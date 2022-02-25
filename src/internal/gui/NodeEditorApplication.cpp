@@ -560,6 +560,70 @@ void NAV::gui::NodeEditorApplication::ShowRenameNodeRequest(Node*& renameNode)
     }
 }
 
+void NAV::gui::NodeEditorApplication::ShowRenamePinRequest(Pin*& renamePin)
+{
+    const char* title = "Rename Pin";
+    ImGui::OpenPopup(title);
+    if (ImGui::BeginPopupModal(title, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+    {
+        static std::string nameBackup = renamePin->name;
+        if (nameBackup.empty())
+        {
+            nameBackup = renamePin->name;
+        }
+
+        auto& io = ImGui::GetIO();
+        if (!io.KeyCtrl && !io.KeyAlt && !io.KeyShift && !io.KeySuper)
+        {
+            if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
+            {
+                if (renamePin)
+                {
+                    renamePin->name = nameBackup;
+                }
+                nameBackup.clear();
+                renamePin = nullptr;
+                ImGui::CloseCurrentPopup();
+                ImGui::EndPopup();
+                return;
+            }
+        }
+
+        if (ImGui::InputTextMultiline(fmt::format("##{}", size_t(renamePin->id)).c_str(), &renamePin->name, ImVec2(0, 65), ImGuiInputTextFlags_CtrlEnterForNewLine | ImGuiInputTextFlags_EnterReturnsTrue))
+        {
+            nameBackup.clear();
+            renamePin = nullptr;
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SameLine();
+        gui::widgets::HelpMarker("Hold SHIFT or use mouse to select text.\n"
+                                 "CTRL+Left/Right to word jump.\n"
+                                 "CTRL+A or double-click to select all.\n"
+                                 "CTRL+X,CTRL+C,CTRL+V clipboard.\n"
+                                 "CTRL+Z,CTRL+Y undo/redo.\n"
+                                 "ESCAPE to revert.");
+        if (ImGui::Button("Accept"))
+        {
+            nameBackup.clear();
+            renamePin = nullptr;
+            flow::ApplyChanges();
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel"))
+        {
+            if (renamePin)
+            {
+                renamePin->name = nameBackup;
+            }
+            nameBackup.clear();
+            renamePin = nullptr;
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
+}
+
 void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 {
     if (frameCountNavigate && ImGui::GetFrameCount() - frameCountNavigate > 3)
@@ -1134,6 +1198,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     ed::Suspend();
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
     static Node* renameNode = nullptr;
+    static Pin* renamePin = nullptr;
     if (ImGui::BeginPopup("Node Context Menu"))
     {
         auto* node = nm::FindNode(contextNodeId);
@@ -1219,8 +1284,14 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Text("ID: %lu", size_t(pin->id));
             ImGui::Text("Node: %s", pin->parentNode ? std::to_string(size_t(pin->parentNode->id)).c_str() : "<none>");
             ImGui::Text("Type: %s", std::string(pin->type).c_str());
+            ImGui::Separator();
+            if (ImGui::MenuItem("Rename"))
+            {
+                renamePin = pin;
+            }
             if (!pin->callbacks.empty())
             {
+                ImGui::Separator();
                 ImGui::Text("Callbacks:");
                 ImGui::Indent();
                 for (auto& callback : pin->callbacks)
@@ -1236,6 +1307,11 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         }
 
         ImGui::EndPopup();
+    }
+
+    if (renamePin) // Popup for renaming a pin
+    {
+        ShowRenamePinRequest(renamePin);
     }
 
     if (ImGui::BeginPopup("Link Context Menu"))

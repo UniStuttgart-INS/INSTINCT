@@ -17,6 +17,7 @@
 namespace NAV
 {
 class Node;
+class Pin;
 
 namespace gui
 {
@@ -73,6 +74,9 @@ class NodeEditorApplication : public Application
     /// @brief Shows a PopupModal where the user can rename the node
     /// @param[in, out] renameNode Pointer to the node to rename. Pointer gets nulled when finished.
     static void ShowRenameNodeRequest(Node*& renameNode);
+    /// @brief Shows a PopupModal where the user can rename the pin
+    /// @param[in, out] renamePin Pointer to the pin to rename. Pointer gets nulled when finished.
+    static void ShowRenamePinRequest(Pin*& renamePin);
 
     /// @brief Frame counter to block the navigate to content function till nodes are correctly loaded
     int frameCountNavigate = 0;
