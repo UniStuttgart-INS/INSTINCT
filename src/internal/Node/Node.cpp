@@ -330,7 +330,7 @@ void NAV::from_json(const json& j, Node& node)
             }
             node.inputPins.at(i).id = inputPins.at(i).id;
             // node.inputPins.at(i).type = inputPins.at(i).type;
-            // node.inputPins.at(i).name = inputPins.at(i).name;
+            node.inputPins.at(i).name = inputPins.at(i).name;
             // node.inputPins.at(i).dataIdentifier = inputPins.at(i).dataIdentifier;
         }
     }
@@ -346,7 +346,7 @@ void NAV::from_json(const json& j, Node& node)
             }
             node.outputPins.at(i).id = outputPins.at(i).id;
             // node.outputPins.at(i).type = outputPins.at(i).type;
-            // node.outputPins.at(i).name = outputPins.at(i).name;
+            node.outputPins.at(i).name = outputPins.at(i).name;
             // node.outputPins.at(i).dataIdentifier = outputPins.at(i).dataIdentifier;
         }
     }

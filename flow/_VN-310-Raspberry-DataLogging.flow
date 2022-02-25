@@ -182,6 +182,7 @@
                     ],
                     "pressureBias": 0.0
                 },
+                "syncInPin": false,
                 "synchronizationControlRegister": {
                     "syncInEdge": 0,
                     "syncInMode": 3,
@@ -261,16 +262,24 @@
             "name": "VectorNavSensor",
             "outputPins": [
                 {
-                    "id": 113
+                    "id": 113,
+                    "name": "Ascii Output"
                 },
                 {
-                    "id": 114
+                    "id": 114,
+                    "name": "Binary Output 1"
                 },
                 {
-                    "id": 115
+                    "id": 115,
+                    "name": "Binary Output 2"
                 },
                 {
-                    "id": 116
+                    "id": 116,
+                    "name": "Binary Output 3"
+                },
+                {
+                    "id": 6,
+                    "name": "SyncOut"
                 }
             ],
             "pos": {
@@ -294,7 +303,8 @@
             "id": 119,
             "inputPins": [
                 {
-                    "id": 118
+                    "id": 118,
+                    "name": "BinaryOutput"
                 }
             ],
             "kind": "Blueprint",
@@ -321,7 +331,8 @@
             "id": 121,
             "inputPins": [
                 {
-                    "id": 120
+                    "id": 120,
+                    "name": "BinaryOutput"
                 }
             ],
             "kind": "Blueprint",

@@ -361,23 +361,28 @@
             "id": 163,
             "inputPins": [
                 {
-                    "id": 164
+                    "id": 164,
+                    "name": "ImuObs"
                 },
                 {
-                    "id": 165
+                    "id": 165,
+                    "name": "PosVelAttInit"
                 },
                 {
-                    "id": 224
+                    "id": 224,
+                    "name": "PVAError"
                 },
                 {
-                    "id": 225
+                    "id": 225,
+                    "name": "ImuBiases"
                 }
             ],
             "kind": "Blueprint",
             "name": "ImuIntegrator",
             "outputPins": [
                 {
-                    "id": 166
+                    "id": 166,
+                    "name": "InertialNavSol"
                 }
             ],
             "pos": {
@@ -423,17 +428,20 @@
             "id": 21,
             "inputPins": [
                 {
-                    "id": 18
+                    "id": 18,
+                    "name": "ImuObs"
                 },
                 {
-                    "id": 19
+                    "id": 19,
+                    "name": "PosVelAttInit"
                 }
             ],
             "kind": "Blueprint",
             "name": "PosVelAttInitializer",
             "outputPins": [
                 {
-                    "id": 20
+                    "id": 20,
+                    "name": "PosVelAtt"
                 }
             ],
             "pos": {
@@ -614,44 +622,56 @@
             "id": 239,
             "inputPins": [
                 {
-                    "id": 226
+                    "id": 226,
+                    "name": "InertialNavSol"
                 },
                 {
-                    "id": 227
+                    "id": 227,
+                    "name": "GNSSNavigationSolution"
                 }
             ],
             "kind": "Blueprint",
             "name": "LooselyCoupledKF",
             "outputPins": [
                 {
-                    "id": 228
+                    "id": 228,
+                    "name": "PVAError"
                 },
                 {
-                    "id": 229
+                    "id": 229,
+                    "name": "ImuBiases"
                 },
                 {
-                    "id": 230
+                    "id": 230,
+                    "name": "x"
                 },
                 {
-                    "id": 231
+                    "id": 231,
+                    "name": "P"
                 },
                 {
-                    "id": 232
+                    "id": 232,
+                    "name": "Phi"
                 },
                 {
-                    "id": 233
+                    "id": 233,
+                    "name": "Q"
                 },
                 {
-                    "id": 234
+                    "id": 234,
+                    "name": "z"
                 },
                 {
-                    "id": 235
+                    "id": 235,
+                    "name": "H"
                 },
                 {
-                    "id": 236
+                    "id": 236,
+                    "name": "R"
                 },
                 {
-                    "id": 237
+                    "id": 237,
+                    "name": "K"
                 }
             ],
             "pos": {
@@ -5362,34 +5382,44 @@
             "id": 250,
             "inputPins": [
                 {
-                    "id": 245
+                    "id": 245,
+                    "name": "Pin 1"
                 },
                 {
-                    "id": 251
+                    "id": 251,
+                    "name": "Pin 2"
                 },
                 {
-                    "id": 252
+                    "id": 252,
+                    "name": "Pin 3"
                 },
                 {
-                    "id": 253
+                    "id": 253,
+                    "name": "Pin 4"
                 },
                 {
-                    "id": 254
+                    "id": 254,
+                    "name": "Pin 5"
                 },
                 {
-                    "id": 255
+                    "id": 255,
+                    "name": "Pin 6"
                 },
                 {
-                    "id": 256
+                    "id": 256,
+                    "name": "Pin 7"
                 },
                 {
-                    "id": 263
+                    "id": 263,
+                    "name": "Pin 8"
                 },
                 {
-                    "id": 264
+                    "id": 264,
+                    "name": "Pin 9"
                 },
                 {
-                    "id": 265
+                    "id": 265,
+                    "name": "Pin 10"
                 }
             ],
             "kind": "Blueprint",
@@ -5561,10 +5591,12 @@
             "name": "ImuSimulator",
             "outputPins": [
                 {
-                    "id": 1
+                    "id": 1,
+                    "name": "ImuObs"
                 },
                 {
-                    "id": 2
+                    "id": 2,
+                    "name": "PosVelAtt"
                 }
             ],
             "pos": {
@@ -5669,7 +5701,8 @@
             "name": "VectorNavFile - IMU",
             "outputPins": [
                 {
-                    "id": 323
+                    "id": 323,
+                    "name": "Binary Output"
                 }
             ],
             "pos": {
@@ -5774,7 +5807,8 @@
             "name": "VectorNavFile - GNSS",
             "outputPins": [
                 {
-                    "id": 325
+                    "id": 325,
+                    "name": "Binary Output"
                 }
             ],
             "pos": {
@@ -5793,17 +5827,20 @@
             "id": 330,
             "inputPins": [
                 {
-                    "id": 327
+                    "id": 327,
+                    "name": ""
                 },
                 {
-                    "id": 328
+                    "id": 328,
+                    "name": ""
                 }
             ],
             "kind": "Simple",
             "name": "",
             "outputPins": [
                 {
-                    "id": 329
+                    "id": 329,
+                    "name": ""
                 }
             ],
             "pos": {
@@ -5826,14 +5863,16 @@
             "id": 333,
             "inputPins": [
                 {
-                    "id": 332
+                    "id": 332,
+                    "name": "VectorNavBinaryOutput"
                 }
             ],
             "kind": "Blueprint",
             "name": "VectorNavBinaryConverter",
             "outputPins": [
                 {
-                    "id": 331
+                    "id": 331,
+                    "name": "ImuObsWDelta"
                 }
             ],
             "pos": {
@@ -5856,14 +5895,16 @@
             "id": 337,
             "inputPins": [
                 {
-                    "id": 338
+                    "id": 338,
+                    "name": "VectorNavBinaryOutput"
                 }
             ],
             "kind": "Blueprint",
             "name": "VectorNavBinaryConverter",
             "outputPins": [
                 {
-                    "id": 339
+                    "id": 339,
+                    "name": "PosVelAtt"
                 }
             ],
             "pos": {
@@ -5882,17 +5923,20 @@
             "id": 344,
             "inputPins": [
                 {
-                    "id": 345
+                    "id": 345,
+                    "name": ""
                 },
                 {
-                    "id": 346
+                    "id": 346,
+                    "name": ""
                 }
             ],
             "kind": "Simple",
             "name": "",
             "outputPins": [
                 {
-                    "id": 347
+                    "id": 347,
+                    "name": ""
                 }
             ],
             "pos": {
@@ -6052,14 +6096,16 @@
             "id": 386,
             "inputPins": [
                 {
-                    "id": 385
+                    "id": 385,
+                    "name": "True"
                 }
             ],
             "kind": "Blueprint",
             "name": "ErrorModel",
             "outputPins": [
                 {
-                    "id": 384
+                    "id": 384,
+                    "name": "Biased"
                 }
             ],
             "pos": {
@@ -6219,14 +6265,16 @@
             "id": 403,
             "inputPins": [
                 {
-                    "id": 401
+                    "id": 401,
+                    "name": "True"
                 }
             ],
             "kind": "Blueprint",
             "name": "ErrorModel",
             "outputPins": [
                 {
-                    "id": 402
+                    "id": 402,
+                    "name": "Biased"
                 }
             ],
             "pos": {
@@ -6245,17 +6293,20 @@
             "id": 433,
             "inputPins": [
                 {
-                    "id": 430
+                    "id": 430,
+                    "name": ""
                 },
                 {
-                    "id": 431
+                    "id": 431,
+                    "name": ""
                 }
             ],
             "kind": "Simple",
             "name": "",
             "outputPins": [
                 {
-                    "id": 432
+                    "id": 432,
+                    "name": ""
                 }
             ],
             "pos": {
@@ -9307,22 +9358,28 @@
             "id": 9,
             "inputPins": [
                 {
-                    "id": 4
+                    "id": 4,
+                    "name": "Pin 1"
                 },
                 {
-                    "id": 5
+                    "id": 5,
+                    "name": "Pin 2"
                 },
                 {
-                    "id": 31
+                    "id": 31,
+                    "name": "Pin 3"
                 },
                 {
-                    "id": 119
+                    "id": 119,
+                    "name": "Pin 4"
                 },
                 {
-                    "id": 120
+                    "id": 120,
+                    "name": "Pin 5"
                 },
                 {
-                    "id": 121
+                    "id": 121,
+                    "name": "Pin 6"
                 }
             ],
             "kind": "Blueprint",
