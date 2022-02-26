@@ -864,7 +864,10 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
             LOG_CRITICAL("{}: Calculation algorithm '{}' for the system matrix Phi is not supported.", nameId(), _phiCalculationAlgorithm);
         }
     }
-    notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi);
+    if (_showKalmanFilterOutputPins)
+    {
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi);
+    }
     LOG_DATA("{}: KF.Phi =\n{}", nameId(), _kalmanFilter.Phi);
 
     if (_qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
@@ -877,7 +880,10 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
                                                         n_Dcm_b, _tau_i);
     }
 
-    notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q);
+    if (_showKalmanFilterOutputPins)
+    {
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q);
+    }
     LOG_DATA("{}: KF.Q =\n{}", nameId(), _kalmanFilter.Q);
 
     LOG_DATA("{}: Q - Q^T =\n{}", nameId(), _kalmanFilter.Q - _kalmanFilter.Q.transpose());
@@ -885,8 +891,11 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     // 3. Propagate the state vector estimate from x(+) and x(-)
     // 4. Propagate the error covariance matrix from P(+) and P(-)
     _kalmanFilter.predict();
-    notifyOutputValueChanged(OUTPUT_PORT_INDEX_x);
-    notifyOutputValueChanged(OUTPUT_PORT_INDEX_P);
+    if (_showKalmanFilterOutputPins)
+    {
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P);
+    }
     LOG_DATA("{}: KF.x =\n{}", nameId(), _kalmanFilter.x);
     LOG_DATA("{}: KF.P =\n{}", nameId(), _kalmanFilter.P);
 
@@ -983,19 +992,28 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     // ---------------------------------------------- Correction -------------------------------------------------
     // 5. Calculate the measurement matrix H_k
     _kalmanFilter.H = measurementMatrix_H(T_rn_p, n_Dcm_b, b_omega_ip, _b_leverArm_InsGnss, n_Omega_ie);
-    notifyOutputValueChanged(OUTPUT_PORT_INDEX_H);
+    if (_showKalmanFilterOutputPins)
+    {
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_H);
+    }
     LOG_DATA("{}: KF.H =\n{}", nameId(), _kalmanFilter.H);
 
     // 6. Calculate the measurement noise covariance matrix R_k
     _kalmanFilter.R = measurementNoiseCovariance_R(gnssSigmaSquaredLatLonAlt, gnssSigmaSquaredVelocity);
-    notifyOutputValueChanged(OUTPUT_PORT_INDEX_R);
+    if (_showKalmanFilterOutputPins)
+    {
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_R);
+    }
     LOG_DATA("{}: KF.R =\n{}", nameId(), _kalmanFilter.R);
 
     // 8. Formulate the measurement z_k
     _kalmanFilter.z = measurementInnovation_dz(gnssMeasurement->lla_position(), _latestInertialNavSol->lla_position(),
                                                gnssMeasurement->n_velocity(), _latestInertialNavSol->n_velocity(),
                                                T_rn_p, _latestInertialNavSol->n_Quat_b(), _b_leverArm_InsGnss, b_omega_ip, n_Omega_ie);
-    notifyOutputValueChanged(OUTPUT_PORT_INDEX_z);
+    if (_showKalmanFilterOutputPins)
+    {
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_z);
+    }
     LOG_DATA("{}: KF.z =\n{}", nameId(), _kalmanFilter.z);
 
     if (_checkKalmanMatricesRanks)
@@ -1011,9 +1029,12 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     // 9. Update the state vector estimate from x(-) to x(+)
     // 10. Update the error covariance matrix from P(-) to P(+)
     _kalmanFilter.correctWithMeasurementInnovation();
-    notifyOutputValueChanged(OUTPUT_PORT_INDEX_K);
-    notifyOutputValueChanged(OUTPUT_PORT_INDEX_x);
-    notifyOutputValueChanged(OUTPUT_PORT_INDEX_P);
+    if (_showKalmanFilterOutputPins)
+    {
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_K);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P);
+    }
     LOG_DATA("{}: KF.K =\n{}", nameId(), _kalmanFilter.K);
     LOG_DATA("{}: KF.x =\n{}", nameId(), _kalmanFilter.x);
     LOG_DATA("{}: KF.P =\n{}", nameId(), _kalmanFilter.P);
