@@ -68,8 +68,8 @@ class UlogFile : public Imu, public FileReader
     uint64_t sensorStartupUTCTime_usec{};
 
   private:
-    constexpr static size_t OutputPortIndex_ImuObs = 0;    ///< @brief Flow (ImuObs)
-    constexpr static size_t OutputPortIndex_PosVelAtt = 1; ///< @brief Flow (PosVelAtt)
+    constexpr static size_t OutputPortIndex_ImuObs = 0; ///< @brief Flow (ImuObs)
+    constexpr static size_t OutputPortIndex_PosVel = 1; ///< @brief Flow (PosVelAtt)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -323,8 +323,6 @@ class UlogFile : public Imu, public FileReader
     bool holdsMag = false;
     /// @brief Flag to check whether 'epochData' contains GPS reading
     bool holdsGps = false;
-    /// @brief Flag to check whether 'epochData' has received an absolute timestamp
-    bool firstGpsTime = false;
 
     /// @brief Timestamp of the latest accelerometer reading
     uint64_t accelKey{};
@@ -335,5 +333,14 @@ class UlogFile : public Imu, public FileReader
 
     /// @brief Flag to check whether loop is run again without re-initialization
     bool isReRun = false;
+
+    /// dffddf
+    struct
+    {
+        uint64_t timeSinceStartup{}; ///< TODO
+        InsTime gnssTime;            ///< TODO
+    } lastGnssTime;
+
+    double lastTime{};
 };
 } // namespace NAV

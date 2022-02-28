@@ -31,12 +31,11 @@ NAV::UlogFile::UlogFile()
     holdsGyro = false;
     holdsMag = false;
     holdsGps = false;
-    firstGpsTime = false;
     isReRun = false;
 
     // All message types are polled from the first output pin, but then send out on the correct pin over invokeCallbacks
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &UlogFile::pollData);
-    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() });
+    nm::CreateOutputPin(this, "PosVel", Pin::Type::Flow, { NAV::PosVel::type() });
 }
 
 NAV::UlogFile::~UlogFile()
@@ -114,7 +113,8 @@ bool NAV::UlogFile::initialize()
     holdsGyro = false;
     holdsMag = false;
     holdsGps = false;
-    firstGpsTime = false;
+
+    lastGnssTime.timeSinceStartup = 0;
 
     return FileReader::initialize();
 }
@@ -315,7 +315,6 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
     {
         epochData.clear();
         isReRun = false;
-        firstGpsTime = false;
     }
 
     // Get current position
@@ -609,7 +608,6 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                         std::memcpy(&vehicleGpsPosition.time_utc_usec, currentData, sizeof(vehicleGpsPosition.time_utc_usec));
                         LOG_DEBUG("{}: vehicleGpsPosition.time_utc_usec: {}", nameId(), vehicleGpsPosition.time_utc_usec);
                         currentExtractLocation += sizeof(vehicleGpsPosition.time_utc_usec);
-                        firstGpsTime = true;
                     }
                     else if (dataField.name == "lat")
                     {
@@ -760,6 +758,10 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                         LOG_WARN("{}: dataField.name = '{}' or dataField.type = '{}' is unknown", nameId(), dataField.name, dataField.type);
                     }
                 }
+
+                lastGnssTime.gnssTime = InsTime(0, 0, 0, 0, 0, vehicleGpsPosition.time_utc_usec * 1e-6L);
+                lastGnssTime.timeSinceStartup = vehicleGpsPosition.timestamp;
+
                 epochData.insert(std::make_pair(vehicleGpsPosition.timestamp,
                                                 MeasurementData{ subscribedMessages.at(messageData.msg_id).multi_id,
                                                                  subscribedMessages.at(messageData.msg_id).message_name,
@@ -806,6 +808,19 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                         LOG_WARN("{}: dataField.name = '{}' or dataField.type = '{}' is unknown", nameId(), dataField.name, dataField.type);
                     }
                 }
+
+                while (true) // Delete all old VehicleAttitude entries
+                {
+                    auto iter = std::find_if(epochData.begin(), epochData.end(), [](const std::pair<uint64_t, MeasurementData>& v) {
+                        return std::holds_alternative<UlogFile::VehicleAttitude>(v.second.data);
+                    });
+                    if (iter == epochData.end())
+                    {
+                        break;
+                    }
+                    epochData.erase(iter);
+                }
+
                 epochData.insert(std::make_pair(vehicleAttitude.timestamp,
                                                 MeasurementData{ subscribedMessages.at(messageData.msg_id).multi_id,
                                                                  subscribedMessages.at(messageData.msg_id).message_name,
@@ -1017,15 +1032,8 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
 
                 auto obs = std::make_shared<ImuObs>(this->imuPos);
 
-                if (firstGpsTime)
-                {
-                    auto utcTime = static_cast<time_t>(std::get<VehicleGpsPosition>(epochData.rbegin()->second.data).time_utc_usec);
-                    auto* utcTimeCtime = std::gmtime(&utcTime);
-
-                    auto utcInsTime = NAV::InsTime_YMDHMS{ utcTimeCtime->tm_year, utcTimeCtime->tm_mon, utcTimeCtime->tm_mday, utcTimeCtime->tm_hour, utcTimeCtime->tm_min, static_cast<long double>(utcTimeCtime->tm_sec) };
-
-                    obs->insTime = NAV::InsTime(utcInsTime);
-                }
+                uint64_t timeSinceStartupNew = epochData.rbegin()->first;
+                obs->insTime = lastGnssTime.gnssTime + std::chrono::microseconds(static_cast<int64_t>(timeSinceStartupNew) - static_cast<int64_t>(lastGnssTime.timeSinceStartup));
 
                 obs->timeSinceStartup = 1000 * epochData.rbegin()->first; // latest timestamp in [ns]
                 LOG_INFO("{}: *obs->timeSinceStartup = {} s", nameId(), static_cast<double>(*obs->timeSinceStartup) * 1e-9);
@@ -1092,15 +1100,35 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
             if (hasEnoughPosVelAttDataToSend) // This is the hasEnoughData check
             {
                 LOG_INFO("{}: Construct PosVelAtt and invoke callback", nameId());
+
+                auto iterGpsPosition = std::find_if(epochData.begin(), epochData.end(), [](const std::pair<uint64_t, MeasurementData>& v) {
+                    return std::holds_alternative<VehicleGpsPosition>(v.second.data); // oldest VehicleGpsPosition
+                });
+                auto iterAttitude = std::find_if(epochData.begin(), epochData.end(), [](const std::pair<uint64_t, MeasurementData>& v) {
+                    return std::holds_alternative<VehicleAttitude>(v.second.data); // oldest VehicleAttitude
+                });
+                if (iterGpsPosition == epochData.end() || iterAttitude == epochData.end())
+                {
+                    LOG_ERROR("{}: This should not happen :(", nameId());
+                }
+
                 auto obs = std::make_shared<NAV::PosVelAtt>();
 
-                // TODO: Befüllen
+                const auto& vehicleGpsPosition = std::get<VehicleGpsPosition>(iterGpsPosition->second.data);
+                const auto& vehicleAttitude = std::get<VehicleAttitude>(iterAttitude->second.data);
+
+                obs->insTime.emplace(0, 0, 0, 0, 0, vehicleGpsPosition.time_utc_usec * 1e-6L);
+                obs->setState_n(Eigen::Vector3d{ static_cast<double>(vehicleGpsPosition.lat), static_cast<double>(vehicleGpsPosition.lon), static_cast<double>(vehicleGpsPosition.alt_ellipsoid) },
+                                Eigen::Vector3d{ vehicleGpsPosition.vel_n_m_s, vehicleGpsPosition.vel_e_m_s, vehicleGpsPosition.vel_d_m_s },
+                                Eigen::Quaterniond{ vehicleAttitude.q.at(0), vehicleAttitude.q.at(1), vehicleAttitude.q.at(2), vehicleAttitude.q.at(3) });
+                // TODO: Check order of w,x,y,z
+                // TODO: Check if this is quaternion_nb
 
                 // TODO: Erase just the first used measurements from epochdata
 
                 if (!peek)
                 {
-                    invokeCallbacks(OutputPortIndex_PosVelAtt, obs);
+                    invokeCallbacks(OutputPortIndex_PosVel, obs);
                 }
                 else
                 {
@@ -1374,12 +1402,7 @@ bool NAV::UlogFile::enoughImuDataAvailable(std::multimap<uint64_t, MeasurementDa
     {
         holdsMag = true;
     }
-    if (dataMap.rbegin()->second.data.index() == 3) // corresponds to 'SensorMag' alternative in NAV::UlogFile::MeasurementData::data (std::variant)
-    {
-        holdsGps = true;
-    }
 
-    //TODO: add 'firstAbsoluteTime' to check
-
-    return (holdsAccel & holdsGyro & holdsGps) != 0;
+    // Check whether Accel and Gyro measurements are available and whether the first absolute timestamp (from GPS) is available
+    return (holdsAccel && holdsGyro && lastGnssTime.timeSinceStartup) != 0;
 }
