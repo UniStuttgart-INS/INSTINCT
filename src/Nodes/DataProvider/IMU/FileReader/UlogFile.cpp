@@ -340,7 +340,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
             filestream.read(reinterpret_cast<char*>(&messageAddLog.multi_id), sizeof(messageAddLog.multi_id));
             LOG_DATA("{}: multi_id: {}", nameId(), messageAddLog.multi_id);
             filestream.read(reinterpret_cast<char*>(&messageAddLog.msg_id), sizeof(messageAddLog.msg_id));
-            LOG_DATA("{}: msg_id: {}", nameId() messageAddLog.msg_id);
+            LOG_DATA("{}: msg_id: {}", nameId(), messageAddLog.msg_id);
 
             messageAddLog.msg_name.resize(messageAddLog.header.msg_size - 3);
             filestream.read(messageAddLog.msg_name.data(), messageAddLog.header.msg_size - 3);
