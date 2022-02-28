@@ -340,7 +340,5 @@ class UlogFile : public Imu, public FileReader
         uint64_t timeSinceStartup{}; ///< TODO
         InsTime gnssTime;            ///< TODO
     } lastGnssTime;
-
-    double lastTime{};
 };
 } // namespace NAV
