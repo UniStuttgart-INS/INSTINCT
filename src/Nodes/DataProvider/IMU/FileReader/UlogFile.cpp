@@ -175,8 +175,7 @@ void NAV::UlogFile::readHeader()
             LOG_WARN("{}: FileType is binary, but not ULog", nameId());
         }
 
-        // Read ULog version (currently only 1, see https://docs.px4.io/master/en/dev_log/ulog_file_format.html)
-        LOG_DATA("{}: version: {}", nameId(), static_cast<int>(ulogHeader.header.version)); // No use so far, hence just a LOG_DATA
+        LOG_DATA("{}: version: {}", nameId(), static_cast<int>(ulogHeader.header.version));
 
         LOG_DATA("{}: time stamp [µs]: {}", nameId(), ulogHeader.header.timeStamp);
 
