@@ -4,29 +4,36 @@
 #include "util/Logger.hpp"
 
 NAV::sensors::ublox::UbloxUartSensor::UbloxUartSensor(std::string name)
-    : name(std::move(name)), _buffer(uart::sensors::UartSensor::DefaultReadBufferSize)
+    : _name(std::move(name)), _buffer(uart::sensors::UartSensor::DefaultReadBufferSize)
 {
     resetTracking();
 }
 
 void NAV::sensors::ublox::UbloxUartSensor::resetTracking()
 {
-    currentlyBuildingBinaryPacket = false;
-    currentlyBuildingAsciiPacket = false;
+    _currentlyBuildingBinaryPacket = false;
+    _currentlyBuildingAsciiPacket = false;
 
-    asciiEndChar1Found = false;
-    binarySyncChar2Found = false;
-    binaryMsgClassFound = false;
-    binaryMsgIdFound = false;
-    binaryPayloadLength1Found = false;
-    binaryPayloadLength2Found = false;
+    _asciiEndChar1Found = false;
+    _binarySyncChar2Found = false;
+    _binaryMsgClassFound = false;
+    _binaryMsgIdFound = false;
+    _binaryPayloadLength1Found = false;
+    _binaryPayloadLength2Found = false;
 
-    binaryMsgClass = 0;
-    binaryMsgId = 0;
-    binaryPayloadLength = 0;
+#if (defined(__GNUC__) || defined(__GNUG__)) && !defined(__clang__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif
+    _binaryMsgClass = 0;
+    _binaryMsgId = 0;
+    _binaryPayloadLength = 0;
+#if (defined(__GNUC__) || defined(__GNUG__)) && !defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
     _buffer.resize(0);
-    numOfBytesRemainingForCompletePacket = 0;
+    _numOfBytesRemainingForCompletePacket = 0;
 }
 
 std::unique_ptr<uart::protocol::Packet> NAV::sensors::ublox::UbloxUartSensor::findPacket(uint8_t dataByte)
@@ -35,75 +42,75 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::ublox::UbloxUartSensor::fi
     {
         // Buffer is full
         resetTracking();
-        LOG_ERROR("{}: Discarding current packet, because buffer is full.", name);
+        LOG_ERROR("{}: Discarding current packet, because buffer is full.", _name);
     }
 
-    if (!currentlyBuildingAsciiPacket && !currentlyBuildingBinaryPacket)
+    if (!_currentlyBuildingAsciiPacket && !_currentlyBuildingBinaryPacket)
     {
         // This byte must be the start char
-        if (dataByte == BinarySyncChar1)
+        if (dataByte == BINARY_SYNC_CHAR_1)
         {
             resetTracking();
-            currentlyBuildingBinaryPacket = true;
+            _currentlyBuildingBinaryPacket = true;
             _buffer.push_back(dataByte);
         }
-        else if (dataByte == AsciiStartChar)
+        else if (dataByte == ASCII_START_CHAR)
         {
             resetTracking();
-            currentlyBuildingAsciiPacket = true;
+            _currentlyBuildingAsciiPacket = true;
             _buffer.push_back(dataByte);
         }
     }
-    else if (currentlyBuildingBinaryPacket)
+    else if (_currentlyBuildingBinaryPacket)
     {
         _buffer.push_back(dataByte);
 
-        if (!binarySyncChar2Found)
+        if (!_binarySyncChar2Found)
         {
             // This byte must be the second sync char
-            if (dataByte == BinarySyncChar2)
+            if (dataByte == BINARY_SYNC_CHAR_2)
             {
-                binarySyncChar2Found = true;
+                _binarySyncChar2Found = true;
             }
             else
             {
                 resetTracking();
             }
         }
-        else if (!binaryMsgClassFound)
+        else if (!_binaryMsgClassFound)
         {
             // This byte must be the message class
-            binaryMsgClassFound = true;
-            binaryMsgClass = dataByte;
+            _binaryMsgClassFound = true;
+            _binaryMsgClass = dataByte;
         }
-        else if (!binaryMsgIdFound)
+        else if (!_binaryMsgIdFound)
         {
             // This byte must be the message id
-            binaryMsgIdFound = true;
-            binaryMsgId = dataByte;
+            _binaryMsgIdFound = true;
+            _binaryMsgId = dataByte;
         }
-        else if (!binaryPayloadLength1Found)
+        else if (!_binaryPayloadLength1Found)
         {
-            binaryPayloadLength1Found = true;
-            binaryPayloadLength = static_cast<uint16_t>(dataByte);
+            _binaryPayloadLength1Found = true;
+            _binaryPayloadLength = static_cast<uint16_t>(dataByte);
         }
-        else if (!binaryPayloadLength2Found)
+        else if (!_binaryPayloadLength2Found)
         {
-            binaryPayloadLength2Found = true;
-            binaryPayloadLength |= static_cast<uint16_t>(static_cast<uint16_t>(dataByte) << 8U);
-            binaryPayloadLength = uart::stoh(binaryPayloadLength, endianness);
-            numOfBytesRemainingForCompletePacket = binaryPayloadLength + 2U;
-            LOG_DATA("{}: Binary packet: Class={:0x}, Id={:0x}, payload length={}", name, binaryMsgClass, binaryMsgId, binaryPayloadLength);
+            _binaryPayloadLength2Found = true;
+            _binaryPayloadLength |= static_cast<uint16_t>(static_cast<uint16_t>(dataByte) << 8U);
+            _binaryPayloadLength = uart::stoh(_binaryPayloadLength, ENDIANNESS);
+            _numOfBytesRemainingForCompletePacket = _binaryPayloadLength + 2U;
+            LOG_DATA("{}: Binary packet: Class={:0x}, Id={:0x}, payload length={}", _name, _binaryMsgClass, _binaryMsgId, _binaryPayloadLength);
         }
         else
         {
             // We are currently collecting data for our packet.
-            numOfBytesRemainingForCompletePacket--;
+            _numOfBytesRemainingForCompletePacket--;
 
-            if (numOfBytesRemainingForCompletePacket == 0)
+            if (_numOfBytesRemainingForCompletePacket == 0)
             {
                 // We have a possible binary packet!
-                auto p = std::make_unique<uart::protocol::Packet>(_buffer, &sensor);
+                auto p = std::make_unique<uart::protocol::Packet>(_buffer, &_sensor);
 
                 if (p->isValid())
                 {
@@ -112,38 +119,38 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::ublox::UbloxUartSensor::fi
                     return p;
                 }
                 // Invalid packet!
-                LOG_ERROR("{}: Invalid binary packet: Class={:0x}, Id={:0x}, payload length={}", name, binaryMsgClass, binaryMsgId, binaryPayloadLength);
+                LOG_ERROR("{}: Invalid binary packet: Class={:0x}, Id={:0x}, payload length={}", _name, _binaryMsgClass, _binaryMsgId, _binaryPayloadLength);
                 resetTracking();
             }
         }
     }
-    else if (currentlyBuildingAsciiPacket)
+    else if (_currentlyBuildingAsciiPacket)
     {
         _buffer.push_back(dataByte);
 
-        if (dataByte == AsciiEscapeChar)
+        if (dataByte == ASCII_ESCAPE_CHAR)
         {
             resetTracking();
         }
-        else if (dataByte == AsciiEndChar1)
+        else if (dataByte == ASCII_END_CHAR_1)
         {
-            asciiEndChar1Found = true;
+            _asciiEndChar1Found = true;
         }
-        else if (asciiEndChar1Found)
+        else if (_asciiEndChar1Found)
         {
-            if (dataByte == AsciiEndChar2)
+            if (dataByte == ASCII_END_CHAR_2)
             {
                 // We have a possible data packet
-                auto p = std::make_unique<uart::protocol::Packet>(_buffer, &sensor);
+                auto p = std::make_unique<uart::protocol::Packet>(_buffer, &_sensor);
 
                 if (p->isValid())
                 {
                     // We have a valid ascii packet!!!.
-                    LOG_DATA("{}: Valid ascii packet: {}", name, p->datastr().substr(0, p->getRawDataLength() - 2));
+                    LOG_DATA("{}: Valid ascii packet: {}", _name, p->datastr().substr(0, p->getRawDataLength() - 2));
                     return p;
                 }
                 // Invalid packet!
-                LOG_ERROR("{}: Invalid ascii packet: {}", name, p->datastr());
+                LOG_ERROR("{}: Invalid ascii packet: {}", _name, p->datastr());
             }
 
             resetTracking();
@@ -157,14 +164,14 @@ void NAV::sensors::ublox::UbloxUartSensor::packetFinderFunction(const std::vecto
 {
     auto* sensor = static_cast<UbloxUartSensor*>(userData);
 
-    for (size_t i = 0; i < data.size(); i++, sensor->runningDataIndex++)
+    for (size_t i = 0; i < data.size(); i++, sensor->_runningDataIndex++)
     {
         auto packetPointer = sensor->findPacket(data.at(i));
 
         if (packetPointer != nullptr)
         {
             uart::protocol::Packet packet = *packetPointer;
-            dispatchPacket(dispatchPacketUserData, packet, sensor->runningDataIndex, timestamp);
+            dispatchPacket(dispatchPacketUserData, packet, sensor->_runningDataIndex, timestamp);
         }
     }
 }
@@ -180,9 +187,9 @@ uart::protocol::Packet::Type NAV::sensors::ublox::UbloxUartSensor::packetTypeFun
     {
         return uart::protocol::Packet::Type::TYPE_ASCII;
     }
-    if (packet.getRawData().at(0) == BinarySyncChar1)
+    if (packet.getRawData().at(0) == BINARY_SYNC_CHAR_1)
     {
-        if (packet.getRawData().at(1) == BinarySyncChar2)
+        if (packet.getRawData().at(1) == BINARY_SYNC_CHAR_2)
         {
             return uart::protocol::Packet::Type::TYPE_BINARY;
         }

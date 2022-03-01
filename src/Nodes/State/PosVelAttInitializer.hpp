@@ -45,7 +45,7 @@ class PosVelAttInitializer : public Node
     [[nodiscard]] static std::string category();
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Saves the node into a json object
@@ -56,9 +56,9 @@ class PosVelAttInitializer : public Node
     void restore(const json& j) override;
 
   private:
-    constexpr static size_t OutputPortIndex_PosVelAtt = 0; ///< @brief Flow (PosVelAtt)
-    constexpr static size_t InputPortIndex_ImuObs = 0;     ///< @brief Flow (ImuObs)
-    constexpr static size_t InputPortIndex_GnssObs = 1;    ///< @brief Flow (GnssObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_POS_VEL_ATT = 0; ///< @brief Flow (PosVelAtt)
+    constexpr static size_t INPUT_PORT_INDEX_IMU_OBS = 0;      ///< @brief Flow (ImuObs)
+    constexpr static size_t INPUT_PORT_INDEX_GNSS_OBS = 1;     ///< @brief Flow (GnssObs)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -92,62 +92,68 @@ class PosVelAttInitializer : public Node
     void receivePosVelAttObs(const std::shared_ptr<const PosVelAtt>& obs);
 
     /// Time in [s] to initialize the state
-    double initDuration = 5.0;
+    double _initDuration = 5.0;
 
     /// Start time of the averageing process
-    uint64_t startTime = 0;
+    uint64_t _startTime = 0;
 
     /// Initialization source for attitude
-    enum AttitudeMode
+    enum class AttitudeMode
     {
-        AttitudeMode_BOTH, ///< Use IMU and GNSS Observations for attitude initialization
-        AttitudeMode_IMU,  ///< Use IMU Observations for attitude initialization
-        AttitudeMode_GNSS, ///< Use GNSS Observations for attitude initialization
+        BOTH,  ///< Use IMU and GNSS Observations for attitude initialization
+        IMU,   ///< Use IMU Observations for attitude initialization
+        GNSS,  ///< Use GNSS Observations for attitude initialization
+        COUNT, ///< Amount of items in the enum
     };
 
+    /// @brief Converts the enum to a string
+    /// @param[in] attitudeMode Enum value to convert into text
+    /// @return String representation of the enum
+    static const char* to_string(AttitudeMode attitudeMode);
+
     /// GUI option to pecify the initialization source for attitude
-    AttitudeMode attitudeMode = AttitudeMode_BOTH;
+    AttitudeMode _attitudeMode = AttitudeMode::BOTH;
 
     /// Whether the GNSS values should be used or we want to override the values manually
-    bool overridePosition = false;
+    bool _overridePosition = false;
     /// Values to override the Position in [deg, deg, m]
-    std::array<float, 3> overrideValuesPosition_lla = {};
+    std::array<float, 3> _lla_overrideValuesPosition = {};
     /// Position Accuracy to achieve in [cm]
-    float positionAccuracyThreshold = 10;
+    float _positionAccuracyThreshold = 10;
     /// Last position accuracy in [cm] for XYZ or NED
-    std::array<float, 3> lastPositionAccuracy = { std::numeric_limits<float>::infinity(),
-                                                  std::numeric_limits<float>::infinity(),
-                                                  std::numeric_limits<float>::infinity() };
+    std::array<float, 3> _lastPositionAccuracy = { std::numeric_limits<float>::infinity(),
+                                                   std::numeric_limits<float>::infinity(),
+                                                   std::numeric_limits<float>::infinity() };
 
     /// Whether the GNSS values should be used or we want to override the values manually
-    bool overrideVelocity = false;
+    bool _overrideVelocity = false;
     /// Values to override the Velocity in [m/s]
-    std::array<float, 3> overrideValuesVelocity_n = {};
+    std::array<float, 3> _n_overrideValuesVelocity = {};
     /// Velocity Accuracy to achieve in [cm/s]
-    float velocityAccuracyThreshold = 10;
+    float _velocityAccuracyThreshold = 10;
     /// Last velocity accuracy in [cm/s] for XYZ or NED
-    std::array<float, 3> lastVelocityAccuracy = { std::numeric_limits<float>::infinity(),
-                                                  std::numeric_limits<float>::infinity(),
-                                                  std::numeric_limits<float>::infinity() };
+    std::array<float, 3> _lastVelocityAccuracy = { std::numeric_limits<float>::infinity(),
+                                                   std::numeric_limits<float>::infinity(),
+                                                   std::numeric_limits<float>::infinity() };
 
     /// Count of received attitude measurements
-    double countAveragedAttitude = 0.0;
+    double _countAveragedAttitude = 0.0;
     /// Averaged Attitude (roll, pitch, yaw) in [rad]
-    std::array<double, 3> averagedAttitude = { 0.0, 0.0, 0.0 };
+    std::array<double, 3> _averagedAttitude = { 0.0, 0.0, 0.0 };
     /// Whether the IMU values should be used or we want to override the values manually
-    std::array<bool, 3> overrideRollPitchYaw = { false, false, false };
+    std::array<bool, 3> _overrideRollPitchYaw = { false, false, false };
     /// Values to override Roll, Pitch and Yaw with in [deg]
-    std::array<float, 3> overrideValuesRollPitchYaw = {};
+    std::array<float, 3> _overrideValuesRollPitchYaw = {};
 
     /// Whether the states are initialized (pos, vel, att, messages send)
-    std::array<bool, 4> posVelAttInitialized = { false, false, false, false };
+    std::array<bool, 4> _posVelAttInitialized = { false, false, false, false };
 
     /// Initialized Quaternion body to navigation frame (roll, pitch, yaw)
-    Eigen::Quaterniond q_nb_init;
+    Eigen::Quaterniond _n_Quat_b_init;
     /// Position in ECEF coordinates
-    Eigen::Vector3d p_ecef_init;
+    Eigen::Vector3d _e_initPosition;
     /// Velocity in navigation coordinates
-    Eigen::Vector3d v_n_init;
+    Eigen::Vector3d _n_initVelocity;
 };
 
 } // namespace NAV

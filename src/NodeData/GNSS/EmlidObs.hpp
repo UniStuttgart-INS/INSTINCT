@@ -60,7 +60,7 @@ class EmlidObs : public InsObs
         data{};
 
     /// ECEF position [m]
-    std::optional<Eigen::Vector3d> position_ecef;
+    std::optional<Eigen::Vector3d> e_position;
 };
 
 } // namespace NAV

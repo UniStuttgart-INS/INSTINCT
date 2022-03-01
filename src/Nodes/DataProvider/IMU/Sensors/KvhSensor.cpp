@@ -19,11 +19,11 @@ NAV::KvhSensor::KvhSensor()
 
     LOG_TRACE("{}: called", name);
 
-    hasConfig = true;
-    guiConfigDefaultWindowSize = { 360, 70 };
+    _hasConfig = true;
+    _guiConfigDefaultWindowSize = { 360, 70 };
 
     // TODO: Update the library to handle different baudrates
-    selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_921600);
+    _selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_921600);
 
     nm::CreateOutputPin(this, "KvhObs", Pin::Type::Flow, { NAV::KvhObs::type() });
 }
@@ -50,9 +50,9 @@ std::string NAV::KvhSensor::category()
 
 void NAV::KvhSensor::guiConfig()
 {
-    if (ImGui::InputTextWithHint("SensorPort", "/dev/ttyUSB0", &sensorPort))
+    if (ImGui::InputTextWithHint("SensorPort", "/dev/ttyUSB0", &_sensorPort))
     {
-        LOG_DEBUG("{}: SensorPort changed to {}", nameId(), sensorPort);
+        LOG_DEBUG("{}: SensorPort changed to {}", nameId(), _sensorPort);
         flow::ApplyChanges();
         deinitializeNode();
     }
@@ -105,9 +105,9 @@ bool NAV::KvhSensor::initialize()
     // connect to the sensor
     try
     {
-        sensor->connect(sensorPort, sensorBaudrate());
+        _sensor->connect(_sensorPort, sensorBaudrate());
 
-        LOG_DEBUG("{} connected on port {} with baudrate {}", nameId(), sensorPort, sensorBaudrate());
+        LOG_DEBUG("{} connected on port {} with baudrate {}", nameId(), _sensorPort, sensorBaudrate());
     }
     catch (...)
     {
@@ -115,7 +115,7 @@ bool NAV::KvhSensor::initialize()
         return false;
     }
 
-    sensor->registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
+    _sensor->registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
 
     return true;
 }
@@ -129,15 +129,15 @@ void NAV::KvhSensor::deinitialize()
         return;
     }
 
-    if (sensor->isConnected())
+    if (_sensor->isConnected())
     {
         try
         {
-            sensor->unregisterAsyncPacketReceivedHandler();
+            _sensor->unregisterAsyncPacketReceivedHandler();
         }
         catch (...)
         {}
-        sensor->disconnect();
+        _sensor->disconnect();
     }
 }
 
@@ -147,7 +147,7 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::pro
 
     if (p.type() == uart::protocol::Packet::Type::TYPE_BINARY)
     {
-        auto obs = std::make_shared<KvhObs>(kvhSensor->imuPos, p);
+        auto obs = std::make_shared<KvhObs>(kvhSensor->_imuPos, p);
 
         sensors::kvh::decryptKvhObs(obs);
 
@@ -155,15 +155,15 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::pro
                  kvhSensor->name, obs->sequenceNumber, obs->temperature.value(), obs->status);
 
         // Check if a packet was skipped
-        if (kvhSensor->prevSequenceNumber == UINT8_MAX)
+        if (kvhSensor->_prevSequenceNumber == UINT8_MAX)
         {
-            kvhSensor->prevSequenceNumber = obs->sequenceNumber;
+            kvhSensor->_prevSequenceNumber = obs->sequenceNumber;
         }
-        if (obs->sequenceNumber != 0 && (obs->sequenceNumber < kvhSensor->prevSequenceNumber || obs->sequenceNumber > kvhSensor->prevSequenceNumber + 2))
+        if (obs->sequenceNumber != 0 && (obs->sequenceNumber < kvhSensor->_prevSequenceNumber || obs->sequenceNumber > kvhSensor->_prevSequenceNumber + 2))
         {
-            LOG_WARN("{}: Sequence Number changed from {} to {}", kvhSensor->name, kvhSensor->prevSequenceNumber, obs->sequenceNumber);
+            LOG_WARN("{}: Sequence Number changed from {} to {}", kvhSensor->name, kvhSensor->_prevSequenceNumber, obs->sequenceNumber);
         }
-        kvhSensor->prevSequenceNumber = obs->sequenceNumber;
+        kvhSensor->_prevSequenceNumber = obs->sequenceNumber;
 
         // Calls all the callbacks
         if (InsTime currentTime = util::time::GetCurrentInsTime();
@@ -171,7 +171,7 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::pro
         {
             obs->insTime = currentTime;
         }
-        kvhSensor->invokeCallbacks(OutputPortIndex_KvhObs, obs);
+        kvhSensor->invokeCallbacks(OUTPUT_PORT_INDEX_KVH_OBS, obs);
     }
     else if (p.type() == uart::protocol::Packet::Type::TYPE_ASCII)
     {

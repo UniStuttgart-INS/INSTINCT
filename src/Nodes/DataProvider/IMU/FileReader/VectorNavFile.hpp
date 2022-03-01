@@ -39,7 +39,7 @@ class VectorNavFile : public Imu, public FileReader
     [[nodiscard]] static std::string category();
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Saves the node into a json object
@@ -53,7 +53,7 @@ class VectorNavFile : public Imu, public FileReader
     bool resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_VectorNavBinaryOutput = 0; ///< @brief Flow (VectorNavBinaryOutput)
+    constexpr static size_t OUTPUT_PORT_INDEX_VECTORNAV_BINARY_OUTPUT = 0; ///< @brief Flow (VectorNavBinaryOutput)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -73,7 +73,7 @@ class VectorNavFile : public Imu, public FileReader
     /// This register allows the user to construct a custom binary output message that
     /// contains a collection of desired estimated states and sensor measurements.
     /// @note See User manual VN-310 - 8.2.11-13 (p 100ff) / VN-100 - 5.2.11-13 (p 73ff)
-    vn::sensors::BinaryOutputRegister binaryOutputRegister;
+    vn::sensors::BinaryOutputRegister _binaryOutputRegister;
 
     /// @brief Polls data from the file
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
@@ -81,7 +81,7 @@ class VectorNavFile : public Imu, public FileReader
     [[nodiscard]] std::shared_ptr<const NodeData> pollData(bool peek = false);
 
     /// @brief Amount of messages read
-    uint32_t messageCount = 0;
+    uint32_t _messageCount = 0;
 };
 
 } // namespace NAV

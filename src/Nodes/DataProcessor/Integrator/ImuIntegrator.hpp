@@ -47,7 +47,7 @@ class ImuIntegrator : public Node
     [[nodiscard]] static std::string category();
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Saves the node into a json object
@@ -58,7 +58,7 @@ class ImuIntegrator : public Node
     void restore(const json& j) override;
 
   private:
-    constexpr static size_t OutputPortIndex_InertialNavSol = 0; ///< @brief Flow (InertialNavSol)
+    constexpr static size_t OUTPUT_PORT_INDEX_INERTIAL_NAV_SOL = 0; ///< @brief Flow (InertialNavSol)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -99,22 +99,22 @@ class ImuIntegrator : public Node
 
     /// IMU Observation list
     /// Length depends on the integration algorithm. Newest observation first (tₖ, tₖ₋₁, tₖ₋₂, ...)
-    std::deque<std::shared_ptr<const ImuObs>> imuObservations;
+    std::deque<std::shared_ptr<const ImuObs>> _imuObservations;
 
     /// @brief Maximum amount of imu observations to keep
-    size_t maxSizeImuObservations = 0;
+    size_t _maxSizeImuObservations = 0;
 
     /// Position, Velocity and Attitude states.
     /// Length depends on the integration algorithm. Newest state first (tₖ, tₖ₋₁, tₖ₋₂, ...)
-    std::deque<std::shared_ptr<const PosVelAtt>> posVelAttStates;
+    std::deque<std::shared_ptr<const PosVelAtt>> _posVelAttStates;
 
     /// @brief Maximum amount of states to keep
-    size_t maxSizeStates = 0;
+    size_t _maxSizeStates = 0;
 
     /// Time at initialization (needed to set time tag when TimeSinceStartup is used)
-    InsTime time__init;
+    InsTime _time__init;
     /// TimeSinceStartup at initialization (needed to set time tag when TimeSinceStartup is used)
-    uint64_t timeSinceStartup__init = 0;
+    uint64_t _timeSinceStartup__init = 0;
 
     // #########################################################################################################################################
 
@@ -125,49 +125,49 @@ class ImuIntegrator : public Node
         NED,  ///< Local North-East-Down frame
     };
     /// Frame to integrate the observations in
-    IntegrationFrame integrationFrame = IntegrationFrame::NED;
+    IntegrationFrame _integrationFrame = IntegrationFrame::NED;
 
     /// @brief Integration algorithm used for the update
-    IntegrationAlgorithm integrationAlgorithm = IntegrationAlgorithm::RungeKutta1;
+    IntegrationAlgorithm _integrationAlgorithm = IntegrationAlgorithm::RungeKutta1;
 
     // #########################################################################################################################################
 
     /// Flag, whether the integrator should take the time from the IMU clock instead of the insTime
-    bool prefereTimeSinceStartupOverInsTime = false;
+    bool _prefereTimeSinceStartupOverInsTime = false;
 
     /// Flag to let the integration algorithm use uncompensated acceleration and angular rates instead of compensated
-    bool prefereUncompensatedData = false;
+    bool _prefereUncompensatedData = false;
 
     // #########################################################################################################################################
 
     /// @brief Gravity model selected in the GUI
-    GravityModel gravityModel = GravityModel::EGM96;
+    GravitationModel _gravitationModel = GravitationModel::EGM96;
 
     /// Apply the coriolis acceleration compensation to the measured accelerations
-    bool coriolisAccelerationCompensationEnabled = true;
+    bool _coriolisAccelerationCompensationEnabled = true;
 
     /// Apply the centrifugal acceleration compensation to the measured accelerations
-    bool centrifgalAccelerationCompensationEnabled = true;
+    bool _centrifgalAccelerationCompensationEnabled = true;
 
     /// Apply the Earth rotation rate compensation to the measured angular rates
-    bool angularRateEarthRotationCompensationEnabled = true;
+    bool _angularRateEarthRotationCompensationEnabled = true;
 
     /// Apply the transport rate compensation to the measured angular rates
-    bool angularRateTransportRateCompensationEnabled = true;
+    bool _angularRateTransportRateCompensationEnabled = true;
 
     /// Apply Zwiener's rotation correction for the velocity update
-    bool velocityUpdateRotationCorrectionEnabled = true;
+    bool _velocityUpdateRotationCorrectionEnabled = true;
 
     // #########################################################################################################################################
 
     /// GUI flag, whether to show the input pin for PVA Corrections
-    bool showCorrectionsInputPin = false;
+    bool _showCorrectionsInputPin = false;
 
     /// Pointer to the most recent PVA error
-    std::shared_ptr<const PVAError> pvaError = nullptr;
+    std::shared_ptr<const PVAError> _pvaError = nullptr;
 
     /// Accumulated IMU biases
-    std::shared_ptr<const ImuBiases> imuBiases = nullptr;
+    std::shared_ptr<const ImuBiases> _imuBiases = nullptr;
 };
 
 } // namespace NAV

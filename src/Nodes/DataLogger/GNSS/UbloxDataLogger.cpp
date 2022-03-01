@@ -18,10 +18,10 @@ NAV::UbloxDataLogger::UbloxDataLogger()
 
     LOG_TRACE("{}: called", name);
 
-    fileType = FileType::BINARY;
+    _fileType = FileType::BINARY;
 
-    hasConfig = true;
-    guiConfigDefaultWindowSize = { 380, 70 };
+    _hasConfig = true;
+    _guiConfigDefaultWindowSize = { 380, 70 };
 
     nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, { NAV::UbloxObs::type() }, &UbloxDataLogger::writeObservation);
 }
@@ -48,7 +48,7 @@ std::string NAV::UbloxDataLogger::category()
 
 void NAV::UbloxDataLogger::guiConfig()
 {
-    if (gui::widgets::FileDialogSave(path, "Save File", ".ubx", { ".ubx" }, size_t(id), nameId()))
+    if (gui::widgets::FileDialogSave(_path, "Save File", ".ubx", { ".ubx" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
         deinitializeNode();
@@ -78,7 +78,7 @@ void NAV::UbloxDataLogger::restore(json const& j)
 
 void NAV::UbloxDataLogger::flush()
 {
-    filestream.flush();
+    _filestream.flush();
 }
 
 bool NAV::UbloxDataLogger::initialize()
@@ -101,7 +101,7 @@ void NAV::UbloxDataLogger::writeObservation(const std::shared_ptr<const NodeData
 
     if (obs->raw.getRawDataLength() > 0)
     {
-        filestream.write(reinterpret_cast<const char*>(obs->raw.getRawData().data()), static_cast<std::streamsize>(obs->raw.getRawDataLength()));
+        _filestream.write(reinterpret_cast<const char*>(obs->raw.getRawData().data()), static_cast<std::streamsize>(obs->raw.getRawDataLength()));
     }
     else
     {

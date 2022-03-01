@@ -42,7 +42,7 @@ class ErrorModel : public Node
     [[nodiscard]] static std::string category();
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Saves the node into a json object
@@ -61,8 +61,8 @@ class ErrorModel : public Node
     };
 
   private:
-    constexpr static size_t OutputPortIndex = 0; ///< @brief Flow
-    constexpr static size_t InputPortIndex = 0;  ///< @brief Flow
+    constexpr static size_t OUTPUT_PORT_INDEX_FLOW = 0; ///< @brief Flow
+    constexpr static size_t INPUT_PORT_INDEX_FLOW = 0;  ///< @brief Flow
 
     /// @brief Resets the node. It is guaranteed that the node is initialized when this is called.
     bool resetNode() override;

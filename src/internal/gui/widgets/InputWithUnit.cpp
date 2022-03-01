@@ -51,6 +51,7 @@ NAV::gui::widgets::InputWithUnitChange InputWithUnit(const char* label, float it
         retVal = NAV::gui::widgets::InputWithUnitChange_Unit;
     }
     ImGui::SameLine();
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
     std::string strLabel{ label };
     ImGui::TextUnformatted(strLabel.substr(0, strLabel.find('#')).c_str());
 

@@ -146,6 +146,16 @@ Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std:
     return CreateOutputPin(node, name, pinType, dataIdentifier, Pin::PinData(static_cast<std::shared_ptr<const NAV::NodeData> (Node::*)(bool)>(callback)));
 }
 
+/// @brief Deletes the output pin
+/// @param[in] id Unique Id of the Pin to delete
+/// @return True if the pin was delete
+bool DeleteOutputPin(ax::NodeEditor::PinId id);
+
+/// @brief Deletes the input pin
+/// @param[in] id Unique Id of the Pin to delete
+/// @return True if the pin was delete
+bool DeleteInputPin(ax::NodeEditor::PinId id);
+
 /// @brief Finds the Node for the NodeId
 /// @param[in] id Unique Id of the Node to search for
 /// @return Pointer to the node or nullptr if the NodeId does not exist

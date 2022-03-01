@@ -55,8 +55,8 @@ NAV::ErrorModel::ErrorModel()
     name = typeStatic();
 
     LOG_TRACE("{}: called", name);
-    hasConfig = true;
-    guiConfigDefaultWindowSize = { 812, 332 };
+    _hasConfig = true;
+    _guiConfigDefaultWindowSize = { 812, 332 };
 
     nm::CreateInputPin(this, "True", Pin::Type::Flow, supportedDataIdentifier, &ErrorModel::receiveObs);
 
@@ -85,7 +85,7 @@ std::string NAV::ErrorModel::category()
 
 void NAV::ErrorModel::guiConfig()
 {
-    if (outputPins.at(OutputPortIndex).dataIdentifier.size() != 1)
+    if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.size() != 1)
     {
         ImGui::TextUnformatted("Please connect the input pin to show the options");
         return;
@@ -96,7 +96,7 @@ void NAV::ErrorModel::guiConfig()
 
     ImGui::TextUnformatted("Offsets:");
     ImGui::Indent();
-    if (outputPins.at(OutputPortIndex).dataIdentifier.front() == ImuObs::type())
+    if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == ImuObs::type())
     {
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Accelerometer Bias (platform)##{}", size_t(id)).c_str(), itemWidth, unitWidth,
                                                _imuAccelerometerBias_p.data(), reinterpret_cast<int*>(&_imuAccelerometerBiasUnit), "m/s^2\0\0", // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
@@ -115,7 +115,7 @@ void NAV::ErrorModel::guiConfig()
             flow::ApplyChanges();
         }
     }
-    else if (outputPins.at(OutputPortIndex).dataIdentifier.front() == PosVelAtt::type())
+    else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type())
     {
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Position Bias ({})##{}",
                                                            _positionBiasUnit == PositionBiasUnits::meter ? "NED" : "LatLonAlt",
@@ -150,7 +150,7 @@ void NAV::ErrorModel::guiConfig()
 
     ImGui::TextUnformatted("Measurement noise:");
     ImGui::Indent();
-    if (outputPins.at(OutputPortIndex).dataIdentifier.front() == ImuObs::type())
+    if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == ImuObs::type())
     {
         // #########################################################################################################################################
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Accelerometer Noise ({})##{}",
@@ -232,7 +232,7 @@ void NAV::ErrorModel::guiConfig()
         }
         // #########################################################################################################################################
     }
-    else if (outputPins.at(OutputPortIndex).dataIdentifier.front() == PosVelAtt::type())
+    else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type())
     {
         // #########################################################################################################################################
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Position Noise ({})##{}",
@@ -510,7 +510,7 @@ bool NAV::ErrorModel::resetNode()
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (outputPins.at(OutputPortIndex).dataIdentifier.front() == ImuObs::type())
+    if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == ImuObs::type())
     {
         _imuAccelerometerRandomNumberGenerator.generator.seed(_imuAccelerometerRandomNumberGenerator.useSeedInsteadOfSystemTime
                                                                   ? _imuAccelerometerRandomNumberGenerator.seed
@@ -519,7 +519,7 @@ bool NAV::ErrorModel::resetNode()
                                                               ? _imuGyroscopeRandomNumberGenerator.seed
                                                               : static_cast<uint64_t>(std::chrono::system_clock::now().time_since_epoch().count()));
     }
-    else if (outputPins.at(OutputPortIndex).dataIdentifier.front() == PosVelAtt::type())
+    else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type())
     {
         _positionRandomNumberGenerator.generator.seed(_positionRandomNumberGenerator.useSeedInsteadOfSystemTime
                                                           ? _positionRandomNumberGenerator.seed
@@ -547,14 +547,14 @@ void NAV::ErrorModel::afterCreateLink(Pin* startPin, Pin* endPin)
         }
 
         // Store previous output pin identifier
-        auto previousOutputPinDataIdentifier = outputPins.at(OutputPortIndex).dataIdentifier;
+        auto previousOutputPinDataIdentifier = outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier;
         // Overwrite output pin identifier with input pin identifier
-        outputPins.at(OutputPortIndex).dataIdentifier = startPin->dataIdentifier;
+        outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = startPin->dataIdentifier;
 
-        if (previousOutputPinDataIdentifier != outputPins.at(OutputPortIndex).dataIdentifier) // If the identifier changed
+        if (previousOutputPinDataIdentifier != outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier) // If the identifier changed
         {
             // Check if connected links on output port are still valid
-            for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OutputPortIndex).id))
+            for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))
             {
                 auto* startPin = nm::FindPin(link->startPinId);
                 auto* endPin = nm::FindPin(link->endPinId);
@@ -570,9 +570,9 @@ void NAV::ErrorModel::afterCreateLink(Pin* startPin, Pin* endPin)
             }
 
             // Refresh all links connected to the output pin if the type changed
-            if (outputPins.at(OutputPortIndex).dataIdentifier != previousOutputPinDataIdentifier)
+            if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier != previousOutputPinDataIdentifier)
             {
-                for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OutputPortIndex).id))
+                for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))
                 {
                     nm::RefreshLink(link->id);
                 }
@@ -587,12 +587,12 @@ void NAV::ErrorModel::afterDeleteLink(Pin* startPin, Pin* endPin)
     {
         LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
 
-        if ((endPin->parentNode->id != id                                // Link on Output port is removed
-             && !nm::IsPinLinked(inputPins.at(InputPortIndex).id))       //     and the Input port is not linked
-            || (startPin->parentNode->id != id                           // Link on Input port is removed
-                && !nm::IsPinLinked(outputPins.at(OutputPortIndex).id))) //     and the Output port is not linked
+        if ((endPin->parentNode->id != id                                       // Link on Output port is removed
+             && !nm::IsPinLinked(inputPins.at(INPUT_PORT_INDEX_FLOW).id))       //     and the Input port is not linked
+            || (startPin->parentNode->id != id                                  // Link on Input port is removed
+                && !nm::IsPinLinked(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))) //     and the Output port is not linked
         {
-            outputPins.at(OutputPortIndex).dataIdentifier = supportedDataIdentifier;
+            outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = supportedDataIdentifier;
         }
     }
 }
@@ -600,11 +600,11 @@ void NAV::ErrorModel::afterDeleteLink(Pin* startPin, Pin* endPin)
 void NAV::ErrorModel::receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
     // Select the correct data type and make a copy of the node data to modify
-    if (outputPins.at(OutputPortIndex).dataIdentifier.front() == ImuObs::type())
+    if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == ImuObs::type())
     {
         receiveImuObs(std::make_shared<ImuObs>(*std::static_pointer_cast<const ImuObs>(nodeData)));
     }
-    else if (outputPins.at(OutputPortIndex).dataIdentifier.front() == PosVelAtt::type())
+    else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type())
     {
         receivePosVelAtt(std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(nodeData)));
     }
@@ -680,39 +680,39 @@ void NAV::ErrorModel::receiveImuObs(const std::shared_ptr<ImuObs>& imuObs)
                                                         std::normal_distribution<double>{ 0.0, gyroscopeNoiseStd(1) }(_imuGyroscopeRandomNumberGenerator.generator),
                                                         std::normal_distribution<double>{ 0.0, gyroscopeNoiseStd(2) }(_imuGyroscopeRandomNumberGenerator.generator) };
 
-    invokeCallbacks(OutputPortIndex, imuObs);
+    invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, imuObs);
 }
 
 void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt)
 {
     // Position Bias in latLonAlt in [rad, rad, m]
-    Eigen::Vector3d positionBias_lla = Eigen::Vector3d::Zero();
+    Eigen::Vector3d lla_positionBias = Eigen::Vector3d::Zero();
     switch (_positionBiasUnit)
     {
     case PositionBiasUnits::meter:
     {
-        Eigen::Vector3d positionBias_e = trafo::quat_en(posVelAtt->latitude(), posVelAtt->longitude()) * _positionBias;
-        positionBias_lla = trafo::ecef2lla_WGS84(posVelAtt->position_ecef() + positionBias_e) - posVelAtt->latLonAlt();
+        Eigen::Vector3d e_positionBias = trafo::e_Quat_n(posVelAtt->latitude(), posVelAtt->longitude()) * _positionBias;
+        lla_positionBias = trafo::ecef2lla_WGS84(posVelAtt->e_position() + e_positionBias) - posVelAtt->lla_position();
         break;
     }
     case PositionBiasUnits::rad_rad_m:
-        positionBias_lla = _positionBias;
+        lla_positionBias = _positionBias;
         break;
     case PositionBiasUnits::deg_deg_m:
-        positionBias_lla = Eigen::Vector3d{ trafo::deg2rad(_positionBias(0)), trafo::deg2rad(_positionBias(1)), _positionBias(2) };
+        lla_positionBias = Eigen::Vector3d{ trafo::deg2rad(_positionBias(0)), trafo::deg2rad(_positionBias(1)), _positionBias(2) };
         break;
     }
-    LOG_DATA("{}: positionBias_lla = {} [rad, rad, m]", nameId(), positionBias_lla.transpose());
+    LOG_DATA("{}: lla_positionBias = {} [rad, rad, m]", nameId(), lla_positionBias.transpose());
 
     // Velocity bias in local-navigation coordinates in [m/s]
-    Eigen::Vector3d velocityBias_n = Eigen::Vector3d::Zero();
+    Eigen::Vector3d n_velocityBias = Eigen::Vector3d::Zero();
     switch (_velocityBiasUnit)
     {
     case VelocityBiasUnits::m_s:
-        velocityBias_n = _velocityBias;
+        n_velocityBias = _velocityBias;
         break;
     }
-    LOG_DATA("{}: velocityBias_n = {} [m/s]", nameId(), velocityBias_n.transpose());
+    LOG_DATA("{}: n_velocityBias = {} [m/s]", nameId(), n_velocityBias.transpose());
 
     // Roll, pitch, yaw bias in [rad]
     Eigen::Vector3d attitudeBias = Eigen::Vector3d::Zero();
@@ -730,48 +730,48 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
     // #########################################################################################################################################
 
     // Position Noise standard deviation in latitude, longitude and altitude [rad, rad, m]
-    Eigen::Vector3d positionNoiseStd_lla = Eigen::Vector3d::Zero();
+    Eigen::Vector3d lla_positionNoiseStd = Eigen::Vector3d::Zero();
     switch (_positionNoiseUnit)
     {
     case PositionNoiseUnits::meter:
     {
-        Eigen::Vector3d positionNoiseStd_e = trafo::quat_en(posVelAtt->latitude(), posVelAtt->longitude()) * _positionNoise;
-        positionNoiseStd_lla = trafo::ecef2lla_WGS84(posVelAtt->position_ecef() + positionNoiseStd_e) - posVelAtt->latLonAlt();
+        Eigen::Vector3d e_positionNoiseStd = trafo::e_Quat_n(posVelAtt->latitude(), posVelAtt->longitude()) * _positionNoise;
+        lla_positionNoiseStd = trafo::ecef2lla_WGS84(posVelAtt->e_position() + e_positionNoiseStd) - posVelAtt->lla_position();
         break;
     }
     case PositionNoiseUnits::rad_rad_m:
-        positionNoiseStd_lla = _positionNoise;
+        lla_positionNoiseStd = _positionNoise;
         break;
     case PositionNoiseUnits::deg_deg_m:
-        positionNoiseStd_lla = trafo::deg2rad(_positionNoise);
+        lla_positionNoiseStd = trafo::deg2rad(_positionNoise);
         break;
     case PositionNoiseUnits::meter2:
     {
-        Eigen::Vector3d positionNoiseStd_e = trafo::quat_en(posVelAtt->latitude(), posVelAtt->longitude()) * _positionNoise.cwiseSqrt();
-        positionNoiseStd_lla = trafo::ecef2lla_WGS84(posVelAtt->position_ecef() + positionNoiseStd_e) - posVelAtt->latLonAlt();
+        Eigen::Vector3d e_positionNoiseStd = trafo::e_Quat_n(posVelAtt->latitude(), posVelAtt->longitude()) * _positionNoise.cwiseSqrt();
+        lla_positionNoiseStd = trafo::ecef2lla_WGS84(posVelAtt->e_position() + e_positionNoiseStd) - posVelAtt->lla_position();
         break;
     }
     case PositionNoiseUnits::rad2_rad2_m2:
-        positionNoiseStd_lla = _positionNoise.cwiseSqrt();
+        lla_positionNoiseStd = _positionNoise.cwiseSqrt();
         break;
     case PositionNoiseUnits::deg2_deg2_m2:
-        positionNoiseStd_lla = trafo::deg2rad(_positionNoise.cwiseSqrt());
+        lla_positionNoiseStd = trafo::deg2rad(_positionNoise.cwiseSqrt());
         break;
     }
-    LOG_DATA("{}: positionNoiseStd_lla = {} [rad, rad, m]", nameId(), positionNoiseStd_lla.transpose());
+    LOG_DATA("{}: lla_positionNoiseStd = {} [rad, rad, m]", nameId(), lla_positionNoiseStd.transpose());
 
     // Velocity Noise standard deviation in local-navigation coordinates in [m/s]
-    Eigen::Vector3d velocityNoiseStd_n = Eigen::Vector3d::Zero();
+    Eigen::Vector3d n_velocityNoiseStd = Eigen::Vector3d::Zero();
     switch (_velocityNoiseUnit)
     {
     case VelocityNoiseUnits::m_s:
-        velocityNoiseStd_n = _velocityNoise;
+        n_velocityNoiseStd = _velocityNoise;
         break;
     case VelocityNoiseUnits::m2_s2:
-        velocityNoiseStd_n = _velocityNoise.cwiseSqrt();
+        n_velocityNoiseStd = _velocityNoise.cwiseSqrt();
         break;
     }
-    LOG_DATA("{}: velocityNoiseStd_n = {} [m/s]", nameId(), velocityNoiseStd_n.transpose());
+    LOG_DATA("{}: n_velocityNoiseStd = {} [m/s]", nameId(), n_velocityNoiseStd.transpose());
 
     // Attitude Noise standard deviation in [rad]
     Eigen::Vector3d attitudeNoiseStd = Eigen::Vector3d::Zero();
@@ -794,21 +794,21 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
 
     // #########################################################################################################################################
 
-    posVelAtt->setState_n(posVelAtt->latLonAlt()
-                              + positionBias_lla
-                              + Eigen::Vector3d{ std::normal_distribution<double>{ 0.0, positionNoiseStd_lla(0) }(_positionRandomNumberGenerator.generator),
-                                                 std::normal_distribution<double>{ 0.0, positionNoiseStd_lla(1) }(_positionRandomNumberGenerator.generator),
-                                                 std::normal_distribution<double>{ 0.0, positionNoiseStd_lla(2) }(_positionRandomNumberGenerator.generator) },
-                          posVelAtt->velocity_n()
-                              + velocityBias_n
-                              + Eigen::Vector3d{ std::normal_distribution<double>{ 0.0, velocityNoiseStd_n(0) }(_velocityRandomNumberGenerator.generator),
-                                                 std::normal_distribution<double>{ 0.0, velocityNoiseStd_n(1) }(_velocityRandomNumberGenerator.generator),
-                                                 std::normal_distribution<double>{ 0.0, velocityNoiseStd_n(2) }(_velocityRandomNumberGenerator.generator) },
-                          trafo::quat_nb(posVelAtt->rollPitchYaw()
-                                         + attitudeBias
-                                         + Eigen::Vector3d{ std::normal_distribution<double>{ 0.0, attitudeNoiseStd(0) }(_attitudeRandomNumberGenerator.generator),
-                                                            std::normal_distribution<double>{ 0.0, attitudeNoiseStd(1) }(_attitudeRandomNumberGenerator.generator),
-                                                            std::normal_distribution<double>{ 0.0, attitudeNoiseStd(2) }(_attitudeRandomNumberGenerator.generator) }));
+    posVelAtt->setState_n(posVelAtt->lla_position()
+                              + lla_positionBias
+                              + Eigen::Vector3d{ std::normal_distribution<double>{ 0.0, lla_positionNoiseStd(0) }(_positionRandomNumberGenerator.generator),
+                                                 std::normal_distribution<double>{ 0.0, lla_positionNoiseStd(1) }(_positionRandomNumberGenerator.generator),
+                                                 std::normal_distribution<double>{ 0.0, lla_positionNoiseStd(2) }(_positionRandomNumberGenerator.generator) },
+                          posVelAtt->n_velocity()
+                              + n_velocityBias
+                              + Eigen::Vector3d{ std::normal_distribution<double>{ 0.0, n_velocityNoiseStd(0) }(_velocityRandomNumberGenerator.generator),
+                                                 std::normal_distribution<double>{ 0.0, n_velocityNoiseStd(1) }(_velocityRandomNumberGenerator.generator),
+                                                 std::normal_distribution<double>{ 0.0, n_velocityNoiseStd(2) }(_velocityRandomNumberGenerator.generator) },
+                          trafo::n_Quat_b(posVelAtt->rollPitchYaw()
+                                          + attitudeBias
+                                          + Eigen::Vector3d{ std::normal_distribution<double>{ 0.0, attitudeNoiseStd(0) }(_attitudeRandomNumberGenerator.generator),
+                                                             std::normal_distribution<double>{ 0.0, attitudeNoiseStd(1) }(_attitudeRandomNumberGenerator.generator),
+                                                             std::normal_distribution<double>{ 0.0, attitudeNoiseStd(2) }(_attitudeRandomNumberGenerator.generator) }));
 
-    invokeCallbacks(OutputPortIndex, posVelAtt);
+    invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, posVelAtt);
 }

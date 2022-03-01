@@ -17,7 +17,11 @@ namespace Instinct {
 
  /** \addtogroup LooselyCoupledKF_n
      \ingroup DataProcessor_KalmanFilter_chapter */
- /** \addtogroup ImuIntegrator
+ /** \addtogroup LooselyCoupledKF_e
+     \ingroup DataProcessor_KalmanFilter_chapter */
+ /** \addtogroup ImuIntegrator_n
+     \ingroup DataProcessor_Integrator_chapter */
+ /** \addtogroup ImuIntegrator_e
      \ingroup DataProcessor_Integrator_chapter */
 
  /** \defgroup DataProvider_chapter DataProvider

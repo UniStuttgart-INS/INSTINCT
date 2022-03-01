@@ -30,9 +30,9 @@ class ImuBiases : public InsObs
     }
 
     /// 𝐛_a The accelerometer bias in platform frame in [m/s^2]
-    Eigen::Vector3d biasAccel_b{ 0, 0, 0 };
+    Eigen::Vector3d b_biasAccel{ 0, 0, 0 };
     /// 𝐛_g The gyroscope bias in platform frame in [rad/s]
-    Eigen::Vector3d biasGyro_b{ 0, 0, 0 };
+    Eigen::Vector3d b_biasGyro{ 0, 0, 0 };
 };
 
 } // namespace NAV

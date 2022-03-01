@@ -1,16 +1,5 @@
 {
     "links": {
-        "link-123": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 119,
-            "id": 123,
-            "startPinId": 45
-        },
         "link-240": {
             "color": {
                 "a": 255,
@@ -154,61 +143,6 @@
             "id": 275,
             "startPinId": 237
         },
-        "link-277": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
-            "endPinId": 276,
-            "id": 277,
-            "startPinId": 238
-        },
-        "link-317": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 13,
-            "id": 317,
-            "startPinId": 20
-        },
-        "link-318": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 44,
-            "id": 318,
-            "startPinId": 20
-        },
-        "link-32": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 31,
-            "id": 32,
-            "startPinId": 14
-        },
-        "link-321": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 100,
-            "id": 321,
-            "startPinId": 20
-        },
         "link-322": {
             "color": {
                 "a": 255,
@@ -252,39 +186,6 @@
             "endPinId": 345,
             "id": 349,
             "startPinId": 331
-        },
-        "link-350": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 99,
-            "id": 350,
-            "startPinId": 347
-        },
-        "link-353": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 43,
-            "id": 353,
-            "startPinId": 347
-        },
-        "link-354": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 12,
-            "id": 354,
-            "startPinId": 347
         },
         "link-374": {
             "color": {
@@ -341,17 +242,6 @@
             "id": 381,
             "startPinId": 339
         },
-        "link-382": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 120,
-            "id": 382,
-            "startPinId": 101
-        },
         "link-383": {
             "color": {
                 "a": 255,
@@ -407,17 +297,6 @@
             "id": 405,
             "startPinId": 402
         },
-        "link-424": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 5,
-            "id": 424,
-            "startPinId": 2
-        },
         "link-427": {
             "color": {
                 "a": 255,
@@ -428,87 +307,86 @@
             "endPinId": 4,
             "id": 427,
             "startPinId": 347
+        },
+        "link-434": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 430,
+            "id": 434,
+            "startPinId": 2
+        },
+        "link-435": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 5,
+            "id": 435,
+            "startPinId": 432
+        },
+        "link-436": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 431,
+            "id": 436,
+            "startPinId": 329
         }
     },
     "nodes": {
-        "node-15": {
-            "data": {
-                "angularRateEarthRotationCompensationEnabled": true,
-                "angularRateTransportRateCompensationEnabled": true,
-                "centrifgalAccelerationCompensationEnabled": true,
-                "coriolisAccelerationCompensationEnabled": true,
-                "gravityModel": 3,
-                "integrationAlgorithm": 1,
-                "integrationFrame": 1,
-                "prefereTimeSinceStartupOverInsTime": false,
-                "prefereUncompensatedData": true,
-                "showCorrectionsInputPin": false
-            },
-            "enabled": true,
-            "id": 15,
-            "inputPins": [
-                {
-                    "id": 12
-                },
-                {
-                    "id": 13
-                }
-            ],
-            "kind": "Blueprint",
-            "name": "ImuIntegrator - RK1",
-            "outputPins": [
-                {
-                    "id": 14
-                }
-            ],
-            "pos": {
-                "x": 1200.0,
-                "y": -622.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "ImuIntegrator"
-        },
         "node-163": {
             "data": {
                 "angularRateEarthRotationCompensationEnabled": true,
                 "angularRateTransportRateCompensationEnabled": true,
                 "centrifgalAccelerationCompensationEnabled": true,
                 "coriolisAccelerationCompensationEnabled": true,
-                "gravityModel": 2,
-                "integrationAlgorithm": 3,
+                "gravitationModel": 3,
+                "integrationAlgorithm": 0,
                 "integrationFrame": 1,
                 "prefereTimeSinceStartupOverInsTime": false,
                 "prefereUncompensatedData": true,
-                "showCorrectionsInputPin": true
+                "showCorrectionsInputPin": true,
+                "velocityUpdateRotationCorrectionEnabled": false
             },
-            "enabled": false,
+            "enabled": true,
             "id": 163,
             "inputPins": [
                 {
-                    "id": 164
+                    "id": 164,
+                    "name": "ImuObs"
                 },
                 {
-                    "id": 165
+                    "id": 165,
+                    "name": "PosVelAttInit"
                 },
                 {
-                    "id": 224
+                    "id": 224,
+                    "name": "PVAError"
                 },
                 {
-                    "id": 225
+                    "id": 225,
+                    "name": "ImuBiases"
                 }
             ],
             "kind": "Blueprint",
             "name": "ImuIntegrator",
             "outputPins": [
                 {
-                    "id": 166
+                    "id": 166,
+                    "name": "InertialNavSol"
                 }
             ],
             "pos": {
-                "x": 792.0,
+                "x": 731.0,
                 "y": -310.0
             },
             "size": {
@@ -519,8 +397,13 @@
         },
         "node-21": {
             "data": {
-                "attitudeMode": 0,
-                "initDuration": 0.0,
+                "attitudeMode": 2,
+                "initDuration": 5.0,
+                "n_overrideValuesVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
                 "overridePosition": false,
                 "overrideRollPitchYaw": [
                     false,
@@ -537,11 +420,6 @@
                     0.0,
                     0.0
                 ],
-                "overrideValuesVelocity_n": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
                 "overrideVelocity": false,
                 "positionAccuracyThreshold": 10.0,
                 "velocityAccuracyThreshold": 10.0
@@ -550,21 +428,24 @@
             "id": 21,
             "inputPins": [
                 {
-                    "id": 18
+                    "id": 18,
+                    "name": "ImuObs"
                 },
                 {
-                    "id": 19
+                    "id": 19,
+                    "name": "PosVelAttInit"
                 }
             ],
             "kind": "Blueprint",
             "name": "PosVelAttInitializer",
             "outputPins": [
                 {
-                    "id": 20
+                    "id": 20,
+                    "name": "PosVelAtt"
                 }
             ],
             "pos": {
-                "x": 792.0,
+                "x": 731.0,
                 "y": -434.0
             },
             "size": {
@@ -575,49 +456,28 @@
         },
         "node-239": {
             "data": {
-                "beta_accel": {
-                    "0": {
-                        "0": 200.0
-                    },
-                    "1": {
-                        "0": 200.0
-                    },
-                    "2": {
-                        "0": 200.0
-                    }
-                },
-                "beta_gyro": {
-                    "0": {
-                        "0": 200.0
-                    },
-                    "1": {
-                        "0": 200.0
-                    },
-                    "2": {
-                        "0": 200.0
-                    }
-                },
+                "checkKalmanMatricesRanks": true,
                 "gnssMeasurementUncertaintyPosition": {
                     "0": {
-                        "0": 0.003
+                        "0": 0.1
                     },
                     "1": {
-                        "0": 0.003
+                        "0": 0.1
                     },
                     "2": {
-                        "0": 0.009
+                        "0": 0.1
                     }
                 },
                 "gnssMeasurementUncertaintyPositionUnit": 3,
                 "gnssMeasurementUncertaintyVelocity": {
                     "0": {
-                        "0": 0.05
+                        "0": 0.1
                     },
                     "1": {
-                        "0": 0.05
+                        "0": 0.1
                     },
                     "2": {
-                        "0": 0.05
+                        "0": 0.1
                     }
                 },
                 "gnssMeasurementUncertaintyVelocityUnit": 1,
@@ -635,41 +495,63 @@
                 "initCovarianceAttitudeAnglesUnit": 3,
                 "initCovarianceBiasAccel": {
                     "0": {
-                        "0": 1.0
+                        "0": 0.1
                     },
                     "1": {
-                        "0": 1.0
+                        "0": 0.1
                     },
                     "2": {
-                        "0": 1.0
+                        "0": 0.1
                     }
                 },
                 "initCovarianceBiasAccelUnit": 1,
                 "initCovarianceBiasGyro": {
                     "0": {
-                        "0": 0.5
+                        "0": 1.0
                     },
                     "1": {
-                        "0": 0.5
+                        "0": 1.0
                     },
                     "2": {
-                        "0": 0.5
+                        "0": 1.0
                     }
                 },
                 "initCovarianceBiasGyroUnit": 3,
                 "initCovariancePosition": {
                     "0": {
-                        "0": 100.0
+                        "0": 1.0
                     },
                     "1": {
-                        "0": 100.0
+                        "0": 1.0
                     },
                     "2": {
-                        "0": 100.0
+                        "0": 1.0
                     }
                 },
                 "initCovariancePositionUnit": 3,
                 "initCovarianceVelocity": {
+                    "0": {
+                        "0": 0.1
+                    },
+                    "1": {
+                        "0": 0.1
+                    },
+                    "2": {
+                        "0": 0.1
+                    }
+                },
+                "initCovarianceVelocityUnit": 1,
+                "phiCalculationAlgorithm": 1,
+                "phiCalculationTaylorOrder": 2,
+                "qCalculationAlgorithm": 1,
+                "randomProcessAccel": 1,
+                "randomProcessGyro": 1,
+                "showKalmanFilterOutputPins": true,
+                "stdevAccelBiasUnits": 0,
+                "stdevAccelNoiseUnits": 1,
+                "stdevGyroBiasUnits": 0,
+                "stdevGyroNoiseUnits": 1,
+                "stdev_bad": {
                     "0": {
                         "0": 10.0
                     },
@@ -680,69 +562,120 @@
                         "0": 10.0
                     }
                 },
-                "initCovarianceVelocityUnit": 1,
-                "phiCalculation": 1,
-                "qCalculation": 1,
-                "randomProcessAccel": 2,
-                "randomProcessGyro": 2,
-                "varianceAccelBiasUnits": 0,
-                "varianceAccelNoiseUnits": 0,
-                "varianceGyroBiasUnits": 0,
-                "varianceGyroNoiseUnits": 0,
-                "variance_bad": 10.0,
-                "variance_bgd": 1.0,
-                "variance_ra": 0.0001,
-                "variance_rg": 0.0001
+                "stdev_bgd": {
+                    "0": {
+                        "0": 1.0
+                    },
+                    "1": {
+                        "0": 1.0
+                    },
+                    "2": {
+                        "0": 1.0
+                    }
+                },
+                "stdev_ra": {
+                    "0": {
+                        "0": 0.0002
+                    },
+                    "1": {
+                        "0": 0.0002
+                    },
+                    "2": {
+                        "0": 0.0002
+                    }
+                },
+                "stdev_rg": {
+                    "0": {
+                        "0": 3.5e-05
+                    },
+                    "1": {
+                        "0": 3.5e-05
+                    },
+                    "2": {
+                        "0": 6e-05
+                    }
+                },
+                "tau_bad": {
+                    "0": {
+                        "0": 300.0
+                    },
+                    "1": {
+                        "0": 300.0
+                    },
+                    "2": {
+                        "0": 300.0
+                    }
+                },
+                "tau_bgd": {
+                    "0": {
+                        "0": 300.0
+                    },
+                    "1": {
+                        "0": 300.0
+                    },
+                    "2": {
+                        "0": 300.0
+                    }
+                }
             },
             "enabled": true,
             "id": 239,
             "inputPins": [
                 {
-                    "id": 226
+                    "id": 226,
+                    "name": "InertialNavSol"
                 },
                 {
-                    "id": 227
+                    "id": 227,
+                    "name": "GNSSNavigationSolution"
                 }
             ],
             "kind": "Blueprint",
             "name": "LooselyCoupledKF",
             "outputPins": [
                 {
-                    "id": 228
+                    "id": 228,
+                    "name": "PVAError"
                 },
                 {
-                    "id": 229
+                    "id": 229,
+                    "name": "ImuBiases"
                 },
                 {
-                    "id": 230
+                    "id": 230,
+                    "name": "x"
                 },
                 {
-                    "id": 231
+                    "id": 231,
+                    "name": "P"
                 },
                 {
-                    "id": 232
+                    "id": 232,
+                    "name": "Phi"
                 },
                 {
-                    "id": 233
+                    "id": 233,
+                    "name": "Q"
                 },
                 {
-                    "id": 234
+                    "id": 234,
+                    "name": "z"
                 },
                 {
-                    "id": 235
+                    "id": 235,
+                    "name": "H"
                 },
                 {
-                    "id": 236
+                    "id": 236,
+                    "name": "R"
                 },
                 {
-                    "id": 237
-                },
-                {
-                    "id": 238
+                    "id": 237,
+                    "name": "K"
                 }
             ],
             "pos": {
-                "x": 744.0,
+                "x": 683.0,
                 "y": -66.0
             },
             "size": {
@@ -753,8 +686,8 @@
         },
         "node-250": {
             "data": {
-                "nInputPins": 11,
-                "nPlots": 2,
+                "nInputPins": 10,
+                "nPlots": 6,
                 "overridePositionStartValues": false,
                 "pinData": [
                     {
@@ -771,39 +704,354 @@
                             },
                             {
                                 "displayName": "Roll error [deg]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        4,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Roll",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Pitch error [deg]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        4,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Pitch",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Yaw error [deg]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        4,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Yaw",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "North velocity error [m/s]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "North",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "East velocity error [m/s]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "East",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Down velocity error [m/s]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Down",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Latitude error [deg]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        2,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Lat",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Longitude error [deg]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        2,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Lon",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Altitude error [deg]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        2,
+                                        [
+                                            1,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Alt",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             }
                         ],
                         "size": 0,
@@ -822,7 +1070,7 @@
                                 "plotOnAxisAndPlotStyle": []
                             },
                             {
-                                "displayName": "Accelerometer bias X_b accumulated [m/s^2]",
+                                "displayName": "Accelerometer bias b_X accumulated [m/s^2]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         0,
@@ -861,7 +1109,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Accelerometer bias Y_b accumulated [m/s^2]",
+                                "displayName": "Accelerometer bias b_Y accumulated [m/s^2]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         0,
@@ -900,7 +1148,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Accelerometer bias Z_b accumulated [m/s^2]",
+                                "displayName": "Accelerometer bias b_Z accumulated [m/s^2]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         0,
@@ -939,7 +1187,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Gyroscope bias X_b accumulated [rad/s]",
+                                "displayName": "Gyroscope bias b_X accumulated [rad/s]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         1,
@@ -978,7 +1226,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Gyroscope bias Y_b accumulated [rad/s]",
+                                "displayName": "Gyroscope bias b_Y accumulated [rad/s]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         1,
@@ -1017,7 +1265,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Gyroscope bias Z_b accumulated [rad/s]",
+                                "displayName": "Gyroscope bias b_Z accumulated [rad/s]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         1,
@@ -1149,7 +1397,42 @@
                             },
                             {
                                 "displayName": "0, 0",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        5,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "0, 0 (4 - P)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "0, 1",
@@ -1213,7 +1496,42 @@
                             },
                             {
                                 "displayName": "1, 1",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        5,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "1, 1 (4 - P)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "1, 2",
@@ -1277,7 +1595,42 @@
                             },
                             {
                                 "displayName": "2, 2",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        5,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "2, 2 (4 - P)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "2, 3",
@@ -4834,82 +5187,6 @@
                         ],
                         "size": 0,
                         "stride": 8
-                    },
-                    {
-                        "dataIdentifier": "K*z",
-                        "pinType": 4,
-                        "plotData": [
-                            {
-                                "displayName": "Time [s]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "GPS time of week [s]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "0, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "1, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "2, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "3, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "4, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "5, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "6, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "7, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "8, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "9, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "10, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "11, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "12, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "13, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "14, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            }
-                        ],
-                        "size": 0,
-                        "stride": 8
                     }
                 ],
                 "plotInfos": [
@@ -4932,7 +5209,6 @@
                             0,
                             0,
                             0,
-                            0,
                             0
                         ],
                         "size": {
@@ -4941,7 +5217,7 @@
                         },
                         "title": "Accelerometer bias (accumulated)",
                         "xAxisLabel": "",
-                        "y1AxisLabel": "Accelerometer bias X_b [m/s^2]",
+                        "y1AxisLabel": "Accelerometer bias b_X [m/s^2]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": ""
                     },
@@ -4964,7 +5240,6 @@
                             0,
                             0,
                             0,
-                            0,
                             0
                         ],
                         "size": {
@@ -4973,7 +5248,131 @@
                         },
                         "title": "Gyroscope bias (accumulated)",
                         "xAxisLabel": "",
-                        "y1AxisLabel": "Gyroscope bias X_b [rad/s]",
+                        "y1AxisLabel": "Gyroscope bias b_X [rad/s]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Lat/Lon/Alt error",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 256,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Lat/Lon/Alt error",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Lat/Lon error [deg]",
+                        "y2AxisLabel": "Altitude error [m]",
+                        "y3AxisLabel": ""
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Velocity error",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Velocity error",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Velocity error [m/s]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Angle error",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Angle error",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Angle error [deg]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "P Angles",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 3,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "P Angles",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Variance [deg^2]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": ""
                     }
@@ -4983,44 +5382,51 @@
             "id": 250,
             "inputPins": [
                 {
-                    "id": 245
+                    "id": 245,
+                    "name": "Pin 1"
                 },
                 {
-                    "id": 251
+                    "id": 251,
+                    "name": "Pin 2"
                 },
                 {
-                    "id": 252
+                    "id": 252,
+                    "name": "Pin 3"
                 },
                 {
-                    "id": 253
+                    "id": 253,
+                    "name": "Pin 4"
                 },
                 {
-                    "id": 254
+                    "id": 254,
+                    "name": "Pin 5"
                 },
                 {
-                    "id": 255
+                    "id": 255,
+                    "name": "Pin 6"
                 },
                 {
-                    "id": 256
+                    "id": 256,
+                    "name": "Pin 7"
                 },
                 {
-                    "id": 263
+                    "id": 263,
+                    "name": "Pin 8"
                 },
                 {
-                    "id": 264
+                    "id": 264,
+                    "name": "Pin 9"
                 },
                 {
-                    "id": 265
-                },
-                {
-                    "id": 276
+                    "id": 265,
+                    "name": "Pin 10"
                 }
             ],
             "kind": "Blueprint",
             "name": "Plot",
             "outputPins": [],
             "pos": {
-                "x": 1192.0,
+                "x": 1131.0,
                 "y": -66.0
             },
             "size": {
@@ -5033,7 +5439,7 @@
             "data": {
                 "Imu": {
                     "imuPos": {
-                        "posAccel_b": {
+                        "b_positionAccel": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5044,7 +5450,7 @@
                                 "0": 0.0
                             }
                         },
-                        "posGyro_b": {
+                        "b_positionGyro": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5055,7 +5461,7 @@
                                 "0": 0.0
                             }
                         },
-                        "posMag_b": {
+                        "b_positionMag": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5066,21 +5472,7 @@
                                 "0": 0.0
                             }
                         },
-                        "quatAccel_bp": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "quatGyro_bp": {
+                        "b_quatAccel_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5094,7 +5486,21 @@
                                 "0": 1.0
                             }
                         },
-                        "quatMag_bp": {
+                        "b_quatGyro_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatMag_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5113,7 +5519,7 @@
                 "angularRateEarthRotationEnabled": true,
                 "angularRateTransportRateEnabled": true,
                 "centrifgalAccelerationEnabled": true,
-                "circularTrajectoryCircleCountForStop": 1.0,
+                "circularTrajectoryCircleCountForStop": 7.0,
                 "circularTrajectoryDirection": 1,
                 "circularTrajectoryHorizontalSpeed": 1.0,
                 "circularTrajectoryOriginAngle": 0.0,
@@ -5131,11 +5537,22 @@
                     }
                 },
                 "gnssFrequency": 5.0,
-                "gravityModel": 3,
+                "gravitationModel": 3,
                 "helicalTrajectoryVerticalSpeed": 1.0,
                 "imuFrequency": 200.0,
                 "linearTrajectoryDistanceForStop": 100.0,
-                "linearTrajectoryVelocity_n": {
+                "n_linearTrajectoryAcceleration": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "n_linearTrajectoryStartVelocity": {
                     "0": {
                         "0": 1.0
                     },
@@ -5146,8 +5563,8 @@
                         "0": 0.0
                     }
                 },
-                "simulationDuration": 300.0,
-                "simulationStopCondition": 1,
+                "simulationDuration": 2000.0,
+                "simulationStopCondition": 0,
                 "startPosition_lla": {
                     "0": {
                         "0": 0.0
@@ -5167,17 +5584,19 @@
                 "startTimeSource": 0,
                 "trajectoryType": 2
             },
-            "enabled": true,
+            "enabled": false,
             "id": 3,
             "inputPins": [],
             "kind": "Blueprint",
             "name": "ImuSimulator",
             "outputPins": [
                 {
-                    "id": 1
+                    "id": 1,
+                    "name": "ImuObs"
                 },
                 {
-                    "id": 2
+                    "id": 2,
+                    "name": "PosVelAtt"
                 }
             ],
             "pos": {
@@ -5193,11 +5612,11 @@
         "node-324": {
             "data": {
                 "FileReader": {
-                    "path": "data/2021-10-05_VectorNav310E_Lab_12h/vn310-imu.csv"
+                    "path": "data/2022-02-07_PWOne_INS-Roof_Walking/vn310-imu.csv"
                 },
                 "Imu": {
                     "imuPos": {
-                        "posAccel_b": {
+                        "b_positionAccel": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5208,7 +5627,7 @@
                                 "0": 0.0
                             }
                         },
-                        "posGyro_b": {
+                        "b_positionGyro": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5219,7 +5638,7 @@
                                 "0": 0.0
                             }
                         },
-                        "posMag_b": {
+                        "b_positionMag": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5230,21 +5649,7 @@
                                 "0": 0.0
                             }
                         },
-                        "quatAccel_bp": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "quatGyro_bp": {
+                        "b_quatAccel_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5258,7 +5663,21 @@
                                 "0": 1.0
                             }
                         },
-                        "quatMag_bp": {
+                        "b_quatGyro_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatMag_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5275,14 +5694,15 @@
                     }
                 }
             },
-            "enabled": false,
+            "enabled": true,
             "id": 324,
             "inputPins": [],
             "kind": "Blueprint",
             "name": "VectorNavFile - IMU",
             "outputPins": [
                 {
-                    "id": 323
+                    "id": 323,
+                    "name": "Binary Output"
                 }
             ],
             "pos": {
@@ -5298,11 +5718,11 @@
         "node-326": {
             "data": {
                 "FileReader": {
-                    "path": "data/2021-10-05_VectorNav310E_Lab_12h/vn310-gnss.csv"
+                    "path": "data/2022-02-07_PWOne_INS-Roof_Walking/vn310-gnss.csv"
                 },
                 "Imu": {
                     "imuPos": {
-                        "posAccel_b": {
+                        "b_positionAccel": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5313,7 +5733,7 @@
                                 "0": 0.0
                             }
                         },
-                        "posGyro_b": {
+                        "b_positionGyro": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5324,7 +5744,7 @@
                                 "0": 0.0
                             }
                         },
-                        "posMag_b": {
+                        "b_positionMag": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5335,21 +5755,7 @@
                                 "0": 0.0
                             }
                         },
-                        "quatAccel_bp": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "quatGyro_bp": {
+                        "b_quatAccel_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5363,7 +5769,21 @@
                                 "0": 1.0
                             }
                         },
-                        "quatMag_bp": {
+                        "b_quatGyro_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatMag_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5380,14 +5800,15 @@
                     }
                 }
             },
-            "enabled": false,
+            "enabled": true,
             "id": 326,
             "inputPins": [],
             "kind": "Blueprint",
             "name": "VectorNavFile - GNSS",
             "outputPins": [
                 {
-                    "id": 325
+                    "id": 325,
+                    "name": "Binary Output"
                 }
             ],
             "pos": {
@@ -5406,21 +5827,24 @@
             "id": 330,
             "inputPins": [
                 {
-                    "id": 327
+                    "id": 327,
+                    "name": ""
                 },
                 {
-                    "id": 328
+                    "id": 328,
+                    "name": ""
                 }
             ],
             "kind": "Simple",
             "name": "",
             "outputPins": [
                 {
-                    "id": 329
+                    "id": 329,
+                    "name": ""
                 }
             ],
             "pos": {
-                "x": 488.0,
+                "x": 504.0,
                 "y": -480.0
             },
             "size": {
@@ -5439,14 +5863,16 @@
             "id": 333,
             "inputPins": [
                 {
-                    "id": 332
+                    "id": 332,
+                    "name": "VectorNavBinaryOutput"
                 }
             ],
             "kind": "Blueprint",
             "name": "VectorNavBinaryConverter",
             "outputPins": [
                 {
-                    "id": 331
+                    "id": 331,
+                    "name": "ImuObsWDelta"
                 }
             ],
             "pos": {
@@ -5469,14 +5895,16 @@
             "id": 337,
             "inputPins": [
                 {
-                    "id": 338
+                    "id": 338,
+                    "name": "VectorNavBinaryOutput"
                 }
             ],
             "kind": "Blueprint",
             "name": "VectorNavBinaryConverter",
             "outputPins": [
                 {
-                    "id": 339
+                    "id": 339,
+                    "name": "PosVelAtt"
                 }
             ],
             "pos": {
@@ -5495,22 +5923,25 @@
             "id": 344,
             "inputPins": [
                 {
-                    "id": 345
+                    "id": 345,
+                    "name": ""
                 },
                 {
-                    "id": 346
+                    "id": 346,
+                    "name": ""
                 }
             ],
             "kind": "Simple",
             "name": "",
             "outputPins": [
                 {
-                    "id": 347
+                    "id": 347,
+                    "name": ""
                 }
             ],
             "pos": {
-                "x": 616.0,
-                "y": -528.0
+                "x": 504.0,
+                "y": -642.0
             },
             "size": {
                 "x": 0.0,
@@ -5551,7 +5982,7 @@
                 "imuAccelerometerBiasUnit": 0,
                 "imuAccelerometerBias_p": {
                     "0": {
-                        "0": 0.0
+                        "0": 0.01
                     },
                     "1": {
                         "0": 0.0
@@ -5582,10 +6013,10 @@
                         "0": 0.0
                     },
                     "1": {
-                        "0": 0.0
+                        "0": 0.05
                     },
                     "2": {
-                        "0": 0.0
+                        "0": -0.02
                     }
                 },
                 "imuGyroscopeNoise": {
@@ -5665,14 +6096,16 @@
             "id": 386,
             "inputPins": [
                 {
-                    "id": 385
+                    "id": 385,
+                    "name": "True"
                 }
             ],
             "kind": "Blueprint",
             "name": "ErrorModel",
             "outputPins": [
                 {
-                    "id": 384
+                    "id": 384,
+                    "name": "Biased"
                 }
             ],
             "pos": {
@@ -5832,14 +6265,16 @@
             "id": 403,
             "inputPins": [
                 {
-                    "id": 401
+                    "id": 401,
+                    "name": "True"
                 }
             ],
             "kind": "Blueprint",
             "name": "ErrorModel",
             "outputPins": [
                 {
-                    "id": 402
+                    "id": 402,
+                    "name": "Biased"
                 }
             ],
             "pos": {
@@ -5852,51 +6287,43 @@
             },
             "type": "ErrorModel"
         },
-        "node-42": {
-            "data": {
-                "angularRateEarthRotationCompensationEnabled": true,
-                "angularRateTransportRateCompensationEnabled": true,
-                "centrifgalAccelerationCompensationEnabled": true,
-                "coriolisAccelerationCompensationEnabled": true,
-                "gravityModel": 3,
-                "integrationAlgorithm": 2,
-                "integrationFrame": 1,
-                "prefereTimeSinceStartupOverInsTime": false,
-                "prefereUncompensatedData": true,
-                "showCorrectionsInputPin": false
-            },
-            "enabled": false,
-            "id": 42,
+        "node-433": {
+            "data": null,
+            "enabled": true,
+            "id": 433,
             "inputPins": [
                 {
-                    "id": 43
+                    "id": 430,
+                    "name": ""
                 },
                 {
-                    "id": 44
+                    "id": 431,
+                    "name": ""
                 }
             ],
-            "kind": "Blueprint",
-            "name": "ImuIntegrator - RK2",
+            "kind": "Simple",
+            "name": "",
             "outputPins": [
                 {
-                    "id": 45
+                    "id": 432,
+                    "name": ""
                 }
             ],
             "pos": {
-                "x": 1200.0,
-                "y": -746.0
+                "x": 776.0,
+                "y": -558.0
             },
             "size": {
                 "x": 0.0,
                 "y": 0.0
             },
-            "type": "ImuIntegrator"
+            "type": "Combiner"
         },
         "node-9": {
             "data": {
-                "nInputPins": 7,
+                "nInputPins": 6,
                 "nPlots": 12,
-                "overridePositionStartValues": true,
+                "overridePositionStartValues": false,
                 "pinData": [
                     {
                         "dataIdentifier": "ImuObs",
@@ -8598,443 +9025,6 @@
                         ],
                         "size": 0,
                         "stride": 8
-                    },
-                    {
-                        "dataIdentifier": "PosVelAtt",
-                        "pinType": 0,
-                        "plotData": [
-                            {
-                                "displayName": "Time [s]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "GPS time of week [s]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "Latitude [deg]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "Longitude [deg]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "Altitude [m]",
-                                "plotOnAxisAndPlotStyle": [
-                                    [
-                                        1,
-                                        [
-                                            0,
-                                            {
-                                                "color": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "legendName": "Errored",
-                                                "lineType": 1,
-                                                "markerFillColor": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "markerOutlineColor": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "markerSize": 1.0,
-                                                "markerStyle": 7,
-                                                "markerWeight": 1.0,
-                                                "markers": false,
-                                                "stride": 0,
-                                                "thickness": 1.0
-                                            }
-                                        ]
-                                    ]
-                                ]
-                            },
-                            {
-                                "displayName": "North/South [m]",
-                                "plotOnAxisAndPlotStyle": [
-                                    [
-                                        0,
-                                        [
-                                            0,
-                                            {
-                                                "color": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "legendName": "Errored",
-                                                "lineType": 1,
-                                                "markerFillColor": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "markerOutlineColor": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "markerSize": 1.0,
-                                                "markerStyle": 7,
-                                                "markerWeight": 1.0,
-                                                "markers": false,
-                                                "stride": 0,
-                                                "thickness": 1.0
-                                            }
-                                        ]
-                                    ],
-                                    [
-                                        2,
-                                        [
-                                            0,
-                                            {
-                                                "color": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "legendName": "Errored",
-                                                "lineType": 1,
-                                                "markerFillColor": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "markerOutlineColor": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "markerSize": 1.0,
-                                                "markerStyle": 7,
-                                                "markerWeight": 1.0,
-                                                "markers": false,
-                                                "stride": 0,
-                                                "thickness": 1.0
-                                            }
-                                        ]
-                                    ]
-                                ]
-                            },
-                            {
-                                "displayName": "East/West [m]",
-                                "plotOnAxisAndPlotStyle": [
-                                    [
-                                        3,
-                                        [
-                                            0,
-                                            {
-                                                "color": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "legendName": "Errored",
-                                                "lineType": 1,
-                                                "markerFillColor": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "markerOutlineColor": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "markerSize": 1.0,
-                                                "markerStyle": 7,
-                                                "markerWeight": 1.0,
-                                                "markers": false,
-                                                "stride": 0,
-                                                "thickness": 1.0
-                                            }
-                                        ]
-                                    ]
-                                ]
-                            },
-                            {
-                                "displayName": "X-ECEF [m]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "Y-ECEF [m]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "Z-ECEF [m]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "North velocity [m/s]",
-                                "plotOnAxisAndPlotStyle": [
-                                    [
-                                        7,
-                                        [
-                                            0,
-                                            {
-                                                "color": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "legendName": "Errored",
-                                                "lineType": 1,
-                                                "markerFillColor": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "markerOutlineColor": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "markerSize": 1.0,
-                                                "markerStyle": 7,
-                                                "markerWeight": 1.0,
-                                                "markers": false,
-                                                "stride": 0,
-                                                "thickness": 1.0
-                                            }
-                                        ]
-                                    ]
-                                ]
-                            },
-                            {
-                                "displayName": "East velocity [m/s]",
-                                "plotOnAxisAndPlotStyle": [
-                                    [
-                                        8,
-                                        [
-                                            0,
-                                            {
-                                                "color": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "legendName": "Errored",
-                                                "lineType": 1,
-                                                "markerFillColor": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "markerOutlineColor": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "markerSize": 1.0,
-                                                "markerStyle": 7,
-                                                "markerWeight": 1.0,
-                                                "markers": false,
-                                                "stride": 0,
-                                                "thickness": 1.0
-                                            }
-                                        ]
-                                    ]
-                                ]
-                            },
-                            {
-                                "displayName": "Down velocity [m/s]",
-                                "plotOnAxisAndPlotStyle": [
-                                    [
-                                        9,
-                                        [
-                                            0,
-                                            {
-                                                "color": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "legendName": "Errored",
-                                                "lineType": 1,
-                                                "markerFillColor": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "markerOutlineColor": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "markerSize": 1.0,
-                                                "markerStyle": 7,
-                                                "markerWeight": 1.0,
-                                                "markers": false,
-                                                "stride": 0,
-                                                "thickness": 1.0
-                                            }
-                                        ]
-                                    ]
-                                ]
-                            },
-                            {
-                                "displayName": "Roll [deg]",
-                                "plotOnAxisAndPlotStyle": [
-                                    [
-                                        4,
-                                        [
-                                            0,
-                                            {
-                                                "color": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "legendName": "Errored",
-                                                "lineType": 1,
-                                                "markerFillColor": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "markerOutlineColor": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "markerSize": 1.0,
-                                                "markerStyle": 7,
-                                                "markerWeight": 1.0,
-                                                "markers": false,
-                                                "stride": 0,
-                                                "thickness": 1.0
-                                            }
-                                        ]
-                                    ]
-                                ]
-                            },
-                            {
-                                "displayName": "Pitch [deg]",
-                                "plotOnAxisAndPlotStyle": [
-                                    [
-                                        5,
-                                        [
-                                            0,
-                                            {
-                                                "color": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "legendName": "Errored",
-                                                "lineType": 1,
-                                                "markerFillColor": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "markerOutlineColor": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "markerSize": 1.0,
-                                                "markerStyle": 7,
-                                                "markerWeight": 1.0,
-                                                "markers": false,
-                                                "stride": 0,
-                                                "thickness": 1.0
-                                            }
-                                        ]
-                                    ]
-                                ]
-                            },
-                            {
-                                "displayName": "Yaw [deg]",
-                                "plotOnAxisAndPlotStyle": [
-                                    [
-                                        6,
-                                        [
-                                            0,
-                                            {
-                                                "color": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "legendName": "Errored",
-                                                "lineType": 1,
-                                                "markerFillColor": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "markerOutlineColor": {
-                                                    "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.6470588445663452,
-                                                    "z": 0.0
-                                                },
-                                                "markerSize": 1.0,
-                                                "markerStyle": 7,
-                                                "markerWeight": 1.0,
-                                                "markers": false,
-                                                "stride": 0,
-                                                "thickness": 1.0
-                                            }
-                                        ]
-                                    ]
-                                ]
-                            },
-                            {
-                                "displayName": "Quaternion::w",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "Quaternion::x",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "Quaternion::y",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "Quaternion::z",
-                                "plotOnAxisAndPlotStyle": []
-                            }
-                        ],
-                        "size": 0,
-                        "stride": 1
                     }
                 ],
                 "plotInfos": [
@@ -9046,10 +9036,9 @@
                         "overrideXAxisLabel": true,
                         "plotFlags": 0,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 6,
+                        "selectedPin": 5,
                         "selectedXdata": [
                             0,
-                            6,
                             6,
                             6,
                             6,
@@ -9074,9 +9063,8 @@
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 6,
+                        "selectedPin": 5,
                         "selectedXdata": [
-                            0,
                             0,
                             0,
                             0,
@@ -9102,9 +9090,8 @@
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 6,
+                        "selectedPin": 5,
                         "selectedXdata": [
-                            0,
                             0,
                             0,
                             0,
@@ -9130,9 +9117,8 @@
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 6,
+                        "selectedPin": 5,
                         "selectedXdata": [
-                            0,
                             0,
                             0,
                             0,
@@ -9158,9 +9144,8 @@
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 6,
+                        "selectedPin": 5,
                         "selectedXdata": [
-                            0,
                             0,
                             0,
                             0,
@@ -9186,9 +9171,8 @@
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 6,
+                        "selectedPin": 5,
                         "selectedXdata": [
-                            0,
                             0,
                             0,
                             0,
@@ -9214,9 +9198,8 @@
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 6,
+                        "selectedPin": 5,
                         "selectedXdata": [
-                            0,
                             0,
                             0,
                             0,
@@ -9242,9 +9225,8 @@
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 6,
+                        "selectedPin": 5,
                         "selectedXdata": [
-                            0,
                             0,
                             0,
                             0,
@@ -9270,9 +9252,8 @@
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 6,
+                        "selectedPin": 5,
                         "selectedXdata": [
-                            0,
                             0,
                             0,
                             0,
@@ -9298,9 +9279,8 @@
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 6,
+                        "selectedPin": 5,
                         "selectedXdata": [
-                            0,
                             0,
                             0,
                             0,
@@ -9333,7 +9313,6 @@
                             0,
                             0,
                             0,
-                            0,
                             0
                         ],
                         "size": {
@@ -9361,7 +9340,6 @@
                             0,
                             0,
                             0,
-                            0,
                             0
                         ],
                         "size": {
@@ -9374,87 +9352,48 @@
                         "y2AxisLabel": "",
                         "y3AxisLabel": ""
                     }
-                ],
-                "startValue_East": 0.0,
-                "startValue_North": 0.0
+                ]
             },
             "enabled": true,
             "id": 9,
             "inputPins": [
                 {
-                    "id": 4
+                    "id": 4,
+                    "name": "Pin 1"
                 },
                 {
-                    "id": 5
+                    "id": 5,
+                    "name": "Pin 2"
                 },
                 {
-                    "id": 31
+                    "id": 31,
+                    "name": "Pin 3"
                 },
                 {
-                    "id": 119
+                    "id": 119,
+                    "name": "Pin 4"
                 },
                 {
-                    "id": 120
+                    "id": 120,
+                    "name": "Pin 5"
                 },
                 {
-                    "id": 121
-                },
-                {
-                    "id": 418
+                    "id": 121,
+                    "name": "Pin 6"
                 }
             ],
             "kind": "Blueprint",
             "name": "Plot",
             "outputPins": [],
             "pos": {
-                "x": 1576.0,
-                "y": -522.0
+                "x": 1144.0,
+                "y": -654.0
             },
             "size": {
                 "x": 0.0,
                 "y": 0.0
             },
             "type": "Plot"
-        },
-        "node-98": {
-            "data": {
-                "angularRateEarthRotationCompensationEnabled": true,
-                "angularRateTransportRateCompensationEnabled": true,
-                "centrifgalAccelerationCompensationEnabled": true,
-                "coriolisAccelerationCompensationEnabled": true,
-                "gravityModel": 3,
-                "integrationAlgorithm": 0,
-                "integrationFrame": 1,
-                "prefereTimeSinceStartupOverInsTime": false,
-                "prefereUncompensatedData": true,
-                "showCorrectionsInputPin": false
-            },
-            "enabled": true,
-            "id": 98,
-            "inputPins": [
-                {
-                    "id": 99
-                },
-                {
-                    "id": 100
-                }
-            ],
-            "kind": "Blueprint",
-            "name": "ImuIntegrator - Heun",
-            "outputPins": [
-                {
-                    "id": 101
-                }
-            ],
-            "pos": {
-                "x": 1200.0,
-                "y": -878.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "ImuIntegrator"
         }
     }
 }

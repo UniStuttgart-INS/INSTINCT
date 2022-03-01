@@ -53,7 +53,15 @@ namespace NAV
 /// @param[in] R_E Prime vertical radius of curvature (East/West) in [m]
 /// @param[in] e_squared Square of the first eccentricity of the ellipsoid
 /// @return Geocentric Radius in [m]
-/// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (eq. 2.137)
+/// @note \cite Groves2013 Groves, ch. 2.4.7, eq. 2.137, p. 71
 [[nodiscard]] double calcGeocentricRadius(const double& latitude, const double& R_E, const double& e_squared = InsConst::WGS84_e_squared);
+
+/// @brief Conversion matrix between cartesian and curvilinear perturbations to the position
+/// @param[in] lla_position Position as Lat Lon Alt in [rad rad m]
+/// @param[in] R_N Meridian radius of curvature in [m]
+/// @param[in] R_E Prime vertical radius of curvature (East/West) [m]
+/// @return T_rn_p A 3x3 matrix
+/// @note See \cite Groves2013 Groves, ch. 2.4.3, eq. 2.119, p. 63
+[[nodiscard]] Eigen::Matrix3d conversionMatrixCartesianCurvilinear(const Eigen::Vector3d& lla_position, const double& R_N, const double& R_E);
 
 } // namespace NAV

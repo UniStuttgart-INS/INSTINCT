@@ -34,29 +34,29 @@ class PosVel : public Pos
     /* -------------------------------------------------------------------------------------------------------- */
 
     /// Returns the velocity in [m/s], in earth coordinates
-    [[nodiscard]] const Eigen::Vector3d& velocity_e() const { return v_e; }
+    [[nodiscard]] const Eigen::Vector3d& e_velocity() const { return _e_velocity; }
 
     /// Returns the velocity in [m/s], in navigation coordinates
-    [[nodiscard]] const Eigen::Vector3d& velocity_n() const { return v_n; }
+    [[nodiscard]] const Eigen::Vector3d& n_velocity() const { return _n_velocity; }
 
     // ###########################################################################################################
     //                                                  Setter
     // ###########################################################################################################
 
     /// @brief Set the Velocity in the earth frame
-    /// @param[in] vel_e The new velocity in the earth frame
-    void setVelocity_e(const Eigen::Vector3d& vel_e)
+    /// @param[in] e_velocity The new velocity in the earth frame
+    void setVelocity_e(const Eigen::Vector3d& e_velocity)
     {
-        v_e = vel_e;
-        v_n = quaternion_ne() * vel_e;
+        _e_velocity = e_velocity;
+        _n_velocity = n_Quat_e() * e_velocity;
     }
 
     /// @brief Set the Velocity in the NED frame
-    /// @param[in] vel_n The new velocity in the NED frame
-    void setVelocity_n(const Eigen::Vector3d& vel_n)
+    /// @param[in] n_velocity The new velocity in the NED frame
+    void setVelocity_n(const Eigen::Vector3d& n_velocity)
     {
-        v_e = quaternion_en() * vel_n;
-        v_n = vel_n;
+        _e_velocity = e_Quat_n() * n_velocity;
+        _n_velocity = n_velocity;
     }
 
     /* -------------------------------------------------------------------------------------------------------- */
@@ -65,9 +65,9 @@ class PosVel : public Pos
 
   private:
     /// Velocity in earth coordinates [m/s]
-    Eigen::Vector3d v_e{ std::nan(""), std::nan(""), std::nan("") };
+    Eigen::Vector3d _e_velocity{ std::nan(""), std::nan(""), std::nan("") };
     /// Velocity in navigation coordinates [m/s]
-    Eigen::Vector3d v_n{ std::nan(""), std::nan(""), std::nan("") };
+    Eigen::Vector3d _n_velocity{ std::nan(""), std::nan(""), std::nan("") };
 };
 
 } // namespace NAV

@@ -39,7 +39,7 @@ class EmlidFile : public Node, public FileReader
     [[nodiscard]] static std::string category();
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Saves the node into a json object
@@ -53,7 +53,7 @@ class EmlidFile : public Node, public FileReader
     bool resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_EmlidObs = 0; ///< @brief Flow (EmlidObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_EMLID_OBS = 0; ///< @brief Flow (EmlidObs)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -71,7 +71,7 @@ class EmlidFile : public Node, public FileReader
     [[nodiscard]] FileType determineFileType() override;
 
     /// Sensor Object
-    sensors::emlid::EmlidUartSensor sensor;
+    sensors::emlid::EmlidUartSensor _sensor;
 };
 
 } // namespace NAV

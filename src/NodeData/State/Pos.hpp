@@ -36,16 +36,16 @@ class Pos : public InsObs
 
     /// @brief Returns the Quaternion from navigation to Earth-fixed frame
     /// @return The Quaternion for the rotation from navigation to earth coordinates
-    [[nodiscard]] Eigen::Quaterniond quaternion_en() const
+    [[nodiscard]] Eigen::Quaterniond e_Quat_n() const
     {
-        return trafo::quat_en(latitude(), longitude());
+        return trafo::e_Quat_n(latitude(), longitude());
     }
 
     /// @brief Returns the Quaternion from Earth-fixed frame to navigation
     /// @return The Quaternion for the rotation from earth navigation coordinates
-    [[nodiscard]] Eigen::Quaterniond quaternion_ne() const
+    [[nodiscard]] Eigen::Quaterniond n_Quat_e() const
     {
-        return quaternion_en().conjugate();
+        return e_Quat_n().conjugate();
     }
 
     /* -------------------------------------------------------------------------------------------------------- */
@@ -53,38 +53,38 @@ class Pos : public InsObs
     /* -------------------------------------------------------------------------------------------------------- */
 
     /// Returns the latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m]
-    [[nodiscard]] const Eigen::Vector3d& latLonAlt() const { return p_lla; }
+    [[nodiscard]] const Eigen::Vector3d& lla_position() const { return _lla_position; }
 
     /// Returns the latitude 𝜙 in [rad]
-    [[nodiscard]] const double& latitude() const { return latLonAlt()(0); }
+    [[nodiscard]] const double& latitude() const { return lla_position()(0); }
 
     /// Returns the longitude λ in [rad]
-    [[nodiscard]] const double& longitude() const { return latLonAlt()(1); }
+    [[nodiscard]] const double& longitude() const { return lla_position()(1); }
 
     /// Returns the altitude (height above ground) in [m]
-    [[nodiscard]] const double& altitude() const { return latLonAlt()(2); }
+    [[nodiscard]] const double& altitude() const { return lla_position()(2); }
 
-    /// Returns the ECEF coordinates in [m]
-    [[nodiscard]] const Eigen::Vector3d& position_ecef() const { return p_ecef; }
+    /// Returns the  coordinates in [m]
+    [[nodiscard]] const Eigen::Vector3d& e_position() const { return _e_position; }
 
     // ###########################################################################################################
     //                                                  Setter
     // ###########################################################################################################
 
-    /// @brief Set the Position in ecef coordinates
-    /// @param[in] pos_ecef New Position in ECEF coordinates
-    void setPosition_e(const Eigen::Vector3d& pos_ecef)
+    /// @brief Set the Position in  coordinates
+    /// @param[in] e_position New Position in ECEF coordinates
+    void setPosition_e(const Eigen::Vector3d& e_position)
     {
-        p_ecef = pos_ecef;
-        p_lla = trafo::ecef2lla_WGS84(pos_ecef);
+        _e_position = e_position;
+        _lla_position = trafo::ecef2lla_WGS84(e_position);
     }
 
     /// @brief Set the Position lla object
-    /// @param[in] pos_lla New Position in LatLonAlt coordinates
-    void setPosition_lla(const Eigen::Vector3d& pos_lla)
+    /// @param[in] lla_position New Position in LatLonAlt coordinates
+    void setPosition_lla(const Eigen::Vector3d& lla_position)
     {
-        p_ecef = trafo::lla2ecef_WGS84(pos_lla);
-        p_lla = pos_lla;
+        _e_position = trafo::lla2ecef_WGS84(lla_position);
+        _lla_position = lla_position;
     }
 
     /* -------------------------------------------------------------------------------------------------------- */
@@ -93,9 +93,9 @@ class Pos : public InsObs
 
   private:
     /// Position in ECEF coordinates [m]
-    Eigen::Vector3d p_ecef{ 0, 0, 0 };
+    Eigen::Vector3d _e_position{ 0, 0, 0 };
     /// Position in LatLonAlt coordinates [rad, rad, m]
-    Eigen::Vector3d p_lla{ 0, 0, 0 };
+    Eigen::Vector3d _lla_position{ 0, 0, 0 };
 };
 
 } // namespace NAV

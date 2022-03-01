@@ -11,5 +11,6 @@ namespace NAV::internal
 {
 /// @brief Read function for EGM96 coefficients
 /// @return 'coeffs' MatrixXd of the EGM96 coefficients
-[[nodiscard]] Eigen::MatrixXd readAscii2Matrix();
+/// @deprecated This function is not used anymore, as the coefficients are stored in the source code
+[[nodiscard]] [[deprecated]] Eigen::MatrixXd readAscii2Matrix();
 } // namespace NAV::internal

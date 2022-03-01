@@ -37,7 +37,7 @@ class ImuFile : public Imu, public FileReader
     [[nodiscard]] static std::string category();
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Saves the node into a json object
@@ -51,8 +51,8 @@ class ImuFile : public Imu, public FileReader
     bool resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_ImuObs = 0;        ///< @brief Flow (ImuObs)
-    constexpr static size_t OutputPortIndex_HeaderColumns = 1; ///< @brief Object (std::vector<std::string>)
+    constexpr static size_t OUTPUT_PORT_INDEX_IMU_OBS = 0;        ///< @brief Flow (ImuObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_HEADER_COLUMNS = 1; ///< @brief Object (std::vector<std::string>)
 
     /// @brief Initialize the node
     bool initialize() override;
