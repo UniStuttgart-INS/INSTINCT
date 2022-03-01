@@ -1273,7 +1273,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
         else
         {
             std::string nextChars;
-            auto unidentifiedPos = static_cast<uint64_t>(filestream.tellg());
+            [[maybe_unused]] auto unidentifiedPos = static_cast<uint64_t>(filestream.tellg());
             nextChars.resize(100);
             filestream.read(nextChars.data(), 100);
             LOG_WARN("{}: Message type not identified. Position: {}, The next 100 chars: {}", nameId(), unidentifiedPos, nextChars);
