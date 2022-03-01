@@ -68,7 +68,7 @@ struct ulog_message_info_multiple_header_s
 struct ulog_message_parameter_default_header_s
 {
     message_header_s header;    ///< msg header
-    uint8_t default_types{ 0 }; //TODO: Validate default value
+    uint8_t default_types{ 0 }; ///< default types (TODO: Validate default value)
     uint8_t key_len{ 0 };       ///< length of 'key'
     std::string key;            ///< key
     std::string value;          ///< value

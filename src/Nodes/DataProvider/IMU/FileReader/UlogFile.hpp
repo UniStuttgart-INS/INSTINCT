@@ -18,6 +18,7 @@
 
 namespace NAV
 {
+/// @brief File Reader for ULog files ('.ulg')
 class UlogFile : public Imu, public FileReader
 {
   public:
