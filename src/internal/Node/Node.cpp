@@ -29,6 +29,11 @@ bool NAV::Node::initializeNode()
         return false;
     }
 
+    if (isInitializing())
+    {
+        return false;
+    }
+
     // Lock the node against recursive calling
     _isInitializing = true;
 

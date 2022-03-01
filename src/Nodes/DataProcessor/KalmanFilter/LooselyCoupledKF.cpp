@@ -1051,7 +1051,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         }
 
         rank = _kalmanFilter.K.fullPivLu().rank();
-        if (rank != _kalmanFilter.K.rows())
+        if (rank != _kalmanFilter.K.cols())
         {
             LOG_WARN("{}: K.rank = {}", nameId(), rank);
         }
