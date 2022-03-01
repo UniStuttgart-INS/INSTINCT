@@ -69,8 +69,8 @@ class UlogFile : public Imu, public FileReader
     uint64_t sensorStartupUTCTime_usec{};
 
   private:
-    constexpr static size_t OUTPUT_PORT_INDEX_IMUOBS = 0; ///< @brief Flow (ImuObs)
-    constexpr static size_t OUTPUT_PORT_INDEX_POSVEL = 1; ///< @brief Flow (PosVelAtt)
+    constexpr static size_t OUTPUT_PORT_INDEX_IMUOBS = 0;    ///< @brief Flow (ImuObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_POSVELATT = 1; ///< @brief Flow (PosVelAtt)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -310,6 +310,10 @@ class UlogFile : public Imu, public FileReader
     /// @param[in] dataMap Multimap that contains measurement data
     bool enoughImuDataAvailable(std::multimap<uint64_t, MeasurementData> dataMap);
 
+    /// @brief Checks '_epochData' whether there is enough data available to output one PosVelAtt
+    /// @param[in] dataMap Multimap that contains measurement data
+    bool enoughPosVelAttDataAvailable(std::multimap<uint64_t, MeasurementData> dataMap);
+
     /// @brief Flag to check whether '_epochData' contains accelerometer reading
     bool _holdsAccel = false;
     /// @brief Flag to check whether '_epochData' contains gyro reading
@@ -318,6 +322,8 @@ class UlogFile : public Imu, public FileReader
     bool _holdsMag = false;
     /// @brief Flag to check whether '_epochData' contains GPS reading
     bool _holdsGps = false;
+    /// @brief Flag to check whether '_epochData' contains attitude reading
+    bool _holdsAtt = false;
 
     /// @brief Timestamp of the latest accelerometer reading
     uint64_t _accelKey{};

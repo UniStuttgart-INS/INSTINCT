@@ -30,11 +30,12 @@ NAV::UlogFile::UlogFile()
     _holdsGyro = false;
     _holdsMag = false;
     _holdsGps = false;
+    _holdsAtt = false;
     _isReRun = false;
 
     // All message types are polled from the first output pin, but then send out on the correct pin over invokeCallbacks
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &UlogFile::pollData);
-    nm::CreateOutputPin(this, "PosVel", Pin::Type::Flow, { NAV::PosVel::type() });
+    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() });
 }
 
 NAV::UlogFile::~UlogFile()
@@ -110,6 +111,7 @@ bool NAV::UlogFile::initialize()
     _holdsGyro = false;
     _holdsMag = false;
     _holdsGps = false;
+    _holdsAtt = false;
 
     lastGnssTime.timeSinceStartup = 0;
 
@@ -1017,10 +1019,9 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
 
             // TODO: for loop for multiple multi_ids (redundant sensors)
 
-            // Callbacks
-            bool hasEnoughPosVelAttDataToSend = false; // FIXME: Make function
-
-            // Breakpoint to debug '_epochData' --> see how it's filled
+            // #########################################################################################################################################
+            //                                                                Callbacks
+            // #########################################################################################################################################
             // This is the hasEnoughData check for an ImuObs
             if (enoughImuDataAvailable(_epochData))
             {
@@ -1038,7 +1039,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 for (_it = _epochData.rbegin(); _it != _epochData.rend(); _it++)
                 {
                     // Add accel data to ImuObs
-                    if (_it->second.data.index() == 0)
+                    if (std::holds_alternative<SensorAccel>(_it->second.data))
                     {
                         _accelKey = _it->first;
                         float accelX = std::get<SensorAccel>(_epochData.find(_accelKey)->second.data).x;
@@ -1048,7 +1049,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                         LOG_DATA("{}: accelX = {}, accelY = {}, accelZ = {}", nameId(), accelX, accelY, accelZ);
                     }
                     // Add gyro data to ImuObs
-                    else if (_it->second.data.index() == 1)
+                    else if (std::holds_alternative<SensorGyro>(_it->second.data))
                     {
                         _gyroKey = _it->first;
                         float gyroX = std::get<SensorGyro>(_epochData.find(_gyroKey)->second.data).x;
@@ -1058,7 +1059,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                         LOG_DATA("{}: gyroX = {}, gyroY = {}, gyroZ = {}", nameId(), gyroX, gyroY, gyroZ);
                     }
                     // Add mag data to ImuObs
-                    else if (_it->second.data.index() == 2)
+                    else if (std::holds_alternative<SensorMag>(_it->second.data))
                     {
                         _magKey = _it->first;
                     }
@@ -1081,6 +1082,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 _holdsGyro = false;
                 _holdsMag = false;
                 _holdsGps = false;
+                _holdsAtt = false;
 
                 if (!peek)
                 {
@@ -1093,7 +1095,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 }
                 return obs;
             }
-            if (hasEnoughPosVelAttDataToSend) // This is the hasEnoughData check
+            if (enoughPosVelAttDataAvailable(_epochData))
             {
                 LOG_INFO("{}: Construct PosVelAtt and invoke callback", nameId());
 
@@ -1124,7 +1126,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
 
                 if (!peek)
                 {
-                    invokeCallbacks(OUTPUT_PORT_INDEX_POSVEL, obs);
+                    invokeCallbacks(OUTPUT_PORT_INDEX_POSVELATT, obs);
                 }
                 else
                 {
@@ -1386,19 +1388,38 @@ bool NAV::UlogFile::enoughImuDataAvailable(std::multimap<uint64_t, MeasurementDa
         return false;
     }
 
-    if (dataMap.rbegin()->second.data.index() == 0) // corresponds to 'SensorAccel' alternative in NAV::UlogFile::MeasurementData::data (std::variant)
+    if (std::holds_alternative<SensorAccel>(dataMap.rbegin()->second.data))
     {
         _holdsAccel = true;
     }
-    if (dataMap.rbegin()->second.data.index() == 1) // corresponds to 'SensorGyro' alternative in NAV::UlogFile::MeasurementData::data (std::variant)
+    if (std::holds_alternative<SensorGyro>(dataMap.rbegin()->second.data))
     {
         _holdsGyro = true;
     }
-    if (dataMap.rbegin()->second.data.index() == 2) // corresponds to 'SensorMag' alternative in NAV::UlogFile::MeasurementData::data (std::variant)
+    if (std::holds_alternative<SensorMag>(dataMap.rbegin()->second.data))
     {
         _holdsMag = true;
     }
 
     // Check whether Accel and Gyro measurements are available and whether the first absolute timestamp (from GPS) is available
     return (_holdsAccel && _holdsGyro && lastGnssTime.timeSinceStartup) != 0;
+}
+
+bool NAV::UlogFile::enoughPosVelAttDataAvailable(std::multimap<uint64_t, MeasurementData> dataMap)
+{
+    if (dataMap.empty())
+    {
+        return false;
+    }
+
+    if (std::holds_alternative<VehicleGpsPosition>(dataMap.rbegin()->second.data))
+    {
+        _holdsGps = true;
+    }
+    if (std::holds_alternative<VehicleAttitude>(dataMap.rbegin()->second.data))
+    {
+        _holdsAtt = true;
+    }
+
+    return (_holdsGps && _holdsAtt) != 0;
 }
