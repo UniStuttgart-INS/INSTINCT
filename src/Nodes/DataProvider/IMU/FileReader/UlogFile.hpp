@@ -69,8 +69,8 @@ class UlogFile : public Imu, public FileReader
     uint64_t sensorStartupUTCTime_usec{};
 
   private:
-    constexpr static size_t OutputPortIndex_ImuObs = 0; ///< @brief Flow (ImuObs)
-    constexpr static size_t OutputPortIndex_PosVel = 1; ///< @brief Flow (PosVelAtt)
+    constexpr static size_t OUTPUT_PORT_INDEX_IMUOBS = 0; ///< @brief Flow (ImuObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_POSVEL = 1; ///< @brief Flow (PosVelAtt)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -118,7 +118,7 @@ class UlogFile : public Imu, public FileReader
     };
 
     /// @brief Key: message_name, e.g. "sensor_accel"
-    std::unordered_map<std::string, std::vector<DataField>> messageFormats;
+    std::unordered_map<std::string, std::vector<DataField>> _messageFormats;
 
     /// @brief Px4 acceleration sensor message
     struct SensorAccel
@@ -290,7 +290,7 @@ class UlogFile : public Imu, public FileReader
     };
 
     /// @brief Key: msg_id
-    std::unordered_map<uint16_t, SubscriptionData> subscribedMessages;
+    std::unordered_map<uint16_t, SubscriptionData> _subscribedMessages;
 
     /// @brief Combined  (sensor-)message name with unique ID and data
     struct MeasurementData
@@ -300,40 +300,34 @@ class UlogFile : public Imu, public FileReader
         std::variant<SensorAccel, SensorGyro, SensorMag, VehicleGpsPosition, VehicleAttitude> data; ///< measurement data
     };
 
-    /// @brief Number of messages read
-    uint32_t messageCount = 0;
-
-    /// @brief First absolute time is available (e.g. from GPS)
-    bool firstAbsoluteTime = false;
-
     /// @brief Data message container. Key: [timestamp], Value: [0, "sensor_accel", SensorAccel{}]
-    std::multimap<uint64_t, MeasurementData> epochData;
+    std::multimap<uint64_t, MeasurementData> _epochData;
 
-    /// @brief Iterator to reversly loop through epochData
-    std::multimap<uint64_t, NAV::UlogFile::MeasurementData>::reverse_iterator it;
+    /// @brief Iterator to reversly loop through _epochData
+    std::multimap<uint64_t, NAV::UlogFile::MeasurementData>::reverse_iterator _it;
 
-    /// @brief Checks 'epochData' whether there is enough data available to output one ImuObs
+    /// @brief Checks '_epochData' whether there is enough data available to output one ImuObs
     /// @param[in] dataMap Multimap that contains measurement data
     bool enoughImuDataAvailable(std::multimap<uint64_t, MeasurementData> dataMap);
 
-    /// @brief Flag to check whether 'epochData' contains accelerometer reading
-    bool holdsAccel = false;
-    /// @brief Flag to check whether 'epochData' contains gyro reading
-    bool holdsGyro = false;
-    /// @brief Flag to check whether 'epochData' contains magnetometer reading
-    bool holdsMag = false;
-    /// @brief Flag to check whether 'epochData' contains GPS reading
-    bool holdsGps = false;
+    /// @brief Flag to check whether '_epochData' contains accelerometer reading
+    bool _holdsAccel = false;
+    /// @brief Flag to check whether '_epochData' contains gyro reading
+    bool _holdsGyro = false;
+    /// @brief Flag to check whether '_epochData' contains magnetometer reading
+    bool _holdsMag = false;
+    /// @brief Flag to check whether '_epochData' contains GPS reading
+    bool _holdsGps = false;
 
     /// @brief Timestamp of the latest accelerometer reading
-    uint64_t accelKey{};
+    uint64_t _accelKey{};
     /// @brief Timestamp of the latest gyro reading
-    uint64_t gyroKey{};
+    uint64_t _gyroKey{};
     /// @brief Timestamp of the latest magnetometer reading
-    uint64_t magKey{};
+    uint64_t _magKey{};
 
     /// @brief Flag to check whether loop is run again without re-initialization
-    bool isReRun = false;
+    bool _isReRun = false;
 
     /// Stores GNSS timestamp of one epoch before the current one (relative or absolute)
     struct
