@@ -676,10 +676,12 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             initThread = std::thread([node, init]() {
                 if (init)
                 {
+                    node->_isInitializing = false;
                     node->initializeNode();
                 }
                 else
                 {
+                    node->_isDeinitializing = false;
                     node->deinitializeNode();
                 }
             });
