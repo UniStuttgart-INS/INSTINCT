@@ -828,7 +828,7 @@ void NAV::Plot::guiConfig()
                                 }
                                 if (plotData.plotOnAxis.at(plotNum).second.lineType == PlotStyle::LineType::Line)
                                 {
-                                    if (ImGui::ColorEdit3("Line Color", &plotData.plotOnAxis.at(plotNum).second.color.x))
+                                    if (ImGui::ColorEdit4("Line Color", &plotData.plotOnAxis.at(plotNum).second.color.x))
                                     {
                                         flow::ApplyChanges();
                                     }
