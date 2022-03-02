@@ -170,12 +170,12 @@ class UlogFile : public Imu, public FileReader
     {
         uint64_t timestamp;              ///< Px4 GPS sensor time since startup in [µs]
         uint64_t time_utc_usec;          ///< Px4 GPS UTC time in [µs]
-        int32_t lat;                     ///< Latitude in [//TODO]
-        int32_t lon;                     ///< Longitude in [//TODO]
-        int32_t alt;                     ///< Altitude above ground in [m]
-        int32_t alt_ellipsoid;           ///< Altitude above ellipsoid in [m]
-        float s_variance_m_s;            ///< Variance of speed
-        float c_variance_rad;            ///< Variance of angle
+        int32_t lat;                     ///< Latitude in [deg * 1e7] (unit retains precision despite integer)
+        int32_t lon;                     ///< Longitude in [deg * 1e7] (unit retains precision despite integer)
+        int32_t alt;                     ///< Altitude above ground in [mm] (unit retains precision despite integer)
+        int32_t alt_ellipsoid;           ///< Altitude above ellipsoid in [mm] (unit retains precision despite integer)
+        float s_variance_m_s;            ///< Variance of speed [m²/s²]
+        float c_variance_rad;            ///< Variance of angle [rad²]
         float eph;                       ///< Horizontal position error in [m]
         float epv;                       ///< Vertical position error in [m]
         float hdop;                      ///< Horizontal dilusion of precision
