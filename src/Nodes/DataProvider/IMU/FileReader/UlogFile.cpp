@@ -760,6 +760,18 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 lastGnssTime.gnssTime = InsTime(0, 0, 0, 0, 0, vehicleGpsPosition.time_utc_usec * 1e-6L);
                 lastGnssTime.timeSinceStartup = vehicleGpsPosition.timestamp;
 
+                while (true) // Delete all old VehicleGpsPosition entries
+                {
+                    auto iter = std::find_if(_epochData.begin(), _epochData.end(), [](const std::pair<uint64_t, MeasurementData>& v) {
+                        return std::holds_alternative<UlogFile::VehicleGpsPosition>(v.second.data);
+                    });
+                    if (iter == _epochData.end())
+                    {
+                        break;
+                    }
+                    _epochData.erase(iter);
+                }
+
                 _epochData.insert(std::make_pair(vehicleGpsPosition.timestamp,
                                                  MeasurementData{ _subscribedMessages.at(messageData.msg_id).multi_id,
                                                                   _subscribedMessages.at(messageData.msg_id).message_name,
@@ -1071,8 +1083,17 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     }
                 }
 
-                // TODO: Erase just the first used measurements from epochdata
-                _epochData.clear();
+                while (true) // Delete all old SensorAccel, SensorGyro and SensorMag entries
+                {
+                    auto iter = std::find_if(_epochData.begin(), _epochData.end(), [](const std::pair<uint64_t, MeasurementData>& v) {
+                        return (std::holds_alternative<SensorAccel>(v.second.data) || std::holds_alternative<SensorGyro>(v.second.data) || std::holds_alternative<SensorMag>(v.second.data));
+                    });
+                    if (iter == _epochData.end())
+                    {
+                        break;
+                    }
+                    _epochData.erase(iter);
+                }
 
                 _accelKey = 0;
                 _gyroKey = 0;
@@ -1081,8 +1102,6 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 _holdsAccel = false;
                 _holdsGyro = false;
                 _holdsMag = false;
-                _holdsGps = false;
-                _holdsAtt = false;
 
                 if (!peek)
                 {
@@ -1122,7 +1141,8 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 // TODO: Check order of w,x,y,z
                 // TODO: Check if this is quaternion_nb
 
-                // TODO: Erase just the first used measurements from epochdata
+                _holdsGps = false;
+                _holdsAtt = false;
 
                 if (!peek)
                 {
