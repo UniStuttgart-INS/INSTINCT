@@ -766,7 +766,7 @@ void NAV::Plot::guiConfig()
                                                  _pinData.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.data(),
                                                  plotData.buffer.data(),
                                                  dataPointCount,
-                                                 plotData.buffer.offset(),
+                                                 static_cast<int>(std::ceil(static_cast<double>(plotData.buffer.offset()) / static_cast<double>(stride))),
                                                  stride * static_cast<int>(sizeof(double)));
                             }
                             else if (plotData.plotOnAxis.at(plotNum).second.lineType == PlotStyle::LineType::Scatter)
@@ -775,7 +775,7 @@ void NAV::Plot::guiConfig()
                                                     _pinData.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.data(),
                                                     plotData.buffer.data(),
                                                     dataPointCount,
-                                                    plotData.buffer.offset(),
+                                                    static_cast<int>(std::ceil(static_cast<double>(plotData.buffer.offset()) / static_cast<double>(stride))),
                                                     stride * static_cast<int>(sizeof(double)));
                             }
 
