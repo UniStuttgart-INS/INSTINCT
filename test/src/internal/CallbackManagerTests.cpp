@@ -11,7 +11,7 @@ namespace nm = NAV::NodeManager;
 
 #include "util/Logger.hpp"
 
-namespace NAV::TEST::LooselyCoupledKF
+namespace NAV::TEST::CallbackManagerTests
 {
 constexpr double EPSILON = 10.0 * std::numeric_limits<double>::epsilon();
 
@@ -176,4 +176,4 @@ TEST_CASE("[CallbackManager] Flow order", "[CallbackManager]")
 
     REQUIRE(testFlow("test/flow/internal/CallbackManager.flow"));
 }
-} // namespace NAV::TEST::LooselyCoupledKF
+} // namespace NAV::TEST::CallbackManagerTests

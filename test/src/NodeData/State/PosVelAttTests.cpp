@@ -4,7 +4,7 @@
 #include "NodeData/State/PosVelAtt.hpp"
 #include "fmt/core.h"
 
-namespace NAV
+namespace NAV::TEST::PosVelAttTests
 {
 TEST_CASE("[PosVelAtt] Position Functions", "[PosVelAtt]")
 {
@@ -109,4 +109,4 @@ TEST_CASE("[PosVelAtt] Attitude RollPitchYaw", "[PosVelAtt]")
     }
 }
 
-} // namespace NAV
+} // namespace NAV::TEST::PosVelAttTests

@@ -8,7 +8,7 @@
 
 #include <limits>
 
-namespace NAV
+namespace NAV::TEST::CoordinateFramesTests
 {
 constexpr double EPSILON = 10.0 * std::numeric_limits<double>::epsilon();
 
@@ -779,4 +779,4 @@ TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
     CHECK(e_Dcm_b_ref == EigApprox(e_Dcm_b_quat).margin(1e-13).epsilon(0));
 }
 
-} // namespace NAV
+} // namespace NAV::TEST::CoordinateFramesTests

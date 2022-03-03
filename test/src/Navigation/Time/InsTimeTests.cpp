@@ -6,7 +6,7 @@
 
 #include "Navigation/Time/InsTime.hpp"
 
-namespace NAV::TEST
+namespace NAV::TEST::InsTimeTests
 {
 #define TEST_EQUAL_OBJECT(lhs, rhs) \
     REQUIRE(lhs == rhs);            \
@@ -887,4 +887,4 @@ TEST_CASE("[InsTime] Arithmetic operators constexpr", "[InsTime]")
                                                + 3.004005006L);
 }
 
-} // namespace NAV::TEST
+} // namespace NAV::TEST::InsTimeTests

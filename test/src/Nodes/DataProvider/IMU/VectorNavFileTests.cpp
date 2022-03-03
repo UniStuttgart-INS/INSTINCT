@@ -15,7 +15,7 @@ namespace nm = NAV::NodeManager;
 
 #include "util/Logger.hpp"
 
-namespace NAV::TEST::VectorNavFile
+namespace NAV::TEST::VectorNavFileTests
 {
 auto extractBit(auto& group, auto value)
 {
@@ -766,4 +766,4 @@ TEST_CASE("[VectorNavFile] Read 'data/vn310-gnss.vnb' and compare content with h
     REQUIRE(messageCounterGnssDataVnb == MESSAGE_COUNT_GNSS);
 }
 
-} // namespace NAV::TEST::VectorNavFile
+} // namespace NAV::TEST::VectorNavFileTests
