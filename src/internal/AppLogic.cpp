@@ -15,6 +15,8 @@ namespace nm = NAV::NodeManager;
 #include "util/Logger.hpp"
 #include "Sleep.hpp"
 
+#define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2 * !!(condition)]))
+
 int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-arrays,hicpp-avoid-c-arrays,modernize-avoid-c-arrays)
 {
     // Save the root path of the program
@@ -28,6 +30,11 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
 
     // Register all Node Data Types which are available to the program
     NAV::NodeRegistry::RegisterNodeDataTypes();
+
+    if (sizeof(long double) != 16)
+    {
+        LOG_WARN("You are running INSTINCT on a platform without quadruple-precision floating-point support. Functionality concerning time measurements and ranging could be affected by the precision loss.");
+    }
 
     if (NAV::ConfigManager::Get<bool>("nogui", false))
     {
