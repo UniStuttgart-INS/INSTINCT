@@ -1109,7 +1109,7 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
         {
             _filestream.write(zeroData.data(), sizeof(int32_t));
             _filestream.write(zeroData.data(), sizeof(int32_t));
-            _filestream.write(zeroData.data(), sizeof(long double));
+            _filestream.write(zeroData.data(), sizeof(double));
         }
 
         // Group 2 (Time)
