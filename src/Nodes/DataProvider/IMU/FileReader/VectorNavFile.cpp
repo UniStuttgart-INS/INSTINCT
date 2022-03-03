@@ -1015,10 +1015,10 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
         {
             int32_t gpsCycle = 0;
             int32_t gpsWeek = 0;
-            long double tow = 0.0L;
+            double tow = 0.0;
             readFromFilestream(reinterpret_cast<char*>(&gpsCycle), sizeof(gpsCycle));
             readFromFilestream(reinterpret_cast<char*>(&gpsWeek), sizeof(gpsWeek));
-            readFromFilestream(reinterpret_cast<char*>(&tow), sizeof(tow));
+            readFromFilestream(reinterpret_cast<char*>(&tow), sizeof(tow)); 
             obs->insTime = InsTime(gpsCycle, gpsWeek, tow);
 
             // Group 2 (Time)
