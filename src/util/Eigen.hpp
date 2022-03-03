@@ -9,22 +9,28 @@
 #include <Eigen/Dense>
 
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
+using json = nlohmann::json; ///< json namespace
 
 namespace Eigen
 {
-using Array3ld = Array<long double, 3, 1>;
+using Array3ld = Array<long double, 3, 1>; ///< Long double 3x1 Eigen::Array
 
-using Vector3ld = Matrix<long double, 3, 1>;
-using Vector4ld = Matrix<long double, 4, 1>;
+using Vector3ld = Matrix<long double, 3, 1>; ///< Long double 3x1 Eigen::Vector
+using Vector4ld = Matrix<long double, 4, 1>; ///< Long double 3x1 Eigen::Vector
 
-using Matrix3ld = Matrix<long double, 3, 3>;
-using Matrix4ld = Matrix<long double, 4, 4>;
+using Matrix3ld = Matrix<long double, 3, 3>; ///< Long double 3x3 Eigen::Matrix
+using Matrix4ld = Matrix<long double, 4, 4>; ///< Long double 4x4 Eigen::Matrix
 
-using Quaternionld = Quaternion<long double>;
+using Quaternionld = Quaternion<long double>; ///< Long double Eigen::Quaternion
 
-using AngleAxisld = AngleAxis<long double>;
+using AngleAxisld = AngleAxis<long double>; ///< Long double Eigen::AngleAxis
 
+/// @brief Converts the provided matrix into a json objetc
+/// @tparam _Scalar Data Type of the matrix
+/// @tparam _Rows Amount of rows of the matrix
+/// @tparam _Cols Amount of cols of the matrix
+/// @param[out] j Json object to fill with
+/// @param[in] matrix Matrix to convert into json
 template<typename _Scalar, int _Rows, int _Cols>
 void to_json(json& j, const Matrix<_Scalar, _Rows, _Cols>& matrix)
 {
@@ -37,6 +43,12 @@ void to_json(json& j, const Matrix<_Scalar, _Rows, _Cols>& matrix)
     }
 }
 
+/// @brief Converts the provided json object into a matrix
+/// @tparam _Scalar Data Type of the matrix
+/// @tparam _Rows Amount of rows of the matrix
+/// @tparam _Cols Amount of cols of the matrix
+/// @param[in] j Json object to read the coefficients from
+/// @param[out] matrix Matrix object to fill
 template<typename _Scalar, int _Rows, int _Cols>
 void from_json(const json& j, Matrix<_Scalar, _Rows, _Cols>& matrix)
 {
@@ -92,22 +104,38 @@ class BlockMatrix
     /// @brief Gets the block matrix
     Eigen::Block<Eigen::MatrixXd> operator()();
 
+    /// @brief Converts the class to a json object
+    /// @return The json object
     [[nodiscard]] json to_json() const;
+    /// @brief Fills this object with the information from the provided json object
+    /// @param[in] j Json object
     void from_json(const json& j);
 
     friend class NAV::experimental::Matrix;
 
   private:
+    /// @brief Pointer to the underlying Matrix
     Eigen::MatrixXd* matrix = nullptr;
 
+    /// @brief Name of the pin
     std::string pinName;
 
+    /// @brief Start row in the underlying matrix to access with index 0
     int startRow = 0;
+    /// @brief Start col in the underlying matrix to access with index 0
     int startCol = 0;
+    /// @brief Amount of rows to access in the underlying matrix
     int blockRows = 1;
+    /// @brief Amount of cols to access in the underlying matrix
     int blockCols = 1;
 };
 
+/// @brief Converts the BlockMatrix into a json object
+/// @param[out] j Json object to return
+/// @param[in] data BlockMatrix to convert into json
 void to_json(json& j, const BlockMatrix& data);
+/// @brief Converts the json object into a BlockMatrix
+/// @param[in] j Json object to read information from
+/// @param[out] data Object to read the information into
 void from_json(const json& j, BlockMatrix& data);
 } // namespace NAV

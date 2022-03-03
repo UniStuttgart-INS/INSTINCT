@@ -26,24 +26,11 @@ class UbloxObs : public InsObs
     explicit UbloxObs(uart::protocol::Packet& packet)
         : raw(packet) {}
 
-    /// Default constructor
-    UbloxObs() = default;
-    /// @brief Destructor
-    ~UbloxObs() override = default;
-    /// @brief Copy constructor
-    UbloxObs(const UbloxObs&) = delete;
-    /// @brief Move constructor
-    UbloxObs(UbloxObs&&) = delete;
-    /// @brief Copy assignment operator
-    UbloxObs& operator=(const UbloxObs&) = delete;
-    /// @brief Move assignment operator
-    UbloxObs& operator=(UbloxObs&&) = delete;
-
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return std::string("UbloxObs");
+        return "UbloxObs";
     }
 
     /// @brief Returns the parent types of the data class
@@ -67,12 +54,6 @@ class UbloxObs : public InsObs
     std::variant<
         // ACK: Ack/Nak Messages: Acknowledge or Reject messages to UBX-CFG input messages
         sensors::ublox::UbxAckAck, sensors::ublox::UbxAckNak,
-        // AID: AssistNow Aiding Messages: Ephemeris, Almanac, other A-GPS data input
-        sensors::ublox::UbxAidAlm, sensors::ublox::UbxAidAlmSV, sensors::ublox::UbxAidAlmIO,
-        sensors::ublox::UbxAidAop, sensors::ublox::UbxAidAopSV, sensors::ublox::UbxAidAopIO,
-        sensors::ublox::UbxAidEph, sensors::ublox::UbxAidEphSV, sensors::ublox::UbxAidEphIO,
-        sensors::ublox::UbxAidHui, sensors::ublox::UbxAidHuiIO,
-        sensors::ublox::UbxAidIni, sensors::ublox::UbxAidIniIO,
         // CFG: Configuration Input Messages: Configure the receiver
         // ESF: External Sensor Fusion Messages: External Sensor Measurements and Status Information
         sensors::ublox::UbxEsfIns,

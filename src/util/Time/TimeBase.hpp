@@ -5,14 +5,15 @@
 
 #pragma once
 
-#include "util/InsTime.hpp"
+#include "Navigation/Time/InsTime.hpp"
 
 namespace NAV::util::time
 {
+/// @brief Different Modes the Time Base class can work in
 enum class Mode
 {
-    REAL_TIME,       //< Computer clock will be added to last time update
-    POST_PROCESSING, //< Time will be set by FlowExecutor only
+    REAL_TIME,       ///< Computer clock will be added to last time update
+    POST_PROCESSING, ///< Time will be set by FlowExecutor only
 };
 
 /// @brief Set the time mode

@@ -14,7 +14,7 @@ bool NAV::Pin::canCreateLink(const Pin& b) const
     const Pin* endPin = (kind == Kind::Output ? &b : this);
 
     if (startPin->type == Pin::Type::Flow
-        && !NAV::NodeRegistry::NodeDataTypeIsChildOf(startPin->dataIdentifier, endPin->dataIdentifier))
+        && !NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPin->dataIdentifier, endPin->dataIdentifier))
     {
         dataTypesMatch = false;
     }
@@ -53,32 +53,32 @@ ImColor NAV::Pin::getIconColor() const
     switch (Type::Value(type))
     {
     case Type::None:
-        return ImColor(0, 0, 0);
+        return { 0, 0, 0 };
     case Type::Flow:
-        return ImColor(255, 255, 255);
+        return { 255, 255, 255 };
     case Type::Bool:
-        return ImColor(220, 48, 48);
+        return { 220, 48, 48 };
     case Type::Int:
-        return ImColor(68, 201, 156);
+        return { 68, 201, 156 };
     case Type::Float:
-        return ImColor(147, 226, 74);
+        return { 147, 226, 74 };
     case Type::String:
-        return ImColor(124, 21, 153);
+        return { 124, 21, 153 };
     case Type::Object:
-        return ImColor(51, 150, 215);
+        return { 51, 150, 215 };
     case Type::Matrix:
-        return ImColor(255, 165, 0);
+        return { 255, 165, 0 };
     case Type::Delegate:
-        return ImColor(255, 48, 48);
+        return { 255, 48, 48 };
     }
-    return ImColor(0, 0, 0);
+    return { 0, 0, 0 };
 }
 
 void NAV::Pin::drawPinIcon(bool connected, int alpha) const
 {
     namespace PinIcon = gui::widgets::PinIcon;
 
-    PinIcon::Type iconType;
+    PinIcon::Type iconType = PinIcon::Type::Flow;
     ImColor color = getIconColor();
     color.Value.w = static_cast<float>(alpha) / 255.0F;
     switch (Type::Value(type))
@@ -123,7 +123,7 @@ void NAV::to_json(json& j, const Pin& pin)
     j = json{
         { "id", size_t(pin.id) },
         // { "type", std::string(pin.type) },
-        // { "name", pin.name },
+        { "name", pin.name },
         // { "dataIdentifier", pin.dataIdentifier },
     };
 }
@@ -136,10 +136,10 @@ void NAV::from_json(const json& j, Pin& pin)
     //     pin.type = Pin::Type(j.at("type").get<std::string>());
     // }
 
-    // if (j.contains("name"))
-    // {
-    //     j.at("name").get_to(pin.name);
-    // }
+    if (j.contains("name"))
+    {
+        j.at("name").get_to(pin.name);
+    }
 
     // if (j.contains("dataIdentifier"))
     // {

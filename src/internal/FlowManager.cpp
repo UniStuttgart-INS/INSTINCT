@@ -1,6 +1,6 @@
 #include "internal/FlowManager.hpp"
 
-#include "internal/Json.hpp"
+#include "util/Json.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -185,9 +185,9 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
             {
                 ed::SetNodePosition(node->id, nodeJson.at("pos").get<ImVec2>());
 
-                if (node->size.x > 0 && node->size.y > 0)
+                if (node->getSize().x > 0 && node->getSize().y > 0)
                 {
-                    ed::SetGroupSize(node->id, node->size);
+                    ed::SetGroupSize(node->id, node->getSize());
                 }
             }
         }

@@ -30,7 +30,6 @@ namespace NAV::NodeRegistry
 {
 /// @brief Registers a Node with the NodeManager
 /// @tparam T Node Class to register
-/// @tparam std::enable_if_t<std::is_base_of_v<Node, T>> Makes sure template only exists for classes with base class 'Nodes'
 template<typename T,
          typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
 void registerNodeType()
@@ -54,7 +53,6 @@ void registerNodeType()
 
 /// @brief Register a NodeData with the NodeManager
 /// @tparam T NodeData Class to register
-/// @tparam std::enable_if_t<std::is_base_of_v<NodeData, T>> Makes sure template only exists for classes with base class 'NodeData'
 template<typename T,
          typename = std::enable_if_t<std::is_base_of_v<NodeData, T>>>
 void registerNodeDataType()
@@ -85,7 +83,7 @@ bool NAV::NodeRegistry::NodeInfo::hasCompatiblePin(const Pin* pin) const
         if (pinInfo.kind == searchPinKind && pinInfo.type == pin->type)
         {
             if ((pinInfo.type == Pin::Type::Flow
-                 && NAV::NodeRegistry::NodeDataTypeIsChildOf(startPinDataIdentifier, endPinDataIdentifier))
+                 && NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPinDataIdentifier, endPinDataIdentifier))
                 || (pinInfo.type == Pin::Type::Delegate
                     && std::find(endPinDataIdentifier.begin(), endPinDataIdentifier.end(), startPinParentNodeType) != endPinDataIdentifier.end())
                 || ((pinInfo.type == Pin::Type::Object || pinInfo.type == Pin::Type::Matrix) // NOLINT(misc-redundant-expression) // FIXME: error: equivalent expression on both sides of logical operator
@@ -105,7 +103,7 @@ const std::map<std::string, std::vector<NAV::NodeRegistry::NodeInfo>>& NAV::Node
     return _registeredNodes;
 }
 
-bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& childTypes, const std::vector<std::string>& parentTypes)
+bool NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(const std::vector<std::string>& childTypes, const std::vector<std::string>& parentTypes)
 {
     for (const auto& childType : childTypes)
     {
@@ -121,7 +119,7 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
                 {
                     for (const auto& parentTypeOfChild : parentTypes)
                     {
-                        if (NodeDataTypeIsChildOf({ parentTypeOfChild }, { parentType }))
+                        if (NodeDataTypeAnyIsChildOf({ parentTypeOfChild }, { parentType }))
                         {
                             return true;
                         }
@@ -163,7 +161,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/Simple/Delay.hpp"
 #include "Nodes/Simple/Transformation.hpp"
 // Converter
-#include "Nodes/Converter/IMU/VectorNavBinary2ImuObsConverter.hpp"
+#include "Nodes/Converter/IMU/VectorNavBinaryConverter.hpp"
 // Data Logger
 #include "Nodes/DataLogger/GNSS/EmlidDataLogger.hpp"
 #include "Nodes/DataLogger/GNSS/UbloxDataLogger.hpp"
@@ -171,7 +169,9 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataLogger/IMU/KvhDataLogger.hpp"
 #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
 // Data Processor
+#include "Nodes/DataProcessor/ErrorModel/ErrorModel.hpp"
 #include "Nodes/DataProcessor/Integrator/ImuIntegrator.hpp"
+#include "Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.hpp"
 // Data Provider
 #include "Nodes/DataProvider/GNSS/FileReader/EmlidFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RtklibPosFile.hpp"
@@ -208,7 +208,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<NAV::experimental::Matrix>();
     registerNodeType<Transformation>();
     // Converter
-    registerNodeType<VectorNavBinary2ImuObsConverter>();
+    registerNodeType<VectorNavBinaryConverter>();
     // Data Logger
     registerNodeType<EmlidDataLogger>();
     registerNodeType<UbloxDataLogger>();
@@ -216,7 +216,9 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<KvhDataLogger>();
     registerNodeType<VectorNavDataLogger>();
     // Data Processor
+    registerNodeType<ErrorModel>();
     registerNodeType<ImuIntegrator>();
+    registerNodeType<LooselyCoupledKF>();
     // Data Provider
     registerNodeType<EmlidFile>();
     registerNodeType<RtklibPosFile>();
@@ -247,11 +249,11 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 #include "NodeData/GNSS/EmlidObs.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
-#include "NodeData/GNSS/SkydelObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/ImuObsWDelta.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
+#include "NodeData/State/InertialNavSol.hpp"
 
 void NAV::NodeRegistry::RegisterNodeDataTypes()
 {
@@ -263,7 +265,6 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     registerNodeDataType<EmlidObs>();
     registerNodeDataType<RtklibPosObs>();
     registerNodeDataType<UbloxObs>();
-    registerNodeDataType<SkydelObs>();
     // IMU
     registerNodeDataType<ImuObs>();
     registerNodeDataType<KvhObs>();
@@ -271,4 +272,5 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     registerNodeDataType<VectorNavBinaryOutput>();
     // State
     registerNodeDataType<PosVelAtt>();
+    registerNodeDataType<InertialNavSol>();
 }

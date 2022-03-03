@@ -1,7 +1,7 @@
 #include "FlowExecutor.hpp"
 
 #include "util/Logger.hpp"
-#include "util/InsTime.hpp"
+#include "Navigation/Time/InsTime.hpp"
 
 #include "internal/Node/Node.hpp"
 #include "NodeData/InsObs.hpp"
@@ -91,7 +91,7 @@ bool NAV::FlowExecutor::initialize()
     bool hasUninitializedNodes = false;
     for (Node* node : nm::m_Nodes())
     {
-        if (node->enabled)
+        if (node->isEnabled())
         {
             if (!node->isInitialized())
             {
@@ -151,7 +151,7 @@ void NAV::FlowExecutor::execute()
 
     for (Node* node : nm::m_Nodes()) // Search for node pins with data callbacks
     {
-        if (node == nullptr || !node->enabled)
+        if (node == nullptr || !node->isEnabled())
         {
             continue;
         }
@@ -178,7 +178,7 @@ void NAV::FlowExecutor::execute()
                     while (true)
                     {
                         // Check if data available (peek = true)
-                        if (auto obs = std::dynamic_pointer_cast<const NAV::InsObs>((node->**callback)(true)))
+                        if (auto obs = std::static_pointer_cast<const NAV::InsObs>((node->**callback)(true)))
                         {
                             // Check if data has a time
                             if (obs->insTime.has_value())
@@ -231,7 +231,7 @@ void NAV::FlowExecutor::execute()
             while (true)
             {
                 // Check if data available (peek = true)
-                if (auto obs = std::dynamic_pointer_cast<const NAV::InsObs>((node->**callback)(true)))
+                if (auto obs = std::static_pointer_cast<const NAV::InsObs>((node->**callback)(true)))
                 {
                     // Check if data has a time
                     if (obs->insTime.has_value())

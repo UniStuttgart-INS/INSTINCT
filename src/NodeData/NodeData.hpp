@@ -10,6 +10,7 @@
 
 namespace NAV
 {
+/// @brief Parent class for all data transmitted over Flow pins
 class NodeData
 {
   public:
@@ -28,7 +29,7 @@ class NodeData
 
     /// @brief Returns the type of the data class
     /// @return The data type
-    [[nodiscard]] static std::string type() { return std::string(""); }
+    [[nodiscard]] static std::string type() { return ""; }
 
     /// @brief Returns the parent types of the data class
     /// @return The parent data types

@@ -9,20 +9,26 @@
 #include <fstream>
 
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
+using json = nlohmann::json; ///< json namespace
 
 namespace NAV
 {
+/// @brief Parent class for other data loggers which manages the output filestream
 class FileWriter
 {
   public:
     /// File Type
-    enum FileType
+    enum class FileType
     {
         NONE,   ///< Not specified
         BINARY, ///< Binary data
         CSV,    ///< Ascii text data
     };
+
+    /// @brief Converts the provided type into string
+    /// @param[in] type FileType to convert
+    /// @return String representation of the type
+    static const char* to_string(FileType type);
 
     /// @brief Copy constructor
     FileWriter(const FileWriter&) = delete;
@@ -32,8 +38,6 @@ class FileWriter
     FileWriter& operator=(const FileWriter&) = delete;
     /// @brief Move assignment operator
     FileWriter& operator=(FileWriter&&) = delete;
-
-    static std::string str(FileType type);
 
   protected:
     /// @brief Default constructor
@@ -55,13 +59,13 @@ class FileWriter
     void deinitialize();
 
     /// Path to the file
-    std::string path;
+    std::string _path;
 
     /// File stream to write the file
-    std::ofstream filestream;
+    std::ofstream _filestream;
 
     /// File Type
-    FileType fileType = FileType::NONE;
+    FileType _fileType = FileType::NONE;
 };
 
 } // namespace NAV

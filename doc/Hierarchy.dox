@@ -1,0 +1,34 @@
+
+// This file strutures pages and modules into a convenient hierarchical structure.
+
+namespace Instinct {
+
+/** \page util ExamplePage
+  %This is a placeholder to show how grouping with pages works
+  - \subpage ExamplePage_Sub1
+*/
+
+
+/** \defgroup DataProcessor_chapter DataProcessor
+ * @{
+ *      \defgroup DataProcessor_KalmanFilter_chapter KalmanFilter
+ *      \defgroup DataProcessor_Integrator_chapter Integrator
+ * @} */
+
+ /** \addtogroup LooselyCoupledKF_n
+     \ingroup DataProcessor_KalmanFilter_chapter */
+ /** \addtogroup LooselyCoupledKF_e
+     \ingroup DataProcessor_KalmanFilter_chapter */
+ /** \addtogroup ImuIntegrator_n
+     \ingroup DataProcessor_Integrator_chapter */
+ /** \addtogroup ImuIntegrator_e
+     \ingroup DataProcessor_Integrator_chapter */
+
+ /** \defgroup DataProvider_chapter DataProvider
+  * @{
+  *      \defgroup DataProvider_Imu_chapter Imu
+  * @} */
+
+  /** \addtogroup ImuSimulator
+      \ingroup DataProvider_Imu_chapter */
+}

@@ -25,7 +25,7 @@ class Imu : public Node
     Imu& operator=(Imu&&) = delete;
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Saves the node into a json object
@@ -36,7 +36,7 @@ class Imu : public Node
     void restore(const json& j) override;
 
     /// Position and rotation information for conversion from platform to body frame
-    [[nodiscard]] const ImuPos& imuPosition() const { return imuPos; }
+    [[nodiscard]] const ImuPos& imuPosition() const { return _imuPos; }
 
   protected:
     /// @brief Default constructor
@@ -46,7 +46,7 @@ class Imu : public Node
     ~Imu() override = default;
 
     /// Position and rotation information for conversion from platform to body frame
-    ImuPos imuPos;
+    ImuPos _imuPos;
 };
 
 } // namespace NAV

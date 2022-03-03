@@ -12,8 +12,8 @@ namespace nm = NAV::NodeManager;
 namespace ed = ax::NodeEditor;
 
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
-#include "internal/Json.hpp"
+using json = nlohmann::json; ///< json namespace
+#include "util/Json.hpp"
 
 #include "internal/ConfigManager.hpp"
 

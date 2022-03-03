@@ -8,7 +8,7 @@
 #include <string>
 
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
+using json = nlohmann::json; ///< json namespace
 
 namespace NAV
 {
@@ -67,10 +67,10 @@ class UartSensor
     /// - "/dev/ttyUSB0" (Linux format for virtual (USB) serial port)
     /// - "/dev/tty.usbserial-FTXXXXXX" (Mac OS X format for virtual (USB) serial port)
     /// - "/dev/ttyS0" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)
-    std::string sensorPort;
+    std::string _sensorPort;
 
     /// Baudrate for the sensor
-    int selectedBaudrate = 0;
+    int _selectedBaudrate = 0;
 };
 
 } // namespace NAV

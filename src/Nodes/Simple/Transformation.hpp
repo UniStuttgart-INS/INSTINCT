@@ -11,6 +11,7 @@
 
 namespace NAV
 {
+/// @brief Applies transformations to incoming NodeData
 class Transformation : public Node
 {
   public:
@@ -37,7 +38,7 @@ class Transformation : public Node
     [[nodiscard]] static std::string category();
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Saves the node into a json object
@@ -58,21 +59,20 @@ class Transformation : public Node
     void notifyOnOutputValueChanged(ax::NodeEditor::LinkId linkId) override;
 
   private:
-    constexpr static size_t OutputPortIndex_Matrix = 0; ///< @brief Matrix
-    constexpr static size_t InputPortIndex_Matrix = 0;  ///< @brief Matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_MATRIX = 0; ///< @brief Matrix
+    constexpr static size_t INPUT_PORT_INDEX_MATRIX = 0;  ///< @brief Matrix
 
+    /// @brief Possible Transformation types
     enum class Type : int
     {
         ECEF_2_LLArad,
         ECEF_2_LLAdeg,
         LLArad_2_ECEF,
         LLAdeg_2_ECEF,
-        Quat_nb_2_RollPitchYawRad,
-        Quat_nb_2_RollPitchYawDeg,
-        RollPitchYawRad_2_Quat_nb,
-        RollPitchYawDeg_2_Quat_nb,
-        ECEF_2_NED,
-        NED_2_ECEF,
+        n_Quat_b_2_RollPitchYawRad,
+        n_Quat_b_2_RollPitchYawDeg,
+        RollPitchYawRad_2_n_Quat_b,
+        RollPitchYawDeg_2_n_Quat_b,
         // CONJUGATE,
         // TRANSPOSE,
     };
@@ -95,14 +95,10 @@ class Transformation : public Node
     void updateMatrixSize();
 
     /// The matrix object
-    Eigen::MatrixXd matrix;
+    Eigen::MatrixXd _matrix;
 
     /// Algorithm to use
-    Type selectedTransformation = Type::ECEF_2_LLArad;
-
-    /// Reference point [𝜙 latitude, λ longitude, altitude]^T in [rad, rad, m]
-    /// which represents the origin of the local frame for the ECEF <=> NED conversion
-    Eigen::Vector3d latLonAlt_ref = Eigen::Vector3d::Zero();
+    Type _selectedTransformation = Type::ECEF_2_LLArad;
 };
 
 } // namespace NAV

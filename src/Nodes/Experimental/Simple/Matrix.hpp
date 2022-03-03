@@ -11,6 +11,7 @@
 
 namespace NAV::experimental
 {
+/// @brief Provides a Matrix Object
 class Matrix : public Node
 {
   public:
@@ -37,7 +38,7 @@ class Matrix : public Node
     [[nodiscard]] static std::string category();
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Saves the node into a json object
@@ -63,7 +64,7 @@ class Matrix : public Node
     void notifyOnOutputValueChanged(ax::NodeEditor::LinkId linkId) override;
 
   private:
-    constexpr static size_t OutputPortIndex_FullMatrix = 0; ///< @brief Matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_FULL_MATRIX = 0; ///< @brief Matrix
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -75,20 +76,20 @@ class Matrix : public Node
     void updateNumberOfOutputPins();
 
     /// Number of Rows
-    int nRows = 3;
+    int _nRows = 3;
     /// Number of Columns
-    int nCols = 3;
+    int _nCols = 3;
     /// Number of subblocks of the matrix
-    int nBlocks = 0;
+    int _nBlocks = 0;
 
     /// List of subblocks
-    std::vector<BlockMatrix> blocks;
+    std::vector<BlockMatrix> _blocks;
 
     /// The matrix object
-    Eigen::MatrixXd matrix;
+    Eigen::MatrixXd _matrix;
 
     /// The initial matrix set in the gui
-    Eigen::MatrixXd initMatrix;
+    Eigen::MatrixXd _initMatrix;
 };
 
 } // namespace NAV::experimental

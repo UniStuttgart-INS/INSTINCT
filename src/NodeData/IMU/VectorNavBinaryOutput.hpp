@@ -28,24 +28,11 @@ class VectorNavBinaryOutput : public InsObs
     explicit VectorNavBinaryOutput(const ImuPos& imuPos)
         : imuPos(imuPos) {}
 
-    /// @brief Default constructor
-    VectorNavBinaryOutput() = delete;
-    /// @brief Destructor
-    ~VectorNavBinaryOutput() override = default;
-    /// @brief Copy constructor
-    VectorNavBinaryOutput(const VectorNavBinaryOutput&) = delete;
-    /// @brief Move constructor
-    VectorNavBinaryOutput(VectorNavBinaryOutput&&) = delete;
-    /// @brief Copy assignment operator
-    VectorNavBinaryOutput& operator=(const VectorNavBinaryOutput&) = delete;
-    /// @brief Move assignment operator
-    VectorNavBinaryOutput& operator=(VectorNavBinaryOutput&&) = delete;
-
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return std::string("VectorNavBinaryOutput");
+        return "VectorNavBinaryOutput";
     }
 
     /// @brief Returns the parent types of the data class

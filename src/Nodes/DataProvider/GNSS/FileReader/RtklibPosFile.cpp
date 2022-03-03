@@ -1,7 +1,7 @@
 #include "RtklibPosFile.hpp"
 
 #include "util/Logger.hpp"
-#include "util/InsTransformations.hpp"
+#include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "util/Time/TimeBase.hpp"
 
 #include "internal/gui/widgets/FileDialog.hpp"
@@ -18,11 +18,11 @@ NAV::RtklibPosFile::RtklibPosFile()
 
     LOG_TRACE("{}: called", name);
 
-    hasConfig = true;
-    guiConfigDefaultWindowSize = { 380, 290 };
+    _hasConfig = true;
+    _guiConfigDefaultWindowSize = { 380, 290 };
 
     nm::CreateOutputPin(this, "RtklibPosObs", Pin::Type::Flow, { NAV::RtklibPosObs::type() }, &RtklibPosFile::pollData);
-    nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, { "std::vector<std::string>" }, &headerColumns);
+    nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, { "std::vector<std::string>" }, &_headerColumns);
 }
 
 NAV::RtklibPosFile::~RtklibPosFile()
@@ -47,7 +47,7 @@ std::string NAV::RtklibPosFile::category()
 
 void NAV::RtklibPosFile::guiConfig()
 {
-    if (gui::widgets::FileDialogLoad(path, "Select File", ".pos", { ".pos" }, size_t(id), nameId()))
+    if (gui::widgets::FileDialogLoad(_path, "Select File", ".pos", { ".pos" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
         initializeNode();
@@ -64,7 +64,7 @@ void NAV::RtklibPosFile::guiConfig()
 
         auto TextColoredIfExists = [this](int index, const char* displayText, const char* searchText, bool alwaysNormal = false) {
             ImGui::TableSetColumnIndex(index);
-            if (alwaysNormal || std::find(headerColumns.begin(), headerColumns.end(), searchText) != headerColumns.end())
+            if (alwaysNormal || std::find(_headerColumns.begin(), _headerColumns.end(), searchText) != _headerColumns.end())
             {
                 ImGui::TextUnformatted(displayText);
             }
@@ -158,11 +158,11 @@ std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData(bool peek)
 {
     auto obs = std::make_shared<RtklibPosObs>();
     // Get current position
-    auto pos = filestream.tellg();
+    auto pos = _filestream.tellg();
 
     // Read line
     std::string line;
-    std::getline(filestream, line);
+    std::getline(_filestream, line);
     // Remove any starting non text characters
     line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
 
@@ -189,7 +189,7 @@ std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData(bool peek)
     std::optional<double> sdE;
     std::optional<double> sdU;
 
-    for (const auto& column : headerColumns)
+    for (const auto& column : _headerColumns)
     {
         if (lineStream >> cell)
         {
@@ -305,13 +305,13 @@ std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData(bool peek)
     }
     if (positionX.has_value() && positionY.has_value() && positionZ.has_value())
     {
-        obs->position_ecef.emplace(positionX.value(), positionY.value(), positionZ.value());
+        obs->e_position.emplace(positionX.value(), positionY.value(), positionZ.value());
     }
     if (positionLat.has_value() && positionLon.has_value() && positionHeight.has_value())
     {
-        if (!obs->position_ecef.has_value())
+        if (!obs->e_position.has_value())
         {
-            obs->position_ecef.emplace(trafo::lla2ecef_WGS84({ positionLat.value(), positionLon.value(), positionHeight.value() }));
+            obs->e_position.emplace(trafo::lla2ecef_WGS84({ positionLat.value(), positionLon.value(), positionHeight.value() }));
         }
     }
     if (sdX.has_value() && sdY.has_value() && sdZ.has_value())
@@ -339,13 +339,13 @@ std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData(bool peek)
     if (peek)
     {
         // Return to position before "Read line".
-        filestream.seekg(pos, std::ios_base::beg);
+        _filestream.seekg(pos, std::ios_base::beg);
     }
 
     // Calls all the callbacks
     if (!peek)
     {
-        invokeCallbacks(OutputPortIndex_RtklibPosObs, obs);
+        invokeCallbacks(OUTPUT_PORT_INDEX_RTKLIB_POS_OBS, obs);
     }
 
     return obs;
@@ -362,7 +362,7 @@ void NAV::RtklibPosFile::readHeader()
     std::string line;
     do
     {
-        std::getline(filestream, line);
+        std::getline(_filestream, line);
         // Remove any starting non text characters
         line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
     } while (!line.empty() && line.find("%  ") == std::string::npos);
@@ -376,12 +376,12 @@ void NAV::RtklibPosFile::readHeader()
         {
             if (cell == "GPST")
             {
-                headerColumns.emplace_back("GpsWeek");
-                headerColumns.emplace_back("GpsToW");
+                _headerColumns.emplace_back("GpsWeek");
+                _headerColumns.emplace_back("GpsToW");
             }
             else
             {
-                headerColumns.push_back(cell);
+                _headerColumns.push_back(cell);
             }
         }
     }

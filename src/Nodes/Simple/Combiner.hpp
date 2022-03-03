@@ -11,6 +11,7 @@
 
 namespace NAV
 {
+/// @brief Combines two input ports into a single output port
 class Combiner : public Node
 {
   public:
@@ -48,9 +49,9 @@ class Combiner : public Node
     void afterDeleteLink(Pin* startPin, Pin* endPin) override;
 
   private:
-    constexpr static size_t OutputPortIndex_Flow = 0;       ///< @brief Flow
-    constexpr static size_t InputPortIndex_Flow_First = 0;  ///< @brief Flow
-    constexpr static size_t InputPortIndex_Flow_Second = 1; ///< @brief Flow
+    constexpr static size_t OUTPUT_PORT_INDEX_FLOW = 0;       ///< @brief Flow
+    constexpr static size_t INPUT_PORT_INDEX_FLOW_FIRST = 0;  ///< @brief Flow
+    constexpr static size_t INPUT_PORT_INDEX_FLOW_SECOND = 1; ///< @brief Flow
 
     /// @brief Set the Pin Identifiers for the other pin depending on the connected pin
     /// @param[in] connectedPinIndex The connected pin
@@ -58,6 +59,8 @@ class Combiner : public Node
     /// @param[in] dataIdentifiers The data Identifier to be considered
     void setPinIdentifiers(size_t connectedPinIndex, size_t otherPinIndex, const std::vector<std::string>& dataIdentifiers);
 
+    /// @brief Checks if link on the pin is still valid and refreshes if so
+    /// @param[in] oldDataIdentifiers Data identifiers which were previously set
     void updateOutputPin(const std::vector<std::string>& oldDataIdentifiers);
 
     /// @brief Receive data

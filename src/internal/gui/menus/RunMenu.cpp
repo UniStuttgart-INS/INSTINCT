@@ -18,7 +18,7 @@ void NAV::gui::menus::ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList)
         {
             hasInitializedNodes = true;
         }
-        else if (node->enabled)
+        else if (node->isEnabled())
         {
             allNodesInitialized = false;
         }
@@ -27,9 +27,9 @@ void NAV::gui::menus::ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList)
     {
         for (auto* node : nm::m_Nodes())
         {
-            if (node->enabled && !node->isInitialized())
+            if (node->isEnabled() && !node->isInitialized())
             {
-                node->isInitializing_ = true;
+                node->_isInitializing = true;
                 initList.emplace_back(node, true);
             }
         }
@@ -38,17 +38,17 @@ void NAV::gui::menus::ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList)
     {
         for (auto* node : nm::m_Nodes())
         {
-            if (node->enabled && node->isInitialized())
+            if (node->isEnabled() && node->isInitialized())
             {
-                node->isDeinitializing_ = true;
+                node->_isDeinitializing = true;
                 initList.emplace_back(node, false);
             }
         }
         for (auto* node : nm::m_Nodes())
         {
-            if (node->enabled)
+            if (node->isEnabled())
             {
-                node->isInitializing_ = true;
+                node->_isInitializing = true;
                 initList.emplace_back(node, true);
             }
         }
@@ -57,9 +57,9 @@ void NAV::gui::menus::ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList)
     {
         for (auto* node : nm::m_Nodes())
         {
-            if (node->enabled && node->isInitialized())
+            if (node->isEnabled() && node->isInitialized())
             {
-                node->isDeinitializing_ = true;
+                node->_isDeinitializing = true;
                 initList.emplace_back(node, false);
             }
         }

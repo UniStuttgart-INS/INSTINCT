@@ -8,22 +8,26 @@
 #include <implot.h>
 
 #include <map>
+#include <mutex>
 
 #include "internal/Node/Node.hpp"
 
-#include "util/ScrollingBuffer.hpp"
+#include "util/Container/ScrollingBuffer.hpp"
 
 #include "NodeData/State/PosVelAtt.hpp"
+#include "NodeData/State/InertialNavSol.hpp"
+#include "NodeData/State/PVAError.hpp"
+#include "NodeData/State/ImuBiases.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
-#include "NodeData/GNSS/SkydelObs.hpp"
 #include "NodeData/IMU/ImuObsWDelta.hpp"
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
 
 namespace NAV
 {
+/// @brief Plot node which plots all kind of observations
 class Plot : public Node
 {
   public:
@@ -50,7 +54,7 @@ class Plot : public Node
     [[nodiscard]] static std::string category();
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Saves the node into a json object
@@ -65,17 +69,14 @@ class Plot : public Node
     /// @param[in] endPin Pin where the link ends
     void afterCreateLink(Pin* startPin, Pin* endPin) override;
 
-    /// @brief Called when a link is to be deleted
-    /// @param[in] startPin Pin where the link starts
-    /// @param[in] endPin Pin where the link ends
-    void onDeleteLink(Pin* startPin, Pin* endPin) override;
-
+    /// @brief Specifying the look of a certain line in the plot
     struct PlotStyle
     {
+        /// @brief Possible line types
         enum class LineType : int
         {
-            Scatter,
-            Line,
+            Scatter, ///< Scatter plot (only markers)
+            Line,    ///< Line plot
         };
 
         /// Display name in the legend (if not set falls back to PlotData::displayName)
@@ -88,6 +89,9 @@ class Plot : public Node
         ImVec4 color = IMPLOT_AUTO_COL;
         /// Line thickness
         float thickness = 1.0F;
+
+        /// Amount of points to skip for plotting
+        int stride = 0;
 
         /// Display markers for the line plot (no effect for scatter type)
         bool markers = false;
@@ -103,8 +107,10 @@ class Plot : public Node
         ImVec4 markerOutlineColor = IMPLOT_AUTO_COL;
     };
 
+    /// @brief Information needed to plot the data on a certain pin
     struct PinData
     {
+        /// @brief Stores the actual data coming from a pin
         struct PlotData
         {
             /// @brief Default constructor
@@ -124,8 +130,12 @@ class Plot : public Node
             bool hasData = false;
             /// Key: PlotIndex; Value: <yAxisIndex, plotStyle>
             std::map<size_t, std::pair<int, PlotStyle>> plotOnAxis;
+
+            /// When connecting a new link. All data is flagged for delete and only those who are also present in the new link are kept
+            bool markedForDelete = false;
         };
 
+        /// @brief Possible Pin types
         enum class PinType : int
         {
             Flow,   ///< NodeData Trigger
@@ -134,6 +144,59 @@ class Plot : public Node
             Float,  ///< Floating Point Number
             Matrix, ///< Matrix Object
         };
+
+        /// @brief Constructor
+        PinData() = default;
+        /// @brief Destructor
+        ~PinData() = default;
+        /// @brief Copy constructor
+        /// @param[in] other The other element to copy
+        PinData(const PinData& other)
+            : size(other.size),
+              dataIdentifier(other.dataIdentifier),
+              plotData(other.plotData),
+              pinType(other.pinType),
+              stride(other.stride) {}
+
+        /// @brief Move constructor
+        /// @param[in] other The other element to move
+        PinData(PinData&& other) noexcept
+            : size(other.size),
+              dataIdentifier(std::move(other.dataIdentifier)),
+              plotData(std::move(other.plotData)),
+              pinType(other.pinType),
+              stride(other.stride) {}
+
+        /// @brief Copy assignment operator
+        /// @param[in] rhs The other element to copy
+        PinData& operator=(const PinData& rhs)
+        {
+            if (&rhs != this)
+            {
+                size = rhs.size;
+                dataIdentifier = rhs.dataIdentifier;
+                plotData = rhs.plotData;
+                pinType = rhs.pinType;
+                stride = rhs.stride;
+            }
+
+            return *this;
+        }
+        /// @brief Move assignment operator
+        /// @param[in] rhs The other element to move
+        PinData& operator=(PinData&& rhs) noexcept
+        {
+            if (&rhs != this)
+            {
+                size = rhs.size;
+                dataIdentifier = std::move(rhs.dataIdentifier);
+                plotData = std::move(rhs.plotData);
+                pinType = rhs.pinType;
+                stride = rhs.stride;
+            }
+
+            return *this;
+        }
 
         /// @brief Adds a plotData Element to the list
         /// @param[in] dataIndex Index where to add the data to
@@ -144,12 +207,16 @@ class Plot : public Node
             {
                 if (plotData.at(dataIndex).displayName == displayName) // Item was restored already at this position
                 {
+                    plotData.at(dataIndex).markedForDelete = false;
                     return;
                 }
 
                 // Some other item was restored at this position
-                LOG_WARN("Adding PlotData item '{}' at position {}, but at this position exists already the item '{}'. Reordering the items to match the data. Consider resaving the flow file.",
-                         displayName, dataIndex, plotData.at(dataIndex).displayName);
+                if (!plotData.at(dataIndex).markedForDelete)
+                {
+                    LOG_WARN("Adding PlotData item '{}' at position {}, but at this position exists already the item '{}'. Reordering the items to match the data. Consider resaving the flow file.",
+                             displayName, dataIndex, plotData.at(dataIndex).displayName);
+                }
                 auto searchIter = std::find_if(plotData.begin(),
                                                plotData.end(),
                                                [displayName](const PlotData& plotData) { return plotData.displayName == displayName; });
@@ -161,10 +228,9 @@ class Plot : public Node
                 }
                 else // Item exists already. Developer reordered the items in the list
                 {
-                    auto tmpPlotData = *searchIter;     // Copy the oldelement
-                    plotData.erase(searchIter);         // Delete the old element
-                    plotData.insert(iter, tmpPlotData); // Put the found element at the right position
+                    std::rotate(searchIter, searchIter + 1, iter);
                 }
+                iter->markedForDelete = false;
             }
             else if (std::find_if(plotData.begin(),
                                   plotData.end(),
@@ -179,6 +245,7 @@ class Plot : public Node
                 plotData.emplace_back(displayName, static_cast<size_t>(size));
             }
         }
+
         /// Size of all buffers of the plotData elements
         int size = 2000;
         /// Data Identifier of the connected pin
@@ -187,8 +254,13 @@ class Plot : public Node
         std::vector<PlotData> plotData;
         /// Pin Type
         PinType pinType = PinType::Flow;
+        /// Amount of points to skip for plotting
+        int stride = 1;
+        /// Mutex to lock the buffer so that the GUI thread and the calculation threads don't cause a data race
+        std::mutex mutex;
     };
 
+    /// @brief Information specifying the look of each plot
     struct PlotInfo
     {
         /// @brief Default constructor
@@ -241,7 +313,7 @@ class Plot : public Node
     /// @brief Deinitialize the node
     void deinitialize() override;
 
-    /// @brief Adds/Deletes Input Pins depending on the variable nInputPins
+    /// @brief Adds/Deletes Input Pins depending on the variable _nInputPins
     void updateNumberOfInputPins();
 
     /// @brief Adds/Deletes Plots depending on the variable nPlots
@@ -282,6 +354,16 @@ class Plot : public Node
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
+    void plotPVAError(const std::shared_ptr<const PVAError>& obs, size_t pinIndex);
+
+    /// @brief Plot the data
+    /// @param[in] obs Observation to plot
+    /// @param[in] pinIndex Index of the input pin where the data was received
+    void plotImuBiases(const std::shared_ptr<const ImuBiases>& obs, size_t pinIndex);
+
+    /// @brief Plot the data
+    /// @param[in] obs Observation to plot
+    /// @param[in] pinIndex Index of the input pin where the data was received
     void plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs, size_t pinIndex);
 
     /// @brief Plot the data
@@ -309,30 +391,28 @@ class Plot : public Node
     /// @param[in] pinIndex Index of the input pin where the data was received
     void plotVectorNavBinaryObs(const std::shared_ptr<const VectorNavBinaryOutput>& obs, size_t pinIndex);
 
-    /// @brief Plot the data
-    /// @param[in] obs Observation to plot
-    /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotSkydelObs(const std::shared_ptr<const SkydelObs>& obs, size_t pinIndex);
-
     /// Data storage for each pin
-    std::vector<PinData> data;
+    std::vector<PinData> _pinData;
 
     /// Info for each plot window
-    std::vector<PlotInfo> plotInfos;
+    std::vector<PlotInfo> _plotInfos;
 
     /// Amount of input pins (should equal data.size())
-    int nInputPins = 5;
-    /// Amount of plot windows (should equal plotInfos.size())
-    int nPlots = 0;
+    int _nInputPins = 5;
+    /// Amount of plot windows (should equal _plotInfos.size())
+    int _nPlots = 0;
     /// Possible data identifiers to connect
-    std::vector<std::string> dataIdentifier;
+    std::vector<std::string> _dataIdentifier;
 
     /// Start Time for calculation of relative time with the GPS ToW
-    double startValue_Time = std::nan("");
+    double _startValue_Time = std::nan("");
     /// Start Latitude [rad] for calculation of relative North-South
-    double startValue_North = std::nan("");
+    double _startValue_North = std::nan("");
     /// Start Longitude [rad] for calculation of relative East-West
-    double startValue_East = std::nan("");
+    double _startValue_East = std::nan("");
+
+    /// Flag, whether to override the North/East startValues in the GUI
+    bool _overridePositionStartValues = false;
 };
 
 } // namespace NAV

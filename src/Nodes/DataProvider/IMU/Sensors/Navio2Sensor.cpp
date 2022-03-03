@@ -1,6 +1,5 @@
 #include "Navio2Sensor.hpp"
 
-#include "util/Debug.hpp"
 #include "util/Logger.hpp"
 
 #if !__APPLE__ && !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
@@ -23,8 +22,8 @@ NAV::Navio2Sensor::Navio2Sensor()
 
     LOG_TRACE("{}: called", name);
 
-    hasConfig = true;
-    guiConfigDefaultWindowSize = { 295, 92 };
+    _hasConfig = true;
+    _guiConfigDefaultWindowSize = { 295, 92 };
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() });
 }
@@ -51,16 +50,16 @@ std::string NAV::Navio2Sensor::category()
 
 void NAV::Navio2Sensor::guiConfig()
 {
-    if (ImGui::Combo("IMU", reinterpret_cast<int*>(&imuType), "MPU9250\0LSM9DS1\0\0"))
+    if (ImGui::Combo("IMU", reinterpret_cast<int*>(&_imuType), "MPU9250\0LSM9DS1\0\0"))
     {
-        LOG_DEBUG("{}: IMU changed to {}", nameId(), imuType ? "LSM9DS1" : "MPU9250");
+        LOG_DEBUG("{}: IMU changed to {}", nameId(), _imuType ? "LSM9DS1" : "MPU9250");
         flow::ApplyChanges();
         deinitializeNode();
     }
 
-    if (ImGui::SliderInt("Frequency", &outputFrequency, 1, 200, "%d Hz"))
+    if (ImGui::SliderInt("Frequency", &_outputFrequency, 1, 200, "%d Hz"))
     {
-        LOG_DEBUG("{}: Frequency changed to {}", nameId(), outputFrequency);
+        LOG_DEBUG("{}: Frequency changed to {}", nameId(), _outputFrequency);
         flow::ApplyChanges();
         deinitializeNode();
     }
@@ -74,7 +73,7 @@ void NAV::Navio2Sensor::guiConfig()
 
     json j;
 
-    j["Frequency"] = outputFrequency;
+    j["Frequency"] = _outputFrequency;
     j["Imu"] = Imu::save();
 
     return j;
@@ -86,7 +85,7 @@ void NAV::Navio2Sensor::restore(json const& j)
 
     if (j.contains("Frequency"))
     {
-        j.at("Frequency").get_to(outputFrequency);
+        j.at("Frequency").get_to(_outputFrequency);
     }
     if (j.contains("Imu"))
     {
@@ -101,47 +100,47 @@ bool NAV::Navio2Sensor::resetNode()
 
 bool NAV::Navio2Sensor::initialize()
 {
-    LOG_TRACE("{} ({}): called", nameId(), imuType ? "LSM9DS1" : "MPU9250");
+    LOG_TRACE("{} ({}): called", nameId(), _imuType ? "LSM9DS1" : "MPU9250");
 
 #if !__APPLE__ && !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
-    if (imuType == ImuType::MPU)
+    if (_imuType == ImuType::MPU)
     {
-        sensor = std::make_unique<MPU9250>();
+        _sensor = std::make_unique<MPU9250>();
     }
     else // ImuType::LSM
     {
-        sensor = std::make_unique<LSM9DS1>();
+        _sensor = std::make_unique<LSM9DS1>();
     }
 
-    if (!sensor->probe())
+    if (!_sensor->probe())
     {
-        LOG_ERROR("{} ({}): Sensor not enabled", nameId(), imuType ? "LSM9DS1" : "MPU9250");
+        LOG_ERROR("{} ({}): Sensor not enabled", nameId(), _imuType ? "LSM9DS1" : "MPU9250");
         return false;
     }
-    sensor->initialize();
+    _sensor->initialize();
 #else
-    LOG_ERROR("{} ({}): MacOS is not supported by the Navio2 Node", nameId(), imuType ? "LSM9DS1" : "MPU9250");
+    LOG_ERROR("{} ({}): MacOS is not supported by the Navio2 Node", nameId(), _imuType ? "LSM9DS1" : "MPU9250");
     return false;
 #endif
 
-    int outputInterval = static_cast<int>(1.0 / static_cast<double>(outputFrequency) * 1000.0);
-    startTime = std::chrono::steady_clock::now();
-    timer.start(outputInterval, readImuThread, this);
+    int outputInterval = static_cast<int>(1.0 / static_cast<double>(_outputFrequency) * 1000.0);
+    _startTime = std::chrono::steady_clock::now();
+    _timer.start(outputInterval, readImuThread, this);
 
     return true;
 }
 
 void NAV::Navio2Sensor::deinitialize()
 {
-    LOG_TRACE("{} ({}): called", nameId(), imuType ? "LSM9DS1" : "MPU9250");
+    LOG_TRACE("{} ({}): called", nameId(), _imuType ? "LSM9DS1" : "MPU9250");
 
-    if (timer.is_running())
+    if (_timer.is_running())
     {
-        timer.stop();
+        _timer.stop();
     }
 
 #if !__APPLE__ && !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
-    sensor.reset();
+    _sensor.reset();
 #endif
 }
 
@@ -149,39 +148,39 @@ void NAV::Navio2Sensor::deinitialize()
 void NAV::Navio2Sensor::readImuThread(void* userData)
 {
     auto* navio = static_cast<Navio2Sensor*>(userData);
-    auto obs = std::make_shared<ImuObs>(navio->imuPos);
+    auto obs = std::make_shared<ImuObs>(navio->_imuPos);
 
     auto currentTime = std::chrono::steady_clock::now();
 #if !__APPLE__ && !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
-    navio->sensor->update();
+    navio->_sensor->update();
 
-    navio->sensor->read_accelerometer(&navio->ax, &navio->ay, &navio->az);
-    navio->sensor->read_gyroscope(&navio->gx, &navio->gy, &navio->gz);
-    navio->sensor->read_magnetometer(&navio->mx, &navio->my, &navio->mz);
+    navio->_sensor->read_accelerometer(&navio->_ax, &navio->_ay, &navio->_az);
+    navio->_sensor->read_gyroscope(&navio->_gx, &navio->_gy, &navio->_gz);
+    navio->_sensor->read_magnetometer(&navio->_mx, &navio->_my, &navio->_mz);
 
-    obs->temperature = navio->sensor->read_temperature();
+    obs->temperature = navio->_sensor->read_temperature();
 #endif
 
-    obs->accelUncompXYZ.emplace(navio->ax, navio->ay, navio->az);
-    obs->gyroUncompXYZ.emplace(navio->gx, navio->gy, navio->gz);
+    obs->accelUncompXYZ.emplace(navio->_ax, navio->_ay, navio->_az);
+    obs->gyroUncompXYZ.emplace(navio->_gx, navio->_gy, navio->_gz);
 
-    if (navio->imuType == ImuType::LSM)
+    if (navio->_imuType == ImuType::LSM)
     {
-        obs->magUncompXYZ.emplace(navio->mx, navio->my, navio->mz);
+        obs->magUncompXYZ.emplace(navio->_mx, navio->_my, navio->_mz);
         // constexpr double uT2Gauss = 1.0 / 100.0;
         // obs->magUncompXYZ.value() *= uT2Gauss;
     }
 
-    std::chrono::nanoseconds diff = currentTime - navio->startTime;
+    std::chrono::nanoseconds diff = currentTime - navio->_startTime;
     obs->timeSinceStartup = diff.count();
 
     LOG_DATA("DATA({}): {}, {}°C, a=({}, {}, {})", navio->name, obs->timeSinceStartup.value(), obs->temperature.value(),
-             navio->ax, navio->ay, navio->az);
+             navio->_ax, navio->_ay, navio->_az);
 
     if (InsTime currentTime = util::time::GetCurrentInsTime();
         !currentTime.empty())
     {
         obs->insTime = currentTime;
     }
-    navio->invokeCallbacks(OutputPortIndex_ImuObs, obs);
+    navio->invokeCallbacks(OUTPUT_PORT_INDEX_IMU_OBS, obs);
 }

@@ -14,17 +14,17 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/GNSS/EmlidObs.hpp"
 
 NAV::EmlidSensor::EmlidSensor()
-    : sensor(typeStatic())
+    : _sensor(typeStatic())
 {
     name = typeStatic();
 
     LOG_TRACE("{}: called", name);
 
-    hasConfig = true;
-    guiConfigDefaultWindowSize = { 360, 70 };
+    _hasConfig = true;
+    _guiConfigDefaultWindowSize = { 360, 70 };
 
     // TODO: Update the library to handle different baudrates
-    selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_9600);
+    _selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_9600);
 
     nm::CreateOutputPin(this, "EmlidObs", Pin::Type::Flow, { NAV::EmlidObs::type() });
 }
@@ -51,9 +51,9 @@ std::string NAV::EmlidSensor::category()
 
 void NAV::EmlidSensor::guiConfig()
 {
-    if (ImGui::InputTextWithHint("SensorPort", "/dev/ttyACM0", &sensorPort))
+    if (ImGui::InputTextWithHint("SensorPort", "/dev/ttyACM0", &_sensorPort))
     {
-        LOG_DEBUG("{}: SensorPort changed to {}", nameId(), sensorPort);
+        LOG_DEBUG("{}: SensorPort changed to {}", nameId(), _sensorPort);
         flow::ApplyChanges();
         deinitializeNode();
     }
@@ -99,9 +99,9 @@ bool NAV::EmlidSensor::initialize()
     // connect to the sensor
     try
     {
-        sensor->connect(sensorPort, sensorBaudrate());
+        _sensor->connect(_sensorPort, sensorBaudrate());
 
-        LOG_DEBUG("{} connected on port {} with baudrate {}", nameId(), sensorPort, sensorBaudrate());
+        LOG_DEBUG("{} connected on port {} with baudrate {}", nameId(), _sensorPort, sensorBaudrate());
     }
     catch (...)
     {
@@ -109,7 +109,7 @@ bool NAV::EmlidSensor::initialize()
         return false;
     }
 
-    sensor->registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
+    _sensor->registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
 
     return true;
 }
@@ -123,16 +123,16 @@ void NAV::EmlidSensor::deinitialize()
         return;
     }
 
-    if (sensor->isConnected())
+    if (_sensor->isConnected())
     {
         try
         {
-            sensor->unregisterAsyncPacketReceivedHandler();
+            _sensor->unregisterAsyncPacketReceivedHandler();
         }
         catch (...)
         {}
 
-        sensor->disconnect();
+        _sensor->disconnect();
     }
 }
 
@@ -157,5 +157,5 @@ void NAV::EmlidSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::p
         obs->insTime = currentTime;
     }
 
-    erSensor->invokeCallbacks(OutputPortIndex_EmlidObs, obs);
+    erSensor->invokeCallbacks(OUTPUT_PORT_INDEX_EMLID_OBS, obs);
 }

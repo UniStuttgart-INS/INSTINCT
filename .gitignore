@@ -4,9 +4,6 @@ build/*
 # Ignore any executables
 bin/*
 
-# Ignore documentation
-doc/*
-
 # Ignore logs
 logs/*
 

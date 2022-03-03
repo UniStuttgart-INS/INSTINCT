@@ -5,42 +5,31 @@
 
 #pragma once
 
-#include "util/InsTransformations.hpp"
+#include "Navigation/Transformations/CoordinateFrames.hpp"
 
 #include "util/Eigen.hpp"
-#include "NodeData/InsObs.hpp"
+#include "NodeData/State/PosVel.hpp"
 
 namespace NAV
 {
 /// Position, Velocity and Attitude Storage Class
-class PosVelAtt : public InsObs
+class PosVelAtt : public PosVel
 {
   public:
-    /// @brief Default constructor
-    PosVelAtt() = default;
-    /// @brief Destructor
-    ~PosVelAtt() override = default;
-    /// @brief Copy constructor
-    PosVelAtt(const PosVelAtt&) = delete;
-    /// @brief Move constructor
-    PosVelAtt(PosVelAtt&&) = delete;
-    /// @brief Copy assignment operator
-    PosVelAtt& operator=(const PosVelAtt&) = delete;
-    /// @brief Move assignment operator
-    PosVelAtt& operator=(PosVelAtt&&) = delete;
-
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return std::string("PosVelAtt");
+        return "PosVelAtt";
     }
 
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
     {
-        return { InsObs::type() };
+        auto parent = PosVel::parentTypes();
+        parent.push_back(PosVel::type());
+        return parent;
     }
 
     /* -------------------------------------------------------------------------------------------------------- */
@@ -49,52 +38,37 @@ class PosVelAtt : public InsObs
 
     /// @brief Returns the Quaternion from body to navigation frame (NED)
     /// @return The Quaternion for the rotation from body to navigation coordinates
-    Eigen::Quaterniond& quaternion_nb() { return q_nb; }
-
-    /// @brief Returns the Quaternion from body to navigation frame (NED)
-    /// @return The Quaternion for the rotation from body to navigation coordinates
-    [[nodiscard]] const Eigen::Quaterniond& quaternion_nb() const { return q_nb; }
+    [[nodiscard]] const Eigen::Quaterniond& n_Quat_b() const
+    {
+        return _n_Quat_b;
+    }
 
     /// @brief Returns the Quaternion from navigation to body frame (NED)
     /// @return The Quaternion for the rotation from navigation to body coordinates
-    [[nodiscard]] Eigen::Quaterniond quaternion_bn() const
+    [[nodiscard]] Eigen::Quaterniond b_Quat_n() const
     {
-        return quaternion_nb().conjugate();
-    }
-
-    /// @brief Returns the Quaternion from navigation to Earth-fixed frame
-    /// @return The Quaternion for the rotation from navigation to earth coordinates
-    [[nodiscard]] Eigen::Quaterniond quaternion_en() const
-    {
-        return trafo::quat_en(latitude(), longitude());
-    }
-
-    /// @brief Returns the Quaternion from Earth-fixed frame to navigation
-    /// @return The Quaternion for the rotation from earth navigation coordinates
-    [[nodiscard]] Eigen::Quaterniond quaternion_ne() const
-    {
-        return quaternion_en().conjugate();
+        return n_Quat_b().conjugate();
     }
 
     /// @brief Returns the Quaternion from body to Earth-fixed frame
     /// @return The Quaternion for the rotation from body to earth coordinates
-    [[nodiscard]] Eigen::Quaterniond quaternion_eb() const
+    [[nodiscard]] const Eigen::Quaterniond& e_Quat_b() const
     {
-        return quaternion_en() * quaternion_nb();
+        return _e_Quat_b;
     }
 
     /// @brief Returns the Quaternion from Earth-fixed to body frame
     /// @return The Quaternion for the rotation from earth to body coordinates
-    [[nodiscard]] Eigen::Quaterniond quaternion_be() const
+    [[nodiscard]] Eigen::Quaterniond b_Quat_e() const
     {
-        return quaternion_eb().conjugate();
+        return e_Quat_b().conjugate();
     }
 
     /// @brief Returns the Roll, Pitch and Yaw angles in [rad]
     /// @return [roll, pitch, yaw]^T
     [[nodiscard]] Eigen::Vector3d rollPitchYaw() const
     {
-        // Eigen::Matrix3d DCMBodyToNED = quaternion_nb().toRotationMatrix();
+        // Eigen::Matrix3d DCMBodyToNED = n_Quat_b().toRotationMatrix();
         // Eigen::Vector3d EulerAngles = Eigen::Vector3d::Zero();
 
         // EulerAngles(1) = -asin(DCMBodyToNED(2, 0));
@@ -111,52 +85,60 @@ class PosVelAtt : public InsObs
         // }
 
         // return EulerAngles;
-        return trafo::quat2eulerZYX(quaternion_nb());
+        return trafo::quat2eulerZYX(n_Quat_b());
     }
 
-    /* -------------------------------------------------------------------------------------------------------- */
-    /*                                                 Position                                                 */
-    /* -------------------------------------------------------------------------------------------------------- */
+    // ###########################################################################################################
+    //                                                  Setter
+    // ###########################################################################################################
 
-    /// Returns the latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m]
-    [[nodiscard]] Eigen::Vector3d latLonAlt() const { return trafo::ecef2lla_WGS84(position_ecef()); }
+    /// @brief Set the Quaternion from body to earth frame
+    /// @param[in] e_Quat_b Quaternion from body to earth frame
+    void setAttitude_e_Quat_b(const Eigen::Quaterniond& e_Quat_b)
+    {
+        _e_Quat_b = e_Quat_b;
+        _n_Quat_b = n_Quat_e() * e_Quat_b;
+    }
 
-    /// Returns the latitude 𝜙 in [rad]
-    [[nodiscard]] double latitude() const { return latLonAlt()(0); }
+    /// @brief Set the Quaternion from body to navigation frame
+    /// @param[in] n_Quat_b Quaternion from body to navigation frame
+    void setAttitude_n_Quat_b(const Eigen::Quaterniond& n_Quat_b)
+    {
+        _e_Quat_b = e_Quat_n() * n_Quat_b;
+        _n_Quat_b = n_Quat_b;
+    }
 
-    /// Returns the longitude λ in [rad]
-    [[nodiscard]] double longitude() const { return latLonAlt()(1); }
+    /// @brief Set the State
+    /// @param[in] e_position New Position in ECEF coordinates
+    /// @param[in] e_velocity The new velocity in the earth frame
+    /// @param[in] e_Quat_b Quaternion from body to earth frame
+    void setState_e(const Eigen::Vector3d& e_position, const Eigen::Vector3d& e_velocity, const Eigen::Quaterniond& e_Quat_b)
+    {
+        setPosition_e(e_position);
+        setVelocity_e(e_velocity);
+        setAttitude_e_Quat_b(e_Quat_b);
+    }
 
-    /// Returns the altitude (height above ground) in [m]
-    [[nodiscard]] double altitude() const { return latLonAlt()(2); }
-
-    /// Returns the ECEF coordinates in [m]
-    Eigen::Vector3d& position_ecef() { return p_ecef; }
-
-    /// Returns the ECEF coordinates in [m]
-    [[nodiscard]] const Eigen::Vector3d& position_ecef() const { return p_ecef; }
-
-    /* -------------------------------------------------------------------------------------------------------- */
-    /*                                                 Velocity                                                 */
-    /* -------------------------------------------------------------------------------------------------------- */
-
-    /// Returns the velocity in [m/s], in navigation coordinates
-    Eigen::Vector3d& velocity_n() { return v_n; }
-
-    /// Returns the velocity in [m/s], in navigation coordinates
-    [[nodiscard]] const Eigen::Vector3d& velocity_n() const { return v_n; }
+    /// @brief Set the State
+    /// @param[in] lla_position New Position in LatLonAlt coordinates
+    /// @param[in] n_velocity The new velocity in the NED frame
+    /// @param[in] n_Quat_b Quaternion from body to navigation frame
+    void setState_n(const Eigen::Vector3d& lla_position, const Eigen::Vector3d& n_velocity, const Eigen::Quaterniond& n_Quat_b)
+    {
+        setPosition_lla(lla_position);
+        setVelocity_n(n_velocity);
+        setAttitude_n_Quat_b(n_Quat_b);
+    }
 
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member variables                                             */
     /* -------------------------------------------------------------------------------------------------------- */
 
   private:
+    /// Quaternion body to earth frame
+    Eigen::Quaterniond _e_Quat_b{ 0, 0, 0, 0 };
     /// Quaternion body to navigation frame (roll, pitch, yaw)
-    Eigen::Quaterniond q_nb;
-    /// Position in ECEF coordinates
-    Eigen::Vector3d p_ecef;
-    /// Velocity in navigation coordinates
-    Eigen::Vector3d v_n;
+    Eigen::Quaterniond _n_Quat_b{ 0, 0, 0, 0 };
 };
 
 } // namespace NAV

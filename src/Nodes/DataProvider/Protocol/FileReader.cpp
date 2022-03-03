@@ -13,7 +13,7 @@
 
     json j;
 
-    j["path"] = path;
+    j["path"] = _path;
 
     return j;
 }
@@ -24,7 +24,7 @@ void NAV::FileReader::restore(json const& j)
 
     if (j.contains("path"))
     {
-        j.at("path").get_to(path);
+        j.at("path").get_to(_path);
     }
 }
 
@@ -34,25 +34,25 @@ bool NAV::FileReader::initialize()
 
     LOG_TRACE("called");
 
-    fileType = determineFileType();
+    _fileType = determineFileType();
 
-    std::string filepath = path;
-    if (!path.starts_with('/') && !path.starts_with('~'))
+    std::string filepath = _path;
+    if (!_path.starts_with('/') && !_path.starts_with('~'))
     {
-        filepath = flow::GetProgramRootPath() + '/' + path;
+        filepath = flow::GetProgramRootPath() + '/' + _path;
     }
 
-    if (fileType == FileType::CSV || fileType == FileType::BINARY)
+    if (_fileType == FileType::CSV || _fileType == FileType::BINARY)
     {
         // Does not enable binary read/write, but disables OS dependant treatment of \n, \r
-        filestream = std::ifstream(filepath, std::ios_base::in | std::ios_base::binary);
+        _filestream = std::ifstream(filepath, std::ios_base::in | std::ios_base::binary);
     }
     else
     {
         return false;
     }
 
-    if (!filestream.good())
+    if (!_filestream.good())
     {
         LOG_ERROR("Could not open file {}", filepath);
         return false;
@@ -60,13 +60,13 @@ bool NAV::FileReader::initialize()
 
     readHeader();
 
-    dataStart = filestream.tellg();
+    _dataStart = _filestream.tellg();
 
-    if (fileType == FileType::CSV)
+    if (_fileType == FileType::CSV)
     {
         LOG_DEBUG("CSV-File successfully initialized");
     }
-    else if (fileType == FileType::BINARY)
+    else if (_fileType == FileType::BINARY)
     {
         LOG_DEBUG("Binary-File successfully initialized");
     }
@@ -78,28 +78,28 @@ void NAV::FileReader::deinitialize()
 {
     LOG_TRACE("called");
 
-    headerColumns.clear();
+    _headerColumns.clear();
 
-    if (filestream.is_open())
+    if (_filestream.is_open())
     {
-        filestream.close();
+        _filestream.close();
     }
 
-    filestream.clear();
+    _filestream.clear();
 }
 
 NAV::FileReader::FileType NAV::FileReader::determineFileType()
 {
     LOG_TRACE("called");
 
-    std::string filepath = path;
-    if (!path.starts_with('/') && !path.starts_with('~'))
+    std::string filepath = _path;
+    if (!_path.starts_with('/') && !_path.starts_with('~'))
     {
-        filepath = flow::GetProgramRootPath() + '/' + path;
+        filepath = flow::GetProgramRootPath() + '/' + _path;
     }
 
     auto filestreamHeader = std::ifstream(filepath);
-    if (filestream.good())
+    if (_filestream.good())
     {
         std::string line;
         std::getline(filestreamHeader, line);
@@ -123,13 +123,13 @@ void NAV::FileReader::readHeader()
 {
     LOG_TRACE("called");
 
-    if (fileType == FileType::CSV)
+    if (_fileType == FileType::CSV)
     {
-        headerColumns.clear();
+        _headerColumns.clear();
 
         // Read header line
         std::string line;
-        std::getline(filestream, line);
+        std::getline(_filestream, line);
         // Remove any starting non text characters
         line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isalnum(ch); }));
         // Convert line into stream
@@ -140,7 +140,7 @@ void NAV::FileReader::readHeader()
         {
             // Remove any trailing non text characters
             cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
-            headerColumns.push_back(cell);
+            _headerColumns.push_back(cell);
         }
     }
 }
@@ -150,6 +150,6 @@ void NAV::FileReader::resetReader()
     LOG_TRACE("called");
 
     // Return to position
-    filestream.clear();
-    filestream.seekg(dataStart, std::ios_base::beg);
+    _filestream.clear();
+    _filestream.seekg(_dataStart, std::ios_base::beg);
 }

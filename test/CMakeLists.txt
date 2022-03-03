@@ -22,17 +22,18 @@ endforeach(TMP_PATH)
 # Link all files in the Source directory
 add_executable(
   tests
-  src/util/UartSensors/Ublox/UbloxTypesTests.cpp
-  src/util/UartSensors/Ublox/UbloxUtilitiesTests.cpp
-  src/util/InsTimeTests.cpp
-  src/util/InsMechanizationTests.cpp
-  src/util/InsTransformationsTests.cpp
-  src/util/LoggerTests.cpp
-  src/util/ScrollingBufferTests.cpp
-  src/NodeData/State/StateDataTests.cpp
+  src/internal/CallbackManagerTests.cpp
+  src/Navigation/INS/MechanizationTests.cpp
+  src/Navigation/Time/InsTimeTests.cpp
+  src/Navigation/Transformations/CoordinateFramesTests.cpp
+  src/NodeData/State/PosVelAttTests.cpp
   src/Nodes/FlowTester.cpp
   src/Nodes/DataLogger/IMU/VectorNavDataLoggerTests.cpp
   src/Nodes/DataProvider/IMU/VectorNavFileTests.cpp
+  src/util/Container/ScrollingBufferTests.cpp
+  src/util/UartSensors/Ublox/UbloxTypesTests.cpp
+  src/util/UartSensors/Ublox/UbloxUtilitiesTests.cpp
+  src/util/LoggerTests.cpp
   ${SRC_FILES})
 
 target_include_directories(tests PRIVATE ${CMAKE_SOURCE_DIR}/src)
@@ -48,8 +49,8 @@ target_link_libraries(
           CONAN_PKG::spdlog
           CONAN_PKG::boost
           CONAN_PKG::eigen
-          Threads::Threads
           CONAN_PKG::nlohmann_json
+          Threads::Threads
           imgui
           imgui_node_editor
           ImGuiFileDialog
@@ -63,6 +64,10 @@ if(NOT APPLE AND NOT WIN32)
 endif()
 
 target_compile_definitions(tests PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})
+
+if(APPLE)
+  target_compile_definitions(tests PUBLIC BOOST_ASIO_HAS_STD_INVOKE_RESULT=1)
+endif()
 
 target_compile_definitions(tests PUBLIC TESTING=1)
 

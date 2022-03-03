@@ -8,7 +8,7 @@
 
     json j;
 
-    j["sensorPort"] = sensorPort;
+    j["sensorPort"] = _sensorPort;
     j["sensorBaudrate"] = static_cast<size_t>(sensorBaudrate());
 
     return j;
@@ -20,19 +20,19 @@ void NAV::UartSensor::restore(json const& j)
 
     if (j.contains("sensorPort"))
     {
-        j.at("sensorPort").get_to(sensorPort);
+        j.at("sensorPort").get_to(_sensorPort);
     }
     if (j.contains("sensorBaudrate"))
     {
         size_t baudrate = 0;
         j.at("sensorBaudrate").get_to(baudrate);
-        selectedBaudrate = baudrate2Selection(static_cast<Baudrate>(baudrate));
+        _selectedBaudrate = baudrate2Selection(static_cast<Baudrate>(baudrate));
     }
 }
 
 NAV::UartSensor::Baudrate NAV::UartSensor::sensorBaudrate() const
 {
-    switch (selectedBaudrate)
+    switch (_selectedBaudrate)
     {
     case 0:
         return BAUDRATE_FASTEST;

@@ -4,25 +4,25 @@
 #include "util/Logger.hpp"
 
 NAV::sensors::kvh::KvhUartSensor::KvhUartSensor(std::string name)
-    : name(std::move(name)), _buffer(uart::sensors::UartSensor::DefaultReadBufferSize)
+    : _name(std::move(name)), _buffer(uart::sensors::UartSensor::DefaultReadBufferSize)
 {
     resetTracking();
 }
 
 void NAV::sensors::kvh::KvhUartSensor::resetTracking()
 {
-    currentlyBuildingBinaryPacket = false;
-    currentlyBuildingAsciiPacket = false;
+    _currentlyBuildingBinaryPacket = false;
+    _currentlyBuildingAsciiPacket = false;
 
-    asciiEndChar1Found = false;
-    packetType = HeaderType::FMT_UNKNOWN;
+    _asciiEndChar1Found = false;
+    _packetType = HeaderType::FMT_UNKNOWN;
 
     _buffer.resize(0);
 }
 
 NAV::sensors::kvh::KvhUartSensor::HeaderType NAV::sensors::kvh::KvhUartSensor::bFindImuHeader(uint8_t ui8Data)
 {
-    if (eState == SM_IDLE)
+    if (_eState == SM_IDLE)
     {
         if (ui8Data == ((HEADER_FMT_A >> 24U) & 0xFFU))
         // || ui8Data == ((HEADER_FMT_B >> 24U) & 0xFFU)
@@ -30,73 +30,73 @@ NAV::sensors::kvh::KvhUartSensor::HeaderType NAV::sensors::kvh::KvhUartSensor::b
         // || ui8Data == ((HEADER_FMT_XBIT >> 24U) & 0xFFU)
         // || ui8Data == ((HEADER_FMT_XBIT2 >> 24U) & 0xFFU))
         {
-            eState = SM_H1;
+            _eState = SM_H1;
         }
     }
-    else if (eState == SM_H1)
+    else if (_eState == SM_H1)
     {
         if (ui8Data == ((HEADER_FMT_A >> 16U) & 0xFFU))
         {
-            eState = SM_H2;
+            _eState = SM_H2;
         }
         else
         {
-            eState = SM_IDLE;
+            _eState = SM_IDLE;
         }
     }
-    else if (eState == SM_H2)
+    else if (_eState == SM_H2)
     {
         if (ui8Data == ((HEADER_FMT_A >> 8U) & 0xFFU))
         {
-            eState = SM_H3;
+            _eState = SM_H3;
         }
         else if (ui8Data == ((HEADER_FMT_XBIT >> 8U) & 0xFFU))
         {
-            eState = SM_X3;
+            _eState = SM_X3;
         }
         else
         {
-            eState = SM_IDLE;
+            _eState = SM_IDLE;
         }
     }
-    else if (eState == SM_H3)
+    else if (_eState == SM_H3)
     {
         if (ui8Data == (HEADER_FMT_A & 0xFFU))
         {
-            eState = SM_IDLE;
+            _eState = SM_IDLE;
             return HeaderType::FMT_A;
         }
         if (ui8Data == (HEADER_FMT_B & 0xFFU))
         {
-            eState = SM_IDLE;
+            _eState = SM_IDLE;
             return HeaderType::FMT_B;
         }
         if (ui8Data == (HEADER_FMT_C & 0xFFU))
         {
-            eState = SM_IDLE;
+            _eState = SM_IDLE;
             return HeaderType::FMT_C;
         }
 
-        eState = SM_IDLE;
+        _eState = SM_IDLE;
     }
-    else if (eState == SM_X3)
+    else if (_eState == SM_X3)
     {
         if (ui8Data == (HEADER_FMT_XBIT & 0xFFU))
         {
-            eState = SM_IDLE;
+            _eState = SM_IDLE;
             return HeaderType::FMT_XBIT;
         }
         if (ui8Data == (HEADER_FMT_XBIT2 & 0xFFU))
         {
-            eState = SM_IDLE;
+            _eState = SM_IDLE;
             return HeaderType::FMT_XBIT2;
         }
 
-        eState = SM_IDLE;
+        _eState = SM_IDLE;
     }
     else
     {
-        eState = SM_IDLE;
+        _eState = SM_IDLE;
     }
 
     return HeaderType::FMT_UNKNOWN;
@@ -108,32 +108,32 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::kvh::KvhUartSensor::findPa
     {
         // Buffer is full
         resetTracking();
-        LOG_ERROR("{}: Discarding current packet, because buffer is full.", name);
+        LOG_ERROR("{}: Discarding current packet, because buffer is full.", _name);
     }
 
     auto binaryPacketType = bFindImuHeader(dataByte);
     if (binaryPacketType != HeaderType::FMT_UNKNOWN)
     {
         resetTracking();
-        packetType = binaryPacketType;
-        currentlyBuildingBinaryPacket = true;
+        _packetType = binaryPacketType;
+        _currentlyBuildingBinaryPacket = true;
         uint32_t header{};
         switch (binaryPacketType)
         {
         case HeaderType::FMT_A:
-            header = uart::stoh(HEADER_FMT_A, endianness);
+            header = uart::stoh(HEADER_FMT_A, ENDIANNESS);
             break;
         case HeaderType::FMT_B:
-            header = uart::stoh(HEADER_FMT_B, endianness);
+            header = uart::stoh(HEADER_FMT_B, ENDIANNESS);
             break;
         case HeaderType::FMT_C:
-            header = uart::stoh(HEADER_FMT_C, endianness);
+            header = uart::stoh(HEADER_FMT_C, ENDIANNESS);
             break;
         case HeaderType::FMT_XBIT:
-            header = uart::stoh(HEADER_FMT_XBIT, endianness);
+            header = uart::stoh(HEADER_FMT_XBIT, ENDIANNESS);
             break;
         case HeaderType::FMT_XBIT2:
-            header = uart::stoh(HEADER_FMT_XBIT2, endianness);
+            header = uart::stoh(HEADER_FMT_XBIT2, ENDIANNESS);
             break;
         default:
             break;
@@ -144,34 +144,34 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::kvh::KvhUartSensor::findPa
         return nullptr;
     }
 
-    if (!currentlyBuildingAsciiPacket && !currentlyBuildingBinaryPacket)
+    if (!_currentlyBuildingAsciiPacket && !_currentlyBuildingBinaryPacket)
     {
         resetTracking();
-        currentlyBuildingAsciiPacket = true;
+        _currentlyBuildingAsciiPacket = true;
         _buffer.push_back(dataByte);
     }
-    else if (currentlyBuildingBinaryPacket)
+    else if (_currentlyBuildingBinaryPacket)
     {
         _buffer.push_back(dataByte);
 
-        if ((packetType == HeaderType::FMT_A && _buffer.size() == 36)
-            || (packetType == HeaderType::FMT_B && _buffer.size() == 40)
-            || (packetType == HeaderType::FMT_C && _buffer.size() == 38)
-            || (packetType == HeaderType::FMT_XBIT && _buffer.size() == 11)
-            || (packetType == HeaderType::FMT_XBIT2 && _buffer.size() == 13))
+        if ((_packetType == HeaderType::FMT_A && _buffer.size() == 36)
+            || (_packetType == HeaderType::FMT_B && _buffer.size() == 40)
+            || (_packetType == HeaderType::FMT_C && _buffer.size() == 38)
+            || (_packetType == HeaderType::FMT_XBIT && _buffer.size() == 11)
+            || (_packetType == HeaderType::FMT_XBIT2 && _buffer.size() == 13))
         {
             // We have a possible binary packet!
-            auto p = std::make_unique<uart::protocol::Packet>(_buffer, &sensor);
+            auto p = std::make_unique<uart::protocol::Packet>(_buffer, &_sensor);
 
             if (p->isValid())
             {
                 // We have a valid binary packet!!!.
-                LOG_DATA("{}: Valid binary packet: Type={}, Length={}", name, packetType, _buffer.size());
+                LOG_DATA("{}: Valid binary packet: Type={}, Length={}", _name, _packetType, _buffer.size());
                 resetTracking();
                 return p;
             }
             // Invalid packet!
-            LOG_ERROR("{}: Invalid binary packet: Type={}, Length={}", name, packetType, _buffer.size());
+            LOG_ERROR("{}: Invalid binary packet: Type={}, Length={}", _name, _packetType, _buffer.size());
             resetTracking();
         }
         if (_buffer.size() >= 40)
@@ -179,41 +179,41 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::kvh::KvhUartSensor::findPa
             resetTracking();
         }
     }
-    else if (currentlyBuildingAsciiPacket)
+    else if (_currentlyBuildingAsciiPacket)
     {
         _buffer.push_back(dataByte);
 
-        if (dataByte == AsciiEscapeChar)
+        if (dataByte == ASCII_ESCAPE_CHAR)
         {
             resetTracking();
         }
-        else if (dataByte == AsciiEndChar1)
+        else if (dataByte == ASCII_END_CHAR_1)
         {
-            asciiEndChar1Found = true;
+            _asciiEndChar1Found = true;
         }
-        else if (asciiEndChar1Found)
+        else if (_asciiEndChar1Found)
         {
-            if (dataByte == AsciiEndChar2)
+            if (dataByte == ASCII_END_CHAR_2)
             {
                 // We have a possible data packet
-                auto p = std::make_unique<uart::protocol::Packet>(_buffer, &sensor);
+                auto p = std::make_unique<uart::protocol::Packet>(_buffer, &_sensor);
 
                 if (p->isValid())
                 {
                     // We have a valid ascii packet!!!.
-                    LOG_DATA("{}: Valid ascii packet: {}", name, p->datastr().substr(0, p->getRawDataLength() - 2));
+                    LOG_DATA("{}: Valid ascii packet: {}", _name, p->datastr().substr(0, p->getRawDataLength() - 2));
                     return p;
                 }
                 // Invalid packet!
-                LOG_ERROR("{}: Invalid ascii packet: {}", name, p->datastr());
+                LOG_ERROR("{}: Invalid ascii packet: {}", _name, p->datastr());
             }
 
             resetTracking();
         }
 
-        if (_buffer.size() >= MaximumSizeForAsciiPacket)
+        if (_buffer.size() >= MAX_SIZE_ASCII_PACKET)
         {
-            LOG_ERROR("{}: Buffer exceeded the Maximum Ascii Packet Size", name);
+            LOG_ERROR("{}: Buffer exceeded the Maximum Ascii Packet Size", _name);
             resetTracking();
         }
     }
@@ -225,14 +225,14 @@ void NAV::sensors::kvh::KvhUartSensor::packetFinderFunction(const std::vector<ui
 {
     auto* sensor = static_cast<KvhUartSensor*>(userData);
 
-    for (size_t i = 0; i < data.size(); i++, sensor->runningDataIndex++)
+    for (size_t i = 0; i < data.size(); i++, sensor->_runningDataIndex++)
     {
         auto packetPointer = sensor->findPacket(data.at(i));
 
         if (packetPointer != nullptr)
         {
             uart::protocol::Packet packet = *packetPointer;
-            dispatchPacket(dispatchPacketUserData, packet, sensor->runningDataIndex, timestamp);
+            dispatchPacket(dispatchPacketUserData, packet, sensor->_runningDataIndex, timestamp);
         }
     }
 }
@@ -253,7 +253,7 @@ uart::protocol::Packet::Type NAV::sensors::kvh::KvhUartSensor::packetTypeFunctio
 
     uint32_t data_zero{};
     memcpy(&data_zero, packet.getRawData().data(), sizeof(uint32_t));
-    data_zero = uart::stoh(data_zero, endianness);
+    data_zero = uart::stoh(data_zero, ENDIANNESS);
 
     if (data_zero == HEADER_FMT_A || data_zero == HEADER_FMT_B || data_zero == HEADER_FMT_C)
     {
@@ -283,7 +283,7 @@ bool NAV::sensors::kvh::KvhUartSensor::checksumFunction(const uart::protocol::Pa
 
         uint32_t checksumPacket = 0;
         memcpy(&checksumPacket, packet.getRawData().data() + packet.getRawDataLength() - sizeof(uint32_t), sizeof(uint32_t));
-        checksumPacket = uart::stoh(checksumPacket, endianness);
+        checksumPacket = uart::stoh(checksumPacket, ENDIANNESS);
 
         return checksumPacket == checksumCalc;
     }

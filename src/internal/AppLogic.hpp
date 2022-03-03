@@ -1,4 +1,4 @@
-/// @file Application.hpp
+/// @file AppLogic.hpp
 /// @brief Application logic
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2021-08-17

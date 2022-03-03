@@ -59,6 +59,10 @@ check-image:
     - genhtml --version
     - gcov --version
     - xml_grep --version
+    - dvips --version
+    - gs --version
+    - latex --version
+    - command -v pdf2svg
 
 check-windows:
   stage: prepare
@@ -93,6 +97,19 @@ clang-tidy:tests:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug --target copy-compile-commands
     - python3 ./tools/run-clang-tidy.py $PWD/test
+
+documentation:
+  stage: checks
+  tags:
+    - linux
+  script:
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES
+    - cmake --build build/Release --target doc
+  artifacts:
+    when: on_failure
+    paths:
+      - bin/doc/
+    expire_in: 1 week
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                         Build Main & GUI                                         ║
@@ -267,18 +284,19 @@ run-tests:win:
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 doxygen:
-  extends: .schedule
   stage: analyze
   tags:
     - linux
   needs: ["check-image"]
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release --target doxygen-docs -- -j2
+    - cmake --build build/Release --target doc
   artifacts:
     paths:
-      - doc/html
+      - bin/doc/html/
     expire_in: 2h
+  only:
+    - master
 
 coverage:
   stage: analyze
@@ -288,14 +306,16 @@ coverage:
   script:
     - mkdir -p coverage
     - lcov --gcov-tool gcov --capture --no-external --directory . --output-file coverage/coverage_all.info
-    - lcov --remove coverage/coverage_all.info $(pwd)'/lib/*' $(pwd)'/test/*' --output-file coverage/coverage.info
-    - genhtml coverage/coverage.info --output-directory coverage
+    - lcov --remove coverage/coverage_all.info $(pwd)'/lib/*' $(pwd)'/test/*' $(pwd)'/build/*' --output-file coverage/coverage.info
+    - genhtml coverage/coverage.info --output-directory coverage --config-file doc/coverage/lcovrc
     - lcov --list coverage/coverage.info
-    - python3 tools/lcov_cobertura.py coverage/coverage.info --output coverage/cobertura-coverage.xml
+    - python3 tools/lcov_cobertura.py coverage/coverage.info --output bin/cobertura-coverage.xml
+    - rm -f coverage/coverage_all.info coverage/coverage.info
   coverage: '/Total:\| ?(\d+\.?\d+\%)/'
   artifacts:
     paths:
       - coverage
+      - bin/cobertura-coverage.xml
     expire_in: 2h
   only:
     - master
@@ -304,14 +324,14 @@ coverage:
 # ║                                              Deploy                                              ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-.pages:
-  extends: .schedule
+pages:
+  # extends: .schedule
   stage: deploy
   tags:
     - linux
   needs: ["doxygen", "coverage"]
   script:
-    - mv doc/html/ public/
+    - mv bin/doc/html/ public/
     - mv coverage/ public/coverage/
   artifacts:
     name: "Documentation & Coverage Report"
@@ -319,9 +339,11 @@ coverage:
       - public
     expire_in: 2h
     reports:
-      cobertura: public/coverage/cobertura-coverage.xml
-  except:
-    - /^(?!master).+@/
+      cobertura: bin/cobertura-coverage.xml
+  only:
+    - master
+  # except:
+  #   - /^(?!master).+@/
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                           Ubuntu 20.04                                           ║
@@ -440,8 +462,7 @@ run-tests:ubuntu:20.04:gcc:debug:
   image: archlinux:latest
   needs: []
   before_script:
-    - curl -fsSL "https://repo.archlinuxcn.org/x86_64/glibc-linux4-2.33-4-x86_64.pkg.tar.zst" | bsdtar -C / -xvf -
-    - pacman -Syyu --noconfirm --needed
+    - pacman -Sy archlinux-keyring --noconfirm && pacman -Syyu --noconfirm --needed
     - pacman -S --noconfirm --needed base-devel cmake clang ccache cppcheck python-pip glfw-x11
     - pip install conan
     - g++ --version
@@ -488,8 +509,7 @@ archlinux:latest:gcc:debug:
   extends: .schedule
   image: archlinux:latest
   before_script:
-    - curl -fsSL "https://repo.archlinuxcn.org/x86_64/glibc-linux4-2.33-4-x86_64.pkg.tar.zst" | bsdtar -C / -xvf -
-    - pacman -Sy
+    - pacman -Sy archlinux-keyring --noconfirm && pacman -Syyu --noconfirm --needed
     - pacman -S --noconfirm --needed base-devel cmake glfw-x11
     - cmake --version
   script:

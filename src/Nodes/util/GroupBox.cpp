@@ -8,8 +8,8 @@ NAV::GroupBox::GroupBox()
 
     name = typeStatic();
     kind = Node::Kind::GroupBox;
-    hasConfig = false;
-    size = ImVec2(400, 300);
+    _hasConfig = false;
+    _size = ImVec2(400, 300);
 }
 
 NAV::GroupBox::~GroupBox()

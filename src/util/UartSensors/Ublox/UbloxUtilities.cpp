@@ -2,7 +2,7 @@
 #include "UbloxTypes.hpp"
 
 #include "util/Eigen.hpp"
-#include "util/InsTransformations.hpp"
+#include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "util/Logger.hpp"
 
 #include "util/Time/TimeBase.hpp"
@@ -44,15 +44,6 @@ void NAV::sensors::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& 
                 {
                     LOG_DATA("UBX:  ACK-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
                 }
-            }
-        }
-        // AssistNow Aiding Messages: Ephemeris, Almanac, other A-GPS data input
-        else if (obs->msgClass == UbxClass::UBX_CLASS_AID)
-        {
-            [[maybe_unused]] auto msgId = static_cast<UbxAidMessages>(obs->msgId);
-            if (!peek)
-            {
-                LOG_DATA("UBX:  AID-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
             }
         }
         // Configuration Input Messages: Configure the receiver

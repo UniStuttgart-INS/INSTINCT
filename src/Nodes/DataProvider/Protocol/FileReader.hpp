@@ -9,10 +9,10 @@
 #include <vector>
 #include <fstream>
 
-#include "util/InsTime.hpp"
+#include "Navigation/Time/InsTime.hpp"
 
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
+using json = nlohmann::json; ///< json namespace
 
 namespace NAV
 {
@@ -67,16 +67,16 @@ class FileReader
     virtual void readHeader();
 
     /// Path to the file
-    std::string path;
+    std::string _path;
     /// File stream to read the file
-    std::ifstream filestream;
+    std::ifstream _filestream;
     /// File Type
-    FileType fileType = FileType::NONE;
+    FileType _fileType = FileType::NONE;
     /// Start of the data in the file
-    std::streampos dataStart = 0;
+    std::streampos _dataStart = 0;
 
     /// Header Columns of a CSV file
-    std::vector<std::string> headerColumns;
+    std::vector<std::string> _headerColumns;
 };
 
 } // namespace NAV

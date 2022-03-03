@@ -37,7 +37,7 @@ class RtklibPosFile : public Node, public FileReader
     [[nodiscard]] static std::string category();
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Saves the node into a json object
@@ -51,7 +51,7 @@ class RtklibPosFile : public Node, public FileReader
     bool resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_RtklibPosObs = 0; ///< @brief Flow (RtklibPosObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_RTKLIB_POS_OBS = 0; ///< @brief Flow (RtklibPosObs)
 
     /// @brief Initialize the node
     bool initialize() override;

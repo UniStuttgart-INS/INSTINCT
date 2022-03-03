@@ -14,14 +14,14 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/GNSS/UbloxObs.hpp"
 
 NAV::UbloxFile::UbloxFile()
-    : sensor(typeStatic())
+    : _sensor(typeStatic())
 {
     name = typeStatic();
 
     LOG_TRACE("{}: called", name);
 
-    hasConfig = true;
-    guiConfigDefaultWindowSize = { 380, 70 };
+    _hasConfig = true;
+    _guiConfigDefaultWindowSize = { 380, 70 };
 
     nm::CreateOutputPin(this, "UbloxObs", Pin::Type::Flow, { NAV::UbloxObs::type() }, &UbloxFile::pollData);
 }
@@ -48,7 +48,7 @@ std::string NAV::UbloxFile::category()
 
 void NAV::UbloxFile::guiConfig()
 {
-    if (gui::widgets::FileDialogLoad(path, "Select File", ".ubx", { ".ubx" }, size_t(id), nameId()))
+    if (gui::widgets::FileDialogLoad(_path, "Select File", ".ubx", { ".ubx" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
         initializeNode();
@@ -100,12 +100,12 @@ bool NAV::UbloxFile::resetNode()
 std::shared_ptr<const NAV::NodeData> NAV::UbloxFile::pollData(bool peek)
 {
     // Get current position
-    auto pos = filestream.tellg();
+    auto pos = _filestream.tellg();
     uint8_t i = 0;
     std::unique_ptr<uart::protocol::Packet> packet = nullptr;
-    while (filestream.readsome(reinterpret_cast<char*>(&i), 1))
+    while (_filestream.readsome(reinterpret_cast<char*>(&i), 1))
     {
-        packet = sensor.findPacket(i);
+        packet = _sensor.findPacket(i);
 
         if (packet != nullptr)
         {
@@ -144,13 +144,13 @@ std::shared_ptr<const NAV::NodeData> NAV::UbloxFile::pollData(bool peek)
     if (peek)
     {
         // Return to position before "Read line".
-        filestream.seekg(pos, std::ios_base::beg);
+        _filestream.seekg(pos, std::ios_base::beg);
     }
 
     // Calls all the callbacks
     if (!peek)
     {
-        invokeCallbacks(OutputPortIndex_UbloxObs, obs);
+        invokeCallbacks(OUTPUT_PORT_INDEX_UBLOX_OBS, obs);
     }
 
     return obs;
@@ -160,7 +160,7 @@ NAV::FileReader::FileType NAV::UbloxFile::determineFileType()
 {
     LOG_TRACE("called for {}", nameId());
 
-    auto filestream = std::ifstream(path);
+    auto filestream = std::ifstream(_path);
 
     constexpr uint16_t BUFFER_SIZE = 10;
 
@@ -169,9 +169,9 @@ NAV::FileReader::FileType NAV::UbloxFile::determineFileType()
     {
         filestream.read(buffer.data(), BUFFER_SIZE);
 
-        if ((static_cast<uint8_t>(buffer.at(0)) == sensors::ublox::UbloxUartSensor::BinarySyncChar1
-             && static_cast<uint8_t>(buffer.at(1)) == sensors::ublox::UbloxUartSensor::BinarySyncChar2)
-            || buffer.at(0) == sensors::ublox::UbloxUartSensor::AsciiStartChar)
+        if ((static_cast<uint8_t>(buffer.at(0)) == sensors::ublox::UbloxUartSensor::BINARY_SYNC_CHAR_1
+             && static_cast<uint8_t>(buffer.at(1)) == sensors::ublox::UbloxUartSensor::BINARY_SYNC_CHAR_2)
+            || buffer.at(0) == sensors::ublox::UbloxUartSensor::ASCII_START_CHAR)
         {
             filestream.close();
             LOG_DEBUG("{} has the file type: Binary", nameId());
@@ -183,6 +183,6 @@ NAV::FileReader::FileType NAV::UbloxFile::determineFileType()
         return FileType::NONE;
     }
 
-    LOG_ERROR("{} could not open file {}", nameId(), path);
+    LOG_ERROR("{} could not open file {}", nameId(), _path);
     return FileType::NONE;
 }

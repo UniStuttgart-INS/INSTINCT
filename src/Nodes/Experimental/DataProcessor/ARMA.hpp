@@ -15,6 +15,7 @@
 
 namespace NAV::experimental
 {
+/// @brief Node performing an ARMA filtering of incoming data
 class ARMA : public Node
 {
   public:
@@ -41,7 +42,7 @@ class ARMA : public Node
     [[nodiscard]] static std::string category();
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Saves the node into a json object
@@ -52,8 +53,8 @@ class ARMA : public Node
     void restore(const json& j) override;
 
   private:
-    constexpr static size_t InputPortIndex_ImuObs = 0;  ///< @brief Flow (ImuObs)
-    constexpr static size_t OutputPortIndex_ImuObs = 0; ///< @brief Flow (ImuObs)
+    constexpr static size_t INPUT_PORT_INDEX_IMU_OBS = 0;  ///< @brief Flow (ImuObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_IMU_OBS = 0; ///< @brief Flow (ImuObs)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -77,13 +78,18 @@ class ARMA : public Node
     /// @param[in] acf vector of acf
     /// @param[in] p order of AR process
     /// @param[out] pacf vector of pacf values
-    /// @param[out] initial_e_hat vector of initial ê for Hannan-Rissanen
+    /// @param[out] e_hat_initial vector of initial ê for Hannan-Rissanen
     static void pacf_function(Eigen::VectorXd& y, Eigen::VectorXd& acf, int p, Eigen::VectorXd& pacf, Eigen::VectorXd& e_hat_initial);
 
     /// @brief Calculate ARMA parameters through Hannan-Rissanen
     /// @param[in] y vector of data
     /// @param[in] p order of AR process
     /// @param[in] q order of MA process
+    /// @param[in] m value of superior order (p or q)
+    /// @param[in] deque_size Size of the deque
+    /// @param[out] x ARMA slope parameters
+    /// @param[out] emp_sig Empirical significance (p-Value) of parameters
+    /// @param[out] y_hat Output measurement data
     static void hannan_rissanen(Eigen::VectorXd& y, int p, int q, int m, int deque_size, Eigen::VectorXd& x, Eigen::VectorXd& emp_sig, Eigen::VectorXd& y_hat);
 
     /// @brief fill A matrix for least squares
@@ -91,33 +97,36 @@ class ARMA : public Node
     /// @param[in] e_hat residuals
     /// @param[in] p order of AR process
     /// @param[in] q order of MA process
+    /// @param[in] m value of superior order (p or q)
+    /// @param[out] A Returns the matrix filled with least squares
     static void matrix_function(Eigen::VectorXd& y, Eigen::VectorXd& e_hat, int p, int q, int m, Eigen::MatrixXd& A);
 
-    std::deque<std::shared_ptr<const ImuObs>> buffer;
+    /// @brief Buffer used to store Imu observations
+    std::deque<std::shared_ptr<const ImuObs>> _buffer;
 
     /// loop iterator
-    int k = 0;
+    int _k = 0;
 
     bool INITIALIZE = false; ///< parameter initialization indicator
     // ARMA order
-    int p = 2; ///< AR order
-    int q = 2; ///< MA order
+    int _p = 2; ///< AR order
+    int _q = 2; ///< MA order
 
-    int deque_size = 1000; ///< modelling size
-    int num_obs = 6;       ///< number of observations (3-axis accelerometer / 3-axis gyro)
+    int _deque_size = 1000; ///< modelling size
+    int _num_obs = 6;       ///< number of observations (3-axis accelerometer / 3-axis gyro)
 
-    Eigen::MatrixXd y;       ///< measurement data
-    Eigen::VectorXd y_rbm;   ///< y (reduced by mean)
-    Eigen::VectorXd y_hat;   ///< ARMA estimates for y_rbm
-    Eigen::VectorXd emp_sig; ///< empirical significance (p-Value) of parameters
-    Eigen::VectorXd x;       ///< ARMA slope parameters
-    Eigen::VectorXd y_hat_t; ///< output container
+    Eigen::MatrixXd _y;       ///< measurement data
+    Eigen::VectorXd _y_rbm;   ///< y (reduced by mean)
+    Eigen::VectorXd _y_hat;   ///< ARMA estimates for y_rbm
+    Eigen::VectorXd _emp_sig; ///< empirical significance (p-Value) of parameters
+    Eigen::VectorXd _x;       ///< ARMA slope parameters
+    Eigen::VectorXd _y_hat_t; ///< output container
 
-    int p_mem = 0; ///< p memory to reset for each observation
-    int q_mem = 0; ///< q memory to reset for each observation
+    int _p_mem = 0; ///< p memory to reset for each observation
+    int _q_mem = 0; ///< q memory to reset for each observation
 
-    int m = 0; ///< value of superior order (p or q)
-    double y_mean = 0;
+    int _m = 0;         ///< value of superior order (p or q)
+    double _y_mean = 0; ///< y-mean
 };
 
 } // namespace NAV::experimental

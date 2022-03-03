@@ -38,13 +38,13 @@ void NAV::gui::menus::ShowMainMenuBar(GlobalActions& globalAction, std::deque<st
             ShowTimeMenu();
             ImGui::EndMenu();
         }
-#ifndef NDEBUG
+        // #ifndef NDEBUG
         if (ImGui::BeginMenu("Debug"))
         {
             ShowDebugMenu();
             ImGui::EndMenu();
         }
-#endif
+        // #endif
         // Move cursor to the right, as ImGui::Spring() is not working inside menu bars
         std::string text = fmt::format("FPS: {:.2f} ({:.2g}ms)", io.Framerate, io.Framerate != 0.0F ? 1000.0F / io.Framerate : 0.0F);
         float textPosX = ImGui::GetCursorPosX() + ImGui::GetColumnWidth() - ImGui::CalcTextSize(text.c_str()).x

@@ -5,6 +5,13 @@
     "[c]": {
         "editor.defaultFormatter": "ms-vscode.cpptools"
     },
+    "[cmake]": {
+        "editor.formatOnSave": false
+    },
+    "[latex]": {
+        "editor.formatOnSave": false,
+        "editor.tabSize": 2,
+    },
     "C_Cpp.autoAddFileAssociations": false, // Otherwise the "files.associations" list will be filled everytime opening a file without extension (e.g. <iostream>)
     "C_Cpp.default.cppStandard": "c++20",
     "cSpell.words": [
@@ -24,7 +31,7 @@
     ],
     "editor.formatOnSave": true,
     "editor.rulers": [
-        120
+        150
     ],
     "doxdocgen.generic.paramTemplate": "@param[in, out] {param} ",
     "doxdocgen.file.fileOrder": [
@@ -54,7 +61,8 @@
         "**/boost/**": "cpp", // <-- boost libraries
         "*.tpp": "cpp", // <-- Template files
         "*.log.*": "log", // <-- log files
-        "*.flow": "json" // <-- nodeeditor save files
+        "*.flow": "json", // <-- nodeeditor save files
+        "*.dox": "latex", // <-- Doxygen files
     },
     "logFileHighlighter.customPatterns": [
         {
@@ -105,7 +113,7 @@
     "clang-tidy.compilerArgs": [
         "-Wno-unknown-warning-option"
     ],
-    "comment-divider.length": 110,
+    "comment-divider.length": 140,
     "mathover.matchRegex": "\\/\\/\\sMath:\\s(.+)",
     "mathover.forwardSkip": 9,
     "search.exclude": {
@@ -127,13 +135,13 @@
         "**/.git": true,
         "**/.DS_Store": true,
         "**/tools": true,
+        ".gitlab": true,
         ".clang-format": true,
         ".clang-tidy": true,
         ".cmake-format.yaml": true,
         ".cppcheck-suppressions-list": true,
         ".gitlab-ci.yml": true,
         ".gitmodules": true,
-        "DoxygenLayout.xml": true,
         "INSTINCT.ini": true,
         "compile_commands.json": true,
     },

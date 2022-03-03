@@ -38,7 +38,7 @@ class UbloxSensor : public Node, public UartSensor
     [[nodiscard]] static std::string category();
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Saves the node into a json object
@@ -52,7 +52,7 @@ class UbloxSensor : public Node, public UartSensor
     bool resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_UbloxObs = 0; ///< @brief Flow (UbloxObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_UBLOX_OBS = 0; ///< @brief Flow (UbloxObs)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -67,7 +67,7 @@ class UbloxSensor : public Node, public UartSensor
     static void asciiOrBinaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, size_t index);
 
     /// Sensor Object
-    sensors::ublox::UbloxUartSensor sensor;
+    sensors::ublox::UbloxUartSensor _sensor;
 };
 
 } // namespace NAV

@@ -798,7 +798,7 @@ void compareObservations(std::shared_ptr<const NAV::VectorNavBinaryOutput>& data
     logs_vnb.reset();
 }
 
-TEST_CASE("[VectorNavDataLogger] Read and log files and compare content", "[VectorNavDataLogger]")
+TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", "[VectorNavDataLogger][flow]")
 {
     messageCounterImuDataCsv = 0;
     messageCounterImuLogCsv = 0;
@@ -823,7 +823,7 @@ TEST_CASE("[VectorNavDataLogger] Read and log files and compare content", "[Vect
     //
     // ###########################################################################################################
 
-    testFlow("test/flow/Nodes/DataLogger/IMU/VectorNavDataLogger.flow");
+    REQUIRE(testFlow("test/flow/Nodes/DataLogger/IMU/VectorNavDataLogger.flow"));
 
     // ###########################################################################################################
     //                                       VectorNavDataLoggerCheck.flow
@@ -908,7 +908,7 @@ TEST_CASE("[VectorNavDataLogger] Read and log files and compare content", "[Vect
         compareObservations(data_vn310_gnss_csv, logs_vn310_gnss_csv, logs_vn310_gnss_vnb);
     });
 
-    testFlow("test/flow/Nodes/DataLogger/IMU/VectorNavDataLoggerCheck.flow");
+    REQUIRE(testFlow("test/flow/Nodes/DataLogger/IMU/VectorNavDataLoggerCheck.flow"));
 
     CHECK(messageCounterImuDataCsv == MESSAGE_COUNT_IMU);
     CHECK(messageCounterImuLogCsv == MESSAGE_COUNT_IMU);

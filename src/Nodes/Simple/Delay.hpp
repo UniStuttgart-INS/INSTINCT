@@ -13,6 +13,7 @@
 
 namespace NAV
 {
+/// @brief Delays messages by buffering them
 class Delay : public Node
 {
   public:
@@ -39,7 +40,7 @@ class Delay : public Node
     [[nodiscard]] static std::string category();
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Saves the node into a json object
@@ -56,8 +57,8 @@ class Delay : public Node
     bool onCreateLink(Pin* startPin, Pin* endPin) override;
 
   private:
-    constexpr static size_t OutputPortIndex_Flow = 0; ///< @brief Flow
-    constexpr static size_t InputPortIndex_Flow = 0;  ///< @brief Flow
+    constexpr static size_t OUTPUT_PORT_INDEX_FLOW = 0; ///< @brief Flow
+    constexpr static size_t INPUT_PORT_INDEX_FLOW = 0;  ///< @brief Flow
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -71,10 +72,10 @@ class Delay : public Node
     void delayObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief The amount to delay messages for
-    int delayLength = 1;
+    int _delayLength = 1;
 
     /// @brief Buffer to delay data
-    std::deque<std::shared_ptr<const NodeData>> buffer;
+    std::deque<std::shared_ptr<const NodeData>> _buffer;
 };
 
 } // namespace NAV

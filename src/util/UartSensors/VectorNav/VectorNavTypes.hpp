@@ -20,13 +20,14 @@ class TimeStatus
 {
   public:
     /// Constructor
-    explicit TimeStatus(uint8_t status) : status(status) {}
+    /// @param[in] status Status to set
+    explicit TimeStatus(uint8_t status) : _status(status) {}
 
     /// @brief Assignment operator
     /// @param[in] status Status to set
-    TimeStatus& operator=(const uint8_t& uintStatus)
+    TimeStatus& operator=(const uint8_t& status)
     {
-        status = uintStatus;
+        _status = status;
         return *this;
     }
 
@@ -43,37 +44,43 @@ class TimeStatus
     /// @brief Move assignment operator
     TimeStatus& operator=(TimeStatus&&) = delete;
 
-    /// The storage field
-    uint8_t status;
+    /// @brief Returns a reference to the status
+    [[nodiscard]] constexpr uint8_t& status()
+    {
+        return _status;
+    }
 
     /// GpsTow is valid
     [[nodiscard]] constexpr uint8_t timeOk() const
     {
-        return ((status & (1U << 0U)) >> 0U);
+        return ((_status & (1U << 0U)) >> 0U);
     }
     /// TimeGps and GpsWeek are valid.
     [[nodiscard]] constexpr uint8_t dateOk() const
     {
-        return ((status & (1U << 1U)) >> 1U); // NOLINT
+        return ((_status & (1U << 1U)) >> 1U); // NOLINT
     }
     /// UTC time is valid.
     [[nodiscard]] constexpr uint8_t utcTimeValid() const
     {
-        return ((status & (1U << 2U)) >> 2U); // NOLINT
+        return ((_status & (1U << 2U)) >> 2U); // NOLINT
     }
+
+  private:
+    /// The storage field
+    uint8_t _status;
 };
 
 /// @brief Storage class for UTC Time
 struct UTC
 {
-    /// The year is given as a signed byte year offset from the year 2000. For example the year 2013 would be given as year 13.
-    int8_t year{};
-    uint8_t month{};
-    uint8_t day{};
-    uint8_t hour{};
-    uint8_t min{};
-    uint8_t sec{};
-    uint16_t ms{};
+    int8_t year{};   ///< The year is given as a signed byte year offset from the year 2000. For example the year 2013 would be given as year 13.
+    uint8_t month{}; ///< Months
+    uint8_t day{};   ///< Days
+    uint8_t hour{};  ///< Hours
+    uint8_t min{};   ///< Minutes
+    uint8_t sec{};   ///< Seconds
+    uint16_t ms{};   ///< Milliseconds
 };
 
 /// @brief GNSS fix.
@@ -137,6 +144,7 @@ enum class SatSys : uint8_t
 /// satellites (numSats).
 struct SatInfo
 {
+    /// @brief Information for a certain satellite
     struct SatInfoElement
     {
         /// @brief Tracking info flags
@@ -207,6 +215,7 @@ constexpr SatInfo::SatInfoElement::Flags operator&(SatInfo::SatInfoElement::Flag
 /// @brief Raw measurements pertaining to each GNSS satellite in view.
 struct RawMeas
 {
+    /// @brief Raw measurements for a certain satellite
     struct SatRawElement
     {
         /// @brief Tracking info flags
@@ -321,13 +330,14 @@ class VpeStatus
 {
   public:
     /// Constructor
-    explicit VpeStatus(uint16_t status) : status(status) {}
+    /// @param[in] status Status to set
+    explicit VpeStatus(uint16_t status) : _status(status) {}
 
     /// @brief Assignment operator
     /// @param[in] status Status to set
-    VpeStatus& operator=(const uint16_t& uintStatus)
+    VpeStatus& operator=(const uint16_t& status)
     {
-        status = uintStatus;
+        _status = status;
         return *this;
     }
 
@@ -344,54 +354,61 @@ class VpeStatus
     /// @brief Move assignment operator
     VpeStatus& operator=(VpeStatus&&) = delete;
 
-    /// The storage field
-    uint16_t status;
+    /// @brief Returns a reference to the status
+    [[nodiscard]] constexpr uint16_t& status()
+    {
+        return _status;
+    }
 
     /// Extract the attitude quality from the vpe status
     [[nodiscard]] constexpr uint8_t attitudeQuality() const
     {
-        return ((status & (1U << 0U | 1U << 1U)) >> 0U);
+        return ((_status & (1U << 0U | 1U << 1U)) >> 0U);
     }
     /// Extract the gyro saturation from the vpe status
     [[nodiscard]] constexpr uint8_t gyroSaturation() const
     {
-        return ((status & (1U << 2U)) >> 2U); // NOLINT
+        return ((_status & (1U << 2U)) >> 2U); // NOLINT
     }
     /// Extract the gyro saturation recovery from the vpe status
     [[nodiscard]] constexpr uint8_t gyroSaturationRecovery() const
     {
-        return ((status & (1U << 3U)) >> 3U); // NOLINT
+        return ((_status & (1U << 3U)) >> 3U); // NOLINT
     }
     /// Extract the magnetic disturbance from the vpe status
     [[nodiscard]] constexpr uint8_t magDisturbance() const
     {
-        return ((status & (1U << 4U | 1U << 5U)) >> 4U); // NOLINT
+        return ((_status & (1U << 4U | 1U << 5U)) >> 4U); // NOLINT
     }
     /// Extract the magnetic saturation from the vpe status
     [[nodiscard]] constexpr uint8_t magSaturation() const
     {
-        return ((status & (1U << 6U)) >> 6U); // NOLINT
+        return ((_status & (1U << 6U)) >> 6U); // NOLINT
     }
     /// Extract the acceleration disturbance from the vpe status
     [[nodiscard]] constexpr uint8_t accDisturbance() const
     {
-        return ((status & (1U << 7U | 1U << 8U)) >> 7U); // NOLINT
+        return ((_status & (1U << 7U | 1U << 8U)) >> 7U); // NOLINT
     }
     /// Extract the acceleration saturation from the vpe status
     [[nodiscard]] constexpr uint8_t accSaturation() const
     {
-        return ((status & (1U << 9U)) >> 9U); // NOLINT
+        return ((_status & (1U << 9U)) >> 9U); // NOLINT
     }
     /// Extract the known magnetic disturbance from the vpe status
     [[nodiscard]] constexpr uint8_t knownMagDisturbance() const
     {
-        return ((status & (1U << 11U)) >> 11U); // NOLINT
+        return ((_status & (1U << 11U)) >> 11U); // NOLINT
     }
     /// Extract the known acceleration disturbance from the vpe status
     [[nodiscard]] constexpr uint8_t knownAccelDisturbance() const
     {
-        return ((status & (1U << 12U)) >> 12U); // NOLINT
+        return ((_status & (1U << 12U)) >> 12U); // NOLINT
     }
+
+  private:
+    /// The storage field
+    uint16_t _status;
 };
 
 /// @brief The INS status bitfield
@@ -421,13 +438,14 @@ class InsStatus
 {
   public:
     /// Constructor
-    explicit InsStatus(uint16_t status) : status(status) {}
+    /// @param[in] status Status to set
+    explicit InsStatus(uint16_t status) : _status(status) {}
 
     /// @brief Assignment operator
     /// @param[in] status Status to set
-    InsStatus& operator=(const uint16_t& uintStatus)
+    InsStatus& operator=(const uint16_t& status)
     {
-        status = uintStatus;
+        _status = status;
         return *this;
     }
 
@@ -444,44 +462,51 @@ class InsStatus
     /// @brief Move assignment operator
     InsStatus& operator=(InsStatus&&) = delete;
 
-    /// The storage field
-    uint16_t status;
+    /// @brief Returns a reference to the status
+    [[nodiscard]] constexpr uint16_t& status()
+    {
+        return _status;
+    }
 
     /// Extract the current mode of the INS filter from the ins status
     [[nodiscard]] constexpr uint8_t mode() const
     {
-        return ((status & (1U << 0U | 1U << 1U)) >> 0U);
+        return ((_status & (1U << 0U | 1U << 1U)) >> 0U);
     }
     /// Extract the GPS Fix from the ins status
     [[nodiscard]] constexpr bool gpsFix() const
     {
-        return ((status & (1U << 2U)) >> 2U); // NOLINT
+        return ((_status & (1U << 2U)) >> 2U); // NOLINT
     }
     /// Extract the IMU Error from the ins status
     [[nodiscard]] constexpr bool errorIMU() const
     {
-        return ((status & (1U << 4U)) >> 4U); // NOLINT
+        return ((_status & (1U << 4U)) >> 4U); // NOLINT
     }
     /// Extract the Mag/Pres Error from the ins status
     [[nodiscard]] constexpr bool errorMagPres() const
     {
-        return ((status & (1U << 5U)) >> 5U); // NOLINT
+        return ((_status & (1U << 5U)) >> 5U); // NOLINT
     }
     /// Extract the GNSS Error from the ins status
     [[nodiscard]] constexpr bool errorGnss() const
     {
-        return ((status & (1U << 6U)) >> 6U); // NOLINT
+        return ((_status & (1U << 6U)) >> 6U); // NOLINT
     }
     /// Extract the GPS Heading INS from the ins status
     [[nodiscard]] constexpr bool gpsHeadingIns() const
     {
-        return ((status & (1U << 8U)) >> 8U); // NOLINT
+        return ((_status & (1U << 8U)) >> 8U); // NOLINT
     }
     /// Extract the GPS Compass from the ins status
     [[nodiscard]] constexpr bool gpsCompass() const
     {
-        return ((status & (1U << 9U)) >> 9U); // NOLINT
+        return ((_status & (1U << 9U)) >> 9U); // NOLINT
     }
+
+  private:
+    /// The storage field
+    uint16_t _status;
 };
 
 } // namespace NAV::sensors::vectornav

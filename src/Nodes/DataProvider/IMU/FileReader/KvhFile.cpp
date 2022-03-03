@@ -13,17 +13,17 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/IMU/KvhObs.hpp"
 
 NAV::KvhFile::KvhFile()
-    : sensor(typeStatic())
+    : _sensor(typeStatic())
 {
     name = typeStatic();
 
     LOG_TRACE("{}: called", name);
 
-    hasConfig = true;
-    guiConfigDefaultWindowSize = { 380, 70 };
+    _hasConfig = true;
+    _guiConfigDefaultWindowSize = { 380, 70 };
 
     nm::CreateOutputPin(this, "KvhObs", Pin::Type::Flow, { NAV::KvhObs::type() }, &KvhFile::pollData);
-    nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, { "std::vector<std::string>" }, &headerColumns);
+    nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, { "std::vector<std::string>" }, &_headerColumns);
 }
 
 NAV::KvhFile::~KvhFile()
@@ -48,7 +48,7 @@ std::string NAV::KvhFile::category()
 
 void NAV::KvhFile::guiConfig()
 {
-    if (gui::widgets::FileDialogLoad(path, "Select File", ".csv", { ".csv" }, size_t(id), nameId()))
+    if (gui::widgets::FileDialogLoad(_path, "Select File", ".csv", { ".csv" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
         initializeNode();
@@ -56,7 +56,7 @@ void NAV::KvhFile::guiConfig()
 
     Imu::guiConfig();
 
-    if (fileType == FileType::CSV)
+    if (_fileType == FileType::CSV)
     {
         // Header info
         if (ImGui::BeginTable(fmt::format("##VectorNavHeaders ({})", id.AsPointer()).c_str(), 2,
@@ -68,7 +68,7 @@ void NAV::KvhFile::guiConfig()
 
             auto TextColoredIfExists = [this](int index, const char* displayText, const char* searchText, bool alwaysNormal = false) {
                 ImGui::TableSetColumnIndex(index);
-                if (alwaysNormal || std::find(headerColumns.begin(), headerColumns.end(), searchText) != headerColumns.end())
+                if (alwaysNormal || std::find(_headerColumns.begin(), _headerColumns.end(), searchText) != _headerColumns.end())
                 {
                     ImGui::TextUnformatted(displayText);
                 }
@@ -95,7 +95,7 @@ void NAV::KvhFile::guiConfig()
             ImGui::EndTable();
         }
     }
-    else if (fileType == FileType::BINARY)
+    else if (_fileType == FileType::BINARY)
     {
         ImGui::TextUnformatted("Binary file");
     }
@@ -153,15 +153,15 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData(bool peek)
     std::shared_ptr<KvhObs> obs = nullptr;
 
     // Get current position
-    auto pos = filestream.tellg();
+    auto pos = _filestream.tellg();
 
-    if (fileType == FileType::BINARY)
+    if (_fileType == FileType::BINARY)
     {
         uint8_t i = 0;
         std::unique_ptr<uart::protocol::Packet> packet = nullptr;
-        while (filestream.readsome(reinterpret_cast<char*>(&i), 1))
+        while (_filestream.readsome(reinterpret_cast<char*>(&i), 1))
         {
-            packet = sensor.findPacket(i);
+            packet = _sensor.findPacket(i);
 
             if (packet != nullptr)
             {
@@ -174,7 +174,7 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData(bool peek)
             return nullptr;
         }
 
-        obs = std::make_shared<KvhObs>(imuPos, *packet);
+        obs = std::make_shared<KvhObs>(_imuPos, *packet);
 
         // Check if package is empty
         if (obs->raw.getRawDataLength() == 0)
@@ -184,13 +184,13 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData(bool peek)
 
         sensors::kvh::decryptKvhObs(obs);
     }
-    else if (fileType == FileType::CSV)
+    else if (_fileType == FileType::CSV)
     {
-        obs = std::make_shared<KvhObs>(imuPos);
+        obs = std::make_shared<KvhObs>(_imuPos);
 
         // Read line
         std::string line;
-        std::getline(filestream, line);
+        std::getline(_filestream, line);
         // Remove any starting non text characters
         line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
 
@@ -217,7 +217,7 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData(bool peek)
         std::optional<double> gyroUncompZ;
 
         // Split line at comma
-        for (const auto& column : headerColumns)
+        for (const auto& column : _headerColumns)
         {
             if (std::getline(lineStream, cell, ','))
             {
@@ -320,27 +320,27 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData(bool peek)
     // Check if a packet was skipped
     if (!peek && callbacksEnabled)
     {
-        if (prevSequenceNumber == UINT8_MAX)
+        if (_prevSequenceNumber == UINT8_MAX)
         {
-            prevSequenceNumber = obs->sequenceNumber;
+            _prevSequenceNumber = obs->sequenceNumber;
         }
-        if (obs->sequenceNumber != 0 && (obs->sequenceNumber < prevSequenceNumber || obs->sequenceNumber > prevSequenceNumber + 2))
+        if (obs->sequenceNumber != 0 && (obs->sequenceNumber < _prevSequenceNumber || obs->sequenceNumber > _prevSequenceNumber + 2))
         {
-            LOG_WARN("{}: Sequence Number changed from {} to {}", name, prevSequenceNumber, obs->sequenceNumber);
+            LOG_WARN("{}: Sequence Number changed from {} to {}", name, _prevSequenceNumber, obs->sequenceNumber);
         }
-        prevSequenceNumber = obs->sequenceNumber;
+        _prevSequenceNumber = obs->sequenceNumber;
     }
 
     if (peek)
     {
         // Return to position before "Read line".
-        filestream.seekg(pos, std::ios_base::beg);
+        _filestream.seekg(pos, std::ios_base::beg);
     }
 
     // Calls all the callbacks
     if (!peek)
     {
-        invokeCallbacks(OutputPortIndex_KvhObs, obs);
+        invokeCallbacks(OUTPUT_PORT_INDEX_KVH_OBS, obs);
     }
 
     return obs;
@@ -350,7 +350,7 @@ NAV::FileReader::FileType NAV::KvhFile::determineFileType()
 {
     LOG_TRACE("called for {}", name);
 
-    auto filestream = std::ifstream(path);
+    auto filestream = std::ifstream(_path);
     if (filestream.good())
     {
         union
@@ -361,7 +361,7 @@ NAV::FileReader::FileType NAV::KvhFile::determineFileType()
 
         if (filestream.readsome(un.buffer.data(), sizeof(uint32_t)) == sizeof(uint32_t))
         {
-            un.ui32 = uart::stoh(un.ui32, sensors::kvh::KvhUartSensor::endianness);
+            un.ui32 = uart::stoh(un.ui32, sensors::kvh::KvhUartSensor::ENDIANNESS);
             if (un.ui32 == sensors::kvh::KvhUartSensor::HEADER_FMT_A
                 || un.ui32 == sensors::kvh::KvhUartSensor::HEADER_FMT_B
                 || un.ui32 == sensors::kvh::KvhUartSensor::HEADER_FMT_C
@@ -388,6 +388,6 @@ NAV::FileReader::FileType NAV::KvhFile::determineFileType()
         return FileType::NONE;
     }
 
-    LOG_ERROR("{} could not open file {}", name, path);
+    LOG_ERROR("{} could not open file {}", name, _path);
     return FileType::NONE;
 }

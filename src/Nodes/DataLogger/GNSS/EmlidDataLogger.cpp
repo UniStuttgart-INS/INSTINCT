@@ -18,10 +18,10 @@ NAV::EmlidDataLogger::EmlidDataLogger()
 
     LOG_TRACE("{}: called", name);
 
-    fileType = FileType::BINARY;
+    _fileType = FileType::BINARY;
 
-    hasConfig = true;
-    guiConfigDefaultWindowSize = { 380, 70 };
+    _hasConfig = true;
+    _guiConfigDefaultWindowSize = { 380, 70 };
 
     nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, { NAV::EmlidObs::type() }, &EmlidDataLogger::writeObservation);
 }
@@ -48,7 +48,7 @@ std::string NAV::EmlidDataLogger::category()
 
 void NAV::EmlidDataLogger::guiConfig()
 {
-    if (gui::widgets::FileDialogSave(path, "Save File", ".ubx", { ".ubx" }, size_t(id), nameId()))
+    if (gui::widgets::FileDialogSave(_path, "Save File", ".ubx", { ".ubx" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
         deinitializeNode();
@@ -78,7 +78,7 @@ void NAV::EmlidDataLogger::restore(json const& j)
 
 void NAV::EmlidDataLogger::flush()
 {
-    filestream.flush();
+    _filestream.flush();
 }
 
 bool NAV::EmlidDataLogger::initialize()
@@ -97,11 +97,11 @@ void NAV::EmlidDataLogger::deinitialize()
 
 void NAV::EmlidDataLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    auto obs = std::dynamic_pointer_cast<const EmlidObs>(nodeData);
+    auto obs = std::static_pointer_cast<const EmlidObs>(nodeData);
 
     if (obs->raw.getRawDataLength() > 0)
     {
-        filestream.write(reinterpret_cast<const char*>(obs->raw.getRawData().data()), static_cast<std::streamsize>(obs->raw.getRawDataLength()));
+        _filestream.write(reinterpret_cast<const char*>(obs->raw.getRawData().data()), static_cast<std::streamsize>(obs->raw.getRawDataLength()));
     }
     else
     {

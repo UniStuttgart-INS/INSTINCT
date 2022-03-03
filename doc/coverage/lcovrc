@@ -1,0 +1,85 @@
+# Example LCOV configuration file
+# See https://linux.die.net/man/5/lcovrc for detailled description of options
+
+# External style sheet file
+#genhtml_css_file = gcov.css
+
+# Coverage rate limits for line coverage
+genhtml_hi_limit = 50
+genhtml_med_limit = 15
+
+# Coverage rate limits for function coverage
+genhtml_function_hi_limit = 90
+genhtml_function_med_limit = 75
+
+# Width of overview image
+genhtml_overview_width = 80
+
+# Resolution of overview navigation
+genhtml_nav_resolution = 4
+
+# Offset for source code navigation
+genhtml_nav_offset = 10
+
+# Do not remove unused test descriptions if non-zero
+genhtml_keep_descriptions = 0
+
+# Do not remove prefix from directory names if non-zero
+genhtml_no_prefix = 0
+
+# Do not create source code view if non-zero
+genhtml_no_source = 0
+
+# Specify size of tabs
+genhtml_num_spaces = 8
+
+# Highlight lines with converted-only data if non-zero
+genhtml_highlight = 0
+
+# Include color legend in HTML output if non-zero
+genhtml_legend = 0
+
+# Include HTML file at start of HTML output
+genhtml_html_prolog = doc/coverage/prolog.html
+
+# Include HTML file at end of HTML output
+#genhtml_html_epilog = doc/coverage/epilog.html
+
+# Use custom HTML file extension
+#genhtml_html_extension = html
+
+# Compress all generated html files with gzip.
+#genhtml_html_gzip = 1
+
+# Include sorted overview pages
+genhtml_sort = 1
+
+# Include function coverage data display
+genhtml_function_coverage = 0
+
+# Location of the gcov tool
+#geninfo_gcov_tool = gcov
+
+# Adjust test names if non-zero
+#geninfo_adjust_testname = 0
+
+# Calculate a checksum for each line if non-zero
+geninfo_checksum = 0
+
+# Enable libtool compatibility mode if non-zero
+geninfo_compat_libtool = 0
+
+# Directory containing gcov kernel files
+lcov_gcov_dir = /proc/gcov
+
+# Location of the insmod tool
+lcov_insmod_tool = /sbin/insmod
+
+# Location of the modprobe tool
+lcov_modprobe_tool = /sbin/modprobe
+
+# Location of the rmmod tool
+lcov_rmmod_tool = /sbin/rmmod
+
+# Location for temporary directories
+lcov_tmp_dir = /tmp

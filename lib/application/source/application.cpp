@@ -16,6 +16,7 @@ extern "C"
 #include "../fonts/InconsolataNerdFontComplete.cpp"
 #include "../fonts/NotoSansRegular.cpp"
 #include "../fonts/CuprumBold.cpp"
+#include "../fonts/FreeMono.cpp"
 
 Application::Application(const char* name, const char* iniFilename)
     : Application(name, iniFilename, 0, nullptr)
@@ -122,6 +123,7 @@ void Application::RecreateFontAtlas()
     static const ImWchar icons_ranges[] = { 0x20, 0xFFFF, 0 };
     io.Fonts->AddFontFromMemoryCompressedTTF(InconsolataNerdFontComplete_compressed_data, InconsolataNerdFontComplete_compressed_size, 18.0F, &config, icons_ranges);
     io.Fonts->AddFontFromMemoryCompressedTTF(NotoSansRegular_compressed_data, NotoSansRegular_compressed_size, 18.0F, &config, icons_ranges);
+    io.Fonts->AddFontFromMemoryCompressedTTF(FreeMono_compressed_data, FreeMono_compressed_size, 18.0F, &config, icons_ranges);
     // io.Fonts->AddFontFromFileTTF("resources/fonts/Inconsolata-Nerd-Font-Complete.otf", 18.0f, &config, icons_ranges);
     // io.Fonts->AddFontFromFileTTF("resources/fonts/NotoSans-Regular.ttf", 18.0f, &config, icons_ranges);
 
