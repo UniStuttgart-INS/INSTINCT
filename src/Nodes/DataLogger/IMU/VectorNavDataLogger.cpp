@@ -1101,9 +1101,10 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
         if (obs->insTime.has_value())
         {
             auto insTimeGPS = obs->insTime->toGPSweekTow();
+            auto tow = static_cast<double>(insTimeGPS.tow);
             _filestream.write(reinterpret_cast<const char*>(&insTimeGPS.gpsCycle), sizeof(insTimeGPS.gpsCycle));
             _filestream.write(reinterpret_cast<const char*>(&insTimeGPS.gpsWeek), sizeof(insTimeGPS.gpsWeek));
-            _filestream.write(reinterpret_cast<const char*>(&insTimeGPS.tow), sizeof(insTimeGPS.tow));
+            _filestream.write(reinterpret_cast<const char*>(&tow), sizeof(tow));
         }
         else
         {
