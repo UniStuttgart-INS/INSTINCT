@@ -680,16 +680,17 @@ void NAV::Plot::guiConfig()
             // Left Data Selectables
             for (auto& plotData : _pinData.at(static_cast<size_t>(plotInfo.selectedPin)).plotData)
             {
-                if (plotData.plotOnAxis.contains(plotNum))
-                {
-                    continue;
-                }
                 auto plotDataHasData = plotData.hasData;
                 if (!plotDataHasData)
                 {
                     ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
                 }
                 std::string label = plotData.displayName;
+                if (plotData.plotOnAxis.contains(plotNum))
+                {
+                    label += fmt::format(" (Y{})", plotData.plotOnAxis.at(plotNum).first + 1 - 3);
+                }
+
                 ImGui::Selectable(label.c_str(), false, 0);
                 if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
                 {
@@ -897,9 +898,9 @@ void NAV::Plot::guiConfig()
                         }
                         else
                         {
-                            plotData->plotOnAxis.at(plotNum).second.color = ImPlot::NextColormapColor();
-                            plotData->plotOnAxis.at(plotNum).second.markerFillColor = plotData->plotOnAxis.at(plotNum).second.color;
-                            plotData->plotOnAxis.at(plotNum).second.markerOutlineColor = plotData->plotOnAxis.at(plotNum).second.color;
+                            style.color = ImPlot::NextColormapColor();
+                            style.markerFillColor = style.color;
+                            style.markerOutlineColor = style.color;
                         }
 
                         plotData->plotOnAxis[plotNum] = { dragDropAxis, style };
