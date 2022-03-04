@@ -69,8 +69,9 @@ class UlogFile : public Imu, public FileReader
     uint64_t sensorStartupUTCTime_usec{};
 
   private:
-    constexpr static size_t OUTPUT_PORT_INDEX_IMUOBS = 0;    ///< @brief Flow (ImuObs)
-    constexpr static size_t OUTPUT_PORT_INDEX_POSVELATT = 1; ///< @brief Flow (PosVelAtt)
+    constexpr static size_t OUTPUT_PORT_INDEX_IMUOBS_1 = 0;  ///< @brief Flow (ImuObs #1)
+    constexpr static size_t OUTPUT_PORT_INDEX_IMUOBS_2 = 1;  ///< @brief Flow (ImuObs #2)
+    constexpr static size_t OUTPUT_PORT_INDEX_POSVELATT = 2; ///< @brief Flow (PosVelAtt)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -314,16 +315,24 @@ class UlogFile : public Imu, public FileReader
     /// @param[in] dataMap Multimap that contains measurement data
     bool enoughPosVelAttDataAvailable(std::multimap<uint64_t, MeasurementData> dataMap);
 
-    /// @brief Flag to check whether '_epochData' contains accelerometer reading
-    bool _holdsAccel = false;
-    /// @brief Flag to check whether '_epochData' contains gyro reading
-    bool _holdsGyro = false;
     /// @brief Flag to check whether '_epochData' contains magnetometer reading
     bool _holdsMag = false;
     /// @brief Flag to check whether '_epochData' contains GPS reading
     bool _holdsGps = false;
     /// @brief Flag to check whether '_epochData' contains attitude reading
     bool _holdsAtt = false;
+
+    /// @brief Flag to check whether the contained accelerometer reading is from Accel_0
+    bool _holdsAccel_0;
+    /// @brief Flag to check whether the contained accelerometer reading is from Accel_1
+    bool _holdsAccel_1;
+    /// @brief Flag to check whether the contained accelerometer reading is from Gyro_0
+    bool _holdsGyro_0;
+    /// @brief Flag to check whether the contained accelerometer reading is from Gyro_1
+    bool _holdsGyro_1;
+
+    /// @brief First or second instance of accel or gyro sensors
+    u_int8_t _multiId{};
 
     /// @brief Timestamp of the latest accelerometer reading
     uint64_t _accelKey{};

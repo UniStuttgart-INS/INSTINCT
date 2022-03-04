@@ -26,15 +26,19 @@ NAV::UlogFile::UlogFile()
 
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 589, 257 };
-    _holdsAccel = false;
-    _holdsGyro = false;
+    _holdsAccel_0 = false;
+    _holdsAccel_1 = false;
+    _holdsGyro_0 = false;
+    _holdsGyro_1 = false;
     _holdsMag = false;
     _holdsGps = false;
     _holdsAtt = false;
     _isReRun = false;
+    _multiId = 0;
 
     // All message types are polled from the first output pin, but then send out on the correct pin over invokeCallbacks
-    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &UlogFile::pollData);
+    nm::CreateOutputPin(this, "ImuObs #1", Pin::Type::Flow, { NAV::ImuObs::type() }, &UlogFile::pollData);
+    nm::CreateOutputPin(this, "ImuObs #2", Pin::Type::Flow, { NAV::ImuObs::type() });
     nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() });
 }
 
@@ -107,11 +111,14 @@ bool NAV::UlogFile::initialize()
     }
 
     sensorStartupUTCTime_usec = 0;
-    _holdsAccel = false;
-    _holdsGyro = false;
+    _holdsAccel_0 = false;
+    _holdsAccel_1 = false;
+    _holdsGyro_0 = false;
+    _holdsGyro_1 = false;
     _holdsMag = false;
     _holdsGps = false;
     _holdsAtt = false;
+    _multiId = 0;
 
     lastGnssTime.timeSinceStartup = 0;
 
@@ -366,7 +373,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
 
             messageData.data.resize(messageData.header.msg_size - 2);
             _filestream.read(messageData.data.data(), messageData.header.msg_size - 2);
-            LOG_DEBUG("{}: messageData.header.msg_size: {}", nameId(), messageData.header.msg_size); //TODO: once data processing logic is finished, make LOG_DATA
+            LOG_DATA("{}: messageData.header.msg_size: {}", nameId(), messageData.header.msg_size);
 
             const auto& messageFormat = _messageFormats.at(_subscribedMessages.at(messageData.msg_id).message_name);
 
@@ -404,19 +411,19 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     else if (dataField.name == "x")
                     {
                         std::memcpy(&sensorAccel.x, currentData, sizeof(sensorAccel.x));
-                        LOG_DATA("{}: sensorAccel.x: {}", nameId(), sensorAccel.x);
+                        LOG_DEBUG("{}: sensorAccel.x: {}", nameId(), sensorAccel.x);
                         currentExtractLocation += sizeof(sensorAccel.x);
                     }
                     else if (dataField.name == "y")
                     {
                         std::memcpy(&sensorAccel.y, currentData, sizeof(sensorAccel.y));
-                        LOG_DATA("{}: sensorAccel.y: {}", nameId(), sensorAccel.y);
+                        LOG_DEBUG("{}: sensorAccel.y: {}", nameId(), sensorAccel.y);
                         currentExtractLocation += sizeof(sensorAccel.y);
                     }
                     else if (dataField.name == "z")
                     {
                         std::memcpy(&sensorAccel.z, currentData, sizeof(sensorAccel.z));
-                        LOG_DATA("{}: sensorAccel.z: {}", nameId(), sensorAccel.z);
+                        LOG_DEBUG("{}: sensorAccel.z: {}", nameId(), sensorAccel.z);
                         currentExtractLocation += sizeof(sensorAccel.z);
                     }
                     else if (dataField.name == "temperature")
@@ -598,151 +605,151 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     if (dataField.name == "timestamp")
                     {
                         std::memcpy(&vehicleGpsPosition.timestamp, currentData, sizeof(vehicleGpsPosition.timestamp));
-                        LOG_DEBUG("{}: vehicleGpsPosition.timestamp: {}", nameId(), vehicleGpsPosition.timestamp);
+                        LOG_DATA("{}: vehicleGpsPosition.timestamp: {}", nameId(), vehicleGpsPosition.timestamp);
                         currentExtractLocation += sizeof(vehicleGpsPosition.timestamp);
                     }
                     else if (dataField.name == "time_utc_usec")
                     {
                         std::memcpy(&vehicleGpsPosition.time_utc_usec, currentData, sizeof(vehicleGpsPosition.time_utc_usec));
-                        LOG_DEBUG("{}: vehicleGpsPosition.time_utc_usec: {}", nameId(), vehicleGpsPosition.time_utc_usec);
+                        LOG_DATA("{}: vehicleGpsPosition.time_utc_usec: {}", nameId(), vehicleGpsPosition.time_utc_usec);
                         currentExtractLocation += sizeof(vehicleGpsPosition.time_utc_usec);
                     }
                     else if (dataField.name == "lat")
                     {
                         std::memcpy(&vehicleGpsPosition.lat, currentData, sizeof(vehicleGpsPosition.lat));
-                        LOG_DEBUG("{}: vehicleGpsPosition.lat: {}", nameId(), vehicleGpsPosition.lat);
+                        LOG_DATA("{}: vehicleGpsPosition.lat: {}", nameId(), vehicleGpsPosition.lat);
                         currentExtractLocation += sizeof(vehicleGpsPosition.lat);
                     }
                     else if (dataField.name == "lon")
                     {
                         std::memcpy(&vehicleGpsPosition.lon, currentData, sizeof(vehicleGpsPosition.lon));
-                        LOG_DEBUG("{}: vehicleGpsPosition.lon: {}", nameId(), vehicleGpsPosition.lon);
+                        LOG_DATA("{}: vehicleGpsPosition.lon: {}", nameId(), vehicleGpsPosition.lon);
                         currentExtractLocation += sizeof(vehicleGpsPosition.lon);
                     }
                     else if (dataField.name == "alt")
                     {
                         std::memcpy(&vehicleGpsPosition.alt, currentData, sizeof(vehicleGpsPosition.alt));
-                        LOG_DEBUG("{}: vehicleGpsPosition.alt: {}", nameId(), vehicleGpsPosition.alt);
+                        LOG_DATA("{}: vehicleGpsPosition.alt: {}", nameId(), vehicleGpsPosition.alt);
                         currentExtractLocation += sizeof(vehicleGpsPosition.alt);
                     }
                     else if (dataField.name == "alt_ellipsoid")
                     {
                         std::memcpy(&vehicleGpsPosition.alt_ellipsoid, currentData, sizeof(vehicleGpsPosition.alt_ellipsoid));
-                        LOG_DEBUG("{}: vehicleGpsPosition.alt_ellipsoid: {}", nameId(), vehicleGpsPosition.alt_ellipsoid);
+                        LOG_DATA("{}: vehicleGpsPosition.alt_ellipsoid: {}", nameId(), vehicleGpsPosition.alt_ellipsoid);
                         currentExtractLocation += sizeof(vehicleGpsPosition.alt_ellipsoid);
                     }
                     else if (dataField.name == "s_variance_m_s")
                     {
                         std::memcpy(&vehicleGpsPosition.s_variance_m_s, currentData, sizeof(vehicleGpsPosition.s_variance_m_s));
-                        LOG_DEBUG("{}: vehicleGpsPosition.s_variance_m_s: {}", nameId(), vehicleGpsPosition.s_variance_m_s);
+                        LOG_DATA("{}: vehicleGpsPosition.s_variance_m_s: {}", nameId(), vehicleGpsPosition.s_variance_m_s);
                         currentExtractLocation += sizeof(vehicleGpsPosition.s_variance_m_s);
                     }
                     else if (dataField.name == "c_variance_rad")
                     {
                         std::memcpy(&vehicleGpsPosition.c_variance_rad, currentData, sizeof(vehicleGpsPosition.c_variance_rad));
-                        LOG_DEBUG("{}: vehicleGpsPosition.c_variance_rad: {}", nameId(), vehicleGpsPosition.c_variance_rad);
+                        LOG_DATA("{}: vehicleGpsPosition.c_variance_rad: {}", nameId(), vehicleGpsPosition.c_variance_rad);
                         currentExtractLocation += sizeof(vehicleGpsPosition.c_variance_rad);
                     }
                     else if (dataField.name == "eph")
                     {
                         std::memcpy(&vehicleGpsPosition.eph, currentData, sizeof(vehicleGpsPosition.eph));
-                        LOG_DEBUG("{}: vehicleGpsPosition.eph: {}", nameId(), vehicleGpsPosition.eph);
+                        LOG_DATA("{}: vehicleGpsPosition.eph: {}", nameId(), vehicleGpsPosition.eph);
                         currentExtractLocation += sizeof(vehicleGpsPosition.eph);
                     }
                     else if (dataField.name == "epv")
                     {
                         std::memcpy(&vehicleGpsPosition.epv, currentData, sizeof(vehicleGpsPosition.epv));
-                        LOG_DEBUG("{}: vehicleGpsPosition.epv: {}", nameId(), vehicleGpsPosition.epv);
+                        LOG_DATA("{}: vehicleGpsPosition.epv: {}", nameId(), vehicleGpsPosition.epv);
                         currentExtractLocation += sizeof(vehicleGpsPosition.epv);
                     }
                     else if (dataField.name == "hdop")
                     {
                         std::memcpy(&vehicleGpsPosition.hdop, currentData, sizeof(vehicleGpsPosition.hdop));
-                        LOG_DEBUG("{}: vehicleGpsPosition.hdop: {}", nameId(), vehicleGpsPosition.hdop);
+                        LOG_DATA("{}: vehicleGpsPosition.hdop: {}", nameId(), vehicleGpsPosition.hdop);
                         currentExtractLocation += sizeof(vehicleGpsPosition.hdop);
                     }
                     else if (dataField.name == "vdop")
                     {
                         std::memcpy(&vehicleGpsPosition.vdop, currentData, sizeof(vehicleGpsPosition.lat));
-                        LOG_DEBUG("{}: vehicleGpsPosition.vdop: {}", nameId(), vehicleGpsPosition.vdop);
+                        LOG_DATA("{}: vehicleGpsPosition.vdop: {}", nameId(), vehicleGpsPosition.vdop);
                         currentExtractLocation += sizeof(vehicleGpsPosition.vdop);
                     }
                     else if (dataField.name == "noise_per_ms")
                     {
                         std::memcpy(&vehicleGpsPosition.noise_per_ms, currentData, sizeof(vehicleGpsPosition.noise_per_ms));
-                        LOG_DEBUG("{}: vehicleGpsPosition.noise_per_ms: {}", nameId(), vehicleGpsPosition.noise_per_ms);
+                        LOG_DATA("{}: vehicleGpsPosition.noise_per_ms: {}", nameId(), vehicleGpsPosition.noise_per_ms);
                         currentExtractLocation += sizeof(vehicleGpsPosition.noise_per_ms);
                     }
                     else if (dataField.name == "jamming_indicator")
                     {
                         std::memcpy(&vehicleGpsPosition.jamming_indicator, currentData, sizeof(vehicleGpsPosition.jamming_indicator));
-                        LOG_DEBUG("{}: vehicleGpsPosition.jamming_indicator: {}", nameId(), vehicleGpsPosition.jamming_indicator);
+                        LOG_DATA("{}: vehicleGpsPosition.jamming_indicator: {}", nameId(), vehicleGpsPosition.jamming_indicator);
                         currentExtractLocation += sizeof(vehicleGpsPosition.jamming_indicator);
                     }
                     else if (dataField.name == "vel_m_s")
                     {
                         std::memcpy(&vehicleGpsPosition.vel_m_s, currentData, sizeof(vehicleGpsPosition.vel_m_s));
-                        LOG_DEBUG("{}: vehicleGpsPosition.vel_m_s: {}", nameId(), vehicleGpsPosition.vel_m_s);
+                        LOG_DATA("{}: vehicleGpsPosition.vel_m_s: {}", nameId(), vehicleGpsPosition.vel_m_s);
                         currentExtractLocation += sizeof(vehicleGpsPosition.vel_m_s);
                     }
                     else if (dataField.name == "vel_n_m_s")
                     {
                         std::memcpy(&vehicleGpsPosition.vel_n_m_s, currentData, sizeof(vehicleGpsPosition.vel_n_m_s));
-                        LOG_DEBUG("{}: vehicleGpsPosition.vel_n_m_s: {}", nameId(), vehicleGpsPosition.vel_n_m_s);
+                        LOG_DATA("{}: vehicleGpsPosition.vel_n_m_s: {}", nameId(), vehicleGpsPosition.vel_n_m_s);
                         currentExtractLocation += sizeof(vehicleGpsPosition.vel_n_m_s);
                     }
                     else if (dataField.name == "vel_e_m_s")
                     {
                         std::memcpy(&vehicleGpsPosition.vel_e_m_s, currentData, sizeof(vehicleGpsPosition.vel_e_m_s));
-                        LOG_DEBUG("{}: vehicleGpsPosition.vel_e_m_s: {}", nameId(), vehicleGpsPosition.vel_e_m_s);
+                        LOG_DATA("{}: vehicleGpsPosition.vel_e_m_s: {}", nameId(), vehicleGpsPosition.vel_e_m_s);
                         currentExtractLocation += sizeof(vehicleGpsPosition.vel_e_m_s);
                     }
                     else if (dataField.name == "vel_d_m_s")
                     {
                         std::memcpy(&vehicleGpsPosition.vel_d_m_s, currentData, sizeof(vehicleGpsPosition.vel_d_m_s));
-                        LOG_DEBUG("{}: vehicleGpsPosition.vel_d_m_s: {}", nameId(), vehicleGpsPosition.vel_d_m_s);
+                        LOG_DATA("{}: vehicleGpsPosition.vel_d_m_s: {}", nameId(), vehicleGpsPosition.vel_d_m_s);
                         currentExtractLocation += sizeof(vehicleGpsPosition.vel_d_m_s);
                     }
                     else if (dataField.name == "cog_rad")
                     {
                         std::memcpy(&vehicleGpsPosition.cog_rad, currentData, sizeof(vehicleGpsPosition.cog_rad));
-                        LOG_DEBUG("{}: vehicleGpsPosition.cog_rad: {}", nameId(), vehicleGpsPosition.cog_rad);
+                        LOG_DATA("{}: vehicleGpsPosition.cog_rad: {}", nameId(), vehicleGpsPosition.cog_rad);
                         currentExtractLocation += sizeof(vehicleGpsPosition.cog_rad);
                     }
                     else if (dataField.name == "timestamp_time_relative")
                     {
                         std::memcpy(&vehicleGpsPosition.timestamp_time_relative, currentData, sizeof(vehicleGpsPosition.timestamp_time_relative));
-                        LOG_DEBUG("{}: vehicleGpsPosition.timestamp_time_relative: {}", nameId(), vehicleGpsPosition.timestamp_time_relative);
+                        LOG_DATA("{}: vehicleGpsPosition.timestamp_time_relative: {}", nameId(), vehicleGpsPosition.timestamp_time_relative);
                         currentExtractLocation += sizeof(vehicleGpsPosition.timestamp_time_relative);
                     }
                     else if (dataField.name == "heading")
                     {
                         std::memcpy(&vehicleGpsPosition.heading, currentData, sizeof(vehicleGpsPosition.heading));
-                        LOG_DEBUG("{}: vehicleGpsPosition.heading: {}", nameId(), vehicleGpsPosition.heading);
+                        LOG_DATA("{}: vehicleGpsPosition.heading: {}", nameId(), vehicleGpsPosition.heading);
                         currentExtractLocation += sizeof(vehicleGpsPosition.heading);
                     }
                     else if (dataField.name == "heading_offset")
                     {
                         std::memcpy(&vehicleGpsPosition.heading_offset, currentData, sizeof(vehicleGpsPosition.heading_offset));
-                        LOG_DEBUG("{}: vehicleGpsPosition.heading_offset: {}", nameId(), vehicleGpsPosition.heading_offset);
+                        LOG_DATA("{}: vehicleGpsPosition.heading_offset: {}", nameId(), vehicleGpsPosition.heading_offset);
                         currentExtractLocation += sizeof(vehicleGpsPosition.heading_offset);
                     }
                     else if (dataField.name == "fix_type")
                     {
                         std::memcpy(&vehicleGpsPosition.fix_type, currentData, sizeof(vehicleGpsPosition.fix_type));
-                        LOG_DEBUG("{}: vehicleGpsPosition.fix_type: {}", nameId(), vehicleGpsPosition.fix_type);
+                        LOG_DATA("{}: vehicleGpsPosition.fix_type: {}", nameId(), vehicleGpsPosition.fix_type);
                         currentExtractLocation += sizeof(vehicleGpsPosition.fix_type);
                     }
                     else if (dataField.name == "vel_ned_valid")
                     {
                         std::memcpy(&vehicleGpsPosition.vel_ned_valid, currentData, sizeof(vehicleGpsPosition.vel_ned_valid));
-                        LOG_DEBUG("{}: vehicleGpsPosition.vel_ned_valid: {}", nameId(), vehicleGpsPosition.vel_ned_valid);
+                        LOG_DATA("{}: vehicleGpsPosition.vel_ned_valid: {}", nameId(), vehicleGpsPosition.vel_ned_valid);
                         currentExtractLocation += sizeof(vehicleGpsPosition.vel_ned_valid);
                     }
                     else if (dataField.name == "satellites_used")
                     {
                         std::memcpy(&vehicleGpsPosition.satellites_used, currentData, sizeof(vehicleGpsPosition.satellites_used));
-                        LOG_DEBUG("{}: vehicleGpsPosition.satellites_used: {}", nameId(), vehicleGpsPosition.satellites_used);
+                        LOG_DATA("{}: vehicleGpsPosition.satellites_used: {}", nameId(), vehicleGpsPosition.satellites_used);
                         currentExtractLocation += sizeof(vehicleGpsPosition.satellites_used);
                     }
                     else if (dataField.name.compare(0, 7, "_padding")) // e.g. '_padding0', '_padding1'
@@ -1029,8 +1036,6 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 LOG_ERROR("{}: UKNOWN: _subscribedMessages.at(messageData.msg_id).message_name = {}", nameId(), _subscribedMessages.at(messageData.msg_id).message_name);
             }
 
-            // TODO: for loop for multiple multi_ids (redundant sensors)
-
             // #########################################################################################################################################
             //                                                                Callbacks
             // #########################################################################################################################################
@@ -1051,7 +1056,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 for (_it = _epochData.rbegin(); _it != _epochData.rend(); _it++)
                 {
                     // Add accel data to ImuObs
-                    if (std::holds_alternative<SensorAccel>(_it->second.data))
+                    if (std::holds_alternative<SensorAccel>(_it->second.data) && (_it->second.multi_id == _multiId))
                     {
                         _accelKey = _it->first;
                         float accelX = std::get<SensorAccel>(_epochData.find(_accelKey)->second.data).x;
@@ -1061,7 +1066,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                         LOG_DATA("{}: accelX = {}, accelY = {}, accelZ = {}", nameId(), accelX, accelY, accelZ);
                     }
                     // Add gyro data to ImuObs
-                    else if (std::holds_alternative<SensorGyro>(_it->second.data))
+                    else if (std::holds_alternative<SensorGyro>(_it->second.data) && (_it->second.multi_id == _multiId))
                     {
                         _gyroKey = _it->first;
                         float gyroX = std::get<SensorGyro>(_epochData.find(_gyroKey)->second.data).x;
@@ -1085,8 +1090,12 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
 
                 while (true) // Delete all old SensorAccel, SensorGyro and SensorMag entries
                 {
-                    auto iter = std::find_if(_epochData.begin(), _epochData.end(), [](const std::pair<uint64_t, MeasurementData>& v) {
-                        return (std::holds_alternative<SensorAccel>(v.second.data) || std::holds_alternative<SensorGyro>(v.second.data) || std::holds_alternative<SensorMag>(v.second.data));
+                    auto iter = std::find_if(_epochData.begin(), _epochData.end(), [&, this](const std::pair<uint64_t, MeasurementData>& v) {
+                        auto haA = std::holds_alternative<SensorAccel>(v.second.data);
+                        auto haG = std::holds_alternative<SensorGyro>(v.second.data);
+                        auto haM = std::holds_alternative<SensorMag>(v.second.data);
+
+                        return (((haA || haG) && ((_holdsAccel_0 && _holdsGyro_0) || (_holdsAccel_1 && _holdsGyro_1))) || haM);
                     });
                     if (iter == _epochData.end())
                     {
@@ -1099,13 +1108,26 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 _gyroKey = 0;
                 _magKey = 0;
 
-                _holdsAccel = false;
-                _holdsGyro = false;
+                _holdsAccel_0 = false;
+                _holdsAccel_1 = false;
+                _holdsGyro_0 = false;
+                _holdsGyro_1 = false;
                 _holdsMag = false;
 
                 if (!peek)
                 {
-                    invokeCallbacks(OUTPUT_PORT_INDEX_IMUOBS, obs);
+                    if (_multiId == 0)
+                    {
+                        invokeCallbacks(OUTPUT_PORT_INDEX_IMUOBS_1, obs);
+                    }
+                    else if (_multiId == 1)
+                    {
+                        invokeCallbacks(OUTPUT_PORT_INDEX_IMUOBS_2, obs);
+                    }
+                    else
+                    {
+                        LOG_ERROR("{}: _multiId = {} is invalid", nameId(), _multiId);
+                    }
                 }
                 else
                 {
@@ -1403,26 +1425,51 @@ void NAV::UlogFile::readParameterMessageDefault(uint16_t msgSize, char msgType)
 
 bool NAV::UlogFile::enoughImuDataAvailable(std::multimap<uint64_t, MeasurementData> dataMap)
 {
+    // Avoid seg-fault
     if (dataMap.empty())
     {
         return false;
     }
 
+    // Check whether _epochData contains enough entries to provide one ImuObs, i.e. one Accel and one Gyro from the same sensor (multi_id 0 or 1)
     if (std::holds_alternative<SensorAccel>(dataMap.rbegin()->second.data))
     {
-        _holdsAccel = true;
+        if (dataMap.rbegin()->second.multi_id == 0)
+        {
+            _holdsAccel_0 = true;
+        }
+        else if (dataMap.rbegin()->second.multi_id == 1)
+        {
+            _holdsAccel_1 = true;
+        }
     }
     if (std::holds_alternative<SensorGyro>(dataMap.rbegin()->second.data))
     {
-        _holdsGyro = true;
+        if (dataMap.rbegin()->second.multi_id == 0)
+        {
+            _holdsGyro_0 = true;
+        }
+        else if (dataMap.rbegin()->second.multi_id == 1)
+        {
+            _holdsGyro_1 = true;
+        }
     }
     if (std::holds_alternative<SensorMag>(dataMap.rbegin()->second.data))
     {
         _holdsMag = true;
     }
 
+    if (_holdsAccel_0 && _holdsGyro_0)
+    {
+        _multiId = 0;
+    }
+    else if (_holdsAccel_1 && _holdsGyro_1)
+    {
+        _multiId = 1;
+    }
+
     // Check whether Accel and Gyro measurements are available and whether the first absolute timestamp (from GPS) is available
-    return (_holdsAccel && _holdsGyro && lastGnssTime.timeSinceStartup) != 0;
+    return (lastGnssTime.timeSinceStartup && ((_holdsAccel_0 && _holdsGyro_0) || (_holdsAccel_1 && _holdsGyro_1))) != 0;
 }
 
 bool NAV::UlogFile::enoughPosVelAttDataAvailable(std::multimap<uint64_t, MeasurementData> dataMap)
