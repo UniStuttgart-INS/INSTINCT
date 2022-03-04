@@ -708,7 +708,7 @@
                                     [
                                         4,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -747,7 +747,7 @@
                                     [
                                         4,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -786,7 +786,7 @@
                                     [
                                         4,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -825,7 +825,7 @@
                                     [
                                         3,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -864,7 +864,7 @@
                                     [
                                         3,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -903,7 +903,7 @@
                                     [
                                         3,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -942,7 +942,7 @@
                                     [
                                         2,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -981,7 +981,7 @@
                                     [
                                         2,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -1020,7 +1020,7 @@
                                     [
                                         2,
                                         [
-                                            1,
+                                            4,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -1075,7 +1075,7 @@
                                     [
                                         0,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -1114,7 +1114,7 @@
                                     [
                                         0,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -1153,7 +1153,7 @@
                                     [
                                         0,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -1192,7 +1192,7 @@
                                     [
                                         1,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -1231,7 +1231,7 @@
                                     [
                                         1,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -1270,7 +1270,7 @@
                                     [
                                         1,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -1401,7 +1401,7 @@
                                     [
                                         5,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -1500,7 +1500,7 @@
                                     [
                                         5,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -1599,7 +1599,7 @@
                                     [
                                         5,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -5191,8 +5191,6 @@
                 ],
                 "plotInfos": [
                     {
-                        "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
                         "headerText": "Accelerometer bias (accumulated)",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -5216,14 +5214,14 @@
                             "y": 300.0
                         },
                         "title": "Accelerometer bias (accumulated)",
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "y1AxisLabel": "Accelerometer bias b_X [m/s^2]",
                         "y2AxisLabel": "",
-                        "y3AxisLabel": ""
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
                     },
                     {
-                        "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
                         "headerText": "Gyroscope bias (accumulated)",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -5247,14 +5245,14 @@
                             "y": 300.0
                         },
                         "title": "Gyroscope bias (accumulated)",
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "y1AxisLabel": "Gyroscope bias b_X [rad/s]",
                         "y2AxisLabel": "",
-                        "y3AxisLabel": ""
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
                     },
                     {
-                        "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
                         "headerText": "Lat/Lon/Alt error",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -5278,14 +5276,14 @@
                             "y": 300.0
                         },
                         "title": "Lat/Lon/Alt error",
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "y1AxisLabel": "Lat/Lon error [deg]",
                         "y2AxisLabel": "Altitude error [m]",
-                        "y3AxisLabel": ""
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
                     },
                     {
-                        "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
                         "headerText": "Velocity error",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -5309,14 +5307,14 @@
                             "y": 300.0
                         },
                         "title": "Velocity error",
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "y1AxisLabel": "Velocity error [m/s]",
                         "y2AxisLabel": "",
-                        "y3AxisLabel": ""
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
                     },
                     {
-                        "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
                         "headerText": "Angle error",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -5340,14 +5338,14 @@
                             "y": 300.0
                         },
                         "title": "Angle error",
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "y1AxisLabel": "Angle error [deg]",
                         "y2AxisLabel": "",
-                        "y3AxisLabel": ""
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
                     },
                     {
-                        "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
                         "headerText": "P Angles",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -5371,10 +5369,12 @@
                             "y": 300.0
                         },
                         "title": "P Angles",
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "y1AxisLabel": "Variance [deg^2]",
                         "y2AxisLabel": "",
-                        "y3AxisLabel": ""
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
                     }
                 ]
             },
@@ -6359,7 +6359,7 @@
                                     [
                                         10,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -6398,7 +6398,7 @@
                                     [
                                         10,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -6437,7 +6437,7 @@
                                     [
                                         10,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -6476,7 +6476,7 @@
                                     [
                                         11,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -6515,7 +6515,7 @@
                                     [
                                         11,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -6554,7 +6554,7 @@
                                     [
                                         11,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -6605,7 +6605,7 @@
                                     [
                                         10,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -6644,7 +6644,7 @@
                                     [
                                         10,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -6683,7 +6683,7 @@
                                     [
                                         10,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -6722,7 +6722,7 @@
                                     [
                                         11,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -6761,7 +6761,7 @@
                                     [
                                         11,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -6800,7 +6800,7 @@
                                     [
                                         11,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -6867,7 +6867,7 @@
                                     [
                                         1,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -6906,7 +6906,7 @@
                                     [
                                         0,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -6940,7 +6940,7 @@
                                     [
                                         2,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -6979,7 +6979,7 @@
                                     [
                                         3,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7030,7 +7030,7 @@
                                     [
                                         7,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7069,7 +7069,7 @@
                                     [
                                         8,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7108,7 +7108,7 @@
                                     [
                                         9,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7147,7 +7147,7 @@
                                     [
                                         4,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7186,7 +7186,7 @@
                                     [
                                         5,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7225,7 +7225,7 @@
                                     [
                                         6,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7304,7 +7304,7 @@
                                     [
                                         1,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7343,7 +7343,7 @@
                                     [
                                         0,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7377,7 +7377,7 @@
                                     [
                                         2,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7416,7 +7416,7 @@
                                     [
                                         3,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7467,7 +7467,7 @@
                                     [
                                         7,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7506,7 +7506,7 @@
                                     [
                                         8,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7545,7 +7545,7 @@
                                     [
                                         9,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7584,7 +7584,7 @@
                                     [
                                         4,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7623,7 +7623,7 @@
                                     [
                                         5,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7662,7 +7662,7 @@
                                     [
                                         6,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7741,7 +7741,7 @@
                                     [
                                         1,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7780,7 +7780,7 @@
                                     [
                                         0,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7814,7 +7814,7 @@
                                     [
                                         2,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7853,7 +7853,7 @@
                                     [
                                         3,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7904,7 +7904,7 @@
                                     [
                                         7,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7943,7 +7943,7 @@
                                     [
                                         8,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -7982,7 +7982,7 @@
                                     [
                                         9,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8021,7 +8021,7 @@
                                     [
                                         4,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8060,7 +8060,7 @@
                                     [
                                         5,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8099,7 +8099,7 @@
                                     [
                                         6,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8178,7 +8178,7 @@
                                     [
                                         1,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8217,7 +8217,7 @@
                                     [
                                         0,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8251,7 +8251,7 @@
                                     [
                                         2,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8290,7 +8290,7 @@
                                     [
                                         3,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8341,7 +8341,7 @@
                                     [
                                         7,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8380,7 +8380,7 @@
                                     [
                                         8,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8419,7 +8419,7 @@
                                     [
                                         9,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8458,7 +8458,7 @@
                                     [
                                         4,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8497,7 +8497,7 @@
                                     [
                                         5,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8536,7 +8536,7 @@
                                     [
                                         6,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8615,7 +8615,7 @@
                                     [
                                         1,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8654,7 +8654,7 @@
                                     [
                                         0,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8688,7 +8688,7 @@
                                     [
                                         2,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8727,7 +8727,7 @@
                                     [
                                         3,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8778,7 +8778,7 @@
                                     [
                                         7,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8817,7 +8817,7 @@
                                     [
                                         8,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8856,7 +8856,7 @@
                                     [
                                         9,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8895,7 +8895,7 @@
                                     [
                                         4,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8934,7 +8934,7 @@
                                     [
                                         5,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -8973,7 +8973,7 @@
                                     [
                                         6,
                                         [
-                                            0,
+                                            3,
                                             {
                                                 "color": {
                                                     "w": 1.0,
@@ -9029,8 +9029,6 @@
                 ],
                 "plotInfos": [
                     {
-                        "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
                         "headerText": "Position (North/East)",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": true,
@@ -9050,14 +9048,14 @@
                             "y": 450.0
                         },
                         "title": "Position (North/East)",
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "East/West [m]",
                         "y1AxisLabel": "North/South [m]",
                         "y2AxisLabel": "",
-                        "y3AxisLabel": ""
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
                     },
                     {
-                        "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
                         "headerText": "Altitude",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -9077,14 +9075,14 @@
                             "y": 300.0
                         },
                         "title": "Altitude",
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "y1AxisLabel": "Altitude [m]",
                         "y2AxisLabel": "",
-                        "y3AxisLabel": ""
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
                     },
                     {
-                        "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
                         "headerText": "North/South",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -9104,14 +9102,14 @@
                             "y": 300.0
                         },
                         "title": "North/South",
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "y1AxisLabel": "North/South [m]",
                         "y2AxisLabel": "",
-                        "y3AxisLabel": ""
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
                     },
                     {
-                        "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
                         "headerText": "East/West",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -9131,14 +9129,14 @@
                             "y": 300.0
                         },
                         "title": "East/West",
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "y1AxisLabel": "East/West [m]",
                         "y2AxisLabel": "",
-                        "y3AxisLabel": ""
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
                     },
                     {
-                        "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
                         "headerText": "Flight Angles - Roll",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -9158,14 +9156,14 @@
                             "y": 300.0
                         },
                         "title": "Flight Angles - Roll",
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "y1AxisLabel": "Roll [deg]",
                         "y2AxisLabel": "",
-                        "y3AxisLabel": ""
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
                     },
                     {
-                        "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
                         "headerText": "Flight Angles - Pitch",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -9185,14 +9183,14 @@
                             "y": 300.0
                         },
                         "title": "Flight Angles - Pitch",
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "y1AxisLabel": "Pitch [deg]",
                         "y2AxisLabel": "",
-                        "y3AxisLabel": ""
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
                     },
                     {
-                        "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
                         "headerText": "Flight Angles - Yaw",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -9212,14 +9210,14 @@
                             "y": 300.0
                         },
                         "title": "Flight Angles - Yaw",
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "y1AxisLabel": "Yaw [deg]",
                         "y2AxisLabel": "",
-                        "y3AxisLabel": ""
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
                     },
                     {
-                        "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
                         "headerText": "Velocity - North",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -9239,14 +9237,14 @@
                             "y": 300.0
                         },
                         "title": "Velocity - North",
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "y1AxisLabel": "Velocity North [m/s]",
                         "y2AxisLabel": "",
-                        "y3AxisLabel": ""
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
                     },
                     {
-                        "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
                         "headerText": "Velocity - East",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -9266,14 +9264,14 @@
                             "y": 300.0
                         },
                         "title": "Velocity - East",
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "y1AxisLabel": "Velocity East [m/s]",
                         "y2AxisLabel": "",
-                        "y3AxisLabel": ""
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
                     },
                     {
-                        "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
                         "headerText": "Velocity - Down",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -9293,14 +9291,14 @@
                             "y": 300.0
                         },
                         "title": "Velocity - Down",
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "y1AxisLabel": "Velocity Down [m/s]",
                         "y2AxisLabel": "",
-                        "y3AxisLabel": ""
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
                     },
                     {
-                        "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
                         "headerText": "Acceleration Measurements (f_p)",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -9320,14 +9318,14 @@
                             "y": 300.0
                         },
                         "title": "Acceleration Measurements (f_p)",
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "y1AxisLabel": "Acceleration [m/s^2]",
                         "y2AxisLabel": "",
-                        "y3AxisLabel": ""
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
                     },
                     {
-                        "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
                         "headerText": "Angular Rate Measurements (omega_ip_p)",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -9347,10 +9345,12 @@
                             "y": 300.0
                         },
                         "title": "Angular Rate Measurements (omega_ip_p)",
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "y1AxisLabel": "Angular rate [rad/s]",
                         "y2AxisLabel": "",
-                        "y3AxisLabel": ""
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
                     }
                 ]
             },

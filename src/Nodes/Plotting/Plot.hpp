@@ -128,8 +128,8 @@ class Plot : public Node
             ScrollingBuffer<double> buffer;
             /// Flag if data was received, as the buffer contains std::nan("") otherwise
             bool hasData = false;
-            /// Key: PlotIndex; Value: <yAxisIndex, plotStyle>
-            std::map<size_t, std::pair<int, PlotStyle>> plotOnAxis;
+            /// Key: PlotIndex; Value: <yImAxis, plotStyle>
+            std::map<size_t, std::pair<ImAxis, PlotStyle>> plotOnAxis;
 
             /// When connecting a new link. All data is flagged for delete and only those who are also present in the new link are kept
             bool markedForDelete = false;
@@ -293,10 +293,11 @@ class Plot : public Node
         int selectedPin = 0;
         /// Flags which are passed to the plot
         int plotFlags = 0;
-        /// Flag whether to automaticaly set the x-Axis limits
-        bool autoLimitXaxis = true;
-        /// Flag whether to automaticaly set the y-Axis limits
-        bool autoLimitYaxis = true;
+
+        /// Flags for the x-Axis
+        ImPlotAxisFlags xAxisFlags = ImPlotAxisFlags_AutoFit;
+        /// Flags for the y-Axes
+        ImPlotAxisFlags yAxisFlags = ImPlotAxisFlags_AutoFit;
         /// @brief Key: PinIndex, Value: plotData to use for x-Axis
         std::vector<size_t> selectedXdata;
 
