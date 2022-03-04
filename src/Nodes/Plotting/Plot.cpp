@@ -1,5 +1,7 @@
 #include "Plot.hpp"
 
+#include <implot_internal.h>
+
 #include "util/Logger.hpp"
 
 #include "internal/NodeManager.hpp"
@@ -107,6 +109,13 @@ void from_json(const json& j, Plot::PinData::PlotData& data)
     if (j.contains("plotOnAxisAndPlotStyle"))
     {
         j.at("plotOnAxisAndPlotStyle").get_to(data.plotOnAxis);
+        for (auto& plotOnAxis : data.plotOnAxis)
+        {
+            if (plotOnAxis.second.first < ImAxis_Y1)
+            {
+                plotOnAxis.second.first += ImAxis_Y1;
+            }
+        }
     }
     if (j.contains("displayName"))
     {
@@ -165,8 +174,8 @@ void to_json(json& j, const Plot::PlotInfo& data)
 {
     j = json{
         { "size", data.size },
-        { "autoLimitXaxis", data.autoLimitXaxis },
-        { "autoLimitYaxis", data.autoLimitYaxis },
+        { "xAxisFlags", data.xAxisFlags },
+        { "yAxisFlags", data.yAxisFlags },
         { "headerText", data.headerText },
         { "leftPaneWidth", data.leftPaneWidth },
         { "plotFlags", data.plotFlags },
@@ -190,13 +199,13 @@ void from_json(const json& j, Plot::PlotInfo& data)
     {
         j.at("size").get_to(data.size);
     }
-    if (j.contains("autoLimitXaxis"))
+    if (j.contains("xAxisFlags"))
     {
-        j.at("autoLimitXaxis").get_to(data.autoLimitXaxis);
+        j.at("xAxisFlags").get_to(data.xAxisFlags);
     }
-    if (j.contains("autoLimitYaxis"))
+    if (j.contains("yAxisFlags"))
     {
-        j.at("autoLimitYaxis").get_to(data.autoLimitYaxis);
+        j.at("yAxisFlags").get_to(data.yAxisFlags);
     }
     if (j.contains("headerText"))
     {
@@ -597,14 +606,15 @@ void NAV::Plot::guiConfig()
                     flow::ApplyChanges();
                 }
                 ImGui::SameLine();
-                if (ImGui::Checkbox(fmt::format("Auto Limit X-Axis##{} - {}", size_t(id), plotNum).c_str(),
-                                    &plotInfo.autoLimitXaxis))
+
+                if (ImGui::CheckboxFlags(fmt::format("Auto Limit X-Axis##{} - {}", size_t(id), plotNum).c_str(),
+                                         &plotInfo.xAxisFlags, ImPlotAxisFlags_AutoFit))
                 {
                     flow::ApplyChanges();
                 }
                 ImGui::SameLine();
-                if (ImGui::Checkbox(fmt::format("Auto Limit Y-Axis##{} - {}", size_t(id), plotNum).c_str(),
-                                    &plotInfo.autoLimitYaxis))
+                if (ImGui::CheckboxFlags(fmt::format("Auto Limit Y-Axis##{} - {}", size_t(id), plotNum).c_str(),
+                                         &plotInfo.yAxisFlags, ImPlotAxisFlags_AutoFit))
                 {
                     flow::ApplyChanges();
                 }
@@ -670,19 +680,20 @@ void NAV::Plot::guiConfig()
             // Left Data Selectables
             for (auto& plotData : _pinData.at(static_cast<size_t>(plotInfo.selectedPin)).plotData)
             {
+                if (plotData.plotOnAxis.contains(plotNum))
+                {
+                    continue;
+                }
                 auto plotDataHasData = plotData.hasData;
                 if (!plotDataHasData)
                 {
                     ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
                 }
                 std::string label = plotData.displayName;
-                if (plotData.plotOnAxis.contains(plotNum))
-                {
-                    label += fmt::format(" (Y{})", plotData.plotOnAxis.at(plotNum).first + 1);
-                }
                 ImGui::Selectable(label.c_str(), false, 0);
                 if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
                 {
+                    // Create a pointer of pointer because the DragDrop copies the value and we want to pass only a pointer
                     auto* ptrPlotData = &plotData;
                     ImGui::SetDragDropPayload(fmt::format("DND_DATA {} - {}", size_t(id), plotNum).c_str(),
                                               &ptrPlotData, sizeof(PinData::PlotData*));
@@ -708,36 +719,38 @@ void NAV::Plot::guiConfig()
             const char* y2Label = (plotInfo.plotFlags & ImPlotFlags_YAxis2) && !plotInfo.y2AxisLabel.empty() ? plotInfo.y2AxisLabel.c_str() : nullptr;
             const char* y3Label = (plotInfo.plotFlags & ImPlotFlags_YAxis3) && !plotInfo.y3AxisLabel.empty() ? plotInfo.y3AxisLabel.c_str() : nullptr;
 
-            ImPlot::FitNextPlotAxes(plotInfo.autoLimitXaxis, plotInfo.autoLimitYaxis, plotInfo.autoLimitYaxis, plotInfo.autoLimitYaxis);
-            if (ImPlot::BeginPlot(fmt::format("{}##{} - {}", plotInfo.title, size_t(id), plotNum).c_str(),
-                                  xLabel, y1Label, plotInfo.size, plotInfo.plotFlags,
-                                  ImPlotAxisFlags_None, ImPlotAxisFlags_None, ImPlotAxisFlags_NoGridLines, ImPlotAxisFlags_NoGridLines, y2Label, y3Label))
+            if (ImPlot::BeginPlot(fmt::format("{}##{} - {}", plotInfo.title, size_t(id), plotNum).c_str(), plotInfo.size, plotInfo.plotFlags))
             {
+                ImPlot::SetupAxis(ImAxis_X1, xLabel, plotInfo.xAxisFlags);
+                ImPlot::SetupAxis(ImAxis_Y1, y1Label, plotInfo.yAxisFlags);
+                if (plotInfo.plotFlags & ImPlotFlags_YAxis2)
+                {
+                    ImPlot::SetupAxis(ImAxis_Y2, y2Label, plotInfo.yAxisFlags | ImPlotAxisFlags_NoGridLines | ImPlotAxisFlags_Opposite);
+                }
+                if (plotInfo.plotFlags & ImPlotFlags_YAxis3)
+                {
+                    ImPlot::SetupAxis(ImAxis_Y3, y3Label, plotInfo.yAxisFlags | ImPlotAxisFlags_NoGridLines | ImPlotAxisFlags_Opposite);
+                }
+
                 for (size_t pinIndex = 0; pinIndex < _pinData.size(); pinIndex++)
                 {
                     for (auto& plotData : _pinData.at(pinIndex).plotData)
                     {
                         if (plotData.plotOnAxis.contains(plotNum)
                             && plotData.hasData
-                            && (plotData.plotOnAxis.at(plotNum).first == ImPlotYAxis_1
-                                || (plotData.plotOnAxis.at(plotNum).first == ImPlotYAxis_2 && (plotInfo.plotFlags & ImPlotFlags_YAxis2))
-                                || (plotData.plotOnAxis.at(plotNum).first == ImPlotYAxis_3 && (plotInfo.plotFlags & ImPlotFlags_YAxis3))))
+                            && (plotData.plotOnAxis.at(plotNum).first == ImAxis_Y1
+                                || (plotData.plotOnAxis.at(plotNum).first == ImAxis_Y2 && (plotInfo.plotFlags & ImPlotFlags_YAxis2))
+                                || (plotData.plotOnAxis.at(plotNum).first == ImAxis_Y3 && (plotInfo.plotFlags & ImPlotFlags_YAxis3))))
                         {
                             // Lock the buffer so no data can be inserted till plotting finishes
                             std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
-                            ImPlot::SetPlotYAxis(plotData.plotOnAxis.at(plotNum).first);
+                            ImPlot::SetAxis(plotData.plotOnAxis.at(plotNum).first);
 
                             // Style options
                             if (plotData.plotOnAxis.at(plotNum).second.legendName.empty())
                             {
                                 plotData.plotOnAxis.at(plotNum).second.legendName = fmt::format("{} ({} - {})", plotData.displayName, pinIndex + 1, _pinData.at(pinIndex).dataIdentifier);
-                            }
-                            if (plotData.plotOnAxis.at(plotNum).second.color.w == -1)
-                            {
-                                plotData.plotOnAxis.at(plotNum).second.color = ImPlot::NextColormapColor();
-                                plotData.plotOnAxis.at(plotNum).second.markerFillColor = plotData.plotOnAxis.at(plotNum).second.color;
-                                plotData.plotOnAxis.at(plotNum).second.markerOutlineColor = plotData.plotOnAxis.at(plotNum).second.color;
                             }
                             if (plotData.plotOnAxis.at(plotNum).second.lineType == PlotStyle::LineType::Line)
                             {
@@ -779,14 +792,15 @@ void NAV::Plot::guiConfig()
                                                     stride * static_cast<int>(sizeof(double)));
                             }
 
-                            // allow legend labels to be dragged and dropped
-                            if (ImPlot::BeginLegendDragDropSource(plotName.c_str()))
+                            // allow legend item labels to be DND sources
+                            if (ImPlot::BeginDragDropSourceItem(plotName.c_str()))
                             {
+                                // Create a pointer of pointer because the DragDrop copies the value and we want to pass only a pointer
                                 auto* ptrPlotData = &plotData;
                                 ImGui::SetDragDropPayload(fmt::format("DND_DATA {} - {}", size_t(id), plotNum).c_str(),
                                                           &ptrPlotData, sizeof(PinData::PlotData*));
                                 ImGui::TextUnformatted(plotData.displayName.c_str());
-                                ImPlot::EndLegendDragDropSource();
+                                ImPlot::EndDragDropSource();
                             }
 
                             // Legend item context menu (right click on legend item)
@@ -871,31 +885,47 @@ void NAV::Plot::guiConfig()
                     }
                 }
 
-                // make our plot a drag and drop target
-                if (ImGui::BeginDragDropTarget())
-                {
+                auto addDragDropPlotToAxis = [this, plotNum](ImAxis dragDropAxis) {
                     if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND_DATA {} - {}", size_t(id), plotNum).c_str()))
                     {
                         auto* plotData = *static_cast<PinData::PlotData**>(payloadData->Data);
 
                         PlotStyle style;
-                        if (plotData->plotOnAxis.contains(plotNum))
+                        if (plotData->plotOnAxis.contains(plotNum)) // Item gets dragged from one axis to another
                         {
                             style = plotData->plotOnAxis.at(plotNum).second;
                         }
-
-                        plotData->plotOnAxis[plotNum] = { 0, style };
-                        // set specific y-axis if hovered
-                        for (int y = 0; y < 3; y++)
+                        else
                         {
-                            if (ImPlot::IsPlotYAxisHovered(y))
-                            {
-                                plotData->plotOnAxis[plotNum].first = y;
-                            }
+                            plotData->plotOnAxis.at(plotNum).second.color = ImPlot::NextColormapColor();
+                            plotData->plotOnAxis.at(plotNum).second.markerFillColor = plotData->plotOnAxis.at(plotNum).second.color;
+                            plotData->plotOnAxis.at(plotNum).second.markerOutlineColor = plotData->plotOnAxis.at(plotNum).second.color;
                         }
+
+                        plotData->plotOnAxis[plotNum] = { dragDropAxis, style };
                         flow::ApplyChanges();
                     }
-                    ImGui::EndDragDropTarget();
+                };
+
+                // allow the main plot area to be a DND target
+                if (ImPlot::BeginDragDropTargetPlot())
+                {
+                    addDragDropPlotToAxis(ImAxis_Y1);
+                    ImPlot::EndDragDropTarget();
+                }
+                // allow each y-axis to be a DND target
+                for (ImAxis y = ImAxis_Y1; y <= ImAxis_Y3; ++y)
+                {
+                    if ((y == ImAxis_Y2 && !(plotInfo.plotFlags & ImPlotFlags_YAxis2))
+                        || (y == ImAxis_Y3 && !(plotInfo.plotFlags & ImPlotFlags_YAxis3)))
+                    {
+                        continue;
+                    }
+                    if (ImPlot::BeginDragDropTargetAxis(y))
+                    {
+                        addDragDropPlotToAxis(y);
+                        ImPlot::EndDragDropTarget();
+                    }
                 }
 
                 ImPlot::EndPlot();
