@@ -69,51 +69,13 @@ class Plot : public Node
     /// @param[in] endPin Pin where the link ends
     void afterCreateLink(Pin* startPin, Pin* endPin) override;
 
-    /// @brief Specifying the look of a certain line in the plot
-    struct PlotStyle
-    {
-        /// @brief Possible line types
-        enum class LineType : int
-        {
-            Scatter, ///< Scatter plot (only markers)
-            Line,    ///< Line plot
-        };
-
-        /// Display name in the legend (if not set falls back to PlotData::displayName)
-        std::string legendName;
-        /// Legend name which gets changed in the gui
-        std::string legendNameGui;
-        /// Line type
-        LineType lineType = LineType::Line;
-        /// Line Color
-        ImVec4 color = IMPLOT_AUTO_COL;
-        /// Line thickness
-        float thickness = 1.0F;
-
-        /// Amount of points to skip for plotting
-        int stride = 0;
-
-        /// Display markers for the line plot (no effect for scatter type)
-        bool markers = false;
-        /// Style of the marker to display
-        ImPlotMarker markerStyle = ImPlotMarker_Cross;
-        /// Size of the markers (makes the marker smaller/bigger)
-        float markerSize = 1.0F;
-        /// Weight of the markers (increases thickness of marker lines)
-        float markerWeight = 1.0F;
-        /// Fill color for markers
-        ImVec4 markerFillColor = IMPLOT_AUTO_COL;
-        /// Outline/Border color for markers
-        ImVec4 markerOutlineColor = IMPLOT_AUTO_COL;
-    };
-
     /// @brief Information needed to plot the data on a certain pin
     struct PinData
     {
         /// @brief Stores the actual data coming from a pin
         struct PlotData
         {
-            /// @brief Default constructor
+            /// @brief Default constructor (needed to make serialization with json working)
             PlotData() = default;
 
             /// @brief Constructor
@@ -128,8 +90,6 @@ class Plot : public Node
             ScrollingBuffer<double> buffer;
             /// Flag if data was received, as the buffer contains std::nan("") otherwise
             bool hasData = false;
-            /// Key: PlotIndex; Value: <yImAxis, plotStyle>
-            std::map<size_t, std::pair<ImAxis, PlotStyle>> plotOnAxis;
 
             /// When connecting a new link. All data is flagged for delete and only those who are also present in the new link are kept
             bool markedForDelete = false;
@@ -263,6 +223,77 @@ class Plot : public Node
     /// @brief Information specifying the look of each plot
     struct PlotInfo
     {
+        /// Info needed to draw a data set
+        struct PlotItem
+        {
+            /// @brief Specifying the look of a certain line in the plot
+            struct Style
+            {
+                /// @brief Possible line types
+                enum class LineType : int
+                {
+                    Scatter, ///< Scatter plot (only markers)
+                    Line,    ///< Line plot
+                };
+
+                /// Display name in the legend (if not set falls back to PlotData::displayName)
+                std::string legendName;
+                /// Legend name which gets changed in the gui
+                std::string legendNameGui;
+                /// Line type
+                LineType lineType = LineType::Line;
+                /// Line Color
+                ImVec4 color = IMPLOT_AUTO_COL;
+                /// Line thickness
+                float thickness = 1.0F;
+
+                /// Amount of points to skip for plotting
+                int stride = 0;
+
+                /// Display markers for the line plot (no effect for scatter type)
+                bool markers = false;
+                /// Style of the marker to display
+                ImPlotMarker markerStyle = ImPlotMarker_Cross;
+                /// Size of the markers (makes the marker smaller/bigger)
+                float markerSize = 1.0F;
+                /// Weight of the markers (increases thickness of marker lines)
+                float markerWeight = 1.0F;
+                /// Fill color for markers
+                ImVec4 markerFillColor = IMPLOT_AUTO_COL;
+                /// Outline/Border color for markers
+                ImVec4 markerOutlineColor = IMPLOT_AUTO_COL;
+            };
+
+            /// @brief Default constructor (needed to make serialization with json working)
+            PlotItem() = default;
+
+            /// @brief Constructor
+            /// @param[in] pinIndex Index of the pin where the data came in
+            /// @param[in] dataIndex Index of the data on the pin
+            PlotItem(size_t pinIndex, size_t dataIndex)
+                : pinIndex(pinIndex), dataIndex(dataIndex) {}
+
+            /// @brief Constructor
+            /// @param[in] pinIndex Index of the pin where the data came in
+            /// @param[in] dataIndex Index of the data on the pin
+            /// @param[in] axis Axis to plot the data on (Y1, Y2, Y3)
+            PlotItem(size_t pinIndex, size_t dataIndex, ImAxis axis)
+                : pinIndex(pinIndex), dataIndex(dataIndex), axis(axis) {}
+
+            /// @brief Equal comparison operator (needed to search the vector with std::find)
+            /// @param[in] rhs Right-hand-side of the operator
+            /// @return True if the pin and data indices match
+            constexpr bool operator==(const PlotItem& rhs) const
+            {
+                return pinIndex == rhs.pinIndex && dataIndex == rhs.dataIndex;
+            }
+
+            size_t pinIndex{};        ///< Index of the pin where the data came in
+            size_t dataIndex{};       ///< Index of the data on the pin
+            ImAxis axis{ ImAxis_Y1 }; ///< Axis to plot the data on (Y1, Y2, Y3)
+            Style style{};            ///< Defines how the data should be plotted
+        };
+
         /// @brief Default constructor
         PlotInfo() = default;
 
@@ -290,21 +321,27 @@ class Plot : public Node
         /// Y3 axis label
         std::string y3AxisLabel;
         /// Selected pin in the GUI for the Drag & Drop Data
-        int selectedPin = 0;
+        size_t selectedPin = 0;
         /// Flags which are passed to the plot
         int plotFlags = 0;
-
         /// Flags for the x-Axis
         ImPlotAxisFlags xAxisFlags = ImPlotAxisFlags_AutoFit;
         /// Flags for the y-Axes
         ImPlotAxisFlags yAxisFlags = ImPlotAxisFlags_AutoFit;
+
         /// @brief Key: PinIndex, Value: plotData to use for x-Axis
         std::vector<size_t> selectedXdata;
+
+        /// List containing all elements which should be plotted
+        std::vector<PlotItem> plotItems;
 
         /// Width of plot Data content
         float leftPaneWidth = 180.0F;
         /// Width of the plot
         float rightPaneWidth = 400.0F;
+
+        /// Flag whether the whole plot is visible. If not, then it should be deleted
+        bool visible = true;
     };
 
   private:
@@ -396,12 +433,12 @@ class Plot : public Node
     std::vector<PinData> _pinData;
 
     /// Info for each plot window
-    std::vector<PlotInfo> _plotInfos;
+    std::vector<PlotInfo> _plots;
 
     /// Amount of input pins (should equal data.size())
-    int _nInputPins = 5;
-    /// Amount of plot windows (should equal _plotInfos.size())
-    int _nPlots = 0;
+    size_t _nInputPins = 5;
+    /// Amount of plot windows (should equal _plots.size())
+    size_t _nPlots = 0;
     /// Possible data identifiers to connect
     std::vector<std::string> _dataIdentifier;
 
