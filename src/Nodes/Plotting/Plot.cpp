@@ -1116,6 +1116,26 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
 
     if (inputPins.at(pinIndex).type == Pin::Type::Flow)
     {
+        if (_pinData.at(pinIndex).dataIdentifier != startPin->dataIdentifier.front())
+        {
+            for (auto& plot : _plots)
+            {
+                while (true)
+                {
+                    auto plotItemIter = std::find_if(plot.plotItems.begin(), plot.plotItems.end(),
+                                                     [pinIndex](const PlotInfo::PlotItem& plotItem) { return plotItem.pinIndex == pinIndex; });
+                    if (plotItemIter != plot.plotItems.end())
+                    {
+                        plot.plotItems.erase(plotItemIter);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+
         _pinData.at(pinIndex).dataIdentifier = startPin->dataIdentifier.front();
 
         if (startPin->dataIdentifier.front() == PosVelAtt::type()
@@ -1598,16 +1618,28 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
                 }
             }
         }
+
+        for (size_t dataIndex = i; dataIndex < _pinData.at(pinIndex).plotData.size(); dataIndex++)
+        {
+            for (auto& plot : _plots)
+            {
+                auto plotItemIter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ pinIndex, dataIndex });
+                if (plotItemIter != plot.plotItems.end())
+                {
+                    plot.plotItems.erase(plotItemIter);
+                }
+            }
+        }
     }
 
-    for (size_t i = 0; i < _pinData.at(pinIndex).plotData.size(); i++)
+    for (size_t dataIndex = 0; dataIndex < _pinData.at(pinIndex).plotData.size(); ++dataIndex)
     {
         auto iter = _pinData.at(pinIndex).plotData.begin();
-        std::advance(iter, i);
+        std::advance(iter, dataIndex);
         if (iter->markedForDelete)
         {
             _pinData.at(pinIndex).plotData.erase(iter);
-            i--;
+            --dataIndex;
         }
     }
 
