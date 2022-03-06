@@ -360,14 +360,6 @@ void NAV::Plot::guiConfig()
             flow::ApplyChanges();
             updateNumberOfInputPins();
         }
-        int nPlots = static_cast<int>(_nPlots);
-        if (ImGui::InputIntL("# Plots", &nPlots, 0))
-        {
-            _nPlots = static_cast<size_t>(nPlots);
-            LOG_DEBUG("{}: # Plots changed to {}", nameId(), _nPlots);
-            flow::ApplyChanges();
-            updateNumberOfPlots();
-        }
         if (ImGui::BeginTable(fmt::format("Pin Settings##{}", size_t(id)).c_str(), 4,
                               ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
         {
@@ -508,8 +500,18 @@ void NAV::Plot::guiConfig()
     for (size_t plotIdx = 0; plotIdx < _plots.size(); plotIdx++)
     {
         auto& plot = _plots.at(plotIdx);
+
+        if (!plot.visible) // In the previous frame the x was pressed on the plot
+        {
+            LOG_DEBUG("{}: # Plot '{}' at index {} was deleted", nameId(), plot.headerText, plotIdx);
+            _plots.erase(_plots.begin() + static_cast<int64_t>(plotIdx));
+            _nPlots -= 1;
+            flow::ApplyChanges();
+            continue;
+        }
+
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-        if (ImGui::CollapsingHeader(fmt::format("{}##Plot Header {} - {}", plot.headerText, size_t(id), plotIdx).c_str()))
+        if (ImGui::CollapsingHeader(fmt::format("{}##Plot Header {} - {}", plot.headerText, size_t(id), plotIdx).c_str(), &plot.visible))
         {
             ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
             if (ImGui::TreeNode(fmt::format("Options##{} - {}", size_t(id), plotIdx).c_str()))
@@ -964,6 +966,14 @@ void NAV::Plot::guiConfig()
                 ImPlot::EndPlot();
             }
         }
+    }
+    ImGui::Separator();
+    if (ImGui::Button(fmt::format("Add Plot##{}", size_t(id)).c_str()))
+    {
+        ++_nPlots;
+        LOG_DEBUG("{}: # Plots changed to {}", nameId(), _nPlots);
+        flow::ApplyChanges();
+        updateNumberOfPlots();
     }
 }
 

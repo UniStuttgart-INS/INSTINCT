@@ -339,6 +339,9 @@ class Plot : public Node
         float leftPaneWidth = 180.0F;
         /// Width of the plot
         float rightPaneWidth = 400.0F;
+
+        /// Flag whether the whole plot is visible. If not, then it should be deleted
+        bool visible = true;
     };
 
   private:
