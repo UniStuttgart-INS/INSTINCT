@@ -371,12 +371,92 @@ void NAV::Plot::guiConfig()
             ImGui::TableSetupColumn("Stride");
             ImGui::TableHeadersRow();
 
+            // Used to reset the member variabel _dragAndDropPinIndex in case no plot does a drag and drop action
+            bool dragAndDropPinStillInProgress = false;
+
+            auto showDragDropTargetPin = [this](size_t pinIdxTarget) {
+                ImGui::Dummy(ImVec2(-1.F, 2.F));
+
+                bool selectableDummy = true;
+                ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
+                ImGui::PushStyleColor(ImGuiCol_Header, IM_COL32(16, 173, 44, 79));
+                ImGui::Selectable(fmt::format("[drop here]").c_str(), &selectableDummy, ImGuiSelectableFlags_None,
+                                  ImVec2(std::max(ImGui::GetColumnWidth(0), ImGui::CalcTextSize("[drop here]").x), 20.F));
+                ImGui::PopStyleColor();
+                ImGui::PopStyleVar();
+
+                if (ImGui::BeginDragDropTarget())
+                {
+                    if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND Pin {}", size_t(id)).c_str()))
+                    {
+                        auto pinIdxSource = *static_cast<size_t*>(payloadData->Data);
+
+                        if (pinIdxSource < pinIdxTarget)
+                        {
+                            --pinIdxTarget;
+                        }
+
+                        move(inputPins, pinIdxSource, pinIdxTarget);
+                        move(_pinData, pinIdxSource, pinIdxTarget);
+                        for (auto& plot : _plots)
+                        {
+                            for (auto& plotItem : plot.plotItems)
+                            {
+                                if (plotItem.pinIndex == pinIdxSource)
+                                {
+                                    plotItem.pinIndex = pinIdxTarget;
+                                }
+                                else if (pinIdxSource < pinIdxTarget)
+                                {
+                                    if (pinIdxSource + 1 <= plotItem.pinIndex && plotItem.pinIndex <= pinIdxTarget)
+                                    {
+                                        --plotItem.pinIndex;
+                                    }
+                                }
+                                else if (pinIdxTarget < pinIdxSource)
+                                {
+                                    if (pinIdxTarget <= plotItem.pinIndex && plotItem.pinIndex <= pinIdxSource - 1)
+                                    {
+                                        ++plotItem.pinIndex;
+                                    }
+                                }
+                            }
+                        }
+                        flow::ApplyChanges();
+                    }
+                    ImGui::EndDragDropTarget();
+                }
+                ImGui::Dummy(ImVec2(-1.F, 2.F));
+            };
+
             for (size_t pinIndex = 0; pinIndex < _pinData.size(); pinIndex++)
             {
                 auto& pinData = _pinData.at(pinIndex);
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn(); // Pin
-                ImGui::Text("%zu - %s", pinIndex + 1, pinData.dataIdentifier.c_str());
+
+                if (pinIndex == 0 && _dragAndDropPinIndex > 0)
+                {
+                    showDragDropTargetPin(0);
+                }
+
+                bool selectablePinDummy = false;
+                ImGui::Selectable(fmt::format("{}##{}", inputPins.at(pinIndex).name, size_t(id)).c_str(), &selectablePinDummy);
+                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+                {
+                    dragAndDropPinStillInProgress = true;
+                    _dragAndDropPinIndex = static_cast<int>(pinIndex);
+                    // Data is copied into heap inside the drag and drop
+                    ImGui::SetDragDropPayload(fmt::format("DND Pin {}", size_t(id)).c_str(), &pinIndex, sizeof(pinIndex));
+                    ImGui::TextUnformatted(inputPins.at(pinIndex).name.c_str());
+                    ImGui::EndDragDropSource();
+                }
+                if (_dragAndDropPinIndex >= 0
+                    && pinIndex != static_cast<size_t>(_dragAndDropPinIndex - 1)
+                    && pinIndex != static_cast<size_t>(_dragAndDropPinIndex))
+                {
+                    showDragDropTargetPin(pinIndex + 1);
+                }
 
                 ImGui::TableNextColumn(); // Pin Type
                 ImGui::SetNextItemWidth(100.0F);
@@ -459,6 +539,11 @@ void NAV::Plot::guiConfig()
                 }
             }
 
+            if (!dragAndDropPinStillInProgress)
+            {
+                _dragAndDropPinIndex = -1;
+            }
+
             ImGui::EndTable();
         }
 
@@ -499,16 +584,16 @@ void NAV::Plot::guiConfig()
         }
     }
 
-    // Used to disable the member variabel _dragAndDropHeaderInProgress in case no plot does a drag and drop action
+    // Used to reset the member variabel _dragAndDropHeaderIndex in case no plot does a drag and drop action
     bool dragAndDropHeaderStillInProgress = false;
 
     auto showDragDropTargetHeader = [this](size_t plotIdxTarget) {
         ImGui::Dummy(ImVec2(-1.F, 2.F));
 
-        bool selectableSelected = true;
+        bool selectableSelectedDummy = true;
         ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
         ImGui::PushStyleColor(ImGuiCol_Header, IM_COL32(16, 173, 44, 79));
-        ImGui::Selectable(fmt::format("[drop here]").c_str(), &selectableSelected, ImGuiSelectableFlags_None, ImVec2(ImGui::GetWindowContentRegionWidth(), 20.F));
+        ImGui::Selectable(fmt::format("[drop here]").c_str(), &selectableSelectedDummy, ImGuiSelectableFlags_None, ImVec2(ImGui::GetWindowContentRegionWidth(), 20.F));
         ImGui::PopStyleColor();
         ImGui::PopStyleVar();
 
@@ -715,13 +800,7 @@ void NAV::Plot::guiConfig()
                     for (size_t n = 0; n < inputPins.size(); ++n)
                     {
                         const bool is_selected = (plot.selectedPin == n);
-                        if (ImGui::Selectable(fmt::format("{} - {}",
-                                                          n + 1,
-                                                          inputPins.at(n).name != fmt::format("Pin {}", n + 1)
-                                                              ? inputPins.at(n).name
-                                                              : _pinData.at(n).dataIdentifier)
-                                                  .c_str(),
-                                              is_selected, 0))
+                        if (ImGui::Selectable(inputPins.at(n).name.c_str(), is_selected, 0))
                         {
                             plot.selectedPin = n;
                         }
@@ -742,7 +821,7 @@ void NAV::Plot::guiConfig()
                 }
                 if (ImGui::BeginDragDropTarget())
                 {
-                    if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND_DATA {} - {}", size_t(id), plotIdx).c_str()))
+                    if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND PlotItem {} - {}", size_t(id), plotIdx).c_str()))
                     {
                         auto [pinIndex, dataIndex] = *static_cast<std::pair<size_t, size_t>*>(payloadData->Data);
 
@@ -782,7 +861,7 @@ void NAV::Plot::guiConfig()
                         {
                             // Data is copied into heap inside the drag and drop
                             auto pinAndDataIndex = std::make_pair(plot.selectedPin, dataIndex);
-                            ImGui::SetDragDropPayload(fmt::format("DND_DATA {} - {}", size_t(id), plotIdx).c_str(),
+                            ImGui::SetDragDropPayload(fmt::format("DND PlotItem {} - {}", size_t(id), plotIdx).c_str(),
                                                       &pinAndDataIndex, sizeof(pinAndDataIndex));
                             ImGui::TextUnformatted(label.c_str());
                             ImGui::EndDragDropSource();
@@ -886,8 +965,7 @@ void NAV::Plot::guiConfig()
                         {
                             // Data is copied into heap inside the drag and drop
                             auto pinAndDataIndex = std::make_pair(plotItem.pinIndex, plotItem.dataIndex);
-                            ImGui::SetDragDropPayload(fmt::format("DND_DATA {} - {}", size_t(id), plotIdx).c_str(),
-                                                      &pinAndDataIndex, sizeof(pinAndDataIndex));
+                            ImGui::SetDragDropPayload(fmt::format("DND PlotItem {} - {}", size_t(id), plotIdx).c_str(), &pinAndDataIndex, sizeof(pinAndDataIndex));
                             ImGui::TextUnformatted(plotData.displayName.c_str());
                             ImPlot::EndDragDropSource();
                         }
@@ -974,7 +1052,7 @@ void NAV::Plot::guiConfig()
                 }
 
                 auto addDragDropPlotToAxis = [this, plotIdx, &plot](ImAxis dragDropAxis) {
-                    if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND_DATA {} - {}", size_t(id), plotIdx).c_str()))
+                    if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND PlotItem {} - {}", size_t(id), plotIdx).c_str()))
                     {
                         auto [pinIndex, dataIndex] = *static_cast<std::pair<size_t, size_t>*>(payloadData->Data);
 

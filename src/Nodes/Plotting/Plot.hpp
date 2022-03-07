@@ -444,6 +444,8 @@ class Plot : public Node
 
     /// Index of the Collapsible Header currently being dragged
     int _dragAndDropHeaderIndex = -1;
+    /// Index of the Pin currently being dragged
+    int _dragAndDropPinIndex = -1;
 
     /// Start Time for calculation of relative time with the GPS ToW
     double _startValue_Time = std::nan("");
