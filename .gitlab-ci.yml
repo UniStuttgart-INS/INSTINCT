@@ -184,7 +184,11 @@ main:win:LOG_OFF:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -j2
   artifacts:
-    untracked: true
+    paths:
+      - build/Debug/CTestTestfile.cmake
+      - build/Debug/test/CTestTestfile.cmake
+      - build/Debug/test/tests_*.cmake
+      - bin/Debug/tests
     expire_in: 2h
 
 tests:clang:
@@ -205,7 +209,11 @@ tests:win:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -maxCpuCount
   artifacts:
-    untracked: true
+    paths:
+      - build/Debug/CTestTestfile.cmake
+      - build/Debug/test/CTestTestfile.cmake
+      - build/Debug/test/tests_*.cmake
+      - bin/Debug/tests
     expire_in: 2h
 
 .build:tests:LOG_OFF:
@@ -256,12 +264,9 @@ run-tests:clang:
   extends: .run-tests
   needs: ["tests:clang"]
 
-
 run-tests:gcc:
   extends: .run-tests
   needs: ["tests:gcc"]
-  artifacts:
-    untracked: true
 
 run-tests:win:
   stage: test
@@ -373,7 +378,11 @@ pages:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -j2
   artifacts:
-    untracked: true
+    paths:
+      - build/Debug/CTestTestfile.cmake
+      - build/Debug/test/CTestTestfile.cmake
+      - build/Debug/test/tests_*.cmake
+      - bin/Debug/tests
     expire_in: 2h
 
 .build:ubuntu:20.04:release:
@@ -462,7 +471,11 @@ run-tests:ubuntu:20.04:gcc:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -j2
   artifacts:
-    untracked: true
+    paths:
+      - build/Debug/CTestTestfile.cmake
+      - build/Debug/test/CTestTestfile.cmake
+      - build/Debug/test/tests_*.cmake
+      - bin/Debug/tests
     expire_in: 2h
 
 .build:archlinux:latest:release:
