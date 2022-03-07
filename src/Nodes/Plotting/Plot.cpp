@@ -354,21 +354,17 @@ void NAV::Plot::guiConfig()
     ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
     if (ImGui::CollapsingHeader(fmt::format("Options##{}", size_t(id)).c_str()))
     {
-        int nInputPins = static_cast<int>(_nInputPins);
-        if (ImGui::InputIntL("# Input Pins", &nInputPins, 1))
-        {
-            _nInputPins = static_cast<size_t>(nInputPins);
-            LOG_DEBUG("{}: # Input Pins changed to {}", nameId(), _nInputPins);
-            flow::ApplyChanges();
-            updateNumberOfInputPins();
-        }
-        if (ImGui::BeginTable(fmt::format("Pin Settings##{}", size_t(id)).c_str(), 4,
+        if (ImGui::BeginTable(fmt::format("Pin Settings##{}", size_t(id)).c_str(), inputPins.size() > 1 ? 5 : 4,
                               ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
         {
             ImGui::TableSetupColumn("Pin");
             ImGui::TableSetupColumn("Pin Type");
             ImGui::TableSetupColumn("# Data Points");
             ImGui::TableSetupColumn("Stride");
+            if (inputPins.size() > 1)
+            {
+                ImGui::TableSetupColumn("");
+            }
             ImGui::TableHeadersRow();
 
             // Used to reset the member variabel _dragAndDropPinIndex in case no plot does a drag and drop action
@@ -457,6 +453,10 @@ void NAV::Plot::guiConfig()
                 {
                     showDragDropTargetPin(pinIndex + 1);
                 }
+                if (ImGui::IsItemHovered())
+                {
+                    ImGui::SetTooltip("This item can be dragged to reorder the pins");
+                }
 
                 ImGui::TableNextColumn(); // Pin Type
                 ImGui::SetNextItemWidth(100.0F);
@@ -537,11 +537,59 @@ void NAV::Plot::guiConfig()
                 {
                     ImGui::SetTooltip("The amount of points to skip when plotting. This greatly reduces lag when plotting");
                 }
+
+                if (inputPins.size() > 1)
+                {
+                    ImGui::TableNextColumn(); // Delete
+                    if (ImGui::Button(fmt::format("x##{} - {}", size_t(id), pinIndex).c_str()))
+                    {
+                        nm::DeleteInputPin(inputPins.at(pinIndex).id);
+                        _pinData.erase(_pinData.begin() + static_cast<int64_t>(pinIndex));
+                        --_nInputPins;
+
+                        for (auto& plot : _plots)
+                        {
+                            if (plot.selectedPin >= inputPins.size())
+                            {
+                                plot.selectedPin = inputPins.size() - 1;
+                            }
+                            for (size_t plotItemIdx = 0; plotItemIdx < plot.plotItems.size(); ++plotItemIdx)
+                            {
+                                auto& plotItem = plot.plotItems.at(plotItemIdx);
+
+                                if (plotItem.pinIndex == pinIndex) // The index we want to delete
+                                {
+                                    plot.plotItems.erase(plot.plotItems.begin() + static_cast<int64_t>(plotItemIdx));
+                                    --plotItemIdx;
+                                }
+                                else if (plotItem.pinIndex > pinIndex) // Index higher -> Decrement
+                                {
+                                    --(plotItem.pinIndex);
+                                }
+                            }
+                        }
+                        flow::ApplyChanges();
+                    }
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::SetTooltip("Delete the pin");
+                    }
+                }
             }
 
             if (!dragAndDropPinStillInProgress)
             {
                 _dragAndDropPinIndex = -1;
+            }
+
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn(); // Pin
+            if (ImGui::Button(fmt::format("Add Pin##{}", size_t(id)).c_str()))
+            {
+                ++_nInputPins;
+                LOG_DEBUG("{}: # Input Pins changed to {}", nameId(), _nInputPins);
+                flow::ApplyChanges();
+                updateNumberOfInputPins();
             }
 
             ImGui::EndTable();
@@ -1813,11 +1861,7 @@ void NAV::Plot::updateNumberOfInputPins()
             }
         }
 
-        if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.back().id))
-        {
-            nm::DeleteLink(connectedLink->id);
-        }
-        inputPins.pop_back();
+        nm::DeleteInputPin(inputPins.back().id);
         _pinData.pop_back();
     }
 
@@ -1838,7 +1882,7 @@ void NAV::Plot::updateNumberOfPlots()
 {
     while (_nPlots > _plots.size())
     {
-        _plots.emplace_back(fmt::format("Plot {}", _plots.size() + 1), _nInputPins);
+        _plots.emplace_back(fmt::format("Plot {}", _plots.size() + 1), inputPins.size());
     }
     while (_nPlots < _plots.size())
     {
