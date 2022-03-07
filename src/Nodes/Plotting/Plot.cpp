@@ -10,6 +10,8 @@ namespace nm = NAV::NodeManager;
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "util/Json.hpp"
 
+#include "util/Container/Vector.hpp"
+
 #include "util/Time/TimeBase.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
@@ -497,6 +499,43 @@ void NAV::Plot::guiConfig()
         }
     }
 
+    // Used to disable the member variabel _dragAndDropHeaderInProgress in case no plot does a drag and drop action
+    bool dragAndDropHeaderStillInProgress = false;
+
+    auto showDragDropTargetHeader = [this](size_t plotIdxTarget) {
+        ImGui::Dummy(ImVec2(-1.F, 2.F));
+
+        bool selectableSelected = true;
+        ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
+        ImGui::PushStyleColor(ImGuiCol_Header, IM_COL32(16, 173, 44, 79));
+        ImGui::Selectable(fmt::format("[drop here]").c_str(), &selectableSelected, ImGuiSelectableFlags_None, ImVec2(ImGui::GetWindowContentRegionWidth(), 20.F));
+        ImGui::PopStyleColor();
+        ImGui::PopStyleVar();
+
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND ColHead {}", size_t(id)).c_str()))
+            {
+                auto plotIdxSource = *static_cast<size_t*>(payloadData->Data);
+
+                if (plotIdxSource < plotIdxTarget)
+                {
+                    --plotIdxTarget;
+                }
+
+                move(_plots, plotIdxSource, plotIdxTarget);
+                flow::ApplyChanges();
+            }
+            ImGui::EndDragDropTarget();
+        }
+        ImGui::Dummy(ImVec2(-1.F, 2.F));
+    };
+
+    if (_dragAndDropHeaderIndex > 0)
+    {
+        showDragDropTargetHeader(0);
+    }
+
     for (size_t plotIdx = 0; plotIdx < _plots.size(); plotIdx++)
     {
         auto& plot = _plots.at(plotIdx);
@@ -513,6 +552,19 @@ void NAV::Plot::guiConfig()
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
         if (ImGui::CollapsingHeader(fmt::format("{}##Plot Header {} - {}", plot.headerText, size_t(id), plotIdx).c_str(), &plot.visible))
         {
+            if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+            {
+                dragAndDropHeaderStillInProgress = true;
+                _dragAndDropHeaderIndex = static_cast<int>(plotIdx);
+                // Data is copied into heap inside the drag and drop
+                ImGui::SetDragDropPayload(fmt::format("DND ColHead {}", size_t(id)).c_str(),
+                                          &plotIdx, sizeof(plotIdx));
+                ImGui::Dummy(ImVec2(ImGui::CalcTextSize(plot.headerText.c_str()).x + 60.F, -1.F));
+                bool dnd_display_close = true;
+                ImGui::CollapsingHeader(fmt::format("{}##Plot DND Header {} - {}", plot.headerText, size_t(id), plotIdx).c_str(), &dnd_display_close);
+                ImGui::EndDragDropSource();
+            }
+
             ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
             if (ImGui::TreeNode(fmt::format("Options##{} - {}", size_t(id), plotIdx).c_str()))
             {
@@ -966,7 +1018,20 @@ void NAV::Plot::guiConfig()
                 ImPlot::EndPlot();
             }
         }
+
+        if (_dragAndDropHeaderIndex >= 0
+            && plotIdx != static_cast<size_t>(_dragAndDropHeaderIndex - 1)
+            && plotIdx != static_cast<size_t>(_dragAndDropHeaderIndex))
+        {
+            showDragDropTargetHeader(plotIdx + 1);
+        }
     }
+
+    if (!dragAndDropHeaderStillInProgress)
+    {
+        _dragAndDropHeaderIndex = -1;
+    }
+
     ImGui::Separator();
     if (ImGui::Button(fmt::format("Add Plot##{}", size_t(id)).c_str()))
     {
