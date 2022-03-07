@@ -442,6 +442,11 @@ class Plot : public Node
     /// Possible data identifiers to connect
     std::vector<std::string> _dataIdentifier;
 
+    /// Index of the Collapsible Header currently being dragged
+    int _dragAndDropHeaderIndex = -1;
+    /// Index of the Pin currently being dragged
+    int _dragAndDropPinIndex = -1;
+
     /// Start Time for calculation of relative time with the GPS ToW
     double _startValue_Time = std::nan("");
     /// Start Latitude [rad] for calculation of relative North-South
