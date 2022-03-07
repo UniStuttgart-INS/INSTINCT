@@ -213,7 +213,7 @@ tests:win:
       - build/Debug/CTestTestfile.cmake
       - build/Debug/test/CTestTestfile.cmake
       - build/Debug/test/tests_*.cmake
-      - bin/Debug/tests
+      - bin/Debug/tests.exe
     expire_in: 2h
 
 .build:tests:LOG_OFF:
