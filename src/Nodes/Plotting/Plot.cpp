@@ -838,12 +838,7 @@ void NAV::Plot::guiConfig()
             ImGui::BeginGroup();
             {
                 if (ImGui::BeginCombo(fmt::format("##Data source pin selection{} - {}", size_t(id), plotIdx).c_str(),
-                                      fmt::format("{} - {}",
-                                                  plot.selectedPin + 1,
-                                                  inputPins.at(plot.selectedPin).name != fmt::format("Pin {}", plot.selectedPin + 1)
-                                                      ? inputPins.at(plot.selectedPin).name
-                                                      : _pinData.at(plot.selectedPin).dataIdentifier)
-                                          .c_str()))
+                                      inputPins.at(plot.selectedPin).name.c_str()))
                 {
                     for (size_t n = 0; n < inputPins.size(); ++n)
                     {
@@ -966,7 +961,7 @@ void NAV::Plot::guiConfig()
                         // Style options
                         if (plotItem.style.legendName.empty())
                         {
-                            plotItem.style.legendName = fmt::format("{} ({} - {})", plotData.displayName, plotItem.pinIndex + 1, pinData.dataIdentifier);
+                            plotItem.style.legendName = fmt::format("{} ({})", plotData.displayName, inputPins.at(plotItem.pinIndex).name);
                         }
                         if (plotItem.style.lineType == PlotInfo::PlotItem::Style::LineType::Line)
                         {
