@@ -5742,34 +5742,60 @@ void NAV::VectorNavSensor::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (_vs.isConnected())
+    try
+    {
+        if (isInitialized() && _vs.isConnected())
     {
         try
         {
             _vs.unregisterAsyncPacketReceivedHandler();
         }
-        catch (...)
+            catch (const std::exception& e)
         {
-            LOG_DEBUG("{}: Could not unregisterAsyncPacketReceivedHandler", nameId());
+                LOG_WARN("{}: Could not unregisterAsyncPacketReceivedHandler ({})", nameId(), e.what());
         }
+
         try
         {
-            _vs.reset(true);
-            LOG_TRACE("{}: Sensor resettet", nameId());
+                vn::sensors::BinaryOutputRegister bor{
+                    vn::protocol::uart::AsyncMode::ASYNCMODE_NONE,         // AsyncMode
+                    800,                                                   // RateDivisor
+                    vn::protocol::uart::CommonGroup::COMMONGROUP_NONE,     // CommonGroup
+                    vn::protocol::uart::TimeGroup::TIMEGROUP_NONE,         // TimeGroup
+                    vn::protocol::uart::ImuGroup::IMUGROUP_NONE,           // IMUGroup
+                    vn::protocol::uart::GpsGroup::GPSGROUP_NONE,           // GNSS1Group
+                    vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_NONE, // AttitudeGroup
+                    vn::protocol::uart::InsGroup::INSGROUP_NONE,           // INSGroup
+                    vn::protocol::uart::GpsGroup::GPSGROUP_NONE            // GNSS2Group
+                };
+
+                _vs.writeBinaryOutput1(bor);
+                _vs.writeBinaryOutput2(bor);
+                _vs.writeBinaryOutput3(bor);
+                _vs.writeAsyncDataOutputType(vn::protocol::uart::AsciiAsync::VNOFF);
+                _vs.changeBaudRate(NAV::UartSensor::Baudrate::BAUDRATE_115200);
+                _vs.writeSettings();
+                LOG_DEBUG("{}: Sensor output turned off", nameId());
         }
-        catch (...)
+            catch (const std::exception& e)
         {
-            LOG_DEBUG("{}: Could not reset", nameId());
+                LOG_WARN("{}: Could not turn off sensor output ({})", nameId(), e.what());
         }
+
         try
         {
             _vs.disconnect();
-            LOG_TRACE("{}: Sensor disconnected", nameId());
+                LOG_DEBUG("{}: Sensor disconnected", nameId());
         }
-        catch (...)
+            catch (const std::exception& e)
         {
-            LOG_DEBUG("{}: Could not disconnect", nameId());
+                LOG_WARN("{}: Could not disconnect ({})", nameId(), e.what());
         }
+        }
+    }
+    catch (const std::exception& e)
+    {
+        LOG_WARN("{}: Unhandled exception while deinitializing sensor ({})", nameId(), e.what());
     }
 }
 
