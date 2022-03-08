@@ -208,8 +208,10 @@ tests:clang:
 tests:gcc:
   extends:
     - .build:tests
-    - .build:test-artifacts
     - .gcc
+  artifacts:
+    untracked: true # For the coverage report
+    expire_in: 2h
 
 tests:win:
   extends:
@@ -271,6 +273,9 @@ run-tests:clang:
 run-tests:gcc:
   extends: .run-tests
   needs: ["tests:gcc"]
+  artifacts:
+    untracked: true # For the coverage report
+    expire_in: 2h
 
 run-tests:win:
   stage: test
