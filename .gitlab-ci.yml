@@ -183,38 +183,37 @@ main:win:LOG_OFF:
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -j2
+
+.build:test-artifacts:
   artifacts:
     paths:
       - build/Debug/CTestTestfile.cmake
       - build/Debug/test/CTestTestfile.cmake
       - build/Debug/test/tests_*.cmake
-      - bin/Debug/tests
+      - bin/Debug/tests*
     expire_in: 2h
 
 tests:clang:
   extends:
     - .build:tests
+    - .build:test-artifacts
     - .clang
 
 tests:gcc:
   extends:
     - .build:tests
+    - .build:test-artifacts
     - .gcc
 
 tests:win:
   stage: build
-  extends: .windows
+  extends:
+    - .windows
+    - .build:test-artifacts
   needs: ["check-windows"]
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -maxCpuCount
-  artifacts:
-    paths:
-      - build/Debug/CTestTestfile.cmake
-      - build/Debug/test/CTestTestfile.cmake
-      - build/Debug/test/tests_*.cmake
-      - bin/Debug/tests.exe
-    expire_in: 2h
 
 .build:tests:LOG_OFF:
   extends:
