@@ -184,6 +184,12 @@ main:win:LOG_OFF:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -j2
 
+.build:tests-win:
+  stage: build
+  extends:
+    - .windows
+  needs: ["check-windows"]
+
 .build:test-artifacts:
   artifacts:
     paths:
@@ -206,11 +212,9 @@ tests:gcc:
     - .gcc
 
 tests:win:
-  stage: build
   extends:
-    - .windows
+    - .build:tests-win
     - .build:test-artifacts
-  needs: ["check-windows"]
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -maxCpuCount
@@ -233,7 +237,8 @@ tests:gcc:LOG_OFF:
     - .gcc
 
 tests:win:LOG_OFF:
-  extends: tests:win
+  extends:
+    - .build:tests-win
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -maxCpuCount
