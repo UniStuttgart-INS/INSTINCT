@@ -183,30 +183,41 @@ main:win:LOG_OFF:
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -j2
+
+.build:tests-win:
+  stage: build
+  extends:
+    - .windows
+  needs: ["check-windows"]
+
+.build:test-artifacts:
   artifacts:
-    untracked: true
+    paths:
+      - build/Debug/CTestTestfile.cmake
+      - build/Debug/test/CTestTestfile.cmake
+      - build/Debug/test/tests_*.cmake
+      - bin/Debug/tests*
     expire_in: 2h
 
 tests:clang:
   extends:
     - .build:tests
+    - .build:test-artifacts
     - .clang
 
 tests:gcc:
   extends:
     - .build:tests
+    - .build:test-artifacts
     - .gcc
 
 tests:win:
-  stage: build
-  extends: .windows
-  needs: ["check-windows"]
+  extends:
+    - .build:tests-win
+    - .build:test-artifacts
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -maxCpuCount
-  artifacts:
-    untracked: true
-    expire_in: 2h
 
 .build:tests:LOG_OFF:
   extends:
@@ -226,7 +237,8 @@ tests:gcc:LOG_OFF:
     - .gcc
 
 tests:win:LOG_OFF:
-  extends: tests:win
+  extends:
+    - .build:tests-win
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -maxCpuCount
@@ -256,12 +268,9 @@ run-tests:clang:
   extends: .run-tests
   needs: ["tests:clang"]
 
-
 run-tests:gcc:
   extends: .run-tests
   needs: ["tests:gcc"]
-  artifacts:
-    untracked: true
 
 run-tests:win:
   stage: test
@@ -373,7 +382,11 @@ pages:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -j2
   artifacts:
-    untracked: true
+    paths:
+      - build/Debug/CTestTestfile.cmake
+      - build/Debug/test/CTestTestfile.cmake
+      - build/Debug/test/tests_*.cmake
+      - bin/Debug/tests
     expire_in: 2h
 
 .build:ubuntu:20.04:release:
@@ -462,7 +475,11 @@ run-tests:ubuntu:20.04:gcc:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -j2
   artifacts:
-    untracked: true
+    paths:
+      - build/Debug/CTestTestfile.cmake
+      - build/Debug/test/CTestTestfile.cmake
+      - build/Debug/test/tests_*.cmake
+      - bin/Debug/tests
     expire_in: 2h
 
 .build:archlinux:latest:release:
