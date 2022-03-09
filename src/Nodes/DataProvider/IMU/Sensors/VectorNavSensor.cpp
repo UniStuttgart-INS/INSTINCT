@@ -5143,6 +5143,9 @@ bool NAV::VectorNavSensor::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+    // Some settings need to be wrote to the device and reset afterwards
+    bool deviceNeedsResetAfterInitialization = false;
+
     // ###########################################################################################################
     //                                                Connecting
     // ###########################################################################################################
@@ -5310,8 +5313,14 @@ bool NAV::VectorNavSensor::initialize()
     // _vs.writeAccelerationCompensation(vn::sensors::AccelerationCompensationRegister()); // User manual VN-310 - 9.2.2 (p 112) / VN-100 - 6.2.2 (p 83)
     // _vs.writeGyroCompensation(vn::sensors::GyroCompensationRegister());                 // User manual VN-310 - 9.2.3 (p 113) / VN-100 - 6.2.3 (p 84)
 
+    auto vnReferenceFrameRotationMatrix = _vs.readReferenceFrameRotation();
+    if (vnReferenceFrameRotationMatrix != _referenceFrameRotationMatrix)
+    {
+        deviceNeedsResetAfterInitialization = true;
+    }
+
     _vs.writeReferenceFrameRotation(_referenceFrameRotationMatrix);
-    if (auto vnReferenceFrameRotationMatrix = _vs.readReferenceFrameRotation();
+    if (vnReferenceFrameRotationMatrix = _vs.readReferenceFrameRotation();
         vnReferenceFrameRotationMatrix != _referenceFrameRotationMatrix)
     {
         LOG_ERROR("{}: Writing the referenceFrameRotationMatrix was not successfull.\n"
@@ -5726,7 +5735,12 @@ bool NAV::VectorNavSensor::initialize()
     // Some changes need to be set at startup, therefore write the settings and reset the device
     LOG_DEBUG("{}: writing settings", nameId());
     _vs.writeSettings();
-    _vs.reset();
+
+    if (deviceNeedsResetAfterInitialization)
+    {
+        LOG_DEBUG("{}: Resetting device to apply permenent settings", nameId());
+        _vs.reset();
+    }
 
     // TODO: Implement in vnproglib: _vs.writeNmeaOutput1(...) - User manual VN-310 - 8.2.14 (p 103)
     // TODO: Implement in vnproglib: _vs.writeNmeaOutput2(...) - User manual VN-310 - 8.2.15 (p 104)
@@ -5745,18 +5759,18 @@ void NAV::VectorNavSensor::deinitialize()
     try
     {
         if (isInitialized() && _vs.isConnected())
-    {
-        try
         {
-            _vs.unregisterAsyncPacketReceivedHandler();
-        }
+            try
+            {
+                _vs.unregisterAsyncPacketReceivedHandler();
+            }
             catch (const std::exception& e)
-        {
+            {
                 LOG_WARN("{}: Could not unregisterAsyncPacketReceivedHandler ({})", nameId(), e.what());
-        }
+            }
 
-        try
-        {
+            try
+            {
                 vn::sensors::BinaryOutputRegister bor{
                     vn::protocol::uart::AsyncMode::ASYNCMODE_NONE,         // AsyncMode
                     800,                                                   // RateDivisor
@@ -5776,21 +5790,21 @@ void NAV::VectorNavSensor::deinitialize()
                 _vs.changeBaudRate(NAV::UartSensor::Baudrate::BAUDRATE_115200);
                 _vs.writeSettings();
                 LOG_DEBUG("{}: Sensor output turned off", nameId());
-        }
+            }
             catch (const std::exception& e)
-        {
+            {
                 LOG_WARN("{}: Could not turn off sensor output ({})", nameId(), e.what());
-        }
+            }
 
-        try
-        {
-            _vs.disconnect();
+            try
+            {
+                _vs.disconnect();
                 LOG_DEBUG("{}: Sensor disconnected", nameId());
-        }
+            }
             catch (const std::exception& e)
-        {
+            {
                 LOG_WARN("{}: Could not disconnect ({})", nameId(), e.what());
-        }
+            }
         }
     }
     catch (const std::exception& e)
