@@ -2,6 +2,7 @@
 
 #include <queue>
 #include <variant>
+#include <mutex>
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -9,36 +10,52 @@ namespace nm = NAV::NodeManager;
 
 namespace NAV::CallbackManager
 {
+
+/// Variant data type for callbacks
+using CallbackType = std::variant<std::pair<NodeCallback, std::shared_ptr<const NAV::NodeData>>,
+                                  NotifyFunction,
+                                  std::pair<WatcherCallback, std::shared_ptr<const NAV::NodeData>>>;
+
+/// Mutex to lock the buffer so that the GUI thread and the calculation threads don't cause a data race
+std::mutex _mutex;
+
 /// Callback List
-std::queue<std::variant<std::pair<NodeCallback, std::shared_ptr<const NAV::NodeData>>,
-                        NotifyFunction,
-                        std::pair<WatcherCallback, std::shared_ptr<const NAV::NodeData>>>>
-    callbacks;
+std::queue<CallbackType> _callbacks;
 
 void queueNodeCallbackForInvocation(const NodeCallback& nodeCallback, const std::shared_ptr<const NAV::NodeData>& data)
 {
-    callbacks.push(std::make_pair(nodeCallback, data));
+    std::scoped_lock<std::mutex> guard(_mutex);
+
+    _callbacks.push(std::make_pair(nodeCallback, data));
 }
 
 void queueNotifyFunctionForInvocation(const NotifyFunction& notifyFunction)
 {
-    callbacks.push(notifyFunction);
+    std::scoped_lock<std::mutex> guard(_mutex);
+
+    _callbacks.push(notifyFunction);
 }
 
 void queueWatcherCallbackForInvocation(const WatcherCallback& watcherCallback, const std::shared_ptr<const NAV::NodeData>& data)
 {
-    callbacks.push(std::make_pair(watcherCallback, data));
+    std::scoped_lock<std::mutex> guard(_mutex);
+
+    _callbacks.push(std::make_pair(watcherCallback, data));
 }
 
 void processNextCallback()
 {
-    if (callbacks.empty())
+    CallbackType nextCallback;
     {
-        return;
-    }
+        std::scoped_lock<std::mutex> guard(_mutex);
+        if (_callbacks.empty())
+        {
+            return;
+        }
 
-    auto nextCallback = callbacks.front();
-    callbacks.pop();
+        nextCallback = _callbacks.front();
+        _callbacks.pop();
+    }
 
     if (nextCallback.index() == 0) // NodeCallback
     {
@@ -67,7 +84,8 @@ void processNextCallback()
 
 bool hasUnprocessedCallbacks()
 {
-    return !callbacks.empty();
+    std::scoped_lock<std::mutex> guard(_mutex);
+    return !_callbacks.empty();
 }
 
 } // namespace NAV::CallbackManager
