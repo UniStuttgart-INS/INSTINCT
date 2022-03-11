@@ -3,6 +3,40 @@
 #include "util/Logger.hpp"
 
 #include "internal/FlowManager.hpp"
+#include "internal/ConfigManager.hpp"
+
+#include <imgui.h>
+#include "internal/gui/widgets/FileDialog.hpp"
+#include "internal/gui/widgets/HelpMarker.hpp"
+
+bool NAV::FileWriter::guiConfig(const char* vFilters, const std::vector<std::string>& extensions, size_t id, const std::string& nameId)
+{
+    bool changesOccurred = false;
+
+    if (gui::widgets::FileDialogSave(_path, "Save File", vFilters, extensions, id, nameId))
+    {
+        if (_path.starts_with(ConfigManager::Get<std::string>("output-path", "logs")))
+        {
+            _path = _path.substr(ConfigManager::Get<std::string>("output-path", "logs").size() + 1);
+        }
+        changesOccurred = true;
+    }
+    ImGui::SameLine();
+    gui::widgets::HelpMarker(fmt::format("If a relative path is given, files will be stored inside {}.", flow::GetOutputPath()).c_str());
+
+    return changesOccurred;
+}
+
+std::filesystem::path NAV::FileWriter::getFilepath()
+{
+    std::filesystem::path filepath{ _path };
+    if (filepath.is_relative())
+    {
+        filepath = flow::GetOutputPath();
+        filepath /= _path;
+    }
+    return filepath;
+}
 
 [[nodiscard]] json NAV::FileWriter::save() const
 {
@@ -42,10 +76,11 @@ bool NAV::FileWriter::initialize()
         return false;
     }
 
-    std::string filepath = _path;
-    if (!_path.starts_with('/') && !_path.starts_with('~'))
+    std::filesystem::path filepath = getFilepath();
+
+    if (!std::filesystem::exists(filepath.parent_path()) && !std::filesystem::create_directories(filepath.parent_path()))
     {
-        filepath = flow::GetProgramRootPath() + '/' + _path;
+        LOG_ERROR("Could not create directory '{}' for file '{}'", filepath.parent_path(), filepath);
     }
 
     if (_fileType == FileType::CSV || _fileType == FileType::BINARY)

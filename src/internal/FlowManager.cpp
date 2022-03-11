@@ -15,6 +15,7 @@ namespace ed = ax::NodeEditor;
 #include "internal/Node/Pin.hpp"
 #include "internal/ConfigManager.hpp"
 
+#include <filesystem>
 #include <fstream>
 #include <iomanip>
 #include <string>
@@ -29,7 +30,10 @@ constexpr int loadingFramesToWait = 2;
 int NAV::flow::loadingFrameCount = 0;
 
 std::string currentFilename;
-std::string programRootPath;
+std::filesystem::path programRootPath;
+
+// The current number for the rotated parent folder
+size_t currentRotatedParentFolderNumber;
 
 void NAV::flow::SaveFlow(GlobalActions& globalAction)
 {
@@ -274,12 +278,76 @@ void NAV::flow::SetCurrentFilename(const std::string& newFilename)
     currentFilename = newFilename;
 }
 
-std::string NAV::flow::GetProgramRootPath()
+std::filesystem::path NAV::flow::GetProgramRootPath()
 {
     return programRootPath;
 }
 
-void NAV::flow::SetProgramRootPath(const std::string& newRootPath)
+void NAV::flow::SetProgramRootPath(const std::filesystem::path& newRootPath)
 {
     programRootPath = newRootPath;
+}
+
+std::filesystem::path NAV::flow::GetOutputPath()
+{
+    std::filesystem::path filepath = flow::GetProgramRootPath();
+
+    if (std::filesystem::path outputPath{ ConfigManager::Get<std::string>("output-path", "logs") };
+        outputPath.is_relative())
+    {
+        filepath /= outputPath;
+    }
+    else
+    {
+        filepath = outputPath;
+    }
+
+    if (ConfigManager::Get<bool>("rotate-output", false))
+    {
+        filepath /= fmt::format("{:04d}", currentRotatedParentFolderNumber);
+    }
+
+    return filepath;
+}
+
+void NAV::flow::SetOutputPath()
+{
+    currentRotatedParentFolderNumber = 0;
+    for (int i = 10000; i >= 0; --i)
+    {
+        std::filesystem::path outputDir{ programRootPath };
+
+        if (std::filesystem::path outputPath{ ConfigManager::Get<std::string>("output-path", "logs") };
+            outputPath.is_relative())
+        {
+            outputDir /= outputPath;
+        }
+        else
+        {
+            outputDir = outputPath;
+        }
+        outputDir /= fmt::format("{:04d}", i);
+        if (std::filesystem::exists(outputDir))
+        {
+            currentRotatedParentFolderNumber = static_cast<size_t>(i + 1);
+        }
+    }
+    LOG_INFO("Output directory set to {}", GetOutputPath());
+}
+
+std::filesystem::path NAV::flow::GetInputPath()
+{
+    std::filesystem::path filepath = flow::GetProgramRootPath();
+
+    if (std::filesystem::path inputPath{ ConfigManager::Get<std::string>("input-path", "data") };
+        inputPath.is_relative())
+    {
+        filepath /= inputPath;
+    }
+    else
+    {
+        filepath = inputPath;
+    }
+
+    return filepath;
 }

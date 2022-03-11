@@ -52,11 +52,20 @@ void SetCurrentFilename(const std::string& newFilename);
 
 /// @brief Get the program root path
 /// @return The path to the program root
-std::string GetProgramRootPath();
+std::filesystem::path GetProgramRootPath();
 
 /// @brief Set the program root path
 /// @param[in] newRootPath The new program root path
-void SetProgramRootPath(const std::string& newRootPath);
+void SetProgramRootPath(const std::filesystem::path& newRootPath);
+
+/// @brief Get the path where logs and outputs are stored
+std::filesystem::path GetOutputPath();
+
+/// @brief Set the path where logs and outputs are stored
+void SetOutputPath();
+
+/// @brief Get the path where data files are searched
+std::filesystem::path GetInputPath();
 
 /// @brief Whether actions should be saved to the last actions list
 extern bool saveLastActions;

@@ -359,11 +359,14 @@
             },
             "command": "./bin/${input:buildType}/instinct",
             "args": [
-                "-f",
-                "config.ini",
-                "-l",
-                "flow/Default.flow",
+                "--config=config.ini",
+                "--load=\"flow/Default.flow\"",
+                // "--sigterm",
+                // "--duration=60",
                 // "--nogui",
+                // "--input-path=data",
+                // "--rotate-output",
+                // "--output-path=logs",
             ],
             "options": {
                 "cwd": "${workspaceFolder}",
