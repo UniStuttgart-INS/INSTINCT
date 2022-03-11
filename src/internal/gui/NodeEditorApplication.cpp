@@ -778,8 +778,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                     bool itemDisabled = false;
                     if (!node->isInitialized() && !node->callbacksEnabled)
                     {
-                        ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
-                        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
+                        ImGui::PushDisabled();
                         itemDisabled = true;
                     }
 
@@ -793,8 +792,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
                     if (itemDisabled)
                     {
-                        ImGui::PopItemFlag();
-                        ImGui::PopStyleVar();
+                        ImGui::PopDisabled();
                     }
                     ImGui::Dummy(ImVec2(0, 26));
                 }

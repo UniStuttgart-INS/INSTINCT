@@ -57,15 +57,13 @@ std::string NAV::ImuIntegrator::category()
 void NAV::ImuIntegrator::guiConfig()
 {
     ImGui::SetNextItemWidth(250);
-    ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
-    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
+    ImGui::PushDisabled();
     if (ImGui::Combo(fmt::format("Integration Frame##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_integrationFrame), "ECEF\0NED\0\0"))
     {
         LOG_DEBUG("{}: Integration Frame changed to {}", nameId(), _integrationFrame == IntegrationFrame::NED ? "NED" : "ECEF");
         flow::ApplyChanges();
     }
-    ImGui::PopItemFlag();
-    ImGui::PopStyleVar();
+    ImGui::PopDisabled();
 
     ImGui::SetNextItemWidth(250);
     if (ImGui::BeginCombo(fmt::format("Integration Algorithm##{}", size_t(id)).c_str(), to_string(_integrationAlgorithm)))
