@@ -13,7 +13,8 @@ bool NAV::FileWriter::guiConfig(const char* vFilters, const std::vector<std::str
 {
     bool changesOccurred = false;
 
-    if (gui::widgets::FileDialogSave(_path, "Save File", vFilters, extensions, id, nameId))
+    if (gui::widgets::FileDialogSave(_path, "Save File", vFilters, extensions,
+                                     flow::GetProgramRootPath() / ConfigManager::Get<std::string>("output-path", "logs"), id, nameId))
     {
         if (_path.starts_with(ConfigManager::Get<std::string>("output-path", "logs")))
         {

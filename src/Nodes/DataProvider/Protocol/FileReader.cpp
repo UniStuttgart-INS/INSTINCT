@@ -16,7 +16,8 @@ bool NAV::FileReader::guiConfig(const char* vFilters, const std::vector<std::str
 {
     bool changesOccurred = false;
 
-    if (gui::widgets::FileDialogLoad(_path, "Select File", vFilters, extensions, id, nameId))
+    if (gui::widgets::FileDialogLoad(_path, "Select File", vFilters, extensions,
+                                     flow::GetProgramRootPath() / ConfigManager::Get<std::string>("input-path", "data"), id, nameId))
     {
         if (_path.starts_with(ConfigManager::Get<std::string>("input-path", "data")))
         {
