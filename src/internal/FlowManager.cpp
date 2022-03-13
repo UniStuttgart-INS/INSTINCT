@@ -329,7 +329,7 @@ void NAV::flow::SetOutputPath()
         outputDir /= fmt::format("{:04d}", i);
         if (std::filesystem::exists(outputDir))
         {
-            currentRotatedParentFolderNumber = static_cast<size_t>(i + 1);
+            currentRotatedParentFolderNumber = static_cast<size_t>(i + 1); // NOLINT(bugprone-misplaced-widening-cast)
         }
     }
     LOG_INFO("Output directory set to {}", GetOutputPath());

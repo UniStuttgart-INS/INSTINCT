@@ -12,7 +12,7 @@
 
 bool NAV::gui::widgets::FileDialogSave(std::string& path, const char* vName,
                                        const char* vFilters, const std::vector<std::string>& extensions,
-                                       std::filesystem::path startPath,
+                                       const std::filesystem::path& startPath,
                                        size_t id, [[maybe_unused]] const std::string& nameId)
 {
     bool changed = false;
@@ -60,7 +60,7 @@ bool NAV::gui::widgets::FileDialogSave(std::string& path, const char* vName,
 
 bool NAV::gui::widgets::FileDialogLoad(std::string& path, const char* vName,
                                        const char* vFilters, const std::vector<std::string>& extensions,
-                                       std::filesystem::path startPath,
+                                       const std::filesystem::path& startPath,
                                        size_t id, [[maybe_unused]] const std::string& nameId)
 {
     bool changed = false;

@@ -22,7 +22,7 @@ namespace NAV::gui::widgets
 /// @return True if the filepath was changed
 bool FileDialogSave(std::string& path, const char* vName,
                     const char* vFilters, const std::vector<std::string>& extensions,
-                    std::filesystem::path startPath,
+                    const std::filesystem::path& startPath,
                     size_t id, const std::string& nameId);
 
 /// @brief Shows an InputText and a button which opens a file dialog to select a path to load a file to
@@ -36,7 +36,7 @@ bool FileDialogSave(std::string& path, const char* vName,
 /// @return True if the filepath was changed
 bool FileDialogLoad(std::string& path, const char* vName,
                     const char* vFilters, const std::vector<std::string>& extensions,
-                    std::filesystem::path startPath,
+                    const std::filesystem::path& startPath,
                     size_t id, const std::string& nameId);
 
 } // namespace NAV::gui::widgets

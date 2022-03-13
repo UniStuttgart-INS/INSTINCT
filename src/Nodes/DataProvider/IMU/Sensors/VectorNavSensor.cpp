@@ -1282,7 +1282,7 @@ NAV::VectorNavSensor::VectorNavSensor()
         {
             divs.push_back(static_cast<uint16_t>(divider));
             freqs.push_back(std::to_string(freq) + " Hz");
-            LOG_DEBUG("VectorNavSensor: RateDivisor {} = {}", divs.back(), freqs.back());
+            LOG_DATA("VectorNavSensor: RateDivisor {} = {}", divs.back(), freqs.back());
         }
         return std::make_pair(divs, freqs);
     }();

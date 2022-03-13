@@ -45,7 +45,6 @@ class FileReader
     virtual ~FileReader() = default;
 
     /// @brief ImGui config
-    /// @param[in] vName Window title
     /// @param[in] vFilters Filter to apply for file names
     /// @param[in] extensions Extensions to filter
     /// @param[in] id Unique id for creating the dialog uid
