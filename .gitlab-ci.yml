@@ -254,7 +254,7 @@ tests:win:LOG_OFF:
   tags:
     - linux
   script:
-    - cd build/Debug/test
+    - cd build/Debug
     - ctest -j2 --output-on-failure
   after_script:
     - cd build/Debug/test

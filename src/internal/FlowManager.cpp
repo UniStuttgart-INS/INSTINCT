@@ -284,6 +284,7 @@ std::filesystem::path NAV::flow::GetProgramRootPath()
 
 void NAV::flow::SetProgramRootPath(const std::filesystem::path& newRootPath)
 {
+    LOG_DEBUG("Program root path set to {}", newRootPath);
     programRootPath = newRootPath;
 }
 
