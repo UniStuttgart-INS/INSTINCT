@@ -4,12 +4,15 @@
 
 #include "internal/ConfigManager.hpp"
 #include "internal/FlowManager.hpp"
+#include "util/Logger.hpp"
 
 namespace NAV::TESTS
 {
 
 TEST_CASE("[ConfigManager] Fetch configs (long options)", "[ConfigManager]")
 {
+    Logger consoleSink;
+
     NAV::ConfigManager::initialize();
 
     std::vector<const char*> argv = { "",
@@ -49,8 +52,10 @@ TEST_CASE("[ConfigManager] Fetch configs (long options)", "[ConfigManager]")
     NAV::ConfigManager::deinitialize();
 }
 
-TEST_CASE("[ConfigManager] Fetch configs (rotate outputs)", "[ConfigManager][Debug]")
+TEST_CASE("[ConfigManager] Fetch configs (rotate outputs)", "[ConfigManager]")
 {
+    Logger consoleSink;
+
     NAV::ConfigManager::initialize();
 
     std::vector<const char*> argv = { "",
@@ -77,6 +82,8 @@ TEST_CASE("[ConfigManager] Fetch configs (rotate outputs)", "[ConfigManager][Deb
 
 TEST_CASE("[ConfigManager] Fetch configs (short options)", "[ConfigManager]")
 {
+    Logger consoleSink;
+
     NAV::ConfigManager::initialize();
 
     std::vector<const char*> argv = { "",
@@ -107,6 +114,8 @@ TEST_CASE("[ConfigManager] Fetch configs (short options)", "[ConfigManager]")
 
 TEST_CASE("[ConfigManager] Fetch configs (config file)", "[ConfigManager]")
 {
+    Logger consoleSink;
+
     NAV::ConfigManager::initialize();
 
     std::vector<const char*> argv = { "",

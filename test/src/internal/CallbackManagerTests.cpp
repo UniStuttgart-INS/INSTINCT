@@ -90,7 +90,7 @@ TEST_CASE("[CallbackManager] Flow order", "[CallbackManager]")
     messageCounterIntegratorResult = 0;
     messageCounterIntegratorResultRef = 0;
 
-    Logger logger;
+    Logger consoleSink;
 
     // ###########################################################################################################
     //                                      VectorNavBinaryConverter - IMU
