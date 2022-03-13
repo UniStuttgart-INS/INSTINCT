@@ -2,10 +2,45 @@
 
 #include "util/Logger.hpp"
 
+#include "internal/ConfigManager.hpp"
 #include "internal/FlowManager.hpp"
 
 #include <sstream>
 #include "util/StringUtil.hpp"
+
+#include <imgui.h>
+#include "internal/gui/widgets/FileDialog.hpp"
+#include "internal/gui/widgets/HelpMarker.hpp"
+
+bool NAV::FileReader::guiConfig(const char* vFilters, const std::vector<std::string>& extensions, size_t id, const std::string& nameId)
+{
+    bool changesOccurred = false;
+
+    if (gui::widgets::FileDialogLoad(_path, "Select File", vFilters, extensions,
+                                     flow::GetProgramRootPath() / ConfigManager::Get<std::string>("input-path", "data"), id, nameId))
+    {
+        if (_path.starts_with(ConfigManager::Get<std::string>("input-path", "data")))
+        {
+            _path = _path.substr(ConfigManager::Get<std::string>("input-path", "data").size() + 1);
+        }
+        changesOccurred = true;
+    }
+    ImGui::SameLine();
+    gui::widgets::HelpMarker(fmt::format("If a relative path is given, files will be searched inside {}.", flow::GetInputPath()).c_str());
+
+    return changesOccurred;
+}
+
+std::filesystem::path NAV::FileReader::getFilepath()
+{
+    std::filesystem::path filepath{ _path };
+    if (filepath.is_relative())
+    {
+        filepath = flow::GetInputPath();
+        filepath /= _path;
+    }
+    return filepath;
+}
 
 [[nodiscard]] json NAV::FileReader::save() const
 {
@@ -34,13 +69,25 @@ bool NAV::FileReader::initialize()
 
     LOG_TRACE("called");
 
-    _fileType = determineFileType();
-
-    std::string filepath = _path;
-    if (!_path.starts_with('/') && !_path.starts_with('~'))
+    if (_path.empty())
     {
-        filepath = flow::GetProgramRootPath() + '/' + _path;
+        return false;
     }
+
+    std::filesystem::path filepath = getFilepath();
+
+    if (!std::filesystem::exists(filepath))
+    {
+        LOG_ERROR("File does not exist {}", filepath);
+        return false;
+    }
+    if (std::filesystem::is_directory(filepath))
+    {
+        LOG_ERROR("Path is a directory {}", filepath);
+        return false;
+    }
+
+    _fileType = determineFileType();
 
     if (_fileType == FileType::CSV || _fileType == FileType::BINARY)
     {
@@ -92,11 +139,7 @@ NAV::FileReader::FileType NAV::FileReader::determineFileType()
 {
     LOG_TRACE("called");
 
-    std::string filepath = _path;
-    if (!_path.starts_with('/') && !_path.starts_with('~'))
-    {
-        filepath = flow::GetProgramRootPath() + '/' + _path;
-    }
+    auto filepath = getFilepath();
 
     auto filestreamHeader = std::ifstream(filepath);
     if (_filestream.good())
@@ -115,7 +158,7 @@ NAV::FileReader::FileType NAV::FileReader::determineFileType()
         return FileType::BINARY;
     }
 
-    LOG_ERROR("Could not open file {}", filepath);
+    LOG_ERROR("Could not open file {}", filepath.string());
     return FileType::NONE;
 }
 

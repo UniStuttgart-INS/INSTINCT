@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <filesystem>
 
 #include "Navigation/Time/InsTime.hpp"
 
@@ -42,6 +43,17 @@ class FileReader
     FileReader() = default;
     /// @brief Destructor
     virtual ~FileReader() = default;
+
+    /// @brief ImGui config
+    /// @param[in] vFilters Filter to apply for file names
+    /// @param[in] extensions Extensions to filter
+    /// @param[in] id Unique id for creating the dialog uid
+    /// @param[in] nameId Name of the node triggering the window used for logging
+    /// @return True if changes occurred
+    bool guiConfig(const char* vFilters, const std::vector<std::string>& extensions, size_t id, const std::string& nameId);
+
+    /// @brief Returns the path of the file
+    std::filesystem::path getFilepath();
 
     /// @brief Saves the node into a json object
     [[nodiscard]] json save() const;

@@ -1,7 +1,7 @@
 #include <catch2/catch.hpp>
 #include <limits>
 
-#include "Nodes/FlowTester.hpp"
+#include "FlowTester.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -90,7 +90,7 @@ TEST_CASE("[CallbackManager] Flow order", "[CallbackManager]")
     messageCounterIntegratorResult = 0;
     messageCounterIntegratorResultRef = 0;
 
-    Logger logger;
+    Logger consoleSink;
 
     // ###########################################################################################################
     //                                      VectorNavBinaryConverter - IMU

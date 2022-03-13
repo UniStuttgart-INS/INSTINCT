@@ -1282,7 +1282,7 @@ NAV::VectorNavSensor::VectorNavSensor()
         {
             divs.push_back(static_cast<uint16_t>(divider));
             freqs.push_back(std::to_string(freq) + " Hz");
-            LOG_DEBUG("VectorNavSensor: RateDivisor {} = {}", divs.back(), freqs.back());
+            LOG_DATA("VectorNavSensor: RateDivisor {} = {}", divs.back(), freqs.back());
         }
         return std::make_pair(divs, freqs);
     }();
@@ -1591,8 +1591,7 @@ void NAV::VectorNavSensor::guiConfig()
             };
             if (_syncInPin)
             {
-                ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
-                ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
+                ImGui::PushDisabled();
             }
 
             if (ImGui::BeginCombo(fmt::format("SyncIn Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(_synchronizationControlRegister.syncInMode).c_str()))
@@ -1644,8 +1643,7 @@ void NAV::VectorNavSensor::guiConfig()
                                      "asynchronous serial messages upon each trigger event.");
             if (_syncInPin)
             {
-                ImGui::PopItemFlag();
-                ImGui::PopStyleVar();
+                ImGui::PopDisabled();
             }
 
             static constexpr std::array<std::pair<vn::protocol::uart::SyncInEdge, const char*>, 2> synchronizationControlSyncInEdges = {
@@ -2459,8 +2457,7 @@ void NAV::VectorNavSensor::guiConfig()
 
                         if (!enabled)
                         {
-                            ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
-                            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
+                            ImGui::PushDisabled();
                         }
 
                         if (ImGui::CheckboxFlags(label, flags, flags_value))
@@ -2517,8 +2514,7 @@ void NAV::VectorNavSensor::guiConfig()
 
                         if (!enabled)
                         {
-                            ImGui::PopItemFlag();
-                            ImGui::PopStyleVar();
+                            ImGui::PopDisabled();
                         }
                     };
 
