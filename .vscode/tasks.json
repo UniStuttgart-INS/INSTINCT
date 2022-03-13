@@ -368,6 +368,7 @@
                 // "--output-path=logs",
                 // "--rotate-output",
                 // ================ To configure tests ================
+                // "--flow-path=test/flow",
                 // "--input-path=test/data",
                 // "--output-path=test/logs",
             ],

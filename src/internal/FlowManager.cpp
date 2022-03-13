@@ -354,5 +354,17 @@ std::filesystem::path NAV::flow::GetInputPath()
 
 std::filesystem::path NAV::flow::GetFlowPath()
 {
-    return flow::GetProgramRootPath() / "flow";
+    std::filesystem::path filepath = flow::GetProgramRootPath();
+
+    if (std::filesystem::path inputPath{ ConfigManager::Get<std::string>("flow-path", "flow") };
+        inputPath.is_relative())
+    {
+        filepath /= inputPath;
+    }
+    else
+    {
+        filepath = inputPath;
+    }
+
+    return filepath;
 }
