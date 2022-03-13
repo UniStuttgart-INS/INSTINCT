@@ -351,3 +351,8 @@ std::filesystem::path NAV::flow::GetInputPath()
 
     return filepath;
 }
+
+std::filesystem::path NAV::flow::GetFlowPath()
+{
+    return flow::GetProgramRootPath() / "flow";
+}

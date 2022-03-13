@@ -67,6 +67,9 @@ void SetOutputPath();
 /// @brief Get the path where data files are searched
 std::filesystem::path GetInputPath();
 
+/// @brief Get the path where flow files are searched
+std::filesystem::path GetFlowPath();
+
 /// @brief Whether actions should be saved to the last actions list
 extern bool saveLastActions;
 

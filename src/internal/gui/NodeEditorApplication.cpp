@@ -210,7 +210,7 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
         {
             if (flow::GetCurrentFilename().empty())
             {
-                if (auto targetPath = flow::GetProgramRootPath() / "flow";
+                if (auto targetPath = flow::GetFlowPath();
                     std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
                 {
                     LOG_DEBUG("Changing current path to {}", std::filesystem::current_path());
@@ -262,7 +262,7 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
 
 void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
 {
-    if (auto targetPath = flow::GetProgramRootPath() / "flow";
+    if (auto targetPath = flow::GetFlowPath();
         std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
     {
         LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path());
@@ -317,7 +317,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
         {
             if (flow::GetCurrentFilename().empty())
             {
-                if (auto targetPath = flow::GetProgramRootPath() / "flow";
+                if (auto targetPath = flow::GetFlowPath();
                     std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
                 {
                     LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path());
@@ -386,7 +386,7 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
             {
                 if (flow::GetCurrentFilename().empty())
                 {
-                    if (auto targetPath = flow::GetProgramRootPath() / "flow";
+                    if (auto targetPath = flow::GetFlowPath();
                         std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
                     {
                         LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path());
@@ -433,7 +433,7 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
     }
     else
     {
-        if (auto targetPath = flow::GetProgramRootPath() / "flow";
+        if (auto targetPath = flow::GetFlowPath();
             std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
         {
             LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path());
