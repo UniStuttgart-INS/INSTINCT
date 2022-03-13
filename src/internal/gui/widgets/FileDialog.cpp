@@ -12,6 +12,7 @@
 
 bool NAV::gui::widgets::FileDialogSave(std::string& path, const char* vName,
                                        const char* vFilters, const std::vector<std::string>& extensions,
+                                       const std::filesystem::path& startPath,
                                        size_t id, [[maybe_unused]] const std::string& nameId)
 {
     bool changed = false;
@@ -25,6 +26,11 @@ bool NAV::gui::widgets::FileDialogSave(std::string& path, const char* vName,
     std::string saveFileDialogKey = fmt::format("Save File ({})", id);
     if (ImGui::Button("Save"))
     {
+        if (std::filesystem::current_path() != startPath && std::filesystem::exists(startPath))
+        {
+            LOG_DEBUG("{}: Changing current path to: {}", nameId, startPath);
+            std::filesystem::current_path(startPath);
+        }
         igfd::ImGuiFileDialog::Instance()->OpenDialog(saveFileDialogKey, vName, vFilters, "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
         for (const auto& ext : extensions)
         {
@@ -37,13 +43,14 @@ bool NAV::gui::widgets::FileDialogSave(std::string& path, const char* vName,
         if (igfd::ImGuiFileDialog::Instance()->IsOk)
         {
             path = igfd::ImGuiFileDialog::Instance()->GetFilePathName();
-            if (path.find(flow::GetProgramRootPath()) != std::string::npos)
+            if (path.find(flow::GetProgramRootPath().string()) != std::string::npos)
             {
-                path = path.substr(flow::GetProgramRootPath().size() + 1);
+                path = path.substr(flow::GetProgramRootPath().string().size() + 1);
             }
             LOG_DEBUG("{}: Selected file: {}", nameId, path);
             changed = true;
         }
+        std::filesystem::current_path(flow::GetProgramRootPath());
 
         igfd::ImGuiFileDialog::Instance()->CloseDialog();
     }
@@ -53,6 +60,7 @@ bool NAV::gui::widgets::FileDialogSave(std::string& path, const char* vName,
 
 bool NAV::gui::widgets::FileDialogLoad(std::string& path, const char* vName,
                                        const char* vFilters, const std::vector<std::string>& extensions,
+                                       const std::filesystem::path& startPath,
                                        size_t id, [[maybe_unused]] const std::string& nameId)
 {
     bool changed = false;
@@ -69,6 +77,11 @@ bool NAV::gui::widgets::FileDialogLoad(std::string& path, const char* vName,
     std::string openFileDialogKey = fmt::format("Select File ({})", id);
     if (ImGui::Button("Open"))
     {
+        if (std::filesystem::current_path() != startPath && std::filesystem::exists(startPath))
+        {
+            LOG_DEBUG("{}: Changing current path to: {}", nameId, startPath);
+            std::filesystem::current_path(startPath);
+        }
         igfd::ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, vName, vFilters, "");
         for (const auto& ext : extensions)
         {
@@ -83,9 +96,9 @@ bool NAV::gui::widgets::FileDialogLoad(std::string& path, const char* vName,
             if (std::filesystem::exists(igfd::ImGuiFileDialog::Instance()->GetFilePathName()))
             {
                 path = igfd::ImGuiFileDialog::Instance()->GetFilePathName();
-                if (path.find(flow::GetProgramRootPath()) != std::string::npos)
+                if (path.find(flow::GetProgramRootPath().string()) != std::string::npos)
                 {
-                    path = path.substr(flow::GetProgramRootPath().size() + 1);
+                    path = path.substr(flow::GetProgramRootPath().string().size() + 1);
                 }
                 LOG_DEBUG("{}: Selected file: {}", nameId, path);
                 changed = true;
@@ -95,6 +108,7 @@ bool NAV::gui::widgets::FileDialogLoad(std::string& path, const char* vName,
                 LOG_WARN("{}: Selected path does not exist: {}", nameId, igfd::ImGuiFileDialog::Instance()->GetFilePathName());
             }
         }
+        std::filesystem::current_path(flow::GetProgramRootPath());
 
         igfd::ImGuiFileDialog::Instance()->CloseDialog();
     }

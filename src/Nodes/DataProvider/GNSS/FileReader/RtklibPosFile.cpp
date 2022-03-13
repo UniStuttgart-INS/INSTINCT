@@ -4,8 +4,6 @@
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "util/Time/TimeBase.hpp"
 
-#include "internal/gui/widgets/FileDialog.hpp"
-
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
@@ -47,10 +45,10 @@ std::string NAV::RtklibPosFile::category()
 
 void NAV::RtklibPosFile::guiConfig()
 {
-    if (gui::widgets::FileDialogLoad(_path, "Select File", ".pos", { ".pos" }, size_t(id), nameId()))
+    if (FileReader::guiConfig(".pos", { ".pos" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        initializeNode();
+        deinitializeNode();
     }
 
     // Header info

@@ -5,14 +5,14 @@
 #include "util/Logger.hpp"
 #include "util/StringUtil.hpp"
 
-#include "internal/gui/widgets/FileDialog.hpp"
-
 #include <iomanip> // std::setprecision
 #include <limits>
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
+
+#include <imgui_internal.h>
 
 NAV::VectorNavDataLogger::VectorNavDataLogger()
 {
@@ -23,7 +23,7 @@ NAV::VectorNavDataLogger::VectorNavDataLogger()
     _fileType = FileType::BINARY;
 
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 380, 92 };
+    _guiConfigDefaultWindowSize = { 444, 92 };
 
     nm::CreateInputPin(this, "BinaryOutput", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() }, &VectorNavDataLogger::writeObservation);
 }
@@ -50,7 +50,7 @@ std::string NAV::VectorNavDataLogger::category()
 
 void NAV::VectorNavDataLogger::guiConfig()
 {
-    if (gui::widgets::FileDialogSave(_path, "Save File", _fileType == FileType::CSV ? ".csv" : ".vnb", { _fileType == FileType::CSV ? ".csv" : ".vnb" }, size_t(id), nameId()))
+    if (FileWriter::guiConfig(_fileType == FileType::CSV ? ".csv" : ".vnb", { _fileType == FileType::CSV ? ".csv" : ".vnb" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
         deinitializeNode();

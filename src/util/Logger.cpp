@@ -69,7 +69,9 @@ Logger::~Logger()
 
 void Logger::writeSeparator() noexcept
 {
+#if SPDLOG_ACTIVE_LEVEL > SPDLOG_LEVEL_OFF
     std::cout << "===========================================================================================" << std::endl;
+#endif
 }
 
 void Logger::writeHeader() noexcept

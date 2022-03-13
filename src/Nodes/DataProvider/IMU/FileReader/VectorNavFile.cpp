@@ -5,8 +5,6 @@
 #include "util/Logger.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 
-#include "internal/gui/widgets/FileDialog.hpp"
-
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
@@ -48,10 +46,10 @@ std::string NAV::VectorNavFile::category()
 
 void NAV::VectorNavFile::guiConfig()
 {
-    if (gui::widgets::FileDialogLoad(_path, "Select File", "Supported types (*.csv *.vnb){.csv,.vnb},.*", { ".csv", ".vnb" }, size_t(id), nameId()))
+    if (FileReader::guiConfig("Supported types (*.csv *.vnb){.csv,.vnb},.*", { ".csv", ".vnb" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        initializeNode();
+        deinitializeNode();
     }
 
     Imu::guiConfig();
@@ -212,11 +210,7 @@ NAV::FileReader::FileType NAV::VectorNavFile::determineFileType()
 {
     LOG_TRACE("called");
 
-    std::string filepath = _path;
-    if (!_path.starts_with('/') && !_path.starts_with('~'))
-    {
-        filepath = flow::GetProgramRootPath() + '/' + _path;
-    }
+    std::filesystem::path filepath = getFilepath();
 
     auto filestreamHeader = std::ifstream(filepath);
     if (_filestream.good())
@@ -1018,7 +1012,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
             double tow = 0.0;
             readFromFilestream(reinterpret_cast<char*>(&gpsCycle), sizeof(gpsCycle));
             readFromFilestream(reinterpret_cast<char*>(&gpsWeek), sizeof(gpsWeek));
-            readFromFilestream(reinterpret_cast<char*>(&tow), sizeof(tow)); 
+            readFromFilestream(reinterpret_cast<char*>(&tow), sizeof(tow));
             obs->insTime = InsTime(gpsCycle, gpsWeek, tow);
 
             // Group 2 (Time)

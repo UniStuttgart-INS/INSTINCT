@@ -4,10 +4,14 @@
 #include "NodeData/State/PosVelAtt.hpp"
 #include "fmt/core.h"
 
+#include "util/Logger.hpp"
+
 namespace NAV
 {
 TEST_CASE("[PosVelAtt] Position Functions", "[PosVelAtt]")
 {
+    Logger consoleSink;
+
     // Stuttgart, Breitscheidstraße 2
     // https://www.koordinaten-umrechner.de/decimal/48.780810,9.172012?karte=OpenStreetMap&zoom=19
     Eigen::Vector3d lla_position{ trafo::deg2rad(48.78081), trafo::deg2rad(9.172012), 254 };
@@ -35,6 +39,8 @@ TEST_CASE("[PosVelAtt] Position Functions", "[PosVelAtt]")
 
 TEST_CASE("[PosVelAtt] Velocity Functions", "[PosVelAtt]")
 {
+    Logger consoleSink;
+
     // Stuttgart, Breitscheidstraße 2
     // https://www.koordinaten-umrechner.de/decimal/48.780810,9.172012?karte=OpenStreetMap&zoom=19
     Eigen::Vector3d lla_position{ trafo::deg2rad(48.78081), trafo::deg2rad(9.172012), 254 };
@@ -59,6 +65,8 @@ TEST_CASE("[PosVelAtt] Velocity Functions", "[PosVelAtt]")
 
 TEST_CASE("[PosVelAtt] Attitude Functions", "[PosVelAtt]")
 {
+    Logger consoleSink;
+
     // Stuttgart, Breitscheidstraße 2
     // https://www.koordinaten-umrechner.de/decimal/48.780810,9.172012?karte=OpenStreetMap&zoom=19
     Eigen::Vector3d lla_position{ trafo::deg2rad(48.78081), trafo::deg2rad(9.172012), 254 };
@@ -88,6 +96,8 @@ TEST_CASE("[PosVelAtt] Attitude Functions", "[PosVelAtt]")
 
 TEST_CASE("[PosVelAtt] Attitude RollPitchYaw", "[PosVelAtt]")
 {
+    Logger consoleSink;
+
     // Stuttgart, Breitscheidstraße 2
     // https://www.koordinaten-umrechner.de/decimal/48.780810,9.172012?karte=OpenStreetMap&zoom=19
     PosVelAtt state;
