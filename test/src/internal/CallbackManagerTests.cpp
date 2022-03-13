@@ -1,7 +1,7 @@
 #include <catch2/catch.hpp>
 #include <limits>
 
-#include "Nodes/FlowTester.hpp"
+#include "FlowTester.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;

@@ -365,8 +365,11 @@
                 // "--duration=60",
                 // "--nogui",
                 // "--input-path=data",
-                // "--rotate-output",
                 // "--output-path=logs",
+                // "--rotate-output",
+                // ================ To configure tests ================
+                // "--input-path=test/data",
+                // "--output-path=test/logs",
             ],
             "options": {
                 "cwd": "${workspaceFolder}",
