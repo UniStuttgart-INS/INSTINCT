@@ -1,10 +1,12 @@
 #include "ConfigManager.hpp"
 
 #include <string>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <boost/program_options/parsers.hpp>
 
+#include "internal/FlowManager.hpp"
 #include "util/Logger.hpp"
 
 #include <boost/tokenizer.hpp>
@@ -63,7 +65,14 @@ std::vector<std::string> NAV::ConfigManager::FetchConfigs(const int argc, const 
     {
         for (const std::string& configFile : vm["config"].as<std::vector<std::string>>())
         {
-            std::ifstream ifs{ configFile };
+            std::filesystem::path filepath{ configFile };
+            if (filepath.is_relative())
+            {
+                filepath = NAV::flow::GetProgramRootPath();
+                filepath /= configFile;
+            }
+
+            std::ifstream ifs{ filepath };
             if (ifs.good())
             {
                 bpo::store(bpo::parse_config_file(ifs, program_options), vm);

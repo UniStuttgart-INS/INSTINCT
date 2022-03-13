@@ -333,7 +333,7 @@ void NAV::flow::SetOutputPath()
             break;
         }
     }
-    LOG_INFO("Output directory set to {}", GetOutputPath());
+    LOG_DEBUG("Output directory set to {}", GetOutputPath());
 }
 
 std::filesystem::path NAV::flow::GetInputPath()
