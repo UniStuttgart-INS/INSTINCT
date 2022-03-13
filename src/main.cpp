@@ -1,6 +1,5 @@
 #include <iostream>
 
-#include "util/Logger.hpp"
 #include "internal/Version.hpp"
 
 #include "internal/AppLogic.hpp"
@@ -31,8 +30,6 @@ int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-array
 
     try
     {
-        Logger logger("logs/instinct.log");
-
         return NAV::AppLogic::processCommandLineArguments(argc, argv);
     }
     catch (const std::exception& e)

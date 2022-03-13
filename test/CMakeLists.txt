@@ -22,12 +22,13 @@ endforeach(TMP_PATH)
 # Link all files in the Source directory
 add_executable(
   tests
+  src/FlowTester.cpp
   src/internal/CallbackManagerTests.cpp
+  src/internal/ConfigManagerTests.cpp
   src/Navigation/INS/MechanizationTests.cpp
   src/Navigation/Time/InsTimeTests.cpp
   src/Navigation/Transformations/CoordinateFramesTests.cpp
   src/NodeData/State/PosVelAttTests.cpp
-  src/Nodes/FlowTester.cpp
   src/Nodes/DataLogger/IMU/VectorNavDataLoggerTests.cpp
   src/Nodes/DataProvider/IMU/VectorNavFileTests.cpp
   src/util/Container/ScrollingBufferTests.cpp

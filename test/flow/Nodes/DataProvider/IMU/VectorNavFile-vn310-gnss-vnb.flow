@@ -3,7 +3,7 @@
         "node-6": {
             "data": {
                 "FileReader": {
-                    "path": "test/data/vn310-gnss.vnb"
+                    "path": "vn310-gnss.vnb"
                 },
                 "Imu": {
                     "imuPos": {

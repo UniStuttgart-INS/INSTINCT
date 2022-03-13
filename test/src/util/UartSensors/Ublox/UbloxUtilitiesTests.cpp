@@ -1,5 +1,7 @@
 #include <catch2/catch.hpp>
 
+#include "util/Logger.hpp"
+
 #include "util/UartSensors/Ublox/UbloxUtilities.hpp"
 namespace ub = NAV::sensors::ublox;
 
@@ -10,6 +12,8 @@ namespace NAV::TEST
 {
 TEST_CASE("[UbloxUtilities] decryptUbloxObs - NMEA", "[UbloxUtilities]")
 {
+    Logger consoleSink;
+
     uart::sensors::UartSensor sensor{ uart::Endianness::ENDIAN_LITTLE,
                                       // packetFinderFunction
                                       nullptr,
@@ -35,6 +39,8 @@ TEST_CASE("[UbloxUtilities] decryptUbloxObs - NMEA", "[UbloxUtilities]")
 
 TEST_CASE("[UbloxUtilities] decryptUbloxObs - UBX", "[UbloxUtilities]")
 {
+    Logger consoleSink;
+
     auto sensorEndianess = uart::Endianness::ENDIAN_LITTLE;
     uart::sensors::UartSensor sensor{ sensorEndianess,
                                       // packetFinderFunction
@@ -207,6 +213,8 @@ TEST_CASE("[UbloxUtilities] decryptUbloxObs - UBX", "[UbloxUtilities]")
 
 TEST_CASE("[UbloxUtilities] checksumUBX", "[UbloxUtilities]")
 {
+    Logger consoleSink;
+
     //                                                                 navBbrMask
     //                                                                 |           resetMode
     //                                                                 |           |     reserved1
@@ -285,6 +293,8 @@ TEST_CASE("[UbloxUtilities] checksumUBX", "[UbloxUtilities]")
 
 TEST_CASE("[UbloxUtilities] checksumNMEA", "[UbloxUtilities]")
 {
+    Logger consoleSink;
+
     std::string text = "$GPZDA,141644.00,22,03,2002,00,00*67\r\n";
     std::vector<uint8_t> data;
     std::copy(text.begin(), text.end(), std::back_inserter(data));

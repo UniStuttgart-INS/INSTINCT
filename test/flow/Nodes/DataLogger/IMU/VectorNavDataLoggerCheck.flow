@@ -3,11 +3,11 @@
         "node-2": {
             "data": {
                 "FileReader": {
-                    "path": "test/data/vn310-imu.csv"
+                    "path": "vn310-imu.csv"
                 },
                 "Imu": {
                     "imuPos": {
-                        "b_posAccel": {
+                        "b_positionAccel": {
                             "0": {
                                 "0": 0.0
                             },
@@ -18,7 +18,7 @@
                                 "0": 0.0
                             }
                         },
-                        "b_posGyro": {
+                        "b_positionGyro": {
                             "0": {
                                 "0": 0.0
                             },
@@ -29,7 +29,7 @@
                                 "0": 0.0
                             }
                         },
-                        "b_posMag": {
+                        "b_positionMag": {
                             "0": {
                                 "0": 0.0
                             },
@@ -40,21 +40,7 @@
                                 "0": 0.0
                             }
                         },
-                        "quatAccel_bp": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "quatGyro_bp": {
+                        "b_quatAccel_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -68,7 +54,21 @@
                                 "0": 1.0
                             }
                         },
-                        "quatMag_bp": {
+                        "b_quatGyro_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatMag_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -92,12 +92,8 @@
             "name": "VectorNavFile - data/vn310-imu.csv",
             "outputPins": [
                 {
-                    "dataIdentifier": [
-                        "VectorNavBinaryOutput"
-                    ],
                     "id": 1,
-                    "name": "Binary Output",
-                    "type": "Flow"
+                    "name": "Binary Output"
                 }
             ],
             "pos": {
@@ -113,11 +109,11 @@
         "node-28": {
             "data": {
                 "FileReader": {
-                    "path": "test/logs/vn310-imu.csv"
+                    "path": "../logs/vn310-imu.csv"
                 },
                 "Imu": {
                     "imuPos": {
-                        "b_posAccel": {
+                        "b_positionAccel": {
                             "0": {
                                 "0": 0.0
                             },
@@ -128,7 +124,7 @@
                                 "0": 0.0
                             }
                         },
-                        "b_posGyro": {
+                        "b_positionGyro": {
                             "0": {
                                 "0": 0.0
                             },
@@ -139,7 +135,7 @@
                                 "0": 0.0
                             }
                         },
-                        "b_posMag": {
+                        "b_positionMag": {
                             "0": {
                                 "0": 0.0
                             },
@@ -150,21 +146,7 @@
                                 "0": 0.0
                             }
                         },
-                        "quatAccel_bp": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "quatGyro_bp": {
+                        "b_quatAccel_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -178,7 +160,21 @@
                                 "0": 1.0
                             }
                         },
-                        "quatMag_bp": {
+                        "b_quatGyro_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatMag_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -202,12 +198,8 @@
             "name": "VectorNavFile - logs/vn310-imu.csv",
             "outputPins": [
                 {
-                    "dataIdentifier": [
-                        "VectorNavBinaryOutput"
-                    ],
                     "id": 29,
-                    "name": "Binary Output",
-                    "type": "Flow"
+                    "name": "Binary Output"
                 }
             ],
             "pos": {
@@ -223,11 +215,11 @@
         "node-31": {
             "data": {
                 "FileReader": {
-                    "path": "test/logs/vn310-imu.vnb"
+                    "path": "../logs/vn310-imu.vnb"
                 },
                 "Imu": {
                     "imuPos": {
-                        "b_posAccel": {
+                        "b_positionAccel": {
                             "0": {
                                 "0": 0.0
                             },
@@ -238,7 +230,7 @@
                                 "0": 0.0
                             }
                         },
-                        "b_posGyro": {
+                        "b_positionGyro": {
                             "0": {
                                 "0": 0.0
                             },
@@ -249,7 +241,7 @@
                                 "0": 0.0
                             }
                         },
-                        "b_posMag": {
+                        "b_positionMag": {
                             "0": {
                                 "0": 0.0
                             },
@@ -260,21 +252,7 @@
                                 "0": 0.0
                             }
                         },
-                        "quatAccel_bp": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "quatGyro_bp": {
+                        "b_quatAccel_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -288,7 +266,21 @@
                                 "0": 1.0
                             }
                         },
-                        "quatMag_bp": {
+                        "b_quatGyro_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatMag_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -312,12 +304,8 @@
             "name": "VectorNavFile - logs/vn310-imu.vnb",
             "outputPins": [
                 {
-                    "dataIdentifier": [
-                        "VectorNavBinaryOutput"
-                    ],
                     "id": 32,
-                    "name": "Binary Output",
-                    "type": "Flow"
+                    "name": "Binary Output"
                 }
             ],
             "pos": {
@@ -333,11 +321,11 @@
         "node-34": {
             "data": {
                 "FileReader": {
-                    "path": "test/logs/vn310-gnss.csv"
+                    "path": "../logs/vn310-gnss.csv"
                 },
                 "Imu": {
                     "imuPos": {
-                        "b_posAccel": {
+                        "b_positionAccel": {
                             "0": {
                                 "0": 0.0
                             },
@@ -348,7 +336,7 @@
                                 "0": 0.0
                             }
                         },
-                        "b_posGyro": {
+                        "b_positionGyro": {
                             "0": {
                                 "0": 0.0
                             },
@@ -359,7 +347,7 @@
                                 "0": 0.0
                             }
                         },
-                        "b_posMag": {
+                        "b_positionMag": {
                             "0": {
                                 "0": 0.0
                             },
@@ -370,21 +358,7 @@
                                 "0": 0.0
                             }
                         },
-                        "quatAccel_bp": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "quatGyro_bp": {
+                        "b_quatAccel_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -398,7 +372,21 @@
                                 "0": 1.0
                             }
                         },
-                        "quatMag_bp": {
+                        "b_quatGyro_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatMag_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -422,12 +410,8 @@
             "name": "VectorNavFile - logs/vn310-gnss.csv",
             "outputPins": [
                 {
-                    "dataIdentifier": [
-                        "VectorNavBinaryOutput"
-                    ],
                     "id": 35,
-                    "name": "Binary Output",
-                    "type": "Flow"
+                    "name": "Binary Output"
                 }
             ],
             "pos": {
@@ -443,11 +427,11 @@
         "node-37": {
             "data": {
                 "FileReader": {
-                    "path": "test/logs/vn310-gnss.vnb"
+                    "path": "../logs/vn310-gnss.vnb"
                 },
                 "Imu": {
                     "imuPos": {
-                        "b_posAccel": {
+                        "b_positionAccel": {
                             "0": {
                                 "0": 0.0
                             },
@@ -458,7 +442,7 @@
                                 "0": 0.0
                             }
                         },
-                        "b_posGyro": {
+                        "b_positionGyro": {
                             "0": {
                                 "0": 0.0
                             },
@@ -469,7 +453,7 @@
                                 "0": 0.0
                             }
                         },
-                        "b_posMag": {
+                        "b_positionMag": {
                             "0": {
                                 "0": 0.0
                             },
@@ -480,21 +464,7 @@
                                 "0": 0.0
                             }
                         },
-                        "quatAccel_bp": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "quatGyro_bp": {
+                        "b_quatAccel_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -508,7 +478,21 @@
                                 "0": 1.0
                             }
                         },
-                        "quatMag_bp": {
+                        "b_quatGyro_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatMag_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -532,12 +516,8 @@
             "name": "VectorNavFile - logs/vn310-gnss.vnb",
             "outputPins": [
                 {
-                    "dataIdentifier": [
-                        "VectorNavBinaryOutput"
-                    ],
                     "id": 38,
-                    "name": "Binary Output",
-                    "type": "Flow"
+                    "name": "Binary Output"
                 }
             ],
             "pos": {
@@ -553,11 +533,11 @@
         "node-6": {
             "data": {
                 "FileReader": {
-                    "path": "test/data/vn310-gnss.csv"
+                    "path": "vn310-gnss.csv"
                 },
                 "Imu": {
                     "imuPos": {
-                        "b_posAccel": {
+                        "b_positionAccel": {
                             "0": {
                                 "0": 0.0
                             },
@@ -568,7 +548,7 @@
                                 "0": 0.0
                             }
                         },
-                        "b_posGyro": {
+                        "b_positionGyro": {
                             "0": {
                                 "0": 0.0
                             },
@@ -579,7 +559,7 @@
                                 "0": 0.0
                             }
                         },
-                        "b_posMag": {
+                        "b_positionMag": {
                             "0": {
                                 "0": 0.0
                             },
@@ -590,21 +570,7 @@
                                 "0": 0.0
                             }
                         },
-                        "quatAccel_bp": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "quatGyro_bp": {
+                        "b_quatAccel_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -618,7 +584,21 @@
                                 "0": 1.0
                             }
                         },
-                        "quatMag_bp": {
+                        "b_quatGyro_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatMag_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -642,12 +622,8 @@
             "name": "VectorNavFile - data/vn310-gnss.csv",
             "outputPins": [
                 {
-                    "dataIdentifier": [
-                        "VectorNavBinaryOutput"
-                    ],
                     "id": 7,
-                    "name": "Binary Output",
-                    "type": "Flow"
+                    "name": "Binary Output"
                 }
             ],
             "pos": {

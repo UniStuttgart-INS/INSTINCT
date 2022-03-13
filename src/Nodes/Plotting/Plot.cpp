@@ -10,6 +10,8 @@ namespace nm = NAV::NodeManager;
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "util/Json.hpp"
 
+#include "util/Container/Vector.hpp"
+
 #include "util/Time/TimeBase.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
@@ -18,84 +20,12 @@ namespace nm = NAV::NodeManager;
 
 namespace NAV
 {
-
-/// @brief Write info to a json object
-/// @param[out] j Json output
-/// @param[in] style Object to read info from
-void to_json(json& j, const Plot::PlotStyle& style)
-{
-    j = json{
-        { "legendName", style.legendName },
-        { "stride", style.stride },
-        { "lineType", style.lineType },
-        { "color", style.color },
-        { "thickness", style.thickness },
-        { "markers", style.markers },
-        { "markerStyle", style.markerStyle },
-        { "markerSize", style.markerSize },
-        { "markerWeight", style.markerWeight },
-        { "markerFillColor", style.markerFillColor },
-        { "markerOutlineColor", style.markerOutlineColor },
-    };
-}
-/// @brief Read info from a json object
-/// @param[in] j Json variable to read info from
-/// @param[out] style Output object
-void from_json(const json& j, Plot::PlotStyle& style)
-{
-    if (j.contains("legendName"))
-    {
-        j.at("legendName").get_to(style.legendName);
-    }
-    if (j.contains("stride"))
-    {
-        j.at("stride").get_to(style.stride);
-    }
-    if (j.contains("lineType"))
-    {
-        j.at("lineType").get_to(style.lineType);
-    }
-    if (j.contains("color"))
-    {
-        j.at("color").get_to(style.color);
-    }
-    if (j.contains("thickness"))
-    {
-        j.at("thickness").get_to(style.thickness);
-    }
-    if (j.contains("markers"))
-    {
-        j.at("markers").get_to(style.markers);
-    }
-    if (j.contains("markerStyle"))
-    {
-        j.at("markerStyle").get_to(style.markerStyle);
-    }
-    if (j.contains("markerSize"))
-    {
-        j.at("markerSize").get_to(style.markerSize);
-    }
-    if (j.contains("markerWeight"))
-    {
-        j.at("markerWeight").get_to(style.markerWeight);
-    }
-    if (j.contains("markerFillColor"))
-    {
-        j.at("markerFillColor").get_to(style.markerFillColor);
-    }
-    if (j.contains("markerOutlineColor"))
-    {
-        j.at("markerOutlineColor").get_to(style.markerOutlineColor);
-    }
-}
-
 /// @brief Write info to a json object
 /// @param[out] j Json output
 /// @param[in] data Object to read info from
 void to_json(json& j, const Plot::PinData::PlotData& data)
 {
     j = json{
-        { "plotOnAxisAndPlotStyle", data.plotOnAxis },
         { "displayName", data.displayName },
     };
 }
@@ -104,10 +34,6 @@ void to_json(json& j, const Plot::PinData::PlotData& data)
 /// @param[out] data Output object
 void from_json(const json& j, Plot::PinData::PlotData& data)
 {
-    if (j.contains("plotOnAxisAndPlotStyle"))
-    {
-        j.at("plotOnAxisAndPlotStyle").get_to(data.plotOnAxis);
-    }
     if (j.contains("displayName"))
     {
         j.at("displayName").get_to(data.displayName);
@@ -160,19 +86,125 @@ void from_json(const json& j, Plot::PinData& data)
 
 /// @brief Write info to a json object
 /// @param[out] j Json output
+/// @param[in] style Object to read info from
+void to_json(json& j, const Plot::PlotInfo::PlotItem::Style& style)
+{
+    j = json{
+        { "legendName", style.legendName },
+        { "stride", style.stride },
+        { "lineType", style.lineType },
+        { "color", style.color },
+        { "thickness", style.thickness },
+        { "markers", style.markers },
+        { "markerStyle", style.markerStyle },
+        { "markerSize", style.markerSize },
+        { "markerWeight", style.markerWeight },
+        { "markerFillColor", style.markerFillColor },
+        { "markerOutlineColor", style.markerOutlineColor },
+    };
+}
+/// @brief Read info from a json object
+/// @param[in] j Json variable to read info from
+/// @param[out] style Output object
+void from_json(const json& j, Plot::PlotInfo::PlotItem::Style& style)
+{
+    if (j.contains("legendName"))
+    {
+        j.at("legendName").get_to(style.legendName);
+    }
+    if (j.contains("stride"))
+    {
+        j.at("stride").get_to(style.stride);
+    }
+    if (j.contains("lineType"))
+    {
+        j.at("lineType").get_to(style.lineType);
+    }
+    if (j.contains("color"))
+    {
+        j.at("color").get_to(style.color);
+    }
+    if (j.contains("thickness"))
+    {
+        j.at("thickness").get_to(style.thickness);
+    }
+    if (j.contains("markers"))
+    {
+        j.at("markers").get_to(style.markers);
+    }
+    if (j.contains("markerStyle"))
+    {
+        j.at("markerStyle").get_to(style.markerStyle);
+    }
+    if (j.contains("markerSize"))
+    {
+        j.at("markerSize").get_to(style.markerSize);
+    }
+    if (j.contains("markerWeight"))
+    {
+        j.at("markerWeight").get_to(style.markerWeight);
+    }
+    if (j.contains("markerFillColor"))
+    {
+        j.at("markerFillColor").get_to(style.markerFillColor);
+    }
+    if (j.contains("markerOutlineColor"))
+    {
+        j.at("markerOutlineColor").get_to(style.markerOutlineColor);
+    }
+}
+
+/// @brief Write info to a json object
+/// @param[out] j Json output
+/// @param[in] data Object to read info from
+void to_json(json& j, const Plot::PlotInfo::PlotItem& data)
+{
+    j = json{
+        { "pinIndex", data.pinIndex },
+        { "dataIndex", data.dataIndex },
+        { "axis", data.axis },
+        { "style", data.style },
+    };
+}
+/// @brief Read info from a json object
+/// @param[in] j Json variable to read info from
+/// @param[out] data Output object
+void from_json(const json& j, Plot::PlotInfo::PlotItem& data)
+{
+    if (j.contains("pinIndex"))
+    {
+        j.at("pinIndex").get_to(data.pinIndex);
+    }
+    if (j.contains("dataIndex"))
+    {
+        j.at("dataIndex").get_to(data.dataIndex);
+    }
+    if (j.contains("axis"))
+    {
+        j.at("axis").get_to(data.axis);
+    }
+    if (j.contains("style"))
+    {
+        j.at("style").get_to(data.style);
+    }
+}
+
+/// @brief Write info to a json object
+/// @param[out] j Json output
 /// @param[in] data Object to read info from
 void to_json(json& j, const Plot::PlotInfo& data)
 {
     j = json{
         { "size", data.size },
-        { "autoLimitXaxis", data.autoLimitXaxis },
-        { "autoLimitYaxis", data.autoLimitYaxis },
+        { "xAxisFlags", data.xAxisFlags },
+        { "yAxisFlags", data.yAxisFlags },
         { "headerText", data.headerText },
         { "leftPaneWidth", data.leftPaneWidth },
         { "plotFlags", data.plotFlags },
         { "rightPaneWidth", data.rightPaneWidth },
         { "selectedPin", data.selectedPin },
         { "selectedXdata", data.selectedXdata },
+        { "plotItems", data.plotItems },
         { "title", data.title },
         { "overrideXAxisLabel", data.overrideXAxisLabel },
         { "xAxisLabel", data.xAxisLabel },
@@ -190,13 +222,13 @@ void from_json(const json& j, Plot::PlotInfo& data)
     {
         j.at("size").get_to(data.size);
     }
-    if (j.contains("autoLimitXaxis"))
+    if (j.contains("xAxisFlags"))
     {
-        j.at("autoLimitXaxis").get_to(data.autoLimitXaxis);
+        j.at("xAxisFlags").get_to(data.xAxisFlags);
     }
-    if (j.contains("autoLimitYaxis"))
+    if (j.contains("yAxisFlags"))
     {
-        j.at("autoLimitYaxis").get_to(data.autoLimitYaxis);
+        j.at("yAxisFlags").get_to(data.yAxisFlags);
     }
     if (j.contains("headerText"))
     {
@@ -221,6 +253,10 @@ void from_json(const json& j, Plot::PlotInfo& data)
     if (j.contains("selectedXdata"))
     {
         j.at("selectedXdata").get_to(data.selectedXdata);
+    }
+    if (j.contains("plotItems"))
+    {
+        j.at("plotItems").get_to(data.plotItems);
     }
     if (j.contains("title"))
     {
@@ -318,41 +354,109 @@ void NAV::Plot::guiConfig()
     ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
     if (ImGui::CollapsingHeader(fmt::format("Options##{}", size_t(id)).c_str()))
     {
-        if (ImGui::InputInt("# Input Pins", &_nInputPins))
-        {
-            if (_nInputPins < 1)
-            {
-                _nInputPins = 1;
-            }
-            LOG_DEBUG("{}: # Input Pins changed to {}", nameId(), _nInputPins);
-            flow::ApplyChanges();
-            updateNumberOfInputPins();
-        }
-        if (ImGui::InputInt("# Plots", &_nPlots))
-        {
-            if (_nPlots < 0)
-            {
-                _nPlots = 0;
-            }
-            LOG_DEBUG("{}: # Plots changed to {}", nameId(), _nPlots);
-            flow::ApplyChanges();
-            updateNumberOfPlots();
-        }
-        if (ImGui::BeginTable(fmt::format("Pin Settings##{}", size_t(id)).c_str(), 4,
+        if (ImGui::BeginTable(fmt::format("Pin Settings##{}", size_t(id)).c_str(), inputPins.size() > 1 ? 5 : 4,
                               ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
         {
             ImGui::TableSetupColumn("Pin");
             ImGui::TableSetupColumn("Pin Type");
             ImGui::TableSetupColumn("# Data Points");
             ImGui::TableSetupColumn("Stride");
+            if (inputPins.size() > 1)
+            {
+                ImGui::TableSetupColumn("");
+            }
             ImGui::TableHeadersRow();
+
+            // Used to reset the member variabel _dragAndDropPinIndex in case no plot does a drag and drop action
+            bool dragAndDropPinStillInProgress = false;
+
+            auto showDragDropTargetPin = [this](size_t pinIdxTarget) {
+                ImGui::Dummy(ImVec2(-1.F, 2.F));
+
+                bool selectableDummy = true;
+                ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5F, 0.5F));
+                ImGui::PushStyleColor(ImGuiCol_Header, IM_COL32(16, 173, 44, 79));
+                ImGui::Selectable(fmt::format("[drop here]").c_str(), &selectableDummy, ImGuiSelectableFlags_None,
+                                  ImVec2(std::max(ImGui::GetColumnWidth(0), ImGui::CalcTextSize("[drop here]").x), 20.F));
+                ImGui::PopStyleColor();
+                ImGui::PopStyleVar();
+
+                if (ImGui::BeginDragDropTarget())
+                {
+                    if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND Pin {}", size_t(id)).c_str()))
+                    {
+                        auto pinIdxSource = *static_cast<size_t*>(payloadData->Data);
+
+                        if (pinIdxSource < pinIdxTarget)
+                        {
+                            --pinIdxTarget;
+                        }
+
+                        move(inputPins, pinIdxSource, pinIdxTarget);
+                        move(_pinData, pinIdxSource, pinIdxTarget);
+                        for (auto& plot : _plots)
+                        {
+                            for (auto& plotItem : plot.plotItems)
+                            {
+                                if (plotItem.pinIndex == pinIdxSource)
+                                {
+                                    plotItem.pinIndex = pinIdxTarget;
+                                }
+                                else if (pinIdxSource < pinIdxTarget)
+                                {
+                                    if (pinIdxSource + 1 <= plotItem.pinIndex && plotItem.pinIndex <= pinIdxTarget)
+                                    {
+                                        --plotItem.pinIndex;
+                                    }
+                                }
+                                else if (pinIdxTarget < pinIdxSource)
+                                {
+                                    if (pinIdxTarget <= plotItem.pinIndex && plotItem.pinIndex <= pinIdxSource - 1)
+                                    {
+                                        ++plotItem.pinIndex;
+                                    }
+                                }
+                            }
+                        }
+                        flow::ApplyChanges();
+                    }
+                    ImGui::EndDragDropTarget();
+                }
+                ImGui::Dummy(ImVec2(-1.F, 2.F));
+            };
 
             for (size_t pinIndex = 0; pinIndex < _pinData.size(); pinIndex++)
             {
                 auto& pinData = _pinData.at(pinIndex);
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn(); // Pin
-                ImGui::Text("%zu - %s", pinIndex + 1, pinData.dataIdentifier.c_str());
+
+                if (pinIndex == 0 && _dragAndDropPinIndex > 0)
+                {
+                    showDragDropTargetPin(0);
+                }
+
+                bool selectablePinDummy = false;
+                ImGui::Selectable(fmt::format("{}##{}", inputPins.at(pinIndex).name, size_t(id)).c_str(), &selectablePinDummy);
+                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+                {
+                    dragAndDropPinStillInProgress = true;
+                    _dragAndDropPinIndex = static_cast<int>(pinIndex);
+                    // Data is copied into heap inside the drag and drop
+                    ImGui::SetDragDropPayload(fmt::format("DND Pin {}", size_t(id)).c_str(), &pinIndex, sizeof(pinIndex));
+                    ImGui::TextUnformatted(inputPins.at(pinIndex).name.c_str());
+                    ImGui::EndDragDropSource();
+                }
+                if (_dragAndDropPinIndex >= 0
+                    && pinIndex != static_cast<size_t>(_dragAndDropPinIndex - 1)
+                    && pinIndex != static_cast<size_t>(_dragAndDropPinIndex))
+                {
+                    showDragDropTargetPin(pinIndex + 1);
+                }
+                if (ImGui::IsItemHovered())
+                {
+                    ImGui::SetTooltip("This item can be dragged to reorder the pins");
+                }
 
                 ImGui::TableNextColumn(); // Pin Type
                 ImGui::SetNextItemWidth(100.0F);
@@ -433,6 +537,59 @@ void NAV::Plot::guiConfig()
                 {
                     ImGui::SetTooltip("The amount of points to skip when plotting. This greatly reduces lag when plotting");
                 }
+
+                if (inputPins.size() > 1)
+                {
+                    ImGui::TableNextColumn(); // Delete
+                    if (ImGui::Button(fmt::format("x##{} - {}", size_t(id), pinIndex).c_str()))
+                    {
+                        nm::DeleteInputPin(inputPins.at(pinIndex).id);
+                        _pinData.erase(_pinData.begin() + static_cast<int64_t>(pinIndex));
+                        --_nInputPins;
+
+                        for (auto& plot : _plots)
+                        {
+                            if (plot.selectedPin >= inputPins.size())
+                            {
+                                plot.selectedPin = inputPins.size() - 1;
+                            }
+                            for (size_t plotItemIdx = 0; plotItemIdx < plot.plotItems.size(); ++plotItemIdx)
+                            {
+                                auto& plotItem = plot.plotItems.at(plotItemIdx);
+
+                                if (plotItem.pinIndex == pinIndex) // The index we want to delete
+                                {
+                                    plot.plotItems.erase(plot.plotItems.begin() + static_cast<int64_t>(plotItemIdx));
+                                    --plotItemIdx;
+                                }
+                                else if (plotItem.pinIndex > pinIndex) // Index higher -> Decrement
+                                {
+                                    --(plotItem.pinIndex);
+                                }
+                            }
+                        }
+                        flow::ApplyChanges();
+                    }
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::SetTooltip("Delete the pin");
+                    }
+                }
+            }
+
+            if (!dragAndDropPinStillInProgress)
+            {
+                _dragAndDropPinIndex = -1;
+            }
+
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn(); // Pin
+            if (ImGui::Button(fmt::format("Add Pin##{}", size_t(id)).c_str()))
+            {
+                ++_nInputPins;
+                LOG_DEBUG("{}: # Input Pins changed to {}", nameId(), _nInputPins);
+                flow::ApplyChanges();
+                updateNumberOfInputPins();
             }
 
             ImGui::EndTable();
@@ -475,62 +632,122 @@ void NAV::Plot::guiConfig()
         }
     }
 
-    for (size_t plotNum = 0; plotNum < static_cast<size_t>(_nPlots); plotNum++)
-    {
-        auto& plotInfo = _plotInfos.at(plotNum);
-        ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-        if (ImGui::CollapsingHeader(fmt::format("{}##Plot Header {} - {}", plotInfo.headerText, size_t(id), plotNum).c_str()))
+    // Used to reset the member variabel _dragAndDropHeaderIndex in case no plot does a drag and drop action
+    bool dragAndDropHeaderStillInProgress = false;
+
+    auto showDragDropTargetHeader = [this](size_t plotIdxTarget) {
+        ImGui::Dummy(ImVec2(-1.F, 2.F));
+
+        bool selectableSelectedDummy = true;
+        ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5F, 0.5F));
+        ImGui::PushStyleColor(ImGuiCol_Header, IM_COL32(16, 173, 44, 79));
+        ImGui::Selectable(fmt::format("[drop here]").c_str(), &selectableSelectedDummy, ImGuiSelectableFlags_None, ImVec2(ImGui::GetWindowContentRegionWidth(), 20.F));
+        ImGui::PopStyleColor();
+        ImGui::PopStyleVar();
+
+        if (ImGui::BeginDragDropTarget())
         {
-            ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
-            if (ImGui::TreeNode(fmt::format("Options##{} - {}", size_t(id), plotNum).c_str()))
+            if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND ColHead {}", size_t(id)).c_str()))
             {
-                std::string headerTitle = plotInfo.headerText;
-                ImGui::InputText(fmt::format("Header Title##{} - {}", size_t(id), plotNum).c_str(), &headerTitle);
-                if (plotInfo.headerText != headerTitle && !ImGui::IsItemActive())
+                auto plotIdxSource = *static_cast<size_t*>(payloadData->Data);
+
+                if (plotIdxSource < plotIdxTarget)
                 {
-                    plotInfo.headerText = headerTitle;
-                    flow::ApplyChanges();
-                    LOG_DEBUG("{}: Header changed to {}", nameId(), plotInfo.headerText);
+                    --plotIdxTarget;
                 }
-                if (ImGui::InputText(fmt::format("Plot Title##{} - {}", size_t(id), plotNum).c_str(), &plotInfo.title))
+
+                move(_plots, plotIdxSource, plotIdxTarget);
+                flow::ApplyChanges();
+            }
+            ImGui::EndDragDropTarget();
+        }
+        ImGui::Dummy(ImVec2(-1.F, 2.F));
+    };
+
+    if (_dragAndDropHeaderIndex > 0)
+    {
+        showDragDropTargetHeader(0);
+    }
+
+    for (size_t plotIdx = 0; plotIdx < _plots.size(); plotIdx++)
+    {
+        auto& plot = _plots.at(plotIdx);
+
+        if (!plot.visible) // In the previous frame the x was pressed on the plot
+        {
+            LOG_DEBUG("{}: # Plot '{}' at index {} was deleted", nameId(), plot.headerText, plotIdx);
+            _plots.erase(_plots.begin() + static_cast<int64_t>(plotIdx));
+            _nPlots -= 1;
+            flow::ApplyChanges();
+            continue;
+        }
+
+        ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+        if (ImGui::CollapsingHeader(fmt::format("{}##Plot Header {} - {}", plot.headerText, size_t(id), plotIdx).c_str(), &plot.visible))
+        {
+            if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+            {
+                dragAndDropHeaderStillInProgress = true;
+                _dragAndDropHeaderIndex = static_cast<int>(plotIdx);
+                // Data is copied into heap inside the drag and drop
+                ImGui::SetDragDropPayload(fmt::format("DND ColHead {}", size_t(id)).c_str(),
+                                          &plotIdx, sizeof(plotIdx));
+                ImGui::Dummy(ImVec2(ImGui::CalcTextSize(plot.headerText.c_str()).x + 60.F, -1.F));
+                bool dnd_display_close = true;
+                ImGui::CollapsingHeader(fmt::format("{}##Plot DND Header {} - {}", plot.headerText, size_t(id), plotIdx).c_str(), &dnd_display_close);
+                ImGui::EndDragDropSource();
+            }
+
+            ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
+            if (ImGui::TreeNode(fmt::format("Options##{} - {}", size_t(id), plotIdx).c_str()))
+            {
+                std::string headerTitle = plot.headerText;
+                ImGui::InputText(fmt::format("Header Title##{} - {}", size_t(id), plotIdx).c_str(), &headerTitle);
+                if (plot.headerText != headerTitle && !ImGui::IsItemActive())
+                {
+                    plot.headerText = headerTitle;
+                    flow::ApplyChanges();
+                    LOG_DEBUG("{}: Header changed to {}", nameId(), plot.headerText);
+                }
+                if (ImGui::InputText(fmt::format("Plot Title##{} - {}", size_t(id), plotIdx).c_str(), &plot.title))
                 {
                     flow::ApplyChanges();
-                    LOG_DEBUG("{}: Plot Title changed to {}", nameId(), plotInfo.title);
+                    LOG_DEBUG("{}: Plot Title changed to {}", nameId(), plot.title);
                 }
-                if (ImGui::SliderFloat(fmt::format("Plot Height##{} - {}", size_t(id), plotNum).c_str(), &plotInfo.size.y, 0.0F, 1000, "%.0f"))
+                if (ImGui::SliderFloat(fmt::format("Plot Height##{} - {}", size_t(id), plotIdx).c_str(), &plot.size.y, 0.0F, 1000, "%.0f"))
                 {
                     flow::ApplyChanges();
                 }
-                if (ImGui::Checkbox(fmt::format("Override X Axis Label##{} - {}", size_t(id), plotNum).c_str(), &plotInfo.overrideXAxisLabel))
+                if (ImGui::Checkbox(fmt::format("Override X Axis Label##{} - {}", size_t(id), plotIdx).c_str(), &plot.overrideXAxisLabel))
                 {
                     flow::ApplyChanges();
                 }
-                if (plotInfo.overrideXAxisLabel)
+                if (plot.overrideXAxisLabel)
                 {
-                    if (ImGui::InputText(fmt::format("X Axis Label##{} - {}", size_t(id), plotNum).c_str(), &plotInfo.xAxisLabel))
+                    if (ImGui::InputText(fmt::format("X Axis Label##{} - {}", size_t(id), plotIdx).c_str(), &plot.xAxisLabel))
                     {
                         flow::ApplyChanges();
                     }
                 }
-                if (ImGui::InputText(fmt::format("Y1 Axis Label##{} - {}", size_t(id), plotNum).c_str(), &plotInfo.y1AxisLabel))
+                if (ImGui::InputText(fmt::format("Y1 Axis Label##{} - {}", size_t(id), plotIdx).c_str(), &plot.y1AxisLabel))
                 {
                     flow::ApplyChanges();
                 }
-                if (plotInfo.plotFlags & ImPlotFlags_YAxis2)
+                if (plot.plotFlags & ImPlotFlags_YAxis2)
                 {
-                    if (ImGui::InputText(fmt::format("Y2 Axis Label##{} - {}", size_t(id), plotNum).c_str(), &plotInfo.y2AxisLabel))
+                    if (ImGui::InputText(fmt::format("Y2 Axis Label##{} - {}", size_t(id), plotIdx).c_str(), &plot.y2AxisLabel))
                     {
                         flow::ApplyChanges();
                     }
                 }
-                if (plotInfo.plotFlags & ImPlotFlags_YAxis3)
+                if (plot.plotFlags & ImPlotFlags_YAxis3)
                 {
-                    if (ImGui::InputText(fmt::format("Y3 Axis Label##{} - {}", size_t(id), plotNum).c_str(), &plotInfo.y3AxisLabel))
+                    if (ImGui::InputText(fmt::format("Y3 Axis Label##{} - {}", size_t(id), plotIdx).c_str(), &plot.y3AxisLabel))
                     {
                         flow::ApplyChanges();
                     }
                 }
-                if (ImGui::BeginTable(fmt::format("Pin Settings##{} - {}", size_t(id), plotNum).c_str(), 2,
+                if (ImGui::BeginTable(fmt::format("Pin Settings##{} - {}", size_t(id), plotIdx).c_str(), 2,
                                       ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
                 {
                     ImGui::TableSetupColumn("Pin");
@@ -549,8 +766,8 @@ void NAV::Plot::guiConfig()
                         if (!pinData.plotData.empty())
                         {
                             ImGui::SetNextItemWidth(200.0F);
-                            if (ImGui::BeginCombo(fmt::format("##X Data for Pin {} - {} - {}", pinIndex + 1, size_t(id), plotNum).c_str(),
-                                                  pinData.plotData.at(plotInfo.selectedXdata.at(pinIndex)).displayName.c_str()))
+                            if (ImGui::BeginCombo(fmt::format("##X Data for Pin {} - {} - {}", pinIndex + 1, size_t(id), plotIdx).c_str(),
+                                                  pinData.plotData.at(plot.selectedXdata.at(pinIndex)).displayName.c_str()))
                             {
                                 for (size_t plotDataIndex = 0; plotDataIndex < pinData.plotData.size(); plotDataIndex++)
                                 {
@@ -560,11 +777,11 @@ void NAV::Plot::guiConfig()
                                     {
                                         ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
                                     }
-                                    const bool is_selected = (plotInfo.selectedXdata.at(pinIndex) == plotDataIndex);
+                                    const bool is_selected = (plot.selectedXdata.at(pinIndex) == plotDataIndex);
                                     if (ImGui::Selectable(pinData.plotData.at(plotDataIndex).displayName.c_str(), is_selected))
                                     {
                                         flow::ApplyChanges();
-                                        plotInfo.selectedXdata.at(pinIndex) = plotDataIndex;
+                                        plot.selectedXdata.at(pinIndex) = plotDataIndex;
                                     }
                                     if (!plotData.hasData)
                                     {
@@ -585,26 +802,27 @@ void NAV::Plot::guiConfig()
                     ImGui::EndTable();
                 }
 
-                if (ImGui::CheckboxFlags(fmt::format("Y-Axis 2##{} - {}", size_t(id), plotNum).c_str(),
-                                         &plotInfo.plotFlags, ImPlotFlags_YAxis2))
+                if (ImGui::CheckboxFlags(fmt::format("Y-Axis 2##{} - {}", size_t(id), plotIdx).c_str(),
+                                         &plot.plotFlags, ImPlotFlags_YAxis2))
                 {
                     flow::ApplyChanges();
                 }
                 ImGui::SameLine();
-                if (ImGui::CheckboxFlags(fmt::format("Y-Axis 3##{} - {}", size_t(id), plotNum).c_str(),
-                                         &plotInfo.plotFlags, ImPlotFlags_YAxis3))
+                if (ImGui::CheckboxFlags(fmt::format("Y-Axis 3##{} - {}", size_t(id), plotIdx).c_str(),
+                                         &plot.plotFlags, ImPlotFlags_YAxis3))
                 {
                     flow::ApplyChanges();
                 }
                 ImGui::SameLine();
-                if (ImGui::Checkbox(fmt::format("Auto Limit X-Axis##{} - {}", size_t(id), plotNum).c_str(),
-                                    &plotInfo.autoLimitXaxis))
+
+                if (ImGui::CheckboxFlags(fmt::format("Auto Limit X-Axis##{} - {}", size_t(id), plotIdx).c_str(),
+                                         &plot.xAxisFlags, ImPlotAxisFlags_AutoFit))
                 {
                     flow::ApplyChanges();
                 }
                 ImGui::SameLine();
-                if (ImGui::Checkbox(fmt::format("Auto Limit Y-Axis##{} - {}", size_t(id), plotNum).c_str(),
-                                    &plotInfo.autoLimitYaxis))
+                if (ImGui::CheckboxFlags(fmt::format("Auto Limit Y-Axis##{} - {}", size_t(id), plotIdx).c_str(),
+                                         &plot.yAxisFlags, ImPlotAxisFlags_AutoFit))
                 {
                     flow::ApplyChanges();
                 }
@@ -612,295 +830,336 @@ void NAV::Plot::guiConfig()
                 ImGui::TreePop();
             }
 
-            gui::widgets::Splitter(fmt::format("Splitter {} - {}", size_t(id), plotNum).c_str(),
-                                   true, 4.0F, &plotInfo.leftPaneWidth, &plotInfo.rightPaneWidth, 150.0F, 80.0F, plotInfo.size.y);
+            gui::widgets::Splitter(fmt::format("Splitter {} - {}", size_t(id), plotIdx).c_str(),
+                                   true, 4.0F, &plot.leftPaneWidth, &plot.rightPaneWidth, 150.0F, 80.0F, plot.size.y);
 
-            ImGui::SetNextItemWidth(plotInfo.leftPaneWidth - 2.0F);
+            ImGui::SetNextItemWidth(plot.leftPaneWidth - 2.0F);
+
             ImGui::BeginGroup();
-            if (ImGui::BeginCombo(fmt::format("##Data source pin selection{} - {}", size_t(id), plotNum).c_str(),
-                                  fmt::format("Pin {} - {}", plotInfo.selectedPin + 1, _pinData.at(static_cast<size_t>(plotInfo.selectedPin)).dataIdentifier).c_str()))
             {
-                for (int n = 0; n < _nInputPins; n++)
+                if (ImGui::BeginCombo(fmt::format("##Data source pin selection{} - {}", size_t(id), plotIdx).c_str(),
+                                      inputPins.at(plot.selectedPin).name.c_str()))
                 {
-                    const bool is_selected = (plotInfo.selectedPin == n);
-                    if (ImGui::Selectable(fmt::format("Pin {} - {}", n + 1, _pinData.at(static_cast<size_t>(n)).dataIdentifier).c_str(),
-                                          is_selected, 0))
+                    for (size_t n = 0; n < inputPins.size(); ++n)
                     {
-                        plotInfo.selectedPin = n;
-                    }
-
-                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-                    if (is_selected)
-                    {
-                        ImGui::SetItemDefaultFocus();
-                    }
-                }
-                ImGui::EndCombo();
-            }
-            auto comboBoxSize = ImGui::GetItemRectSize();
-            if (ImGui::Button(fmt::format("Clear##{} - {}", size_t(id), plotNum).c_str(), ImVec2(plotInfo.leftPaneWidth - 2.0F, 0)))
-            {
-                for (auto& pinData : _pinData)
-                {
-                    for (auto& plotData : pinData.plotData)
-                    {
-                        if (plotData.plotOnAxis.contains(plotNum))
+                        const bool is_selected = (plot.selectedPin == n);
+                        if (ImGui::Selectable(inputPins.at(n).name.c_str(), is_selected, 0))
                         {
-                            flow::ApplyChanges();
+                            plot.selectedPin = n;
                         }
-                        plotData.plotOnAxis.erase(plotNum);
+
+                        // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                        if (is_selected)
+                        {
+                            ImGui::SetItemDefaultFocus();
+                        }
                     }
+                    ImGui::EndCombo();
                 }
-            }
-            if (ImGui::BeginDragDropTarget())
-            {
-                if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND_DATA {} - {}", size_t(id), plotNum).c_str()))
+                auto comboBoxSize = ImGui::GetItemRectSize();
+                if (ImGui::Button(fmt::format("Clear##{} - {}", size_t(id), plotIdx).c_str(), ImVec2(plot.leftPaneWidth - 2.0F, 0)))
                 {
-                    auto* plotData = *static_cast<PinData::PlotData**>(payloadData->Data);
-                    plotData->plotOnAxis.erase(plotNum);
+                    plot.plotItems.clear();
                     flow::ApplyChanges();
                 }
-                ImGui::EndDragDropTarget();
+                if (ImGui::BeginDragDropTarget())
+                {
+                    if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND PlotItem {} - {}", size_t(id), plotIdx).c_str()))
+                    {
+                        auto [pinIndex, dataIndex] = *static_cast<std::pair<size_t, size_t>*>(payloadData->Data);
+
+                        auto iter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ pinIndex, dataIndex });
+                        if (iter != plot.plotItems.end())
+                        {
+                            plot.plotItems.erase(iter);
+                            flow::ApplyChanges();
+                        }
+                    }
+                    ImGui::EndDragDropTarget();
+                }
+                auto buttonSize = ImGui::GetItemRectSize();
+                ImGui::BeginChild(fmt::format("Data Drag{} - {}", size_t(id), plotIdx).c_str(),
+                                  ImVec2(plot.leftPaneWidth - 2.0F, plot.size.y - comboBoxSize.y - buttonSize.y - 2 * ImGui::GetStyle().ItemSpacing.y),
+                                  true);
+                {
+                    // Left Data Selectables
+                    for (size_t dataIndex = 0; dataIndex < _pinData.at(plot.selectedPin).plotData.size(); ++dataIndex)
+                    {
+                        auto& plotData = _pinData.at(plot.selectedPin).plotData.at(dataIndex);
+                        auto plotDataHasData = plotData.hasData;
+                        if (!plotDataHasData)
+                        {
+                            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
+                        }
+                        std::string label = plotData.displayName;
+
+                        if (auto iter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ plot.selectedPin, dataIndex });
+                            iter != plot.plotItems.end())
+                        {
+                            label += fmt::format(" (Y{})", iter->axis + 1 - 3);
+                        }
+
+                        ImGui::Selectable(label.c_str(), false, 0);
+                        if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+                        {
+                            // Data is copied into heap inside the drag and drop
+                            auto pinAndDataIndex = std::make_pair(plot.selectedPin, dataIndex);
+                            ImGui::SetDragDropPayload(fmt::format("DND PlotItem {} - {}", size_t(id), plotIdx).c_str(),
+                                                      &pinAndDataIndex, sizeof(pinAndDataIndex));
+                            ImGui::TextUnformatted(label.c_str());
+                            ImGui::EndDragDropSource();
+                        }
+
+                        if (!plotDataHasData)
+                        {
+                            ImGui::PopStyleVar();
+                        }
+                    }
+
+                    ImGui::EndChild();
+                }
+                ImGui::EndGroup();
             }
-            auto buttonSize = ImGui::GetItemRectSize();
-            ImGui::BeginChild(fmt::format("Data Drag{} - {}", size_t(id), plotNum).c_str(),
-                              ImVec2(plotInfo.leftPaneWidth - 2.0F, plotInfo.size.y - comboBoxSize.y - buttonSize.y - 2 * ImGui::GetStyle().ItemSpacing.y),
-                              true);
-
-            // Left Data Selectables
-            for (auto& plotData : _pinData.at(static_cast<size_t>(plotInfo.selectedPin)).plotData)
-            {
-                auto plotDataHasData = plotData.hasData;
-                if (!plotDataHasData)
-                {
-                    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
-                }
-                std::string label = plotData.displayName;
-                if (plotData.plotOnAxis.contains(plotNum))
-                {
-                    label += fmt::format(" (Y{})", plotData.plotOnAxis.at(plotNum).first + 1);
-                }
-                ImGui::Selectable(label.c_str(), false, 0);
-                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
-                {
-                    auto* ptrPlotData = &plotData;
-                    ImGui::SetDragDropPayload(fmt::format("DND_DATA {} - {}", size_t(id), plotNum).c_str(),
-                                              &ptrPlotData, sizeof(PinData::PlotData*));
-                    ImGui::TextUnformatted(label.c_str());
-                    ImGui::EndDragDropSource();
-                }
-
-                if (!plotDataHasData)
-                {
-                    ImGui::PopStyleVar();
-                }
-            }
-
-            ImGui::EndChild();
-            ImGui::EndGroup();
 
             ImGui::SameLine();
 
-            const char* xLabel = plotInfo.overrideXAxisLabel ? (!plotInfo.xAxisLabel.empty() ? plotInfo.xAxisLabel.c_str() : nullptr)
-                                                             : (!_pinData.at(0).plotData.empty() ? _pinData.at(0).plotData.at(plotInfo.selectedXdata.at(0)).displayName.c_str() : nullptr);
+            const char* xLabel = plot.overrideXAxisLabel ? (!plot.xAxisLabel.empty() ? plot.xAxisLabel.c_str() : nullptr)
+                                                         : (!_pinData.at(0).plotData.empty() ? _pinData.at(0).plotData.at(plot.selectedXdata.at(0)).displayName.c_str() : nullptr);
 
-            const char* y1Label = !plotInfo.y1AxisLabel.empty() ? plotInfo.y1AxisLabel.c_str() : nullptr;
-            const char* y2Label = (plotInfo.plotFlags & ImPlotFlags_YAxis2) && !plotInfo.y2AxisLabel.empty() ? plotInfo.y2AxisLabel.c_str() : nullptr;
-            const char* y3Label = (plotInfo.plotFlags & ImPlotFlags_YAxis3) && !plotInfo.y3AxisLabel.empty() ? plotInfo.y3AxisLabel.c_str() : nullptr;
+            const char* y1Label = !plot.y1AxisLabel.empty() ? plot.y1AxisLabel.c_str() : nullptr;
+            const char* y2Label = (plot.plotFlags & ImPlotFlags_YAxis2) && !plot.y2AxisLabel.empty() ? plot.y2AxisLabel.c_str() : nullptr;
+            const char* y3Label = (plot.plotFlags & ImPlotFlags_YAxis3) && !plot.y3AxisLabel.empty() ? plot.y3AxisLabel.c_str() : nullptr;
 
-            ImPlot::FitNextPlotAxes(plotInfo.autoLimitXaxis, plotInfo.autoLimitYaxis, plotInfo.autoLimitYaxis, plotInfo.autoLimitYaxis);
-            if (ImPlot::BeginPlot(fmt::format("{}##{} - {}", plotInfo.title, size_t(id), plotNum).c_str(),
-                                  xLabel, y1Label, plotInfo.size, plotInfo.plotFlags,
-                                  ImPlotAxisFlags_None, ImPlotAxisFlags_None, ImPlotAxisFlags_NoGridLines, ImPlotAxisFlags_NoGridLines, y2Label, y3Label))
+            if (ImPlot::BeginPlot(fmt::format("{}##{} - {}", plot.title, size_t(id), plotIdx).c_str(), plot.size, plot.plotFlags))
             {
-                for (size_t pinIndex = 0; pinIndex < _pinData.size(); pinIndex++)
+                ImPlot::SetupAxis(ImAxis_X1, xLabel, plot.xAxisFlags);
+                ImPlot::SetupAxis(ImAxis_Y1, y1Label, plot.yAxisFlags);
+                if (plot.plotFlags & ImPlotFlags_YAxis2)
                 {
-                    for (auto& plotData : _pinData.at(pinIndex).plotData)
+                    ImPlot::SetupAxis(ImAxis_Y2, y2Label, plot.yAxisFlags | ImPlotAxisFlags_NoGridLines | ImPlotAxisFlags_Opposite);
+                }
+                if (plot.plotFlags & ImPlotFlags_YAxis3)
+                {
+                    ImPlot::SetupAxis(ImAxis_Y3, y3Label, plot.yAxisFlags | ImPlotAxisFlags_NoGridLines | ImPlotAxisFlags_Opposite);
+                }
+
+                for (auto& plotItem : plot.plotItems)
+                {
+                    auto& pinData = _pinData.at(plotItem.pinIndex);
+                    auto& plotData = pinData.plotData.at(plotItem.dataIndex);
+
+                    if (plotData.hasData
+                        && (plotItem.axis == ImAxis_Y1
+                            || (plotItem.axis == ImAxis_Y2 && (plot.plotFlags & ImPlotFlags_YAxis2))
+                            || (plotItem.axis == ImAxis_Y3 && (plot.plotFlags & ImPlotFlags_YAxis3))))
                     {
-                        if (plotData.plotOnAxis.contains(plotNum)
-                            && plotData.hasData
-                            && (plotData.plotOnAxis.at(plotNum).first == ImPlotYAxis_1
-                                || (plotData.plotOnAxis.at(plotNum).first == ImPlotYAxis_2 && (plotInfo.plotFlags & ImPlotFlags_YAxis2))
-                                || (plotData.plotOnAxis.at(plotNum).first == ImPlotYAxis_3 && (plotInfo.plotFlags & ImPlotFlags_YAxis3))))
+                        // Lock the buffer so no data can be inserted till plotting finishes
+                        std::scoped_lock<std::mutex> guard(pinData.mutex);
+
+                        ImPlot::SetAxis(plotItem.axis);
+
+                        // Style options
+                        if (plotItem.style.legendName.empty())
                         {
-                            // Lock the buffer so no data can be inserted till plotting finishes
-                            std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
+                            plotItem.style.legendName = fmt::format("{} ({})", plotData.displayName, inputPins.at(plotItem.pinIndex).name);
+                        }
+                        if (plotItem.style.lineType == PlotInfo::PlotItem::Style::LineType::Line)
+                        {
+                            ImPlot::SetNextLineStyle(plotItem.style.color, plotItem.style.thickness);
+                        }
+                        if (plotItem.style.lineType == PlotInfo::PlotItem::Style::LineType::Scatter || plotItem.style.markers)
+                        {
+                            ImPlot::SetNextMarkerStyle(plotItem.style.markerStyle,
+                                                       plotItem.style.markerSize,
+                                                       plotItem.style.markerFillColor,
+                                                       plotItem.style.markerWeight,
+                                                       plotItem.style.markerOutlineColor);
+                        }
 
-                            ImPlot::SetPlotYAxis(plotData.plotOnAxis.at(plotNum).first);
+                        std::string plotName = fmt::format("{}##{} - {} - {}", plotItem.style.legendName, size_t(id), plotItem.pinIndex + 1, plotData.displayName);
 
-                            // Style options
-                            if (plotData.plotOnAxis.at(plotNum).second.legendName.empty())
+                        auto stride = plotItem.style.stride ? plotItem.style.stride
+                                                            : pinData.stride;
+                        auto dataPointCount = static_cast<int>(std::ceil(static_cast<double>(plotData.buffer.size())
+                                                                         / static_cast<double>(stride)));
+
+                        // Plot the data
+                        if (plotItem.style.lineType == PlotInfo::PlotItem::Style::LineType::Line)
+                        {
+                            ImPlot::PlotLine(plotName.c_str(),
+                                             pinData.plotData.at(plot.selectedXdata.at(plotItem.pinIndex)).buffer.data(),
+                                             plotData.buffer.data(),
+                                             dataPointCount,
+                                             static_cast<int>(std::ceil(static_cast<double>(plotData.buffer.offset()) / static_cast<double>(stride))),
+                                             stride * static_cast<int>(sizeof(double)));
+                        }
+                        else if (plotItem.style.lineType == PlotInfo::PlotItem::Style::LineType::Scatter)
+                        {
+                            ImPlot::PlotScatter(plotName.c_str(),
+                                                pinData.plotData.at(plot.selectedXdata.at(plotItem.pinIndex)).buffer.data(),
+                                                plotData.buffer.data(),
+                                                dataPointCount,
+                                                static_cast<int>(std::ceil(static_cast<double>(plotData.buffer.offset()) / static_cast<double>(stride))),
+                                                stride * static_cast<int>(sizeof(double)));
+                        }
+
+                        // allow legend item labels to be DND sources
+                        if (ImPlot::BeginDragDropSourceItem(plotName.c_str()))
+                        {
+                            // Data is copied into heap inside the drag and drop
+                            auto pinAndDataIndex = std::make_pair(plotItem.pinIndex, plotItem.dataIndex);
+                            ImGui::SetDragDropPayload(fmt::format("DND PlotItem {} - {}", size_t(id), plotIdx).c_str(), &pinAndDataIndex, sizeof(pinAndDataIndex));
+                            ImGui::TextUnformatted(plotData.displayName.c_str());
+                            ImPlot::EndDragDropSource();
+                        }
+
+                        // Legend item context menu (right click on legend item)
+                        if (ImPlot::BeginLegendPopup(plotName.c_str()))
+                        {
+                            ImGui::TextUnformatted(fmt::format("Pin {} - {}: {}", plotItem.pinIndex + 1, pinData.dataIdentifier, plotData.displayName).c_str());
+                            ImGui::Separator();
+
+                            if (plotItem.style.legendNameGui.empty())
                             {
-                                plotData.plotOnAxis.at(plotNum).second.legendName = fmt::format("{} ({} - {})", plotData.displayName, pinIndex + 1, _pinData.at(pinIndex).dataIdentifier);
+                                plotItem.style.legendNameGui = plotItem.style.legendName;
                             }
-                            if (plotData.plotOnAxis.at(plotNum).second.color.w == -1)
+                            ImGui::InputText("Legend name", &plotItem.style.legendNameGui);
+                            if (plotItem.style.legendNameGui != plotItem.style.legendName && !ImGui::IsItemActive())
                             {
-                                plotData.plotOnAxis.at(plotNum).second.color = ImPlot::NextColormapColor();
-                                plotData.plotOnAxis.at(plotNum).second.markerFillColor = plotData.plotOnAxis.at(plotNum).second.color;
-                                plotData.plotOnAxis.at(plotNum).second.markerOutlineColor = plotData.plotOnAxis.at(plotNum).second.color;
-                            }
-                            if (plotData.plotOnAxis.at(plotNum).second.lineType == PlotStyle::LineType::Line)
-                            {
-                                ImPlot::SetNextLineStyle(plotData.plotOnAxis.at(plotNum).second.color, plotData.plotOnAxis.at(plotNum).second.thickness);
-                            }
-                            if (plotData.plotOnAxis.at(plotNum).second.lineType == PlotStyle::LineType::Scatter || plotData.plotOnAxis.at(plotNum).second.markers)
-                            {
-                                ImPlot::SetNextMarkerStyle(plotData.plotOnAxis.at(plotNum).second.markerStyle,
-                                                           plotData.plotOnAxis.at(plotNum).second.markerSize,
-                                                           plotData.plotOnAxis.at(plotNum).second.markerFillColor,
-                                                           plotData.plotOnAxis.at(plotNum).second.markerWeight,
-                                                           plotData.plotOnAxis.at(plotNum).second.markerOutlineColor);
+                                plotItem.style.legendName = plotItem.style.legendNameGui;
+                                flow::ApplyChanges();
+                                LOG_DEBUG("{}: Legend changed to {}", nameId(), plotItem.style.legendName);
                             }
 
-                            std::string plotName = fmt::format("{}##{} - {} - {}", plotData.plotOnAxis.at(plotNum).second.legendName, size_t(id), pinIndex + 1, plotData.displayName);
-
-                            auto stride = plotData.plotOnAxis.at(plotNum).second.stride ? plotData.plotOnAxis.at(plotNum).second.stride
-                                                                                        : _pinData.at(pinIndex).stride;
-                            auto dataPointCount = static_cast<int>(std::ceil(static_cast<double>(plotData.buffer.size())
-                                                                             / static_cast<double>(stride)));
-
-                            // Plot the data
-                            if (plotData.plotOnAxis.at(plotNum).second.lineType == PlotStyle::LineType::Line)
+                            if (ImGui::InputInt("Stride", &plotItem.style.stride))
                             {
-                                ImPlot::PlotLine(plotName.c_str(),
-                                                 _pinData.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.data(),
-                                                 plotData.buffer.data(),
-                                                 dataPointCount,
-                                                 static_cast<int>(std::ceil(static_cast<double>(plotData.buffer.offset()) / static_cast<double>(stride))),
-                                                 stride * static_cast<int>(sizeof(double)));
-                            }
-                            else if (plotData.plotOnAxis.at(plotNum).second.lineType == PlotStyle::LineType::Scatter)
-                            {
-                                ImPlot::PlotScatter(plotName.c_str(),
-                                                    _pinData.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.data(),
-                                                    plotData.buffer.data(),
-                                                    dataPointCount,
-                                                    static_cast<int>(std::ceil(static_cast<double>(plotData.buffer.offset()) / static_cast<double>(stride))),
-                                                    stride * static_cast<int>(sizeof(double)));
-                            }
-
-                            // allow legend labels to be dragged and dropped
-                            if (ImPlot::BeginLegendDragDropSource(plotName.c_str()))
-                            {
-                                auto* ptrPlotData = &plotData;
-                                ImGui::SetDragDropPayload(fmt::format("DND_DATA {} - {}", size_t(id), plotNum).c_str(),
-                                                          &ptrPlotData, sizeof(PinData::PlotData*));
-                                ImGui::TextUnformatted(plotData.displayName.c_str());
-                                ImPlot::EndLegendDragDropSource();
-                            }
-
-                            // Legend item context menu (right click on legend item)
-                            if (ImPlot::BeginLegendPopup(plotName.c_str()))
-                            {
-                                ImGui::TextUnformatted(fmt::format("Pin {} - {}: {}", pinIndex + 1, _pinData.at(pinIndex).dataIdentifier, plotData.displayName).c_str());
-                                ImGui::Separator();
-
-                                if (plotData.plotOnAxis.at(plotNum).second.legendNameGui.empty())
+                                if (plotItem.style.stride < 0)
                                 {
-                                    plotData.plotOnAxis.at(plotNum).second.legendNameGui = plotData.plotOnAxis.at(plotNum).second.legendName;
+                                    plotItem.style.stride = 0;
                                 }
-                                ImGui::InputText("Legend name", &plotData.plotOnAxis.at(plotNum).second.legendNameGui);
-                                if (plotData.plotOnAxis.at(plotNum).second.legendNameGui != plotData.plotOnAxis.at(plotNum).second.legendName && !ImGui::IsItemActive())
+                                if (plotItem.style.stride > static_cast<int>(plotData.buffer.size()) - 1)
                                 {
-                                    plotData.plotOnAxis.at(plotNum).second.legendName = plotData.plotOnAxis.at(plotNum).second.legendNameGui;
-                                    flow::ApplyChanges();
-                                    LOG_DEBUG("{}: Legend changed to {}", nameId(), plotData.plotOnAxis.at(plotNum).second.legendName);
+                                    plotItem.style.stride = static_cast<int>(plotData.buffer.size()) - 1;
                                 }
+                                flow::ApplyChanges();
+                                LOG_DEBUG("{}: Stride changed to {}", nameId(), plotItem.style.stride);
+                            }
 
-                                if (ImGui::InputInt("Stride", &plotData.plotOnAxis.at(plotNum).second.stride))
-                                {
-                                    if (plotData.plotOnAxis.at(plotNum).second.stride < 0)
-                                    {
-                                        plotData.plotOnAxis.at(plotNum).second.stride = 0;
-                                    }
-                                    if (plotData.plotOnAxis.at(plotNum).second.stride > static_cast<int>(plotData.buffer.size()) - 1)
-                                    {
-                                        plotData.plotOnAxis.at(plotNum).second.stride = static_cast<int>(plotData.buffer.size()) - 1;
-                                    }
-                                    flow::ApplyChanges();
-                                    LOG_DEBUG("{}: Stride changed to {}", nameId(), plotData.plotOnAxis.at(plotNum).second.stride);
-                                }
-
-                                if (ImGui::Combo("Style", reinterpret_cast<int*>(&plotData.plotOnAxis.at(plotNum).second.lineType),
-                                                 "Scatter\0Line\0\0"))
+                            if (ImGui::Combo("Style", reinterpret_cast<int*>(&plotItem.style.lineType),
+                                             "Scatter\0Line\0\0"))
+                            {
+                                flow::ApplyChanges();
+                            }
+                            if (plotItem.style.lineType == PlotInfo::PlotItem::Style::LineType::Line)
+                            {
+                                if (ImGui::ColorEdit4("Line Color", &plotItem.style.color.x))
                                 {
                                     flow::ApplyChanges();
                                 }
-                                if (plotData.plotOnAxis.at(plotNum).second.lineType == PlotStyle::LineType::Line)
+                                if (ImGui::DragFloat("Line Thickness", &plotItem.style.thickness, 0.1F, 0.0F, 8.0F, "%.2f px"))
                                 {
-                                    if (ImGui::ColorEdit4("Line Color", &plotData.plotOnAxis.at(plotNum).second.color.x))
-                                    {
-                                        flow::ApplyChanges();
-                                    }
-                                    if (ImGui::DragFloat("Line Thickness", &plotData.plotOnAxis.at(plotNum).second.thickness, 0.1F, 0.0F, 8.0F, "%.2f px"))
-                                    {
-                                        flow::ApplyChanges();
-                                    }
-                                    if (ImGui::Checkbox("Markers", &plotData.plotOnAxis.at(plotNum).second.markers))
-                                    {
-                                        flow::ApplyChanges();
-                                    }
+                                    flow::ApplyChanges();
                                 }
-                                if (plotData.plotOnAxis.at(plotNum).second.lineType == PlotStyle::LineType::Scatter || plotData.plotOnAxis.at(plotNum).second.markers)
+                                if (ImGui::Checkbox("Markers", &plotItem.style.markers))
                                 {
-                                    if (ImGui::Combo("Marker Style", &plotData.plotOnAxis.at(plotNum).second.markerStyle,
-                                                     "Circle\0Square\0Diamond\0Up\0Down\0Left\0Right\0Cross\0Plus\0Asterisk\0\0"))
-                                    {
-                                        flow::ApplyChanges();
-                                    }
-                                    if (ImGui::DragFloat("Marker Size", &plotData.plotOnAxis.at(plotNum).second.markerSize, 0.1F, 1.0F, 10.0F, "%.2f px"))
-                                    {
-                                        flow::ApplyChanges();
-                                    }
-                                    if (ImGui::DragFloat("Marker Weight", &plotData.plotOnAxis.at(plotNum).second.markerWeight, 0.05F, 0.5F, 3.0F, "%.2f px"))
-                                    {
-                                        flow::ApplyChanges();
-                                    }
-                                    if (ImGui::ColorEdit4("Marker Fill Color", &plotData.plotOnAxis.at(plotNum).second.markerFillColor.x))
-                                    {
-                                        flow::ApplyChanges();
-                                    }
-                                    if (ImGui::ColorEdit4("Marker Outline Color", &plotData.plotOnAxis.at(plotNum).second.markerOutlineColor.x))
-                                    {
-                                        flow::ApplyChanges();
-                                    }
+                                    flow::ApplyChanges();
                                 }
-                                ImPlot::EndLegendPopup();
                             }
+                            if (plotItem.style.lineType == PlotInfo::PlotItem::Style::LineType::Scatter || plotItem.style.markers)
+                            {
+                                if (ImGui::Combo("Marker Style", &plotItem.style.markerStyle,
+                                                 "Circle\0Square\0Diamond\0Up\0Down\0Left\0Right\0Cross\0Plus\0Asterisk\0\0"))
+                                {
+                                    flow::ApplyChanges();
+                                }
+                                if (ImGui::DragFloat("Marker Size", &plotItem.style.markerSize, 0.1F, 1.0F, 10.0F, "%.2f px"))
+                                {
+                                    flow::ApplyChanges();
+                                }
+                                if (ImGui::DragFloat("Marker Weight", &plotItem.style.markerWeight, 0.05F, 0.5F, 3.0F, "%.2f px"))
+                                {
+                                    flow::ApplyChanges();
+                                }
+                                if (ImGui::ColorEdit4("Marker Fill Color", &plotItem.style.markerFillColor.x))
+                                {
+                                    flow::ApplyChanges();
+                                }
+                                if (ImGui::ColorEdit4("Marker Outline Color", &plotItem.style.markerOutlineColor.x))
+                                {
+                                    flow::ApplyChanges();
+                                }
+                            }
+                            ImPlot::EndLegendPopup();
                         }
                     }
                 }
 
-                // make our plot a drag and drop target
-                if (ImGui::BeginDragDropTarget())
-                {
-                    if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND_DATA {} - {}", size_t(id), plotNum).c_str()))
+                auto addDragDropPlotToAxis = [this, plotIdx, &plot](ImAxis dragDropAxis) {
+                    if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND PlotItem {} - {}", size_t(id), plotIdx).c_str()))
                     {
-                        auto* plotData = *static_cast<PinData::PlotData**>(payloadData->Data);
+                        auto [pinIndex, dataIndex] = *static_cast<std::pair<size_t, size_t>*>(payloadData->Data);
 
-                        PlotStyle style;
-                        if (plotData->plotOnAxis.contains(plotNum))
+                        auto iter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ pinIndex, dataIndex });
+                        if (iter != plot.plotItems.end()) // Item gets dragged from one axis to another
                         {
-                            style = plotData->plotOnAxis.at(plotNum).second;
+                            iter->axis = dragDropAxis;
                         }
-
-                        plotData->plotOnAxis[plotNum] = { 0, style };
-                        // set specific y-axis if hovered
-                        for (int y = 0; y < 3; y++)
+                        else
                         {
-                            if (ImPlot::IsPlotYAxisHovered(y))
-                            {
-                                plotData->plotOnAxis[plotNum].first = y;
-                            }
+                            plot.plotItems.emplace_back(pinIndex, dataIndex, dragDropAxis);
+                            plot.plotItems.back().style.color = ImPlot::NextColormapColor();
+                            plot.plotItems.back().style.markerFillColor = plot.plotItems.back().style.color;
+                            plot.plotItems.back().style.markerOutlineColor = plot.plotItems.back().style.color;
                         }
                         flow::ApplyChanges();
                     }
-                    ImGui::EndDragDropTarget();
+                };
+
+                // allow the main plot area to be a DND target
+                if (ImPlot::BeginDragDropTargetPlot())
+                {
+                    addDragDropPlotToAxis(ImAxis_Y1);
+                    ImPlot::EndDragDropTarget();
+                }
+                // allow each y-axis to be a DND target
+                for (ImAxis y = ImAxis_Y1; y <= ImAxis_Y3; ++y)
+                {
+                    if ((y == ImAxis_Y2 && !(plot.plotFlags & ImPlotFlags_YAxis2))
+                        || (y == ImAxis_Y3 && !(plot.plotFlags & ImPlotFlags_YAxis3)))
+                    {
+                        continue;
+                    }
+                    if (ImPlot::BeginDragDropTargetAxis(y))
+                    {
+                        addDragDropPlotToAxis(y);
+                        ImPlot::EndDragDropTarget();
+                    }
                 }
 
                 ImPlot::EndPlot();
             }
         }
+
+        if (_dragAndDropHeaderIndex >= 0
+            && plotIdx != static_cast<size_t>(_dragAndDropHeaderIndex - 1)
+            && plotIdx != static_cast<size_t>(_dragAndDropHeaderIndex))
+        {
+            showDragDropTargetHeader(plotIdx + 1);
+        }
+    }
+
+    if (!dragAndDropHeaderStillInProgress)
+    {
+        _dragAndDropHeaderIndex = -1;
+    }
+
+    ImGui::Separator();
+    if (ImGui::Button(fmt::format("Add Plot##{}", size_t(id)).c_str()))
+    {
+        ++_nPlots;
+        LOG_DEBUG("{}: # Plots changed to {}", nameId(), _nPlots);
+        flow::ApplyChanges();
+        updateNumberOfPlots();
     }
 }
 
@@ -913,7 +1172,7 @@ void NAV::Plot::guiConfig()
     j["nInputPins"] = _nInputPins;
     j["nPlots"] = _nPlots;
     j["pinData"] = _pinData;
-    j["plotInfos"] = _plotInfos;
+    j["plots"] = _plots;
     j["overridePositionStartValues"] = _overridePositionStartValues;
     if (_overridePositionStartValues)
     {
@@ -977,9 +1236,9 @@ void NAV::Plot::restore(json const& j)
             }
         }
     }
-    if (j.contains("plotInfos"))
+    if (j.contains("plots"))
     {
-        j.at("plotInfos").get_to(_plotInfos);
+        j.at("plots").get_to(_plots);
     }
     if (j.contains("overridePositionStartValues"))
     {
@@ -1043,6 +1302,26 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
 
     if (inputPins.at(pinIndex).type == Pin::Type::Flow)
     {
+        if (_pinData.at(pinIndex).dataIdentifier != startPin->dataIdentifier.front())
+        {
+            for (auto& plot : _plots)
+            {
+                while (true)
+                {
+                    auto plotItemIter = std::find_if(plot.plotItems.begin(), plot.plotItems.end(),
+                                                     [pinIndex](const PlotInfo::PlotItem& plotItem) { return plotItem.pinIndex == pinIndex; });
+                    if (plotItemIter != plot.plotItems.end())
+                    {
+                        plot.plotItems.erase(plotItemIter);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+
         _pinData.at(pinIndex).dataIdentifier = startPin->dataIdentifier.front();
 
         if (startPin->dataIdentifier.front() == PosVelAtt::type()
@@ -1525,76 +1804,84 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
                 }
             }
         }
-    }
 
-    for (size_t i = 0; i < _pinData.at(pinIndex).plotData.size(); i++)
-    {
-        auto iter = _pinData.at(pinIndex).plotData.begin();
-        std::advance(iter, i);
-        if (iter->markedForDelete)
+        for (size_t dataIndex = i; dataIndex < _pinData.at(pinIndex).plotData.size(); dataIndex++)
         {
-            _pinData.at(pinIndex).plotData.erase(iter);
-            i--;
+            for (auto& plot : _plots)
+            {
+                auto plotItemIter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ pinIndex, dataIndex });
+                if (plotItemIter != plot.plotItems.end())
+                {
+                    plot.plotItems.erase(plotItemIter);
+                }
+            }
         }
     }
 
-    for (auto& plotInfo : _plotInfos)
+    for (size_t dataIndex = 0; dataIndex < _pinData.at(pinIndex).plotData.size(); ++dataIndex)
     {
-        if (plotInfo.selectedXdata.at(pinIndex) > _pinData.at(pinIndex).plotData.size())
+        auto iter = _pinData.at(pinIndex).plotData.begin();
+        std::advance(iter, dataIndex);
+        if (iter->markedForDelete)
         {
-            plotInfo.selectedXdata.at(pinIndex) = 0;
+            _pinData.at(pinIndex).plotData.erase(iter);
+            --dataIndex;
+        }
+    }
+
+    for (auto& plot : _plots)
+    {
+        if (plot.selectedXdata.at(pinIndex) > _pinData.at(pinIndex).plotData.size())
+        {
+            plot.selectedXdata.at(pinIndex) = 0;
         }
     }
 }
 
 void NAV::Plot::updateNumberOfInputPins()
 {
-    while (inputPins.size() < static_cast<size_t>(_nInputPins))
+    while (inputPins.size() < _nInputPins)
     {
         nm::CreateInputPin(this, fmt::format("Pin {}", inputPins.size() + 1).c_str(), Pin::Type::Flow,
                            _dataIdentifier, &Plot::plotData);
         _pinData.emplace_back();
     }
-    while (inputPins.size() > static_cast<size_t>(_nInputPins))
+    while (inputPins.size() > _nInputPins)
     {
-        for (auto& plotInfo : _plotInfos)
+        for (auto& plot : _plots)
         {
-            if (plotInfo.selectedPin >= _nInputPins)
+            if (plot.selectedPin >= _nInputPins)
             {
-                plotInfo.selectedPin = _nInputPins - 1;
+                plot.selectedPin = _nInputPins - 1;
             }
         }
 
-        if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.back().id))
-        {
-            nm::DeleteLink(connectedLink->id);
-        }
-        inputPins.pop_back();
+        nm::DeleteInputPin(inputPins.back().id);
         _pinData.pop_back();
     }
 
-    for (auto& plotInfo : _plotInfos)
+    for (auto& plot : _plots)
     {
-        while (plotInfo.selectedXdata.size() < static_cast<size_t>(_nInputPins))
+        while (plot.selectedXdata.size() < _nInputPins)
         {
-            plotInfo.selectedXdata.emplace_back(0);
+            plot.selectedXdata.emplace_back(0);
         }
-        while (plotInfo.selectedXdata.size() > static_cast<size_t>(_nInputPins))
+        while (plot.selectedXdata.size() > _nInputPins)
         {
-            plotInfo.selectedXdata.pop_back();
+            plot.selectedXdata.pop_back();
         }
     }
 }
 
 void NAV::Plot::updateNumberOfPlots()
 {
-    while (static_cast<size_t>(_nPlots) > _plotInfos.size())
+    while (_nPlots > _plots.size())
     {
-        _plotInfos.emplace_back(fmt::format("Plot {}", _plotInfos.size() + 1), _nInputPins);
+        _plots.emplace_back(fmt::format("Plot {}", _plots.size() + 1), inputPins.size());
     }
-    while (static_cast<size_t>(_nPlots) < _plotInfos.size())
+    while (_nPlots < _plots.size())
     {
-        _plotInfos.pop_back();
+        _plots.pop_back();
     }
 }
 

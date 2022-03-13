@@ -125,6 +125,8 @@ Eigen::Vector3d ecef2lla_iter(const Eigen::Vector3d& e_position, double a = InsC
 
 TEST_CASE("[InsTransformations] Degree to radian conversion", "[InsTransformations]")
 {
+    Logger consoleSink;
+
     double rad_90 = trafo::deg2rad(90);
     double rad_180 = trafo::deg2rad(180.0);
     double rad_360 = trafo::deg2rad(360.0F);
@@ -142,6 +144,8 @@ TEST_CASE("[InsTransformations] Degree to radian conversion", "[InsTransformatio
 
 TEST_CASE("[InsTransformations] Degree to radian conversion constexpr", "[InsTransformations]")
 {
+    Logger consoleSink;
+
     constexpr double rad_90 = trafo::deg2rad(90);
     constexpr double rad_180 = trafo::deg2rad(180.0);
     constexpr double rad_360 = trafo::deg2rad(360.0F);
@@ -153,6 +157,8 @@ TEST_CASE("[InsTransformations] Degree to radian conversion constexpr", "[InsTra
 
 TEST_CASE("[InsTransformations] Radian to degree conversion", "[InsTransformations]")
 {
+    Logger consoleSink;
+
     double deg_90 = trafo::rad2deg(M_PI_2);
     double deg_180 = trafo::rad2deg(M_PI);
     double deg_360 = trafo::rad2deg(M_PI * 2.0);
@@ -170,6 +176,8 @@ TEST_CASE("[InsTransformations] Radian to degree conversion", "[InsTransformatio
 
 TEST_CASE("[InsTransformations] Radian to degree conversion constexpr", "[InsTransformations]")
 {
+    Logger consoleSink;
+
     constexpr double deg_90 = trafo::rad2deg(M_PI_2);
     constexpr double deg_180 = trafo::rad2deg(M_PI);
     constexpr double deg_360 = trafo::rad2deg(M_PI * 2.0);
@@ -181,6 +189,8 @@ TEST_CASE("[InsTransformations] Radian to degree conversion constexpr", "[InsTra
 
 TEST_CASE("[InsTransformations] Euler to Quaternion conversion", "[InsTransformations]")
 {
+    Logger consoleSink;
+
     double delta = trafo::deg2rad(5);
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
     for (double roll = -M_PI + delta; roll < M_PI - std::numeric_limits<float>::epsilon(); roll += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
@@ -253,6 +263,8 @@ TEST_CASE("[InsTransformations] Euler to Quaternion conversion", "[InsTransforma
 
 TEST_CASE("[InsTransformations] Quaternion to Euler conversion", "[InsTransformations]")
 {
+    Logger consoleSink;
+
     auto quat = [](double alpha, double beta, double gamma) {
         Eigen::AngleAxisd xAngle(alpha, Eigen::Vector3d::UnitX());
         Eigen::AngleAxisd yAngle(beta, Eigen::Vector3d::UnitY());
@@ -279,6 +291,8 @@ TEST_CASE("[InsTransformations] Quaternion to Euler conversion", "[InsTransforma
 
 TEST_CASE("[InsTransformations] Negated Quaternion to Euler conversion", "[InsTransformations]")
 {
+    Logger consoleSink;
+
     auto quat = [](double alpha, double beta, double gamma) {
         Eigen::AngleAxisd xAngle(alpha, Eigen::Vector3d::UnitX());
         Eigen::AngleAxisd yAngle(beta, Eigen::Vector3d::UnitY());
@@ -310,6 +324,8 @@ TEST_CASE("[InsTransformations] Negated Quaternion to Euler conversion", "[InsTr
 
 TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[InsTransformations]")
 {
+    Logger consoleSink;
+
     double time = 86164.099 / 3.0;
     auto e_Quat_i = trafo::e_Quat_i(time, InsConst::omega_ie);
     CHECK(e_Quat_i.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
@@ -343,6 +359,8 @@ TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[In
 
 TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[InsTransformations]")
 {
+    Logger consoleSink;
+
     double latitude = trafo::deg2rad(88);
     double longitude = trafo::deg2rad(-40);
 
@@ -407,6 +425,8 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
 
 TEST_CASE("[InsTransformations] NED <=> Earth-centered-earth-fixed frame conversion", "[InsTransformations]")
 {
+    Logger consoleSink;
+
     double latitude_ref = trafo::deg2rad(88);
     double longitude_ref = trafo::deg2rad(-40);
     double altitude_ref = 500;
@@ -446,6 +466,8 @@ TEST_CASE("[InsTransformations] NED <=> Earth-centered-earth-fixed frame convers
 
 TEST_CASE("[InsTransformations] Body <=> navigation DCM/Quaternion comparison", "[InsTransformations]")
 {
+    Logger consoleSink;
+
     double delta = trafo::deg2rad(5);
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
     for (double roll = -M_PI + delta; roll <= M_PI + std::numeric_limits<float>::epsilon(); roll += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
@@ -468,6 +490,8 @@ TEST_CASE("[InsTransformations] Body <=> navigation DCM/Quaternion comparison", 
 
 TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTransformations]")
 {
+    Logger consoleSink;
+
     /* -------------------------------------------------------------------------------------------------------- */
 
     double roll = trafo::deg2rad(45);
@@ -549,6 +573,8 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
 
 TEST_CASE("[InsTransformations] Platform <=> body frame conversion", "[InsTransformations]")
 {
+    Logger consoleSink;
+
     double mountingAngleX = trafo::deg2rad(90);
     double mountingAngleY = 0.0;
     double mountingAngleZ = trafo::deg2rad(-90);
@@ -564,6 +590,8 @@ TEST_CASE("[InsTransformations] Platform <=> body frame conversion", "[InsTransf
 
 TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]")
 {
+    Logger consoleSink;
+
     // Conversion with https://www.oc.nps.edu/oc2902w/coord/llhxyz.htm
 
     // Stuttgart, Breitscheidstraße 2
@@ -652,6 +680,8 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
 
 TEST_CASE("[InsTransformations] LLA => ECEF => LLA conversion", "[InsTransformations]")
 {
+    Logger consoleSink;
+
     for (int lat = -89; lat < 90; lat += 1)
     {
         for (int lon = -179; lon < 180; lon += 1)
@@ -676,6 +706,8 @@ TEST_CASE("[InsTransformations] LLA => ECEF => LLA conversion", "[InsTransformat
 
 TEST_CASE("[InsTransformations] LLA => ECEF => LLH-iterative conversion", "[InsTransformations]")
 {
+    Logger consoleSink;
+
     for (int lat = -89; lat < 90; lat += 1)
     {
         for (int lon = -179; lon < 180; lon += 1)
@@ -724,6 +756,8 @@ TEST_CASE("[InsTransformations] LLA => ECEF => LLH-iterative conversion", "[InsT
 
 TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
 {
+    Logger consoleSink;
+
     double roll = trafo::deg2rad(20);
     double pitch = trafo::deg2rad(50);
     double yaw = trafo::deg2rad(190);

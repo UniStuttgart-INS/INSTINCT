@@ -191,30 +191,43 @@ main:win:LOG_OFF:
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -j2
+
+.build:tests-win:
+  stage: build
+  extends:
+    - .windows
+  needs: ["check-windows"]
+
+.build:test-artifacts:
   artifacts:
-    untracked: true
+    paths:
+      - build/Debug/CTestTestfile.cmake
+      - build/Debug/test/CTestTestfile.cmake
+      - build/Debug/test/tests_*.cmake
+      - bin/Debug/tests*
     expire_in: 2h
 
 tests:clang:
   extends:
     - .build:tests
+    - .build:test-artifacts
     - .clang
 
 tests:gcc:
   extends:
     - .build:tests
     - .gcc
+  artifacts:
+    untracked: true # For the coverage report
+    expire_in: 2h
 
 tests:win:
-  stage: build
-  extends: .windows
-  needs: ["check-windows"]
+  extends:
+    - .build:tests-win
+    - .build:test-artifacts
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -maxCpuCount
-  artifacts:
-    untracked: true
-    expire_in: 2h
 
 .build:tests:LOG_OFF:
   extends:
@@ -234,7 +247,8 @@ tests:gcc:LOG_OFF:
     - .gcc
 
 tests:win:LOG_OFF:
-  extends: tests:win
+  extends:
+    - .build:tests-win
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -maxCpuCount
@@ -248,8 +262,8 @@ tests:win:LOG_OFF:
   tags:
     - linux
   script:
-    - cd build/Debug/test
-    - ctest --output-on-failure # -j2
+    - cd build/Debug
+    - ctest -j2 --output-on-failure
   after_script:
     - cd build/Debug/test
     - xml_grep --pretty_print indented --wrap '' --descr '' --cond "testsuites" *.xml > ../../../junit.xml
@@ -264,12 +278,12 @@ run-tests:clang:
   extends: .run-tests
   needs: ["tests:clang"]
 
-
 run-tests:gcc:
   extends: .run-tests
   needs: ["tests:gcc"]
   artifacts:
-    untracked: true
+    untracked: true # For the coverage report
+    expire_in: 2h
 
 run-tests:win:
   stage: test
@@ -377,7 +391,11 @@ pages:
     - cmake -Bbuild/$BUILD_TYPE -S. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/$BUILD_TYPE -- -j2
   artifacts:
-    untracked: true
+    paths:
+      - build/Debug/CTestTestfile.cmake
+      - build/Debug/test/CTestTestfile.cmake
+      - build/Debug/test/tests_*.cmake
+      - bin/Debug/tests
     expire_in: 2h
 
 ubuntu:20.04:clang:release:
@@ -475,7 +493,11 @@ run-tests:ubuntu:20.04:gcc:debug:
     - cmake -Bbuild/$BUILD_TYPE -S. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/$BUILD_TYPE -- -j2
   artifacts:
-    untracked: true
+    paths:
+      - build/Debug/CTestTestfile.cmake
+      - build/Debug/test/CTestTestfile.cmake
+      - build/Debug/test/tests_*.cmake
+      - bin/Debug/tests
     expire_in: 2h
 
 archlinux:latest:clang:release:

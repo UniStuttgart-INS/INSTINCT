@@ -6,7 +6,7 @@
 #include <array>
 #include <limits>
 
-#include "Nodes/FlowTester.hpp"
+#include "FlowTester.hpp"
 
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
 

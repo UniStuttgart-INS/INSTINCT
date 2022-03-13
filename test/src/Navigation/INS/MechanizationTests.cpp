@@ -9,6 +9,7 @@
 #include "Navigation/Gravity/Gravity.hpp"
 
 #include "util/Eigen.hpp"
+#include "util/Logger.hpp"
 
 #include <deque>
 #include <limits>
@@ -20,6 +21,8 @@ namespace NAV::TEST::MechanizationTests
 
 // TEST_CASE("[InsMechanization] Update Quaternions ep Runge-Kutta 3. Order", "[InsMechanization]")
 // {
+//     Logger consoleSink;
+//
 //     auto checkIntegration = [](const Eigen::Vector3d& p_omega_ip__t0,
 //                                double deltaLatLon, double delta,
 //                                double longitudeMin, double longitudeMax,
@@ -119,6 +122,8 @@ namespace NAV::TEST::MechanizationTests
 
 // TEST_CASE("[InsMechanization] Update Quaternions nb Runge-Kutta 1. Order", "[InsMechanization]")
 // {
+//     Logger consoleSink;
+//
 //     auto checkIntegration = [](const Eigen::Vector3d& b_omega_ip__t0,
 //                                double delta,
 //                                double rollMin, double rollMax,
@@ -229,6 +234,8 @@ namespace NAV::TEST::MechanizationTests
 
 // TEST_CASE("[InsMechanization] Update Quaternions nb Runge-Kutta 3. Order", "[InsMechanization]")
 // {
+//     Logger consoleSink;
+//
 //     // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
 //     long double timeDifferenceSec = 0.0001L;
 //     // ω_ip_p (tₖ) Angular velocity in [rad/s], of the inertial to platform system, in body coordinates
@@ -272,6 +279,8 @@ namespace NAV::TEST::MechanizationTests
 
 // TEST_CASE("[InsMechanization] Update Velocity e-frame Runge-Kutta 3. Order", "[InsMechanization]")
 // {
+//     Logger consoleSink;
+//
 //     // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
 //     long double timeDifferenceSec = 0.0001L;
 
@@ -340,6 +349,8 @@ namespace NAV::TEST::MechanizationTests
 
 // TEST_CASE("[InsMechanization] Update Velocity n-frame Runge-Kutta 3. Order", "[InsMechanization]")
 // {
+//     Logger consoleSink;
+//
 //     // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
 //     long double timeDifferenceSec = 0.0001L;
 
@@ -408,6 +419,8 @@ namespace NAV::TEST::MechanizationTests
 
 // TEST_CASE("[InsMechanization] Update Position e-frame", "[InsMechanization]")
 // {
+//     Logger consoleSink;
+//
 //     // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
 //     long double timeDifferenceSec = 0.0001L;
 
@@ -439,6 +452,8 @@ namespace NAV::TEST::MechanizationTests
 
 // TEST_CASE("[InsMechanization] Update Position lla-frame", "[InsMechanization]")
 // {
+//     Logger consoleSink;
+//
 //     // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
 //     long double dt = 0.001L;
 
@@ -481,6 +496,8 @@ namespace NAV::TEST::MechanizationTests
 
 // TEST_CASE("[InsMechanization] PVAError correction", "[InsMechanization]")
 // {
+//     Logger consoleSink;
+//
 //     Eigen::Vector3d lla_position{ trafo::deg2rad(30), trafo::deg2rad(9), 400 };
 //     Eigen::Vector3d n_vel{ 15, 2, -5 };
 //     double roll = trafo::deg2rad(10.0);
