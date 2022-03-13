@@ -80,7 +80,7 @@ std::vector<std::string> NAV::ConfigManager::FetchConfigs(const int argc, const 
     return failedConfigFiles;
 }
 
-void NAV::ConfigManager::LogOptions(const int argc, const char* argv[]) // NOLINT
+void NAV::ConfigManager::LogOptions(const int argc, [[maybe_unused]] const char* argv[]) // NOLINT
 {
     LOG_DEBUG("{} arguments were provided over the command line", argc);
 
@@ -93,19 +93,19 @@ void NAV::ConfigManager::LogOptions(const int argc, const char* argv[]) // NOLIN
 
     for (const auto& value : vm)
     {
-        if (const auto* v = boost::any_cast<size_t>(&value.second.value()))
+        if ([[maybe_unused]] const auto* v = boost::any_cast<size_t>(&value.second.value()))
         {
             LOG_DEBUG("\tvm[{}] = '{}'", value.first, *v);
         }
-        else if (const auto* v = boost::any_cast<bool>(&value.second.value()))
+        else if ([[maybe_unused]] const auto* v = boost::any_cast<bool>(&value.second.value()))
         {
             LOG_DEBUG("\tvm[{}] = '{}'", value.first, *v);
         }
-        else if (const auto* v = boost::any_cast<std::string>(&value.second.value()))
+        else if ([[maybe_unused]] const auto* v = boost::any_cast<std::string>(&value.second.value()))
         {
             LOG_DEBUG("\tvm[{}] = '{}'", value.first, *v);
         }
-        else if (const auto* v = boost::any_cast<std::vector<std::string>>(&value.second.value()))
+        else if ([[maybe_unused]] const auto* v = boost::any_cast<std::vector<std::string>>(&value.second.value()))
         {
             LOG_DEBUG("\tvm[{}] = '{}'", value.first, fmt::join(v->begin(), v->end(), ", "));
         }
