@@ -29,7 +29,7 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
     NAV::flow::SetOutputPath();
 
     // Initialize the logger
-    Logger logger(NAV::flow::GetOutputPath() / "instinct.log");
+    Logger logger((NAV::flow::GetOutputPath() / "instinct.log").string());
 
     // Log all the options
     NAV::ConfigManager::LogOptions(argc, argv);

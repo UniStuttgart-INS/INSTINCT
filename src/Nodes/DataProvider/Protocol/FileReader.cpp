@@ -139,7 +139,7 @@ NAV::FileReader::FileType NAV::FileReader::determineFileType()
 {
     LOG_TRACE("called");
 
-    std::string filepath = getFilepath();
+    auto filepath = getFilepath();
 
     auto filestreamHeader = std::ifstream(filepath);
     if (_filestream.good())
@@ -158,7 +158,7 @@ NAV::FileReader::FileType NAV::FileReader::determineFileType()
         return FileType::BINARY;
     }
 
-    LOG_ERROR("Could not open file {}", filepath);
+    LOG_ERROR("Could not open file {}", filepath.string());
     return FileType::NONE;
 }
 
