@@ -51,16 +51,11 @@ const boost::program_options::options_description& NAV::ConfigManager::GetProgra
     return program_options;
 }
 
-void NAV::ConfigManager::FetchConfigs(const int argc, const char* argv[]) // NOLINT
+std::vector<std::string> NAV::ConfigManager::FetchConfigs(const int argc, const char* argv[]) // NOLINT
 {
-    LOG_TRACE("called with {} arguments", argc);
-
-    for (int i = 0; i < argc; i++)
-    {
-        LOG_TRACE("argument[{}] = '{}'", i, argv[i]);
-    }
-
     bpo::store(bpo::parse_command_line(argc, argv, program_options), vm);
+
+    std::vector<std::string> failedConfigFiles;
 
     // if config file is available, the parameters from file will be added
     if (vm.count("config"))
@@ -74,12 +69,50 @@ void NAV::ConfigManager::FetchConfigs(const int argc, const char* argv[]) // NOL
             }
             else
             {
-                LOG_ERROR("Could not open the config file: {}", configFile);
+                failedConfigFiles.push_back(configFile);
             }
         }
     }
 
     bpo::notify(vm);
+
+    return failedConfigFiles;
+}
+
+void NAV::ConfigManager::LogOptions(const int argc, const char* argv[]) // NOLINT
+{
+    LOG_DEBUG("{} arguments were provided over the command line", argc);
+
+    for (int i = 0; i < argc; i++)
+    {
+        LOG_DEBUG("\targument[{}] = '{}'", i, argv[i]);
+    }
+
+    LOG_DEBUG("{} arguments are set in the allowed variable map", vm.size());
+
+    for (const auto& value : vm)
+    {
+        if (const auto* v = boost::any_cast<size_t>(&value.second.value()))
+        {
+            LOG_DEBUG("\tvm[{}] = '{}'", value.first, *v);
+        }
+        else if (const auto* v = boost::any_cast<bool>(&value.second.value()))
+        {
+            LOG_DEBUG("\tvm[{}] = '{}'", value.first, *v);
+        }
+        else if (const auto* v = boost::any_cast<std::string>(&value.second.value()))
+        {
+            LOG_DEBUG("\tvm[{}] = '{}'", value.first, *v);
+        }
+        else if (const auto* v = boost::any_cast<std::vector<std::string>>(&value.second.value()))
+        {
+            LOG_DEBUG("\tvm[{}] = '{}'", value.first, fmt::join(v->begin(), v->end(), ", "));
+        }
+        else
+        {
+            LOG_ERROR("The Log option vm[{}] could not be casted. Please report this to the developers.", value.first);
+        }
+    }
 }
 
 bool NAV::ConfigManager::HasKey(const std::string& key)

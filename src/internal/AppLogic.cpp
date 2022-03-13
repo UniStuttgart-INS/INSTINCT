@@ -20,10 +20,24 @@ namespace nm = NAV::NodeManager;
 int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-arrays,hicpp-avoid-c-arrays,modernize-avoid-c-arrays)
 {
     // Save the root path of the program
-    NAV::flow::SetProgramRootPath(std::filesystem::current_path().string());
+    NAV::flow::SetProgramRootPath(std::filesystem::current_path());
 
     // Program configuration
-    NAV::ConfigManager::FetchConfigs(argc, argv);
+    auto failedConfigFiles = NAV::ConfigManager::FetchConfigs(argc, argv);
+
+    // Sets the output path
+    NAV::flow::SetOutputPath();
+
+    // Initialize the logger
+    Logger logger(NAV::flow::GetOutputPath() / "instinct.log");
+
+    // Log all the options
+    NAV::ConfigManager::LogOptions(argc, argv);
+
+    for (const auto& configFile : failedConfigFiles)
+    {
+        LOG_ERROR("Could not open the config file: {}", configFile);
+    }
 
     // Register all Node Types which are available to the program
     NAV::NodeRegistry::RegisterNodeTypes();
