@@ -15,7 +15,6 @@ namespace ed = ax::NodeEditor;
 #include "internal/Node/Pin.hpp"
 #include "internal/ConfigManager.hpp"
 
-#include <filesystem>
 #include <fstream>
 #include <iomanip>
 #include <string>

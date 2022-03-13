@@ -34,7 +34,7 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
     // Log all the options
     NAV::ConfigManager::LogOptions(argc, argv);
 
-    for (const auto& configFile : failedConfigFiles)
+    for ([[maybe_unused]] const auto& configFile : failedConfigFiles)
     {
         LOG_ERROR("Could not open the config file: {}", configFile);
     }

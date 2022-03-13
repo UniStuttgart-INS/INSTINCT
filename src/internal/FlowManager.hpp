@@ -6,6 +6,7 @@
 #pragma once
 
 #include <string>
+#include <filesystem>
 #include "internal/gui/GlobalActions.hpp"
 
 #include <nlohmann/json.hpp>
