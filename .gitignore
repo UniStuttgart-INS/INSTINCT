@@ -23,7 +23,7 @@ compile_commands.json
 junit.xml
 
 # Ignore config files
-config.ini
+/config.ini
 
 # Imgui files
 INSTINCT.ini
