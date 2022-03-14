@@ -53,8 +53,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
         // TODO: The flow animations currently crash under windows
-        ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
-        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
+        ImGui::PushDisabled();
 #endif
 
         ImGui::Checkbox("Show Callback Flow", &nm::showFlowWhenInvokingCallbacks);
@@ -62,8 +61,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
         ImGui::Checkbox("Show Notify Flow", &nm::showFlowWhenNotifyingValueChange);
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
-        ImGui::PopItemFlag();
-        ImGui::PopStyleVar();
+        ImGui::PopDisabled();
 #endif
 
         if (showStyleEditor)

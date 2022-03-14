@@ -4,8 +4,6 @@
 
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 
-#include "internal/gui/widgets/FileDialog.hpp"
-
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
@@ -47,10 +45,10 @@ std::string NAV::ImuFile::category()
 
 void NAV::ImuFile::guiConfig()
 {
-    if (gui::widgets::FileDialogLoad(_path, "Select File", ".csv", { ".csv" }, size_t(id), nameId()))
+    if (FileReader::guiConfig(".csv", { ".csv" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        initializeNode();
+        deinitializeNode();
     }
 
     Imu::guiConfig();

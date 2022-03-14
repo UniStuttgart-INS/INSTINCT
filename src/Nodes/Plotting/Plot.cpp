@@ -374,7 +374,7 @@ void NAV::Plot::guiConfig()
                 ImGui::Dummy(ImVec2(-1.F, 2.F));
 
                 bool selectableDummy = true;
-                ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
+                ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5F, 0.5F));
                 ImGui::PushStyleColor(ImGuiCol_Header, IM_COL32(16, 173, 44, 79));
                 ImGui::Selectable(fmt::format("[drop here]").c_str(), &selectableDummy, ImGuiSelectableFlags_None,
                                   ImVec2(std::max(ImGui::GetColumnWidth(0), ImGui::CalcTextSize("[drop here]").x), 20.F));
@@ -639,7 +639,7 @@ void NAV::Plot::guiConfig()
         ImGui::Dummy(ImVec2(-1.F, 2.F));
 
         bool selectableSelectedDummy = true;
-        ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
+        ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5F, 0.5F));
         ImGui::PushStyleColor(ImGuiCol_Header, IM_COL32(16, 173, 44, 79));
         ImGui::Selectable(fmt::format("[drop here]").c_str(), &selectableSelectedDummy, ImGuiSelectableFlags_None, ImVec2(ImGui::GetWindowContentRegionWidth(), 20.F));
         ImGui::PopStyleColor();

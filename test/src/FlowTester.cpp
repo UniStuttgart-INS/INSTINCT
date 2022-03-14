@@ -12,7 +12,11 @@ bool testFlow(const char* path)
     // Config Manager object
     NAV::ConfigManager::initialize();
 
-    std::vector<const char*> argv = { "", "--nogui", "-l", path, nullptr };
+    std::vector<const char*> argv = { "",
+                                      "--nogui",
+                                      "-l", path,
+                                      "--input-path=test/data",
+                                      "--output-path=test/logs", nullptr };
 
     int executionFailure = NAV::AppLogic::processCommandLineArguments(static_cast<int>(argv.size() - 1), argv.data());
 

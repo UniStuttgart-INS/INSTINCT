@@ -4,7 +4,7 @@
 #include <sstream>
 #include <vector>
 
-#include "Nodes/FlowTester.hpp"
+#include "FlowTester.hpp"
 
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
 
@@ -39,7 +39,7 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
     messageCounterGnssLogCsv = 0;
     messageCounterGnssLogVnb = 0;
 
-    Logger logger;
+    Logger consoleSink;
 
     // ###########################################################################################################
     //                                         VectorNavDataLogger.flow

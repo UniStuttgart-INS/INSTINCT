@@ -1,10 +1,12 @@
 #include "ConfigManager.hpp"
 
 #include <string>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <boost/program_options/parsers.hpp>
 
+#include "internal/FlowManager.hpp"
 #include "util/Logger.hpp"
 
 #include <boost/tokenizer.hpp>
@@ -26,13 +28,17 @@ void NAV::ConfigManager::initialize()
         // clang-format off
         // See https://www.boost.org/doc/libs/1_72_0/doc/html/program_options.html
         program_options.add_options()
-            ("config,f",  bpo::value<std::vector<std::string>>()->multitoken(), "List of configuration files to read parameters from")
-            ("version,v",                                                       "Display the version number"                         )
-            ("help,h",                                                          "Display this help message"                          )
-            ("sigterm",   bpo::bool_switch()->default_value(false),             "Programm waits for -SIGUSR1 / -SIGINT / -SIGTERM"   )
-            ("duration",  bpo::value<size_t>()->default_value(0),               "Program execution duration [sec]"                   )
-            ("nogui",     bpo::bool_switch()->default_value(false),             "Launch without the gui"                             )
-            ("load,l",    bpo::value<std::string>(),                            "Flow file to load"                                  )
+            ("config",        bpo::value<std::vector<std::string>>()->multitoken(), "List of configuration files to read parameters from")
+            ("version,v",                                                           "Display the version number"                         )
+            ("help,h",                                                              "Display this help message"                          )
+            ("sigterm",       bpo::bool_switch()->default_value(false),             "Programm waits for -SIGUSR1 / -SIGINT / -SIGTERM"   )
+            ("duration",      bpo::value<size_t>()->default_value(0),               "Program execution duration [sec]"                   )
+            ("nogui",         bpo::bool_switch()->default_value(false),             "Launch without the gui"                             )
+            ("load,l",        bpo::value<std::string>(),                            "Flow file to load"                                  )
+            ("rotate-output", bpo::bool_switch()->default_value(false),             "Create new folders for output files"                )
+            ("output-path,o", bpo::value<std::string>()->default_value("logs"),     "Directory path for logs and output files"           )
+            ("input-path,i",  bpo::value<std::string>()->default_value("data"),     "Directory path for searching input files"           )
+            ("flow-path,f",   bpo::value<std::string>()->default_value("flow"),     "Directory path for searching flow files"            )
         ;
         // clang-format on
     }
@@ -48,35 +54,75 @@ const boost::program_options::options_description& NAV::ConfigManager::GetProgra
     return program_options;
 }
 
-void NAV::ConfigManager::FetchConfigs(const int argc, const char* argv[]) // NOLINT
+std::vector<std::string> NAV::ConfigManager::FetchConfigs(const int argc, const char* argv[]) // NOLINT
 {
-    LOG_TRACE("called with {} arguments", argc);
-
-    for (int i = 0; i < argc; i++)
-    {
-        LOG_TRACE("argument[{}] = '{}'", i, argv[i]);
-    }
-
     bpo::store(bpo::parse_command_line(argc, argv, program_options), vm);
+
+    std::vector<std::string> failedConfigFiles;
 
     // if config file is available, the parameters from file will be added
     if (vm.count("config"))
     {
         for (const std::string& configFile : vm["config"].as<std::vector<std::string>>())
         {
-            std::ifstream ifs{ configFile };
+            std::filesystem::path filepath{ configFile };
+            if (filepath.is_relative())
+            {
+                filepath = NAV::flow::GetProgramRootPath();
+                filepath /= configFile;
+            }
+
+            std::ifstream ifs{ filepath };
             if (ifs.good())
             {
                 bpo::store(bpo::parse_config_file(ifs, program_options), vm);
             }
             else
             {
-                LOG_ERROR("Could not open the config file: {}", configFile);
+                failedConfigFiles.push_back(configFile);
             }
         }
     }
 
     bpo::notify(vm);
+
+    return failedConfigFiles;
+}
+
+void NAV::ConfigManager::LogOptions(const int argc, [[maybe_unused]] const char* argv[]) // NOLINT
+{
+    LOG_DEBUG("{} arguments were provided over the command line", argc);
+
+    for (int i = 0; i < argc; i++)
+    {
+        LOG_DEBUG("\targument[{}] = '{}'", i, argv[i]);
+    }
+
+    LOG_DEBUG("{} arguments are set in the allowed variable map", vm.size());
+
+    for (const auto& value : vm)
+    {
+        if ([[maybe_unused]] const auto* v = boost::any_cast<size_t>(&value.second.value()))
+        {
+            LOG_DEBUG("\tvm[{}] = '{}'", value.first, *v);
+        }
+        else if ([[maybe_unused]] const auto* v = boost::any_cast<bool>(&value.second.value()))
+        {
+            LOG_DEBUG("\tvm[{}] = '{}'", value.first, *v);
+        }
+        else if ([[maybe_unused]] const auto* v = boost::any_cast<std::string>(&value.second.value()))
+        {
+            LOG_DEBUG("\tvm[{}] = '{}'", value.first, *v);
+        }
+        else if ([[maybe_unused]] const auto* v = boost::any_cast<std::vector<std::string>>(&value.second.value()))
+        {
+            LOG_DEBUG("\tvm[{}] = '{}'", value.first, fmt::join(v->begin(), v->end(), ", "));
+        }
+        else
+        {
+            LOG_ERROR("The Log option vm[{}] could not be casted. Please report this to the developers.", value.first);
+        }
+    }
 }
 
 bool NAV::ConfigManager::HasKey(const std::string& key)

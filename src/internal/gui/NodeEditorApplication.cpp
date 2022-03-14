@@ -210,10 +210,10 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
         {
             if (flow::GetCurrentFilename().empty())
             {
-                if (std::string targetPath = flow::GetProgramRootPath() + "/flow";
+                if (auto targetPath = flow::GetFlowPath();
                     std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
                 {
-                    LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path().string());
+                    LOG_DEBUG("Changing current path to {}", std::filesystem::current_path());
                     std::filesystem::current_path(targetPath);
                 }
                 igfd::ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
@@ -262,10 +262,10 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
 
 void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
 {
-    if (std::string targetPath = flow::GetProgramRootPath() + "/flow";
+    if (auto targetPath = flow::GetFlowPath();
         std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
     {
-        LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path().string());
+        LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path());
         std::filesystem::current_path(targetPath);
     }
     igfd::ImGuiFileDialog::Instance()->OpenDialog("Save Flow", "Save Flow", ".flow", "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
@@ -317,10 +317,10 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
         {
             if (flow::GetCurrentFilename().empty())
             {
-                if (std::string targetPath = flow::GetProgramRootPath() + "/flow";
+                if (auto targetPath = flow::GetFlowPath();
                     std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
                 {
-                    LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path().string());
+                    LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path());
                     std::filesystem::current_path(targetPath);
                 }
                 igfd::ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
@@ -386,10 +386,10 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
             {
                 if (flow::GetCurrentFilename().empty())
                 {
-                    if (std::string targetPath = flow::GetProgramRootPath() + "/flow";
+                    if (auto targetPath = flow::GetFlowPath();
                         std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
                     {
-                        LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path().string());
+                        LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path());
                         std::filesystem::current_path(targetPath);
                     }
                     igfd::ImGuiFileDialog::Instance()->OpenModal("Save Flow##Load", "Save Flow", ".flow", "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
@@ -433,10 +433,10 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
     }
     else
     {
-        if (std::string targetPath = flow::GetProgramRootPath() + "/flow";
+        if (auto targetPath = flow::GetFlowPath();
             std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
         {
-            LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path().string());
+            LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path());
             std::filesystem::current_path(targetPath);
         }
         igfd::ImGuiFileDialog::Instance()->OpenDialog("Load Flow", "Load Flow", ".flow", "", 1, nullptr);
@@ -778,8 +778,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                     bool itemDisabled = false;
                     if (!node->isInitialized() && !node->callbacksEnabled)
                     {
-                        ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
-                        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
+                        ImGui::PushDisabled();
                         itemDisabled = true;
                     }
 
@@ -793,8 +792,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
                     if (itemDisabled)
                     {
-                        ImGui::PopItemFlag();
-                        ImGui::PopStyleVar();
+                        ImGui::PopDisabled();
                     }
                     ImGui::Dummy(ImVec2(0, 26));
                 }

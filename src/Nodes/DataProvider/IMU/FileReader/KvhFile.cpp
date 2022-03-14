@@ -2,8 +2,6 @@
 
 #include "util/Logger.hpp"
 
-#include "internal/gui/widgets/FileDialog.hpp"
-
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
@@ -48,10 +46,10 @@ std::string NAV::KvhFile::category()
 
 void NAV::KvhFile::guiConfig()
 {
-    if (gui::widgets::FileDialogLoad(_path, "Select File", ".csv", { ".csv" }, size_t(id), nameId()))
+    if (FileReader::guiConfig(".csv", { ".csv" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        initializeNode();
+        deinitializeNode();
     }
 
     Imu::guiConfig();
@@ -350,7 +348,7 @@ NAV::FileReader::FileType NAV::KvhFile::determineFileType()
 {
     LOG_TRACE("called for {}", name);
 
-    auto filestream = std::ifstream(_path);
+    auto filestream = std::ifstream(getFilepath());
     if (filestream.good())
     {
         union
@@ -388,6 +386,6 @@ NAV::FileReader::FileType NAV::KvhFile::determineFileType()
         return FileType::NONE;
     }
 
-    LOG_ERROR("{} could not open file {}", name, _path);
+    LOG_ERROR("{} could not open file {}", name, getFilepath());
     return FileType::NONE;
 }

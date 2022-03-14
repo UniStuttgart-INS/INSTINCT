@@ -2,8 +2,6 @@
 
 #include "util/Logger.hpp"
 
-#include "internal/gui/widgets/FileDialog.hpp"
-
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
@@ -48,10 +46,10 @@ std::string NAV::UbloxFile::category()
 
 void NAV::UbloxFile::guiConfig()
 {
-    if (gui::widgets::FileDialogLoad(_path, "Select File", ".ubx", { ".ubx" }, size_t(id), nameId()))
+    if (FileReader::guiConfig(".ubx", { ".ubx" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        initializeNode();
+        deinitializeNode();
     }
 }
 
@@ -160,7 +158,7 @@ NAV::FileReader::FileType NAV::UbloxFile::determineFileType()
 {
     LOG_TRACE("called for {}", nameId());
 
-    auto filestream = std::ifstream(_path);
+    auto filestream = std::ifstream(getFilepath());
 
     constexpr uint16_t BUFFER_SIZE = 10;
 
@@ -183,6 +181,6 @@ NAV::FileReader::FileType NAV::UbloxFile::determineFileType()
         return FileType::NONE;
     }
 
-    LOG_ERROR("{} could not open file {}", nameId(), _path);
+    LOG_ERROR("{} could not open file {}", nameId(), getFilepath());
     return FileType::NONE;
 }

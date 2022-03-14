@@ -4,8 +4,6 @@
 
 #include "util/Logger.hpp"
 
-#include "internal/gui/widgets/FileDialog.hpp"
-
 #include <iomanip> // std::setprecision
 
 #include "internal/NodeManager.hpp"
@@ -48,7 +46,7 @@ std::string NAV::UbloxDataLogger::category()
 
 void NAV::UbloxDataLogger::guiConfig()
 {
-    if (gui::widgets::FileDialogSave(_path, "Save File", ".ubx", { ".ubx" }, size_t(id), nameId()))
+    if (FileWriter::guiConfig(".ubx", { ".ubx" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
         deinitializeNode();

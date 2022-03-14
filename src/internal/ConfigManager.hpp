@@ -6,6 +6,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 #include <deque>
 #include <memory>
 
@@ -28,9 +29,15 @@ void deinitialize();
 [[nodiscard]] const boost::program_options::options_description& GetProgramOptions();
 
 /// @brief Fetches the configs from the command line parameters
-/// @param[in, out] argc Number of command line parameters
-/// @param[in, out] argv Array of the command line parameters
-void FetchConfigs(const int argc, const char* argv[]); // NOLINT
+/// @param[in] argc Number of command line parameters
+/// @param[in] argv Array of the command line parameters
+/// @return List of config files which failed to be read (for error reporting)
+std::vector<std::string> FetchConfigs(const int argc, const char* argv[]); // NOLINT
+
+/// @brief Writes all command line options into the log
+/// @param[in] argc Number of command line parameters
+/// @param[in] argv Array of the command line parameters
+void LogOptions(const int argc, const char* argv[]); // NOLINT
 
 /// @brief Retrieves the value of a corresponding key from the configuration, if one exists.
 /// @tparam T Return value type
