@@ -3,7 +3,7 @@
         "node-2": {
             "data": {
                 "FileReader": {
-                    "path": "vn310-imu.vnb"
+                    "path": "VectorNav/StaticSize/vn310-imu.vnb"
                 },
                 "Imu": {
                     "imuPos": {

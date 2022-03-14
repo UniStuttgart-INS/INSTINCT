@@ -26,6 +26,9 @@ auto extractBit(auto& group, auto value)
 
 constexpr double EPSILON = 10.0 * std::numeric_limits<double>::epsilon();
 
+namespace StaticData
+{
+
 enum ImuRef : size_t
 {
     ImuRef_GpsCycle,
@@ -232,7 +235,7 @@ constexpr size_t MESSAGE_COUNT_IMU = 18; ///< Amount of messages expected in the
 size_t messageCounterImuDataCsv = 0;     ///< Message Counter for the Imu data csv file
 size_t messageCounterImuDataVnb = 0;     ///< Message Counter for the Imu data vnb file
 
-TEST_CASE("[VectorNavFile] Read 'data/vn310-imu.csv' and compare content with hardcoded values", "[VectorNavFile]")
+TEST_CASE("[VectorNavFile] Read 'data/VectorNav/StaticSize/vn310-imu.csv' and compare content with hardcoded values", "[VectorNavFile]")
 {
     messageCounterImuDataCsv = 0;
 
@@ -242,7 +245,7 @@ TEST_CASE("[VectorNavFile] Read 'data/vn310-imu.csv' and compare content with ha
     //                                     VectorNavFile-vn310-imu-csv.flow
     // ###########################################################################################################
     //
-    // VectorNavFile("data/vn310-imu.csv")
+    // VectorNavFile("data/VectorNav/StaticSize/vn310-imu.csv")
     //
     // ###########################################################################################################
 
@@ -259,7 +262,7 @@ TEST_CASE("[VectorNavFile] Read 'data/vn310-imu.csv' and compare content with ha
     REQUIRE(messageCounterImuDataCsv == MESSAGE_COUNT_IMU);
 }
 
-TEST_CASE("[VectorNavFile] Read 'data/vn310-imu.vnb' and compare content with hardcoded values", "[VectorNavFile]")
+TEST_CASE("[VectorNavFile] Read 'data/VectorNav/StaticSize/vn310-imu.vnb' and compare content with hardcoded values", "[VectorNavFile]")
 {
     messageCounterImuDataVnb = 0;
 
@@ -269,7 +272,7 @@ TEST_CASE("[VectorNavFile] Read 'data/vn310-imu.vnb' and compare content with ha
     //                                     VectorNavFile-vn310-imu-vnb.flow
     // ###########################################################################################################
     //
-    // VectorNavFile("data/vn310-imu.vnb")
+    // VectorNavFile("data/VectorNav/StaticSize/vn310-imu.vnb")
     //
     // ###########################################################################################################
 
@@ -712,7 +715,7 @@ constexpr size_t MESSAGE_COUNT_GNSS = 12; ///< Amount of messages expected in th
 size_t messageCounterGnssDataCsv = 0;     ///< Message Counter for the Gnss data csv file
 size_t messageCounterGnssDataVnb = 0;     ///< Message Counter for the Gnss data vnb file
 
-TEST_CASE("[VectorNavFile] Read 'data/vn310-gnss.csv' and compare content with hardcoded values", "[VectorNavFile]")
+TEST_CASE("[VectorNavFile] Read 'data/VectorNav/StaticSize/vn310-gnss.csv' and compare content with hardcoded values", "[VectorNavFile]")
 {
     messageCounterGnssDataCsv = 0;
 
@@ -722,7 +725,7 @@ TEST_CASE("[VectorNavFile] Read 'data/vn310-gnss.csv' and compare content with h
     //                                     VectorNavFile-vn310-gnss-csv.flow
     // ###########################################################################################################
     //
-    // VectorNavFile("data/vn310-gnss.csv")
+    // VectorNavFile("data/VectorNav/StaticSize/vn310-gnss.csv")
     //
     // ###########################################################################################################
 
@@ -739,7 +742,7 @@ TEST_CASE("[VectorNavFile] Read 'data/vn310-gnss.csv' and compare content with h
     REQUIRE(messageCounterGnssDataCsv == MESSAGE_COUNT_GNSS);
 }
 
-TEST_CASE("[VectorNavFile] Read 'data/vn310-gnss.vnb' and compare content with hardcoded values", "[VectorNavFile]")
+TEST_CASE("[VectorNavFile] Read 'data/VectorNav/StaticSize/vn310-gnss.vnb' and compare content with hardcoded values", "[VectorNavFile]")
 {
     messageCounterGnssDataVnb = 0;
 
@@ -749,7 +752,7 @@ TEST_CASE("[VectorNavFile] Read 'data/vn310-gnss.vnb' and compare content with h
     //                                     VectorNavFile-vn310-gnss-vnb.flow
     // ###########################################################################################################
     //
-    // VectorNavFile("data/vn310-gnss.vnb")
+    // VectorNavFile("data/VectorNav/StaticSize/vn310-gnss.vnb")
     //
     // ###########################################################################################################
 
@@ -765,5 +768,7 @@ TEST_CASE("[VectorNavFile] Read 'data/vn310-gnss.vnb' and compare content with h
 
     REQUIRE(messageCounterGnssDataVnb == MESSAGE_COUNT_GNSS);
 }
+
+} // namespace StaticData
 
 } // namespace NAV::TEST::VectorNavFileTests
