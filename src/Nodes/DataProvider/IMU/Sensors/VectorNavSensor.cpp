@@ -1404,6 +1404,94 @@ void NAV::VectorNavSensor::guiConfig()
                              "- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n"
                              "- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)");
 
+    bool isNodeInitialized = isInitialized();
+    if (!isNodeInitialized)
+    {
+        ImGui::PushDisabled();
+    }
+    if (ImGui::Button("Write settings"))
+    {
+        try
+        {
+            _vs.writeSettings();
+        }
+        catch (const std::exception& e)
+        {
+            LOG_ERROR("{}: Write settings threw an exception: {}", nameId(), e.what());
+        }
+    }
+    if (!isNodeInitialized)
+    {
+        ImGui::PopDisabled();
+    }
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::SetTooltip("This command will write the current register settings into non-volatile memory. Once the settings are stored\n"
+                          "in non-volatile (Flash) memory, the VN-310E module can be power cycled or reset, and the register will be\n"
+                          "reloaded from non-volatile memory.\n\n"
+                          "Due to limitations in the flash write speed the write settings command takes ~ 500ms to\n"
+                          "complete. Any commands that are sent to the sensor during this time will be responded to after\n"
+                          "the operation is complete.\n\n"
+                          "The sensor must be stationary when issuing a Write Settings Command otherwise a Reset\n"
+                          "command must also be issued to prevent the Kalman Filter from diverging during the write\n"
+                          "settings process.\n\n"
+                          "A write settings command is automatically send after initializing the node.");
+    }
+    ImGui::SameLine();
+    if (!isNodeInitialized)
+    {
+        ImGui::PushDisabled();
+    }
+    if (ImGui::Button("Restore factory settings"))
+    {
+        try
+        {
+            _vs.restoreFactorySettings();
+        }
+        catch (const std::exception& e)
+        {
+            LOG_ERROR("{}: Restore factory settings threw an exception: {}", nameId(), e.what());
+        }
+    }
+    if (!isNodeInitialized)
+    {
+        ImGui::PopDisabled();
+    }
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::SetTooltip("This command will restore the VN-310E module's factory default settings and will reset the module. There\n"
+                          "are no parameters for this command. The module will respond to this command before restoring the factory\n"
+                          "settings.");
+    }
+    ImGui::SameLine();
+    if (!isNodeInitialized)
+    {
+        ImGui::PushDisabled();
+    }
+    if (ImGui::Button("Reset sensor"))
+    {
+        try
+        {
+            _vs.reset();
+        }
+        catch (const std::exception& e)
+        {
+            LOG_ERROR("{}: Resetting threw an exception: {}", nameId(), e.what());
+        }
+    }
+    if (!isNodeInitialized)
+    {
+        ImGui::PopDisabled();
+    }
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::SetTooltip("This command will reset the module. There are no parameters required for this command. The module will\n"
+                          "first respond to the command and will then perform a reset. Upon a reset all registers will be reloaded with\n"
+                          "the values saved in non-volatile memory. If no values are stored in non-volatile memory, the device will default\n"
+                          "to factory settings. Also upon reset the VN-310E will re-initialize its Kalman filter, thus the filter will take a\n"
+                          "few seconds to completely converge on the correct attitude and correct for gyro bias.");
+    }
+
     // ###########################################################################################################
     //                                               SYSTEM MODULE
     // ###########################################################################################################
@@ -5824,9 +5912,9 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
     else if (p.getPacketLength() > 2500)
     {
         LOG_ERROR("{} Packet size is {} bytes. VectorNav internal buffer overflows happen if the size is > 2550 bytes. "
-                 "You potentially already lost packages without noticing. "
-                 "Consider splitting the packet to different Binary outputs.",
-                 vnSensor->nameId(), p.getPacketLength());
+                  "You potentially already lost packages without noticing. "
+                  "Consider splitting the packet to different Binary outputs.",
+                  vnSensor->nameId(), p.getPacketLength());
     }
 
     if (p.type() == vn::protocol::uart::Packet::TYPE_BINARY)
