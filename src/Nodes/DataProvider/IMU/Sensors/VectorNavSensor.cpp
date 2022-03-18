@@ -1387,7 +1387,7 @@ void NAV::VectorNavSensor::guiConfig()
         }
     }
 
-    if (ImGui::InputTextWithHint("SensorPort", "/dev/ttyUSB0", &_sensorPort))
+    if (ImGui::InputTextWithHint("SensorPort", _connectedSensorPort.empty() ? "/dev/ttyUSB0" : _connectedSensorPort.c_str(), &_sensorPort))
     {
         LOG_DEBUG("{}: SensorPort changed to {}", nameId(), _sensorPort);
         flow::ApplyChanges();
@@ -5240,65 +5240,87 @@ bool NAV::VectorNavSensor::initialize()
                                   : sensorBaudrate();
 
     Baudrate connectedBaudrate{};
+    _connectedSensorPort.clear();
+
     // Search for the VectorNav Sensor
-    if (int32_t foundBaudrate = 0;
-        vn::sensors::Searcher::search(_sensorPort, &foundBaudrate))
+    size_t maxTries = std::filesystem::exists(_sensorPort) ? 5 : 0;
+    for (size_t i = 0; i < maxTries; ++i)
     {
-        // Sensor was found at specified port with the baudrate 'foundBaudrate'
-        connectedBaudrate = static_cast<Baudrate>(foundBaudrate);
-    }
-    else if (std::vector<std::pair<std::string, uint32_t>> foundSensors = vn::sensors::Searcher::search();
-             !foundSensors.empty())
-    {
-        if (foundSensors.size() == 1)
+        if (int32_t foundBaudrate = 0;
+            vn::sensors::Searcher::search(_sensorPort, &foundBaudrate))
         {
-            _sensorPort = foundSensors.at(0).first;
-            connectedBaudrate = static_cast<Baudrate>(foundSensors.at(0).second);
+            // Sensor was found at specified port with the baudrate 'foundBaudrate'
+            connectedBaudrate = static_cast<Baudrate>(foundBaudrate);
+            _connectedSensorPort = _sensorPort;
+            LOG_DEBUG("{}: Found VectorNav sensor on specified port '{}' with baudrate {} (it took {} attempts to connect)",
+                      nameId(), _connectedSensorPort, foundBaudrate, i + 1);
+            break;
         }
-        else
+    }
+    if (_connectedSensorPort.empty())
+    {
+        if (std::filesystem::exists(_sensorPort))
         {
-            _sensorPort = "";
-            // Some VectorNav sensors where found, try to identify the wanted one by it's name
-            for (auto [port, baudrate] : foundSensors)
+            LOG_ERROR("{}: Could not connect to VectorNav sensor on specified port '{}', but port exists.", nameId(), _sensorPort);
+            return false;
+        }
+
+        for (size_t i = 0; i < 5; ++i)
+        {
+            if (!_connectedSensorPort.empty())
             {
-                _vs.connect(port, baudrate);
-                std::string modelNumber = _vs.readModelNumber();
-                _vs.disconnect();
+                break;
+            }
 
-                LOG_DEBUG("{}: Found VectorNav Sensor {} on port {} with baudrate {}", nameId(), modelNumber, port, baudrate);
-
-                // Regex search may be better, but simple find is used here
-                if (modelNumber.find(name) != std::string::npos)
+            if (std::vector<std::pair<std::string, uint32_t>> foundSensors = vn::sensors::Searcher::search();
+                !foundSensors.empty())
+            {
+                if (foundSensors.size() == 1)
                 {
-                    _sensorPort = port;
-                    connectedBaudrate = static_cast<Baudrate>(baudrate);
-                    break;
+                    _connectedSensorPort = foundSensors.at(0).first;
+                    connectedBaudrate = static_cast<Baudrate>(foundSensors.at(0).second);
+                    LOG_DEBUG("{}: Found VectorNav sensor on port '{}' with baudrate {} (it took {} attempts to connect)",
+                              nameId(), _connectedSensorPort, foundSensors.at(0).second, i + 1);
+                }
+                else
+                {
+                    // Some VectorNav sensors where found, try to identify the wanted one by it's name
+                    for (auto [port, baudrate] : foundSensors)
+                    {
+                        _vs.connect(port, baudrate);
+                        std::string modelNumber = _vs.readModelNumber();
+                        _vs.disconnect();
+
+                        LOG_DEBUG("{}: Found VectorNav sensor '{}' on port '{}' with baudrate {} (it took {} attempts to connect) ({} VN sensors connected in total)",
+                                  nameId(), modelNumber, port, baudrate, i + 1, foundSensors.size());
+
+                        // Regex search may be better, but simple find is used here
+                        if (modelNumber.find(name) != std::string::npos)
+                        {
+                            _connectedSensorPort = port;
+                            connectedBaudrate = static_cast<Baudrate>(baudrate);
+                            break;
+                        }
+                    }
                 }
             }
-            // Sensor could not be identified
-            if (_sensorPort.empty())
-            {
-                // This point is also reached if a sensor is connected with USB but external power is off
-                LOG_ERROR("{}: Could not connect", nameId());
-                return false;
-            }
         }
-    }
-    else
-    {
-        LOG_ERROR("{}: Could not connect. Is the sensor connected and do you have read permissions?", nameId());
-        return false;
+        if (_connectedSensorPort.empty())
+        {
+            LOG_ERROR("{}: Could not connect. Is the sensor connected and do you have read permissions?", nameId());
+            return false;
+        }
     }
 
     try
     {
         // Connect to the sensor (vs.verifySensorConnectivity does not have to be called as sensor is already tested)
-        _vs.connect(_sensorPort, connectedBaudrate);
+        _vs.connect(_connectedSensorPort, connectedBaudrate);
     }
     catch (const std::exception& e)
     {
-        LOG_ERROR("{}: Failed to connect to sensor on port {} with baudrate {} with error: {}", nameId(),
-                  _sensorPort, connectedBaudrate, e.what());
+        LOG_ERROR("{}: Failed to connect to sensor on port '{}' with baudrate {} with error: {}", nameId(),
+                  _connectedSensorPort, connectedBaudrate, e.what());
         return false;
     }
 
@@ -5306,20 +5328,20 @@ bool NAV::VectorNavSensor::initialize()
     {
         if (!_vs.verifySensorConnectivity())
         {
-            LOG_ERROR("{}: Connected to sensor on port {} with baudrate {} but sensor does not answer", nameId(),
-                      _sensorPort, connectedBaudrate);
+            LOG_ERROR("{}: Connected to sensor on port '{}' with baudrate {} but sensor does not answer", nameId(),
+                      _connectedSensorPort, connectedBaudrate);
             return false;
         }
     }
     catch (const std::exception& e)
     {
-        LOG_ERROR("{}: Connected to sensor on port {} with baudrate {} but sensor threw an exception: {}", nameId(),
-                  _sensorPort, connectedBaudrate, e.what());
+        LOG_ERROR("{}: Connected to sensor on port '{}' with baudrate {} but sensor threw an exception: {}", nameId(),
+                  _connectedSensorPort, connectedBaudrate, e.what());
         return false;
     }
 
     // Query the sensor's model number
-    LOG_DEBUG("{}: {} connected on port {} with baudrate {}", nameId(), _vs.readModelNumber(), _sensorPort, connectedBaudrate);
+    LOG_DEBUG("{}: {} connected on port '{}' with baudrate {}", nameId(), _vs.readModelNumber(), _connectedSensorPort, connectedBaudrate);
 
     // ###########################################################################################################
     //                                               SYSTEM MODULE

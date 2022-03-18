@@ -98,6 +98,9 @@ class VectorNavSensor : public Imu, public UartSensor
     /// VnSensor Object
     vn::sensors::VnSensor _vs;
 
+    /// Connected sensor port
+    std::string _connectedSensorPort;
+
     /// Internal Frequency of the Sensor
     static constexpr double IMU_DEFAULT_FREQUENCY = 800;
 
