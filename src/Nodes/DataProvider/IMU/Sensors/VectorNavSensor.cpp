@@ -5925,18 +5925,18 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
 
     LOG_DATA("{}: Received message", vnSensor->nameId());
 
-    if (p.getPacketLength() > 2200)
-    {
-        LOG_WARN("{} Packet size is {} bytes. VectorNav internal buffer overflows happen if the size is > 2550 bytes. "
-                 "Consider splitting the packet to different Binary outputs.",
-                 vnSensor->nameId(), p.getPacketLength());
-    }
-    else if (p.getPacketLength() > 2500)
+    if (p.getPacketLength() > 2500)
     {
         LOG_ERROR("{} Packet size is {} bytes. VectorNav internal buffer overflows happen if the size is > 2550 bytes. "
                   "You potentially already lost packages without noticing. "
                   "Consider splitting the packet to different Binary outputs.",
                   vnSensor->nameId(), p.getPacketLength());
+    }
+    else if (p.getPacketLength() > 2200)
+    {
+        LOG_WARN("{} Packet size is {} bytes. VectorNav internal buffer overflows happen if the size is > 2550 bytes. "
+                 "Consider splitting the packet to different Binary outputs.",
+                 vnSensor->nameId(), p.getPacketLength());
     }
 
     if (p.type() == vn::protocol::uart::Packet::TYPE_BINARY)
