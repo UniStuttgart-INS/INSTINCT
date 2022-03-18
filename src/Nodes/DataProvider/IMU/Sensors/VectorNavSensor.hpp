@@ -142,7 +142,7 @@ class VectorNavSensor : public Imu, public UartSensor
         vn::protocol::uart::SyncInMode::SYNCINMODE_COUNT,              // SyncInMode
         vn::protocol::uart::SyncInEdge::SYNCINEDGE_RISING,             // SyncInEdge
         0,                                                             // SyncInSkipFactor
-        vn::protocol::uart::SyncOutMode::SYNCOUTMODE_GPSPPS,           // SyncOutMode
+        vn::protocol::uart::SyncOutMode::SYNCOUTMODE_NONE,             // SyncOutMode
         vn::protocol::uart::SyncOutPolarity::SYNCOUTPOLARITY_POSITIVE, // SyncOutPolarity
         0,                                                             // SyncOutSkipFactor
         100000000                                                      // SyncOutPulseWidth
