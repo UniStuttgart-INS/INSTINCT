@@ -64,10 +64,10 @@ std::string NAV::UlogFile::category()
 
 void NAV::UlogFile::guiConfig()
 {
-    if (gui::widgets::FileDialogLoad(_path, "Select File", ".ulg", { ".ulg" }, size_t(id), nameId()))
+    if (FileReader::guiConfig(".ulg", { ".ulg" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        initializeNode();
+        deinitializeNode();
     }
 
     Imu::guiConfig();
@@ -145,21 +145,23 @@ NAV::FileReader::FileType NAV::UlogFile::determineFileType()
 {
     LOG_TRACE("called for {}", nameId());
 
-    auto _filestream = std::ifstream(_path);
+    std::filesystem::path filepath = getFilepath();
+
+    auto filestream = std::ifstream(filepath);
 
     constexpr uint16_t BUFFER_SIZE = 10; //TODO: validate size
 
     std::array<char, BUFFER_SIZE> buffer{};
-    if (_filestream.good())
+    if (filestream.good())
     {
-        _filestream.read(buffer.data(), BUFFER_SIZE);
-        _filestream.close();
+        filestream.read(buffer.data(), BUFFER_SIZE);
+        filestream.close();
         LOG_DEBUG("{} has the file type: CSV", nameId());
         return FileType::BINARY;
     }
-    _filestream.close();
+    filestream.close();
 
-    LOG_ERROR("{} could not open file", nameId(), _path);
+    LOG_ERROR("{} could not open file", nameId(), filepath);
     return FileType::NONE;
 }
 
