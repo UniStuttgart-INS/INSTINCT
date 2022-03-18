@@ -2428,6 +2428,13 @@ void NAV::VectorNavSensor::guiConfig()
                       { vn::protocol::uart::AsyncMode::ASYNCMODE_PORT2, "Message is sent out serial port 2 at a fixed rate" },
                       { vn::protocol::uart::AsyncMode::ASYNCMODE_BOTH, "Message is sent out both serial ports at a fixed rate" } }
                 };
+                if ((_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output2 && b == 1)
+                    || (_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output3 && b == 2)
+                    || (_binaryOutputRegisterMerge == BinaryRegisterMerge::Output2_Output3 && b == 2))
+                {
+                    ImGui::PushDisabled();
+                }
+
                 if (ImGui::BeginCombo(fmt::format("Async Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(_binaryOutputRegister.at(b).asyncMode).c_str()))
                 {
                     for (const auto& asyncMode : asyncModes)
@@ -2436,31 +2443,51 @@ void NAV::VectorNavSensor::guiConfig()
                         if (ImGui::Selectable(vn::protocol::uart::str(asyncMode.first).c_str(), isSelected))
                         {
                             _binaryOutputRegister.at(b).asyncMode = asyncMode.first;
-                            LOG_DEBUG("{}: binaryOutputRegister.at(b).asyncMode changed to {}", nameId(), vn::protocol::uart::str(_binaryOutputRegister.at(b).asyncMode));
+                            LOG_DEBUG("{}: binaryOutputRegister.at({}).asyncMode changed to {}", nameId(), b, vn::protocol::uart::str(_binaryOutputRegister.at(b).asyncMode));
+
+                            std::vector<size_t> binaryOutputRegistersToUpdate;
+                            binaryOutputRegistersToUpdate.push_back(b);
+                            if (_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output2 && b == 0)
+                            {
+                                _binaryOutputRegister.at(1).asyncMode = asyncMode.first;
+                                LOG_DEBUG("{}: binaryOutputRegister.at({}).asyncMode changed to {}", nameId(), 1, vn::protocol::uart::str(_binaryOutputRegister.at(1).asyncMode));
+                                binaryOutputRegistersToUpdate.push_back(1);
+                            }
+                            else if ((_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output3 && b == 0)
+                                     || (_binaryOutputRegisterMerge == BinaryRegisterMerge::Output2_Output3 && b == 1))
+                            {
+                                _binaryOutputRegister.at(2).asyncMode = asyncMode.first;
+                                LOG_DEBUG("{}: binaryOutputRegister.at({}).asyncMode changed to {}", nameId(), 2, vn::protocol::uart::str(_binaryOutputRegister.at(2).asyncMode));
+                                binaryOutputRegistersToUpdate.push_back(2);
+                            }
                             flow::ApplyChanges();
+
                             if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
-                                try
+                                for (const auto& binUpdate : binaryOutputRegistersToUpdate)
                                 {
-                                    switch (b)
+                                    try
                                     {
-                                    case 0:
-                                        _vs.writeBinaryOutput1(_binaryOutputRegister.at(0));
-                                        break;
-                                    case 1:
-                                        _vs.writeBinaryOutput2(_binaryOutputRegister.at(1));
-                                        break;
-                                    case 2:
-                                        _vs.writeBinaryOutput3(_binaryOutputRegister.at(2));
-                                        break;
-                                    default:
-                                        break;
+                                        switch (binUpdate)
+                                        {
+                                        case 0:
+                                            _vs.writeBinaryOutput1(_binaryOutputRegister.at(binUpdate));
+                                            break;
+                                        case 1:
+                                            _vs.writeBinaryOutput2(_binaryOutputRegister.at(binUpdate));
+                                            break;
+                                        case 2:
+                                            _vs.writeBinaryOutput3(_binaryOutputRegister.at(binUpdate));
+                                            break;
+                                        default:
+                                            break;
+                                        }
                                     }
-                                }
-                                catch (const std::exception& e)
-                                {
-                                    LOG_ERROR("{}: Could not configure the binaryOutputRegister {}: {}", nameId(), b + 1, e.what());
-                                    deinitializeNode();
+                                    catch (const std::exception& e)
+                                    {
+                                        LOG_ERROR("{}: Could not configure the binaryOutputRegister {}: {}", nameId(), binUpdate + 1, e.what());
+                                        deinitializeNode();
+                                    }
                                 }
                             }
                             else
@@ -2496,36 +2523,64 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     _binaryOutputRegister.at(b).rateDivisor = _dividerFrequency.first.at(_binaryOutputSelectedFrequency.at(b));
                     LOG_DEBUG("{}: Frequency of Binary Group {} changed to {}", nameId(), b + 1, _dividerFrequency.second.at(_binaryOutputSelectedFrequency.at(b)));
+
+                    std::vector<size_t> binaryOutputRegistersToUpdate;
+                    binaryOutputRegistersToUpdate.push_back(b);
+                    if (_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output2 && b == 0)
+                    {
+                        _binaryOutputSelectedFrequency.at(1) = _binaryOutputSelectedFrequency.at(b);
+                        _binaryOutputRegister.at(1).rateDivisor = _dividerFrequency.first.at(_binaryOutputSelectedFrequency.at(1));
+                        LOG_DEBUG("{}: Frequency of Binary Group {} changed to {}", nameId(), 1 + 1, _dividerFrequency.second.at(_binaryOutputSelectedFrequency.at(1)));
+                        binaryOutputRegistersToUpdate.push_back(1);
+                    }
+                    else if ((_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output3 && b == 0)
+                             || (_binaryOutputRegisterMerge == BinaryRegisterMerge::Output2_Output3 && b == 1))
+                    {
+                        _binaryOutputSelectedFrequency.at(2) = _binaryOutputSelectedFrequency.at(b);
+                        _binaryOutputRegister.at(2).rateDivisor = _dividerFrequency.first.at(_binaryOutputSelectedFrequency.at(2));
+                        LOG_DEBUG("{}: Frequency of Binary Group {} changed to {}", nameId(), 2 + 1, _dividerFrequency.second.at(_binaryOutputSelectedFrequency.at(2)));
+                        binaryOutputRegistersToUpdate.push_back(2);
+                    }
+
                     flow::ApplyChanges();
                     if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
-                        try
+                        for (const auto& binUpdate : binaryOutputRegistersToUpdate)
                         {
-                            switch (b)
+                            try
                             {
-                            case 0:
-                                _vs.writeBinaryOutput1(_binaryOutputRegister.at(b));
-                                break;
-                            case 1:
-                                _vs.writeBinaryOutput2(_binaryOutputRegister.at(b));
-                                break;
-                            case 2:
-                                _vs.writeBinaryOutput3(_binaryOutputRegister.at(b));
-                                break;
-                            default:
-                                break;
+                                switch (binUpdate)
+                                {
+                                case 0:
+                                    _vs.writeBinaryOutput1(_binaryOutputRegister.at(binUpdate));
+                                    break;
+                                case 1:
+                                    _vs.writeBinaryOutput2(_binaryOutputRegister.at(binUpdate));
+                                    break;
+                                case 2:
+                                    _vs.writeBinaryOutput3(_binaryOutputRegister.at(binUpdate));
+                                    break;
+                                default:
+                                    break;
+                                }
                             }
-                        }
-                        catch (const std::exception& e)
-                        {
-                            LOG_ERROR("{}: Could not configure the binaryOutputRegister {}: {}", nameId(), b + 1, e.what());
-                            deinitializeNode();
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the binaryOutputRegister {}: {}", nameId(), binUpdate + 1, e.what());
+                                deinitializeNode();
+                            }
                         }
                     }
                     else
                     {
                         deinitializeNode();
                     }
+                }
+                if ((_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output2 && b == 1)
+                    || (_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output3 && b == 2)
+                    || (_binaryOutputRegisterMerge == BinaryRegisterMerge::Output2_Output3 && b == 2))
+                {
+                    ImGui::PopDisabled();
                 }
 
                 if (ImGui::BeginTable(fmt::format("##VectorNavSensorConfig ({})", size_t(id)).c_str(), 7,
@@ -2726,6 +2781,38 @@ void NAV::VectorNavSensor::guiConfig()
                 ImGui::TreePop();
             }
         }
+
+        if (ImGui::Combo(fmt::format("Merge Binary outputs").c_str(), reinterpret_cast<int*>(&_binaryOutputRegisterMerge), "None\0"
+                                                                                                                           "1 <-> 2\0"
+                                                                                                                           "1 <-> 3\0"
+                                                                                                                           "2 <-> 3\0\0"))
+        {
+            flow::ApplyChanges();
+            switch (_binaryOutputRegisterMerge)
+            {
+            case BinaryRegisterMerge::Output1_Output2:
+                _binaryOutputRegister.at(1).rateDivisor = _binaryOutputRegister.at(0).rateDivisor;
+                _binaryOutputSelectedFrequency.at(1) = _binaryOutputSelectedFrequency.at(0);
+                _binaryOutputRegister.at(1).asyncMode = _binaryOutputRegister.at(0).asyncMode;
+                break;
+            case BinaryRegisterMerge::Output1_Output3:
+                _binaryOutputRegister.at(2).rateDivisor = _binaryOutputRegister.at(0).rateDivisor;
+                _binaryOutputSelectedFrequency.at(2) = _binaryOutputSelectedFrequency.at(0);
+                _binaryOutputRegister.at(2).asyncMode = _binaryOutputRegister.at(0).asyncMode;
+                break;
+            case BinaryRegisterMerge::Output2_Output3:
+                _binaryOutputRegister.at(2).rateDivisor = _binaryOutputRegister.at(1).rateDivisor;
+                _binaryOutputSelectedFrequency.at(2) = _binaryOutputSelectedFrequency.at(1);
+                _binaryOutputRegister.at(2).asyncMode = _binaryOutputRegister.at(1).asyncMode;
+                break;
+            default:
+                break;
+            }
+        }
+        ImGui::SameLine();
+        NAV::gui::widgets::HelpMarker("VectorNav sensors have a buffer overflow if packages get too big (SatInfo/RawMeas selected and a lot of satellites). "
+                                      "A workaround is, to split the data into different Binary Outputs. "
+                                      "This option merges the outputs into a single observation.");
 
         // TODO: Add Gui Config for NMEA output - User manual VN-310 - 8.2.14 (p 103)
     }
@@ -4976,6 +5063,7 @@ void NAV::VectorNavSensor::guiConfig()
     j["syncInPin"] = _syncInPin;
     j["synchronizationControlRegister"] = _synchronizationControlRegister;
     j["communicationProtocolControlRegister"] = _communicationProtocolControlRegister;
+    j["binaryOutputRegisterMerge"] = _binaryOutputRegisterMerge;
     for (size_t b = 0; b < 3; b++)
     {
         j[fmt::format("binaryOutputRegister{}", b + 1)] = _binaryOutputRegister.at(b);
@@ -5089,6 +5177,10 @@ void NAV::VectorNavSensor::restore(json const& j)
     if (j.contains("communicationProtocolControlRegister"))
     {
         j.at("communicationProtocolControlRegister").get_to(_communicationProtocolControlRegister);
+    }
+    if (j.contains("binaryOutputRegisterMerge"))
+    {
+        j.at("binaryOutputRegisterMerge").get_to(_binaryOutputRegisterMerge);
     }
     for (size_t b = 0; b < 3; b++)
     {
@@ -5219,6 +5311,7 @@ bool NAV::VectorNavSensor::resetNode()
 {
     _timeSyncOut.ppsTime = InsTime{};
     _timeSyncOut.syncOutCnt = 0;
+    _binaryOutputRegisterMergeObservation = nullptr;
 
     return true;
 }
@@ -6777,6 +6870,12 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     }
                     vnSensor->_lastMessageTime.at(b) = obs->insTime.value();
                 }
+
+                // TODO: Merge observations
+                // if (_binaryOutputRegisterMerge != BinaryRegisterMerge::None && _binaryOutputRegisterMergeObservation == nullptr)
+                // {
+                //     _binaryOutputRegisterMergeObservation = obs;
+                // }
 
                 // Calls all the callbacks
                 vnSensor->invokeCallbacks(b + 1, obs);

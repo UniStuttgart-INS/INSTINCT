@@ -168,6 +168,21 @@ class VectorNavSensor : public Imu, public UartSensor
         vn::protocol::uart::ErrorMode::ERRORMODE_SEND            // ErrorMode
     };
 
+    /// Possible Merge combinations between the binary output registers
+    enum class BinaryRegisterMerge
+    {
+        None,
+        Output1_Output2,
+        Output1_Output3,
+        Output2_Output3,
+    };
+
+    /// Merge binary output registers together. This has to be done because VectorNav sensors have a buffer overflow when packages get too big.
+    BinaryRegisterMerge _binaryOutputRegisterMerge = BinaryRegisterMerge::None;
+
+    /// First observation received, which should be merged together
+    std::shared_ptr<VectorNavBinaryOutput> _binaryOutputRegisterMergeObservation = nullptr;
+
     /// @brief Binary Output Register 1 - 3.
     ///
     /// This register allows the user to construct a custom binary output message that
