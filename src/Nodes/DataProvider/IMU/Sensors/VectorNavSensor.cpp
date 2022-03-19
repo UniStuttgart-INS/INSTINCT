@@ -6003,7 +6003,7 @@ void NAV::VectorNavSensor::deinitialize()
     }
 }
 
-void NAV::VectorNavSensor::mergeVectorNavBinaryObservations(std::shared_ptr<VectorNavBinaryOutput> target, std::shared_ptr<VectorNavBinaryOutput> source)
+void NAV::VectorNavSensor::mergeVectorNavBinaryObservations(const std::shared_ptr<VectorNavBinaryOutput>& target, const std::shared_ptr<VectorNavBinaryOutput>& source)
 {
     target->insTime = target->insTime.has_value() ? target->insTime : source->insTime;
     // Group 2 (Time)

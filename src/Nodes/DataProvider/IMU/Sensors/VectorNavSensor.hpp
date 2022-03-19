@@ -81,7 +81,7 @@ class VectorNavSensor : public Imu, public UartSensor
     /// @brief Merges the content of the two observations into one
     /// @param[in, out] target The observation used to store the merged information
     /// @param[in] source The observation where information is taken from
-    static void mergeVectorNavBinaryObservations(std::shared_ptr<VectorNavBinaryOutput> target, std::shared_ptr<VectorNavBinaryOutput> source);
+    static void mergeVectorNavBinaryObservations(const std::shared_ptr<VectorNavBinaryOutput>& target, const std::shared_ptr<VectorNavBinaryOutput>& source);
 
     /// @brief Callback handler for notifications of new asynchronous data packets received
     /// @param[in, out] userData Pointer to the data we supplied when we called registerAsyncPacketReceivedHandler
