@@ -33,16 +33,6 @@ class TimeStatus
 
     /// @brief Default constructor
     TimeStatus() = default;
-    /// @brief Destructor
-    ~TimeStatus() = default;
-    /// @brief Copy constructor
-    TimeStatus(const TimeStatus&) = delete;
-    /// @brief Move constructor
-    TimeStatus(TimeStatus&&) = delete;
-    /// @brief Copy assignment operator
-    TimeStatus& operator=(const TimeStatus&) = delete;
-    /// @brief Move assignment operator
-    TimeStatus& operator=(TimeStatus&&) = delete;
 
     /// @brief Returns a reference to the status
     [[nodiscard]] constexpr uint8_t& status()
@@ -343,16 +333,6 @@ class VpeStatus
 
     /// @brief Default constructor
     VpeStatus() = default;
-    /// @brief Destructor
-    ~VpeStatus() = default;
-    /// @brief Copy constructor
-    VpeStatus(const VpeStatus&) = delete;
-    /// @brief Move constructor
-    VpeStatus(VpeStatus&&) = delete;
-    /// @brief Copy assignment operator
-    VpeStatus& operator=(const VpeStatus&) = delete;
-    /// @brief Move assignment operator
-    VpeStatus& operator=(VpeStatus&&) = delete;
 
     /// @brief Returns a reference to the status
     [[nodiscard]] constexpr uint16_t& status()
@@ -451,16 +431,6 @@ class InsStatus
 
     /// @brief Default constructor
     InsStatus() = default;
-    /// @brief Destructor
-    ~InsStatus() = default;
-    /// @brief Copy constructor
-    InsStatus(const InsStatus&) = delete;
-    /// @brief Move constructor
-    InsStatus(InsStatus&&) = delete;
-    /// @brief Copy assignment operator
-    InsStatus& operator=(const InsStatus&) = delete;
-    /// @brief Move assignment operator
-    InsStatus& operator=(InsStatus&&) = delete;
 
     /// @brief Returns a reference to the status
     [[nodiscard]] constexpr uint16_t& status()
