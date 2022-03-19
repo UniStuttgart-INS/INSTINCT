@@ -9,6 +9,8 @@
 #include "Nodes/DataProvider/Protocol/UartSensor.hpp"
 #include "vn/sensors.h"
 
+#include "NodeData/IMU/VectorNavBinaryOutput.hpp"
+
 #include "Navigation/Time/InsTime.hpp"
 #include "util/Container/ScrollingBuffer.hpp"
 
@@ -75,6 +77,11 @@ class VectorNavSensor : public Imu, public UartSensor
 
     /// @brief Deinitialize the node
     void deinitialize() override;
+
+    /// @brief Merges the content of the two observations into one
+    /// @param[in, out] target The observation used to store the merged information
+    /// @param[in] source The observation where information is taken from
+    static void mergeVectorNavBinaryObservations(std::shared_ptr<VectorNavBinaryOutput> target, std::shared_ptr<VectorNavBinaryOutput> source);
 
     /// @brief Callback handler for notifications of new asynchronous data packets received
     /// @param[in, out] userData Pointer to the data we supplied when we called registerAsyncPacketReceivedHandler
@@ -182,6 +189,8 @@ class VectorNavSensor : public Imu, public UartSensor
 
     /// First observation received, which should be merged together
     std::shared_ptr<VectorNavBinaryOutput> _binaryOutputRegisterMergeObservation = nullptr;
+    /// Index of the binary output for the merge observation stored
+    size_t _binaryOutputRegisterMergeIndex{};
 
     /// @brief Binary Output Register 1 - 3.
     ///

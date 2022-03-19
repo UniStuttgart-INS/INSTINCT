@@ -13,7 +13,6 @@ namespace nm = NAV::NodeManager;
 #include <imgui_internal.h>
 
 #include "NodeData/General/StringObs.hpp"
-#include "NodeData/IMU/VectorNavBinaryOutput.hpp"
 
 #include "util/Time/TimeBase.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
@@ -2861,7 +2860,6 @@ void NAV::VectorNavSensor::guiConfig()
             gui::widgets::HelpMarker("The rotation happens in ZYX Order");
             ImGui::Indent();
 
-            // TODO: Angles to define this
             Eigen::Matrix3d dcm;
             dcm << _referenceFrameRotationMatrix.e00, _referenceFrameRotationMatrix.e01, _referenceFrameRotationMatrix.e02,
                 _referenceFrameRotationMatrix.e10, _referenceFrameRotationMatrix.e11, _referenceFrameRotationMatrix.e12,
@@ -6005,6 +6003,145 @@ void NAV::VectorNavSensor::deinitialize()
     }
 }
 
+void NAV::VectorNavSensor::mergeVectorNavBinaryObservations(std::shared_ptr<VectorNavBinaryOutput> target, std::shared_ptr<VectorNavBinaryOutput> source)
+{
+    target->insTime = target->insTime.has_value() ? target->insTime : source->insTime;
+    // Group 2 (Time)
+    if (!target->timeOutputs && source->timeOutputs)
+    {
+        target->timeOutputs = source->timeOutputs;
+    }
+    else if (target->timeOutputs && source->timeOutputs)
+    {
+        target->timeOutputs->timeStartup = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP ? target->timeOutputs->timeStartup : source->timeOutputs->timeStartup;
+        target->timeOutputs->timeGps = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS ? target->timeOutputs->timeGps : source->timeOutputs->timeGps;
+        target->timeOutputs->gpsTow = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW ? target->timeOutputs->gpsTow : source->timeOutputs->gpsTow;
+        target->timeOutputs->gpsWeek = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK ? target->timeOutputs->gpsWeek : source->timeOutputs->gpsWeek;
+        target->timeOutputs->timeSyncIn = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN ? target->timeOutputs->timeSyncIn : source->timeOutputs->timeSyncIn;
+        target->timeOutputs->timePPS = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS ? target->timeOutputs->timePPS : source->timeOutputs->timePPS;
+        target->timeOutputs->timeUtc = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC ? target->timeOutputs->timeUtc : source->timeOutputs->timeUtc;
+        target->timeOutputs->syncInCnt = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT ? target->timeOutputs->syncInCnt : source->timeOutputs->syncInCnt;
+        target->timeOutputs->syncOutCnt = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT ? target->timeOutputs->syncOutCnt : source->timeOutputs->syncOutCnt;
+        target->timeOutputs->timeStatus = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS ? target->timeOutputs->timeStatus : source->timeOutputs->timeStatus;
+
+        target->timeOutputs->timeField |= source->timeOutputs->timeField;
+    }
+    // Group 3 (IMU)
+    if (!target->imuOutputs && source->imuOutputs)
+    {
+        target->imuOutputs = source->imuOutputs;
+    }
+    else if (target->imuOutputs && source->imuOutputs)
+    {
+        target->imuOutputs->imuStatus = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_IMUSTATUS ? target->imuOutputs->imuStatus : source->imuOutputs->imuStatus;
+        target->imuOutputs->uncompMag = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG ? target->imuOutputs->uncompMag : source->imuOutputs->uncompMag;
+        target->imuOutputs->uncompAccel = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL ? target->imuOutputs->uncompAccel : source->imuOutputs->uncompAccel;
+        target->imuOutputs->uncompGyro = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO ? target->imuOutputs->uncompGyro : source->imuOutputs->uncompGyro;
+        target->imuOutputs->temp = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_TEMP ? target->imuOutputs->temp : source->imuOutputs->temp;
+        target->imuOutputs->pres = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_PRES ? target->imuOutputs->pres : source->imuOutputs->pres;
+        target->imuOutputs->deltaTime = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA ? target->imuOutputs->deltaTime : source->imuOutputs->deltaTime;
+        target->imuOutputs->deltaTheta = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA ? target->imuOutputs->deltaTheta : source->imuOutputs->deltaTheta;
+        target->imuOutputs->deltaV = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL ? target->imuOutputs->deltaV : source->imuOutputs->deltaV;
+        target->imuOutputs->mag = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_MAG ? target->imuOutputs->mag : source->imuOutputs->mag;
+        target->imuOutputs->accel = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL ? target->imuOutputs->accel : source->imuOutputs->accel;
+        target->imuOutputs->angularRate = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE ? target->imuOutputs->angularRate : source->imuOutputs->angularRate;
+
+        target->imuOutputs->imuField |= source->imuOutputs->imuField;
+    }
+    // Group 4 (GNSS1)
+    if (!target->gnss1Outputs && source->gnss1Outputs)
+    {
+        target->gnss1Outputs = source->gnss1Outputs;
+    }
+    else if (target->gnss1Outputs && source->gnss1Outputs)
+    {
+        target->gnss1Outputs->timeUtc = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC ? target->gnss1Outputs->timeUtc : source->gnss1Outputs->timeUtc;
+        target->gnss1Outputs->tow = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW ? target->gnss1Outputs->tow : source->gnss1Outputs->tow;
+        target->gnss1Outputs->week = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK ? target->gnss1Outputs->week : source->gnss1Outputs->week;
+        target->gnss1Outputs->numSats = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS ? target->gnss1Outputs->numSats : source->gnss1Outputs->numSats;
+        target->gnss1Outputs->fix = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_FIX ? target->gnss1Outputs->fix : source->gnss1Outputs->fix;
+        target->gnss1Outputs->posLla = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA ? target->gnss1Outputs->posLla : source->gnss1Outputs->posLla;
+        target->gnss1Outputs->posEcef = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF ? target->gnss1Outputs->posEcef : source->gnss1Outputs->posEcef;
+        target->gnss1Outputs->velNed = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED ? target->gnss1Outputs->velNed : source->gnss1Outputs->velNed;
+        target->gnss1Outputs->velEcef = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF ? target->gnss1Outputs->velEcef : source->gnss1Outputs->velEcef;
+        target->gnss1Outputs->posU = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSU ? target->gnss1Outputs->posU : source->gnss1Outputs->posU;
+        target->gnss1Outputs->velU = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELU ? target->gnss1Outputs->velU : source->gnss1Outputs->velU;
+        target->gnss1Outputs->timeU = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU ? target->gnss1Outputs->timeU : source->gnss1Outputs->timeU;
+        target->gnss1Outputs->timeInfo = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO ? target->gnss1Outputs->timeInfo : source->gnss1Outputs->timeInfo;
+        target->gnss1Outputs->dop = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP ? target->gnss1Outputs->dop : source->gnss1Outputs->dop;
+        target->gnss1Outputs->satInfo = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO ? target->gnss1Outputs->satInfo : source->gnss1Outputs->satInfo;
+        target->gnss1Outputs->raw = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS ? target->gnss1Outputs->raw : source->gnss1Outputs->raw;
+
+        target->gnss1Outputs->gnssField |= source->gnss1Outputs->gnssField;
+    }
+    // Group 5 (Attitude)
+    if (!target->attitudeOutputs && source->attitudeOutputs)
+    {
+        target->attitudeOutputs = source->attitudeOutputs;
+    }
+    else if (target->attitudeOutputs && source->attitudeOutputs)
+    {
+        target->attitudeOutputs->vpeStatus = target->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS ? target->attitudeOutputs->vpeStatus : source->attitudeOutputs->vpeStatus;
+        target->attitudeOutputs->ypr = target->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL ? target->attitudeOutputs->ypr : source->attitudeOutputs->ypr;
+        target->attitudeOutputs->qtn = target->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION ? target->attitudeOutputs->qtn : source->attitudeOutputs->qtn;
+        target->attitudeOutputs->dcm = target->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM ? target->attitudeOutputs->dcm : source->attitudeOutputs->dcm;
+        target->attitudeOutputs->magNed = target->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED ? target->attitudeOutputs->magNed : source->attitudeOutputs->magNed;
+        target->attitudeOutputs->accelNed = target->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_ACCELNED ? target->attitudeOutputs->accelNed : source->attitudeOutputs->accelNed;
+        target->attitudeOutputs->linearAccelBody = target->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELBODY ? target->attitudeOutputs->linearAccelBody : source->attitudeOutputs->linearAccelBody;
+        target->attitudeOutputs->linearAccelNed = target->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELNED ? target->attitudeOutputs->linearAccelNed : source->attitudeOutputs->linearAccelNed;
+        target->attitudeOutputs->yprU = target->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU ? target->attitudeOutputs->yprU : source->attitudeOutputs->yprU;
+
+        target->attitudeOutputs->attitudeField |= source->attitudeOutputs->attitudeField;
+    }
+    // Group 6 (INS)
+    if (!target->insOutputs && source->insOutputs)
+    {
+        target->insOutputs = source->insOutputs;
+    }
+    else if (target->insOutputs && source->insOutputs)
+    {
+        target->insOutputs->insStatus = target->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS ? target->insOutputs->insStatus : source->insOutputs->insStatus;
+        target->insOutputs->posLla = target->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA ? target->insOutputs->posLla : source->insOutputs->posLla;
+        target->insOutputs->posEcef = target->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSECEF ? target->insOutputs->posEcef : source->insOutputs->posEcef;
+        target->insOutputs->velBody = target->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELBODY ? target->insOutputs->velBody : source->insOutputs->velBody;
+        target->insOutputs->velNed = target->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELNED ? target->insOutputs->velNed : source->insOutputs->velNed;
+        target->insOutputs->velEcef = target->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELECEF ? target->insOutputs->velEcef : source->insOutputs->velEcef;
+        target->insOutputs->magEcef = target->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_MAGECEF ? target->insOutputs->magEcef : source->insOutputs->magEcef;
+        target->insOutputs->accelEcef = target->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_ACCELECEF ? target->insOutputs->accelEcef : source->insOutputs->accelEcef;
+        target->insOutputs->linearAccelEcef = target->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_LINEARACCELECEF ? target->insOutputs->linearAccelEcef : source->insOutputs->linearAccelEcef;
+        target->insOutputs->posU = target->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSU ? target->insOutputs->posU : source->insOutputs->posU;
+        target->insOutputs->velU = target->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELU ? target->insOutputs->velU : source->insOutputs->velU;
+
+        target->insOutputs->insField |= source->insOutputs->insField;
+    }
+    // Group 7 (GNSS2)
+    if (!target->gnss2Outputs && source->gnss2Outputs)
+    {
+        target->gnss2Outputs = source->gnss2Outputs;
+    }
+    else if (target->gnss2Outputs && source->gnss2Outputs)
+    {
+        target->gnss2Outputs->timeUtc = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC ? target->gnss2Outputs->timeUtc : source->gnss2Outputs->timeUtc;
+        target->gnss2Outputs->tow = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW ? target->gnss2Outputs->tow : source->gnss2Outputs->tow;
+        target->gnss2Outputs->week = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK ? target->gnss2Outputs->week : source->gnss2Outputs->week;
+        target->gnss2Outputs->numSats = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS ? target->gnss2Outputs->numSats : source->gnss2Outputs->numSats;
+        target->gnss2Outputs->fix = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_FIX ? target->gnss2Outputs->fix : source->gnss2Outputs->fix;
+        target->gnss2Outputs->posLla = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA ? target->gnss2Outputs->posLla : source->gnss2Outputs->posLla;
+        target->gnss2Outputs->posEcef = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF ? target->gnss2Outputs->posEcef : source->gnss2Outputs->posEcef;
+        target->gnss2Outputs->velNed = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED ? target->gnss2Outputs->velNed : source->gnss2Outputs->velNed;
+        target->gnss2Outputs->velEcef = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF ? target->gnss2Outputs->velEcef : source->gnss2Outputs->velEcef;
+        target->gnss2Outputs->posU = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSU ? target->gnss2Outputs->posU : source->gnss2Outputs->posU;
+        target->gnss2Outputs->velU = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELU ? target->gnss2Outputs->velU : source->gnss2Outputs->velU;
+        target->gnss2Outputs->timeU = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU ? target->gnss2Outputs->timeU : source->gnss2Outputs->timeU;
+        target->gnss2Outputs->timeInfo = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO ? target->gnss2Outputs->timeInfo : source->gnss2Outputs->timeInfo;
+        target->gnss2Outputs->dop = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP ? target->gnss2Outputs->dop : source->gnss2Outputs->dop;
+        target->gnss2Outputs->satInfo = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO ? target->gnss2Outputs->satInfo : source->gnss2Outputs->satInfo;
+        target->gnss2Outputs->raw = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS ? target->gnss2Outputs->raw : source->gnss2Outputs->raw;
+
+        target->gnss2Outputs->gnssField |= source->gnss2Outputs->gnssField;
+    }
+}
+
 void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn::protocol::uart::Packet& p, [[maybe_unused]] size_t index)
 {
     auto* vnSensor = static_cast<VectorNavSensor*>(userData);
@@ -6871,14 +7008,65 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     vnSensor->_lastMessageTime.at(b) = obs->insTime.value();
                 }
 
-                // TODO: Merge observations
-                // if (_binaryOutputRegisterMerge != BinaryRegisterMerge::None && _binaryOutputRegisterMergeObservation == nullptr)
-                // {
-                //     _binaryOutputRegisterMergeObservation = obs;
-                // }
+                if ((vnSensor->_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output2 && (b == 0 || b == 1))
+                    || (vnSensor->_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output3 && (b == 0 || b == 2))
+                    || (vnSensor->_binaryOutputRegisterMerge == BinaryRegisterMerge::Output2_Output3 && (b == 1 || b == 2)))
+                {
+                    if (vnSensor->_binaryOutputRegisterMergeObservation == nullptr)
+                    {
+                        vnSensor->_binaryOutputRegisterMergeObservation = obs;
+                        vnSensor->_binaryOutputRegisterMergeIndex = b;
+                    }
+                    else
+                    {
+                        if ((obs->insTime.has_value() && vnSensor->_binaryOutputRegisterMergeObservation->insTime.has_value()
+                             && obs->insTime.value() == vnSensor->_binaryOutputRegisterMergeObservation->insTime.value())
+                            || (obs->timeOutputs != nullptr && vnSensor->_binaryOutputRegisterMergeObservation->timeOutputs != nullptr
+                                && obs->timeOutputs->timeField & vn::protocol::uart::TIMEGROUP_TIMESTARTUP
+                                && vnSensor->_binaryOutputRegisterMergeObservation->timeOutputs->timeField & vn::protocol::uart::TIMEGROUP_TIMESTARTUP
+                                && obs->timeOutputs->timeStartup == vnSensor->_binaryOutputRegisterMergeObservation->timeOutputs->timeStartup))
+                        {
+                            // Stored and new observation have same time, so merge them
+                            mergeVectorNavBinaryObservations(obs, vnSensor->_binaryOutputRegisterMergeObservation);
+                            vnSensor->_binaryOutputRegisterMergeObservation = nullptr;
 
-                // Calls all the callbacks
-                vnSensor->invokeCallbacks(b + 1, obs);
+                            vnSensor->invokeCallbacks(b + 1, obs);
+                        }
+                        else
+                        {
+                            std::stringstream sstreamOld;
+                            if (obs->insTime.has_value() && vnSensor->_binaryOutputRegisterMergeObservation->insTime.has_value())
+                            {
+                                sstreamOld << vnSensor->_binaryOutputRegisterMergeObservation->insTime.value();
+                            }
+                            else
+                            {
+                                sstreamOld << vnSensor->_binaryOutputRegisterMergeObservation->timeOutputs->timeStartup;
+                            }
+                            std::stringstream sstreamNew;
+                            if (obs->insTime.has_value() && vnSensor->_binaryOutputRegisterMergeObservation->insTime.has_value())
+                            {
+                                sstreamOld << obs->insTime.value();
+                            }
+                            else
+                            {
+                                sstreamOld << obs->timeOutputs->timeStartup;
+                            }
+
+                            LOG_WARN("{}: Merging failed, because timestamps do not match. Potentially lost a message (old {}, new {})", vnSensor->nameId(), sstreamOld.str(), sstreamNew.str());
+
+                            // Send out old message and save new one
+                            vnSensor->invokeCallbacks(vnSensor->_binaryOutputRegisterMergeIndex + 1, vnSensor->_binaryOutputRegisterMergeObservation);
+                            vnSensor->_binaryOutputRegisterMergeObservation = obs;
+                            vnSensor->_binaryOutputRegisterMergeIndex = b;
+                        }
+                    }
+                }
+                else
+                {
+                    // Calls all the callbacks
+                    vnSensor->invokeCallbacks(b + 1, obs);
+                }
             }
         }
     }
