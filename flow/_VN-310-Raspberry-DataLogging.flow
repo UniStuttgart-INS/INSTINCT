@@ -21,6 +21,28 @@
             "endPinId": 120,
             "id": 123,
             "startPinId": 115
+        },
+        "link-126": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 124,
+            "id": 126,
+            "startPinId": 115
+        },
+        "link-129": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 127,
+            "id": 129,
+            "startPinId": 114
         }
     },
     "nodes": {
@@ -296,7 +318,7 @@
             "data": {
                 "FileWriter": {
                     "fileType": 2,
-                    "path": "logs/vn310-imu.csv"
+                    "path": "vn310-imu.csv"
                 }
             },
             "enabled": true,
@@ -308,7 +330,7 @@
                 }
             ],
             "kind": "Blueprint",
-            "name": "VectorNavDataLogger - IMU",
+            "name": "VectorNavDataLogger - IMU - csv",
             "outputPins": [],
             "pos": {
                 "x": 664.0,
@@ -324,7 +346,7 @@
             "data": {
                 "FileWriter": {
                     "fileType": 2,
-                    "path": "logs/vn310-gnss.csv"
+                    "path": "vn310-gnss.csv"
                 }
             },
             "enabled": true,
@@ -336,11 +358,67 @@
                 }
             ],
             "kind": "Blueprint",
-            "name": "VectorNavDataLogger - GNSS",
+            "name": "VectorNavDataLogger - GNSS - csv",
             "outputPins": [],
             "pos": {
                 "x": 675.0,
                 "y": 127.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavDataLogger"
+        },
+        "node-125": {
+            "data": {
+                "FileWriter": {
+                    "fileType": 1,
+                    "path": "vn310-gnss.vnb"
+                }
+            },
+            "enabled": true,
+            "id": 125,
+            "inputPins": [
+                {
+                    "id": 124,
+                    "name": "BinaryOutput"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "VectorNavDataLogger - GNSS - bin",
+            "outputPins": [],
+            "pos": {
+                "x": 680.0,
+                "y": 206.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavDataLogger"
+        },
+        "node-128": {
+            "data": {
+                "FileWriter": {
+                    "fileType": 1,
+                    "path": "vn310-imu.vnb"
+                }
+            },
+            "enabled": true,
+            "id": 128,
+            "inputPins": [
+                {
+                    "id": 127,
+                    "name": "BinaryOutput"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "VectorNavDataLogger IMU - bin",
+            "outputPins": [],
+            "pos": {
+                "x": 664.0,
+                "y": -66.0
             },
             "size": {
                 "x": 0.0,
