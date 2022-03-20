@@ -210,14 +210,8 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
         {
             if (flow::GetCurrentFilename().empty())
             {
-                if (auto targetPath = flow::GetFlowPath();
-                    std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
-                {
-                    LOG_DEBUG("Changing current path to {}", std::filesystem::current_path());
-                    std::filesystem::current_path(targetPath);
-                }
-                igfd::ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
-                igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
+                ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", (flow::GetFlowPath() / ".").string(), 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
+                ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, ".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
             }
             else
             {
@@ -229,16 +223,16 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
             }
         }
 
-        if (igfd::ImGuiFileDialog::Instance()->FileDialog("Save Flow", ImGuiWindowFlags_NoCollapse, ImVec2(600, 400)))
+        if (ImGuiFileDialog::Instance()->Display("Save Flow", ImGuiWindowFlags_NoCollapse, ImVec2(600, 400)))
         {
-            if (igfd::ImGuiFileDialog::Instance()->IsOk)
+            if (ImGuiFileDialog::Instance()->IsOk())
             {
-                flow::SetCurrentFilename(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
+                flow::SetCurrentFilename(ImGuiFileDialog::Instance()->GetFilePathName());
                 flow::SaveFlowAs(flow::GetCurrentFilename());
             }
 
             globalAction = GlobalActions::None;
-            igfd::ImGuiFileDialog::Instance()->CloseDialog();
+            ImGuiFileDialog::Instance()->Close();
             Quit();
             ImGui::CloseCurrentPopup();
         }
@@ -262,14 +256,8 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
 
 void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
 {
-    if (auto targetPath = flow::GetFlowPath();
-        std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
-    {
-        LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path());
-        std::filesystem::current_path(targetPath);
-    }
-    igfd::ImGuiFileDialog::Instance()->OpenDialog("Save Flow", "Save Flow", ".flow", "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
-    igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
+    ImGuiFileDialog::Instance()->OpenDialog("Save Flow", "Save Flow", ".flow", (flow::GetFlowPath() / ".").string(), 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
+    ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, ".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
 
     auto& io = ImGui::GetIO();
     if (!io.KeyCtrl && !io.KeyAlt && !io.KeyShift && !io.KeySuper)
@@ -277,23 +265,21 @@ void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
         if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
         {
             globalAction = GlobalActions::None;
-            igfd::ImGuiFileDialog::Instance()->CloseDialog();
-            std::filesystem::current_path(flow::GetProgramRootPath());
+            ImGuiFileDialog::Instance()->Close();
             return;
         }
     }
 
-    if (igfd::ImGuiFileDialog::Instance()->FileDialog("Save Flow", ImGuiWindowFlags_NoCollapse, ImVec2(600, 400)))
+    if (ImGuiFileDialog::Instance()->Display("Save Flow", ImGuiWindowFlags_NoCollapse, ImVec2(600, 400)))
     {
-        if (igfd::ImGuiFileDialog::Instance()->IsOk)
+        if (ImGuiFileDialog::Instance()->IsOk())
         {
-            flow::SetCurrentFilename(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
+            flow::SetCurrentFilename(ImGuiFileDialog::Instance()->GetFilePathName());
             flow::SaveFlowAs(flow::GetCurrentFilename());
         }
 
         globalAction = GlobalActions::None;
-        igfd::ImGuiFileDialog::Instance()->CloseDialog();
-        std::filesystem::current_path(flow::GetProgramRootPath());
+        ImGuiFileDialog::Instance()->Close();
     }
 }
 
@@ -317,14 +303,8 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
         {
             if (flow::GetCurrentFilename().empty())
             {
-                if (auto targetPath = flow::GetFlowPath();
-                    std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
-                {
-                    LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path());
-                    std::filesystem::current_path(targetPath);
-                }
-                igfd::ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
-                igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
+                ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", (flow::GetFlowPath() / ".").string(), 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
+                ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, ".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
             }
             else
             {
@@ -337,14 +317,14 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
             }
         }
 
-        if (igfd::ImGuiFileDialog::Instance()->FileDialog("Save Flow", ImGuiWindowFlags_NoCollapse, ImVec2(600, 400)))
+        if (ImGuiFileDialog::Instance()->Display("Save Flow", ImGuiWindowFlags_NoCollapse, ImVec2(600, 400)))
         {
-            if (igfd::ImGuiFileDialog::Instance()->IsOk)
+            if (ImGuiFileDialog::Instance()->IsOk())
             {
-                flow::SetCurrentFilename(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
+                flow::SetCurrentFilename(ImGuiFileDialog::Instance()->GetFilePathName());
                 flow::SaveFlowAs(flow::GetCurrentFilename());
 
-                igfd::ImGuiFileDialog::Instance()->CloseDialog();
+                ImGuiFileDialog::Instance()->Close();
                 nm::DeleteAllLinksAndNodes();
                 flow::DiscardChanges();
                 flow::SetCurrentFilename("");
@@ -353,7 +333,6 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
             globalAction = GlobalActions::None;
 
             ImGui::CloseCurrentPopup();
-            std::filesystem::current_path(flow::GetProgramRootPath());
         }
         ImGui::SameLine();
         if (ImGui::Button("Discard"))
@@ -386,14 +365,8 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
             {
                 if (flow::GetCurrentFilename().empty())
                 {
-                    if (auto targetPath = flow::GetFlowPath();
-                        std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
-                    {
-                        LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path());
-                        std::filesystem::current_path(targetPath);
-                    }
-                    igfd::ImGuiFileDialog::Instance()->OpenModal("Save Flow##Load", "Save Flow", ".flow", "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
-                    igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
+                    ImGuiFileDialog::Instance()->OpenModal("Save Flow##Load", "Save Flow", ".flow", (flow::GetFlowPath() / ".").string(), 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
+                    ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, ".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
                 }
                 else
                 {
@@ -403,18 +376,17 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
                 }
             }
 
-            if (igfd::ImGuiFileDialog::Instance()->FileDialog("Save Flow##Load", ImGuiWindowFlags_NoCollapse, ImVec2(600, 400)))
+            if (ImGuiFileDialog::Instance()->Display("Save Flow##Load", ImGuiWindowFlags_NoCollapse, ImVec2(600, 400)))
             {
-                if (igfd::ImGuiFileDialog::Instance()->IsOk)
+                if (ImGuiFileDialog::Instance()->IsOk())
                 {
-                    flow::SetCurrentFilename(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
+                    flow::SetCurrentFilename(ImGuiFileDialog::Instance()->GetFilePathName());
                     flow::SaveFlowAs(flow::GetCurrentFilename());
                 }
 
                 flow::DiscardChanges();
-                igfd::ImGuiFileDialog::Instance()->CloseDialog();
+                ImGuiFileDialog::Instance()->Close();
                 ImGui::CloseCurrentPopup();
-                std::filesystem::current_path(flow::GetProgramRootPath());
             }
             ImGui::SameLine();
             if (ImGui::Button("Discard"))
@@ -433,14 +405,8 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
     }
     else
     {
-        if (auto targetPath = flow::GetFlowPath();
-            std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
-        {
-            LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path());
-            std::filesystem::current_path(targetPath);
-        }
-        igfd::ImGuiFileDialog::Instance()->OpenDialog("Load Flow", "Load Flow", ".flow", "", 1, nullptr);
-        igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
+        ImGuiFileDialog::Instance()->OpenDialog("Load Flow", "Load Flow", ".flow", (flow::GetFlowPath() / ".").string(), 1, nullptr);
+        ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, ".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
 
         static bool loadSuccessful = true;
 
@@ -451,31 +417,27 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
             {
                 globalAction = GlobalActions::None;
                 loadSuccessful = true;
-                igfd::ImGuiFileDialog::Instance()->CloseDialog();
-                std::filesystem::current_path(flow::GetProgramRootPath());
+                ImGuiFileDialog::Instance()->Close();
                 return;
             }
         }
 
-        if (igfd::ImGuiFileDialog::Instance()->FileDialog("Load Flow", ImGuiWindowFlags_NoCollapse, ImVec2(600, 400)))
+        if (ImGuiFileDialog::Instance()->Display("Load Flow", ImGuiWindowFlags_NoCollapse, ImVec2(600, 400)))
         {
-            if (igfd::ImGuiFileDialog::Instance()->IsOk)
+            if (ImGuiFileDialog::Instance()->IsOk())
             {
-                std::filesystem::current_path(flow::GetProgramRootPath());
-                loadSuccessful = flow::LoadFlow(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
+                loadSuccessful = flow::LoadFlow(ImGuiFileDialog::Instance()->GetFilePathName());
                 if (loadSuccessful)
                 {
                     globalAction = GlobalActions::None;
                     frameCountNavigate = ImGui::GetFrameCount();
-                    igfd::ImGuiFileDialog::Instance()->CloseDialog();
-                    std::filesystem::current_path(flow::GetProgramRootPath());
+                    ImGuiFileDialog::Instance()->Close();
                 }
             }
             else
             {
                 globalAction = GlobalActions::None;
-                igfd::ImGuiFileDialog::Instance()->CloseDialog();
-                std::filesystem::current_path(flow::GetProgramRootPath());
+                ImGuiFileDialog::Instance()->Close();
             }
         }
         if (!loadSuccessful)
