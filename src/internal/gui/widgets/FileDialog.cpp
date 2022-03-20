@@ -26,23 +26,18 @@ bool NAV::gui::widgets::FileDialogSave(std::string& path, const char* vName,
     std::string saveFileDialogKey = fmt::format("Save File ({})", id);
     if (ImGui::Button("Save"))
     {
-        if (std::filesystem::current_path() != startPath && std::filesystem::exists(startPath))
-        {
-            LOG_DEBUG("{}: Changing current path to: {}", nameId, startPath);
-            std::filesystem::current_path(startPath);
-        }
-        igfd::ImGuiFileDialog::Instance()->OpenDialog(saveFileDialogKey, vName, vFilters, "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
+        ImGuiFileDialog::Instance()->OpenDialog(saveFileDialogKey, vName, vFilters, startPath / ".", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
         for (const auto& ext : extensions)
         {
-            igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(ext, ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
+            ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, ext.c_str(), ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
         }
     }
 
-    if (igfd::ImGuiFileDialog::Instance()->FileDialog(saveFileDialogKey, ImGuiWindowFlags_NoCollapse, ImVec2(600, 500)))
+    if (ImGuiFileDialog::Instance()->Display(saveFileDialogKey, ImGuiWindowFlags_NoCollapse, ImVec2(600, 500)))
     {
-        if (igfd::ImGuiFileDialog::Instance()->IsOk)
+        if (ImGuiFileDialog::Instance()->IsOk())
         {
-            path = igfd::ImGuiFileDialog::Instance()->GetFilePathName();
+            path = ImGuiFileDialog::Instance()->GetFilePathName();
             if (path.find(flow::GetProgramRootPath().string()) != std::string::npos)
             {
                 path = path.substr(flow::GetProgramRootPath().string().size() + 1);
@@ -50,9 +45,8 @@ bool NAV::gui::widgets::FileDialogSave(std::string& path, const char* vName,
             LOG_DEBUG("{}: Selected file: {}", nameId, path);
             changed = true;
         }
-        std::filesystem::current_path(flow::GetProgramRootPath());
 
-        igfd::ImGuiFileDialog::Instance()->CloseDialog();
+        ImGuiFileDialog::Instance()->Close();
     }
 
     return changed;
@@ -77,40 +71,41 @@ bool NAV::gui::widgets::FileDialogLoad(std::string& path, const char* vName,
     std::string openFileDialogKey = fmt::format("Select File ({})", id);
     if (ImGui::Button("Open"))
     {
-        if (std::filesystem::current_path() != startPath && std::filesystem::exists(startPath))
-        {
-            LOG_DEBUG("{}: Changing current path to: {}", nameId, startPath);
-            std::filesystem::current_path(startPath);
-        }
-        igfd::ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, vName, vFilters, "");
+        ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, vName, vFilters, startPath / ".");
         for (const auto& ext : extensions)
         {
-            igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(ext, ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
+            ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, ext.c_str(), ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
         }
     }
 
-    if (igfd::ImGuiFileDialog::Instance()->FileDialog(openFileDialogKey, ImGuiWindowFlags_NoCollapse, ImVec2(600, 500)))
+    if (ImGuiFileDialog::Instance()->Display(openFileDialogKey, ImGuiWindowFlags_NoCollapse, ImVec2(600, 500)))
     {
-        if (igfd::ImGuiFileDialog::Instance()->IsOk)
+        if (ImGuiFileDialog::Instance()->IsOk())
         {
-            if (std::filesystem::exists(igfd::ImGuiFileDialog::Instance()->GetFilePathName()))
+            if (!ImGuiFileDialog::Instance()->GetSelection().empty())
             {
-                path = igfd::ImGuiFileDialog::Instance()->GetFilePathName();
-                if (path.find(flow::GetProgramRootPath().string()) != std::string::npos)
+                if (std::filesystem::exists(ImGuiFileDialog::Instance()->GetSelection().begin()->second))
                 {
-                    path = path.substr(flow::GetProgramRootPath().string().size() + 1);
+                    path = ImGuiFileDialog::Instance()->GetSelection().begin()->second;
+                    if (path.find(flow::GetProgramRootPath().string()) != std::string::npos)
+                    {
+                        path = path.substr(flow::GetProgramRootPath().string().size() + 1);
+                    }
+                    LOG_DEBUG("{}: Selected file: {}", nameId, path);
+                    changed = true;
                 }
-                LOG_DEBUG("{}: Selected file: {}", nameId, path);
-                changed = true;
+                else
+                {
+                    LOG_WARN("{}: Selected path does not exist: {}", nameId, ImGuiFileDialog::Instance()->GetSelection().begin()->second);
+                }
             }
             else
             {
-                LOG_WARN("{}: Selected path does not exist: {}", nameId, igfd::ImGuiFileDialog::Instance()->GetFilePathName());
+                LOG_WARN("{}: FileDialog is okay, but nothing selected", nameId);
             }
         }
-        std::filesystem::current_path(flow::GetProgramRootPath());
 
-        igfd::ImGuiFileDialog::Instance()->CloseDialog();
+        ImGuiFileDialog::Instance()->Close();
     }
 
     return changed;

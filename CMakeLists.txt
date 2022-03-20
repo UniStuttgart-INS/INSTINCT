@@ -144,15 +144,15 @@ set_target_properties(imgui_node_editor PROPERTIES CXX_CPPCHECK "")
 
 add_library(
   ImGuiFileDialog
-  "${CMAKE_SOURCE_DIR}/lib/ImGuiFileDialog/ImGuiFileDialog/ImGuiFileDialog.cpp"
-  "${CMAKE_SOURCE_DIR}/lib/ImGuiFileDialog/ImGuiFileDialog/ImGuiFileDialog.h"
-  "${CMAKE_SOURCE_DIR}/lib/ImGuiFileDialog/ImGuiFileDialog/ImGuiFileDialogConfig.h")
+  "${CMAKE_SOURCE_DIR}/lib/ImGuiFileDialog/ImGuiFileDialog.cpp"
+  "${CMAKE_SOURCE_DIR}/lib/ImGuiFileDialog/ImGuiFileDialog.h"
+  "${CMAKE_SOURCE_DIR}/lib/ImGuiFileDialog/ImGuiFileDialogConfig.h")
 
 if(WIN32)
-  target_include_directories(ImGuiFileDialog PUBLIC "${CMAKE_SOURCE_DIR}/lib/ImGuiFileDialog/3rdparty/dirent/include")
+  target_include_directories(ImGuiFileDialog PUBLIC "${CMAKE_SOURCE_DIR}/lib/ImGuiFileDialog/dirent/include")
 endif()
 
-include_directories(SYSTEM lib/ImGuiFileDialog/ImGuiFileDialog)
+include_directories(SYSTEM lib/ImGuiFileDialog)
 target_link_libraries(ImGuiFileDialog PRIVATE project_options)
 set_target_properties(ImGuiFileDialog PROPERTIES CXX_CLANG_TIDY "")
 set_target_properties(ImGuiFileDialog PROPERTIES CXX_CPPCHECK "")
