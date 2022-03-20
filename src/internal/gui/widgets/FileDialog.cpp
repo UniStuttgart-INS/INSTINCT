@@ -26,7 +26,7 @@ bool NAV::gui::widgets::FileDialogSave(std::string& path, const char* vName,
     std::string saveFileDialogKey = fmt::format("Save File ({})", id);
     if (ImGui::Button("Save"))
     {
-        ImGuiFileDialog::Instance()->OpenDialog(saveFileDialogKey, vName, vFilters, startPath / ".", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
+        ImGuiFileDialog::Instance()->OpenDialog(saveFileDialogKey, vName, vFilters, (startPath / ".").string(), 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
         for (const auto& ext : extensions)
         {
             ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, ext.c_str(), ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
@@ -71,7 +71,7 @@ bool NAV::gui::widgets::FileDialogLoad(std::string& path, const char* vName,
     std::string openFileDialogKey = fmt::format("Select File ({})", id);
     if (ImGui::Button("Open"))
     {
-        ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, vName, vFilters, startPath / ".");
+        ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, vName, vFilters, (startPath / ".").string());
         for (const auto& ext : extensions)
         {
             ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, ext.c_str(), ImVec4(0.0F, 1.0F, 0.0F, 0.9F));

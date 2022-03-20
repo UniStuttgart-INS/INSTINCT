@@ -210,7 +210,7 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
         {
             if (flow::GetCurrentFilename().empty())
             {
-                ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", flow::GetFlowPath() / ".", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
+                ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", (flow::GetFlowPath() / ".").string(), 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
                 ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, ".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
             }
             else
@@ -256,7 +256,7 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
 
 void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
 {
-    ImGuiFileDialog::Instance()->OpenDialog("Save Flow", "Save Flow", ".flow", flow::GetFlowPath() / ".", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
+    ImGuiFileDialog::Instance()->OpenDialog("Save Flow", "Save Flow", ".flow", (flow::GetFlowPath() / ".").string(), 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
     ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, ".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
 
     auto& io = ImGui::GetIO();
@@ -303,7 +303,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
         {
             if (flow::GetCurrentFilename().empty())
             {
-                ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", flow::GetFlowPath() / ".", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
+                ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", (flow::GetFlowPath() / ".").string(), 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
                 ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, ".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
             }
             else
@@ -365,7 +365,7 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
             {
                 if (flow::GetCurrentFilename().empty())
                 {
-                    ImGuiFileDialog::Instance()->OpenModal("Save Flow##Load", "Save Flow", ".flow", flow::GetFlowPath() / ".", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
+                    ImGuiFileDialog::Instance()->OpenModal("Save Flow##Load", "Save Flow", ".flow", (flow::GetFlowPath() / ".").string(), 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
                     ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, ".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
                 }
                 else
@@ -405,7 +405,7 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
     }
     else
     {
-        ImGuiFileDialog::Instance()->OpenDialog("Load Flow", "Load Flow", ".flow", flow::GetFlowPath() / ".", 1, nullptr);
+        ImGuiFileDialog::Instance()->OpenDialog("Load Flow", "Load Flow", ".flow", (flow::GetFlowPath() / ".").string(), 1, nullptr);
         ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, ".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
 
         static bool loadSuccessful = true;
