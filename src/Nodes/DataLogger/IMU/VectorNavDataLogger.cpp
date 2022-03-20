@@ -752,6 +752,7 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
             }
             if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
             {
+                _filestream << std::setprecision(gpsTimePrecision);
                 _filestream << "," << obs->gnss1Outputs->raw.tow
                             << "," << obs->gnss1Outputs->raw.week
                             << "," << static_cast<unsigned int>(obs->gnss1Outputs->raw.numSats)
@@ -1053,6 +1054,7 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
             }
             if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
             {
+                _filestream << std::setprecision(gpsTimePrecision);
                 _filestream << "," << obs->gnss2Outputs->raw.tow
                             << "," << obs->gnss2Outputs->raw.week
                             << "," << static_cast<unsigned int>(obs->gnss2Outputs->raw.numSats)
