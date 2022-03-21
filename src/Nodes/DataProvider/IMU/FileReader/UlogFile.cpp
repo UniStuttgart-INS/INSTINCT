@@ -26,9 +26,6 @@ NAV::UlogFile::UlogFile()
 
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 589, 257 };
-    _holdsGps = false;
-    _holdsAtt = false;
-    _isReRun = false;
 
     // All message types are polled from the first output pin, but then send out on the correct pin over invokeCallbacks
     nm::CreateOutputPin(this, "ImuObs #1", Pin::Type::Flow, { NAV::ImuObs::type() }, &UlogFile::pollData);
@@ -97,16 +94,7 @@ bool NAV::UlogFile::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    // Clear container at re-init
-    if (!_epochData.empty())
-    {
-        _epochData.clear();
-        _isReRun = false;
-    }
-
     sensorStartupUTCTime_usec = 0;
-    _holdsGps = false;
-    _holdsAtt = false;
 
     lastGnssTime.timeSinceStartup = 0;
 
@@ -122,7 +110,11 @@ void NAV::UlogFile::deinitialize()
 
 bool NAV::UlogFile::resetNode()
 {
+    LOG_INFO("{}: called", nameId());
+
     FileReader::resetReader();
+
+    _epochData.clear();
 
     return true;
 }
@@ -131,7 +123,7 @@ bool NAV::UlogFile::resetNode()
 
 NAV::FileReader::FileType NAV::UlogFile::determineFileType()
 {
-    LOG_TRACE("called for {}", nameId());
+    LOG_TRACE("{}: called", nameId());
 
     std::filesystem::path filepath = getFilepath();
 
@@ -155,6 +147,8 @@ NAV::FileReader::FileType NAV::UlogFile::determineFileType()
 
 void NAV::UlogFile::readHeader()
 {
+    LOG_TRACE("{}: called", nameId());
+
     if (_fileType == FileType::BINARY)
     {
         union
@@ -171,9 +165,9 @@ void NAV::UlogFile::readHeader()
             LOG_WARN("{}: FileType is binary, but not ULog", nameId());
         }
 
-        LOG_DATA("{}: version: {}", nameId(), static_cast<int>(ulogHeader.header.version));
+        LOG_DEBUG("{}: version: {}", nameId(), static_cast<int>(ulogHeader.header.version));
 
-        LOG_DATA("{}: time stamp [µs]: {}", nameId(), ulogHeader.header.timeStamp);
+        LOG_DEBUG("{}: time stamp [µs]: {}", nameId(), ulogHeader.header.timeStamp);
 
         // Read message header
         union
@@ -186,8 +180,7 @@ void NAV::UlogFile::readHeader()
         {
             _filestream.read(ulogMsgHeader.data.data(), ulogMsgHeader.data.size());
 
-            LOG_DATA("{}: msgSize: {}", nameId(), ulogMsgHeader.msgHeader.msg_size);
-            LOG_DATA("{}: msgType: {}", nameId(), ulogMsgHeader.msgHeader.msg_type);
+            LOG_DATA("{}: msgSize: {},  msgType: {}", nameId(), ulogMsgHeader.msgHeader.msg_size, ulogMsgHeader.msgHeader.msg_type);
 
             // Read definition message
             // Flag bitset message
@@ -306,12 +299,6 @@ void NAV::UlogFile::readHeader()
 
 std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
 {
-    if (_isReRun)
-    {
-        _epochData.clear();
-        _isReRun = false;
-    }
-
     // Get current position
     auto pollStartPos = _filestream.tellg();
     std::multimap<uint64_t, MeasurementData> peekEpochData;
@@ -355,7 +342,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
             Ulog::message_remove_logged_s messageRemoveLog;
             messageRemoveLog.header = ulogMsgHeader.msgHeader;
             _filestream.read(reinterpret_cast<char*>(&messageRemoveLog.msg_id), sizeof(messageRemoveLog.msg_id));
-            LOG_INFO("{}: Removed message with 'msg_id': {}", nameId(), messageRemoveLog.msg_id);
+            LOG_DATA("{}: Removed message with 'msg_id': {}", nameId(), messageRemoveLog.msg_id);
 
             _subscribedMessages.erase(messageRemoveLog.msg_id);
         }
@@ -364,7 +351,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
             Ulog::message_data_s messageData;
             messageData.header = ulogMsgHeader.msgHeader;
             _filestream.read(reinterpret_cast<char*>(&messageData.msg_id), sizeof(messageData.msg_id));
-            LOG_DEBUG("{}: msg_id: {}", nameId(), messageData.msg_id); //TODO: once data processing logic is finished, make LOG_DATA
+            LOG_DATA("{}: msg_id: {}", nameId(), messageData.msg_id);
 
             messageData.data.resize(messageData.header.msg_size - 2);
             _filestream.read(messageData.data.data(), messageData.header.msg_size - 2);
@@ -382,7 +369,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     if (dataField.name == "timestamp")
                     {
                         std::memcpy(&sensorAccel.timestamp, currentData, sizeof(sensorAccel.timestamp));
-                        LOG_DEBUG("{}: sensorAccel.timestamp: {}", nameId(), sensorAccel.timestamp);
+                        LOG_DATA("{}: sensorAccel.timestamp: {}", nameId(), sensorAccel.timestamp);
                         currentExtractLocation += sizeof(sensorAccel.timestamp);
                     }
                     else if (dataField.name == "timestamp_sample")
@@ -406,19 +393,19 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     else if (dataField.name == "x")
                     {
                         std::memcpy(&sensorAccel.x, currentData, sizeof(sensorAccel.x));
-                        LOG_DEBUG("{}: sensorAccel.x: {}", nameId(), sensorAccel.x);
+                        LOG_DATA("{}: sensorAccel.x: {}", nameId(), sensorAccel.x);
                         currentExtractLocation += sizeof(sensorAccel.x);
                     }
                     else if (dataField.name == "y")
                     {
                         std::memcpy(&sensorAccel.y, currentData, sizeof(sensorAccel.y));
-                        LOG_DEBUG("{}: sensorAccel.y: {}", nameId(), sensorAccel.y);
+                        LOG_DATA("{}: sensorAccel.y: {}", nameId(), sensorAccel.y);
                         currentExtractLocation += sizeof(sensorAccel.y);
                     }
                     else if (dataField.name == "z")
                     {
                         std::memcpy(&sensorAccel.z, currentData, sizeof(sensorAccel.z));
-                        LOG_DEBUG("{}: sensorAccel.z: {}", nameId(), sensorAccel.z);
+                        LOG_DATA("{}: sensorAccel.z: {}", nameId(), sensorAccel.z);
                         currentExtractLocation += sizeof(sensorAccel.z);
                     }
                     else if (dataField.name == "temperature")
@@ -459,7 +446,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     if (dataField.name == "timestamp")
                     {
                         std::memcpy(&sensorGyro.timestamp, currentData, sizeof(sensorGyro.timestamp));
-                        LOG_DEBUG("{}: sensorGyro.timestamp: {}", nameId(), sensorGyro.timestamp);
+                        LOG_DATA("{}: sensorGyro.timestamp: {}", nameId(), sensorGyro.timestamp);
                         currentExtractLocation += sizeof(sensorGyro.timestamp);
                     }
                     else if (dataField.name == "timestamp_sample")
@@ -524,7 +511,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     if (dataField.name == "timestamp")
                     {
                         std::memcpy(&sensorMag.timestamp, currentData, sizeof(sensorMag.timestamp));
-                        LOG_DEBUG("{}: sensorMag.timestamp: {}", nameId(), sensorMag.timestamp);
+                        LOG_DATA("{}: sensorMag.timestamp: {}", nameId(), sensorMag.timestamp);
                         currentExtractLocation += sizeof(sensorMag.timestamp);
                     }
                     else if (dataField.name == "timestamp_sample")
@@ -788,7 +775,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     if (dataField.name == "timestamp")
                     {
                         std::memcpy(&vehicleAttitude.timestamp, currentData, sizeof(vehicleAttitude.timestamp));
-                        LOG_DEBUG("{}: vehicleAttitude.timestamp: {}", nameId(), vehicleAttitude.timestamp);
+                        LOG_DATA("{}: vehicleAttitude.timestamp: {}", nameId(), vehicleAttitude.timestamp);
                         currentExtractLocation += sizeof(vehicleAttitude.timestamp);
                     }
                     else if (dataField.name == "q")
@@ -806,7 +793,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     if (dataField.name == "quat_reset_counter")
                     {
                         std::memcpy(&vehicleAttitude.quat_reset_counter, currentData, sizeof(vehicleAttitude.quat_reset_counter));
-                        LOG_DEBUG("{}: vehicleAttitude.quat_reset_counter: {}", nameId(), vehicleAttitude.quat_reset_counter);
+                        LOG_DATA("{}: vehicleAttitude.quat_reset_counter: {}", nameId(), vehicleAttitude.quat_reset_counter);
                         currentExtractLocation += sizeof(vehicleAttitude.quat_reset_counter);
                     }
                     else if (dataField.name.compare(0, 7, "_padding")) // e.g. '_padding0', '_padding1'
@@ -1028,7 +1015,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
             }
             else
             {
-                LOG_ERROR("{}: UKNOWN: _subscribedMessages.at(messageData.msg_id).message_name = {}", nameId(), _subscribedMessages.at(messageData.msg_id).message_name);
+                LOG_DATA("{}: UKNOWN: _subscribedMessages.at(messageData.msg_id).message_name = {}", nameId(), _subscribedMessages.at(messageData.msg_id).message_name);
             }
 
             // #########################################################################################################################################
@@ -1038,7 +1025,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
             if (auto multi_id = enoughImuDataAvailable();
                 multi_id >= 0)
             {
-                LOG_DEBUG("{}: Construct ImuObs and invoke callback", nameId());
+                LOG_DATA("{}: Construct ImuObs and invoke callback", nameId());
 
                 auto obs = std::make_shared<ImuObs>(this->_imuPos);
 
@@ -1098,7 +1085,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 obs->insTime = lastGnssTime.gnssTime + std::chrono::microseconds(static_cast<int64_t>(timeSinceStartupNew) - static_cast<int64_t>(lastGnssTime.timeSinceStartup));
 
                 obs->timeSinceStartup = 1000 * timeSinceStartupNew; // latest timestamp in [ns]
-                LOG_INFO("{}: *obs->timeSinceStartup = {} s", nameId(), static_cast<double>(*obs->timeSinceStartup) * 1e-9);
+                LOG_DATA("{}: *obs->timeSinceStartup = {} s", nameId(), static_cast<double>(*obs->timeSinceStartup) * 1e-9);
 
                 if (!peek)
                 {
@@ -1123,25 +1110,15 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 }
                 return obs;
             }
-            if (enoughPosVelAttDataAvailable())
+            if (auto [gpsIter, attIter] = findPosVelAttData();
+                gpsIter != _epochData.end() && attIter != _epochData.end())
             {
-                LOG_INFO("{}: Construct PosVelAtt and invoke callback", nameId());
-
-                auto iterGpsPosition = std::find_if(_epochData.begin(), _epochData.end(), [](const std::pair<uint64_t, MeasurementData>& v) {
-                    return std::holds_alternative<VehicleGpsPosition>(v.second.data); // oldest VehicleGpsPosition
-                });
-                auto iterAttitude = std::find_if(_epochData.begin(), _epochData.end(), [](const std::pair<uint64_t, MeasurementData>& v) {
-                    return std::holds_alternative<VehicleAttitude>(v.second.data); // oldest VehicleAttitude
-                });
-                if (iterGpsPosition == _epochData.end() || iterAttitude == _epochData.end())
-                {
-                    LOG_ERROR("{}: This should not happen :(", nameId());
-                }
+                LOG_DATA("{}: Construct PosVelAtt and invoke callback", nameId());
 
                 auto obs = std::make_shared<NAV::PosVelAtt>();
 
-                const auto& vehicleGpsPosition = std::get<VehicleGpsPosition>(iterGpsPosition->second.data);
-                const auto& vehicleAttitude = std::get<VehicleAttitude>(iterAttitude->second.data);
+                const auto& vehicleGpsPosition = std::get<VehicleGpsPosition>(gpsIter->second.data);
+                const auto& vehicleAttitude = std::get<VehicleAttitude>(attIter->second.data);
 
                 obs->insTime.emplace(0, 0, 0, 0, 0, vehicleGpsPosition.time_utc_usec * 1e-6L);
                 obs->setState_n(Eigen::Vector3d{ trafo::deg2rad(1e-7 * static_cast<double>(vehicleGpsPosition.lat)), trafo::deg2rad(1e-7 * static_cast<double>(vehicleGpsPosition.lon)), 1e-3 * (static_cast<double>(vehicleGpsPosition.alt_ellipsoid)) },
@@ -1150,8 +1127,10 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 // TODO: Check order of w,x,y,z
                 // TODO: Check if this is quaternion_nb
 
-                _holdsGps = false;
-                _holdsAtt = false;
+                // Above it is ensured that only one gps and att element is present.
+                // Here we still need to delete the used elements, otherwise the next iteration would find the elements again.
+                _epochData.erase(gpsIter);
+                _epochData.erase(attIter);
 
                 if (!peek)
                 {
@@ -1174,35 +1153,35 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
 
             if (messageLog.log_level == 48) // '0'
             {
-                LOG_INFO("{}: Log-level: EMERG - System is unusable", nameId());
+                LOG_DATA("{}: Log-level: EMERG - System is unusable", nameId());
             }
             else if (messageLog.log_level == 49) // '1'
             {
-                LOG_INFO("{}: Log-level: ALERT - Action must be taken immediately", nameId());
+                LOG_DATA("{}: Log-level: ALERT - Action must be taken immediately", nameId());
             }
             else if (messageLog.log_level == 50) // '2'
             {
-                LOG_INFO("{}: Log-level: CRIT - Critical conditions", nameId());
+                LOG_DATA("{}: Log-level: CRIT - Critical conditions", nameId());
             }
             else if (messageLog.log_level == 51) // '3'
             {
-                LOG_INFO("{}: Log-level: ERR - Error conditions", nameId());
+                LOG_DATA("{}: Log-level: ERR - Error conditions", nameId());
             }
             else if (messageLog.log_level == 52) // '4'
             {
-                LOG_INFO("{}: Log-level: WARNING - Warning conditions", nameId());
+                LOG_DATA("{}: Log-level: WARNING - Warning conditions", nameId());
             }
             else if (messageLog.log_level == 53) // '5'
             {
-                LOG_INFO("{}: Log-level: NOTICE - Normal but significant condition", nameId());
+                LOG_DATA("{}: Log-level: NOTICE - Normal but significant condition", nameId());
             }
             else if (messageLog.log_level == 54) // '6'
             {
-                LOG_INFO("{}: Log-level: INFO - Informational", nameId());
+                LOG_DATA("{}: Log-level: INFO - Informational", nameId());
             }
             else if (messageLog.log_level == 55) // '7'
             {
-                LOG_INFO("{}: Log-level: DEBUG - Debug-level messages", nameId());
+                LOG_DATA("{}: Log-level: DEBUG - Debug-level messages", nameId());
             }
             else
             {
@@ -1224,35 +1203,35 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
 
             if (messageLogTagged.log_level == 48) // '0'
             {
-                LOG_INFO("{}: Log-level: EMERG - System is unusable", nameId());
+                LOG_DATA("{}: Log-level: EMERG - System is unusable", nameId());
             }
             else if (messageLogTagged.log_level == 49) // '1'
             {
-                LOG_INFO("{}: Log-level: ALERT - Action must be taken immediately", nameId());
+                LOG_DATA("{}: Log-level: ALERT - Action must be taken immediately", nameId());
             }
             else if (messageLogTagged.log_level == 50) // '2'
             {
-                LOG_INFO("{}: Log-level: CRIT - Critical conditions", nameId());
+                LOG_DATA("{}: Log-level: CRIT - Critical conditions", nameId());
             }
             else if (messageLogTagged.log_level == 51) // '3'
             {
-                LOG_INFO("{}: Log-level: ERR - Error conditions", nameId());
+                LOG_DATA("{}: Log-level: ERR - Error conditions", nameId());
             }
             else if (messageLogTagged.log_level == 52) // '4'
             {
-                LOG_INFO("{}: Log-level: WARNING - Warning conditions", nameId());
+                LOG_DATA("{}: Log-level: WARNING - Warning conditions", nameId());
             }
             else if (messageLogTagged.log_level == 53) // '5'
             {
-                LOG_INFO("{}: Log-level: NOTICE - Normal but significant condition", nameId());
+                LOG_DATA("{}: Log-level: NOTICE - Normal but significant condition", nameId());
             }
             else if (messageLogTagged.log_level == 54) // '6'
             {
-                LOG_INFO("{}: Log-level: INFO - Informational", nameId());
+                LOG_DATA("{}: Log-level: INFO - Informational", nameId());
             }
             else if (messageLogTagged.log_level == 55) // '7'
             {
-                LOG_INFO("{}: Log-level: DEBUG - Debug-level messages", nameId());
+                LOG_DATA("{}: Log-level: DEBUG - Debug-level messages", nameId());
             }
             else
             {
@@ -1260,7 +1239,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
             }
 
             _filestream.read(reinterpret_cast<char*>(&messageLogTagged.tag), sizeof(messageLogTagged.tag));
-            LOG_DEBUG("{}: messageLogTagged.tag: {}", nameId(), messageLogTagged.tag);
+            LOG_DATA("{}: messageLogTagged.tag: {}", nameId(), messageLogTagged.tag);
             _filestream.read(reinterpret_cast<char*>(&messageLogTagged.timestamp), sizeof(messageLogTagged.timestamp));
             LOG_DATA("{}: messageLogTagged.timestamp [µs]: {}", nameId(), messageLogTagged.timestamp);
 
@@ -1274,7 +1253,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
             messageSync.header = ulogMsgHeader.msgHeader;
             std::array<uint8_t, 8> sync_magic{};
             _filestream.read(reinterpret_cast<char*>(messageSync.snyc_magic.data()), sizeof(sync_magic));
-            LOG_DEBUG("{}: messageSync.snyc_magic[0]: {}", nameId(), messageSync.snyc_magic[0]);
+            LOG_DATA("{}: messageSync.snyc_magic[0]: {}", nameId(), messageSync.snyc_magic[0]);
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'O')
         {
@@ -1313,7 +1292,6 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
 
         if (!_filestream.good() || _filestream.eof())
         {
-            _isReRun = true;
             break;
         }
     }
@@ -1442,21 +1420,22 @@ int8_t NAV::UlogFile::enoughImuDataAvailable()
     return -1;
 }
 
-bool NAV::UlogFile::enoughPosVelAttDataAvailable()
+std::array<std::multimap<uint64_t, NAV::UlogFile::MeasurementData>::iterator, 2> NAV::UlogFile::findPosVelAttData()
 {
-    if (_epochData.empty())
+    auto gpsIter = _epochData.end();
+    auto attIter = _epochData.end();
+
+    for (auto iter = _epochData.begin(); iter != _epochData.end(); ++iter)
     {
-        return false;
+        if (std::holds_alternative<VehicleGpsPosition>(iter->second.data))
+        {
+            gpsIter = iter;
+        }
+        else if (std::holds_alternative<VehicleAttitude>(iter->second.data))
+        {
+            attIter = iter;
+        }
     }
 
-    if (std::holds_alternative<VehicleGpsPosition>(_epochData.rbegin()->second.data))
-    {
-        _holdsGps = true;
-    }
-    if (std::holds_alternative<VehicleAttitude>(_epochData.rbegin()->second.data))
-    {
-        _holdsAtt = true;
-    }
-
-    return (_holdsGps && _holdsAtt) != 0;
+    return { gpsIter, attIter };
 }

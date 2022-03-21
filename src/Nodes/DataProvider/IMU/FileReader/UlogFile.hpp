@@ -305,21 +305,12 @@ class UlogFile : public Imu, public FileReader
     std::multimap<uint64_t, MeasurementData> _epochData;
 
     /// @brief Checks '_epochData' whether there is enough data available to output one ImuObs
-    /// @param[in] dataMap Multimap that contains measurement data
     /// @return The multi id where enough data is available, or -1 if not enough info
     int8_t enoughImuDataAvailable();
 
     /// @brief Checks '_epochData' whether there is enough data available to output one PosVelAtt
-    /// @param[in] dataMap Multimap that contains measurement data
-    bool enoughPosVelAttDataAvailable();
-
-    /// @brief Flag to check whether '_epochData' contains GPS reading
-    bool _holdsGps = false;
-    /// @brief Flag to check whether '_epochData' contains attitude reading
-    bool _holdsAtt = false;
-
-    /// @brief Flag to check whether loop is run again without re-initialization
-    bool _isReRun = false;
+    /// @return Iterators to the oldest gps and attitude
+    std::array<std::multimap<uint64_t, NAV::UlogFile::MeasurementData>::iterator, 2> findPosVelAttData();
 
     /// Stores GNSS timestamp of one epoch before the current one (relative or absolute)
     struct
