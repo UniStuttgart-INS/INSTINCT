@@ -26,15 +26,9 @@ NAV::UlogFile::UlogFile()
 
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 589, 257 };
-    _holdsAccel_0 = false;
-    _holdsAccel_1 = false;
-    _holdsGyro_0 = false;
-    _holdsGyro_1 = false;
-    _holdsMag = false;
     _holdsGps = false;
     _holdsAtt = false;
     _isReRun = false;
-    _multiId = 0;
 
     // All message types are polled from the first output pin, but then send out on the correct pin over invokeCallbacks
     nm::CreateOutputPin(this, "ImuObs #1", Pin::Type::Flow, { NAV::ImuObs::type() }, &UlogFile::pollData);
@@ -111,14 +105,8 @@ bool NAV::UlogFile::initialize()
     }
 
     sensorStartupUTCTime_usec = 0;
-    _holdsAccel_0 = false;
-    _holdsAccel_1 = false;
-    _holdsGyro_0 = false;
-    _holdsGyro_1 = false;
-    _holdsMag = false;
     _holdsGps = false;
     _holdsAtt = false;
-    _multiId = 0;
 
     lastGnssTime.timeSinceStartup = 0;
 
@@ -326,6 +314,11 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
 
     // Get current position
     auto pollStartPos = _filestream.tellg();
+    std::multimap<uint64_t, MeasurementData> peekEpochData;
+    if (peek)
+    {
+        peekEpochData = _epochData;
+    }
 
     // Read message header
     union
@@ -1042,103 +1035,95 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
             //                                                                Callbacks
             // #########################################################################################################################################
             // This is the hasEnoughData check for an ImuObs
-            if (enoughImuDataAvailable(_epochData))
+            if (auto multi_id = enoughImuDataAvailable();
+                multi_id >= 0)
             {
                 LOG_DEBUG("{}: Construct ImuObs and invoke callback", nameId());
 
                 auto obs = std::make_shared<ImuObs>(this->_imuPos);
 
-                uint64_t timeSinceStartupNew = _epochData.rbegin()->first;
-                obs->insTime = lastGnssTime.gnssTime + std::chrono::microseconds(static_cast<int64_t>(timeSinceStartupNew) - static_cast<int64_t>(lastGnssTime.timeSinceStartup));
-
-                obs->timeSinceStartup = 1000 * _epochData.rbegin()->first; // latest timestamp in [ns]
-                LOG_INFO("{}: *obs->timeSinceStartup = {} s", nameId(), static_cast<double>(*obs->timeSinceStartup) * 1e-9);
+                uint64_t timeSinceStartupNew{};
 
                 // Construct ImuObs
-                for (_it = _epochData.rbegin(); _it != _epochData.rend(); _it++)
+                for (auto it = _epochData.begin(); it != _epochData.end();)
                 {
                     // Add accel data to ImuObs
-                    if (std::holds_alternative<SensorAccel>(_it->second.data) && (_it->second.multi_id == _multiId))
+                    if (std::holds_alternative<SensorAccel>(it->second.data) && (it->second.multi_id == multi_id)
+                        && !obs->accelUncompXYZ.has_value())
                     {
-                        _accelKey = _it->first;
-                        float accelX = std::get<SensorAccel>(_epochData.find(_accelKey)->second.data).x;
-                        float accelY = std::get<SensorAccel>(_epochData.find(_accelKey)->second.data).y;
-                        float accelZ = std::get<SensorAccel>(_epochData.find(_accelKey)->second.data).z;
+                        timeSinceStartupNew = it->first;
+                        float accelX = std::get<SensorAccel>(it->second.data).x;
+                        float accelY = std::get<SensorAccel>(it->second.data).y;
+                        float accelZ = std::get<SensorAccel>(it->second.data).z;
                         obs->accelUncompXYZ.emplace(accelX, accelY, accelZ);
+                        auto delIt = it;
+                        ++it;
+                        _epochData.erase(delIt);
                         LOG_DATA("{}: accelX = {}, accelY = {}, accelZ = {}", nameId(), accelX, accelY, accelZ);
                     }
                     // Add gyro data to ImuObs
-                    else if (std::holds_alternative<SensorGyro>(_it->second.data) && (_it->second.multi_id == _multiId))
+                    else if (std::holds_alternative<SensorGyro>(it->second.data) && (it->second.multi_id == multi_id)
+                             && !obs->gyroUncompXYZ.has_value())
                     {
-                        _gyroKey = _it->first;
-                        float gyroX = std::get<SensorGyro>(_epochData.find(_gyroKey)->second.data).x;
-                        float gyroY = std::get<SensorGyro>(_epochData.find(_gyroKey)->second.data).y;
-                        float gyroZ = std::get<SensorGyro>(_epochData.find(_gyroKey)->second.data).z;
+                        timeSinceStartupNew = it->first;
+                        float gyroX = std::get<SensorGyro>(it->second.data).x;
+                        float gyroY = std::get<SensorGyro>(it->second.data).y;
+                        float gyroZ = std::get<SensorGyro>(it->second.data).z;
                         obs->gyroUncompXYZ.emplace(gyroX, gyroY, gyroZ);
+                        auto delIt = it;
+                        ++it;
+                        _epochData.erase(delIt);
                         LOG_DATA("{}: gyroX = {}, gyroY = {}, gyroZ = {}", nameId(), gyroX, gyroY, gyroZ);
                     }
                     // Add mag data to ImuObs
-                    else if (std::holds_alternative<SensorMag>(_it->second.data))
+                    else if (std::holds_alternative<SensorMag>(it->second.data) && (it->second.multi_id == multi_id)
+                             && !obs->magUncompXYZ.has_value()) // TODO: Find out what is multi_id = 1. Px4 Mini is supposed to have only one magnetometer
                     {
-                        _magKey = _it->first;
+                        timeSinceStartupNew = it->first;
+                        float magX = std::get<SensorMag>(it->second.data).x;
+                        float magY = std::get<SensorMag>(it->second.data).y;
+                        float magZ = std::get<SensorMag>(it->second.data).z;
+                        obs->magUncompXYZ.emplace(magX, magY, magZ);
+                        auto delIt = it;
+                        ++it;
+                        _epochData.erase(delIt);
+                        LOG_DATA("{}: magX = {}, magY = {}, magZ = {}", nameId(), magX, magY, magZ);
                     }
-
-                    // continue after one of each sensors is read
-                    if (_accelKey != 0 && _gyroKey != 0 && _magKey != 0)
+                    else
                     {
-                        break;
+                        ++it;
                     }
                 }
 
-                while (true) // Delete all old SensorAccel, SensorGyro and SensorMag entries
-                {
-                    auto iter = std::find_if(_epochData.begin(), _epochData.end(), [&, this](const std::pair<uint64_t, MeasurementData>& v) {
-                        auto haA = std::holds_alternative<SensorAccel>(v.second.data);
-                        auto haG = std::holds_alternative<SensorGyro>(v.second.data);
-                        auto haM = std::holds_alternative<SensorMag>(v.second.data);
+                obs->insTime = lastGnssTime.gnssTime + std::chrono::microseconds(static_cast<int64_t>(timeSinceStartupNew) - static_cast<int64_t>(lastGnssTime.timeSinceStartup));
 
-                        return (((haA || haG) && ((_holdsAccel_0 && _holdsGyro_0) || (_holdsAccel_1 && _holdsGyro_1))) || haM);
-                    });
-                    if (iter == _epochData.end())
-                    {
-                        break;
-                    }
-                    _epochData.erase(iter);
-                }
-
-                _accelKey = 0;
-                _gyroKey = 0;
-                _magKey = 0;
-
-                _holdsAccel_0 = false;
-                _holdsAccel_1 = false;
-                _holdsGyro_0 = false;
-                _holdsGyro_1 = false;
-                _holdsMag = false;
+                obs->timeSinceStartup = 1000 * timeSinceStartupNew; // latest timestamp in [ns]
+                LOG_INFO("{}: *obs->timeSinceStartup = {} s", nameId(), static_cast<double>(*obs->timeSinceStartup) * 1e-9);
 
                 if (!peek)
                 {
-                    if (_multiId == 0)
+                    if (multi_id == 0)
                     {
                         invokeCallbacks(OUTPUT_PORT_INDEX_IMUOBS_1, obs);
                     }
-                    else if (_multiId == 1)
+                    else if (multi_id == 1)
                     {
                         invokeCallbacks(OUTPUT_PORT_INDEX_IMUOBS_2, obs);
                     }
                     else
                     {
-                        LOG_ERROR("{}: _multiId = {} is invalid", nameId(), _multiId);
+                        LOG_ERROR("{}: multi_id = {} is invalid", nameId(), multi_id);
                     }
                 }
                 else
                 {
                     // Return to position before "Read line".
                     _filestream.seekg(pollStartPos, std::ios_base::beg);
+                    _epochData = peekEpochData;
                 }
                 return obs;
             }
-            if (enoughPosVelAttDataAvailable(_epochData))
+            if (enoughPosVelAttDataAvailable())
             {
                 LOG_INFO("{}: Construct PosVelAtt and invoke callback", nameId());
 
@@ -1176,6 +1161,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 {
                     // Return to position before "Read line".
                     _filestream.seekg(pollStartPos, std::ios_base::beg);
+                    _epochData = peekEpochData;
                 }
                 return obs;
             }
@@ -1425,67 +1411,49 @@ void NAV::UlogFile::readParameterMessageDefault(uint16_t msgSize, char msgType)
     //TODO: Restriction on '1<<0' and '1<<1'
 }
 
-bool NAV::UlogFile::enoughImuDataAvailable(std::multimap<uint64_t, MeasurementData> dataMap)
+int8_t NAV::UlogFile::enoughImuDataAvailable()
 {
-    // Avoid seg-fault
-    if (dataMap.empty())
+    std::array<bool, 2> accelHasData{};
+    std::array<bool, 2> gyroHasData{};
+
+    for ([[maybe_unused]] const auto& [timestamp, measurement] : _epochData)
     {
-        return false;
+        if (std::holds_alternative<SensorAccel>(measurement.data))
+        {
+            accelHasData.at(measurement.multi_id) = true;
+        }
+        else if (std::holds_alternative<SensorGyro>(measurement.data))
+        {
+            gyroHasData.at(measurement.multi_id) = true;
+        }
     }
 
-    // Check whether _epochData contains enough entries to provide one ImuObs, i.e. one Accel and one Gyro from the same sensor (multi_id 0 or 1)
-    if (std::holds_alternative<SensorAccel>(dataMap.rbegin()->second.data))
+    if (lastGnssTime.timeSinceStartup)
     {
-        if (dataMap.rbegin()->second.multi_id == 0)
+        for (size_t i = 0; i < 2; ++i)
         {
-            _holdsAccel_0 = true;
+            if (accelHasData.at(i) && gyroHasData.at(i))
+            {
+                return static_cast<int8_t>(i);
+            }
         }
-        else if (dataMap.rbegin()->second.multi_id == 1)
-        {
-            _holdsAccel_1 = true;
-        }
-    }
-    if (std::holds_alternative<SensorGyro>(dataMap.rbegin()->second.data))
-    {
-        if (dataMap.rbegin()->second.multi_id == 0)
-        {
-            _holdsGyro_0 = true;
-        }
-        else if (dataMap.rbegin()->second.multi_id == 1)
-        {
-            _holdsGyro_1 = true;
-        }
-    }
-    if (std::holds_alternative<SensorMag>(dataMap.rbegin()->second.data))
-    {
-        _holdsMag = true;
     }
 
-    if (_holdsAccel_0 && _holdsGyro_0)
-    {
-        _multiId = 0;
-    }
-    else if (_holdsAccel_1 && _holdsGyro_1)
-    {
-        _multiId = 1;
-    }
-
-    // Check whether Accel and Gyro measurements are available and whether the first absolute timestamp (from GPS) is available
-    return (lastGnssTime.timeSinceStartup && ((_holdsAccel_0 && _holdsGyro_0) || (_holdsAccel_1 && _holdsGyro_1))) != 0;
+    return -1;
 }
 
-bool NAV::UlogFile::enoughPosVelAttDataAvailable(std::multimap<uint64_t, MeasurementData> dataMap)
+bool NAV::UlogFile::enoughPosVelAttDataAvailable()
 {
-    if (dataMap.empty())
+    if (_epochData.empty())
     {
         return false;
     }
 
-    if (std::holds_alternative<VehicleGpsPosition>(dataMap.rbegin()->second.data))
+    if (std::holds_alternative<VehicleGpsPosition>(_epochData.rbegin()->second.data))
     {
         _holdsGps = true;
     }
-    if (std::holds_alternative<VehicleAttitude>(dataMap.rbegin()->second.data))
+    if (std::holds_alternative<VehicleAttitude>(_epochData.rbegin()->second.data))
     {
         _holdsAtt = true;
     }

@@ -304,42 +304,19 @@ class UlogFile : public Imu, public FileReader
     /// @brief Data message container. Key: [timestamp], Value: [0, "sensor_accel", SensorAccel{}]
     std::multimap<uint64_t, MeasurementData> _epochData;
 
-    /// @brief Iterator to reversly loop through _epochData
-    std::multimap<uint64_t, NAV::UlogFile::MeasurementData>::reverse_iterator _it;
-
     /// @brief Checks '_epochData' whether there is enough data available to output one ImuObs
     /// @param[in] dataMap Multimap that contains measurement data
-    bool enoughImuDataAvailable(std::multimap<uint64_t, MeasurementData> dataMap);
+    /// @return The multi id where enough data is available, or -1 if not enough info
+    int8_t enoughImuDataAvailable();
 
     /// @brief Checks '_epochData' whether there is enough data available to output one PosVelAtt
     /// @param[in] dataMap Multimap that contains measurement data
-    bool enoughPosVelAttDataAvailable(std::multimap<uint64_t, MeasurementData> dataMap);
+    bool enoughPosVelAttDataAvailable();
 
-    /// @brief Flag to check whether '_epochData' contains magnetometer reading
-    bool _holdsMag = false;
     /// @brief Flag to check whether '_epochData' contains GPS reading
     bool _holdsGps = false;
     /// @brief Flag to check whether '_epochData' contains attitude reading
     bool _holdsAtt = false;
-
-    /// @brief Flag to check whether the contained accelerometer reading is from Accel_0
-    bool _holdsAccel_0;
-    /// @brief Flag to check whether the contained accelerometer reading is from Accel_1
-    bool _holdsAccel_1;
-    /// @brief Flag to check whether the contained accelerometer reading is from Gyro_0
-    bool _holdsGyro_0;
-    /// @brief Flag to check whether the contained accelerometer reading is from Gyro_1
-    bool _holdsGyro_1;
-
-    /// @brief First or second instance of accel or gyro sensors
-    u_int8_t _multiId{};
-
-    /// @brief Timestamp of the latest accelerometer reading
-    uint64_t _accelKey{};
-    /// @brief Timestamp of the latest gyro reading
-    uint64_t _gyroKey{};
-    /// @brief Timestamp of the latest magnetometer reading
-    uint64_t _magKey{};
 
     /// @brief Flag to check whether loop is run again without re-initialization
     bool _isReRun = false;
