@@ -1035,7 +1035,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 for (auto it = _epochData.begin(); it != _epochData.end();)
                 {
                     // Add accel data to ImuObs
-                    if (std::holds_alternative<SensorAccel>(it->second.data) && (it->second.multi_id == multi_id)
+                    if (std::holds_alternative<SensorAccel>(it->second.data) && (it->second.multi_id == static_cast<uint8_t>(multi_id))
                         && !obs->accelUncompXYZ.has_value())
                     {
                         timeSinceStartupNew = it->first;
@@ -1049,7 +1049,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                         LOG_DATA("{}: accelX = {}, accelY = {}, accelZ = {}", nameId(), accelX, accelY, accelZ);
                     }
                     // Add gyro data to ImuObs
-                    else if (std::holds_alternative<SensorGyro>(it->second.data) && (it->second.multi_id == multi_id)
+                    else if (std::holds_alternative<SensorGyro>(it->second.data) && (it->second.multi_id == static_cast<uint8_t>(multi_id))
                              && !obs->gyroUncompXYZ.has_value())
                     {
                         timeSinceStartupNew = it->first;
@@ -1063,7 +1063,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                         LOG_DATA("{}: gyroX = {}, gyroY = {}, gyroZ = {}", nameId(), gyroX, gyroY, gyroZ);
                     }
                     // Add mag data to ImuObs
-                    else if (std::holds_alternative<SensorMag>(it->second.data) && (it->second.multi_id == multi_id)
+                    else if (std::holds_alternative<SensorMag>(it->second.data) && (it->second.multi_id == static_cast<uint8_t>(multi_id))
                              && !obs->magUncompXYZ.has_value()) // TODO: Find out what is multi_id = 1. Px4 Mini is supposed to have only one magnetometer
                     {
                         timeSinceStartupNew = it->first;
