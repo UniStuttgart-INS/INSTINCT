@@ -187,8 +187,6 @@ bool NAV::VectorNavFile::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    _messageCount = 0;
-
     return FileReader::initialize();
 }
 
@@ -202,6 +200,8 @@ void NAV::VectorNavFile::deinitialize()
 bool NAV::VectorNavFile::resetNode()
 {
     FileReader::resetReader();
+
+    _messageCount = 0;
 
     return true;
 }
