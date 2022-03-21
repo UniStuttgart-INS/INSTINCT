@@ -13,7 +13,7 @@ namespace nm = NAV::NodeManager;
 
 #include "util/Logger.hpp"
 
-#include "VectorNavFileTestsData.cpp"
+#include "VectorNavFileTestsData.hpp"
 
 namespace NAV::TEST::VectorNavFileTests
 {

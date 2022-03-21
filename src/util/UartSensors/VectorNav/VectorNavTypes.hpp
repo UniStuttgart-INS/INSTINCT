@@ -329,7 +329,7 @@ struct RawMeas
         /// @param[in] cp Carrier phase measurement in cycles
         /// @param[in] dp Doppler measurement in Hz. Positive sign for approaching satellites
         SatRawElement(uint8_t sys, uint8_t svId, uint8_t freq, uint8_t chan, int8_t slot, uint8_t cno,
-                      bool searching, bool tracking, bool timeValid, bool codeLock, bool phaseLock, bool phaseHalfAmbiguity, bool phaseHalfSub, bool phaseSlip, bool pseudorangeSmoothed,
+                      uint8_t searching, uint8_t tracking, uint8_t timeValid, uint8_t codeLock, uint8_t phaseLock, uint8_t phaseHalfAmbiguity, uint8_t phaseHalfSub, uint8_t phaseSlip, uint8_t pseudorangeSmoothed,
                       double pr, double cp, double dp)
             : sys(static_cast<SatSys>(sys)), svId(svId), freq(static_cast<Freq>(freq)), chan(static_cast<Chan>(chan)), slot(slot), cno(cno), flags((searching ? Flags::Searching : Flags::None) | (tracking ? Flags::Tracking : Flags::None) | (timeValid ? Flags::TimeValid : Flags::None) | (codeLock ? Flags::CodeLock : Flags::None) | (phaseLock ? Flags::PhaseLock : Flags::None) | (phaseHalfAmbiguity ? Flags::PhaseHalfAmbiguity : Flags::None) | (phaseHalfSub ? Flags::PhaseHalfSub : Flags::None) | (phaseSlip ? Flags::PhaseSlip : Flags::None) | (pseudorangeSmoothed ? Flags::PseudorangeSmoothed : Flags::None)), pr(pr), cp(cp), dp(static_cast<float>(dp)) {}
 
