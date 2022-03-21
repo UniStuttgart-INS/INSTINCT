@@ -158,7 +158,7 @@ void compareImuObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutpu
 size_t messageCounterImuDataCsv = 0; ///< Message Counter for the Imu data csv file
 size_t messageCounterImuDataVnb = 0; ///< Message Counter for the Imu data vnb file
 
-TEST_CASE("[VectorNavFile] Read 'data/VectorNav/StaticSize/vn310-imu.csv' and compare content with hardcoded values", "[VectorNavFile]")
+TEST_CASE("[VectorNavFile] Read 'data/VectorNav/StaticSize/vn310-imu.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
     messageCounterImuDataCsv = 0;
 
@@ -185,7 +185,7 @@ TEST_CASE("[VectorNavFile] Read 'data/VectorNav/StaticSize/vn310-imu.csv' and co
     REQUIRE(messageCounterImuDataCsv == IMU_REFERENCE_DATA.size());
 }
 
-TEST_CASE("[VectorNavFile] Read 'data/VectorNav/StaticSize/vn310-imu.vnb' and compare content with hardcoded values", "[VectorNavFile]")
+TEST_CASE("[VectorNavFile] Read 'data/VectorNav/StaticSize/vn310-imu.vnb' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
     messageCounterImuDataVnb = 0;
 
@@ -481,7 +481,7 @@ void compareGnssObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutp
 size_t messageCounterGnssDataCsv = 0; ///< Message Counter for the Gnss data csv file
 size_t messageCounterGnssDataVnb = 0; ///< Message Counter for the Gnss data vnb file
 
-TEST_CASE("[VectorNavFile] Read 'data/VectorNav/StaticSize/vn310-gnss.csv' and compare content with hardcoded values", "[VectorNavFile]")
+TEST_CASE("[VectorNavFile] Read 'data/VectorNav/StaticSize/vn310-gnss.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
     messageCounterGnssDataCsv = 0;
 
@@ -508,7 +508,7 @@ TEST_CASE("[VectorNavFile] Read 'data/VectorNav/StaticSize/vn310-gnss.csv' and c
     REQUIRE(messageCounterGnssDataCsv == GNSS_REFERENCE_DATA.size());
 }
 
-TEST_CASE("[VectorNavFile] Read 'data/VectorNav/StaticSize/vn310-gnss.vnb' and compare content with hardcoded values", "[VectorNavFile]")
+TEST_CASE("[VectorNavFile] Read 'data/VectorNav/StaticSize/vn310-gnss.vnb' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
     messageCounterGnssDataVnb = 0;
 
@@ -815,7 +815,7 @@ void compareDynamicSizeObservation(const std::shared_ptr<const NAV::VectorNavBin
 size_t messageCounterDataCsv = 0; ///< Message Counter for the Gnss data csv file
 size_t messageCounterDataVnb = 0; ///< Message Counter for the Gnss data vnb file
 
-TEST_CASE("[VectorNavFile] Read 'data/VectorNav/DynamicSize/vn310-gnss.csv' and compare content with hardcoded values", "[VectorNavFile]")
+TEST_CASE("[VectorNavFile] Read 'data/VectorNav/DynamicSize/vn310-gnss.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
     messageCounterDataCsv = 0;
 
@@ -842,7 +842,7 @@ TEST_CASE("[VectorNavFile] Read 'data/VectorNav/DynamicSize/vn310-gnss.csv' and 
     REQUIRE(messageCounterDataCsv == REFERENCE_DATA.size());
 }
 
-TEST_CASE("[VectorNavFile] Read 'data/VectorNav/DynamicSize/vn310-gnss.vnb' and compare content with hardcoded values", "[VectorNavFile][Debug]")
+TEST_CASE("[VectorNavFile] Read 'data/VectorNav/DynamicSize/vn310-gnss.vnb' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
     messageCounterDataVnb = 0;
 
