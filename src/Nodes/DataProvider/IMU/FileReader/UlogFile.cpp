@@ -129,7 +129,7 @@ NAV::FileReader::FileType NAV::UlogFile::determineFileType()
 
     auto filestream = std::ifstream(filepath);
 
-    constexpr uint16_t BUFFER_SIZE = 10; //TODO: validate size
+    constexpr uint16_t BUFFER_SIZE = 10; // TODO: validate size
 
     std::array<char, BUFFER_SIZE> buffer{};
     if (filestream.good())
@@ -427,7 +427,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     }
                     else
                     {
-                        //FIXME: move 'currentExtractLocation', if yes, how far?
+                        // FIXME: move 'currentExtractLocation', if yes, how far?
                         LOG_WARN("{}: dataField.name = '{}' or dataField.type = '{}' is unknown", nameId(), dataField.name, dataField.type);
                     }
                 }
@@ -493,7 +493,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     }
                     else
                     {
-                        //FIXME: move 'currentExtractLocation', if yes, how far?
+                        // FIXME: move 'currentExtractLocation', if yes, how far?
                         LOG_WARN("{}: dataField.name = '{}' or dataField.type = '{}' is unknown", nameId(), dataField.name, dataField.type);
                     }
                 }
@@ -569,7 +569,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     }
                     else
                     {
-                        //FIXME: move 'currentExtractLocation', if yes, how far?
+                        // FIXME: move 'currentExtractLocation', if yes, how far?
                         LOG_WARN("{}: dataField.name = '{}' or dataField.type = '{}' is unknown", nameId(), dataField.name, dataField.type);
                     }
                 }
@@ -741,7 +741,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     }
                     else
                     {
-                        //FIXME: move 'currentExtractLocation', if yes, how far?
+                        // FIXME: move 'currentExtractLocation', if yes, how far?
                         LOG_WARN("{}: dataField.name = '{}' or dataField.type = '{}' is unknown", nameId(), dataField.name, dataField.type);
                     }
                 }
@@ -803,7 +803,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     }
                     else
                     {
-                        //FIXME: move 'currentExtractLocation', if yes, how far?
+                        // FIXME: move 'currentExtractLocation', if yes, how far?
                         LOG_WARN("{}: dataField.name = '{}' or dataField.type = '{}' is unknown", nameId(), dataField.name, dataField.type);
                     }
                 }
@@ -1338,7 +1338,7 @@ void NAV::UlogFile::readInformationMessageMulti(uint16_t msgSize, char msgType)
     LOG_DATA("{}: Information message multi - key: {}", nameId(), messageInfoMulti.key);
     LOG_DATA("{}: Information message multi - value: {}", nameId(), messageInfoMulti.value);
 
-    //TODO: Use 'is_continued' to generate a list of values with the same key
+    // TODO: Use 'is_continued' to generate a list of values with the same key
 }
 
 void NAV::UlogFile::readParameterMessage(uint16_t msgSize, char msgType)
@@ -1386,7 +1386,7 @@ void NAV::UlogFile::readParameterMessageDefault(uint16_t msgSize, char msgType)
     LOG_DEBUG("{}: Parameter default message - key: {}", nameId(), messageParamDefault.key);
     LOG_DEBUG("{}: Parameter default message - value: {}", nameId(), messageParamDefault.value);
 
-    //TODO: Restriction on '1<<0' and '1<<1'
+    // TODO: Restriction on '1<<0' and '1<<1'
 }
 
 int8_t NAV::UlogFile::enoughImuDataAvailable()
