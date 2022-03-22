@@ -94,10 +94,6 @@ bool NAV::UlogFile::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    sensorStartupUTCTime_usec = 0;
-
-    lastGnssTime.timeSinceStartup = 0;
-
     return FileReader::initialize();
 }
 
@@ -110,11 +106,13 @@ void NAV::UlogFile::deinitialize()
 
 bool NAV::UlogFile::resetNode()
 {
-    LOG_INFO("{}: called", nameId());
+    LOG_TRACE("{}: called", nameId());
 
     FileReader::resetReader();
 
+    lastGnssTime.timeSinceStartup = 0;
     _epochData.clear();
+    _subscribedMessages.clear();
 
     return true;
 }
@@ -302,6 +300,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
     // Get current position
     auto pollStartPos = _filestream.tellg();
     std::multimap<uint64_t, MeasurementData> peekEpochData;
+    auto peekLastGnssTime = lastGnssTime;
     if (peek)
     {
         peekEpochData = _epochData;
@@ -431,6 +430,12 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                         LOG_WARN("{}: dataField.name = '{}' or dataField.type = '{}' is unknown", nameId(), dataField.name, dataField.type);
                     }
                 }
+                if (!peek)
+                {
+                    LOG_DATA("{}: Inserting [{}] {}: {}", nameId(), sensorAccel.timestamp,
+                             _subscribedMessages.at(messageData.msg_id).multi_id,
+                             _subscribedMessages.at(messageData.msg_id).message_name);
+                }
                 _epochData.insert(std::make_pair(sensorAccel.timestamp,
                                                  MeasurementData{ _subscribedMessages.at(messageData.msg_id).multi_id,
                                                                   _subscribedMessages.at(messageData.msg_id).message_name,
@@ -496,6 +501,12 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                         // FIXME: move 'currentExtractLocation', if yes, how far?
                         LOG_WARN("{}: dataField.name = '{}' or dataField.type = '{}' is unknown", nameId(), dataField.name, dataField.type);
                     }
+                }
+                if (!peek)
+                {
+                    LOG_DATA("{}: Inserting [{}] {}: {}", nameId(), sensorGyro.timestamp,
+                             _subscribedMessages.at(messageData.msg_id).multi_id,
+                             _subscribedMessages.at(messageData.msg_id).message_name);
                 }
                 _epochData.insert(std::make_pair(sensorGyro.timestamp,
                                                  MeasurementData{ _subscribedMessages.at(messageData.msg_id).multi_id,
@@ -572,6 +583,12 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                         // FIXME: move 'currentExtractLocation', if yes, how far?
                         LOG_WARN("{}: dataField.name = '{}' or dataField.type = '{}' is unknown", nameId(), dataField.name, dataField.type);
                     }
+                }
+                if (!peek)
+                {
+                    LOG_DATA("{}: Inserting [{}] {}: {}", nameId(), sensorMag.timestamp,
+                             _subscribedMessages.at(messageData.msg_id).multi_id,
+                             _subscribedMessages.at(messageData.msg_id).message_name);
                 }
                 _epochData.insert(std::make_pair(sensorMag.timestamp,
                                                  MeasurementData{ _subscribedMessages.at(messageData.msg_id).multi_id,
@@ -746,7 +763,14 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     }
                 }
 
-                lastGnssTime.gnssTime = InsTime(0, 0, 0, 0, 0, vehicleGpsPosition.time_utc_usec * 1e-6L);
+                if (!peek && lastGnssTime.timeSinceStartup)
+                {
+                    [[maybe_unused]] auto newGnssTime = InsTime(1970, 1, 1, 0, 0, vehicleGpsPosition.time_utc_usec * 1e-6L);
+                    LOG_DATA("{}: Updating GnssTime from {} to {} (Diff {} sec)", nameId(), lastGnssTime.gnssTime.toYMDHMS(), newGnssTime.toYMDHMS(), (newGnssTime - lastGnssTime.gnssTime).count());
+                    LOG_DATA("{}: Updating tStartup from {} to {} (Diff {} sec)", nameId(), lastGnssTime.timeSinceStartup, vehicleGpsPosition.timestamp, (vehicleGpsPosition.timestamp - lastGnssTime.timeSinceStartup) * 1e-6L);
+                }
+
+                lastGnssTime.gnssTime = InsTime(1970, 1, 1, 0, 0, vehicleGpsPosition.time_utc_usec * 1e-6L);
                 lastGnssTime.timeSinceStartup = vehicleGpsPosition.timestamp;
 
                 while (true) // Delete all old VehicleGpsPosition entries
@@ -760,7 +784,12 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     }
                     _epochData.erase(iter);
                 }
-
+                if (!peek)
+                {
+                    LOG_DATA("{}: Inserting [{}] {}: {}", nameId(), vehicleGpsPosition.timestamp,
+                             _subscribedMessages.at(messageData.msg_id).multi_id,
+                             _subscribedMessages.at(messageData.msg_id).message_name);
+                }
                 _epochData.insert(std::make_pair(vehicleGpsPosition.timestamp,
                                                  MeasurementData{ _subscribedMessages.at(messageData.msg_id).multi_id,
                                                                   _subscribedMessages.at(messageData.msg_id).message_name,
@@ -819,7 +848,12 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     }
                     _epochData.erase(iter);
                 }
-
+                if (!peek)
+                {
+                    LOG_DATA("{}: Inserting [{}] {}: {}", nameId(), vehicleAttitude.timestamp,
+                             _subscribedMessages.at(messageData.msg_id).multi_id,
+                             _subscribedMessages.at(messageData.msg_id).message_name);
+                }
                 _epochData.insert(std::make_pair(vehicleAttitude.timestamp,
                                                  MeasurementData{ _subscribedMessages.at(messageData.msg_id).multi_id,
                                                                   _subscribedMessages.at(messageData.msg_id).message_name,
@@ -1030,6 +1064,13 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 auto obs = std::make_shared<ImuObs>(this->_imuPos);
 
                 uint64_t timeSinceStartupNew{};
+                if (!peek)
+                {
+                    for ([[maybe_unused]] const auto& [timestamp, measurement] : _epochData)
+                    {
+                        LOG_DATA("{}: [{}] {}: {}", nameId(), timestamp, measurement.multi_id, measurement.message_name);
+                    }
+                }
 
                 // Construct ImuObs
                 for (auto it = _epochData.begin(); it != _epochData.end();)
@@ -1066,7 +1107,6 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     else if (std::holds_alternative<SensorMag>(it->second.data) && (it->second.multi_id == static_cast<uint8_t>(multi_id))
                              && !obs->magUncompXYZ.has_value()) // TODO: Find out what is multi_id = 1. Px4 Mini is supposed to have only one magnetometer
                     {
-                        timeSinceStartupNew = it->first;
                         float magX = std::get<SensorMag>(it->second.data).x;
                         float magY = std::get<SensorMag>(it->second.data).y;
                         float magZ = std::get<SensorMag>(it->second.data).z;
@@ -1089,6 +1129,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
 
                 if (!peek)
                 {
+                    LOG_DATA("{}: Sending out ImuObs {}: {} - {}", nameId(), multi_id, obs->insTime->toYMDHMS(), obs->timeSinceStartup.value());
                     if (multi_id == 0)
                     {
                         invokeCallbacks(OUTPUT_PORT_INDEX_IMUOBS_1, obs);
@@ -1107,6 +1148,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     // Return to position before "Read line".
                     _filestream.seekg(pollStartPos, std::ios_base::beg);
                     _epochData = peekEpochData;
+                    lastGnssTime = peekLastGnssTime;
                 }
                 return obs;
             }
@@ -1134,6 +1176,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
 
                 if (!peek)
                 {
+                    LOG_DATA("{}: Sending out PosVelAtt: {}", nameId(), obs->insTime->toYMDHMS());
                     invokeCallbacks(OUTPUT_PORT_INDEX_POSVELATT, obs);
                 }
                 else
@@ -1141,6 +1184,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     // Return to position before "Read line".
                     _filestream.seekg(pollStartPos, std::ios_base::beg);
                     _epochData = peekEpochData;
+                    lastGnssTime = peekLastGnssTime;
                 }
                 return obs;
             }

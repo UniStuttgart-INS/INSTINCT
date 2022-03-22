@@ -65,9 +65,6 @@ class UlogFile : public Imu, public FileReader
         std::string message_name; ///< message name to subscribe to
     };
 
-    /// @brief The sensor startup UTC time in [µs]
-    uint64_t sensorStartupUTCTime_usec{};
-
   private:
     constexpr static size_t OUTPUT_PORT_INDEX_IMUOBS_1 = 0;  ///< @brief Flow (ImuObs #1)
     constexpr static size_t OUTPUT_PORT_INDEX_IMUOBS_2 = 1;  ///< @brief Flow (ImuObs #2)
