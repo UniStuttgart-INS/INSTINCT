@@ -21,6 +21,14 @@ image: ins-cpp:10
     CC: gcc
     CXX: g++
 
+.release:
+  variables:
+    BUILD_TYPE: Release
+
+.debug:
+  variables:
+    BUILD_TYPE: Debug
+
 .schedule:
   only:
     - schedules
@@ -86,7 +94,7 @@ clang-tidy:tests:
   extends:
     - .clang
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug --target copy-compile-commands
     - python3 ./tools/run-clang-tidy.py $PWD/test
 
@@ -181,7 +189,7 @@ main:win:LOG_OFF:
     - linux
   needs: ["check-image"]
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -j2
 
 .build:tests-win:
@@ -218,14 +226,14 @@ tests:win:
     - .build:tests-win
     - .build:test-artifacts
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -maxCpuCount
 
 .build:tests:LOG_OFF:
   extends:
     - .build:tests
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -j2
 
 tests:clang:LOG_OFF:
@@ -242,7 +250,7 @@ tests:win:LOG_OFF:
   extends:
     - .build:tests-win
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -maxCpuCount
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
@@ -379,13 +387,9 @@ pages:
     - cmake --version
     - conan --version
     - cppcheck --version
-
-.build:ubuntu:20.04:debug:
-  extends:
-    - .build:ubuntu:20.04
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug -- -j2
+    - cmake -Bbuild/$BUILD_TYPE -S. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/$BUILD_TYPE -- -j2
   artifacts:
     paths:
       - build/Debug/CTestTestfile.cmake
@@ -394,32 +398,29 @@ pages:
       - bin/Debug/tests
     expire_in: 2h
 
-.build:ubuntu:20.04:release:
-  extends:
-    - .build:ubuntu:20.04
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -j2
-
 ubuntu:20.04:clang:release:
   extends:
-    - .build:ubuntu:20.04:release
+    - .build:ubuntu:20.04
     - .clang
+    - .release
 
 ubuntu:20.04:clang:debug:
   extends:
-    - .build:ubuntu:20.04:debug
+    - .build:ubuntu:20.04
     - .clang
+    - .debug
 
 ubuntu:20.04:gcc:release:
   extends:
-    - .build:ubuntu:20.04:release
+    - .build:ubuntu:20.04
     - .gcc
+    - .release
 
 ubuntu:20.04:gcc:debug:
   extends:
-    - .build:ubuntu:20.04:debug
+    - .build:ubuntu:20.04
     - .gcc
+    - .debug
 
 .run-tests:ubuntu:20.04:
   stage: test
@@ -435,16 +436,32 @@ ubuntu:20.04:gcc:debug:
     - apt install -y cmake libglfw3
     - cmake --version
   script:
-    - cd build/Debug/test
-    - ctest -j2 --output-on-failure
+    - cd build/$BUILD_TYPE/test
+    - ctest --output-on-failure # -j2
 
-run-tests:ubuntu:20.04:clang:
-  extends: .run-tests:ubuntu:20.04
+run-tests:ubuntu:20.04:clang:release:
+  needs: ["ubuntu:20.04:clang:release"]
+  extends:
+    - .run-tests:ubuntu:20.04
+    - .release
+
+run-tests:ubuntu:20.04:clang:debug:
   needs: ["ubuntu:20.04:clang:debug"]
+  extends:
+    - .run-tests:ubuntu:20.04
+    - .debug
 
-run-tests:ubuntu:20.04:gcc:
-  extends: .run-tests:ubuntu:20.04
+run-tests:ubuntu:20.04:gcc:release:
+  needs: ["ubuntu:20.04:gcc:release"]
+  extends:
+    - .run-tests:ubuntu:20.04
+    - .release
+
+run-tests:ubuntu:20.04:gcc:debug:
   needs: ["ubuntu:20.04:gcc:debug"]
+  extends:
+    - .run-tests:ubuntu:20.04
+    - .debug
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                        Arch Linux Latest                                         ║
@@ -472,13 +489,9 @@ run-tests:ubuntu:20.04:gcc:
     - cmake --version
     - conan --version
     - cppcheck --version
-
-.build:archlinux:latest:debug:
-  extends:
-    - .build:archlinux:latest
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug -- -j2
+    - cmake -Bbuild/$BUILD_TYPE -S. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/$BUILD_TYPE -- -j2
   artifacts:
     paths:
       - build/Debug/CTestTestfile.cmake
@@ -487,32 +500,29 @@ run-tests:ubuntu:20.04:gcc:
       - bin/Debug/tests
     expire_in: 2h
 
-.build:archlinux:latest:release:
-  extends:
-    - .build:archlinux:latest
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -j2
-
 archlinux:latest:clang:release:
   extends:
-    - .build:archlinux:latest:release
+    - .build:archlinux:latest
     - .clang
+    - .release
 
 archlinux:latest:clang:debug:
   extends:
-    - .build:archlinux:latest:debug
+    - .build:archlinux:latest
     - .clang
+    - .debug
 
 archlinux:latest:gcc:release:
   extends:
-    - .build:archlinux:latest:release
+    - .build:archlinux:latest
     - .gcc
+    - .release
 
 archlinux:latest:gcc:debug:
   extends:
-    - .build:archlinux:latest:debug
+    - .build:archlinux:latest
     - .gcc
+    - .debug
 
 .run-tests:archlinux:latest:
   stage: test
@@ -525,13 +535,29 @@ archlinux:latest:gcc:debug:
     - pacman -S --noconfirm --needed base-devel cmake glfw-x11
     - cmake --version
   script:
-    - cd build/Debug/test
-    - ctest -j2 --output-on-failure
+    - cd build/$BUILD_TYPE/test
+    - ctest --output-on-failure # -j2
 
-run-tests:archlinux:latest:clang:
-  extends: .run-tests:archlinux:latest
+run-tests:archlinux:latest:clang:release:
+  needs: ["archlinux:latest:clang:release"]
+  extends:
+    - .run-tests:archlinux:latest
+    - .release
+
+run-tests:archlinux:latest:clang:debug:
   needs: ["archlinux:latest:clang:debug"]
+  extends:
+    - .run-tests:archlinux:latest
+    - .debug
 
-run-tests:archlinux:latest:gcc:
-  extends: .run-tests:archlinux:latest
+run-tests:archlinux:latest:gcc:release:
+  needs: ["archlinux:latest:gcc:release"]
+  extends:
+    - .run-tests:archlinux:latest
+    - .release
+
+run-tests:archlinux:latest:gcc:debug:
   needs: ["archlinux:latest:gcc:debug"]
+  extends:
+    - .run-tests:archlinux:latest
+    - .debug

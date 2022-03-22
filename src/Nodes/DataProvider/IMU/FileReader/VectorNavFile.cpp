@@ -187,8 +187,6 @@ bool NAV::VectorNavFile::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    _messageCount = 0;
-
     return FileReader::initialize();
 }
 
@@ -202,6 +200,8 @@ void NAV::VectorNavFile::deinitialize()
 bool NAV::VectorNavFile::resetNode()
 {
     FileReader::resetReader();
+
+    _messageCount = 0;
 
     return true;
 }
@@ -409,16 +409,29 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                     return cell;
                 }
             }
-            throw std::runtime_error("Cell is empty");
             return std::string("");
+        };
+        auto extractRemoveTillDelimiter = [](std::string& str, const std::string& delimiter) {
+            std::string extract;
+            if (size_t pos = str.find(delimiter);
+                pos != std::string::npos)
+            {
+                extract = str.substr(0, pos);
+                str = str.substr(pos + 1);
+            }
+
+            return extract;
         };
 
         try
         {
-            int32_t gpsCycle = std::stoi(extractCell());
-            int32_t gpsWeek = std::stoi(extractCell());
-            long double tow = std::stold(extractCell());
-            obs->insTime = InsTime(gpsCycle, gpsWeek, tow);
+            std::string gpsCycle = extractCell();
+            std::string gpsWeek = extractCell();
+            std::string gpsTow = extractCell();
+            if (!gpsCycle.empty() && !gpsWeek.empty() && !gpsTow.empty())
+            {
+                obs->insTime = InsTime(std::stoi(gpsCycle), std::stoi(gpsWeek), std::stold(gpsTow));
+            }
 
             // Group 2 (Time)
             if (_binaryOutputRegister.timeField != vn::protocol::uart::TimeGroup::TIMEGROUP_NONE)
@@ -657,15 +670,30 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                 if (_binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO)
                 {
                     obs->gnss1Outputs->satInfo.numSats = static_cast<uint8_t>(std::stoul(extractCell()));
+                    std::string satellites = extractCell();
                     for (size_t i = 0; i < obs->gnss1Outputs->satInfo.numSats; i++)
                     {
-                        auto sys = static_cast<int8_t>(std::stoi(extractCell()));
-                        auto svId = static_cast<uint8_t>(std::stoul(extractCell()));
-                        auto flags = static_cast<uint8_t>(std::stoul(extractCell()));
-                        auto cno = static_cast<uint8_t>(std::stoul(extractCell()));
-                        auto qi = static_cast<uint8_t>(std::stoul(extractCell()));
-                        auto el = static_cast<int8_t>(std::stoi(extractCell()));
-                        auto az = static_cast<int16_t>(std::stoi(extractCell()));
+                        satellites = satellites.substr(1); // Remove leading '['
+                        auto sys = static_cast<int8_t>(std::stoi(extractRemoveTillDelimiter(satellites, "|")));
+                        auto svId = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagHealthy = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagAlmanac = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagEphemeris = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagDifferentialCorrection = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagUsedForNavigation = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagAzimuthElevationValid = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagUsedForRTK = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flags = static_cast<uint8_t>(flagHealthy << 0U
+                                                          | flagAlmanac << 1U
+                                                          | flagEphemeris << 2U
+                                                          | flagDifferentialCorrection << 3U
+                                                          | flagUsedForNavigation << 4U
+                                                          | flagAzimuthElevationValid << 5U
+                                                          | flagUsedForRTK << 6U);
+                        auto cno = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto qi = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto el = static_cast<int8_t>(std::stoi(extractRemoveTillDelimiter(satellites, "|")));
+                        auto az = static_cast<int16_t>(std::stoi(extractRemoveTillDelimiter(satellites, "]")));
                         obs->gnss1Outputs->satInfo.satellites.emplace_back(sys, svId, flags, cno, qi, el, az);
                     }
                 }
@@ -674,18 +702,37 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                     obs->gnss1Outputs->raw.tow = std::stod(extractCell());
                     obs->gnss1Outputs->raw.week = static_cast<uint16_t>(std::stoul(extractCell()));
                     obs->gnss1Outputs->raw.numSats = static_cast<uint8_t>(std::stoul(extractCell()));
+                    std::string satellites = extractCell();
                     for (size_t i = 0; i < obs->gnss1Outputs->raw.numSats; i++)
                     {
-                        auto sys = static_cast<uint8_t>(std::stoul(extractCell()));
-                        auto svId = static_cast<uint8_t>(std::stoul(extractCell()));
-                        auto freq = static_cast<uint8_t>(std::stoul(extractCell()));
-                        auto chan = static_cast<uint8_t>(std::stoul(extractCell()));
-                        auto slot = static_cast<int8_t>(std::stoi(extractCell()));
-                        auto cno = static_cast<uint8_t>(std::stoul(extractCell()));
-                        auto flags = static_cast<uint16_t>(std::stoul(extractCell()));
-                        auto pr = std::stod(extractCell());
-                        auto cp = std::stod(extractCell());
-                        auto dp = std::stof(extractCell());
+                        satellites = satellites.substr(1); // Remove leading '['
+                        auto sys = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto svId = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto freq = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto chan = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto slot = static_cast<int8_t>(std::stoi(extractRemoveTillDelimiter(satellites, "|")));
+                        auto cno = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagSearching = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagTracking = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagTimeValid = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagCodeLock = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagPhaseLock = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagPhaseHalfAmbiguity = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagPhaseHalfSub = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagPhaseSlip = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagPseudorangeSmoothed = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flags = static_cast<uint16_t>(flagSearching << 0U
+                                                           | flagTracking << 1U
+                                                           | flagTimeValid << 2U
+                                                           | flagCodeLock << 3U
+                                                           | flagPhaseLock << 4U
+                                                           | flagPhaseHalfAmbiguity << 5U
+                                                           | flagPhaseHalfSub << 6U
+                                                           | flagPhaseSlip << 7U
+                                                           | flagPseudorangeSmoothed << 8U);
+                        auto pr = std::stod(extractRemoveTillDelimiter(satellites, "|"));
+                        auto cp = std::stod(extractRemoveTillDelimiter(satellites, "|"));
+                        auto dp = std::stof(extractRemoveTillDelimiter(satellites, "]"));
                         obs->gnss1Outputs->raw.satellites.emplace_back(sys, svId, freq, chan, slot, cno, flags, pr, cp, dp);
                     }
                 }
@@ -955,15 +1002,30 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                 if (_binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO)
                 {
                     obs->gnss2Outputs->satInfo.numSats = static_cast<uint8_t>(std::stoul(extractCell()));
+                    std::string satellites = extractCell();
                     for (size_t i = 0; i < obs->gnss2Outputs->satInfo.numSats; i++)
                     {
-                        auto sys = static_cast<int8_t>(std::stoi(extractCell()));
-                        auto svId = static_cast<uint8_t>(std::stoul(extractCell()));
-                        auto flags = static_cast<uint8_t>(std::stoul(extractCell()));
-                        auto cno = static_cast<uint8_t>(std::stoul(extractCell()));
-                        auto qi = static_cast<uint8_t>(std::stoul(extractCell()));
-                        auto el = static_cast<int8_t>(std::stoi(extractCell()));
-                        auto az = static_cast<int16_t>(std::stoi(extractCell()));
+                        satellites = satellites.substr(1); // Remove leading '['
+                        auto sys = static_cast<int8_t>(std::stoi(extractRemoveTillDelimiter(satellites, "|")));
+                        auto svId = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagHealthy = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagAlmanac = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagEphemeris = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagDifferentialCorrection = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagUsedForNavigation = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagAzimuthElevationValid = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagUsedForRTK = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flags = static_cast<uint8_t>(flagHealthy << 0U
+                                                          | flagAlmanac << 1U
+                                                          | flagEphemeris << 2U
+                                                          | flagDifferentialCorrection << 3U
+                                                          | flagUsedForNavigation << 4U
+                                                          | flagAzimuthElevationValid << 5U
+                                                          | flagUsedForRTK << 6U);
+                        auto cno = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto qi = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto el = static_cast<int8_t>(std::stoi(extractRemoveTillDelimiter(satellites, "|")));
+                        auto az = static_cast<int16_t>(std::stoi(extractRemoveTillDelimiter(satellites, "]")));
                         obs->gnss2Outputs->satInfo.satellites.emplace_back(sys, svId, flags, cno, qi, el, az);
                     }
                 }
@@ -972,18 +1034,37 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                     obs->gnss2Outputs->raw.tow = std::stod(extractCell());
                     obs->gnss2Outputs->raw.week = static_cast<uint16_t>(std::stoul(extractCell()));
                     obs->gnss2Outputs->raw.numSats = static_cast<uint8_t>(std::stoul(extractCell()));
+                    std::string satellites = extractCell();
                     for (size_t i = 0; i < obs->gnss2Outputs->raw.numSats; i++)
                     {
-                        auto sys = static_cast<uint8_t>(std::stoul(extractCell()));
-                        auto svId = static_cast<uint8_t>(std::stoul(extractCell()));
-                        auto freq = static_cast<uint8_t>(std::stoul(extractCell()));
-                        auto chan = static_cast<uint8_t>(std::stoul(extractCell()));
-                        auto slot = static_cast<int8_t>(std::stoi(extractCell()));
-                        auto cno = static_cast<uint8_t>(std::stoul(extractCell()));
-                        auto flags = static_cast<uint16_t>(std::stoul(extractCell()));
-                        auto pr = std::stod(extractCell());
-                        auto cp = std::stod(extractCell());
-                        auto dp = std::stof(extractCell());
+                        satellites = satellites.substr(1); // Remove leading '['
+                        auto sys = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto svId = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto freq = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto chan = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto slot = static_cast<int8_t>(std::stoi(extractRemoveTillDelimiter(satellites, "|")));
+                        auto cno = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagSearching = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagTracking = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagTimeValid = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagCodeLock = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagPhaseLock = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagPhaseHalfAmbiguity = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagPhaseHalfSub = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagPhaseSlip = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flagPseudorangeSmoothed = static_cast<uint8_t>(std::stoul(extractRemoveTillDelimiter(satellites, "|")));
+                        auto flags = static_cast<uint16_t>(flagSearching << 0U
+                                                           | flagTracking << 1U
+                                                           | flagTimeValid << 2U
+                                                           | flagCodeLock << 3U
+                                                           | flagPhaseLock << 4U
+                                                           | flagPhaseHalfAmbiguity << 5U
+                                                           | flagPhaseHalfSub << 6U
+                                                           | flagPhaseSlip << 7U
+                                                           | flagPseudorangeSmoothed << 8U);
+                        auto pr = std::stod(extractRemoveTillDelimiter(satellites, "|"));
+                        auto cp = std::stod(extractRemoveTillDelimiter(satellites, "|"));
+                        auto dp = std::stof(extractRemoveTillDelimiter(satellites, "]"));
                         obs->gnss2Outputs->raw.satellites.emplace_back(sys, svId, freq, chan, slot, cno, flags, pr, cp, dp);
                     }
                 }
@@ -1013,7 +1094,10 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
             readFromFilestream(reinterpret_cast<char*>(&gpsCycle), sizeof(gpsCycle));
             readFromFilestream(reinterpret_cast<char*>(&gpsWeek), sizeof(gpsWeek));
             readFromFilestream(reinterpret_cast<char*>(&tow), sizeof(tow));
-            obs->insTime = InsTime(gpsCycle, gpsWeek, tow);
+            if (gpsCycle || gpsWeek)
+            {
+                obs->insTime = InsTime(gpsCycle, gpsWeek, tow);
+            }
 
             // Group 2 (Time)
             if (_binaryOutputRegister.timeField != vn::protocol::uart::TimeGroup::TIMEGROUP_NONE)
@@ -1441,7 +1525,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                     _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->raw.tow), sizeof(obs->gnss2Outputs->raw.tow));
                     _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->raw.week), sizeof(obs->gnss2Outputs->raw.week));
                     _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->raw.numSats), sizeof(obs->gnss2Outputs->raw.numSats));
-                    obs->gnss1Outputs->raw.satellites.resize(obs->gnss1Outputs->raw.numSats);
+                    obs->gnss2Outputs->raw.satellites.resize(obs->gnss2Outputs->raw.numSats);
 
                     for (auto& satellite : obs->gnss2Outputs->raw.satellites)
                     {
