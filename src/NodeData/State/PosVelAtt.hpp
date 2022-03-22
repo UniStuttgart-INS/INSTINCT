@@ -120,8 +120,8 @@ class PosVelAtt : public PosVel
     }
 
     /// @brief Set the State
-    /// @param[in] lla_position New Position in LatLonAlt coordinates
-    /// @param[in] n_velocity The new velocity in the NED frame
+    /// @param[in] lla_position New Position in LatLonAlt coordinates [rad, rad, m]
+    /// @param[in] n_velocity The new velocity in the NED frame [m/s, m/s, m/s]
     /// @param[in] n_Quat_b Quaternion from body to navigation frame
     void setState_n(const Eigen::Vector3d& lla_position, const Eigen::Vector3d& n_velocity, const Eigen::Quaterniond& n_Quat_b)
     {
