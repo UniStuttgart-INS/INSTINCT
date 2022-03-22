@@ -8,6 +8,8 @@ namespace ub = NAV::sensors::ublox;
 #include "uart/protocol/packet.hpp"
 #include "uart/sensors/sensors.hpp"
 
+namespace NAV::TEST
+{
 TEST_CASE("[UbloxUtilities] decryptUbloxObs - NMEA", "[UbloxUtilities]")
 {
     Logger consoleSink;
@@ -328,3 +330,5 @@ TEST_CASE("[UbloxUtilities] checksumNMEA", "[UbloxUtilities]")
     std::copy(text.begin(), text.end(), std::back_inserter(data));
     REQUIRE(ub::checksumNMEA(data) == 0x72);
 }
+
+} // namespace NAV::TEST

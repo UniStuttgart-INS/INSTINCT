@@ -15,7 +15,7 @@
 #include <limits>
 #include <iostream>
 
-namespace NAV
+namespace NAV::TEST::MechanizationTests
 {
 // TODO: Rewrite tests
 
@@ -540,4 +540,4 @@ namespace NAV
 //     CHECK(trafo::rad2deg(expectedRollPitchYaw) == trafo::rad2deg(correctedPVA->rollPitchYaw()));
 // }
 
-} // namespace NAV
+} // namespace NAV::TEST::MechanizationTests

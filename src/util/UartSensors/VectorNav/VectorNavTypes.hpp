@@ -150,6 +150,15 @@ struct SatInfo
             UsedForRTK = 1 << 6,             ///< Used for RTK
         };
 
+        /// @brief Binary or-operator
+        /// @param[in] lhs Left-hand side
+        /// @param[in] rhs Right-hand side
+        /// @return Binary or-ed result
+        friend Flags operator|(Flags lhs, Flags rhs)
+        {
+            return Flags(int(lhs) | int(rhs));
+        }
+
         /// @brief Quality Indicator
         enum class QualityIndicator : uint8_t
         {
@@ -176,6 +185,25 @@ struct SatInfo
         /// @param[in] az Azimuth angle in degrees
         SatInfoElement(uint8_t sys, uint8_t svId, uint8_t flags, uint8_t cno, uint8_t qi, int8_t el, int16_t az)
             : sys(static_cast<SatSys>(sys)), svId(svId), flags(static_cast<Flags>(flags)), cno(cno), qi(static_cast<QualityIndicator>(qi)), el(el), az(az) {}
+
+        /// @brief Constructor
+        /// @param[in] sys GNSS constellation indicator
+        /// @param[in] svId Space vehicle Id
+        /// @param[in] healthy Healthy
+        /// @param[in] almanac Almanac
+        /// @param[in] ephemeris Ephemeris
+        /// @param[in] differentialCorrection Differential Correction
+        /// @param[in] usedForNavigation Used for Navigation
+        /// @param[in] azimuthElevationValid Azimuth / Elevation Valid
+        /// @param[in] usedForRTK Used for RTK
+        /// @param[in] cno Carrier-to-noise density ratio (signal strength) [dB-Hz]
+        /// @param[in] qi Quality Indicator
+        /// @param[in] el Elevation in degrees
+        /// @param[in] az Azimuth angle in degrees
+        SatInfoElement(uint8_t sys, uint8_t svId,
+                       uint8_t healthy, uint8_t almanac, uint8_t ephemeris, uint8_t differentialCorrection, uint8_t usedForNavigation, uint8_t azimuthElevationValid, uint8_t usedForRTK,
+                       uint8_t cno, uint8_t qi, int8_t el, int16_t az)
+            : sys(static_cast<SatSys>(sys)), svId(svId), flags((healthy ? Flags::Healthy : Flags::None) | (almanac ? Flags::Almanac : Flags::None) | (ephemeris ? Flags::Ephemeris : Flags::None) | (differentialCorrection ? Flags::DifferentialCorrection : Flags::None) | (usedForNavigation ? Flags::UsedForNavigation : Flags::None) | (azimuthElevationValid ? Flags::AzimuthElevationValid : Flags::None) | (usedForRTK ? Flags::UsedForRTK : Flags::None)), cno(cno), qi(static_cast<QualityIndicator>(qi)), el(el), az(az) {}
 
         SatSys sys{};          ///< GNSS constellation indicator
         uint8_t svId{};        ///< Space vehicle Id
@@ -222,6 +250,15 @@ struct RawMeas
             PhaseSlip = 1 << 7,           ///< Phase Slip
             PseudorangeSmoothed = 1 << 8, ///< Pseudorange Smoothed
         };
+
+        /// @brief Binary or-operator
+        /// @param[in] lhs Left-hand side
+        /// @param[in] rhs Right-hand side
+        /// @return Binary or-ed result
+        friend Flags operator|(Flags lhs, Flags rhs)
+        {
+            return Flags(int(lhs) | int(rhs));
+        }
 
         /// @brief Channel Indicator
         enum class Chan : uint8_t
@@ -271,6 +308,30 @@ struct RawMeas
         /// @param[in] dp Doppler measurement in Hz. Positive sign for approaching satellites
         SatRawElement(uint8_t sys, uint8_t svId, uint8_t freq, uint8_t chan, int8_t slot, uint8_t cno, uint16_t flags, double pr, double cp, float dp)
             : sys(static_cast<SatSys>(sys)), svId(svId), freq(static_cast<Freq>(freq)), chan(static_cast<Chan>(chan)), slot(slot), cno(cno), flags(static_cast<Flags>(flags)), pr(pr), cp(cp), dp(dp) {}
+
+        /// @brief Constructor
+        /// @param[in] sys GNSS constellation indicator
+        /// @param[in] svId Space vehicle Id
+        /// @param[in] freq Frequency indicator
+        /// @param[in] chan Channel Indicator
+        /// @param[in] slot Slot Id
+        /// @param[in] cno Carrier-to-noise density ratio (signal strength) [dB-Hz]
+        /// @param[in] searching Searching
+        /// @param[in] tracking Tracking
+        /// @param[in] timeValid Time Valid
+        /// @param[in] codeLock Code Lock
+        /// @param[in] phaseLock Phase Lock
+        /// @param[in] phaseHalfAmbiguity Phase Half Ambiguity
+        /// @param[in] phaseHalfSub Phase Half Sub
+        /// @param[in] phaseSlip Phase Slip
+        /// @param[in] pseudorangeSmoothed Pseudorange Smoothed
+        /// @param[in] pr Pseudorange measurement in meters
+        /// @param[in] cp Carrier phase measurement in cycles
+        /// @param[in] dp Doppler measurement in Hz. Positive sign for approaching satellites
+        SatRawElement(uint8_t sys, uint8_t svId, uint8_t freq, uint8_t chan, int8_t slot, uint8_t cno,
+                      uint8_t searching, uint8_t tracking, uint8_t timeValid, uint8_t codeLock, uint8_t phaseLock, uint8_t phaseHalfAmbiguity, uint8_t phaseHalfSub, uint8_t phaseSlip, uint8_t pseudorangeSmoothed,
+                      double pr, double cp, double dp)
+            : sys(static_cast<SatSys>(sys)), svId(svId), freq(static_cast<Freq>(freq)), chan(static_cast<Chan>(chan)), slot(slot), cno(cno), flags((searching ? Flags::Searching : Flags::None) | (tracking ? Flags::Tracking : Flags::None) | (timeValid ? Flags::TimeValid : Flags::None) | (codeLock ? Flags::CodeLock : Flags::None) | (phaseLock ? Flags::PhaseLock : Flags::None) | (phaseHalfAmbiguity ? Flags::PhaseHalfAmbiguity : Flags::None) | (phaseHalfSub ? Flags::PhaseHalfSub : Flags::None) | (phaseSlip ? Flags::PhaseSlip : Flags::None) | (pseudorangeSmoothed ? Flags::PseudorangeSmoothed : Flags::None)), pr(pr), cp(cp), dp(static_cast<float>(dp)) {}
 
         SatSys sys{};   ///< GNSS constellation indicator
         uint8_t svId{}; ///< Space vehicle Id
