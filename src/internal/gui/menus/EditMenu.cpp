@@ -2,6 +2,7 @@
 
 #include <imgui.h>
 #include "internal/gui/GlobalActions.hpp"
+#include "internal/gui/windows/Global.hpp"
 
 void NAV::gui::menus::ShowEditMenu()
 {
@@ -26,4 +27,7 @@ void NAV::gui::menus::ShowEditMenu()
     {
         pasteFlowElements();
     }
+    ImGui::Separator();
+    ImGui::MenuItem("Node Editor Style", nullptr, &gui::windows::showNodeEditorStyleEditor);
+    ImGui::MenuItem("ImPlot Style", nullptr, &gui::windows::showImPlotStyleEditor);
 }

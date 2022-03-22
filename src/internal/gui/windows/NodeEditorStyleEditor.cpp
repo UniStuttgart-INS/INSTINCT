@@ -1,12 +1,12 @@
-#include "StyleEditor.hpp"
+#include "NodeEditorStyleEditor.hpp"
 
 #include <imgui_node_editor.h>
 
 namespace ed = ax::NodeEditor;
 
-void NAV::gui::windows::ShowStyleEditor(bool* show /* = nullptr*/)
+void NAV::gui::windows::ShowNodeEditorStyleEditor(bool* show /* = nullptr*/)
 {
-    if (!ImGui::Begin("Style", show))
+    if (!ImGui::Begin("Node Editor Style", show))
     {
         ImGui::End();
         return;
@@ -32,19 +32,19 @@ void NAV::gui::windows::ShowStyleEditor(bool* show /* = nullptr*/)
     ImGui::DragFloat("Pin Rounding", &editorStyle.PinRounding, 0.1F, 0.0F, 40.0F);
     ImGui::DragFloat("Pin Border Width", &editorStyle.PinBorderWidth, 0.1F, 0.0F, 15.0F);
     ImGui::DragFloat("Link Strength", &editorStyle.LinkStrength, 1.0F, 0.0F, 500.0F);
-    //ImVec2  SourceDirection;
-    //ImVec2  TargetDirection;
+    // ImVec2  SourceDirection;
+    // ImVec2  TargetDirection;
     ImGui::DragFloat("Scroll Duration", &editorStyle.ScrollDuration, 0.001F, 0.0F, 2.0F);
     ImGui::DragFloat("Flow Marker Distance", &editorStyle.FlowMarkerDistance, 1.0F, 1.0F, 200.0F);
     ImGui::DragFloat("Flow Speed", &editorStyle.FlowSpeed, 1.0F, 1.0F, 2000.0F);
     ImGui::DragFloat("Flow Duration", &editorStyle.FlowDuration, 0.001F, 0.0F, 5.0F);
-    //ImVec2  PivotAlignment;
-    //ImVec2  PivotSize;
-    //ImVec2  PivotScale;
-    //float   PinCorners;
-    //float   PinRadius;
-    //float   PinArrowSize;
-    //float   PinArrowWidth;
+    // ImVec2  PivotAlignment;
+    // ImVec2  PivotSize;
+    // ImVec2  PivotScale;
+    // float   PinCorners;
+    // float   PinRadius;
+    // float   PinArrowSize;
+    // float   PinArrowWidth;
     ImGui::DragFloat("Group Rounding", &editorStyle.GroupRounding, 0.1F, 0.0F, 40.0F);
     ImGui::DragFloat("Group Border Width", &editorStyle.GroupBorderWidth, 0.1F, 0.0F, 15.0F);
 

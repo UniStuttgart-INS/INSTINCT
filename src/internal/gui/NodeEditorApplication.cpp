@@ -27,6 +27,8 @@ namespace util = ax::NodeEditor::Utilities;
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/widgets/Spinner.hpp"
 
+#include "internal/gui/windows/Global.hpp"
+
 #include "internal/Node/Pin.hpp"
 #include "internal/Node/Node.hpp"
 #include "internal/Node/Link.hpp"
@@ -1442,14 +1444,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         ImGui::SetTooltip("%s", tooltipText.c_str());
     }
 
-    if (showImGuiDemoWindow)
-    {
-        ImGui::ShowDemoWindow();
-    }
-    if (showImPlotDemoWindow)
-    {
-        ImPlot::ShowDemoWindow();
-    }
+    gui::windows::renderGlobalWindows();
 
     std::string title = (flow::HasUnsavedChanges() ? "● " : "")
                         + (flow::GetCurrentFilename().empty() ? "" : flow::GetCurrentFilename() + " - ")

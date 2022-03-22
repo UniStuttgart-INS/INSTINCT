@@ -84,11 +84,6 @@ class NodeEditorApplication : public Application
     /// @brief Pointer to the texture for the instinct logo
     static inline ImTextureID m_InstinctLogo = nullptr;
 
-    /// @brief Flag whether the ImGui Demo window should be displayed
-    static inline bool showImGuiDemoWindow = false;
-    /// @brief Flag whether the ImPlot Demo window should be displayed
-    static inline bool showImPlotDemoWindow = false;
-
     inline static float leftPaneWidth = 350.0F;       ///< Width of the left pane
     inline static float rightPaneWidth = 850.0F;      ///< Width of the right pane
     inline static float menuBarHeight = 20;           ///< Height of the menu bar on top
