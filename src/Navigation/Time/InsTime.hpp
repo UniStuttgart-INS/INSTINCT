@@ -89,7 +89,7 @@ constexpr int32_t daysInMonth(int32_t month, int32_t year)
     --month; // Make month 0 based
     if (month >= InsTimeUtil::MONTHS_PER_YEAR)
     {
-        year += static_cast<int32_t>(month / InsTimeUtil::MONTHS_PER_YEAR);
+        year += month / InsTimeUtil::MONTHS_PER_YEAR;
         month %= InsTimeUtil::MONTHS_PER_YEAR;
     }
     while (month < 0)
@@ -305,7 +305,7 @@ struct InsTime_GPSweekTow
 
         if (this->gpsWeek >= InsTimeUtil::WEEKS_PER_GPS_CYCLE)
         {
-            this->gpsCycle += static_cast<int32_t>(this->gpsWeek / InsTimeUtil::WEEKS_PER_GPS_CYCLE);
+            this->gpsCycle += this->gpsWeek / InsTimeUtil::WEEKS_PER_GPS_CYCLE;
             this->gpsWeek %= InsTimeUtil::WEEKS_PER_GPS_CYCLE;
         }
         while (this->gpsWeek < 0)
@@ -399,7 +399,7 @@ struct InsTime_YMDHMS
 
         if (this->min >= InsTimeUtil::MINUTES_PER_HOUR)
         {
-            this->hour += static_cast<int32_t>(this->min / InsTimeUtil::MINUTES_PER_HOUR);
+            this->hour += this->min / InsTimeUtil::MINUTES_PER_HOUR;
             this->min %= InsTimeUtil::MINUTES_PER_HOUR;
         }
         while (this->min < 0)
@@ -410,7 +410,7 @@ struct InsTime_YMDHMS
 
         if (this->hour >= InsTimeUtil::HOURS_PER_DAY)
         {
-            this->day += static_cast<int32_t>(this->hour / InsTimeUtil::HOURS_PER_DAY);
+            this->day += this->hour / InsTimeUtil::HOURS_PER_DAY;
             this->hour %= InsTimeUtil::HOURS_PER_DAY;
         }
         while (this->hour < 0)
