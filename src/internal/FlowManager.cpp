@@ -5,6 +5,7 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
+#include <implot.h>
 #include <imgui_node_editor.h>
 namespace ed = ax::NodeEditor;
 
@@ -14,6 +15,8 @@ namespace ed = ax::NodeEditor;
 #include "internal/Node/Link.hpp"
 #include "internal/Node/Pin.hpp"
 #include "internal/ConfigManager.hpp"
+
+#include "internal/gui/windows/ImPlotStyleEditor.hpp"
 
 #include <fstream>
 #include <iomanip>
@@ -66,6 +69,11 @@ void NAV::flow::SaveFlowAs(const std::string& filepath)
     {
         j["links"]["link-" + std::to_string(size_t(link.id))] = link;
     }
+    if (gui::windows::saveConfigInFlow)
+    {
+        j["implot"]["style"] = ImPlot::GetStyle();
+        j["implot"]["prefereFlowOverGlobal"] = gui::windows::prefereFlowOverGlobal;
+    }
 
     filestream << std::setw(4) << j << std::endl;
 
@@ -93,7 +101,7 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
 
     LoadJson(j);
 
-    if (ConfigManager::Get<bool>("nogui", false))
+    if (ConfigManager::Get<bool>("nogui"))
     {
         if (!nm::InitializeAllNodes())
         {
@@ -105,7 +113,7 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
         nm::InitializeAllNodesAsync();
     }
 
-    if (!ConfigManager::Get<bool>("nogui", false))
+    if (!ConfigManager::Get<bool>("nogui"))
     {
         loadingFrameCount = ImGui::GetFrameCount();
     }
@@ -113,7 +121,7 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
     saveLastActions = true;
     currentFilename = filepath;
 
-    if (!ConfigManager::Get<bool>("nogui", false))
+    if (!ConfigManager::Get<bool>("nogui"))
     {
         gui::clearLastActionList();
         gui::saveLastAction();
@@ -125,6 +133,38 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
 bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
 {
     bool loadSuccessful = true;
+
+    if (j.contains("implot"))
+    {
+        gui::windows::saveConfigInFlow = true;
+
+        if (j.at("implot").contains("prefereFlowOverGlobal"))
+        {
+            j.at("implot").at("prefereFlowOverGlobal").get_to(gui::windows::prefereFlowOverGlobal);
+        }
+
+        std::filesystem::path filepath = flow::GetProgramRootPath();
+        if (std::filesystem::path inputPath{ ConfigManager::Get<std::string>("implot-config") };
+            inputPath.is_relative())
+        {
+            filepath /= inputPath;
+        }
+        else
+        {
+            filepath = inputPath;
+        }
+
+        if (gui::windows::prefereFlowOverGlobal || !std::filesystem::exists(filepath))
+        {
+            if (!ConfigManager::Get<bool>("nogui"))
+            {
+                if (j.at("implot").contains("style"))
+                {
+                    j.at("implot").at("style").get_to(ImPlot::GetStyle());
+                }
+            }
+        }
+    }
 
     if (j.contains("nodes"))
     {
@@ -184,7 +224,7 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
 
             nm::UpdateNode(node);
 
-            if (!ConfigManager::Get<bool>("nogui", false))
+            if (!ConfigManager::Get<bool>("nogui"))
             {
                 ed::SetNodePosition(node->id, nodeJson.at("pos").get<ImVec2>());
 
@@ -292,7 +332,7 @@ std::filesystem::path NAV::flow::GetOutputPath()
 {
     std::filesystem::path filepath = flow::GetProgramRootPath();
 
-    if (std::filesystem::path outputPath{ ConfigManager::Get<std::string>("output-path", "logs") };
+    if (std::filesystem::path outputPath{ ConfigManager::Get<std::string>("output-path") };
         outputPath.is_relative())
     {
         filepath /= outputPath;
@@ -302,7 +342,7 @@ std::filesystem::path NAV::flow::GetOutputPath()
         filepath = outputPath;
     }
 
-    if (ConfigManager::Get<bool>("rotate-output", false))
+    if (ConfigManager::Get<bool>("rotate-output"))
     {
         filepath /= fmt::format("{:04d}", currentRotatedParentFolderNumber);
     }
@@ -317,7 +357,7 @@ void NAV::flow::SetOutputPath()
     {
         std::filesystem::path outputDir{ programRootPath };
 
-        if (std::filesystem::path outputPath{ ConfigManager::Get<std::string>("output-path", "logs") };
+        if (std::filesystem::path outputPath{ ConfigManager::Get<std::string>("output-path") };
             outputPath.is_relative())
         {
             outputDir /= outputPath;
@@ -340,7 +380,7 @@ std::filesystem::path NAV::flow::GetInputPath()
 {
     std::filesystem::path filepath = flow::GetProgramRootPath();
 
-    if (std::filesystem::path inputPath{ ConfigManager::Get<std::string>("input-path", "data") };
+    if (std::filesystem::path inputPath{ ConfigManager::Get<std::string>("input-path") };
         inputPath.is_relative())
     {
         filepath /= inputPath;
@@ -357,7 +397,7 @@ std::filesystem::path NAV::flow::GetFlowPath()
 {
     std::filesystem::path filepath = flow::GetProgramRootPath();
 
-    if (std::filesystem::path inputPath{ ConfigManager::Get<std::string>("flow-path", "flow") };
+    if (std::filesystem::path inputPath{ ConfigManager::Get<std::string>("flow-path") };
         inputPath.is_relative())
     {
         filepath /= inputPath;

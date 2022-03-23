@@ -19,11 +19,13 @@ namespace NAV::gui::widgets
 /// @param[in] startPath Path to the directory to display initially
 /// @param[in] id Unique id for creating the dialog uid
 /// @param[in] nameId Name of the node triggering the window used for logging
+/// @param[in] buttonText Text to display on the button
 /// @return True if the filepath was changed
 bool FileDialogSave(std::string& path, const char* vName,
                     const char* vFilters, const std::vector<std::string>& extensions,
                     const std::filesystem::path& startPath,
-                    size_t id, const std::string& nameId);
+                    size_t id, const std::string& nameId,
+                    const char* buttonText = "Choose");
 
 /// @brief Shows an InputText and a button which opens a file dialog to select a path to load a file to
 /// @param[in, out] path String to store the path in
@@ -33,10 +35,12 @@ bool FileDialogSave(std::string& path, const char* vName,
 /// @param[in] startPath Path to the directory to display initially
 /// @param[in] id Unique id for creating the dialog uid
 /// @param[in] nameId Name of the node triggering the window used for logging
+/// @param[in] buttonText Text to display on the button
 /// @return True if the filepath was changed
 bool FileDialogLoad(std::string& path, const char* vName,
                     const char* vFilters, const std::vector<std::string>& extensions,
                     const std::filesystem::path& startPath,
-                    size_t id, const std::string& nameId);
+                    size_t id, const std::string& nameId,
+                    const char* buttonText = "Choose");
 
 } // namespace NAV::gui::widgets

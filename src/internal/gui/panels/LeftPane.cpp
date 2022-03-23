@@ -9,7 +9,6 @@
 namespace nm = NAV::NodeManager;
 
 #include "internal/gui/TouchTracker.hpp"
-#include "internal/gui/windows/StyleEditor.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
 
 #include "util/StringUtil.hpp"
@@ -44,11 +43,6 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
             ImGui::SetTooltip("Shortcut: F");
         }
         ImGui::Spring();
-        static bool showStyleEditor = false;
-        if (ImGui::Button("Edit Style"))
-        {
-            showStyleEditor = true;
-        }
         ImGui::EndHorizontal();
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
@@ -63,11 +57,6 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
         ImGui::PopDisabled();
 #endif
-
-        if (showStyleEditor)
-        {
-            gui::windows::ShowStyleEditor(&showStyleEditor);
-        }
     }
 
     std::vector<ed::NodeId> selectedNodes;

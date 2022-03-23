@@ -8,6 +8,7 @@
 #include <application.h>
 
 #include <imgui.h>
+#include <implot.h>
 
 #include "internal/gui/GlobalActions.hpp"
 
@@ -84,10 +85,8 @@ class NodeEditorApplication : public Application
     /// @brief Pointer to the texture for the instinct logo
     static inline ImTextureID m_InstinctLogo = nullptr;
 
-    /// @brief Flag whether the ImGui Demo window should be displayed
-    static inline bool showImGuiDemoWindow = false;
-    /// @brief Flag whether the ImPlot Demo window should be displayed
-    static inline bool showImPlotDemoWindow = false;
+    /// @brief Default style of the ImPlot library to compare changes against
+    static inline ImPlotStyle imPlotReferenceStyle;
 
     inline static float leftPaneWidth = 350.0F;       ///< Width of the left pane
     inline static float rightPaneWidth = 850.0F;      ///< Width of the right pane

@@ -13,7 +13,8 @@
 bool NAV::gui::widgets::FileDialogSave(std::string& path, const char* vName,
                                        const char* vFilters, const std::vector<std::string>& extensions,
                                        const std::filesystem::path& startPath,
-                                       size_t id, [[maybe_unused]] const std::string& nameId)
+                                       size_t id, [[maybe_unused]] const std::string& nameId,
+                                       const char* buttonText)
 {
     bool changed = false;
     // Filepath
@@ -24,7 +25,7 @@ bool NAV::gui::widgets::FileDialogSave(std::string& path, const char* vName,
     }
     ImGui::SameLine();
     std::string saveFileDialogKey = fmt::format("Save File ({})", id);
-    if (ImGui::Button("Save"))
+    if (ImGui::Button(buttonText))
     {
         ImGuiFileDialog::Instance()->OpenDialog(saveFileDialogKey, vName, vFilters, (startPath / ".").string(), 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
         for (const auto& ext : extensions)
@@ -55,7 +56,8 @@ bool NAV::gui::widgets::FileDialogSave(std::string& path, const char* vName,
 bool NAV::gui::widgets::FileDialogLoad(std::string& path, const char* vName,
                                        const char* vFilters, const std::vector<std::string>& extensions,
                                        const std::filesystem::path& startPath,
-                                       size_t id, [[maybe_unused]] const std::string& nameId)
+                                       size_t id, [[maybe_unused]] const std::string& nameId,
+                                       const char* buttonText)
 {
     bool changed = false;
     // Filepath
@@ -69,7 +71,7 @@ bool NAV::gui::widgets::FileDialogLoad(std::string& path, const char* vName,
     }
     ImGui::SameLine();
     std::string openFileDialogKey = fmt::format("Select File ({})", id);
-    if (ImGui::Button("Open"))
+    if (ImGui::Button(buttonText))
     {
         ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, vName, vFilters, (startPath / ".").string());
         for (const auto& ext : extensions)

@@ -122,7 +122,7 @@ void NAV::FlowExecutor::deinitialize()
 
     _execute.store(false, std::memory_order_release);
 
-    if (!ConfigManager::Get<bool>("nogui", false))
+    if (!ConfigManager::Get<bool>("nogui"))
     {
         nm::DisableAllCallbacks();
     }
@@ -260,9 +260,9 @@ void NAV::FlowExecutor::execute()
         events.erase(it);
     }
 
-    if (!ConfigManager::Get<bool>("nogui", false)
-        || (!ConfigManager::Get<bool>("sigterm", false)
-            && !ConfigManager::Get<size_t>("duration", 0)))
+    if (!ConfigManager::Get<bool>("nogui")
+        || (!ConfigManager::Get<bool>("sigterm")
+            && !ConfigManager::Get<size_t>("duration")))
     {
         auto finish = std::chrono::steady_clock::now();
         [[maybe_unused]] std::chrono::duration<double> elapsed = finish - start;

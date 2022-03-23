@@ -50,7 +50,7 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
         LOG_WARN("You are running INSTINCT on a platform without quadruple-precision floating-point support. Functionality concerning time measurements and ranging could be affected by the precision loss.");
     }
 
-    if (NAV::ConfigManager::Get<bool>("nogui", false))
+    if (NAV::ConfigManager::Get<bool>("nogui"))
     {
         LOG_INFO("Starting in No-GUI Mode");
 
@@ -81,13 +81,13 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
 
                 NAV::FlowExecutor::waitForFinish();
 
-                if (NAV::ConfigManager::Get<bool>("nogui", false)
-                    && NAV::ConfigManager::Get<bool>("sigterm", false))
+                if (NAV::ConfigManager::Get<bool>("nogui")
+                    && NAV::ConfigManager::Get<bool>("sigterm"))
                 {
                     NAV::Sleep::waitForSignal(true);
                 }
-                else if (size_t duration = NAV::ConfigManager::Get<size_t>("duration", 0);
-                         NAV::ConfigManager::Get<bool>("nogui", false) && duration)
+                else if (size_t duration = NAV::ConfigManager::Get<size_t>("duration");
+                         NAV::ConfigManager::Get<bool>("nogui") && duration)
                 {
                     auto now = std::chrono::steady_clock::now();
                     std::chrono::duration<double> elapsed = now - start;

@@ -16,6 +16,8 @@ namespace nm = NAV::NodeManager;
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 
+#include <implot_internal.h>
+
 #include <algorithm>
 
 namespace NAV
@@ -673,6 +675,8 @@ void NAV::Plot::guiConfig()
     {
         auto& plot = _plots.at(plotIdx);
 
+        size_t plotElementIdx = 0;
+
         if (!plot.visible) // In the previous frame the x was pressed on the plot
         {
             LOG_DEBUG("{}: # Plot '{}' at index {} was deleted", nameId(), plot.headerText, plotIdx);
@@ -965,15 +969,16 @@ void NAV::Plot::guiConfig()
                         }
                         if (plotItem.style.lineType == PlotInfo::PlotItem::Style::LineType::Line)
                         {
-                            ImPlot::SetNextLineStyle(plotItem.style.color, plotItem.style.thickness);
+                            ImPlot::SetNextLineStyle(ImPlot::IsColorAuto(plotItem.style.color) ? ImPlot::GetColormapColor(static_cast<int>(plotElementIdx)) : plotItem.style.color,
+                                                     plotItem.style.thickness);
                         }
                         if (plotItem.style.lineType == PlotInfo::PlotItem::Style::LineType::Scatter || plotItem.style.markers)
                         {
                             ImPlot::SetNextMarkerStyle(plotItem.style.markerStyle,
                                                        plotItem.style.markerSize,
-                                                       plotItem.style.markerFillColor,
+                                                       ImPlot::IsColorAuto(plotItem.style.markerFillColor) ? ImPlot::GetColormapColor(static_cast<int>(plotElementIdx)) : plotItem.style.markerFillColor,
                                                        plotItem.style.markerWeight,
-                                                       plotItem.style.markerOutlineColor);
+                                                       ImPlot::IsColorAuto(plotItem.style.markerOutlineColor) ? ImPlot::GetColormapColor(static_cast<int>(plotElementIdx)) : plotItem.style.markerOutlineColor);
                         }
 
                         std::string plotName = fmt::format("{}##{} - {} - {}", plotItem.style.legendName, size_t(id), plotItem.pinIndex + 1, plotData.displayName);
@@ -1052,9 +1057,20 @@ void NAV::Plot::guiConfig()
                             }
                             if (plotItem.style.lineType == PlotInfo::PlotItem::Style::LineType::Line)
                             {
-                                if (ImGui::ColorEdit4("Line Color", &plotItem.style.color.x))
+                                bool isColorAuto = ImPlot::IsColorAuto(plotItem.style.color);
+                                auto col = isColorAuto ? ImPlot::GetColormapColor(static_cast<int>(plotElementIdx)) : plotItem.style.color;
+                                if (ImGui::ColorEdit4("Line Color", &col.x))
                                 {
+                                    plotItem.style.color = col;
                                     flow::ApplyChanges();
+                                }
+                                if (!isColorAuto)
+                                {
+                                    ImGui::SameLine();
+                                    if (ImGui::Button("Auto##Line Color"))
+                                    {
+                                        plotItem.style.color = IMPLOT_AUTO_COL;
+                                    }
                                 }
                                 if (ImGui::DragFloat("Line Thickness", &plotItem.style.thickness, 0.1F, 0.0F, 8.0F, "%.2f px"))
                                 {
@@ -1080,17 +1096,42 @@ void NAV::Plot::guiConfig()
                                 {
                                     flow::ApplyChanges();
                                 }
-                                if (ImGui::ColorEdit4("Marker Fill Color", &plotItem.style.markerFillColor.x))
+                                bool isColorAuto = ImPlot::IsColorAuto(plotItem.style.markerFillColor);
+                                auto col = isColorAuto ? ImPlot::GetColormapColor(static_cast<int>(plotElementIdx)) : plotItem.style.markerFillColor;
+                                if (ImGui::ColorEdit4("Marker Fill Color", &col.x))
                                 {
+                                    plotItem.style.markerFillColor = col;
                                     flow::ApplyChanges();
                                 }
-                                if (ImGui::ColorEdit4("Marker Outline Color", &plotItem.style.markerOutlineColor.x))
+                                if (!isColorAuto)
                                 {
+                                    ImGui::SameLine();
+                                    if (ImGui::Button("Auto##Marker Fill Color"))
+                                    {
+                                        plotItem.style.markerFillColor = IMPLOT_AUTO_COL;
+                                    }
+                                }
+
+                                isColorAuto = ImPlot::IsColorAuto(plotItem.style.markerOutlineColor);
+                                col = isColorAuto ? ImPlot::GetColormapColor(static_cast<int>(plotElementIdx)) : plotItem.style.markerOutlineColor;
+                                if (ImGui::ColorEdit4("Marker Outline Color", &col.x))
+                                {
+                                    plotItem.style.markerOutlineColor = col;
                                     flow::ApplyChanges();
+                                }
+                                if (!isColorAuto)
+                                {
+                                    ImGui::SameLine();
+                                    if (ImGui::Button("Auto##Marker Outline Color"))
+                                    {
+                                        plotItem.style.markerOutlineColor = IMPLOT_AUTO_COL;
+                                    }
                                 }
                             }
                             ImPlot::EndLegendPopup();
                         }
+
+                        plotElementIdx++;
                     }
                 }
 
@@ -1107,9 +1148,6 @@ void NAV::Plot::guiConfig()
                         else
                         {
                             plot.plotItems.emplace_back(pinIndex, dataIndex, dragDropAxis);
-                            plot.plotItems.back().style.color = ImPlot::NextColormapColor();
-                            plot.plotItems.back().style.markerFillColor = plot.plotItems.back().style.color;
-                            plot.plotItems.back().style.markerOutlineColor = plot.plotItems.back().style.color;
                         }
                         flow::ApplyChanges();
                     }
