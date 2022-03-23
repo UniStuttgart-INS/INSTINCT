@@ -367,6 +367,7 @@
                 // "--input-path=data",
                 // "--output-path=logs",
                 // "--rotate-output",
+                // "--implot-config=\"config/implot.json\"",
                 // ================ To configure tests ================
                 // "--flow-path=test/flow",
                 // "--input-path=test/data",
