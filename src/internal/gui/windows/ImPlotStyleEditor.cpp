@@ -79,7 +79,7 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
 
     static std::string path = ConfigManager::Get<std::string>("implot-config");
 
-    if (widgets::FileDialogSave(path, "ImPlot config file", ".json", { ".json" }, filepath.parent_path() / ".", 0, "ImPlotStyleEditor"))
+    if (widgets::FileDialogLoad(path, "ImPlot config file", ".json", { ".json" }, filepath.parent_path() / ".", 0, "ImPlotStyleEditor"))
     {
         if (path.starts_with(flow::GetProgramRootPath().string()))
         {
