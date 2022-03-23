@@ -28,6 +28,7 @@ namespace util = ax::NodeEditor::Utilities;
 #include "internal/gui/widgets/Spinner.hpp"
 
 #include "internal/gui/windows/Global.hpp"
+#include "internal/gui/windows/ImPlotStyleEditor.hpp"
 
 #include "internal/Node/Pin.hpp"
 #include "internal/Node/Node.hpp"
@@ -37,8 +38,11 @@ namespace util = ax::NodeEditor::Utilities;
 namespace nm = NAV::NodeManager;
 #include "NodeRegistry.hpp"
 
+#include "internal/ConfigManager.hpp"
 #include "internal/FlowManager.hpp"
 #include "internal/FlowExecutor.hpp"
+
+#include "util/Json.hpp"
 
 #include <string>
 #include <array>
@@ -101,6 +105,33 @@ void NAV::gui::NodeEditorApplication::OnStart()
 
     ImPlot::CreateContext();
     imPlotReferenceStyle = ImPlot::GetStyle();
+
+    std::filesystem::path imPlotConfigFilepath = flow::GetProgramRootPath();
+    if (std::filesystem::path inputPath{ ConfigManager::Get<std::string>("implot-config") };
+        inputPath.is_relative())
+    {
+        imPlotConfigFilepath /= inputPath;
+    }
+    else
+    {
+        imPlotConfigFilepath = inputPath;
+    }
+    std::ifstream imPlotConfigFilestream(imPlotConfigFilepath);
+
+    if (!imPlotConfigFilestream.good())
+    {
+        LOG_ERROR("The ImPlot style config file could not be loaded: {}", imPlotConfigFilepath);
+    }
+    else
+    {
+        json j;
+        imPlotConfigFilestream >> j;
+
+        if (j.contains("implot") && j.at("implot").contains("style"))
+        {
+            j.at("implot").at("style").get_to(ImPlot::GetStyle());
+        }
+    }
 
     auto fs = cmrc::instinct::get_filesystem();
 

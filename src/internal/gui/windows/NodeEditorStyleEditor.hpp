@@ -1,4 +1,4 @@
-/// @file StyleEditor.hpp
+/// @file NodeEditorStyleEditor.hpp
 /// @brief Style Editor window
 /// @author T. Topp (thomas@topp.cc)
 /// @date 2020-12-14

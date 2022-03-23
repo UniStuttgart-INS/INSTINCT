@@ -272,11 +272,11 @@ void from_json(const json& j, ImPlotStyle& style)
                     if (j.at("Colors").at(ImPlot::GetStyleColorName(i)).at("col").is_string()
                         && j.at("Colors").at(ImPlot::GetStyleColorName(i)).at("col").get<std::string>() == "Auto")
                     {
-                        style.Colors[i] = IMPLOT_AUTO_COL;
+                        style.Colors[i] = IMPLOT_AUTO_COL; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
                     }
                     else
                     {
-                        j.at("Colors").at(ImPlot::GetStyleColorName(i)).at("col").get_to(style.Colors[i]);
+                        j.at("Colors").at(ImPlot::GetStyleColorName(i)).at("col").get_to(style.Colors[i]); // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
                     }
                 }
             }

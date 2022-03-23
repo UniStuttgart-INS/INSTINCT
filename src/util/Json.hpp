@@ -40,9 +40,9 @@ void from_json(const json& j, ImVec4& vec4);
 
 /// @brief Converts the provided vector into a json object
 /// @param[out] j Return Json object
-/// @param[in] vec4 Vector to convert
+/// @param[in] style Style to convert
 void to_json(json& j, const ImPlotStyle& style);
 /// @brief Converts the provided json object into a vector
 /// @param[in] j Json object with the vector values
-/// @param[out] vec4 Vector to return
+/// @param[out] style Style to return
 void from_json(const json& j, ImPlotStyle& style);
