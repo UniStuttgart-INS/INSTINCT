@@ -5,6 +5,7 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
+#include <implot.h>
 #include <imgui_node_editor.h>
 namespace ed = ax::NodeEditor;
 
@@ -14,6 +15,8 @@ namespace ed = ax::NodeEditor;
 #include "internal/Node/Link.hpp"
 #include "internal/Node/Pin.hpp"
 #include "internal/ConfigManager.hpp"
+
+#include "internal/gui/windows/ImPlotStyleEditor.hpp"
 
 #include <fstream>
 #include <iomanip>
@@ -65,6 +68,11 @@ void NAV::flow::SaveFlowAs(const std::string& filepath)
     for (const auto& link : nm::m_Links())
     {
         j["links"]["link-" + std::to_string(size_t(link.id))] = link;
+    }
+    if (gui::windows::saveConfigInFlow)
+    {
+        j["implot"]["style"] = ImPlot::GetStyle();
+        j["implot"]["prefereFlowOverGlobal"] = gui::windows::prefereFlowOverGlobal;
     }
 
     filestream << std::setw(4) << j << std::endl;
@@ -125,6 +133,38 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
 bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
 {
     bool loadSuccessful = true;
+
+    if (j.contains("implot"))
+    {
+        gui::windows::saveConfigInFlow = true;
+
+        if (j.at("implot").contains("prefereFlowOverGlobal"))
+        {
+            j.at("implot").at("prefereFlowOverGlobal").get_to(gui::windows::prefereFlowOverGlobal);
+        }
+
+        std::filesystem::path filepath = flow::GetProgramRootPath();
+        if (std::filesystem::path inputPath{ ConfigManager::Get<std::string>("implot-config") };
+            inputPath.is_relative())
+        {
+            filepath /= inputPath;
+        }
+        else
+        {
+            filepath = inputPath;
+        }
+
+        if (gui::windows::prefereFlowOverGlobal || !std::filesystem::exists(filepath))
+        {
+            if (!ConfigManager::Get<bool>("nogui"))
+            {
+                if (j.at("implot").contains("style"))
+                {
+                    j.at("implot").at("style").get_to(ImPlot::GetStyle());
+                }
+            }
+        }
+    }
 
     if (j.contains("nodes"))
     {

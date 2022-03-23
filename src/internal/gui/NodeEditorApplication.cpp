@@ -99,6 +99,9 @@ void NAV::gui::NodeEditorApplication::OnStart()
     ImGui::GetStyle().FrameRounding = 4.0F;
     ed::GetStyle().FlowDuration = 1.0F;
 
+    ImPlot::CreateContext();
+    imPlotReferenceStyle = ImPlot::GetStyle();
+
     auto fs = cmrc::instinct::get_filesystem();
 
     if (fs.is_file("resources/images/BlueprintBackground.png"))
@@ -176,6 +179,10 @@ void NAV::gui::NodeEditorApplication::OnStop()
     {
         ed::DestroyEditor(m_Editor);
         m_Editor = nullptr;
+    }
+    if (ImPlotContext* ctx = ImPlot::GetCurrentContext())
+    {
+        ImPlot::DestroyContext(ctx);
     }
 }
 

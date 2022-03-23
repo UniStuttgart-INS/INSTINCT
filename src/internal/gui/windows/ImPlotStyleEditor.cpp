@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <filesystem>
 
 #include <fmt/core.h>
 #include <imgui.h>
@@ -10,8 +11,20 @@
 #include <implot_internal.h>
 
 #include "internal/gui/widgets/HelpMarker.hpp"
+#include "internal/gui/widgets/FileDialog.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
+#include "internal/ConfigManager.hpp"
+#include "internal/FlowManager.hpp"
 
 #include "util/Logger.hpp"
+
+namespace NAV::gui::windows
+{
+
+bool saveConfigInFlow = false;
+bool prefereFlowOverGlobal = true;
+
+} // namespace NAV::gui::windows
 
 void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
 {
@@ -21,13 +34,46 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
         return;
     }
 
-    // TODO: Save to file (global/flow)
-    // if (ImGui::Checkbox("Save to global settings"))
-    // {
-    // }
+    std::filesystem::path filepath = flow::GetProgramRootPath();
+    if (std::filesystem::path inputPath{ ConfigManager::Get<std::string>("implot-config") };
+        inputPath.is_relative())
+    {
+        filepath /= inputPath;
+    }
+    else
+    {
+        filepath = inputPath;
+    }
+
+    static std::string path = ConfigManager::Get<std::string>("implot-config");
+
+    if (widgets::FileDialogSave(path, "ImPlot config file", ".json", { ".json" }, filepath.parent_path() / ".", 0, "ImPlotStyleEditor"))
+    {
+        if (path.starts_with(flow::GetProgramRootPath().string()))
+        {
+            path = path.substr(flow::GetProgramRootPath().string().length());
+        }
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Load##ImPlotStyleFromFile")) // TODO
+    {
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Save##ImPlotStyleToFile")) // TODO
+    {
+    }
+
+    if (ImGui::Checkbox("Save into flow file", &saveConfigInFlow))
+    {
+        flow::ApplyChanges();
+    }
+    ImGui::SameLine();
+    if (ImGui::Checkbox("Prefere flow file over global settings", &prefereFlowOverGlobal))
+    {
+        flow::ApplyChanges();
+    }
 
     ImPlotStyle& style = ImPlot::GetStyle();
-    static ImPlotStyle ref = style;
 
     if (ImGui::BeginTabBar("##StyleEditor"))
     {
@@ -45,6 +91,10 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
                         if (ImGui::Button(fmt::format("Revert##ImPlotStyle.{}", id).c_str()))
                         {
                             value = refVal;
+                            if (saveConfigInFlow)
+                            {
+                                flow::ApplyChanges();
+                            }
                         }
                     }
                 };
@@ -54,123 +104,285 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
                 ImGui::Text("Item Styling");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat("LineWeight", &style.LineWeight, 0.0F, 5.0F, "%.1F");
-                revertButton(style.LineWeight, ref.LineWeight, "LineWeight");
+                if (ImGui::SliderFloat("LineWeight", &style.LineWeight, 0.0F, 5.0F, "%.1F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.LineWeight, NodeEditorApplication::imPlotReferenceStyle.LineWeight, "LineWeight");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat("MarkerSize", &style.MarkerSize, 2.0F, 10.0F, "%.1F");
-                revertButton(style.MarkerSize, ref.MarkerSize, "MarkerSize");
+                if (ImGui::SliderFloat("MarkerSize", &style.MarkerSize, 2.0F, 10.0F, "%.1F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.MarkerSize, NodeEditorApplication::imPlotReferenceStyle.MarkerSize, "MarkerSize");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat("MarkerWeight", &style.MarkerWeight, 0.0F, 5.0F, "%.1F");
-                revertButton(style.MarkerWeight, ref.MarkerWeight, "MarkerWeight");
+                if (ImGui::SliderFloat("MarkerWeight", &style.MarkerWeight, 0.0F, 5.0F, "%.1F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.MarkerWeight, NodeEditorApplication::imPlotReferenceStyle.MarkerWeight, "MarkerWeight");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat("FillAlpha", &style.FillAlpha, 0.0F, 1.0F, "%.2F");
-                revertButton(style.FillAlpha, ref.FillAlpha, "FillAlpha");
+                if (ImGui::SliderFloat("FillAlpha", &style.FillAlpha, 0.0F, 1.0F, "%.2F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.FillAlpha, NodeEditorApplication::imPlotReferenceStyle.FillAlpha, "FillAlpha");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat("ErrorBarSize", &style.ErrorBarSize, 0.0F, 10.0F, "%.1F");
-                revertButton(style.ErrorBarSize, ref.ErrorBarSize, "ErrorBarSize");
+                if (ImGui::SliderFloat("ErrorBarSize", &style.ErrorBarSize, 0.0F, 10.0F, "%.1F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.ErrorBarSize, NodeEditorApplication::imPlotReferenceStyle.ErrorBarSize, "ErrorBarSize");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat("ErrorBarWeight", &style.ErrorBarWeight, 0.0F, 5.0F, "%.1F");
-                revertButton(style.ErrorBarWeight, ref.ErrorBarWeight, "ErrorBarWeight");
+                if (ImGui::SliderFloat("ErrorBarWeight", &style.ErrorBarWeight, 0.0F, 5.0F, "%.1F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.ErrorBarWeight, NodeEditorApplication::imPlotReferenceStyle.ErrorBarWeight, "ErrorBarWeight");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat("DigitalBitHeight", &style.DigitalBitHeight, 0.0F, 20.0F, "%.1F");
-                revertButton(style.DigitalBitHeight, ref.DigitalBitHeight, "DigitalBitHeight");
+                if (ImGui::SliderFloat("DigitalBitHeight", &style.DigitalBitHeight, 0.0F, 20.0F, "%.1F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.DigitalBitHeight, NodeEditorApplication::imPlotReferenceStyle.DigitalBitHeight, "DigitalBitHeight");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat("DigitalBitGap", &style.DigitalBitGap, 0.0F, 20.0F, "%.1F");
-                revertButton(style.DigitalBitGap, ref.DigitalBitGap, "DigitalBitGap");
+                if (ImGui::SliderFloat("DigitalBitGap", &style.DigitalBitGap, 0.0F, 20.0F, "%.1F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.DigitalBitGap, NodeEditorApplication::imPlotReferenceStyle.DigitalBitGap, "DigitalBitGap");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
                 float indent = ImGui::CalcItemWidth() - ImGui::GetFrameHeight();
                 ImGui::Indent(ImGui::CalcItemWidth() - ImGui::GetFrameHeight());
-                ImGui::Checkbox("AntiAliasedLines", &style.AntiAliasedLines);
+                if (ImGui::Checkbox("AntiAliasedLines", &style.AntiAliasedLines))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
                 ImGui::Unindent(indent);
-                revertButton(style.AntiAliasedLines, ref.AntiAliasedLines, "AntiAliasedLines");
+                revertButton(style.AntiAliasedLines, NodeEditorApplication::imPlotReferenceStyle.AntiAliasedLines, "AntiAliasedLines");
 
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
                 ImGui::Text("Plot Styling");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat("PlotBorderSize", &style.PlotBorderSize, 0.0F, 2.0F, "%.0F");
-                revertButton(style.PlotBorderSize, ref.PlotBorderSize, "PlotBorderSize");
+                if (ImGui::SliderFloat("PlotBorderSize", &style.PlotBorderSize, 0.0F, 2.0F, "%.0F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.PlotBorderSize, NodeEditorApplication::imPlotReferenceStyle.PlotBorderSize, "PlotBorderSize");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat("MinorAlpha", &style.MinorAlpha, 0.0F, 1.0F, "%.2F");
-                revertButton(style.MinorAlpha, ref.MinorAlpha, "MinorAlpha");
+                if (ImGui::SliderFloat("MinorAlpha", &style.MinorAlpha, 0.0F, 1.0F, "%.2F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.MinorAlpha, NodeEditorApplication::imPlotReferenceStyle.MinorAlpha, "MinorAlpha");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat2("MajorTickLen", reinterpret_cast<float*>(&style.MajorTickLen), 0.0F, 20.0F, "%.0F");
-                revertButton(style.MajorTickLen, ref.MajorTickLen, "MajorTickLen");
+                if (ImGui::SliderFloat2("MajorTickLen", reinterpret_cast<float*>(&style.MajorTickLen), 0.0F, 20.0F, "%.0F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.MajorTickLen, NodeEditorApplication::imPlotReferenceStyle.MajorTickLen, "MajorTickLen");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat2("MinorTickLen", reinterpret_cast<float*>(&style.MinorTickLen), 0.0F, 20.0F, "%.0F");
-                revertButton(style.MinorTickLen, ref.MinorTickLen, "MinorTickLen");
+                if (ImGui::SliderFloat2("MinorTickLen", reinterpret_cast<float*>(&style.MinorTickLen), 0.0F, 20.0F, "%.0F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.MinorTickLen, NodeEditorApplication::imPlotReferenceStyle.MinorTickLen, "MinorTickLen");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat2("MajorTickSize", reinterpret_cast<float*>(&style.MajorTickSize), 0.0F, 2.0F, "%.1F");
-                revertButton(style.MajorTickSize, ref.MajorTickSize, "MajorTickSize");
+                if (ImGui::SliderFloat2("MajorTickSize", reinterpret_cast<float*>(&style.MajorTickSize), 0.0F, 2.0F, "%.1F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.MajorTickSize, NodeEditorApplication::imPlotReferenceStyle.MajorTickSize, "MajorTickSize");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat2("MinorTickSize", reinterpret_cast<float*>(&style.MinorTickSize), 0.0F, 2.0F, "%.1F");
-                revertButton(style.MinorTickSize, ref.MinorTickSize, "MinorTickSize");
+                if (ImGui::SliderFloat2("MinorTickSize", reinterpret_cast<float*>(&style.MinorTickSize), 0.0F, 2.0F, "%.1F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.MinorTickSize, NodeEditorApplication::imPlotReferenceStyle.MinorTickSize, "MinorTickSize");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat2("MajorGridSize", reinterpret_cast<float*>(&style.MajorGridSize), 0.0F, 2.0F, "%.1F");
-                revertButton(style.MajorGridSize, ref.MajorGridSize, "MajorGridSize");
+                if (ImGui::SliderFloat2("MajorGridSize", reinterpret_cast<float*>(&style.MajorGridSize), 0.0F, 2.0F, "%.1F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.MajorGridSize, NodeEditorApplication::imPlotReferenceStyle.MajorGridSize, "MajorGridSize");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat2("MinorGridSize", reinterpret_cast<float*>(&style.MinorGridSize), 0.0F, 2.0F, "%.1F");
-                revertButton(style.MinorGridSize, ref.MinorGridSize, "MinorGridSize");
+                if (ImGui::SliderFloat2("MinorGridSize", reinterpret_cast<float*>(&style.MinorGridSize), 0.0F, 2.0F, "%.1F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.MinorGridSize, NodeEditorApplication::imPlotReferenceStyle.MinorGridSize, "MinorGridSize");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat2("PlotDefaultSize", reinterpret_cast<float*>(&style.PlotDefaultSize), 0.0F, 1000, "%.0F");
-                revertButton(style.PlotDefaultSize, ref.PlotDefaultSize, "PlotDefaultSize");
+                if (ImGui::SliderFloat2("PlotDefaultSize", reinterpret_cast<float*>(&style.PlotDefaultSize), 0.0F, 1000, "%.0F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.PlotDefaultSize, NodeEditorApplication::imPlotReferenceStyle.PlotDefaultSize, "PlotDefaultSize");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat2("PlotMinSize", reinterpret_cast<float*>(&style.PlotMinSize), 0.0F, 300, "%.0F");
-                revertButton(style.PlotMinSize, ref.PlotMinSize, "PlotMinSize");
+                if (ImGui::SliderFloat2("PlotMinSize", reinterpret_cast<float*>(&style.PlotMinSize), 0.0F, 300, "%.0F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.PlotMinSize, NodeEditorApplication::imPlotReferenceStyle.PlotMinSize, "PlotMinSize");
 
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
                 ImGui::Text("Plot Padding");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat2("PlotPadding", reinterpret_cast<float*>(&style.PlotPadding), 0.0F, 20.0F, "%.0F");
-                revertButton(style.PlotPadding, ref.PlotPadding, "PlotPadding");
+                if (ImGui::SliderFloat2("PlotPadding", reinterpret_cast<float*>(&style.PlotPadding), 0.0F, 20.0F, "%.0F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.PlotPadding, NodeEditorApplication::imPlotReferenceStyle.PlotPadding, "PlotPadding");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat2("LabelPadding", reinterpret_cast<float*>(&style.LabelPadding), 0.0F, 20.0F, "%.0F");
-                revertButton(style.LabelPadding, ref.LabelPadding, "LabelPadding");
+                if (ImGui::SliderFloat2("LabelPadding", reinterpret_cast<float*>(&style.LabelPadding), 0.0F, 20.0F, "%.0F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.LabelPadding, NodeEditorApplication::imPlotReferenceStyle.LabelPadding, "LabelPadding");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat2("LegendPadding", reinterpret_cast<float*>(&style.LegendPadding), 0.0F, 20.0F, "%.0F");
-                revertButton(style.LegendPadding, ref.LegendPadding, "LegendPadding");
+                if (ImGui::SliderFloat2("LegendPadding", reinterpret_cast<float*>(&style.LegendPadding), 0.0F, 20.0F, "%.0F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.LegendPadding, NodeEditorApplication::imPlotReferenceStyle.LegendPadding, "LegendPadding");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat2("LegendInnerPadding", reinterpret_cast<float*>(&style.LegendInnerPadding), 0.0F, 10.0F, "%.0F");
-                revertButton(style.LegendInnerPadding, ref.LegendInnerPadding, "LegendInnerPadding");
+                if (ImGui::SliderFloat2("LegendInnerPadding", reinterpret_cast<float*>(&style.LegendInnerPadding), 0.0F, 10.0F, "%.0F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.LegendInnerPadding, NodeEditorApplication::imPlotReferenceStyle.LegendInnerPadding, "LegendInnerPadding");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat2("LegendSpacing", reinterpret_cast<float*>(&style.LegendSpacing), 0.0F, 5.0F, "%.0F");
-                revertButton(style.LegendSpacing, ref.LegendSpacing, "LegendSpacing");
+                if (ImGui::SliderFloat2("LegendSpacing", reinterpret_cast<float*>(&style.LegendSpacing), 0.0F, 5.0F, "%.0F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.LegendSpacing, NodeEditorApplication::imPlotReferenceStyle.LegendSpacing, "LegendSpacing");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat2("MousePosPadding", reinterpret_cast<float*>(&style.MousePosPadding), 0.0F, 20.0F, "%.0F");
-                revertButton(style.MousePosPadding, ref.MousePosPadding, "MousePosPadding");
+                if (ImGui::SliderFloat2("MousePosPadding", reinterpret_cast<float*>(&style.MousePosPadding), 0.0F, 20.0F, "%.0F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.MousePosPadding, NodeEditorApplication::imPlotReferenceStyle.MousePosPadding, "MousePosPadding");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat2("AnnotationPadding", reinterpret_cast<float*>(&style.AnnotationPadding), 0.0F, 5.0F, "%.0F");
-                revertButton(style.AnnotationPadding, ref.AnnotationPadding, "AnnotationPadding");
+                if (ImGui::SliderFloat2("AnnotationPadding", reinterpret_cast<float*>(&style.AnnotationPadding), 0.0F, 5.0F, "%.0F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.AnnotationPadding, NodeEditorApplication::imPlotReferenceStyle.AnnotationPadding, "AnnotationPadding");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::SliderFloat2("FitPadding", reinterpret_cast<float*>(&style.FitPadding), 0, 0.2F, "%.2F");
-                revertButton(style.FitPadding, ref.FitPadding, "FitPadding");
+                if (ImGui::SliderFloat2("FitPadding", reinterpret_cast<float*>(&style.FitPadding), 0, 0.2F, "%.2F"))
+                {
+                    if (saveConfigInFlow)
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                revertButton(style.FitPadding, NodeEditorApplication::imPlotReferenceStyle.FitPadding, "FitPadding");
 
                 ImGui::EndTable();
             }
@@ -233,6 +445,10 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
                             style.Colors[i] = IMPLOT_AUTO_COL; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
                         }
                         ImPlot::BustItemCache();
+                        if (saveConfigInFlow)
+                        {
+                            flow::ApplyChanges();
+                        }
                     }
                     if (!isColorAuto)
                     {
@@ -243,14 +459,22 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
                     {
                         style.Colors[i] = temp; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
                         ImPlot::BustItemCache();
+                        if (saveConfigInFlow)
+                        {
+                            flow::ApplyChanges();
+                        }
                     }
-                    if (memcmp(&style.Colors[i], &ref.Colors[i], sizeof(ImVec4)) != 0) // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
+                    if (memcmp(&style.Colors[i], &NodeEditorApplication::imPlotReferenceStyle.Colors[i], sizeof(ImVec4)) != 0) // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
                     {
                         ImGui::TableNextColumn();
                         if (ImGui::Button(fmt::format("Revert##ImPlotStyleColor{}", i).c_str()))
                         {
-                            style.Colors[i] = ref.Colors[i]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
+                            style.Colors[i] = NodeEditorApplication::imPlotReferenceStyle.Colors[i]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
                             ImPlot::BustItemCache();
+                            if (saveConfigInFlow)
+                            {
+                                flow::ApplyChanges();
+                            }
                         }
                     }
                     ImGui::PopID();
@@ -346,7 +570,7 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
             ImGui::Separator();
 
             ImGui::BeginGroup();
-            static std::string name = "MyColormap";
+            static std::string name = "Custom";
 
             if (ImGui::Button("+", ImVec2((100 - ImGui::GetStyle().ItemSpacing.x) / 2, 0)))
             {
@@ -361,6 +585,12 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
             ImGui::InputText("##Name", &name, ImGuiInputTextFlags_CharsNoBlank);
             static bool qual = true;
             ImGui::Checkbox("Qualitative", &qual);
+            if (ImGui::IsItemHovered())
+            {
+                ImGui::SetTooltip("Means, that the colors are separated into distinct levels.\n"
+                                  "If unchecked, a color gradient will be applied.");
+            }
+
             if (ImGui::Button("Add", ImVec2(100, 0)) && gp.ColormapData.GetIndex(name.c_str()) == -1)
             {
                 ImPlot::AddColormap(name.c_str(), custom.Data, custom.Size, qual);

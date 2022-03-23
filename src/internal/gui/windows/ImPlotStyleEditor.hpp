@@ -11,4 +11,10 @@ namespace NAV::gui::windows
 /// @param[in, out] show Flag which indicates wheather the window is shown
 void ShowImPlotStyleEditor(bool* show = nullptr);
 
+/// @brief If true, the ImPlot config will be saved into the flow file
+extern bool saveConfigInFlow;
+
+/// @brief If true, the ImPlot config from the flow file will be preferred over the global settings file
+extern bool prefereFlowOverGlobal;
+
 } // namespace NAV::gui::windows
