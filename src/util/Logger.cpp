@@ -60,8 +60,12 @@ Logger::Logger(const std::string& logpath)
         break;
     }
 
+    auto ringbuffer_sink = std::make_shared<spdlog::sinks::ringbuffer_sink_mt>(128);
+    ringbuffer_sink->set_level(spdlog::level::trace);
+    ringbuffer_sink->set_pattern(logPatternDebug);
+
     // Set the logger as default logger
-    spdlog::set_default_logger(std::make_shared<spdlog::logger>("multi_sink", spdlog::sinks_init_list({ console_sink, file_sink })));
+    spdlog::set_default_logger(std::make_shared<spdlog::logger>("multi_sink", spdlog::sinks_init_list({ console_sink, file_sink, ringbuffer_sink })));
 
     // Level should be smaller or equal to the level of the sinks
     spdlog::set_level(spdlog::level::level_enum::trace);
@@ -101,6 +105,11 @@ Logger::~Logger()
     writeFooter();
 
     spdlog::default_logger()->flush();
+}
+
+std::shared_ptr<spdlog::sinks::ringbuffer_sink_mt> Logger::GetRingBufferSink()
+{
+    return std::static_pointer_cast<spdlog::sinks::ringbuffer_sink_mt>(spdlog::get("multi_sink")->sinks().back());
 }
 
 void Logger::writeSeparator() noexcept
