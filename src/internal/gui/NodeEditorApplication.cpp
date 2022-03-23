@@ -717,7 +717,15 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     // ToolTips have to be shown outside of the NodeEditor Context, so save the Tooltip and push it afterwards
     std::string tooltipText;
 
-    ed::Begin("Node editor");
+    ImGui::BeginGroup();
+
+    if (logViewerMinHeight != LOG_COLLAPSED_MIN_HEIGHT)
+    {
+        float blueprintHeight = ImGui::GetContentRegionAvail().y - logViewerHeight;
+        gui::widgets::Splitter("Log Splitter", false, SPLITTER_THICKNESS, &blueprintHeight, &logViewerHeight, 400.0F, logViewerMinHeight);
+    }
+
+    ed::Begin("Node editor", ImVec2(0, ImGui::GetContentRegionAvail().y - logViewerHeight - (logViewerMinHeight != LOG_COLLAPSED_MIN_HEIGHT ? SPLITTER_THICKNESS : -SPLITTER_THICKNESS)));
     {
         static Pin* newLinkPin = nullptr;
 
@@ -1473,6 +1481,28 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     ed::Resume();
 
     ed::End();
+
+    if (logViewerMinHeight != LOG_COLLAPSED_MIN_HEIGHT)
+    {
+        ImGui::Dummy(ImVec2(0.0F, SPLITTER_THICKNESS));
+    }
+    ImGui::Indent(SPLITTER_THICKNESS);
+    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+    if (ImGui::CollapsingHeader("Log output"))
+    {
+        logViewerMinHeight = LOG_UNCOLLAPSED_MIN_HEIGHT;
+        logViewerHeight = std::max(logViewerHeight, LOG_UNCOLLAPSED_MIN_HEIGHT);
+
+        ImGui::Text("Test");
+    }
+    else
+    {
+        logViewerMinHeight = LOG_COLLAPSED_MIN_HEIGHT;
+        logViewerHeight = LOG_COLLAPSED_MIN_HEIGHT;
+    }
+    ImGui::Unindent();
+
+    ImGui::EndGroup();
 
     FlowAnimation::ProcessQueue();
 

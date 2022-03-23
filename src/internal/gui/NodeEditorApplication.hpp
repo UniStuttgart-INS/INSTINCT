@@ -94,6 +94,12 @@ class NodeEditorApplication : public Application
     constexpr static float SPLITTER_THICKNESS = 4.0F; ///< Thickness of the splitter between left and right pane
 
   private:
+    constexpr static float LOG_COLLAPSED_MIN_HEIGHT = 35.0F;    ///< Minimal height of the log viewer if it is collapsed
+    constexpr static float LOG_UNCOLLAPSED_MIN_HEIGHT = 200.0F; ///< Minimal height of the log viewer if it is not collapsed
+
+    inline static float logViewerHeight = LOG_COLLAPSED_MIN_HEIGHT;    ///< Height of the log viewer
+    inline static float logViewerMinHeight = LOG_COLLAPSED_MIN_HEIGHT; ///< Minimal height of the log viewer
+
     /// @brief Pointer to the texture for the node headers
     ImTextureID m_HeaderBackground = nullptr;
 
