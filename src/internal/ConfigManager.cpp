@@ -28,19 +28,20 @@ void NAV::ConfigManager::initialize()
         // clang-format off
         // See https://www.boost.org/doc/libs/1_72_0/doc/html/program_options.html
         program_options.add_options()
-            ("config",            bpo::value<std::vector<std::string>>()->multitoken(),             "List of configuration files to read parameters from"                                 )
-            ("version,v",                                                                           "Display the version number"                                                          )
-            ("help,h",                                                                              "Display this help message"                                                           )
-            ("sigterm",           bpo::bool_switch()->default_value(false),                         "Programm waits for -SIGUSR1 / -SIGINT / -SIGTERM"                                    )
-            ("duration",          bpo::value<size_t>()->default_value(0),                           "Program execution duration [sec]"                                                    )
-            ("nogui",             bpo::bool_switch()->default_value(false),                         "Launch without the gui"                                                              )
-            ("load,l",            bpo::value<std::string>(),                                        "Flow file to load"                                                                   )
-            ("rotate-output",     bpo::bool_switch()->default_value(false),                         "Create new folders for output files"                                                 )
-            ("output-path,o",     bpo::value<std::string>()->default_value("logs"),                 "Directory path for logs and output files"                                            )
-            ("input-path,i",      bpo::value<std::string>()->default_value("data"),                 "Directory path for searching input files"                                            )
-            ("flow-path,f",       bpo::value<std::string>()->default_value("flow"),                 "Directory path for searching flow files"                                             )
-            ("implot-config",     bpo::value<std::string>()->default_value("config/implot.json"),   "Config file to read implot settings from"                                            )
-            ("console-log-level", bpo::value<std::string>()->default_value("OFF"),                  "Log level on the console (possible values: TRACE/DEBUG/INFO/WARN/ERROR/CRITICAL/OFF" )
+            ("config",            bpo::value<std::vector<std::string>>()->multitoken(),             "List of configuration files to read parameters from"                                     )
+            ("version,v",                                                                           "Display the version number"                                                              )
+            ("help,h",                                                                              "Display this help message"                                                               )
+            ("sigterm",           bpo::bool_switch()->default_value(false),                         "Programm waits for -SIGUSR1 / -SIGINT / -SIGTERM"                                        )
+            ("duration",          bpo::value<size_t>()->default_value(0),                           "Program execution duration [sec]"                                                        )
+            ("nogui",             bpo::bool_switch()->default_value(false),                         "Launch without the gui"                                                                  )
+            ("load,l",            bpo::value<std::string>(),                                        "Flow file to load"                                                                       )
+            ("rotate-output",     bpo::bool_switch()->default_value(false),                         "Create new folders for output files"                                                     )
+            ("output-path,o",     bpo::value<std::string>()->default_value("logs"),                 "Directory path for logs and output files"                                                )
+            ("input-path,i",      bpo::value<std::string>()->default_value("data"),                 "Directory path for searching input files"                                                )
+            ("flow-path,f",       bpo::value<std::string>()->default_value("flow"),                 "Directory path for searching flow files"                                                 )
+            ("implot-config",     bpo::value<std::string>()->default_value("config/implot.json"),   "Config file to read implot settings from"                                                )
+            ("console-log-level", bpo::value<std::string>()->default_value("off"),                  "Log level on the console  (possible values: trace/debug/info/warning/error/critical/off" )
+            ("file-log-level",    bpo::value<std::string>()->default_value("debug"),                "Log level to the log file (possible values: trace/debug/info/warning/error/critical/off" )
         ;
         // clang-format on
     }
@@ -95,15 +96,25 @@ void NAV::ConfigManager::CheckOptions(const int argc, [[maybe_unused]] const cha
 {
     LOG_DEBUG("{} arguments were provided over the command line", argc);
 
-    if (vm["console-log-level"].as<std::string>() != "TRACE"
-        && vm["console-log-level"].as<std::string>() != "DEBUG"
-        && vm["console-log-level"].as<std::string>() != "INFO"
-        && vm["console-log-level"].as<std::string>() != "WARN"
-        && vm["console-log-level"].as<std::string>() != "ERROR"
-        && vm["console-log-level"].as<std::string>() != "CRITICAL"
-        && vm["console-log-level"].as<std::string>() != "OFF")
+    if (vm["console-log-level"].as<std::string>() != "trace"
+        && vm["console-log-level"].as<std::string>() != "debug"
+        && vm["console-log-level"].as<std::string>() != "info"
+        && vm["console-log-level"].as<std::string>() != "warning"
+        && vm["console-log-level"].as<std::string>() != "error"
+        && vm["console-log-level"].as<std::string>() != "critical"
+        && vm["console-log-level"].as<std::string>() != "off")
     {
-        LOG_CRITICAL("The command line argument 'console-log-level' has to be one of 'TRACE/DEBUG/INFO/WARN/ERROR/CRITICAL/OFF' but the value '{}' was provided", vm["console-log-level"].as<std::string>());
+        LOG_CRITICAL("The command line argument 'console-log-level' has to be one of 'trace/debug/info/warning/error/critical/off' but the value '{}' was provided", vm["console-log-level"].as<std::string>());
+    }
+    if (vm["file-log-level"].as<std::string>() != "trace"
+        && vm["file-log-level"].as<std::string>() != "debug"
+        && vm["file-log-level"].as<std::string>() != "info"
+        && vm["file-log-level"].as<std::string>() != "warning"
+        && vm["file-log-level"].as<std::string>() != "error"
+        && vm["file-log-level"].as<std::string>() != "critical"
+        && vm["file-log-level"].as<std::string>() != "off")
+    {
+        LOG_CRITICAL("The command line argument 'file-log-level' has to be one of 'trace/debug/info/warning/error/critical/off' but the value '{}' was provided", vm["file-log-level"].as<std::string>());
     }
 
     for (int i = 0; i < argc; i++)
