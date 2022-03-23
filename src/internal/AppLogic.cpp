@@ -32,7 +32,7 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
     Logger logger((NAV::flow::GetOutputPath() / "instinct.log").string());
 
     // Log all the options
-    NAV::ConfigManager::LogOptions(argc, argv);
+    NAV::ConfigManager::CheckOptions(argc, argv);
 
     for ([[maybe_unused]] const auto& configFile : failedConfigFiles)
     {
