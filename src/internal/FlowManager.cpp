@@ -93,7 +93,7 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
 
     LoadJson(j);
 
-    if (ConfigManager::Get<bool>("nogui", false))
+    if (ConfigManager::Get<bool>("nogui"))
     {
         if (!nm::InitializeAllNodes())
         {
@@ -105,7 +105,7 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
         nm::InitializeAllNodesAsync();
     }
 
-    if (!ConfigManager::Get<bool>("nogui", false))
+    if (!ConfigManager::Get<bool>("nogui"))
     {
         loadingFrameCount = ImGui::GetFrameCount();
     }
@@ -113,7 +113,7 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
     saveLastActions = true;
     currentFilename = filepath;
 
-    if (!ConfigManager::Get<bool>("nogui", false))
+    if (!ConfigManager::Get<bool>("nogui"))
     {
         gui::clearLastActionList();
         gui::saveLastAction();
@@ -184,7 +184,7 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
 
             nm::UpdateNode(node);
 
-            if (!ConfigManager::Get<bool>("nogui", false))
+            if (!ConfigManager::Get<bool>("nogui"))
             {
                 ed::SetNodePosition(node->id, nodeJson.at("pos").get<ImVec2>());
 
@@ -292,7 +292,7 @@ std::filesystem::path NAV::flow::GetOutputPath()
 {
     std::filesystem::path filepath = flow::GetProgramRootPath();
 
-    if (std::filesystem::path outputPath{ ConfigManager::Get<std::string>("output-path", "logs") };
+    if (std::filesystem::path outputPath{ ConfigManager::Get<std::string>("output-path") };
         outputPath.is_relative())
     {
         filepath /= outputPath;
@@ -302,7 +302,7 @@ std::filesystem::path NAV::flow::GetOutputPath()
         filepath = outputPath;
     }
 
-    if (ConfigManager::Get<bool>("rotate-output", false))
+    if (ConfigManager::Get<bool>("rotate-output"))
     {
         filepath /= fmt::format("{:04d}", currentRotatedParentFolderNumber);
     }
@@ -317,7 +317,7 @@ void NAV::flow::SetOutputPath()
     {
         std::filesystem::path outputDir{ programRootPath };
 
-        if (std::filesystem::path outputPath{ ConfigManager::Get<std::string>("output-path", "logs") };
+        if (std::filesystem::path outputPath{ ConfigManager::Get<std::string>("output-path") };
             outputPath.is_relative())
         {
             outputDir /= outputPath;
@@ -340,7 +340,7 @@ std::filesystem::path NAV::flow::GetInputPath()
 {
     std::filesystem::path filepath = flow::GetProgramRootPath();
 
-    if (std::filesystem::path inputPath{ ConfigManager::Get<std::string>("input-path", "data") };
+    if (std::filesystem::path inputPath{ ConfigManager::Get<std::string>("input-path") };
         inputPath.is_relative())
     {
         filepath /= inputPath;
@@ -357,7 +357,7 @@ std::filesystem::path NAV::flow::GetFlowPath()
 {
     std::filesystem::path filepath = flow::GetProgramRootPath();
 
-    if (std::filesystem::path inputPath{ ConfigManager::Get<std::string>("flow-path", "flow") };
+    if (std::filesystem::path inputPath{ ConfigManager::Get<std::string>("flow-path") };
         inputPath.is_relative())
     {
         filepath /= inputPath;
