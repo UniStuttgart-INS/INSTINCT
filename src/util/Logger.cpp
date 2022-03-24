@@ -123,7 +123,7 @@ void Logger::writeHeader() noexcept
 
     auto now = std::chrono::system_clock::now();
     std::time_t now_c = std::chrono::system_clock::to_time_t(now);
-    tm* t = std::localtime(&now_c);
+    tm* t = std::localtime(&now_c); // NOLINT(concurrency-mt-unsafe)
 
 #ifdef NDEBUG
     LOG_INFO("Program started in Release on {:04d}-{:02d}-{:02d}", 1900 + t->tm_year, 1 + t->tm_mon, t->tm_mday);
@@ -140,7 +140,7 @@ void Logger::writeFooter() noexcept
 
     auto now = std::chrono::system_clock::now();
     std::time_t now_c = std::chrono::system_clock::to_time_t(now);
-    tm* t = std::localtime(&now_c);
+    tm* t = std::localtime(&now_c); // NOLINT(concurrency-mt-unsafe)
 
     LOG_INFO("Program finished on {:04d}-{:02d}-{:02d}", 1900 + t->tm_year, 1 + t->tm_mon, t->tm_mday);
 

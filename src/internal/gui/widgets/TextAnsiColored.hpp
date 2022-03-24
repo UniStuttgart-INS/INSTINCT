@@ -16,12 +16,26 @@
 namespace ImGui
 {
 
+/// @brief Displays an unformatted ansi text
+/// @param[in] text C-style string pointer
+/// @param[in] text_end Pointer to the end of the text or nullptr
 void TextAnsiUnformatted(const char* text, const char* text_end = nullptr);
 
+/// @brief Displays an ansi text with format string
+/// @param[in] fmt Format string
+/// @param[in] args Format arguments
 void TextAnsiV(const char* fmt, va_list args);
 
+/// @brief Displays an ansi text with format string
+/// @param[in] col Color to display text in
+/// @param[in] fmt Format string
+/// @param[in] args Format arguments
 void TextAnsiColoredV(const ImVec4& col, const char* fmt, va_list args);
 
+/// @brief Displays an ansi text with format string
+/// @param[in] col Color to display text in
+/// @param[in] fmt Format string
+/// @param[in] ... Further arguments
 void TextAnsiColored(const ImVec4& col, const char* fmt, ...);
 
 } // namespace ImGui
