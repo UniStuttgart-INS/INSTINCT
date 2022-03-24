@@ -19,7 +19,7 @@ The software consists of one executable ```instinct```
 ##### Git (either clone or update)
 - Clone the repository
   ```
-  git clone --recurse-submodules https://git.nav.uni-stuttgart.de/thomas.topp/instinct.git INSTINCT
+  git clone --recurse-submodules https://git.ins.uni-stuttgart.de/thomas.topp/instinct.git INSTINCT
   ```
 - Update the repository
   ```
