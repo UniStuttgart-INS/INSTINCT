@@ -18,8 +18,8 @@ Logger::Logger(const std::string& logpath)
 {
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
     // Only edit if console and file should log different levels
-    console_sink->set_level(spdlog::level::from_str(NAV::ConfigManager::Get<std::string>("console-log-level")));
-    switch (spdlog::level::from_str(NAV::ConfigManager::Get<std::string>("console-log-level")))
+    console_sink->set_level(spdlog::level::from_str(NAV::ConfigManager::Get<std::string>("console-log-level", "trace")));
+    switch (spdlog::level::from_str(NAV::ConfigManager::Get<std::string>("console-log-level", "trace")))
     {
     case spdlog::level::trace:
         console_sink->set_pattern(logPatternTrace);
@@ -40,8 +40,8 @@ Logger::Logger(const std::string& logpath)
 
     auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(logpath, true);
     // Only edit if console and file should log different levels
-    file_sink->set_level(spdlog::level::from_str(NAV::ConfigManager::Get<std::string>("file-log-level")));
-    switch (spdlog::level::from_str(NAV::ConfigManager::Get<std::string>("file-log-level")))
+    file_sink->set_level(spdlog::level::from_str(NAV::ConfigManager::Get<std::string>("file-log-level", "trace")));
+    switch (spdlog::level::from_str(NAV::ConfigManager::Get<std::string>("file-log-level", "trace")))
     {
     case spdlog::level::trace:
         file_sink->set_pattern(logPatternTrace);
@@ -123,7 +123,7 @@ void Logger::writeHeader() noexcept
 
     auto now = std::chrono::system_clock::now();
     std::time_t now_c = std::chrono::system_clock::to_time_t(now);
-    tm* t = std::localtime(&now_c); // NOLINT(concurrency-mt-unsafe)
+    [[maybe_unused]] tm* t = std::localtime(&now_c); // NOLINT(concurrency-mt-unsafe)
 
 #ifdef NDEBUG
     LOG_INFO("Program started in Release on {:04d}-{:02d}-{:02d}", 1900 + t->tm_year, 1 + t->tm_mon, t->tm_mday);
@@ -140,7 +140,7 @@ void Logger::writeFooter() noexcept
 
     auto now = std::chrono::system_clock::now();
     std::time_t now_c = std::chrono::system_clock::to_time_t(now);
-    tm* t = std::localtime(&now_c); // NOLINT(concurrency-mt-unsafe)
+    [[maybe_unused]] tm* t = std::localtime(&now_c); // NOLINT(concurrency-mt-unsafe)
 
     LOG_INFO("Program finished on {:04d}-{:02d}-{:02d}", 1900 + t->tm_year, 1 + t->tm_mon, t->tm_mday);
 
