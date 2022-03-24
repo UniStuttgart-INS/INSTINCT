@@ -628,6 +628,8 @@ void NAV::gui::NodeEditorApplication::ShowRenamePinRequest(Pin*& renamePin)
 
 void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 {
+    bool firstFrame = ImGui::GetFrameCount() == 1;
+
     if (frameCountNavigate && ImGui::GetFrameCount() - frameCountNavigate > 3)
     {
         frameCountNavigate = 0;
@@ -719,13 +721,15 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
     ImGui::BeginGroup();
 
-    if (logViewerMinHeight != LOG_COLLAPSED_MIN_HEIGHT)
+    if (bottomViewSelectedTab != BottomViewTabItem::None)
     {
-        float blueprintHeight = ImGui::GetContentRegionAvail().y - logViewerHeight;
-        gui::widgets::Splitter("Log Splitter", false, SPLITTER_THICKNESS, &blueprintHeight, &logViewerHeight, 400.0F, logViewerMinHeight);
+        float blueprintHeight = ImGui::GetContentRegionAvail().y - bottomViewHeight + 28.5F;
+        ImGui::PushStyleColor(ImGuiCol_Separator, IM_COL32_BLACK_TRANS);
+        gui::widgets::Splitter("Log Splitter", false, 6.0F, &blueprintHeight, &bottomViewHeight, 400.0F, BOTTOM_VIEW_UNCOLLAPSED_MIN_HEIGHT);
+        ImGui::PopStyleColor();
     }
 
-    ed::Begin("Node editor", ImVec2(0, ImGui::GetContentRegionAvail().y - logViewerHeight - (logViewerMinHeight != LOG_COLLAPSED_MIN_HEIGHT ? SPLITTER_THICKNESS : -SPLITTER_THICKNESS)));
+    ed::Begin("Node editor", ImVec2(0, ImGui::GetContentRegionAvail().y - bottomViewHeight + SPLITTER_THICKNESS));
     {
         static Pin* newLinkPin = nullptr;
 
@@ -1482,23 +1486,37 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
     ed::End();
 
-    if (logViewerMinHeight != LOG_COLLAPSED_MIN_HEIGHT)
-    {
-        ImGui::Dummy(ImVec2(0.0F, SPLITTER_THICKNESS));
-    }
     ImGui::Indent(SPLITTER_THICKNESS);
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-    if (ImGui::CollapsingHeader("Log output"))
+    if (ImGui::BeginTabBar("BottomViewTabBar"))
     {
-        logViewerMinHeight = LOG_UNCOLLAPSED_MIN_HEIGHT;
-        logViewerHeight = std::max(logViewerHeight, LOG_UNCOLLAPSED_MIN_HEIGHT);
+        bool noItemSelected = bottomViewSelectedTab == BottomViewTabItem::None;
+        if (noItemSelected)
+        {
+            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.0F);
+        }
+        if (ImGui::BeginTabItem("▼"))
+        {
+            bottomViewSelectedTab = BottomViewTabItem::None;
+            bottomViewHeight = BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT;
+            ImGui::EndTabItem();
+        }
+        else
+        {
+            bottomViewHeight = std::max(bottomViewHeight, BOTTOM_VIEW_UNCOLLAPSED_MIN_HEIGHT);
+        }
+        if (noItemSelected)
+        {
+            ImGui::PopStyleVar();
+        }
 
-        ImGui::Text("Test");
-    }
-    else
-    {
-        logViewerMinHeight = LOG_COLLAPSED_MIN_HEIGHT;
-        logViewerHeight = LOG_COLLAPSED_MIN_HEIGHT;
+        if (ImGui::BeginTabItem("Log Output", nullptr, firstFrame ? ImGuiTabItemFlags_SetSelected : ImGuiTabItemFlags_None))
+        {
+            bottomViewSelectedTab = BottomViewTabItem::LogOutput;
+
+            ImGui::EndTabItem();
+        }
+        ImGui::EndTabBar();
     }
     ImGui::Unindent();
 

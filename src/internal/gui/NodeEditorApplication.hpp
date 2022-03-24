@@ -94,11 +94,18 @@ class NodeEditorApplication : public Application
     constexpr static float SPLITTER_THICKNESS = 4.0F; ///< Thickness of the splitter between left and right pane
 
   private:
-    constexpr static float LOG_COLLAPSED_MIN_HEIGHT = 35.0F;    ///< Minimal height of the log viewer if it is collapsed
-    constexpr static float LOG_UNCOLLAPSED_MIN_HEIGHT = 200.0F; ///< Minimal height of the log viewer if it is not collapsed
+    constexpr static float BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT = 23.0F;    ///< Minimal height of the bottom view if it is collapsed
+    constexpr static float BOTTOM_VIEW_UNCOLLAPSED_MIN_HEIGHT = 200.0F; ///< Minimal height of the bottom view if it is not collapsed
 
-    inline static float logViewerHeight = LOG_COLLAPSED_MIN_HEIGHT;    ///< Height of the log viewer
-    inline static float logViewerMinHeight = LOG_COLLAPSED_MIN_HEIGHT; ///< Minimal height of the log viewer
+    /// @brief Tabs displayed in the bottom view
+    enum class BottomViewTabItem
+    {
+        None,      ///< The cross item is selected
+        LogOutput, ///< The log output item is selected
+    };
+
+    BottomViewTabItem bottomViewSelectedTab = BottomViewTabItem::None;       ///< Selected Tab item in the bottom view
+    inline static float bottomViewHeight = BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT; ///< Height of the log viewer
 
     /// @brief Pointer to the texture for the node headers
     ImTextureID m_HeaderBackground = nullptr;
