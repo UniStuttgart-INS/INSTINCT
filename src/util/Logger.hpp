@@ -41,6 +41,7 @@
 
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/ostr.h"
+#include "spdlog/sinks/ringbuffer_sink.h"
 
 #include <string>
 #include <stdexcept>
@@ -93,6 +94,9 @@ class Logger
     Logger& operator=(const Logger&) = delete;
     /// @brief Move assignment operator
     Logger& operator=(Logger&&) = delete;
+
+    /// @brief Returns the ring buffer sink
+    static std::shared_ptr<spdlog::sinks::ringbuffer_sink_mt> GetRingBufferSink();
 
   private:
     /// @brief Writes a separation line to the console only

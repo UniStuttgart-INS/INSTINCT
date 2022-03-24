@@ -26,6 +26,7 @@ namespace util = ax::NodeEditor::Utilities;
 #include "internal/gui/widgets/Splitter.hpp"
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/widgets/Spinner.hpp"
+#include "internal/gui/widgets/TextAnsiColored.hpp"
 
 #include "internal/gui/windows/Global.hpp"
 #include "internal/gui/windows/ImPlotStyleEditor.hpp"
@@ -43,6 +44,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowExecutor.hpp"
 
 #include "util/Json.hpp"
+#include "util/StringUtil.hpp"
 
 #include <string>
 #include <array>
@@ -628,6 +630,8 @@ void NAV::gui::NodeEditorApplication::ShowRenamePinRequest(Pin*& renamePin)
 
 void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 {
+    bool firstFrame = ImGui::GetFrameCount() == 1;
+
     if (frameCountNavigate && ImGui::GetFrameCount() - frameCountNavigate > 3)
     {
         frameCountNavigate = 0;
@@ -717,7 +721,17 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     // ToolTips have to be shown outside of the NodeEditor Context, so save the Tooltip and push it afterwards
     std::string tooltipText;
 
-    ed::Begin("Node editor");
+    ImGui::BeginGroup();
+
+    if (bottomViewSelectedTab != BottomViewTabItem::None)
+    {
+        float blueprintHeight = ImGui::GetContentRegionAvail().y - bottomViewHeight + 28.5F;
+        ImGui::PushStyleColor(ImGuiCol_Separator, IM_COL32_BLACK_TRANS);
+        gui::widgets::Splitter("Log Splitter", false, 6.0F, &blueprintHeight, &bottomViewHeight, 400.0F, BOTTOM_VIEW_UNCOLLAPSED_MIN_HEIGHT);
+        ImGui::PopStyleColor();
+    }
+
+    ed::Begin("Node editor", ImVec2(0, ImGui::GetContentRegionAvail().y - bottomViewHeight + SPLITTER_THICKNESS));
     {
         static Pin* newLinkPin = nullptr;
 
@@ -1473,6 +1487,129 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     ed::Resume();
 
     ed::End();
+
+    ImGui::Indent(SPLITTER_THICKNESS);
+    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+    if (ImGui::BeginTabBar("BottomViewTabBar"))
+    {
+        bool noItemSelected = bottomViewSelectedTab == BottomViewTabItem::None;
+        if (noItemSelected)
+        {
+            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.0F);
+        }
+        if (ImGui::BeginTabItem("▼"))
+        {
+            bottomViewSelectedTab = BottomViewTabItem::None;
+            bottomViewHeight = BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT;
+            ImGui::EndTabItem();
+        }
+        else
+        {
+            bottomViewHeight = std::max(bottomViewHeight, BOTTOM_VIEW_UNCOLLAPSED_MIN_HEIGHT);
+        }
+        if (noItemSelected)
+        {
+            ImGui::PopStyleVar();
+        }
+
+        if (ImGui::BeginTabItem("Log Output", nullptr, firstFrame ? ImGuiTabItemFlags_SetSelected : ImGuiTabItemFlags_None))
+        {
+            static int scrollToBottom = 0;
+            if (bottomViewSelectedTab != BottomViewTabItem::LogOutput)
+            {
+                scrollToBottom = 2;
+            }
+            bottomViewSelectedTab = BottomViewTabItem::LogOutput;
+
+            static bool autoScroll = true;
+            static ImGuiTextFilter textFilter;
+
+            // Options menu
+            if (ImGui::BeginPopup("Options"))
+            {
+                ImGui::Checkbox("Auto-scroll", &autoScroll);
+                ImGui::EndPopup();
+            }
+
+            // Main window
+            if (ImGui::Button("Options"))
+            {
+                ImGui::OpenPopup("Options");
+            }
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(100.0F);
+            static int logLevelFilterSelected = spdlog::level::info;
+            if (ImGui::BeginCombo("##LogLevelCombo", spdlog::level::to_string_view(static_cast<spdlog::level::level_enum>(logLevelFilterSelected)).begin()))
+            {
+                for (int n = spdlog::level::debug; n < spdlog::level::critical; n++)
+                {
+                    const bool is_selected = (logLevelFilterSelected == n);
+                    if (ImGui::Selectable(spdlog::level::to_string_view(static_cast<spdlog::level::level_enum>(n)).begin(), is_selected))
+                    {
+                        logLevelFilterSelected = n;
+                    }
+
+                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    if (is_selected)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::SameLine();
+            textFilter.Draw("Filter", -100.0F);
+
+            ImGui::Separator();
+            ImGui::BeginChild("scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
+            {
+                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+                ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
+
+                auto logMessages = Logger::GetRingBufferSink()->last_formatted();
+
+                for (auto& logLine : logMessages)
+                {
+                    for (int n = logLevelFilterSelected; n < spdlog::level::n_levels; n++)
+                    {
+                        if (logLine.find(fmt::format("] [{}]", spdlog::level::to_short_c_str(static_cast<spdlog::level::level_enum>(n)))) != std::string::npos)
+                        {
+                            if (!textFilter.IsActive() || textFilter.PassFilter(logLine.c_str()))
+                            {
+                                // str::replace(logLine, "[T]", "\033[30m[T]\033[0m");
+                                str::replace(logLine, "[D]", "\033[36m[D]\033[0m");
+                                str::replace(logLine, "[I]", "\033[32m[I]\033[0m");
+                                str::replace(logLine, "[W]", "\033[33m[W]\033[0m");
+                                str::replace(logLine, "[E]", "\033[31m[E]\033[0m");
+                                ImGui::TextAnsiUnformatted(logLine.c_str());
+                                // ImGui::TextAnsiUnformatted("\033[31;1;4mHello\033[0mtt");
+                            }
+                            break;
+                        }
+                    }
+                }
+                ImGui::PopFont();
+                ImGui::PopStyleVar();
+
+                if (scrollToBottom)
+                {
+                    ImGui::SetScrollHereY(1.0F);
+                    scrollToBottom--;
+                }
+                else if (autoScroll && ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
+                {
+                    ImGui::SetScrollHereY(1.0F);
+                }
+            }
+            ImGui::EndChild();
+
+            ImGui::EndTabItem();
+        }
+        ImGui::EndTabBar();
+    }
+    ImGui::Unindent();
+
+    ImGui::EndGroup();
 
     FlowAnimation::ProcessQueue();
 

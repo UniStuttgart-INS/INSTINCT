@@ -39,7 +39,7 @@ std::vector<std::string> FetchConfigs(const int argc, const char* argv[]); // NO
 /// @brief Writes all command line options into the log
 /// @param[in] argc Number of command line parameters
 /// @param[in] argv Array of the command line parameters
-void LogOptions(const int argc, const char* argv[]); // NOLINT
+void CheckOptions(const int argc, const char* argv[]); // NOLINT
 
 /// @brief Retrieves the value of a corresponding key from the configuration, if one exists.
 /// @tparam T Return value type
