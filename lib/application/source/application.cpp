@@ -69,7 +69,7 @@ bool Application::Create(int width /*= -1*/, int height /*= -1*/)
         m_IniFilename += ".ini";
 
     ImGuiIO& io = ImGui::GetIO();
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
     io.IniFilename = m_IniFilename.c_str();
     io.LogFilename = nullptr;
 
@@ -116,6 +116,7 @@ void Application::RecreateFontAtlas()
     config.OversampleH = 4;
     config.OversampleV = 4;
     config.PixelSnapH = false;
+    strcpy(config.Name, "Play Regular");
 
     m_DefaultFont = io.Fonts->AddFontFromMemoryCompressedTTF(PlayRegular_compressed_data, PlayRegular_compressed_size, 18.0F, &config);
     // m_DefaultFont = io.Fonts->AddFontFromFileTTF("resources/fonts/Play-Regular.ttf", 18.0f, &config);
@@ -128,6 +129,9 @@ void Application::RecreateFontAtlas()
     // io.Fonts->AddFontFromFileTTF("resources/fonts/NotoSans-Regular.ttf", 18.0f, &config, icons_ranges);
 
     config.MergeMode = false;
+    strcpy(config.Name, "Inconsolata");
+    m_HeaderFont = io.Fonts->AddFontFromMemoryCompressedTTF(InconsolataNerdFontComplete_compressed_data, InconsolataNerdFontComplete_compressed_size, 18.0F, &config);
+    strcpy(config.Name, "Cuprum Bold");
     m_HeaderFont = io.Fonts->AddFontFromMemoryCompressedTTF(CuprumBold_compressed_data, CuprumBold_compressed_size, 20.0F, &config);
     // m_HeaderFont = io.Fonts->AddFontFromFileTTF("resources/fonts/Cuprum-Bold.ttf", 20.0f, &config);
 

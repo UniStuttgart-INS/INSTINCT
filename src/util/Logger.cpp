@@ -60,9 +60,9 @@ Logger::Logger(const std::string& logpath)
         break;
     }
 
-    auto ringbuffer_sink = std::make_shared<spdlog::sinks::ringbuffer_sink_mt>(128);
+    auto ringbuffer_sink = std::make_shared<spdlog::sinks::ringbuffer_sink_mt>(1024);
     ringbuffer_sink->set_level(spdlog::level::trace);
-    ringbuffer_sink->set_pattern(logPatternDebug);
+    ringbuffer_sink->set_pattern(logPatternInfo);
 
     // Set the logger as default logger
     spdlog::set_default_logger(std::make_shared<spdlog::logger>("multi_sink", spdlog::sinks_init_list({ console_sink, file_sink, ringbuffer_sink })));
