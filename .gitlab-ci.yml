@@ -392,10 +392,10 @@ pages:
     - cmake --build build/$BUILD_TYPE -- -j2
   artifacts:
     paths:
-      - build/Debug/CTestTestfile.cmake
-      - build/Debug/test/CTestTestfile.cmake
-      - build/Debug/test/tests_*.cmake
-      - bin/Debug/tests
+      - build/$BUILD_TYPE/CTestTestfile.cmake
+      - build/$BUILD_TYPE/test/CTestTestfile.cmake
+      - build/$BUILD_TYPE/test/tests_*.cmake
+      - bin/$BUILD_TYPE/tests
     expire_in: 2h
 
 ubuntu:20.04:clang:release:
@@ -494,10 +494,10 @@ run-tests:ubuntu:20.04:gcc:debug:
     - cmake --build build/$BUILD_TYPE -- -j2
   artifacts:
     paths:
-      - build/Debug/CTestTestfile.cmake
-      - build/Debug/test/CTestTestfile.cmake
-      - build/Debug/test/tests_*.cmake
-      - bin/Debug/tests
+      - build/$BUILD_TYPE/CTestTestfile.cmake
+      - build/$BUILD_TYPE/test/CTestTestfile.cmake
+      - build/$BUILD_TYPE/test/tests_*.cmake
+      - bin/$BUILD_TYPE/tests
     expire_in: 2h
 
 archlinux:latest:clang:release:
