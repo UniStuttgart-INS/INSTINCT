@@ -5,7 +5,7 @@ Please read this!
 Before opening a new issue, make sure to search for keywords in the issues
 filtered by the "Type::Bug" label:
 
-- https://git.nav.uni-stuttgart.de/thomas.topp/instinct/-/issues?label_name=Type%3A%3ABug
+- https://git.ins.uni-stuttgart.de/thomas.topp/instinct/-/issues?label_name=Type%3A%3ABug
 
 and verify the issue you're about to submit isn't a duplicate.
 --->
@@ -30,7 +30,7 @@ and verify the issue you're about to submit isn't a duplicate.
 
 <!-- Paste any relevant logs
 
-- please use code blocks (```) to format console output, logs, and code as it's tough to read otherwise. 
+- please use code blocks (```) to format console output, logs, and code as it's tough to read otherwise.
 - Use blocks to collapse long code
 -->
 <details>
@@ -54,8 +54,8 @@ Collapsed text
 
 <!--  Input any relevant environment information if needed. -->
 
-/label ~"Type::Bug" 
-/label ~"Severity::4 - Low" 
-/label ~"Priority::3 - Medium" 
+/label ~"Type::Bug"
+/label ~"Severity::4 - Low"
+/label ~"Priority::3 - Medium"
 /label ~"needs investigation"
-/label ~"Workflow::Problem validation" 
+/label ~"Workflow::Problem validation"

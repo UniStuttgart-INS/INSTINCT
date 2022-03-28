@@ -13,6 +13,8 @@
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
 
+#include <fmt/core.h>
+
 namespace NAV::ConfigManager
 {
 /// Map which stores all options
@@ -37,7 +39,7 @@ std::vector<std::string> FetchConfigs(const int argc, const char* argv[]); // NO
 /// @brief Writes all command line options into the log
 /// @param[in] argc Number of command line parameters
 /// @param[in] argv Array of the command line parameters
-void LogOptions(const int argc, const char* argv[]); // NOLINT
+void CheckOptions(const int argc, const char* argv[]); // NOLINT
 
 /// @brief Retrieves the value of a corresponding key from the configuration, if one exists.
 /// @tparam T Return value type
@@ -53,6 +55,21 @@ const T& Get(const std::string& key, const T& defaultValue)
     }
 
     return defaultValue;
+}
+
+/// @brief Retrieves the value of a corresponding key from the configuration, if it does not exists, throws an exception
+/// @tparam T Return value type
+/// @param[in] key Key to search for
+/// @return The value found with the key
+template<typename T>
+const T& Get(const std::string& key)
+{
+    if (vm.count(key))
+    {
+        return vm[key].as<T>();
+    }
+
+    throw std::runtime_error(fmt::format("The key '{}' does not exist.", key));
 }
 
 /// Checks if a corresponding key exists in the configuration.

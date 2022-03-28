@@ -13,7 +13,6 @@ namespace nm = NAV::NodeManager;
 #include <imgui_internal.h>
 
 #include "NodeData/General/StringObs.hpp"
-#include "NodeData/IMU/VectorNavBinaryOutput.hpp"
 
 #include "util/Time/TimeBase.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
@@ -1387,7 +1386,7 @@ void NAV::VectorNavSensor::guiConfig()
         }
     }
 
-    if (ImGui::InputTextWithHint("SensorPort", "/dev/ttyUSB0", &_sensorPort))
+    if (ImGui::InputTextWithHint("SensorPort", _connectedSensorPort.empty() ? "/dev/ttyUSB0" : _connectedSensorPort.c_str(), &_sensorPort))
     {
         LOG_DEBUG("{}: SensorPort changed to {}", nameId(), _sensorPort);
         flow::ApplyChanges();
@@ -1403,6 +1402,94 @@ void NAV::VectorNavSensor::guiConfig()
                              "- \"/dev/ttyUSB0\" (Linux format for virtual (USB) serial port)\n"
                              "- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n"
                              "- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)");
+
+    bool isNodeInitialized = isInitialized();
+    if (!isNodeInitialized)
+    {
+        ImGui::PushDisabled();
+    }
+    if (ImGui::Button("Write settings"))
+    {
+        try
+        {
+            _vs.writeSettings();
+        }
+        catch (const std::exception& e)
+        {
+            LOG_ERROR("{}: Write settings threw an exception: {}", nameId(), e.what());
+        }
+    }
+    if (!isNodeInitialized)
+    {
+        ImGui::PopDisabled();
+    }
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::SetTooltip("This command will write the current register settings into non-volatile memory. Once the settings are stored\n"
+                          "in non-volatile (Flash) memory, the VN-310E module can be power cycled or reset, and the register will be\n"
+                          "reloaded from non-volatile memory.\n\n"
+                          "Due to limitations in the flash write speed the write settings command takes ~ 500ms to\n"
+                          "complete. Any commands that are sent to the sensor during this time will be responded to after\n"
+                          "the operation is complete.\n\n"
+                          "The sensor must be stationary when issuing a Write Settings Command otherwise a Reset\n"
+                          "command must also be issued to prevent the Kalman Filter from diverging during the write\n"
+                          "settings process.\n\n"
+                          "A write settings command is automatically send after initializing the node.");
+    }
+    ImGui::SameLine();
+    if (!isNodeInitialized)
+    {
+        ImGui::PushDisabled();
+    }
+    if (ImGui::Button("Restore factory settings"))
+    {
+        try
+        {
+            _vs.restoreFactorySettings();
+        }
+        catch (const std::exception& e)
+        {
+            LOG_ERROR("{}: Restore factory settings threw an exception: {}", nameId(), e.what());
+        }
+    }
+    if (!isNodeInitialized)
+    {
+        ImGui::PopDisabled();
+    }
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::SetTooltip("This command will restore the VN-310E module's factory default settings and will reset the module. There\n"
+                          "are no parameters for this command. The module will respond to this command before restoring the factory\n"
+                          "settings.");
+    }
+    ImGui::SameLine();
+    if (!isNodeInitialized)
+    {
+        ImGui::PushDisabled();
+    }
+    if (ImGui::Button("Reset sensor"))
+    {
+        try
+        {
+            _vs.reset();
+        }
+        catch (const std::exception& e)
+        {
+            LOG_ERROR("{}: Resetting threw an exception: {}", nameId(), e.what());
+        }
+    }
+    if (!isNodeInitialized)
+    {
+        ImGui::PopDisabled();
+    }
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::SetTooltip("This command will reset the module. There are no parameters required for this command. The module will\n"
+                          "first respond to the command and will then perform a reset. Upon a reset all registers will be reloaded with\n"
+                          "the values saved in non-volatile memory. If no values are stored in non-volatile memory, the device will default\n"
+                          "to factory settings. Also upon reset the VN-310E will re-initialize its Kalman filter, thus the filter will take a\n"
+                          "few seconds to completely converge on the correct attitude and correct for gyro bias.");
+    }
 
     // ###########################################################################################################
     //                                               SYSTEM MODULE
@@ -2340,6 +2427,13 @@ void NAV::VectorNavSensor::guiConfig()
                       { vn::protocol::uart::AsyncMode::ASYNCMODE_PORT2, "Message is sent out serial port 2 at a fixed rate" },
                       { vn::protocol::uart::AsyncMode::ASYNCMODE_BOTH, "Message is sent out both serial ports at a fixed rate" } }
                 };
+                if ((_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output2 && b == 1)
+                    || (_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output3 && b == 2)
+                    || (_binaryOutputRegisterMerge == BinaryRegisterMerge::Output2_Output3 && b == 2))
+                {
+                    ImGui::PushDisabled();
+                }
+
                 if (ImGui::BeginCombo(fmt::format("Async Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(_binaryOutputRegister.at(b).asyncMode).c_str()))
                 {
                     for (const auto& asyncMode : asyncModes)
@@ -2348,31 +2442,51 @@ void NAV::VectorNavSensor::guiConfig()
                         if (ImGui::Selectable(vn::protocol::uart::str(asyncMode.first).c_str(), isSelected))
                         {
                             _binaryOutputRegister.at(b).asyncMode = asyncMode.first;
-                            LOG_DEBUG("{}: binaryOutputRegister.at(b).asyncMode changed to {}", nameId(), vn::protocol::uart::str(_binaryOutputRegister.at(b).asyncMode));
+                            LOG_DEBUG("{}: binaryOutputRegister.at({}).asyncMode changed to {}", nameId(), b, vn::protocol::uart::str(_binaryOutputRegister.at(b).asyncMode));
+
+                            std::vector<size_t> binaryOutputRegistersToUpdate;
+                            binaryOutputRegistersToUpdate.push_back(b);
+                            if (_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output2 && b == 0)
+                            {
+                                _binaryOutputRegister.at(1).asyncMode = asyncMode.first;
+                                LOG_DEBUG("{}: binaryOutputRegister.at({}).asyncMode changed to {}", nameId(), 1, vn::protocol::uart::str(_binaryOutputRegister.at(1).asyncMode));
+                                binaryOutputRegistersToUpdate.push_back(1);
+                            }
+                            else if ((_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output3 && b == 0)
+                                     || (_binaryOutputRegisterMerge == BinaryRegisterMerge::Output2_Output3 && b == 1))
+                            {
+                                _binaryOutputRegister.at(2).asyncMode = asyncMode.first;
+                                LOG_DEBUG("{}: binaryOutputRegister.at({}).asyncMode changed to {}", nameId(), 2, vn::protocol::uart::str(_binaryOutputRegister.at(2).asyncMode));
+                                binaryOutputRegistersToUpdate.push_back(2);
+                            }
                             flow::ApplyChanges();
+
                             if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
-                                try
+                                for (const auto& binUpdate : binaryOutputRegistersToUpdate)
                                 {
-                                    switch (b)
+                                    try
                                     {
-                                    case 0:
-                                        _vs.writeBinaryOutput1(_binaryOutputRegister.at(0));
-                                        break;
-                                    case 1:
-                                        _vs.writeBinaryOutput2(_binaryOutputRegister.at(1));
-                                        break;
-                                    case 2:
-                                        _vs.writeBinaryOutput3(_binaryOutputRegister.at(2));
-                                        break;
-                                    default:
-                                        break;
+                                        switch (binUpdate)
+                                        {
+                                        case 0:
+                                            _vs.writeBinaryOutput1(_binaryOutputRegister.at(binUpdate));
+                                            break;
+                                        case 1:
+                                            _vs.writeBinaryOutput2(_binaryOutputRegister.at(binUpdate));
+                                            break;
+                                        case 2:
+                                            _vs.writeBinaryOutput3(_binaryOutputRegister.at(binUpdate));
+                                            break;
+                                        default:
+                                            break;
+                                        }
                                     }
-                                }
-                                catch (const std::exception& e)
-                                {
-                                    LOG_ERROR("{}: Could not configure the binaryOutputRegister {}: {}", nameId(), b + 1, e.what());
-                                    deinitializeNode();
+                                    catch (const std::exception& e)
+                                    {
+                                        LOG_ERROR("{}: Could not configure the binaryOutputRegister {}: {}", nameId(), binUpdate + 1, e.what());
+                                        deinitializeNode();
+                                    }
                                 }
                             }
                             else
@@ -2408,36 +2522,64 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     _binaryOutputRegister.at(b).rateDivisor = _dividerFrequency.first.at(_binaryOutputSelectedFrequency.at(b));
                     LOG_DEBUG("{}: Frequency of Binary Group {} changed to {}", nameId(), b + 1, _dividerFrequency.second.at(_binaryOutputSelectedFrequency.at(b)));
+
+                    std::vector<size_t> binaryOutputRegistersToUpdate;
+                    binaryOutputRegistersToUpdate.push_back(b);
+                    if (_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output2 && b == 0)
+                    {
+                        _binaryOutputSelectedFrequency.at(1) = _binaryOutputSelectedFrequency.at(b);
+                        _binaryOutputRegister.at(1).rateDivisor = _dividerFrequency.first.at(_binaryOutputSelectedFrequency.at(1));
+                        LOG_DEBUG("{}: Frequency of Binary Group {} changed to {}", nameId(), 1 + 1, _dividerFrequency.second.at(_binaryOutputSelectedFrequency.at(1)));
+                        binaryOutputRegistersToUpdate.push_back(1);
+                    }
+                    else if ((_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output3 && b == 0)
+                             || (_binaryOutputRegisterMerge == BinaryRegisterMerge::Output2_Output3 && b == 1))
+                    {
+                        _binaryOutputSelectedFrequency.at(2) = _binaryOutputSelectedFrequency.at(b);
+                        _binaryOutputRegister.at(2).rateDivisor = _dividerFrequency.first.at(_binaryOutputSelectedFrequency.at(2));
+                        LOG_DEBUG("{}: Frequency of Binary Group {} changed to {}", nameId(), 2 + 1, _dividerFrequency.second.at(_binaryOutputSelectedFrequency.at(2)));
+                        binaryOutputRegistersToUpdate.push_back(2);
+                    }
+
                     flow::ApplyChanges();
                     if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
-                        try
+                        for (const auto& binUpdate : binaryOutputRegistersToUpdate)
                         {
-                            switch (b)
+                            try
                             {
-                            case 0:
-                                _vs.writeBinaryOutput1(_binaryOutputRegister.at(b));
-                                break;
-                            case 1:
-                                _vs.writeBinaryOutput2(_binaryOutputRegister.at(b));
-                                break;
-                            case 2:
-                                _vs.writeBinaryOutput3(_binaryOutputRegister.at(b));
-                                break;
-                            default:
-                                break;
+                                switch (binUpdate)
+                                {
+                                case 0:
+                                    _vs.writeBinaryOutput1(_binaryOutputRegister.at(binUpdate));
+                                    break;
+                                case 1:
+                                    _vs.writeBinaryOutput2(_binaryOutputRegister.at(binUpdate));
+                                    break;
+                                case 2:
+                                    _vs.writeBinaryOutput3(_binaryOutputRegister.at(binUpdate));
+                                    break;
+                                default:
+                                    break;
+                                }
                             }
-                        }
-                        catch (const std::exception& e)
-                        {
-                            LOG_ERROR("{}: Could not configure the binaryOutputRegister {}: {}", nameId(), b + 1, e.what());
-                            deinitializeNode();
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the binaryOutputRegister {}: {}", nameId(), binUpdate + 1, e.what());
+                                deinitializeNode();
+                            }
                         }
                     }
                     else
                     {
                         deinitializeNode();
                     }
+                }
+                if ((_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output2 && b == 1)
+                    || (_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output3 && b == 2)
+                    || (_binaryOutputRegisterMerge == BinaryRegisterMerge::Output2_Output3 && b == 2))
+                {
+                    ImGui::PopDisabled();
                 }
 
                 if (ImGui::BeginTable(fmt::format("##VectorNavSensorConfig ({})", size_t(id)).c_str(), 7,
@@ -2639,6 +2781,38 @@ void NAV::VectorNavSensor::guiConfig()
             }
         }
 
+        if (ImGui::Combo(fmt::format("Merge Binary outputs").c_str(), reinterpret_cast<int*>(&_binaryOutputRegisterMerge), "None\0"
+                                                                                                                           "1 <-> 2\0"
+                                                                                                                           "1 <-> 3\0"
+                                                                                                                           "2 <-> 3\0\0"))
+        {
+            flow::ApplyChanges();
+            switch (_binaryOutputRegisterMerge)
+            {
+            case BinaryRegisterMerge::Output1_Output2:
+                _binaryOutputRegister.at(1).rateDivisor = _binaryOutputRegister.at(0).rateDivisor;
+                _binaryOutputSelectedFrequency.at(1) = _binaryOutputSelectedFrequency.at(0);
+                _binaryOutputRegister.at(1).asyncMode = _binaryOutputRegister.at(0).asyncMode;
+                break;
+            case BinaryRegisterMerge::Output1_Output3:
+                _binaryOutputRegister.at(2).rateDivisor = _binaryOutputRegister.at(0).rateDivisor;
+                _binaryOutputSelectedFrequency.at(2) = _binaryOutputSelectedFrequency.at(0);
+                _binaryOutputRegister.at(2).asyncMode = _binaryOutputRegister.at(0).asyncMode;
+                break;
+            case BinaryRegisterMerge::Output2_Output3:
+                _binaryOutputRegister.at(2).rateDivisor = _binaryOutputRegister.at(1).rateDivisor;
+                _binaryOutputSelectedFrequency.at(2) = _binaryOutputSelectedFrequency.at(1);
+                _binaryOutputRegister.at(2).asyncMode = _binaryOutputRegister.at(1).asyncMode;
+                break;
+            default:
+                break;
+            }
+        }
+        ImGui::SameLine();
+        NAV::gui::widgets::HelpMarker("VectorNav sensors have a buffer overflow if packages get too big (SatInfo/RawMeas selected and a lot of satellites). "
+                                      "A workaround is, to split the data into different Binary Outputs. "
+                                      "This option merges the outputs into a single observation.");
+
         // TODO: Add Gui Config for NMEA output - User manual VN-310 - 8.2.14 (p 103)
     }
 
@@ -2686,7 +2860,6 @@ void NAV::VectorNavSensor::guiConfig()
             gui::widgets::HelpMarker("The rotation happens in ZYX Order");
             ImGui::Indent();
 
-            // TODO: Angles to define this
             Eigen::Matrix3d dcm;
             dcm << _referenceFrameRotationMatrix.e00, _referenceFrameRotationMatrix.e01, _referenceFrameRotationMatrix.e02,
                 _referenceFrameRotationMatrix.e10, _referenceFrameRotationMatrix.e11, _referenceFrameRotationMatrix.e12,
@@ -4888,6 +5061,7 @@ void NAV::VectorNavSensor::guiConfig()
     j["syncInPin"] = _syncInPin;
     j["synchronizationControlRegister"] = _synchronizationControlRegister;
     j["communicationProtocolControlRegister"] = _communicationProtocolControlRegister;
+    j["binaryOutputRegisterMerge"] = _binaryOutputRegisterMerge;
     for (size_t b = 0; b < 3; b++)
     {
         j[fmt::format("binaryOutputRegister{}", b + 1)] = _binaryOutputRegister.at(b);
@@ -5001,6 +5175,10 @@ void NAV::VectorNavSensor::restore(json const& j)
     if (j.contains("communicationProtocolControlRegister"))
     {
         j.at("communicationProtocolControlRegister").get_to(_communicationProtocolControlRegister);
+    }
+    if (j.contains("binaryOutputRegisterMerge"))
+    {
+        j.at("binaryOutputRegisterMerge").get_to(_binaryOutputRegisterMerge);
     }
     for (size_t b = 0; b < 3; b++)
     {
@@ -5131,6 +5309,7 @@ bool NAV::VectorNavSensor::resetNode()
 {
     _timeSyncOut.ppsTime = InsTime{};
     _timeSyncOut.syncOutCnt = 0;
+    _binaryOutputRegisterMergeObservation = nullptr;
 
     return true;
 }
@@ -5138,6 +5317,9 @@ bool NAV::VectorNavSensor::resetNode()
 bool NAV::VectorNavSensor::initialize()
 {
     LOG_TRACE("{}: called", nameId());
+
+    // Some settings need to be wrote to the device and reset afterwards
+    bool deviceNeedsResetAfterInitialization = false;
 
     // ###########################################################################################################
     //                                                Connecting
@@ -5149,65 +5331,80 @@ bool NAV::VectorNavSensor::initialize()
                                   : sensorBaudrate();
 
     Baudrate connectedBaudrate{};
+    _connectedSensorPort.clear();
+
     // Search for the VectorNav Sensor
-    if (int32_t foundBaudrate = 0;
-        vn::sensors::Searcher::search(_sensorPort, &foundBaudrate))
+    size_t maxTries = std::filesystem::exists(_sensorPort) ? 5 : 0;
+    for (size_t i = 0; i < maxTries; ++i)
     {
-        // Sensor was found at specified port with the baudrate 'foundBaudrate'
-        connectedBaudrate = static_cast<Baudrate>(foundBaudrate);
-    }
-    else if (std::vector<std::pair<std::string, uint32_t>> foundSensors = vn::sensors::Searcher::search();
-             !foundSensors.empty())
-    {
-        if (foundSensors.size() == 1)
+        if (int32_t foundBaudrate = 0;
+            vn::sensors::Searcher::search(_sensorPort, &foundBaudrate))
         {
-            _sensorPort = foundSensors.at(0).first;
-            connectedBaudrate = static_cast<Baudrate>(foundSensors.at(0).second);
+            // Sensor was found at specified port with the baudrate 'foundBaudrate'
+            connectedBaudrate = static_cast<Baudrate>(foundBaudrate);
+            _connectedSensorPort = _sensorPort;
+            LOG_DEBUG("{}: Found VectorNav sensor on specified port '{}' with baudrate {} (it took {} attempts to connect)",
+                      nameId(), _connectedSensorPort, foundBaudrate, i + 1);
+            break;
         }
-        else
+    }
+    if (_connectedSensorPort.empty())
+    {
+        if (std::filesystem::exists(_sensorPort))
         {
-            _sensorPort = "";
-            // Some VectorNav sensors where found, try to identify the wanted one by it's name
-            for (auto [port, baudrate] : foundSensors)
+            LOG_ERROR("{}: Could not connect to VectorNav sensor on specified port '{}', but port exists.", nameId(), _sensorPort);
+            return false;
+        }
+
+        for (size_t i = 0; i < 5; ++i)
+        {
+            if (!_connectedSensorPort.empty())
             {
-                _vs.connect(port, baudrate);
-                std::string modelNumber = _vs.readModelNumber();
-                _vs.disconnect();
+                break;
+            }
 
-                LOG_DEBUG("{}: Found VectorNav Sensor {} on port {} with baudrate {}", nameId(), modelNumber, port, baudrate);
-
-                // Regex search may be better, but simple find is used here
-                if (modelNumber.find(name) != std::string::npos)
+            if (std::vector<std::pair<std::string, uint32_t>> foundSensors = vn::sensors::Searcher::search();
+                !foundSensors.empty())
+            {
+                for (auto [port, baudrate] : foundSensors)
                 {
-                    _sensorPort = port;
-                    connectedBaudrate = static_cast<Baudrate>(baudrate);
-                    break;
+                    _vs.connect(port, baudrate);
+                    std::string modelNumber = _vs.readModelNumber();
+                    _vs.disconnect();
+
+                    LOG_DEBUG("{}: Found VectorNav sensor '{}' on port '{}' with baudrate {} ({} VN sensors connected in total)",
+                              nameId(), modelNumber, port, baudrate, foundSensors.size());
+
+                    // Identify the sensor by its model number
+                    const std::string searchString = _sensorModel == VectorNavModel::VN100_VN110 ? "VN-1" : "VN-3";
+                    if (modelNumber.find(searchString) != std::string::npos)
+                    {
+                        _connectedSensorPort = port;
+                        connectedBaudrate = static_cast<Baudrate>(baudrate);
+
+                        LOG_DEBUG("{}: Selected VectorNav sensor '{}' on port '{}' (it took {} attempts to connect)",
+                                  nameId(), modelNumber, port, i + 1);
+                        break;
+                    }
                 }
             }
-            // Sensor could not be identified
-            if (_sensorPort.empty())
-            {
-                // This point is also reached if a sensor is connected with USB but external power is off
-                LOG_ERROR("{}: Could not connect", nameId());
-                return false;
-            }
         }
-    }
-    else
-    {
-        LOG_ERROR("{}: Could not connect. Is the sensor connected and do you have read permissions?", nameId());
-        return false;
+        if (_connectedSensorPort.empty())
+        {
+            LOG_ERROR("{}: Could not connect. Is the sensor connected and do you have read permissions?", nameId());
+            return false;
+        }
     }
 
     try
     {
         // Connect to the sensor (vs.verifySensorConnectivity does not have to be called as sensor is already tested)
-        _vs.connect(_sensorPort, connectedBaudrate);
+        _vs.connect(_connectedSensorPort, connectedBaudrate);
     }
     catch (const std::exception& e)
     {
-        LOG_ERROR("{}: Failed to connect to sensor on port {} with baudrate {} with error: {}", nameId(),
-                  _sensorPort, connectedBaudrate, e.what());
+        LOG_ERROR("{}: Failed to connect to sensor on port '{}' with baudrate {} with error: {}", nameId(),
+                  _connectedSensorPort, connectedBaudrate, e.what());
         return false;
     }
 
@@ -5215,20 +5412,20 @@ bool NAV::VectorNavSensor::initialize()
     {
         if (!_vs.verifySensorConnectivity())
         {
-            LOG_ERROR("{}: Connected to sensor on port {} with baudrate {} but sensor does not answer", nameId(),
-                      _sensorPort, connectedBaudrate);
+            LOG_ERROR("{}: Connected to sensor on port '{}' with baudrate {} but sensor does not answer", nameId(),
+                      _connectedSensorPort, connectedBaudrate);
             return false;
         }
     }
     catch (const std::exception& e)
     {
-        LOG_ERROR("{}: Connected to sensor on port {} with baudrate {} but sensor threw an exception: {}", nameId(),
-                  _sensorPort, connectedBaudrate, e.what());
+        LOG_ERROR("{}: Connected to sensor on port '{}' with baudrate {} but sensor threw an exception: {}", nameId(),
+                  _connectedSensorPort, connectedBaudrate, e.what());
         return false;
     }
 
     // Query the sensor's model number
-    LOG_DEBUG("{}: {} connected on port {} with baudrate {}", nameId(), _vs.readModelNumber(), _sensorPort, connectedBaudrate);
+    LOG_DEBUG("{}: {} connected on port '{}' with baudrate {}", nameId(), _vs.readModelNumber(), _connectedSensorPort, connectedBaudrate);
 
     // ###########################################################################################################
     //                                               SYSTEM MODULE
@@ -5306,8 +5503,14 @@ bool NAV::VectorNavSensor::initialize()
     // _vs.writeAccelerationCompensation(vn::sensors::AccelerationCompensationRegister()); // User manual VN-310 - 9.2.2 (p 112) / VN-100 - 6.2.2 (p 83)
     // _vs.writeGyroCompensation(vn::sensors::GyroCompensationRegister());                 // User manual VN-310 - 9.2.3 (p 113) / VN-100 - 6.2.3 (p 84)
 
+    auto vnReferenceFrameRotationMatrix = _vs.readReferenceFrameRotation();
+    if (vnReferenceFrameRotationMatrix != _referenceFrameRotationMatrix)
+    {
+        deviceNeedsResetAfterInitialization = true;
+    }
+
     _vs.writeReferenceFrameRotation(_referenceFrameRotationMatrix);
-    if (auto vnReferenceFrameRotationMatrix = _vs.readReferenceFrameRotation();
+    if (vnReferenceFrameRotationMatrix = _vs.readReferenceFrameRotation();
         vnReferenceFrameRotationMatrix != _referenceFrameRotationMatrix)
     {
         LOG_ERROR("{}: Writing the referenceFrameRotationMatrix was not successfull.\n"
@@ -5722,7 +5925,12 @@ bool NAV::VectorNavSensor::initialize()
     // Some changes need to be set at startup, therefore write the settings and reset the device
     LOG_DEBUG("{}: writing settings", nameId());
     _vs.writeSettings();
-    _vs.reset();
+
+    if (deviceNeedsResetAfterInitialization)
+    {
+        LOG_DEBUG("{}: Resetting device to apply permenent settings", nameId());
+        _vs.reset();
+    }
 
     // TODO: Implement in vnproglib: _vs.writeNmeaOutput1(...) - User manual VN-310 - 8.2.14 (p 103)
     // TODO: Implement in vnproglib: _vs.writeNmeaOutput2(...) - User manual VN-310 - 8.2.15 (p 104)
@@ -5738,34 +5946,199 @@ void NAV::VectorNavSensor::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (_vs.isConnected())
+    try
     {
-        try
+        if (isInitialized() && _vs.isConnected())
         {
-            _vs.unregisterAsyncPacketReceivedHandler();
+            try
+            {
+                _vs.unregisterAsyncPacketReceivedHandler();
+            }
+            catch (const std::exception& e)
+            {
+                LOG_WARN("{}: Could not unregisterAsyncPacketReceivedHandler ({})", nameId(), e.what());
+            }
+
+            try
+            {
+                vn::sensors::BinaryOutputRegister bor{
+                    vn::protocol::uart::AsyncMode::ASYNCMODE_NONE,         // AsyncMode
+                    800,                                                   // RateDivisor
+                    vn::protocol::uart::CommonGroup::COMMONGROUP_NONE,     // CommonGroup
+                    vn::protocol::uart::TimeGroup::TIMEGROUP_NONE,         // TimeGroup
+                    vn::protocol::uart::ImuGroup::IMUGROUP_NONE,           // IMUGroup
+                    vn::protocol::uart::GpsGroup::GPSGROUP_NONE,           // GNSS1Group
+                    vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_NONE, // AttitudeGroup
+                    vn::protocol::uart::InsGroup::INSGROUP_NONE,           // INSGroup
+                    vn::protocol::uart::GpsGroup::GPSGROUP_NONE            // GNSS2Group
+                };
+
+                _vs.writeBinaryOutput1(bor);
+                _vs.writeBinaryOutput2(bor);
+                _vs.writeBinaryOutput3(bor);
+                _vs.writeAsyncDataOutputType(vn::protocol::uart::AsciiAsync::VNOFF);
+                _vs.changeBaudRate(NAV::UartSensor::Baudrate::BAUDRATE_115200);
+                _vs.writeSettings();
+                LOG_DEBUG("{}: Sensor output turned off", nameId());
+            }
+            catch (const std::exception& e)
+            {
+                LOG_WARN("{}: Could not turn off sensor output ({})", nameId(), e.what());
+            }
+
+            try
+            {
+                _vs.disconnect();
+                LOG_DEBUG("{}: Sensor disconnected", nameId());
+            }
+            catch (const std::exception& e)
+            {
+                LOG_WARN("{}: Could not disconnect ({})", nameId(), e.what());
+            }
         }
-        catch (...)
-        {
-            LOG_DEBUG("{}: Could not unregisterAsyncPacketReceivedHandler", nameId());
-        }
-        try
-        {
-            _vs.reset(true);
-            LOG_TRACE("{}: Sensor resettet", nameId());
-        }
-        catch (...)
-        {
-            LOG_DEBUG("{}: Could not reset", nameId());
-        }
-        try
-        {
-            _vs.disconnect();
-            LOG_TRACE("{}: Sensor disconnected", nameId());
-        }
-        catch (...)
-        {
-            LOG_DEBUG("{}: Could not disconnect", nameId());
-        }
+    }
+    catch (const std::exception& e)
+    {
+        LOG_WARN("{}: Unhandled exception while deinitializing sensor ({})", nameId(), e.what());
+    }
+}
+
+void NAV::VectorNavSensor::mergeVectorNavBinaryObservations(const std::shared_ptr<VectorNavBinaryOutput>& target, const std::shared_ptr<VectorNavBinaryOutput>& source)
+{
+    target->insTime = target->insTime.has_value() ? target->insTime : source->insTime;
+    // Group 2 (Time)
+    if (!target->timeOutputs && source->timeOutputs)
+    {
+        target->timeOutputs = source->timeOutputs;
+    }
+    else if (target->timeOutputs && source->timeOutputs)
+    {
+        target->timeOutputs->timeStartup = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP ? target->timeOutputs->timeStartup : source->timeOutputs->timeStartup;
+        target->timeOutputs->timeGps = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS ? target->timeOutputs->timeGps : source->timeOutputs->timeGps;
+        target->timeOutputs->gpsTow = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW ? target->timeOutputs->gpsTow : source->timeOutputs->gpsTow;
+        target->timeOutputs->gpsWeek = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK ? target->timeOutputs->gpsWeek : source->timeOutputs->gpsWeek;
+        target->timeOutputs->timeSyncIn = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN ? target->timeOutputs->timeSyncIn : source->timeOutputs->timeSyncIn;
+        target->timeOutputs->timePPS = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS ? target->timeOutputs->timePPS : source->timeOutputs->timePPS;
+        target->timeOutputs->timeUtc = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC ? target->timeOutputs->timeUtc : source->timeOutputs->timeUtc;
+        target->timeOutputs->syncInCnt = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT ? target->timeOutputs->syncInCnt : source->timeOutputs->syncInCnt;
+        target->timeOutputs->syncOutCnt = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT ? target->timeOutputs->syncOutCnt : source->timeOutputs->syncOutCnt;
+        target->timeOutputs->timeStatus = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS ? target->timeOutputs->timeStatus : source->timeOutputs->timeStatus;
+
+        target->timeOutputs->timeField |= source->timeOutputs->timeField;
+    }
+    // Group 3 (IMU)
+    if (!target->imuOutputs && source->imuOutputs)
+    {
+        target->imuOutputs = source->imuOutputs;
+    }
+    else if (target->imuOutputs && source->imuOutputs)
+    {
+        target->imuOutputs->imuStatus = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_IMUSTATUS ? target->imuOutputs->imuStatus : source->imuOutputs->imuStatus;
+        target->imuOutputs->uncompMag = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG ? target->imuOutputs->uncompMag : source->imuOutputs->uncompMag;
+        target->imuOutputs->uncompAccel = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL ? target->imuOutputs->uncompAccel : source->imuOutputs->uncompAccel;
+        target->imuOutputs->uncompGyro = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO ? target->imuOutputs->uncompGyro : source->imuOutputs->uncompGyro;
+        target->imuOutputs->temp = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_TEMP ? target->imuOutputs->temp : source->imuOutputs->temp;
+        target->imuOutputs->pres = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_PRES ? target->imuOutputs->pres : source->imuOutputs->pres;
+        target->imuOutputs->deltaTime = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA ? target->imuOutputs->deltaTime : source->imuOutputs->deltaTime;
+        target->imuOutputs->deltaTheta = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA ? target->imuOutputs->deltaTheta : source->imuOutputs->deltaTheta;
+        target->imuOutputs->deltaV = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL ? target->imuOutputs->deltaV : source->imuOutputs->deltaV;
+        target->imuOutputs->mag = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_MAG ? target->imuOutputs->mag : source->imuOutputs->mag;
+        target->imuOutputs->accel = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL ? target->imuOutputs->accel : source->imuOutputs->accel;
+        target->imuOutputs->angularRate = target->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE ? target->imuOutputs->angularRate : source->imuOutputs->angularRate;
+
+        target->imuOutputs->imuField |= source->imuOutputs->imuField;
+    }
+    // Group 4 (GNSS1)
+    if (!target->gnss1Outputs && source->gnss1Outputs)
+    {
+        target->gnss1Outputs = source->gnss1Outputs;
+    }
+    else if (target->gnss1Outputs && source->gnss1Outputs)
+    {
+        target->gnss1Outputs->timeUtc = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC ? target->gnss1Outputs->timeUtc : source->gnss1Outputs->timeUtc;
+        target->gnss1Outputs->tow = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW ? target->gnss1Outputs->tow : source->gnss1Outputs->tow;
+        target->gnss1Outputs->week = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK ? target->gnss1Outputs->week : source->gnss1Outputs->week;
+        target->gnss1Outputs->numSats = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS ? target->gnss1Outputs->numSats : source->gnss1Outputs->numSats;
+        target->gnss1Outputs->fix = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_FIX ? target->gnss1Outputs->fix : source->gnss1Outputs->fix;
+        target->gnss1Outputs->posLla = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA ? target->gnss1Outputs->posLla : source->gnss1Outputs->posLla;
+        target->gnss1Outputs->posEcef = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF ? target->gnss1Outputs->posEcef : source->gnss1Outputs->posEcef;
+        target->gnss1Outputs->velNed = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED ? target->gnss1Outputs->velNed : source->gnss1Outputs->velNed;
+        target->gnss1Outputs->velEcef = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF ? target->gnss1Outputs->velEcef : source->gnss1Outputs->velEcef;
+        target->gnss1Outputs->posU = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSU ? target->gnss1Outputs->posU : source->gnss1Outputs->posU;
+        target->gnss1Outputs->velU = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELU ? target->gnss1Outputs->velU : source->gnss1Outputs->velU;
+        target->gnss1Outputs->timeU = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU ? target->gnss1Outputs->timeU : source->gnss1Outputs->timeU;
+        target->gnss1Outputs->timeInfo = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO ? target->gnss1Outputs->timeInfo : source->gnss1Outputs->timeInfo;
+        target->gnss1Outputs->dop = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP ? target->gnss1Outputs->dop : source->gnss1Outputs->dop;
+        target->gnss1Outputs->satInfo = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO ? target->gnss1Outputs->satInfo : source->gnss1Outputs->satInfo;
+        target->gnss1Outputs->raw = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS ? target->gnss1Outputs->raw : source->gnss1Outputs->raw;
+
+        target->gnss1Outputs->gnssField |= source->gnss1Outputs->gnssField;
+    }
+    // Group 5 (Attitude)
+    if (!target->attitudeOutputs && source->attitudeOutputs)
+    {
+        target->attitudeOutputs = source->attitudeOutputs;
+    }
+    else if (target->attitudeOutputs && source->attitudeOutputs)
+    {
+        target->attitudeOutputs->vpeStatus = target->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS ? target->attitudeOutputs->vpeStatus : source->attitudeOutputs->vpeStatus;
+        target->attitudeOutputs->ypr = target->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL ? target->attitudeOutputs->ypr : source->attitudeOutputs->ypr;
+        target->attitudeOutputs->qtn = target->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION ? target->attitudeOutputs->qtn : source->attitudeOutputs->qtn;
+        target->attitudeOutputs->dcm = target->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM ? target->attitudeOutputs->dcm : source->attitudeOutputs->dcm;
+        target->attitudeOutputs->magNed = target->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED ? target->attitudeOutputs->magNed : source->attitudeOutputs->magNed;
+        target->attitudeOutputs->accelNed = target->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_ACCELNED ? target->attitudeOutputs->accelNed : source->attitudeOutputs->accelNed;
+        target->attitudeOutputs->linearAccelBody = target->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELBODY ? target->attitudeOutputs->linearAccelBody : source->attitudeOutputs->linearAccelBody;
+        target->attitudeOutputs->linearAccelNed = target->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELNED ? target->attitudeOutputs->linearAccelNed : source->attitudeOutputs->linearAccelNed;
+        target->attitudeOutputs->yprU = target->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU ? target->attitudeOutputs->yprU : source->attitudeOutputs->yprU;
+
+        target->attitudeOutputs->attitudeField |= source->attitudeOutputs->attitudeField;
+    }
+    // Group 6 (INS)
+    if (!target->insOutputs && source->insOutputs)
+    {
+        target->insOutputs = source->insOutputs;
+    }
+    else if (target->insOutputs && source->insOutputs)
+    {
+        target->insOutputs->insStatus = target->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS ? target->insOutputs->insStatus : source->insOutputs->insStatus;
+        target->insOutputs->posLla = target->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA ? target->insOutputs->posLla : source->insOutputs->posLla;
+        target->insOutputs->posEcef = target->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSECEF ? target->insOutputs->posEcef : source->insOutputs->posEcef;
+        target->insOutputs->velBody = target->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELBODY ? target->insOutputs->velBody : source->insOutputs->velBody;
+        target->insOutputs->velNed = target->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELNED ? target->insOutputs->velNed : source->insOutputs->velNed;
+        target->insOutputs->velEcef = target->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELECEF ? target->insOutputs->velEcef : source->insOutputs->velEcef;
+        target->insOutputs->magEcef = target->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_MAGECEF ? target->insOutputs->magEcef : source->insOutputs->magEcef;
+        target->insOutputs->accelEcef = target->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_ACCELECEF ? target->insOutputs->accelEcef : source->insOutputs->accelEcef;
+        target->insOutputs->linearAccelEcef = target->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_LINEARACCELECEF ? target->insOutputs->linearAccelEcef : source->insOutputs->linearAccelEcef;
+        target->insOutputs->posU = target->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSU ? target->insOutputs->posU : source->insOutputs->posU;
+        target->insOutputs->velU = target->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELU ? target->insOutputs->velU : source->insOutputs->velU;
+
+        target->insOutputs->insField |= source->insOutputs->insField;
+    }
+    // Group 7 (GNSS2)
+    if (!target->gnss2Outputs && source->gnss2Outputs)
+    {
+        target->gnss2Outputs = source->gnss2Outputs;
+    }
+    else if (target->gnss2Outputs && source->gnss2Outputs)
+    {
+        target->gnss2Outputs->timeUtc = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC ? target->gnss2Outputs->timeUtc : source->gnss2Outputs->timeUtc;
+        target->gnss2Outputs->tow = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW ? target->gnss2Outputs->tow : source->gnss2Outputs->tow;
+        target->gnss2Outputs->week = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK ? target->gnss2Outputs->week : source->gnss2Outputs->week;
+        target->gnss2Outputs->numSats = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS ? target->gnss2Outputs->numSats : source->gnss2Outputs->numSats;
+        target->gnss2Outputs->fix = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_FIX ? target->gnss2Outputs->fix : source->gnss2Outputs->fix;
+        target->gnss2Outputs->posLla = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA ? target->gnss2Outputs->posLla : source->gnss2Outputs->posLla;
+        target->gnss2Outputs->posEcef = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF ? target->gnss2Outputs->posEcef : source->gnss2Outputs->posEcef;
+        target->gnss2Outputs->velNed = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED ? target->gnss2Outputs->velNed : source->gnss2Outputs->velNed;
+        target->gnss2Outputs->velEcef = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF ? target->gnss2Outputs->velEcef : source->gnss2Outputs->velEcef;
+        target->gnss2Outputs->posU = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSU ? target->gnss2Outputs->posU : source->gnss2Outputs->posU;
+        target->gnss2Outputs->velU = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELU ? target->gnss2Outputs->velU : source->gnss2Outputs->velU;
+        target->gnss2Outputs->timeU = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU ? target->gnss2Outputs->timeU : source->gnss2Outputs->timeU;
+        target->gnss2Outputs->timeInfo = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO ? target->gnss2Outputs->timeInfo : source->gnss2Outputs->timeInfo;
+        target->gnss2Outputs->dop = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP ? target->gnss2Outputs->dop : source->gnss2Outputs->dop;
+        target->gnss2Outputs->satInfo = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO ? target->gnss2Outputs->satInfo : source->gnss2Outputs->satInfo;
+        target->gnss2Outputs->raw = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS ? target->gnss2Outputs->raw : source->gnss2Outputs->raw;
+
+        target->gnss2Outputs->gnssField |= source->gnss2Outputs->gnssField;
     }
 }
 
@@ -5774,6 +6147,20 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
     auto* vnSensor = static_cast<VectorNavSensor*>(userData);
 
     LOG_DATA("{}: Received message", vnSensor->nameId());
+
+    if (p.getPacketLength() > 2500)
+    {
+        LOG_ERROR("{} Packet size is {} bytes. VectorNav internal buffer overflows happen if the size is > 2550 bytes. "
+                  "You potentially already lost packages without noticing. "
+                  "Consider splitting the packet to different Binary outputs.",
+                  vnSensor->nameId(), p.getPacketLength());
+    }
+    else if (p.getPacketLength() > 2200)
+    {
+        LOG_WARN("{} Packet size is {} bytes. VectorNav internal buffer overflows happen if the size is > 2550 bytes. "
+                 "Consider splitting the packet to different Binary outputs.",
+                 vnSensor->nameId(), p.getPacketLength());
+    }
 
     if (p.type() == vn::protocol::uart::Packet::TYPE_BINARY)
     {
@@ -6462,119 +6849,142 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                 }
 
                 // --------------------------------------------- Fetch InsTime -----------------------------------------------
+                auto updateSyncOut = [vnSensor, obs](const InsTime& ppsTime) {
+                    if (vnSensor->_synchronizationControlRegister.syncOutMode == vn::protocol::uart::SYNCOUTMODE_GPSPPS
+                        && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT))
+                    {
+                        if (obs->timeOutputs->syncOutCnt > 0)
+                        {
+                            if (vnSensor->_timeSyncOut.syncOutCnt == 0)
+                            {
+                                LOG_INFO("{}: Found PPS time {} and is providing it to its connected nodes", vnSensor->nameId(), ppsTime.toYMDHMS());
+                            }
+                            vnSensor->_timeSyncOut.ppsTime = ppsTime;
+                            vnSensor->_timeSyncOut.syncOutCnt = obs->timeOutputs->syncOutCnt;
+                            LOG_DATA("{}: Syncing time {}, pps {}, syncOutCnt {}",
+                                     vnSensor->nameId(), obs->insTime->toGPSweekTow(),
+                                     vnSensor->_timeSyncOut.ppsTime.toGPSweekTow(), vnSensor->_timeSyncOut.syncOutCnt);
+                        }
+                    }
+                };
+
                 // Group 2 (Time)
                 if (obs->timeOutputs
-                    && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS)
-                    && obs->timeOutputs->timeStatus.dateOk())
+                    && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS))
                 {
-                    if (obs->timeOutputs->timeStatus.timeOk()
-                        && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
-                        && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK))
+                    if (obs->timeOutputs->timeStatus.dateOk())
                     {
-                        obs->insTime.emplace(InsTime_GPSweekTow(0, obs->timeOutputs->gpsWeek, obs->timeOutputs->gpsTow * 1e-9L));
-
-                        if (vnSensor->_synchronizationControlRegister.syncOutMode == vn::protocol::uart::SYNCOUTMODE_GPSPPS
-                            && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT))
+                        if (obs->timeOutputs->timeStatus.timeOk()
+                            && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
+                            && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK))
                         {
-                            if (vnSensor->_timeSyncOut.syncOutCnt == 0)
-                            {
-                                LOG_INFO("{}: Found GNSS time {} and is providing it to connected nodes", vnSensor->nameId(), obs->insTime->toGPSweekTow());
-                            }
-                            vnSensor->_timeSyncOut.ppsTime = InsTime(0, obs->timeOutputs->gpsWeek, std::floor(obs->timeOutputs->gpsTow * 1e-9L));
-                            vnSensor->_timeSyncOut.syncOutCnt = obs->timeOutputs->syncOutCnt;
-                            LOG_DATA("{}: Syncing time {}, pps {}, syncOutCnt {}",
-                                     vnSensor->nameId(), obs->insTime->toGPSweekTow(),
-                                     vnSensor->_timeSyncOut.ppsTime.toGPSweekTow(), vnSensor->_timeSyncOut.syncOutCnt);
+                            obs->insTime.emplace(InsTime_GPSweekTow(0, obs->timeOutputs->gpsWeek, obs->timeOutputs->gpsTow * 1e-9L));
+                            updateSyncOut(InsTime(0, obs->timeOutputs->gpsWeek, std::floor(obs->timeOutputs->gpsTow * 1e-9L)));
+                        }
+                        else if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS)
+                        {
+                            auto secondsSinceEpoche = static_cast<long double>(obs->timeOutputs->timeGps) * 1e-9L;
+                            auto week = static_cast<uint16_t>(secondsSinceEpoche / static_cast<long double>(InsTimeUtil::SECONDS_PER_DAY * InsTimeUtil::DAYS_PER_WEEK));
+                            auto tow = secondsSinceEpoche - week * InsTimeUtil::SECONDS_PER_DAY * InsTimeUtil::DAYS_PER_WEEK;
+
+                            obs->insTime.emplace(InsTime_GPSweekTow(0, week, tow));
+                            updateSyncOut(InsTime(0, week, std::floor(tow)));
                         }
                     }
-                    else if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS)
+                    if ((!obs->insTime.has_value() || obs->insTime->empty())
+                        && obs->timeOutputs->timeStatus.utcTimeValid()
+                        && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC))
                     {
-                        auto secondsSinceEpoche = static_cast<long double>(obs->timeOutputs->timeGps) * 1e-9L;
-                        auto week = static_cast<uint16_t>(secondsSinceEpoche / static_cast<long double>(InsTimeUtil::SECONDS_PER_DAY * InsTimeUtil::DAYS_PER_WEEK));
-                        auto tow = secondsSinceEpoche - week * InsTimeUtil::SECONDS_PER_DAY * InsTimeUtil::DAYS_PER_WEEK;
-
-                        obs->insTime.emplace(InsTime_GPSweekTow(0, week, tow));
-
-                        if (vnSensor->_synchronizationControlRegister.syncOutMode == vn::protocol::uart::SYNCOUTMODE_GPSPPS
-                            && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT))
-                        {
-                            if (vnSensor->_timeSyncOut.syncOutCnt == 0)
-                            {
-                                LOG_INFO("{}: Found GNSS time {} and is providing it to its connected nodes", vnSensor->nameId(), obs->insTime->toGPSweekTow());
-                            }
-                            vnSensor->_timeSyncOut.ppsTime = InsTime(0, week, std::floor(tow));
-                            vnSensor->_timeSyncOut.syncOutCnt = obs->timeOutputs->syncOutCnt;
-                            LOG_DATA("{}: Syncing time {}, pps {}, syncOutCnt {}",
-                                     vnSensor->nameId(), obs->insTime->toGPSweekTow(),
-                                     vnSensor->_timeSyncOut.ppsTime.toGPSweekTow(), vnSensor->_timeSyncOut.syncOutCnt);
-                        }
+                        obs->insTime.emplace(InsTime_YMDHMS(2000 + obs->timeOutputs->timeUtc.year,
+                                                            obs->timeOutputs->timeUtc.month,
+                                                            obs->timeOutputs->timeUtc.day,
+                                                            obs->timeOutputs->timeUtc.hour,
+                                                            obs->timeOutputs->timeUtc.min,
+                                                            obs->timeOutputs->timeUtc.sec + static_cast<long double>(obs->timeOutputs->timeUtc.ms) * 1e-3L));
+                        updateSyncOut(InsTime(InsTime_YMDHMS(2000 + obs->timeOutputs->timeUtc.year,
+                                                             obs->timeOutputs->timeUtc.month,
+                                                             obs->timeOutputs->timeUtc.day,
+                                                             obs->timeOutputs->timeUtc.hour,
+                                                             obs->timeOutputs->timeUtc.min,
+                                                             obs->timeOutputs->timeUtc.sec)));
                     }
                 }
-                // TODO: Calculate time from GNSS. The value only changes with the GNSS update rate. Therefore all IMU messages in between have the same time
                 // Group 4 (GNSS1)
-                // if ((!obs->insTime.has_value() || obs->insTime->empty()) && obs->gnss1Outputs)
-                // {
-                //     if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
-                //     {
-                //         if (obs->gnss1Outputs->timeInfo.status.dateOk() && obs->gnss1Outputs->timeInfo.status.timeOk()
-                //             && (((obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
-                //                  && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK))
-                //                 || obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS))
-                //         {
-                //             if ((obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
-                //                 && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK))
-                //             {
-                //                 obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss1Outputs->week, obs->gnss1Outputs->tow * 1e-9L));
-                //             }
-                //             else // obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS
-                //             {
-                //                 obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss1Outputs->raw.week, obs->gnss1Outputs->raw.tow * 1e-9L));
-                //             }
-                //         }
-                //         else if (obs->gnss1Outputs->timeInfo.status.utcTimeValid()
-                //                  && obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
-                //         {
-                //             obs->insTime.emplace(InsTime_YMDHMS(2000 + obs->gnss1Outputs->timeUtc.year,
-                //                                                 obs->gnss1Outputs->timeUtc.month,
-                //                                                 obs->gnss1Outputs->timeUtc.day,
-                //                                                 obs->gnss1Outputs->timeUtc.hour,
-                //                                                 obs->gnss1Outputs->timeUtc.min,
-                //                                                 obs->gnss1Outputs->timeUtc.sec + static_cast<long double>(obs->gnss1Outputs->timeUtc.ms) * 1e-3L));
-                //         }
-                //     }
-                // }
-                // // Group 7 (GNSS2)
-                // if ((!obs->insTime.has_value() || obs->insTime->empty()) && obs->gnss2Outputs)
-                // {
-                //     if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
-                //     {
-                //         if (obs->gnss2Outputs->timeInfo.status.dateOk() && obs->gnss2Outputs->timeInfo.status.timeOk()
-                //             && (((obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
-                //                  && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK))
-                //                 || obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS))
-                //         {
-                //             if ((obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
-                //                 && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK))
-                //             {
-                //                 obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss2Outputs->week, obs->gnss2Outputs->tow * 1e-9L));
-                //             }
-                //             else // obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS
-                //             {
-                //                 obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss2Outputs->raw.week, obs->gnss2Outputs->raw.tow * 1e-9L));
-                //             }
-                //         }
-                //         else if (obs->gnss2Outputs->timeInfo.status.utcTimeValid()
-                //                  && obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
-                //         {
-                //             obs->insTime.emplace(InsTime_YMDHMS(2000 + obs->gnss2Outputs->timeUtc.year,
-                //                                                 obs->gnss2Outputs->timeUtc.month,
-                //                                                 obs->gnss2Outputs->timeUtc.day,
-                //                                                 obs->gnss2Outputs->timeUtc.hour,
-                //                                                 obs->gnss2Outputs->timeUtc.min,
-                //                                                 obs->gnss2Outputs->timeUtc.sec + static_cast<long double>(obs->gnss2Outputs->timeUtc.ms) * 1e-3L));
-                //         }
-                //     }
-                // }
+                if ((!obs->insTime.has_value() || obs->insTime->empty())
+                    && obs->gnss1Outputs
+                    && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO))
+                {
+                    if (obs->gnss1Outputs->timeInfo.status.dateOk() && obs->gnss1Outputs->timeInfo.status.timeOk())
+                    {
+                        if ((obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+                            && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK))
+                        {
+                            obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss1Outputs->week, obs->gnss1Outputs->tow * 1e-9L));
+                            updateSyncOut(InsTime(0, obs->gnss1Outputs->week, std::floor(obs->gnss1Outputs->tow * 1e-9L)));
+                        }
+                        else if ((obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
+                                 && obs->gnss1Outputs->raw.numSats)
+                        {
+                            obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss1Outputs->raw.week, obs->gnss1Outputs->raw.tow));
+                            updateSyncOut(InsTime(0, obs->gnss1Outputs->raw.week, std::floor(obs->gnss1Outputs->raw.tow)));
+                        }
+                    }
+                    if ((!obs->insTime.has_value() || obs->insTime->empty())
+                        && obs->gnss1Outputs->timeInfo.status.utcTimeValid()
+                        && obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
+                    {
+                        obs->insTime.emplace(InsTime_YMDHMS(2000 + obs->gnss1Outputs->timeUtc.year,
+                                                            obs->gnss1Outputs->timeUtc.month,
+                                                            obs->gnss1Outputs->timeUtc.day,
+                                                            obs->gnss1Outputs->timeUtc.hour,
+                                                            obs->gnss1Outputs->timeUtc.min,
+                                                            obs->gnss1Outputs->timeUtc.sec + static_cast<long double>(obs->gnss1Outputs->timeUtc.ms) * 1e-3L));
+                        updateSyncOut(InsTime(InsTime_YMDHMS(2000 + obs->gnss1Outputs->timeUtc.year,
+                                                             obs->gnss1Outputs->timeUtc.month,
+                                                             obs->gnss1Outputs->timeUtc.day,
+                                                             obs->gnss1Outputs->timeUtc.hour,
+                                                             obs->gnss1Outputs->timeUtc.min,
+                                                             obs->gnss1Outputs->timeUtc.sec)));
+                    }
+                }
+                // Group 7 (GNSS2)
+                if ((!obs->insTime.has_value() || obs->insTime->empty())
+                    && obs->gnss2Outputs
+                    && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO))
+                {
+                    if (obs->gnss2Outputs->timeInfo.status.dateOk() && obs->gnss2Outputs->timeInfo.status.timeOk())
+                    {
+                        if ((obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+                            && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK))
+                        {
+                            obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss2Outputs->week, obs->gnss2Outputs->tow * 1e-9L));
+                            updateSyncOut(InsTime(0, obs->gnss2Outputs->week, std::floor(obs->gnss2Outputs->tow * 1e-9L)));
+                        }
+                        else if ((obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
+                                 && obs->gnss2Outputs->raw.numSats)
+                        {
+                            obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss2Outputs->raw.week, obs->gnss2Outputs->raw.tow));
+                            updateSyncOut(InsTime(0, obs->gnss2Outputs->raw.week, std::floor(obs->gnss2Outputs->raw.tow)));
+                        }
+                    }
+                    if ((!obs->insTime.has_value() || obs->insTime->empty())
+                        && obs->gnss2Outputs->timeInfo.status.utcTimeValid()
+                        && obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
+                    {
+                        obs->insTime.emplace(InsTime_YMDHMS(2000 + obs->gnss2Outputs->timeUtc.year,
+                                                            obs->gnss2Outputs->timeUtc.month,
+                                                            obs->gnss2Outputs->timeUtc.day,
+                                                            obs->gnss2Outputs->timeUtc.hour,
+                                                            obs->gnss2Outputs->timeUtc.min,
+                                                            obs->gnss2Outputs->timeUtc.sec + static_cast<long double>(obs->gnss2Outputs->timeUtc.ms) * 1e-3L));
+                        updateSyncOut(InsTime(InsTime_YMDHMS(2000 + obs->gnss2Outputs->timeUtc.year,
+                                                             obs->gnss2Outputs->timeUtc.month,
+                                                             obs->gnss2Outputs->timeUtc.day,
+                                                             obs->gnss2Outputs->timeUtc.hour,
+                                                             obs->gnss2Outputs->timeUtc.min,
+                                                             obs->gnss2Outputs->timeUtc.sec)));
+                    }
+                }
 
                 if ((!obs->insTime.has_value() || obs->insTime->empty())                        // Look for master to give GNSS time
                     && (obs->timeOutputs->timeField & vn::protocol::uart::TIMEGROUP_TIMESYNCIN) // We need syncin time for this
@@ -6621,8 +7031,65 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     vnSensor->_lastMessageTime.at(b) = obs->insTime.value();
                 }
 
-                // Calls all the callbacks
-                vnSensor->invokeCallbacks(b + 1, obs);
+                if ((vnSensor->_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output2 && (b == 0 || b == 1))
+                    || (vnSensor->_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output3 && (b == 0 || b == 2))
+                    || (vnSensor->_binaryOutputRegisterMerge == BinaryRegisterMerge::Output2_Output3 && (b == 1 || b == 2)))
+                {
+                    if (vnSensor->_binaryOutputRegisterMergeObservation == nullptr)
+                    {
+                        vnSensor->_binaryOutputRegisterMergeObservation = obs;
+                        vnSensor->_binaryOutputRegisterMergeIndex = b;
+                    }
+                    else
+                    {
+                        if ((obs->insTime.has_value() && vnSensor->_binaryOutputRegisterMergeObservation->insTime.has_value()
+                             && obs->insTime.value() == vnSensor->_binaryOutputRegisterMergeObservation->insTime.value())
+                            || (obs->timeOutputs != nullptr && vnSensor->_binaryOutputRegisterMergeObservation->timeOutputs != nullptr
+                                && obs->timeOutputs->timeField & vn::protocol::uart::TIMEGROUP_TIMESTARTUP
+                                && vnSensor->_binaryOutputRegisterMergeObservation->timeOutputs->timeField & vn::protocol::uart::TIMEGROUP_TIMESTARTUP
+                                && obs->timeOutputs->timeStartup == vnSensor->_binaryOutputRegisterMergeObservation->timeOutputs->timeStartup))
+                        {
+                            // Stored and new observation have same time, so merge them
+                            mergeVectorNavBinaryObservations(obs, vnSensor->_binaryOutputRegisterMergeObservation);
+                            vnSensor->_binaryOutputRegisterMergeObservation = nullptr;
+
+                            vnSensor->invokeCallbacks(b + 1, obs);
+                        }
+                        else
+                        {
+                            std::stringstream sstreamOld;
+                            if (obs->insTime.has_value() && vnSensor->_binaryOutputRegisterMergeObservation->insTime.has_value())
+                            {
+                                sstreamOld << vnSensor->_binaryOutputRegisterMergeObservation->insTime.value();
+                            }
+                            else
+                            {
+                                sstreamOld << vnSensor->_binaryOutputRegisterMergeObservation->timeOutputs->timeStartup;
+                            }
+                            std::stringstream sstreamNew;
+                            if (obs->insTime.has_value() && vnSensor->_binaryOutputRegisterMergeObservation->insTime.has_value())
+                            {
+                                sstreamOld << obs->insTime.value();
+                            }
+                            else
+                            {
+                                sstreamOld << obs->timeOutputs->timeStartup;
+                            }
+
+                            LOG_WARN("{}: Merging failed, because timestamps do not match. Potentially lost a message (old {}, new {})", vnSensor->nameId(), sstreamOld.str(), sstreamNew.str());
+
+                            // Send out old message and save new one
+                            vnSensor->invokeCallbacks(vnSensor->_binaryOutputRegisterMergeIndex + 1, vnSensor->_binaryOutputRegisterMergeObservation);
+                            vnSensor->_binaryOutputRegisterMergeObservation = obs;
+                            vnSensor->_binaryOutputRegisterMergeIndex = b;
+                        }
+                    }
+                }
+                else
+                {
+                    // Calls all the callbacks
+                    vnSensor->invokeCallbacks(b + 1, obs);
+                }
             }
         }
     }

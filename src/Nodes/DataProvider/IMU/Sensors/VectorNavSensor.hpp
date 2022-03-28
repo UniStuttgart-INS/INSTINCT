@@ -9,6 +9,8 @@
 #include "Nodes/DataProvider/Protocol/UartSensor.hpp"
 #include "vn/sensors.h"
 
+#include "NodeData/IMU/VectorNavBinaryOutput.hpp"
+
 #include "Navigation/Time/InsTime.hpp"
 #include "util/Container/ScrollingBuffer.hpp"
 
@@ -76,6 +78,11 @@ class VectorNavSensor : public Imu, public UartSensor
     /// @brief Deinitialize the node
     void deinitialize() override;
 
+    /// @brief Merges the content of the two observations into one
+    /// @param[in, out] target The observation used to store the merged information
+    /// @param[in] source The observation where information is taken from
+    static void mergeVectorNavBinaryObservations(const std::shared_ptr<VectorNavBinaryOutput>& target, const std::shared_ptr<VectorNavBinaryOutput>& source);
+
     /// @brief Callback handler for notifications of new asynchronous data packets received
     /// @param[in, out] userData Pointer to the data we supplied when we called registerAsyncPacketReceivedHandler
     /// @param[in] p Encapsulation of the data packet. At this state, it has already been validated and identified as an asynchronous data message
@@ -97,6 +104,9 @@ class VectorNavSensor : public Imu, public UartSensor
 
     /// VnSensor Object
     vn::sensors::VnSensor _vs;
+
+    /// Connected sensor port
+    std::string _connectedSensorPort;
 
     /// Internal Frequency of the Sensor
     static constexpr double IMU_DEFAULT_FREQUENCY = 800;
@@ -139,7 +149,7 @@ class VectorNavSensor : public Imu, public UartSensor
         vn::protocol::uart::SyncInMode::SYNCINMODE_COUNT,              // SyncInMode
         vn::protocol::uart::SyncInEdge::SYNCINEDGE_RISING,             // SyncInEdge
         0,                                                             // SyncInSkipFactor
-        vn::protocol::uart::SyncOutMode::SYNCOUTMODE_GPSPPS,           // SyncOutMode
+        vn::protocol::uart::SyncOutMode::SYNCOUTMODE_NONE,             // SyncOutMode
         vn::protocol::uart::SyncOutPolarity::SYNCOUTPOLARITY_POSITIVE, // SyncOutPolarity
         0,                                                             // SyncOutSkipFactor
         100000000                                                      // SyncOutPulseWidth
@@ -164,6 +174,23 @@ class VectorNavSensor : public Imu, public UartSensor
         vn::protocol::uart::ChecksumMode::CHECKSUMMODE_OFF,      // SPIChecksum
         vn::protocol::uart::ErrorMode::ERRORMODE_SEND            // ErrorMode
     };
+
+    /// Possible Merge combinations between the binary output registers
+    enum class BinaryRegisterMerge
+    {
+        None,
+        Output1_Output2,
+        Output1_Output3,
+        Output2_Output3,
+    };
+
+    /// Merge binary output registers together. This has to be done because VectorNav sensors have a buffer overflow when packages get too big.
+    BinaryRegisterMerge _binaryOutputRegisterMerge = BinaryRegisterMerge::None;
+
+    /// First observation received, which should be merged together
+    std::shared_ptr<VectorNavBinaryOutput> _binaryOutputRegisterMergeObservation = nullptr;
+    /// Index of the binary output for the merge observation stored
+    size_t _binaryOutputRegisterMergeIndex{};
 
     /// @brief Binary Output Register 1 - 3.
     ///

@@ -790,7 +790,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
 std::array<double, 3> NAV::ImuSimulator::calcFlightAngles(const Eigen::Vector3d& lla_position, const Eigen::Vector3d& n_velocity)
 {
     double roll = 0;
-    double pitch = calcPitchFromVelocity(n_velocity);
+    double pitch = std::abs(n_velocity.head<2>().norm()) > 1e-8 ? calcPitchFromVelocity(n_velocity) : 0;
     double yaw = calcYawFromVelocity(n_velocity);
 
     if (_trajectoryType == TrajectoryType::Fixed)

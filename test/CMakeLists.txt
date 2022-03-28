@@ -30,6 +30,7 @@ add_executable(
   src/Navigation/Transformations/CoordinateFramesTests.cpp
   src/NodeData/State/PosVelAttTests.cpp
   src/Nodes/DataLogger/IMU/VectorNavDataLoggerTests.cpp
+  src/Nodes/DataProvider/IMU/VectorNavFileTests.cpp
   src/util/Container/ScrollingBufferTests.cpp
   src/util/UartSensors/Ublox/UbloxTypesTests.cpp
   src/util/UartSensors/Ublox/UbloxUtilitiesTests.cpp
@@ -74,17 +75,19 @@ target_compile_definitions(tests PUBLIC TESTING=1)
 # automatically discover tests that are defined in catch based test files you can modify the unittests. TEST_PREFIX to
 # whatever you want, or use different for different binaries
 
-# if(NOT WIN32)
-#   catch_discover_tests(
-#     tests
-#     WORKING_DIRECTORY
-#     ${CMAKE_SOURCE_DIR}
-#     REPORTER
-#     junit
-#     OUTPUT_DIR
-#     ${CMAKE_SOURCE_DIR}/build/Debug/test
-#     OUTPUT_SUFFIX
-#     .xml)
-# else()
+option(CATCH2_JUNIT_OUTPUT "Generate Junit output from tests instead of command-line output" FALSE)
+
+if(NOT WIN32 AND CATCH2_JUNIT_OUTPUT)
+  catch_discover_tests(
+    tests
+    WORKING_DIRECTORY
+    ${CMAKE_SOURCE_DIR}
+    REPORTER
+    junit
+    OUTPUT_DIR
+    ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/test
+    OUTPUT_SUFFIX
+    .xml)
+else()
   catch_discover_tests(tests WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-# endif()
+endif()

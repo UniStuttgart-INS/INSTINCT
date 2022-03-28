@@ -86,16 +86,18 @@ constexpr bool isLeapYear(int32_t year)
 /// @return Number of days in the specified month
 constexpr int32_t daysInMonth(int32_t month, int32_t year)
 {
-    while (month > InsTimeUtil::MONTHS_PER_YEAR)
+    --month; // Make month 0 based
+    if (month >= InsTimeUtil::MONTHS_PER_YEAR)
     {
-        month -= InsTimeUtil::MONTHS_PER_YEAR;
-        year++;
+        year += month / InsTimeUtil::MONTHS_PER_YEAR;
+        month %= InsTimeUtil::MONTHS_PER_YEAR;
     }
-    while (month < 1)
+    while (month < 0)
     {
         month += MONTHS_PER_YEAR;
         year--;
     }
+    ++month; // Make month 1 based
 
     switch (month)
     {
@@ -148,10 +150,10 @@ struct InsTime_MJD
     constexpr InsTime_MJD(int32_t mjd_day, long double mjd_frac)
         : mjd_day(mjd_day), mjd_frac(mjd_frac)
     {
-        while (this->mjd_frac >= 1.0L)
+        if (this->mjd_frac >= 1.0L)
         {
-            this->mjd_frac -= 1.0L;
-            this->mjd_day++;
+            this->mjd_day += static_cast<int32_t>(this->mjd_frac);
+            this->mjd_frac -= static_cast<int32_t>(this->mjd_frac);
         }
         while (this->mjd_frac < 0.0L)
         {
@@ -218,10 +220,10 @@ struct InsTime_JD
     constexpr InsTime_JD(int32_t jd_day, long double jd_frac)
         : jd_day(jd_day), jd_frac(jd_frac)
     {
-        while (this->jd_frac >= 1.0L)
+        if (this->jd_frac >= 1.0L)
         {
-            this->jd_frac -= 1.0L;
-            this->jd_day++;
+            this->jd_day += static_cast<int32_t>(this->jd_frac);
+            this->jd_frac -= static_cast<int32_t>(this->jd_frac);
         }
         while (this->jd_frac < 0.0L)
         {
@@ -290,20 +292,21 @@ struct InsTime_GPSweekTow
     constexpr InsTime_GPSweekTow(int32_t gpsCycle, int32_t gpsWeek, long double tow)
         : gpsCycle(gpsCycle), gpsWeek(gpsWeek), tow(tow)
     {
-        while (this->tow >= InsTimeUtil::SECONDS_PER_WEEK)
+        if (this->tow >= InsTimeUtil::SECONDS_PER_WEEK)
         {
-            this->tow -= InsTimeUtil::SECONDS_PER_WEEK;
-            this->gpsWeek++;
+            this->gpsWeek += static_cast<int32_t>(this->tow / InsTimeUtil::SECONDS_PER_WEEK);
+            this->tow = static_cast<int64_t>(this->tow) % InsTimeUtil::SECONDS_PER_WEEK + (this->tow - static_cast<int64_t>(this->tow));
         }
         while (this->tow < 0.0L)
         {
             this->tow += InsTimeUtil::SECONDS_PER_WEEK;
             this->gpsWeek--;
         }
-        while (this->gpsWeek >= InsTimeUtil::WEEKS_PER_GPS_CYCLE)
+
+        if (this->gpsWeek >= InsTimeUtil::WEEKS_PER_GPS_CYCLE)
         {
-            this->gpsWeek -= InsTimeUtil::WEEKS_PER_GPS_CYCLE;
-            this->gpsCycle++;
+            this->gpsCycle += this->gpsWeek / InsTimeUtil::WEEKS_PER_GPS_CYCLE;
+            this->gpsWeek %= InsTimeUtil::WEEKS_PER_GPS_CYCLE;
         }
         while (this->gpsWeek < 0)
         {
@@ -383,10 +386,10 @@ struct InsTime_YMDHMS
     constexpr InsTime_YMDHMS(int32_t year, int32_t month, int32_t day, int32_t hour, int32_t min, long double sec)
         : year(year), month(month), day(day), hour(hour), min(min), sec(sec)
     {
-        while (this->sec >= InsTimeUtil::SECONDS_PER_MINUTE)
+        if (this->sec >= InsTimeUtil::SECONDS_PER_MINUTE)
         {
-            this->sec -= InsTimeUtil::SECONDS_PER_MINUTE;
-            this->min++;
+            this->min += static_cast<int32_t>(this->sec / InsTimeUtil::SECONDS_PER_MINUTE);
+            this->sec = static_cast<int64_t>(this->sec) % InsTimeUtil::SECONDS_PER_MINUTE + (this->sec - static_cast<int64_t>(this->sec));
         }
         while (this->sec < 0.0L)
         {
@@ -394,10 +397,10 @@ struct InsTime_YMDHMS
             this->min--;
         }
 
-        while (this->min >= InsTimeUtil::MINUTES_PER_HOUR)
+        if (this->min >= InsTimeUtil::MINUTES_PER_HOUR)
         {
-            this->min -= InsTimeUtil::MINUTES_PER_HOUR;
-            this->hour++;
+            this->hour += this->min / InsTimeUtil::MINUTES_PER_HOUR;
+            this->min %= InsTimeUtil::MINUTES_PER_HOUR;
         }
         while (this->min < 0)
         {
@@ -405,15 +408,21 @@ struct InsTime_YMDHMS
             this->hour--;
         }
 
-        while (this->hour >= InsTimeUtil::HOURS_PER_DAY)
+        if (this->hour >= InsTimeUtil::HOURS_PER_DAY)
         {
-            this->hour -= InsTimeUtil::HOURS_PER_DAY;
-            this->day++;
+            this->day += this->hour / InsTimeUtil::HOURS_PER_DAY;
+            this->hour %= InsTimeUtil::HOURS_PER_DAY;
         }
         while (this->hour < 0)
         {
             this->hour += InsTimeUtil::HOURS_PER_DAY;
             this->day--;
+        }
+
+        while (this->day >= InsTimeUtil::DAYS_PER_YEAR + static_cast<int32_t>(InsTimeUtil::isLeapYear(this->year)))
+        {
+            this->day -= InsTimeUtil::DAYS_PER_YEAR + static_cast<int32_t>(InsTimeUtil::isLeapYear(this->year));
+            this->year++;
         }
 
         while (this->day > InsTimeUtil::daysInMonth(this->month, this->year))
@@ -513,10 +522,10 @@ struct InsTime_YDoySod
     constexpr InsTime_YDoySod(int32_t year, int32_t doy, long double sod)
         : year(year), doy(doy), sod(sod)
     {
-        while (this->sod >= InsTimeUtil::SECONDS_PER_DAY)
+        if (this->sod >= InsTimeUtil::SECONDS_PER_DAY)
         {
-            this->sod -= InsTimeUtil::SECONDS_PER_DAY;
-            this->doy++;
+            this->doy += static_cast<int32_t>(this->sod / InsTimeUtil::SECONDS_PER_DAY);
+            this->sod = static_cast<int64_t>(this->sod) % InsTimeUtil::SECONDS_PER_DAY + (this->sod - static_cast<int64_t>(this->sod));
         }
         while (this->sod < 0)
         {

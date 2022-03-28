@@ -737,13 +737,13 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
                     _filestream << "["
                                 << static_cast<int>(satellite.sys) << "|"
                                 << static_cast<unsigned int>(satellite.svId) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::Healthy) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::Almanac) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::Ephemeris) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::DifferentialCorrection) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::UsedForNavigation) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::AzimuthElevationValid) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::UsedForRTK) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::Healthy) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::Almanac) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::Ephemeris) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::DifferentialCorrection) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::UsedForNavigation) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::AzimuthElevationValid) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::UsedForRTK) ? 1 : 0) << "|"
                                 << static_cast<unsigned int>(satellite.cno) << "|"
                                 << static_cast<unsigned int>(satellite.qi) << "|"
                                 << static_cast<int>(satellite.el) << "|"
@@ -752,6 +752,7 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
             }
             if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
             {
+                _filestream << std::setprecision(gpsTimePrecision);
                 _filestream << "," << obs->gnss1Outputs->raw.tow
                             << "," << obs->gnss1Outputs->raw.week
                             << "," << static_cast<unsigned int>(obs->gnss1Outputs->raw.numSats)
@@ -765,15 +766,15 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
                                 << static_cast<unsigned int>(satellite.chan) << "|"
                                 << static_cast<int>(satellite.slot) << "|"
                                 << static_cast<unsigned int>(satellite.cno) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::Searching) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::Tracking) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::TimeValid) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::CodeLock) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::PhaseLock) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::PhaseHalfAmbiguity) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::PhaseHalfSub) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::PhaseSlip) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::PseudorangeSmoothed) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::Searching) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::Tracking) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::TimeValid) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::CodeLock) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::PhaseLock) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::PhaseHalfAmbiguity) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::PhaseHalfSub) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::PhaseSlip) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::PseudorangeSmoothed) ? 1 : 0) << "|"
                                 << std::setprecision(doublePrecision) << satellite.pr << "|"
                                 << std::setprecision(doublePrecision) << satellite.cp << "|"
                                 << std::setprecision(floatPrecision) << satellite.dp << "]";
@@ -1038,13 +1039,13 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
                     _filestream << "["
                                 << static_cast<int>(satellite.sys) << "|"
                                 << static_cast<unsigned int>(satellite.svId) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::Healthy) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::Almanac) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::Ephemeris) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::DifferentialCorrection) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::UsedForNavigation) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::AzimuthElevationValid) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::UsedForRTK) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::Healthy) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::Almanac) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::Ephemeris) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::DifferentialCorrection) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::UsedForNavigation) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::AzimuthElevationValid) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::SatInfo::SatInfoElement::Flags::UsedForRTK) ? 1 : 0) << "|"
                                 << static_cast<unsigned int>(satellite.cno) << "|"
                                 << static_cast<unsigned int>(satellite.qi) << "|"
                                 << static_cast<int>(satellite.el) << "|"
@@ -1053,6 +1054,7 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
             }
             if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
             {
+                _filestream << std::setprecision(gpsTimePrecision);
                 _filestream << "," << obs->gnss2Outputs->raw.tow
                             << "," << obs->gnss2Outputs->raw.week
                             << "," << static_cast<unsigned int>(obs->gnss2Outputs->raw.numSats)
@@ -1066,15 +1068,15 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
                                 << static_cast<unsigned int>(satellite.chan) << "|"
                                 << static_cast<int>(satellite.slot) << "|"
                                 << static_cast<unsigned int>(satellite.cno) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::Searching) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::Tracking) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::TimeValid) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::CodeLock) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::PhaseLock) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::PhaseHalfAmbiguity) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::PhaseHalfSub) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::PhaseSlip) << "|"
-                                << static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::PseudorangeSmoothed) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::Searching) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::Tracking) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::TimeValid) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::CodeLock) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::PhaseLock) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::PhaseHalfAmbiguity) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::PhaseHalfSub) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::PhaseSlip) ? 1 : 0) << "|"
+                                << (static_cast<unsigned int>(satellite.flags & NAV::sensors::vectornav::RawMeas::SatRawElement::Flags::PseudorangeSmoothed) ? 1 : 0) << "|"
                                 << std::setprecision(doublePrecision) << satellite.pr << "|"
                                 << std::setprecision(doublePrecision) << satellite.cp << "|"
                                 << std::setprecision(floatPrecision) << satellite.dp << "]";

@@ -6,8 +6,9 @@
 
 #include "util/Logger.hpp"
 
-namespace NAV
+namespace NAV::TEST::PosVelAttTests
 {
+
 TEST_CASE("[PosVelAtt] Position Functions", "[PosVelAtt]")
 {
     Logger consoleSink;
@@ -119,4 +120,4 @@ TEST_CASE("[PosVelAtt] Attitude RollPitchYaw", "[PosVelAtt]")
     }
 }
 
-} // namespace NAV
+} // namespace NAV::TEST::PosVelAttTests

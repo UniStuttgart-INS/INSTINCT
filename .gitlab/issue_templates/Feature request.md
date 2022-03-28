@@ -1,4 +1,4 @@
-### Problem to solve 
+### Problem to solve
 
 <!-- What problem do we solve? Try to define the who/what/why of the opportunity as a user story. For example, "As a (who), I want (what), so I can (why/value)." -->
 
@@ -31,10 +31,10 @@ Please list the test areas (unit, flow) that needs to be added or updated to ens
 
 <!-- Label reminders - you should have one of each of the following labels.
 Use the following resources to find the appropriate labels:
-- https://git.nav.uni-stuttgart.de/thomas.topp/instinct/-/labels
+- https://git.ins.uni-stuttgart.de/thomas.topp/instinct/-/labels
 -->
 /label ~"Type::Feature"
 /label ~"Type::Documentation"
-/label ~"Type::Testing" 
-/label ~"Priority::3 - Medium" 
+/label ~"Type::Testing"
+/label ~"Priority::3 - Medium"
 /label ~"Workflow::Design"

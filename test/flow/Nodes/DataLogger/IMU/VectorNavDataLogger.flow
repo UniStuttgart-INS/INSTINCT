@@ -105,7 +105,7 @@
         "node-2": {
             "data": {
                 "FileReader": {
-                    "path": "vn310-imu.csv"
+                    "path": "VectorNav/StaticSize/vn310-imu.csv"
                 },
                 "Imu": {
                     "imuPos": {
@@ -239,7 +239,7 @@
         "node-6": {
             "data": {
                 "FileReader": {
-                    "path": "vn310-gnss.csv"
+                    "path": "VectorNav/StaticSize/vn310-gnss.csv"
                 },
                 "Imu": {
                     "imuPos": {

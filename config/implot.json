@@ -1,0 +1,149 @@
+{
+    "implot": {
+        "style": {
+            "AnnotationPadding": {
+                "x": 2.0,
+                "y": 2.0
+            },
+            "AntiAliasedLines": false,
+            "Colormap": {
+                "active": 0
+            },
+            "Colors": {
+                "AxisBg": {
+                    "col": "Auto"
+                },
+                "AxisBgActive": {
+                    "col": "Auto"
+                },
+                "AxisBgHovered": {
+                    "col": "Auto"
+                },
+                "AxisGrid": {
+                    "col": "Auto"
+                },
+                "AxisText": {
+                    "col": "Auto"
+                },
+                "AxisTick": {
+                    "col": "Auto"
+                },
+                "Crosshairs": {
+                    "col": "Auto"
+                },
+                "ErrorBar": {
+                    "col": "Auto"
+                },
+                "Fill": {
+                    "col": "Auto"
+                },
+                "FrameBg": {
+                    "col": "Auto"
+                },
+                "InlayText": {
+                    "col": "Auto"
+                },
+                "LegendBg": {
+                    "col": "Auto"
+                },
+                "LegendBorder": {
+                    "col": "Auto"
+                },
+                "LegendText": {
+                    "col": "Auto"
+                },
+                "Line": {
+                    "col": "Auto"
+                },
+                "MarkerFill": {
+                    "col": "Auto"
+                },
+                "MarkerOutline": {
+                    "col": "Auto"
+                },
+                "PlotBg": {
+                    "col": "Auto"
+                },
+                "PlotBorder": {
+                    "col": "Auto"
+                },
+                "Selection": {
+                    "col": "Auto"
+                },
+                "TitleText": {
+                    "col": "Auto"
+                }
+            },
+            "DigitalBitGap": 4.0,
+            "DigitalBitHeight": 8.0,
+            "ErrorBarSize": 5.0,
+            "ErrorBarWeight": 1.5,
+            "FillAlpha": 1.0,
+            "FitPadding": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "LabelPadding": {
+                "x": 5.0,
+                "y": 5.0
+            },
+            "LegendInnerPadding": {
+                "x": 5.0,
+                "y": 5.0
+            },
+            "LegendPadding": {
+                "x": 10.0,
+                "y": 10.0
+            },
+            "LegendSpacing": {
+                "x": 5.0,
+                "y": 0.0
+            },
+            "LineWeight": 1.0,
+            "MajorGridSize": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "MajorTickLen": {
+                "x": 10.0,
+                "y": 10.0
+            },
+            "MajorTickSize": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "MarkerSize": 4.0,
+            "MarkerWeight": 1.0,
+            "MinorAlpha": 0.25,
+            "MinorGridSize": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "MinorTickLen": {
+                "x": 5.0,
+                "y": 5.0
+            },
+            "MinorTickSize": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "MousePosPadding": {
+                "x": 10.0,
+                "y": 10.0
+            },
+            "PlotBorderSize": 1.0,
+            "PlotDefaultSize": {
+                "x": 400.0,
+                "y": 300.0
+            },
+            "PlotMinSize": {
+                "x": 200.0,
+                "y": 150.0
+            },
+            "PlotPadding": {
+                "x": 10.0,
+                "y": 10.0
+            }
+        }
+    }
+}

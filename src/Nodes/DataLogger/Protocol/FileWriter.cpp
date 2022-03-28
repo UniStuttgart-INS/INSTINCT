@@ -14,11 +14,11 @@ bool NAV::FileWriter::guiConfig(const char* vFilters, const std::vector<std::str
     bool changesOccurred = false;
 
     if (gui::widgets::FileDialogSave(_path, "Save File", vFilters, extensions,
-                                     flow::GetProgramRootPath() / ConfigManager::Get<std::string>("output-path", "logs"), id, nameId))
+                                     flow::GetProgramRootPath() / ConfigManager::Get<std::string>("output-path"), id, nameId))
     {
-        if (_path.starts_with(ConfigManager::Get<std::string>("output-path", "logs")))
+        if (_path.starts_with(ConfigManager::Get<std::string>("output-path")))
         {
-            _path = _path.substr(ConfigManager::Get<std::string>("output-path", "logs").size() + 1);
+            _path = _path.substr(ConfigManager::Get<std::string>("output-path").size() + 1);
         }
         changesOccurred = true;
     }
