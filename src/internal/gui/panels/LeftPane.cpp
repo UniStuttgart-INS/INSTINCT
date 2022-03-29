@@ -28,7 +28,10 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
 
     paneWidth = ImGui::GetContentRegionAvailWidth();
 
-    ImGui::Image(NodeEditorApplication::m_InstinctLogo, ImVec2(paneWidth, paneWidth * 3000.0F / 13070.0F));
+    float colSum = ImGui::GetStyle().Colors[ImGuiCol_WindowBg].x + ImGui::GetStyle().Colors[ImGuiCol_WindowBg].y + ImGui::GetStyle().Colors[ImGuiCol_WindowBg].z;
+    ImTextureID instinctLogo = NodeEditorApplication::m_InstinctLogo.at(colSum > 2.0F ? 1 : 0);
+
+    ImGui::Image(instinctLogo, ImVec2(paneWidth, paneWidth * 3000.0F / 13070.0F));
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0F);
 
     { // Control Buttons
