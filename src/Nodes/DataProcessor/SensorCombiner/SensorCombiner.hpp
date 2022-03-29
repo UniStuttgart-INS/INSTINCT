@@ -5,12 +5,18 @@
 
 #pragma once
 
-#include "internal/Node/Node.hpp"
+// #include "internal/Node/Node.hpp"
+
+#include "Nodes/DataProvider/IMU/Imu.hpp"
+
+#include "NodeData/IMU/ImuObs.hpp"
+
+#include <deque>
 
 namespace NAV
 {
 /// @brief Combines signals of sensors that provide the same signal-type to one signal
-class SensorCombiner : public Node
+class SensorCombiner : public Imu
 {
   public:
     /// @brief Default constructor
@@ -62,6 +68,13 @@ class SensorCombiner : public Node
 
     /// @brief Combines the signals
     void combineSignals();
+
+    /// IMU Observation list
+    /// Length depends on the integration algorithm. Newest observation first (tₖ, tₖ₋₁, tₖ₋₂, ...)
+    std::deque<std::shared_ptr<const ImuObs>> _imuObservations;
+
+    /// @brief Maximum amount of imu observations to keep
+    size_t _maxSizeImuObservations = 0;
 };
 
 } // namespace NAV
