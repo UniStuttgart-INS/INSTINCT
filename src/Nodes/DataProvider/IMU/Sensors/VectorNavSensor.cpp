@@ -7083,11 +7083,11 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                                                                                           * 1e6));
                         if (vnSensor->_binaryOutputRegisterMergeIndex != b
                             && ((obs->insTime.has_value() && vnSensor->_binaryOutputRegisterMergeObservation->insTime.has_value()
-                                 && (obs->insTime.value() - vnSensor->_binaryOutputRegisterMergeObservation->insTime.value() < allowedTimeDiff))
+                                 && (obs->insTime.value() - vnSensor->_binaryOutputRegisterMergeObservation->insTime.value() < allowedTimeDiff)) // NOLINT(hicpp-use-nullptr, modernize-use-nullptr)
                                 || (obs->timeOutputs != nullptr && vnSensor->_binaryOutputRegisterMergeObservation->timeOutputs != nullptr
                                     && obs->timeOutputs->timeField & vn::protocol::uart::TIMEGROUP_TIMESTARTUP
                                     && vnSensor->_binaryOutputRegisterMergeObservation->timeOutputs->timeField & vn::protocol::uart::TIMEGROUP_TIMESTARTUP
-                                    && (std::chrono::nanoseconds(obs->timeOutputs->timeStartup - vnSensor->_binaryOutputRegisterMergeObservation->timeOutputs->timeStartup) < allowedTimeDiff))))
+                                    && (std::chrono::nanoseconds(obs->timeOutputs->timeStartup - vnSensor->_binaryOutputRegisterMergeObservation->timeOutputs->timeStartup) < allowedTimeDiff)))) // NOLINT(hicpp-use-nullptr, modernize-use-nullptr)
                         {
                             // Stored and new observation have same time, so merge them
                             mergeVectorNavBinaryObservations(obs, vnSensor->_binaryOutputRegisterMergeObservation);
@@ -7108,7 +7108,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         }
                         else
                         {
-                            long double timeDiff = 0.0L;
+                            [[maybe_unused]] long double timeDiff = 0.0L;
                             std::stringstream sstreamOld;
                             std::stringstream sstreamNew;
                             if (obs->insTime.has_value() && vnSensor->_binaryOutputRegisterMergeObservation->insTime.has_value())
