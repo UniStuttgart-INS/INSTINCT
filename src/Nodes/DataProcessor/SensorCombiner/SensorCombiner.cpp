@@ -61,7 +61,6 @@ void NAV::SensorCombiner::guiConfig()
 
         for (size_t pinIndex = 0; pinIndex < _pinData.size(); ++pinIndex)
         {
-            [[maybe_unused]] auto& pinData = _pinData.at(pinIndex); //TODO: not [[maybe_unused]]?
             ImGui::TableNextRow();
             ImGui::TableNextColumn(); // Pin
 
@@ -144,12 +143,31 @@ bool NAV::SensorCombiner::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+    _imuObservations.clear();
+
+    LOG_DEBUG("SensorCombiner initialized");
+
     return true;
 }
 
 void NAV::SensorCombiner::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
+}
+
+void NAV::SensorCombiner::updateNumberOfInputPins()
+{
+    while (inputPins.size() < _nInputPins)
+    {
+        nm::CreateInputPin(this, fmt::format("Pin {}", inputPins.size() + 1).c_str(), Pin::Type::Flow,
+                           { NAV::ImuObs::type() }, &SensorCombiner::recvSignal);
+        _pinData.emplace_back();
+    }
+    while (inputPins.size() > _nInputPins)
+    {
+        nm::DeleteInputPin(inputPins.back().id);
+        _pinData.pop_back();
+    }
 }
 
 void NAV::SensorCombiner::recvSignal(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
@@ -195,21 +213,33 @@ void NAV::SensorCombiner::recvSignal(const std::shared_ptr<const NodeData>& node
 void NAV::SensorCombiner::combineSignals()
 {
     // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
-    auto obs = _imuObservations.front();
+
+    // for (size_t pinIndex = 0; pinIndex < _pinData.size(); ++pinIndex)
+    // {
+    //     auto& pinData = _pinData.at(pinIndex);    // IMU Observation of sensor #1
+    //     const std::shared_ptr<const ImuObs>& imuObs__s0 = _imuObservations.at(0);
+    //     // IMU Observation at the time tₖ₋₁
+    //     const std::shared_ptr<const ImuObs>& imuObs__t1 = _imuObservations.at(1);
+    // }
+
+    auto obs = _imuObservations.front(); // TODO: this should be the combined IMU observation
     invokeCallbacks(OUTPUT_PORT_INDEX_COMBINED_SIGNAL, obs);
 }
 
-void NAV::SensorCombiner::updateNumberOfInputPins()
+Eigen::Matrix<double, 9, 9> stateTransitionMatrix_Phi([[maybe_unused]] double dt, [[maybe_unused]] uint8_t M)
 {
-    while (inputPins.size() < _nInputPins)
-    {
-        nm::CreateInputPin(this, fmt::format("Pin {}", inputPins.size() + 1).c_str(), Pin::Type::Flow,
-                           { NAV::ImuObs::type() }, &SensorCombiner::recvSignal);
-        _pinData.emplace_back();
-    }
-    while (inputPins.size() > _nInputPins)
-    {
-        nm::DeleteInputPin(inputPins.back().id);
-        _pinData.pop_back();
-    }
+    Eigen::Matrix<double, 9, 9> nullMatrix{};
+    return nullMatrix;
+}
+
+Eigen::Matrix<double, 9, 9> processNoiseMatrix_Q([[maybe_unused]] double dt, [[maybe_unused]] double sigma_a, [[maybe_unused]] double sigma_f, [[maybe_unused]] double sigma_biasw, [[maybe_unused]] double sigma_biasf, [[maybe_unused]] uint8_t M)
+{
+    Eigen::Matrix<double, 9, 9> nullMatrix{};
+    return nullMatrix;
+}
+
+Eigen::Matrix<double, 12, 9> designMatrix_H([[maybe_unused]] double omega, [[maybe_unused]] double omegadot, [[maybe_unused]] Eigen::Matrix<double, 12, 12>& R, [[maybe_unused]] Eigen::Matrix<double, 3, 3>& DCM, [[maybe_unused]] uint8_t M)
+{
+    Eigen::Matrix<double, 12, 9> nullMatrix{};
+    return nullMatrix;
 }
