@@ -70,6 +70,10 @@ bool DeleteLink(ax::NodeEditor::LinkId linkId);
 /// @brief Delete all links
 void DeleteAllLinks();
 
+/// @brief Delete all links on the provided pin
+/// @param[in] pinId Id of the pin
+void DeleteLinksOnPin(ax::NodeEditor::PinId pinId);
+
 /// @brief Create an Input Pin object
 /// @param[in] node Node to register the Pin for
 /// @param[in] name Display name of the Pin

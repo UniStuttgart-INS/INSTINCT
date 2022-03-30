@@ -906,7 +906,16 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 ImGui::Spring(0);
                 if (!input.name.empty())
                 {
+                    bool noneType = input.type == Pin::Type::None;
+                    if (noneType)
+                    {
+                        ImGui::PushDisabled();
+                    }
                     ImGui::TextUnformatted(input.name.c_str());
+                    if (noneType)
+                    {
+                        ImGui::PopDisabled();
+                    }
                     ImGui::Spring(0);
                 }
                 ImGui::PopStyleVar();
@@ -940,7 +949,16 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 if (!output.name.empty())
                 {
                     ImGui::Spring(0);
+                    bool noneType = output.type == Pin::Type::None;
+                    if (noneType)
+                    {
+                        ImGui::PushDisabled();
+                    }
                     ImGui::TextUnformatted(output.name.c_str());
+                    if (noneType)
+                    {
+                        ImGui::PopDisabled();
+                    }
                 }
                 ImGui::Spring(0);
                 output.drawPinIcon(nm::IsPinLinked(output.id), static_cast<int>(alpha * 255));

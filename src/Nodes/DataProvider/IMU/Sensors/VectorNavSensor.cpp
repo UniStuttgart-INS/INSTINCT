@@ -2793,16 +2793,28 @@ void NAV::VectorNavSensor::guiConfig()
                 _binaryOutputRegister.at(1).rateDivisor = _binaryOutputRegister.at(0).rateDivisor;
                 _binaryOutputSelectedFrequency.at(1) = _binaryOutputSelectedFrequency.at(0);
                 _binaryOutputRegister.at(1).asyncMode = _binaryOutputRegister.at(0).asyncMode;
+                nm::DeleteLinksOnPin(outputPins.at(2).id);
+                outputPins.at(1).type = Pin::Type::Flow;
+                outputPins.at(2).type = Pin::Type::None;
+                outputPins.at(3).type = Pin::Type::Flow;
                 break;
             case BinaryRegisterMerge::Output1_Output3:
                 _binaryOutputRegister.at(2).rateDivisor = _binaryOutputRegister.at(0).rateDivisor;
                 _binaryOutputSelectedFrequency.at(2) = _binaryOutputSelectedFrequency.at(0);
                 _binaryOutputRegister.at(2).asyncMode = _binaryOutputRegister.at(0).asyncMode;
+                nm::DeleteLinksOnPin(outputPins.at(3).id);
+                outputPins.at(1).type = Pin::Type::Flow;
+                outputPins.at(2).type = Pin::Type::Flow;
+                outputPins.at(3).type = Pin::Type::None;
                 break;
             case BinaryRegisterMerge::Output2_Output3:
                 _binaryOutputRegister.at(2).rateDivisor = _binaryOutputRegister.at(1).rateDivisor;
                 _binaryOutputSelectedFrequency.at(2) = _binaryOutputSelectedFrequency.at(1);
                 _binaryOutputRegister.at(2).asyncMode = _binaryOutputRegister.at(1).asyncMode;
+                nm::DeleteLinksOnPin(outputPins.at(3).id);
+                outputPins.at(1).type = Pin::Type::Flow;
+                outputPins.at(2).type = Pin::Type::Flow;
+                outputPins.at(3).type = Pin::Type::None;
                 break;
             default:
                 break;
@@ -5179,6 +5191,19 @@ void NAV::VectorNavSensor::restore(json const& j)
     if (j.contains("binaryOutputRegisterMerge"))
     {
         j.at("binaryOutputRegisterMerge").get_to(_binaryOutputRegisterMerge);
+        if (_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output2)
+        {
+            outputPins.at(1).type = Pin::Type::Flow;
+            outputPins.at(2).type = Pin::Type::None;
+            outputPins.at(3).type = Pin::Type::Flow;
+        }
+        else if (_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output3
+                 || _binaryOutputRegisterMerge == BinaryRegisterMerge::Output2_Output3)
+        {
+            outputPins.at(1).type = Pin::Type::Flow;
+            outputPins.at(2).type = Pin::Type::Flow;
+            outputPins.at(3).type = Pin::Type::None;
+        }
     }
     for (size_t b = 0; b < 3; b++)
     {
@@ -7037,46 +7062,72 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                 {
                     if (vnSensor->_binaryOutputRegisterMergeObservation == nullptr)
                     {
+                        std::stringstream sstream;
+                        if (obs->insTime.has_value())
+                        {
+                            sstream << obs->insTime.value();
+                        }
+                        else
+                        {
+                            sstream << obs->timeOutputs->timeStartup;
+                        }
+                        LOG_DATA("{}: {} - Storing message with time {}", vnSensor->nameId(), b, sstream.str());
+
                         vnSensor->_binaryOutputRegisterMergeObservation = obs;
                         vnSensor->_binaryOutputRegisterMergeIndex = b;
                     }
                     else
                     {
-                        if ((obs->insTime.has_value() && vnSensor->_binaryOutputRegisterMergeObservation->insTime.has_value()
-                             && obs->insTime.value() == vnSensor->_binaryOutputRegisterMergeObservation->insTime.value())
-                            || (obs->timeOutputs != nullptr && vnSensor->_binaryOutputRegisterMergeObservation->timeOutputs != nullptr
-                                && obs->timeOutputs->timeField & vn::protocol::uart::TIMEGROUP_TIMESTARTUP
-                                && vnSensor->_binaryOutputRegisterMergeObservation->timeOutputs->timeField & vn::protocol::uart::TIMEGROUP_TIMESTARTUP
-                                && obs->timeOutputs->timeStartup == vnSensor->_binaryOutputRegisterMergeObservation->timeOutputs->timeStartup))
+                        auto allowedTimeDiff = std::chrono::microseconds(static_cast<int>(0.5 / IMU_DEFAULT_FREQUENCY
+                                                                                          * vnSensor->_binaryOutputRegister.at(b).rateDivisor
+                                                                                          * 1e6));
+                        if (vnSensor->_binaryOutputRegisterMergeIndex != b
+                            && ((obs->insTime.has_value() && vnSensor->_binaryOutputRegisterMergeObservation->insTime.has_value()
+                                 && (obs->insTime.value() - vnSensor->_binaryOutputRegisterMergeObservation->insTime.value() < allowedTimeDiff))
+                                || (obs->timeOutputs != nullptr && vnSensor->_binaryOutputRegisterMergeObservation->timeOutputs != nullptr
+                                    && obs->timeOutputs->timeField & vn::protocol::uart::TIMEGROUP_TIMESTARTUP
+                                    && vnSensor->_binaryOutputRegisterMergeObservation->timeOutputs->timeField & vn::protocol::uart::TIMEGROUP_TIMESTARTUP
+                                    && (std::chrono::nanoseconds(obs->timeOutputs->timeStartup - vnSensor->_binaryOutputRegisterMergeObservation->timeOutputs->timeStartup) < allowedTimeDiff))))
                         {
                             // Stored and new observation have same time, so merge them
                             mergeVectorNavBinaryObservations(obs, vnSensor->_binaryOutputRegisterMergeObservation);
                             vnSensor->_binaryOutputRegisterMergeObservation = nullptr;
 
-                            vnSensor->invokeCallbacks(b + 1, obs);
+                            std::stringstream sstream;
+                            if (obs->insTime.has_value())
+                            {
+                                sstream << obs->insTime.value();
+                            }
+                            else
+                            {
+                                sstream << obs->timeOutputs->timeStartup;
+                            }
+                            LOG_DATA("{}: {} - Merged  message with time {}", vnSensor->nameId(), b, sstream.str());
+
+                            vnSensor->invokeCallbacks(std::min(b, vnSensor->_binaryOutputRegisterMergeIndex) + 1, obs);
                         }
                         else
                         {
+                            long double timeDiff = 0.0L;
                             std::stringstream sstreamOld;
+                            std::stringstream sstreamNew;
                             if (obs->insTime.has_value() && vnSensor->_binaryOutputRegisterMergeObservation->insTime.has_value())
                             {
+                                timeDiff = (obs->insTime.value() - vnSensor->_binaryOutputRegisterMergeObservation->insTime.value()).count();
                                 sstreamOld << vnSensor->_binaryOutputRegisterMergeObservation->insTime.value();
+                                sstreamNew << obs->insTime.value();
                             }
                             else
                             {
                                 sstreamOld << vnSensor->_binaryOutputRegisterMergeObservation->timeOutputs->timeStartup;
-                            }
-                            std::stringstream sstreamNew;
-                            if (obs->insTime.has_value() && vnSensor->_binaryOutputRegisterMergeObservation->insTime.has_value())
-                            {
-                                sstreamOld << obs->insTime.value();
-                            }
-                            else
-                            {
-                                sstreamOld << obs->timeOutputs->timeStartup;
+                                sstreamNew << obs->timeOutputs->timeStartup;
+                                timeDiff = static_cast<double>(obs->timeOutputs->timeStartup
+                                                               - vnSensor->_binaryOutputRegisterMergeObservation->timeOutputs->timeStartup)
+                                           * 1e-9;
                             }
 
-                            LOG_WARN("{}: Merging failed, because timestamps do not match. Potentially lost a message (old {}, new {})", vnSensor->nameId(), sstreamOld.str(), sstreamNew.str());
+                            LOG_WARN("{}: Merging failed, because timestamps do not match. Potentially lost a message (diff {} sec, old ({}) {}, new ({}) {})",
+                                     vnSensor->nameId(), timeDiff, vnSensor->_binaryOutputRegisterMergeIndex, sstreamOld.str(), b, sstreamNew.str());
 
                             // Send out old message and save new one
                             vnSensor->invokeCallbacks(vnSensor->_binaryOutputRegisterMergeIndex + 1, vnSensor->_binaryOutputRegisterMergeObservation);
@@ -7087,6 +7138,10 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                 }
                 else
                 {
+                    if (obs->insTime.has_value())
+                    {
+                        LOG_DATA("{}: {} - Normal  message with time {}", vnSensor->nameId(), b, obs->insTime.value());
+                    }
                     // Calls all the callbacks
                     vnSensor->invokeCallbacks(b + 1, obs);
                 }
