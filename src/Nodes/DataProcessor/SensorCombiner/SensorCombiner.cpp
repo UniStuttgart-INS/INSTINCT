@@ -20,7 +20,7 @@ NAV::SensorCombiner::SensorCombiner()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 483, 350 }; //TODO: adapt
 
-    nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &SensorCombiner::recvSignal);
+    updateNumberOfInputPins();
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() });
 }
@@ -47,7 +47,79 @@ std::string NAV::SensorCombiner::category()
 
 void NAV::SensorCombiner::guiConfig()
 {
-    // TODO: adapt _maxSizeImuObservations to number of sensors
+    // TODO: adapt _maxSizeImuObservations to number of sensors?
+
+    if (ImGui::BeginTable(fmt::format("Pin Settings##{}", size_t(id)).c_str(), inputPins.size() > 1 ? 2 : 1,
+                          ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
+    {
+        ImGui::TableSetupColumn("Pin");
+        if (inputPins.size() > 1)
+        {
+            ImGui::TableSetupColumn("");
+        }
+        ImGui::TableHeadersRow();
+
+        for (size_t pinIndex = 0; pinIndex < _pinData.size(); ++pinIndex)
+        {
+            [[maybe_unused]] auto& pinData = _pinData.at(pinIndex); //TODO: not [[maybe_unused]]?
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn(); // Pin
+
+            // if (pinIndex == 0 && _dragAndDropPinIndex > 0)
+            // {
+            //     showDragDropTargetPin(0);
+            // }
+
+            bool selectablePinDummy = false;
+            ImGui::Selectable(fmt::format("{}##{}", inputPins.at(pinIndex).name, size_t(id)).c_str(), &selectablePinDummy);
+            // if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+            // {
+            //     dragAndDropPinStillInProgress = true;
+            //     _dragAndDropPinIndex = static_cast<int>(pinIndex);
+            //     // Data is copied into heap inside the drag and drop
+            //     ImGui::SetDragDropPayload(fmt::format("DND Pin {}", size_t(id)).c_str(), &pinIndex, sizeof(pinIndex));
+            //     ImGui::TextUnformatted(inputPins.at(pinIndex).name.c_str());
+            //     ImGui::EndDragDropSource();
+            // }
+            // if (_dragAndDropPinIndex >= 0
+            //     && pinIndex != static_cast<size_t>(_dragAndDropPinIndex - 1)
+            //     && pinIndex != static_cast<size_t>(_dragAndDropPinIndex))
+            // {
+            //     showDragDropTargetPin(pinIndex + 1);
+            // }
+            // if (ImGui::IsItemHovered())
+            // {
+            //     ImGui::SetTooltip("This item can be dragged to reorder the pins");
+            // }
+            if (inputPins.size() > 1)
+            {
+                ImGui::TableNextColumn(); // Delete
+                if (ImGui::Button(fmt::format("x##{} - {}", size_t(id), pinIndex).c_str()))
+                {
+                    nm::DeleteInputPin(inputPins.at(pinIndex).id);
+                    _pinData.erase(_pinData.begin() + static_cast<int64_t>(pinIndex));
+                    --_nInputPins;
+                    flow::ApplyChanges();
+                }
+                if (ImGui::IsItemHovered())
+                {
+                    ImGui::SetTooltip("Delete the pin");
+                }
+            }
+        }
+
+        ImGui::TableNextRow();
+        ImGui::TableNextColumn(); // Pin
+        if (ImGui::Button(fmt::format("Add Pin##{}", size_t(id)).c_str()))
+        {
+            ++_nInputPins;
+            LOG_DEBUG("{}: # Input Pins changed to {}", nameId(), _nInputPins);
+            flow::ApplyChanges();
+            updateNumberOfInputPins();
+        }
+
+        ImGui::EndTable();
+    }
 }
 
 [[nodiscard]] json NAV::SensorCombiner::save() const
@@ -56,12 +128,16 @@ void NAV::SensorCombiner::guiConfig()
 
     json j;
 
+    // TODO
+
     return j;
 }
 
 void NAV::SensorCombiner::restore([[maybe_unused]] json const& j) //TODO: remove [[maybe_unused]]
 {
     LOG_TRACE("{}: called", nameId());
+
+    // TODO
 }
 
 bool NAV::SensorCombiner::initialize()
@@ -121,4 +197,19 @@ void NAV::SensorCombiner::combineSignals()
     // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
     auto obs = _imuObservations.front();
     invokeCallbacks(OUTPUT_PORT_INDEX_COMBINED_SIGNAL, obs);
+}
+
+void NAV::SensorCombiner::updateNumberOfInputPins()
+{
+    while (inputPins.size() < _nInputPins)
+    {
+        nm::CreateInputPin(this, fmt::format("Pin {}", inputPins.size() + 1).c_str(), Pin::Type::Flow,
+                           { NAV::ImuObs::type() }, &SensorCombiner::recvSignal);
+        _pinData.emplace_back();
+    }
+    while (inputPins.size() > _nInputPins)
+    {
+        nm::DeleteInputPin(inputPins.back().id);
+        _pinData.pop_back();
+    }
 }

@@ -9,6 +9,8 @@
 
 #include "Nodes/DataProvider/IMU/Imu.hpp"
 
+#include "util/Container/ScrollingBuffer.hpp"
+
 #include "NodeData/IMU/ImuObs.hpp"
 
 #include <deque>
@@ -52,6 +54,153 @@ class SensorCombiner : public Imu
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
+    /// @brief Information needed to link imu data on a certain pin
+    struct PinData
+    {
+        /// @brief Stores the imu data coming from a pin
+        struct SensorData
+        {
+            /// @brief Default constructor (needed to make serialization with json working)
+            SensorData() = default;
+
+            /// @brief Constructor
+            /// @param[in] displayName Display name of the contained data
+            /// @param[in] size Size of the buffer
+            explicit SensorData(std::string displayName, size_t size)
+                : displayName(std::move(displayName)), buffer(size) {}
+
+            /// Display name of the contained data
+            std::string displayName;
+            /// Buffer for the data
+            ScrollingBuffer<double> buffer;
+            /// Flag if data was received, as the buffer contains std::nan("") otherwise
+            bool hasData = false;
+
+            /// When connecting a new link. All data is flagged for delete and only those who are also present in the new link are kept
+            bool markedForDelete = false;
+        };
+
+        /// @brief Possible Pin types
+        enum class PinType : int
+        {
+            Flow, ///< NodeData Trigger
+        };
+
+        /// @brief Constructor
+        PinData() = default;
+        /// @brief Destructor
+        ~PinData() = default;
+        /// @brief Copy constructor
+        /// @param[in] other The other element to copy
+        PinData(const PinData& other)
+            : size(other.size),
+              dataIdentifier(other.dataIdentifier),
+              sensorData(other.sensorData),
+              pinType(other.pinType),
+              stride(other.stride) {}
+
+        /// @brief Move constructor
+        /// @param[in] other The other element to move
+        PinData(PinData&& other) noexcept
+            : size(other.size),
+              dataIdentifier(std::move(other.dataIdentifier)),
+              sensorData(std::move(other.sensorData)),
+              pinType(other.pinType),
+              stride(other.stride) {}
+
+        /// @brief Copy assignment operator
+        /// @param[in] rhs The other element to copy
+        PinData& operator=(const PinData& rhs)
+        {
+            if (&rhs != this)
+            {
+                size = rhs.size;
+                dataIdentifier = rhs.dataIdentifier;
+                sensorData = rhs.sensorData;
+                pinType = rhs.pinType;
+                stride = rhs.stride;
+            }
+
+            return *this;
+        }
+        /// @brief Move assignment operator
+        /// @param[in] rhs The other element to move
+        PinData& operator=(PinData&& rhs) noexcept
+        {
+            if (&rhs != this)
+            {
+                size = rhs.size;
+                dataIdentifier = std::move(rhs.dataIdentifier);
+                sensorData = std::move(rhs.sensorData);
+                pinType = rhs.pinType;
+                stride = rhs.stride;
+            }
+
+            return *this;
+        }
+
+        /// @brief Adds a sensorData Element to the list
+        /// @param[in] dataIndex Index where to add the data to
+        /// @param[in] displayName Display name of the contained data
+        void addSensorDataItem(size_t dataIndex, const std::string& displayName)
+        {
+            if (sensorData.size() > dataIndex)
+            {
+                if (sensorData.at(dataIndex).displayName == displayName) // Item was restored already at this position
+                {
+                    sensorData.at(dataIndex).markedForDelete = false;
+                    return;
+                }
+
+                // Some other item was restored at this position
+                if (!sensorData.at(dataIndex).markedForDelete)
+                {
+                    LOG_WARN("Adding SensorData item '{}' at position {}, but at this position exists already the item '{}'. Reordering the items to match the data. Consider resaving the flow file.",
+                             displayName, dataIndex, sensorData.at(dataIndex).displayName);
+                }
+                auto searchIter = std::find_if(sensorData.begin(),
+                                               sensorData.end(),
+                                               [displayName](const SensorData& sensorData) { return sensorData.displayName == displayName; });
+                auto iter = sensorData.begin();
+                std::advance(iter, dataIndex);
+                if (searchIter == sensorData.end()) // Item does not exist yet. Developer added a new item to the list
+                {
+                    sensorData.insert(iter, SensorData{ displayName, static_cast<size_t>(size) });
+                }
+                else // Item exists already. Developer reordered the items in the list
+                {
+                    std::rotate(searchIter, searchIter + 1, iter);
+                }
+                iter->markedForDelete = false;
+            }
+            else if (std::find_if(sensorData.begin(),
+                                  sensorData.end(),
+                                  [displayName](const SensorData& sensorData) { return sensorData.displayName == displayName; })
+                     != sensorData.end())
+            {
+                LOG_ERROR("Adding the SensorData item {} at position {}, but this sensor item was found at another position already",
+                          displayName, dataIndex);
+            }
+            else // Item not there yet. Add to the end of the list
+            {
+                sensorData.emplace_back(displayName, static_cast<size_t>(size));
+            }
+        }
+
+        /// Size of all buffers of the sensorData elements
+        int size = 2000;
+        /// Data Identifier of the connected pin
+        std::string dataIdentifier;
+        /// List with all the data
+        std::vector<SensorData> sensorData;
+        /// Pin Type
+        PinType pinType = PinType::Flow;
+        /// Amount of points to skip for plotting
+        int stride = 1;
+        /// Mutex to lock the buffer so that the GUI thread and the calculation threads don't cause a data race
+        std::mutex mutex;
+    };
+
   private:
     constexpr static size_t OUTPUT_PORT_INDEX_COMBINED_SIGNAL = 0; ///< @brief Flow (InertialNavSol)
 
@@ -61,6 +210,9 @@ class SensorCombiner : public Imu
     /// @brief Deinitialize the node
     void deinitialize() override;
 
+    /// @brief Adds/Deletes Input Pins depending on the variable _nInputPins
+    void updateNumberOfInputPins();
+
     /// @brief Receive Function for the signal at the time tₖ
     /// @param[in] nodeData Signal to process
     /// @param[in] linkId Id of the link over which the data is received
@@ -68,6 +220,12 @@ class SensorCombiner : public Imu
 
     /// @brief Combines the signals
     void combineSignals();
+
+    /// Number of input pins
+    size_t _nInputPins = 1;
+
+    /// Data storage for each pin
+    std::vector<PinData> _pinData;
 
     /// IMU Observation list
     /// Length depends on the integration algorithm. Newest observation first (tₖ, tₖ₋₁, tₖ₋₂, ...)
