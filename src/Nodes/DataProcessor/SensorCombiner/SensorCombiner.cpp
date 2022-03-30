@@ -118,4 +118,7 @@ void NAV::SensorCombiner::recvSignal(const std::shared_ptr<const NodeData>& node
 
 void NAV::SensorCombiner::combineSignals()
 {
+    // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
+    auto obs = _imuObservations.front();
+    invokeCallbacks(OUTPUT_PORT_INDEX_COMBINED_SIGNAL, obs);
 }
