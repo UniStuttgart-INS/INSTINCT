@@ -221,7 +221,7 @@ class SensorCombiner : public Imu
     void recvSignal(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Calculates the state-transition-matrix 𝚽
-    /// @param[in] dt Time difference between two successive measurements
+    /// @param[in] dt Time difference between two successive measurements // TODO: unit
     /// @param[in] M Number of connected sensors
     /// @return State-transition-matrix 𝚽
     Eigen::Matrix<double, 9, 9> stateTransitionMatrix_Phi(double dt, uint8_t M);
@@ -234,7 +234,12 @@ class SensorCombiner : public Imu
     /// @param[in] sigma_biasf Standard deviation of the bias on the specific force
     /// @param[in] M Number of connected sensors
     /// @return Process noise matrix Q
-    Eigen::Matrix<double, 9, 9> processNoiseMatrix_Q(double dt, double sigma_a, double sigma_f, double sigma_biasw, double sigma_biasf, uint8_t M);
+    Eigen::Matrix<double, 9, 9> processNoiseMatrix_Q(double dt,
+                                                     double sigma_a,
+                                                     double sigma_f,
+                                                     double sigma_biasw,
+                                                     double sigma_biasf,
+                                                     uint8_t M);
 
     /// @brief Calculates the design matrix H
     /// @param[in] omega Angular velocity in [rad/s]
@@ -243,7 +248,27 @@ class SensorCombiner : public Imu
     /// @param[in] DCM Rotation matrix of mounting angles of a sensor w.r.t. a common reference
     /// @param[in] M Number of connected sensors
     /// @return Design matrix H
-    Eigen::Matrix<double, 12, 9> designMatrix_H(double omega, double omegadot, Eigen::Matrix<double, 12, 12> R, Eigen::Matrix<double, 3, 3> DCM, uint8_t M); // FIXME: # of rows must equal # of measurements, in R, too
+    Eigen::Matrix<double, Eigen::Dynamic, 9> designMatrix_H(double omega,
+                                                            double omegadot,
+                                                            Eigen::MatrixXd R,
+                                                            Eigen::Matrix<double, 3, 3> DCM,
+                                                            uint8_t M);
+
+    /// @brief Calculates the adaptive measurement noise matrix R
+    /// @param[in] alpha Forgetting factor (i.e. weight on previous estimates), 0 < alpha < 1
+    /// @param[in] R Measurement noise covariance matrix at the previous epoch
+    /// @param[in] e Vector of residuals
+    /// @param[in] H Design matrix
+    /// @param[in] P Error covariance matrix
+    /// @return Measurement noise matrix R
+    /// @note See https://arxiv.org/pdf/1702.00884.pdf
+    Eigen::MatrixXd measurementNoiseMatrix_R(double alpha,
+                                             Eigen::MatrixXd R,
+                                             Eigen::VectorXd e,
+                                             Eigen::Matrix<double, Eigen::Dynamic, 9> H,
+                                             Eigen::Matrix<double, 9, 9> P);
+
+    // Eigen::Matrix<double, Eigen::Dynamic, 1> residuals(double omega, double omegadot, double f, double w, double a, Eigen::Matrix<double, 3, Eigen::Dynamic> IMU_pos, Eigen::Matrix<double, 3, 3> DCM, uint8_t M, uint64_t ti);
 
     /// @brief Combines the signals
     void combineSignals();

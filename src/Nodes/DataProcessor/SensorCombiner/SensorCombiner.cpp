@@ -238,8 +238,13 @@ Eigen::Matrix<double, 9, 9> processNoiseMatrix_Q([[maybe_unused]] double dt, [[m
     return nullMatrix;
 }
 
-Eigen::Matrix<double, 12, 9> designMatrix_H([[maybe_unused]] double omega, [[maybe_unused]] double omegadot, [[maybe_unused]] Eigen::Matrix<double, 12, 12>& R, [[maybe_unused]] Eigen::Matrix<double, 3, 3>& DCM, [[maybe_unused]] uint8_t M)
+Eigen::Matrix<double, Eigen::Dynamic, 9> designMatrix_H([[maybe_unused]] double omega, [[maybe_unused]] double omegadot, [[maybe_unused]] Eigen::MatrixXd& R, [[maybe_unused]] Eigen::Matrix<double, 3, 3>& DCM, [[maybe_unused]] uint8_t M)
 {
     Eigen::Matrix<double, 12, 9> nullMatrix{};
     return nullMatrix;
+}
+
+Eigen::MatrixXd measurementNoiseMatrix_R(double alpha, Eigen::MatrixXd& R, Eigen::VectorXd& e, Eigen::Matrix<double, Eigen::Dynamic, 9>& H, Eigen::Matrix<double, 9, 9>& P)
+{
+    return alpha * R + (1.0 - alpha) * (e * e.transpose() + H * P * H.transpose());
 }
