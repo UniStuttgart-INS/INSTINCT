@@ -226,22 +226,57 @@ void NAV::SensorCombiner::combineSignals()
     invokeCallbacks(OUTPUT_PORT_INDEX_COMBINED_SIGNAL, obs);
 }
 
-Eigen::Matrix<double, 9, 9> stateTransitionMatrix_Phi([[maybe_unused]] double dt, [[maybe_unused]] uint8_t M)
+Eigen::MatrixXd stateTransitionMatrix_Phi(uint8_t M)
 {
-    Eigen::Matrix<double, 9, 9> nullMatrix{};
-    return nullMatrix;
+    uint8_t numStates = 6 + 2 * 3 * M; // dim(accelXYZ)=3, dim(gyroXYZ)=3, dim(sensorBiases)=2*3*M --> accel and gyro biases
+    Eigen::MatrixXd Phi(numStates, numStates);
+    Phi = Eigen::MatrixXd::Identity();
+
+    return Phi;
 }
 
-Eigen::Matrix<double, 9, 9> processNoiseMatrix_Q([[maybe_unused]] double dt, [[maybe_unused]] double sigma_a, [[maybe_unused]] double sigma_f, [[maybe_unused]] double sigma_biasw, [[maybe_unused]] double sigma_biasf, [[maybe_unused]] uint8_t M)
+Eigen::Matrix<double, 9, 9> processNoiseMatrix_Q(double dt,
+                                                 double sigma_w,
+                                                 double sigma_f,
+                                                 double sigma_biasw,
+                                                 double sigma_biasf,
+                                                 uint8_t M)
 {
-    Eigen::Matrix<double, 9, 9> nullMatrix{};
-    return nullMatrix;
+    uint8_t numStates = 6 + 2 * 3 * M; // dim(accelXYZ)=3, dim(gyroXYZ)=3, dim(sensorBiases)=2*3*M --> accel and gyro biases
+    Eigen::MatrixXd Q(numStates, numStates);
+    Q = Eigen::MatrixXd::Zero();
+
+    // Process noise of angular rate and specific force - Random Walk
+    Q.block<3, 3>(0, 0) = dt * std::pow(sigma_w, 2) * Eigen::Matrix3d::Identity();
+    Q.block<3, 3>(3, 3) = dt * std::pow(sigma_f, 2) * Eigen::Matrix3d::Identity();
+
+    // Process noise of sensor biases - Random Walk
+    for (uint8_t i = 6; i <= numStates; ++i)
+    {
+        Q.block<3, 3>(i, i) = dt * std::pow(sigma_biasw, 2) * Eigen::Matrix3d::Identity();
+        Q.block<3, 3>(3 * M + i, 3 * M + i) = dt * std::pow(sigma_biasf, 2) * Eigen::Matrix3d::Identity();
+    }
+
+    return Q;
 }
 
-Eigen::Matrix<double, Eigen::Dynamic, 9> designMatrix_H([[maybe_unused]] double omega, [[maybe_unused]] double omegadot, [[maybe_unused]] Eigen::MatrixXd& R, [[maybe_unused]] Eigen::Matrix<double, 3, 3>& DCM, [[maybe_unused]] uint8_t M)
+Eigen::Matrix<double, Eigen::Dynamic, 6> designMatrix_H([[maybe_unused]] double omega,
+                                                        [[maybe_unused]] Eigen::MatrixXd& R,
+                                                        [[maybe_unused]] Eigen::Matrix<double, 3, 3>& DCM,
+                                                        [[maybe_unused]] uint8_t M)
 {
-    Eigen::Matrix<double, 12, 9> nullMatrix{};
-    return nullMatrix;
+    uint8_t numStates = 6 + 2 * 3 * M; // dim(accelXYZ)=3, dim(gyroXYZ)=3, dim(sensorBiases)=2*3*M --> accel and gyro biases
+    Eigen::Matrix<double, Eigen::Dynamic, 6> H(numStates, 6);
+    H = Eigen::Matrix<double, Eigen::Dynamic, 6>::Zero(numStates, 6);
+
+    // Mapping of state estimates on sensors
+    for (uint8_t i = 0; i < numStates; i += 6)
+    {
+        H.block<6, 6>(i, i) = R;
+        H.block<6, 6>(i + 1, i + 1) = R;
+    }
+
+    return H;
 }
 
 Eigen::MatrixXd measurementNoiseMatrix_R(double alpha, Eigen::MatrixXd& R, Eigen::VectorXd& e, Eigen::Matrix<double, Eigen::Dynamic, 9>& H, Eigen::Matrix<double, 9, 9>& P)
