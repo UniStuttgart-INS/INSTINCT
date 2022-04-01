@@ -223,7 +223,7 @@ class SensorCombiner : public Imu
     /// @brief Calculates the state-transition-matrix 𝚽
     /// @param[in] M Number of connected sensors
     /// @return State-transition-matrix 𝚽
-    Eigen::MatrixXd stateTransitionMatrix_Phi(uint8_t M);
+    [[nodiscard]] static Eigen::MatrixXd stateTransitionMatrix_Phi(uint8_t M);
 
     /// @brief Calculates the process noise matrix Q
     /// @param[in] dt Time difference between two successive measurements
@@ -233,19 +233,19 @@ class SensorCombiner : public Imu
     /// @param[in] sigma_biasf Standard deviation of the bias on the specific force
     /// @param[in] M Number of connected sensors
     /// @return Process noise matrix Q
-    Eigen::MatrixXd processNoiseMatrix_Q(double dt,
-                                         double sigma_a,
-                                         double sigma_f,
-                                         double sigma_biasw,
-                                         double sigma_biasf,
-                                         uint8_t M);
+    [[nodiscard]] static Eigen::MatrixXd processNoiseMatrix_Q(double dt,
+                                                              double sigma_a,
+                                                              double sigma_f,
+                                                              double sigma_biasw,
+                                                              double sigma_biasf,
+                                                              uint8_t M);
 
     /// @brief Calculates the design matrix H
     /// @param[in] DCM Rotation matrix of mounting angles of a sensor w.r.t. a common reference
     /// @param[in] M Number of connected sensors
     /// @return Design matrix H
-    Eigen::Matrix<double, Eigen::Dynamic, 6> designMatrix_H(Eigen::Matrix<double, 3, 3> DCM,
-                                                            uint8_t M);
+    [[nodiscard]] static Eigen::Matrix<double, Eigen::Dynamic, 6> designMatrix_H(Eigen::Matrix<double, 3, 3>& DCM,
+                                                                                 uint8_t M);
 
     /// @brief Calculates the adaptive measurement noise matrix R
     /// @param[in] alpha Forgetting factor (i.e. weight on previous estimates), 0 < alpha < 1
@@ -255,11 +255,17 @@ class SensorCombiner : public Imu
     /// @param[in] P Error covariance matrix
     /// @return Measurement noise matrix R
     /// @note See https://arxiv.org/pdf/1702.00884.pdf
-    Eigen::MatrixXd measurementNoiseMatrix_R(double alpha,
-                                             Eigen::MatrixXd R,
-                                             Eigen::VectorXd e,
-                                             Eigen::Matrix<double, Eigen::Dynamic, 9> H,
-                                             Eigen::Matrix<double, 9, 9> P);
+    [[nodiscard]] static Eigen::MatrixXd measurementNoiseMatrix_R(double alpha,
+                                                                  Eigen::MatrixXd& R,
+                                                                  Eigen::VectorXd& e,
+                                                                  Eigen::Matrix<double, Eigen::Dynamic, 9>& H,
+                                                                  Eigen::Matrix<double, 9, 9>& P);
+
+    /// @brief Calculates the initial measurement noise matrix R
+    /// @param[in] sigma_w Standard deviation of angular velocity
+    /// @param[in] sigma_f Standard deviation of specific force
+    /// @return Initial measurement noise matrix R
+    [[nodiscard]] static Eigen::MatrixXd measurementNoiseMatrix_R_init(double sigma_w, double sigma_f, uint8_t M);
 
     // Eigen::Matrix<double, Eigen::Dynamic, 1> residuals(double omega, double omegadot, double f, double w, double a, Eigen::Matrix<double, 3, Eigen::Dynamic> IMU_pos, Eigen::Matrix<double, 3, 3> DCM, uint8_t M, uint64_t ti);
 
@@ -281,6 +287,9 @@ class SensorCombiner : public Imu
 
     /// @brief Number of states overall
     uint8_t _numStates = 0;
+
+    /// Kalman Filter representation
+    KalmanFilter _kalmanFilter{ 12, 6 };
 };
 
 } // namespace NAV

@@ -144,6 +144,23 @@ bool NAV::SensorCombiner::initialize()
     LOG_TRACE("{}: called", nameId());
 
     _imuObservations.clear();
+    // _kalmanFilter.setZero();
+    updateNumberOfInputPins();
+
+    double dt{};
+    double sigma_w{};
+    double sigma_f{};
+    double sigma_biasw{};
+    double sigma_biasf{};
+    Eigen::Matrix3d DCM{};
+    auto M = static_cast<uint8_t>(_nInputPins);
+
+    // KF initializations
+    // _kalmanFilter.P = ;
+    _kalmanFilter.Phi = stateTransitionMatrix_Phi(M);
+    _kalmanFilter.Q = processNoiseMatrix_Q(dt, sigma_w, sigma_f, sigma_biasw, sigma_biasf, M);
+    _kalmanFilter.H = designMatrix_H(DCM, M);
+    _kalmanFilter.R = measurementNoiseMatrix_R_init(sigma_w, sigma_f, M);
 
     LOG_DEBUG("SensorCombiner initialized");
 
@@ -169,13 +186,14 @@ void NAV::SensorCombiner::updateNumberOfInputPins()
         _pinData.pop_back();
     }
 
-    /// Number of estimated states (accel and gyro)
+    // Number of estimated states (accel and gyro)
     uint8_t numStatesEst = 6;
 
-    /// Number of states per pin (biases of accel and gyro)
+    // Number of states per pin (biases of accel and gyro)
     uint8_t numStatesPerPin = 6;
 
-    _numStates = numStatesEst + static_cast<uint8_t>(_nInputPins) * numStatesPerPin;
+    _numStates = numStatesEst + static_cast<uint8_t>(_nInputPins * numStatesPerPin);
+    KalmanFilter _kalmanFilter{ _numStates, numStatesPerPin };
 }
 
 void NAV::SensorCombiner::recvSignal(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
@@ -220,6 +238,7 @@ void NAV::SensorCombiner::recvSignal(const std::shared_ptr<const NodeData>& node
 
 void NAV::SensorCombiner::combineSignals()
 {
+    LOG_TRACE("{}: called", nameId());
     // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
 
     // for (size_t pinIndex = 0; pinIndex < _pinData.size(); ++pinIndex)
@@ -230,11 +249,15 @@ void NAV::SensorCombiner::combineSignals()
     //     const std::shared_ptr<const ImuObs>& imuObs__t1 = _imuObservations.at(1);
     // }
 
+    _kalmanFilter.predict();
+
+    _kalmanFilter.correct();
+
     auto obs = _imuObservations.front(); // TODO: this should be the combined IMU observation
     invokeCallbacks(OUTPUT_PORT_INDEX_COMBINED_SIGNAL, obs);
 }
 
-Eigen::MatrixXd stateTransitionMatrix_Phi(uint8_t M)
+Eigen::MatrixXd NAV::SensorCombiner::stateTransitionMatrix_Phi(uint8_t M)
 {
     auto numStates = static_cast<uint8_t>(6 + 2 * 3 * M); // dim(accelXYZ)=3, dim(gyroXYZ)=3, dim(sensorBiases)=2*3*M --> accel and gyro biases
     Eigen::MatrixXd Phi(numStates, numStates);
@@ -246,12 +269,12 @@ Eigen::MatrixXd stateTransitionMatrix_Phi(uint8_t M)
     return Phi;
 }
 
-Eigen::MatrixXd processNoiseMatrix_Q(double dt,
-                                     double sigma_w,
-                                     double sigma_f,
-                                     double sigma_biasw,
-                                     double sigma_biasf,
-                                     uint8_t M)
+Eigen::MatrixXd NAV::SensorCombiner::processNoiseMatrix_Q(double dt,
+                                                          double sigma_w,
+                                                          double sigma_f,
+                                                          double sigma_biasw,
+                                                          double sigma_biasf,
+                                                          uint8_t M)
 {
     auto numStates = static_cast<uint8_t>(6 + 2 * 3 * M); // dim(accelXYZ)=3, dim(gyroXYZ)=3, dim(sensorBiases)=2*3*M --> accel and gyro biases
     Eigen::MatrixXd Q(numStates, numStates);
@@ -274,8 +297,7 @@ Eigen::MatrixXd processNoiseMatrix_Q(double dt,
     return Q;
 }
 
-Eigen::Matrix<double, Eigen::Dynamic, 6> designMatrix_H(Eigen::Matrix<double, 3, 3>& DCM,
-                                                        uint8_t M)
+Eigen::Matrix<double, Eigen::Dynamic, 6> NAV::SensorCombiner::designMatrix_H(Eigen::Matrix<double, 3, 3>& DCM, uint8_t M)
 {
     auto numStates = static_cast<uint8_t>(6 + 2 * 3 * M); // dim(accelXYZ)=3, dim(gyroXYZ)=3, dim(sensorBiases)=2*3*M --> accel and gyro biases
     Eigen::Matrix<double, Eigen::Dynamic, 6> H(numStates, 6);
@@ -291,7 +313,21 @@ Eigen::Matrix<double, Eigen::Dynamic, 6> designMatrix_H(Eigen::Matrix<double, 3,
     return H;
 }
 
-Eigen::MatrixXd measurementNoiseMatrix_R(double alpha, Eigen::MatrixXd& R, Eigen::VectorXd& e, Eigen::Matrix<double, Eigen::Dynamic, 9>& H, Eigen::Matrix<double, 9, 9>& P)
+Eigen::MatrixXd NAV::SensorCombiner::measurementNoiseMatrix_R(double alpha, Eigen::MatrixXd& R, Eigen::VectorXd& e, Eigen::Matrix<double, Eigen::Dynamic, 9>& H, Eigen::Matrix<double, 9, 9>& P)
 {
     return alpha * R + (1.0 - alpha) * (e * e.transpose() + H * P * H.transpose());
+}
+
+Eigen::MatrixXd NAV::SensorCombiner::measurementNoiseMatrix_R_init(double sigma_w, double sigma_f, uint8_t M)
+{
+    auto numMeas = static_cast<uint8_t>(2 * 3 * M); // dim(accelXYZ)=3, dim(gyroXYZ)=3, dim(sensorBiases)=2*3*M --> accel and gyro biases
+    Eigen::MatrixXd R(numMeas, numMeas);
+    R.setZero();
+    for (uint8_t i = 0; i < 3 * M; ++i)
+    {
+        R(i, i) = std::pow(sigma_w, 2);
+        R(3 * M + i, 3 * M + i) = std::pow(sigma_f, 2);
+    }
+
+    return R;
 }
