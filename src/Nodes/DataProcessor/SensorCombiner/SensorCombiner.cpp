@@ -168,6 +168,14 @@ void NAV::SensorCombiner::updateNumberOfInputPins()
         nm::DeleteInputPin(inputPins.back().id);
         _pinData.pop_back();
     }
+
+    /// Number of estimated states (accel and gyro)
+    uint8_t numStatesEst = 6;
+
+    /// Number of states per pin (biases of accel and gyro)
+    uint8_t numStatesPerPin = 6;
+
+    _numStates = numStatesEst + static_cast<uint8_t>(_nInputPins) * numStatesPerPin;
 }
 
 void NAV::SensorCombiner::recvSignal(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)

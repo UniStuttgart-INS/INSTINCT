@@ -278,6 +278,9 @@ class SensorCombiner : public Imu
 
     /// @brief Maximum amount of imu observations to keep
     size_t _maxSizeImuObservations = 0;
+
+    /// @brief Number of states overall
+    uint8_t _numStates = 0;
 };
 
 } // namespace NAV
