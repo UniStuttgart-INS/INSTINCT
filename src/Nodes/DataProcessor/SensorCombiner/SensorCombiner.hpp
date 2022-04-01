@@ -264,6 +264,7 @@ class SensorCombiner : public Imu
     /// @brief Calculates the initial measurement noise matrix R
     /// @param[in] sigma_w Standard deviation of angular velocity
     /// @param[in] sigma_f Standard deviation of specific force
+    /// @param[in] M Number of connected sensors
     /// @return Initial measurement noise matrix R
     [[nodiscard]] static Eigen::MatrixXd measurementNoiseMatrix_R_init(double sigma_w, double sigma_f, uint8_t M);
 

@@ -249,9 +249,9 @@ void NAV::SensorCombiner::combineSignals()
     //     const std::shared_ptr<const ImuObs>& imuObs__t1 = _imuObservations.at(1);
     // }
 
-    _kalmanFilter.predict();
+    // _kalmanFilter.predict();
 
-    _kalmanFilter.correct();
+    // _kalmanFilter.correct();
 
     auto obs = _imuObservations.front(); // TODO: this should be the combined IMU observation
     invokeCallbacks(OUTPUT_PORT_INDEX_COMBINED_SIGNAL, obs);
@@ -288,10 +288,10 @@ Eigen::MatrixXd NAV::SensorCombiner::processNoiseMatrix_Q(double dt,
     Q.block<3, 3>(3, 3) = dt * std::pow(sigma_f, 2) * Eigen::Matrix3d::Identity();
 
     // Process noise of sensor biases - Random Walk
-    for (uint8_t i = 6; i <= numStates; ++i)
+    for (uint8_t i = 6; i < numStates; i += 6)
     {
         Q.block<3, 3>(i, i) = dt * std::pow(sigma_biasw, 2) * Eigen::Matrix3d::Identity();
-        Q.block<3, 3>(3 * M + i, 3 * M + i) = dt * std::pow(sigma_biasf, 2) * Eigen::Matrix3d::Identity();
+        Q.block<3, 3>(3 + i, 3 + i) = dt * std::pow(sigma_biasf, 2) * Eigen::Matrix3d::Identity();
     }
 
     return Q;
