@@ -227,14 +227,14 @@ class SensorCombiner : public Imu
 
     /// @brief Calculates the process noise matrix Q
     /// @param[in] dt Time difference between two successive measurements
-    /// @param[in] sigma_a Standard deviation of angular acceleration (omegaDot)
+    /// @param[in] sigma_w Standard deviation of angular acceleration (omegaDot)
     /// @param[in] sigma_f Standard deviation of specific force
     /// @param[in] sigma_biasw Standard deviation of the bias on the angular acceleration (omegaDot)
     /// @param[in] sigma_biasf Standard deviation of the bias on the specific force
     /// @param[in] M Number of connected sensors
     /// @return Process noise matrix Q
     [[nodiscard]] static Eigen::MatrixXd processNoiseMatrix_Q(double dt,
-                                                              double sigma_a,
+                                                              double sigma_w,
                                                               double sigma_f,
                                                               double sigma_biasw,
                                                               double sigma_biasf,
