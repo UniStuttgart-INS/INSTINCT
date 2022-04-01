@@ -241,14 +241,10 @@ class SensorCombiner : public Imu
                                          uint8_t M);
 
     /// @brief Calculates the design matrix H
-    /// @param[in] omega Angular velocity in [rad/s]
-    /// @param[in] R Measurement noise matrix
     /// @param[in] DCM Rotation matrix of mounting angles of a sensor w.r.t. a common reference
     /// @param[in] M Number of connected sensors
     /// @return Design matrix H
-    Eigen::Matrix<double, Eigen::Dynamic, 6> designMatrix_H(double omega,
-                                                            Eigen::MatrixXd R,
-                                                            Eigen::Matrix<double, 3, 3> DCM,
+    Eigen::Matrix<double, Eigen::Dynamic, 6> designMatrix_H(Eigen::Matrix<double, 3, 3> DCM,
                                                             uint8_t M);
 
     /// @brief Calculates the adaptive measurement noise matrix R

@@ -228,23 +228,29 @@ void NAV::SensorCombiner::combineSignals()
 
 Eigen::MatrixXd stateTransitionMatrix_Phi(uint8_t M)
 {
-    uint8_t numStates = 6 + 2 * 3 * M; // dim(accelXYZ)=3, dim(gyroXYZ)=3, dim(sensorBiases)=2*3*M --> accel and gyro biases
+    auto numStates = static_cast<uint8_t>(6 + 2 * 3 * M); // dim(accelXYZ)=3, dim(gyroXYZ)=3, dim(sensorBiases)=2*3*M --> accel and gyro biases
     Eigen::MatrixXd Phi(numStates, numStates);
-    Phi = Eigen::MatrixXd::Identity();
+    for (uint8_t i = 0; i < numStates; ++i)
+    {
+        Phi(i, i) = 1;
+    }
 
     return Phi;
 }
 
-Eigen::Matrix<double, 9, 9> processNoiseMatrix_Q(double dt,
-                                                 double sigma_w,
-                                                 double sigma_f,
-                                                 double sigma_biasw,
-                                                 double sigma_biasf,
-                                                 uint8_t M)
+Eigen::MatrixXd processNoiseMatrix_Q(double dt,
+                                     double sigma_w,
+                                     double sigma_f,
+                                     double sigma_biasw,
+                                     double sigma_biasf,
+                                     uint8_t M)
 {
-    uint8_t numStates = 6 + 2 * 3 * M; // dim(accelXYZ)=3, dim(gyroXYZ)=3, dim(sensorBiases)=2*3*M --> accel and gyro biases
+    auto numStates = static_cast<uint8_t>(6 + 2 * 3 * M); // dim(accelXYZ)=3, dim(gyroXYZ)=3, dim(sensorBiases)=2*3*M --> accel and gyro biases
     Eigen::MatrixXd Q(numStates, numStates);
-    Q = Eigen::MatrixXd::Zero();
+    for (uint8_t i = 0; i < numStates; ++i)
+    {
+        Q(i, i) = 0;
+    }
 
     // Process noise of angular rate and specific force - Random Walk
     Q.block<3, 3>(0, 0) = dt * std::pow(sigma_w, 2) * Eigen::Matrix3d::Identity();
@@ -260,20 +266,18 @@ Eigen::Matrix<double, 9, 9> processNoiseMatrix_Q(double dt,
     return Q;
 }
 
-Eigen::Matrix<double, Eigen::Dynamic, 6> designMatrix_H([[maybe_unused]] double omega,
-                                                        [[maybe_unused]] Eigen::MatrixXd& R,
-                                                        [[maybe_unused]] Eigen::Matrix<double, 3, 3>& DCM,
-                                                        [[maybe_unused]] uint8_t M)
+Eigen::Matrix<double, Eigen::Dynamic, 6> designMatrix_H(Eigen::Matrix<double, 3, 3>& DCM,
+                                                        uint8_t M)
 {
-    uint8_t numStates = 6 + 2 * 3 * M; // dim(accelXYZ)=3, dim(gyroXYZ)=3, dim(sensorBiases)=2*3*M --> accel and gyro biases
+    auto numStates = static_cast<uint8_t>(6 + 2 * 3 * M); // dim(accelXYZ)=3, dim(gyroXYZ)=3, dim(sensorBiases)=2*3*M --> accel and gyro biases
     Eigen::Matrix<double, Eigen::Dynamic, 6> H(numStates, 6);
     H = Eigen::Matrix<double, Eigen::Dynamic, 6>::Zero(numStates, 6);
 
     // Mapping of state estimates on sensors
     for (uint8_t i = 0; i < numStates; i += 6)
     {
-        H.block<6, 6>(i, i) = R;
-        H.block<6, 6>(i + 1, i + 1) = R;
+        H.block<3, 3>(i, 0) = DCM;
+        H.block<3, 3>(i + 3, 3) = DCM;
     }
 
     return H;
