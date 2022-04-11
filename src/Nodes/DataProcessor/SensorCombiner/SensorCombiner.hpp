@@ -242,10 +242,8 @@ class SensorCombiner : public Imu
 
     /// @brief Calculates the design matrix H
     /// @param[in] DCM Rotation matrix of mounting angles of a sensor w.r.t. a common reference
-    /// @param[in] M Number of connected sensors
     /// @return Design matrix H
-    [[nodiscard]] static Eigen::Matrix<double, Eigen::Dynamic, 6> designMatrix_H(Eigen::Matrix<double, 3, 3>& DCM,
-                                                                                 uint8_t M);
+    [[nodiscard]] const Eigen::MatrixXd designMatrix_H(Eigen::Matrix<double, 3, 3>& DCM);
 
     /// @brief Calculates the adaptive measurement noise matrix R
     /// @param[in] alpha Forgetting factor (i.e. weight on previous estimates), 0 < alpha < 1
@@ -293,6 +291,9 @@ class SensorCombiner : public Imu
 
     /// @brief Number of states overall
     uint8_t _numStates = 0;
+
+    /// @brief Number of measurements
+    uint8_t _numMeasurements = 0;
 
     /// Kalman Filter representation
     KalmanFilter _kalmanFilter{ 12, 6 };
