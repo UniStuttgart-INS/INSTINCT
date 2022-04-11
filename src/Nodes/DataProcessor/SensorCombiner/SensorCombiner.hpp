@@ -268,6 +268,11 @@ class SensorCombiner : public Imu
     /// @return Initial measurement noise matrix R
     [[nodiscard]] static Eigen::MatrixXd measurementNoiseMatrix_R_init(double sigma_w, double sigma_f, uint8_t M);
 
+    /// @brief Initial error covariance matrix P_0
+    /// @param[in] M Number of connected sensors
+    /// @return The (_numStates) x (_numStates) matrix of initial state variances
+    [[nodiscard]] static Eigen::MatrixXd initialErrorCovarianceMatrix_P0(uint8_t M); // TODO: Extend by GUI inputs of 2x3D variances per one sensor
+
     // Eigen::Matrix<double, Eigen::Dynamic, 1> residuals(double omega, double omegadot, double f, double w, double a, Eigen::Matrix<double, 3, Eigen::Dynamic> IMU_pos, Eigen::Matrix<double, 3, 3> DCM, uint8_t M, uint64_t ti);
 
     /// @brief Combines the signals
