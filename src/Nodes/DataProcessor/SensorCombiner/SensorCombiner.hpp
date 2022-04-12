@@ -221,9 +221,8 @@ class SensorCombiner : public Imu
     void recvSignal(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Calculates the state-transition-matrix 𝚽
-    /// @param[in] M Number of connected sensors
     /// @return State-transition-matrix 𝚽
-    [[nodiscard]] static Eigen::MatrixXd stateTransitionMatrix_Phi(uint8_t M);
+    [[nodiscard]] const Eigen::MatrixXd stateTransitionMatrix_Phi();
 
     /// @brief Calculates the process noise matrix Q
     /// @param[in] dt Time difference between two successive measurements
