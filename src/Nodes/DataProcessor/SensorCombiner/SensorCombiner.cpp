@@ -4,8 +4,9 @@
 
 #include "Navigation/Math/Math.hpp"
 
-#include "internal/gui/widgets/HelpMarker.hpp"
 #include <imgui_internal.h>
+#include "internal/gui/widgets/imgui_ex.hpp"
+#include "internal/gui/widgets/InputWithUnit.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -47,6 +48,9 @@ std::string NAV::SensorCombiner::category()
 
 void NAV::SensorCombiner::guiConfig()
 {
+    constexpr float configWidth = 380.0F;
+    constexpr float unitWidth = 150.0F;
+
     // TODO: adapt _maxSizeImuObservations to number of sensors?
 
     if (ImGui::BeginTable(fmt::format("Pin Settings##{}", size_t(id)).c_str(), inputPins.size() > 1 ? 2 : 1,
@@ -118,6 +122,113 @@ void NAV::SensorCombiner::guiConfig()
         }
 
         ImGui::EndTable();
+    }
+
+    ImGui::Separator();
+
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+    if (ImGui::TreeNode(fmt::format("P Error covariance matrix (init)##{}", size_t(id)).c_str()))
+    {
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular rate covariance ({})##{}",
+                                                           _initCovarianceAngularRateUnit == InitCovarianceAngularRateUnit::rad2_s2
+                                                                   || _initCovarianceAngularRateUnit == InitCovarianceAngularRateUnit::deg2_s2
+                                                               ? "Variance σ²"
+                                                               : "Standard deviation σ",
+                                                           size_t(id))
+                                                   .c_str(),
+                                               configWidth, unitWidth, _initCovarianceAngularRate.data(), reinterpret_cast<int*>(&_initCovarianceAngularRateUnit), "(rad/s)^2, (rad/s)^2, (rad/s)^2\0"
+                                                                                                                                                                   "rad/s, rad/s, rad/s\0"
+                                                                                                                                                                   "(deg/s)^2, (deg/s)^2, (deg/s)^2\0"
+                                                                                                                                                                   "deg/s, deg/s, deg/s\0\0",
+                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: initCovarianceAngularRate changed to {}", nameId(), _initCovarianceAngularRate);
+            LOG_DEBUG("{}: InitCovarianceAngularRateUnit changed to {}", nameId(), _initCovarianceAngularRateUnit);
+            flow::ApplyChanges();
+        }
+
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular acceleration covariance ({})##{}",
+                                                           _initCovarianceAngularAccUnit == InitCovarianceAngularAccUnit::rad2_s4
+                                                                   || _initCovarianceAngularAccUnit == InitCovarianceAngularAccUnit::deg2_s4
+                                                               ? "Variance σ²"
+                                                               : "Standard deviation σ",
+                                                           size_t(id))
+                                                   .c_str(),
+                                               configWidth, unitWidth, _initCovarianceAngularAcc.data(), reinterpret_cast<int*>(&_initCovarianceAngularAccUnit), "(rad^2)/(s^4), (rad^2)/(s^4), (rad^2)/(s^4)\0"
+                                                                                                                                                                 "rad/s^2, rad/s^2, rad/s^2\0"
+                                                                                                                                                                 "(deg^2)/(s^4), (deg^2)/(s^4), (deg^2)/(s^4)\0"
+                                                                                                                                                                 "deg/s^2, deg/s^2, deg/s^2\0\0",
+                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: initCovarianceAngularAcc changed to {}", nameId(), _initCovarianceAngularAcc);
+            LOG_DEBUG("{}: InitCovarianceAngularAccUnit changed to {}", nameId(), _initCovarianceAngularAccUnit);
+            flow::ApplyChanges();
+        }
+
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Acceleration covariance ({})##{}",
+                                                           _initCovarianceAccelerationUnit == InitCovarianceAccelerationUnit::m2_s4
+                                                               ? "Variance σ²"
+                                                               : "Standard deviation σ",
+                                                           size_t(id))
+                                                   .c_str(),
+                                               configWidth, unitWidth, _initCovarianceAcceleration.data(), reinterpret_cast<int*>(&_initCovarianceAccelerationUnit), "(m^2)/(s^4), (m^2)/(s^4), (m^2)/(s^4)\0"
+                                                                                                                                                                     "m/s^2, m/s^2, m/s^2\0\0",
+                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: initCovarianceAcceleration changed to {}", nameId(), _initCovarianceAcceleration);
+            LOG_DEBUG("{}: InitCovarianceAccelerationUnit changed to {}", nameId(), _initCovarianceAccelerationUnit);
+            flow::ApplyChanges();
+        }
+
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Jerk covariance ({})##{}",
+                                                           _initCovarianceJerkUnit == InitCovarianceJerkUnit::m2_s6
+                                                               ? "Variance σ²"
+                                                               : "Standard deviation σ",
+                                                           size_t(id))
+                                                   .c_str(),
+                                               configWidth, unitWidth, _initCovarianceJerk.data(), reinterpret_cast<int*>(&_initCovarianceJerkUnit), "(m^2)/(s^6), (m^2)/(s^6), (m^2)/(s^6)\0"
+                                                                                                                                                     "m/s^3, m/s^3, m/s^3\0\0",
+                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: initCovarianceJerk changed to {}", nameId(), _initCovarianceJerk);
+            LOG_DEBUG("{}: InitCovarianceJerkUnit changed to {}", nameId(), _initCovarianceJerkUnit);
+            flow::ApplyChanges();
+        }
+
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular acceleration bias covariance ({})##{}",
+                                                           _initCovarianceBiasAngAccUnit == InitCovarianceBiasAngAccUnit::rad2_s4
+                                                                   || _initCovarianceBiasAngAccUnit == InitCovarianceBiasAngAccUnit::deg2_s4
+                                                               ? "Variance σ²"
+                                                               : "Standard deviation σ",
+                                                           size_t(id))
+                                                   .c_str(),
+                                               configWidth, unitWidth, _initCovarianceBiasAngAcc.data(), reinterpret_cast<int*>(&_initCovarianceBiasAngAccUnit), "(rad^2)/(s^4), (rad^2)/(s^4), (rad^2)/(s^4)\0"
+                                                                                                                                                                 "rad/s^2, rad/s^2, rad/s^2\0"
+                                                                                                                                                                 "(deg^2)/(s^4), (deg^2)/(s^4), (deg^2)/(s^4)\0"
+                                                                                                                                                                 "deg/s^2, deg/s^2, deg/s^2\0\0",
+                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: initCovarianceBiasAngAcc changed to {}", nameId(), _initCovarianceBiasAngAcc);
+            LOG_DEBUG("{}: InitCovarianceBiasAngAccUnit changed to {}", nameId(), _initCovarianceBiasAngAccUnit);
+            flow::ApplyChanges();
+        }
+
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Jerk bias covariance ({})##{}",
+                                                           _initCovarianceBiasJerkUnit == InitCovarianceBiasJerkUnit::m2_s6
+                                                               ? "Variance σ²"
+                                                               : "Standard deviation σ",
+                                                           size_t(id))
+                                                   .c_str(),
+                                               configWidth, unitWidth, _initCovarianceBiasJerk.data(), reinterpret_cast<int*>(&_initCovarianceBiasJerkUnit), "(m^2)/(s^6), (m^2)/(s^6), (m^2)/(s^6)\0"
+                                                                                                                                                             "m/s^3, m/s^3, m/s^3\0\0",
+                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: initCovarianceBiasJerk changed to {}", nameId(), _initCovarianceBiasJerk);
+            LOG_DEBUG("{}: InitCovarianceBiasJerkUnit changed to {}", nameId(), _initCovarianceBiasJerkUnit);
+            flow::ApplyChanges();
+        }
+
+        ImGui::TreePop();
     }
 }
 
