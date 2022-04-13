@@ -226,10 +226,10 @@ class SensorCombiner : public Imu
 
     /// @brief Calculates the process noise matrix Q
     /// @param[in] dt Time difference between two successive measurements
-    /// @param[in] sigma_w Standard deviation of angular acceleration (omegaDot)
-    /// @param[in] sigma_f Standard deviation of specific force
-    /// @param[in] sigma_biasw Standard deviation of the bias on the angular acceleration (omegaDot)
-    /// @param[in] sigma_biasf Standard deviation of the bias on the specific force
+    /// @param[in] sigma_w Standard deviation of angular acceleration (omegaDot) in [rad/s^2]
+    /// @param[in] sigma_f Standard deviation of specific force in [m/s^3]
+    /// @param[in] sigma_biasw Standard deviation of the bias on the angular acceleration (omegaDot) in [rad/s^2]
+    /// @param[in] sigma_biasf Standard deviation of the bias on the specific force in [m/s^3]
     /// @param[in] M Number of connected sensors
     /// @return Process noise matrix Q
     [[nodiscard]] static Eigen::MatrixXd processNoiseMatrix_Q(double dt,
@@ -388,6 +388,35 @@ class SensorCombiner : public Imu
 
     /// GUI selection of the initial covariance diagonal values for jerk biases (standard deviation σ or Variance σ²)
     Eigen::Vector3d _initCovarianceBiasJerk{ 0.1, 0.1, 0.1 };
+
+    // #########################################################################################################################################
+    //                                                         Process Noise Matrix Q
+    // #########################################################################################################################################
+
+    /// Possible Units for the initial covariance for the angular acceleration (standard deviation σ or Variance σ²)
+    enum class StdevAngularAccUnit
+    {
+        rad_s2, ///< Standard deviation [rad/s^2, rad/s^2, rad/s^2]
+        deg_s2, ///< Standard deviation [deg/s^2, deg/s^2, deg/s^2]
+    };
+    /// Gui selection for the Unit of the angular acceleration process noise
+    StdevAngularAccUnit _stdevAngularAccUnit = StdevAngularAccUnit::deg_s2;
+
+    /// GUI selection of the angular acceleration process noise diagonal values
+    Eigen::Vector3d _stdevAngularAcc{ 0.1, 0.1, 0.1 };
+
+    // #########################################################################################################################################
+
+    /// Possible Units for the initial covariance for the jerk (standard deviation σ or Variance σ²)
+    enum class StdevJerkUnit
+    {
+        m_s3, ///< Standard deviation [m/s^3, m/s^3, m/s^3]
+    };
+    /// Gui selection for the Unit of the jerk process noise
+    StdevJerkUnit _stdevJerkUnit = StdevJerkUnit::m_s3;
+
+    /// GUI selection of the jerk process noise diagonal values
+    Eigen::Vector3d _stdevJerk{ 0.1, 0.1, 0.1 };
 };
 
 } // namespace NAV

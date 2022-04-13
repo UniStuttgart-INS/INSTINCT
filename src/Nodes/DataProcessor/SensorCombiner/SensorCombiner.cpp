@@ -195,6 +195,7 @@ void NAV::SensorCombiner::guiConfig()
             flow::ApplyChanges();
         }
 
+        // TODO: Make for-loop around 'Angular acceleration bias covariance' and 'Jerk bias covariance' to add as many inputs as there are measurements
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular acceleration bias covariance ({})##{}",
                                                            _initCovarianceBiasAngAccUnit == InitCovarianceBiasAngAccUnit::rad2_s4
                                                                    || _initCovarianceBiasAngAccUnit == InitCovarianceBiasAngAccUnit::deg2_s4
@@ -225,6 +226,34 @@ void NAV::SensorCombiner::guiConfig()
         {
             LOG_DEBUG("{}: initCovarianceBiasJerk changed to {}", nameId(), _initCovarianceBiasJerk);
             LOG_DEBUG("{}: InitCovarianceBiasJerkUnit changed to {}", nameId(), _initCovarianceBiasJerkUnit);
+            flow::ApplyChanges();
+        }
+
+        ImGui::TreePop();
+    }
+
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+    if (ImGui::TreeNode(fmt::format("Q - System/Process noise covariance matrix##{}", size_t(id)).c_str()))
+    {
+        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+
+        // TODO: Make for-loop around 'angular acceleration process noise' and 'Jerk bias covariance' to add as many inputs as there are measurements
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the noise on the\njerk process noise##{}", size_t(id)).c_str(),
+                                               configWidth, unitWidth, _stdevAngularAcc.data(), reinterpret_cast<int*>(&_stdevAngularAccUnit), "rad/s^2, rad/s^2, rad/s^2\0"
+                                                                                                                                               "deg/s^2, deg/s^2, deg/s^2\0\0",
+                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: stdevAngularAcc changed to {}", nameId(), _stdevAngularAcc.transpose());
+            LOG_DEBUG("{}: stdevAngularAccUnit changed to {}", nameId(), _stdevAngularAccUnit);
+            flow::ApplyChanges();
+        }
+
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the jerk process noise##{}", size_t(id)).c_str(),
+                                               configWidth, unitWidth, _stdevJerk.data(), reinterpret_cast<int*>(&_stdevJerkUnit), "m/s^3\0\0",
+                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: stdev_bad changed to {}", nameId(), _stdevJerk.transpose());
+            LOG_DEBUG("{}: stdevAccelBiasUnits changed to {}", nameId(), _stdevJerkUnit);
             flow::ApplyChanges();
         }
 
