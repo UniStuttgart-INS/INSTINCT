@@ -3,6 +3,7 @@
 #include "util/Logger.hpp"
 
 #include "Navigation/Math/Math.hpp"
+#include "Navigation/Transformations/CoordinateFrames.hpp"
 
 #include <imgui_internal.h>
 #include "internal/gui/widgets/imgui_ex.hpp"
@@ -314,9 +315,107 @@ bool NAV::SensorCombiner::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+    _kalmanFilter.setZero();
     _imuObservations.clear();
-    // _kalmanFilter.setZero();
+
     updateNumberOfInputPins();
+
+    // ------------------------------------------------------ Error covariance matrix P --------------------------------------------------------
+
+    // Initial Covariance of the angular rate in [rad²/s²]
+    Eigen::Vector3d variance_angularRate = Eigen::Vector3d::Zero();
+    if (_initCovarianceAngularRateUnit == InitCovarianceAngularRateUnit::rad2_s2)
+    {
+        variance_angularRate = _initCovarianceAngularRate;
+    }
+    else if (_initCovarianceAngularRateUnit == InitCovarianceAngularRateUnit::deg2_s2)
+    {
+        variance_angularRate = trafo::deg2rad(_initCovarianceAngularRate);
+    }
+    else if (_initCovarianceAngularRateUnit == InitCovarianceAngularRateUnit::rad_s)
+    {
+        variance_angularRate = _initCovarianceAngularRate.array().pow(2);
+    }
+    else if (_initCovarianceAngularRateUnit == InitCovarianceAngularRateUnit::deg_s)
+    {
+        variance_angularRate = trafo::deg2rad(_initCovarianceAngularRate).array().pow(2);
+    }
+
+    // Initial Covariance of the angular acceleration in [(rad^2)/(s^4)]
+    Eigen::Vector3d variance_angularAcceleration = Eigen::Vector3d::Zero();
+    if (_initCovarianceAngularAccUnit == InitCovarianceAngularAccUnit::rad2_s4)
+    {
+        variance_angularAcceleration = _initCovarianceAngularAcc;
+    }
+    else if (_initCovarianceAngularAccUnit == InitCovarianceAngularAccUnit::deg2_s4)
+    {
+        variance_angularAcceleration = trafo::deg2rad(_initCovarianceAngularAcc);
+    }
+    else if (_initCovarianceAngularAccUnit == InitCovarianceAngularAccUnit::rad_s2)
+    {
+        variance_angularAcceleration = _initCovarianceAngularAcc.array().pow(2);
+    }
+    else if (_initCovarianceAngularAccUnit == InitCovarianceAngularAccUnit::deg_s2)
+    {
+        variance_angularAcceleration = trafo::deg2rad(_initCovarianceAngularAcc).array().pow(2);
+    }
+
+    // Initial Covariance of the acceleration in [(m^2)/(s^4)]
+    Eigen::Vector3d variance_acceleration = Eigen::Vector3d::Zero();
+    if (_initCovarianceAccelerationUnit == InitCovarianceAccelerationUnit::m2_s4)
+    {
+        variance_acceleration = _initCovarianceAcceleration;
+    }
+    else if (_initCovarianceAccelerationUnit == InitCovarianceAccelerationUnit::m_s2)
+    {
+        variance_acceleration = _initCovarianceAcceleration.array().pow(2);
+    }
+
+    // Initial Covariance of the jerk in [(m^2)/(s^6)]
+    Eigen::Vector3d variance_jerk = Eigen::Vector3d::Zero();
+    if (_initCovarianceJerkUnit == InitCovarianceJerkUnit::m2_s6)
+    {
+        variance_jerk = _initCovarianceJerk;
+    }
+    else if (_initCovarianceJerkUnit == InitCovarianceJerkUnit::m_s3)
+    {
+        variance_jerk = _initCovarianceJerk.array().pow(2);
+    }
+
+    // TODO: Make for-loop around 'bias of the angular acceleration' and 'bias of the jerk' to add as many inputs as there are measurements
+    // Initial Covariance of the bias of the angular acceleration in [(rad^2)/(s^4)]
+    Eigen::Vector3d variance_biasAngularAcceleration = Eigen::Vector3d::Zero();
+    if (_initCovarianceBiasAngAccUnit == InitCovarianceBiasAngAccUnit::rad2_s4)
+    {
+        variance_biasAngularAcceleration = _initCovarianceBiasAngAcc;
+    }
+    else if (_initCovarianceBiasAngAccUnit == InitCovarianceBiasAngAccUnit::deg2_s4)
+    {
+        variance_biasAngularAcceleration = trafo::deg2rad(_initCovarianceBiasAngAcc);
+    }
+    else if (_initCovarianceBiasAngAccUnit == InitCovarianceBiasAngAccUnit::rad_s2)
+    {
+        variance_biasAngularAcceleration = _initCovarianceBiasAngAcc.array().pow(2);
+    }
+    else if (_initCovarianceBiasAngAccUnit == InitCovarianceBiasAngAccUnit::deg_s2)
+    {
+        variance_biasAngularAcceleration = trafo::deg2rad(_initCovarianceBiasAngAcc).array().pow(2);
+    }
+
+    // Initial Covariance of the bias of the jerk in [(m^2)/(s^6)]
+    Eigen::Vector3d variance_biasJerk = Eigen::Vector3d::Zero();
+    if (_initCovarianceBiasJerkUnit == InitCovarianceBiasJerkUnit::m2_s6)
+    {
+        variance_biasJerk = _initCovarianceBiasJerk;
+    }
+    else if (_initCovarianceBiasJerkUnit == InitCovarianceBiasJerkUnit::m_s3)
+    {
+        variance_biasJerk = _initCovarianceBiasJerk.array().pow(2);
+    }
+
+    // ------------------------------------------------------- Process noise matrix Q ----------------------------------------------------------
+
+    // -------------------------------------------------- Measurement uncertainty matrix R -----------------------------------------------------
 
     LOG_DEBUG("SensorCombiner initialized");
 
