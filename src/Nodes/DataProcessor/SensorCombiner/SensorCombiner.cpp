@@ -415,7 +415,54 @@ bool NAV::SensorCombiner::initialize()
 
     // ------------------------------------------------------- Process noise matrix Q ----------------------------------------------------------
 
+    // 𝜎_AngAcc Standard deviation of the noise on the angular acceleration state [rad/s²]
+    Eigen::Vector3d sigma_AngAcc = Eigen::Vector3d::Zero();
+    switch (_stdevAngularAccUnit)
+    {
+    case StdevAngularAccUnit::deg_s2:
+        sigma_AngAcc = trafo::deg2rad(_stdevAngularAcc);
+        break;
+    case StdevAngularAccUnit::rad_s2:
+        sigma_AngAcc = _stdevAngularAcc;
+        break;
+    }
+    LOG_DATA("{}: sigma_AngAcc = {} [rad / s^2]", nameId(), sigma_AngAcc.transpose());
+
+    // 𝜎_jerk Standard deviation of the noise on the jerk state [m/s³]
+    [[maybe_unused]] Eigen::Vector3d sigma_jerk = _stdevJerk; //TODO: remove 'maybe_unused'
+    LOG_DATA("{}: sigma_jerk = {} [rad / s^2]", nameId(), sigma_jerk.transpose());
+
     // -------------------------------------------------- Measurement uncertainty matrix R -----------------------------------------------------
+
+    // Measurement uncertainty for the angular rate (Variance σ²) in [(rad/s)^2, (rad/s)^2, (rad/s)^2]
+    Eigen::Vector3d sigmaSquaredAngularRateMeas = Eigen::Vector3d::Zero();
+    switch (_measurementUncertaintyAngularRateUnit)
+    {
+    case MeasurementUncertaintyAngularRateUnit::rad_s:
+        sigmaSquaredAngularRateMeas = (_measurementUncertaintyAngularRate).array().pow(2);
+        break;
+    case MeasurementUncertaintyAngularRateUnit::deg_s:
+        sigmaSquaredAngularRateMeas = (trafo::deg2rad(_measurementUncertaintyAngularRate)).array().pow(2);
+        break;
+    case MeasurementUncertaintyAngularRateUnit::rad2_s2:
+        sigmaSquaredAngularRateMeas = _measurementUncertaintyAngularRate;
+        break;
+    case MeasurementUncertaintyAngularRateUnit::deg2_s2:
+        sigmaSquaredAngularRateMeas = trafo::deg2rad((_measurementUncertaintyAngularRate).cwiseSqrt()).array().pow(2);
+        break;
+    }
+
+    // Measurement uncertainty for the acceleration (Variance σ²) in [(m^2)/(s^4), (m^2)/(s^4), (m^2)/(s^4)]
+    Eigen::Vector3d sigmaSquaredAccelerationMeas = Eigen::Vector3d::Zero();
+    switch (_measurementUncertaintyAccelerationUnit)
+    {
+    case MeasurementUncertaintyAccelerationUnit::m2_s4:
+        sigmaSquaredAccelerationMeas = _measurementUncertaintyAcceleration;
+        break;
+    case MeasurementUncertaintyAccelerationUnit::m_s2:
+        sigmaSquaredAccelerationMeas = (_measurementUncertaintyAcceleration).array().pow(2);
+        break;
+    }
 
     LOG_DEBUG("SensorCombiner initialized");
 
