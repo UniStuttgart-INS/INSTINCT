@@ -136,10 +136,10 @@ void NAV::SensorCombiner::guiConfig()
                                                                : "Standard deviation σ",
                                                            size_t(id))
                                                    .c_str(),
-                                               configWidth, unitWidth, _initCovarianceAngularRate.data(), reinterpret_cast<int*>(&_initCovarianceAngularRateUnit), "(rad/s)^2, (rad/s)^2, (rad/s)^2\0"
-                                                                                                                                                                   "rad/s, rad/s, rad/s\0"
-                                                                                                                                                                   "(deg/s)^2, (deg/s)^2, (deg/s)^2\0"
-                                                                                                                                                                   "deg/s, deg/s, deg/s\0\0",
+                                               configWidth, unitWidth, _initCovarianceAngularRate.data(), reinterpret_cast<int*>(&_initCovarianceAngularRateUnit), "(rad/s)^2\0"
+                                                                                                                                                                   "rad/s\0"
+                                                                                                                                                                   "(deg/s)^2\0"
+                                                                                                                                                                   "deg/s\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: initCovarianceAngularRate changed to {}", nameId(), _initCovarianceAngularRate);
@@ -154,10 +154,10 @@ void NAV::SensorCombiner::guiConfig()
                                                                : "Standard deviation σ",
                                                            size_t(id))
                                                    .c_str(),
-                                               configWidth, unitWidth, _initCovarianceAngularAcc.data(), reinterpret_cast<int*>(&_initCovarianceAngularAccUnit), "(rad^2)/(s^4), (rad^2)/(s^4), (rad^2)/(s^4)\0"
-                                                                                                                                                                 "rad/s^2, rad/s^2, rad/s^2\0"
-                                                                                                                                                                 "(deg^2)/(s^4), (deg^2)/(s^4), (deg^2)/(s^4)\0"
-                                                                                                                                                                 "deg/s^2, deg/s^2, deg/s^2\0\0",
+                                               configWidth, unitWidth, _initCovarianceAngularAcc.data(), reinterpret_cast<int*>(&_initCovarianceAngularAccUnit), "(rad^2)/(s^4)\0"
+                                                                                                                                                                 "rad/s^2\0"
+                                                                                                                                                                 "(deg^2)/(s^4)\0"
+                                                                                                                                                                 "deg/s^2\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: initCovarianceAngularAcc changed to {}", nameId(), _initCovarianceAngularAcc);
@@ -171,8 +171,8 @@ void NAV::SensorCombiner::guiConfig()
                                                                : "Standard deviation σ",
                                                            size_t(id))
                                                    .c_str(),
-                                               configWidth, unitWidth, _initCovarianceAcceleration.data(), reinterpret_cast<int*>(&_initCovarianceAccelerationUnit), "(m^2)/(s^4), (m^2)/(s^4), (m^2)/(s^4)\0"
-                                                                                                                                                                     "m/s^2, m/s^2, m/s^2\0\0",
+                                               configWidth, unitWidth, _initCovarianceAcceleration.data(), reinterpret_cast<int*>(&_initCovarianceAccelerationUnit), "(m^2)/(s^4)\0"
+                                                                                                                                                                     "m/s^2\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: initCovarianceAcceleration changed to {}", nameId(), _initCovarianceAcceleration);
@@ -186,8 +186,8 @@ void NAV::SensorCombiner::guiConfig()
                                                                : "Standard deviation σ",
                                                            size_t(id))
                                                    .c_str(),
-                                               configWidth, unitWidth, _initCovarianceJerk.data(), reinterpret_cast<int*>(&_initCovarianceJerkUnit), "(m^2)/(s^6), (m^2)/(s^6), (m^2)/(s^6)\0"
-                                                                                                                                                     "m/s^3, m/s^3, m/s^3\0\0",
+                                               configWidth, unitWidth, _initCovarianceJerk.data(), reinterpret_cast<int*>(&_initCovarianceJerkUnit), "(m^2)/(s^6)\0"
+                                                                                                                                                     "m/s^3\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: initCovarianceJerk changed to {}", nameId(), _initCovarianceJerk);
@@ -203,10 +203,10 @@ void NAV::SensorCombiner::guiConfig()
                                                                : "Standard deviation σ",
                                                            size_t(id))
                                                    .c_str(),
-                                               configWidth, unitWidth, _initCovarianceBiasAngAcc.data(), reinterpret_cast<int*>(&_initCovarianceBiasAngAccUnit), "(rad^2)/(s^4), (rad^2)/(s^4), (rad^2)/(s^4)\0"
-                                                                                                                                                                 "rad/s^2, rad/s^2, rad/s^2\0"
-                                                                                                                                                                 "(deg^2)/(s^4), (deg^2)/(s^4), (deg^2)/(s^4)\0"
-                                                                                                                                                                 "deg/s^2, deg/s^2, deg/s^2\0\0",
+                                               configWidth, unitWidth, _initCovarianceBiasAngAcc.data(), reinterpret_cast<int*>(&_initCovarianceBiasAngAccUnit), "(rad^2)/(s^4)\0"
+                                                                                                                                                                 "rad/s^2\0"
+                                                                                                                                                                 "(deg^2)/(s^4)\0"
+                                                                                                                                                                 "deg/s^2\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: initCovarianceBiasAngAcc changed to {}", nameId(), _initCovarianceBiasAngAcc);
@@ -220,8 +220,8 @@ void NAV::SensorCombiner::guiConfig()
                                                                : "Standard deviation σ",
                                                            size_t(id))
                                                    .c_str(),
-                                               configWidth, unitWidth, _initCovarianceBiasJerk.data(), reinterpret_cast<int*>(&_initCovarianceBiasJerkUnit), "(m^2)/(s^6), (m^2)/(s^6), (m^2)/(s^6)\0"
-                                                                                                                                                             "m/s^3, m/s^3, m/s^3\0\0",
+                                               configWidth, unitWidth, _initCovarianceBiasJerk.data(), reinterpret_cast<int*>(&_initCovarianceBiasJerkUnit), "(m^2)/(s^6)\0"
+                                                                                                                                                             "m/s^3\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: initCovarianceBiasJerk changed to {}", nameId(), _initCovarianceBiasJerk);
@@ -238,9 +238,9 @@ void NAV::SensorCombiner::guiConfig()
         ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
 
         // TODO: Make for-loop around 'angular acceleration process noise' and 'Jerk bias covariance' to add as many inputs as there are measurements
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the noise on the\njerk process noise##{}", size_t(id)).c_str(),
-                                               configWidth, unitWidth, _stdevAngularAcc.data(), reinterpret_cast<int*>(&_stdevAngularAccUnit), "rad/s^2, rad/s^2, rad/s^2\0"
-                                                                                                                                               "deg/s^2, deg/s^2, deg/s^2\0\0",
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the process noise on the angular acceleration##{}", size_t(id)).c_str(),
+                                               configWidth, unitWidth, _stdevAngularAcc.data(), reinterpret_cast<int*>(&_stdevAngularAccUnit), "rad/s^2\0"
+                                                                                                                                               "deg/s^2\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: stdevAngularAcc changed to {}", nameId(), _stdevAngularAcc.transpose());
@@ -248,12 +248,12 @@ void NAV::SensorCombiner::guiConfig()
             flow::ApplyChanges();
         }
 
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the jerk process noise##{}", size_t(id)).c_str(),
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the process noise on the jerk##{}", size_t(id)).c_str(),
                                                configWidth, unitWidth, _stdevJerk.data(), reinterpret_cast<int*>(&_stdevJerkUnit), "m/s^3\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
-            LOG_DEBUG("{}: stdev_bad changed to {}", nameId(), _stdevJerk.transpose());
-            LOG_DEBUG("{}: stdevAccelBiasUnits changed to {}", nameId(), _stdevJerkUnit);
+            LOG_DEBUG("{}: stdevJerk changed to {}", nameId(), _stdevJerk.transpose());
+            LOG_DEBUG("{}: stdevJerkUnit changed to {}", nameId(), _stdevJerkUnit);
             flow::ApplyChanges();
         }
 
