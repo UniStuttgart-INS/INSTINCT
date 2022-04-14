@@ -421,6 +421,32 @@ class SensorCombiner : public Imu
     // #########################################################################################################################################
     //                                                       Measurement Noise Matrix R
     // #########################################################################################################################################
+
+    /// Possible Units for the initial covariance of the angular rate measurements (standard deviation σ or Variance σ²)
+    enum class MeasurementUncertaintyAngularRateUnit
+    {
+        rad2_s2, ///< Variance [(rad/s)^2, (rad/s)^2, (rad/s)^2]
+        rad_s,   ///< Standard deviation [rad/s, rad/s, rad/s]
+        deg2_s2, ///< Variance [(deg/s)^2, (deg/s)^2, (deg/s)^2]
+        deg_s,   ///< Standard deviation [deg/s, deg/s, deg/s]
+    };
+    /// Gui selection for the unit of the angular rate's measurement uncertainty
+    MeasurementUncertaintyAngularRateUnit _measurementUncertaintyAngularRateUnit = MeasurementUncertaintyAngularRateUnit::deg_s;
+
+    /// Gui selection of the angular rate measurement uncertainty diagonal values
+    Eigen::Vector3d _measurementUncertaintyAngularRate{ 1, 1, 1 };
+
+    /// Possible Units for the initial covariance of the acceleration measurements (standard deviation σ or Variance σ²)
+    enum class MeasurementUncertaintyAccelerationUnit
+    {
+        m2_s4, ///< Variance [(m^2)/(s^4), (m^2)/(s^4), (m^2)/(s^4)]
+        m_s2,  ///< Standard deviation [m/s^2, m/s^2, m/s^2]
+    };
+    /// Gui selection for the unit of the acceleration's measurement uncertainty
+    MeasurementUncertaintyAccelerationUnit _measurementUncertaintyAccelerationUnit = MeasurementUncertaintyAccelerationUnit::m_s2;
+
+    /// Gui selection of the angular acceleration measurement uncertainty diagonal values
+    Eigen::Vector3d _measurementUncertaintyAcceleration{ 0.1, 0.1, 0.1 };
 };
 
 } // namespace NAV
