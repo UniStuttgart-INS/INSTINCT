@@ -221,28 +221,32 @@ class SensorCombiner : public Imu
     void recvSignal(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Calculates the state-transition-matrix 𝚽
+    /// @param[in] numStates Number of states
+    /// @param[in] dt Time difference between two successive measurements
     /// @return State-transition-matrix 𝚽
-    [[nodiscard]] const Eigen::MatrixXd stateTransitionMatrix_Phi();
+    [[nodiscard]] const Eigen::MatrixXd stateTransitionMatrix_Phi(uint8_t numStates, double dt);
 
     /// @brief Calculates the process noise matrix Q
+    /// @param[in] numStates Number of states
     /// @param[in] dt Time difference between two successive measurements
     /// @param[in] sigma_w Standard deviation of angular acceleration (omegaDot) in [rad/s^2]
     /// @param[in] sigma_f Standard deviation of specific force in [m/s^3]
     /// @param[in] sigma_biasw Standard deviation of the bias on the angular acceleration (omegaDot) in [rad/s^2]
     /// @param[in] sigma_biasf Standard deviation of the bias on the specific force in [m/s^3]
-    /// @param[in] M Number of connected sensors
     /// @return Process noise matrix Q
-    [[nodiscard]] static Eigen::MatrixXd processNoiseMatrix_Q(double dt,
+    [[nodiscard]] static Eigen::MatrixXd processNoiseMatrix_Q(uint8_t numStates,
+                                                              double dt,
                                                               double sigma_w,
                                                               double sigma_f,
                                                               double sigma_biasw,
-                                                              double sigma_biasf,
-                                                              uint8_t M);
+                                                              double sigma_biasf);
 
     /// @brief Calculates the design matrix H
+    /// @param[in] numStates Number of states
+    /// @param[in] numMeasurements Number of measurements
     /// @param[in] DCM Rotation matrix of mounting angles of a sensor w.r.t. a common reference
     /// @return Design matrix H
-    [[nodiscard]] const Eigen::MatrixXd designMatrix_H(Eigen::Matrix<double, 3, 3>& DCM);
+    [[nodiscard]] const Eigen::MatrixXd designMatrix_H(uint8_t numStates, uint8_t numMeasurements, Eigen::Matrix<double, 3, 3>& DCM);
 
     /// @brief Calculates the adaptive measurement noise matrix R
     /// @param[in] alpha Forgetting factor (i.e. weight on previous estimates), 0 < alpha < 1
@@ -259,16 +263,31 @@ class SensorCombiner : public Imu
                                                                   Eigen::Matrix<double, 9, 9>& P);
 
     /// @brief Calculates the initial measurement noise matrix R
+    /// @param[in] M Number of sensors
+    /// @param[in] numMeasurements Number of measurements
     /// @param[in] sigma_w Standard deviation of angular velocity
     /// @param[in] sigma_f Standard deviation of specific force
-    /// @param[in] M Number of connected sensors
     /// @return Initial measurement noise matrix R
-    [[nodiscard]] static Eigen::MatrixXd measurementNoiseMatrix_R_init(double sigma_w, double sigma_f, uint8_t M);
+    [[nodiscard]] static Eigen::MatrixXd measurementNoiseMatrix_R_init(uint8_t M, uint8_t numMeasurements, double sigma_w, double sigma_f);
 
     /// @brief Initial error covariance matrix P_0
-    /// @param[in] M Number of connected sensors
+    /// @param[in] numStates Number of states
+    /// @param[in] varAngRate Initial variance (3D) of the Angular Rate state in [rad²/s²]
+    /// @param[in] varAngAcc Initial variance (3D) of the Angular Acceleration state in [(rad^2)/(s^4)]
+    /// @param[in] varAcc Initial variance (3D) of the Acceleration state in [(m^2)/(s^4)]
+    /// @param[in] varJerk Initial variance (3D) of the Jerk state in [(m^2)/(s^6)]
+    /// @param[in] varBiasAngAcc Initial variance (3D) of the bias of the Angular Acceleration state in [(rad^2)/(s^4)] for a dynamic number of sensors
+    /// @param[in] varBiasJerk Initial variance (3D) of the bias of the Jerk state in [(m^2)/(s^6)] for a dynamic number of sensors
     /// @return The (_numStates) x (_numStates) matrix of initial state variances
-    [[nodiscard]] static Eigen::MatrixXd initialErrorCovarianceMatrix_P0(uint8_t M); // TODO: Extend by GUI inputs of 2x3D variances per one sensor
+    [[nodiscard]] static Eigen::MatrixXd initialErrorCovarianceMatrix_P0(uint8_t numStates,
+                                                                         Eigen::Vector3d& varAngRate,
+                                                                         Eigen::Vector3d& varAngAcc,
+                                                                         Eigen::Vector3d& varAcc,
+                                                                         Eigen::Vector3d& varJerk,
+                                                                         Eigen::Vector3d& varBiasAngAcc,
+                                                                         Eigen::Vector3d& varBiasJerk); // TODO: make array to accept multiple sensors
+    //  Eigen::Matrix<double, 3, Eigen::Dynamic>& varBiasAngAcc,
+    //  Eigen::Matrix<double, 3, Eigen::Dynamic>& varBiasJerk);
 
     // Eigen::Matrix<double, Eigen::Dynamic, 1> residuals(double omega, double omegadot, double f, double w, double a, Eigen::Matrix<double, 3, Eigen::Dynamic> IMU_pos, Eigen::Matrix<double, 3, 3> DCM, uint8_t M, uint64_t ti);
 
@@ -287,12 +306,6 @@ class SensorCombiner : public Imu
 
     /// @brief Maximum amount of imu observations to keep
     size_t _maxSizeImuObservations = 0;
-
-    /// @brief Number of states overall
-    uint8_t _numStates = 0;
-
-    /// @brief Number of measurements
-    uint8_t _numMeasurements = 0;
 
     /// Kalman Filter representation
     KalmanFilter _kalmanFilter{ 12, 6 };
