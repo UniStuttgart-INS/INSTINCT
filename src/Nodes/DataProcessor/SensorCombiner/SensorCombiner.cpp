@@ -662,10 +662,18 @@ Eigen::MatrixXd NAV::SensorCombiner::initialErrorCovarianceMatrix_P0(uint8_t num
 
     [[maybe_unused]] auto bla = varAngRate + varAngAcc + varAcc + varJerk + varBiasAngRate + varBiasAcc;
 
-    for (uint8_t i = 0; i < numStates; ++i)
-    {
-        P(i, i) = 1; // no covariance at the beginning // TODO: Extend by a factor of GUI inputs of 2x3D variances per one sensor
-    }
+    P.block<3, 3>(0, 0).diagonal() = varAngRate;
+    P.block<3, 3>(3, 3).diagonal() = varAngAcc;
+    P.block<3, 3>(6, 6).diagonal() = varAcc;
+    P.block<3, 3>(9, 9).diagonal() = varJerk;
+
+    P.block<3, 3>(12, 12).diagonal() = varBiasAngRate;
+    P.block<3, 3>(15, 15).diagonal() = varBiasAcc;
+    // TODO: loop to consider multiple sensors
+    // for (uint8_t i = 0; i < numStates; ++i)
+    // {
+    //     P(i, i) = 1; // no covariance at the beginning
+    // }
 
     return P;
 }
