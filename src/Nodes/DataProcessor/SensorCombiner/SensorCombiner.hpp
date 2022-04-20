@@ -276,18 +276,18 @@ class SensorCombiner : public Imu
     /// @param[in] varAngAcc Initial variance (3D) of the Angular Acceleration state in [(rad^2)/(s^4)]
     /// @param[in] varAcc Initial variance (3D) of the Acceleration state in [(m^2)/(s^4)]
     /// @param[in] varJerk Initial variance (3D) of the Jerk state in [(m^2)/(s^6)]
-    /// @param[in] varBiasAngAcc Initial variance (3D) of the bias of the Angular Acceleration state in [(rad^2)/(s^4)] for a dynamic number of sensors
-    /// @param[in] varBiasJerk Initial variance (3D) of the bias of the Jerk state in [(m^2)/(s^6)] for a dynamic number of sensors
+    /// @param[in] varBiasAngRate Initial variance (3D) of the bias of the Angular Rate state in [rad²/s²] for a dynamic number of sensors
+    /// @param[in] varBiasAcc Initial variance (3D) of the bias of the Acceleration state in [(m^2)/(s^4)] for a dynamic number of sensors
     /// @return The (_numStates) x (_numStates) matrix of initial state variances
     [[nodiscard]] static Eigen::MatrixXd initialErrorCovarianceMatrix_P0(uint8_t numStates,
                                                                          Eigen::Vector3d& varAngRate,
                                                                          Eigen::Vector3d& varAngAcc,
                                                                          Eigen::Vector3d& varAcc,
                                                                          Eigen::Vector3d& varJerk,
-                                                                         Eigen::Vector3d& varBiasAngAcc,
-                                                                         Eigen::Vector3d& varBiasJerk); // TODO: make array to accept multiple sensors
-    //  Eigen::Matrix<double, 3, Eigen::Dynamic>& varBiasAngAcc,
-    //  Eigen::Matrix<double, 3, Eigen::Dynamic>& varBiasJerk);
+                                                                         Eigen::Vector3d& varBiasAngRate,
+                                                                         Eigen::Vector3d& varBiasAcc); // TODO: make array to accept multiple sensors
+    //  Eigen::Matrix<double, 3, Eigen::Dynamic>& varBiasAngRate,
+    //  Eigen::Matrix<double, 3, Eigen::Dynamic>& varBiasAcc);
 
     // Eigen::Matrix<double, Eigen::Dynamic, 1> residuals(double omega, double omegadot, double f, double w, double a, Eigen::Matrix<double, 3, Eigen::Dynamic> IMU_pos, Eigen::Matrix<double, 3, 3> DCM, uint8_t M, uint64_t ti);
 
@@ -317,9 +317,9 @@ class SensorCombiner : public Imu
     /// Possible Units for the initial covariance for the angular rate (standard deviation σ or Variance σ²)
     enum class InitCovarianceAngularRateUnit
     {
-        rad2_s2, ///< Variance [(rad/s)^2, (rad/s)^2, (rad/s)^2]
+        rad2_s2, ///< Variance [rad²/s², rad²/s², rad²/s²]
         rad_s,   ///< Standard deviation [rad/s, rad/s, rad/s]
-        deg2_s2, ///< Variance [(deg/s)^2, (deg/s)^2, (deg/s)^2]
+        deg2_s2, ///< Variance [deg²/s², deg²/s², deg²/s²]
         deg_s,   ///< Standard deviation [deg/s, deg/s, deg/s]
     };
     /// Gui selection for the Unit of the initial covariance for the angular rate
@@ -334,9 +334,9 @@ class SensorCombiner : public Imu
     enum class InitCovarianceAngularAccUnit
     {
         rad2_s4, ///< Variance [(rad^2)/(s^4), (rad^2)/(s^4), (rad^2)/(s^4)]
-        rad_s2,  ///< Standard deviation [rad/s^2, rad/s^2, rad/s^2]
+        rad_s2,  ///< Standard deviation [rad/s², rad/s², rad/s²]
         deg2_s4, ///< Variance [(deg^2)/(s^4), (deg^2)/(s^4), (deg^2)/(s^4)]
-        deg_s2,  ///< Standard deviation [deg/s^2, deg/s^2, deg/s^2]
+        deg_s2,  ///< Standard deviation [deg/s², deg/s², deg/s²]
     };
     /// Gui selection for the Unit of the initial covariance for the angular acceleration
     InitCovarianceAngularAccUnit _initCovarianceAngularAccUnit = InitCovarianceAngularAccUnit::deg_s2;
@@ -350,7 +350,7 @@ class SensorCombiner : public Imu
     enum class InitCovarianceAccelerationUnit
     {
         m2_s4, ///< Variance [(m^2)/(s^4), (m^2)/(s^4), (m^2)/(s^4)]
-        m_s2,  ///< Standard deviation [m/s^2, m/s^2, m/s^2]
+        m_s2,  ///< Standard deviation [m/s², m/s², m/s²]
     };
     /// Gui selection for the Unit of the initial covariance for the acceleration
     InitCovarianceAccelerationUnit _initCovarianceAccelerationUnit = InitCovarianceAccelerationUnit::m_s2;
@@ -364,7 +364,7 @@ class SensorCombiner : public Imu
     enum class InitCovarianceJerkUnit
     {
         m2_s6, ///< Variance [(m^2)/(s^6), (m^2)/(s^6), (m^2)/(s^6)]
-        m_s3,  ///< Standard deviation [m/s^3, m/s^3, m/s^3]
+        m_s3,  ///< Standard deviation [m/s³, m/s³, m/s³]
     };
     /// Gui selection for the Unit of the initial covariance for the jerk
     InitCovarianceJerkUnit _initCovarianceJerkUnit = InitCovarianceJerkUnit::m_s3;
@@ -374,33 +374,33 @@ class SensorCombiner : public Imu
 
     // #########################################################################################################################################
 
-    /// Possible Units for the initial covariance for the angular acceleration biases (standard deviation σ or Variance σ²)
-    enum class InitCovarianceBiasAngAccUnit
+    /// Possible Units for the initial covariance for the angular rate biases (standard deviation σ or Variance σ²)
+    enum class InitCovarianceBiasAngRateUnit
     {
-        rad2_s4, ///< Variance [(rad^2)/(s^4), (rad^2)/(s^4), (rad^2)/(s^4)]
-        rad_s2,  ///< Standard deviation [rad/s^2, rad/s^2, rad/s^2]
-        deg2_s4, ///< Variance [(deg^2)/(s^4), (deg^2)/(s^4), (deg^2)/(s^4)]
-        deg_s2,  ///< Standard deviation [deg/s^2, deg/s^2, deg/s^2]
+        rad2_s2, ///< Variance [rad²/s², rad²/s², rad²/s²]
+        rad_s,   ///< Standard deviation [rad/s, rad/s, rad/s]
+        deg2_s2, ///< Variance [deg²/s², deg²/s², deg²/s²]
+        deg_s,   ///< Standard deviation [deg/s, deg/s, deg/s]
     };
-    /// Gui selection for the Unit of the initial covariance for the angular acceleration biases
-    InitCovarianceBiasAngAccUnit _initCovarianceBiasAngAccUnit = InitCovarianceBiasAngAccUnit::deg_s2;
+    /// Gui selection for the Unit of the initial covariance for the angular rate biases
+    InitCovarianceBiasAngRateUnit _initCovarianceBiasAngRateUnit = InitCovarianceBiasAngRateUnit::deg_s;
 
-    /// GUI selection of the initial covariance diagonal values for angular acceleration biases (standard deviation σ or Variance σ²)
-    Eigen::Vector3d _initCovarianceBiasAngAcc{ 1, 1, 1 };
+    /// GUI selection of the initial covariance diagonal values for angular rate biases (standard deviation σ or Variance σ²)
+    Eigen::Vector3d _initCovarianceBiasAngRate{ 1, 1, 1 };
 
     // #########################################################################################################################################
 
-    /// Possible Units for the initial covariance for the jerk biases (standard deviation σ or Variance σ²)
-    enum class InitCovarianceBiasJerkUnit
+    /// Possible Units for the initial covariance for the acceleration biases (standard deviation σ or Variance σ²)
+    enum class InitCovarianceBiasAccUnit
     {
-        m2_s6, ///< Variance [(m^2)/(s^6), (m^2)/(s^6), (m^2)/(s^6)]
-        m_s3,  ///< Standard deviation [m/s^3, m/s^3, m/s^3]
+        m2_s4, ///< Variance [(m^2)/(s^4), (m^2)/(s^4), (m^2)/(s^4)]
+        m_s2,  ///< Standard deviation [m/s², m/s², m/s²]
     };
-    /// Gui selection for the Unit of the initial covariance for the jerk biases
-    InitCovarianceBiasJerkUnit _initCovarianceBiasJerkUnit = InitCovarianceBiasJerkUnit::m_s3;
+    /// Gui selection for the Unit of the initial covariance for the acceleration biases
+    InitCovarianceBiasAccUnit _initCovarianceBiasAccUnit = InitCovarianceBiasAccUnit::m_s2;
 
-    /// GUI selection of the initial covariance diagonal values for jerk biases (standard deviation σ or Variance σ²)
-    Eigen::Vector3d _initCovarianceBiasJerk{ 0.1, 0.1, 0.1 };
+    /// GUI selection of the initial covariance diagonal values for acceleration biases (standard deviation σ or Variance σ²)
+    Eigen::Vector3d _initCovarianceBiasAcc{ 0.1, 0.1, 0.1 };
 
     // #########################################################################################################################################
     //                                                         Process Noise Matrix Q
@@ -409,8 +409,8 @@ class SensorCombiner : public Imu
     /// Possible Units for the initial covariance for the angular acceleration (standard deviation σ or Variance σ²)
     enum class StdevAngularAccUnit
     {
-        rad_s2, ///< Standard deviation [rad/s^2, rad/s^2, rad/s^2]
-        deg_s2, ///< Standard deviation [deg/s^2, deg/s^2, deg/s^2]
+        rad_s2, ///< Standard deviation [rad/s², rad/s², rad/s²]
+        deg_s2, ///< Standard deviation [deg/s², deg/s², deg/s²]
     };
     /// Gui selection for the Unit of the angular acceleration process noise
     StdevAngularAccUnit _stdevAngularAccUnit = StdevAngularAccUnit::deg_s2;
@@ -423,7 +423,7 @@ class SensorCombiner : public Imu
     /// Possible Units for the initial covariance for the jerk (standard deviation σ or Variance σ²)
     enum class StdevJerkUnit
     {
-        m_s3, ///< Standard deviation [m/s^3, m/s^3, m/s^3]
+        m_s3, ///< Standard deviation [m/s³, m/s³, m/s³]
     };
     /// Gui selection for the Unit of the jerk process noise
     StdevJerkUnit _stdevJerkUnit = StdevJerkUnit::m_s3;
@@ -438,9 +438,9 @@ class SensorCombiner : public Imu
     /// Possible Units for the initial covariance of the angular rate measurements (standard deviation σ or Variance σ²)
     enum class MeasurementUncertaintyAngularRateUnit
     {
-        rad2_s2, ///< Variance [(rad/s)^2, (rad/s)^2, (rad/s)^2]
+        rad2_s2, ///< Variance [rad²/s², rad²/s², rad²/s²]
         rad_s,   ///< Standard deviation [rad/s, rad/s, rad/s]
-        deg2_s2, ///< Variance [(deg/s)^2, (deg/s)^2, (deg/s)^2]
+        deg2_s2, ///< Variance [deg²/s², deg²/s², deg²/s²]
         deg_s,   ///< Standard deviation [deg/s, deg/s, deg/s]
     };
     /// Gui selection for the unit of the angular rate's measurement uncertainty
@@ -453,7 +453,7 @@ class SensorCombiner : public Imu
     enum class MeasurementUncertaintyAccelerationUnit
     {
         m2_s4, ///< Variance [(m^2)/(s^4), (m^2)/(s^4), (m^2)/(s^4)]
-        m_s2,  ///< Standard deviation [m/s^2, m/s^2, m/s^2]
+        m_s2,  ///< Standard deviation [m/s², m/s², m/s²]
     };
     /// Gui selection for the unit of the acceleration's measurement uncertainty
     MeasurementUncertaintyAccelerationUnit _measurementUncertaintyAccelerationUnit = MeasurementUncertaintyAccelerationUnit::m_s2;
