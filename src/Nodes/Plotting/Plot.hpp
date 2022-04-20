@@ -13,6 +13,7 @@
 #include "internal/Node/Node.hpp"
 
 #include "util/Container/ScrollingBuffer.hpp"
+#include "util/Container/Vector.hpp"
 
 #include "NodeData/State/PosVelAtt.hpp"
 #include "NodeData/State/InertialNavSol.hpp"
@@ -188,7 +189,7 @@ class Plot : public Node
                 }
                 else // Item exists already. Developer reordered the items in the list
                 {
-                    std::rotate(searchIter, searchIter + 1, iter);
+                    move(plotData, static_cast<size_t>(searchIter - plotData.begin()), dataIndex);
                 }
                 iter->markedForDelete = false;
             }
