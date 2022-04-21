@@ -354,8 +354,11 @@ void NAV::SensorCombiner::updateNumberOfInputPins()
     // Number of states per pin (biases of accel and gyro)
     uint8_t numStatesPerPin = 6;
 
-    static uint8_t numStates = numStatesEst + static_cast<uint8_t>(M * numStatesPerPin);
-    static uint8_t numMeasurements = 6 * M;
+    // Number of measurements per pin (acceleration and angular rate)
+    uint8_t numMeasPerPin = 6;
+
+    uint8_t numStates = numStatesEst + static_cast<uint8_t>(M * numStatesPerPin);
+    uint8_t numMeasurements = numMeasPerPin * M;
 
     double dt{}; // TODO: adapt input/calculation of 'Time difference between two successive measurements'
     double sigma_w{};
@@ -660,20 +663,16 @@ Eigen::MatrixXd NAV::SensorCombiner::initialErrorCovarianceMatrix_P0(uint8_t num
 {
     Eigen::MatrixXd P(numStates, numStates);
 
-    [[maybe_unused]] auto bla = varAngRate + varAngAcc + varAcc + varJerk + varBiasAngRate + varBiasAcc;
-
     P.block<3, 3>(0, 0).diagonal() = varAngRate;
     P.block<3, 3>(3, 3).diagonal() = varAngAcc;
     P.block<3, 3>(6, 6).diagonal() = varAcc;
     P.block<3, 3>(9, 9).diagonal() = varJerk;
 
-    P.block<3, 3>(12, 12).diagonal() = varBiasAngRate;
-    P.block<3, 3>(15, 15).diagonal() = varBiasAcc;
-    // TODO: loop to consider multiple sensors
-    // for (uint8_t i = 0; i < numStates; ++i)
-    // {
-    //     P(i, i) = 1; // no covariance at the beginning
-    // }
+    for (uint8_t i = 12; i < numStates; i += 6)
+    {
+        P.block<3, 3>(i, i).diagonal() = varBiasAngRate;
+        P.block<3, 3>(i + 3, i + 3).diagonal() = varBiasAcc;
+    }
 
     return P;
 }
