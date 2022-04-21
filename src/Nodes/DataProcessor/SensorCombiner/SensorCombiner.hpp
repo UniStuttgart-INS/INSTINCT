@@ -229,17 +229,19 @@ class SensorCombiner : public Imu
     /// @brief Calculates the process noise matrix Q
     /// @param[in] numStates Number of states
     /// @param[in] dt Time difference between two successive measurements
-    /// @param[in] sigma_w Standard deviation of angular acceleration (omegaDot) in [rad/s^2]
-    /// @param[in] sigma_f Standard deviation of specific force in [m/s^3]
-    /// @param[in] sigma_biasw Standard deviation of the bias on the angular acceleration (omegaDot) in [rad/s^2]
-    /// @param[in] sigma_biasf Standard deviation of the bias on the specific force in [m/s^3]
+    /// @param[in] varAngAcc Initial variance (3D) of the Angular Acceleration state in [(rad^2)/(s^4)]
+    /// @param[in] varJerk Initial variance (3D) of the Jerk state in [(m^2)/(s^6)]
+    /// @param[in] varBiasAngAcc Initial variance (3D) of the bias of the Angular Acceleration state in [(rad^2)/(s^4)] for a dynamic number of sensors
+    /// @param[in] varBiasJerk Initial variance (3D) of the bias of the Jerk state in [(m^2)/(s^6)] for a dynamic number of sensors
     /// @return Process noise matrix Q
     [[nodiscard]] static Eigen::MatrixXd processNoiseMatrix_Q(uint8_t numStates,
                                                               double dt,
-                                                              double sigma_w,
-                                                              double sigma_f,
-                                                              double sigma_biasw,
-                                                              double sigma_biasf);
+                                                              Eigen::Vector3d& varAngAcc,
+                                                              Eigen::Vector3d& varJerk,
+                                                              Eigen::Vector3d& varBiasAngAcc,
+                                                              Eigen::Vector3d& varBiasJerk); // TODO: make array to accept multiple sensors
+    //  Eigen::Matrix<double, 3, Eigen::Dynamic>& varBiasAngAcc,
+    //  Eigen::Matrix<double, 3, Eigen::Dynamic>& varBiasJerk);
 
     /// @brief Calculates the design matrix H
     /// @param[in] numStates Number of states
@@ -406,30 +408,63 @@ class SensorCombiner : public Imu
     //                                                         Process Noise Matrix Q
     // #########################################################################################################################################
 
-    /// Possible Units for the initial covariance for the angular acceleration (standard deviation σ or Variance σ²)
-    enum class StdevAngularAccUnit
+    /// Possible Units for the variance for the process noise of the angular acceleration (standard deviation σ or Variance σ²)
+    enum class VarAngularAccNoiseUnit
     {
-        rad_s2, ///< Standard deviation [rad/s², rad/s², rad/s²]
-        deg_s2, ///< Standard deviation [deg/s², deg/s², deg/s²]
+        rad2_s4, ///< Variance [(rad^2)/(s^4), (rad^2)/(s^4), (rad^2)/(s^4)]
+        rad_s2,  ///< Standard deviation [rad/s², rad/s², rad/s²]
+        deg2_s4, ///< Variance [(deg^2)/(s^4), (deg^2)/(s^4), (deg^2)/(s^4)]
+        deg_s2,  ///< Standard deviation [deg/s², deg/s², deg/s²]
     };
     /// Gui selection for the Unit of the angular acceleration process noise
-    StdevAngularAccUnit _stdevAngularAccUnit = StdevAngularAccUnit::deg_s2;
+    VarAngularAccNoiseUnit _varAngularAccNoiseUnit = VarAngularAccNoiseUnit::deg_s2;
 
     /// GUI selection of the angular acceleration process noise diagonal values
-    Eigen::Vector3d _stdevAngularAcc{ 0.1, 0.1, 0.1 };
+    Eigen::Vector3d _varAngularAccNoise{ 0.1, 0.1, 0.1 };
 
     // #########################################################################################################################################
 
-    /// Possible Units for the initial covariance for the jerk (standard deviation σ or Variance σ²)
-    enum class StdevJerkUnit
+    /// Possible Units for the variance for the process noise of the jerk (standard deviation σ or Variance σ²)
+    enum class VarJerkNoiseUnit
     {
-        m_s3, ///< Standard deviation [m/s³, m/s³, m/s³]
+        m2_s6, ///< Variance [(m^2)/(s^6), (m^2)/(s^6), (m^2)/(s^6)]
+        m_s3,  ///< Standard deviation [m/s³, m/s³, m/s³]
     };
     /// Gui selection for the Unit of the jerk process noise
-    StdevJerkUnit _stdevJerkUnit = StdevJerkUnit::m_s3;
+    VarJerkNoiseUnit _varJerkNoiseUnit = VarJerkNoiseUnit::m_s3;
 
     /// GUI selection of the jerk process noise diagonal values
-    Eigen::Vector3d _stdevJerk{ 0.1, 0.1, 0.1 };
+    Eigen::Vector3d _varJerkNoise{ 0.1, 0.1, 0.1 };
+
+    // #########################################################################################################################################
+
+    /// Possible Units for the variance for the process noise of the angular rate (standard deviation σ or Variance σ²)
+    enum class VarBiasAngRateNoiseUnit
+    {
+        rad2_s2, ///< Variance [rad²/s², rad²/s², rad²/s²]
+        rad_s,   ///< Standard deviation [rad/s, rad/s, rad/s]
+        deg2_s2, ///< Variance [deg²/s², deg²/s², deg²/s²]
+        deg_s,   ///< Standard deviation [deg/s, deg/s, deg/s]
+    };
+    /// Gui selection for the Unit of the process noise of the angular rate
+    VarBiasAngRateNoiseUnit _varBiasAngRateNoiseUnit = VarBiasAngRateNoiseUnit::deg_s;
+
+    /// GUI selection of the process noise of the angular rate diagonal values (standard deviation σ or Variance σ²)
+    Eigen::Vector3d _varBiasAngRateNoise{ 1, 1, 1 };
+
+    // #########################################################################################################################################
+
+    /// Possible Units for the variance for the process noise of the acceleration (standard deviation σ or Variance σ²)
+    enum class VarBiasAccelerationNoiseUnit
+    {
+        m2_s4, ///< Variance [(m^2)/(s^4), (m^2)/(s^4), (m^2)/(s^4)]
+        m_s2,  ///< Standard deviation [m/s², m/s², m/s²]
+    };
+    /// Gui selection for the Unit of the process noise of the acceleration
+    VarBiasAccelerationNoiseUnit _varBiasAccelerationNoiseUnit = VarBiasAccelerationNoiseUnit::m_s2;
+
+    /// GUI selection of the process noise of the acceleration diagonal values (standard deviation σ or Variance σ²)
+    Eigen::Vector3d _varBiasAccelerationNoise{ 0.1, 0.1, 0.1 };
 
     // #########################################################################################################################################
     //                                                       Measurement Noise Matrix R
