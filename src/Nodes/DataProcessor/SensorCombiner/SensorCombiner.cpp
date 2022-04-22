@@ -733,7 +733,7 @@ const Eigen::MatrixXd NAV::SensorCombiner::designMatrix_H(uint8_t numStates, uin
     return H;
 }
 
-Eigen::MatrixXd NAV::SensorCombiner::measurementNoiseMatrix_R(double alpha, Eigen::MatrixXd& R, Eigen::VectorXd& e, Eigen::Matrix<double, Eigen::Dynamic, 9>& H, Eigen::Matrix<double, 9, 9>& P)
+Eigen::MatrixXd NAV::SensorCombiner::measurementNoiseMatrix_R(double alpha, Eigen::MatrixXd& R, Eigen::VectorXd& e, Eigen::MatrixXd& H, Eigen::MatrixXd& P)
 {
     return alpha * R + (1.0 - alpha) * (e * e.transpose() + H * P * H.transpose());
 }

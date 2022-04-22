@@ -261,8 +261,8 @@ class SensorCombiner : public Imu
     [[nodiscard]] static Eigen::MatrixXd measurementNoiseMatrix_R(double alpha,
                                                                   Eigen::MatrixXd& R,
                                                                   Eigen::VectorXd& e,
-                                                                  Eigen::Matrix<double, Eigen::Dynamic, 9>& H,
-                                                                  Eigen::Matrix<double, 9, 9>& P);
+                                                                  Eigen::MatrixXd& H,
+                                                                  Eigen::MatrixXd& P);
 
     /// @brief Calculates the initial measurement noise matrix R
     /// @param[in] numMeasurements Number of measurements
