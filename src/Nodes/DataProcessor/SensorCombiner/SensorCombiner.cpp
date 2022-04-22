@@ -717,14 +717,19 @@ Eigen::MatrixXd NAV::SensorCombiner::processNoiseMatrix_Q(uint8_t numStates,
 
 const Eigen::MatrixXd NAV::SensorCombiner::designMatrix_H(uint8_t numStates, uint8_t numMeasurements, Eigen::Matrix<double, 3, 3>& DCM) //NOLINT(readability-const-return-type,readability-make-member-function-const,readability-convert-member-functions-to-static)
 {
-    Eigen::MatrixXd H(numStates, numMeasurements);
-    H = Eigen::MatrixXd::Zero(numStates, numMeasurements);
+    Eigen::MatrixXd H(numMeasurements, numStates);
+    H.setZero();
 
     // Mapping of state estimates on sensors
-    for (uint8_t i = 0; i < numStates; i += 6)
+    for (uint8_t i = 0; i < numMeasurements; i += 6)
     {
-        H.block<3, 3>(i, 0) = DCM;
-        H.block<3, 3>(i + 3, 3) = DCM;
+        H.block<3, 3>(i, 0) = DCM;     // Rotation for angular rate
+        H.block<3, 3>(i + 3, 6) = DCM; // Rotation for acceleration
+
+        if (i >= 6)
+        {
+            H.block<6, 6>(i, i + 6) = Eigen::MatrixXd::Identity(6, 6); // constant bias of each sensor (3 angular rates and 3 accelerations)
+        }
     }
 
     return H;
