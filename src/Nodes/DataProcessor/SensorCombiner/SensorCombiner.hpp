@@ -265,12 +265,13 @@ class SensorCombiner : public Imu
                                                                   Eigen::Matrix<double, 9, 9>& P);
 
     /// @brief Calculates the initial measurement noise matrix R
-    /// @param[in] M Number of sensors
     /// @param[in] numMeasurements Number of measurements
-    /// @param[in] sigma_w Standard deviation of angular velocity
-    /// @param[in] sigma_f Standard deviation of specific force
+    /// @param[in] varAngRateMeas Variance of angular rate measurements in [rad²/s²]
+    /// @param[in] varAccelerationMeas Variance of acceleration measurements in [m²/(s^4)]
     /// @return Initial measurement noise matrix R
-    [[nodiscard]] static Eigen::MatrixXd measurementNoiseMatrix_R_init(uint8_t M, uint8_t numMeasurements, double sigma_w, double sigma_f);
+    [[nodiscard]] static Eigen::MatrixXd measurementNoiseMatrix_R_init(uint8_t numMeasurements,
+                                                                       Eigen::Vector3d& varAngRateMeas,
+                                                                       Eigen::Vector3d& varAccelerationMeas);
 
     /// @brief Initial error covariance matrix P_0
     /// @param[in] numStates Number of states

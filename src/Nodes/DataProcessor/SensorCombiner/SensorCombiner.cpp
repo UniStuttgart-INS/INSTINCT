@@ -386,8 +386,6 @@ void NAV::SensorCombiner::updateNumberOfInputPins()
     uint8_t numMeasurements = numMeasPerPin * M;
 
     double dt{}; // TODO: adapt input/calculation of 'Time difference between two successive measurements'
-    double sigma_w{};
-    double sigma_f{};
     Eigen::Matrix3d DCM{};
 
     // ------------------------------------------------------ Error covariance matrix P --------------------------------------------------------
@@ -584,7 +582,7 @@ void NAV::SensorCombiner::updateNumberOfInputPins()
     _kalmanFilter.Phi = stateTransitionMatrix_Phi(numStates, dt);
     _kalmanFilter.Q = processNoiseMatrix_Q(numStates, dt, variance_AngAccNoise, variance_jerkNoise, variance_biasAngRate, variance_biasAcceleration);
     _kalmanFilter.H = designMatrix_H(numStates, numMeasurements, DCM);
-    _kalmanFilter.R = measurementNoiseMatrix_R_init(M, numMeasurements, sigma_w, sigma_f);
+    _kalmanFilter.R = measurementNoiseMatrix_R_init(numMeasurements, sigmaSquaredAngularRateMeas, sigmaSquaredAccelerationMeas);
 }
 
 void NAV::SensorCombiner::recvSignal(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
@@ -740,15 +738,15 @@ Eigen::MatrixXd NAV::SensorCombiner::measurementNoiseMatrix_R(double alpha, Eige
     return alpha * R + (1.0 - alpha) * (e * e.transpose() + H * P * H.transpose());
 }
 
-Eigen::MatrixXd NAV::SensorCombiner::measurementNoiseMatrix_R_init(uint8_t M, uint8_t numMeasurements, double sigma_w, double sigma_f)
+Eigen::MatrixXd NAV::SensorCombiner::measurementNoiseMatrix_R_init(uint8_t numMeasurements, Eigen::Vector3d& varAngRateMeas, Eigen::Vector3d& varAccelerationMeas)
 {
     Eigen::MatrixXd R(numMeasurements, numMeasurements);
     R.setZero();
 
-    for (uint8_t i = 0; i < 3 * M; ++i)
+    for (uint8_t i = 0; i < numMeasurements; i += 6)
     {
-        R(i, i) = std::pow(sigma_w, 2);
-        R(3 * M + i, 3 * M + i) = std::pow(sigma_f, 2);
+        R.block<3, 3>(i, i).diagonal() = varAngRateMeas;
+        R.block<3, 3>(i + 3, i + 3).diagonal() = varAccelerationMeas;
     }
 
     return R;
