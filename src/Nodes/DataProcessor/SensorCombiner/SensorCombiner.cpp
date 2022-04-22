@@ -129,6 +129,19 @@ void NAV::SensorCombiner::guiConfig()
     ImGui::Separator();
 
     ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+
+    constexpr float columnWidth{ 130.0F };
+
+    ImGui::SetNextItemWidth(columnWidth);
+    if (ImGui::InputDoubleL(fmt::format("Highest IMU sample rate##{}", size_t(id)).c_str(), &_imuFrequency, 1e-3, 1e4, 0.0, 0.0, "%.0f Hz"))
+    {
+        LOG_DEBUG("{}: imuFrequency changed to {}", nameId(), _imuFrequency);
+        flow::ApplyChanges();
+    }
+
+    ImGui::Separator();
+
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
     if (ImGui::TreeNode(fmt::format("P Error covariance matrix (init)##{}", size_t(id)).c_str()))
     {
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular rate covariance ({})##{}",
@@ -385,7 +398,9 @@ void NAV::SensorCombiner::updateNumberOfInputPins()
     uint8_t numStates = numStatesEst + static_cast<uint8_t>(M * numStatesPerPin);
     uint8_t numMeasurements = numMeasPerPin * M;
 
-    double dt{}; // TODO: adapt input/calculation of 'Time difference between two successive measurements'
+    // Initial time step for KF prediction
+    double dt = 1.0 / _imuFrequency;
+
     Eigen::Matrix3d DCM{};
 
     // ------------------------------------------------------ Error covariance matrix P --------------------------------------------------------

@@ -313,6 +313,9 @@ class SensorCombiner : public Imu
     /// Kalman Filter representation
     KalmanFilter _kalmanFilter{ 12, 6 };
 
+    /// @brief Highest IMU sample rate (for time step in KF prediction)
+    double _imuFrequency{ 100 };
+
     // #########################################################################################################################################
     //                                                        Error Covariance Matrix P
     // #########################################################################################################################################
