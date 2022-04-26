@@ -7,6 +7,7 @@
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/INS/Functions.hpp"
 #include "Navigation/INS/Mechanization.hpp"
+#include "Navigation/Math/CubicSpline.hpp"
 #include "Navigation/Gravity/Gravity.hpp"
 #include "Navigation/Math/NumericalIntegration.hpp"
 #include "util/Time/TimeBase.hpp"

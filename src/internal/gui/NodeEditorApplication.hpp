@@ -9,7 +9,7 @@
 
 #include <imgui.h>
 #include <implot.h>
-
+#include <array>
 #include "internal/gui/GlobalActions.hpp"
 
 #include <thread>
