@@ -300,15 +300,26 @@ class SensorCombiner : public Imu
     /// Number of input pins
     size_t _nInputPins = 1;
 
+    /// @brief Flag to check whether the design matrix H has been initialized
+    bool _designMatrixInitialized = false;
+
+    /// @brief Number of estimated states (accel and gyro)
+    uint8_t _numStatesEst = 6;
+
+    /// @brief Number of states per pin (biases of accel and gyro)
+    uint8_t _numStatesPerPin = 6;
+
+    /// @brief Number of measurements per pin (acceleration and angular rate)
+    uint8_t _numMeasPerPin = 6;
+
     /// Data storage for each pin
     std::vector<PinData> _pinData;
 
-    /// IMU Observation list
-    /// Length depends on the integration algorithm. Newest observation first (tₖ, tₖ₋₁, tₖ₋₂, ...)
-    std::deque<std::shared_ptr<const ImuObs>> _imuObservations;
+    /// @brief IMU observation from a certain sensor
+    std::shared_ptr<const ImuObs> _imuObs;
 
-    /// @brief Maximum amount of imu observations to keep
-    size_t _maxSizeImuObservations = 0;
+    /// @brief Rotations of all connected IMUs
+    std::map<size_t, Eigen::Matrix3d> _imuRotations;
 
     /// Kalman Filter representation
     KalmanFilter _kalmanFilter{ 12, 6 };
