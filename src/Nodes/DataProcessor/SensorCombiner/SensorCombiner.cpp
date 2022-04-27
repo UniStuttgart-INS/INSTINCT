@@ -114,8 +114,8 @@ void NAV::SensorCombiner::guiConfig()
         }
 
         ImGui::TableNextRow();
-        ImGui::TableNextColumn(); // Pin
-        if (ImGui::Button(fmt::format("Add Pin##{}", size_t(id)).c_str()))
+        ImGui::TableNextColumn();                                          // Pin
+        if (ImGui::Button(fmt::format("Add Pin##{}", size_t(id)).c_str())) // TODO: increment only if Pin is connected
         {
             ++_nInputPins;
             LOG_DEBUG("{}: # Input Pins changed to {}", nameId(), _nInputPins);
@@ -354,6 +354,11 @@ bool NAV::SensorCombiner::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+    _numStates = _numStatesEst + static_cast<uint8_t>(_nInputPins * _numStatesPerPin);
+    _numMeasurements = _numMeasPerPin * static_cast<uint8_t>(_nInputPins);
+
+    KalmanFilter _kalmanFilter{ _numStates, _numMeasurements };
+
     _kalmanFilter.setZero();
     _imuRotations.clear();
 
@@ -384,9 +389,6 @@ void NAV::SensorCombiner::updateNumberOfInputPins()
     }
 
     _designMatrixInitialized = false;
-
-    uint8_t numStates = _numStatesEst + static_cast<uint8_t>(_nInputPins * _numStatesPerPin);
-    uint8_t numMeasurements = _numMeasPerPin * static_cast<uint8_t>(_nInputPins);
 
     // Initial time step for KF prediction
     double dt = 1.0 / _imuFrequency;
@@ -579,19 +581,19 @@ void NAV::SensorCombiner::updateNumberOfInputPins()
     }
 
     // --------------------------------------------------------- KF Initializations ------------------------------------------------------------
-    KalmanFilter _kalmanFilter{ numStates, numMeasurements };
-    // _kalmanFilter.P = initialErrorCovarianceMatrix_P0(varOmega, varAlpha, varAcc, varJerk, varBiasAlpha, varBiasAcc); // numStates not necessary as an argument
-    _kalmanFilter.P = initialErrorCovarianceMatrix_P0(numStates, variance_angularRate, variance_angularAcceleration, variance_acceleration, variance_jerk, variance_biasAngularAcceleration, variance_biasJerk);
-    _kalmanFilter.Phi = stateTransitionMatrix_Phi(numStates, dt);
-    _kalmanFilter.Q = processNoiseMatrix_Q(numStates, dt, variance_AngAccNoise, variance_jerkNoise, variance_biasAngRate, variance_biasAcceleration);
-    _kalmanFilter.R = measurementNoiseMatrix_R_init(numMeasurements, sigmaSquaredAngularRateMeas, sigmaSquaredAccelerationMeas);
+    KalmanFilter _kalmanFilter{ _numStates, _numMeasurements };
+    // _kalmanFilter.P = initialErrorCovarianceMatrix_P0(varOmega, varAlpha, varAcc, varJerk, varBiasAlpha, varBiasAcc); // _numStates not necessary as an argument
+    _kalmanFilter.P = initialErrorCovarianceMatrix_P0(_numStates, variance_angularRate, variance_angularAcceleration, variance_acceleration, variance_jerk, variance_biasAngularAcceleration, variance_biasJerk);
+    _kalmanFilter.Phi = stateTransitionMatrix_Phi(_numStates, dt);
+    _kalmanFilter.Q = processNoiseMatrix_Q(_numStates, dt, variance_AngAccNoise, variance_jerkNoise, variance_biasAngRate, variance_biasAcceleration);
+    _kalmanFilter.R = measurementNoiseMatrix_R_init(_numMeasurements, sigmaSquaredAngularRateMeas, sigmaSquaredAccelerationMeas);
 }
 
 void NAV::SensorCombiner::recvSignal(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId)
 {
-    auto _imuObs = std::static_pointer_cast<const ImuObs>(nodeData);
+    auto imuObs = std::static_pointer_cast<const ImuObs>(nodeData);
 
-    if (!_imuObs->insTime.has_value() && !_imuObs->timeSinceStartup.has_value())
+    if (!imuObs->insTime.has_value() && !imuObs->timeSinceStartup.has_value())
     {
         LOG_ERROR("{}: Can't set new imuObs__t0 because the observation has no time tag (insTime/timeSinceStartup)", nameId());
         return;
@@ -600,11 +602,11 @@ void NAV::SensorCombiner::recvSignal(const std::shared_ptr<const NodeData>& node
     {
         size_t pinIndex = pinIndexFromId(link->endPinId);
 
-        // Read sensor rotation info from '_imuObs'
+        // Read sensor rotation info from 'imuObs'
         if (!_imuRotations.contains(pinIndex))
         {
             // Do heavy calculations
-            auto DCM = _imuObs->imuPos.b_quatAccel_p().toRotationMatrix();
+            auto DCM = imuObs->imuPos.b_quatAccel_p().toRotationMatrix();
 
             _imuRotations.insert_or_assign(pinIndex, DCM);
         }
@@ -614,43 +616,44 @@ void NAV::SensorCombiner::recvSignal(const std::shared_ptr<const NodeData>& node
     {
         if (!_designMatrixInitialized)
         {
-            uint8_t numStates = _numStatesEst + static_cast<uint8_t>(_nInputPins * _numStatesPerPin);
-            uint8_t numMeasurements = _numMeasPerPin * static_cast<uint8_t>(_nInputPins);
+            KalmanFilter _kalmanFilter{ _numStates, _numMeasurements };
 
             auto DCM = _imuRotations.at(0); // TODO: extend to map in order to consider multiple different rotations
 
-            _kalmanFilter.H = designMatrix_H(numStates, numMeasurements, DCM);
+            _kalmanFilter.H = designMatrix_H(_numStates, _numMeasurements, DCM);
 
             _designMatrixInitialized = true;
         }
         if (_designMatrixInitialized)
         {
-            combineSignals();
+            combineSignals(imuObs);
         }
     }
 }
 
-void NAV::SensorCombiner::combineSignals() //NOLINT(readability-convert-member-functions-to-static)
+void NAV::SensorCombiner::combineSignals(std::shared_ptr<const ImuObs>& imuObs) //NOLINT(readability-convert-member-functions-to-static)
 {
     LOG_TRACE("{}: called", nameId());
-    // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
+
+    auto imuObsFiltered = std::make_shared<ImuObs>(this->_imuPos);
+
+    KalmanFilter _kalmanFilter{ _numStates, _numMeasurements };
+
+    _kalmanFilter.predict();
+
+    _kalmanFilter.correct();
+
     // Construct imuObs
-    // auto imuObsFiltered = std::make_shared<ImuObs>(this->_imuPos);
+    imuObsFiltered->insTime = imuObs->insTime;
+    imuObsFiltered->accelUncompXYZ.emplace(_kalmanFilter.x(6, 0), _kalmanFilter.x(7, 0), _kalmanFilter.x(8, 0));
+    imuObsFiltered->gyroUncompXYZ.emplace(_kalmanFilter.x(0, 0), _kalmanFilter.x(1, 0), _kalmanFilter.x(2, 0));
 
-    // _kalmanFilter.predict();
-
-    // _kalmanFilter.correct();
-
-    // imuObsFiltered->insTime = _imuObs->insTime;
-    // imuObsFiltered->accelUncompXYZ.emplace(_kalmanFilter.x(6, 0), _kalmanFilter.x(7, 0), _kalmanFilter.x(8, 0));
-    // imuObsFiltered->gyroUncompXYZ.emplace(_kalmanFilter.x(0, 0), _kalmanFilter.x(1, 0), _kalmanFilter.x(2, 0));
-
-    // invokeCallbacks(OUTPUT_PORT_INDEX_COMBINED_SIGNAL, imuObsFiltered);
+    invokeCallbacks(OUTPUT_PORT_INDEX_COMBINED_SIGNAL, imuObsFiltered);
 }
 
-const Eigen::MatrixXd NAV::SensorCombiner::stateTransitionMatrix_Phi(uint8_t numStates, double dt) //NOLINT(readability-const-return-type,readability-make-member-function-const,readability-convert-member-functions-to-static)
+const Eigen::MatrixXd NAV::SensorCombiner::stateTransitionMatrix_Phi(uint8_t _numStates, double dt) //NOLINT(readability-const-return-type,readability-make-member-function-const,readability-convert-member-functions-to-static)
 {
-    Eigen::MatrixXd Phi(numStates, numStates);
+    Eigen::MatrixXd Phi(_numStates, _numStates);
 
     Phi.diagonal().setOnes(); // constant part of states
 
@@ -660,7 +663,7 @@ const Eigen::MatrixXd NAV::SensorCombiner::stateTransitionMatrix_Phi(uint8_t num
     return Phi;
 }
 
-Eigen::MatrixXd NAV::SensorCombiner::initialErrorCovarianceMatrix_P0(uint8_t numStates,
+Eigen::MatrixXd NAV::SensorCombiner::initialErrorCovarianceMatrix_P0(uint8_t _numStates,
                                                                      Eigen::Vector3d& varAngRate,
                                                                      Eigen::Vector3d& varAngAcc,
                                                                      Eigen::Vector3d& varAcc,
@@ -668,14 +671,14 @@ Eigen::MatrixXd NAV::SensorCombiner::initialErrorCovarianceMatrix_P0(uint8_t num
                                                                      Eigen::Vector3d& varBiasAngRate,
                                                                      Eigen::Vector3d& varBiasAcc)
 {
-    Eigen::MatrixXd P(numStates, numStates);
+    Eigen::MatrixXd P(_numStates, _numStates);
 
     P.block<3, 3>(0, 0).diagonal() = varAngRate;
     P.block<3, 3>(3, 3).diagonal() = varAngAcc;
     P.block<3, 3>(6, 6).diagonal() = varAcc;
     P.block<3, 3>(9, 9).diagonal() = varJerk;
 
-    for (uint8_t i = 12; i < numStates; i += 6)
+    for (uint8_t i = 12; i < _numStates; i += 6)
     {
         P.block<3, 3>(i, i).diagonal() = varBiasAngRate;
         P.block<3, 3>(i + 3, i + 3).diagonal() = varBiasAcc;
@@ -684,14 +687,14 @@ Eigen::MatrixXd NAV::SensorCombiner::initialErrorCovarianceMatrix_P0(uint8_t num
     return P;
 }
 
-Eigen::MatrixXd NAV::SensorCombiner::processNoiseMatrix_Q(uint8_t numStates,
+Eigen::MatrixXd NAV::SensorCombiner::processNoiseMatrix_Q(uint8_t _numStates,
                                                           double dt,
                                                           Eigen::Vector3d& varAngAcc,
                                                           Eigen::Vector3d& varJerk,
                                                           Eigen::Vector3d& varBiasAngAcc,
                                                           Eigen::Vector3d& varBiasJerk)
 {
-    Eigen::MatrixXd Q(numStates, numStates);
+    Eigen::MatrixXd Q(_numStates, _numStates);
 
     // Integrated Random Walk of the angular rate
     Q.block<3, 3>(0, 0).diagonal() = varAngAcc / 3. * std::pow(dt, 3);
@@ -706,7 +709,7 @@ Eigen::MatrixXd NAV::SensorCombiner::processNoiseMatrix_Q(uint8_t numStates,
     Q.block<3, 3>(9, 9).diagonal() = varJerk * dt;
 
     // Random Walk of the bias states
-    for (uint8_t i = 12; i < numStates; i += 6)
+    for (uint8_t i = 12; i < _numStates; i += 6)
     {
         Q.block<3, 3>(i, i).diagonal() = varBiasAngAcc * dt;
         Q.block<3, 3>(i + 3, i + 3).diagonal() = varBiasJerk * dt;
@@ -715,13 +718,13 @@ Eigen::MatrixXd NAV::SensorCombiner::processNoiseMatrix_Q(uint8_t numStates,
     return Q;
 }
 
-const Eigen::MatrixXd NAV::SensorCombiner::designMatrix_H(uint8_t numStates, uint8_t numMeasurements, Eigen::Matrix<double, 3, 3>& DCM) //NOLINT(readability-const-return-type,readability-make-member-function-const,readability-convert-member-functions-to-static)
+const Eigen::MatrixXd NAV::SensorCombiner::designMatrix_H(uint8_t _numStates, uint8_t _numMeasurements, Eigen::Matrix<double, 3, 3>& DCM) //NOLINT(readability-const-return-type,readability-make-member-function-const,readability-convert-member-functions-to-static)
 {
-    Eigen::MatrixXd H(numMeasurements, numStates);
+    Eigen::MatrixXd H(_numMeasurements, _numStates);
     H.setZero();
 
     // Mapping of state estimates on sensors
-    for (uint8_t i = 0; i < numMeasurements; i += 6)
+    for (uint8_t i = 0; i < _numMeasurements; i += 6)
     {
         H.block<3, 3>(i, 0) = DCM;     // Rotation for angular rate
         H.block<3, 3>(i + 3, 6) = DCM; // Rotation for acceleration
@@ -740,12 +743,12 @@ Eigen::MatrixXd NAV::SensorCombiner::measurementNoiseMatrix_R(double alpha, Eige
     return alpha * R + (1.0 - alpha) * (e * e.transpose() + H * P * H.transpose());
 }
 
-Eigen::MatrixXd NAV::SensorCombiner::measurementNoiseMatrix_R_init(uint8_t numMeasurements, Eigen::Vector3d& varAngRateMeas, Eigen::Vector3d& varAccelerationMeas)
+Eigen::MatrixXd NAV::SensorCombiner::measurementNoiseMatrix_R_init(uint8_t _numMeasurements, Eigen::Vector3d& varAngRateMeas, Eigen::Vector3d& varAccelerationMeas)
 {
-    Eigen::MatrixXd R(numMeasurements, numMeasurements);
+    Eigen::MatrixXd R(_numMeasurements, _numMeasurements);
     R.setZero();
 
-    for (uint8_t i = 0; i < numMeasurements; i += 6)
+    for (uint8_t i = 0; i < _numMeasurements; i += 6)
     {
         R.block<3, 3>(i, i).diagonal() = varAngRateMeas;
         R.block<3, 3>(i + 3, i + 3).diagonal() = varAccelerationMeas;

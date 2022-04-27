@@ -295,7 +295,7 @@ class SensorCombiner : public Imu
     // Eigen::Matrix<double, Eigen::Dynamic, 1> residuals(double omega, double omegadot, double f, double w, double a, Eigen::Matrix<double, 3, Eigen::Dynamic> IMU_pos, Eigen::Matrix<double, 3, 3> DCM, uint8_t M, uint64_t ti);
 
     /// @brief Combines the signals
-    void combineSignals();
+    void combineSignals(std::shared_ptr<const ImuObs>& imuObs);
 
     /// Number of input pins
     size_t _nInputPins = 1;
@@ -312,17 +312,20 @@ class SensorCombiner : public Imu
     /// @brief Number of measurements per pin (acceleration and angular rate)
     uint8_t _numMeasPerPin = 6;
 
+    /// @brief Number of states overall
+    uint8_t _numStates = 12;
+
+    /// @brief Number of measurements overall
+    uint8_t _numMeasurements = 6;
+
     /// Data storage for each pin
     std::vector<PinData> _pinData;
-
-    /// @brief IMU observation from a certain sensor
-    std::shared_ptr<const ImuObs> _imuObs;
 
     /// @brief Rotations of all connected IMUs
     std::map<size_t, Eigen::Matrix3d> _imuRotations;
 
     /// Kalman Filter representation
-    KalmanFilter _kalmanFilter{ 12, 6 };
+    KalmanFilter _kalmanFilter{ _numStates, _numMeasurements };
 
     /// @brief Highest IMU sample rate (for time step in KF prediction)
     double _imuFrequency{ 100 };
