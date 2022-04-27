@@ -221,34 +221,29 @@ class SensorCombiner : public Imu
     void recvSignal(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Calculates the state-transition-matrix 𝚽
-    /// @param[in] numStates Number of states
     /// @param[in] dt Time difference between two successive measurements
     /// @return State-transition-matrix 𝚽
-    [[nodiscard]] const Eigen::MatrixXd stateTransitionMatrix_Phi(uint8_t numStates, double dt);
+    [[nodiscard]] Eigen::MatrixXd stateTransitionMatrix_Phi(double dt) const;
 
     /// @brief Calculates the process noise matrix Q
-    /// @param[in] numStates Number of states
     /// @param[in] dt Time difference between two successive measurements
     /// @param[in] varAngAcc Initial variance (3D) of the Angular Acceleration state in [(rad^2)/(s^4)]
     /// @param[in] varJerk Initial variance (3D) of the Jerk state in [(m^2)/(s^6)]
     /// @param[in] varBiasAngAcc Initial variance (3D) of the bias of the Angular Acceleration state in [(rad^2)/(s^4)] for a dynamic number of sensors
     /// @param[in] varBiasJerk Initial variance (3D) of the bias of the Jerk state in [(m^2)/(s^6)] for a dynamic number of sensors
     /// @return Process noise matrix Q
-    [[nodiscard]] static Eigen::MatrixXd processNoiseMatrix_Q(uint8_t numStates,
-                                                              double dt,
-                                                              Eigen::Vector3d& varAngAcc,
-                                                              Eigen::Vector3d& varJerk,
-                                                              Eigen::Vector3d& varBiasAngAcc,
-                                                              Eigen::Vector3d& varBiasJerk); // TODO: make array to accept multiple sensors
+    [[nodiscard]] Eigen::MatrixXd processNoiseMatrix_Q(double dt,
+                                                       Eigen::Vector3d& varAngAcc,
+                                                       Eigen::Vector3d& varJerk,
+                                                       Eigen::Vector3d& varBiasAngAcc,
+                                                       Eigen::Vector3d& varBiasJerk) const; // TODO: make array to accept multiple sensors
     //  Eigen::Matrix<double, 3, Eigen::Dynamic>& varBiasAngAcc,
     //  Eigen::Matrix<double, 3, Eigen::Dynamic>& varBiasJerk);
 
     /// @brief Calculates the design matrix H
-    /// @param[in] numStates Number of states
-    /// @param[in] numMeasurements Number of measurements
     /// @param[in] DCM Rotation matrix of mounting angles of a sensor w.r.t. a common reference
     /// @return Design matrix H
-    [[nodiscard]] const Eigen::MatrixXd designMatrix_H(uint8_t numStates, uint8_t numMeasurements, Eigen::Matrix<double, 3, 3>& DCM);
+    [[nodiscard]] Eigen::MatrixXd designMatrix_H(Eigen::Matrix<double, 3, 3>& DCM) const;
 
     /// @brief Calculates the adaptive measurement noise matrix R
     /// @param[in] alpha Forgetting factor (i.e. weight on previous estimates), 0 < alpha < 1
@@ -265,16 +260,13 @@ class SensorCombiner : public Imu
                                                                   Eigen::MatrixXd& P);
 
     /// @brief Calculates the initial measurement noise matrix R
-    /// @param[in] numMeasurements Number of measurements
     /// @param[in] varAngRateMeas Variance of angular rate measurements in [rad²/s²]
     /// @param[in] varAccelerationMeas Variance of acceleration measurements in [m²/(s^4)]
     /// @return Initial measurement noise matrix R
-    [[nodiscard]] static Eigen::MatrixXd measurementNoiseMatrix_R_init(uint8_t numMeasurements,
-                                                                       Eigen::Vector3d& varAngRateMeas,
-                                                                       Eigen::Vector3d& varAccelerationMeas);
+    [[nodiscard]] Eigen::MatrixXd measurementNoiseMatrix_R_init(Eigen::Vector3d& varAngRateMeas,
+                                                                Eigen::Vector3d& varAccelerationMeas) const;
 
     /// @brief Initial error covariance matrix P_0
-    /// @param[in] numStates Number of states
     /// @param[in] varAngRate Initial variance (3D) of the Angular Rate state in [rad²/s²]
     /// @param[in] varAngAcc Initial variance (3D) of the Angular Acceleration state in [(rad^2)/(s^4)]
     /// @param[in] varAcc Initial variance (3D) of the Acceleration state in [(m^2)/(s^4)]
@@ -282,13 +274,12 @@ class SensorCombiner : public Imu
     /// @param[in] varBiasAngRate Initial variance (3D) of the bias of the Angular Rate state in [rad²/s²] for a dynamic number of sensors
     /// @param[in] varBiasAcc Initial variance (3D) of the bias of the Acceleration state in [(m^2)/(s^4)] for a dynamic number of sensors
     /// @return The (_numStates) x (_numStates) matrix of initial state variances
-    [[nodiscard]] static Eigen::MatrixXd initialErrorCovarianceMatrix_P0(uint8_t numStates,
-                                                                         Eigen::Vector3d& varAngRate,
-                                                                         Eigen::Vector3d& varAngAcc,
-                                                                         Eigen::Vector3d& varAcc,
-                                                                         Eigen::Vector3d& varJerk,
-                                                                         Eigen::Vector3d& varBiasAngRate,
-                                                                         Eigen::Vector3d& varBiasAcc); // TODO: make array to accept multiple sensors
+    [[nodiscard]] Eigen::MatrixXd initialErrorCovarianceMatrix_P0(Eigen::Vector3d& varAngRate,
+                                                                  Eigen::Vector3d& varAngAcc,
+                                                                  Eigen::Vector3d& varAcc,
+                                                                  Eigen::Vector3d& varJerk,
+                                                                  Eigen::Vector3d& varBiasAngRate,
+                                                                  Eigen::Vector3d& varBiasAcc) const; // TODO: make array to accept multiple sensors
     //  Eigen::Matrix<double, 3, Eigen::Dynamic>& varBiasAngRate,
     //  Eigen::Matrix<double, 3, Eigen::Dynamic>& varBiasAcc);
 
