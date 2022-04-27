@@ -8,10 +8,78 @@
 #include <imgui_internal.h>
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/widgets/InputWithUnit.hpp"
+#include "util/Json.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
+
+namespace NAV
+{
+/// @brief Write info to a json object
+/// @param[out] j Json output
+/// @param[in] data Object to read info from
+void to_json(json& j, const SensorCombiner::PinData::SensorData& data)
+{
+    j = json{
+        { "displayName", data.displayName },
+    };
+}
+/// @brief Read info from a json object
+/// @param[in] j Json variable to read info from
+/// @param[out] data Output object
+void from_json(const json& j, SensorCombiner::PinData::SensorData& data)
+{
+    if (j.contains("displayName"))
+    {
+        j.at("displayName").get_to(data.displayName);
+    }
+}
+
+/// @brief Write info to a json object
+/// @param[out] j Json output
+/// @param[in] data Object to read info from
+void to_json(json& j, const SensorCombiner::PinData& data)
+{
+    j = json{
+        { "dataIdentifier", data.dataIdentifier },
+        { "size", data.size },
+        { "sensorData", data.sensorData },
+        { "pinType", data.pinType },
+        { "stride", data.stride },
+    };
+}
+/// @brief Read info from a json object
+/// @param[in] j Json variable to read info from
+/// @param[out] data Output object
+void from_json(const json& j, SensorCombiner::PinData& data)
+{
+    if (j.contains("dataIdentifier"))
+    {
+        j.at("dataIdentifier").get_to(data.dataIdentifier);
+    }
+    if (j.contains("size"))
+    {
+        j.at("size").get_to(data.size);
+    }
+    if (j.contains("sensorData"))
+    {
+        j.at("sensorData").get_to(data.sensorData);
+        for (auto& sensorData : data.sensorData)
+        {
+            sensorData.buffer = ScrollingBuffer<double>(static_cast<size_t>(data.size));
+        }
+    }
+    if (j.contains("pinType"))
+    {
+        j.at("pinType").get_to(data.pinType);
+    }
+    if (j.contains("stride"))
+    {
+        j.at("stride").get_to(data.stride);
+    }
+}
+} // namespace NAV
 
 NAV::SensorCombiner::SensorCombiner()
 {
@@ -338,16 +406,161 @@ void NAV::SensorCombiner::guiConfig()
 
     json j;
 
-    // TODO
+    j["nInputPins"] = _nInputPins;
+    j["imuRotations"] = _imuRotations;
+    j["pinData"] = _pinData;
+
+    j["initCovarianceAngularRateUnit"] = _initCovarianceAngularRateUnit;
+    j["initCovarianceAngularRate"] = _initCovarianceAngularRate;
+    j["initCovarianceAngularAccUnit"] = _initCovarianceAngularAccUnit;
+    j["initCovarianceAngularAcc"] = _initCovarianceAngularAcc;
+    j["initCovarianceAccelerationUnit"] = _initCovarianceAccelerationUnit;
+    j["initCovarianceAcceleration"] = _initCovarianceAcceleration;
+    j["initCovarianceJerkUnit"] = _initCovarianceJerkUnit;
+    j["initCovarianceJerk"] = _initCovarianceJerk;
+    j["initCovarianceBiasAngRateUnit"] = _initCovarianceBiasAngRateUnit;
+    j["initCovarianceBiasAngRate"] = _initCovarianceBiasAngRate;
+    j["initCovarianceBiasAccUnit"] = _initCovarianceBiasAccUnit;
+    j["initCovarianceBiasAcc"] = _initCovarianceBiasAcc;
+    j["varAngularAccNoiseUnit"] = _varAngularAccNoiseUnit;
+    j["varAngularAccNoise"] = _varAngularAccNoise;
+    j["varJerkNoiseUnit"] = _varJerkNoiseUnit;
+    j["varJerkNoise"] = _varJerkNoise;
+    j["varBiasAngRateNoiseUnit"] = _varBiasAngRateNoiseUnit;
+    j["varBiasAngRateNoise"] = _varBiasAngRateNoise;
+    j["varBiasAccelerationNoiseUnit"] = _varBiasAccelerationNoiseUnit;
+    j["varBiasAccelerationNoise"] = _varBiasAccelerationNoise;
+    j["measurementUncertaintyAngularRateUnit"] = _measurementUncertaintyAngularRateUnit;
+    j["measurementUncertaintyAngularRate"] = _measurementUncertaintyAngularRate;
+    j["measurementUncertaintyAccelerationUnit"] = _measurementUncertaintyAccelerationUnit;
+    j["measurementUncertaintyAcceleration"] = _measurementUncertaintyAcceleration;
 
     return j;
 }
 
-void NAV::SensorCombiner::restore([[maybe_unused]] json const& j) //TODO: remove [[maybe_unused]]
+void NAV::SensorCombiner::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
 
-    // TODO
+    if (j.contains("nInputPins"))
+    {
+        j.at("nInputPins").get_to(_nInputPins);
+        updateNumberOfInputPins();
+    }
+    if (j.contains("imuRotations"))
+    {
+        j.at("imuRotations").get_to(_imuRotations);
+    }
+    if (j.contains("pinData"))
+    {
+        j.at("pinData").get_to(_pinData);
+
+        for (size_t inputPinIndex = 0; inputPinIndex < inputPins.size(); inputPinIndex++) //NOLINT(modernize-loop-convert)
+        {
+            inputPins.at(inputPinIndex).notifyFunc.clear();
+        }
+    }
+    // -------------------------------------- 𝐏 Error covariance matrix -----------------------------------------
+    if (j.contains("initCovarianceAngularRateUnit"))
+    {
+        j.at("initCovarianceAngularRateUnit").get_to(_initCovarianceAngularRateUnit);
+    }
+    if (j.contains("initCovarianceAngularRate"))
+    {
+        j.at("initCovarianceAngularRate").get_to(_initCovarianceAngularRate);
+    }
+    if (j.contains("initCovarianceAngularAccUnit"))
+    {
+        j.at("initCovarianceAngularAccUnit").get_to(_initCovarianceAngularAccUnit);
+    }
+    if (j.contains("initCovarianceAngularAcc"))
+    {
+        j.at("initCovarianceAngularAcc").get_to(_initCovarianceAngularAcc);
+    }
+    if (j.contains("initCovarianceAccelerationUnit"))
+    {
+        j.at("initCovarianceAccelerationUnit").get_to(_initCovarianceAccelerationUnit);
+    }
+    if (j.contains("initCovarianceAcceleration"))
+    {
+        j.at("initCovarianceAcceleration").get_to(_initCovarianceAcceleration);
+    }
+    if (j.contains("initCovarianceJerkUnit"))
+    {
+        j.at("initCovarianceJerkUnit").get_to(_initCovarianceJerkUnit);
+    }
+    if (j.contains("initCovarianceJerk"))
+    {
+        j.at("initCovarianceJerk").get_to(_initCovarianceJerk);
+    }
+    if (j.contains("initCovarianceBiasAngRateUnit"))
+    {
+        j.at("initCovarianceBiasAngRateUnit").get_to(_initCovarianceBiasAngRateUnit);
+    }
+    if (j.contains("initCovarianceBiasAngRate"))
+    {
+        j.at("initCovarianceBiasAngRate").get_to(_initCovarianceBiasAngRate);
+    }
+    if (j.contains("initCovarianceBiasAccUnit"))
+    {
+        j.at("initCovarianceBiasAccUnit").get_to(_initCovarianceBiasAccUnit);
+    }
+    if (j.contains("initCovarianceBiasAcc"))
+    {
+        j.at("initCovarianceBiasAcc").get_to(_initCovarianceBiasAcc);
+    }
+
+    // ------------------------------- 𝐐 System/Process noise covariance matrix ---------------------------------
+    if (j.contains("varAngularAccNoiseUnit"))
+    {
+        j.at("varAngularAccNoiseUnit").get_to(_varAngularAccNoiseUnit);
+    }
+    if (j.contains("varAngularAccNoise"))
+    {
+        j.at("varAngularAccNoise").get_to(_varAngularAccNoise);
+    }
+    if (j.contains("varJerkNoiseUnit"))
+    {
+        j.at("varJerkNoiseUnit").get_to(_varJerkNoiseUnit);
+    }
+    if (j.contains("varJerkNoise"))
+    {
+        j.at("varJerkNoise").get_to(_varJerkNoise);
+    }
+    if (j.contains("varBiasAngRateNoiseUnit"))
+    {
+        j.at("varBiasAngRateNoiseUnit").get_to(_varBiasAngRateNoiseUnit);
+    }
+    if (j.contains("varBiasAngRateNoise"))
+    {
+        j.at("varBiasAngRateNoise").get_to(_varBiasAngRateNoise);
+    }
+    if (j.contains("varBiasAccelerationNoiseUnit"))
+    {
+        j.at("varBiasAccelerationNoiseUnit").get_to(_varBiasAccelerationNoiseUnit);
+    }
+    if (j.contains("varBiasAccelerationNoise"))
+    {
+        j.at("varBiasAccelerationNoise").get_to(_varBiasAccelerationNoise);
+    }
+
+    // -------------------------------- 𝐑 Measurement noise covariance matrix -----------------------------------
+    if (j.contains("measurementUncertaintyAngularRateUnit"))
+    {
+        j.at("measurementUncertaintyAngularRateUnit").get_to(_measurementUncertaintyAngularRateUnit);
+    }
+    if (j.contains("measurementUncertaintyAngularRate"))
+    {
+        j.at("measurementUncertaintyAngularRate").get_to(_measurementUncertaintyAngularRate);
+    }
+    if (j.contains("measurementUncertaintyAccelerationUnit"))
+    {
+        j.at("measurementUncertaintyAccelerationUnit").get_to(_measurementUncertaintyAccelerationUnit);
+    }
+    if (j.contains("measurementUncertaintyAcceleration"))
+    {
+        j.at("measurementUncertaintyAcceleration").get_to(_measurementUncertaintyAcceleration);
+    }
 }
 
 bool NAV::SensorCombiner::initialize()
