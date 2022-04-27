@@ -88,7 +88,7 @@ NAV::SensorCombiner::SensorCombiner()
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 483, 350 }; //TODO: adapt
+    _guiConfigDefaultWindowSize = { 934, 586 };
 
     updateNumberOfInputPins();
 
@@ -408,7 +408,11 @@ void NAV::SensorCombiner::guiConfig()
 
     j["nInputPins"] = _nInputPins;
     j["imuRotations"] = _imuRotations;
+    j["imuFrequency"] = _imuFrequency;
+    j["designMatrixInitialized"] = _designMatrixInitialized;
     j["pinData"] = _pinData;
+    j["numStates"] = _numStates;
+    j["numMeasurements"] = _numMeasurements;
 
     j["initCovarianceAngularRateUnit"] = _initCovarianceAngularRateUnit;
     j["initCovarianceAngularRate"] = _initCovarianceAngularRate;
@@ -450,6 +454,22 @@ void NAV::SensorCombiner::restore(json const& j)
     if (j.contains("imuRotations"))
     {
         j.at("imuRotations").get_to(_imuRotations);
+    }
+    if (j.contains("imuFrequency"))
+    {
+        j.at("imuFrequency").get_to(_imuFrequency);
+    }
+    if (j.contains("designMatrixInitialized"))
+    {
+        j.at("designMatrixInitialized").get_to(_designMatrixInitialized);
+    }
+    if (j.contains("designMatrixInitialized"))
+    {
+        j.at("numStates").get_to(_numStates);
+    }
+    if (j.contains("designMatrixInitialized"))
+    {
+        j.at("numMeasurements").get_to(_numMeasurements);
     }
     if (j.contains("pinData"))
     {
