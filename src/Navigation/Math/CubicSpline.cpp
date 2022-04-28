@@ -38,18 +38,18 @@ void CubicSpline::set_points(const std::vector<double>& x,
     made_monotonic=false;
     vals_x=x;
     vals_y=y;
-    unsigned int n = (unsigned int) x.size();
+    int n = (int) x.size();
  
         // classical cubic splines which are C^2 (twice cont differentiable)
         // this requires solving an equation system
 
         // setting up the matrix and right hand side of the equation system
         // for the parameters b[]
-        unsigned int n_upper = (boundary_type_left  == CubicSpline::not_a_knot) ? 2 : 1;
-        unsigned int n_lower = (boundary_type_right == CubicSpline::not_a_knot) ? 2 : 1;
+        int n_upper = (boundary_type_left  == CubicSpline::not_a_knot) ? 2 : 1;
+        int n_lower = (boundary_type_right == CubicSpline::not_a_knot) ? 2 : 1;
         BandMatrix A(n,n_upper,n_lower);
         std::vector<double>  rhs(n);
-        for(unsigned int i=1; i<n-1; i++) {
+        for(int i=1; i<n-1; i++) {
             A(i,i-1)=1.0/3.0*(x[i]-x[i-1]);
             A(i,i)=2.0/3.0*(x[i+1]-x[i-1]);
             A(i,i+1)=1.0/3.0*(x[i+1]-x[i]);
@@ -102,7 +102,7 @@ void CubicSpline::set_points(const std::vector<double>& x,
         // calculate parameters b[] and d[] based on c[]
         coef_d.resize(n);
         coef_b.resize(n);
-        for(unsigned int i=0; i<n-1; i++) {
+        for(int i=0; i<n-1; i++) {
             coef_d[i]=1.0/3.0*(coef_c[i+1]-coef_c[i])/(x[i+1]-x[i]);
             coef_b[i]=(y[i+1]-y[i])/(x[i+1]-x[i])
                    - 1.0/3.0*(2.0*coef_c[i]+coef_c[i+1])*(x[i+1]-x[i]);
@@ -206,11 +206,11 @@ double CubicSpline::deriv(int order, double x) const
 
 
 
-CubicSpline::BandMatrix::BandMatrix(unsigned int dim, unsigned int n_u, unsigned int n_l)
+CubicSpline::BandMatrix::BandMatrix(int dim, int n_u, int n_l)
 {
     resize(dim, n_u, n_l);
 }
-void CubicSpline::BandMatrix::resize(unsigned int dim, unsigned int n_u, unsigned int n_l)
+void CubicSpline::BandMatrix::resize(int dim, int n_u, int n_l)
 {
     upper_band.resize(n_u+1);
     lower_band.resize(n_l+1);
@@ -233,16 +233,16 @@ int CubicSpline::BandMatrix::dim() const
 
 // defines the new operator (), so that we can access the elements
 // by A(i,j), index going from i=0,...,dim()-1
-double & CubicSpline::BandMatrix::operator () (unsigned int i, unsigned int j)
+double & CubicSpline::BandMatrix::operator () (int i, int j)
 {
-    long  k=j-i;       // what band is the entry
+    int k=j-i;       // what band is the entry
     // k=0 -> diagonal, k<0 lower left part, k>0 upper right part
     if(k>=0)    return upper_band[k][i];
     else        return lower_band[-k][i];
 }
-double CubicSpline::BandMatrix::operator () (unsigned int i, unsigned int j) const
+double CubicSpline::BandMatrix::operator () (int i, int j) const
 {
-    long k=j-i;       // what band is the entry
+    int k=j-i;       // what band is the entry
     // k=0 -> diagonal, k<0 lower left part, k>0 upper right part
     if(k>=0)    return upper_band[k][i];
     else        return lower_band[-k][i];
@@ -307,7 +307,7 @@ std::vector<double> CubicSpline::BandMatrix::l_solve(const std::vector<double>& 
     }
     return x;
 }
-// solves Rx=y
+
 std::vector<double> CubicSpline::BandMatrix::r_solve(const std::vector<double>& b) const
 {
     assert( dim()==(int)b.size() );

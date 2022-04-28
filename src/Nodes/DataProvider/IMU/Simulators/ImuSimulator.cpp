@@ -7,7 +7,6 @@
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/INS/Functions.hpp"
 #include "Navigation/INS/Mechanization.hpp"
-#include "Navigation/Math/CubicSpline.hpp"
 #include "Navigation/Gravity/Gravity.hpp"
 #include "Navigation/Math/NumericalIntegration.hpp"
 #include "util/Time/TimeBase.hpp"
@@ -592,9 +591,41 @@ bool NAV::ImuSimulator::initialize()
     LOG_TRACE("{}: called", nameId());
 
     _e_startPosition = trafo::lla2ecef_WGS84(_lla_startPosition);
+	
+	SplineInitializer();
+	
 
+		 
     return true;
 }
+
+void NAV::ImuSimulator::SplineInitializer()
+{
+	std::cout <<  "### " << _imuFrequency << "\n";
+ 
+    std::cout <<  "### " << _simulationDuration  << "\n";
+	
+	std::vector<double> SplineTime;
+	
+	std::vector<double> X;
+	
+	double t=0.0;
+	double dt = 1.0 / _imuFrequency;
+
+	while (t < 1)
+	{
+		SplineTime.push_back(t);
+		X.push_back(t*1000);
+		t+=dt;
+	}
+    SplineInfo.X.set_points(SplineTime,X);
+
+	
+	std::cout << "sdfsfs\n";
+	
+	
+}
+
 
 void NAV::ImuSimulator::deinitialize()
 {
@@ -663,6 +694,8 @@ bool NAV::ImuSimulator::checkStopCondition(double time, const Eigen::Vector3d& l
 
 std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 {
+    std::cout << "interpolated value at " << _imuUpdateTime << " = " <<  SplineInfo.X(_imuUpdateTime) << "\n";
+	std::cout << _imuUpdateTime << " "  << _imuLastUpdateTime << "\n";
     Eigen::Vector3d lla_position = lla_calcPosition(_imuUpdateTime, _imuLastUpdateTime, _lla_imuLastLinearPosition);
     LOG_DATA("{}: lla_position = {}°, {}°, {} m", nameId(), trafo::rad2deg(lla_position(0)), trafo::rad2deg(lla_position(1)), lla_position(2));
     Eigen::Vector3d e_position = trafo::lla2ecef_WGS84(lla_position);
@@ -692,7 +725,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
         _stopConditionReached = true;
         return nullptr;
     }
-
+	std::cout << "+++" << _imuUpdateTime << "\n";
     // ------------------------------------------------------------ Accelerations --------------------------------------------------------------
 
     // Force to keep vehicle on track

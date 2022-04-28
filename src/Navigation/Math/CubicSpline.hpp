@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <sstream>
 #include <string>
+#include <iostream>
 
 
 
@@ -14,7 +15,6 @@
 // header file and we don't want to export symbols to the obj files
 
 
-// spline interpolation
 class CubicSpline
 {
 public:
@@ -70,9 +70,9 @@ private:
 	    std::vector< std::vector<double> > lower_band;  // lower band
 	public:
 	    BandMatrix() {};                             // constructor
-	    BandMatrix(unsigned int dim, unsigned int n_u, unsigned int n_l);       // constructor
+	    BandMatrix(int dim, int n_u, int n_l);       // constructor
 	    ~BandMatrix() {};                            // destructor
-	    void resize(unsigned int dim, unsigned int n_u, unsigned int n_l);      // init with dim,n_u,n_l
+	    void resize(int dim, int n_u, int n_l);      // init with dim,n_u,n_l
 	    int dim() const;                             // matrix dimension
 	    int dim_upper_band() const
 	    {
@@ -83,8 +83,8 @@ private:
 	        return (int)lower_band.size()-1;
 	    }
 	    // access operator
-	    double & operator () (unsigned int i, unsigned int j);            // write
-	    double   operator () (unsigned int i, unsigned int j) const;      // read
+	    double & operator () (int i, int j);            // write
+	    double   operator () (int i, int j) const;      // read
 	    // we can store an additional diagonal (in lower_band)
 	    double& saved_diag(int i);
 	    double  saved_diag(int i) const;
