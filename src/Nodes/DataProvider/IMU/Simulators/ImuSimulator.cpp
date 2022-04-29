@@ -602,23 +602,42 @@ bool NAV::ImuSimulator::initialize()
 void NAV::ImuSimulator::SplineInitializer()
 {
 	std::cout <<  "### " << _imuFrequency << "\n";
- 
+
     std::cout <<  "### " << _simulationDuration  << "\n";
 	
 	std::vector<double> SplineTime;
 	
-	std::vector<double> X;
 	
-	double t=0.0;
-	double dt = 1.0 / _imuFrequency;
+    if (_trajectoryType == TrajectoryType::Fixed)
+    {
 
-	while (t < 1)
-	{
-		SplineTime.push_back(t);
-		X.push_back(t*1000);
-		t+=dt;
-	}
-    SplineInfo.X.set_points(SplineTime,X);
+		
+		SplineTime.push_back(-10.0); // 10 seconds in the past; simply to define the derivative at zero seconds
+		SplineTime.push_back(0.0);
+		SplineTime.push_back(_simulationDuration);
+		SplineTime.push_back(_simulationDuration+10.0); // 10 seconds past simulation end; simply to define the derivative at end node
+		
+		Eigen::Vector3d e_position = trafo::lla2ecef_WGS84(_lla_startPosition);
+		std::vector<double> X(4, e_position[0]);
+		std::vector<double> Y(4, e_position[1]);
+		std::vector<double> Z(4, e_position[2]);
+		std::vector<double> Roll(4, _fixedTrajectoryStartOrientation.x());
+		std::vector<double> Pitch(4,_fixedTrajectoryStartOrientation.y());
+		std::vector<double> Yaw(4, _fixedTrajectoryStartOrientation.z());
+		
+		SplineInfo.X.set_points(SplineTime,X);
+		SplineInfo.Y.set_points(SplineTime,Y);
+		SplineInfo.Z.set_points(SplineTime,Z);
+		
+		SplineInfo.Roll.set_points(SplineTime,Roll);
+		SplineInfo.Pitch.set_points(SplineTime,Pitch);
+		SplineInfo.Yaw.set_points(SplineTime,Yaw);
+		
+		
+		
+		
+    }
+
 
 	
 	std::cout << "sdfsfs\n";
@@ -827,11 +846,11 @@ std::array<double, 3> NAV::ImuSimulator::calcFlightAngles(const Eigen::Vector3d&
     double pitch = std::abs(n_velocity.head<2>().norm()) > 1e-8 ? calcPitchFromVelocity(n_velocity) : 0;
     double yaw = calcYawFromVelocity(n_velocity);
 
-    if (_trajectoryType == TrajectoryType::Fixed)
+    if (_trajectoryType == TrajectoryType::Fixed) // will be removed once everything has been implemented in splines
     {
-        roll = _fixedTrajectoryStartOrientation.x();
-        pitch = _fixedTrajectoryStartOrientation.y();
-        yaw = _fixedTrajectoryStartOrientation.z();
+        roll = SplineInfo.Roll(_imuUpdateTime);
+        pitch = SplineInfo.Pitch(_imuUpdateTime);
+        yaw = SplineInfo.Yaw(_imuUpdateTime);
     }
     else if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
     {
@@ -853,9 +872,10 @@ std::array<double, 3> NAV::ImuSimulator::calcFlightAngles(const Eigen::Vector3d&
 
 Eigen::Vector3d NAV::ImuSimulator::lla_calcPosition(double time, double& lastUpdateTime, Eigen::Vector3d& lla_lastPosition)
 {
-    if (_trajectoryType == TrajectoryType::Fixed)
-    {
-        return _lla_startPosition;
+    if (_trajectoryType == TrajectoryType::Fixed) // will be removed once everything has been implemented in splines
+    {        
+		Eigen::Vector3d e_pos(SplineInfo.X(_imuUpdateTime),SplineInfo.Y(_imuUpdateTime),SplineInfo.Z(_imuUpdateTime));	
+		return trafo::ecef2lla_WGS84(e_pos);
     }
     if (_trajectoryType == TrajectoryType::Linear)
     {
@@ -918,9 +938,11 @@ Eigen::Vector3d NAV::ImuSimulator::lla_calcPosition(double time, double& lastUpd
 
 Eigen::Vector3d NAV::ImuSimulator::n_calcVelocity(double time, const Eigen::Quaterniond& n_Quat_e)
 {
-    if (_trajectoryType == TrajectoryType::Fixed)
+    if (_trajectoryType == TrajectoryType::Fixed) // will be removed once everything has been implemented in splines
     {
-        return Eigen::Vector3d::Zero();
+        Eigen::Vector3d e_vel(SplineInfo.X.deriv(1,_imuUpdateTime),SplineInfo.Y.deriv(1,_imuUpdateTime),SplineInfo.Z.deriv(1,_imuUpdateTime));	
+		return n_Quat_e * e_vel;
+		
     }
     if (_trajectoryType == TrajectoryType::Linear)
     {
@@ -948,7 +970,8 @@ Eigen::Vector3d NAV::ImuSimulator::n_calcTrajectoryAccel(double time, const Eige
 {
     if (_trajectoryType == TrajectoryType::Fixed)
     {
-        return Eigen::Vector3d::Zero();
+        Eigen::Vector3d e_accel(SplineInfo.X.deriv(2,_imuUpdateTime),SplineInfo.Y.deriv(2,_imuUpdateTime),SplineInfo.Z.deriv(2,_imuUpdateTime));	
+		return n_Quat_e * e_accel;
     }
     if (_trajectoryType == TrajectoryType::Linear)
     {
@@ -1008,6 +1031,16 @@ Eigen::Vector3d NAV::ImuSimulator::p_calcOmega_ip(const Eigen::Vector3d& lla_pos
     double R_dot = 0;
     double Y_dot = 0;
     double P_dot = 0;
+	
+    if (_trajectoryType == TrajectoryType::Fixed)
+    {
+        R_dot = SplineInfo.Roll.deriv(1,_imuUpdateTime);
+        Y_dot = SplineInfo.Yaw.deriv(1,_imuUpdateTime);
+		P_dot = SplineInfo.Pitch.deriv(1,_imuUpdateTime);
+    }
+	
+	
+	
     if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
     {
         // The normal vector of the center point of the circle to the ellipsoid expressed in Earth frame coordinates (see https://en.wikipedia.org/wiki/N-vector)
