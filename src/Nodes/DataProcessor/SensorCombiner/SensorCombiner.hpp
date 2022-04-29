@@ -286,7 +286,9 @@ class SensorCombiner : public Imu
     // Eigen::Matrix<double, Eigen::Dynamic, 1> residuals(double omega, double omegadot, double f, double w, double a, Eigen::Matrix<double, 3, Eigen::Dynamic> IMU_pos, Eigen::Matrix<double, 3, 3> DCM, uint8_t M, uint64_t ti);
 
     /// @brief Combines the signals
-    void combineSignals(std::shared_ptr<const ImuObs>& imuObs);
+    /// @param[in] imuObs Imu observation
+    /// @param[in] pinIndex Index of pin to identify sensor
+    void combineSignals(std::shared_ptr<const ImuObs>& imuObs, size_t pinIndex);
 
     /// Number of input pins
     size_t _nInputPins = 1;

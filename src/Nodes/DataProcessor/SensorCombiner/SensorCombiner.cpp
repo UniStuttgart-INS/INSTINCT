@@ -841,34 +841,58 @@ void NAV::SensorCombiner::recvSignal(const std::shared_ptr<const NodeData>& node
 
             _imuRotations.insert_or_assign(pinIndex, DCM);
         }
-    }
-    // Initialize H if number of sensors has changed
-    if (_imuRotations.size() == _nInputPins)
-    {
-        if (!_designMatrixInitialized)
+        // Initialize H if number of sensors has changed
+        if (_imuRotations.size() == _nInputPins)
         {
-            auto DCM = _imuRotations.at(0); // TODO: extend to map in order to consider multiple different rotations
+            if (!_designMatrixInitialized)
+            {
+                auto DCM = _imuRotations.at(0); // TODO: extend to map in order to consider multiple different rotations
 
-            _kalmanFilter.H = designMatrix_H(DCM);
+                _kalmanFilter.H = designMatrix_H(DCM);
 
-            _designMatrixInitialized = true;
-        }
-        if (_designMatrixInitialized)
-        {
-            combineSignals(imuObs);
+                _designMatrixInitialized = true;
+            }
+            if (_designMatrixInitialized)
+            {
+                combineSignals(imuObs, pinIndex);
+            }
         }
     }
 }
 
-void NAV::SensorCombiner::combineSignals(std::shared_ptr<const ImuObs>& imuObs)
+void NAV::SensorCombiner::combineSignals(std::shared_ptr<const ImuObs>& imuObs, size_t pinIndex)
 {
     LOG_TRACE("{}: called", nameId());
 
     auto imuObsFiltered = std::make_shared<ImuObs>(this->_imuPos);
 
+    // LOG_DEBUG("KF matrices before prediction:\nkalmanFilter.Phi =\n{}\nkalmanFilter.P =\n{}\nkalmanFilter.Q =\n{}\nkalmanFilter.R =\n{}\nkalmanFilter.H =\n{}", _kalmanFilter.Phi, _kalmanFilter.P, _kalmanFilter.Q, _kalmanFilter.R, _kalmanFilter.H);
+    LOG_DEBUG("Estimated state before prediction: x =\n{}", _kalmanFilter.x);
+
     _kalmanFilter.predict();
+    // LOG_DEBUG("Estimated state after prediction: x =\n{}", _kalmanFilter.x);
+
+    auto measIndex = _numMeasPerPin * static_cast<uint8_t>(pinIndex);
+
+    for (size_t i = 0; i < _nInputPins; ++i)
+    {
+        if (i == pinIndex)
+        {
+            _kalmanFilter.z.block<3, 1>(measIndex, 0) = *imuObs->accelUncompXYZ;
+            _kalmanFilter.z.block<3, 1>(measIndex + 3, 0) = *imuObs->gyroUncompXYZ;
+        }
+        else
+        {
+            _kalmanFilter.z.block<3, 1>(measIndex, 0) = _kalmanFilter.x.block<3, 1>(0, 0);
+            _kalmanFilter.z.block<3, 1>(measIndex + 3, 0) = _kalmanFilter.x.block<3, 1>(6, 0);
+        }
+    }
+
+    // _kalmanFilter.z << imuObs->accelUncompXYZ(0), imuObs->accelUncompXYZ(1), imuObs->accelUncompXYZ(2), imuObs->gyroUncompXYZ(0), imuObs->gyroUncompXYZ(1), imuObs->gyroUncompXYZ(2);
+    LOG_DEBUG("Measurements z =\n{}", _kalmanFilter.z);
 
     _kalmanFilter.correct();
+    LOG_DEBUG("Estimated state after correction: x =\n{}", _kalmanFilter.x);
 
     // Construct imuObs
     imuObsFiltered->insTime = imuObs->insTime;
