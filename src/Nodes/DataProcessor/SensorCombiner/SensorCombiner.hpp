@@ -5,8 +5,6 @@
 
 #pragma once
 
-// #include "internal/Node/Node.hpp"
-
 #include "Nodes/DataProvider/IMU/Imu.hpp"
 
 #include "util/Container/ScrollingBuffer.hpp"
@@ -281,10 +279,6 @@ class SensorCombiner : public Imu
                                                                   Eigen::Vector3d& varJerk,
                                                                   Eigen::Vector3d& varBiasAngRate,
                                                                   Eigen::Vector3d& varBiasAcc) const; // TODO: make array to accept multiple sensors
-    //  Eigen::Matrix<double, 3, Eigen::Dynamic>& varBiasAngRate,
-    //  Eigen::Matrix<double, 3, Eigen::Dynamic>& varBiasAcc);
-
-    // Eigen::Matrix<double, Eigen::Dynamic, 1> residuals(double omega, double omegadot, double f, double w, double a, Eigen::Matrix<double, 3, Eigen::Dynamic> IMU_pos, Eigen::Matrix<double, 3, 3> DCM, uint8_t M, uint64_t ti);
 
     /// @brief Combines the signals
     /// @param[in] imuObs Imu observation
@@ -301,9 +295,6 @@ class SensorCombiner : public Imu
 
     /// @brief Number of states per pin (biases of accel and gyro)
     uint8_t _numStatesPerPin = 6;
-
-    /// @brief Number of measurements per pin (acceleration and angular rate)
-    uint8_t _numMeasPerPin = 6;
 
     /// @brief Number of states overall
     uint8_t _numStates = 12;
