@@ -587,8 +587,8 @@ bool NAV::SensorCombiner::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    _numStates = _numStatesEst + static_cast<uint8_t>(_nInputPins * _numStatesPerPin);
-    _numMeasurements = _numMeasPerPin * static_cast<uint8_t>(_nInputPins);
+    _numStates = _numStatesEst + static_cast<uint8_t>((_nInputPins - 1) * _numStatesPerPin);
+    // _numMeasurements = _numMeasPerPin * static_cast<uint8_t>(_nInputPins);
 
     _kalmanFilter = KalmanFilter{ _numStates, _numMeasurements };
 
@@ -842,25 +842,25 @@ void NAV::SensorCombiner::recvSignal(const std::shared_ptr<const NodeData>& node
             _imuRotations.insert_or_assign(pinIndex, DCM);
         }
         // Initialize H if number of sensors has changed
-        if (_imuRotations.size() == _nInputPins)
-        {
-            if (!_designMatrixInitialized)
-            {
-                auto DCM = _imuRotations.at(0); // TODO: extend to map in order to consider multiple different rotations
+        // if (_imuRotations.size() == _nInputPins)
+        // {
+        //     if (!_designMatrixInitialized)
+        //     {
+        auto DCM = _imuRotations.at(0); // TODO: extend to map in order to consider multiple different rotations
 
-                _kalmanFilter.H = designMatrix_H(DCM);
+        _kalmanFilter.H = designMatrix_H(DCM, pinIndex);
 
-                _designMatrixInitialized = true;
-            }
-            if (_designMatrixInitialized)
-            {
-                combineSignals(imuObs, pinIndex);
-            }
-        }
+        _designMatrixInitialized = true;
+        // }
+        // if (_designMatrixInitialized)
+        // {
+        combineSignals(imuObs);
+        //     }
+        // }
     }
 }
 
-void NAV::SensorCombiner::combineSignals(std::shared_ptr<const ImuObs>& imuObs, size_t pinIndex)
+void NAV::SensorCombiner::combineSignals(std::shared_ptr<const ImuObs>& imuObs)
 {
     LOG_TRACE("{}: called", nameId());
 
@@ -872,21 +872,21 @@ void NAV::SensorCombiner::combineSignals(std::shared_ptr<const ImuObs>& imuObs, 
     _kalmanFilter.predict();
     // LOG_DEBUG("Estimated state after prediction: x =\n{}", _kalmanFilter.x);
 
-    auto measIndex = _numMeasPerPin * static_cast<uint8_t>(pinIndex);
+    // auto measIndex = _numMeasPerPin * static_cast<uint8_t>(pinIndex);
 
-    for (size_t i = 0; i < _nInputPins; ++i)
-    {
-        if (i == pinIndex)
-        {
-            _kalmanFilter.z.block<3, 1>(measIndex, 0) = *imuObs->accelUncompXYZ;
-            _kalmanFilter.z.block<3, 1>(measIndex + 3, 0) = *imuObs->gyroUncompXYZ;
-        }
-        else
-        {
-            _kalmanFilter.z.block<3, 1>(measIndex, 0) = _kalmanFilter.x.block<3, 1>(0, 0);
-            _kalmanFilter.z.block<3, 1>(measIndex + 3, 0) = _kalmanFilter.x.block<3, 1>(6, 0);
-        }
-    }
+    // for (size_t i = 0; i < _nInputPins; ++i)
+    // {
+    // if (i == pinIndex)
+    // {
+    _kalmanFilter.z.block<3, 1>(0, 0) = *imuObs->gyroUncompXYZ;
+    _kalmanFilter.z.block<3, 1>(3, 0) = *imuObs->accelUncompXYZ;
+    // }
+    // else
+    // {
+    //     _kalmanFilter.z.block<3, 1>(measIndex, 0) = _kalmanFilter.x.block<3, 1>(0, 0);
+    //     _kalmanFilter.z.block<3, 1>(measIndex + 3, 0) = _kalmanFilter.x.block<3, 1>(6, 0);
+    // }
+    // }
 
     // _kalmanFilter.z << imuObs->accelUncompXYZ(0), imuObs->accelUncompXYZ(1), imuObs->accelUncompXYZ(2), imuObs->gyroUncompXYZ(0), imuObs->gyroUncompXYZ(1), imuObs->gyroUncompXYZ(2);
     LOG_DEBUG("Measurements z =\n{}", _kalmanFilter.z);
@@ -967,21 +967,21 @@ Eigen::MatrixXd NAV::SensorCombiner::processNoiseMatrix_Q(double dt,
     return Q;
 }
 
-Eigen::MatrixXd NAV::SensorCombiner::designMatrix_H(Eigen::Matrix<double, 3, 3>& DCM) const
+Eigen::MatrixXd NAV::SensorCombiner::designMatrix_H(Eigen::Matrix3d& DCM, size_t pinIndex) const
 {
     Eigen::MatrixXd H(_numMeasurements, _numStates);
     H.setZero();
 
-    // Mapping of state estimates on sensors
-    for (uint8_t i = 0; i < _numMeasurements; i += 6)
-    {
-        H.block<3, 3>(i, 0) = DCM;     // Rotation for angular rate
-        H.block<3, 3>(i + 3, 6) = DCM; // Rotation for acceleration
+    // Mounting angles of sensor with latest measurement
+    H.block<3, 3>(0, 0) = DCM; // Rotation for angular rate
+    H.block<3, 3>(3, 6) = DCM; // Rotation for acceleration
 
-        if (i >= 6)
-        {
-            H.block<6, 6>(i, i + 6) = Eigen::MatrixXd::Identity(6, 6); // constant bias of each sensor (3 angular rates and 3 accelerations)
-        }
+    // Mapping of bias states on sensor with the latest measurement
+    if (pinIndex > 1)
+    {
+        auto stateIndex = static_cast<uint8_t>(_numStatesEst + _numStatesPerPin * (pinIndex - 2));
+
+        H.block<6, 6>(0, stateIndex) = Eigen::MatrixXd::Identity(6, 6);
     }
 
     return H;
@@ -997,11 +997,11 @@ Eigen::MatrixXd NAV::SensorCombiner::measurementNoiseMatrix_R_init(Eigen::Vector
     Eigen::MatrixXd R(_numMeasurements, _numMeasurements);
     R.setZero();
 
-    for (uint8_t i = 0; i < _numMeasurements; i += 6)
-    {
-        R.block<3, 3>(i, i).diagonal() = varAngRateMeas;
-        R.block<3, 3>(i + 3, i + 3).diagonal() = varAccelerationMeas;
-    }
+    // for (uint8_t i = 0; i < _numMeasurements; i += 6)
+    // {
+    R.block<3, 3>(0, 0).diagonal() = varAngRateMeas;
+    R.block<3, 3>(3, 3).diagonal() = varAccelerationMeas;
+    // }
 
     return R;
 }

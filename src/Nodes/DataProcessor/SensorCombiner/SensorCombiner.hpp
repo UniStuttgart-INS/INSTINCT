@@ -242,8 +242,9 @@ class SensorCombiner : public Imu
 
     /// @brief Calculates the design matrix H
     /// @param[in] DCM Rotation matrix of mounting angles of a sensor w.r.t. a common reference
+    /// @param[in] pinIndex Index of pin to identify sensor
     /// @return Design matrix H
-    [[nodiscard]] Eigen::MatrixXd designMatrix_H(Eigen::Matrix<double, 3, 3>& DCM) const;
+    [[nodiscard]] Eigen::MatrixXd designMatrix_H(Eigen::Matrix3d& DCM, size_t pinIndex) const;
 
     /// @brief Calculates the adaptive measurement noise matrix R
     /// @param[in] alpha Forgetting factor (i.e. weight on previous estimates), 0 < alpha < 1
@@ -287,8 +288,7 @@ class SensorCombiner : public Imu
 
     /// @brief Combines the signals
     /// @param[in] imuObs Imu observation
-    /// @param[in] pinIndex Index of pin to identify sensor
-    void combineSignals(std::shared_ptr<const ImuObs>& imuObs, size_t pinIndex);
+    void combineSignals(std::shared_ptr<const ImuObs>& imuObs);
 
     /// Number of input pins
     size_t _nInputPins = 1;
@@ -297,7 +297,7 @@ class SensorCombiner : public Imu
     bool _designMatrixInitialized = false;
 
     /// @brief Number of estimated states (accel and gyro)
-    uint8_t _numStatesEst = 6;
+    uint8_t _numStatesEst = 12;
 
     /// @brief Number of states per pin (biases of accel and gyro)
     uint8_t _numStatesPerPin = 6;
