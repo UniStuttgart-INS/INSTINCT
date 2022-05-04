@@ -274,25 +274,22 @@ class ImuSimulator : public Imu
                                    const Eigen::Quaterniond& b_Quat_n,
                                    const Eigen::Vector3d& n_omega_ie,
                                    const Eigen::Vector3d& n_omega_en);
-								   
-								   
-	// defines a struct that holds all 6 CSplines together							   
-	struct SplineContainer
-	{
-		CubicSpline X;
-		CubicSpline Y;
-		CubicSpline Z;
-		CubicSpline Roll;
-		CubicSpline Pitch;
-		CubicSpline Yaw;
-	};
-	
-	// Assgien a variable that holds the Spline information
-	SplineContainer SplineInfo;	
-	
-	void SplineInitializer();
-	
-							   
+
+    // defines a struct that holds all 6 CSplines together
+    struct SplineContainer
+    {
+        CubicSpline X;
+        CubicSpline Y;
+        CubicSpline Z;
+        CubicSpline Roll;
+        CubicSpline Pitch;
+        CubicSpline Yaw;
+    };
+
+    // Assgien a variable that holds the Spline information
+    SplineContainer SplineInfo;
+
+    void SplineInitializer();
 };
 
 } // namespace NAV
