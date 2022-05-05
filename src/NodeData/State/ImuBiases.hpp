@@ -11,7 +11,7 @@
 
 namespace NAV
 {
-/// Position, Velocity and Attitude Storage Class
+/// IMU Acceleration and Gyro Biases Storage Class
 class ImuBiases : public InsObs
 {
   public:
