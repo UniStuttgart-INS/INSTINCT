@@ -10,6 +10,7 @@
 #include "util/Container/ScrollingBuffer.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
+#include "NodeData/State/ImuBiases.hpp"
 
 #include "Navigation/Math/KalmanFilter.hpp"
 
@@ -202,7 +203,8 @@ class SensorCombiner : public Imu
     };
 
   private:
-    constexpr static size_t OUTPUT_PORT_INDEX_COMBINED_SIGNAL = 0; ///< @brief Flow (InertialNavSol)
+    constexpr static size_t OUTPUT_PORT_INDEX_COMBINED_SIGNAL = 0; ///< @brief Flow (ImuObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_BIASES = 1;          ///< @brief Flow (ImuBiases)
 
     /// @brief Initialize the node
     bool initialize() override;

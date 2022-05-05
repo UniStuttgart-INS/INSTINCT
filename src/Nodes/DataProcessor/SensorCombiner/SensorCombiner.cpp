@@ -93,6 +93,7 @@ NAV::SensorCombiner::SensorCombiner()
     updateNumberOfInputPins();
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() });
+    nm::CreateOutputPin(this, "ImuBiases", Pin::Type::Flow, { NAV::ImuBiases::type() });
 }
 
 NAV::SensorCombiner::~SensorCombiner()
@@ -842,7 +843,8 @@ void NAV::SensorCombiner::recvSignal(const std::shared_ptr<const NodeData>& node
         }
 
         // Initialize H with mounting angles (DCM) of the sensor that provided the latest measurement
-        auto DCM = _imuRotations.at(0); // TODO: extend to map in order to consider multiple different rotations
+        auto DCM = _imuRotations.at(pinIndex);
+        LOG_DEBUG("DCM =\n{}", DCM);
 
         _kalmanFilter.H = designMatrix_H(DCM, pinIndex);
 
@@ -855,6 +857,7 @@ void NAV::SensorCombiner::combineSignals(std::shared_ptr<const ImuObs>& imuObs)
     LOG_TRACE("{}: called", nameId());
 
     auto imuObsFiltered = std::make_shared<ImuObs>(this->_imuPos);
+    auto imuRelativeBiases = std::make_shared<ImuBiases>();
 
     LOG_DEBUG("Estimated state before prediction: x =\n{}", _kalmanFilter.x);
 
@@ -873,7 +876,12 @@ void NAV::SensorCombiner::combineSignals(std::shared_ptr<const ImuObs>& imuObs)
     imuObsFiltered->accelUncompXYZ.emplace(_kalmanFilter.x(6, 0), _kalmanFilter.x(7, 0), _kalmanFilter.x(8, 0));
     imuObsFiltered->gyroUncompXYZ.emplace(_kalmanFilter.x(0, 0), _kalmanFilter.x(1, 0), _kalmanFilter.x(2, 0));
 
+    imuRelativeBiases->insTime = imuObs->insTime;
+    imuRelativeBiases->b_biasGyro << _kalmanFilter.x(12, 0), _kalmanFilter.x(13, 0), _kalmanFilter.x(14, 0);
+    imuRelativeBiases->b_biasAccel << _kalmanFilter.x(15, 0), _kalmanFilter.x(16, 0), _kalmanFilter.x(17, 0);
+
     invokeCallbacks(OUTPUT_PORT_INDEX_COMBINED_SIGNAL, imuObsFiltered);
+    invokeCallbacks(OUTPUT_PORT_INDEX_BIASES, imuRelativeBiases);
 }
 
 Eigen::MatrixXd NAV::SensorCombiner::stateTransitionMatrix_Phi(double dt) const // TODO: if called in KF update, don't make new Phi every iteration
