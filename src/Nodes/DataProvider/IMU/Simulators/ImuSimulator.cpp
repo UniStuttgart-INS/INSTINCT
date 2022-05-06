@@ -629,7 +629,62 @@ void NAV::ImuSimulator::SplineInitializer()
         SplineInfo.Yaw.set_points(SplineTime, Yaw);
     }
 
-    std::cout << "sdfsfs\n";
+
+    if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
+    {
+		double spline_sample_interval = 0.1;
+		
+        SplineTime.push_back(-spline_sample_interval*2); // 2 epochs  in the past; simply to define the derivative at zero seconds
+        SplineTime.push_back(-spline_sample_interval); // 1 epoch  in the past; simply to define the derivative at zero seconds
+		for (double t = 0.0; t<=_simulationDuration; t+=spline_sample_interval) SplineTime.push_back(t);
+        SplineTime.push_back(_simulationDuration+spline_sample_interval); // 1 epoch past simulation end; simply to define the derivative at end node
+        SplineTime.push_back(_simulationDuration+spline_sample_interval*2); // 2 epoch past simulation end; simply to define the derivative at end node
+		
+        std::vector<double> X(SplineTime.size());
+        std::vector<double> Y(SplineTime.size());
+        std::vector<double> Z(SplineTime.size());
+        std::vector<double> Roll(SplineTime.size());
+        std::vector<double> Pitch(SplineTime.size());
+        std::vector<double> Yaw(SplineTime.size());
+		
+		
+		
+		Eigen::Vector3d e_origin = trafo::lla2ecef_WGS84(_lla_startPosition);
+		
+		Eigen::Quaterniond mytrafo = trafo::e_Quat_n(_lla_startPosition(0), _lla_startPosition(1));
+		
+		for(unsigned long i = 0; i< SplineTime.size(); i++) 
+		{
+	        auto phi = _circularTrajectoryHorizontalSpeed * SplineTime[i] / _circularTrajectoryRadius; // Angle of the current point on the circle
+	        phi *= _circularTrajectoryDirection == Direction::CW ? -1 : 1;
+	        phi += _circularTrajectoryOriginAngle;
+
+	        Eigen::Vector3d n_relativePosition{ _circularTrajectoryRadius * std::sin(phi),                                                 // [m]
+	                                            _circularTrajectoryRadius * std::cos(phi),                                                 // [m]
+	                                            _trajectoryType == TrajectoryType::Helix ? _helicalTrajectoryVerticalSpeed * SplineTime[i] : 0.0 }; // [m]
+
+	        Eigen::Vector3d e_relativePosition = mytrafo * n_relativePosition;
+
+	        Eigen::Vector3d e_position =  e_origin  + e_relativePosition;
+			
+			X[i] = e_position[0];
+			Y[i] = e_position[1];
+			Z[i] = e_position[2];	
+			
+			Roll[i] = _fixedTrajectoryStartOrientation.x();
+			Pitch[i] = _fixedTrajectoryStartOrientation.y();
+			Yaw[i] = _fixedTrajectoryStartOrientation.z();
+			
+		}
+        SplineInfo.X.set_points(SplineTime, X);
+        SplineInfo.Y.set_points(SplineTime, Y);
+        SplineInfo.Z.set_points(SplineTime, Z);
+
+        SplineInfo.Roll.set_points(SplineTime, Roll);
+        SplineInfo.Pitch.set_points(SplineTime, Pitch);
+        SplineInfo.Yaw.set_points(SplineTime, Yaw);				
+    }
+
 }
 
 void NAV::ImuSimulator::deinitialize()
@@ -675,6 +730,7 @@ bool NAV::ImuSimulator::checkStopCondition(double time, const Eigen::Vector3d& l
     {
         return true;
     }
+	/*
     if (_simulationStopCondition == StopCondition::DistanceOrCircles && _trajectoryType == TrajectoryType::Linear)
     {
         auto horizontalDistance = calcGeographicalDistance(_lla_startPosition(0), _lla_startPosition(1), lla_position(0), lla_position(1));
@@ -693,7 +749,7 @@ bool NAV::ImuSimulator::checkStopCondition(double time, const Eigen::Vector3d& l
             return true;
         }
     }
-
+  */
     return false;
 }
 
@@ -840,6 +896,13 @@ std::array<double, 3> NAV::ImuSimulator::calcFlightAngles(const Eigen::Vector3d&
     }
     else if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
     {
+		
+        roll = SplineInfo.Roll(_imuUpdateTime);
+        pitch = SplineInfo.Pitch(_imuUpdateTime);
+        yaw = SplineInfo.Yaw(_imuUpdateTime);
+		
+		/*
+		
         // The normal vector of the center point of the circle to the ellipsoid expressed in Earth frame coordinates (see https://en.wikipedia.org/wiki/N-vector)
         const Eigen::Vector3d e_normalVectorCenterCircle{ std::cos(_lla_startPosition(0)) * std::cos(_lla_startPosition(1)),
                                                           std::cos(_lla_startPosition(0)) * std::sin(_lla_startPosition(1)),
@@ -851,6 +914,8 @@ std::array<double, 3> NAV::ImuSimulator::calcFlightAngles(const Eigen::Vector3d&
 
         roll = (_circularTrajectoryDirection == Direction::CCW ? -1.0 : 1.0) // CCW = Right wing facing outwards, roll angle measured downwards
                * std::acos(e_normalVectorCurrentPosition.dot(e_normalVectorCenterCircle) / (e_normalVectorCurrentPosition.norm() * e_normalVectorCenterCircle.norm()));
+		
+		*/
     }
 
     return { roll, pitch, yaw };
@@ -903,21 +968,9 @@ Eigen::Vector3d NAV::ImuSimulator::lla_calcPosition(double time, double& lastUpd
     }
     if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
     {
-        auto phi = _circularTrajectoryHorizontalSpeed * time / _circularTrajectoryRadius; // Angle of the current point on the circle
-        phi *= _circularTrajectoryDirection == Direction::CW ? -1 : 1;
-        phi += _circularTrajectoryOriginAngle;
-
-        Eigen::Vector3d n_relativePosition{ _circularTrajectoryRadius * std::sin(phi),                                                 // [m]
-                                            _circularTrajectoryRadius * std::cos(phi),                                                 // [m]
-                                            _trajectoryType == TrajectoryType::Helix ? _helicalTrajectoryVerticalSpeed * time : 0.0 }; // [m]
-
-        Eigen::Vector3d e_relativePosition = trafo::e_Quat_n(_lla_startPosition(0), _lla_startPosition(1)) * n_relativePosition;
-
-        Eigen::Vector3d e_position = trafo::lla2ecef_WGS84(_lla_startPosition) + e_relativePosition;
-
-        Eigen::Vector3d lla_position = trafo::ecef2lla_WGS84(e_position);
-
-        return lla_position;
+        Eigen::Vector3d e_pos(SplineInfo.X(_imuUpdateTime), SplineInfo.Y(_imuUpdateTime), SplineInfo.Z(_imuUpdateTime));
+		std::cout << e_pos << "\n";
+        return trafo::ecef2lla_WGS84(e_pos);
     }
     return Eigen::Vector3d::Zero();
 }
@@ -935,18 +988,8 @@ Eigen::Vector3d NAV::ImuSimulator::n_calcVelocity(double time, const Eigen::Quat
     }
     if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
     {
-        auto direction = _circularTrajectoryDirection == Direction::CW ? -1 : 1;
-
-        auto phi = _circularTrajectoryHorizontalSpeed * time / _circularTrajectoryRadius; // Angle of the current point on the circle
-        phi *= direction;
-        phi += _circularTrajectoryOriginAngle;
-
-        Eigen::Vector3d e_velocity = trafo::e_Quat_n(_lla_startPosition(0), _lla_startPosition(1))
-                                     * Eigen::Vector3d{ _circularTrajectoryHorizontalSpeed * direction * std::cos(phi),                     // [m/s]
-                                                        -_circularTrajectoryHorizontalSpeed * direction * std::sin(phi),                    // [m/s]
-                                                        _trajectoryType == TrajectoryType::Helix ? _helicalTrajectoryVerticalSpeed : 0.0 }; // [m/s]
-
-        return n_Quat_e * e_velocity;
+        Eigen::Vector3d e_vel(SplineInfo.X.deriv(1, _imuUpdateTime), SplineInfo.Y.deriv(1, _imuUpdateTime), SplineInfo.Z.deriv(1, _imuUpdateTime));
+        return n_Quat_e * e_vel;
     }
     return Eigen::Vector3d::Zero();
 }
@@ -964,17 +1007,7 @@ Eigen::Vector3d NAV::ImuSimulator::n_calcTrajectoryAccel(double time, const Eige
     }
     if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
     {
-        auto direction = _circularTrajectoryDirection == Direction::CW ? -1 : 1;
-
-        auto phi = _circularTrajectoryHorizontalSpeed * time / _circularTrajectoryRadius; // Angle of the current point on the circle
-        phi *= direction;
-        phi += _circularTrajectoryOriginAngle;
-
-        Eigen::Vector3d e_accel = trafo::e_Quat_n(_lla_startPosition(0), _lla_startPosition(1))
-                                  * Eigen::Vector3d{ -std::pow(_circularTrajectoryHorizontalSpeed, 2) / _circularTrajectoryRadius * std::sin(phi), // [m/s^2]
-                                                     -std::pow(_circularTrajectoryHorizontalSpeed, 2) / _circularTrajectoryRadius * std::cos(phi), // [m/s^2]
-                                                     0.0 };                                                                                        // [m/s^2]
-
+        Eigen::Vector3d e_accel(SplineInfo.X.deriv(2, _imuUpdateTime), SplineInfo.Y.deriv(2, _imuUpdateTime), SplineInfo.Z.deriv(2, _imuUpdateTime));
         return n_Quat_e * e_accel;
     }
     return Eigen::Vector3d::Zero();
@@ -1026,24 +1059,9 @@ Eigen::Vector3d NAV::ImuSimulator::p_calcOmega_ip(const Eigen::Vector3d& lla_pos
 
     if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
     {
-        // The normal vector of the center point of the circle to the ellipsoid expressed in Earth frame coordinates (see https://en.wikipedia.org/wiki/N-vector)
-        const Eigen::Vector3d e_normalVectorCenterCircle{ std::cos(_lla_startPosition(0)) * std::cos(_lla_startPosition(1)),
-                                                          std::cos(_lla_startPosition(0)) * std::sin(_lla_startPosition(1)),
-                                                          std::sin(_lla_startPosition(0)) };
-        // The normal vector of the current position to the ellipsoid expressed in Earth frame coordinates
-        const Eigen::Vector3d e_normalVectorCurrentPosition{ std::cos(phi) * std::cos(lambda),
-                                                             std::cos(phi) * std::sin(lambda),
-                                                             std::sin(phi) };
-
-        R_dot = e_normalVectorCenterCircle.dot(Eigen::Vector3d{ -v_N / (R_N + h) * std::sin(phi) * std::cos(lambda) - v_E / (R_E + h) * std::sin(lambda),
-                                                                -v_N / (R_N + h) * std::sin(phi) * std::sin(lambda) * v_E / (R_E + h) * std::cos(lambda),
-                                                                v_N / (R_N + h) * std::cos(phi) })
-                * -1 / std::sqrt(1 - std::pow(e_normalVectorCenterCircle.dot(e_normalVectorCurrentPosition), 2));
-
-        Y_dot = (a_E * v_N - v_E * a_N)
-                / (v_E_2 + v_N_2);
-        P_dot = (-a_D * std::sqrt(v_N_2 + v_E_2) + v_D * (a_N * v_N + a_E * v_E) / std::sqrt(v_N_2 + v_E_2))
-                / (v_D_2 + v_N_2 + v_E_2);
+        R_dot = SplineInfo.Roll.deriv(1, _imuUpdateTime);
+        Y_dot = SplineInfo.Yaw.deriv(1, _imuUpdateTime);
+        P_dot = SplineInfo.Pitch.deriv(1, _imuUpdateTime);
     }
 
     auto C_3 = [](double R) {
