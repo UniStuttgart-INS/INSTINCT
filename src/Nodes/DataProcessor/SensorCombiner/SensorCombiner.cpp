@@ -847,6 +847,7 @@ void NAV::SensorCombiner::recvSignal(const std::shared_ptr<const NodeData>& node
         LOG_DEBUG("DCM =\n{}", DCM);
 
         _kalmanFilter.H = designMatrix_H(DCM, pinIndex);
+        LOG_DEBUG("kalmanFilter.H =\n", _kalmanFilter.H);
 
         combineSignals(imuObs);
     }
@@ -959,9 +960,9 @@ Eigen::MatrixXd NAV::SensorCombiner::designMatrix_H(Eigen::Matrix3d& DCM, size_t
     H.block<3, 3>(3, 6) = DCM; // Rotation for acceleration
 
     // Mapping of bias states on sensor with the latest measurement
-    if (pinIndex > 1)
+    if (pinIndex > 0)
     {
-        auto stateIndex = static_cast<uint8_t>(_numStatesEst + _numStatesPerPin * (pinIndex - 2));
+        auto stateIndex = static_cast<uint8_t>(_numStatesEst + _numStatesPerPin * (pinIndex - 1));
 
         H.block<6, 6>(0, stateIndex) = Eigen::MatrixXd::Identity(6, 6);
     }
