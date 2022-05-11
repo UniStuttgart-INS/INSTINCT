@@ -90,10 +90,8 @@ NAV::SensorCombiner::SensorCombiner()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 934, 586 };
 
+    nm::CreateOutputPin(this, "Combined ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() });
     updateNumberOfInputPins();
-
-    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() });
-    nm::CreateOutputPin(this, "ImuBiases", Pin::Type::Flow, { NAV::ImuBiases::type() });
 }
 
 NAV::SensorCombiner::~SensorCombiner()
@@ -121,13 +119,11 @@ void NAV::SensorCombiner::guiConfig()
     constexpr float configWidth = 380.0F;
     constexpr float unitWidth = 150.0F;
 
-    // TODO: adapt _maxSizeImuObservations to number of sensors?
-
     if (ImGui::BeginTable(fmt::format("Pin Settings##{}", size_t(id)).c_str(), inputPins.size() > 1 ? 2 : 1,
                           ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
     {
         ImGui::TableSetupColumn("Pin");
-        if (inputPins.size() > 1)
+        if (inputPins.size() > 2)
         {
             ImGui::TableSetupColumn("");
         }
@@ -164,20 +160,24 @@ void NAV::SensorCombiner::guiConfig()
             // {
             //     ImGui::SetTooltip("This item can be dragged to reorder the pins");
             // }
-            if (inputPins.size() > 1)
+            if (inputPins.size() > 2) // Minimum # of pins for the fusion to make sense is two
             {
                 ImGui::TableNextColumn(); // Delete
-                if (ImGui::Button(fmt::format("x##{} - {}", size_t(id), pinIndex).c_str()))
+                if (!(pinIndex == 0))     // Don't delete Pin 1, it's the reference for all other sensor (biases) that follow
                 {
-                    nm::DeleteInputPin(inputPins.at(pinIndex).id);
-                    _pinData.erase(_pinData.begin() + static_cast<int64_t>(pinIndex));
-                    --_nInputPins;
-                    flow::ApplyChanges();
-                    // TODO: updateNumberOfInputPins(); ???
-                }
-                if (ImGui::IsItemHovered())
-                {
-                    ImGui::SetTooltip("Delete the pin");
+                    if (ImGui::Button(fmt::format("x##{} - {}", size_t(id), pinIndex).c_str()))
+                    {
+                        nm::DeleteInputPin(inputPins.at(pinIndex).id);
+                        nm::DeleteOutputPin(outputPins.at(pinIndex).id);
+                        _pinData.erase(_pinData.begin() + static_cast<int64_t>(pinIndex));
+                        --_nInputPins;
+                        flow::ApplyChanges();
+                        updateNumberOfInputPins();
+                    }
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::SetTooltip("Delete the pin");
+                    }
                 }
             }
         }
@@ -614,10 +614,15 @@ void NAV::SensorCombiner::updateNumberOfInputPins()
         nm::CreateInputPin(this, fmt::format("Pin {}", inputPins.size() + 1).c_str(), Pin::Type::Flow,
                            { NAV::ImuObs::type() }, &SensorCombiner::recvSignal);
         _pinData.emplace_back();
+        if (outputPins.size() < _nInputPins)
+        {
+            nm::CreateOutputPin(this, fmt::format("ImuBiases {}1", outputPins.size() + 1).c_str(), Pin::Type::Flow, { NAV::ImuBiases::type() });
+        }
     }
-    while (inputPins.size() > _nInputPins)
+    while (inputPins.size() > _nInputPins) // TODO: while loop still necessary here? guiConfig also deletes pins
     {
         nm::DeleteInputPin(inputPins.back().id);
+        nm::DeleteOutputPin(outputPins.back().id);
         _pinData.pop_back();
     }
 

@@ -287,7 +287,7 @@ class SensorCombiner : public Imu
     void combineSignals(std::shared_ptr<const ImuObs>& imuObs);
 
     /// Number of input pins
-    size_t _nInputPins = 1;
+    size_t _nInputPins = 2;
 
     /// @brief Flag to check whether the design matrix H has been initialized
     bool _designMatrixInitialized = false;
