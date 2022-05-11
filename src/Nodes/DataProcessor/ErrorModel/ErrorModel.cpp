@@ -682,7 +682,10 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
     case PositionBiasUnits::meter:
     {
         Eigen::Vector3d e_positionBias = trafo::e_Quat_n(posVelAtt->latitude(), posVelAtt->longitude()) * _positionBias;
-        lla_positionBias = trafo::ecef2lla_WGS84(posVelAtt->e_position() + e_positionBias) - posVelAtt->lla_position();
+        if (!e_positionBias.isZero())
+        {
+            lla_positionBias = trafo::ecef2lla_WGS84(posVelAtt->e_position() + e_positionBias) - posVelAtt->lla_position();
+        }
         break;
     }
     case PositionBiasUnits::rad_rad_m:
@@ -726,7 +729,10 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
     case PositionNoiseUnits::meter:
     {
         Eigen::Vector3d e_positionNoiseStd = trafo::e_Quat_n(posVelAtt->latitude(), posVelAtt->longitude()) * _positionNoise;
-        lla_positionNoiseStd = trafo::ecef2lla_WGS84(posVelAtt->e_position() + e_positionNoiseStd) - posVelAtt->lla_position();
+        if (!e_positionNoiseStd.isZero())
+        {
+            lla_positionNoiseStd = trafo::ecef2lla_WGS84(posVelAtt->e_position() + e_positionNoiseStd) - posVelAtt->lla_position();
+        }
         break;
     }
     case PositionNoiseUnits::rad_rad_m:
@@ -738,7 +744,10 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
     case PositionNoiseUnits::meter2:
     {
         Eigen::Vector3d e_positionNoiseStd = trafo::e_Quat_n(posVelAtt->latitude(), posVelAtt->longitude()) * _positionNoise.cwiseSqrt();
-        lla_positionNoiseStd = trafo::ecef2lla_WGS84(posVelAtt->e_position() + e_positionNoiseStd) - posVelAtt->lla_position();
+        if (!e_positionNoiseStd.isZero())
+        {
+            lla_positionNoiseStd = trafo::ecef2lla_WGS84(posVelAtt->e_position() + e_positionNoiseStd) - posVelAtt->lla_position();
+        }
         break;
     }
     case PositionNoiseUnits::rad2_rad2_m2:
