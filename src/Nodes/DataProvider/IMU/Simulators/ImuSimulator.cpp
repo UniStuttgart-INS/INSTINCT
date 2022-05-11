@@ -9,6 +9,7 @@
 #include "Navigation/INS/Mechanization.hpp"
 #include "Navigation/Gravity/Gravity.hpp"
 #include "Navigation/Math/NumericalIntegration.hpp"
+#include "Navigation/Math/Math.hpp"
 #include "util/Time/TimeBase.hpp"
 
 #include "internal/NodeManager.hpp"
@@ -126,6 +127,7 @@ void NAV::ImuSimulator::guiConfig()
                     _trajectoryType = static_cast<TrajectoryType>(i);
                     LOG_DEBUG("{}: trajectoryType changed to {}", nameId(), _trajectoryType);
                     flow::ApplyChanges();
+                    deinitializeNode();
                 }
 
                 if (is_selected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -143,6 +145,7 @@ void NAV::ImuSimulator::guiConfig()
             _lla_startPosition.x() = trafo::deg2rad(latitude);
             LOG_DEBUG("{}: latitude changed to {}", nameId(), latitude);
             flow::ApplyChanges();
+            deinitializeNode();
         }
         ImGui::SameLine();
         ImGui::SetNextItemWidth(columnWidth);
@@ -152,6 +155,7 @@ void NAV::ImuSimulator::guiConfig()
             _lla_startPosition.y() = trafo::deg2rad(longitude);
             LOG_DEBUG("{}: longitude changed to {}", nameId(), longitude);
             flow::ApplyChanges();
+            deinitializeNode();
         }
         ImGui::SameLine();
         ImGui::SetNextItemWidth(columnWidth);
@@ -159,6 +163,7 @@ void NAV::ImuSimulator::guiConfig()
         {
             LOG_DEBUG("{}: altitude changed to {}", nameId(), _lla_startPosition.y());
             flow::ApplyChanges();
+            deinitializeNode();
         }
         ImGui::SameLine();
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
@@ -179,6 +184,7 @@ void NAV::ImuSimulator::guiConfig()
                 _fixedTrajectoryStartOrientation.x() = trafo::deg2rad(roll);
                 LOG_DEBUG("{}: roll changed to {}", nameId(), roll);
                 flow::ApplyChanges();
+                deinitializeNode();
             }
             ImGui::SameLine();
             ImGui::SetNextItemWidth(columnWidth);
@@ -188,6 +194,7 @@ void NAV::ImuSimulator::guiConfig()
                 _fixedTrajectoryStartOrientation.y() = trafo::deg2rad(pitch);
                 LOG_DEBUG("{}: pitch changed to {}", nameId(), pitch);
                 flow::ApplyChanges();
+                deinitializeNode();
             }
             ImGui::SameLine();
             ImGui::SetNextItemWidth(columnWidth);
@@ -197,6 +204,7 @@ void NAV::ImuSimulator::guiConfig()
                 _fixedTrajectoryStartOrientation.z() = trafo::deg2rad(yaw);
                 LOG_DEBUG("{}: yaw changed to {}", nameId(), yaw);
                 flow::ApplyChanges();
+                deinitializeNode();
             }
             ImGui::SameLine();
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
@@ -209,6 +217,7 @@ void NAV::ImuSimulator::guiConfig()
             {
                 LOG_DEBUG("{}: n_linearTrajectoryStartVelocity changed to {}", nameId(), _n_linearTrajectoryStartVelocity.transpose());
                 flow::ApplyChanges();
+                deinitializeNode();
             }
             ImGui::SameLine();
             ImGui::SetNextItemWidth(columnWidth);
@@ -216,6 +225,7 @@ void NAV::ImuSimulator::guiConfig()
             {
                 LOG_DEBUG("{}: n_linearTrajectoryStartVelocity changed to {}", nameId(), _n_linearTrajectoryStartVelocity.transpose());
                 flow::ApplyChanges();
+                deinitializeNode();
             }
             ImGui::SameLine();
             ImGui::SetNextItemWidth(columnWidth);
@@ -223,6 +233,7 @@ void NAV::ImuSimulator::guiConfig()
             {
                 LOG_DEBUG("{}: n_linearTrajectoryStartVelocity changed to {}", nameId(), _n_linearTrajectoryStartVelocity.transpose());
                 flow::ApplyChanges();
+                deinitializeNode();
             }
             ImGui::SameLine();
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
@@ -233,6 +244,7 @@ void NAV::ImuSimulator::guiConfig()
             {
                 LOG_DEBUG("{}: n_linearTrajectoryAcceleration changed to {}", nameId(), _n_linearTrajectoryAcceleration.transpose());
                 flow::ApplyChanges();
+                deinitializeNode();
             }
             ImGui::SameLine();
             ImGui::SetNextItemWidth(columnWidth);
@@ -240,6 +252,7 @@ void NAV::ImuSimulator::guiConfig()
             {
                 LOG_DEBUG("{}: n_linearTrajectoryAcceleration changed to {}", nameId(), _n_linearTrajectoryAcceleration.transpose());
                 flow::ApplyChanges();
+                deinitializeNode();
             }
             ImGui::SameLine();
             ImGui::SetNextItemWidth(columnWidth);
@@ -247,6 +260,7 @@ void NAV::ImuSimulator::guiConfig()
             {
                 LOG_DEBUG("{}: n_linearTrajectoryAcceleration changed to {}", nameId(), _n_linearTrajectoryAcceleration.transpose());
                 flow::ApplyChanges();
+                deinitializeNode();
             }
             ImGui::SameLine();
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
@@ -269,6 +283,7 @@ void NAV::ImuSimulator::guiConfig()
                             _circularTrajectoryDirection = static_cast<Direction>(i);
                             LOG_DEBUG("{}: circularTrajectoryDirection changed to {}", nameId(), _circularTrajectoryDirection);
                             flow::ApplyChanges();
+                            deinitializeNode();
                         }
 
                         if (is_selected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -286,6 +301,7 @@ void NAV::ImuSimulator::guiConfig()
                 {
                     LOG_DEBUG("{}: circularTrajectoryRadius changed to {}", nameId(), _circularTrajectoryRadius);
                     flow::ApplyChanges();
+                    deinitializeNode();
                 }
                 // ####################################################################################################
                 ImGui::TableNextColumn();
@@ -296,6 +312,7 @@ void NAV::ImuSimulator::guiConfig()
                     _circularTrajectoryOriginAngle = trafo::deg2rad(originAngle);
                     LOG_DEBUG("{}: originAngle changed to {}", nameId(), originAngle);
                     flow::ApplyChanges();
+                    deinitializeNode();
                 }
 
                 ImGui::TableNextColumn();
@@ -304,6 +321,7 @@ void NAV::ImuSimulator::guiConfig()
                 {
                     LOG_DEBUG("{}: circularTrajectoryHorizontalSpeed changed to {}", nameId(), _circularTrajectoryHorizontalSpeed);
                     flow::ApplyChanges();
+                    deinitializeNode();
                 }
                 // ####################################################################################################
                 if (_trajectoryType == TrajectoryType::Helix)
@@ -314,6 +332,7 @@ void NAV::ImuSimulator::guiConfig()
                     {
                         LOG_DEBUG("{}: helicalTrajectoryVerticalSpeed changed to {}", nameId(), _helicalTrajectoryVerticalSpeed);
                         flow::ApplyChanges();
+                        deinitializeNode();
                     }
                 }
 
@@ -599,10 +618,6 @@ bool NAV::ImuSimulator::initialize()
 
 void NAV::ImuSimulator::SplineInitializer()
 {
-    std::cout << "### " << _imuFrequency << "\n";
-
-    std::cout << "### " << _simulationDuration << "\n";
-
     std::vector<double> SplineTime;
 
     if (_trajectoryType == TrajectoryType::Fixed)
@@ -629,62 +644,53 @@ void NAV::ImuSimulator::SplineInitializer()
         SplineInfo.Yaw.set_points(SplineTime, Yaw);
     }
 
-
     if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
     {
-		double spline_sample_interval = 0.1;
-		
-        SplineTime.push_back(-spline_sample_interval*2); // 2 epochs  in the past; simply to define the derivative at zero seconds
-        SplineTime.push_back(-spline_sample_interval); // 1 epoch  in the past; simply to define the derivative at zero seconds
-		for (double t = 0.0; t<=_simulationDuration; t+=spline_sample_interval) SplineTime.push_back(t);
-        SplineTime.push_back(_simulationDuration+spline_sample_interval); // 1 epoch past simulation end; simply to define the derivative at end node
-        SplineTime.push_back(_simulationDuration+spline_sample_interval*2); // 2 epoch past simulation end; simply to define the derivative at end node
-		
+        double spline_sample_interval = 0.1;
+
+        for (double t = -1.0; t <= _simulationDuration + 1.0; t += spline_sample_interval) SplineTime.push_back(t);
+
         std::vector<double> X(SplineTime.size());
         std::vector<double> Y(SplineTime.size());
         std::vector<double> Z(SplineTime.size());
         std::vector<double> Roll(SplineTime.size());
         std::vector<double> Pitch(SplineTime.size());
         std::vector<double> Yaw(SplineTime.size());
-		
-		
-		
-		Eigen::Vector3d e_origin = trafo::lla2ecef_WGS84(_lla_startPosition);
-		
-		Eigen::Quaterniond mytrafo = trafo::e_Quat_n(_lla_startPosition(0), _lla_startPosition(1));
-		
-		for(unsigned long i = 0; i< SplineTime.size(); i++) 
-		{
-	        auto phi = _circularTrajectoryHorizontalSpeed * SplineTime[i] / _circularTrajectoryRadius; // Angle of the current point on the circle
-	        phi *= _circularTrajectoryDirection == Direction::CW ? -1 : 1;
-	        phi += _circularTrajectoryOriginAngle;
 
-	        Eigen::Vector3d n_relativePosition{ _circularTrajectoryRadius * std::sin(phi),                                                 // [m]
-	                                            _circularTrajectoryRadius * std::cos(phi),                                                 // [m]
-	                                            _trajectoryType == TrajectoryType::Helix ? _helicalTrajectoryVerticalSpeed * SplineTime[i] : 0.0 }; // [m]
+        Eigen::Vector3d e_origin = trafo::lla2ecef_WGS84(_lla_startPosition);
 
-	        Eigen::Vector3d e_relativePosition = mytrafo * n_relativePosition;
+        Eigen::Quaterniond mytrafo = trafo::e_Quat_n(_lla_startPosition(0), _lla_startPosition(1));
 
-	        Eigen::Vector3d e_position =  e_origin  + e_relativePosition;
-			
-			X[i] = e_position[0];
-			Y[i] = e_position[1];
-			Z[i] = e_position[2];	
-			
-			Roll[i] = _fixedTrajectoryStartOrientation.x();
-			Pitch[i] = _fixedTrajectoryStartOrientation.y();
-			Yaw[i] = _fixedTrajectoryStartOrientation.z();
-			
-		}
+        for (unsigned long i = 0; i < SplineTime.size(); i++)
+        {
+            auto phi = _circularTrajectoryHorizontalSpeed * SplineTime[i] / _circularTrajectoryRadius; // Angle of the current point on the circle
+            phi *= _circularTrajectoryDirection == Direction::CW ? -1 : 1;
+            phi += _circularTrajectoryOriginAngle;
+
+            Eigen::Vector3d n_relativePosition{ _circularTrajectoryRadius * std::sin(phi),                                                          // [m]
+                                                _circularTrajectoryRadius * std::cos(phi),                                                          // [m]
+                                                _trajectoryType == TrajectoryType::Helix ? _helicalTrajectoryVerticalSpeed * SplineTime[i] : 0.0 }; // [m]
+
+            Eigen::Vector3d e_relativePosition = mytrafo * n_relativePosition;
+
+            Eigen::Vector3d e_position = e_origin + e_relativePosition;
+
+            X[i] = e_position[0];
+            Y[i] = e_position[1];
+            Z[i] = e_position[2];
+
+            Roll[i] = _fixedTrajectoryStartOrientation.x();
+            Pitch[i] = _fixedTrajectoryStartOrientation.y();
+            Yaw[i] = _fixedTrajectoryStartOrientation.z();
+        }
         SplineInfo.X.set_points(SplineTime, X);
         SplineInfo.Y.set_points(SplineTime, Y);
         SplineInfo.Z.set_points(SplineTime, Z);
 
         SplineInfo.Roll.set_points(SplineTime, Roll);
         SplineInfo.Pitch.set_points(SplineTime, Pitch);
-        SplineInfo.Yaw.set_points(SplineTime, Yaw);				
+        SplineInfo.Yaw.set_points(SplineTime, Yaw);
     }
-
 }
 
 void NAV::ImuSimulator::deinitialize()
@@ -730,7 +736,7 @@ bool NAV::ImuSimulator::checkStopCondition(double time, const Eigen::Vector3d& l
     {
         return true;
     }
-	/*
+    /*
     if (_simulationStopCondition == StopCondition::DistanceOrCircles && _trajectoryType == TrajectoryType::Linear)
     {
         auto horizontalDistance = calcGeographicalDistance(_lla_startPosition(0), _lla_startPosition(1), lla_position(0), lla_position(1));
@@ -755,8 +761,6 @@ bool NAV::ImuSimulator::checkStopCondition(double time, const Eigen::Vector3d& l
 
 std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 {
-    std::cout << "interpolated value at " << _imuUpdateTime << " = " << SplineInfo.X(_imuUpdateTime) << "\n";
-    std::cout << _imuUpdateTime << " " << _imuLastUpdateTime << "\n";
     Eigen::Vector3d lla_position = lla_calcPosition(_imuUpdateTime, _imuLastUpdateTime, _lla_imuLastLinearPosition);
     LOG_DATA("{}: lla_position = {}°, {}°, {} m", nameId(), trafo::rad2deg(lla_position(0)), trafo::rad2deg(lla_position(1)), lla_position(2));
     Eigen::Vector3d e_position = trafo::lla2ecef_WGS84(lla_position);
@@ -786,11 +790,10 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
         _stopConditionReached = true;
         return nullptr;
     }
-    std::cout << "+++" << _imuUpdateTime << "\n";
     // ------------------------------------------------------------ Accelerations --------------------------------------------------------------
 
     // Force to keep vehicle on track
-    const Eigen::Vector3d n_trajectoryAccel = n_calcTrajectoryAccel(_imuUpdateTime, n_Quat_e);
+    const Eigen::Vector3d n_trajectoryAccel = n_calcTrajectoryAccel(_imuUpdateTime, n_Quat_e, lla_position, n_vel);
     LOG_DATA("{}: n_trajectoryAccel = {} [m/s^2]", nameId(), n_trajectoryAccel.transpose());
 
     // Measured acceleration in local-navigation frame coordinates [m/s^2]
@@ -896,13 +899,12 @@ std::array<double, 3> NAV::ImuSimulator::calcFlightAngles(const Eigen::Vector3d&
     }
     else if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
     {
-		
         roll = SplineInfo.Roll(_imuUpdateTime);
         pitch = SplineInfo.Pitch(_imuUpdateTime);
         yaw = SplineInfo.Yaw(_imuUpdateTime);
-		
-		/*
-		
+
+        /*
+
         // The normal vector of the center point of the circle to the ellipsoid expressed in Earth frame coordinates (see https://en.wikipedia.org/wiki/N-vector)
         const Eigen::Vector3d e_normalVectorCenterCircle{ std::cos(_lla_startPosition(0)) * std::cos(_lla_startPosition(1)),
                                                           std::cos(_lla_startPosition(0)) * std::sin(_lla_startPosition(1)),
@@ -914,8 +916,8 @@ std::array<double, 3> NAV::ImuSimulator::calcFlightAngles(const Eigen::Vector3d&
 
         roll = (_circularTrajectoryDirection == Direction::CCW ? -1.0 : 1.0) // CCW = Right wing facing outwards, roll angle measured downwards
                * std::acos(e_normalVectorCurrentPosition.dot(e_normalVectorCenterCircle) / (e_normalVectorCurrentPosition.norm() * e_normalVectorCenterCircle.norm()));
-		
-		*/
+
+        */
     }
 
     return { roll, pitch, yaw };
@@ -969,7 +971,6 @@ Eigen::Vector3d NAV::ImuSimulator::lla_calcPosition(double time, double& lastUpd
     if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
     {
         Eigen::Vector3d e_pos(SplineInfo.X(_imuUpdateTime), SplineInfo.Y(_imuUpdateTime), SplineInfo.Z(_imuUpdateTime));
-		std::cout << e_pos << "\n";
         return trafo::ecef2lla_WGS84(e_pos);
     }
     return Eigen::Vector3d::Zero();
@@ -994,7 +995,7 @@ Eigen::Vector3d NAV::ImuSimulator::n_calcVelocity(double time, const Eigen::Quat
     return Eigen::Vector3d::Zero();
 }
 
-Eigen::Vector3d NAV::ImuSimulator::n_calcTrajectoryAccel(double time, const Eigen::Quaterniond& n_Quat_e)
+Eigen::Vector3d NAV::ImuSimulator::n_calcTrajectoryAccel(double time, const Eigen::Quaterniond& n_Quat_e, const Eigen::Vector3d& lla_position, const Eigen::Vector3d& n_velocity)
 {
     if (_trajectoryType == TrajectoryType::Fixed)
     {
@@ -1008,7 +1009,21 @@ Eigen::Vector3d NAV::ImuSimulator::n_calcTrajectoryAccel(double time, const Eige
     if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
     {
         Eigen::Vector3d e_accel(SplineInfo.X.deriv(2, _imuUpdateTime), SplineInfo.Y.deriv(2, _imuUpdateTime), SplineInfo.Z.deriv(2, _imuUpdateTime));
-        return n_Quat_e * e_accel;
+
+        Eigen::Quaterniond e_Quat_n = n_Quat_e.conjugate();
+        Eigen::Vector3d e_vel = e_Quat_n * n_velocity;
+
+        // Math: \dot{C}_n^e = C_n^e \cdot \Omega_{en}^n
+        Eigen::Matrix3d n_DCM_dot_e = e_Quat_n.toRotationMatrix()
+                                      * skewSymmetricMatrix(n_calcTransportRate(lla_position, n_velocity,
+                                                                                calcEarthRadius_N(lla_position(0)),
+                                                                                calcEarthRadius_E(lla_position(0))));
+
+        // Math: \dot{C}_e^n = (\dot{C}_n^e)^T
+        Eigen::Matrix3d e_DCM_dot_n = n_DCM_dot_e.transpose();
+
+        // Math: a^n = \frac{\partial}{\partial t} \left( \dot{x}^n \right) = \frac{\partial}{\partial t} \left( C_e^n \cdot \dot{x}^e \right) = \dot{C}_e^n \cdot \dot{x}^e + C_e^n \cdot \ddot{x}^e
+        return e_DCM_dot_n * e_vel + n_Quat_e * e_accel;
     }
     return Eigen::Vector3d::Zero();
 }

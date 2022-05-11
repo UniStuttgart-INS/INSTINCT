@@ -255,8 +255,10 @@ class ImuSimulator : public Imu
     /// @brief Calculates the acceleration in local-navigation frame coordinates at the given time depending on the trajectoryType
     /// @param[in] time Time in [s]
     /// @param[in] n_Quat_e Rotation quaternion from Earth frame to local-navigation frame
+    /// @param[in] lla_position Current position as latitude, longitude, altitude [rad, rad, m]
+    /// @param[in] n_velocity Velocity in local-navigation frame coordinates [m/s]
     /// @return n_accel in [rad, rad, m]
-    Eigen::Vector3d n_calcTrajectoryAccel(double time, const Eigen::Quaterniond& n_Quat_e);
+    Eigen::Vector3d n_calcTrajectoryAccel(double time, const Eigen::Quaterniond& n_Quat_e, const Eigen::Vector3d& lla_position, const Eigen::Vector3d& n_velocity);
 
     /// @brief Calculates ω_ip_p, the gyroscope measurement (turn rate of the platform with respect to the inertial system expressed in platform coordinates)
     /// @param[in] lla_position Current position as latitude, longitude, altitude [rad, rad, m]
