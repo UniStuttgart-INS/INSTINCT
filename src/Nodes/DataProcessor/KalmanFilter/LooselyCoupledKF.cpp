@@ -578,6 +578,7 @@ bool NAV::LooselyCoupledKF::initialize()
     _kalmanFilter.setZero();
 
     _latestInertialNavSol = nullptr;
+    _unprocessedGnssPVAObs.clear();
     _accumulatedImuBiases.b_biasAccel.setZero();
     _accumulatedImuBiases.b_biasGyro.setZero();
 
