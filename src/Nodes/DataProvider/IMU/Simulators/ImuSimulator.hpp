@@ -213,10 +213,10 @@ class ImuSimulator : public Imu
 
     // ###########################################################################################################
 
-    /// Time to send the next IMU message in [s]
-    double _imuUpdateTime = 0.0;
-    /// Time to send the next GNSS message in [s]
-    double _gnssUpdateTime = 0.0;
+    /// Counter to calculate the IMU update time
+    uint64_t _imuUpdateCnt = 0.0;
+    /// Counter to calculate the GNSS update time
+    uint64_t _gnssUpdateCnt = 0.0;
 
     /// Update rate for the internal solution of linear movement in [Hz]
     static constexpr double INTERNAL_LINEAR_UPDATE_FREQUENCY = 1000;

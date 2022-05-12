@@ -710,8 +710,8 @@ bool NAV::ImuSimulator::resetNode()
 {
     LOG_TRACE("{}: called", nameId());
 
-    _imuUpdateTime = 0.0;
-    _gnssUpdateTime = 0.0;
+    _imuUpdateCnt = 0;
+    _gnssUpdateCnt = 0;
 
     _imuLastUpdateTime = 0.0;
     _gnssLastUpdateTime = 0.0;
@@ -763,10 +763,12 @@ bool NAV::ImuSimulator::checkStopCondition(double time, const Eigen::Vector3d& l
 
 std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 {
-    Eigen::Vector3d lla_position = lla_calcPosition(_imuUpdateTime, _imuLastUpdateTime, _lla_imuLastLinearPosition);
+    double imuUpdateTime = static_cast<double>(_imuUpdateCnt) / _imuFrequency;
+
+    Eigen::Vector3d lla_position = lla_calcPosition(imuUpdateTime, _imuLastUpdateTime, _lla_imuLastLinearPosition);
 
     // -------------------------------------------------- Check if a stop condition is met -----------------------------------------------------
-    if (checkStopCondition(_imuUpdateTime, lla_position))
+    if (checkStopCondition(imuUpdateTime, lla_position))
     {
         return nullptr;
     }
@@ -775,74 +777,74 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     if (peek)
     {
         auto obs = std::make_shared<InsObs>();
-        obs->insTime = _startTime + std::chrono::duration<double>(_imuUpdateTime);
+        obs->insTime = _startTime + std::chrono::duration<double>(imuUpdateTime);
         return obs;
     }
 
     // --------------------------------------------------------- Calculation of data -----------------------------------------------------------
-    LOG_DATA("{}: [{:8.3f}] lla_position = {}°, {}°, {} m", nameId(), _imuUpdateTime, trafo::rad2deg(lla_position(0)), trafo::rad2deg(lla_position(1)), lla_position(2));
+    LOG_DATA("{}: [{:8.3f}] lla_position = {}°, {}°, {} m", nameId(), imuUpdateTime, trafo::rad2deg(lla_position(0)), trafo::rad2deg(lla_position(1)), lla_position(2));
     Eigen::Vector3d e_position = trafo::lla2ecef_WGS84(lla_position);
     auto n_Quat_e = trafo::n_Quat_e(lla_position(0), lla_position(1));
 
-    Eigen::Vector3d n_vel = n_calcVelocity(_imuUpdateTime, n_Quat_e);
-    LOG_DATA("{}: [{:8.3f}] n_vel = {} [m/s]", nameId(), _imuUpdateTime, n_vel.transpose());
+    Eigen::Vector3d n_vel = n_calcVelocity(imuUpdateTime, n_Quat_e);
+    LOG_DATA("{}: [{:8.3f}] n_vel = {} [m/s]", nameId(), imuUpdateTime, n_vel.transpose());
 
-    auto [roll, pitch, yaw] = calcFlightAngles(_imuUpdateTime, lla_position, n_vel);
-    LOG_DATA("{}: [{:8.3f}] roll = {}°, pitch = {}°, yaw = {}°", nameId(), _imuUpdateTime, trafo::rad2deg(roll), trafo::rad2deg(pitch), trafo::rad2deg(yaw));
+    auto [roll, pitch, yaw] = calcFlightAngles(imuUpdateTime, lla_position, n_vel);
+    LOG_DATA("{}: [{:8.3f}] roll = {}°, pitch = {}°, yaw = {}°", nameId(), imuUpdateTime, trafo::rad2deg(roll), trafo::rad2deg(pitch), trafo::rad2deg(yaw));
 
     auto b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
 
     const Eigen::Vector3d n_omega_ie = n_Quat_e * InsConst::e_omega_ie;
-    LOG_DATA("{}: [{:8.3f}] n_omega_ie = {} [rad/s]", nameId(), _imuUpdateTime, n_omega_ie.transpose());
+    LOG_DATA("{}: [{:8.3f}] n_omega_ie = {} [rad/s]", nameId(), imuUpdateTime, n_omega_ie.transpose());
     const double R_N = calcEarthRadius_N(lla_position(0));
-    LOG_DATA("{}: [{:8.3f}] R_N = {} [m]", nameId(), _imuUpdateTime, R_N);
+    LOG_DATA("{}: [{:8.3f}] R_N = {} [m]", nameId(), imuUpdateTime, R_N);
     const double R_E = calcEarthRadius_E(lla_position(0));
-    LOG_DATA("{}: [{:8.3f}] R_E = {} [m]", nameId(), _imuUpdateTime, R_E);
+    LOG_DATA("{}: [{:8.3f}] R_E = {} [m]", nameId(), imuUpdateTime, R_E);
     const Eigen::Vector3d n_omega_en = n_calcTransportRate(lla_position, n_vel, R_N, R_E);
-    LOG_DATA("{}: [{:8.3f}] n_omega_en = {} [rad/s]", nameId(), _imuUpdateTime, n_omega_en.transpose());
+    LOG_DATA("{}: [{:8.3f}] n_omega_en = {} [rad/s]", nameId(), imuUpdateTime, n_omega_en.transpose());
 
     // ------------------------------------------------------------ Accelerations --------------------------------------------------------------
 
     // Force to keep vehicle on track
-    const Eigen::Vector3d n_trajectoryAccel = n_calcTrajectoryAccel(_imuUpdateTime, n_Quat_e, lla_position, n_vel);
-    LOG_DATA("{}: [{:8.3f}] n_trajectoryAccel = {} [m/s^2]", nameId(), _imuUpdateTime, n_trajectoryAccel.transpose());
+    const Eigen::Vector3d n_trajectoryAccel = n_calcTrajectoryAccel(imuUpdateTime, n_Quat_e, lla_position, n_vel);
+    LOG_DATA("{}: [{:8.3f}] n_trajectoryAccel = {} [m/s^2]", nameId(), imuUpdateTime, n_trajectoryAccel.transpose());
 
     // Measured acceleration in local-navigation frame coordinates [m/s^2]
     Eigen::Vector3d n_accel = n_trajectoryAccel;
     if (_coriolisAccelerationEnabled) // Apply Coriolis Acceleration
     {
         const Eigen::Vector3d n_coriolisAcceleration = n_calcCoriolisAcceleration(n_omega_ie, n_omega_en, n_vel);
-        LOG_DATA("{}: [{:8.3f}] n_coriolisAcceleration = {} [m/s^2]", nameId(), _imuUpdateTime, n_coriolisAcceleration.transpose());
+        LOG_DATA("{}: [{:8.3f}] n_coriolisAcceleration = {} [m/s^2]", nameId(), imuUpdateTime, n_coriolisAcceleration.transpose());
         n_accel += n_coriolisAcceleration;
     }
 
     // Mass attraction of the Earth (gravitation)
     const Eigen::Vector3d n_gravitation = n_calcGravitation(lla_position, _gravitationModel);
-    LOG_DATA("{}: [{:8.3f}] n_gravitation = {} [m/s^2] ({})", nameId(), _imuUpdateTime, n_gravitation.transpose(), NAV::to_string(_gravitationModel));
+    LOG_DATA("{}: [{:8.3f}] n_gravitation = {} [m/s^2] ({})", nameId(), imuUpdateTime, n_gravitation.transpose(), NAV::to_string(_gravitationModel));
     n_accel -= n_gravitation; // Apply the local gravity vector
 
     if (_centrifgalAccelerationEnabled) // Centrifugal acceleration caused by the Earth's rotation
     {
         const Eigen::Vector3d e_centrifugalAcceleration = e_calcCentrifugalAcceleration(e_position);
-        LOG_DATA("{}: [{:8.3f}] e_centrifugalAcceleration = {} [m/s^2]", nameId(), _imuUpdateTime, e_centrifugalAcceleration.transpose());
+        LOG_DATA("{}: [{:8.3f}] e_centrifugalAcceleration = {} [m/s^2]", nameId(), imuUpdateTime, e_centrifugalAcceleration.transpose());
         const Eigen::Vector3d n_centrifugalAcceleration = n_Quat_e * e_centrifugalAcceleration;
-        LOG_DATA("{}: [{:8.3f}] n_centrifugalAcceleration = {} [m/s^2]", nameId(), _imuUpdateTime, n_centrifugalAcceleration.transpose());
+        LOG_DATA("{}: [{:8.3f}] n_centrifugalAcceleration = {} [m/s^2]", nameId(), imuUpdateTime, n_centrifugalAcceleration.transpose());
         n_accel += n_centrifugalAcceleration;
     }
 
     // Acceleration measured by the accelerometer in platform coordinates
     Eigen::Vector3d accel_p = _imuPos.p_quatAccel_b() * b_Quat_n * n_accel;
-    LOG_DATA("{}: [{:8.3f}] accel_p = {} [m/s^2]", nameId(), _imuUpdateTime, accel_p.transpose());
+    LOG_DATA("{}: [{:8.3f}] accel_p = {} [m/s^2]", nameId(), imuUpdateTime, accel_p.transpose());
 
     // ------------------------------------------------------------ Angular rates --------------------------------------------------------------
 
-    const Eigen::Vector3d omega_ip_p = p_calcOmega_ip(_imuUpdateTime, lla_position, n_vel, n_trajectoryAccel, Eigen::Vector3d{ roll, pitch, yaw }, b_Quat_n, n_omega_ie, n_omega_en);
-    LOG_DATA("{}: [{:8.3f}] omega_ip_p = {} [rad/s]", nameId(), _imuUpdateTime, omega_ip_p.transpose());
+    const Eigen::Vector3d omega_ip_p = p_calcOmega_ip(imuUpdateTime, lla_position, n_vel, n_trajectoryAccel, Eigen::Vector3d{ roll, pitch, yaw }, b_Quat_n, n_omega_ie, n_omega_en);
+    LOG_DATA("{}: [{:8.3f}] omega_ip_p = {} [rad/s]", nameId(), imuUpdateTime, omega_ip_p.transpose());
 
     // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
     auto obs = std::make_shared<ImuObs>(_imuPos);
-    obs->timeSinceStartup = static_cast<uint64_t>(_imuUpdateTime * 1e9);
-    obs->insTime = _startTime + std::chrono::duration<double>(_imuUpdateTime);
+    obs->timeSinceStartup = static_cast<uint64_t>(imuUpdateTime * 1e9);
+    obs->insTime = _startTime + std::chrono::duration<double>(imuUpdateTime);
 
     obs->accelCompXYZ = accel_p;
     obs->accelUncompXYZ = accel_p;
@@ -852,7 +854,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     obs->magCompXYZ.emplace(0, 0, 0);
     obs->magUncompXYZ.emplace(0, 0, 0);
 
-    _imuUpdateTime += 1.0 / _imuFrequency;
+    _imuUpdateCnt++;
     invokeCallbacks(OUTPUT_PORT_INDEX_IMU_OBS, obs);
 
     return obs;
@@ -860,10 +862,12 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 
 std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
 {
-    Eigen::Vector3d lla_position = lla_calcPosition(_gnssUpdateTime, _gnssLastUpdateTime, _lla_gnssLastLinearPosition);
+    double gnssUpdateTime = static_cast<double>(_gnssUpdateCnt) / _gnssFrequency;
+
+    Eigen::Vector3d lla_position = lla_calcPosition(gnssUpdateTime, _gnssLastUpdateTime, _lla_gnssLastLinearPosition);
 
     // -------------------------------------------------- Check if a stop condition is met -----------------------------------------------------
-    if (checkStopCondition(_gnssUpdateTime, lla_position))
+    if (checkStopCondition(gnssUpdateTime, lla_position))
     {
         return nullptr;
     }
@@ -872,25 +876,25 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
     if (peek)
     {
         auto obs = std::make_shared<InsObs>();
-        obs->insTime = _startTime + std::chrono::duration<double>(_gnssUpdateTime);
+        obs->insTime = _startTime + std::chrono::duration<double>(gnssUpdateTime);
         return obs;
     }
 
     // --------------------------------------------------------- Calculation of data -----------------------------------------------------------
-    LOG_DATA("{}: [{:8.3f}] lla_position = {}°, {}°, {} m", nameId(), _gnssUpdateTime, trafo::rad2deg(lla_position(0)), trafo::rad2deg(lla_position(1)), lla_position(2));
+    LOG_DATA("{}: [{:8.3f}] lla_position = {}°, {}°, {} m", nameId(), gnssUpdateTime, trafo::rad2deg(lla_position(0)), trafo::rad2deg(lla_position(1)), lla_position(2));
     auto n_Quat_e = trafo::n_Quat_e(lla_position(0), lla_position(1));
-    Eigen::Vector3d n_vel = n_calcVelocity(_gnssUpdateTime, n_Quat_e);
-    LOG_DATA("{}: [{:8.3f}] n_vel = {} [m/s]", nameId(), _gnssUpdateTime, n_vel.transpose());
-    auto [roll, pitch, yaw] = calcFlightAngles(_gnssUpdateTime, lla_position, n_vel);
-    LOG_DATA("{}: [{:8.3f}] roll = {}°, pitch = {}°, yaw = {}°", nameId(), _gnssUpdateTime, trafo::rad2deg(roll), trafo::rad2deg(pitch), trafo::rad2deg(yaw));
+    Eigen::Vector3d n_vel = n_calcVelocity(gnssUpdateTime, n_Quat_e);
+    LOG_DATA("{}: [{:8.3f}] n_vel = {} [m/s]", nameId(), gnssUpdateTime, n_vel.transpose());
+    auto [roll, pitch, yaw] = calcFlightAngles(gnssUpdateTime, lla_position, n_vel);
+    LOG_DATA("{}: [{:8.3f}] roll = {}°, pitch = {}°, yaw = {}°", nameId(), gnssUpdateTime, trafo::rad2deg(roll), trafo::rad2deg(pitch), trafo::rad2deg(yaw));
 
     // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
     auto obs = std::make_shared<PosVelAtt>();
-    obs->insTime = _startTime + std::chrono::duration<double>(_gnssUpdateTime);
+    obs->insTime = _startTime + std::chrono::duration<double>(gnssUpdateTime);
 
     obs->setState_n(lla_position, n_vel, trafo::n_Quat_b(roll, pitch, yaw));
 
-    _gnssUpdateTime += 1.0 / _gnssFrequency;
+    _gnssUpdateCnt++;
     invokeCallbacks(OUTPUT_PORT_INDEX_POS_VEL_ATT, obs);
 
     return obs;
