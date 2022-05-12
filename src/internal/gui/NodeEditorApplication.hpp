@@ -83,7 +83,7 @@ class NodeEditorApplication : public Application
     int frameCountNavigate = 0;
 
     /// @brief Pointer to the texture for the instinct logo
-    static inline ImTextureID m_InstinctLogo = nullptr;
+    static inline std::array<ImTextureID, 2> m_InstinctLogo{ nullptr, nullptr };
 
     /// @brief Default style of the ImPlot library to compare changes against
     static inline ImPlotStyle imPlotReferenceStyle;

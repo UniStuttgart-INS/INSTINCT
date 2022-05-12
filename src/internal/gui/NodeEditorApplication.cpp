@@ -165,7 +165,7 @@ void NAV::gui::NodeEditorApplication::OnStart()
     {
         auto fd = fs.open("resources/images/INSTINCT_Logo_Text_white_small.png");
 
-        LOG_DEBUG("Generating Texture for INSTINCT Logo ({} byte)", fd.size());
+        LOG_DEBUG("Generating Texture for INSTINCT Logo (white) ({} byte)", fd.size());
 
         auto is = cmrc::memstream(const_cast<char*>(fd.begin()), // NOLINT(cppcoreguidelines-pro-type-const-cast)
                                   const_cast<char*>(fd.end()));  // NOLINT(cppcoreguidelines-pro-type-const-cast)
@@ -177,12 +177,36 @@ void NAV::gui::NodeEditorApplication::OnStart()
                 static_cast<std::streamsize>(buffer.size()));
 
         // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
-        m_InstinctLogo = LoadTexture(reinterpret_cast<const void*>(const_cast<const char*>(buffer.data())),
-                                     static_cast<int>(fd.size()));
+        m_InstinctLogo.at(0) = LoadTexture(reinterpret_cast<const void*>(const_cast<const char*>(buffer.data())),
+                                           static_cast<int>(fd.size()));
     }
     else
     {
-        m_InstinctLogo = LoadTexture("resources/images/INSTINCT_Logo_Text_white_small.png");
+        m_InstinctLogo.at(0) = LoadTexture("resources/images/INSTINCT_Logo_Text_white_small.png");
+    }
+
+    if (fs.is_file("resources/images/INSTINCT_Logo_Text_black_small.png"))
+    {
+        auto fd = fs.open("resources/images/INSTINCT_Logo_Text_black_small.png");
+
+        LOG_DEBUG("Generating Texture for INSTINCT Logo (black) ({} byte)", fd.size());
+
+        auto is = cmrc::memstream(const_cast<char*>(fd.begin()), // NOLINT(cppcoreguidelines-pro-type-const-cast)
+                                  const_cast<char*>(fd.end()));  // NOLINT(cppcoreguidelines-pro-type-const-cast)
+
+        std::vector<char> buffer;
+        buffer.resize(fd.size(), '\0');
+
+        is.read(buffer.data(),
+                static_cast<std::streamsize>(buffer.size()));
+
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
+        m_InstinctLogo.at(1) = LoadTexture(reinterpret_cast<const void*>(const_cast<const char*>(buffer.data())),
+                                           static_cast<int>(fd.size()));
+    }
+    else
+    {
+        m_InstinctLogo.at(1) = LoadTexture("resources/images/INSTINCT_Logo_Text_black_small.png");
     }
 }
 
@@ -205,7 +229,8 @@ void NAV::gui::NodeEditorApplication::OnStop()
         }
     };
 
-    releaseTexture(m_InstinctLogo);
+    releaseTexture(m_InstinctLogo.at(0));
+    releaseTexture(m_InstinctLogo.at(1));
     releaseTexture(m_HeaderBackground);
 
     if (m_Editor)
@@ -234,7 +259,7 @@ bool NAV::gui::NodeEditorApplication::OnQuitRequest()
 
 void NAV::gui::NodeEditorApplication::ShowQuitRequested()
 {
-    auto& io = ImGui::GetIO();
+    const auto& io = ImGui::GetIO();
     if (!io.KeyCtrl && !io.KeyAlt && !io.KeyShift && !io.KeySuper)
     {
         if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
@@ -301,7 +326,7 @@ void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
     ImGuiFileDialog::Instance()->OpenDialog("Save Flow", "Save Flow", ".flow", (flow::GetFlowPath() / ".").string(), 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
     ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, ".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
 
-    auto& io = ImGui::GetIO();
+    const auto& io = ImGui::GetIO();
     if (!io.KeyCtrl && !io.KeyAlt && !io.KeyShift && !io.KeySuper)
     {
         if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
@@ -327,7 +352,7 @@ void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
 
 void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
 {
-    auto& io = ImGui::GetIO();
+    const auto& io = ImGui::GetIO();
     if (!io.KeyCtrl && !io.KeyAlt && !io.KeyShift && !io.KeySuper)
     {
         if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
@@ -1118,7 +1143,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 if (ed::QueryNewNode(&pinId))
                 {
                     newLinkPin = nm::FindPin(pinId);
-                    if (newLinkPin->kind == Pin::Kind::Input && nm::IsPinLinked(newLinkPin->id))
+                    if (newLinkPin && newLinkPin->kind == Pin::Kind::Input && nm::IsPinLinked(newLinkPin->id))
                     {
                         showLabel("End Pin already linked", ImColor(45, 32, 32, 180));
                         ed::RejectNewItem(ImColor(255, 128, 128), 1.0F);

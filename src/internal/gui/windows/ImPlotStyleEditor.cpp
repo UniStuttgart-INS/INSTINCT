@@ -36,17 +36,6 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
         return;
     }
 
-    std::filesystem::path filepath = flow::GetProgramRootPath();
-    if (std::filesystem::path inputPath{ ConfigManager::Get<std::string>("implot-config") };
-        inputPath.is_relative())
-    {
-        filepath /= inputPath;
-    }
-    else
-    {
-        filepath = inputPath;
-    }
-
     auto loadImPlotStyleFromConfigFile = [](const std::string& path) {
         std::filesystem::path filepath = flow::GetProgramRootPath();
         if (std::filesystem::path inputPath{ path };
@@ -77,6 +66,17 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
         }
     };
 
+    std::filesystem::path filepath = flow::GetProgramRootPath();
+    if (std::filesystem::path inputPath{ ConfigManager::Get<std::string>("implot-config") };
+        inputPath.is_relative())
+    {
+        filepath /= inputPath;
+    }
+    else
+    {
+        filepath = inputPath;
+    }
+
     static std::string path = ConfigManager::Get<std::string>("implot-config");
 
     if (widgets::FileDialogLoad(path, "ImPlot config file", ".json", { ".json" }, filepath.parent_path() / ".", 0, "ImPlotStyleEditor"))
@@ -94,7 +94,7 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
     ImGui::SameLine();
     if (ImGui::Button("Save##ImPlotStyleToFile"))
     {
-        std::filesystem::path filepath = flow::GetProgramRootPath();
+        filepath = flow::GetProgramRootPath();
         if (std::filesystem::path inputPath{ path };
             inputPath.is_relative())
         {
