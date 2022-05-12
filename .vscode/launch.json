@@ -12,6 +12,9 @@
                 "-l",
                 "flow/Default.flow",
                 // "--nogui",
+                // "--noinit",
+                "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
+                "--file-log-level=trace", // trace/debug/info/warning/error/critical/off
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
@@ -61,6 +64,9 @@
                 "-l",
                 "flow/Default.flow",
                 // "--nogui",
+                // "--noinit",
+                "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
+                "--file-log-level=trace", // trace/debug/info/warning/error/critical/off
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

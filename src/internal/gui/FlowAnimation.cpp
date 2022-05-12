@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <mutex>
+#include <algorithm>
 
 /// Queue to store animations till the draw threads pushes them onto the library
 static std::vector<std::pair<ax::NodeEditor::LinkId, ax::NodeEditor::FlowDirection>> flowAnimationQueue;
