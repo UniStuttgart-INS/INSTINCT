@@ -16,6 +16,9 @@ coverage/*
 # Ignore Mac specific files
 .DS_Store
 
+# Ignore clangd cache
+/.cache
+
 # Ignore root level compile_commands
 compile_commands.json
 
