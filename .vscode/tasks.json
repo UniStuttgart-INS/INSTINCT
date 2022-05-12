@@ -364,6 +364,7 @@
                 // "--sigterm",
                 // "--duration=60",
                 // "--nogui",
+                // "--noinit",
                 // "--input-path=data",
                 // "--output-path=logs",
                 // "--rotate-output",

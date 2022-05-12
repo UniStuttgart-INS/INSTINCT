@@ -101,16 +101,19 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
 
     LoadJson(j);
 
-    if (ConfigManager::Get<bool>("nogui"))
+    if (!ConfigManager::Get<bool>("noinit"))
     {
-        if (!nm::InitializeAllNodes())
+        if (ConfigManager::Get<bool>("nogui"))
         {
-            loadSuccessful = false;
+            if (!nm::InitializeAllNodes())
+            {
+                loadSuccessful = false;
+            }
         }
-    }
-    else
-    {
-        nm::InitializeAllNodesAsync();
+        else
+        {
+            nm::InitializeAllNodesAsync();
+        }
     }
 
     if (!ConfigManager::Get<bool>("nogui"))
