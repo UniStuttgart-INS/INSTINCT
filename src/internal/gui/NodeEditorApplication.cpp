@@ -1251,6 +1251,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     {
         Node* node = nm::FindNode(doubleClickedNodeId);
         node->_showConfig = true;
+        node->_configWindowFocus = true;
     }
     ed::Resume();
 
@@ -1291,6 +1292,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             if (node->_hasConfig && ImGui::MenuItem("Configure", "", false))
             {
                 node->_showConfig = true;
+                node->_configWindowFocus = true;
             }
             if (ImGui::MenuItem(node->isEnabled() ? "Disable" : "Enable", "", false))
             {
@@ -1509,6 +1511,12 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         if (node->_hasConfig && node->_showConfig)
         {
             ImVec2 center(ImGui::GetIO().DisplaySize.x * 0.5F, ImGui::GetIO().DisplaySize.y * 0.5F);
+            if (node->_configWindowFocus)
+            {
+                ImGui::SetNextWindowCollapsed(false);
+                ImGui::SetNextWindowFocus();
+                node->_configWindowFocus = false;
+            }
             ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5F, 0.5F));
             ImGui::SetNextWindowSize(node->_guiConfigDefaultWindowSize, ImGuiCond_FirstUseEver);
             if (ImGui::Begin(fmt::format("{} ({})", node->nameId(), node->type()).c_str(), &(node->_showConfig),

@@ -316,6 +316,9 @@ class Node
     /// Flag if the config window is shown
     bool _showConfig = false;
 
+    /// Flag if the config window should be focused
+    bool _configWindowFocus = false;
+
     /// Size of the node in pixels
     ImVec2 _size{ 0, 0 };
 

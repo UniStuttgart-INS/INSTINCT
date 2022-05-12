@@ -12,6 +12,7 @@
 #include <array>
 #include "internal/gui/GlobalActions.hpp"
 
+#include <array>
 #include <thread>
 #include <deque>
 
