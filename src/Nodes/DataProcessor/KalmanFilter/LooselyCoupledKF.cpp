@@ -681,6 +681,7 @@ void NAV::LooselyCoupledKF::deinitialize()
 void NAV::LooselyCoupledKF::recvInertialNavigationSolution(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/) // NOLINT(readability-convert-member-functions-to-static)
 {
     auto inertialNavSol = std::static_pointer_cast<const InertialNavSol>(nodeData);
+    LOG_DATA("{}: Recv Inertial  t = {}", nameId(), inertialNavSol->insTime->toYMDHMS());
 
     if (_latestInertialNavSol)
     {
@@ -689,16 +690,27 @@ void NAV::LooselyCoupledKF::recvInertialNavigationSolution(const std::shared_ptr
 
     _latestInertialNavSol = inertialNavSol;
 
+    if (!_unprocessedGnssPVAObs.empty() && _unprocessedGnssPVAObs.front()->insTime < inertialNavSol->insTime)
+    {
+        looselyCoupledUpdate(_unprocessedGnssPVAObs.front());
+        _unprocessedGnssPVAObs.pop_front();
+    }
+
     looselyCoupledPrediction(inertialNavSol);
 }
 
 void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
     auto gnssMeasurement = std::static_pointer_cast<const PosVelAtt>(nodeData);
+    LOG_DATA("{}: Recv GNSS     t = {}", nameId(), gnssMeasurement->insTime->toYMDHMS());
 
-    if (_latestInertialNavSol)
+    if (_latestInertialNavSol && _latestInertialNavSol->insTime >= gnssMeasurement->insTime) // If IMU and GNSS coma at the same time, but GNSS first.
+    {                                                                                        // Then we should first predict and then update.
+        looselyCoupledUpdate(gnssMeasurement);                                               // TODO: LCKF can't handle IMU not sending data anymore
+    }
+    else
     {
-        looselyCoupledUpdate(gnssMeasurement);
+        _unprocessedGnssPVAObs.push_back(gnssMeasurement);
     }
 }
 

@@ -90,8 +90,11 @@ class LooselyCoupledKF : public Node
     /// @brief Removes the output pins for the Kalman matrices
     void removeKalmanMatricesPins();
 
-    /// Latest Position, Velocity, Attitude and Imu observation
+    /// Latest observation from the Inertial Integrator (Position, Velocity, Attitude and IMU measurements)
     std::shared_ptr<const InertialNavSol> _latestInertialNavSol = nullptr;
+
+    /// Unprocessed observation from GNSS (Position, Velocity and Attitude)
+    std::deque<std::shared_ptr<const PosVelAtt>> _unprocessedGnssPVAObs;
 
     /// Accumulated IMU biases
     ImuBiases _accumulatedImuBiases;
