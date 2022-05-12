@@ -134,32 +134,9 @@ void NAV::SensorCombiner::guiConfig()
             ImGui::TableNextRow();
             ImGui::TableNextColumn(); // Pin
 
-            // if (pinIndex == 0 && _dragAndDropPinIndex > 0)
-            // {
-            //     showDragDropTargetPin(0);
-            // }
-
             bool selectablePinDummy = false;
             ImGui::Selectable(fmt::format("{}##{}", inputPins.at(pinIndex).name, size_t(id)).c_str(), &selectablePinDummy);
-            // if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
-            // {
-            //     dragAndDropPinStillInProgress = true;
-            //     _dragAndDropPinIndex = static_cast<int>(pinIndex);
-            //     // Data is copied into heap inside the drag and drop
-            //     ImGui::SetDragDropPayload(fmt::format("DND Pin {}", size_t(id)).c_str(), &pinIndex, sizeof(pinIndex));
-            //     ImGui::TextUnformatted(inputPins.at(pinIndex).name.c_str());
-            //     ImGui::EndDragDropSource();
-            // }
-            // if (_dragAndDropPinIndex >= 0
-            //     && pinIndex != static_cast<size_t>(_dragAndDropPinIndex - 1)
-            //     && pinIndex != static_cast<size_t>(_dragAndDropPinIndex))
-            // {
-            //     showDragDropTargetPin(pinIndex + 1);
-            // }
-            // if (ImGui::IsItemHovered())
-            // {
-            //     ImGui::SetTooltip("This item can be dragged to reorder the pins");
-            // }
+
             if (inputPins.size() > 2) // Minimum # of pins for the fusion to make sense is two
             {
                 ImGui::TableNextColumn(); // Delete
@@ -882,12 +859,18 @@ void NAV::SensorCombiner::combineSignals(std::shared_ptr<const ImuObs>& imuObs)
     imuObsFiltered->accelUncompXYZ.emplace(_kalmanFilter.x(6, 0), _kalmanFilter.x(7, 0), _kalmanFilter.x(8, 0));
     imuObsFiltered->gyroUncompXYZ.emplace(_kalmanFilter.x(0, 0), _kalmanFilter.x(1, 0), _kalmanFilter.x(2, 0));
 
-    imuRelativeBiases->insTime = imuObs->insTime;
-    imuRelativeBiases->b_biasGyro << _kalmanFilter.x(12, 0), _kalmanFilter.x(13, 0), _kalmanFilter.x(14, 0);
-    imuRelativeBiases->b_biasAccel << _kalmanFilter.x(15, 0), _kalmanFilter.x(16, 0), _kalmanFilter.x(17, 0);
-
     invokeCallbacks(OUTPUT_PORT_INDEX_COMBINED_SIGNAL, imuObsFiltered);
-    invokeCallbacks(OUTPUT_PORT_INDEX_BIASES, imuRelativeBiases);
+
+    imuRelativeBiases->insTime = imuObs->insTime;
+    for (size_t OUTPUT_PORT_INDEX_BIAS = 1; OUTPUT_PORT_INDEX_BIAS < _nInputPins; ++OUTPUT_PORT_INDEX_BIAS)
+    {
+        auto biasIndex = _numStatesEst + static_cast<uint8_t>((OUTPUT_PORT_INDEX_BIAS - 1) * _numStatesPerPin);
+
+        imuRelativeBiases->b_biasGyro << _kalmanFilter.x(biasIndex, 0), _kalmanFilter.x(biasIndex + 1, 0), _kalmanFilter.x(biasIndex + 2, 0);
+        imuRelativeBiases->b_biasAccel << _kalmanFilter.x(biasIndex + 3, 0), _kalmanFilter.x(biasIndex + 4, 0), _kalmanFilter.x(biasIndex + 5, 0);
+
+        invokeCallbacks(OUTPUT_PORT_INDEX_BIAS, imuRelativeBiases);
+    }
 }
 
 Eigen::MatrixXd NAV::SensorCombiner::stateTransitionMatrix_Phi(double dt) const // TODO: if called in KF update, don't make new Phi every iteration
