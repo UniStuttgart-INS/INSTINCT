@@ -571,6 +571,9 @@ bool NAV::SensorCombiner::initialize()
 
     _kalmanFilter.setZero();
     _imuRotations.clear();
+    _processNoiseVariances.clear();
+
+    _latestTimestamp = InsTime{};
 
     updateNumberOfInputPins();
 
@@ -604,9 +607,6 @@ void NAV::SensorCombiner::updateNumberOfInputPins()
     }
 
     _designMatrixInitialized = false;
-
-    // Initial time step for KF prediction
-    double dt = 1.0 / _imuFrequency;
 
     // ------------------------------------------------------ Error covariance matrix P --------------------------------------------------------
 
@@ -702,64 +702,61 @@ void NAV::SensorCombiner::updateNumberOfInputPins()
     }
 
     // ------------------------------------------------------- Process noise matrix Q ----------------------------------------------------------
+    _processNoiseVariances.resize(2 * _nInputPins);
 
     // 𝜎_AngAcc Standard deviation of the noise on the angular acceleration state [rad/s²]
-    Eigen::Vector3d variance_AngAccNoise = Eigen::Vector3d::Zero();
     switch (_varAngularAccNoiseUnit)
     {
     case VarAngularAccNoiseUnit::rad2_s4:
-        variance_AngAccNoise = _varAngularAccNoise;
+        _processNoiseVariances[0] = _varAngularAccNoise;
         break;
     case VarAngularAccNoiseUnit::deg2_s4:
-        variance_AngAccNoise = trafo::deg2rad(_varAngularAccNoise);
+        _processNoiseVariances[0] = trafo::deg2rad(_varAngularAccNoise);
         break;
     case VarAngularAccNoiseUnit::deg_s2:
-        variance_AngAccNoise = trafo::deg2rad(_varAngularAccNoise).array().pow(2);
+        _processNoiseVariances[0] = trafo::deg2rad(_varAngularAccNoise).array().pow(2);
         break;
     case VarAngularAccNoiseUnit::rad_s2:
-        variance_AngAccNoise = _varAngularAccNoise.array().pow(2);
+        _processNoiseVariances[0] = _varAngularAccNoise.array().pow(2);
         break;
     }
 
     // 𝜎_jerk Standard deviation of the noise on the jerk state [m/s³]
-    Eigen::Vector3d variance_jerkNoise = Eigen::Vector3d::Zero();
     switch (_varJerkNoiseUnit)
     {
     case VarJerkNoiseUnit::m2_s6:
-        variance_jerkNoise = _varJerkNoise;
+        _processNoiseVariances[1] = _varJerkNoise;
         break;
     case VarJerkNoiseUnit::m_s3:
-        variance_jerkNoise = _varJerkNoise.array().pow(2);
+        _processNoiseVariances[1] = _varJerkNoise.array().pow(2);
         break;
     }
 
     // 𝜎_biasAngRate Standard deviation of the bias on the angular rate state [rad/s²]
-    Eigen::Vector3d variance_biasAngRate = Eigen::Vector3d::Zero();
     switch (_varBiasAngRateNoiseUnit)
     {
     case VarBiasAngRateNoiseUnit::rad2_s2:
-        variance_biasAngRate = _varBiasAngRateNoise;
+        _processNoiseVariances[2] = _varBiasAngRateNoise;
         break;
     case VarBiasAngRateNoiseUnit::deg2_s2:
-        variance_biasAngRate = trafo::deg2rad(_varBiasAngRateNoise);
+        _processNoiseVariances[2] = trafo::deg2rad(_varBiasAngRateNoise);
         break;
     case VarBiasAngRateNoiseUnit::deg_s:
-        variance_biasAngRate = trafo::deg2rad(_varBiasAngRateNoise).array().pow(2);
+        _processNoiseVariances[2] = trafo::deg2rad(_varBiasAngRateNoise).array().pow(2);
         break;
     case VarBiasAngRateNoiseUnit::rad_s:
-        variance_biasAngRate = _varBiasAngRateNoise.array().pow(2);
+        _processNoiseVariances[2] = _varBiasAngRateNoise.array().pow(2);
         break;
     }
 
     // 𝜎_biasAcceleration Standard deviation of the noise on the acceleration state [m/s³]
-    Eigen::Vector3d variance_biasAcceleration = Eigen::Vector3d::Zero();
     switch (_varBiasAccelerationNoiseUnit)
     {
     case VarBiasAccelerationNoiseUnit::m2_s4:
-        variance_biasAcceleration = _varBiasAccelerationNoise;
+        _processNoiseVariances[3] = _varBiasAccelerationNoise;
         break;
     case VarBiasAccelerationNoiseUnit::m_s2:
-        variance_biasAcceleration = _varBiasAccelerationNoise.array().pow(2);
+        _processNoiseVariances[3] = _varBiasAccelerationNoise.array().pow(2);
         break;
     }
 
@@ -795,10 +792,12 @@ void NAV::SensorCombiner::updateNumberOfInputPins()
         break;
     }
 
+    auto dtInit = 1.0 / _imuFrequency;
+
     // --------------------------------------------------------- KF Initializations ------------------------------------------------------------
     _kalmanFilter.P = initialErrorCovarianceMatrix_P0(variance_angularRate, variance_angularAcceleration, variance_acceleration, variance_jerk, variance_biasAngularAcceleration, variance_biasJerk);
-    _kalmanFilter.Phi = stateTransitionMatrix_Phi(dt);
-    _kalmanFilter.Q = processNoiseMatrix_Q(dt, variance_AngAccNoise, variance_jerkNoise, variance_biasAngRate, variance_biasAcceleration);
+    _kalmanFilter.Phi = stateTransitionMatrix_Phi(dtInit);
+    _kalmanFilter.Q = processNoiseMatrix_Q(dtInit);
     _kalmanFilter.R = measurementNoiseMatrix_R_init(sigmaSquaredAngularRateMeas, sigmaSquaredAccelerationMeas);
 }
 
@@ -811,6 +810,32 @@ void NAV::SensorCombiner::recvSignal(const std::shared_ptr<const NodeData>& node
         LOG_ERROR("{}: Can't set new imuObs__t0 because the observation has no time tag (insTime/timeSinceStartup)", nameId());
         return;
     }
+
+    if (_latestTimestamp.empty())
+    {
+        // Initial time step for KF prediction
+        InsTime dt_init = InsTime{ 0, 0, 0, 0, 0, 1.0 / _imuFrequency };
+        _latestTimestamp = InsTime{ 0, 0, 0, 0, 0, (imuObs->insTime.value() - dt_init).count() };
+    }
+
+    auto dt = static_cast<double>((imuObs->insTime.value() - _latestTimestamp).count());
+    _latestTimestamp = imuObs->insTime.value();
+    if (dt > 0.001 && dt < 1) // Adapt Phi and Q only if time difference is sufficiently large
+    {
+        _kalmanFilter.Phi = stateTransitionMatrix_Phi(dt);
+        LOG_DEBUG("kalmanFilter.Phi =\n{}", _kalmanFilter.Phi);
+        _kalmanFilter.Q = processNoiseMatrix_Q(dt);
+        LOG_DEBUG("kalmanFilter.Q =\n{}", _kalmanFilter.Q);
+        // if (true) // _checkKalmanMatricesRanks
+        // {
+        //     auto rank = _kalmanFilter.P.fullPivLu().rank();
+        //     if (rank != _kalmanFilter.P.rows())
+        //     {
+        //         LOG_WARN("{}: P.rank = {}", nameId(), rank);
+        //     }
+        // }
+    }
+
     if (Link* link = nm::FindLink(linkId))
     {
         size_t pinIndex = pinIndexFromId(link->endPinId);
@@ -908,31 +933,28 @@ Eigen::MatrixXd NAV::SensorCombiner::initialErrorCovarianceMatrix_P0(Eigen::Vect
     return P;
 }
 
-Eigen::MatrixXd NAV::SensorCombiner::processNoiseMatrix_Q(double dt,
-                                                          Eigen::Vector3d& varAngAcc,
-                                                          Eigen::Vector3d& varJerk,
-                                                          Eigen::Vector3d& varBiasAngAcc,
-                                                          Eigen::Vector3d& varBiasJerk) const
+Eigen::MatrixXd NAV::SensorCombiner::processNoiseMatrix_Q(double dt) const
 {
     Eigen::MatrixXd Q(_numStates, _numStates);
 
     // Integrated Random Walk of the angular rate
-    Q.block<3, 3>(0, 0).diagonal() = varAngAcc / 3. * std::pow(dt, 3);
-    Q.block<3, 3>(0, 3).diagonal() = varAngAcc / 2. * std::pow(dt, 2);
-    Q.block<3, 3>(3, 0).diagonal() = varAngAcc / 2. * std::pow(dt, 2);
-    Q.block<3, 3>(3, 3).diagonal() = varAngAcc * dt;
+    Q.block<3, 3>(0, 0).diagonal() = _processNoiseVariances.at(0) / 3. * std::pow(dt, 3);
+    Q.block<3, 3>(0, 3).diagonal() = _processNoiseVariances.at(0) / 2. * std::pow(dt, 2);
+    Q.block<3, 3>(3, 0).diagonal() = _processNoiseVariances.at(0) / 2. * std::pow(dt, 2);
+    Q.block<3, 3>(3, 3).diagonal() = _processNoiseVariances.at(0) * dt;
 
     // Integrated Random Walk of the acceleration
-    Q.block<3, 3>(6, 6).diagonal() = varJerk / 3. * std::pow(dt, 3);
-    Q.block<3, 3>(6, 9).diagonal() = varJerk / 2. * std::pow(dt, 2);
-    Q.block<3, 3>(9, 6).diagonal() = varJerk / 2. * std::pow(dt, 2);
-    Q.block<3, 3>(9, 9).diagonal() = varJerk * dt;
+    Q.block<3, 3>(6, 6).diagonal() = _processNoiseVariances.at(1) / 3. * std::pow(dt, 3);
+    Q.block<3, 3>(6, 9).diagonal() = _processNoiseVariances.at(1) / 2. * std::pow(dt, 2);
+    Q.block<3, 3>(9, 6).diagonal() = _processNoiseVariances.at(1) / 2. * std::pow(dt, 2);
+    Q.block<3, 3>(9, 9).diagonal() = _processNoiseVariances.at(1) * dt;
 
     // Random Walk of the bias states
-    for (uint8_t i = 12; i < _numStates; i += 6)
+    for (uint32_t i = 12; i < _numStates; i += 6)
     {
-        Q.block<3, 3>(i, i).diagonal() = varBiasAngAcc * dt;
-        Q.block<3, 3>(i + 3, i + 3).diagonal() = varBiasJerk * dt;
+        size_t j = (i - 12) / 3 + 2;                                                    // access 2 bias variances for each sensor from the third element onwards
+        Q.block<3, 3>(i, i).diagonal() = _processNoiseVariances.at(j) * dt;             // variance for the process noise of the angular rate
+        Q.block<3, 3>(i + 3, i + 3).diagonal() = _processNoiseVariances.at(j + 1) * dt; // variance for the process noise of the acceleration
     }
 
     return Q;

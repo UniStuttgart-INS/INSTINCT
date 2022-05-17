@@ -227,18 +227,8 @@ class SensorCombiner : public Imu
 
     /// @brief Calculates the process noise matrix Q
     /// @param[in] dt Time difference between two successive measurements
-    /// @param[in] varAngAcc Initial variance (3D) of the Angular Acceleration state in [(rad^2)/(s^4)]
-    /// @param[in] varJerk Initial variance (3D) of the Jerk state in [(m^2)/(s^6)]
-    /// @param[in] varBiasAngAcc Initial variance (3D) of the bias of the Angular Acceleration state in [(rad^2)/(s^4)] for a dynamic number of sensors
-    /// @param[in] varBiasJerk Initial variance (3D) of the bias of the Jerk state in [(m^2)/(s^6)] for a dynamic number of sensors
     /// @return Process noise matrix Q
-    [[nodiscard]] Eigen::MatrixXd processNoiseMatrix_Q(double dt,
-                                                       Eigen::Vector3d& varAngAcc,
-                                                       Eigen::Vector3d& varJerk,
-                                                       Eigen::Vector3d& varBiasAngAcc,
-                                                       Eigen::Vector3d& varBiasJerk) const; // TODO: make array to accept multiple sensors
-    //  Eigen::Matrix<double, 3, Eigen::Dynamic>& varBiasAngAcc,
-    //  Eigen::Matrix<double, 3, Eigen::Dynamic>& varBiasJerk);
+    [[nodiscard]] Eigen::MatrixXd processNoiseMatrix_Q(double dt) const;
 
     /// @brief Calculates the design matrix H
     /// @param[in] DCM Rotation matrix of mounting angles of a sensor w.r.t. a common reference
@@ -315,6 +305,12 @@ class SensorCombiner : public Imu
 
     /// @brief Highest IMU sample rate (for time step in KF prediction)
     double _imuFrequency{ 100 };
+
+    /// @brief Saves the timestamp of the measurement before in [s]
+    InsTime _latestTimestamp{};
+
+    /// @brief Container for process noise of each state
+    std::vector<Eigen::Vector3d> _processNoiseVariances;
 
     // #########################################################################################################################################
     //                                                        Error Covariance Matrix P
