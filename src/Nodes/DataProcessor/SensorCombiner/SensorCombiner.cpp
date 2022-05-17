@@ -321,26 +321,31 @@ void NAV::SensorCombiner::guiConfig()
             flow::ApplyChanges();
         }
 
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the process noise on the bias of the angular rate##{}", size_t(id)).c_str(),
-                                               configWidth, unitWidth, _varBiasAngRateNoise.data(), reinterpret_cast<int*>(&_varBiasAngRateNoiseUnit), "(rad/s)^2\0"
-                                                                                                                                                       "rad/s\0"
-                                                                                                                                                       "(deg/s)^2\0"
-                                                                                                                                                       "deg/s\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
+        _varBiasAngRateNoise.resize(_nInputPins - 1);
+        _varBiasAccelerationNoise.resize(_nInputPins - 1);
+        for (size_t i = 0; i < _nInputPins - 1; ++i)
         {
-            LOG_DEBUG("{}: varBiasAngRateNoise changed to {}", nameId(), _varBiasAngRateNoise.transpose());
-            LOG_DEBUG("{}: varBiasAngRateNoiseUnit changed to {}", nameId(), _varBiasAngRateNoiseUnit);
-            flow::ApplyChanges();
-        }
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the process noise on the bias of the angular rate##{}", size_t(id)).c_str(),
+                                                   configWidth, unitWidth, _varBiasAngRateNoise.at(i).data(), reinterpret_cast<int*>(&_varBiasAngRateNoiseUnit), "(rad/s)^2\0"
+                                                                                                                                                                 "rad/s\0"
+                                                                                                                                                                 "(deg/s)^2\0"
+                                                                                                                                                                 "deg/s\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: varBiasAngRateNoise changed to {}", nameId(), _varBiasAngRateNoise.transpose());
+                LOG_DEBUG("{}: varBiasAngRateNoiseUnit changed to {}", nameId(), _varBiasAngRateNoiseUnit);
+                flow::ApplyChanges();
+            }
 
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the process noise on the bias of the acceleration##{}", size_t(id)).c_str(),
-                                               configWidth, unitWidth, _varBiasAccelerationNoise.data(), reinterpret_cast<int*>(&_varBiasAccelerationNoiseUnit), "(m^2)/(s^4)\0"
-                                                                                                                                                                 "m/s^2\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: varBiasAccelerationNoise changed to {}", nameId(), _varBiasAccelerationNoise.transpose());
-            LOG_DEBUG("{}: varBiasAccelerationNoiseUnit changed to {}", nameId(), _varBiasAccelerationNoiseUnit);
-            flow::ApplyChanges();
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the process noise on the bias of the acceleration##{}", size_t(id)).c_str(),
+                                                   configWidth, unitWidth, _varBiasAccelerationNoise.at(i).data(), reinterpret_cast<int*>(&_varBiasAccelerationNoiseUnit), "(m^2)/(s^4)\0"
+                                                                                                                                                                           "m/s^2\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: varBiasAccelerationNoise changed to {}", nameId(), _varBiasAccelerationNoise.transpose());
+                LOG_DEBUG("{}: varBiasAccelerationNoiseUnit changed to {}", nameId(), _varBiasAccelerationNoiseUnit);
+                flow::ApplyChanges();
+            }
         }
 
         ImGui::TreePop();
@@ -732,33 +737,37 @@ void NAV::SensorCombiner::updateNumberOfInputPins()
         break;
     }
 
-    // 𝜎_biasAngRate Standard deviation of the bias on the angular rate state [rad/s²]
-    switch (_varBiasAngRateNoiseUnit)
+    for (size_t i = 0; i < _nInputPins - 1; ++i)
     {
-    case VarBiasAngRateNoiseUnit::rad2_s2:
-        _processNoiseVariances[2] = _varBiasAngRateNoise;
-        break;
-    case VarBiasAngRateNoiseUnit::deg2_s2:
-        _processNoiseVariances[2] = trafo::deg2rad(_varBiasAngRateNoise);
-        break;
-    case VarBiasAngRateNoiseUnit::deg_s:
-        _processNoiseVariances[2] = trafo::deg2rad(_varBiasAngRateNoise).array().pow(2);
-        break;
-    case VarBiasAngRateNoiseUnit::rad_s:
-        _processNoiseVariances[2] = _varBiasAngRateNoise.array().pow(2);
-        break;
-    }
+        // 𝜎_biasAngRate Standard deviation of the bias on the angular rate state [rad/s²]
+        switch (_varBiasAngRateNoiseUnit)
+        {
+        case VarBiasAngRateNoiseUnit::rad2_s2:
+            _processNoiseVariances[2 + 2 * i] = _varBiasAngRateNoise.at(i);
+            break;
+        case VarBiasAngRateNoiseUnit::deg2_s2:
+            _processNoiseVariances[2 + 2 * i] = trafo::deg2rad(_varBiasAngRateNoise.at(i));
+            break;
+        case VarBiasAngRateNoiseUnit::deg_s:
+            _processNoiseVariances[2 + 2 * i] = trafo::deg2rad(_varBiasAngRateNoise.at(i)).array().pow(2);
+            break;
+        case VarBiasAngRateNoiseUnit::rad_s:
+            _processNoiseVariances[2 + 2 * i] = _varBiasAngRateNoise.at(i).array().pow(2);
+            break;
+        }
 
-    // 𝜎_biasAcceleration Standard deviation of the noise on the acceleration state [m/s³]
-    switch (_varBiasAccelerationNoiseUnit)
-    {
-    case VarBiasAccelerationNoiseUnit::m2_s4:
-        _processNoiseVariances[3] = _varBiasAccelerationNoise;
-        break;
-    case VarBiasAccelerationNoiseUnit::m_s2:
-        _processNoiseVariances[3] = _varBiasAccelerationNoise.array().pow(2);
-        break;
+        // 𝜎_biasAcceleration Standard deviation of the noise on the acceleration state [m/s³]
+        switch (_varBiasAccelerationNoiseUnit)
+        {
+        case VarBiasAccelerationNoiseUnit::m2_s4:
+            _processNoiseVariances[3 + 2 * i] = _varBiasAccelerationNoise.at(i);
+            break;
+        case VarBiasAccelerationNoiseUnit::m_s2:
+            _processNoiseVariances[3 + 2 * i] = _varBiasAccelerationNoise.at(i).array().pow(2);
+            break;
+        }
     }
+    LOG_ERROR("_processNoiseVariances.size() = {}", _processNoiseVariances.size());
 
     // -------------------------------------------------- Measurement uncertainty matrix R -----------------------------------------------------
 
@@ -818,23 +827,25 @@ void NAV::SensorCombiner::recvSignal(const std::shared_ptr<const NodeData>& node
         _latestTimestamp = InsTime{ 0, 0, 0, 0, 0, (imuObs->insTime.value() - dt_init).count() };
     }
 
-    auto dt = static_cast<double>((imuObs->insTime.value() - _latestTimestamp).count());
+    [[maybe_unused]] auto dt = static_cast<double>((imuObs->insTime.value() - _latestTimestamp).count());
     _latestTimestamp = imuObs->insTime.value();
-    if (dt > 0.001 && dt < 1) // Adapt Phi and Q only if time difference is sufficiently large
-    {
-        _kalmanFilter.Phi = stateTransitionMatrix_Phi(dt);
-        LOG_DEBUG("kalmanFilter.Phi =\n{}", _kalmanFilter.Phi);
-        _kalmanFilter.Q = processNoiseMatrix_Q(dt);
-        LOG_DEBUG("kalmanFilter.Q =\n{}", _kalmanFilter.Q);
-        // if (true) // _checkKalmanMatricesRanks
-        // {
-        //     auto rank = _kalmanFilter.P.fullPivLu().rank();
-        //     if (rank != _kalmanFilter.P.rows())
-        //     {
-        //         LOG_WARN("{}: P.rank = {}", nameId(), rank);
-        //     }
-        // }
-    }
+    // if (dt > 0.001 && dt < 1) // Adapt Phi and Q only if time difference is sufficiently large
+    // {
+
+    // _kalmanFilter.Phi = stateTransitionMatrix_Phi(dt);
+    // LOG_DEBUG("kalmanFilter.Phi =\n{}", _kalmanFilter.Phi);
+    // _kalmanFilter.Q = processNoiseMatrix_Q(dt);
+    // LOG_DEBUG("kalmanFilter.Q =\n{}", _kalmanFilter.Q);
+
+    // if (true) // _checkKalmanMatricesRanks // TODO: enable
+    // {
+    //     auto rank = _kalmanFilter.P.fullPivLu().rank();
+    //     if (rank != _kalmanFilter.P.rows())
+    //     {
+    //         LOG_WARN("{}: P.rank = {}", nameId(), rank);
+    //     }
+    // }
+    // }
 
     if (Link* link = nm::FindLink(linkId))
     {

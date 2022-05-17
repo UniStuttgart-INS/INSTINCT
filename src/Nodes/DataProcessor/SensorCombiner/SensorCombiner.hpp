@@ -450,7 +450,8 @@ class SensorCombiner : public Imu
     VarBiasAngRateNoiseUnit _varBiasAngRateNoiseUnit = VarBiasAngRateNoiseUnit::deg_s;
 
     /// GUI selection of the process noise of the angular rate diagonal values (standard deviation σ or Variance σ²)
-    Eigen::Vector3d _varBiasAngRateNoise{ 1, 1, 1 };
+    std::vector<Eigen::Vector3d> _varBiasAngRateNoise = { { 1, 1, 1 } };
+    // Eigen::Vector3d _varBiasAngRateNoise{ 1, 1, 1 };
 
     // #########################################################################################################################################
 
@@ -464,7 +465,8 @@ class SensorCombiner : public Imu
     VarBiasAccelerationNoiseUnit _varBiasAccelerationNoiseUnit = VarBiasAccelerationNoiseUnit::m_s2;
 
     /// GUI selection of the process noise of the acceleration diagonal values (standard deviation σ or Variance σ²)
-    Eigen::Vector3d _varBiasAccelerationNoise{ 0.1, 0.1, 0.1 };
+    std::vector<Eigen::Vector3d> _varBiasAccelerationNoise{ { 0.1, 0.1, 0.1 } };
+    // Eigen::Vector3d _varBiasAccelerationNoise{ 0.1, 0.1, 0.1 };
 
     // #########################################################################################################################################
     //                                                       Measurement Noise Matrix R
