@@ -215,6 +215,9 @@ class SensorCombiner : public Imu
     /// @brief Adds/Deletes Input Pins depending on the variable _nInputPins
     void updateNumberOfInputPins();
 
+    /// @brief Initializes the Kalman Filter
+    void initializeKalmanFilter();
+
     /// @brief Receive Function for the signal at the time tₖ
     /// @param[in] nodeData Signal to process
     /// @param[in] linkId Id of the link over which the data is received

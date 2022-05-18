@@ -325,24 +325,24 @@ void NAV::SensorCombiner::guiConfig()
         _varBiasAccelerationNoise.resize(_nInputPins - 1);
         for (size_t i = 0; i < _nInputPins - 1; ++i)
         {
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the process noise on the bias of the angular rate##{}", size_t(id)).c_str(),
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the process noise on the bias of the angular rate of sensor {}##{}", i + 2, size_t(id)).c_str(),
                                                    configWidth, unitWidth, _varBiasAngRateNoise.at(i).data(), reinterpret_cast<int*>(&_varBiasAngRateNoiseUnit), "(rad/s)^2\0"
                                                                                                                                                                  "rad/s\0"
                                                                                                                                                                  "(deg/s)^2\0"
                                                                                                                                                                  "deg/s\0\0",
-                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific)) // FIXME: make '_varBiasAngRateNoiseUnit' a container, s.t. user can choose different units for each sensor
             {
-                LOG_DEBUG("{}: varBiasAngRateNoise changed to {}", nameId(), _varBiasAngRateNoise.transpose());
+                LOG_DEBUG("{}: varBiasAngRateNoise changed to {}", nameId(), _varBiasAngRateNoise.at(i).transpose());
                 LOG_DEBUG("{}: varBiasAngRateNoiseUnit changed to {}", nameId(), _varBiasAngRateNoiseUnit);
                 flow::ApplyChanges();
             }
 
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the process noise on the bias of the acceleration##{}", size_t(id)).c_str(),
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the process noise on the bias of the acceleration of sensor {}##{}", i + 2, size_t(id)).c_str(),
                                                    configWidth, unitWidth, _varBiasAccelerationNoise.at(i).data(), reinterpret_cast<int*>(&_varBiasAccelerationNoiseUnit), "(m^2)/(s^4)\0"
                                                                                                                                                                            "m/s^2\0\0",
-                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific)) // FIXME: make '_varBiasAccelerationNoiseUnit' a container, s.t. user can choose different units for each sensor
             {
-                LOG_DEBUG("{}: varBiasAccelerationNoise changed to {}", nameId(), _varBiasAccelerationNoise.transpose());
+                LOG_DEBUG("{}: varBiasAccelerationNoise changed to {}", nameId(), _varBiasAccelerationNoise.at(i).transpose());
                 LOG_DEBUG("{}: varBiasAccelerationNoiseUnit changed to {}", nameId(), _varBiasAccelerationNoiseUnit);
                 flow::ApplyChanges();
             }
@@ -580,7 +580,8 @@ bool NAV::SensorCombiner::initialize()
 
     _latestTimestamp = InsTime{};
 
-    updateNumberOfInputPins();
+    updateNumberOfInputPins(); // TODO: necessary here?
+    initializeKalmanFilter();
 
     LOG_DEBUG("SensorCombiner initialized");
 
@@ -610,6 +611,11 @@ void NAV::SensorCombiner::updateNumberOfInputPins()
         nm::DeleteOutputPin(outputPins.back().id);
         _pinData.pop_back();
     }
+}
+
+void NAV::SensorCombiner::initializeKalmanFilter()
+{
+    LOG_TRACE("{}: called", nameId());
 
     _designMatrixInitialized = false;
 
