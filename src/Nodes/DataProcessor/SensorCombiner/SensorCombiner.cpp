@@ -147,6 +147,8 @@ void NAV::SensorCombiner::guiConfig()
                         nm::DeleteInputPin(inputPins.at(pinIndex).id);
                         nm::DeleteOutputPin(outputPins.at(pinIndex).id);
                         _pinData.erase(_pinData.begin() + static_cast<int64_t>(pinIndex));
+                        _varBiasAngRateNoise.erase(_varBiasAngRateNoise.begin() + static_cast<int64_t>(pinIndex - 1));
+                        _varBiasAccelerationNoise.erase(_varBiasAccelerationNoise.begin() + static_cast<int64_t>(pinIndex - 1));
                         --_nInputPins;
                         flow::ApplyChanges();
                         updateNumberOfInputPins();
@@ -321,8 +323,6 @@ void NAV::SensorCombiner::guiConfig()
             flow::ApplyChanges();
         }
 
-        _varBiasAngRateNoise.resize(_nInputPins - 1);
-        _varBiasAccelerationNoise.resize(_nInputPins - 1);
         for (size_t i = 0; i < _nInputPins - 1; ++i)
         {
             if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the process noise on the bias of the angular rate of sensor {}##{}", i + 2, size_t(id)).c_str(),
@@ -611,6 +611,8 @@ void NAV::SensorCombiner::updateNumberOfInputPins()
         nm::DeleteOutputPin(outputPins.back().id);
         _pinData.pop_back();
     }
+    _varBiasAngRateNoise.resize(_nInputPins - 1);
+    _varBiasAccelerationNoise.resize(_nInputPins - 1);
 }
 
 void NAV::SensorCombiner::initializeKalmanFilter()
