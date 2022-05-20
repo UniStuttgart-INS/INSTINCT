@@ -254,11 +254,9 @@ class SensorCombiner : public Imu
                                                                   Eigen::MatrixXd& P);
 
     /// @brief Calculates the initial measurement noise matrix R
-    /// @param[in] varAngRateMeas Variance of angular rate measurements in [rad²/s²]
-    /// @param[in] varAccelerationMeas Variance of acceleration measurements in [m²/(s^4)]
+    /// @param[in] pinIndex Index of pin to identify sensor
     /// @return Initial measurement noise matrix R
-    [[nodiscard]] Eigen::MatrixXd measurementNoiseMatrix_R_init(Eigen::Vector3d& varAngRateMeas,
-                                                                Eigen::Vector3d& varAccelerationMeas) const;
+    [[nodiscard]] Eigen::MatrixXd measurementNoiseMatrix_R_init(size_t pinIndex) const;
 
     /// @brief Initial error covariance matrix P_0
     /// @param[in] varAngRate Initial variance (3D) of the Angular Rate state in [rad²/s²]
@@ -314,6 +312,9 @@ class SensorCombiner : public Imu
 
     /// @brief Container for process noise of each state
     std::vector<Eigen::Vector3d> _processNoiseVariances;
+
+    /// @brief Container for measurement noises of each sensor
+    std::vector<Eigen::Vector3d> _measurementNoiseVariances;
 
     // #########################################################################################################################################
     //                                                        Error Covariance Matrix P
@@ -469,7 +470,6 @@ class SensorCombiner : public Imu
 
     /// GUI selection of the process noise of the acceleration diagonal values (standard deviation σ or Variance σ²)
     std::vector<Eigen::Vector3d> _varBiasAccelerationNoise{ { 0.1, 0.1, 0.1 } };
-    // Eigen::Vector3d _varBiasAccelerationNoise{ 0.1, 0.1, 0.1 };
 
     // #########################################################################################################################################
     //                                                       Measurement Noise Matrix R
@@ -487,7 +487,7 @@ class SensorCombiner : public Imu
     MeasurementUncertaintyAngularRateUnit _measurementUncertaintyAngularRateUnit = MeasurementUncertaintyAngularRateUnit::deg_s;
 
     /// Gui selection of the angular rate measurement uncertainty diagonal values
-    Eigen::Vector3d _measurementUncertaintyAngularRate{ 1, 1, 1 };
+    std::vector<Eigen::Vector3d> _measurementUncertaintyAngularRate{ { 1, 1, 1 } };
 
     /// Possible Units for the initial covariance of the acceleration measurements (standard deviation σ or Variance σ²)
     enum class MeasurementUncertaintyAccelerationUnit
@@ -499,7 +499,7 @@ class SensorCombiner : public Imu
     MeasurementUncertaintyAccelerationUnit _measurementUncertaintyAccelerationUnit = MeasurementUncertaintyAccelerationUnit::m_s2;
 
     /// Gui selection of the angular acceleration measurement uncertainty diagonal values
-    Eigen::Vector3d _measurementUncertaintyAcceleration{ 0.1, 0.1, 0.1 };
+    std::vector<Eigen::Vector3d> _measurementUncertaintyAcceleration{ { 0.1, 0.1, 0.1 } };
 };
 
 } // namespace NAV

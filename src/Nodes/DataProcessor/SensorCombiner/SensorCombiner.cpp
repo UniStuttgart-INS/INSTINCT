@@ -149,6 +149,8 @@ void NAV::SensorCombiner::guiConfig()
                         _pinData.erase(_pinData.begin() + static_cast<int64_t>(pinIndex));
                         _varBiasAngRateNoise.erase(_varBiasAngRateNoise.begin() + static_cast<int64_t>(pinIndex - 1));
                         _varBiasAccelerationNoise.erase(_varBiasAccelerationNoise.begin() + static_cast<int64_t>(pinIndex - 1));
+                        _measurementUncertaintyAngularRate.erase(_measurementUncertaintyAngularRate.begin() + static_cast<int64_t>(pinIndex - 1));
+                        _measurementUncertaintyAcceleration.erase(_measurementUncertaintyAcceleration.begin() + static_cast<int64_t>(pinIndex - 1));
                         --_nInputPins;
                         flow::ApplyChanges();
                         updateNumberOfInputPins();
@@ -325,7 +327,7 @@ void NAV::SensorCombiner::guiConfig()
 
         for (size_t i = 0; i < _nInputPins - 1; ++i)
         {
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the process noise on the bias of the angular rate of sensor {}##{}", i + 2, size_t(id)).c_str(),
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the process noise on the bias of the angular rate of sensor {}##{}", i + 2, size_t(id)).c_str(), // FIXME: adapt config window number of sensors (if pin 3 is deleted, keep 1,2,4 instead of re-counting to 1,2,3)
                                                    configWidth, unitWidth, _varBiasAngRateNoise.at(i).data(), reinterpret_cast<int*>(&_varBiasAngRateNoiseUnit), "(rad/s)^2\0"
                                                                                                                                                                  "rad/s\0"
                                                                                                                                                                  "(deg/s)^2\0"
@@ -337,7 +339,7 @@ void NAV::SensorCombiner::guiConfig()
                 flow::ApplyChanges();
             }
 
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the process noise on the bias of the acceleration of sensor {}##{}", i + 2, size_t(id)).c_str(),
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the process noise on the bias of the acceleration of sensor {}##{}", i + 2, size_t(id)).c_str(), // FIXME: adapt config window number of sensors (if pin 3 is deleted, keep 1,2,4 instead of re-counting to 1,2,3)
                                                    configWidth, unitWidth, _varBiasAccelerationNoise.at(i).data(), reinterpret_cast<int*>(&_varBiasAccelerationNoiseUnit), "(m^2)/(s^4)\0"
                                                                                                                                                                            "m/s^2\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific)) // FIXME: make '_varBiasAccelerationNoiseUnit' a container, s.t. user can choose different units for each sensor
@@ -356,27 +358,30 @@ void NAV::SensorCombiner::guiConfig()
     {
         ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
 
-        // TODO: Make for-loop around 'angular rate measurement uncertainty' and 'acceleration measurement uncertainty' to add as many inputs as there are measurements
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the measurement uncertainty on the angular rate##{}", size_t(id)).c_str(),
-                                               configWidth, unitWidth, _measurementUncertaintyAngularRate.data(), reinterpret_cast<int*>(&_measurementUncertaintyAngularRateUnit), "(rad/s)^2\0"
-                                                                                                                                                                                   "rad/s\0"
-                                                                                                                                                                                   "(deg/s)^2\0"
-                                                                                                                                                                                   "deg/s\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
+        for (size_t i = 0; i < _nInputPins - 1; ++i)
         {
-            LOG_DEBUG("{}: stdevAngularAcc changed to {}", nameId(), _measurementUncertaintyAngularRate.transpose());
-            LOG_DEBUG("{}: stdevAngularAccUnit changed to {}", nameId(), _measurementUncertaintyAngularRateUnit);
-            flow::ApplyChanges();
-        }
+            // TODO: Make for-loop around 'angular rate measurement uncertainty' and 'acceleration measurement uncertainty' to add as many inputs as there are measurements
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the measurement uncertainty on the angular rate of sensor {}##{}", i + 2, size_t(id)).c_str(),
+                                                   configWidth, unitWidth, _measurementUncertaintyAngularRate.at(i).data(), reinterpret_cast<int*>(&_measurementUncertaintyAngularRateUnit), "(rad/s)^2\0"
+                                                                                                                                                                                             "rad/s\0"
+                                                                                                                                                                                             "(deg/s)^2\0"
+                                                                                                                                                                                             "deg/s\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: stdevAngularAcc changed to {}", nameId(), _measurementUncertaintyAngularRate.at(i).transpose());
+                LOG_DEBUG("{}: stdevAngularAccUnit changed to {}", nameId(), _measurementUncertaintyAngularRateUnit);
+                flow::ApplyChanges();
+            }
 
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the measurement uncertainty on the acceleration##{}", size_t(id)).c_str(),
-                                               configWidth, unitWidth, _measurementUncertaintyAcceleration.data(), reinterpret_cast<int*>(&_measurementUncertaintyAccelerationUnit), "(m^2)/(s^4)\0"
-                                                                                                                                                                                     "m/s^2\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: stdevJerk changed to {}", nameId(), _measurementUncertaintyAcceleration.transpose());
-            LOG_DEBUG("{}: stdevJerkUnit changed to {}", nameId(), _measurementUncertaintyAccelerationUnit);
-            flow::ApplyChanges();
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the measurement uncertainty on the acceleration of sensor {}##{}", i + 2, size_t(id)).c_str(),
+                                                   configWidth, unitWidth, _measurementUncertaintyAcceleration.at(i).data(), reinterpret_cast<int*>(&_measurementUncertaintyAccelerationUnit), "(m^2)/(s^4)\0"
+                                                                                                                                                                                               "m/s^2\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: stdevJerk changed to {}", nameId(), _measurementUncertaintyAcceleration.at(i).transpose());
+                LOG_DEBUG("{}: stdevJerkUnit changed to {}", nameId(), _measurementUncertaintyAccelerationUnit);
+                flow::ApplyChanges();
+            }
         }
 
         ImGui::TreePop();
@@ -417,6 +422,8 @@ void NAV::SensorCombiner::guiConfig()
     j["varBiasAngRateNoise"] = _varBiasAngRateNoise;
     j["varBiasAccelerationNoiseUnit"] = _varBiasAccelerationNoiseUnit;
     j["varBiasAccelerationNoise"] = _varBiasAccelerationNoise;
+    j["measurementUncertaintyAngularRate"] = _measurementUncertaintyAngularRate;
+    j["measurementUncertaintyAcceleration"] = _measurementUncertaintyAcceleration;
     j["measurementUncertaintyAngularRateUnit"] = _measurementUncertaintyAngularRateUnit;
     j["measurementUncertaintyAngularRate"] = _measurementUncertaintyAngularRate;
     j["measurementUncertaintyAccelerationUnit"] = _measurementUncertaintyAccelerationUnit;
@@ -577,6 +584,7 @@ bool NAV::SensorCombiner::initialize()
     _kalmanFilter.setZero();
     _imuRotations.clear();
     _processNoiseVariances.clear();
+    _measurementNoiseVariances.clear();
 
     _latestTimestamp = InsTime{};
 
@@ -613,6 +621,8 @@ void NAV::SensorCombiner::updateNumberOfInputPins()
     }
     _varBiasAngRateNoise.resize(_nInputPins - 1);
     _varBiasAccelerationNoise.resize(_nInputPins - 1);
+    _measurementUncertaintyAngularRate.resize(_nInputPins - 1);
+    _measurementUncertaintyAcceleration.resize(_nInputPins - 1);
 }
 
 void NAV::SensorCombiner::initializeKalmanFilter()
@@ -778,35 +788,37 @@ void NAV::SensorCombiner::initializeKalmanFilter()
     LOG_ERROR("_processNoiseVariances.size() = {}", _processNoiseVariances.size());
 
     // -------------------------------------------------- Measurement uncertainty matrix R -----------------------------------------------------
+    _measurementNoiseVariances.resize(2 * _nInputPins);
 
-    // Measurement uncertainty for the angular rate (Variance σ²) in [(rad/s)^2, (rad/s)^2, (rad/s)^2]
-    Eigen::Vector3d sigmaSquaredAngularRateMeas = Eigen::Vector3d::Zero();
-    switch (_measurementUncertaintyAngularRateUnit)
+    for (size_t i = 0; i < _nInputPins - 1; ++i)
     {
-    case MeasurementUncertaintyAngularRateUnit::rad_s:
-        sigmaSquaredAngularRateMeas = (_measurementUncertaintyAngularRate).array().pow(2);
-        break;
-    case MeasurementUncertaintyAngularRateUnit::deg_s:
-        sigmaSquaredAngularRateMeas = (trafo::deg2rad(_measurementUncertaintyAngularRate)).array().pow(2);
-        break;
-    case MeasurementUncertaintyAngularRateUnit::rad2_s2:
-        sigmaSquaredAngularRateMeas = _measurementUncertaintyAngularRate;
-        break;
-    case MeasurementUncertaintyAngularRateUnit::deg2_s2:
-        sigmaSquaredAngularRateMeas = trafo::deg2rad((_measurementUncertaintyAngularRate).cwiseSqrt()).array().pow(2);
-        break;
-    }
+        // Measurement uncertainty for the angular rate (Variance σ²) in [(rad/s)^2, (rad/s)^2, (rad/s)^2]
+        switch (_measurementUncertaintyAngularRateUnit)
+        {
+        case MeasurementUncertaintyAngularRateUnit::rad_s:
+            _measurementNoiseVariances[2 * i] = (_measurementUncertaintyAngularRate.at(i)).array().pow(2);
+            break;
+        case MeasurementUncertaintyAngularRateUnit::deg_s:
+            _measurementNoiseVariances[2 * i] = (trafo::deg2rad(_measurementUncertaintyAngularRate.at(i))).array().pow(2);
+            break;
+        case MeasurementUncertaintyAngularRateUnit::rad2_s2:
+            _measurementNoiseVariances[2 * i] = _measurementUncertaintyAngularRate.at(i);
+            break;
+        case MeasurementUncertaintyAngularRateUnit::deg2_s2:
+            _measurementNoiseVariances[2 * i] = trafo::deg2rad((_measurementUncertaintyAngularRate.at(i)).cwiseSqrt()).array().pow(2);
+            break;
+        }
 
-    // Measurement uncertainty for the acceleration (Variance σ²) in [(m^2)/(s^4), (m^2)/(s^4), (m^2)/(s^4)]
-    Eigen::Vector3d sigmaSquaredAccelerationMeas = Eigen::Vector3d::Zero();
-    switch (_measurementUncertaintyAccelerationUnit)
-    {
-    case MeasurementUncertaintyAccelerationUnit::m2_s4:
-        sigmaSquaredAccelerationMeas = _measurementUncertaintyAcceleration;
-        break;
-    case MeasurementUncertaintyAccelerationUnit::m_s2:
-        sigmaSquaredAccelerationMeas = (_measurementUncertaintyAcceleration).array().pow(2);
-        break;
+        // Measurement uncertainty for the acceleration (Variance σ²) in [(m^2)/(s^4), (m^2)/(s^4), (m^2)/(s^4)]
+        switch (_measurementUncertaintyAccelerationUnit)
+        {
+        case MeasurementUncertaintyAccelerationUnit::m2_s4:
+            _measurementNoiseVariances[1 + 2 * i] = _measurementUncertaintyAcceleration.at(i);
+            break;
+        case MeasurementUncertaintyAccelerationUnit::m_s2:
+            _measurementNoiseVariances[1 + 2 * i] = (_measurementUncertaintyAcceleration.at(i)).array().pow(2);
+            break;
+        }
     }
 
     auto dtInit = 1.0 / _imuFrequency;
@@ -815,7 +827,6 @@ void NAV::SensorCombiner::initializeKalmanFilter()
     _kalmanFilter.P = initialErrorCovarianceMatrix_P0(variance_angularRate, variance_angularAcceleration, variance_acceleration, variance_jerk, variance_biasAngularAcceleration, variance_biasJerk);
     _kalmanFilter.Phi = stateTransitionMatrix_Phi(dtInit);
     _kalmanFilter.Q = processNoiseMatrix_Q(dtInit);
-    _kalmanFilter.R = measurementNoiseMatrix_R_init(sigmaSquaredAngularRateMeas, sigmaSquaredAccelerationMeas);
 }
 
 void NAV::SensorCombiner::recvSignal(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId)
@@ -874,6 +885,9 @@ void NAV::SensorCombiner::recvSignal(const std::shared_ptr<const NodeData>& node
 
         _kalmanFilter.H = designMatrix_H(DCM, pinIndex);
         LOG_DEBUG("kalmanFilter.H =\n", _kalmanFilter.H);
+
+        _kalmanFilter.R = measurementNoiseMatrix_R_init(pinIndex);
+        LOG_DEBUG("kalmanFilter.R =\n", _kalmanFilter.R);
 
         combineSignals(imuObs);
     }
@@ -1004,16 +1018,13 @@ Eigen::MatrixXd NAV::SensorCombiner::measurementNoiseMatrix_R(double alpha, Eige
     return alpha * R + (1.0 - alpha) * (e * e.transpose() + H * P * H.transpose());
 }
 
-Eigen::MatrixXd NAV::SensorCombiner::measurementNoiseMatrix_R_init(Eigen::Vector3d& varAngRateMeas, Eigen::Vector3d& varAccelerationMeas) const
+Eigen::MatrixXd NAV::SensorCombiner::measurementNoiseMatrix_R_init(size_t pinIndex) const
 {
     Eigen::MatrixXd R(_numMeasurements, _numMeasurements);
     R.setZero();
 
-    // for (uint8_t i = 0; i < _numMeasurements; i += 6)
-    // {
-    R.block<3, 3>(0, 0).diagonal() = varAngRateMeas;
-    R.block<3, 3>(3, 3).diagonal() = varAccelerationMeas;
-    // }
+    R.block<3, 3>(0, 0).diagonal() = _measurementNoiseVariances.at(pinIndex + 1);
+    R.block<3, 3>(3, 3).diagonal() = _measurementNoiseVariances.at(pinIndex + 2);
 
     return R;
 }
