@@ -263,15 +263,11 @@ class SensorCombiner : public Imu
     /// @param[in] varAngAcc Initial variance (3D) of the Angular Acceleration state in [(rad^2)/(s^4)]
     /// @param[in] varAcc Initial variance (3D) of the Acceleration state in [(m^2)/(s^4)]
     /// @param[in] varJerk Initial variance (3D) of the Jerk state in [(m^2)/(s^6)]
-    /// @param[in] varBiasAngRate Initial variance (3D) of the bias of the Angular Rate state in [rad²/s²] for a dynamic number of sensors
-    /// @param[in] varBiasAcc Initial variance (3D) of the bias of the Acceleration state in [(m^2)/(s^4)] for a dynamic number of sensors
     /// @return The (_numStates) x (_numStates) matrix of initial state variances
     [[nodiscard]] Eigen::MatrixXd initialErrorCovarianceMatrix_P0(Eigen::Vector3d& varAngRate,
                                                                   Eigen::Vector3d& varAngAcc,
                                                                   Eigen::Vector3d& varAcc,
-                                                                  Eigen::Vector3d& varJerk,
-                                                                  Eigen::Vector3d& varBiasAngRate,
-                                                                  Eigen::Vector3d& varBiasAcc) const; // TODO: make array to accept multiple sensors
+                                                                  Eigen::Vector3d& varJerk) const;
 
     /// @brief Combines the signals
     /// @param[in] imuObs Imu observation
@@ -309,6 +305,9 @@ class SensorCombiner : public Imu
 
     /// @brief Saves the timestamp of the measurement before in [s]
     InsTime _latestTimestamp{};
+
+    /// @brief Container for process noise of each state
+    std::vector<Eigen::Vector3d> _biasCovariances;
 
     /// @brief Container for process noise of each state
     std::vector<Eigen::Vector3d> _processNoiseVariances;
@@ -392,7 +391,7 @@ class SensorCombiner : public Imu
     InitCovarianceBiasAngRateUnit _initCovarianceBiasAngRateUnit = InitCovarianceBiasAngRateUnit::deg_s;
 
     /// GUI selection of the initial covariance diagonal values for angular rate biases (standard deviation σ or Variance σ²)
-    Eigen::Vector3d _initCovarianceBiasAngRate{ 1, 1, 1 };
+    std::vector<Eigen::Vector3d> _initCovarianceBiasAngRate{ { 1, 1, 1 } };
 
     // #########################################################################################################################################
 
@@ -406,7 +405,7 @@ class SensorCombiner : public Imu
     InitCovarianceBiasAccUnit _initCovarianceBiasAccUnit = InitCovarianceBiasAccUnit::m_s2;
 
     /// GUI selection of the initial covariance diagonal values for acceleration biases (standard deviation σ or Variance σ²)
-    Eigen::Vector3d _initCovarianceBiasAcc{ 0.1, 0.1, 0.1 };
+    std::vector<Eigen::Vector3d> _initCovarianceBiasAcc{ { 0.1, 0.1, 0.1 } };
 
     // #########################################################################################################################################
     //                                                         Process Noise Matrix Q
@@ -455,7 +454,6 @@ class SensorCombiner : public Imu
 
     /// GUI selection of the process noise of the angular rate diagonal values (standard deviation σ or Variance σ²)
     std::vector<Eigen::Vector3d> _varBiasAngRateNoise = { { 1, 1, 1 } };
-    // Eigen::Vector3d _varBiasAngRateNoise{ 1, 1, 1 };
 
     // #########################################################################################################################################
 

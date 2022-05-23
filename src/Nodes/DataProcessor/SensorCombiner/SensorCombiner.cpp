@@ -147,6 +147,8 @@ void NAV::SensorCombiner::guiConfig()
                         nm::DeleteInputPin(inputPins.at(pinIndex).id);
                         nm::DeleteOutputPin(outputPins.at(pinIndex).id);
                         _pinData.erase(_pinData.begin() + static_cast<int64_t>(pinIndex));
+                        _initCovarianceBiasAngRate.erase(_initCovarianceBiasAngRate.begin() + static_cast<int64_t>(pinIndex - 1));
+                        _initCovarianceBiasAcc.erase(_initCovarianceBiasAcc.begin() + static_cast<int64_t>(pinIndex - 1));
                         _varBiasAngRateNoise.erase(_varBiasAngRateNoise.begin() + static_cast<int64_t>(pinIndex - 1));
                         _varBiasAccelerationNoise.erase(_varBiasAccelerationNoise.begin() + static_cast<int64_t>(pinIndex - 1));
                         _measurementUncertaintyAngularRate.erase(_measurementUncertaintyAngularRate.begin() + static_cast<int64_t>(pinIndex - 1));
@@ -260,38 +262,40 @@ void NAV::SensorCombiner::guiConfig()
             flow::ApplyChanges();
         }
 
-        // TODO: Make for-loop around 'Angular acceleration bias covariance' and 'Jerk bias covariance' to add as many inputs as there are measurements
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular acceleration bias covariance ({})##{}",
-                                                           _initCovarianceBiasAngRateUnit == InitCovarianceBiasAngRateUnit::rad2_s2
-                                                                   || _initCovarianceBiasAngRateUnit == InitCovarianceBiasAngRateUnit::deg2_s2
-                                                               ? "Variance σ²"
-                                                               : "Standard deviation σ",
-                                                           size_t(id))
-                                                   .c_str(),
-                                               configWidth, unitWidth, _initCovarianceBiasAngRate.data(), reinterpret_cast<int*>(&_initCovarianceBiasAngRateUnit), "(rad^2)/(s^4)\0"
-                                                                                                                                                                   "rad/s^2\0"
-                                                                                                                                                                   "(deg^2)/(s^4)\0"
-                                                                                                                                                                   "deg/s^2\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
+        for (size_t i = 0; i < _nInputPins - 1; ++i)
         {
-            LOG_DEBUG("{}: initCovarianceBiasAngAcc changed to {}", nameId(), _initCovarianceBiasAngRate);
-            LOG_DEBUG("{}: InitCovarianceBiasAngRateUnit changed to {}", nameId(), _initCovarianceBiasAngRateUnit);
-            flow::ApplyChanges();
-        }
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular acceleration bias covariance of sensor {} ({})##{}", i + 2,
+                                                               _initCovarianceBiasAngRateUnit == InitCovarianceBiasAngRateUnit::rad2_s2
+                                                                       || _initCovarianceBiasAngRateUnit == InitCovarianceBiasAngRateUnit::deg2_s2
+                                                                   ? "Variance σ²"
+                                                                   : "Standard deviation σ",
+                                                               size_t(id))
+                                                       .c_str(),
+                                                   configWidth, unitWidth, _initCovarianceBiasAngRate.at(i).data(), reinterpret_cast<int*>(&_initCovarianceBiasAngRateUnit), "(rad^2)/(s^4)\0"
+                                                                                                                                                                             "rad/s^2\0"
+                                                                                                                                                                             "(deg^2)/(s^4)\0"
+                                                                                                                                                                             "deg/s^2\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: initCovarianceBiasAngAcc changed to {}", nameId(), _initCovarianceBiasAngRate.at(i));
+                LOG_DEBUG("{}: InitCovarianceBiasAngRateUnit changed to {}", nameId(), _initCovarianceBiasAngRateUnit);
+                flow::ApplyChanges();
+            }
 
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Jerk bias covariance ({})##{}",
-                                                           _initCovarianceBiasAccUnit == InitCovarianceBiasAccUnit::m2_s4
-                                                               ? "Variance σ²"
-                                                               : "Standard deviation σ",
-                                                           size_t(id))
-                                                   .c_str(),
-                                               configWidth, unitWidth, _initCovarianceBiasAcc.data(), reinterpret_cast<int*>(&_initCovarianceBiasAccUnit), "(m^2)/(s^6)\0"
-                                                                                                                                                           "m/s^3\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: initCovarianceBiasJerk changed to {}", nameId(), _initCovarianceBiasAcc);
-            LOG_DEBUG("{}: InitCovarianceBiasAccUnit changed to {}", nameId(), _initCovarianceBiasAccUnit);
-            flow::ApplyChanges();
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Jerk bias covariance of sensor {} ({})##{}", i + 2,
+                                                               _initCovarianceBiasAccUnit == InitCovarianceBiasAccUnit::m2_s4
+                                                                   ? "Variance σ²"
+                                                                   : "Standard deviation σ",
+                                                               size_t(id))
+                                                       .c_str(),
+                                                   configWidth, unitWidth, _initCovarianceBiasAcc.at(i).data(), reinterpret_cast<int*>(&_initCovarianceBiasAccUnit), "(m^2)/(s^6)\0"
+                                                                                                                                                                     "m/s^3\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: initCovarianceBiasJerk changed to {}", nameId(), _initCovarianceBiasAcc.at(i));
+                LOG_DEBUG("{}: InitCovarianceBiasAccUnit changed to {}", nameId(), _initCovarianceBiasAccUnit);
+                flow::ApplyChanges();
+            }
         }
 
         ImGui::TreePop();
@@ -302,7 +306,6 @@ void NAV::SensorCombiner::guiConfig()
     {
         ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
 
-        // TODO: Make for-loop around 'angular acceleration process noise' and 'Jerk bias covariance' to add as many inputs as there are measurements
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Process noise of the angular acceleration ({})##{}",
                                                            _varAngularAccNoiseUnit == VarAngularAccNoiseUnit::rad2_s4
                                                                    || _varAngularAccNoiseUnit == VarAngularAccNoiseUnit::deg2_s4
@@ -382,7 +385,6 @@ void NAV::SensorCombiner::guiConfig()
 
         for (size_t i = 0; i < _nInputPins - 1; ++i)
         {
-            // TODO: Make for-loop around 'angular rate measurement uncertainty' and 'acceleration measurement uncertainty' to add as many inputs as there are measurements
             if (gui::widgets::InputDouble3WithUnit(fmt::format("Measurement uncertainty of the angular rate of sensor {} ({})##{}", i + 2,
                                                                _measurementUncertaintyAngularRateUnit == MeasurementUncertaintyAngularRateUnit::rad2_s2
                                                                        || _measurementUncertaintyAngularRateUnit == MeasurementUncertaintyAngularRateUnit::deg2_s2
@@ -616,6 +618,7 @@ bool NAV::SensorCombiner::initialize()
 
     _kalmanFilter.setZero();
     _imuRotations.clear();
+    _biasCovariances.clear();
     _processNoiseVariances.clear();
     _measurementNoiseVariances.clear();
 
@@ -652,6 +655,8 @@ void NAV::SensorCombiner::updateNumberOfInputPins()
         nm::DeleteOutputPin(outputPins.back().id);
         _pinData.pop_back();
     }
+    _initCovarianceBiasAngRate.resize(_nInputPins - 1);
+    _initCovarianceBiasAcc.resize(_nInputPins - 1);
     _varBiasAngRateNoise.resize(_nInputPins - 1);
     _varBiasAccelerationNoise.resize(_nInputPins - 1);
     _measurementUncertaintyAngularRate.resize(_nInputPins - 1);
@@ -726,35 +731,36 @@ void NAV::SensorCombiner::initializeKalmanFilter()
         variance_jerk = _initCovarianceJerk.array().pow(2);
     }
 
-    // TODO: Make for-loop around 'bias of the angular acceleration' and 'bias of the jerk' to add as many inputs as there are measurements
     // Initial Covariance of the bias of the angular acceleration in [(rad^2)/(s^4)]
-    Eigen::Vector3d variance_biasAngularAcceleration = Eigen::Vector3d::Zero();
-    if (_initCovarianceBiasAngRateUnit == InitCovarianceBiasAngRateUnit::rad2_s2)
+    _biasCovariances.resize(2 * _nInputPins);
+    for (size_t i = 0; i < _nInputPins - 1UL; ++i)
     {
-        variance_biasAngularAcceleration = _initCovarianceBiasAngRate;
-    }
-    else if (_initCovarianceBiasAngRateUnit == InitCovarianceBiasAngRateUnit::deg2_s2)
-    {
-        variance_biasAngularAcceleration = trafo::deg2rad(_initCovarianceBiasAngRate);
-    }
-    else if (_initCovarianceBiasAngRateUnit == InitCovarianceBiasAngRateUnit::rad_s)
-    {
-        variance_biasAngularAcceleration = _initCovarianceBiasAngRate.array().pow(2);
-    }
-    else if (_initCovarianceBiasAngRateUnit == InitCovarianceBiasAngRateUnit::deg_s)
-    {
-        variance_biasAngularAcceleration = trafo::deg2rad(_initCovarianceBiasAngRate).array().pow(2);
-    }
+        if (_initCovarianceBiasAngRateUnit == InitCovarianceBiasAngRateUnit::rad2_s2)
+        {
+            _biasCovariances[2 * i] = _initCovarianceBiasAngRate.at(i);
+        }
+        else if (_initCovarianceBiasAngRateUnit == InitCovarianceBiasAngRateUnit::deg2_s2)
+        {
+            _biasCovariances[2 * i] = trafo::deg2rad(_initCovarianceBiasAngRate.at(i));
+        }
+        else if (_initCovarianceBiasAngRateUnit == InitCovarianceBiasAngRateUnit::rad_s)
+        {
+            _biasCovariances[2 * i] = _initCovarianceBiasAngRate.at(i).array().pow(2);
+        }
+        else if (_initCovarianceBiasAngRateUnit == InitCovarianceBiasAngRateUnit::deg_s)
+        {
+            _biasCovariances[2 * i] = trafo::deg2rad(_initCovarianceBiasAngRate.at(i)).array().pow(2);
+        }
 
-    // Initial Covariance of the bias of the jerk in [(m^2)/(s^6)]
-    Eigen::Vector3d variance_biasJerk = Eigen::Vector3d::Zero();
-    if (_initCovarianceBiasAccUnit == InitCovarianceBiasAccUnit::m2_s4)
-    {
-        variance_biasJerk = _initCovarianceBiasAcc;
-    }
-    else if (_initCovarianceBiasAccUnit == InitCovarianceBiasAccUnit::m_s2)
-    {
-        variance_biasJerk = _initCovarianceBiasAcc.array().pow(2);
+        // Initial Covariance of the bias of the jerk in [(m^2)/(s^6)]
+        if (_initCovarianceBiasAccUnit == InitCovarianceBiasAccUnit::m2_s4)
+        {
+            _biasCovariances[1 + 2 * i] = _initCovarianceBiasAcc.at(i);
+        }
+        else if (_initCovarianceBiasAccUnit == InitCovarianceBiasAccUnit::m_s2)
+        {
+            _biasCovariances[1 + 2 * i] = _initCovarianceBiasAcc.at(i).array().pow(2);
+        }
     }
 
     // ------------------------------------------------------- Process noise matrix Q ----------------------------------------------------------
@@ -857,7 +863,7 @@ void NAV::SensorCombiner::initializeKalmanFilter()
     auto dtInit = 1.0 / _imuFrequency;
 
     // --------------------------------------------------------- KF Initializations ------------------------------------------------------------
-    _kalmanFilter.P = initialErrorCovarianceMatrix_P0(variance_angularRate, variance_angularAcceleration, variance_acceleration, variance_jerk, variance_biasAngularAcceleration, variance_biasJerk);
+    _kalmanFilter.P = initialErrorCovarianceMatrix_P0(variance_angularRate, variance_angularAcceleration, variance_acceleration, variance_jerk);
     _kalmanFilter.Phi = stateTransitionMatrix_Phi(dtInit);
     _kalmanFilter.Q = processNoiseMatrix_Q(dtInit);
 }
@@ -979,9 +985,7 @@ Eigen::MatrixXd NAV::SensorCombiner::stateTransitionMatrix_Phi(double dt) const 
 Eigen::MatrixXd NAV::SensorCombiner::initialErrorCovarianceMatrix_P0(Eigen::Vector3d& varAngRate,
                                                                      Eigen::Vector3d& varAngAcc,
                                                                      Eigen::Vector3d& varAcc,
-                                                                     Eigen::Vector3d& varJerk,
-                                                                     Eigen::Vector3d& varBiasAngRate,
-                                                                     Eigen::Vector3d& varBiasAcc) const
+                                                                     Eigen::Vector3d& varJerk) const
 {
     Eigen::MatrixXd P(_numStates, _numStates);
 
@@ -990,10 +994,11 @@ Eigen::MatrixXd NAV::SensorCombiner::initialErrorCovarianceMatrix_P0(Eigen::Vect
     P.block<3, 3>(6, 6).diagonal() = varAcc;
     P.block<3, 3>(9, 9).diagonal() = varJerk;
 
-    for (uint8_t i = 12; i < _numStates; i += 6)
+    for (uint32_t i = 12; i < _numStates - 1UL; i += 6)
     {
-        P.block<3, 3>(i, i).diagonal() = varBiasAngRate;
-        P.block<3, 3>(i + 3, i + 3).diagonal() = varBiasAcc;
+        size_t j = (i - 12) / 3 + 2; // access 2 bias variances for each sensor from the third element onwards
+        P.block<3, 3>(i, i).diagonal() = _biasCovariances.at(j);
+        P.block<3, 3>(i + 3, i + 3).diagonal() = _biasCovariances.at(j + 1);
     }
 
     return P;
