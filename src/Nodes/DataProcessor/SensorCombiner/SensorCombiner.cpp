@@ -191,6 +191,12 @@ void NAV::SensorCombiner::guiConfig()
         flow::ApplyChanges();
     }
 
+    if (ImGui::Checkbox(fmt::format("Rank check for Kalman filter matrices##{}", size_t(id)).c_str(), &_checkKalmanMatricesRanks))
+    {
+        LOG_DEBUG("{}: checkKalmanMatricesRanks {}", nameId(), _checkKalmanMatricesRanks);
+        flow::ApplyChanges();
+    }
+
     ImGui::Separator();
 
     ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
@@ -429,6 +435,8 @@ void NAV::SensorCombiner::guiConfig()
 
     json j;
 
+    j["checkKalmanMatricesRanks"] = _checkKalmanMatricesRanks;
+
     j["nInputPins"] = _nInputPins;
     j["imuRotations"] = _imuRotations;
     j["imuFrequency"] = _imuFrequency;
@@ -470,6 +478,11 @@ void NAV::SensorCombiner::guiConfig()
 void NAV::SensorCombiner::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
+
+    if (j.contains("checkKalmanMatricesRanks"))
+    {
+        j.at("checkKalmanMatricesRanks").get_to(_checkKalmanMatricesRanks);
+    }
 
     if (j.contains("nInputPins"))
     {
@@ -824,7 +837,6 @@ void NAV::SensorCombiner::initializeKalmanFilter()
             break;
         }
     }
-    LOG_ERROR("_processNoiseVariances.size() = {}", _processNoiseVariances.size());
 
     // -------------------------------------------------- Measurement uncertainty matrix R -----------------------------------------------------
     _measurementNoiseVariances.resize(2 * _nInputPins);
@@ -889,13 +901,12 @@ void NAV::SensorCombiner::recvSignal(const std::shared_ptr<const NodeData>& node
     _latestTimestamp = imuObs->insTime.value();
     // if (dt > 0.001 && dt < 1) // Adapt Phi and Q only if time difference is sufficiently large
     // {
-
     // _kalmanFilter.Phi = stateTransitionMatrix_Phi(dt);
     // LOG_DEBUG("kalmanFilter.Phi =\n{}", _kalmanFilter.Phi);
     // _kalmanFilter.Q = processNoiseMatrix_Q(dt);
     // LOG_DEBUG("kalmanFilter.Q =\n{}", _kalmanFilter.Q);
 
-    // if (true) // _checkKalmanMatricesRanks // TODO: enable
+    // if (_checkKalmanMatricesRanks)
     // {
     //     auto rank = _kalmanFilter.P.fullPivLu().rank();
     //     if (rank != _kalmanFilter.P.rows())
@@ -928,6 +939,15 @@ void NAV::SensorCombiner::recvSignal(const std::shared_ptr<const NodeData>& node
         _kalmanFilter.R = measurementNoiseMatrix_R_init(pinIndex);
         LOG_DEBUG("kalmanFilter.R =\n", _kalmanFilter.R);
 
+        if (_checkKalmanMatricesRanks)
+        {
+            auto rank = (_kalmanFilter.H * _kalmanFilter.P * _kalmanFilter.H.transpose() + _kalmanFilter.R).fullPivLu().rank();
+            if (rank != _kalmanFilter.H.rows())
+            {
+                LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank);
+            }
+        }
+
         combineSignals(imuObs);
     }
 }
@@ -950,6 +970,29 @@ void NAV::SensorCombiner::combineSignals(std::shared_ptr<const ImuObs>& imuObs)
 
     _kalmanFilter.correct();
     LOG_DEBUG("Estimated state after correction: x =\n{}", _kalmanFilter.x);
+
+    if (_checkKalmanMatricesRanks)
+    {
+        auto rank = (_kalmanFilter.H * _kalmanFilter.P * _kalmanFilter.H.transpose() + _kalmanFilter.R).fullPivLu().rank();
+        if (rank != _kalmanFilter.H.rows())
+        {
+            LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank);
+        }
+
+        rank = _kalmanFilter.K.fullPivLu().rank();
+        if (rank != _kalmanFilter.K.cols())
+        {
+            LOG_WARN("{}: K.rank = {}", nameId(), rank);
+        }
+    }
+    if (_checkKalmanMatricesRanks)
+    {
+        auto rank = _kalmanFilter.P.fullPivLu().rank();
+        if (rank != _kalmanFilter.P.rows())
+        {
+            LOG_WARN("{}: P.rank = {}", nameId(), rank);
+        }
+    }
 
     // Construct imuObs
     imuObsFiltered->insTime = imuObs->insTime;

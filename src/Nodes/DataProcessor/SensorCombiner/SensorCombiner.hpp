@@ -315,6 +315,9 @@ class SensorCombiner : public Imu
     /// @brief Container for measurement noises of each sensor
     std::vector<Eigen::Vector3d> _measurementNoiseVariances;
 
+    /// @brief Check the rank of the Kalman matrices every iteration (computationally expensive)
+    bool _checkKalmanMatricesRanks = false;
+
     // #########################################################################################################################################
     //                                                        Error Covariance Matrix P
     // #########################################################################################################################################
