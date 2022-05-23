@@ -45,7 +45,7 @@ std::string NAV::VectorNavBinaryConverter::category()
 
 void NAV::VectorNavBinaryConverter::guiConfig()
 {
-    if (ImGui::Combo(fmt::format("Output Type##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_outputType), "ImuObsWDelta\0PosVelAtt\0\0"))
+    if (ImGui::Combo(fmt::format("Output Type##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_outputType), "ImuObsWDelta\0PosVelAtt\0GnssObs\0\0"))
     {
         LOG_DEBUG("{}: Output Type changed to {}", nameId(), _outputType ? "PosVelAtt" : "ImuObsWDelta");
 
@@ -58,6 +58,11 @@ void NAV::VectorNavBinaryConverter::guiConfig()
         {
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::PosVelAtt::type() };
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::PosVelAtt::type();
+        }
+        else if (_outputType == OutputType_GnssObs)
+        {
+            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::GnssObs::type() };
+            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name           = NAV::GnssObs::type();
         }
 
         for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.front().id))
@@ -116,6 +121,11 @@ void NAV::VectorNavBinaryConverter::restore(json const& j)
                 outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::PosVelAtt::type() };
                 outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::PosVelAtt::type();
             }
+            else if (_outputType == OutputType_GnssObs)
+            {
+                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::GnssObs::type() };
+                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name           = NAV::GnssObs::type();
+            }
         }
     }
     if (j.contains("posVelSource"))
@@ -150,6 +160,10 @@ void NAV::VectorNavBinaryConverter::receiveObs(const std::shared_ptr<const NodeD
     else if (_outputType == OutputType_PosVelAtt)
     {
         convertedData = convert2PosVelAtt(vnObs);
+    }
+    else if (_outputType == OutputType_GnssObs)
+    {
+        convertedData = convert2GnssObs(vnObs);
     }
 
     if (convertedData)
@@ -383,4 +397,169 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
 
     LOG_ERROR("{}: Conversion failed. No position or velocity data found in the input data.", nameId());
     return nullptr;
+}
+
+std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssObs(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs)
+{
+    auto gnssObs = std::make_shared<GnssObs>();
+
+    gnssObs->insTime = vnObs->insTime;
+
+    if (vnObs->gnss1Outputs)
+    {
+        if (vnObs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
+        {
+            for (const auto& satRaw : vnObs->gnss1Outputs->raw.satellites)
+            {
+                bool skipMeasurement   = false;
+                SatelliteSystem satSys = SatSys_None;
+                switch (satRaw.sys)
+                {
+                case sensors::vectornav::SatSys::GPS:
+                    satSys = GPS;
+                    break;
+                case sensors::vectornav::SatSys::SBAS:
+                    satSys = SBAS;
+                    break;
+                case sensors::vectornav::SatSys::Galileo:
+                    satSys = GAL;
+                    break;
+                case sensors::vectornav::SatSys::BeiDou:
+                    satSys = BDS;
+                    break;
+                case sensors::vectornav::SatSys::IMES:
+                    skipMeasurement = true; // not in GnssObs
+                    break;
+                case sensors::vectornav::SatSys::QZSS:
+                    satSys = QZSS;
+                    break;
+                case sensors::vectornav::SatSys::GLONASS:
+                    satSys = GLO;
+                    break;
+                default:
+                    break;
+                }
+
+                if (skipMeasurement) // IRNSS not in vectorNav
+                {
+                    continue;
+                }
+
+                Frequency frequency = Freq_None;
+                switch (SatelliteSystem_(satSys))
+                {
+                case GPS:
+                    switch (satRaw.freq)
+                    {
+                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L1:
+                        frequency = G01;
+                        break;
+                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L2:
+                        frequency = G02;
+                        break;
+                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L5:
+                        frequency = G05;
+                        break;
+                    default: // other frequencies in Freq
+                        break;
+                    }
+                    break;
+                case SBAS:
+                    switch (satRaw.freq)
+                    {
+                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L1:
+                        frequency = S01;
+                        break;
+                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L5:
+                        frequency = S05;
+                        break;
+                    default: // other frequencies in Freq
+                        break;
+                    }
+                    break;
+                case GAL:
+                    switch (satRaw.freq)
+                    {
+                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L1:
+                        frequency = E01;
+                        break;
+                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L5:
+                        frequency = E08;
+                        break;
+                    case sensors::vectornav::RawMeas::SatRawElement::Freq::E6:
+                        frequency = E06;
+                        break;
+                    case sensors::vectornav::RawMeas::SatRawElement::Freq::E5a:
+                        frequency = E05;
+                        break;
+                    case sensors::vectornav::RawMeas::SatRawElement::Freq::E5b:
+                        frequency = E07;
+                        break;
+                    default: // other frequencies in Freq
+                        break;
+                    }
+                    break;
+                case BDS:
+                    switch (satRaw.freq)
+                    {
+                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L1:
+                        frequency = B01;
+                        break;
+                    case sensors::vectornav::RawMeas::SatRawElement::Freq::E6:
+                        frequency = B06;
+                        break;
+                    case sensors::vectornav::RawMeas::SatRawElement::Freq::E5b:
+                        frequency = B08;
+                        break;
+                    default: // other frequencies in Freq
+                        break;
+                    }
+                    break;
+                case QZSS:
+                    switch (satRaw.freq)
+                    {
+                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L1:
+                        frequency = J01;
+                        break;
+                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L2:
+                        frequency = J02;
+                        break;
+                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L5:
+                        frequency = J05;
+                        break;
+                    case sensors::vectornav::RawMeas::SatRawElement::Freq::E6:
+                        frequency = J06;
+                        break;
+                    default: // other frequencies in Freq
+                        break;
+                    }
+                    break;
+                case GLO:
+                    switch (satRaw.freq)
+                    {
+                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L1:
+                        frequency = R01;
+                        break;
+                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L2:
+                        frequency = R02;
+                        break;
+                    default: // other frequencies in Freq
+                        break;
+                    }
+                    break;
+                case IRNSS: // IRNSS not in vectorNav
+                case SatSys_None:
+                    break;
+                }
+                (*gnssObs)[{ frequency, satRaw.svId }].pseudorange  = satRaw.pr;
+                (*gnssObs)[{ frequency, satRaw.svId }].carrierPhase = satRaw.cp;
+                (*gnssObs)[{ frequency, satRaw.svId }].doppler      = static_cast<double>(satRaw.dp); // testen
+                (*gnssObs)[{ frequency, satRaw.svId }].CN0          = static_cast<double>(satRaw.cno);
+                // LLI has not been implemented yet, but can be calculated from sensors::vectornav::RawMeas::SatRawElement::Flags
+                // (*gnssObs)[{ frequency, satRaw.svId }].LLI = ...
+            }
+        }
+    }
+
+    return gnssObs;
 }
