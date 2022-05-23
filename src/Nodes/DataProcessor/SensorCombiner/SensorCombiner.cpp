@@ -303,7 +303,13 @@ void NAV::SensorCombiner::guiConfig()
         ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
 
         // TODO: Make for-loop around 'angular acceleration process noise' and 'Jerk bias covariance' to add as many inputs as there are measurements
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the process noise on the angular acceleration##{}", size_t(id)).c_str(),
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Process noise of the angular acceleration ({})##{}",
+                                                           _varAngularAccNoiseUnit == VarAngularAccNoiseUnit::rad2_s4
+                                                                   || _varAngularAccNoiseUnit == VarAngularAccNoiseUnit::deg2_s4
+                                                               ? "Variance σ²"
+                                                               : "Standard deviation σ",
+                                                           size_t(id))
+                                                   .c_str(),
                                                configWidth, unitWidth, _varAngularAccNoise.data(), reinterpret_cast<int*>(&_varAngularAccNoiseUnit), "(rad^2)/(s^4)\0"
                                                                                                                                                      "rad/s^2\0"
                                                                                                                                                      "(deg^2)/(s^4)\0"
@@ -315,7 +321,12 @@ void NAV::SensorCombiner::guiConfig()
             flow::ApplyChanges();
         }
 
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the process noise on the jerk##{}", size_t(id)).c_str(),
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Process noise of the jerk ({})##{}",
+                                                           _varJerkNoiseUnit == VarJerkNoiseUnit::m2_s6
+                                                               ? "Variance σ²"
+                                                               : "Standard deviation σ",
+                                                           size_t(id))
+                                                   .c_str(),
                                                configWidth, unitWidth, _varJerkNoise.data(), reinterpret_cast<int*>(&_varJerkNoiseUnit), "(m^2)/(s^6)\0"
                                                                                                                                          "m/s^3\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
@@ -327,7 +338,13 @@ void NAV::SensorCombiner::guiConfig()
 
         for (size_t i = 0; i < _nInputPins - 1; ++i)
         {
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the process noise on the bias of the angular rate of sensor {}##{}", i + 2, size_t(id)).c_str(), // FIXME: adapt config window number of sensors (if pin 3 is deleted, keep 1,2,4 instead of re-counting to 1,2,3)
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Process noise of the bias of the angular rate of sensor {} ({})##{}", i + 2,
+                                                               _varBiasAngRateNoiseUnit == VarBiasAngRateNoiseUnit::rad2_s2
+                                                                       || _varBiasAngRateNoiseUnit == VarBiasAngRateNoiseUnit::deg2_s2
+                                                                   ? "Variance σ²"
+                                                                   : "Standard deviation σ",
+                                                               size_t(id))
+                                                       .c_str(), // FIXME: adapt config window number of sensors (if pin 3 is deleted, keep 1,2,4 instead of re-counting to 1,2,3)
                                                    configWidth, unitWidth, _varBiasAngRateNoise.at(i).data(), reinterpret_cast<int*>(&_varBiasAngRateNoiseUnit), "(rad/s)^2\0"
                                                                                                                                                                  "rad/s\0"
                                                                                                                                                                  "(deg/s)^2\0"
@@ -339,7 +356,12 @@ void NAV::SensorCombiner::guiConfig()
                 flow::ApplyChanges();
             }
 
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the process noise on the bias of the acceleration of sensor {}##{}", i + 2, size_t(id)).c_str(), // FIXME: adapt config window number of sensors (if pin 3 is deleted, keep 1,2,4 instead of re-counting to 1,2,3)
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Process noise of the bias of the acceleration of sensor {} ({})##{}", i + 2,
+                                                               _varBiasAccelerationNoiseUnit == VarBiasAccelerationNoiseUnit::m2_s4
+                                                                   ? "Variance σ²"
+                                                                   : "Standard deviation σ",
+                                                               size_t(id))
+                                                       .c_str(), // FIXME: adapt config window number of sensors (if pin 3 is deleted, keep 1,2,4 instead of re-counting to 1,2,3)
                                                    configWidth, unitWidth, _varBiasAccelerationNoise.at(i).data(), reinterpret_cast<int*>(&_varBiasAccelerationNoiseUnit), "(m^2)/(s^4)\0"
                                                                                                                                                                            "m/s^2\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific)) // FIXME: make '_varBiasAccelerationNoiseUnit' a container, s.t. user can choose different units for each sensor
@@ -361,7 +383,13 @@ void NAV::SensorCombiner::guiConfig()
         for (size_t i = 0; i < _nInputPins - 1; ++i)
         {
             // TODO: Make for-loop around 'angular rate measurement uncertainty' and 'acceleration measurement uncertainty' to add as many inputs as there are measurements
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the measurement uncertainty on the angular rate of sensor {}##{}", i + 2, size_t(id)).c_str(),
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Measurement uncertainty of the angular rate of sensor {} ({})##{}", i + 2,
+                                                               _measurementUncertaintyAngularRateUnit == MeasurementUncertaintyAngularRateUnit::rad2_s2
+                                                                       || _measurementUncertaintyAngularRateUnit == MeasurementUncertaintyAngularRateUnit::deg2_s2
+                                                                   ? "Variance σ²"
+                                                                   : "Standard deviation σ",
+                                                               size_t(id))
+                                                       .c_str(),
                                                    configWidth, unitWidth, _measurementUncertaintyAngularRate.at(i).data(), reinterpret_cast<int*>(&_measurementUncertaintyAngularRateUnit), "(rad/s)^2\0"
                                                                                                                                                                                              "rad/s\0"
                                                                                                                                                                                              "(deg/s)^2\0"
@@ -373,7 +401,12 @@ void NAV::SensorCombiner::guiConfig()
                 flow::ApplyChanges();
             }
 
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the measurement uncertainty on the acceleration of sensor {}##{}", i + 2, size_t(id)).c_str(),
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Measurement uncertainty of the acceleration of sensor {} ({})##{}", i + 2,
+                                                               _measurementUncertaintyAccelerationUnit == MeasurementUncertaintyAccelerationUnit::m2_s4
+                                                                   ? "Variance σ²"
+                                                                   : "Standard deviation σ",
+                                                               size_t(id))
+                                                       .c_str(),
                                                    configWidth, unitWidth, _measurementUncertaintyAcceleration.at(i).data(), reinterpret_cast<int*>(&_measurementUncertaintyAccelerationUnit), "(m^2)/(s^4)\0"
                                                                                                                                                                                                "m/s^2\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
