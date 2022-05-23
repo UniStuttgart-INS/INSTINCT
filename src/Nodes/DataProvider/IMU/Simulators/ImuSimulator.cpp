@@ -687,9 +687,9 @@ void NAV::ImuSimulator::SplineInitializer()
             Y[i] = e_position[1];
             Z[i] = e_position[2];
 
-            Roll[i] = _fixedTrajectoryStartOrientation.x();
-            Pitch[i] = _fixedTrajectoryStartOrientation.y();
-            Yaw[i] = _fixedTrajectoryStartOrientation.z();
+		    Roll[i] = _fixedTrajectoryStartOrientation.x(); //+trafo::deg2rad(SplineTime[i]*0.01);
+		    Pitch[i] = _fixedTrajectoryStartOrientation.y(); //+trafo::deg2rad(SplineTime[i]*-0.01);
+		    Yaw[i] = _fixedTrajectoryStartOrientation.z()+trafo::deg2rad(SplineTime[i]*0.02);
         }
         SplineInfo.X.set_points(SplineTime, X);
         SplineInfo.Y.set_points(SplineTime, Y);
@@ -765,7 +765,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 {
     double imuUpdateTime = static_cast<double>(_imuUpdateCnt) / _imuFrequency;
 
-    Eigen::Vector3d lla_position = lla_calcPosition(imuUpdateTime, _imuLastUpdateTime, _lla_imuLastLinearPosition);
+    Eigen::Vector3d lla_position = lla_calcPosition(imuUpdateTime);
 
     // -------------------------------------------------- Check if a stop condition is met -----------------------------------------------------
     if (checkStopCondition(imuUpdateTime, lla_position))
@@ -789,7 +789,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     Eigen::Vector3d n_vel = n_calcVelocity(imuUpdateTime, n_Quat_e);
     LOG_DATA("{}: [{:8.3f}] n_vel = {} [m/s]", nameId(), imuUpdateTime, n_vel.transpose());
 
-    auto [roll, pitch, yaw] = calcFlightAngles(imuUpdateTime, lla_position, n_vel);
+    auto [roll, pitch, yaw] = calcFlightAngles(imuUpdateTime);
     LOG_DATA("{}: [{:8.3f}] roll = {}°, pitch = {}°, yaw = {}°", nameId(), imuUpdateTime, trafo::rad2deg(roll), trafo::rad2deg(pitch), trafo::rad2deg(yaw));
 
     auto b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
@@ -838,7 +838,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 
     // ------------------------------------------------------------ Angular rates --------------------------------------------------------------
 
-    const Eigen::Vector3d omega_ip_p = p_calcOmega_ip(imuUpdateTime, lla_position, n_vel, n_trajectoryAccel, Eigen::Vector3d{ roll, pitch, yaw }, b_Quat_n, n_omega_ie, n_omega_en);
+    const Eigen::Vector3d omega_ip_p = p_calcOmega_ip(imuUpdateTime, Eigen::Vector3d{ roll, pitch, yaw }, b_Quat_n, n_omega_ie, n_omega_en);
     LOG_DATA("{}: [{:8.3f}] omega_ip_p = {} [rad/s]", nameId(), imuUpdateTime, omega_ip_p.transpose());
 
     // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
@@ -864,7 +864,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
 {
     double gnssUpdateTime = static_cast<double>(_gnssUpdateCnt) / _gnssFrequency;
 
-    Eigen::Vector3d lla_position = lla_calcPosition(gnssUpdateTime, _gnssLastUpdateTime, _lla_gnssLastLinearPosition);
+    Eigen::Vector3d lla_position = lla_calcPosition(gnssUpdateTime);
 
     // -------------------------------------------------- Check if a stop condition is met -----------------------------------------------------
     if (checkStopCondition(gnssUpdateTime, lla_position))
@@ -885,7 +885,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
     auto n_Quat_e = trafo::n_Quat_e(lla_position(0), lla_position(1));
     Eigen::Vector3d n_vel = n_calcVelocity(gnssUpdateTime, n_Quat_e);
     LOG_DATA("{}: [{:8.3f}] n_vel = {} [m/s]", nameId(), gnssUpdateTime, n_vel.transpose());
-    auto [roll, pitch, yaw] = calcFlightAngles(gnssUpdateTime, lla_position, n_vel);
+    auto [roll, pitch, yaw] = calcFlightAngles(gnssUpdateTime);
     LOG_DATA("{}: [{:8.3f}] roll = {}°, pitch = {}°, yaw = {}°", nameId(), gnssUpdateTime, trafo::rad2deg(roll), trafo::rad2deg(pitch), trafo::rad2deg(yaw));
 
     // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
@@ -900,200 +900,65 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
     return obs;
 }
 
-std::array<double, 3> NAV::ImuSimulator::calcFlightAngles(double time, const Eigen::Vector3d& lla_position, const Eigen::Vector3d& n_velocity)
+std::array<double, 3> NAV::ImuSimulator::calcFlightAngles(double time)
 {
-    double roll = 0;
-    double pitch = std::abs(n_velocity.head<2>().norm()) > 1e-8 ? calcPitchFromVelocity(n_velocity) : 0;
-    double yaw = calcYawFromVelocity(n_velocity);
-
-    if (_trajectoryType == TrajectoryType::Fixed) // will be removed once everything has been implemented in splines
-    {
-        roll = SplineInfo.Roll(time);
-        pitch = SplineInfo.Pitch(time);
-        yaw = SplineInfo.Yaw(time);
-    }
-    else if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
-    {
-        roll = SplineInfo.Roll(time);
-        pitch = SplineInfo.Pitch(time);
-        yaw = SplineInfo.Yaw(time);
-
-        /*
-
-        // The normal vector of the center point of the circle to the ellipsoid expressed in Earth frame coordinates (see https://en.wikipedia.org/wiki/N-vector)
-        const Eigen::Vector3d e_normalVectorCenterCircle{ std::cos(_lla_startPosition(0)) * std::cos(_lla_startPosition(1)),
-                                                          std::cos(_lla_startPosition(0)) * std::sin(_lla_startPosition(1)),
-                                                          std::sin(_lla_startPosition(0)) };
-        // The normal vector of the current position to the ellipsoid expressed in Earth frame coordinates
-        const Eigen::Vector3d e_normalVectorCurrentPosition{ std::cos(lla_position(0)) * std::cos(lla_position(1)),
-                                                             std::cos(lla_position(0)) * std::sin(lla_position(1)),
-                                                             std::sin(lla_position(0)) };
-
-        roll = (_circularTrajectoryDirection == Direction::CCW ? -1.0 : 1.0) // CCW = Right wing facing outwards, roll angle measured downwards
-               * std::acos(e_normalVectorCurrentPosition.dot(e_normalVectorCenterCircle) / (e_normalVectorCurrentPosition.norm() * e_normalVectorCenterCircle.norm()));
-
-        */
-    }
-
+    double roll = SplineInfo.Roll(time);
+    double pitch = SplineInfo.Pitch(time);
+    double yaw = SplineInfo.Yaw(time);
     return { roll, pitch, yaw };
 }
 
-Eigen::Vector3d NAV::ImuSimulator::lla_calcPosition(double time, double& lastUpdateTime, Eigen::Vector3d& lla_lastPosition)
+Eigen::Vector3d NAV::ImuSimulator::lla_calcPosition(double time)
 {
-    if (_trajectoryType == TrajectoryType::Fixed) // will be removed once everything has been implemented in splines
-    {
         Eigen::Vector3d e_pos(SplineInfo.X(time), SplineInfo.Y(time), SplineInfo.Z(time));
         return trafo::ecef2lla_WGS84(e_pos);
-    }
-    if (_trajectoryType == TrajectoryType::Linear)
-    {
-        // @brief Calculates the derivative of the curvilinear position and velocity
-        // @param[in] y [𝜙, λ, h, v_N, v_E, v_D]^T Latitude, longitude, altitude, velocity NED in [rad, rad, m, m/s, m/s, m/s]
-        // @param[in] n_acceleration Acceleration in local-navigation frame coordinates [m/s^s]
-        // @return The curvilinear position and velocity derivatives ∂/∂t [𝜙, λ, h, v_N, v_E, v_D]^T
-        auto f = [](const Eigen::Vector<double, 6>& y, const Eigen::Vector3d& n_acceleration) {
-            Eigen::Vector<double, 6> y_dot;
-            y_dot << lla_calcTimeDerivativeForPosition(y.tail<3>(),              // Velocity with respect to the Earth in local-navigation frame coordinates [m/s]
-                                                       y(0),                     // 𝜙 Latitude in [rad]
-                                                       y(2),                     // h Altitude in [m]
-                                                       calcEarthRadius_N(y(0)),  // North/South (meridian) earth radius [m]
-                                                       calcEarthRadius_E(y(0))), // East/West (prime vertical) earth radius [m]
-                n_acceleration;
-
-            return y_dot;
-        };
-
-        // Time to propagate the position
-        double dt = time - lastUpdateTime;
-
-        while (dt > 0) // Iterate in small steps to avoid numeric precision loss
-        {
-            double h = std::min(dt, 1.0 / INTERNAL_LINEAR_UPDATE_FREQUENCY);
-
-            Eigen::Vector<double, 6> y;
-            y << lla_lastPosition,
-                _n_linearTrajectoryStartVelocity + _n_linearTrajectoryAcceleration * lastUpdateTime;
-
-            y = RungeKutta1(f, h, y, _n_linearTrajectoryAcceleration);
-            lla_lastPosition = y.head<3>();
-
-            lastUpdateTime += h;
-            dt -= h;
-        }
-
-        return lla_lastPosition;
-    }
-    if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
-    {
-        Eigen::Vector3d e_pos(SplineInfo.X(time), SplineInfo.Y(time), SplineInfo.Z(time));
-        return trafo::ecef2lla_WGS84(e_pos);
-    }
-    return Eigen::Vector3d::Zero();
+   
 }
 
 Eigen::Vector3d NAV::ImuSimulator::n_calcVelocity(double time, const Eigen::Quaterniond& n_Quat_e)
 {
-    if (_trajectoryType == TrajectoryType::Fixed) // will be removed once everything has been implemented in splines
-    {
-        Eigen::Vector3d e_vel(SplineInfo.X.deriv(1, time), SplineInfo.Y.deriv(1, time), SplineInfo.Z.deriv(1, time));
-        return n_Quat_e * e_vel;
-    }
-    if (_trajectoryType == TrajectoryType::Linear)
-    {
-        return _n_linearTrajectoryStartVelocity + _n_linearTrajectoryAcceleration * time;
-    }
-    if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
-    {
-        Eigen::Vector3d e_vel(SplineInfo.X.deriv(1, time), SplineInfo.Y.deriv(1, time), SplineInfo.Z.deriv(1, time));
-        return n_Quat_e * e_vel;
-    }
-    return Eigen::Vector3d::Zero();
+   Eigen::Vector3d e_vel(SplineInfo.X.deriv(1, time), SplineInfo.Y.deriv(1, time), SplineInfo.Z.deriv(1, time));
+   return n_Quat_e * e_vel;
 }
 
 Eigen::Vector3d NAV::ImuSimulator::n_calcTrajectoryAccel(double time, const Eigen::Quaterniond& n_Quat_e, const Eigen::Vector3d& lla_position, const Eigen::Vector3d& n_velocity)
 {
-    if (_trajectoryType == TrajectoryType::Fixed)
-    {
-        Eigen::Vector3d e_accel(SplineInfo.X.deriv(2, time), SplineInfo.Y.deriv(2, time), SplineInfo.Z.deriv(2, time));
-        return n_Quat_e * e_accel;
-    }
-    if (_trajectoryType == TrajectoryType::Linear)
-    {
-        return _n_linearTrajectoryAcceleration;
-    }
-    if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
-    {
-        Eigen::Vector3d e_accel(SplineInfo.X.deriv(2, time), SplineInfo.Y.deriv(2, time), SplineInfo.Z.deriv(2, time));
+	Eigen::Vector3d e_accel(SplineInfo.X.deriv(2, time), SplineInfo.Y.deriv(2, time), SplineInfo.Z.deriv(2, time));
+    Eigen::Quaterniond e_Quat_n = n_Quat_e.conjugate();
+    Eigen::Vector3d e_vel = e_Quat_n * n_velocity;
 
-        Eigen::Quaterniond e_Quat_n = n_Quat_e.conjugate();
-        Eigen::Vector3d e_vel = e_Quat_n * n_velocity;
-
-        // Math: \dot{C}_n^e = C_n^e \cdot \Omega_{en}^n
-        Eigen::Matrix3d n_DCM_dot_e = e_Quat_n.toRotationMatrix()
+    // Math: \dot{C}_n^e = C_n^e \cdot \Omega_{en}^n
+    Eigen::Matrix3d n_DCM_dot_e = e_Quat_n.toRotationMatrix()
                                       * skewSymmetricMatrix(n_calcTransportRate(lla_position, n_velocity,
                                                                                 calcEarthRadius_N(lla_position(0)),
                                                                                 calcEarthRadius_E(lla_position(0))));
 
-        // Math: \dot{C}_e^n = (\dot{C}_n^e)^T
-        Eigen::Matrix3d e_DCM_dot_n = n_DCM_dot_e.transpose();
+    // Math: \dot{C}_e^n = (\dot{C}_n^e)^T
+    
+	Eigen::Matrix3d e_DCM_dot_n = n_DCM_dot_e.transpose();
+    // Math: a^n = \frac{\partial}{\partial t} \left( \dot{x}^n \right) = \frac{\partial}{\partial t} \left( C_e^n \cdot \dot{x}^e \right) = \dot{C}_e^n \cdot \dot{x}^e + C_e^n \cdot \ddot{x}^e
+    return e_DCM_dot_n * e_vel + n_Quat_e * e_accel;
 
-        // Math: a^n = \frac{\partial}{\partial t} \left( \dot{x}^n \right) = \frac{\partial}{\partial t} \left( C_e^n \cdot \dot{x}^e \right) = \dot{C}_e^n \cdot \dot{x}^e + C_e^n \cdot \ddot{x}^e
-        return e_DCM_dot_n * e_vel + n_Quat_e * e_accel;
-    }
-    return Eigen::Vector3d::Zero();
 }
 
 Eigen::Vector3d NAV::ImuSimulator::p_calcOmega_ip(double time,
-                                                  const Eigen::Vector3d& lla_position,
-                                                  const Eigen::Vector3d& n_velocity,
-                                                  const Eigen::Vector3d& n_acceleration,
                                                   const Eigen::Vector3d& rollPitchYaw,
                                                   const Eigen::Quaterniond& b_Quat_n,
                                                   const Eigen::Vector3d& n_omega_ie,
                                                   const Eigen::Vector3d& n_omega_en)
 {
-    const auto& phi = lla_position(0);
-    const auto& lambda = lla_position(1);
-    const auto& h = lla_position(2);
-
-    const auto& v_N = n_velocity(0);
-    const auto& v_E = n_velocity(1);
-    const auto& v_D = n_velocity(2);
-    const auto& v_N_2 = std::pow(v_N, 2);
-    const auto& v_E_2 = std::pow(v_E, 2);
-    const auto& v_D_2 = std::pow(v_D, 2);
-
-    const auto& a_N = n_acceleration(0);
-    const auto& a_E = n_acceleration(1);
-    const auto& a_D = n_acceleration(2);
 
     const auto& R = rollPitchYaw(0);
     const auto& P = rollPitchYaw(1);
 
     const Eigen::Quaterniond n_Quat_b = b_Quat_n.conjugate();
 
-    const double R_N = calcEarthRadius_N(phi);
-    const double R_E = calcEarthRadius_E(phi);
 
     // #########################################################################################################################################
 
-    double R_dot = 0;
-    double Y_dot = 0;
-    double P_dot = 0;
-
-    if (_trajectoryType == TrajectoryType::Fixed)
-    {
-        R_dot = SplineInfo.Roll.deriv(1, time);
-        Y_dot = SplineInfo.Yaw.deriv(1, time);
-        P_dot = SplineInfo.Pitch.deriv(1, time);
-    }
-
-    if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
-    {
-        R_dot = SplineInfo.Roll.deriv(1, time);
-        Y_dot = SplineInfo.Yaw.deriv(1, time);
-        P_dot = SplineInfo.Pitch.deriv(1, time);
-    }
+    double R_dot = SplineInfo.Roll.deriv(1, time);
+    double Y_dot = SplineInfo.Yaw.deriv(1, time);
+    double P_dot = SplineInfo.Pitch.deriv(1, time);
 
     auto C_3 = [](double R) {
         // Eigen::Matrix3d C;

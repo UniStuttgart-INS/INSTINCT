@@ -232,17 +232,13 @@ class ImuSimulator : public Imu
 
     /// @brief Calculates the flight angles (roll, pitch, yaw)
     /// @param[in] time Time in [s]
-    /// @param[in] lla_position Current position as latitude, longitude, altitude [rad, rad, m]
-    /// @param[in] n_velocity Velocity in local-navigation frame coordinates [m/s]
     /// @return Roll, pitch, yaw in [rad]
-    std::array<double, 3> calcFlightAngles(double time, const Eigen::Vector3d& lla_position, const Eigen::Vector3d& n_velocity);
+    std::array<double, 3> calcFlightAngles(double time);
 
     /// @brief Calculates the position in latLonAlt at the given time depending on the trajectoryType
     /// @param[in] time Time in [s]
-    /// @param[in, out] lastUpdateTime Last time the update was called in [s]. Needed for the iterative linear calculation.
-    /// @param[in, out] lla_lastPosition Last calculated position in linear mode for iterative calculations as latitude, longitude, altitude [rad, rad, m]
     /// @return LatLonAlt in [rad, rad, m]
-    Eigen::Vector3d lla_calcPosition(double time, double& lastUpdateTime, Eigen::Vector3d& lla_lastPosition);
+    Eigen::Vector3d lla_calcPosition(double time);
 
     /// @brief Calculates the velocity in local-navigation frame coordinates at the given time depending on the trajectoryType
     /// @param[in] time Time in [s]
@@ -260,18 +256,12 @@ class ImuSimulator : public Imu
 
     /// @brief Calculates ω_ip_p, the gyroscope measurement (turn rate of the platform with respect to the inertial system expressed in platform coordinates)
     /// @param[in] time Time in [s]
-    /// @param[in] lla_position Current position as latitude, longitude, altitude [rad, rad, m]
-    /// @param[in] n_velocity Velocity in local-navigation frame coordinates [m/s]
-    /// @param[in] n_acceleration Acceleration in local-navigation frame coordinates [m/s^2]
     /// @param[in] rollPitchYaw Gimbal angles (roll, pitch, yaw) [rad]
     /// @param[in] b_Quat_n Rotation quaternion from local-navigation frame to the body frame
     /// @param[in] n_omega_ie ω_ie_n Earth rotation rate in local-navigation coordinates
     /// @param[in] n_omega_en ω_en_n Transport rate in local-navigation coordinates
     /// @return ω_ip_p [rad/s]
     Eigen::Vector3d p_calcOmega_ip(double time,
-                                   const Eigen::Vector3d& lla_position,
-                                   const Eigen::Vector3d& n_velocity,
-                                   const Eigen::Vector3d& n_acceleration,
                                    const Eigen::Vector3d& rollPitchYaw,
                                    const Eigen::Quaterniond& b_Quat_n,
                                    const Eigen::Vector3d& n_omega_ie,
