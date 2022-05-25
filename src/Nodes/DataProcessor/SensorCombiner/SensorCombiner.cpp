@@ -8,6 +8,7 @@
 #include <imgui_internal.h>
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/widgets/InputWithUnit.hpp"
+#include "internal/gui/widgets/HelpMarker.hpp"
 #include "util/Json.hpp"
 
 #include "internal/NodeManager.hpp"
@@ -190,12 +191,16 @@ void NAV::SensorCombiner::guiConfig()
         LOG_DEBUG("{}: imuFrequency changed to {}", nameId(), _imuFrequency);
         flow::ApplyChanges();
     }
+    ImGui::SameLine();
+    gui::widgets::HelpMarker("The inverse of this rate is used as 'dt' for the Kalman Filter Prediction (Phi and Q).");
 
     if (ImGui::Checkbox(fmt::format("Rank check for Kalman filter matrices##{}", size_t(id)).c_str(), &_checkKalmanMatricesRanks))
     {
         LOG_DEBUG("{}: checkKalmanMatricesRanks {}", nameId(), _checkKalmanMatricesRanks);
         flow::ApplyChanges();
     }
+    ImGui::SameLine();
+    gui::widgets::HelpMarker("Computationally intensive - only recommended for debugging.");
 
     ImGui::Separator();
 
