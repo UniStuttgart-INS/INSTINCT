@@ -902,24 +902,24 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
         _latestTimestamp = InsTime{ 0, 0, 0, 0, 0, (imuObs->insTime.value() - dt_init).count() };
     }
 
+    // Predict states over the time difference between the latest signal and the one before
     [[maybe_unused]] auto dt = static_cast<double>((imuObs->insTime.value() - _latestTimestamp).count());
     _latestTimestamp = imuObs->insTime.value();
-    // if (dt > 0.001 && dt < 1) // Adapt Phi and Q only if time difference is sufficiently large
-    // {
-    // _kalmanFilter.Phi = stateTransitionMatrix_Phi(dt);
-    // LOG_DEBUG("kalmanFilter.Phi =\n{}", _kalmanFilter.Phi);
-    // _kalmanFilter.Q = processNoiseMatrix_Q(dt);
-    // LOG_DEBUG("kalmanFilter.Q =\n{}", _kalmanFilter.Q);
+    LOG_DATA("dt = {}", dt);
 
-    // if (_checkKalmanMatricesRanks)
-    // {
-    //     auto rank = _kalmanFilter.P.fullPivLu().rank();
-    //     if (rank != _kalmanFilter.P.rows())
-    //     {
-    //         LOG_WARN("{}: P.rank = {}", nameId(), rank);
-    //     }
-    // }
-    // }
+    _kalmanFilter.Phi = stateTransitionMatrix_Phi(dt);
+    LOG_DATA("kalmanFilter.Phi =\n{}", _kalmanFilter.Phi);
+    _kalmanFilter.Q = processNoiseMatrix_Q(dt);
+    LOG_DATA("kalmanFilter.Q =\n{}", _kalmanFilter.Q);
+
+    if (_checkKalmanMatricesRanks)
+    {
+        auto rank = _kalmanFilter.P.fullPivLu().rank();
+        if (rank != _kalmanFilter.P.rows())
+        {
+            LOG_WARN("{}: P.rank = {}", nameId(), rank);
+        }
+    }
 
     if (Link* link = nm::FindLink(linkId))
     {
@@ -939,10 +939,10 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
         LOG_DEBUG("DCM =\n{}", DCM);
 
         _kalmanFilter.H = designMatrix_H(DCM, pinIndex);
-        LOG_DEBUG("kalmanFilter.H =\n", _kalmanFilter.H);
+        LOG_DATA("kalmanFilter.H =\n", _kalmanFilter.H);
 
         _kalmanFilter.R = measurementNoiseMatrix_R_init(pinIndex);
-        LOG_DEBUG("kalmanFilter.R =\n", _kalmanFilter.R);
+        LOG_DATA("kalmanFilter.R =\n", _kalmanFilter.R);
 
         if (_checkKalmanMatricesRanks)
         {
@@ -964,17 +964,17 @@ void NAV::ImuFusion::combineSignals(std::shared_ptr<const ImuObs>& imuObs)
     auto imuObsFiltered = std::make_shared<ImuObs>(this->_imuPos);
     auto imuRelativeBiases = std::make_shared<ImuBiases>();
 
-    LOG_DEBUG("Estimated state before prediction: x =\n{}", _kalmanFilter.x);
+    LOG_DATA("Estimated state before prediction: x =\n{}", _kalmanFilter.x);
 
     _kalmanFilter.predict();
 
     _kalmanFilter.z.block<3, 1>(0, 0) = *imuObs->gyroUncompXYZ;
     _kalmanFilter.z.block<3, 1>(3, 0) = *imuObs->accelUncompXYZ;
 
-    LOG_DEBUG("Measurements z =\n{}", _kalmanFilter.z);
+    LOG_DATA("Measurements z =\n{}", _kalmanFilter.z);
 
     _kalmanFilter.correct();
-    LOG_DEBUG("Estimated state after correction: x =\n{}", _kalmanFilter.x);
+    LOG_DATA("Estimated state after correction: x =\n{}", _kalmanFilter.x);
 
     if (_checkKalmanMatricesRanks)
     {
@@ -1018,9 +1018,13 @@ void NAV::ImuFusion::combineSignals(std::shared_ptr<const ImuObs>& imuObs)
     }
 }
 
-Eigen::MatrixXd NAV::ImuFusion::stateTransitionMatrix_Phi(double dt) const // TODO: if called in KF update, don't make new Phi every iteration
+// #########################################################################################################################################
+//                                                         Kalman Filter Matrices
+// #########################################################################################################################################
+
+Eigen::MatrixXd NAV::ImuFusion::stateTransitionMatrix_Phi(double dt) const // TODO: if called in KF update, don't initialize the entire matrix every iteration
 {
-    Eigen::MatrixXd Phi(_numStates, _numStates);
+    Eigen::MatrixXd Phi = Eigen::MatrixXd::Zero(_numStates, _numStates);
 
     Phi.diagonal().setOnes(); // constant part of states
 
@@ -1035,7 +1039,7 @@ Eigen::MatrixXd NAV::ImuFusion::initialErrorCovarianceMatrix_P0(Eigen::Vector3d&
                                                                 Eigen::Vector3d& varAcc,
                                                                 Eigen::Vector3d& varJerk) const
 {
-    Eigen::MatrixXd P(_numStates, _numStates);
+    Eigen::MatrixXd P = Eigen::MatrixXd::Zero(_numStates, _numStates);
 
     P.block<3, 3>(0, 0).diagonal() = varAngRate;
     P.block<3, 3>(3, 3).diagonal() = varAngAcc;
@@ -1052,9 +1056,9 @@ Eigen::MatrixXd NAV::ImuFusion::initialErrorCovarianceMatrix_P0(Eigen::Vector3d&
     return P;
 }
 
-Eigen::MatrixXd NAV::ImuFusion::processNoiseMatrix_Q(double dt) const
+Eigen::MatrixXd NAV::ImuFusion::processNoiseMatrix_Q(double dt) const // TODO: if called in KF update, don't initialize the entire matrix every iteration
 {
-    Eigen::MatrixXd Q(_numStates, _numStates);
+    Eigen::MatrixXd Q = Eigen::MatrixXd::Zero(_numStates, _numStates);
 
     // Integrated Random Walk of the angular rate
     Q.block<3, 3>(0, 0).diagonal() = _processNoiseVariances.at(0) / 3. * std::pow(dt, 3);
@@ -1081,7 +1085,7 @@ Eigen::MatrixXd NAV::ImuFusion::processNoiseMatrix_Q(double dt) const
 
 Eigen::MatrixXd NAV::ImuFusion::designMatrix_H(Eigen::Matrix3d& DCM, size_t pinIndex) const
 {
-    Eigen::MatrixXd H(_numMeasurements, _numStates);
+    Eigen::MatrixXd H = Eigen::MatrixXd::Zero(_numMeasurements, _numStates);
     H.setZero();
 
     // Mounting angles of sensor with latest measurement
@@ -1106,8 +1110,7 @@ Eigen::MatrixXd NAV::ImuFusion::measurementNoiseMatrix_R(double alpha, Eigen::Ma
 
 Eigen::MatrixXd NAV::ImuFusion::measurementNoiseMatrix_R_init(size_t pinIndex) const
 {
-    Eigen::MatrixXd R(_numMeasurements, _numMeasurements);
-    R.setZero();
+    Eigen::MatrixXd R = Eigen::MatrixXd::Zero(_numMeasurements, _numMeasurements);
 
     R.block<3, 3>(0, 0).diagonal() = _measurementNoiseVariances.at(pinIndex + 1);
     R.block<3, 3>(3, 3).diagonal() = _measurementNoiseVariances.at(pinIndex + 2);
