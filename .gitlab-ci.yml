@@ -37,7 +37,7 @@ image: ins-cpp:10
   tags:
     - windows
   before_script:
-    - 'call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat"'
+    - 'call "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat"'
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                              Prepare                                             ║
