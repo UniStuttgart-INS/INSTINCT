@@ -149,11 +149,17 @@ void NAV::ImuFusion::guiConfig()
                         nm::DeleteOutputPin(outputPins.at(pinIndex).id);
                         _pinData.erase(_pinData.begin() + static_cast<int64_t>(pinIndex));
                         _initCovarianceBiasAngRate.erase(_initCovarianceBiasAngRate.begin() + static_cast<int64_t>(pinIndex - 1));
+                        _initCovarianceBiasAngRateUnit.erase(_initCovarianceBiasAngRateUnit.begin() + static_cast<int64_t>(pinIndex - 1));
                         _initCovarianceBiasAcc.erase(_initCovarianceBiasAcc.begin() + static_cast<int64_t>(pinIndex - 1));
+                        _initCovarianceBiasAccUnit.erase(_initCovarianceBiasAccUnit.begin() + static_cast<int64_t>(pinIndex - 1));
                         _varBiasAngRateNoise.erase(_varBiasAngRateNoise.begin() + static_cast<int64_t>(pinIndex - 1));
+                        _varBiasAngRateNoiseUnit.erase(_varBiasAngRateNoiseUnit.begin() + static_cast<int64_t>(pinIndex - 1));
                         _varBiasAccelerationNoise.erase(_varBiasAccelerationNoise.begin() + static_cast<int64_t>(pinIndex - 1));
+                        _varBiasAccelerationNoiseUnit.erase(_varBiasAccelerationNoiseUnit.begin() + static_cast<int64_t>(pinIndex - 1));
                         _measurementUncertaintyAngularRate.erase(_measurementUncertaintyAngularRate.begin() + static_cast<int64_t>(pinIndex - 1));
+                        _measurementUncertaintyAngularRateUnit.erase(_measurementUncertaintyAngularRateUnit.begin() + static_cast<int64_t>(pinIndex - 1));
                         _measurementUncertaintyAcceleration.erase(_measurementUncertaintyAcceleration.begin() + static_cast<int64_t>(pinIndex - 1));
+                        _measurementUncertaintyAccelerationUnit.erase(_measurementUncertaintyAccelerationUnit.begin() + static_cast<int64_t>(pinIndex - 1));
                         --_nInputPins;
                         flow::ApplyChanges();
                         updateNumberOfInputPins();
@@ -192,7 +198,7 @@ void NAV::ImuFusion::guiConfig()
         flow::ApplyChanges();
     }
     ImGui::SameLine();
-    gui::widgets::HelpMarker("The inverse of this rate is used as 'dt' for the Kalman Filter Prediction (Phi and Q).");
+    gui::widgets::HelpMarker("The inverse of this rate is used as the initial 'dt' for the Kalman Filter Prediction (Phi and Q).");
 
     if (ImGui::Checkbox(fmt::format("Rank check for Kalman filter matrices##{}", size_t(id)).c_str(), &_checkKalmanMatricesRanks))
     {
@@ -275,36 +281,36 @@ void NAV::ImuFusion::guiConfig()
 
         for (size_t i = 0; i < _nInputPins - 1; ++i)
         {
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular acceleration bias covariance of sensor {} ({})##{}", i + 2,
-                                                               _initCovarianceBiasAngRateUnit == InitCovarianceBiasAngRateUnit::rad2_s2
-                                                                       || _initCovarianceBiasAngRateUnit == InitCovarianceBiasAngRateUnit::deg2_s2
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular rate bias covariance of sensor {} ({})##{}", i + 2,
+                                                               _initCovarianceBiasAngRateUnit[i] == InitCovarianceBiasAngRateUnit::rad2_s2
+                                                                       || _initCovarianceBiasAngRateUnit[i] == InitCovarianceBiasAngRateUnit::deg2_s2
                                                                    ? "Variance σ²"
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _initCovarianceBiasAngRate.at(i).data(), reinterpret_cast<int*>(&_initCovarianceBiasAngRateUnit), "(rad^2)/(s^4)\0"
-                                                                                                                                                                             "rad/s^2\0"
-                                                                                                                                                                             "(deg^2)/(s^4)\0"
-                                                                                                                                                                             "deg/s^2\0\0",
+                                                   configWidth, unitWidth, _initCovarianceBiasAngRate.at(i).data(), reinterpret_cast<int*>(&_initCovarianceBiasAngRateUnit[i]), "(rad^2)/(s^2)\0"
+                                                                                                                                                                                "rad/s\0"
+                                                                                                                                                                                "(deg^2)/(s^2)\0"
+                                                                                                                                                                                "deg/s\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
-                LOG_DEBUG("{}: initCovarianceBiasAngAcc changed to {}", nameId(), _initCovarianceBiasAngRate.at(i));
-                LOG_DEBUG("{}: InitCovarianceBiasAngRateUnit changed to {}", nameId(), _initCovarianceBiasAngRateUnit);
+                LOG_DEBUG("{}: initCovarianceBiasAngRate changed to {}", nameId(), _initCovarianceBiasAngRate.at(i));
+                LOG_DEBUG("{}: InitCovarianceBiasAngRateUnit changed to {}", nameId(), _initCovarianceBiasAngRateUnit[i]);
                 flow::ApplyChanges();
             }
 
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Jerk bias covariance of sensor {} ({})##{}", i + 2,
-                                                               _initCovarianceBiasAccUnit == InitCovarianceBiasAccUnit::m2_s4
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Acceleration bias covariance of sensor {} ({})##{}", i + 2,
+                                                               _initCovarianceBiasAccUnit[i] == InitCovarianceBiasAccUnit::m2_s4
                                                                    ? "Variance σ²"
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _initCovarianceBiasAcc.at(i).data(), reinterpret_cast<int*>(&_initCovarianceBiasAccUnit), "(m^2)/(s^6)\0"
-                                                                                                                                                                     "m/s^3\0\0",
+                                                   configWidth, unitWidth, _initCovarianceBiasAcc.at(i).data(), reinterpret_cast<int*>(&_initCovarianceBiasAccUnit[i]), "(m^2)/(s^4)\0"
+                                                                                                                                                                        "m/s^2\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
-                LOG_DEBUG("{}: initCovarianceBiasJerk changed to {}", nameId(), _initCovarianceBiasAcc.at(i));
-                LOG_DEBUG("{}: InitCovarianceBiasAccUnit changed to {}", nameId(), _initCovarianceBiasAccUnit);
+                LOG_DEBUG("{}: initCovarianceBiasAcc changed to {}", nameId(), _initCovarianceBiasAcc.at(i));
+                LOG_DEBUG("{}: InitCovarianceBiasAccUnit changed to {}", nameId(), _initCovarianceBiasAccUnit[i]);
                 flow::ApplyChanges();
             }
         }
@@ -353,35 +359,35 @@ void NAV::ImuFusion::guiConfig()
         for (size_t i = 0; i < _nInputPins - 1; ++i)
         {
             if (gui::widgets::InputDouble3WithUnit(fmt::format("Process noise of the bias of the angular rate of sensor {} ({})##{}", i + 2,
-                                                               _varBiasAngRateNoiseUnit == VarBiasAngRateNoiseUnit::rad2_s2
-                                                                       || _varBiasAngRateNoiseUnit == VarBiasAngRateNoiseUnit::deg2_s2
+                                                               _varBiasAngRateNoiseUnit[i] == VarBiasAngRateNoiseUnit::rad2_s2
+                                                                       || _varBiasAngRateNoiseUnit[i] == VarBiasAngRateNoiseUnit::deg2_s2
                                                                    ? "Variance σ²"
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(), // FIXME: adapt config window number of sensors (if pin 3 is deleted, keep 1,2,4 instead of re-counting to 1,2,3)
-                                                   configWidth, unitWidth, _varBiasAngRateNoise.at(i).data(), reinterpret_cast<int*>(&_varBiasAngRateNoiseUnit), "(rad/s)^2\0"
-                                                                                                                                                                 "rad/s\0"
-                                                                                                                                                                 "(deg/s)^2\0"
-                                                                                                                                                                 "deg/s\0\0",
+                                                   configWidth, unitWidth, _varBiasAngRateNoise.at(i).data(), reinterpret_cast<int*>(&_varBiasAngRateNoiseUnit[i]), "(rad/s)^2\0"
+                                                                                                                                                                    "rad/s\0"
+                                                                                                                                                                    "(deg/s)^2\0"
+                                                                                                                                                                    "deg/s\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific)) // FIXME: make '_varBiasAngRateNoiseUnit' a container, s.t. user can choose different units for each sensor
             {
                 LOG_DEBUG("{}: varBiasAngRateNoise changed to {}", nameId(), _varBiasAngRateNoise.at(i).transpose());
-                LOG_DEBUG("{}: varBiasAngRateNoiseUnit changed to {}", nameId(), _varBiasAngRateNoiseUnit);
+                LOG_DEBUG("{}: varBiasAngRateNoiseUnit changed to {}", nameId(), _varBiasAngRateNoiseUnit[i]);
                 flow::ApplyChanges();
             }
 
             if (gui::widgets::InputDouble3WithUnit(fmt::format("Process noise of the bias of the acceleration of sensor {} ({})##{}", i + 2,
-                                                               _varBiasAccelerationNoiseUnit == VarBiasAccelerationNoiseUnit::m2_s4
+                                                               _varBiasAccelerationNoiseUnit[i] == VarBiasAccelerationNoiseUnit::m2_s4
                                                                    ? "Variance σ²"
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(), // FIXME: adapt config window number of sensors (if pin 3 is deleted, keep 1,2,4 instead of re-counting to 1,2,3)
-                                                   configWidth, unitWidth, _varBiasAccelerationNoise.at(i).data(), reinterpret_cast<int*>(&_varBiasAccelerationNoiseUnit), "(m^2)/(s^4)\0"
-                                                                                                                                                                           "m/s^2\0\0",
+                                                   configWidth, unitWidth, _varBiasAccelerationNoise.at(i).data(), reinterpret_cast<int*>(&_varBiasAccelerationNoiseUnit[i]), "(m^2)/(s^4)\0"
+                                                                                                                                                                              "m/s^2\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific)) // FIXME: make '_varBiasAccelerationNoiseUnit' a container, s.t. user can choose different units for each sensor
             {
                 LOG_DEBUG("{}: varBiasAccelerationNoise changed to {}", nameId(), _varBiasAccelerationNoise.at(i).transpose());
-                LOG_DEBUG("{}: varBiasAccelerationNoiseUnit changed to {}", nameId(), _varBiasAccelerationNoiseUnit);
+                LOG_DEBUG("{}: varBiasAccelerationNoiseUnit changed to {}", nameId(), _varBiasAccelerationNoiseUnit[i]);
                 flow::ApplyChanges();
             }
         }
@@ -397,35 +403,35 @@ void NAV::ImuFusion::guiConfig()
         for (size_t i = 0; i < _nInputPins - 1; ++i)
         {
             if (gui::widgets::InputDouble3WithUnit(fmt::format("Measurement uncertainty of the angular rate of sensor {} ({})##{}", i + 2,
-                                                               _measurementUncertaintyAngularRateUnit == MeasurementUncertaintyAngularRateUnit::rad2_s2
-                                                                       || _measurementUncertaintyAngularRateUnit == MeasurementUncertaintyAngularRateUnit::deg2_s2
+                                                               _measurementUncertaintyAngularRateUnit[i] == MeasurementUncertaintyAngularRateUnit::rad2_s2
+                                                                       || _measurementUncertaintyAngularRateUnit[i] == MeasurementUncertaintyAngularRateUnit::deg2_s2
                                                                    ? "Variance σ²"
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _measurementUncertaintyAngularRate.at(i).data(), reinterpret_cast<int*>(&_measurementUncertaintyAngularRateUnit), "(rad/s)^2\0"
-                                                                                                                                                                                             "rad/s\0"
-                                                                                                                                                                                             "(deg/s)^2\0"
-                                                                                                                                                                                             "deg/s\0\0",
+                                                   configWidth, unitWidth, _measurementUncertaintyAngularRate.at(i).data(), reinterpret_cast<int*>(&_measurementUncertaintyAngularRateUnit[i]), "(rad/s)^2\0"
+                                                                                                                                                                                                "rad/s\0"
+                                                                                                                                                                                                "(deg/s)^2\0"
+                                                                                                                                                                                                "deg/s\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: stdevAngularAcc changed to {}", nameId(), _measurementUncertaintyAngularRate.at(i).transpose());
-                LOG_DEBUG("{}: stdevAngularAccUnit changed to {}", nameId(), _measurementUncertaintyAngularRateUnit);
+                LOG_DEBUG("{}: stdevAngularAccUnit changed to {}", nameId(), _measurementUncertaintyAngularRateUnit[i]);
                 flow::ApplyChanges();
             }
 
             if (gui::widgets::InputDouble3WithUnit(fmt::format("Measurement uncertainty of the acceleration of sensor {} ({})##{}", i + 2,
-                                                               _measurementUncertaintyAccelerationUnit == MeasurementUncertaintyAccelerationUnit::m2_s4
+                                                               _measurementUncertaintyAccelerationUnit[i] == MeasurementUncertaintyAccelerationUnit::m2_s4
                                                                    ? "Variance σ²"
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _measurementUncertaintyAcceleration.at(i).data(), reinterpret_cast<int*>(&_measurementUncertaintyAccelerationUnit), "(m^2)/(s^4)\0"
-                                                                                                                                                                                               "m/s^2\0\0",
+                                                   configWidth, unitWidth, _measurementUncertaintyAcceleration.at(i).data(), reinterpret_cast<int*>(&_measurementUncertaintyAccelerationUnit[i]), "(m^2)/(s^4)\0"
+                                                                                                                                                                                                  "m/s^2\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: stdevJerk changed to {}", nameId(), _measurementUncertaintyAcceleration.at(i).transpose());
-                LOG_DEBUG("{}: stdevJerkUnit changed to {}", nameId(), _measurementUncertaintyAccelerationUnit);
+                LOG_DEBUG("{}: stdevJerkUnit changed to {}", nameId(), _measurementUncertaintyAccelerationUnit[i]);
                 flow::ApplyChanges();
             }
         }
@@ -673,11 +679,17 @@ void NAV::ImuFusion::updateNumberOfInputPins()
         _pinData.pop_back();
     }
     _initCovarianceBiasAngRate.resize(_nInputPins - 1);
+    _initCovarianceBiasAngRateUnit.resize(_nInputPins - 1);
     _initCovarianceBiasAcc.resize(_nInputPins - 1);
+    _initCovarianceBiasAccUnit.resize(_nInputPins - 1);
     _varBiasAngRateNoise.resize(_nInputPins - 1);
+    _varBiasAngRateNoiseUnit.resize(_nInputPins - 1);
     _varBiasAccelerationNoise.resize(_nInputPins - 1);
+    _varBiasAccelerationNoiseUnit.resize(_nInputPins - 1);
     _measurementUncertaintyAngularRate.resize(_nInputPins - 1);
+    _measurementUncertaintyAngularRateUnit.resize(_nInputPins - 1);
     _measurementUncertaintyAcceleration.resize(_nInputPins - 1);
+    _measurementUncertaintyAccelerationUnit.resize(_nInputPins - 1);
 }
 
 void NAV::ImuFusion::initializeKalmanFilter()
@@ -760,29 +772,29 @@ void NAV::ImuFusion::initializeKalmanFilter()
     _biasCovariances.resize(2 * _nInputPins);
     for (size_t i = 0; i < _nInputPins - 1UL; ++i)
     {
-        if (_initCovarianceBiasAngRateUnit == InitCovarianceBiasAngRateUnit::rad2_s2)
+        if (_initCovarianceBiasAngRateUnit[i] == InitCovarianceBiasAngRateUnit::rad2_s2)
         {
             _biasCovariances[2 * i] = _initCovarianceBiasAngRate.at(i);
         }
-        else if (_initCovarianceBiasAngRateUnit == InitCovarianceBiasAngRateUnit::deg2_s2)
+        else if (_initCovarianceBiasAngRateUnit[i] == InitCovarianceBiasAngRateUnit::deg2_s2)
         {
             _biasCovariances[2 * i] = trafo::deg2rad(_initCovarianceBiasAngRate.at(i));
         }
-        else if (_initCovarianceBiasAngRateUnit == InitCovarianceBiasAngRateUnit::rad_s)
+        else if (_initCovarianceBiasAngRateUnit[i] == InitCovarianceBiasAngRateUnit::rad_s)
         {
             _biasCovariances[2 * i] = _initCovarianceBiasAngRate.at(i).array().pow(2);
         }
-        else if (_initCovarianceBiasAngRateUnit == InitCovarianceBiasAngRateUnit::deg_s)
+        else if (_initCovarianceBiasAngRateUnit[i] == InitCovarianceBiasAngRateUnit::deg_s)
         {
             _biasCovariances[2 * i] = trafo::deg2rad(_initCovarianceBiasAngRate.at(i)).array().pow(2);
         }
 
         // Initial Covariance of the bias of the jerk in [(m^2)/(s^6)]
-        if (_initCovarianceBiasAccUnit == InitCovarianceBiasAccUnit::m2_s4)
+        if (_initCovarianceBiasAccUnit[i] == InitCovarianceBiasAccUnit::m2_s4)
         {
             _biasCovariances[1 + 2 * i] = _initCovarianceBiasAcc.at(i);
         }
-        else if (_initCovarianceBiasAccUnit == InitCovarianceBiasAccUnit::m_s2)
+        else if (_initCovarianceBiasAccUnit[i] == InitCovarianceBiasAccUnit::m_s2)
         {
             _biasCovariances[1 + 2 * i] = _initCovarianceBiasAcc.at(i).array().pow(2);
         }
@@ -822,7 +834,7 @@ void NAV::ImuFusion::initializeKalmanFilter()
     for (size_t i = 0; i < _nInputPins - 1; ++i)
     {
         // 𝜎_biasAngRate Standard deviation of the bias on the angular rate state [rad/s²]
-        switch (_varBiasAngRateNoiseUnit)
+        switch (_varBiasAngRateNoiseUnit[i])
         {
         case VarBiasAngRateNoiseUnit::rad2_s2:
             _processNoiseVariances[2 + 2 * i] = _varBiasAngRateNoise.at(i);
@@ -839,7 +851,7 @@ void NAV::ImuFusion::initializeKalmanFilter()
         }
 
         // 𝜎_biasAcceleration Standard deviation of the noise on the acceleration state [m/s³]
-        switch (_varBiasAccelerationNoiseUnit)
+        switch (_varBiasAccelerationNoiseUnit[i])
         {
         case VarBiasAccelerationNoiseUnit::m2_s4:
             _processNoiseVariances[3 + 2 * i] = _varBiasAccelerationNoise.at(i);
@@ -856,7 +868,7 @@ void NAV::ImuFusion::initializeKalmanFilter()
     for (size_t i = 0; i < _nInputPins - 1; ++i)
     {
         // Measurement uncertainty for the angular rate (Variance σ²) in [(rad/s)^2, (rad/s)^2, (rad/s)^2]
-        switch (_measurementUncertaintyAngularRateUnit)
+        switch (_measurementUncertaintyAngularRateUnit[i])
         {
         case MeasurementUncertaintyAngularRateUnit::rad_s:
             _measurementNoiseVariances[2 * i] = (_measurementUncertaintyAngularRate.at(i)).array().pow(2);
@@ -873,7 +885,7 @@ void NAV::ImuFusion::initializeKalmanFilter()
         }
 
         // Measurement uncertainty for the acceleration (Variance σ²) in [(m^2)/(s^4), (m^2)/(s^4), (m^2)/(s^4)]
-        switch (_measurementUncertaintyAccelerationUnit)
+        switch (_measurementUncertaintyAccelerationUnit[i])
         {
         case MeasurementUncertaintyAccelerationUnit::m2_s4:
             _measurementNoiseVariances[1 + 2 * i] = _measurementUncertaintyAcceleration.at(i);
@@ -1011,7 +1023,7 @@ void NAV::ImuFusion::combineSignals(std::shared_ptr<const ImuObs>& imuObs)
             if (rank != _kalmanFilter.P.rows())
             {
                 LOG_WARN("{}: P.rank = {}", nameId(), rank);
-                LOG_ERROR("kalmanFilter.P =\n{}", _kalmanFilter.P);
+                LOG_DATA("kalmanFilter.P =\n{}", _kalmanFilter.P);
             }
         }
     }

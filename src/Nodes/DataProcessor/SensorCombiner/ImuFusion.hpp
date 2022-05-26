@@ -391,7 +391,7 @@ class ImuFusion : public Imu
         deg_s,   ///< Standard deviation [deg/s, deg/s, deg/s]
     };
     /// Gui selection for the Unit of the initial covariance for the angular rate biases
-    InitCovarianceBiasAngRateUnit _initCovarianceBiasAngRateUnit = InitCovarianceBiasAngRateUnit::deg_s;
+    std::vector<InitCovarianceBiasAngRateUnit> _initCovarianceBiasAngRateUnit = { InitCovarianceBiasAngRateUnit::deg_s };
 
     /// GUI selection of the initial covariance diagonal values for angular rate biases (standard deviation σ or Variance σ²)
     std::vector<Eigen::Vector3d> _initCovarianceBiasAngRate{ { 1, 1, 1 } };
@@ -405,7 +405,7 @@ class ImuFusion : public Imu
         m_s2,  ///< Standard deviation [m/s², m/s², m/s²]
     };
     /// Gui selection for the Unit of the initial covariance for the acceleration biases
-    InitCovarianceBiasAccUnit _initCovarianceBiasAccUnit = InitCovarianceBiasAccUnit::m_s2;
+    std::vector<InitCovarianceBiasAccUnit> _initCovarianceBiasAccUnit = { InitCovarianceBiasAccUnit::m_s2 };
 
     /// GUI selection of the initial covariance diagonal values for acceleration biases (standard deviation σ or Variance σ²)
     std::vector<Eigen::Vector3d> _initCovarianceBiasAcc{ { 0.1, 0.1, 0.1 } };
@@ -453,7 +453,7 @@ class ImuFusion : public Imu
         deg_s,   ///< Standard deviation [deg/s, deg/s, deg/s]
     };
     /// Gui selection for the Unit of the process noise of the angular rate
-    VarBiasAngRateNoiseUnit _varBiasAngRateNoiseUnit = VarBiasAngRateNoiseUnit::deg_s;
+    std::vector<VarBiasAngRateNoiseUnit> _varBiasAngRateNoiseUnit = { VarBiasAngRateNoiseUnit::deg_s };
 
     /// GUI selection of the process noise of the angular rate diagonal values (standard deviation σ or Variance σ²)
     std::vector<Eigen::Vector3d> _varBiasAngRateNoise = { { 1, 1, 1 } };
@@ -467,7 +467,7 @@ class ImuFusion : public Imu
         m_s2,  ///< Standard deviation [m/s², m/s², m/s²]
     };
     /// Gui selection for the Unit of the process noise of the acceleration
-    VarBiasAccelerationNoiseUnit _varBiasAccelerationNoiseUnit = VarBiasAccelerationNoiseUnit::m_s2;
+    std::vector<VarBiasAccelerationNoiseUnit> _varBiasAccelerationNoiseUnit = { VarBiasAccelerationNoiseUnit::m_s2 };
 
     /// GUI selection of the process noise of the acceleration diagonal values (standard deviation σ or Variance σ²)
     std::vector<Eigen::Vector3d> _varBiasAccelerationNoise{ { 0.1, 0.1, 0.1 } };
@@ -485,7 +485,7 @@ class ImuFusion : public Imu
         deg_s,   ///< Standard deviation [deg/s, deg/s, deg/s]
     };
     /// Gui selection for the unit of the angular rate's measurement uncertainty
-    MeasurementUncertaintyAngularRateUnit _measurementUncertaintyAngularRateUnit = MeasurementUncertaintyAngularRateUnit::deg_s;
+    std::vector<MeasurementUncertaintyAngularRateUnit> _measurementUncertaintyAngularRateUnit = { MeasurementUncertaintyAngularRateUnit::deg_s };
 
     /// Gui selection of the angular rate measurement uncertainty diagonal values
     std::vector<Eigen::Vector3d> _measurementUncertaintyAngularRate{ { 1, 1, 1 } };
@@ -497,7 +497,7 @@ class ImuFusion : public Imu
         m_s2,  ///< Standard deviation [m/s², m/s², m/s²]
     };
     /// Gui selection for the unit of the acceleration's measurement uncertainty
-    MeasurementUncertaintyAccelerationUnit _measurementUncertaintyAccelerationUnit = MeasurementUncertaintyAccelerationUnit::m_s2;
+    std::vector<MeasurementUncertaintyAccelerationUnit> _measurementUncertaintyAccelerationUnit = { MeasurementUncertaintyAccelerationUnit::m_s2 };
 
     /// Gui selection of the angular acceleration measurement uncertainty diagonal values
     std::vector<Eigen::Vector3d> _measurementUncertaintyAcceleration{ { 0.1, 0.1, 0.1 } };
