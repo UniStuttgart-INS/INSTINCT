@@ -642,7 +642,6 @@ bool NAV::ImuFusion::initialize()
 
     _latestTimestamp = InsTime{};
 
-    updateNumberOfInputPins(); // TODO: necessary here?
     initializeKalmanFilter();
 
     LOG_DEBUG("ImuFusion initialized");
@@ -686,6 +685,14 @@ void NAV::ImuFusion::initializeKalmanFilter()
     LOG_TRACE("{}: called", nameId());
 
     _designMatrixInitialized = false;
+
+    for (size_t pinIndex = 0; pinIndex < _pinData.size(); pinIndex++)
+    {
+        if (!nm::FindConnectedLinkToInputPin(inputPins.at(pinIndex).id))
+        {
+            LOG_INFO("Fewer links than input pins - Consider deleting pins that are not connected to limit KF matrices to the necessary size.");
+        }
+    }
 
     // ------------------------------------------------------ Error covariance matrix P --------------------------------------------------------
 
@@ -881,8 +888,11 @@ void NAV::ImuFusion::initializeKalmanFilter()
 
     // --------------------------------------------------------- KF Initializations ------------------------------------------------------------
     _kalmanFilter.P = initialErrorCovarianceMatrix_P0(variance_angularRate, variance_angularAcceleration, variance_acceleration, variance_jerk);
+    LOG_DATA("kalmanFilter.P =\n{}", _kalmanFilter.P);
     _kalmanFilter.Phi = stateTransitionMatrix_Phi(dtInit);
+    LOG_DATA("kalmanFilter.Phi =\n{}", _kalmanFilter.Phi);
     _kalmanFilter.Q = processNoiseMatrix_Q(dtInit);
+    LOG_DATA("kalmanFilter.Q =\n{}", _kalmanFilter.Q);
 }
 
 void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId)
@@ -903,7 +913,7 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
     }
 
     // Predict states over the time difference between the latest signal and the one before
-    [[maybe_unused]] auto dt = static_cast<double>((imuObs->insTime.value() - _latestTimestamp).count());
+    auto dt = static_cast<double>((imuObs->insTime.value() - _latestTimestamp).count());
     _latestTimestamp = imuObs->insTime.value();
     LOG_DATA("dt = {}", dt);
 
@@ -914,10 +924,13 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
 
     if (_checkKalmanMatricesRanks)
     {
-        auto rank = _kalmanFilter.P.fullPivLu().rank();
-        if (rank != _kalmanFilter.P.rows())
+        if (nm::FindConnectedLinkToInputPin(inputPins.at(_pinData.size() - 1).id))
         {
-            LOG_WARN("{}: P.rank = {}", nameId(), rank);
+            auto rank = _kalmanFilter.P.fullPivLu().rank();
+            if (rank != _kalmanFilter.P.rows())
+            {
+                LOG_WARN("{}: P.rank = {}", nameId(), rank);
+            }
         }
     }
 
@@ -992,10 +1005,14 @@ void NAV::ImuFusion::combineSignals(std::shared_ptr<const ImuObs>& imuObs)
     }
     if (_checkKalmanMatricesRanks)
     {
-        auto rank = _kalmanFilter.P.fullPivLu().rank();
-        if (rank != _kalmanFilter.P.rows())
+        if (nm::FindConnectedLinkToInputPin(inputPins.at(_pinData.size() - 1).id))
         {
-            LOG_WARN("{}: P.rank = {}", nameId(), rank);
+            auto rank = _kalmanFilter.P.fullPivLu().rank();
+            if (rank != _kalmanFilter.P.rows())
+            {
+                LOG_WARN("{}: P.rank = {}", nameId(), rank);
+                LOG_ERROR("kalmanFilter.P =\n{}", _kalmanFilter.P);
+            }
         }
     }
 
