@@ -226,7 +226,12 @@ class ImuFusion : public Imu
     /// @brief Calculates the state-transition-matrix 𝚽
     /// @param[in] dt Time difference between two successive measurements
     /// @return State-transition-matrix 𝚽
-    [[nodiscard]] Eigen::MatrixXd stateTransitionMatrix_Phi(double dt) const;
+    [[nodiscard]] Eigen::MatrixXd initialStateTransitionMatrix_Phi(double& dt) const;
+
+    /// @brief Calculates the state-transition-matrix 𝚽
+    /// @param[in] dt Time difference between two successive measurements
+    /// @return State-transition-matrix 𝚽
+    [[nodiscard]] static Eigen::MatrixXd stateTransitionMatrix_Phi(Eigen::MatrixXd& Phi, double& dt);
 
     /// @brief Calculates the process noise matrix Q
     /// @param[in] dt Time difference between two successive measurements

@@ -901,7 +901,7 @@ void NAV::ImuFusion::initializeKalmanFilter()
     // --------------------------------------------------------- KF Initializations ------------------------------------------------------------
     _kalmanFilter.P = initialErrorCovarianceMatrix_P0(variance_angularRate, variance_angularAcceleration, variance_acceleration, variance_jerk);
     LOG_DATA("kalmanFilter.P =\n{}", _kalmanFilter.P);
-    _kalmanFilter.Phi = stateTransitionMatrix_Phi(dtInit);
+    _kalmanFilter.Phi = initialStateTransitionMatrix_Phi(dtInit);
     LOG_DATA("kalmanFilter.Phi =\n{}", _kalmanFilter.Phi);
     _kalmanFilter.Q = processNoiseMatrix_Q(dtInit);
     LOG_DATA("kalmanFilter.Q =\n{}", _kalmanFilter.Q);
@@ -929,7 +929,7 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
     _latestTimestamp = imuObs->insTime.value();
     LOG_DATA("dt = {}", dt);
 
-    _kalmanFilter.Phi = stateTransitionMatrix_Phi(dt);
+    _kalmanFilter.Phi = stateTransitionMatrix_Phi(_kalmanFilter.Phi, dt);
     LOG_DATA("kalmanFilter.Phi =\n{}", _kalmanFilter.Phi);
     _kalmanFilter.Q = processNoiseMatrix_Q(dt);
     LOG_DATA("kalmanFilter.Q =\n{}", _kalmanFilter.Q);
@@ -1051,12 +1051,20 @@ void NAV::ImuFusion::combineSignals(std::shared_ptr<const ImuObs>& imuObs)
 //                                                         Kalman Filter Matrices
 // #########################################################################################################################################
 
-Eigen::MatrixXd NAV::ImuFusion::stateTransitionMatrix_Phi(double dt) const // TODO: if called in KF update, don't initialize the entire matrix every iteration
+Eigen::MatrixXd NAV::ImuFusion::initialStateTransitionMatrix_Phi(double& dt) const // TODO: if called in KF update, don't initialize the entire matrix every iteration
 {
     Eigen::MatrixXd Phi = Eigen::MatrixXd::Zero(_numStates, _numStates);
 
     Phi.diagonal().setOnes(); // constant part of states
 
+    Phi.block<3, 3>(0, 3).diagonal().setConstant(dt); // dependency of angular rate on angular acceleration
+    Phi.block<3, 3>(6, 9).diagonal().setConstant(dt); // dependency of acceleration on jerk
+
+    return Phi;
+}
+
+Eigen::MatrixXd NAV::ImuFusion::stateTransitionMatrix_Phi(Eigen::MatrixXd& Phi, double& dt) // TODO: if called in KF update, don't initialize the entire matrix every iteration
+{
     Phi.block<3, 3>(0, 3).diagonal().setConstant(dt); // dependency of angular rate on angular acceleration
     Phi.block<3, 3>(6, 9).diagonal().setConstant(dt); // dependency of acceleration on jerk
 
