@@ -1123,19 +1123,21 @@ Eigen::MatrixXd NAV::ImuFusion::processNoiseMatrix_Q(double dt) const // TODO: i
 Eigen::MatrixXd NAV::ImuFusion::designMatrix_H(Eigen::Matrix3d& DCM, size_t pinIndex) const
 {
     Eigen::MatrixXd H = Eigen::MatrixXd::Zero(_numMeasurements, _numStates);
-    H.setZero();
 
     // Mounting angles of sensor with latest measurement
-    H.block<3, 3>(0, 0) = DCM; // Rotation for angular rate
-    H.block<3, 3>(3, 6) = DCM; // Rotation for acceleration
+    H.block<3, 3>(0, 0) = DCM.transpose(); // Inverse rotation for angular rate
+    H.block<3, 3>(3, 6) = DCM.transpose(); // Inverse rotation for acceleration
 
     // Mapping of bias states on sensor with the latest measurement
     if (pinIndex > 0)
     {
         auto stateIndex = static_cast<uint8_t>(_numStatesEst + _numStatesPerPin * (pinIndex - 1));
+        LOG_DATA("stateIndex = {}", stateIndex);
 
         H.block<6, 6>(0, stateIndex) = Eigen::MatrixXd::Identity(6, 6);
     }
+
+    LOG_DATA("H =\n{}", H);
 
     return H;
 }
