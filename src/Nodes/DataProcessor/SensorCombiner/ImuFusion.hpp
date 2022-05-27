@@ -229,6 +229,7 @@ class ImuFusion : public Imu
     [[nodiscard]] Eigen::MatrixXd initialStateTransitionMatrix_Phi(double& dt) const;
 
     /// @brief Calculates the state-transition-matrix 𝚽
+    /// @param[in] Phi State transition matrix from previous iteration
     /// @param[in] dt Time difference between two successive measurements
     /// @return State-transition-matrix 𝚽
     [[nodiscard]] static Eigen::MatrixXd stateTransitionMatrix_Phi(Eigen::MatrixXd& Phi, double& dt);
