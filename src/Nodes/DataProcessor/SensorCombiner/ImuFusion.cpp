@@ -449,7 +449,8 @@ void NAV::ImuFusion::guiConfig()
     j["checkKalmanMatricesRanks"] = _checkKalmanMatricesRanks;
 
     j["nInputPins"] = _nInputPins;
-    j["imuRotations"] = _imuRotations;
+    j["imuRotations_accel"] = _imuRotations_accel;
+    j["imuRotations_gyro"] = _imuRotations_gyro;
     j["imuFrequency"] = _imuFrequency;
     j["designMatrixInitialized"] = _designMatrixInitialized;
     j["pinData"] = _pinData;
@@ -500,9 +501,13 @@ void NAV::ImuFusion::restore(json const& j)
         j.at("nInputPins").get_to(_nInputPins);
         updateNumberOfInputPins();
     }
-    if (j.contains("imuRotations"))
+    if (j.contains("imuRotations_accel"))
     {
-        j.at("imuRotations").get_to(_imuRotations);
+        j.at("imuRotations_accel").get_to(_imuRotations_accel);
+    }
+    if (j.contains("imuRotations_gyro"))
+    {
+        j.at("imuRotations_gyro").get_to(_imuRotations_gyro);
     }
     if (j.contains("imuFrequency"))
     {
@@ -512,11 +517,11 @@ void NAV::ImuFusion::restore(json const& j)
     {
         j.at("designMatrixInitialized").get_to(_designMatrixInitialized);
     }
-    if (j.contains("designMatrixInitialized"))
+    if (j.contains("numStates"))
     {
         j.at("numStates").get_to(_numStates);
     }
-    if (j.contains("designMatrixInitialized"))
+    if (j.contains("numMeasurements"))
     {
         j.at("numMeasurements").get_to(_numMeasurements);
     }
@@ -641,7 +646,8 @@ bool NAV::ImuFusion::initialize()
     _kalmanFilter = KalmanFilter{ _numStates, _numMeasurements };
 
     _kalmanFilter.setZero();
-    _imuRotations.clear();
+    _imuRotations_accel.clear();
+    _imuRotations_gyro.clear();
     _biasCovariances.clear();
     _processNoiseVariances.clear();
     _measurementNoiseVariances.clear();
@@ -951,19 +957,28 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
         size_t pinIndex = pinIndexFromId(link->endPinId);
 
         // Read sensor rotation info from 'imuObs'
-        if (!_imuRotations.contains(pinIndex))
+        if (!_imuRotations_accel.contains(pinIndex))
         {
             // Do heavy calculations
-            auto DCM = imuObs->imuPos.b_quatAccel_p().toRotationMatrix();
+            auto DCM_accel = imuObs->imuPos.b_quatAccel_p().toRotationMatrix();
 
-            _imuRotations.insert_or_assign(pinIndex, DCM);
+            _imuRotations_accel.insert_or_assign(pinIndex, DCM_accel);
+        }
+        if (!_imuRotations_gyro.contains(pinIndex))
+        {
+            // Do heavy calculations
+            auto DCM_gyro = imuObs->imuPos.b_quatGyro_p().toRotationMatrix();
+
+            _imuRotations_gyro.insert_or_assign(pinIndex, DCM_gyro);
         }
 
         // Initialize H with mounting angles (DCM) of the sensor that provided the latest measurement
-        auto DCM = _imuRotations.at(pinIndex);
-        LOG_DEBUG("DCM =\n{}", DCM);
+        auto DCM_accel = _imuRotations_accel.at(pinIndex);
+        LOG_DATA("DCM_accel =\n{}", DCM_accel);
+        auto DCM_gyro = _imuRotations_gyro.at(pinIndex);
+        LOG_DATA("DCM_gyro =\n{}", DCM_gyro);
 
-        _kalmanFilter.H = designMatrix_H(DCM, pinIndex);
+        _kalmanFilter.H = designMatrix_H(DCM_accel, DCM_gyro, pinIndex);
         LOG_DATA("kalmanFilter.H =\n", _kalmanFilter.H);
 
         _kalmanFilter.R = measurementNoiseMatrix_R_init(pinIndex);
@@ -1120,13 +1135,13 @@ Eigen::MatrixXd NAV::ImuFusion::processNoiseMatrix_Q(double dt) const // TODO: i
     return Q;
 }
 
-Eigen::MatrixXd NAV::ImuFusion::designMatrix_H(Eigen::Matrix3d& DCM, size_t pinIndex) const
+Eigen::MatrixXd NAV::ImuFusion::designMatrix_H(Eigen::Matrix3d& DCM_accel, Eigen::Matrix3d& DCM_gyro, size_t pinIndex) const
 {
     Eigen::MatrixXd H = Eigen::MatrixXd::Zero(_numMeasurements, _numStates);
 
     // Mounting angles of sensor with latest measurement
-    H.block<3, 3>(0, 0) = DCM.transpose(); // Inverse rotation for angular rate
-    H.block<3, 3>(3, 6) = DCM.transpose(); // Inverse rotation for acceleration
+    H.block<3, 3>(0, 0) = DCM_accel.transpose(); // Inverse rotation for angular rate
+    H.block<3, 3>(3, 6) = DCM_gyro.transpose();  // Inverse rotation for acceleration
 
     // Mapping of bias states on sensor with the latest measurement
     if (pinIndex > 0)

@@ -240,10 +240,11 @@ class ImuFusion : public Imu
     [[nodiscard]] Eigen::MatrixXd processNoiseMatrix_Q(double dt) const;
 
     /// @brief Calculates the design matrix H
-    /// @param[in] DCM Rotation matrix of mounting angles of a sensor w.r.t. a common reference
+    /// @param[in] DCM_accel Rotation matrix of mounting angles of an accelerometer w.r.t. a common reference
+    /// @param[in] DCM_gyro Rotation matrix of mounting angles of a gyroscope w.r.t. a common reference
     /// @param[in] pinIndex Index of pin to identify sensor
     /// @return Design matrix H
-    [[nodiscard]] Eigen::MatrixXd designMatrix_H(Eigen::Matrix3d& DCM, size_t pinIndex) const;
+    [[nodiscard]] Eigen::MatrixXd designMatrix_H(Eigen::Matrix3d& DCM_accel, Eigen::Matrix3d& DCM_gyro, size_t pinIndex) const;
 
     /// @brief Calculates the adaptive measurement noise matrix R
     /// @param[in] alpha Forgetting factor (i.e. weight on previous estimates), 0 < alpha < 1
@@ -301,7 +302,10 @@ class ImuFusion : public Imu
     std::vector<PinData> _pinData;
 
     /// @brief Rotations of all connected IMUs
-    std::map<size_t, Eigen::Matrix3d> _imuRotations;
+    std::map<size_t, Eigen::Matrix3d> _imuRotations_accel;
+
+    /// @brief Rotations of all connected IMUs
+    std::map<size_t, Eigen::Matrix3d> _imuRotations_gyro;
 
     /// Kalman Filter representation
     KalmanFilter _kalmanFilter{ _numStates, _numMeasurements };
