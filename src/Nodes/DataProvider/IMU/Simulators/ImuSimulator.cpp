@@ -816,8 +816,6 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 
     Eigen::Vector3d lla_position = lla_calcPosition(imuUpdateTime);
 
-	double dt_offset = 0.5/_imuFrequency;
-
     // -------------------------------------------------- Check if a stop condition is met -----------------------------------------------------
     if (checkStopCondition(imuUpdateTime, lla_position))
     {
@@ -837,10 +835,10 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     Eigen::Vector3d e_position = trafo::lla2ecef_WGS84(lla_position);
     auto n_Quat_e = trafo::n_Quat_e(lla_position(0), lla_position(1));
 
-    Eigen::Vector3d n_vel = n_calcVelocity(imuUpdateTime-dt_offset, n_Quat_e);
+    Eigen::Vector3d n_vel = n_calcVelocity(imuUpdateTime, n_Quat_e);
     LOG_DATA("{}: [{:8.3f}] n_vel = {} [m/s]", nameId(), imuUpdateTime, n_vel.transpose());
 
-    auto [roll, pitch, yaw] = calcFlightAngles(imuUpdateTime-dt_offset);
+    auto [roll, pitch, yaw] = calcFlightAngles(imuUpdateTime);
     LOG_DATA("{}: [{:8.3f}] roll = {}°, pitch = {}°, yaw = {}°", nameId(), imuUpdateTime, trafo::rad2deg(roll), trafo::rad2deg(pitch), trafo::rad2deg(yaw));
 
     auto b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
@@ -857,7 +855,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     // ------------------------------------------------------------ Accelerations --------------------------------------------------------------
 
     // Force to keep vehicle on track
-    const Eigen::Vector3d n_trajectoryAccel = n_calcTrajectoryAccel(imuUpdateTime-dt_offset, n_Quat_e, lla_position, n_vel);
+    const Eigen::Vector3d n_trajectoryAccel = n_calcTrajectoryAccel(imuUpdateTime, n_Quat_e, lla_position, n_vel);
     LOG_DATA("{}: [{:8.3f}] n_trajectoryAccel = {} [m/s^2]", nameId(), imuUpdateTime, n_trajectoryAccel.transpose());
 
     // Measured acceleration in local-navigation frame coordinates [m/s^2]
