@@ -400,9 +400,9 @@ void NAV::ImuFusion::guiConfig()
     {
         ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
 
-        for (size_t i = 0; i < _nInputPins - 1; ++i)
+        for (size_t i = 0; i < _nInputPins; ++i)
         {
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Measurement uncertainty of the angular rate of sensor {} ({})##{}", i + 2,
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Measurement uncertainty of the angular rate of sensor {} ({})##{}", i + 1,
                                                                _measurementUncertaintyAngularRateUnit[i] == MeasurementUncertaintyAngularRateUnit::rad2_s2
                                                                        || _measurementUncertaintyAngularRateUnit[i] == MeasurementUncertaintyAngularRateUnit::deg2_s2
                                                                    ? "Variance σ²"
@@ -420,7 +420,7 @@ void NAV::ImuFusion::guiConfig()
                 flow::ApplyChanges();
             }
 
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Measurement uncertainty of the acceleration of sensor {} ({})##{}", i + 2,
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Measurement uncertainty of the acceleration of sensor {} ({})##{}", i + 1,
                                                                _measurementUncertaintyAccelerationUnit[i] == MeasurementUncertaintyAccelerationUnit::m2_s4
                                                                    ? "Variance σ²"
                                                                    : "Standard deviation σ",
@@ -692,10 +692,10 @@ void NAV::ImuFusion::updateNumberOfInputPins()
     _varBiasAngRateNoiseUnit.resize(_nInputPins - 1);
     _varBiasAccelerationNoise.resize(_nInputPins - 1);
     _varBiasAccelerationNoiseUnit.resize(_nInputPins - 1);
-    _measurementUncertaintyAngularRate.resize(_nInputPins - 1);
-    _measurementUncertaintyAngularRateUnit.resize(_nInputPins - 1);
-    _measurementUncertaintyAcceleration.resize(_nInputPins - 1);
-    _measurementUncertaintyAccelerationUnit.resize(_nInputPins - 1);
+    _measurementUncertaintyAngularRate.resize(_nInputPins);
+    _measurementUncertaintyAngularRateUnit.resize(_nInputPins);
+    _measurementUncertaintyAcceleration.resize(_nInputPins);
+    _measurementUncertaintyAccelerationUnit.resize(_nInputPins);
 }
 
 void NAV::ImuFusion::initializeKalmanFilter()
@@ -871,7 +871,7 @@ void NAV::ImuFusion::initializeKalmanFilter()
     // -------------------------------------------------- Measurement uncertainty matrix R -----------------------------------------------------
     _measurementNoiseVariances.resize(2 * _nInputPins);
 
-    for (size_t i = 0; i < _nInputPins - 1; ++i)
+    for (size_t i = 0; i < _nInputPins; ++i)
     {
         // Measurement uncertainty for the angular rate (Variance σ²) in [(rad/s)^2, (rad/s)^2, (rad/s)^2]
         switch (_measurementUncertaintyAngularRateUnit[i])
