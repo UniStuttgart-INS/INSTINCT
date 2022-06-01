@@ -89,7 +89,7 @@ NAV::ImuFusion::ImuFusion()
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 934, 586 };
+    _guiConfigDefaultWindowSize = { 991, 1059 };
 
     nm::CreateOutputPin(this, "Combined ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() });
     updateNumberOfInputPins();
@@ -173,8 +173,8 @@ void NAV::ImuFusion::guiConfig()
         }
 
         ImGui::TableNextRow();
-        ImGui::TableNextColumn();                                          // Pin
-        if (ImGui::Button(fmt::format("Add Pin##{}", size_t(id)).c_str())) // TODO: increment only if Pin is connected
+        ImGui::TableNextColumn(); // Pin
+        if (ImGui::Button(fmt::format("Add Pin##{}", size_t(id)).c_str()))
         {
             ++_nInputPins;
             LOG_DEBUG("{}: # Input Pins changed to {}", nameId(), _nInputPins);
@@ -369,7 +369,7 @@ void NAV::ImuFusion::guiConfig()
                                                                                                                                                                     "rad/s\0"
                                                                                                                                                                     "(deg/s)^2\0"
                                                                                                                                                                     "deg/s\0\0",
-                                                   "%.2e", ImGuiInputTextFlags_CharsScientific)) // FIXME: make '_varBiasAngRateNoiseUnit' a container, s.t. user can choose different units for each sensor
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: varBiasAngRateNoise changed to {}", nameId(), _varBiasAngRateNoise.at(i).transpose());
                 LOG_DEBUG("{}: varBiasAngRateNoiseUnit changed to {}", nameId(), _varBiasAngRateNoiseUnit[i]);
@@ -384,7 +384,7 @@ void NAV::ImuFusion::guiConfig()
                                                        .c_str(), // FIXME: adapt config window number of sensors (if pin 3 is deleted, keep 1,2,4 instead of re-counting to 1,2,3)
                                                    configWidth, unitWidth, _varBiasAccelerationNoise.at(i).data(), reinterpret_cast<int*>(&_varBiasAccelerationNoiseUnit[i]), "(m^2)/(s^4)\0"
                                                                                                                                                                               "m/s^2\0\0",
-                                                   "%.2e", ImGuiInputTextFlags_CharsScientific)) // FIXME: make '_varBiasAccelerationNoiseUnit' a container, s.t. user can choose different units for each sensor
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: varBiasAccelerationNoise changed to {}", nameId(), _varBiasAccelerationNoise.at(i).transpose());
                 LOG_DEBUG("{}: varBiasAccelerationNoiseUnit changed to {}", nameId(), _varBiasAccelerationNoiseUnit[i]);
