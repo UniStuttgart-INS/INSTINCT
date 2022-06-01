@@ -909,9 +909,8 @@ void NAV::ImuFusion::initializeKalmanFilter()
     LOG_DATA("kalmanFilter.P =\n{}", _kalmanFilter.P);
     _kalmanFilter.Phi = initialStateTransitionMatrix_Phi(dtInit);
     LOG_DATA("kalmanFilter.Phi =\n{}", _kalmanFilter.Phi);
-    _kalmanFilter.Q = processNoiseMatrix_Q(dtInit);
+    _kalmanFilter.Q = processNoiseMatrix_Q(_kalmanFilter.Q, dtInit);
     LOG_DATA("kalmanFilter.Q =\n{}", _kalmanFilter.Q);
-    _kalmanFilter.R = Eigen::MatrixXd::Zero(_numMeasurements, _numMeasurements);
 }
 
 void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId)
@@ -938,7 +937,7 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
 
     _kalmanFilter.Phi = stateTransitionMatrix_Phi(_kalmanFilter.Phi, dt);
     LOG_DATA("kalmanFilter.Phi =\n{}", _kalmanFilter.Phi);
-    _kalmanFilter.Q = processNoiseMatrix_Q(dt);
+    _kalmanFilter.Q = processNoiseMatrix_Q(_kalmanFilter.Q, dt);
     LOG_DATA("kalmanFilter.Q =\n{}", _kalmanFilter.Q);
 
     if (_checkKalmanMatricesRanks)
@@ -1067,7 +1066,7 @@ void NAV::ImuFusion::combineSignals(std::shared_ptr<const ImuObs>& imuObs)
 //                                                         Kalman Filter Matrices
 // #########################################################################################################################################
 
-Eigen::MatrixXd NAV::ImuFusion::initialStateTransitionMatrix_Phi(double& dt) const // TODO: if called in KF update, don't initialize the entire matrix every iteration
+Eigen::MatrixXd NAV::ImuFusion::initialStateTransitionMatrix_Phi(double& dt) const
 {
     Eigen::MatrixXd Phi = Eigen::MatrixXd::Zero(_numStates, _numStates);
 
@@ -1079,7 +1078,7 @@ Eigen::MatrixXd NAV::ImuFusion::initialStateTransitionMatrix_Phi(double& dt) con
     return Phi;
 }
 
-Eigen::MatrixXd NAV::ImuFusion::stateTransitionMatrix_Phi(Eigen::MatrixXd& Phi, double& dt) // TODO: if called in KF update, don't initialize the entire matrix every iteration
+Eigen::MatrixXd NAV::ImuFusion::stateTransitionMatrix_Phi(Eigen::MatrixXd& Phi, double& dt)
 {
     Phi.block<3, 3>(0, 3).diagonal().setConstant(dt); // dependency of angular rate on angular acceleration
     Phi.block<3, 3>(6, 9).diagonal().setConstant(dt); // dependency of acceleration on jerk
@@ -1109,10 +1108,8 @@ Eigen::MatrixXd NAV::ImuFusion::initialErrorCovarianceMatrix_P0(Eigen::Vector3d&
     return P;
 }
 
-Eigen::MatrixXd NAV::ImuFusion::processNoiseMatrix_Q(double dt) const // TODO: if called in KF update, don't initialize the entire matrix every iteration
+Eigen::MatrixXd NAV::ImuFusion::processNoiseMatrix_Q(Eigen::MatrixXd& Q, double& dt) const
 {
-    Eigen::MatrixXd Q = Eigen::MatrixXd::Zero(_numStates, _numStates);
-
     // Integrated Random Walk of the angular rate
     Q.block<3, 3>(0, 0).diagonal() = _processNoiseVariances.at(0) / 3. * std::pow(dt, 3);
     Q.block<3, 3>(0, 3).diagonal() = _processNoiseVariances.at(0) / 2. * std::pow(dt, 2);

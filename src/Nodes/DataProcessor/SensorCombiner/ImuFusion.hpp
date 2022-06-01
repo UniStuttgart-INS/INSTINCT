@@ -235,9 +235,10 @@ class ImuFusion : public Imu
     [[nodiscard]] static Eigen::MatrixXd stateTransitionMatrix_Phi(Eigen::MatrixXd& Phi, double& dt);
 
     /// @brief Calculates the process noise matrix Q
+    /// @param[in] Q Process noise matrix of the previous time step
     /// @param[in] dt Time difference between two successive measurements
     /// @return Process noise matrix Q
-    [[nodiscard]] Eigen::MatrixXd processNoiseMatrix_Q(double dt) const;
+    [[nodiscard]] Eigen::MatrixXd processNoiseMatrix_Q(Eigen::MatrixXd& Q, double& dt) const;
 
     /// @brief Calculates the design matrix H
     /// @param[in] DCM_accel Rotation matrix of mounting angles of an accelerometer w.r.t. a common reference
