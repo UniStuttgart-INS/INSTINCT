@@ -254,16 +254,17 @@ class ImuFusion : public Imu
     /// @param[in] P Error covariance matrix
     /// @return Measurement noise matrix R
     /// @note See https://arxiv.org/pdf/1702.00884.pdf
-    [[nodiscard]] static Eigen::MatrixXd measurementNoiseMatrix_R(double alpha,
-                                                                  Eigen::MatrixXd& R,
-                                                                  Eigen::VectorXd& e,
-                                                                  Eigen::MatrixXd& H,
-                                                                  Eigen::MatrixXd& P);
+    [[nodiscard]] static Eigen::MatrixXd measurementNoiseMatrix_R_adaptive(double alpha,
+                                                                           Eigen::MatrixXd& R,
+                                                                           Eigen::VectorXd& e,
+                                                                           Eigen::MatrixXd& H,
+                                                                           Eigen::MatrixXd& P);
 
     /// @brief Calculates the initial measurement noise matrix R
+    /// @param[in] R Measurement noise uncertainty matrix for sensor at 'pinIndex'
     /// @param[in] pinIndex Index of pin to identify sensor
     /// @return Initial measurement noise matrix R
-    [[nodiscard]] Eigen::MatrixXd measurementNoiseMatrix_R_init(size_t pinIndex) const;
+    [[nodiscard]] Eigen::MatrixXd measurementNoiseMatrix_R(Eigen::MatrixXd& R, size_t& pinIndex) const;
 
     /// @brief Initial error covariance matrix P_0
     /// @param[in] varAngRate Initial variance (3D) of the Angular Rate state in [rad²/s²]

@@ -911,6 +911,7 @@ void NAV::ImuFusion::initializeKalmanFilter()
     LOG_DATA("kalmanFilter.Phi =\n{}", _kalmanFilter.Phi);
     _kalmanFilter.Q = processNoiseMatrix_Q(dtInit);
     LOG_DATA("kalmanFilter.Q =\n{}", _kalmanFilter.Q);
+    _kalmanFilter.R = Eigen::MatrixXd::Zero(_numMeasurements, _numMeasurements);
 }
 
 void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId)
@@ -981,8 +982,8 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
         _kalmanFilter.H = designMatrix_H(DCM_accel, DCM_gyro, pinIndex);
         LOG_DATA("kalmanFilter.H =\n", _kalmanFilter.H);
 
-        _kalmanFilter.R = measurementNoiseMatrix_R_init(pinIndex);
-        LOG_DATA("kalmanFilter.R =\n", _kalmanFilter.R);
+        _kalmanFilter.R = measurementNoiseMatrix_R(_kalmanFilter.R, pinIndex);
+        LOG_DATA("{}: kalmanFilter.R =\n{}", nameId(), _kalmanFilter.R);
 
         if (_checkKalmanMatricesRanks)
         {
@@ -1157,17 +1158,15 @@ Eigen::MatrixXd NAV::ImuFusion::designMatrix_H(Eigen::Matrix3d& DCM_accel, Eigen
     return H;
 }
 
-Eigen::MatrixXd NAV::ImuFusion::measurementNoiseMatrix_R(double alpha, Eigen::MatrixXd& R, Eigen::VectorXd& e, Eigen::MatrixXd& H, Eigen::MatrixXd& P)
+Eigen::MatrixXd NAV::ImuFusion::measurementNoiseMatrix_R_adaptive(double alpha, Eigen::MatrixXd& R, Eigen::VectorXd& e, Eigen::MatrixXd& H, Eigen::MatrixXd& P)
 {
     return alpha * R + (1.0 - alpha) * (e * e.transpose() + H * P * H.transpose());
 }
 
-Eigen::MatrixXd NAV::ImuFusion::measurementNoiseMatrix_R_init(size_t pinIndex) const
+Eigen::MatrixXd NAV::ImuFusion::measurementNoiseMatrix_R(Eigen::MatrixXd& R, size_t& pinIndex) const
 {
-    Eigen::MatrixXd R = Eigen::MatrixXd::Zero(_numMeasurements, _numMeasurements);
-
-    R.block<3, 3>(0, 0).diagonal() = _measurementNoiseVariances.at(pinIndex + 1);
-    R.block<3, 3>(3, 3).diagonal() = _measurementNoiseVariances.at(pinIndex + 2);
+    R.block<3, 3>(0, 0).diagonal() = _measurementNoiseVariances.at(2 * pinIndex);
+    R.block<3, 3>(3, 3).diagonal() = _measurementNoiseVariances.at(2 * pinIndex + 1);
 
     return R;
 }
