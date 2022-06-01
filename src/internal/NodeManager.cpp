@@ -596,6 +596,33 @@ void NAV::NodeManager::DeleteAllLinks()
     flow::ApplyChanges();
 }
 
+void NAV::NodeManager::DeleteLinksOnPin(ax::NodeEditor::PinId pinId)
+{
+    LOG_TRACE("called for pin ({})", size_t(pinId));
+
+    Pin* pin = FindPin(pinId);
+    if (!pin)
+    {
+        return;
+    }
+
+    if (pin->kind == Pin::Kind::Input)
+    {
+        if (auto* connectedLink = FindConnectedLinkToInputPin(pinId))
+        {
+            NAV::NodeManager::DeleteLink(connectedLink->id);
+        }
+    }
+    else if (pin->kind == Pin::Kind::Output)
+    {
+        auto connectedLinks = FindConnectedLinksToOutputPin(pinId);
+        for (auto* connectedLink : connectedLinks)
+        {
+            NAV::NodeManager::DeleteLink(connectedLink->id);
+        }
+    }
+}
+
 NAV::Pin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, NAV::Pin::PinData data)
 {
     LOG_TRACE("called for pin ({}) of type ({}) for node [{}]", name, std::string(pinType), node->nameId());
@@ -632,11 +659,7 @@ bool NAV::NodeManager::DeleteOutputPin(ax::NodeEditor::PinId id)
         return false;
     }
 
-    auto connectedLinks = FindConnectedLinksToOutputPin(id);
-    for (auto* connectedLink : connectedLinks)
-    {
-        NAV::NodeManager::DeleteLink(connectedLink->id);
-    }
+    DeleteLinksOnPin(id);
 
     size_t pinIndex = pin->parentNode->pinIndexFromId(id);
     pin->parentNode->outputPins.erase(pin->parentNode->outputPins.begin() + static_cast<int64_t>(pinIndex));
@@ -654,10 +677,7 @@ bool NAV::NodeManager::DeleteInputPin(ax::NodeEditor::PinId id)
         return false;
     }
 
-    if (auto* connectedLink = FindConnectedLinkToInputPin(id))
-    {
-        NAV::NodeManager::DeleteLink(connectedLink->id);
-    }
+    DeleteLinksOnPin(id);
 
     size_t pinIndex = pin->parentNode->pinIndexFromId(id);
     pin->parentNode->inputPins.erase(pin->parentNode->inputPins.begin() + static_cast<int64_t>(pinIndex));

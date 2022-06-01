@@ -114,6 +114,10 @@
         "-Wno-unknown-warning-option"
     ],
     "comment-divider.length": 140,
+    "comment-divider.lineFiller": "#",
+    "comment-divider.mainHeaderFiller": "#",
+    "comment-divider.subheaderFiller": "-",
+    "comment-divider.shouldLengthIncludeIndent": true,
     "mathover.matchRegex": "\\/\\/\\sMath:\\s(.+)",
     "mathover.forwardSkip": 9,
     "search.exclude": {

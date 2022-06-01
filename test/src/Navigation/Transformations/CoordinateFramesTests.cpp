@@ -582,10 +582,10 @@ TEST_CASE("[InsTransformations] Platform <=> body frame conversion", "[InsTransf
     auto b_Quat_p = trafo::b_Quat_p(mountingAngleX, mountingAngleY, mountingAngleZ);
     CHECK(b_Quat_p.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
-    Eigen::Vector3d x_p{ 2.0, 0.0, 9.81 };
-    Eigen::Vector3d b_x = b_Quat_p * x_p;
+    Eigen::Vector3d p_x{ 2.0, 0.0, 9.81 };
+    Eigen::Vector3d b_x = b_Quat_p * p_x;
 
-    CHECK(b_x == EigApprox(Eigen::Vector3d{ x_p(1), x_p(2), -x_p(0) }).margin(EPSILON).epsilon(0));
+    CHECK(b_x == EigApprox(Eigen::Vector3d{ p_x(1), p_x(2), -p_x(0) }).margin(EPSILON).epsilon(0));
 }
 
 TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]")
