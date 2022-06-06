@@ -353,7 +353,9 @@ pages:
       - public
     expire_in: 2h
     reports:
-      cobertura: bin/cobertura-coverage.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: bin/cobertura-coverage.xml
   only:
     - master
   # except:
