@@ -233,18 +233,18 @@ class ImuSimulator : public Imu
     /// @brief Calculates the flight angles (roll, pitch, yaw)
     /// @param[in] time Time in [s]
     /// @return Roll, pitch, yaw in [rad]
-    std::array<double, 3> calcFlightAngles(double time);
+    [[nodiscard]] std::array<double, 3> calcFlightAngles(double time) const;
 
     /// @brief Calculates the position in latLonAlt at the given time depending on the trajectoryType
     /// @param[in] time Time in [s]
     /// @return LatLonAlt in [rad, rad, m]
-    Eigen::Vector3d lla_calcPosition(double time);
+    [[nodiscard]] Eigen::Vector3d lla_calcPosition(double time) const;
 
     /// @brief Calculates the velocity in local-navigation frame coordinates at the given time depending on the trajectoryType
     /// @param[in] time Time in [s]
     /// @param[in] n_Quat_e Rotation quaternion from Earth frame to local-navigation frame
     /// @return n_velocity in [rad, rad, m]
-    Eigen::Vector3d n_calcVelocity(double time, const Eigen::Quaterniond& n_Quat_e);
+    [[nodiscard]] Eigen::Vector3d n_calcVelocity(double time, const Eigen::Quaterniond& n_Quat_e) const;
 
     /// @brief Calculates the acceleration in local-navigation frame coordinates at the given time depending on the trajectoryType
     /// @param[in] time Time in [s]
@@ -252,7 +252,7 @@ class ImuSimulator : public Imu
     /// @param[in] lla_position Current position as latitude, longitude, altitude [rad, rad, m]
     /// @param[in] n_velocity Velocity in local-navigation frame coordinates [m/s]
     /// @return n_accel in [rad, rad, m]
-    Eigen::Vector3d n_calcTrajectoryAccel(double time, const Eigen::Quaterniond& n_Quat_e, const Eigen::Vector3d& lla_position, const Eigen::Vector3d& n_velocity);
+    [[nodiscard]] Eigen::Vector3d n_calcTrajectoryAccel(double time, const Eigen::Quaterniond& n_Quat_e, const Eigen::Vector3d& lla_position, const Eigen::Vector3d& n_velocity) const;
 
     /// @brief Calculates ω_ip_p, the gyroscope measurement (turn rate of the platform with respect to the inertial system expressed in platform coordinates)
     /// @param[in] time Time in [s]
@@ -261,26 +261,27 @@ class ImuSimulator : public Imu
     /// @param[in] n_omega_ie ω_ie_n Earth rotation rate in local-navigation coordinates
     /// @param[in] n_omega_en ω_en_n Transport rate in local-navigation coordinates
     /// @return ω_ip_p [rad/s]
-    Eigen::Vector3d p_calcOmega_ip(double time,
-                                   const Eigen::Vector3d& rollPitchYaw,
-                                   const Eigen::Quaterniond& b_Quat_n,
-                                   const Eigen::Vector3d& n_omega_ie,
-                                   const Eigen::Vector3d& n_omega_en);
+    [[nodiscard]] Eigen::Vector3d p_calcOmega_ip(double time,
+                                                 const Eigen::Vector3d& rollPitchYaw,
+                                                 const Eigen::Quaterniond& b_Quat_n,
+                                                 const Eigen::Vector3d& n_omega_ie,
+                                                 const Eigen::Vector3d& n_omega_en) const;
 
-    // defines a struct that holds all 6 CSplines together
+    /// Defines a struct that holds all 6 CSplines together
     struct SplineContainer
     {
-        CubicSpline X;
-        CubicSpline Y;
-        CubicSpline Z;
-        CubicSpline Roll;
-        CubicSpline Pitch;
-        CubicSpline Yaw;
+        CubicSpline X;     ///< ECEF X Position [m]
+        CubicSpline Y;     ///< ECEF Y Position [m]
+        CubicSpline Z;     ///< ECEF Z Position [m]
+        CubicSpline Roll;  ///< Roll angle [rad]
+        CubicSpline Pitch; ///< Pitch angle [rad]
+        CubicSpline Yaw;   ///< Yaw angle [rad]
     };
 
-    // Assgien a variable that holds the Spline information
+    /// Assign a variable that holds the Spline information
     SplineContainer SplineInfo;
 
+    /// @brief Initializes the spline values
     void SplineInitializer();
 };
 
