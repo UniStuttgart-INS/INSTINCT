@@ -764,7 +764,7 @@ The position and velocity errors get applied by simply subtracting them from the
 
 The attitude correction can be derived from equation \eqref{eq-LCKF_n-Derivation-Attitude-estimate-errors}
 \fl{equation,eq-LCKF_n-correction-attitude}
-  \mathbf{C}_b^{n,+} = (\mathbf{I}_3 - [\boldsymbol{\delta \psi} \times]) \mathbf{C}_b^{n,-}
+  \mathbf{C}_b^{n,+} = (\mathbf{I}_3 + [\boldsymbol{\delta \psi} \times]) \mathbf{C}_b^{n,-}
 \f}
 
 After applying the errors to the total state, the errors have to be reset to zero (closed-loop).

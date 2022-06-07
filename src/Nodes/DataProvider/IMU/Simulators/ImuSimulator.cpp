@@ -816,9 +816,14 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     if (peek)
     {
         auto obs = std::make_shared<InsObs>();
-        obs->insTime = _startTime + std::chrono::duration<double>(imuUpdateTime);
+        obs->insTime = _startTime + std::chrono::duration<double>(imuUpdateTime - 1e-9);
         return obs;
     }
+
+    auto obs = std::make_shared<ImuObs>(_imuPos);
+    obs->timeSinceStartup = static_cast<uint64_t>(imuUpdateTime * 1e9);
+    obs->insTime = _startTime + std::chrono::duration<double>(imuUpdateTime);
+    LOG_DATA("{}: Simulating IMU data for time {}", nameId(), obs->insTime->toYMDHMS());
 
     // --------------------------------------------------------- Calculation of data -----------------------------------------------------------
     LOG_DATA("{}: [{:8.3f}] lla_position = {}°, {}°, {} m", nameId(), imuUpdateTime, trafo::rad2deg(lla_position(0)), trafo::rad2deg(lla_position(1)), lla_position(2));
@@ -881,9 +886,6 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     LOG_DATA("{}: [{:8.3f}] omega_ip_p = {} [rad/s]", nameId(), imuUpdateTime, omega_ip_p.transpose());
 
     // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
-    auto obs = std::make_shared<ImuObs>(_imuPos);
-    obs->timeSinceStartup = static_cast<uint64_t>(imuUpdateTime * 1e9);
-    obs->insTime = _startTime + std::chrono::duration<double>(imuUpdateTime);
 
     obs->accelCompXYZ = accel_p;
     obs->accelUncompXYZ = accel_p;
@@ -918,6 +920,9 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
         obs->insTime = _startTime + std::chrono::duration<double>(gnssUpdateTime);
         return obs;
     }
+    auto obs = std::make_shared<PosVelAtt>();
+    obs->insTime = _startTime + std::chrono::duration<double>(gnssUpdateTime);
+    LOG_DATA("{}: Simulating GNSS data for time {}", nameId(), obs->insTime->toYMDHMS());
 
     // --------------------------------------------------------- Calculation of data -----------------------------------------------------------
     LOG_DATA("{}: [{:8.3f}] lla_position = {}°, {}°, {} m", nameId(), gnssUpdateTime, trafo::rad2deg(lla_position(0)), trafo::rad2deg(lla_position(1)), lla_position(2));
@@ -928,8 +933,6 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
     LOG_DATA("{}: [{:8.3f}] roll = {}°, pitch = {}°, yaw = {}°", nameId(), gnssUpdateTime, trafo::rad2deg(roll), trafo::rad2deg(pitch), trafo::rad2deg(yaw));
 
     // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
-    auto obs = std::make_shared<PosVelAtt>();
-    obs->insTime = _startTime + std::chrono::duration<double>(gnssUpdateTime);
 
     obs->setState_n(lla_position, n_vel, trafo::n_Quat_b(roll, pitch, yaw));
 

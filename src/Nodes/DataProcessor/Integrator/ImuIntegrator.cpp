@@ -329,15 +329,15 @@ void NAV::ImuIntegrator::deinitialize()
 
 void NAV::ImuIntegrator::recvPosVelAttInit(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
+    LOG_DATA("{}: recvPosVelAttInit", nameId());
     auto posVelAtt = std::static_pointer_cast<const PosVelAtt>(nodeData);
-    LOG_DATA("{}: recvPosVelAttInit at time {}", nameId(), posVelAtt->insTime.value());
 
     // Fill the list with the initial state to the start of the list
     if (_posVelAttStates.empty())
     {
         while (_posVelAttStates.size() < _maxSizeStates)
         {
-            LOG_DEBUG("{}: Adding posVelAtt to the start of the list {}", nameId(), posVelAtt);
+            LOG_DATA("{}: Adding posVelAtt to the start of the list {}", nameId(), posVelAtt);
             _posVelAttStates.push_front(posVelAtt);
         }
 
@@ -432,7 +432,7 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::ImuIntegrator::correctPosVelAtt(const
 
     // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
     Eigen::Vector3d attError = pvaError->n_attitudeError();
-    Eigen::Matrix3d n_DcmCorrected_b = (Eigen::Matrix3d::Identity() - skewSymmetricMatrix(attError)) * posVelAtt->n_Quat_b().toRotationMatrix();
+    Eigen::Matrix3d n_DcmCorrected_b = (Eigen::Matrix3d::Identity() + skewSymmetricMatrix(attError)) * posVelAtt->n_Quat_b().toRotationMatrix();
     posVelAttCorrected->setAttitude_n_Quat_b(Eigen::Quaterniond(n_DcmCorrected_b).normalized());
 
     // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16
@@ -458,7 +458,7 @@ void NAV::ImuIntegrator::integrateObservation()
 {
     if (_pvaError)
     {
-        LOG_DATA("{}: Applying PVA corrections for time {}", nameId(), _pvaError->insTime.value());
+        LOG_DATA("{}: Applying PVA corrections for time {}", nameId(), _pvaError->insTime->toYMDHMS());
 
         for (auto& posVelAtt : _posVelAttStates)
         {
@@ -467,7 +467,7 @@ void NAV::ImuIntegrator::integrateObservation()
 
         _pvaError.reset();
     }
-    LOG_DATA("{}: integrateObservation at time {}", nameId(), _imuObservations.front());
+    LOG_DATA("{}: integrateObservation at time {}", nameId(), _imuObservations.front()->insTime->toYMDHMS());
 
     // IMU Observation at the time tₖ
     const std::shared_ptr<const ImuObs>& imuObs__t0 = _imuObservations.at(0);

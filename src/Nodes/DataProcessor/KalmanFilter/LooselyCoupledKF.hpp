@@ -7,6 +7,7 @@
 #pragma once
 
 #include "internal/Node/Node.hpp"
+#include "Navigation/Time/InsTime.hpp"
 #include "NodeData/State/InertialNavSol.hpp"
 #include "NodeData/State/ImuBiases.hpp"
 
@@ -79,9 +80,12 @@ class LooselyCoupledKF : public Node
     void recvGNSSNavigationSolution(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Predicts the state from the InertialNavSol
-    void looselyCoupledPrediction(const std::shared_ptr<const InertialNavSol>& inertialNavSol);
+    /// @param[in] inertialNavSol Inertial navigation solution triggering the prediction
+    /// @param[in] tau_i Time since the last prediction in [s]
+    void looselyCoupledPrediction(const std::shared_ptr<const InertialNavSol>& inertialNavSol, double tau_i);
 
     /// @brief Updates the predicted state from the InertialNavSol with the GNSS measurement
+    /// @param[in] gnssMeasurement Gnss measurement triggering the update
     void looselyCoupledUpdate(const std::shared_ptr<const PosVelAtt>& gnssMeasurement);
 
     /// @brief Add the output pins for the Kalman matrices
@@ -93,8 +97,8 @@ class LooselyCoupledKF : public Node
     /// Latest observation from the Inertial Integrator (Position, Velocity, Attitude and IMU measurements)
     std::shared_ptr<const InertialNavSol> _latestInertialNavSol = nullptr;
 
-    /// Unprocessed observation from GNSS (Position, Velocity and Attitude)
-    std::deque<std::shared_ptr<const PosVelAtt>> _unprocessedGnssPVAObs;
+    /// Time when the last prediction was triggered
+    InsTime _lastPredictTime;
 
     /// Accumulated IMU biases
     ImuBiases _accumulatedImuBiases;
@@ -115,9 +119,6 @@ class LooselyCoupledKF : public Node
     // ###########################################################################################################
     //                                                Parameters
     // ###########################################################################################################
-
-    /// Time interval between the input of successive accelerometer and gyro outputs to the inertial navigation equations
-    double _tau_i = 0.01;
 
     /// Lever arm between INS and GNSS in [m, m, m]
     Eigen::Vector3d _b_leverArm_InsGnss{ 0.0, 0.0, 0.0 };

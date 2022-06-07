@@ -578,7 +578,7 @@ bool NAV::LooselyCoupledKF::initialize()
     _kalmanFilter.setZero();
 
     _latestInertialNavSol = nullptr;
-    _unprocessedGnssPVAObs.clear();
+    _lastPredictTime = InsTime();
     _accumulatedImuBiases.b_biasAccel.setZero();
     _accumulatedImuBiases.b_biasGyro.setZero();
 
@@ -682,36 +682,33 @@ void NAV::LooselyCoupledKF::deinitialize()
 void NAV::LooselyCoupledKF::recvInertialNavigationSolution(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/) // NOLINT(readability-convert-member-functions-to-static)
 {
     auto inertialNavSol = std::static_pointer_cast<const InertialNavSol>(nodeData);
-    LOG_DATA("{}: Recv Inertial  t = {}", nameId(), inertialNavSol->insTime->toYMDHMS());
+    LOG_DATA("{}: Recv Inertial t = {}", nameId(), inertialNavSol->insTime->toYMDHMS());
 
-    if (_latestInertialNavSol)
-    {
-        _tau_i = static_cast<double>((inertialNavSol->insTime.value() - _latestInertialNavSol->insTime.value()).count());
-    }
+    double tau_i = _latestInertialNavSol != nullptr
+                       ? static_cast<double>((inertialNavSol->insTime.value() - _latestInertialNavSol->insTime.value()).count())
+                       : 0.0;
 
     _latestInertialNavSol = inertialNavSol;
 
-    if (!_unprocessedGnssPVAObs.empty() && _unprocessedGnssPVAObs.front()->insTime < inertialNavSol->insTime)
+    if (tau_i > 0)
     {
-        looselyCoupledUpdate(_unprocessedGnssPVAObs.front());
-        _unprocessedGnssPVAObs.pop_front();
+        looselyCoupledPrediction(inertialNavSol, tau_i);
     }
-
-    looselyCoupledPrediction(inertialNavSol);
 }
 
 void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
     auto gnssMeasurement = std::static_pointer_cast<const PosVelAtt>(nodeData);
-    LOG_DATA("{}: Recv GNSS     t = {}", nameId(), gnssMeasurement->insTime->toYMDHMS());
+    LOG_DATA("{}: Recv GNSS t = {}", nameId(), gnssMeasurement->insTime->toYMDHMS());
 
-    if (_latestInertialNavSol && _latestInertialNavSol->insTime >= gnssMeasurement->insTime) // If IMU and GNSS coma at the same time, but GNSS first.
-    {                                                                                        // Then we should first predict and then update.
-        looselyCoupledUpdate(gnssMeasurement);                                               // TODO: LCKF can't handle IMU not sending data anymore
-    }
-    else
+    if (_latestInertialNavSol)
     {
-        _unprocessedGnssPVAObs.push_back(gnssMeasurement);
+        if (_lastPredictTime < gnssMeasurement->insTime.value())
+        {
+            looselyCoupledPrediction(_latestInertialNavSol, static_cast<double>((gnssMeasurement->insTime.value() - _lastPredictTime).count()));
+        }
+
+        looselyCoupledUpdate(gnssMeasurement);
     }
 }
 
@@ -719,41 +716,42 @@ void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(const std::shared_ptr<con
 //                                               Kalman Filter
 // ###########################################################################################################
 
-void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const InertialNavSol>& inertialNavSol)
+void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const InertialNavSol>& inertialNavSol, double tau_i)
 {
-    LOG_DATA("{}: Predicting for t = {}", nameId(), inertialNavSol->insTime->toYMDHMS());
+    LOG_DATA("{}: Predicting (τ = {}s) to time {}", nameId(), tau_i, inertialNavSol->insTime->toYMDHMS());
+    _lastPredictTime = inertialNavSol->insTime.value();
 
     // ------------------------------------------- Data preparation ----------------------------------------------
     // n_velocity (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
-    const Eigen::Vector3d& n_velocity__t1 = inertialNavSol->n_velocity();
-    LOG_DATA("{}:     n_velocity__t1 = {} [m / s]", nameId(), n_velocity__t1.transpose());
+    const Eigen::Vector3d& n_velocity = inertialNavSol->n_velocity();
+    LOG_DATA("{}:     n_velocity = {} [m / s]", nameId(), n_velocity.transpose());
     // Latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m] at the time tₖ₋₁
-    const Eigen::Vector3d& lla_position__t1 = inertialNavSol->lla_position();
-    LOG_DATA("{}:     lla_position__t1 = {} [rad, rad, m]", nameId(), lla_position__t1.transpose());
+    const Eigen::Vector3d& lla_position = inertialNavSol->lla_position();
+    LOG_DATA("{}:     lla_position = {} [rad, rad, m]", nameId(), lla_position.transpose());
     // q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
-    const Eigen::Quaterniond& n_Quat_b__t1 = inertialNavSol->n_Quat_b();
-    LOG_DATA("{}:     n_Quat_b__t1 --> Roll, Pitch, Yaw = {} [deg]", nameId(), trafo::deg2rad(trafo::quat2eulerZYX(n_Quat_b__t1).transpose()));
+    const Eigen::Quaterniond& n_Quat_b = inertialNavSol->n_Quat_b();
+    LOG_DATA("{}:     n_Quat_b --> Roll, Pitch, Yaw = {} [deg]", nameId(), trafo::deg2rad(trafo::quat2eulerZYX(n_Quat_b).transpose()));
 
     // Prime vertical radius of curvature (East/West) [m]
-    const double R_E = calcEarthRadius_E(lla_position__t1(0));
+    const double R_E = calcEarthRadius_E(lla_position(0));
     LOG_DATA("{}:     R_E = {} [m]", nameId(), R_E);
     // Meridian radius of curvature in [m]
-    const double R_N = calcEarthRadius_N(lla_position__t1(0));
+    const double R_N = calcEarthRadius_N(lla_position(0));
     LOG_DATA("{}:     R_N = {} [m]", nameId(), R_N);
 
     // Direction Cosine Matrix from body to navigation coordinates, at the time tₖ₋₁
-    Eigen::Matrix3d n_Dcm_b = n_Quat_b__t1.toRotationMatrix();
+    Eigen::Matrix3d n_Dcm_b = n_Quat_b.toRotationMatrix();
     LOG_DATA("{}:     n_Dcm_b =\n{}", nameId(), n_Dcm_b);
 
     // Conversion matrix between cartesian and curvilinear perturbations to the position
-    Eigen::Matrix3d T_rn_p = conversionMatrixCartesianCurvilinear(lla_position__t1, R_N, R_E);
+    Eigen::Matrix3d T_rn_p = conversionMatrixCartesianCurvilinear(lla_position, R_N, R_E);
     LOG_DATA("{}:     T_rn_p =\n{}", nameId(), T_rn_p);
 
     // Gravity at surface level in [m/s^2]
-    double g_0 = n_calcGravitation_SomiglianaAltitude(lla_position__t1(0), 0).norm();
+    double g_0 = n_calcGravitation_EGM96(lla_position).norm();
 
     // Geocentric Radius in [m]
-    double r_eS_e = calcGeocentricRadius(lla_position__t1(0), R_E);
+    double r_eS_e = calcGeocentricRadius(lla_position(0), R_E);
 
     // a_p Acceleration in [m/s^2], in body coordinates
     const Eigen::Vector3d b_acceleration = inertialNavSol->imuObs->imuPos.b_quatAccel_p() * inertialNavSol->imuObs->accelUncompXYZ.value()
@@ -762,7 +760,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
 
     // omega_in^n = omega_ie^n + omega_en^n
     Eigen::Vector3d n_omega_in = inertialNavSol->n_Quat_e() * InsConst::e_omega_ie
-                                 + n_calcTransportRate(lla_position__t1, n_velocity__t1, R_N, R_E);
+                                 + n_calcTransportRate(lla_position, n_velocity, R_N, R_E);
     LOG_DATA("{}:     n_omega_in = {} [rad/s]", nameId(), n_omega_in.transpose());
 
     // ------------------------------------------- GUI Parameters ----------------------------------------------
@@ -829,30 +827,24 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     // ---------------------------------------------- Prediction -------------------------------------------------
 
     // System Matrix
-    Eigen::Matrix<double, 15, 15> F = systemMatrix_F(n_Quat_b__t1, b_acceleration, n_omega_in, n_velocity__t1, lla_position__t1, _tau_bad, _tau_bgd, R_N, R_E, g_0, r_eS_e);
+    Eigen::Matrix<double, 15, 15> F = systemMatrix_F(n_Quat_b, b_acceleration, n_omega_in, n_velocity, lla_position, _tau_bad, _tau_bgd, R_N, R_E, g_0, r_eS_e);
     LOG_DATA("{}:     F =\n{}", nameId(), F);
-
-    // TODO: Groves signs
-    F.block<3, 3>(0, 3) *= -1;  // F_12
-    F.block<3, 3>(0, 6) *= -1;  // F_13
-    F.block<3, 3>(0, 12) *= -1; // F_15
-    F.block<3, 3>(3, 0) *= -1;  // F_21
 
     if (_qCalculationAlgorithm == QCalculationAlgorithm::VanLoan)
     {
         // Noise Input Matrix
-        Eigen::Matrix<double, 15, 12> G = noiseInputMatrix_G(n_Quat_b__t1);
+        Eigen::Matrix<double, 15, 12> G = noiseInputMatrix_G(n_Quat_b);
         LOG_DATA("{}:     G =\n{}", nameId(), G);
 
         Eigen::Matrix<double, 12, 12> W = noiseScaleMatrix_W(sigma_ra.array().square(), sigma_rg.array().square(),
                                                              sigma_bad.array().square(), sigma_bgd.array().square(),
                                                              _tau_bad, _tau_bgd,
-                                                             _tau_i);
+                                                             tau_i);
         LOG_DATA("{}:     W =\n{}", nameId(), W);
 
         LOG_DATA("{}:     G*W*G^T =\n{}", nameId(), G * W * G.transpose());
 
-        auto [Phi, Q] = calcPhiAndQWithVanLoanMethod<double, 15, 12>(F, G, W, _tau_i);
+        auto [Phi, Q] = calcPhiAndQWithVanLoanMethod<double, 15, 12>(F, G, W, tau_i);
 
         // 1. Calculate the transition matrix 𝚽_{k-1}
         _kalmanFilter.Phi = Phi;
@@ -867,12 +859,12 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Exponential)
         {
             // 1. Calculate the transition matrix 𝚽_{k-1}
-            _kalmanFilter.Phi = transitionMatrix_Phi_exp<double, 15>(F, _tau_i);
+            _kalmanFilter.Phi = transitionMatrix_Phi_exp<double, 15>(F, tau_i);
         }
         else if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor)
         {
             // 1. Calculate the transition matrix 𝚽_{k-1}
-            _kalmanFilter.Phi = transitionMatrix_Phi_Taylor<double, 15>(F, _tau_i, static_cast<size_t>(_phiCalculationTaylorOrder));
+            _kalmanFilter.Phi = transitionMatrix_Phi_Taylor<double, 15>(F, tau_i, static_cast<size_t>(_phiCalculationTaylorOrder));
         }
         else
         {
@@ -892,7 +884,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
                                                         sigma_bad.array().square(), sigma_bgd.array().square(),
                                                         _tau_bad, _tau_bgd,
                                                         F.block<3, 3>(3, 0), T_rn_p,
-                                                        n_Dcm_b, _tau_i);
+                                                        n_Dcm_b, tau_i);
     }
 
     if (_showKalmanFilterOutputPins)
@@ -905,14 +897,15 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
 
     // 3. Propagate the state vector estimate from x(+) and x(-)
     // 4. Propagate the error covariance matrix from P(+) and P(-)
+    LOG_DATA("{}:     KF.P (before prediction) =\n{}", nameId(), _kalmanFilter.P);
     _kalmanFilter.predict();
     if (_showKalmanFilterOutputPins)
     {
         notifyOutputValueChanged(OUTPUT_PORT_INDEX_x);
         notifyOutputValueChanged(OUTPUT_PORT_INDEX_P);
     }
-    LOG_DATA("{}:     KF.x =\n{}", nameId(), _kalmanFilter.x);
-    LOG_DATA("{}:     KF.P =\n{}", nameId(), _kalmanFilter.P);
+    LOG_DATA("{}:     KF.x = {}", nameId(), _kalmanFilter.x.transpose());
+    LOG_DATA("{}:     KF.P (after prediction) =\n{}", nameId(), _kalmanFilter.P);
 
     // Averaging of P to avoid numerical problems with symmetry (did not work)
     // _kalmanFilter.P = ((_kalmanFilter.P + _kalmanFilter.P.transpose()) / 2.0);
@@ -944,14 +937,14 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
 
     // ------------------------------------------- Data preparation ----------------------------------------------
     // Latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m] at the time tₖ₋₁
-    const Eigen::Vector3d& lla_position__t1 = _latestInertialNavSol->lla_position();
-    LOG_DATA("{}:     lla_position__t1 = {} [rad, rad, m]", nameId(), lla_position__t1.transpose());
+    const Eigen::Vector3d& lla_position = _latestInertialNavSol->lla_position();
+    LOG_DATA("{}:     lla_position = {} [rad, rad, m]", nameId(), lla_position.transpose());
 
     // Prime vertical radius of curvature (East/West) [m]
-    const double R_E = calcEarthRadius_E(lla_position__t1(0));
+    const double R_E = calcEarthRadius_E(lla_position(0));
     LOG_DATA("{}:     R_E = {} [m]", nameId(), R_E);
     // Meridian radius of curvature in [m]
-    const double R_N = calcEarthRadius_N(lla_position__t1(0));
+    const double R_N = calcEarthRadius_N(lla_position(0));
     LOG_DATA("{}:     R_N = {} [m]", nameId(), R_N);
 
     // Direction Cosine Matrix from body to navigation coordinates, at the time tₖ₋₁
@@ -959,7 +952,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     LOG_DATA("{}:     n_Dcm_b =\n{}", nameId(), n_Dcm_b);
 
     // Conversion matrix between cartesian and curvilinear perturbations to the position
-    Eigen::Matrix3d T_rn_p = conversionMatrixCartesianCurvilinear(lla_position__t1, R_N, R_E);
+    Eigen::Matrix3d T_rn_p = conversionMatrixCartesianCurvilinear(lla_position, R_N, R_E);
     LOG_DATA("{}:     T_rn_p =\n{}", nameId(), T_rn_p);
 
     // Angular rate measured in units of [rad/s], and given in the body frame
@@ -981,10 +974,10 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     switch (_gnssMeasurementUncertaintyPositionUnit)
     {
     case GnssMeasurementUncertaintyPositionUnit::meter:
-        gnssSigmaSquaredLatLonAlt = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_gnssMeasurementUncertaintyPosition, lla_position__t1)) - lla_position__t1).array().pow(2);
+        gnssSigmaSquaredLatLonAlt = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_gnssMeasurementUncertaintyPosition, lla_position)) - lla_position).array().pow(2);
         break;
     case GnssMeasurementUncertaintyPositionUnit::meter2:
-        gnssSigmaSquaredLatLonAlt = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_gnssMeasurementUncertaintyPosition.cwiseSqrt(), lla_position__t1)) - lla_position__t1).array().pow(2);
+        gnssSigmaSquaredLatLonAlt = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_gnssMeasurementUncertaintyPosition.cwiseSqrt(), lla_position)) - lla_position).array().pow(2);
         break;
     case GnssMeasurementUncertaintyPositionUnit::rad_rad_m:
         gnssSigmaSquaredLatLonAlt = _gnssMeasurementUncertaintyPosition.array().pow(2);
