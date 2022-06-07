@@ -31,6 +31,8 @@ class FileWriter
     /// @return String representation of the type
     static const char* to_string(FileType type);
 
+    /// @brief Destructor
+    ~FileWriter() = default;
     /// @brief Copy constructor
     FileWriter(const FileWriter&) = delete;
     /// @brief Move constructor
@@ -43,8 +45,6 @@ class FileWriter
   protected:
     /// @brief Default constructor
     FileWriter() = default;
-    /// @brief Destructor
-    ~FileWriter() = default;
 
     /// @brief ImGui config
     /// @param[in] vFilters Filter to apply for file names

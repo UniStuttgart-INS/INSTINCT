@@ -246,7 +246,6 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<PosVelAttInitializer>();
 }
 
-#include "NodeData/NodeData.hpp"
 #include "NodeData/InsObs.hpp"
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
 #include "NodeData/General/StringObs.hpp"

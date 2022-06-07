@@ -5,10 +5,10 @@
 #include <cmath>
 #include <array>
 
-std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::internal::associatedLegendre(int ndegree, double theta)
+std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::internal::associatedLegendre(double theta, size_t ndegree)
 {
     // Index needed for the calculation of all necessary 'Pd' entries up to 'ndegree' (--> Pd(n = ndegree, m = ndegree) is dependent on P(n = ndegree, m = ndegree + 1))
-    int N = ndegree + 2;
+    int N = static_cast<int>(ndegree + 2);
 
     Eigen::MatrixXd P = Eigen::MatrixXd::Zero(N, N);
     Eigen::MatrixXd Pd = Eigen::MatrixXd::Zero(N, N);

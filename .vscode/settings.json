@@ -151,5 +151,10 @@
     },
     "todo-tree.filtering.excludeGlobs": [
         "**/lib"
-    ]
+    ],
+    "matched-line-dimmer.enabled": true,
+    "matched-line-dimmer.patterns": [
+        "LOG_(DATA)",
+    ],
+    "matched-line-dimmer.opacity": 40
 }

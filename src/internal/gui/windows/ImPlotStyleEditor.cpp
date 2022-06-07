@@ -13,6 +13,7 @@
 
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/widgets/FileDialog.hpp"
+#include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
 #include "internal/ConfigManager.hpp"
 #include "internal/FlowManager.hpp"
@@ -142,7 +143,7 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
                 ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 55.0F);
 
                 auto revertButton = [](auto& value, auto refVal, const char* id) {
-                    if (memcmp(&value, &refVal, sizeof(refVal)) != 0)
+                    if (value != refVal)
                     {
                         ImGui::TableNextColumn();
                         if (ImGui::Button(fmt::format("Revert##ImPlotStyle.{}", id).c_str()))
@@ -521,7 +522,7 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
                             flow::ApplyChanges();
                         }
                     }
-                    if (memcmp(&style.Colors[i], &NodeEditorApplication::imPlotReferenceStyle.Colors[i], sizeof(ImVec4)) != 0) // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
+                    if (style.Colors[i] != NodeEditorApplication::imPlotReferenceStyle.Colors[i]) // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
                     {
                         ImGui::TableNextColumn();
                         if (ImGui::Button(fmt::format("Revert##ImPlotStyleColor{}", i).c_str()))
