@@ -330,6 +330,7 @@ void NAV::ImuIntegrator::deinitialize()
 void NAV::ImuIntegrator::recvPosVelAttInit(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
     auto posVelAtt = std::static_pointer_cast<const PosVelAtt>(nodeData);
+    LOG_DATA("{}: recvPosVelAttInit at time {}", nameId(), posVelAtt->insTime.value());
 
     // Fill the list with the initial state to the start of the list
     if (_posVelAttStates.empty())
@@ -366,6 +367,7 @@ void NAV::ImuIntegrator::recvPosVelAttInit(const std::shared_ptr<const NodeData>
 void NAV::ImuIntegrator::recvImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
     auto imuObs = std::static_pointer_cast<const ImuObs>(nodeData);
+    LOG_DATA("{}: recvImuObs at time {}", nameId(), imuObs->insTime.value());
 
     if (!imuObs->insTime.has_value() && !imuObs->timeSinceStartup.has_value())
     {
@@ -456,7 +458,7 @@ void NAV::ImuIntegrator::integrateObservation()
 {
     if (_pvaError)
     {
-        LOG_DATA("{}: Applying PVA corrections", nameId());
+        LOG_DATA("{}: Applying PVA corrections for time {}", nameId(), _pvaError->insTime.value());
 
         for (auto& posVelAtt : _posVelAttStates)
         {
@@ -465,6 +467,7 @@ void NAV::ImuIntegrator::integrateObservation()
 
         _pvaError.reset();
     }
+    LOG_DATA("{}: integrateObservation at time {}", nameId(), _imuObservations.front());
 
     // IMU Observation at the time tₖ
     const std::shared_ptr<const ImuObs>& imuObs__t0 = _imuObservations.at(0);
