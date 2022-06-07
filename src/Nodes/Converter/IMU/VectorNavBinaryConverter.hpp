@@ -108,7 +108,7 @@ class VectorNavBinaryConverter : public Node
     /// @brief Converts the VectorNavBinaryOutput to a GnssObs observation
     /// @param[in] vnObs VectorNavBinaryOutput to process
     /// @return The converted data
-    std::shared_ptr<const GnssObs> convert2GnssObs(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs);
+    static std::shared_ptr<const GnssObs> convert2GnssObs(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs);
 };
 
 } // namespace NAV

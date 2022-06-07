@@ -62,7 +62,7 @@ void NAV::VectorNavBinaryConverter::guiConfig()
         else if (_outputType == OutputType_GnssObs)
         {
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::GnssObs::type() };
-            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name           = NAV::GnssObs::type();
+            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::GnssObs::type();
         }
 
         for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.front().id))
@@ -124,7 +124,7 @@ void NAV::VectorNavBinaryConverter::restore(json const& j)
             else if (_outputType == OutputType_GnssObs)
             {
                 outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::GnssObs::type() };
-                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name           = NAV::GnssObs::type();
+                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::GnssObs::type();
             }
         }
     }
@@ -411,7 +411,7 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
         {
             for (const auto& satRaw : vnObs->gnss1Outputs->raw.satellites)
             {
-                bool skipMeasurement   = false;
+                bool skipMeasurement = false;
                 SatelliteSystem satSys = SatSys_None;
                 switch (satRaw.sys)
                 {
@@ -551,10 +551,11 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                 case SatSys_None:
                     break;
                 }
-                (*gnssObs)[{ frequency, satRaw.svId }].pseudorange  = satRaw.pr;
-                (*gnssObs)[{ frequency, satRaw.svId }].carrierPhase = satRaw.cp;
-                (*gnssObs)[{ frequency, satRaw.svId }].doppler      = static_cast<double>(satRaw.dp); // testen
-                (*gnssObs)[{ frequency, satRaw.svId }].CN0          = static_cast<double>(satRaw.cno);
+                (*gnssObs)(frequency, satRaw.svId, Code::G1C).pseudorange = satRaw.pr; // TODO: Die code information wird jetzt auch gespeichert, ihr müsstet also aus dem channel der satRaw das noch extrahieren
+                (*gnssObs)(frequency, satRaw.svId, Code::G1C).carrierPhase = satRaw.cp;
+                (*gnssObs)(frequency, satRaw.svId, Code::G1C).doppler = static_cast<double>(satRaw.dp); // testen
+                (*gnssObs)(frequency, satRaw.svId, Code::G1C).CN0 = static_cast<double>(satRaw.cno);
+
                 // LLI has not been implemented yet, but can be calculated from sensors::vectornav::RawMeas::SatRawElement::Flags
                 // (*gnssObs)[{ frequency, satRaw.svId }].LLI = ...
             }
