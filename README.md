@@ -101,26 +101,19 @@ sudo pacman -S ccache cppcheck
 sudo pacman -S valgrind kcachegrind
 ```
 
-#### Ubuntu 20.04
+#### Ubuntu 22.04
 ```shell
 # Needed
 sudo apt update
 sudo apt upgrade -y
 sudo apt install -y build-essential clang clang-tidy cmake python3-pip libglfw3-dev libglfw3
-sudo apt install -y gcc-10 g++-10
-sudo ln -sf /usr/bin/gcc-10 /usr/bin/gcc
-sudo ln -sf /usr/bin/g++-10 /usr/bin/g++
-sudo apt install -y clang-12 clang-tidy-12
-sudo ln -sf /usr/bin/clang-12 /usr/bin/clang
-sudo ln -sf /usr/bin/clang++-12 /usr/bin/clang++
-sudo ln -sf /usr/bin/clang-tidy-12 /usr/bin/clang-tidy
 pip3 install conan --user
 
 # Documentation (Ubuntu 20.04 has too old doxygen version)
 sudo apt install -y pdf2svg texlive texlive-lang-german texlive-latex-extra ghostscript
 sudo apt install -y flex bison graphviz mscgen dia # Build dependencies
-wget -c https://www.doxygen.nl/files/doxygen-1.9.2.src.tar.gz -O - | tar -xz
-mkdir doxygen-1.9.2/build && cd doxygen-1.9.2/build
+wget -c https://www.doxygen.nl/files/doxygen-1.9.4.src.tar.gz -O - | tar -xz
+mkdir doxygen-1.9.4/build && cd doxygen-1.9.4/build
 cmake -G "Unix Makefiles" .. && make && sudo make install
 
 # Optional

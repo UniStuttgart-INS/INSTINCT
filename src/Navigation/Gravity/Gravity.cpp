@@ -108,7 +108,7 @@ Eigen::Vector3d n_calcGravitation_WGS84(const double& latitude, const double& al
     return { 0, 0, gravitationMagnitude };
 }
 
-Eigen::Vector3d n_calcGravitation_EGM96(const Eigen::Vector3d& lla_position, int ndegree)
+Eigen::Vector3d n_calcGravitation_EGM96(const Eigen::Vector3d& lla_position, size_t ndegree)
 {
     using internal::egm96Coeffs;
     using internal::associatedLegendre;
@@ -132,7 +132,7 @@ Eigen::Vector3d n_calcGravitation_EGM96(const Eigen::Vector3d& lla_position, int
     auto coeffsRows = egm96Coeffs.size();
 
     // Associated Legendre Polynomial Coefficients 'P' and their derivatives 'Pd'
-    auto [P, Pd] = associatedLegendre(ndegree, elevation);
+    auto [P, Pd] = associatedLegendre(elevation, ndegree);
 
     for (size_t i = 0; i < coeffsRows; i++) // NOLINT(clang-analyzer-core.UndefinedBinaryOperatorResult) // FIXME: Wrong error message about Eigen (error: The left operand of '*' is a garbage value)
     {
@@ -142,7 +142,7 @@ Eigen::Vector3d n_calcGravitation_EGM96(const Eigen::Vector3d& lla_position, int
         auto C = egm96Coeffs.at(i).at(2);
         auto S = egm96Coeffs.at(i).at(3);
 
-        if (n == ndegree + 1)
+        if (static_cast<size_t>(n) == ndegree + 1)
         {
             // Ending of the for-loop once the iterated 'n' becomes larger than the user-defined 'ndegree'
             i = coeffsRows;

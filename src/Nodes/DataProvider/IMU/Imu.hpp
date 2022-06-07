@@ -15,6 +15,8 @@ namespace NAV
 class Imu : public Node
 {
   public:
+    /// @brief Destructor
+    ~Imu() override = default;
     /// @brief Copy constructor
     Imu(const Imu&) = delete;
     /// @brief Move constructor
@@ -41,9 +43,6 @@ class Imu : public Node
   protected:
     /// @brief Default constructor
     Imu() = default;
-
-    /// @brief Destructor
-    ~Imu() override = default;
 
     /// Position and rotation information for conversion from platform to body frame
     ImuPos _imuPos;

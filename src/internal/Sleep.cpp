@@ -31,9 +31,9 @@ void NAV::Sleep::waitForSignal(bool showText)
     sigaddset(&mask, SIGUSR1);
     sigaddset(&mask, SIGINT);
     sigaddset(&mask, SIGTERM);
-    signal(SIGUSR1, handler);
-    signal(SIGINT, handler);
-    signal(SIGTERM, handler);
+    static_cast<void>(signal(SIGUSR1, handler));
+    static_cast<void>(signal(SIGINT, handler));
+    static_cast<void>(signal(SIGTERM, handler));
 
     if (showText)
     {
@@ -48,9 +48,9 @@ void NAV::Sleep::waitForSignal(bool showText)
     }
     sigprocmask(SIG_UNBLOCK, &mask, nullptr); // NOLINT(concurrency-mt-unsafe) // FIXME: error: function is not thread safe
 
-    signal(SIGUSR1, SIG_DFL);
-    signal(SIGINT, SIG_DFL);
-    signal(SIGTERM, SIG_DFL);
+    static_cast<void>(signal(SIGUSR1, SIG_DFL));
+    static_cast<void>(signal(SIGINT, SIG_DFL));
+    static_cast<void>(signal(SIGTERM, SIG_DFL));
 #else
     LOG_ERROR("Waiting for Sigterm is not supported in Windows");
 #endif
@@ -60,8 +60,8 @@ void NAV::Sleep::countDownSeconds(size_t seconds)
 {
     LOG_TRACE("called with seconds={}", seconds);
 
-    signal(SIGINT, handler);
-    signal(SIGTERM, handler);
+    static_cast<void>(signal(SIGINT, handler));
+    static_cast<void>(signal(SIGTERM, handler));
 
     for (size_t i = 0; i < seconds && !usr_interrupt; i++)
     {
@@ -75,6 +75,6 @@ void NAV::Sleep::countDownSeconds(size_t seconds)
 #endif
     }
 
-    signal(SIGINT, SIG_DFL);
-    signal(SIGTERM, SIG_DFL);
+    static_cast<void>(signal(SIGINT, SIG_DFL));
+    static_cast<void>(signal(SIGTERM, SIG_DFL));
 }

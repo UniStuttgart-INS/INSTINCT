@@ -66,7 +66,7 @@ const char* to_string(GravitationModel gravitationModel);
 /// @return Gravitation vector in local-navigation frame coordinates in [m/s^2]
 ///
 /// @note See Groves (2013) Chapter 2.4.3 and 'GUT User Guide' (2018) Chapter 7.4
-[[nodiscard]] Eigen::Vector3d n_calcGravitation_EGM96(const Eigen::Vector3d& lla_position, int ndegree = 10);
+[[nodiscard]] Eigen::Vector3d n_calcGravitation_EGM96(const Eigen::Vector3d& lla_position, size_t ndegree = 10);
 
 /// @brief Calculates the centrifugal acceleration
 /// @param[in] latitude Latitude in [rad]

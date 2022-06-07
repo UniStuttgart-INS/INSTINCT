@@ -4641,7 +4641,7 @@
         "node-324": {
             "data": {
                 "FileReader": {
-                    "path": "data/2022-02-07_PWOne_INS-Roof_Walking/vn310-imu.csv"
+                    "path": "2022-02-07_PWOne_INS-Roof_Walking/vn310-imu.csv"
                 },
                 "Imu": {
                     "imuPos": {
@@ -4747,7 +4747,7 @@
         "node-326": {
             "data": {
                 "FileReader": {
-                    "path": "data/2022-02-07_PWOne_INS-Roof_Walking/vn310-gnss.csv"
+                    "path": "2022-02-07_PWOne_INS-Roof_Walking/vn310-gnss.csv"
                 },
                 "Imu": {
                     "imuPos": {

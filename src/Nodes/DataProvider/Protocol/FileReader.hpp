@@ -29,6 +29,8 @@ class FileReader
         CSV,    ///< Ascii text data
     };
 
+    /// @brief Destructor
+    virtual ~FileReader() = default;
     /// @brief Copy constructor
     FileReader(const FileReader&) = delete;
     /// @brief Move constructor
@@ -41,8 +43,6 @@ class FileReader
   protected:
     /// @brief Default constructor
     FileReader() = default;
-    /// @brief Destructor
-    virtual ~FileReader() = default;
 
     /// @brief ImGui config
     /// @param[in] vFilters Filter to apply for file names
