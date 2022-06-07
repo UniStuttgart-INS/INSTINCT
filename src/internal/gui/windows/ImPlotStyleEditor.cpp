@@ -10,6 +10,7 @@
 #include <imgui_stdlib.h>
 #include <implot.h>
 #include <implot_internal.h>
+#include <imgui_extra_math.h>
 
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/widgets/FileDialog.hpp"

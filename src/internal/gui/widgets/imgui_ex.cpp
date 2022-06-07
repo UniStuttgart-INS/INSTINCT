@@ -314,16 +314,6 @@ bool InputDouble4L(const char* label, double v[4], double v_min, double v_max, c
 
 } // namespace ImGui
 
-bool operator==(const ImVec2& lhs, const ImVec2& rhs)
-{
-    return lhs.x == rhs.x && lhs.y == rhs.y;
-}
-
-bool operator!=(const ImVec2& lhs, const ImVec2& rhs)
-{
-    return lhs.x != rhs.x || lhs.y != rhs.y;
-}
-
 bool operator==(const ImVec4& lhs, const ImVec4& rhs)
 {
     return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z && lhs.w == rhs.w;

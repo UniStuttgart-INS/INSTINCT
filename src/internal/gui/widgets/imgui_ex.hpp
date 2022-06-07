@@ -458,18 +458,6 @@ bool InputDouble4L(const char* label, double v[4], double v_min = std::numeric_l
 /// @param[in] lhs Left-hand side
 /// @param[in] rhs Right-hand-side
 /// @return True if the elements are equal
-bool operator==(const ImVec2& lhs, const ImVec2& rhs);
-
-/// @brief Unequal comparison operator
-/// @param[in] lhs Left-hand side
-/// @param[in] rhs Right-hand-side
-/// @return True if the elements are unequal
-bool operator!=(const ImVec2& lhs, const ImVec2& rhs);
-
-/// @brief Equal comparison operator
-/// @param[in] lhs Left-hand side
-/// @param[in] rhs Right-hand-side
-/// @return True if the elements are equal
 bool operator==(const ImVec4& lhs, const ImVec4& rhs);
 
 /// @brief Unequal comparison operator
