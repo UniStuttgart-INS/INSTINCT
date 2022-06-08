@@ -812,7 +812,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     LOG_DATA("{}:     sigma_rg = {} [rad / (s · √(s))]", nameId(), sigma_rg.transpose());
 
     // 𝜎_bad Standard deviation of the accelerometer dynamic bias [m / s^2]
-    Eigen::Vector3d sigma_bad{};
+    Eigen::Vector3d sigma_bad = Eigen::Vector3d::Zero();
     switch (_stdevAccelBiasUnits)
     {
     case StdevAccelBiasUnits::microg:  // [µg]
@@ -820,12 +820,13 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         sigma_bad *= InsConst::G_NORM; // [m / s^2]
         break;
     case StdevAccelBiasUnits::m_s2: // [m / s^2]
+        sigma_bad = _stdev_bad;
         break;
     }
     LOG_DATA("{}:     sigma_bad = {} [m / s^2]", nameId(), sigma_bad.transpose());
 
     // 𝜎_bgd Standard deviation of the gyro dynamic bias [rad / s]
-    Eigen::Vector3d sigma_bgd{};
+    Eigen::Vector3d sigma_bgd = Eigen::Vector3d::Zero();
     switch (_stdevGyroBiasUnits)
     {
     case StdevGyroBiasUnits::deg_h:            // [° / h]
@@ -833,6 +834,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         sigma_bgd = trafo::deg2rad(sigma_bgd); // [rad / s]
         break;
     case StdevGyroBiasUnits::rad_s: // [rad / s]
+        sigma_bgd = _stdev_bgd;
         break;
     }
     LOG_DATA("{}:     sigma_bgd = {} [rad / s]", nameId(), sigma_bgd.transpose());
