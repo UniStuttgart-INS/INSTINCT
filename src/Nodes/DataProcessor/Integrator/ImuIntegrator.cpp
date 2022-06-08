@@ -418,23 +418,23 @@ void NAV::ImuIntegrator::recvLcKfInsGnssErrors(const std::shared_ptr<const NodeD
     auto lcKfInsGnssErrors = std::static_pointer_cast<const LcKfInsGnssErrors>(nodeData);
     LOG_DATA("{}: recvLcKfInsGnssErrors at time [{}]", nameId(), lcKfInsGnssErrors->insTime->toYMDHMS());
 
-    for (size_t i = 0; i < _posVelAttStates.size(); i++)
+    for (auto& posVelAtt : _posVelAttStates)
     {
-        LOG_DATA("{}: Correcting posVelAtt at time [{}] with error from time [{}]", nameId(), _posVelAttStates.at(i)->insTime->toYMDHMS(), lcKfInsGnssErrors->insTime->toYMDHMS());
-        LOG_DATA("{}:     lla_position ({}) - ({})", nameId(), _posVelAttStates.at(i)->lla_position().transpose(), lcKfInsGnssErrors->lla_positionError.transpose());
-        LOG_DATA("{}:     n_velocity ({}) - ({})", nameId(), _posVelAttStates.at(i)->n_velocity().transpose(), lcKfInsGnssErrors->n_velocityError.transpose());
+        LOG_DATA("{}: Correcting posVelAtt at time [{}] with error from time [{}]", nameId(), posVelAtt->insTime->toYMDHMS(), lcKfInsGnssErrors->insTime->toYMDHMS());
+        LOG_DATA("{}:     lla_position ({}) - ({})", nameId(), posVelAtt->lla_position().transpose(), lcKfInsGnssErrors->lla_positionError.transpose());
+        LOG_DATA("{}:     n_velocity ({}) - ({})", nameId(), posVelAtt->n_velocity().transpose(), lcKfInsGnssErrors->n_velocityError.transpose());
 
-        auto posVelAttCorrected = std::make_shared<PosVelAtt>(*_posVelAttStates.at(i));
-        posVelAttCorrected->setPosition_lla(_posVelAttStates.at(i)->lla_position() - lcKfInsGnssErrors->lla_positionError);
+        auto posVelAttCorrected = std::make_shared<PosVelAtt>(*posVelAtt);
+        posVelAttCorrected->setPosition_lla(posVelAtt->lla_position() - lcKfInsGnssErrors->lla_positionError);
 
-        posVelAttCorrected->setVelocity_n(_posVelAttStates.at(i)->n_velocity() - lcKfInsGnssErrors->n_velocityError);
+        posVelAttCorrected->setVelocity_n(posVelAtt->n_velocity() - lcKfInsGnssErrors->n_velocityError);
 
         // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
-        Eigen::Matrix3d n_DcmCorrected_b = (Eigen::Matrix3d::Identity() + skewSymmetricMatrix(lcKfInsGnssErrors->n_attitudeError)) * _posVelAttStates.at(i)->n_Quat_b().toRotationMatrix();
+        Eigen::Matrix3d n_DcmCorrected_b = (Eigen::Matrix3d::Identity() + skewSymmetricMatrix(lcKfInsGnssErrors->n_attitudeError)) * posVelAtt->n_Quat_b().toRotationMatrix();
         posVelAttCorrected->setAttitude_n_Quat_b(Eigen::Quaterniond(n_DcmCorrected_b).normalized());
 
         // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16
-        // Eigen::Quaterniond n_Quat_b = _posVelAttStates.at(i)->n_Quat_b()
+        // Eigen::Quaterniond n_Quat_b = posVelAtt->n_Quat_b()
         //                                  * (Eigen::AngleAxisd(attError(0), Eigen::Vector3d::UnitX())
         //                                     * Eigen::AngleAxisd(attError(1), Eigen::Vector3d::UnitY())
         //                                     * Eigen::AngleAxisd(attError(2), Eigen::Vector3d::UnitZ()))
@@ -442,17 +442,17 @@ void NAV::ImuIntegrator::recvLcKfInsGnssErrors(const std::shared_ptr<const NodeD
         // posVelAttCorrected->setAttitude_n_Quat_b(n_Quat_b.normalized());
 
         // Eigen::Vector3d attError = pvaError->n_attitudeError();
-        // const Eigen::Quaterniond& n_Quat_b = _posVelAttStates.at(i)->n_Quat_b();
+        // const Eigen::Quaterniond& n_Quat_b = posVelAtt->n_Quat_b();
         // Eigen::Quaterniond n_Quat_b_c{ n_Quat_b.w() + 0.5 * (+attError(0) * n_Quat_b.x() + attError(1) * n_Quat_b.y() + attError(2) * n_Quat_b.z()),
         //                            n_Quat_b.x() + 0.5 * (-attError(0) * n_Quat_b.w() + attError(1) * n_Quat_b.z() - attError(2) * n_Quat_b.y()),
         //                            n_Quat_b.y() + 0.5 * (-attError(0) * n_Quat_b.z() - attError(1) * n_Quat_b.w() + attError(2) * n_Quat_b.x()),
         //                            n_Quat_b.z() + 0.5 * (+attError(0) * n_Quat_b.y() - attError(1) * n_Quat_b.x() - attError(2) * n_Quat_b.w()) };
         // posVelAttCorrected->setAttitude_n_Quat_b(n_Quat_b_c.normalized());
 
-        _posVelAttStates.at(i) = posVelAttCorrected;
+        posVelAtt = posVelAttCorrected;
 
-        LOG_DATA("{}:     = lla_position ({})", nameId(), _posVelAttStates.at(i)->lla_position().transpose());
-        LOG_DATA("{}:     = n_velocity ({})", nameId(), _posVelAttStates.at(i)->n_velocity().transpose());
+        LOG_DATA("{}:     = lla_position ({})", nameId(), posVelAtt->lla_position().transpose());
+        LOG_DATA("{}:     = n_velocity ({})", nameId(), posVelAtt->n_velocity().transpose());
     }
 
     _lckfErrors = lcKfInsGnssErrors;
