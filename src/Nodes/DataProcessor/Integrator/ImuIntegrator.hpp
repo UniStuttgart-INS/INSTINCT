@@ -86,12 +86,6 @@ class ImuIntegrator : public Node
     /// @param[in] linkId Id of the link over which the data is received
     void recvImuBiases(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
-    /// @brief Corrects the provided Position, Velocity and Attitude with the corrections
-    /// @param[in] posVelAtt PosVelAtt to correct
-    /// @param[in] pvaError Corrections to apply
-    /// @return Newly allocated pointer to the corrected posVelAtt
-    static std::shared_ptr<const NAV::PosVelAtt> correctPosVelAtt(const std::shared_ptr<const NAV::PosVelAtt>& posVelAtt, const std::shared_ptr<const NAV::PVAError>& pvaError);
-
     /// @brief Integrates the Imu Observation data
     void integrateObservation();
 
@@ -162,9 +156,6 @@ class ImuIntegrator : public Node
 
     /// GUI flag, whether to show the input pin for PVA Corrections
     bool _showCorrectionsInputPin = false;
-
-    /// Pointer to the most recent PVA error
-    std::shared_ptr<const PVAError> _pvaError = nullptr;
 
     /// Accumulated IMU biases
     std::shared_ptr<const ImuBiases> _imuBiases = nullptr;

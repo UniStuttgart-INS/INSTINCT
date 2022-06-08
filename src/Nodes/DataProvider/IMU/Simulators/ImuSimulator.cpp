@@ -702,13 +702,13 @@ void NAV::ImuSimulator::SplineInitializer()
             auto n_Quat_e = trafo::n_Quat_e(lla_position(0), lla_position(1));
             Eigen::Vector3d n_velocity = n_calcVelocity(SplineTime[i], n_Quat_e);
 
-            const Eigen::Vector3d e_normalVectorCenterCircle{ std::cos(_lla_startPosition(0)) * std::cos(_lla_startPosition(1)),
-                                                              std::cos(_lla_startPosition(0)) * std::sin(_lla_startPosition(1)),
-                                                              std::sin(_lla_startPosition(0)) };
+            Eigen::Vector3d e_normalVectorCenterCircle{ std::cos(_lla_startPosition(0)) * std::cos(_lla_startPosition(1)),
+                                                        std::cos(_lla_startPosition(0)) * std::sin(_lla_startPosition(1)),
+                                                        std::sin(_lla_startPosition(0)) };
 
-            const Eigen::Vector3d e_normalVectorCurrentPosition{ std::cos(lla_position(0)) * std::cos(lla_position(1)),
-                                                                 std::cos(lla_position(0)) * std::sin(lla_position(1)),
-                                                                 std::sin(lla_position(0)) };
+            Eigen::Vector3d e_normalVectorCurrentPosition{ std::cos(lla_position(0)) * std::cos(lla_position(1)),
+                                                           std::cos(lla_position(0)) * std::sin(lla_position(1)),
+                                                           std::sin(lla_position(0)) };
 
             double yaw = calcYawFromVelocity(n_velocity);
 
@@ -823,7 +823,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     auto obs = std::make_shared<ImuObs>(_imuPos);
     obs->timeSinceStartup = static_cast<uint64_t>(imuUpdateTime * 1e9);
     obs->insTime = _startTime + std::chrono::duration<double>(imuUpdateTime);
-    LOG_DATA("{}: Simulating IMU data for time {}", nameId(), obs->insTime->toYMDHMS());
+    LOG_DATA("{}: Simulating IMU data for time [{}]", nameId(), obs->insTime->toYMDHMS());
 
     // --------------------------------------------------------- Calculation of data -----------------------------------------------------------
     LOG_DATA("{}: [{:8.3f}] lla_position = {}°, {}°, {} m", nameId(), imuUpdateTime, trafo::rad2deg(lla_position(0)), trafo::rad2deg(lla_position(1)), lla_position(2));
@@ -838,40 +838,40 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 
     auto b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
 
-    const Eigen::Vector3d n_omega_ie = n_Quat_e * InsConst::e_omega_ie;
+    Eigen::Vector3d n_omega_ie = n_Quat_e * InsConst::e_omega_ie;
     LOG_DATA("{}: [{:8.3f}] n_omega_ie = {} [rad/s]", nameId(), imuUpdateTime, n_omega_ie.transpose());
-    const double R_N = calcEarthRadius_N(lla_position(0));
+    double R_N = calcEarthRadius_N(lla_position(0));
     LOG_DATA("{}: [{:8.3f}] R_N = {} [m]", nameId(), imuUpdateTime, R_N);
-    const double R_E = calcEarthRadius_E(lla_position(0));
+    double R_E = calcEarthRadius_E(lla_position(0));
     LOG_DATA("{}: [{:8.3f}] R_E = {} [m]", nameId(), imuUpdateTime, R_E);
-    const Eigen::Vector3d n_omega_en = n_calcTransportRate(lla_position, n_vel, R_N, R_E);
+    Eigen::Vector3d n_omega_en = n_calcTransportRate(lla_position, n_vel, R_N, R_E);
     LOG_DATA("{}: [{:8.3f}] n_omega_en = {} [rad/s]", nameId(), imuUpdateTime, n_omega_en.transpose());
 
     // ------------------------------------------------------------ Accelerations --------------------------------------------------------------
 
     // Force to keep vehicle on track
-    const Eigen::Vector3d n_trajectoryAccel = n_calcTrajectoryAccel(imuUpdateTime, n_Quat_e, lla_position, n_vel);
+    Eigen::Vector3d n_trajectoryAccel = n_calcTrajectoryAccel(imuUpdateTime, n_Quat_e, lla_position, n_vel);
     LOG_DATA("{}: [{:8.3f}] n_trajectoryAccel = {} [m/s^2]", nameId(), imuUpdateTime, n_trajectoryAccel.transpose());
 
     // Measured acceleration in local-navigation frame coordinates [m/s^2]
     Eigen::Vector3d n_accel = n_trajectoryAccel;
     if (_coriolisAccelerationEnabled) // Apply Coriolis Acceleration
     {
-        const Eigen::Vector3d n_coriolisAcceleration = n_calcCoriolisAcceleration(n_omega_ie, n_omega_en, n_vel);
+        Eigen::Vector3d n_coriolisAcceleration = n_calcCoriolisAcceleration(n_omega_ie, n_omega_en, n_vel);
         LOG_DATA("{}: [{:8.3f}] n_coriolisAcceleration = {} [m/s^2]", nameId(), imuUpdateTime, n_coriolisAcceleration.transpose());
         n_accel += n_coriolisAcceleration;
     }
 
     // Mass attraction of the Earth (gravitation)
-    const Eigen::Vector3d n_gravitation = n_calcGravitation(lla_position, _gravitationModel);
+    Eigen::Vector3d n_gravitation = n_calcGravitation(lla_position, _gravitationModel);
     LOG_DATA("{}: [{:8.3f}] n_gravitation = {} [m/s^2] ({})", nameId(), imuUpdateTime, n_gravitation.transpose(), NAV::to_string(_gravitationModel));
     n_accel -= n_gravitation; // Apply the local gravity vector
 
     if (_centrifgalAccelerationEnabled) // Centrifugal acceleration caused by the Earth's rotation
     {
-        const Eigen::Vector3d e_centrifugalAcceleration = e_calcCentrifugalAcceleration(e_position);
+        Eigen::Vector3d e_centrifugalAcceleration = e_calcCentrifugalAcceleration(e_position);
         LOG_DATA("{}: [{:8.3f}] e_centrifugalAcceleration = {} [m/s^2]", nameId(), imuUpdateTime, e_centrifugalAcceleration.transpose());
-        const Eigen::Vector3d n_centrifugalAcceleration = n_Quat_e * e_centrifugalAcceleration;
+        Eigen::Vector3d n_centrifugalAcceleration = n_Quat_e * e_centrifugalAcceleration;
         LOG_DATA("{}: [{:8.3f}] n_centrifugalAcceleration = {} [m/s^2]", nameId(), imuUpdateTime, n_centrifugalAcceleration.transpose());
         n_accel += n_centrifugalAcceleration;
     }
@@ -882,7 +882,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 
     // ------------------------------------------------------------ Angular rates --------------------------------------------------------------
 
-    const Eigen::Vector3d omega_ip_p = p_calcOmega_ip(imuUpdateTime, Eigen::Vector3d{ roll, pitch, yaw }, b_Quat_n, n_omega_ie, n_omega_en);
+    Eigen::Vector3d omega_ip_p = p_calcOmega_ip(imuUpdateTime, Eigen::Vector3d{ roll, pitch, yaw }, b_Quat_n, n_omega_ie, n_omega_en);
     LOG_DATA("{}: [{:8.3f}] omega_ip_p = {} [rad/s]", nameId(), imuUpdateTime, omega_ip_p.transpose());
 
     // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
@@ -922,7 +922,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
     }
     auto obs = std::make_shared<PosVelAtt>();
     obs->insTime = _startTime + std::chrono::duration<double>(gnssUpdateTime);
-    LOG_DATA("{}: Simulating GNSS data for time {}", nameId(), obs->insTime->toYMDHMS());
+    LOG_DATA("{}: Simulating GNSS data for time [{}]", nameId(), obs->insTime->toYMDHMS());
 
     // --------------------------------------------------------- Calculation of data -----------------------------------------------------------
     LOG_DATA("{}: [{:8.3f}] lla_position = {}°, {}°, {} m", nameId(), gnssUpdateTime, trafo::rad2deg(lla_position(0)), trafo::rad2deg(lla_position(1)), lla_position(2));
@@ -990,7 +990,7 @@ Eigen::Vector3d NAV::ImuSimulator::p_calcOmega_ip(double time,
     const auto& R = rollPitchYaw(0);
     const auto& P = rollPitchYaw(1);
 
-    const Eigen::Quaterniond n_Quat_b = b_Quat_n.conjugate();
+    Eigen::Quaterniond n_Quat_b = b_Quat_n.conjugate();
 
     // #########################################################################################################################################
 
@@ -1022,9 +1022,9 @@ Eigen::Vector3d NAV::ImuSimulator::p_calcOmega_ip(double time,
     // ω_nb_b = [∂/∂t R] + C_3 [   0  ] + C_3 C_2 [   0  ]
     //          [   0  ]       [∂/∂t P]           [   0  ]
     //          [   0  ]       [   0  ]           [∂/∂t Y]
-    const Eigen::Vector3d b_omega_nb = Eigen::Vector3d{ R_dot, 0, 0 }
-                                       + C_3(R) * Eigen::Vector3d{ 0, P_dot, 0 }
-                                       + C_3(R) * C_2(P) * Eigen::Vector3d{ 0, 0, Y_dot };
+    Eigen::Vector3d b_omega_nb = Eigen::Vector3d{ R_dot, 0, 0 }
+                                 + C_3(R) * Eigen::Vector3d{ 0, P_dot, 0 }
+                                 + C_3(R) * C_2(P) * Eigen::Vector3d{ 0, 0, Y_dot };
 
     //  ω_ib_n = ω_in_n + ω_nb_n = (ω_ie_n + ω_en_n) + n_Quat_b * ω_nb_b
     Eigen::Vector3d n_omega_ib = n_Quat_b * b_omega_nb;
@@ -1038,7 +1038,7 @@ Eigen::Vector3d NAV::ImuSimulator::p_calcOmega_ip(double time,
     }
 
     // ω_ib_b = b_Quat_n * ω_ib_n
-    const Eigen::Vector3d b_omega_ib = b_Quat_n * n_omega_ib;
+    Eigen::Vector3d b_omega_ib = b_Quat_n * n_omega_ib;
 
     //                            = 0
     // ω_ip_p = p_Quat_b * (ω_ib_b + ω_bp_b) = p_Quat_b * ω_ib_b

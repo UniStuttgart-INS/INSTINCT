@@ -367,7 +367,7 @@ void NAV::ImuIntegrator::recvPosVelAttInit(const std::shared_ptr<const NodeData>
 void NAV::ImuIntegrator::recvImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
     auto imuObs = std::static_pointer_cast<const ImuObs>(nodeData);
-    LOG_DATA("{}: recvImuObs at time {}", nameId(), imuObs->insTime.value());
+    LOG_DATA("{}: recvImuObs at time [{}]", nameId(), imuObs->insTime->toYMDHMS());
 
     if (!imuObs->insTime.has_value() && !imuObs->timeSinceStartup.has_value())
     {
@@ -415,70 +415,60 @@ void NAV::ImuIntegrator::recvImuObs(const std::shared_ptr<const NodeData>& nodeD
 
 void NAV::ImuIntegrator::recvPVAError(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    _pvaError = std::static_pointer_cast<const PVAError>(nodeData);
+    auto pvaError = std::static_pointer_cast<const PVAError>(nodeData);
+
+    for (size_t i = 0; i < _posVelAttStates.size(); i++)
+    {
+        LOG_DATA("{}: Correcting posVelAtt at time [{}] with error from time [{}]", nameId(), _posVelAttStates.at(i)->insTime->toYMDHMS(), pvaError->insTime->toYMDHMS());
+        LOG_DATA("{}:     lla_position ({}) - ({})", nameId(), _posVelAttStates.at(i)->lla_position().transpose(), pvaError->lla_positionError().transpose());
+        LOG_DATA("{}:     n_velocity ({}) - ({})", nameId(), _posVelAttStates.at(i)->n_velocity().transpose(), pvaError->n_velocityError().transpose());
+
+        auto posVelAttCorrected = std::make_shared<PosVelAtt>(*_posVelAttStates.at(i));
+        posVelAttCorrected->setPosition_lla(_posVelAttStates.at(i)->lla_position() - pvaError->lla_positionError());
+
+        posVelAttCorrected->setVelocity_n(_posVelAttStates.at(i)->n_velocity() - pvaError->n_velocityError());
+
+        // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
+        Eigen::Vector3d attError = pvaError->n_attitudeError();
+        Eigen::Matrix3d n_DcmCorrected_b = (Eigen::Matrix3d::Identity() + skewSymmetricMatrix(attError)) * _posVelAttStates.at(i)->n_Quat_b().toRotationMatrix();
+        posVelAttCorrected->setAttitude_n_Quat_b(Eigen::Quaterniond(n_DcmCorrected_b).normalized());
+
+        // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16
+        // Eigen::Quaterniond n_Quat_b = _posVelAttStates.at(i)->n_Quat_b()
+        //                                  * (Eigen::AngleAxisd(attError(0), Eigen::Vector3d::UnitX())
+        //                                     * Eigen::AngleAxisd(attError(1), Eigen::Vector3d::UnitY())
+        //                                     * Eigen::AngleAxisd(attError(2), Eigen::Vector3d::UnitZ()))
+        //                                        .normalized();
+        // posVelAttCorrected->setAttitude_n_Quat_b(n_Quat_b.normalized());
+
+        // Eigen::Vector3d attError = pvaError->n_attitudeError();
+        // const Eigen::Quaterniond& n_Quat_b = _posVelAttStates.at(i)->n_Quat_b();
+        // Eigen::Quaterniond n_Quat_b_c{ n_Quat_b.w() + 0.5 * (+attError(0) * n_Quat_b.x() + attError(1) * n_Quat_b.y() + attError(2) * n_Quat_b.z()),
+        //                            n_Quat_b.x() + 0.5 * (-attError(0) * n_Quat_b.w() + attError(1) * n_Quat_b.z() - attError(2) * n_Quat_b.y()),
+        //                            n_Quat_b.y() + 0.5 * (-attError(0) * n_Quat_b.z() - attError(1) * n_Quat_b.w() + attError(2) * n_Quat_b.x()),
+        //                            n_Quat_b.z() + 0.5 * (+attError(0) * n_Quat_b.y() - attError(1) * n_Quat_b.x() - attError(2) * n_Quat_b.w()) };
+        // posVelAttCorrected->setAttitude_n_Quat_b(n_Quat_b_c.normalized());
+
+        _posVelAttStates.at(i) = posVelAttCorrected;
+
+        LOG_DATA("{}:     = lla_position ({})", nameId(), _posVelAttStates.at(i)->lla_position().transpose());
+        LOG_DATA("{}:     = n_velocity ({})", nameId(), _posVelAttStates.at(i)->n_velocity().transpose());
+    }
 }
 
 void NAV::ImuIntegrator::recvImuBiases(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    _imuBiases = std::static_pointer_cast<const ImuBiases>(nodeData);
-}
-
-std::shared_ptr<const NAV::PosVelAtt> NAV::ImuIntegrator::correctPosVelAtt(const std::shared_ptr<const NAV::PosVelAtt>& posVelAtt, const std::shared_ptr<const NAV::PVAError>& pvaError)
-{
-    auto posVelAttCorrected = std::make_shared<PosVelAtt>(*posVelAtt);
-    posVelAttCorrected->setPosition_lla(posVelAtt->lla_position() - pvaError->lla_positionError());
-
-    posVelAttCorrected->setVelocity_n(posVelAtt->n_velocity() - pvaError->n_velocityError());
-
-    // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
-    Eigen::Vector3d attError = pvaError->n_attitudeError();
-    Eigen::Matrix3d n_DcmCorrected_b = (Eigen::Matrix3d::Identity() + skewSymmetricMatrix(attError)) * posVelAtt->n_Quat_b().toRotationMatrix();
-    posVelAttCorrected->setAttitude_n_Quat_b(Eigen::Quaterniond(n_DcmCorrected_b).normalized());
-
-    // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16
-    // const Eigen::Quaterniond& n_Quat_b = posVelAtt->n_Quat_b()
-    //                                  * (Eigen::AngleAxisd(attError(0), Eigen::Vector3d::UnitX())
-    //                                     * Eigen::AngleAxisd(attError(1), Eigen::Vector3d::UnitY())
-    //                                     * Eigen::AngleAxisd(attError(2), Eigen::Vector3d::UnitZ()))
-    //                                        .normalized();
-    // posVelAttCorrected->setAttitude_n_Quat_b(n_Quat_b.normalized());
-
-    // Eigen::Vector3d attError = pvaError->n_attitudeError();
-    // const Eigen::Quaterniond& n_Quat_b = posVelAtt->n_Quat_b();
-    // Eigen::Quaterniond n_Quat_b_c{ n_Quat_b.w() + 0.5 * (+attError(0) * n_Quat_b.x() + attError(1) * n_Quat_b.y() + attError(2) * n_Quat_b.z()),
-    //                            n_Quat_b.x() + 0.5 * (-attError(0) * n_Quat_b.w() + attError(1) * n_Quat_b.z() - attError(2) * n_Quat_b.y()),
-    //                            n_Quat_b.y() + 0.5 * (-attError(0) * n_Quat_b.z() - attError(1) * n_Quat_b.w() + attError(2) * n_Quat_b.x()),
-    //                            n_Quat_b.z() + 0.5 * (+attError(0) * n_Quat_b.y() - attError(1) * n_Quat_b.x() - attError(2) * n_Quat_b.w()) };
-    // posVelAttCorrected->setAttitude_n_Quat_b(n_Quat_b_c.normalized());
-
-    return posVelAttCorrected;
+    auto imuBiases = std::static_pointer_cast<const ImuBiases>(nodeData);
+    LOG_DATA("{}: recvImuBiases at time [{}]", nameId(), imuBiases->insTime->toYMDHMS());
+    _imuBiases = imuBiases;
 }
 
 void NAV::ImuIntegrator::integrateObservation()
 {
-    if (_pvaError)
-    {
-        LOG_DATA("{}: Applying PVA corrections for time {}", nameId(), _pvaError->insTime->toYMDHMS());
-
-        for (auto& posVelAtt : _posVelAttStates)
-        {
-            posVelAtt = correctPosVelAtt(posVelAtt, _pvaError);
-        }
-
-        _pvaError.reset();
-    }
-    LOG_DATA("{}: integrateObservation at time {}", nameId(), _imuObservations.front()->insTime->toYMDHMS());
-
     // IMU Observation at the time tₖ
     const std::shared_ptr<const ImuObs>& imuObs__t0 = _imuObservations.at(0);
     // IMU Observation at the time tₖ₋₁
     const std::shared_ptr<const ImuObs>& imuObs__t1 = _imuObservations.at(1);
-
-    // Position, Velocity and Attitude at the time tₖ₋₁
-    const std::shared_ptr<const PosVelAtt>& posVelAtt__t1 = _posVelAttStates.at(0);
-
-    // Position and rotation information for conversion of IMU data from platform to body frame
-    const auto& imuPosition = imuObs__t0->imuPos;
 
     // Result State Data at the time tₖ
     auto posVelAtt__t0 = std::make_shared<InertialNavSol>();
@@ -522,8 +512,18 @@ void NAV::ImuIntegrator::integrateObservation()
         // Update time
         posVelAtt__t0->insTime = _time__init + std::chrono::nanoseconds(imuObs__t0->timeSinceStartup.value() - _timeSinceStartup__init);
 
-        LOG_DATA("{}: time__t0 - time__t1 = {} - {} = {}", nameId(), time__t0, time__t1, timeDifferenceSec);
+        LOG_DATA("{}: time__t0 - time__t1 = [{}] - [{}] = {}", nameId(), time__t0, time__t1, timeDifferenceSec);
     }
+    auto dt = fmt::format("{:0.5f}", timeDifferenceSec);
+    dt.erase(std::find_if(dt.rbegin(), dt.rend(), [](char ch) { return ch != '0'; }).base(), dt.end());
+    LOG_DATA("{}: Integrating (dt = {}s) from [{}] to [{}]", nameId(), dt,
+             imuObs__t1->insTime->toYMDHMS(), imuObs__t0->insTime->toYMDHMS());
+
+    // Position, Velocity and Attitude at the time tₖ₋₁
+    const std::shared_ptr<const PosVelAtt>& posVelAtt__t1 = _posVelAttStates.at(0);
+
+    // Position and rotation information for conversion of IMU data from platform to body frame
+    const auto& imuPosition = imuObs__t0->imuPos;
 
     // ω_ip_p (tₖ₋₁) Angular velocity in [rad/s], of the inertial to platform system, in platform coordinates, at the time tₖ₋₁
     Eigen::Vector3d p_omega_ip__t1 = !_prefereUncompensatedData && imuObs__t1->gyroCompXYZ.has_value()
@@ -547,7 +547,7 @@ void NAV::ImuIntegrator::integrateObservation()
 
     if (_imuBiases)
     {
-        LOG_DATA("{}: Applying IMU Biases", nameId());
+        LOG_DATA("{}: Applying IMU Biases p_quatGyro_b {}, p_quatAccel_b {}", nameId(), imuPosition.p_quatGyro_b(), imuPosition.p_quatAccel_b());
         p_omega_ip__t1 -= imuPosition.p_quatGyro_b() * _imuBiases->b_biasGyro;
         p_omega_ip__t0 -= imuPosition.p_quatGyro_b() * _imuBiases->b_biasGyro;
         p_f_ip__t1 -= imuPosition.p_quatAccel_b() * _imuBiases->b_biasAccel;
@@ -559,29 +559,29 @@ void NAV::ImuIntegrator::integrateObservation()
     LOG_DATA("{}: p_f_ip__t0 = {}", nameId(), p_f_ip__t0.transpose());
 
     // q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
-    const Eigen::Quaterniond n_Quat_b__t1 = posVelAtt__t1->n_Quat_b();
-    LOG_DATA("{}: n_Quat_b__t1 = {}", nameId(), n_Quat_b__t1.coeffs().transpose());
+    const Eigen::Quaterniond& n_Quat_b__t1 = posVelAtt__t1->n_Quat_b();
+    LOG_DATA("{}: n_Quat_b__t1 = {}", nameId(), n_Quat_b__t1);
 
     // n_velocity (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
     const Eigen::Vector3d& n_velocity__t1 = posVelAtt__t1->n_velocity();
     LOG_DATA("{}: n_velocity__t1 = {}", nameId(), n_velocity__t1.transpose());
 
     // [latitude 𝜙, longitude λ, altitude h] (tₖ₋₁) Position in [rad, rad, m] at the time tₖ₋₁
-    const Eigen::Vector3d lla_position__t1 = posVelAtt__t1->lla_position();
+    const Eigen::Vector3d& lla_position__t1 = posVelAtt__t1->lla_position();
     LOG_DATA("{}: lla_position__t1 = {}", nameId(), lla_position__t1.transpose());
 
     // ω_ip_b (tₖ₋₁) Angular velocity in [rad/s], of the inertial to platform system, in body coordinates, at the time tₖ₋₁
-    const Eigen::Vector3d b_omega_ip__t1 = imuPosition.b_quatGyro_p() * p_omega_ip__t1;
+    Eigen::Vector3d b_omega_ip__t1 = imuPosition.b_quatGyro_p() * p_omega_ip__t1;
     LOG_DATA("{}: b_omega_ip__t1 = {}", nameId(), b_omega_ip__t1.transpose());
     // ω_ip_b (tₖ) Angular velocity in [rad/s], of the inertial to platform system, in body coordinates, at the time tₖ
-    const Eigen::Vector3d b_omega_ip__t0 = imuPosition.b_quatGyro_p() * p_omega_ip__t0;
+    Eigen::Vector3d b_omega_ip__t0 = imuPosition.b_quatGyro_p() * p_omega_ip__t0;
     LOG_DATA("{}: b_omega_ip__t0 = {}", nameId(), b_omega_ip__t0.transpose());
 
     // f_b (tₖ₋₁) Acceleration in [m/s^2], in body coordinates, at the time tₖ₋₁
-    const Eigen::Vector3d b_f__t1 = imuPosition.b_quatAccel_p() * p_f_ip__t1;
+    Eigen::Vector3d b_f__t1 = imuPosition.b_quatAccel_p() * p_f_ip__t1;
     LOG_DATA("{}: b_f__t1 = {}", nameId(), b_f__t1.transpose());
     // f_b (tₖ) Acceleration in [m/s^2], in body coordinates, at the time tₖ
-    const Eigen::Vector3d b_f__t0 = imuPosition.b_quatAccel_p() * p_f_ip__t0;
+    Eigen::Vector3d b_f__t0 = imuPosition.b_quatAccel_p() * p_f_ip__t0;
     LOG_DATA("{}: b_f__t0 = {}", nameId(), b_f__t0.transpose());
 
     //  0  1  2  3   4    5    6   7  8  9
@@ -652,7 +652,7 @@ void NAV::ImuIntegrator::integrateObservation()
     LOG_DATA("{}: posVelAtt__t0->lla_position() - posVelAtt__t1->lla_position() = {} [m]", nameId(),
              calcGeographicalDistance(posVelAtt__t0->latitude(), posVelAtt__t0->longitude(), posVelAtt__t1->latitude(), posVelAtt__t1->longitude()));
     LOG_DATA("{}: posVelAtt__t0->n_velocity() = {}", nameId(), posVelAtt__t0->n_velocity().transpose());
-    LOG_DATA("{}: posVelAtt__t0->n_Quat_b() = {}", nameId(), posVelAtt__t0->n_Quat_b().coeffs().transpose());
+    LOG_DATA("{}: posVelAtt__t0->n_Quat_b() = {}", nameId(), posVelAtt__t0->n_Quat_b());
 
     // Cycle lists
     _imuObservations.pop_back();

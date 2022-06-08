@@ -158,13 +158,13 @@ Eigen::Matrix3d n_F_dr_dr(const Eigen::Vector3d& n_velocity, double latitude, do
 Eigen::Matrix3d n_F_df_df(const Eigen::Vector3d& beta_a)
 {
     // Math: \mathbf{F}_{a} = - \begin{bmatrix} \beta_{a,1} & 0 & 0 \\ 0 & \beta_{a,2} & 0 \\ 0 & 0 & \beta_{a,2} \end{bmatrix} \quad \text{T. Hobiger}\,(6.3)
-    return -1.0 * Eigen::DiagonalMatrix<double, 3>{ beta_a };
+    return -1.0 * beta_a.asDiagonal();
 }
 
 Eigen::Matrix3d n_F_dw_dw(const Eigen::Vector3d& beta_omega)
 {
     // Math: \mathbf{F}_{\omega} = - \begin{bmatrix} \beta_{\omega,1} & 0 & 0 \\ 0 & \beta_{\omega,2} & 0 \\ 0 & 0 & \beta_{\omega,2} \end{bmatrix} \quad \text{T. Hobiger}\,(6.3)
-    return -1.0 * Eigen::DiagonalMatrix<double, 3>{ beta_omega };
+    return -1.0 * beta_omega.asDiagonal();
 }
 
 } // namespace NAV

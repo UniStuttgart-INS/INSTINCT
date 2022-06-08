@@ -67,12 +67,11 @@ void NAV::util::time::SetCurrentTime(const NAV::InsTime& insTime)
     {
         if (timeMode == Mode::REAL_TIME)
         {
-            LOG_INFO("Updating current Time [{} {:.6f}] to [{} {:.6f}]",
-                     currentExactTime.toGPSweekTow().gpsWeek, currentExactTime.toGPSweekTow().tow,
-                     insTime.toGPSweekTow().gpsWeek, insTime.toGPSweekTow().tow);
+            LOG_INFO("Updating current Time [{}] to [{} ]", currentExactTime, insTime);
         }
         currentTimeComputer = std::chrono::steady_clock::now();
         currentTime = insTime;
+        LOG_DATA("Updating current Time [{}] to [{} ]", currentExactTime, insTime);
     }
 }
 
