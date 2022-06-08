@@ -9,9 +9,37 @@
 #include <ctime>
 #include <iostream>
 
+#define C_NO "\033[0m"
+
+#define C_BLACK "\033[0;30m"
+#define C_DARK_GRAY "\033[1;30m"
+
+#define C_RED "\033[0;31m"
+#define C_LIGHT_RED "\033[1;31m"
+
+#define C_GREEN "\033[0;32m"
+#define C_LIGHT_GREEN "\033[1;32m"
+
+#define C_ORANGE "\033[0;33m"
+#define C_YELLOW "\033[1;33m"
+
+#define C_BLUE "\033[0;34m"
+#define C_LIGHT_BLUE "\033[1;34m"
+
+#define C_PURPLE "\033[0;35m"
+#define C_LIGHT_PURPLE "\033[1;35m"
+
+#define C_CYAN "\033[0;36m"
+#define C_LIGHT_CYAN "\033[1;36m"
+
+#define C_LIGHT_GRAY "\033[0;37m"
+#define C_WHITE "\033[1;37m"
+
 // See https://github.com/gabime/spdlog/wiki/3.-Custom-formatting for formatting options
 const char* logPatternTrace = "[%H:%M:%S.%e] [%^%L%$] [%s:%#] [%!()] %v";
+const char* logPatternTraceColor = "[%H:%M:%S.%e] [%^%L%$] [" C_CYAN "%s:%#" C_NO "] [" C_ORANGE "%!()" C_NO "] %v";
 const char* logPatternDebug = "[%H:%M:%S.%e] [%^%L%$] [%s:%#] %v";
+const char* logPatternDebugColor = "[%H:%M:%S.%e] [%^%L%$] [" C_CYAN "%s:%#" C_NO "] %v";
 const char* logPatternInfo = "[%H:%M:%S.%e] [%^%L%$] %v";
 
 Logger::Logger(const std::string& logpath)
@@ -22,10 +50,10 @@ Logger::Logger(const std::string& logpath)
     switch (spdlog::level::from_str(NAV::ConfigManager::Get<std::string>("console-log-level", "trace")))
     {
     case spdlog::level::trace:
-        console_sink->set_pattern(logPatternTrace);
+        console_sink->set_pattern(logPatternTraceColor);
         break;
     case spdlog::level::debug:
-        console_sink->set_pattern(logPatternDebug);
+        console_sink->set_pattern(logPatternDebugColor);
         break;
     case spdlog::level::info:
     case spdlog::level::warn:
