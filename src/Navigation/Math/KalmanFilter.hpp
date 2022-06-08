@@ -42,6 +42,9 @@ class KalmanFilter
         // 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
         R = Eigen::MatrixXd::Zero(m, m);
 
+        // 𝗦 Measurement prediction covariance matrix
+        S = Eigen::MatrixXd::Zero(m, m);
+
         // 𝐊 Kalman gain matrix
         K = Eigen::MatrixXd::Zero(n, m);
 
@@ -76,6 +79,9 @@ class KalmanFilter
         // 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
         R.setZero();
 
+        // 𝗦 Measurement prediction covariance matrix
+        S.setZero();
+
         // 𝐊 Kalman gain matrix
         K.setZero();
     }
@@ -98,8 +104,10 @@ class KalmanFilter
     /// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 3.2.2)
     void correct()
     {
+        S = H * P * H.transpose() + R;
+
         // Math: \mathbf{K}_k = \mathbf{P}_k^- \mathbf{H}_k^T (\mathbf{H}_k \mathbf{P}_k^- \mathbf{H}_k^T + R_k)^{-1} \qquad \text{P. Groves}\,(3.21)
-        K = P * H.transpose() * (H * P * H.transpose() + R).inverse();
+        K = P * H.transpose() * S.inverse();
 
         // Math: \begin{align*} \mathbf{\hat{x}}_k^+ &= \mathbf{\hat{x}}_k^- + \mathbf{K}_k (\mathbf{z}_k - \mathbf{H}_k \mathbf{\hat{x}}_k^-) \\ &= \mathbf{\hat{x}}_k^- + \mathbf{K}_k \mathbf{\delta z}_k^{-} \end{align*} \qquad \text{P. Groves}\,(3.24)
         x = x + K * (z - H * x);
@@ -158,6 +166,9 @@ class KalmanFilter
 
     /// 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
     Eigen::MatrixXd R;
+
+    /// 𝗦 Measurement prediction covariance matrix
+    Eigen::MatrixXd S;
 
     /// 𝐊 Kalman gain matrix
     Eigen::MatrixXd K;
