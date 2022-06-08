@@ -179,8 +179,8 @@ void NAV::ImuIntegrator::guiConfig()
 
         if (_showCorrectionsInputPin && inputPins.size() < 4)
         {
-            nm::CreateInputPin(this, "PVAError", Pin::Type::Flow, { PVAError::type() }, &ImuIntegrator::recvPVAError);
-            nm::CreateInputPin(this, "ImuBiases", Pin::Type::Flow, { ImuBiases::type() }, &ImuIntegrator::recvImuBiases);
+            nm::CreateInputPin(this, "Errors", Pin::Type::Flow, { LcKfInsGnssErrors::type() }, &ImuIntegrator::recvLcKfInsGnssErrors);
+            nm::CreateInputPin(this, "Predict", Pin::Type::Flow, { ImuObs::type() }, &ImuIntegrator::recvImuObs);
         }
         else if (!_showCorrectionsInputPin)
         {
@@ -274,8 +274,8 @@ void NAV::ImuIntegrator::restore(json const& j)
         _showCorrectionsInputPin = j.at("showCorrectionsInputPin");
         if (_showCorrectionsInputPin && inputPins.size() < 4)
         {
-            nm::CreateInputPin(this, "PVAError", Pin::Type::Flow, { PVAError::type() }, &ImuIntegrator::recvPVAError);
-            nm::CreateInputPin(this, "ImuBiases", Pin::Type::Flow, { ImuBiases::type() }, &ImuIntegrator::recvImuBiases);
+            nm::CreateInputPin(this, "Errors", Pin::Type::Flow, { LcKfInsGnssErrors::type() }, &ImuIntegrator::recvLcKfInsGnssErrors);
+            nm::CreateInputPin(this, "Predict", Pin::Type::Flow, { ImuObs::type() }, &ImuIntegrator::recvImuObs);
         }
         else if (!_showCorrectionsInputPin)
         {
@@ -312,7 +312,7 @@ bool NAV::ImuIntegrator::initialize()
 
     _imuObservations.clear();
     _posVelAttStates.clear();
-    _imuBiases.reset();
+    _lckfErrors.reset();
 
     _time__init = InsTime();
     _timeSinceStartup__init = 0;
@@ -413,24 +413,24 @@ void NAV::ImuIntegrator::recvImuObs(const std::shared_ptr<const NodeData>& nodeD
     }
 }
 
-void NAV::ImuIntegrator::recvPVAError(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::ImuIntegrator::recvLcKfInsGnssErrors(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    auto pvaError = std::static_pointer_cast<const PVAError>(nodeData);
+    auto lcKfInsGnssErrors = std::static_pointer_cast<const LcKfInsGnssErrors>(nodeData);
+    LOG_DATA("{}: recvLcKfInsGnssErrors at time [{}]", nameId(), lcKfInsGnssErrors->insTime->toYMDHMS());
 
     for (size_t i = 0; i < _posVelAttStates.size(); i++)
     {
-        LOG_DATA("{}: Correcting posVelAtt at time [{}] with error from time [{}]", nameId(), _posVelAttStates.at(i)->insTime->toYMDHMS(), pvaError->insTime->toYMDHMS());
-        LOG_DATA("{}:     lla_position ({}) - ({})", nameId(), _posVelAttStates.at(i)->lla_position().transpose(), pvaError->lla_positionError().transpose());
-        LOG_DATA("{}:     n_velocity ({}) - ({})", nameId(), _posVelAttStates.at(i)->n_velocity().transpose(), pvaError->n_velocityError().transpose());
+        LOG_DATA("{}: Correcting posVelAtt at time [{}] with error from time [{}]", nameId(), _posVelAttStates.at(i)->insTime->toYMDHMS(), lcKfInsGnssErrors->insTime->toYMDHMS());
+        LOG_DATA("{}:     lla_position ({}) - ({})", nameId(), _posVelAttStates.at(i)->lla_position().transpose(), lcKfInsGnssErrors->lla_positionError.transpose());
+        LOG_DATA("{}:     n_velocity ({}) - ({})", nameId(), _posVelAttStates.at(i)->n_velocity().transpose(), lcKfInsGnssErrors->n_velocityError.transpose());
 
         auto posVelAttCorrected = std::make_shared<PosVelAtt>(*_posVelAttStates.at(i));
-        posVelAttCorrected->setPosition_lla(_posVelAttStates.at(i)->lla_position() - pvaError->lla_positionError());
+        posVelAttCorrected->setPosition_lla(_posVelAttStates.at(i)->lla_position() - lcKfInsGnssErrors->lla_positionError);
 
-        posVelAttCorrected->setVelocity_n(_posVelAttStates.at(i)->n_velocity() - pvaError->n_velocityError());
+        posVelAttCorrected->setVelocity_n(_posVelAttStates.at(i)->n_velocity() - lcKfInsGnssErrors->n_velocityError);
 
         // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
-        Eigen::Vector3d attError = pvaError->n_attitudeError();
-        Eigen::Matrix3d n_DcmCorrected_b = (Eigen::Matrix3d::Identity() + skewSymmetricMatrix(attError)) * _posVelAttStates.at(i)->n_Quat_b().toRotationMatrix();
+        Eigen::Matrix3d n_DcmCorrected_b = (Eigen::Matrix3d::Identity() + skewSymmetricMatrix(lcKfInsGnssErrors->n_attitudeError)) * _posVelAttStates.at(i)->n_Quat_b().toRotationMatrix();
         posVelAttCorrected->setAttitude_n_Quat_b(Eigen::Quaterniond(n_DcmCorrected_b).normalized());
 
         // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16
@@ -454,13 +454,8 @@ void NAV::ImuIntegrator::recvPVAError(const std::shared_ptr<const NodeData>& nod
         LOG_DATA("{}:     = lla_position ({})", nameId(), _posVelAttStates.at(i)->lla_position().transpose());
         LOG_DATA("{}:     = n_velocity ({})", nameId(), _posVelAttStates.at(i)->n_velocity().transpose());
     }
-}
 
-void NAV::ImuIntegrator::recvImuBiases(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
-{
-    auto imuBiases = std::static_pointer_cast<const ImuBiases>(nodeData);
-    LOG_DATA("{}: recvImuBiases at time [{}]", nameId(), imuBiases->insTime->toYMDHMS());
-    _imuBiases = imuBiases;
+    _lckfErrors = lcKfInsGnssErrors;
 }
 
 void NAV::ImuIntegrator::integrateObservation()
@@ -545,13 +540,13 @@ void NAV::ImuIntegrator::integrateObservation()
                                      ? imuObs__t0->accelCompXYZ.value()
                                      : imuObs__t0->accelUncompXYZ.value();
 
-    if (_imuBiases)
+    if (_lckfErrors)
     {
         LOG_DATA("{}: Applying IMU Biases p_quatGyro_b {}, p_quatAccel_b {}", nameId(), imuPosition.p_quatGyro_b(), imuPosition.p_quatAccel_b());
-        p_omega_ip__t1 -= imuPosition.p_quatGyro_b() * _imuBiases->b_biasGyro;
-        p_omega_ip__t0 -= imuPosition.p_quatGyro_b() * _imuBiases->b_biasGyro;
-        p_f_ip__t1 -= imuPosition.p_quatAccel_b() * _imuBiases->b_biasAccel;
-        p_f_ip__t0 -= imuPosition.p_quatAccel_b() * _imuBiases->b_biasAccel;
+        p_omega_ip__t1 -= imuPosition.p_quatGyro_b() * _lckfErrors->b_biasGyro;
+        p_omega_ip__t0 -= imuPosition.p_quatGyro_b() * _lckfErrors->b_biasGyro;
+        p_f_ip__t1 -= imuPosition.p_quatAccel_b() * _lckfErrors->b_biasAccel;
+        p_f_ip__t0 -= imuPosition.p_quatAccel_b() * _lckfErrors->b_biasAccel;
     }
     LOG_DATA("{}: p_omega_ip__t1 = {}", nameId(), p_omega_ip__t1.transpose());
     LOG_DATA("{}: p_omega_ip__t0 = {}", nameId(), p_omega_ip__t0.transpose());

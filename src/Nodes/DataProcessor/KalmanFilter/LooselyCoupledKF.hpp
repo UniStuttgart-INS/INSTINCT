@@ -9,7 +9,7 @@
 #include "internal/Node/Node.hpp"
 #include "Navigation/Time/InsTime.hpp"
 #include "NodeData/State/InertialNavSol.hpp"
-#include "NodeData/State/ImuBiases.hpp"
+#include "NodeData/State/LcKfInsGnssErrors.hpp"
 
 #include "Navigation/Math/KalmanFilter.hpp"
 
@@ -52,16 +52,16 @@ class LooselyCoupledKF : public Node
     void restore(const json& j) override;
 
   private:
-    constexpr static size_t OUTPUT_PORT_INDEX_PVA_ERROR = 0;  ///< @brief Flow (PVAError)
-    constexpr static size_t OUTPUT_PORT_INDEX_IMU_BIASES = 1; ///< @brief Flow (ImuBiases)
-    constexpr static size_t OUTPUT_PORT_INDEX_x = 2;          ///< @brief x̂ State vector
-    constexpr static size_t OUTPUT_PORT_INDEX_P = 3;          ///< @brief 𝐏 Error covariance matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_Phi = 4;        ///< @brief 𝚽 State transition matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_Q = 5;          ///< @brief 𝐐 System/Process noise covariance matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_z = 6;          ///< @brief 𝐳 Measurement vector
-    constexpr static size_t OUTPUT_PORT_INDEX_H = 7;          ///< @brief 𝐇 Measurement sensitivity Matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_R = 8;          ///< @brief 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_K = 9;          ///< @brief 𝐊 Kalman gain matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_ERROR = 0;          ///< @brief Flow (LcKfInsGnssErrors)
+    constexpr static size_t OUTPUT_PORT_INDEX_MANUAL_PREDICT = 1; ///< @brief Flow (ImuObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_x = 2;              ///< @brief x̂ State vector
+    constexpr static size_t OUTPUT_PORT_INDEX_P = 3;              ///< @brief 𝐏 Error covariance matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_Phi = 4;            ///< @brief 𝚽 State transition matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_Q = 5;              ///< @brief 𝐐 System/Process noise covariance matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_z = 6;              ///< @brief 𝐳 Measurement vector
+    constexpr static size_t OUTPUT_PORT_INDEX_H = 7;              ///< @brief 𝐇 Measurement sensitivity Matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_R = 8;              ///< @brief 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_K = 9;              ///< @brief 𝐊 Kalman gain matrix
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -100,8 +100,10 @@ class LooselyCoupledKF : public Node
     /// Time when the last prediction was triggered
     InsTime _lastPredictTime;
 
-    /// Accumulated IMU biases
-    ImuBiases _accumulatedImuBiases;
+    /// Accumulated Accelerometer biases
+    Eigen::Vector3d _accumulatedAccelBiases;
+    /// Accumulated Gyroscope biases
+    Eigen::Vector3d _accumulatedGyroBiases;
 
     /// Kalman Filter representation
     KalmanFilter _kalmanFilter{ 15, 6 };

@@ -8,8 +8,6 @@
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/widgets/InputWithUnit.hpp"
 
-#include "NodeData/State/PVAError.hpp"
-
 #include "internal/FlowManager.hpp"
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -43,8 +41,8 @@ NAV::LooselyCoupledKF::LooselyCoupledKF()
 
     nm::CreateInputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() }, &LooselyCoupledKF::recvInertialNavigationSolution);
     nm::CreateInputPin(this, "GNSSNavigationSolution", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &LooselyCoupledKF::recvGNSSNavigationSolution);
-    nm::CreateOutputPin(this, "PVAError", Pin::Type::Flow, { NAV::PVAError::type() });
-    nm::CreateOutputPin(this, "ImuBiases", Pin::Type::Flow, { NAV::ImuBiases::type() });
+    nm::CreateOutputPin(this, "Errors", Pin::Type::Flow, { NAV::LcKfInsGnssErrors::type() });
+    nm::CreateOutputPin(this, "Predict", Pin::Type::Flow, { NAV::ImuObs::type() });
 }
 
 NAV::LooselyCoupledKF::~LooselyCoupledKF()
@@ -579,8 +577,8 @@ bool NAV::LooselyCoupledKF::initialize()
 
     _latestInertialNavSol = nullptr;
     _lastPredictTime = InsTime();
-    _accumulatedImuBiases.b_biasAccel.setZero();
-    _accumulatedImuBiases.b_biasGyro.setZero();
+    _accumulatedAccelBiases.setZero();
+    _accumulatedGyroBiases.setZero();
 
     // Initial Covariance of the attitude angles in [rad²]
     Eigen::Vector3d variance_angles = Eigen::Vector3d::Zero();
@@ -707,13 +705,12 @@ void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(const std::shared_ptr<con
 
     if (_latestInertialNavSol)
     {
-        if (_lastPredictTime < gnssMeasurement->insTime.value())
+        if (_lastPredictTime < gnssMeasurement->insTime.value()) // We need to predict to the update time before updating
         {
-            auto inertialNavSol = std::make_shared<InertialNavSol>(*_latestInertialNavSol);
-            inertialNavSol->insTime = gnssMeasurement->insTime;
-            looselyCoupledPrediction(inertialNavSol, static_cast<double>((gnssMeasurement->insTime.value() - _lastPredictTime).count()));
+            auto imuObs = std::make_shared<ImuObs>(*_latestInertialNavSol->imuObs);
+            imuObs->insTime = gnssMeasurement->insTime;
 
-            // looselyCoupledPrediction(_latestInertialNavSol, static_cast<double>((gnssMeasurement->insTime.value() - _lastPredictTime).count()));
+            invokeCallbacks(OUTPUT_PORT_INDEX_MANUAL_PREDICT, imuObs); // Prediction consists out of ImuIntegration and prediction (gets triggered from it)
         }
 
         looselyCoupledUpdate(gnssMeasurement);
@@ -771,7 +768,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
 
     // a_p Acceleration in [m/s^2], in body coordinates
     Eigen::Vector3d b_acceleration = inertialNavSol->imuObs->imuPos.b_quatAccel_p() * inertialNavSol->imuObs->accelUncompXYZ.value()
-                                     - _accumulatedImuBiases.b_biasAccel;
+                                     - _accumulatedAccelBiases;
     LOG_DATA("{}:     b_acceleration = {} [m/s^2]", nameId(), b_acceleration.transpose());
 
     // omega_in^n = omega_ie^n + omega_en^n
@@ -974,7 +971,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
 
     // Angular rate measured in units of [rad/s], and given in the body frame
     Eigen::Vector3d b_omega_ip = _latestInertialNavSol->imuObs->imuPos.b_quatGyro_p() * _latestInertialNavSol->imuObs->gyroUncompXYZ.value()
-                                 - _accumulatedImuBiases.b_biasGyro;
+                                 - _accumulatedGyroBiases;
     LOG_DATA("{}:     b_omega_ip = {} [rad/s]", nameId(), b_omega_ip.transpose());
 
     // Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
@@ -1105,27 +1102,23 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         }
     }
 
+    _accumulatedAccelBiases += _kalmanFilter.x.block<3, 1>(9, 0) * (1. / SCALE_FACTOR_ACCELERATION);
+    _accumulatedGyroBiases += _kalmanFilter.x.block<3, 1>(12, 0) * (1. / SCALE_FACTOR_ANGULAR_RATE);
+
     // Push out the new data
-    auto pvaError = std::make_shared<PVAError>();
-    pvaError->insTime = gnssMeasurement->insTime;
-    pvaError->lla_positionError() = _kalmanFilter.x.block<3, 1>(6, 0).array() * Eigen::Array3d(1. / SCALE_FACTOR_LAT_LON, 1. / SCALE_FACTOR_LAT_LON, 1);
-    pvaError->n_velocityError() = _kalmanFilter.x.block<3, 1>(3, 0);
-    pvaError->n_attitudeError() = _kalmanFilter.x.block<3, 1>(0, 0) * (1. / SCALE_FACTOR_ATTITUDE);
-
-    _accumulatedImuBiases.b_biasAccel += _kalmanFilter.x.block<3, 1>(9, 0) * (1. / SCALE_FACTOR_ACCELERATION);
-    _accumulatedImuBiases.b_biasGyro += _kalmanFilter.x.block<3, 1>(12, 0) * (1. / SCALE_FACTOR_ANGULAR_RATE);
-
-    auto imuBiases = std::make_shared<ImuBiases>();
-    imuBiases->insTime = gnssMeasurement->insTime;
-    imuBiases->b_biasAccel = _accumulatedImuBiases.b_biasAccel;
-    imuBiases->b_biasGyro = _accumulatedImuBiases.b_biasGyro;
+    auto lcKfInsGnssErrors = std::make_shared<LcKfInsGnssErrors>();
+    lcKfInsGnssErrors->insTime = gnssMeasurement->insTime;
+    lcKfInsGnssErrors->lla_positionError = _kalmanFilter.x.block<3, 1>(6, 0).array() * Eigen::Array3d(1. / SCALE_FACTOR_LAT_LON, 1. / SCALE_FACTOR_LAT_LON, 1);
+    lcKfInsGnssErrors->n_velocityError = _kalmanFilter.x.block<3, 1>(3, 0);
+    lcKfInsGnssErrors->n_attitudeError = _kalmanFilter.x.block<3, 1>(0, 0) * (1. / SCALE_FACTOR_ATTITUDE);
+    lcKfInsGnssErrors->b_biasAccel = _accumulatedAccelBiases;
+    lcKfInsGnssErrors->b_biasGyro = _accumulatedGyroBiases;
 
     // Closed loop
     // _kalmanFilter.x.block<9, 1>(0, 0).setZero();
     _kalmanFilter.x.setZero();
 
-    invokeCallbacks(OUTPUT_PORT_INDEX_PVA_ERROR, pvaError);
-    invokeCallbacks(OUTPUT_PORT_INDEX_IMU_BIASES, imuBiases);
+    invokeCallbacks(OUTPUT_PORT_INDEX_ERROR, lcKfInsGnssErrors);
 }
 
 // ###########################################################################################################

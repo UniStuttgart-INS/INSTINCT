@@ -297,7 +297,7 @@ NAV::Plot::Plot()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 750, 650 };
 
-    _dataIdentifier = { PosVelAtt::type(), PVAError::type(), ImuBiases::type(),
+    _dataIdentifier = { PosVelAtt::type(), LcKfInsGnssErrors::type(),
                         RtklibPosObs::type(), UbloxObs::type(),
                         ImuObs::type(), KvhObs::type(), ImuObsWDelta::type(),
                         VectorNavBinaryOutput::type() };
@@ -1388,7 +1388,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "Quaternion::y");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Quaternion::z");
         }
-        else if (startPin->dataIdentifier.front() == PVAError::type())
+        else if (startPin->dataIdentifier.front() == LcKfInsGnssErrors::type())
         {
             // InsObs
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
@@ -1403,12 +1403,6 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "Latitude error [deg]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Longitude error [deg]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Altitude error [deg]");
-        }
-        else if (startPin->dataIdentifier.front() == ImuBiases::type())
-        {
-            // InsObs
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
             // ImuBiases
             _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_X accumulated [m/s^2]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_Y accumulated [m/s^2]");
@@ -2105,13 +2099,9 @@ void NAV::Plot::plotData(const std::shared_ptr<const NodeData>& nodeData, ax::No
             {
                 plotPosVelAtt(std::static_pointer_cast<const PosVelAtt>(nodeData), pinIndex);
             }
-            else if (sourcePin->dataIdentifier.front() == PVAError::type())
+            else if (sourcePin->dataIdentifier.front() == LcKfInsGnssErrors::type())
             {
-                plotPVAError(std::static_pointer_cast<const PVAError>(nodeData), pinIndex);
-            }
-            else if (sourcePin->dataIdentifier.front() == ImuBiases::type())
-            {
-                plotImuBiases(std::static_pointer_cast<const ImuBiases>(nodeData), pinIndex);
+                plotLcKfInsGnssErrors(std::static_pointer_cast<const LcKfInsGnssErrors>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
             {
@@ -2201,7 +2191,7 @@ void NAV::Plot::plotPosVelAtt(const std::shared_ptr<const PosVelAtt>& obs, size_
     addData(pinIndex, i++, obs->n_Quat_b().z());
 }
 
-void NAV::Plot::plotPVAError(const std::shared_ptr<const PVAError>& obs, size_t pinIndex)
+void NAV::Plot::plotLcKfInsGnssErrors(const std::shared_ptr<const LcKfInsGnssErrors>& obs, size_t pinIndex)
 {
     if (obs->insTime.has_value())
     {
@@ -2218,33 +2208,15 @@ void NAV::Plot::plotPVAError(const std::shared_ptr<const PVAError>& obs, size_t 
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - _startValue_Time : std::nan(""));
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
     // PVAError
-    addData(pinIndex, i++, trafo::rad2deg(obs->n_attitudeError()(0)));
-    addData(pinIndex, i++, trafo::rad2deg(obs->n_attitudeError()(1)));
-    addData(pinIndex, i++, trafo::rad2deg(obs->n_attitudeError()(2)));
-    addData(pinIndex, i++, obs->n_velocityError()(0));
-    addData(pinIndex, i++, obs->n_velocityError()(1));
-    addData(pinIndex, i++, obs->n_velocityError()(2));
-    addData(pinIndex, i++, trafo::rad2deg(obs->lla_positionError()(0)));
-    addData(pinIndex, i++, trafo::rad2deg(obs->lla_positionError()(1)));
-    addData(pinIndex, i++, trafo::rad2deg(obs->lla_positionError()(2)));
-}
-
-void NAV::Plot::plotImuBiases(const std::shared_ptr<const ImuBiases>& obs, size_t pinIndex)
-{
-    if (obs->insTime.has_value())
-    {
-        if (std::isnan(_startValue_Time))
-        {
-            _startValue_Time = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
-        }
-    }
-    size_t i = 0;
-
-    std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
-
-    // InsObs
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - _startValue_Time : std::nan(""));
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    addData(pinIndex, i++, trafo::rad2deg(obs->n_attitudeError(0)));
+    addData(pinIndex, i++, trafo::rad2deg(obs->n_attitudeError(1)));
+    addData(pinIndex, i++, trafo::rad2deg(obs->n_attitudeError(2)));
+    addData(pinIndex, i++, obs->n_velocityError(0));
+    addData(pinIndex, i++, obs->n_velocityError(1));
+    addData(pinIndex, i++, obs->n_velocityError(2));
+    addData(pinIndex, i++, trafo::rad2deg(obs->lla_positionError(0)));
+    addData(pinIndex, i++, trafo::rad2deg(obs->lla_positionError(1)));
+    addData(pinIndex, i++, trafo::rad2deg(obs->lla_positionError(2)));
     // ImuBiases
     addData(pinIndex, i++, obs->b_biasAccel(0));
     addData(pinIndex, i++, obs->b_biasAccel(1));
