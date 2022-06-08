@@ -697,6 +697,7 @@ void NAV::LooselyCoupledKF::recvInertialNavigationSolution(const std::shared_ptr
     {
         _lastPredictTime = inertialNavSol->insTime.value();
     }
+    // _latestInertialNavSol = inertialNavSol;
 }
 
 void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
@@ -711,6 +712,8 @@ void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(const std::shared_ptr<con
             auto inertialNavSol = std::make_shared<InertialNavSol>(*_latestInertialNavSol);
             inertialNavSol->insTime = gnssMeasurement->insTime;
             looselyCoupledPrediction(inertialNavSol, static_cast<double>((gnssMeasurement->insTime.value() - _lastPredictTime).count()));
+
+            // looselyCoupledPrediction(_latestInertialNavSol, static_cast<double>((gnssMeasurement->insTime.value() - _lastPredictTime).count()));
         }
 
         looselyCoupledUpdate(gnssMeasurement);
@@ -729,6 +732,10 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     LOG_DATA("{}: Predicting (dt = {}s) from [{}] to [{}]", nameId(), dt,
              (inertialNavSol->insTime.value() - std::chrono::duration<double>(tau_i)).toYMDHMS(), inertialNavSol->insTime->toYMDHMS());
     _lastPredictTime = inertialNavSol->insTime.value();
+
+    // LOG_DEBUG("{}: Predicting (dt = {}s) from [{}] to [{}]", nameId(), dt,
+    //           inertialNavSol->insTime->toYMDHMS(), (inertialNavSol->insTime.value() + std::chrono::duration<double>(tau_i)).toYMDHMS());
+    // _lastPredictTime = inertialNavSol->insTime.value() + std::chrono::duration<double>(tau_i);
 
     // ------------------------------------------- Data preparation ----------------------------------------------
     // n_velocity (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
