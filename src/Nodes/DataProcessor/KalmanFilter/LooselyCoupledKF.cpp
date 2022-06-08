@@ -939,7 +939,8 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
 
     if (_checkKalmanMatricesRanks)
     {
-        auto rank = _kalmanFilter.P.fullPivLu().rank();
+        Eigen::FullPivLU<Eigen::MatrixXd> lu(_kalmanFilter.P);
+        auto rank = lu.rank();
         if (rank != _kalmanFilter.P.rows())
         {
             LOG_WARN("{}: P.rank = {}", nameId(), rank);
@@ -1041,7 +1042,8 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
 
     if (_checkKalmanMatricesRanks)
     {
-        auto rank = (_kalmanFilter.H * _kalmanFilter.P * _kalmanFilter.H.transpose() + _kalmanFilter.R).fullPivLu().rank();
+        Eigen::FullPivLU<Eigen::MatrixXd> lu(_kalmanFilter.H * _kalmanFilter.P * _kalmanFilter.H.transpose() + _kalmanFilter.R);
+        auto rank = lu.rank();
         if (rank != _kalmanFilter.H.rows())
         {
             LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank);
@@ -1067,13 +1069,15 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
 
     if (_checkKalmanMatricesRanks)
     {
-        auto rank = (_kalmanFilter.H * _kalmanFilter.P * _kalmanFilter.H.transpose() + _kalmanFilter.R).fullPivLu().rank();
+        Eigen::FullPivLU<Eigen::MatrixXd> lu(_kalmanFilter.H * _kalmanFilter.P * _kalmanFilter.H.transpose() + _kalmanFilter.R);
+        auto rank = lu.rank();
         if (rank != _kalmanFilter.H.rows())
         {
             LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank);
         }
 
-        rank = _kalmanFilter.K.fullPivLu().rank();
+        Eigen::FullPivLU<Eigen::MatrixXd> lu2(_kalmanFilter.K);
+        rank = lu2.rank();
         if (rank != _kalmanFilter.K.cols())
         {
             LOG_WARN("{}: K.rank = {}", nameId(), rank);
@@ -1093,7 +1097,8 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     // LOG_DEBUG("{}: P - P^T\n{}\n", nameId(), _kalmanFilter.P - _kalmanFilter.P.transpose());
     if (_checkKalmanMatricesRanks)
     {
-        auto rank = _kalmanFilter.P.fullPivLu().rank();
+        Eigen::FullPivLU<Eigen::MatrixXd> lu(_kalmanFilter.P);
+        auto rank = lu.rank();
         if (rank != _kalmanFilter.P.rows())
         {
             LOG_WARN("{}: P.rank = {}", nameId(), rank);
