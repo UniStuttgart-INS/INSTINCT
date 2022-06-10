@@ -344,7 +344,7 @@
                 "prefereTimeSinceStartupOverInsTime": false,
                 "prefereUncompensatedData": true,
                 "showCorrectionsInputPin": true,
-                "velocityUpdateRotationCorrectionEnabled": true
+                "velocityUpdateRotationCorrectionEnabled": false
             },
             "enabled": true,
             "id": 163,
