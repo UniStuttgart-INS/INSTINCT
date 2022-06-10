@@ -175,7 +175,36 @@ void NAV::ImuSimulator::guiConfig()
                                                  ? "Center position (Lat, Lon, Alt)"
                                                  : "")));
 
-        if (_trajectoryType == TrajectoryType::Fixed)
+        if (_trajectoryType == TrajectoryType::Linear)
+        {
+            ImGui::SetNextItemWidth(columnWidth);
+            if (ImGui::InputDouble(fmt::format("##North velocity{}", size_t(id)).c_str(), &_n_linearTrajectoryStartVelocity.x(), 0.0, 0.0, "%.3f m/s"))
+            {
+                LOG_DEBUG("{}: n_linearTrajectoryStartVelocity changed to {}", nameId(), _n_linearTrajectoryStartVelocity.transpose());
+                flow::ApplyChanges();
+                deinitializeNode();
+            }
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(columnWidth);
+            if (ImGui::InputDouble(fmt::format("##East velocity{}", size_t(id)).c_str(), &_n_linearTrajectoryStartVelocity.y(), 0.0, 0.0, "%.3f m/s"))
+            {
+                LOG_DEBUG("{}: n_linearTrajectoryStartVelocity changed to {}", nameId(), _n_linearTrajectoryStartVelocity.transpose());
+                flow::ApplyChanges();
+                deinitializeNode();
+            }
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(columnWidth);
+            if (ImGui::InputDouble(fmt::format("##Down velocity{}", size_t(id)).c_str(), &_n_linearTrajectoryStartVelocity.z(), 0.0, 0.0, "%.3f m/s"))
+            {
+                LOG_DEBUG("{}: n_linearTrajectoryStartVelocity changed to {}", nameId(), _n_linearTrajectoryStartVelocity.transpose());
+                flow::ApplyChanges();
+                deinitializeNode();
+            }
+            ImGui::SameLine();
+            ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
+            ImGui::TextUnformatted("Start velocity (North, East, Down)");
+        }
+        if (_trajectoryType == TrajectoryType::Fixed || _trajectoryType == TrajectoryType::Linear)
         {
             ImGui::SetNextItemWidth(columnWidth);
             double roll = trafo::rad2deg(_fixedTrajectoryStartOrientation.x());
@@ -210,63 +239,7 @@ void NAV::ImuSimulator::guiConfig()
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
             ImGui::TextUnformatted("startOrientation (Roll, Pitch, Yaw)");
         }
-        else if (_trajectoryType == TrajectoryType::Linear)
-        {
-            ImGui::SetNextItemWidth(columnWidth);
-            if (ImGui::InputDouble(fmt::format("##North velocity{}", size_t(id)).c_str(), &_n_linearTrajectoryStartVelocity.x(), 0.0, 0.0, "%.3f m/s"))
-            {
-                LOG_DEBUG("{}: n_linearTrajectoryStartVelocity changed to {}", nameId(), _n_linearTrajectoryStartVelocity.transpose());
-                flow::ApplyChanges();
-                deinitializeNode();
-            }
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(columnWidth);
-            if (ImGui::InputDouble(fmt::format("##East velocity{}", size_t(id)).c_str(), &_n_linearTrajectoryStartVelocity.y(), 0.0, 0.0, "%.3f m/s"))
-            {
-                LOG_DEBUG("{}: n_linearTrajectoryStartVelocity changed to {}", nameId(), _n_linearTrajectoryStartVelocity.transpose());
-                flow::ApplyChanges();
-                deinitializeNode();
-            }
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(columnWidth);
-            if (ImGui::InputDouble(fmt::format("##Down velocity{}", size_t(id)).c_str(), &_n_linearTrajectoryStartVelocity.z(), 0.0, 0.0, "%.3f m/s"))
-            {
-                LOG_DEBUG("{}: n_linearTrajectoryStartVelocity changed to {}", nameId(), _n_linearTrajectoryStartVelocity.transpose());
-                flow::ApplyChanges();
-                deinitializeNode();
-            }
-            ImGui::SameLine();
-            ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
-            ImGui::TextUnformatted("Start velocity (North, East, Down)");
-
-            ImGui::SetNextItemWidth(columnWidth);
-            if (ImGui::InputDouble(fmt::format("##North acceleration{}", size_t(id)).c_str(), &_n_linearTrajectoryAcceleration.x(), 0.0, 0.0, "%.3f m/s^2"))
-            {
-                LOG_DEBUG("{}: n_linearTrajectoryAcceleration changed to {}", nameId(), _n_linearTrajectoryAcceleration.transpose());
-                flow::ApplyChanges();
-                deinitializeNode();
-            }
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(columnWidth);
-            if (ImGui::InputDouble(fmt::format("##East acceleration{}", size_t(id)).c_str(), &_n_linearTrajectoryAcceleration.y(), 0.0, 0.0, "%.3f m/s^2"))
-            {
-                LOG_DEBUG("{}: n_linearTrajectoryAcceleration changed to {}", nameId(), _n_linearTrajectoryAcceleration.transpose());
-                flow::ApplyChanges();
-                deinitializeNode();
-            }
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(columnWidth);
-            if (ImGui::InputDouble(fmt::format("##Down acceleration{}", size_t(id)).c_str(), &_n_linearTrajectoryAcceleration.z(), 0.0, 0.0, "%.3f m/s^2"))
-            {
-                LOG_DEBUG("{}: n_linearTrajectoryAcceleration changed to {}", nameId(), _n_linearTrajectoryAcceleration.transpose());
-                flow::ApplyChanges();
-                deinitializeNode();
-            }
-            ImGui::SameLine();
-            ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
-            ImGui::TextUnformatted("Acceleration (North, East, Down)");
-        }
-        else if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
+        if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
         {
             if (ImGui::BeginTable(fmt::format("CircularTrajectory##{}", size_t(id)).c_str(), 2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX))
             {
@@ -476,7 +449,6 @@ void NAV::ImuSimulator::guiConfig()
     j["startPosition_lla"] = _lla_startPosition;
     j["fixedTrajectoryStartOrientation"] = _fixedTrajectoryStartOrientation;
     j["n_linearTrajectoryStartVelocity"] = _n_linearTrajectoryStartVelocity;
-    j["n_linearTrajectoryAcceleration"] = _n_linearTrajectoryAcceleration;
     j["circularTrajectoryHorizontalSpeed"] = _circularTrajectoryHorizontalSpeed;
     j["helicalTrajectoryVerticalSpeed"] = _helicalTrajectoryVerticalSpeed;
     j["circularTrajectoryRadius"] = _circularTrajectoryRadius;
@@ -540,10 +512,6 @@ void NAV::ImuSimulator::restore(json const& j)
     if (j.contains("n_linearTrajectoryStartVelocity"))
     {
         j.at("n_linearTrajectoryStartVelocity").get_to(_n_linearTrajectoryStartVelocity);
-    }
-    if (j.contains("n_linearTrajectoryAcceleration"))
-    {
-        j.at("n_linearTrajectoryAcceleration").get_to(_n_linearTrajectoryAcceleration);
     }
     if (j.contains("circularTrajectoryHorizontalSpeed"))
     {
@@ -624,6 +592,7 @@ bool NAV::ImuSimulator::initialize()
 void NAV::ImuSimulator::SplineInitializer()
 {
     std::vector<double> SplineTime;
+    constexpr double splineSampleInterval = 0.1;
 
     if (_trajectoryType == TrajectoryType::Fixed)
     {
@@ -637,12 +606,12 @@ void NAV::ImuSimulator::SplineInitializer()
         SplineTime.push_back(_simulationDuration + 30.0); // 10 seconds past simulation end; simply to define the derivative at end node
 
         Eigen::Vector3d e_position = trafo::lla2ecef_WGS84(_lla_startPosition);
-        std::vector<double> X(4, e_position[0]);
-        std::vector<double> Y(4, e_position[1]);
-        std::vector<double> Z(4, e_position[2]);
-        std::vector<double> Roll(4, _fixedTrajectoryStartOrientation.x());
-        std::vector<double> Pitch(4, _fixedTrajectoryStartOrientation.y());
-        std::vector<double> Yaw(4, _fixedTrajectoryStartOrientation.z());
+        std::vector<double> X(SplineTime.size(), e_position[0]);
+        std::vector<double> Y(SplineTime.size(), e_position[1]);
+        std::vector<double> Z(SplineTime.size(), e_position[2]);
+        std::vector<double> Roll(SplineTime.size(), _fixedTrajectoryStartOrientation.x());
+        std::vector<double> Pitch(SplineTime.size(), _fixedTrajectoryStartOrientation.y());
+        std::vector<double> Yaw(SplineTime.size(), _fixedTrajectoryStartOrientation.z());
 
         SplineInfo.X.setPoints(SplineTime, X);
         SplineInfo.Y.setPoints(SplineTime, Y);
@@ -652,14 +621,25 @@ void NAV::ImuSimulator::SplineInitializer()
         SplineInfo.Pitch.setPoints(SplineTime, Pitch);
         SplineInfo.Yaw.setPoints(SplineTime, Yaw);
     }
-
-    if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
+    else if (_trajectoryType == TrajectoryType::Linear)
     {
-        double spline_sample_interval = 0.1;
-
-        for (size_t i = 0; i <= static_cast<size_t>(std::round((_simulationDuration + 2.0) / spline_sample_interval)); i++)
+    }
+    else if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
+    {
+        double simDuration{};
+        if (_simulationStopCondition == StopCondition::Duration)
         {
-            SplineTime.push_back(spline_sample_interval * static_cast<double>(i) - 1.0);
+            simDuration = _simulationDuration;
+        }
+        else if (_simulationStopCondition == StopCondition::DistanceOrCircles)
+        {
+            double omega = _circularTrajectoryHorizontalSpeed / _circularTrajectoryRadius;
+            simDuration = _circularTrajectoryCircleCountForStop * 2 * M_PI / omega;
+        }
+
+        for (size_t i = 0; i <= static_cast<size_t>(std::round((simDuration + 2.0) / splineSampleInterval)); i++)
+        {
+            SplineTime.push_back(splineSampleInterval * static_cast<double>(i) - 1.0);
         }
 
         std::vector<double> X(SplineTime.size());
@@ -731,7 +711,7 @@ void NAV::ImuSimulator::SplineInitializer()
 
             Roll[i] = (_circularTrajectoryDirection == Direction::CCW ? -1.0 : 1.0) // CCW = Right wing facing outwards, roll angle measured downwards
                       * std::acos(e_normalVectorCurrentPosition.dot(e_normalVectorCenterCircle) / (e_normalVectorCurrentPosition.norm() * e_normalVectorCenterCircle.norm()));
-            Pitch[i] = std::abs(n_velocity.head<2>().norm()) > 1e-8 ? calcPitchFromVelocity(n_velocity) : 0;
+            Pitch[i] = n_velocity.head<2>().norm() > 1e-8 ? calcPitchFromVelocity(n_velocity) : 0;
         }
 
         SplineInfo.Roll.setPoints(SplineTime, Roll);
@@ -770,33 +750,28 @@ bool NAV::ImuSimulator::resetNode()
     return true;
 }
 
-bool NAV::ImuSimulator::checkStopCondition(double time, const Eigen::Vector3d& /*lla_position*/)
+bool NAV::ImuSimulator::checkStopCondition(double time, const Eigen::Vector3d& lla_position)
 {
-    if ((_simulationStopCondition == StopCondition::Duration || _trajectoryType == TrajectoryType::Fixed)
-        && time > _simulationDuration)
+    if (_simulationStopCondition == StopCondition::Duration
+        || _trajectoryType == TrajectoryType::Fixed)
     {
-        return true; // NOLINT(readability-simplify-boolean-expr) // TODO: Remove after fixing below
+        return time > _simulationDuration;
     }
-    /*
-    if (_simulationStopCondition == StopCondition::DistanceOrCircles && _trajectoryType == TrajectoryType::Linear)
+    else if (_simulationStopCondition == StopCondition::DistanceOrCircles)
     {
-        auto horizontalDistance = calcGeographicalDistance(_lla_startPosition(0), _lla_startPosition(1), lla_position(0), lla_position(1));
-        auto distance = std::sqrt(std::pow(horizontalDistance, 2) + std::pow(_lla_startPosition(2) - lla_position(2), 2));
-        if (distance > _linearTrajectoryDistanceForStop)
+        if (_trajectoryType == TrajectoryType::Linear)
         {
-            return true;
+            auto horizontalDistance = calcGeographicalDistance(_lla_startPosition(0), _lla_startPosition(1), lla_position(0), lla_position(1));
+            auto distance = std::sqrt(std::pow(horizontalDistance, 2) + std::pow(_lla_startPosition(2) - lla_position(2), 2));
+            return distance > _linearTrajectoryDistanceForStop;
+        }
+        else if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
+        {
+            double omega = _circularTrajectoryHorizontalSpeed / _circularTrajectoryRadius;
+            double simDuration = _circularTrajectoryCircleCountForStop * 2 * M_PI / omega;
+            return time > simDuration;
         }
     }
-    else if (_simulationStopCondition == StopCondition::DistanceOrCircles && (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix))
-    {
-        auto phi = _circularTrajectoryHorizontalSpeed * time / _circularTrajectoryRadius; // Angle of the current point on the circle
-        auto circleCount = phi / (2 * M_PI);
-        if (circleCount >= _circularTrajectoryCircleCountForStop)
-        {
-            return true;
-        }
-    }
-  */
     return false;
 }
 
@@ -1000,21 +975,17 @@ Eigen::Vector3d NAV::ImuSimulator::p_calcOmega_ip(double time,
 
     auto C_3 = [](double R) {
         // Eigen::Matrix3d C;
-        // // clang-format off
         // C << 1,       0     ,      0     ,
         //      0,  std::cos(R), std::sin(R),
         //      0, -std::sin(R), std::cos(R);
-        // // clang-format on
         // return C;
         return Eigen::AngleAxisd{ -R, Eigen::Vector3d::UnitX() };
     };
     auto C_2 = [](double P) {
         // Eigen::Matrix3d C;
-        // // clang-format off
         // C << std::cos(P), 0 , -std::sin(P),
         //           0     , 1 ,       0     ,
         //      std::sin(P), 0 ,  std::cos(P);
-        // // clang-format on
         // return C;
         return Eigen::AngleAxisd{ -P, Eigen::Vector3d::UnitY() };
     };
