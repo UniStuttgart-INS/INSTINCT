@@ -686,7 +686,6 @@ void NAV::LooselyCoupledKF::recvInertialNavigationSolution(const std::shared_ptr
                        ? static_cast<double>((inertialNavSol->insTime.value() - _lastPredictTime).count())
                        : 0.0;
 
-    _latestInertialNavSol = inertialNavSol;
     if (tau_i > 0)
     {
         looselyCoupledPrediction(_latestInertialNavSol, tau_i);
@@ -695,7 +694,7 @@ void NAV::LooselyCoupledKF::recvInertialNavigationSolution(const std::shared_ptr
     {
         _lastPredictTime = inertialNavSol->insTime.value();
     }
-    // _latestInertialNavSol = inertialNavSol;
+    _latestInertialNavSol = inertialNavSol;
 }
 
 void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
@@ -727,12 +726,8 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     dt.erase(std::find_if(dt.rbegin(), dt.rend(), [](char ch) { return ch != '0'; }).base(), dt.end());
 
     LOG_DATA("{}: Predicting (dt = {}s) from [{}] to [{}]", nameId(), dt,
-             (inertialNavSol->insTime.value() - std::chrono::duration<double>(tau_i)).toYMDHMS(), inertialNavSol->insTime->toYMDHMS());
-    _lastPredictTime = inertialNavSol->insTime.value();
-
-    // LOG_DEBUG("{}: Predicting (dt = {}s) from [{}] to [{}]", nameId(), dt,
-    //           inertialNavSol->insTime->toYMDHMS(), (inertialNavSol->insTime.value() + std::chrono::duration<double>(tau_i)).toYMDHMS());
-    // _lastPredictTime = inertialNavSol->insTime.value() + std::chrono::duration<double>(tau_i);
+             inertialNavSol->insTime->toYMDHMS(), (inertialNavSol->insTime.value() + std::chrono::duration<double>(tau_i)).toYMDHMS());
+    _lastPredictTime = inertialNavSol->insTime.value() + std::chrono::duration<double>(tau_i);
 
     // ------------------------------------------- Data preparation ----------------------------------------------
     // n_velocity (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
@@ -1085,13 +1080,13 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
 
     // LOG_DEBUG("{}: H\n{}\n", nameId(), _kalmanFilter.H);
     // LOG_DEBUG("{}: R\n{}\n", nameId(), _kalmanFilter.R);
-    // LOG_DEBUG("{}: z\n{}\n", nameId(), _kalmanFilter.z);
+    // LOG_DEBUG("{}: z = {}", nameId(), _kalmanFilter.z.transpose());
 
     // LOG_DEBUG("{}: K\n{}\n", nameId(), _kalmanFilter.K);
-    // LOG_DEBUG("{}: x\n{}\n", nameId(), _kalmanFilter.x);
+    // LOG_DEBUG("{}: x = {}", nameId(), _kalmanFilter.x.transpose());
     // LOG_DEBUG("{}: P\n{}\n", nameId(), _kalmanFilter.P);
 
-    // LOG_DEBUG("{}: K * z\n{}\n", nameId(), _kalmanFilter.K * _kalmanFilter.z);
+    // LOG_DEBUG("{}: K * z = {}", nameId(), (_kalmanFilter.K * _kalmanFilter.z).transpose());
 
     // LOG_DEBUG("{}: P - P^T\n{}\n", nameId(), _kalmanFilter.P - _kalmanFilter.P.transpose());
     if (_checkKalmanMatricesRanks)
