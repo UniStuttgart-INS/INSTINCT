@@ -134,9 +134,6 @@ class ImuSimulator : public Imu
     /// - Circular, Helix: Center of the circle
     Eigen::Vector3d _lla_startPosition = Eigen::Vector3d::Zero();
 
-    /// Start position in ECEF coordinates in [m]. Will be set at initialization
-    Eigen::Vector3d _e_startPosition;
-
     /// Orientation of the vehicle [roll, pitch, yaw] [rad]
     Eigen::Vector3d _fixedTrajectoryStartOrientation = Eigen::Vector3d::Zero();
 
@@ -210,6 +207,20 @@ class ImuSimulator : public Imu
 
     // ###########################################################################################################
 
+    /// Assign a variable that holds the Spline information
+    struct
+    {
+        CubicSpline x;     ///< ECEF X Position [m]
+        CubicSpline y;     ///< ECEF Y Position [m]
+        CubicSpline z;     ///< ECEF Z Position [m]
+        CubicSpline roll;  ///< Roll angle [rad]
+        CubicSpline pitch; ///< Pitch angle [rad]
+        CubicSpline yaw;   ///< Yaw angle [rad]
+    } _splines;
+
+    /// @brief Initializes the spline values
+    void initializeSplines();
+
     /// Counter to calculate the IMU update time
     uint64_t _imuUpdateCnt = 0.0;
     /// Counter to calculate the GNSS update time
@@ -263,23 +274,6 @@ class ImuSimulator : public Imu
                                                  const Eigen::Quaterniond& b_Quat_n,
                                                  const Eigen::Vector3d& n_omega_ie,
                                                  const Eigen::Vector3d& n_omega_en) const;
-
-    /// Defines a struct that holds all 6 CSplines together
-    struct SplineContainer
-    {
-        CubicSpline X;     ///< ECEF X Position [m]
-        CubicSpline Y;     ///< ECEF Y Position [m]
-        CubicSpline Z;     ///< ECEF Z Position [m]
-        CubicSpline Roll;  ///< Roll angle [rad]
-        CubicSpline Pitch; ///< Pitch angle [rad]
-        CubicSpline Yaw;   ///< Yaw angle [rad]
-    };
-
-    /// Assign a variable that holds the Spline information
-    SplineContainer SplineInfo;
-
-    /// @brief Initializes the spline values
-    void SplineInitializer();
 };
 
 } // namespace NAV

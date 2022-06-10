@@ -175,36 +175,7 @@ void NAV::ImuSimulator::guiConfig()
                                                  ? "Center position (Lat, Lon, Alt)"
                                                  : "")));
 
-        if (_trajectoryType == TrajectoryType::Linear)
-        {
-            ImGui::SetNextItemWidth(columnWidth);
-            if (ImGui::InputDouble(fmt::format("##North velocity{}", size_t(id)).c_str(), &_n_linearTrajectoryStartVelocity.x(), 0.0, 0.0, "%.3f m/s"))
-            {
-                LOG_DEBUG("{}: n_linearTrajectoryStartVelocity changed to {}", nameId(), _n_linearTrajectoryStartVelocity.transpose());
-                flow::ApplyChanges();
-                deinitializeNode();
-            }
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(columnWidth);
-            if (ImGui::InputDouble(fmt::format("##East velocity{}", size_t(id)).c_str(), &_n_linearTrajectoryStartVelocity.y(), 0.0, 0.0, "%.3f m/s"))
-            {
-                LOG_DEBUG("{}: n_linearTrajectoryStartVelocity changed to {}", nameId(), _n_linearTrajectoryStartVelocity.transpose());
-                flow::ApplyChanges();
-                deinitializeNode();
-            }
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(columnWidth);
-            if (ImGui::InputDouble(fmt::format("##Down velocity{}", size_t(id)).c_str(), &_n_linearTrajectoryStartVelocity.z(), 0.0, 0.0, "%.3f m/s"))
-            {
-                LOG_DEBUG("{}: n_linearTrajectoryStartVelocity changed to {}", nameId(), _n_linearTrajectoryStartVelocity.transpose());
-                flow::ApplyChanges();
-                deinitializeNode();
-            }
-            ImGui::SameLine();
-            ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
-            ImGui::TextUnformatted("Start velocity (North, East, Down)");
-        }
-        if (_trajectoryType == TrajectoryType::Fixed || _trajectoryType == TrajectoryType::Linear)
+        if (_trajectoryType == TrajectoryType::Fixed)
         {
             ImGui::SetNextItemWidth(columnWidth);
             double roll = trafo::rad2deg(_fixedTrajectoryStartOrientation.x());
@@ -239,7 +210,36 @@ void NAV::ImuSimulator::guiConfig()
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
             ImGui::TextUnformatted("startOrientation (Roll, Pitch, Yaw)");
         }
-        if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
+        else if (_trajectoryType == TrajectoryType::Linear)
+        {
+            ImGui::SetNextItemWidth(columnWidth);
+            if (ImGui::InputDouble(fmt::format("##North velocity{}", size_t(id)).c_str(), &_n_linearTrajectoryStartVelocity.x(), 0.0, 0.0, "%.3f m/s"))
+            {
+                LOG_DEBUG("{}: n_linearTrajectoryStartVelocity changed to {}", nameId(), _n_linearTrajectoryStartVelocity.transpose());
+                flow::ApplyChanges();
+                deinitializeNode();
+            }
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(columnWidth);
+            if (ImGui::InputDouble(fmt::format("##East velocity{}", size_t(id)).c_str(), &_n_linearTrajectoryStartVelocity.y(), 0.0, 0.0, "%.3f m/s"))
+            {
+                LOG_DEBUG("{}: n_linearTrajectoryStartVelocity changed to {}", nameId(), _n_linearTrajectoryStartVelocity.transpose());
+                flow::ApplyChanges();
+                deinitializeNode();
+            }
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(columnWidth);
+            if (ImGui::InputDouble(fmt::format("##Down velocity{}", size_t(id)).c_str(), &_n_linearTrajectoryStartVelocity.z(), 0.0, 0.0, "%.3f m/s"))
+            {
+                LOG_DEBUG("{}: n_linearTrajectoryStartVelocity changed to {}", nameId(), _n_linearTrajectoryStartVelocity.transpose());
+                flow::ApplyChanges();
+                deinitializeNode();
+            }
+            ImGui::SameLine();
+            ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
+            ImGui::TextUnformatted("Start velocity (North, East, Down)");
+        }
+        else if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
         {
             if (ImGui::BeginTable(fmt::format("CircularTrajectory##{}", size_t(id)).c_str(), 2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX))
             {
@@ -582,47 +582,140 @@ bool NAV::ImuSimulator::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    _e_startPosition = trafo::lla2ecef_WGS84(_lla_startPosition);
-
-    SplineInitializer();
+    initializeSplines();
 
     return true;
 }
 
-void NAV::ImuSimulator::SplineInitializer()
+void NAV::ImuSimulator::initializeSplines()
 {
-    std::vector<double> SplineTime;
+    std::vector<double> splineTime;
     constexpr double splineSampleInterval = 0.1;
 
     if (_trajectoryType == TrajectoryType::Fixed)
     {
-        SplineTime.push_back(-30.0); // 10 seconds in the past; simply to define the derivative at zero seconds
-        SplineTime.push_back(-20.0); // 10 seconds in the past; simply to define the derivative at zero seconds
-        SplineTime.push_back(-10.0); // 10 seconds in the past; simply to define the derivative at zero seconds
-        SplineTime.push_back(0.0);
-        SplineTime.push_back(_simulationDuration);
-        SplineTime.push_back(_simulationDuration + 10.0); // 10 seconds past simulation end; simply to define the derivative at end node
-        SplineTime.push_back(_simulationDuration + 20.0); // 10 seconds past simulation end; simply to define the derivative at end node
-        SplineTime.push_back(_simulationDuration + 30.0); // 10 seconds past simulation end; simply to define the derivative at end node
+        splineTime.push_back(-30.0); // 10 seconds in the past; simply to define the derivative at zero seconds
+        splineTime.push_back(-20.0); // 10 seconds in the past; simply to define the derivative at zero seconds
+        splineTime.push_back(-10.0); // 10 seconds in the past; simply to define the derivative at zero seconds
+        splineTime.push_back(0.0);
+        splineTime.push_back(_simulationDuration);
+        splineTime.push_back(_simulationDuration + 10.0); // 10 seconds past simulation end; simply to define the derivative at end node
+        splineTime.push_back(_simulationDuration + 20.0); // 10 seconds past simulation end; simply to define the derivative at end node
+        splineTime.push_back(_simulationDuration + 30.0); // 10 seconds past simulation end; simply to define the derivative at end node
 
-        Eigen::Vector3d e_position = trafo::lla2ecef_WGS84(_lla_startPosition);
-        std::vector<double> X(SplineTime.size(), e_position[0]);
-        std::vector<double> Y(SplineTime.size(), e_position[1]);
-        std::vector<double> Z(SplineTime.size(), e_position[2]);
-        std::vector<double> Roll(SplineTime.size(), _fixedTrajectoryStartOrientation.x());
-        std::vector<double> Pitch(SplineTime.size(), _fixedTrajectoryStartOrientation.y());
-        std::vector<double> Yaw(SplineTime.size(), _fixedTrajectoryStartOrientation.z());
+        Eigen::Vector3d e_startPosition = trafo::lla2ecef_WGS84(_lla_startPosition);
+        std::vector<double> X(splineTime.size(), e_startPosition[0]);
+        std::vector<double> Y(splineTime.size(), e_startPosition[1]);
+        std::vector<double> Z(splineTime.size(), e_startPosition[2]);
+        std::vector<double> Roll(splineTime.size(), _fixedTrajectoryStartOrientation.x());
+        std::vector<double> Pitch(splineTime.size(), _fixedTrajectoryStartOrientation.y());
+        std::vector<double> Yaw(splineTime.size(), _fixedTrajectoryStartOrientation.z());
 
-        SplineInfo.X.setPoints(SplineTime, X);
-        SplineInfo.Y.setPoints(SplineTime, Y);
-        SplineInfo.Z.setPoints(SplineTime, Z);
+        _splines.x.setPoints(splineTime, X);
+        _splines.y.setPoints(splineTime, Y);
+        _splines.z.setPoints(splineTime, Z);
 
-        SplineInfo.Roll.setPoints(SplineTime, Roll);
-        SplineInfo.Pitch.setPoints(SplineTime, Pitch);
-        SplineInfo.Yaw.setPoints(SplineTime, Yaw);
+        _splines.roll.setPoints(splineTime, Roll);
+        _splines.pitch.setPoints(splineTime, Pitch);
+        _splines.yaw.setPoints(splineTime, Yaw);
     }
     else if (_trajectoryType == TrajectoryType::Linear)
     {
+        double roll = 0.0;
+        double pitch = _n_linearTrajectoryStartVelocity.head<2>().norm() > 1e-8 ? calcPitchFromVelocity(_n_linearTrajectoryStartVelocity) : 0;
+        double yaw = _n_linearTrajectoryStartVelocity.head<2>().norm() > 1e-8 ? calcYawFromVelocity(_n_linearTrajectoryStartVelocity) : 0;
+        Eigen::Vector3d e_startPosition = trafo::lla2ecef_WGS84(_lla_startPosition);
+
+        splineTime = { 0.0 };
+        std::vector<double> splineX = { e_startPosition[0] };
+        std::vector<double> splineY = { e_startPosition[1] };
+        std::vector<double> splineZ = { e_startPosition[2] };
+        std::vector<double> splineRoll = { roll };
+        std::vector<double> splinePitch = { pitch };
+        std::vector<double> splineYaw = { yaw };
+
+        // @brief Calculates the derivative of the curvilinear position and velocity
+        // @param[in] y [𝜙, λ, h, v_N, v_E, v_D]^T Latitude, longitude, altitude, velocity NED in [rad, rad, m, m/s, m/s, m/s]
+        // @param[in] n_acceleration Acceleration in local-navigation frame coordinates [m/s^s]
+        // @return The curvilinear position and velocity derivatives ∂/∂t [𝜙, λ, h, v_N, v_E, v_D]^T
+        auto f = [](const Eigen::Vector<double, 6>& y, const Eigen::Vector3d& n_acceleration) {
+            Eigen::Vector<double, 6> y_dot;
+            y_dot << lla_calcTimeDerivativeForPosition(y.tail<3>(),              // Velocity with respect to the Earth in local-navigation frame coordinates [m/s]
+                                                       y(0),                     // 𝜙 Latitude in [rad]
+                                                       y(2),                     // h Altitude in [m]
+                                                       calcEarthRadius_N(y(0)),  // North/South (meridian) earth radius [m]
+                                                       calcEarthRadius_E(y(0))), // East/West (prime vertical) earth radius [m]
+                n_acceleration;
+
+            return y_dot;
+        };
+
+        Eigen::Vector3d lla_lastPosition = _lla_startPosition;
+        for (size_t i = 1; i <= static_cast<size_t>(std::round(1.0 / splineSampleInterval)); i++) // Calculate one second backwards
+        {
+            Eigen::Vector<double, 6> y; // [𝜙, λ, h, v_N, v_E, v_D]^T
+            y << lla_lastPosition,
+                _n_linearTrajectoryStartVelocity;
+
+            y = RungeKutta1(f, -splineSampleInterval, y, Eigen::Vector3d::Zero());
+            lla_lastPosition = y.head<3>();
+
+            Eigen::Vector3d e_position = trafo::lla2ecef_WGS84(lla_lastPosition);
+
+            splineTime.insert(splineTime.begin(), -splineSampleInterval * static_cast<double>(i));
+            splineX.insert(splineX.begin(), e_position(0));
+            splineY.insert(splineY.begin(), e_position(1));
+            splineZ.insert(splineZ.begin(), e_position(2));
+            splineRoll.insert(splineRoll.begin(), roll);
+            splinePitch.insert(splinePitch.begin(), pitch);
+            splineYaw.insert(splineYaw.begin(), yaw);
+        }
+
+        lla_lastPosition = _lla_startPosition;
+        for (size_t i = 1;; i++)
+        {
+            Eigen::Vector<double, 6> y; // [𝜙, λ, h, v_N, v_E, v_D]^T
+            y << lla_lastPosition,
+                _n_linearTrajectoryStartVelocity;
+
+            y = RungeKutta1(f, splineSampleInterval, y, Eigen::Vector3d::Zero());
+            lla_lastPosition = y.head<3>();
+
+            Eigen::Vector3d e_position = trafo::lla2ecef_WGS84(lla_lastPosition);
+
+            double simTime = splineSampleInterval * static_cast<double>(i);
+            splineTime.push_back(simTime);
+            splineX.push_back(e_position(0));
+            splineY.push_back(e_position(1));
+            splineZ.push_back(e_position(2));
+            splineRoll.push_back(roll);
+            splinePitch.push_back(pitch);
+            splineYaw.push_back(yaw);
+
+            if (_simulationStopCondition == StopCondition::Duration
+                && simTime > _simulationDuration + 1.0)
+            {
+                break;
+            }
+            if (_simulationStopCondition == StopCondition::DistanceOrCircles)
+            {
+                auto horizontalDistance = calcGeographicalDistance(_lla_startPosition(0), _lla_startPosition(1), lla_lastPosition(0), lla_lastPosition(1));
+                auto distance = std::sqrt(std::pow(horizontalDistance, 2) + std::pow(_lla_startPosition(2) - lla_lastPosition(2), 2))
+                                - _n_linearTrajectoryStartVelocity.norm() * 1.0;
+                if (distance > _linearTrajectoryDistanceForStop)
+                {
+                    break;
+                }
+            }
+        }
+
+        _splines.x.setPoints(splineTime, splineX);
+        _splines.y.setPoints(splineTime, splineY);
+        _splines.z.setPoints(splineTime, splineZ);
+
+        _splines.roll.setPoints(splineTime, splineRoll);
+        _splines.pitch.setPoints(splineTime, splinePitch);
+        _splines.yaw.setPoints(splineTime, splineYaw);
     }
     else if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
     {
@@ -639,48 +732,48 @@ void NAV::ImuSimulator::SplineInitializer()
 
         for (size_t i = 0; i <= static_cast<size_t>(std::round((simDuration + 2.0) / splineSampleInterval)); i++)
         {
-            SplineTime.push_back(splineSampleInterval * static_cast<double>(i) - 1.0);
+            splineTime.push_back(splineSampleInterval * static_cast<double>(i) - 1.0);
         }
 
-        std::vector<double> X(SplineTime.size());
-        std::vector<double> Y(SplineTime.size());
-        std::vector<double> Z(SplineTime.size());
-        std::vector<double> Roll(SplineTime.size());
-        std::vector<double> Pitch(SplineTime.size());
-        std::vector<double> Yaw(SplineTime.size());
+        std::vector<double> splineX(splineTime.size());
+        std::vector<double> splineY(splineTime.size());
+        std::vector<double> splineZ(splineTime.size());
+        std::vector<double> splineRoll(splineTime.size());
+        std::vector<double> splinePitch(splineTime.size());
+        std::vector<double> splineYaw(splineTime.size());
 
         Eigen::Vector3d e_origin = trafo::lla2ecef_WGS84(_lla_startPosition);
 
         Eigen::Quaterniond e_quatCenter_n = trafo::e_Quat_n(_lla_startPosition(0), _lla_startPosition(1));
 
-        for (uint64_t i = 0; i < SplineTime.size(); i++)
+        for (uint64_t i = 0; i < splineTime.size(); i++)
         {
-            auto phi = _circularTrajectoryHorizontalSpeed * SplineTime[i] / _circularTrajectoryRadius; // Angle of the current point on the circle
+            auto phi = _circularTrajectoryHorizontalSpeed * splineTime[i] / _circularTrajectoryRadius; // Angle of the current point on the circle
             phi *= _circularTrajectoryDirection == Direction::CW ? -1 : 1;
             phi += _circularTrajectoryOriginAngle;
 
-            Eigen::Vector3d n_relativePosition{ _circularTrajectoryRadius * std::sin(phi),                                                          // [m]
-                                                _circularTrajectoryRadius * std::cos(phi),                                                          // [m]
-                                                _trajectoryType == TrajectoryType::Helix ? _helicalTrajectoryVerticalSpeed * SplineTime[i] : 0.0 }; // [m]
+            Eigen::Vector3d n_relativePosition{ _circularTrajectoryRadius * std::sin(phi),                                                           // [m]
+                                                _circularTrajectoryRadius * std::cos(phi),                                                           // [m]
+                                                _trajectoryType == TrajectoryType::Helix ? -_helicalTrajectoryVerticalSpeed * splineTime[i] : 0.0 }; // [m]
 
             Eigen::Vector3d e_relativePosition = e_quatCenter_n * n_relativePosition;
 
             Eigen::Vector3d e_position = e_origin + e_relativePosition;
 
-            X[i] = e_position[0];
-            Y[i] = e_position[1];
-            Z[i] = e_position[2];
+            splineX[i] = e_position[0];
+            splineY[i] = e_position[1];
+            splineZ[i] = e_position[2];
         }
 
-        SplineInfo.X.setPoints(SplineTime, X);
-        SplineInfo.Y.setPoints(SplineTime, Y);
-        SplineInfo.Z.setPoints(SplineTime, Z);
+        _splines.x.setPoints(splineTime, splineX);
+        _splines.y.setPoints(splineTime, splineY);
+        _splines.z.setPoints(splineTime, splineZ);
 
-        for (uint64_t i = 0; i < SplineTime.size(); i++)
+        for (uint64_t i = 0; i < splineTime.size(); i++)
         {
-            Eigen::Vector3d lla_position = lla_calcPosition(SplineTime[i]);
+            Eigen::Vector3d lla_position = lla_calcPosition(splineTime[i]);
             auto n_Quat_e = trafo::n_Quat_e(lla_position(0), lla_position(1));
-            Eigen::Vector3d n_velocity = n_calcVelocity(SplineTime[i], n_Quat_e);
+            Eigen::Vector3d n_velocity = n_calcVelocity(splineTime[i], n_Quat_e);
 
             Eigen::Vector3d e_normalVectorCenterCircle{ std::cos(_lla_startPosition(0)) * std::cos(_lla_startPosition(1)),
                                                         std::cos(_lla_startPosition(0)) * std::sin(_lla_startPosition(1)),
@@ -694,7 +787,7 @@ void NAV::ImuSimulator::SplineInitializer()
 
             if (i > 0)
             {
-                double x = yaw - Yaw[i - 1];
+                double x = yaw - splineYaw[i - 1];
                 x = fmod(x + M_PI, 2 * M_PI);
                 if (x < 0)
                 {
@@ -702,21 +795,21 @@ void NAV::ImuSimulator::SplineInitializer()
                 }
                 x -= M_PI;
 
-                Yaw[i] = Yaw[i - 1] + x;
+                splineYaw[i] = splineYaw[i - 1] + x;
             }
             else
             {
-                Yaw[i] = yaw;
+                splineYaw[i] = yaw;
             }
 
-            Roll[i] = (_circularTrajectoryDirection == Direction::CCW ? -1.0 : 1.0) // CCW = Right wing facing outwards, roll angle measured downwards
-                      * std::acos(e_normalVectorCurrentPosition.dot(e_normalVectorCenterCircle) / (e_normalVectorCurrentPosition.norm() * e_normalVectorCenterCircle.norm()));
-            Pitch[i] = n_velocity.head<2>().norm() > 1e-8 ? calcPitchFromVelocity(n_velocity) : 0;
+            splineRoll[i] = (_circularTrajectoryDirection == Direction::CCW ? -1.0 : 1.0) // CCW = Right wing facing outwards, roll angle measured downwards
+                            * std::acos(e_normalVectorCurrentPosition.dot(e_normalVectorCenterCircle) / (e_normalVectorCurrentPosition.norm() * e_normalVectorCenterCircle.norm()));
+            splinePitch[i] = n_velocity.head<2>().norm() > 1e-8 ? calcPitchFromVelocity(n_velocity) : 0;
         }
 
-        SplineInfo.Roll.setPoints(SplineTime, Roll);
-        SplineInfo.Pitch.setPoints(SplineTime, Pitch);
-        SplineInfo.Yaw.setPoints(SplineTime, Yaw);
+        _splines.roll.setPoints(splineTime, splineRoll);
+        _splines.pitch.setPoints(splineTime, splinePitch);
+        _splines.yaw.setPoints(splineTime, splineYaw);
     }
 }
 
@@ -757,7 +850,7 @@ bool NAV::ImuSimulator::checkStopCondition(double time, const Eigen::Vector3d& l
     {
         return time > _simulationDuration;
     }
-    else if (_simulationStopCondition == StopCondition::DistanceOrCircles)
+    if (_simulationStopCondition == StopCondition::DistanceOrCircles)
     {
         if (_trajectoryType == TrajectoryType::Linear)
         {
@@ -765,7 +858,7 @@ bool NAV::ImuSimulator::checkStopCondition(double time, const Eigen::Vector3d& l
             auto distance = std::sqrt(std::pow(horizontalDistance, 2) + std::pow(_lla_startPosition(2) - lla_position(2), 2));
             return distance > _linearTrajectoryDistanceForStop;
         }
-        else if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
+        if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
         {
             double omega = _circularTrajectoryHorizontalSpeed / _circularTrajectoryRadius;
             double simDuration = _circularTrajectoryCircleCountForStop * 2 * M_PI / omega;
@@ -919,27 +1012,27 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
 
 std::array<double, 3> NAV::ImuSimulator::calcFlightAngles(double time) const
 {
-    double roll = SplineInfo.Roll(time);
-    double pitch = SplineInfo.Pitch(time);
-    double yaw = SplineInfo.Yaw(time);
+    double roll = _splines.roll(time);
+    double pitch = _splines.pitch(time);
+    double yaw = _splines.yaw(time);
     return { roll, pitch, yaw };
 }
 
 Eigen::Vector3d NAV::ImuSimulator::lla_calcPosition(double time) const
 {
-    Eigen::Vector3d e_pos(SplineInfo.X(time), SplineInfo.Y(time), SplineInfo.Z(time));
+    Eigen::Vector3d e_pos(_splines.x(time), _splines.y(time), _splines.z(time));
     return trafo::ecef2lla_WGS84(e_pos);
 }
 
 Eigen::Vector3d NAV::ImuSimulator::n_calcVelocity(double time, const Eigen::Quaterniond& n_Quat_e) const
 {
-    Eigen::Vector3d e_vel(SplineInfo.X.derivative(1, time), SplineInfo.Y.derivative(1, time), SplineInfo.Z.derivative(1, time));
+    Eigen::Vector3d e_vel(_splines.x.derivative(1, time), _splines.y.derivative(1, time), _splines.z.derivative(1, time));
     return n_Quat_e * e_vel;
 }
 
 Eigen::Vector3d NAV::ImuSimulator::n_calcTrajectoryAccel(double time, const Eigen::Quaterniond& n_Quat_e, const Eigen::Vector3d& lla_position, const Eigen::Vector3d& n_velocity) const
 {
-    Eigen::Vector3d e_accel(SplineInfo.X.derivative(2, time), SplineInfo.Y.derivative(2, time), SplineInfo.Z.derivative(2, time));
+    Eigen::Vector3d e_accel(_splines.x.derivative(2, time), _splines.y.derivative(2, time), _splines.z.derivative(2, time));
     Eigen::Quaterniond e_Quat_n = n_Quat_e.conjugate();
     Eigen::Vector3d e_vel = e_Quat_n * n_velocity;
 
@@ -969,9 +1062,9 @@ Eigen::Vector3d NAV::ImuSimulator::p_calcOmega_ip(double time,
 
     // #########################################################################################################################################
 
-    double R_dot = SplineInfo.Roll.derivative(1, time);
-    double Y_dot = SplineInfo.Yaw.derivative(1, time);
-    double P_dot = SplineInfo.Pitch.derivative(1, time);
+    double R_dot = _splines.roll.derivative(1, time);
+    double Y_dot = _splines.yaw.derivative(1, time);
+    double P_dot = _splines.pitch.derivative(1, time);
 
     auto C_3 = [](double R) {
         // Eigen::Matrix3d C;
