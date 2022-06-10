@@ -436,16 +436,13 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                 case sensors::vectornav::SatSys::GLONASS:
                     satSys = GLO;
                     break;
-                default:
+                default: // IRNSS not in vectorNav
+                    skipMeasurement = true;
                     break;
                 }
 
-                if (skipMeasurement) // IRNSS not in vectorNav
-                {
-                    continue;
-                }
-
                 Frequency frequency = Freq_None;
+                Code code;
                 switch (SatelliteSystem_(satSys))
                 {
                 case GPS:
@@ -453,14 +450,96 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                     {
                     case sensors::vectornav::RawMeas::SatRawElement::Freq::L1:
                         frequency = G01;
+                        switch (satRaw.chan)
+                        {
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::P_Code:
+                            code = Code::G1P;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                            code = Code::G1C;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::SemiCodeless: // TODO: Z-Tracking?
+                            code = Code::G1W;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Y_Code:
+                            code = Code::G1Y;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::M_Code:
+                            code = Code::G1M;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Codeless:
+                            code = Code::G1N;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::M_Chan:
+                            code = Code::G1S;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
+                            code = Code::G1L;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::G1X;
+                            break;
+                        default:
+                            skipMeasurement = true;
+                            break;
+                        }
                         break;
                     case sensors::vectornav::RawMeas::SatRawElement::Freq::L2:
                         frequency = G02;
+                        switch (satRaw.chan)
+                        {
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::P_Code:
+                            code = Code::G2P;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                            code = Code::G2C;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::SemiCodeless: // TODO: Was ist G2D Semi-codeless P(Y) tracking (L1 C/A + (P2-P1)) - ist das Z-tracking?
+                            code = Code::G2W;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Y_Code:
+                            code = Code::G2Y;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::M_Code:
+                            code = Code::G2M;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Codeless:
+                            code = Code::G2N;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::M_Chan: // TODO: L2C medium / long richtig als M-Chan und L_Chan?
+                            code = Code::G2S;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
+                            code = Code::G2L;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::G2X;
+                            break;
+                        default:
+                            skipMeasurement = true;
+                            break;
+                        }
                         break;
                     case sensors::vectornav::RawMeas::SatRawElement::Freq::L5:
                         frequency = G05;
+                        switch (satRaw.chan)
+                        {
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan: // TODO: oder M_Chan
+                            code = Code::G5I;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan: // TODO: oder L_Chan
+                            code = Code::G5Q;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::G5X;
+                            break;
+                        default:
+                            skipMeasurement = true;
+                            break;
+                        }
                         break;
                     default: // other frequencies in Freq
+                        skipMeasurement = true;
                         break;
                     }
                     break;
@@ -469,11 +548,36 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                     {
                     case sensors::vectornav::RawMeas::SatRawElement::Freq::L1:
                         frequency = S01;
+                        switch (satRaw.chan)
+                        {
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                            code = Code::S1C;
+                            break;
+                        default:
+                            skipMeasurement = true;
+                            break;
+                        }
                         break;
                     case sensors::vectornav::RawMeas::SatRawElement::Freq::L5:
                         frequency = S05;
+                        switch (satRaw.chan)
+                        {
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan: // TODO: oder M_Chan
+                            code = Code::S5I;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan: // TODO: oder L_Chan
+                            code = Code::S5Q;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::S5X;
+                            break;
+                        default:
+                            skipMeasurement = true;
+                            break;
+                        }
                         break;
                     default: // other frequencies in Freq
+                        skipMeasurement = true;
                         break;
                     }
                     break;
@@ -482,20 +586,88 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                     {
                     case sensors::vectornav::RawMeas::SatRawElement::Freq::L1:
                         frequency = E01;
+                        switch (satRaw.chan)
+                        {
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                            code = Code::E1C;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::A_Chan:
+                            code = Code::E1A;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::B_Chan:
+                            code = Code::E1B;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::E1X;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::ABC:
+                            code = Code::E1Z;
+                            break;
+                        default:
+                            skipMeasurement = true;
+                            break;
+                        }
                         break;
                     case sensors::vectornav::RawMeas::SatRawElement::Freq::L5:
                         frequency = E08;
+                        switch (satRaw.chan)
+                        {
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                            code = Code::E8I;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                            code = Code::E8Q;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::E8X;
+                            break;
+                        default:
+                            skipMeasurement = true;
+                            break;
+                        }
                         break;
                     case sensors::vectornav::RawMeas::SatRawElement::Freq::E6:
                         frequency = E06;
+                        skipMeasurement = true; // TODO: Es gibt keine Codes für E6 in Code.hpp, im Dokument zur RINEX Version 3.04 gibt es welche.
                         break;
                     case sensors::vectornav::RawMeas::SatRawElement::Freq::E5a:
                         frequency = E05;
+                        switch (satRaw.chan)
+                        {
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                            code = Code::E5I;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                            code = Code::E5Q;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::E5X;
+                            break;
+                        default:
+                            skipMeasurement = true;
+                            break;
+                        }
                         break;
                     case sensors::vectornav::RawMeas::SatRawElement::Freq::E5b:
                         frequency = E07;
+                        switch (satRaw.chan)
+                        {
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                            code = Code::E7I;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                            code = Code::E7Q;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::E7X;
+                            break;
+                        default:
+                            skipMeasurement = true;
+                            break;
+                        }
                         break;
                     default: // other frequencies in Freq
+                        skipMeasurement = true;
                         break;
                     }
                     break;
@@ -504,14 +676,60 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                     {
                     case sensors::vectornav::RawMeas::SatRawElement::Freq::L1:
                         frequency = B01;
+                        switch (satRaw.chan)
+                        {
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                            code = Code::B2I;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                            code = Code::B2Q;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::B2X;
+                            break;
+                        default:
+                            skipMeasurement = true;
+                            break;
+                        }
                         break;
                     case sensors::vectornav::RawMeas::SatRawElement::Freq::E6:
                         frequency = B06;
+                        switch (satRaw.chan)
+                        {
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                            code = Code::B6I;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                            code = Code::B6Q;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::B6X;
+                            break;
+                        default:
+                            skipMeasurement = true;
+                            break;
+                        }
                         break;
                     case sensors::vectornav::RawMeas::SatRawElement::Freq::E5b:
                         frequency = B08;
+                        switch (satRaw.chan) //TODO: B08 ist eig B2 (B2a + B2b) (1191.795MHz), B07 ist B2b (1207.14 MHz). Ist B7I / B7Q / B7X B2 oder B2b und muss daher übersprungen werden?
+                        {
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                            code = Code::B7I;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                            code = Code::B7Q;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::B7X;
+                            break;
+                        default:
+                            skipMeasurement = true;
+                            break;
+                        }
                         break;
                     default: // other frequencies in Freq
+                        skipMeasurement = true;
                         break;
                     }
                     break;
@@ -520,17 +738,81 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                     {
                     case sensors::vectornav::RawMeas::SatRawElement::Freq::L1:
                         frequency = J01;
+                        switch (satRaw.chan)
+                        {
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                            code = Code::J1C;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::M_Chan:
+                            code = Code::J1S;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
+                            code = Code::J1L;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::J1X;
+                            break;
+                        default:
+                            skipMeasurement = true;
+                            break;
+                        }
                         break;
                     case sensors::vectornav::RawMeas::SatRawElement::Freq::L2:
                         frequency = J02;
+                        switch (satRaw.chan)
+                        {
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::M_Chan: // TODO: medium und long richtig als M_Chan und L_Chan?
+                            code = Code::J2S;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
+                            code = Code::J2L;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::J2X;
+                            break;
+                        default:
+                            skipMeasurement = true;
+                            break;
+                        }
                         break;
                     case sensors::vectornav::RawMeas::SatRawElement::Freq::L5:
                         frequency = J05;
+                        switch (satRaw.chan)
+                        {
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan: // TODO: oder M_Chan
+                            code = Code::J5I;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan: // TODO: oder L_Chan
+                            code = Code::J5Q;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::J5X;
+                            break;
+                        default:
+                            skipMeasurement = true;
+                            break;
+                        }
                         break;
                     case sensors::vectornav::RawMeas::SatRawElement::Freq::E6:
                         frequency = J06;
+                        switch (satRaw.chan)
+                        {
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::M_Chan: // TODO: long / short richtig als M_Chan und L_Chan?
+                            code = Code::J6S;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
+                            code = Code::J6L;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::J6X;
+                            break;
+                        default:
+                            skipMeasurement = true;
+                            break;
+                        }
                         break;
                     default: // other frequencies in Freq
+                        skipMeasurement = true;
                         break;
                     }
                     break;
@@ -539,22 +821,54 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                     {
                     case sensors::vectornav::RawMeas::SatRawElement::Freq::L1:
                         frequency = R01;
+                        switch (satRaw.chan)
+                        {
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                            code = Code::R1C;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::P_Code:
+                            code = Code::R1P;
+                            break;
+                        default:
+                            skipMeasurement = true;
+                            break;
+                        }
                         break;
                     case sensors::vectornav::RawMeas::SatRawElement::Freq::L2:
                         frequency = R02;
+                        switch (satRaw.chan)
+                        {
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                            code = Code::R2C;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::P_Code:
+                            code = Code::R2P;
+                            break;
+                        default:
+                            skipMeasurement = true;
+                            break;
+                        }
                         break;
                     default: // other frequencies in Freq
+                        skipMeasurement = true;
                         break;
                     }
                     break;
                 case IRNSS: // IRNSS not in vectorNav
                 case SatSys_None:
+                    skipMeasurement = true;
                     break;
                 }
-                (*gnssObs)(frequency, satRaw.svId, Code::G1C).pseudorange = satRaw.pr; // TODO: Die code information wird jetzt auch gespeichert, ihr müsstet also aus dem channel der satRaw das noch extrahieren
-                (*gnssObs)(frequency, satRaw.svId, Code::G1C).carrierPhase = satRaw.cp;
-                (*gnssObs)(frequency, satRaw.svId, Code::G1C).doppler = static_cast<double>(satRaw.dp); // testen
-                (*gnssObs)(frequency, satRaw.svId, Code::G1C).CN0 = static_cast<double>(satRaw.cno);
+
+                if (skipMeasurement)
+                {
+                    continue;
+                }
+
+                (*gnssObs)(frequency, satRaw.svId, code).pseudorange = satRaw.pr;
+                (*gnssObs)(frequency, satRaw.svId, code).carrierPhase = satRaw.cp;
+                (*gnssObs)(frequency, satRaw.svId, code).doppler = satRaw.dp;
+                (*gnssObs)(frequency, satRaw.svId, code).CN0 = satRaw.cno;
 
                 // LLI has not been implemented yet, but can be calculated from sensors::vectornav::RawMeas::SatRawElement::Flags
                 // (*gnssObs)[{ frequency, satRaw.svId }].LLI = ...
