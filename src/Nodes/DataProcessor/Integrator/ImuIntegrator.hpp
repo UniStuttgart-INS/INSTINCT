@@ -80,8 +80,11 @@ class ImuIntegrator : public Node
     /// @param[in] linkId Id of the link over which the data is received
     void recvLcKfInsGnssErrors(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
-    /// @brief Integrates the Imu Observation data
-    void integrateObservation();
+    /// @brief Integrates the Imu Observation data in ECEF frame
+    void integrateObservationECEF();
+
+    /// @brief Integrates the Imu Observation data in NED frame
+    void integrateObservationNED();
 
     // #########################################################################################################################################
 
@@ -144,7 +147,7 @@ class ImuIntegrator : public Node
     bool _angularRateTransportRateCompensationEnabled = true;
 
     /// Apply Zwiener's rotation correction for the velocity update
-    bool _velocityUpdateRotationCorrectionEnabled = true;
+    bool _velocityUpdateRotationCorrectionEnabled = false;
 
     // #########################################################################################################################################
 

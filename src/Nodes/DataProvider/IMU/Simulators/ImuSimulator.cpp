@@ -6,7 +6,7 @@
 #include "util/StringUtil.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/INS/Functions.hpp"
-#include "Navigation/INS/Mechanization.hpp"
+#include "Navigation/INS/LocalNavFrame/Mechanization.hpp"
 #include "Navigation/Gravity/Gravity.hpp"
 #include "Navigation/Math/NumericalIntegration.hpp"
 #include "Navigation/Math/Math.hpp"
