@@ -460,7 +460,7 @@ void NAV::ImuIntegrator::recvLcKfInsGnssErrors(const std::shared_ptr<const NodeD
         posVelAttCorrected->setVelocity_n(posVelAtt->n_velocity() - lcKfInsGnssErrors->n_velocityError);
 
         // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
-        Eigen::Matrix3d n_DcmCorrected_b = (Eigen::Matrix3d::Identity() + skewSymmetricMatrix(lcKfInsGnssErrors->n_attitudeError)) * posVelAtt->n_Quat_b().toRotationMatrix();
+        Eigen::Matrix3d n_DcmCorrected_b = (Eigen::Matrix3d::Identity() - skewSymmetricMatrix(lcKfInsGnssErrors->n_attitudeError)) * posVelAtt->n_Quat_b().toRotationMatrix();
         posVelAttCorrected->setAttitude_n_Quat_b(Eigen::Quaterniond(n_DcmCorrected_b).normalized());
 
         // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16
