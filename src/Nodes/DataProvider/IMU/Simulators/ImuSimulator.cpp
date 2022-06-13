@@ -807,9 +807,15 @@ void NAV::ImuSimulator::initializeSplines()
 
         for (uint64_t i = 0; i < splineTime.size(); i++)
         {
-            Eigen::Vector3d lla_position = lla_calcPosition(splineTime[i]);
-            auto n_Quat_e = trafo::n_Quat_e(lla_position(0), lla_position(1));
-            Eigen::Vector3d n_velocity = n_calcVelocity(splineTime[i], n_Quat_e);
+            Eigen::Vector3d e_pos{ _splines.x(splineTime[i]),
+                                   _splines.y(splineTime[i]),
+                                   _splines.z(splineTime[i]) };
+            Eigen::Vector3d e_vel{ _splines.x.derivative(1, splineTime[i]),
+                                   _splines.y.derivative(1, splineTime[i]),
+                                   _splines.z.derivative(1, splineTime[i]) };
+
+            Eigen::Vector3d lla_position = trafo::ecef2lla_WGS84(e_pos);
+            Eigen::Vector3d n_velocity = trafo::n_Quat_e(lla_position(0), lla_position(1)) * e_vel;
 
             Eigen::Vector3d e_normalVectorCenterCircle{ std::cos(_lla_startPosition(0)) * std::cos(_lla_startPosition(1)),
                                                         std::cos(_lla_startPosition(0)) * std::sin(_lla_startPosition(1)),
