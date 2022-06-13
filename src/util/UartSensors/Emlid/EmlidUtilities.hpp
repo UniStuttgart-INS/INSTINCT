@@ -9,6 +9,7 @@
 #include <vector>
 #include <memory>
 
+#include "uart/protocol/packet.hpp"
 #include "NodeData/GNSS/EmlidObs.hpp"
 
 namespace NAV::sensors::emlid
@@ -16,8 +17,9 @@ namespace NAV::sensors::emlid
 /// @brief Decrypts the provided Emlid observation
 ///
 /// @param[in, out] obs Emlid Observation to decrypt
+/// @param[in, out] packet Uart packet with the data (content gets changed because data gets extracted)
 /// @param[in] peek Specifies if the data should be peeked or read
-void decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& obs, bool peek = false);
+void decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& obs, uart::protocol::Packet& packet, bool peek = false);
 
 /// @brief Calculates the two UBX checksums for the provided data vector
 ///

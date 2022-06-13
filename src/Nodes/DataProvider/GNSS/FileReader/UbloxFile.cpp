@@ -116,15 +116,14 @@ std::shared_ptr<const NAV::NodeData> NAV::UbloxFile::pollData(bool peek)
         return nullptr;
     }
 
-    auto obs = std::make_shared<UbloxObs>(*packet);
-
     // Check if package is empty
-    if (obs->raw.getRawDataLength() == 0)
+    if (packet->getRawDataLength() == 0)
     {
         return nullptr;
     }
 
-    sensors::ublox::decryptUbloxObs(obs, peek);
+    auto obs = std::make_shared<UbloxObs>();
+    sensors::ublox::decryptUbloxObs(obs, *packet, peek);
 
     if (obs->insTime.has_value())
     {

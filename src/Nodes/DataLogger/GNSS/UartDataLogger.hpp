@@ -1,7 +1,7 @@
-/// @file UbloxDataLogger.hpp
-/// @brief Data Logger for Ublox observations
+/// @file UartDataLogger.hpp
+/// @brief Data Logger for Uart packets
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2020-03-17
+/// @date 2022-06-13
 
 #pragma once
 
@@ -13,21 +13,21 @@ namespace NAV
 class NodeData;
 
 /// Data Logger for Ublox observations
-class UbloxDataLogger : public Node, public FileWriter
+class UartDataLogger : public Node, public FileWriter
 {
   public:
     /// @brief Default constructor
-    UbloxDataLogger();
+    UartDataLogger();
     /// @brief Destructor
-    ~UbloxDataLogger() override;
+    ~UartDataLogger() override;
     /// @brief Copy constructor
-    UbloxDataLogger(const UbloxDataLogger&) = delete;
+    UartDataLogger(const UartDataLogger&) = delete;
     /// @brief Move constructor
-    UbloxDataLogger(UbloxDataLogger&&) = delete;
+    UartDataLogger(UartDataLogger&&) = delete;
     /// @brief Copy assignment operator
-    UbloxDataLogger& operator=(const UbloxDataLogger&) = delete;
+    UartDataLogger& operator=(const UartDataLogger&) = delete;
     /// @brief Move assignment operator
-    UbloxDataLogger& operator=(UbloxDataLogger&&) = delete;
+    UartDataLogger& operator=(UartDataLogger&&) = delete;
 
     /// @brief String representation of the Class Type
     [[nodiscard]] static std::string typeStatic();

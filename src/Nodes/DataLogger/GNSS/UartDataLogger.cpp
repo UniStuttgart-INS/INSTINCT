@@ -1,6 +1,6 @@
-#include "EmlidDataLogger.hpp"
+#include "UartDataLogger.hpp"
 
-#include "NodeData/GNSS/EmlidObs.hpp"
+#include "NodeData/General/UartPacket.hpp"
 
 #include "util/Logger.hpp"
 
@@ -10,7 +10,7 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-NAV::EmlidDataLogger::EmlidDataLogger()
+NAV::UartDataLogger::UartDataLogger()
 {
     name = typeStatic();
 
@@ -21,30 +21,30 @@ NAV::EmlidDataLogger::EmlidDataLogger()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 380, 70 };
 
-    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, { NAV::EmlidObs::type() }, &EmlidDataLogger::writeObservation);
+    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, { NAV::UartPacket::type() }, &UartDataLogger::writeObservation);
 }
 
-NAV::EmlidDataLogger::~EmlidDataLogger()
+NAV::UartDataLogger::~UartDataLogger()
 {
     LOG_TRACE("{}: called", nameId());
 }
 
-std::string NAV::EmlidDataLogger::typeStatic()
+std::string NAV::UartDataLogger::typeStatic()
 {
-    return "EmlidDataLogger";
+    return "UartDataLogger";
 }
 
-std::string NAV::EmlidDataLogger::type() const
+std::string NAV::UartDataLogger::type() const
 {
     return typeStatic();
 }
 
-std::string NAV::EmlidDataLogger::category()
+std::string NAV::UartDataLogger::category()
 {
     return "Data Logger";
 }
 
-void NAV::EmlidDataLogger::guiConfig()
+void NAV::UartDataLogger::guiConfig()
 {
     if (FileWriter::guiConfig(".ubx", { ".ubx" }, size_t(id), nameId()))
     {
@@ -53,7 +53,7 @@ void NAV::EmlidDataLogger::guiConfig()
     }
 }
 
-[[nodiscard]] json NAV::EmlidDataLogger::save() const
+[[nodiscard]] json NAV::UartDataLogger::save() const
 {
     LOG_TRACE("{}: called", nameId());
 
@@ -64,7 +64,7 @@ void NAV::EmlidDataLogger::guiConfig()
     return j;
 }
 
-void NAV::EmlidDataLogger::restore(json const& j)
+void NAV::UartDataLogger::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
 
@@ -74,28 +74,28 @@ void NAV::EmlidDataLogger::restore(json const& j)
     }
 }
 
-void NAV::EmlidDataLogger::flush()
+void NAV::UartDataLogger::flush()
 {
     _filestream.flush();
 }
 
-bool NAV::EmlidDataLogger::initialize()
+bool NAV::UartDataLogger::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
     return FileWriter::initialize();
 }
 
-void NAV::EmlidDataLogger::deinitialize()
+void NAV::UartDataLogger::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
 
     FileWriter::deinitialize();
 }
 
-void NAV::EmlidDataLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::UartDataLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    auto obs = std::static_pointer_cast<const EmlidObs>(nodeData);
+    auto obs = std::static_pointer_cast<const UartPacket>(nodeData);
 
     if (obs->raw.getRawDataLength() > 0)
     {

@@ -9,9 +9,6 @@
 
 #include <variant>
 
-#include "util/Eigen.hpp"
-#include "uart/protocol/packet.hpp"
-
 #include "util/UartSensors/Ublox/UbloxTypes.hpp"
 
 namespace NAV
@@ -20,12 +17,6 @@ namespace NAV
 class UbloxObs : public InsObs
 {
   public:
-    /// @brief Constructor
-    ///
-    /// @param[in] packet The packet to copy into the raw data
-    explicit UbloxObs(uart::protocol::Packet& packet)
-        : raw(packet) {}
-
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()
@@ -46,9 +37,6 @@ class UbloxObs : public InsObs
     uint8_t msgId = 0;
     /// Payload length in bytes
     uint16_t payloadLength = 0;
-
-    /// Complete message raw binary data including header and checksum (UBX) or raw string (NMEA)
-    uart::protocol::Packet raw;
 
     /// Decoded data
     std::variant<
