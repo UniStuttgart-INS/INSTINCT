@@ -2,6 +2,8 @@
 
 #include "util/Logger.hpp"
 
+#include "NodeData/General/UartPacket.hpp"
+#include "NodeData/GNSS/UbloxObs.hpp"
 #include "util/UartSensors/Ublox/UbloxUtilities.hpp"
 namespace ub = NAV::sensors::ublox;
 
@@ -31,10 +33,8 @@ TEST_CASE("[UbloxUtilities] decryptUbloxObs - NMEA", "[UbloxUtilities]")
                                       2 };
 
     uart::protocol::Packet packet("$GPZDA,141644.00,22,03,2002,00,00*67\r\n", &sensor);
-    auto obs = std::make_shared<NAV::UbloxObs>(packet);
 
-    ub::decryptUbloxObs(obs);
-    REQUIRE(obs->raw.datastr().substr(0, obs->raw.datastr().size() - 2) == "$GPZDA,141644.00,22,03,2002,00,00*67");
+    REQUIRE(packet.datastr().substr(0, packet.datastr().size() - 2) == "$GPZDA,141644.00,22,03,2002,00,00*67");
 }
 
 TEST_CASE("[UbloxUtilities] decryptUbloxObs - UBX", "[UbloxUtilities]")
@@ -67,8 +67,8 @@ TEST_CASE("[UbloxUtilities] decryptUbloxObs - UBX", "[UbloxUtilities]")
         std::vector<uint8_t> data = { 0xB5, 0x62, 0x06, 0x04, 0x04, 0x00, 0xFF, 0x87, 0x00, 0x00,
                                       0x94, 0xF5 };
         uart::protocol::Packet packet(data, &sensor);
-        auto obs = std::make_shared<NAV::UbloxObs>(packet);
-        ub::decryptUbloxObs(obs);
+        auto obs = std::make_shared<NAV::UbloxObs>();
+        ub::decryptUbloxObs(obs, packet);
         REQUIRE(obs->msgClass == ub::UbxClass::UBX_CLASS_CFG);
         REQUIRE(obs->msgId == ub::UbxCfgMessages::UBX_CFG_RST);
         REQUIRE(obs->payloadLength == 4);
@@ -115,8 +115,8 @@ TEST_CASE("[UbloxUtilities] decryptUbloxObs - UBX", "[UbloxUtilities]")
                                       0xE9, 0x9E, 0xFA, 0x7C, 0x25, 0x49, 0x77, 0x41, 0x54, 0xE3, 0x71, 0x8B, 0x82, 0x97, 0x9E, 0x41, 0xF3, 0x88, 0x8C, 0xC5, 0x02, 0x1E, 0x00, 0x00, 0xF4, 0xFB, 0x28, 0x05, 0x01, 0x08, 0x07, 0x00,
                                       0x2F, 0x61 };
         uart::protocol::Packet packet(data, &sensor);
-        auto obs = std::make_shared<NAV::UbloxObs>(packet);
-        ub::decryptUbloxObs(obs);
+        auto obs = std::make_shared<NAV::UbloxObs>();
+        ub::decryptUbloxObs(obs, packet);
         REQUIRE(obs->msgClass == ub::UbxClass::UBX_CLASS_RXM);
         REQUIRE(obs->msgId == ub::UbxRxmMessages::UBX_RXM_RAWX);
         REQUIRE(obs->payloadLength == 0x0390);
@@ -197,8 +197,8 @@ TEST_CASE("[UbloxUtilities] decryptUbloxObs - UBX", "[UbloxUtilities]")
                                       0xB1, 0xE6, 0xD8, 0x3B,
                                       0xA0, 0xD0 };
         uart::protocol::Packet packet(data, &sensor);
-        auto obs = std::make_shared<NAV::UbloxObs>(packet);
-        ub::decryptUbloxObs(obs);
+        auto obs = std::make_shared<NAV::UbloxObs>();
+        ub::decryptUbloxObs(obs, packet);
         REQUIRE(obs->msgClass == ub::UbxClass::UBX_CLASS_RXM);
         REQUIRE(obs->msgId == ub::UbxRxmMessages::UBX_RXM_SFRBX);
         REQUIRE(obs->payloadLength == 0x0028);
