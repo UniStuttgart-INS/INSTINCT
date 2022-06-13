@@ -1403,6 +1403,15 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "Latitude error [deg]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Longitude error [deg]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Altitude error [deg]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Alpha_eb [deg]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Beta_eb [deg]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gamma_eb [deg]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF X velocity error [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF Y velocity error [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF Z velocity error [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF X error [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF Y error [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF Z error [m]");
             // ImuBiases
             _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_X accumulated [m/s^2]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_Y accumulated [m/s^2]");
@@ -2208,15 +2217,25 @@ void NAV::Plot::plotLcKfInsGnssErrors(const std::shared_ptr<const LcKfInsGnssErr
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - _startValue_Time : std::nan(""));
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
     // PVAError
-    addData(pinIndex, i++, trafo::rad2deg(obs->n_attitudeError(0)));
-    addData(pinIndex, i++, trafo::rad2deg(obs->n_attitudeError(1)));
-    addData(pinIndex, i++, trafo::rad2deg(obs->n_attitudeError(2)));
-    addData(pinIndex, i++, obs->n_velocityError(0));
-    addData(pinIndex, i++, obs->n_velocityError(1));
-    addData(pinIndex, i++, obs->n_velocityError(2));
-    addData(pinIndex, i++, trafo::rad2deg(obs->lla_positionError(0)));
-    addData(pinIndex, i++, trafo::rad2deg(obs->lla_positionError(1)));
-    addData(pinIndex, i++, trafo::rad2deg(obs->lla_positionError(2)));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? trafo::rad2deg(obs->attitudeError(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? trafo::rad2deg(obs->attitudeError(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? trafo::rad2deg(obs->attitudeError(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? obs->velocityError(0) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? obs->velocityError(1) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? obs->velocityError(2) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? trafo::rad2deg(obs->positionError(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? trafo::rad2deg(obs->positionError(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? obs->positionError(2) : std::nan(""));
+
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::ECEF ? trafo::rad2deg(obs->attitudeError(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::ECEF ? trafo::rad2deg(obs->attitudeError(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::ECEF ? trafo::rad2deg(obs->attitudeError(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::ECEF ? obs->velocityError(0) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::ECEF ? obs->velocityError(1) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::ECEF ? obs->velocityError(2) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::ECEF ? obs->positionError(0) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::ECEF ? obs->positionError(1) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::ECEF ? obs->positionError(2) : std::nan(""));
     // ImuBiases
     addData(pinIndex, i++, obs->b_biasAccel(0));
     addData(pinIndex, i++, obs->b_biasAccel(1));

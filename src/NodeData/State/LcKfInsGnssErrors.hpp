@@ -28,12 +28,22 @@ class LcKfInsGnssErrors : public InsObs
         return { InsObs::type() };
     }
 
-    /// δ𝛙_nb_n = [δ𝜑 δ𝜃 δ𝜓]_nb_n The attitude error (roll, pitch, yaw) in navigation coordinates in [rad]
-    Eigen::Vector3d n_attitudeError{ 0, 0, 0 };
-    /// δ𝐯_n The velocity error in navigation coordinates in [m/s]
-    Eigen::Vector3d n_velocityError{ 0, 0, 0 };
-    /// δ𝐩 = [δ𝜙 δλ δ𝘩] The position error (latitude, longitude, altitude) in [rad, rad, m]
-    Eigen::Vector3d lla_positionError{ 0, 0, 0 };
+    /// @brief Available Frames
+    enum class Frame : int
+    {
+        ECEF, ///< Earth-Centered Earth-Fixed frame
+        NED,  ///< Local North-East-Down frame
+    };
+    /// Frame in which the errors are set
+    Frame frame = Frame::NED;
+
+    /// δ𝛙_{i,e,n}b_{i,e,n} The attitude error in {i,e,n} frame coordinates in [rad]
+    Eigen::Vector3d attitudeError{ 0, 0, 0 };
+    /// δ𝐯_{i,e,n} The velocity error in {i,e,n} coordinates in [m/s]
+    Eigen::Vector3d velocityError{ 0, 0, 0 };
+    /// NED:    δ𝐩 = [δ𝜙 δλ δ𝘩] The position error (latitude, longitude, altitude) in [rad, rad, m]
+    /// ECEF/i: δr The position error in [m]
+    Eigen::Vector3d positionError{ 0, 0, 0 };
 
     /// 𝐛_a The accelerometer bias in body frame in [m/s^2]
     Eigen::Vector3d b_biasAccel{ 0, 0, 0 };

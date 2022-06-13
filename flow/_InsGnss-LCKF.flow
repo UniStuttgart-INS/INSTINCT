@@ -446,6 +446,7 @@
         "node-239": {
             "data": {
                 "checkKalmanMatricesRanks": true,
+                "frame": 1,
                 "gnssMeasurementUncertaintyPosition": {
                     "0": {
                         "0": 0.001
@@ -715,6 +716,33 @@
                             },
                             {
                                 "displayName": "Altitude error [deg]"
+                            },
+                            {
+                                "displayName": "Alpha_eb [deg]"
+                            },
+                            {
+                                "displayName": "Beta_eb [deg]"
+                            },
+                            {
+                                "displayName": "Gamma_eb [deg]"
+                            },
+                            {
+                                "displayName": "ECEF X velocity error [m/s]"
+                            },
+                            {
+                                "displayName": "ECEF Y velocity error [m/s]"
+                            },
+                            {
+                                "displayName": "ECEF Z velocity error [m/s]"
+                            },
+                            {
+                                "displayName": "ECEF X error [m]"
+                            },
+                            {
+                                "displayName": "ECEF Y error [m]"
+                            },
+                            {
+                                "displayName": "ECEF Z error [m]"
                             },
                             {
                                 "displayName": "Accelerometer bias b_X accumulated [m/s^2]"
@@ -3596,7 +3624,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 11,
+                                "dataIndex": 20,
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -3629,7 +3657,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 12,
+                                "dataIndex": 21,
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -3662,7 +3690,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 13,
+                                "dataIndex": 22,
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -3727,7 +3755,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 14,
+                                "dataIndex": 23,
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -3760,7 +3788,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 15,
+                                "dataIndex": 24,
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -3793,7 +3821,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 16,
+                                "dataIndex": 25,
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -3851,7 +3879,7 @@
                         "yAxisFlags": 2048
                     },
                     {
-                        "headerText": "Lat/Lon/Alt error",
+                        "headerText": "Position error",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 1048576,
@@ -3954,6 +3982,105 @@
                                     "stride": 0,
                                     "thickness": 1.0
                                 }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 17,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "ECEF X",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 18,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "ECEF Y",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 19,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "ECEF Z",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
                             }
                         ],
                         "rightPaneWidth": 400.0,
@@ -3973,10 +4100,10 @@
                             "x": -1.0,
                             "y": 300.0
                         },
-                        "title": "Lat/Lon/Alt error",
+                        "title": "Position error",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
-                        "y1AxisLabel": "Lat/Lon error [deg]",
+                        "y1AxisLabel": "Lat/Lon error [deg] / ECEF error [m]",
                         "y2AxisLabel": "Altitude error [m]",
                         "y3AxisLabel": "",
                         "yAxisFlags": 2048
@@ -4065,6 +4192,105 @@
                                         "z": 0.0
                                     },
                                     "legendName": "Down",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 14,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "ECEF X",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 15,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "ECEF Y",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 16,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "ECEF Z",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -4196,6 +4422,105 @@
                                         "z": 0.0
                                     },
                                     "legendName": "Yaw",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 11,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Alpha_eb",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 12,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Beta_eb",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 13,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Gamma_eb",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -5299,11 +5624,11 @@
                 "angularRateEarthRotationEnabled": true,
                 "angularRateTransportRateEnabled": true,
                 "centrifgalAccelerationEnabled": true,
-                "circularTrajectoryCircleCountForStop": 7.0,
+                "circularTrajectoryCircleCountForStop": 2.0,
                 "circularTrajectoryDirection": 1,
                 "circularTrajectoryHorizontalSpeed": 10.0,
                 "circularTrajectoryOriginAngle": 0.0,
-                "circularTrajectoryRadius": 5000.0,
+                "circularTrajectoryRadius": 300.0,
                 "coriolisAccelerationEnabled": true,
                 "fixedTrajectoryStartOrientation": {
                     "0": {
@@ -5319,31 +5644,20 @@
                 "gnssFrequency": 5.0,
                 "gravitationModel": 3,
                 "helicalTrajectoryVerticalSpeed": 1.0,
-                "imuFrequency": 101.0,
-                "linearTrajectoryDistanceForStop": 100.0,
-                "n_linearTrajectoryAcceleration": {
-                    "0": {
-                        "0": 0.0
-                    },
-                    "1": {
-                        "0": 0.0
-                    },
-                    "2": {
-                        "0": 0.0
-                    }
-                },
+                "imuFrequency": 100.0,
+                "linearTrajectoryDistanceForStop": 5000.0,
                 "n_linearTrajectoryStartVelocity": {
                     "0": {
                         "0": 1.0
                     },
                     "1": {
-                        "0": 0.0
+                        "0": 2.0
                     },
                     "2": {
-                        "0": 0.0
+                        "0": 3.0
                     }
                 },
-                "simulationDuration": 2000.0,
+                "simulationDuration": 3000.0,
                 "simulationStopCondition": 0,
                 "startPosition_lla": {
                     "0": {
@@ -5362,7 +5676,7 @@
                 },
                 "startTimeEditFormat": 0,
                 "startTimeSource": 0,
-                "trajectoryType": 3
+                "trajectoryType": 2
             },
             "enabled": true,
             "id": 3,
@@ -5762,24 +6076,24 @@
                 "imuAccelerometerBiasUnit": 0,
                 "imuAccelerometerBias_p": {
                     "0": {
-                        "0": 0.01
+                        "0": 0.0
                     },
                     "1": {
-                        "0": 0.02
+                        "0": 0.0
                     },
                     "2": {
-                        "0": 0.03
+                        "0": 0.0
                     }
                 },
                 "imuAccelerometerNoise": {
                     "0": {
-                        "0": 0.0002
+                        "0": 0.0
                     },
                     "1": {
-                        "0": 0.0002
+                        "0": 0.0
                     },
                     "2": {
-                        "0": 0.0002
+                        "0": 0.0
                     }
                 },
                 "imuAccelerometerNoiseUnit": 0,
@@ -5790,24 +6104,24 @@
                 "imuGyroscopeBiasUnit": 0,
                 "imuGyroscopeBias_p": {
                     "0": {
-                        "0": 0.015
+                        "0": 0.0
                     },
                     "1": {
-                        "0": 0.05
+                        "0": 0.0
                     },
                     "2": {
-                        "0": -0.02
+                        "0": 0.0
                     }
                 },
                 "imuGyroscopeNoise": {
                     "0": {
-                        "0": 3.5e-05
+                        "0": 0.0
                     },
                     "1": {
-                        "0": 3.5e-05
+                        "0": 0.0
                     },
                     "2": {
-                        "0": 6e-05
+                        "0": 0.0
                     }
                 },
                 "imuGyroscopeNoiseUnit": 0,
@@ -5998,13 +6312,13 @@
                 "positionBiasUnit": 0,
                 "positionNoise": {
                     "0": {
-                        "0": 0.0001
+                        "0": 0.0
                     },
                     "1": {
-                        "0": 0.0001
+                        "0": 0.0
                     },
                     "2": {
-                        "0": 0.0001
+                        "0": 0.0
                     }
                 },
                 "positionNoiseUnit": 0,
@@ -6026,13 +6340,13 @@
                 "velocityBiasUnit": 0,
                 "velocityNoise": {
                     "0": {
-                        "0": 0.0001
+                        "0": 0.0
                     },
                     "1": {
-                        "0": 0.0001
+                        "0": 0.0
                     },
                     "2": {
-                        "0": 0.0001
+                        "0": 0.0
                     }
                 },
                 "velocityNoiseUnit": 0,
@@ -6177,7 +6491,7 @@
                             }
                         ],
                         "size": 0,
-                        "stride": 8
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "PosVelAtt",
@@ -6313,7 +6627,7 @@
                             }
                         ],
                         "size": 0,
-                        "stride": 8
+                        "stride": 1
                     }
                 ],
                 "plots": [

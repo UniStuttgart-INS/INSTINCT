@@ -408,9 +408,9 @@ class LooselyCoupledKF : public Node
     // ###########################################################################################################
 
     /// @brief Calculates the noise input matrix 𝐆
-    /// @param[in] x_Quat_b Quaternion from body frame to {earth,navigation} frame x
+    /// @param[in] ien_Quat_b Quaternion from body frame to {i,e,n} frame
     /// @note See \cite Groves2013 Groves, ch. 14.2.6, eq. 14.79, p. 590
-    [[nodiscard]] static Eigen::Matrix<double, 15, 12> noiseInputMatrix_G(const Eigen::Quaterniond& x_Quat_b);
+    [[nodiscard]] static Eigen::Matrix<double, 15, 12> noiseInputMatrix_G(const Eigen::Quaterniond& ien_Quat_b);
 
     /// @brief Calculates the noise scale matrix 𝐖
     /// @param[in] sigma2_ra Variance of the noise on the accelerometer specific-force measurements
@@ -468,13 +468,13 @@ class LooselyCoupledKF : public Node
     /// @brief Initial error covariance matrix P_0
     /// @param[in] variance_angles Initial Covariance of the attitude angles in [rad²]
     /// @param[in] variance_vel Initial Covariance of the velocity in [m²/s²]
-    /// @param[in] variance_lla Initial Covariance of the position in [rad² rad² m²]
+    /// @param[in] variance_pos Initial Covariance of the position in [rad² rad² m²] n-frame / [m²] i,e-frame
     /// @param[in] variance_accelBias Initial Covariance of the accelerometer biases in [m^2/s^4]
     /// @param[in] variance_gyroBias Initial Covariance of the gyroscope biases in [rad^2/s^2]
     /// @return The 15x15 matrix of initial state variances
     [[nodiscard]] Eigen::Matrix<double, 15, 15> initialErrorCovarianceMatrix_P0(const Eigen::Vector3d& variance_angles,
                                                                                 const Eigen::Vector3d& variance_vel,
-                                                                                const Eigen::Vector3d& variance_lla,
+                                                                                const Eigen::Vector3d& variance_pos,
                                                                                 const Eigen::Vector3d& variance_accelBias,
                                                                                 const Eigen::Vector3d& variance_gyroBias) const;
 
@@ -522,11 +522,54 @@ class LooselyCoupledKF : public Node
     [[nodiscard]] static Eigen::Matrix3d n_measurementMatrix_H_v5(const Eigen::Matrix3d& n_Dcm_b,
                                                                   const Eigen::Vector3d& b_leverArm_InsGnss);
 
+    /// @brief Measurement matrix for GNSS measurements at timestep k, represented in Earth frame coordinates
+    /// @param[in] e_Dcm_b Direction Cosine Matrix from body to Earth coordinates
+    /// @param[in] b_omega_ib Angular rate of body with respect to inertial system in body-frame coordinates in [rad/s]
+    /// @param[in] b_leverArm_InsGnss l_{ba}^b lever arm from the INS to the GNSS antenna in body-frame coordinates [m]
+    /// @param[in] e_Omega_ie Skew-symmetric matrix of the Earth-rotation vector in Earth frame axes
+    /// @return The 6x15 measurement matrix 𝐇
+    [[nodiscard]] static Eigen::Matrix<double, 6, 15> e_measurementMatrix_H(const Eigen::Matrix3d& e_Dcm_b,
+                                                                            const Eigen::Vector3d& b_omega_ib,
+                                                                            const Eigen::Vector3d& b_leverArm_InsGnss,
+                                                                            const Eigen::Matrix3d& e_Omega_ie);
+
+    /// @brief Submatrix 𝐇_r1 of the measurement sensitivity matrix 𝐇
+    /// @param[in] e_Dcm_b Direction Cosine Matrix from body to Earth coordinates
+    /// @param[in] b_leverArm_InsGnss l_{ba}^b lever arm from the INS to the GNSS antenna in body-frame coordinates [m]
+    /// @return The 3x3 matrix 𝐇_r1
+    [[nodiscard]] static Eigen::Matrix3d e_measurementMatrix_H_r1(const Eigen::Matrix3d& e_Dcm_b,
+                                                                  const Eigen::Vector3d& b_leverArm_InsGnss);
+
+    /// @brief Submatrix 𝐇_v1 of the measurement sensitivity matrix 𝐇
+    /// @param[in] e_Dcm_b Direction Cosine Matrix from body to Earth coordinates
+    /// @param[in] b_omega_ib Angular rate of body with respect to inertial system in body-frame coordinates in [rad/s]
+    /// @param[in] b_leverArm_InsGnss l_{ba}^b lever arm from the INS to the GNSS antenna in body-frame coordinates [m]
+    /// @param[in] e_Omega_ie Skew-symmetric matrix of the Earth-rotation vector in Earth frame axes
+    /// @return The 3x3 matrix 𝐇_v1
+    [[nodiscard]] static Eigen::Matrix3d e_measurementMatrix_H_v1(const Eigen::Matrix3d& e_Dcm_b,
+                                                                  const Eigen::Vector3d& b_omega_ib,
+                                                                  const Eigen::Vector3d& b_leverArm_InsGnss,
+                                                                  const Eigen::Matrix3d& e_Omega_ie);
+
+    /// @brief Submatrix 𝐇_v5 of the measurement sensitivity matrix 𝐇
+    /// @param[in] e_Dcm_b Direction Cosine Matrix from body to Earth coordinates
+    /// @param[in] b_leverArm_InsGnss l_{ba}^b lever arm from the INS to the GNSS antenna in body-frame coordinates [m]
+    /// @return The 3x3 matrix 𝐇_v5
+    [[nodiscard]] static Eigen::Matrix3d e_measurementMatrix_H_v5(const Eigen::Matrix3d& e_Dcm_b,
+                                                                  const Eigen::Vector3d& b_leverArm_InsGnss);
+
     /// @brief Measurement noise covariance matrix 𝐑
     /// @param[in] gnssVarianceLatLonAlt Variances of the position LLA in [rad² rad² m²]
-    /// @param[in] gnssVarianceVelocity Variances of the velocity in [m² m² m²]
+    /// @param[in] gnssVarianceVelocity Variances of the velocity in [m²/s²]
     /// @return The 6x6 measurement covariance matrix 𝐑
     [[nodiscard]] static Eigen::Matrix<double, 6, 6> n_measurementNoiseCovariance_R(const Eigen::Vector3d& gnssVarianceLatLonAlt,
+                                                                                    const Eigen::Vector3d& gnssVarianceVelocity);
+
+    /// @brief Measurement noise covariance matrix 𝐑
+    /// @param[in] gnssVariancePosition Variances of the position in [m²]
+    /// @param[in] gnssVarianceVelocity Variances of the velocity in [m²/s²]
+    /// @return The 6x6 measurement covariance matrix 𝐑
+    [[nodiscard]] static Eigen::Matrix<double, 6, 6> e_measurementNoiseCovariance_R(const Eigen::Vector3d& gnssVariancePosition,
                                                                                     const Eigen::Vector3d& gnssVarianceVelocity);
 
     /// @brief Measurement innovation vector 𝜹𝐳
@@ -544,5 +587,20 @@ class LooselyCoupledKF : public Node
                                                                                 const Eigen::Vector3d& n_velocityMeasurement, const Eigen::Vector3d& n_velocityEstimate,
                                                                                 const Eigen::Matrix3d& T_rn_p, const Eigen::Quaterniond& n_Quat_b, const Eigen::Vector3d& b_leverArm_InsGnss,
                                                                                 const Eigen::Vector3d& b_omega_ib, const Eigen::Matrix3d& n_Omega_ie);
+
+    /// @brief Measurement innovation vector 𝜹𝐳
+    /// @param[in] e_positionMeasurement Position measurement in ECEF coordinates in [m]
+    /// @param[in] e_positionEstimate Position estimate in ECEF coordinates in [m]
+    /// @param[in] e_velocityMeasurement Velocity measurement in the e frame in [m/s]
+    /// @param[in] e_velocityEstimate Velocity estimate in the e frame in [m/s]
+    /// @param[in] e_Quat_b Rotation quaternion from body to Earth coordinates
+    /// @param[in] b_leverArm_InsGnss l_{ba}^b lever arm from the INS to the GNSS antenna in body-frame coordinates [m]
+    /// @param[in] b_omega_ib Angular rate of body with respect to inertial system in body-frame coordinates in [rad/s]
+    /// @param[in] e_Omega_ie Skew-symmetric matrix of the Earth-rotation vector in Earth frame axes
+    /// @return The 6x1 measurement innovation vector 𝜹𝐳
+    [[nodiscard]] static Eigen::Matrix<double, 6, 1> e_measurementInnovation_dz(const Eigen::Vector3d& e_positionMeasurement, const Eigen::Vector3d& e_positionEstimate,
+                                                                                const Eigen::Vector3d& e_velocityMeasurement, const Eigen::Vector3d& e_velocityEstimate,
+                                                                                const Eigen::Quaterniond& e_Quat_b, const Eigen::Vector3d& b_leverArm_InsGnss,
+                                                                                const Eigen::Vector3d& b_omega_ib, const Eigen::Matrix3d& e_Omega_ie);
 };
 } // namespace NAV

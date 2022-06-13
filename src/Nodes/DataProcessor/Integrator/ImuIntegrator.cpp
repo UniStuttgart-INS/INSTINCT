@@ -451,17 +451,33 @@ void NAV::ImuIntegrator::recvLcKfInsGnssErrors(const std::shared_ptr<const NodeD
     for (auto& posVelAtt : _posVelAttStates)
     {
         LOG_DATA("{}: Correcting posVelAtt at time [{}] with error from time [{}]", nameId(), posVelAtt->insTime->toYMDHMS(), lcKfInsGnssErrors->insTime->toYMDHMS());
-        LOG_DATA("{}:     lla_position ({}) - ({})", nameId(), posVelAtt->lla_position().transpose(), lcKfInsGnssErrors->lla_positionError.transpose());
-        LOG_DATA("{}:     n_velocity ({}) - ({})", nameId(), posVelAtt->n_velocity().transpose(), lcKfInsGnssErrors->n_velocityError.transpose());
-
         auto posVelAttCorrected = std::make_shared<PosVelAtt>(*posVelAtt);
-        posVelAttCorrected->setPosition_lla(posVelAtt->lla_position() - lcKfInsGnssErrors->lla_positionError);
 
-        posVelAttCorrected->setVelocity_n(posVelAtt->n_velocity() - lcKfInsGnssErrors->n_velocityError);
+        if (lcKfInsGnssErrors->frame == LcKfInsGnssErrors::Frame::NED)
+        {
+            LOG_DATA("{}:     velocity ({}) - ({})", nameId(), posVelAtt->n_velocity().transpose(), lcKfInsGnssErrors->velocityError.transpose());
+            LOG_DATA("{}:     position ({}) - ({})", nameId(), posVelAtt->lla_position().transpose(), lcKfInsGnssErrors->positionError.transpose());
 
-        // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
-        Eigen::Matrix3d n_DcmCorrected_b = (Eigen::Matrix3d::Identity() - skewSymmetricMatrix(lcKfInsGnssErrors->n_attitudeError)) * posVelAtt->n_Quat_b().toRotationMatrix();
-        posVelAttCorrected->setAttitude_n_Quat_b(Eigen::Quaterniond(n_DcmCorrected_b).normalized());
+            posVelAttCorrected->setPosition_lla(posVelAtt->lla_position() - lcKfInsGnssErrors->positionError);
+
+            posVelAttCorrected->setVelocity_n(posVelAtt->n_velocity() - lcKfInsGnssErrors->velocityError);
+
+            // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
+            Eigen::Matrix3d n_DcmCorrected_b = (Eigen::Matrix3d::Identity() - skewSymmetricMatrix(lcKfInsGnssErrors->attitudeError)) * posVelAtt->n_Quat_b().toRotationMatrix();
+            posVelAttCorrected->setAttitude_n_Quat_b(Eigen::Quaterniond(n_DcmCorrected_b).normalized());
+        }
+        else // if (lcKfInsGnssErrors->frame == LcKfInsGnssErrors::Frame::ECEF)
+        {
+            LOG_DATA("{}:     velocity ({}) - ({})", nameId(), posVelAtt->e_velocity().transpose(), lcKfInsGnssErrors->velocityError.transpose());
+            LOG_DATA("{}:     position ({}) - ({})", nameId(), posVelAtt->e_position().transpose(), lcKfInsGnssErrors->positionError.transpose());
+            posVelAttCorrected->setPosition_e(posVelAtt->e_position() - lcKfInsGnssErrors->positionError);
+
+            posVelAttCorrected->setVelocity_e(posVelAtt->e_velocity() - lcKfInsGnssErrors->velocityError);
+
+            // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
+            Eigen::Matrix3d e_DcmCorrected_b = (Eigen::Matrix3d::Identity() - skewSymmetricMatrix(lcKfInsGnssErrors->attitudeError)) * posVelAtt->e_Quat_b().toRotationMatrix();
+            posVelAttCorrected->setAttitude_e_Quat_b(Eigen::Quaterniond(e_DcmCorrected_b).normalized());
+        }
 
         // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16
         // Eigen::Quaterniond n_Quat_b = posVelAtt->n_Quat_b()
