@@ -104,7 +104,7 @@ class ImuSimulator : public Imu
     // ###########################################################################################################
 
     /// Frequency to sample the IMU with in [Hz]
-    double _imuFrequency = 200;
+    double _imuFrequency = 100;
     /// Frequency to sample the position with in [Hz]
     double _gnssFrequency = 5;
 
@@ -115,10 +115,8 @@ class ImuSimulator : public Imu
     {
         Fixed,    ///< Static position without movement
         Linear,   ///< Linear movement with constant velocity
-        Circular, ///< Circular path in the horizontal plane
-        Helix,    ///< Circular path with velocity in normal direction of the circle plane
+        Circular, ///< Circular path
         COUNT,    ///< Amount of items in the enum
-        // Spline,   ///< Path which follows a spline trajectory // TODO: Implement ImuSimulator Spline Trajectory
     };
     /// @brief Converts the enum to a string
     /// @param[in] value Enum value to convert into text
@@ -131,7 +129,7 @@ class ImuSimulator : public Imu
     /// Start position in local navigation coordinates (latitude, longitude, altitude) [rad, rad, m]
     ///
     /// - Fixed, Linear: Start position
-    /// - Circular, Helix: Center of the circle
+    /// - Circular: Center of the circle
     Eigen::Vector3d _lla_startPosition = Eigen::Vector3d::Zero();
 
     /// Orientation of the vehicle [roll, pitch, yaw] [rad]
@@ -141,18 +139,24 @@ class ImuSimulator : public Imu
     Eigen::Vector3d _n_linearTrajectoryStartVelocity = Eigen::Vector3d{ 1, 0, 0 };
 
     /// Horizontal speed of the vehicle in the tangential plane in [m/s]
-    double _circularTrajectoryHorizontalSpeed = 1.0;
+    double _circularTrajectoryHorizontalSpeed = 10.0;
 
     /// Vertical speed of the vehicle in the tangential plane in [m/s]
-    double _helicalTrajectoryVerticalSpeed = 1.0;
+    double _circularTrajectoryVerticalSpeed = 0.0;
 
-    /// In the GUI selected radius of the circular/helix trajectory
+    /// In the GUI selected radius of the circular trajectory
     double _circularTrajectoryRadius = 50.0;
 
-    /// In the GUI selected origin angle of the circular/helix trajectory in [rad]
+    /// In the GUI selected origin angle of the circular trajectory in [rad]
     double _circularTrajectoryOriginAngle = 0.0;
 
-    /// Possible directions for the circular/helix trajectory
+    /// Harmonic Oscillation Frequency on the circular trajectory [cycles/revolution]
+    int _circularSubHarmonicFrequency = 0;
+
+    /// Harmonic Oscillation Amplitude Factor of the circle radius [-]
+    double _circularSubHarmonicAmplitudeFactor = 0.1;
+
+    /// Possible directions for the circular trajectory
     enum class Direction
     {
         CW,    ///< Clockwise
@@ -164,7 +168,7 @@ class ImuSimulator : public Imu
     /// @return String representation of the enum
     static const char* to_string(Direction value);
 
-    /// In the GUI selected direction of the circular/helix trajectory
+    /// In the GUI selected direction of the circular trajectory
     Direction _circularTrajectoryDirection = Direction::CCW;
 
     // ###########################################################################################################
@@ -173,7 +177,7 @@ class ImuSimulator : public Imu
     enum StopCondition
     {
         Duration,          ///< Time Duration
-        DistanceOrCircles, ///< Distance for Linear trajectory / Circle count for Circular/Helix trajectory
+        DistanceOrCircles, ///< Distance for Linear trajectory / Circle count for Circular trajectory
     };
 
     /// Condition which has to be met to stop the simulation

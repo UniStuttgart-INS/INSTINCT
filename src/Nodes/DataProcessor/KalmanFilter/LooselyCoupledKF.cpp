@@ -1446,12 +1446,10 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::e_systemNoiseCovarianceMatr
     Q.block<3, 3>(0, 12) = Q.block<3, 3>(12, 0).transpose(); // Q_51^T
 
     Q.middleRows<3>(0) *= SCALE_FACTOR_ATTITUDE;
-    Q.middleRows<2>(6) *= SCALE_FACTOR_LAT_LON;
     Q.middleRows<3>(9) *= SCALE_FACTOR_ACCELERATION;
     Q.middleRows<3>(12) *= SCALE_FACTOR_ANGULAR_RATE;
 
     Q.middleCols<3>(0) *= SCALE_FACTOR_ATTITUDE;
-    Q.middleCols<2>(6) *= SCALE_FACTOR_LAT_LON;
     Q.middleCols<3>(9) *= SCALE_FACTOR_ACCELERATION;
     Q.middleCols<3>(12) *= SCALE_FACTOR_ANGULAR_RATE;
 

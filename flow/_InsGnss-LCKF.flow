@@ -5240,7 +5240,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "North - z(0)",
+                                    "legendName": "North/Lat - z(0)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -5273,7 +5273,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "East - z(1)",
+                                    "legendName": "East/Lon - z(1)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -5306,7 +5306,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "Up - z(2)",
+                                    "legendName": "Up/Alt - z(2)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -5624,11 +5624,13 @@
                 "angularRateEarthRotationEnabled": true,
                 "angularRateTransportRateEnabled": true,
                 "centrifgalAccelerationEnabled": true,
-                "circularTrajectoryCircleCountForStop": 2.0,
+                "circularSubHarmonicAmplitudeFactor": 0.1,
+                "circularSubHarmonicFrequency": 10,
+                "circularTrajectoryCircleCountForStop": 1.0,
                 "circularTrajectoryDirection": 1,
                 "circularTrajectoryHorizontalSpeed": 10.0,
                 "circularTrajectoryOriginAngle": 0.0,
-                "circularTrajectoryRadius": 300.0,
+                "circularTrajectoryRadius": 600.0,
                 "coriolisAccelerationEnabled": true,
                 "fixedTrajectoryStartOrientation": {
                     "0": {
@@ -5658,7 +5660,7 @@
                     }
                 },
                 "simulationDuration": 3000.0,
-                "simulationStopCondition": 0,
+                "simulationStopCondition": 1,
                 "startPosition_lla": {
                     "0": {
                         "0": 0.0
@@ -6076,13 +6078,13 @@
                 "imuAccelerometerBiasUnit": 0,
                 "imuAccelerometerBias_p": {
                     "0": {
-                        "0": 0.0
+                        "0": 0.01
                     },
                     "1": {
-                        "0": 0.0
+                        "0": 0.02
                     },
                     "2": {
-                        "0": 0.0
+                        "0": 0.03
                     }
                 },
                 "imuAccelerometerNoise": {
@@ -6104,13 +6106,13 @@
                 "imuGyroscopeBiasUnit": 0,
                 "imuGyroscopeBias_p": {
                     "0": {
-                        "0": 0.0
+                        "0": 0.01
                     },
                     "1": {
-                        "0": 0.0
+                        "0": 0.02
                     },
                     "2": {
-                        "0": 0.0
+                        "0": 0.03
                     }
                 },
                 "imuGyroscopeNoise": {
@@ -6417,7 +6419,7 @@
             "data": {
                 "nInputPins": 3,
                 "nPlots": 10,
-                "overridePositionStartValues": false,
+                "overridePositionStartValues": true,
                 "pinData": [
                     {
                         "dataIdentifier": "ImuObs",
@@ -7845,7 +7847,9 @@
                         "y3AxisLabel": "",
                         "yAxisFlags": 2048
                     }
-                ]
+                ],
+                "startValue_East": 0.0,
+                "startValue_North": 0.0
             },
             "enabled": true,
             "id": 9,

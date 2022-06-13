@@ -16,6 +16,7 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
+#include "internal/gui/widgets/HelpMarker.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
@@ -171,7 +172,7 @@ void NAV::ImuSimulator::guiConfig()
                                    ? "Position (Lat, Lon, Alt)"
                                    : (_trajectoryType == TrajectoryType::Linear
                                           ? "Start position (Lat, Lon, Alt)"
-                                          : (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix
+                                          : (_trajectoryType == TrajectoryType::Circular
                                                  ? "Center position (Lat, Lon, Alt)"
                                                  : "")));
 
@@ -239,7 +240,7 @@ void NAV::ImuSimulator::guiConfig()
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
             ImGui::TextUnformatted("Start velocity (North, East, Down)");
         }
-        else if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
+        else if (_trajectoryType == TrajectoryType::Circular)
         {
             if (ImGui::BeginTable(fmt::format("CircularTrajectory##{}", size_t(id)).c_str(), 2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX))
             {
@@ -279,35 +280,60 @@ void NAV::ImuSimulator::guiConfig()
                 // ####################################################################################################
                 ImGui::TableNextColumn();
                 ImGui::SetNextItemWidth(columnWidth);
-                double originAngle = trafo::rad2deg(_circularTrajectoryOriginAngle);
-                if (ImGui::DragDouble(fmt::format("Origin Angle##{}", size_t(id)).c_str(), &originAngle, 15.0, -360.0, 360.0, "%.8f°"))
-                {
-                    _circularTrajectoryOriginAngle = trafo::deg2rad(originAngle);
-                    LOG_DEBUG("{}: originAngle changed to {}", nameId(), originAngle);
-                    flow::ApplyChanges();
-                    deinitializeNode();
-                }
-
-                ImGui::TableNextColumn();
-                ImGui::SetNextItemWidth(columnWidth);
                 if (ImGui::InputDouble(fmt::format("Horizontal speed##{}", size_t(id)).c_str(), &_circularTrajectoryHorizontalSpeed, 0.0, 0.0, "%.3f m/s"))
                 {
                     LOG_DEBUG("{}: circularTrajectoryHorizontalSpeed changed to {}", nameId(), _circularTrajectoryHorizontalSpeed);
                     flow::ApplyChanges();
                     deinitializeNode();
                 }
-                // ####################################################################################################
-                if (_trajectoryType == TrajectoryType::Helix)
+
+                ImGui::TableNextColumn();
+                ImGui::SetNextItemWidth(columnWidth);
+                double originAngle = trafo::rad2deg(_circularTrajectoryOriginAngle);
+                if (ImGui::DragDouble(fmt::format("Origin Angle##{}", size_t(id)).c_str(), &originAngle, 15.0, -360.0, 360.0, "%.3f°"))
                 {
-                    ImGui::TableNextColumn();
-                    ImGui::SetNextItemWidth(columnWidth);
-                    if (ImGui::InputDouble(fmt::format("Vertical speed (Up)##{}", size_t(id)).c_str(), &_helicalTrajectoryVerticalSpeed, 0.0, 0.0, "%.3f m/s"))
-                    {
-                        LOG_DEBUG("{}: helicalTrajectoryVerticalSpeed changed to {}", nameId(), _helicalTrajectoryVerticalSpeed);
-                        flow::ApplyChanges();
-                        deinitializeNode();
-                    }
+                    _circularTrajectoryOriginAngle = trafo::deg2rad(originAngle);
+                    LOG_DEBUG("{}: originAngle changed to {}", nameId(), originAngle);
+                    flow::ApplyChanges();
+                    deinitializeNode();
                 }
+                // ####################################################################################################
+                ImGui::TableNextColumn();
+                ImGui::SetNextItemWidth(columnWidth);
+                if (ImGui::InputDouble(fmt::format("Vertical speed (Up)##{}", size_t(id)).c_str(), &_circularTrajectoryVerticalSpeed, 0.0, 0.0, "%.3f m/s"))
+                {
+                    LOG_DEBUG("{}: circularTrajectoryVerticalSpeed changed to {}", nameId(), _circularTrajectoryVerticalSpeed);
+                    flow::ApplyChanges();
+                    deinitializeNode();
+                }
+
+                ImGui::TableNextColumn();
+                // ####################################################################################################
+                ImGui::TableNextColumn();
+                ImGui::SetNextItemWidth(columnWidth);
+                if (ImGui::DragInt(fmt::format("Osc Frequency##{}", size_t(id)).c_str(), &_circularSubHarmonicFrequency, 1.0F, 0, 100, "%d [cycles/rev]"))
+                {
+                    LOG_DEBUG("{}: circularSubHarmonicFrequency changed to {}", nameId(), _circularSubHarmonicFrequency);
+                    flow::ApplyChanges();
+                    deinitializeNode();
+                }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("This modulates a harmonic oscillation on the circular path.\n"
+                                         "The frequency is in units [cycles per revolution].");
+
+                ImGui::TableNextColumn();
+                ImGui::SetNextItemWidth(columnWidth);
+                if (ImGui::DragDouble(fmt::format("Osc Amplitude Factor##{}", size_t(id)).c_str(), &_circularSubHarmonicAmplitudeFactor, 0.01F, 0.0, 10.0, "%.3f * r"))
+                {
+                    LOG_DEBUG("{}: circularSubHarmonicAmplitudeFactor changed to {}", nameId(), _circularSubHarmonicAmplitudeFactor);
+                    flow::ApplyChanges();
+                    deinitializeNode();
+                }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("This modulates a harmonic oscillation on the circular path.\n"
+                                         "This factor determines the amplitude of the oscillation\n"
+                                         "with respect to the radius of the circle.");
+                // ####################################################################################################
 
                 ImGui::EndTable();
             }
@@ -357,7 +383,7 @@ void NAV::ImuSimulator::guiConfig()
                 deinitializeNode();
             }
         }
-        else if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
+        else if (_trajectoryType == TrajectoryType::Circular)
         {
             ImGui::SetNextItemWidth(columnWidth);
             if (ImGui::InputDoubleL(fmt::format("Amount of Circles##{}", size_t(id)).c_str(), &_circularTrajectoryCircleCountForStop, 0.0, std::numeric_limits<double>::max(), 1.0, 1.0, "%.3f"))
@@ -450,10 +476,12 @@ void NAV::ImuSimulator::guiConfig()
     j["fixedTrajectoryStartOrientation"] = _fixedTrajectoryStartOrientation;
     j["n_linearTrajectoryStartVelocity"] = _n_linearTrajectoryStartVelocity;
     j["circularTrajectoryHorizontalSpeed"] = _circularTrajectoryHorizontalSpeed;
-    j["helicalTrajectoryVerticalSpeed"] = _helicalTrajectoryVerticalSpeed;
+    j["circularTrajectoryVerticalSpeed"] = _circularTrajectoryVerticalSpeed;
     j["circularTrajectoryRadius"] = _circularTrajectoryRadius;
     j["circularTrajectoryOriginAngle"] = _circularTrajectoryOriginAngle;
     j["circularTrajectoryDirection"] = _circularTrajectoryDirection;
+    j["circularSubHarmonicFrequency"] = _circularSubHarmonicFrequency;
+    j["circularSubHarmonicAmplitudeFactor"] = _circularSubHarmonicAmplitudeFactor;
     // ###########################################################################################################
     j["simulationStopCondition"] = _simulationStopCondition;
     j["simulationDuration"] = _simulationDuration;
@@ -517,9 +545,9 @@ void NAV::ImuSimulator::restore(json const& j)
     {
         j.at("circularTrajectoryHorizontalSpeed").get_to(_circularTrajectoryHorizontalSpeed);
     }
-    if (j.contains("helicalTrajectoryVerticalSpeed"))
+    if (j.contains("circularTrajectoryVerticalSpeed"))
     {
-        j.at("helicalTrajectoryVerticalSpeed").get_to(_helicalTrajectoryVerticalSpeed);
+        j.at("circularTrajectoryVerticalSpeed").get_to(_circularTrajectoryVerticalSpeed);
     }
     if (j.contains("circularTrajectoryRadius"))
     {
@@ -532,6 +560,14 @@ void NAV::ImuSimulator::restore(json const& j)
     if (j.contains("circularTrajectoryDirection"))
     {
         j.at("circularTrajectoryDirection").get_to(_circularTrajectoryDirection);
+    }
+    if (j.contains("circularSubHarmonicFrequency"))
+    {
+        j.at("circularSubHarmonicFrequency").get_to(_circularSubHarmonicFrequency);
+    }
+    if (j.contains("circularSubHarmonicAmplitudeFactor"))
+    {
+        j.at("circularSubHarmonicAmplitudeFactor").get_to(_circularSubHarmonicAmplitudeFactor);
     }
     // ###########################################################################################################
     if (j.contains("simulationStopCondition"))
@@ -717,7 +753,7 @@ void NAV::ImuSimulator::initializeSplines()
         _splines.pitch.setPoints(splineTime, splinePitch);
         _splines.yaw.setPoints(splineTime, splineYaw);
     }
-    else if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
+    else if (_trajectoryType == TrajectoryType::Circular)
     {
         double simDuration{};
         if (_simulationStopCondition == StopCondition::Duration)
@@ -752,9 +788,9 @@ void NAV::ImuSimulator::initializeSplines()
             phi *= _circularTrajectoryDirection == Direction::CW ? -1 : 1;
             phi += _circularTrajectoryOriginAngle;
 
-            Eigen::Vector3d n_relativePosition{ _circularTrajectoryRadius * std::sin(phi),                                                           // [m]
-                                                _circularTrajectoryRadius * std::cos(phi),                                                           // [m]
-                                                _trajectoryType == TrajectoryType::Helix ? -_helicalTrajectoryVerticalSpeed * splineTime[i] : 0.0 }; // [m]
+            Eigen::Vector3d n_relativePosition{ _circularTrajectoryRadius * std::sin(phi) * (1 + _circularSubHarmonicAmplitudeFactor * sin(phi * static_cast<double>(_circularSubHarmonicFrequency))), // [m]
+                                                _circularTrajectoryRadius * std::cos(phi) * (1 + _circularSubHarmonicAmplitudeFactor * sin(phi * static_cast<double>(_circularSubHarmonicFrequency))), // [m]
+                                                -_circularTrajectoryVerticalSpeed * splineTime[i] };                                                                                                   // [m]
 
             Eigen::Vector3d e_relativePosition = e_quatCenter_n * n_relativePosition;
 
@@ -858,7 +894,7 @@ bool NAV::ImuSimulator::checkStopCondition(double time, const Eigen::Vector3d& l
             auto distance = std::sqrt(std::pow(horizontalDistance, 2) + std::pow(_lla_startPosition(2) - lla_position(2), 2));
             return distance > _linearTrajectoryDistanceForStop;
         }
-        if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
+        if (_trajectoryType == TrajectoryType::Circular)
         {
             double omega = _circularTrajectoryHorizontalSpeed / _circularTrajectoryRadius;
             double simDuration = _circularTrajectoryCircleCountForStop * 2 * M_PI / omega;
@@ -1119,8 +1155,6 @@ const char* NAV::ImuSimulator::to_string(TrajectoryType value)
         return "Linear";
     case TrajectoryType::Circular:
         return "Circular";
-    case TrajectoryType::Helix:
-        return "Helix";
     case TrajectoryType::COUNT:
         return "";
     }
