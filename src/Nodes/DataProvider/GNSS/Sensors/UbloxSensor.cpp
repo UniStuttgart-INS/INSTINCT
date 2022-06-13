@@ -3,7 +3,6 @@
 #include "util/Logger.hpp"
 
 #include "util/Time/TimeBase.hpp"
-#include "util/UartSensors/Ublox/UbloxUtilities.hpp"
 
 #include "internal/gui/widgets/HelpMarker.hpp"
 
@@ -11,7 +10,7 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-#include "NodeData/GNSS/UbloxObs.hpp"
+#include "NodeData/General/UartPacket.hpp"
 
 NAV::UbloxSensor::UbloxSensor()
     : _sensor(typeStatic())
@@ -27,7 +26,7 @@ NAV::UbloxSensor::UbloxSensor()
     _selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_9600);
     _sensorPort = "/dev/ttyACM0";
 
-    nm::CreateOutputPin(this, "UbloxObs", Pin::Type::Flow, { NAV::UbloxObs::type() });
+    nm::CreateOutputPin(this, "UartPacket", Pin::Type::Flow, { NAV::UartPacket::type() });
 }
 
 NAV::UbloxSensor::~UbloxSensor()
@@ -141,22 +140,5 @@ void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::p
 {
     auto* ubSensor = static_cast<UbloxSensor*>(userData);
 
-    auto obs = std::make_shared<UbloxObs>(p);
-
-    sensors::ublox::decryptUbloxObs(obs);
-
-    if (obs->insTime.has_value())
-    {
-        if (util::time::GetMode() == util::time::Mode::REAL_TIME)
-        {
-            util::time::SetCurrentTime(obs->insTime.value());
-        }
-    }
-    else if (auto currentTime = util::time::GetCurrentInsTime();
-             !currentTime.empty())
-    {
-        obs->insTime = currentTime;
-    }
-
-    ubSensor->invokeCallbacks(OUTPUT_PORT_INDEX_UBLOX_OBS, obs);
+    ubSensor->invokeCallbacks(OUTPUT_PORT_INDEX_UBLOX_OBS, std::make_shared<UartPacket>(p));
 }

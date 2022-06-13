@@ -4,12 +4,12 @@
 #include "util/Logger.hpp"
 #include "util/Time/TimeBase.hpp"
 
-void NAV::sensors::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& obs, bool peek)
+void NAV::sensors::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& obs, uart::protocol::Packet& packet, bool peek)
 {
-    if (obs->raw.type() == uart::protocol::Packet::Type::TYPE_BINARY)
+    if (packet.type() == uart::protocol::Packet::Type::TYPE_BINARY)
     {
-        obs->msgId = obs->raw.extractUint8();
-        obs->payloadLength = obs->raw.extractUint16();
+        obs->msgId = packet.extractUint8();
+        obs->payloadLength = packet.extractUint16();
 
         // Navigation Results Messages: Position
         auto msgId = static_cast<ErbMessageID>(obs->msgId);
@@ -17,10 +17,10 @@ void NAV::sensors::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& 
         {
             obs->data = ErbVer();
 
-            std::get<ErbVer>(obs->data).iTOW = obs->raw.extractUint32();
-            std::get<ErbVer>(obs->data).verH = obs->raw.extractUint8();
-            std::get<ErbVer>(obs->data).verM = obs->raw.extractUint8();
-            std::get<ErbVer>(obs->data).verL = obs->raw.extractUint8();
+            std::get<ErbVer>(obs->data).iTOW = packet.extractUint32();
+            std::get<ErbVer>(obs->data).verH = packet.extractUint8();
+            std::get<ErbVer>(obs->data).verM = packet.extractUint8();
+            std::get<ErbVer>(obs->data).verL = packet.extractUint8();
 
             // Calculate the insTime with the iTOW
             auto currentTime = util::time::GetCurrentInsTime();
@@ -46,13 +46,13 @@ void NAV::sensors::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& 
         {
             obs->data = ErbPos();
 
-            std::get<ErbPos>(obs->data).iTOW = obs->raw.extractUint32();
-            std::get<ErbPos>(obs->data).lon = obs->raw.extractDouble();
-            std::get<ErbPos>(obs->data).lat = obs->raw.extractDouble();
-            std::get<ErbPos>(obs->data).height = obs->raw.extractDouble();
-            std::get<ErbPos>(obs->data).hMSL = obs->raw.extractDouble();
-            std::get<ErbPos>(obs->data).hAcc = obs->raw.extractUint32();
-            std::get<ErbPos>(obs->data).vAcc = obs->raw.extractUint32();
+            std::get<ErbPos>(obs->data).iTOW = packet.extractUint32();
+            std::get<ErbPos>(obs->data).lon = packet.extractDouble();
+            std::get<ErbPos>(obs->data).lat = packet.extractDouble();
+            std::get<ErbPos>(obs->data).height = packet.extractDouble();
+            std::get<ErbPos>(obs->data).hMSL = packet.extractDouble();
+            std::get<ErbPos>(obs->data).hAcc = packet.extractUint32();
+            std::get<ErbPos>(obs->data).vAcc = packet.extractUint32();
 
             // Calculate the insTime with the iTOW
             auto currentTime = util::time::GetCurrentInsTime();
@@ -76,11 +76,11 @@ void NAV::sensors::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& 
         {
             obs->data = ErbStat();
 
-            std::get<ErbStat>(obs->data).iTOW = obs->raw.extractUint32();
-            std::get<ErbStat>(obs->data).weekGPS = obs->raw.extractUint16();
-            std::get<ErbStat>(obs->data).fixType = obs->raw.extractUint8();
-            std::get<ErbStat>(obs->data).fixStatus = obs->raw.extractUint8();
-            std::get<ErbStat>(obs->data).numSV = obs->raw.extractUint8();
+            std::get<ErbStat>(obs->data).iTOW = packet.extractUint32();
+            std::get<ErbStat>(obs->data).weekGPS = packet.extractUint16();
+            std::get<ErbStat>(obs->data).fixType = packet.extractUint8();
+            std::get<ErbStat>(obs->data).fixStatus = packet.extractUint8();
+            std::get<ErbStat>(obs->data).numSV = packet.extractUint8();
 
             // Calculate the insTime with the iTOW
             auto currentTime = util::time::GetCurrentInsTime();
@@ -105,11 +105,11 @@ void NAV::sensors::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& 
         {
             obs->data = ErbDops();
 
-            std::get<ErbDops>(obs->data).iTOW = obs->raw.extractUint32();
-            std::get<ErbDops>(obs->data).dopGeo = obs->raw.extractUint16();
-            std::get<ErbDops>(obs->data).dopPos = obs->raw.extractUint16();
-            std::get<ErbDops>(obs->data).dopVer = obs->raw.extractUint16();
-            std::get<ErbDops>(obs->data).dopHor = obs->raw.extractUint16();
+            std::get<ErbDops>(obs->data).iTOW = packet.extractUint32();
+            std::get<ErbDops>(obs->data).dopGeo = packet.extractUint16();
+            std::get<ErbDops>(obs->data).dopPos = packet.extractUint16();
+            std::get<ErbDops>(obs->data).dopVer = packet.extractUint16();
+            std::get<ErbDops>(obs->data).dopHor = packet.extractUint16();
 
             // Calculate the insTime with the iTOW
             auto currentTime = util::time::GetCurrentInsTime();
@@ -134,14 +134,14 @@ void NAV::sensors::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& 
         {
             obs->data = ErbVel();
 
-            std::get<ErbVel>(obs->data).iTOW = obs->raw.extractUint32();
-            std::get<ErbVel>(obs->data).velN = obs->raw.extractInt32();
-            std::get<ErbVel>(obs->data).velE = obs->raw.extractInt32();
-            std::get<ErbVel>(obs->data).velD = obs->raw.extractInt32();
-            std::get<ErbVel>(obs->data).speed = obs->raw.extractUint32();
-            std::get<ErbVel>(obs->data).gSpeed = obs->raw.extractUint32();
-            std::get<ErbVel>(obs->data).heading = obs->raw.extractInt32();
-            std::get<ErbVel>(obs->data).sAcc = obs->raw.extractUint32();
+            std::get<ErbVel>(obs->data).iTOW = packet.extractUint32();
+            std::get<ErbVel>(obs->data).velN = packet.extractInt32();
+            std::get<ErbVel>(obs->data).velE = packet.extractInt32();
+            std::get<ErbVel>(obs->data).velD = packet.extractInt32();
+            std::get<ErbVel>(obs->data).speed = packet.extractUint32();
+            std::get<ErbVel>(obs->data).gSpeed = packet.extractUint32();
+            std::get<ErbVel>(obs->data).heading = packet.extractInt32();
+            std::get<ErbVel>(obs->data).sAcc = packet.extractUint32();
 
             // Calculate the insTime with the iTOW
             auto currentTime = util::time::GetCurrentInsTime();
@@ -165,16 +165,16 @@ void NAV::sensors::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& 
         {
             obs->data = ErbSvi();
 
-            std::get<ErbSvi>(obs->data).iTOW = obs->raw.extractUint32();
-            std::get<ErbSvi>(obs->data).nSV = obs->raw.extractUint8();
-            std::get<ErbSvi>(obs->data).idSV = obs->raw.extractUint8();
-            std::get<ErbSvi>(obs->data).typeSV = obs->raw.extractUint8();
-            std::get<ErbSvi>(obs->data).carPh = obs->raw.extractInt32();
-            std::get<ErbSvi>(obs->data).psRan = obs->raw.extractInt32();
-            std::get<ErbSvi>(obs->data).freqD = obs->raw.extractInt32();
-            std::get<ErbSvi>(obs->data).snr = obs->raw.extractUint16();
-            std::get<ErbSvi>(obs->data).azim = obs->raw.extractUint16();
-            std::get<ErbSvi>(obs->data).elev = obs->raw.extractUint16();
+            std::get<ErbSvi>(obs->data).iTOW = packet.extractUint32();
+            std::get<ErbSvi>(obs->data).nSV = packet.extractUint8();
+            std::get<ErbSvi>(obs->data).idSV = packet.extractUint8();
+            std::get<ErbSvi>(obs->data).typeSV = packet.extractUint8();
+            std::get<ErbSvi>(obs->data).carPh = packet.extractInt32();
+            std::get<ErbSvi>(obs->data).psRan = packet.extractInt32();
+            std::get<ErbSvi>(obs->data).freqD = packet.extractInt32();
+            std::get<ErbSvi>(obs->data).snr = packet.extractUint16();
+            std::get<ErbSvi>(obs->data).azim = packet.extractUint16();
+            std::get<ErbSvi>(obs->data).elev = packet.extractUint16();
 
             // Calculate the insTime with the iTOW
             auto currentTime = util::time::GetCurrentInsTime();
@@ -201,14 +201,14 @@ void NAV::sensors::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& 
         {
             obs->data = ErbRtk();
 
-            std::get<ErbRtk>(obs->data).numSV = obs->raw.extractUint8();
-            std::get<ErbRtk>(obs->data).age = obs->raw.extractUint16();
-            std::get<ErbRtk>(obs->data).baselineN = obs->raw.extractInt32();
-            std::get<ErbRtk>(obs->data).baselineE = obs->raw.extractInt32();
-            std::get<ErbRtk>(obs->data).baselineD = obs->raw.extractInt32();
-            std::get<ErbRtk>(obs->data).arRatio = obs->raw.extractUint16();
-            std::get<ErbRtk>(obs->data).weekGPS = obs->raw.extractUint16();
-            std::get<ErbRtk>(obs->data).timeGPS = obs->raw.extractUint32();
+            std::get<ErbRtk>(obs->data).numSV = packet.extractUint8();
+            std::get<ErbRtk>(obs->data).age = packet.extractUint16();
+            std::get<ErbRtk>(obs->data).baselineN = packet.extractInt32();
+            std::get<ErbRtk>(obs->data).baselineE = packet.extractInt32();
+            std::get<ErbRtk>(obs->data).baselineD = packet.extractInt32();
+            std::get<ErbRtk>(obs->data).arRatio = packet.extractUint16();
+            std::get<ErbRtk>(obs->data).weekGPS = packet.extractUint16();
+            std::get<ErbRtk>(obs->data).timeGPS = packet.extractUint32();
 
             if (!peek)
             {
@@ -223,7 +223,7 @@ void NAV::sensors::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& 
         {
             if (!peek)
             {
-                LOG_DATA("Erb: {:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
+                LOG_DATA("Erb: {:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
             }
         }
     }

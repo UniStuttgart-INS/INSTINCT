@@ -3,7 +3,6 @@
 #include "util/Logger.hpp"
 
 #include "util/Time/TimeBase.hpp"
-#include "util/UartSensors/Emlid/EmlidUtilities.hpp"
 
 #include "internal/gui/widgets/HelpMarker.hpp"
 
@@ -11,7 +10,7 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-#include "NodeData/GNSS/EmlidObs.hpp"
+#include "NodeData/General/UartPacket.hpp"
 
 NAV::EmlidSensor::EmlidSensor()
     : _sensor(typeStatic())
@@ -26,7 +25,7 @@ NAV::EmlidSensor::EmlidSensor()
     // TODO: Update the library to handle different baudrates
     _selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_9600);
 
-    nm::CreateOutputPin(this, "EmlidObs", Pin::Type::Flow, { NAV::EmlidObs::type() });
+    nm::CreateOutputPin(this, "UartPacket", Pin::Type::Flow, { NAV::UartPacket::type() });
 }
 
 NAV::EmlidSensor::~EmlidSensor()
@@ -140,22 +139,5 @@ void NAV::EmlidSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::p
 {
     auto* erSensor = static_cast<EmlidSensor*>(userData);
 
-    auto obs = std::make_shared<EmlidObs>(p);
-
-    sensors::emlid::decryptEmlidObs(obs);
-
-    if (obs->insTime.has_value())
-    {
-        if (util::time::GetMode() == util::time::Mode::REAL_TIME)
-        {
-            util::time::SetCurrentTime(obs->insTime.value());
-        }
-    }
-    else if (auto currentTime = util::time::GetCurrentInsTime();
-             !currentTime.empty())
-    {
-        obs->insTime = currentTime;
-    }
-
-    erSensor->invokeCallbacks(OUTPUT_PORT_INDEX_EMLID_OBS, obs);
+    erSensor->invokeCallbacks(OUTPUT_PORT_INDEX_EMLID_OBS, std::make_shared<UartPacket>(p));
 }
