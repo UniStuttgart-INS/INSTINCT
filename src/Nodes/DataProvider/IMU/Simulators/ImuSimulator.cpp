@@ -311,9 +311,9 @@ void NAV::ImuSimulator::guiConfig()
                 // ####################################################################################################
                 ImGui::TableNextColumn();
                 ImGui::SetNextItemWidth(columnWidth);
-                if (ImGui::DragInt(fmt::format("Osc Frequency##{}", size_t(id)).c_str(), &_circularSubHarmonicFrequency, 1.0F, 0, 100, "%d [cycles/rev]"))
+                if (ImGui::DragInt(fmt::format("Osc Frequency##{}", size_t(id)).c_str(), &_circularHarmonicFrequency, 1.0F, 0, 100, "%d [cycles/rev]"))
                 {
-                    LOG_DEBUG("{}: circularSubHarmonicFrequency changed to {}", nameId(), _circularSubHarmonicFrequency);
+                    LOG_DEBUG("{}: circularHarmonicFrequency changed to {}", nameId(), _circularHarmonicFrequency);
                     flow::ApplyChanges();
                     deinitializeNode();
                 }
@@ -323,9 +323,9 @@ void NAV::ImuSimulator::guiConfig()
 
                 ImGui::TableNextColumn();
                 ImGui::SetNextItemWidth(columnWidth);
-                if (ImGui::DragDouble(fmt::format("Osc Amplitude Factor##{}", size_t(id)).c_str(), &_circularSubHarmonicAmplitudeFactor, 0.01F, 0.0, 10.0, "%.3f * r"))
+                if (ImGui::DragDouble(fmt::format("Osc Amplitude Factor##{}", size_t(id)).c_str(), &_circularHarmonicAmplitudeFactor, 0.01F, 0.0, 10.0, "%.3f * r"))
                 {
-                    LOG_DEBUG("{}: circularSubHarmonicAmplitudeFactor changed to {}", nameId(), _circularSubHarmonicAmplitudeFactor);
+                    LOG_DEBUG("{}: circularHarmonicAmplitudeFactor changed to {}", nameId(), _circularHarmonicAmplitudeFactor);
                     flow::ApplyChanges();
                     deinitializeNode();
                 }
@@ -480,8 +480,8 @@ void NAV::ImuSimulator::guiConfig()
     j["circularTrajectoryRadius"] = _circularTrajectoryRadius;
     j["circularTrajectoryOriginAngle"] = _circularTrajectoryOriginAngle;
     j["circularTrajectoryDirection"] = _circularTrajectoryDirection;
-    j["circularSubHarmonicFrequency"] = _circularSubHarmonicFrequency;
-    j["circularSubHarmonicAmplitudeFactor"] = _circularSubHarmonicAmplitudeFactor;
+    j["circularHarmonicFrequency"] = _circularHarmonicFrequency;
+    j["circularHarmonicAmplitudeFactor"] = _circularHarmonicAmplitudeFactor;
     // ###########################################################################################################
     j["simulationStopCondition"] = _simulationStopCondition;
     j["simulationDuration"] = _simulationDuration;
@@ -561,13 +561,13 @@ void NAV::ImuSimulator::restore(json const& j)
     {
         j.at("circularTrajectoryDirection").get_to(_circularTrajectoryDirection);
     }
-    if (j.contains("circularSubHarmonicFrequency"))
+    if (j.contains("circularHarmonicFrequency"))
     {
-        j.at("circularSubHarmonicFrequency").get_to(_circularSubHarmonicFrequency);
+        j.at("circularHarmonicFrequency").get_to(_circularHarmonicFrequency);
     }
-    if (j.contains("circularSubHarmonicAmplitudeFactor"))
+    if (j.contains("circularHarmonicAmplitudeFactor"))
     {
-        j.at("circularSubHarmonicAmplitudeFactor").get_to(_circularSubHarmonicAmplitudeFactor);
+        j.at("circularHarmonicAmplitudeFactor").get_to(_circularHarmonicAmplitudeFactor);
     }
     // ###########################################################################################################
     if (j.contains("simulationStopCondition"))
@@ -788,9 +788,9 @@ void NAV::ImuSimulator::initializeSplines()
             phi *= _circularTrajectoryDirection == Direction::CW ? -1 : 1;
             phi += _circularTrajectoryOriginAngle;
 
-            Eigen::Vector3d n_relativePosition{ _circularTrajectoryRadius * std::sin(phi) * (1 + _circularSubHarmonicAmplitudeFactor * sin(phi * static_cast<double>(_circularSubHarmonicFrequency))), // [m]
-                                                _circularTrajectoryRadius * std::cos(phi) * (1 + _circularSubHarmonicAmplitudeFactor * sin(phi * static_cast<double>(_circularSubHarmonicFrequency))), // [m]
-                                                -_circularTrajectoryVerticalSpeed * splineTime[i] };                                                                                                   // [m]
+            Eigen::Vector3d n_relativePosition{ _circularTrajectoryRadius * std::sin(phi) * (1 + _circularHarmonicAmplitudeFactor * sin(phi * static_cast<double>(_circularHarmonicFrequency))), // [m]
+                                                _circularTrajectoryRadius * std::cos(phi) * (1 + _circularHarmonicAmplitudeFactor * sin(phi * static_cast<double>(_circularHarmonicFrequency))), // [m]
+                                                -_circularTrajectoryVerticalSpeed * splineTime[i] };                                                                                             // [m]
 
             Eigen::Vector3d e_relativePosition = e_quatCenter_n * n_relativePosition;
 

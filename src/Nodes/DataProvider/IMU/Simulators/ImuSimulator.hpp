@@ -151,10 +151,10 @@ class ImuSimulator : public Imu
     double _circularTrajectoryOriginAngle = 0.0;
 
     /// Harmonic Oscillation Frequency on the circular trajectory [cycles/revolution]
-    int _circularSubHarmonicFrequency = 0;
+    int _circularHarmonicFrequency = 0;
 
     /// Harmonic Oscillation Amplitude Factor of the circle radius [-]
-    double _circularSubHarmonicAmplitudeFactor = 0.1;
+    double _circularHarmonicAmplitudeFactor = 0.1;
 
     /// Possible directions for the circular trajectory
     enum class Direction
