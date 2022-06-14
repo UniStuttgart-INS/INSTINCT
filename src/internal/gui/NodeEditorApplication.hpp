@@ -5,16 +5,15 @@
 
 #pragma once
 
-#include <application.h>
+#include <array>
+#include <thread>
+#include <deque>
 
+#include <application.h>
 #include <imgui.h>
 #include <implot.h>
 
 #include "internal/gui/GlobalActions.hpp"
-
-#include <array>
-#include <thread>
-#include <deque>
 
 namespace NAV
 {

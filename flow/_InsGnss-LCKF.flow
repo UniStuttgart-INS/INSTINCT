@@ -11,17 +11,6 @@
             "id": 240,
             "startPinId": 228
         },
-        "link-241": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 225,
-            "id": 241,
-            "startPinId": 229
-        },
         "link-242": {
             "color": {
                 "a": 255,
@@ -43,105 +32,6 @@
             "endPinId": 245,
             "id": 266,
             "startPinId": 228
-        },
-        "link-267": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 251,
-            "id": 267,
-            "startPinId": 229
-        },
-        "link-268": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
-            "endPinId": 252,
-            "id": 268,
-            "startPinId": 230
-        },
-        "link-269": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
-            "endPinId": 253,
-            "id": 269,
-            "startPinId": 231
-        },
-        "link-270": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
-            "endPinId": 254,
-            "id": 270,
-            "startPinId": 232
-        },
-        "link-271": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
-            "endPinId": 255,
-            "id": 271,
-            "startPinId": 233
-        },
-        "link-272": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
-            "endPinId": 256,
-            "id": 272,
-            "startPinId": 234
-        },
-        "link-273": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
-            "endPinId": 263,
-            "id": 273,
-            "startPinId": 235
-        },
-        "link-274": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
-            "endPinId": 264,
-            "id": 274,
-            "startPinId": 236
-        },
-        "link-275": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
-            "endPinId": 265,
-            "id": 275,
-            "startPinId": 237
         },
         "link-322": {
             "color": {
@@ -340,6 +230,105 @@
             "endPinId": 431,
             "id": 440,
             "startPinId": 339
+        },
+        "link-504": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 6,
+            "id": 504,
+            "startPinId": 441
+        },
+        "link-505": {
+            "color": {
+                "a": 255,
+                "b": 0,
+                "g": 165,
+                "r": 255
+            },
+            "endPinId": 252,
+            "id": 505,
+            "startPinId": 496
+        },
+        "link-506": {
+            "color": {
+                "a": 255,
+                "b": 0,
+                "g": 165,
+                "r": 255
+            },
+            "endPinId": 253,
+            "id": 506,
+            "startPinId": 497
+        },
+        "link-507": {
+            "color": {
+                "a": 255,
+                "b": 0,
+                "g": 165,
+                "r": 255
+            },
+            "endPinId": 254,
+            "id": 507,
+            "startPinId": 498
+        },
+        "link-508": {
+            "color": {
+                "a": 255,
+                "b": 0,
+                "g": 165,
+                "r": 255
+            },
+            "endPinId": 255,
+            "id": 508,
+            "startPinId": 499
+        },
+        "link-509": {
+            "color": {
+                "a": 255,
+                "b": 0,
+                "g": 165,
+                "r": 255
+            },
+            "endPinId": 256,
+            "id": 509,
+            "startPinId": 500
+        },
+        "link-510": {
+            "color": {
+                "a": 255,
+                "b": 0,
+                "g": 165,
+                "r": 255
+            },
+            "endPinId": 263,
+            "id": 510,
+            "startPinId": 501
+        },
+        "link-511": {
+            "color": {
+                "a": 255,
+                "b": 0,
+                "g": 165,
+                "r": 255
+            },
+            "endPinId": 264,
+            "id": 511,
+            "startPinId": 502
+        },
+        "link-512": {
+            "color": {
+                "a": 255,
+                "b": 0,
+                "g": 165,
+                "r": 255
+            },
+            "endPinId": 456,
+            "id": 512,
+            "startPinId": 503
         }
     },
     "nodes": {
@@ -373,8 +362,8 @@
                     "name": "PVAError"
                 },
                 {
-                    "id": 225,
-                    "name": "ImuBiases"
+                    "id": 6,
+                    "name": "Predict"
                 }
             ],
             "kind": "Blueprint",
@@ -457,27 +446,28 @@
         "node-239": {
             "data": {
                 "checkKalmanMatricesRanks": true,
+                "frame": 1,
                 "gnssMeasurementUncertaintyPosition": {
                     "0": {
-                        "0": 0.1
+                        "0": 0.001
                     },
                     "1": {
-                        "0": 0.1
+                        "0": 0.001
                     },
                     "2": {
-                        "0": 0.1
+                        "0": 0.001
                     }
                 },
                 "gnssMeasurementUncertaintyPositionUnit": 3,
                 "gnssMeasurementUncertaintyVelocity": {
                     "0": {
-                        "0": 0.1
+                        "0": 0.001
                     },
                     "1": {
-                        "0": 0.1
+                        "0": 0.001
                     },
                     "2": {
-                        "0": 0.1
+                        "0": 0.001
                     }
                 },
                 "gnssMeasurementUncertaintyVelocityUnit": 1,
@@ -519,13 +509,13 @@
                 "initCovarianceBiasGyroUnit": 3,
                 "initCovariancePosition": {
                     "0": {
-                        "0": 1.0
+                        "0": 0.1
                     },
                     "1": {
-                        "0": 1.0
+                        "0": 0.1
                     },
                     "2": {
-                        "0": 1.0
+                        "0": 0.1
                     }
                 },
                 "initCovariancePositionUnit": 3,
@@ -547,19 +537,19 @@
                 "randomProcessAccel": 1,
                 "randomProcessGyro": 1,
                 "showKalmanFilterOutputPins": true,
-                "stdevAccelBiasUnits": 0,
+                "stdevAccelBiasUnits": 1,
                 "stdevAccelNoiseUnits": 1,
                 "stdevGyroBiasUnits": 0,
                 "stdevGyroNoiseUnits": 1,
                 "stdev_bad": {
                     "0": {
-                        "0": 10.0
+                        "0": 0.001
                     },
                     "1": {
-                        "0": 10.0
+                        "0": 0.001
                     },
                     "2": {
-                        "0": 10.0
+                        "0": 0.001
                     }
                 },
                 "stdev_bgd": {
@@ -608,13 +598,13 @@
                 },
                 "tau_bgd": {
                     "0": {
-                        "0": 300.0
+                        "0": 3000.0
                     },
                     "1": {
-                        "0": 300.0
+                        "0": 3000.0
                     },
                     "2": {
-                        "0": 300.0
+                        "0": 3000.0
                     }
                 }
             },
@@ -638,39 +628,39 @@
                     "name": "PVAError"
                 },
                 {
-                    "id": 229,
-                    "name": "ImuBiases"
+                    "id": 441,
+                    "name": "Predict"
                 },
                 {
-                    "id": 230,
+                    "id": 496,
                     "name": "x"
                 },
                 {
-                    "id": 231,
+                    "id": 497,
                     "name": "P"
                 },
                 {
-                    "id": 232,
+                    "id": 498,
                     "name": "Phi"
                 },
                 {
-                    "id": 233,
+                    "id": 499,
                     "name": "Q"
                 },
                 {
-                    "id": 234,
+                    "id": 500,
                     "name": "z"
                 },
                 {
-                    "id": 235,
+                    "id": 501,
                     "name": "H"
                 },
                 {
-                    "id": 236,
+                    "id": 502,
                     "name": "R"
                 },
                 {
-                    "id": 237,
+                    "id": 503,
                     "name": "K"
                 }
             ],
@@ -686,12 +676,12 @@
         },
         "node-250": {
             "data": {
-                "nInputPins": 10,
-                "nPlots": 6,
+                "nInputPins": 9,
+                "nPlots": 12,
                 "overridePositionStartValues": false,
                 "pinData": [
                     {
-                        "dataIdentifier": "PVAError",
+                        "dataIdentifier": "LcKfInsGnssErrors",
                         "pinType": 0,
                         "plotData": [
                             {
@@ -726,20 +716,33 @@
                             },
                             {
                                 "displayName": "Altitude error [deg]"
-                            }
-                        ],
-                        "size": 0,
-                        "stride": 1
-                    },
-                    {
-                        "dataIdentifier": "ImuBiases",
-                        "pinType": 0,
-                        "plotData": [
-                            {
-                                "displayName": "Time [s]"
                             },
                             {
-                                "displayName": "GPS time of week [s]"
+                                "displayName": "Alpha_eb [deg]"
+                            },
+                            {
+                                "displayName": "Beta_eb [deg]"
+                            },
+                            {
+                                "displayName": "Gamma_eb [deg]"
+                            },
+                            {
+                                "displayName": "ECEF X velocity error [m/s]"
+                            },
+                            {
+                                "displayName": "ECEF Y velocity error [m/s]"
+                            },
+                            {
+                                "displayName": "ECEF Z velocity error [m/s]"
+                            },
+                            {
+                                "displayName": "ECEF X error [m]"
+                            },
+                            {
+                                "displayName": "ECEF Y error [m]"
+                            },
+                            {
+                                "displayName": "ECEF Z error [m]"
                             },
                             {
                                 "displayName": "Accelerometer bias b_X accumulated [m/s^2]"
@@ -820,7 +823,7 @@
                             }
                         ],
                         "size": 0,
-                        "stride": 8
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "P",
@@ -1509,7 +1512,7 @@
                             }
                         ],
                         "size": 0,
-                        "stride": 8
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "Phi",
@@ -2198,7 +2201,7 @@
                             }
                         ],
                         "size": 0,
-                        "stride": 8
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "Q",
@@ -2887,7 +2890,7 @@
                             }
                         ],
                         "size": 0,
-                        "stride": 8
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "z",
@@ -2919,7 +2922,7 @@
                             }
                         ],
                         "size": 0,
-                        "stride": 8
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "H",
@@ -3203,7 +3206,7 @@
                             }
                         ],
                         "size": 0,
-                        "stride": 8
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "R",
@@ -3325,7 +3328,7 @@
                             }
                         ],
                         "size": 0,
-                        "stride": 8
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "K",
@@ -3609,40 +3612,40 @@
                             }
                         ],
                         "size": 0,
-                        "stride": 8
+                        "stride": 1
                     }
                 ],
                 "plots": [
                     {
-                        "headerText": "Accelerometer bias (accumulated)",
+                        "headerText": "Accelerometer bias body-frame (accumulated)",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 2,
-                                "pinIndex": 1,
+                                "dataIndex": 20,
+                                "pinIndex": 0,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "X",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -3654,28 +3657,28 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 3,
-                                "pinIndex": 1,
+                                "dataIndex": 21,
+                                "pinIndex": 0,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "Y",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -3687,292 +3690,28 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 4,
-                                "pinIndex": 1,
+                                "dataIndex": 22,
+                                "pinIndex": 0,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "Z",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            }
-                        ],
-                        "rightPaneWidth": 400.0,
-                        "selectedPin": 1,
-                        "selectedXdata": [
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0
-                        ],
-                        "size": {
-                            "x": -1.0,
-                            "y": 300.0
-                        },
-                        "title": "Accelerometer bias (accumulated)",
-                        "xAxisFlags": 2048,
-                        "xAxisLabel": "",
-                        "y1AxisLabel": "Accelerometer bias b_X [m/s^2]",
-                        "y2AxisLabel": "",
-                        "y3AxisLabel": "",
-                        "yAxisFlags": 2048
-                    },
-                    {
-                        "headerText": "Gyroscope bias (accumulated)",
-                        "leftPaneWidth": 180.0,
-                        "overrideXAxisLabel": false,
-                        "plotFlags": 0,
-                        "plotItems": [
-                            {
-                                "axis": 3,
-                                "dataIndex": 5,
-                                "pinIndex": 1,
-                                "style": {
-                                    "color": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
-                                    },
-                                    "legendName": "X",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 6,
-                                "pinIndex": 1,
-                                "style": {
-                                    "color": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
-                                    },
-                                    "legendName": "Y",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 7,
-                                "pinIndex": 1,
-                                "style": {
-                                    "color": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
-                                    },
-                                    "legendName": "Z",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            }
-                        ],
-                        "rightPaneWidth": 400.0,
-                        "selectedPin": 1,
-                        "selectedXdata": [
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0
-                        ],
-                        "size": {
-                            "x": -1.0,
-                            "y": 300.0
-                        },
-                        "title": "Gyroscope bias (accumulated)",
-                        "xAxisFlags": 2048,
-                        "xAxisLabel": "",
-                        "y1AxisLabel": "Gyroscope bias b_X [rad/s]",
-                        "y2AxisLabel": "",
-                        "y3AxisLabel": "",
-                        "yAxisFlags": 2048
-                    },
-                    {
-                        "headerText": "Lat/Lon/Alt error",
-                        "leftPaneWidth": 180.0,
-                        "overrideXAxisLabel": false,
-                        "plotFlags": 1048576,
-                        "plotItems": [
-                            {
-                                "axis": 3,
-                                "dataIndex": 8,
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
-                                    },
-                                    "legendName": "Lat",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 9,
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
-                                    },
-                                    "legendName": "Lon",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 4,
-                                "dataIndex": 10,
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
-                                    },
-                                    "legendName": "Alt",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -3994,6 +3733,136 @@
                             0,
                             0,
                             0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Accelerometer bias body-frame (accumulated)",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Bias [m/s^2]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "Gyroscope bias body-frame (accumulated)",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 23,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "X",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 24,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Y",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 25,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Z",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
                             0,
                             0
                         ],
@@ -4001,10 +3870,240 @@
                             "x": -1.0,
                             "y": 300.0
                         },
-                        "title": "Lat/Lon/Alt error",
+                        "title": "Gyroscope bias body-frame (accumulated)",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
-                        "y1AxisLabel": "Lat/Lon error [deg]",
+                        "y1AxisLabel": "Bias [rad/s]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "Position error",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 1048576,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 8,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Latitude",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 9,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Longitude",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 4,
+                                "dataIndex": 10,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Altitude",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 17,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "ECEF X",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 18,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "ECEF Y",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 19,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "ECEF Z",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Position error",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Lat/Lon error [deg] / ECEF error [m]",
                         "y2AxisLabel": "Altitude error [m]",
                         "y3AxisLabel": "",
                         "yAxisFlags": 2048
@@ -4021,24 +4120,24 @@
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "North",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -4054,24 +4153,24 @@
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "East",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -4087,24 +4186,123 @@
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "Down",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 14,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "ECEF X",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 15,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "ECEF Y",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 16,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "ECEF Z",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -4118,7 +4316,6 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 0,
                         "selectedXdata": [
-                            0,
                             0,
                             0,
                             0,
@@ -4153,24 +4350,24 @@
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "Roll",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -4186,24 +4383,24 @@
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "Pitch",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -4219,24 +4416,123 @@
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "Yaw",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 11,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Alpha_eb",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 12,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Beta_eb",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 13,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Gamma_eb",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -4250,7 +4546,6 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 0,
                         "selectedXdata": [
-                            0,
                             0,
                             0,
                             0,
@@ -4282,27 +4577,27 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 2,
-                                "pinIndex": 3,
+                                "pinIndex": 2,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "Roll - P(0, 0)",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -4315,27 +4610,27 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 18,
-                                "pinIndex": 3,
+                                "pinIndex": 2,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "Pitch - P(1, 1)",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -4348,27 +4643,27 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 34,
-                                "pinIndex": 3,
+                                "pinIndex": 2,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "Yaw - P(2, 2)",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -4380,9 +4675,8 @@
                             }
                         ],
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 3,
+                        "selectedPin": 2,
                         "selectedXdata": [
-                            0,
                             0,
                             0,
                             0,
@@ -4398,12 +4692,798 @@
                             "y": 300.0
                         },
                         "title": "P Angles",
-                        "xAxisFlags": 2048,
+                        "xAxisFlags": 0,
                         "xAxisLabel": "",
                         "y1AxisLabel": "Variance [deg^2]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxisFlags": 0
+                    },
+                    {
+                        "headerText": "P Velocity",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 50,
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "North - P(3, 3)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 66,
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "East - P(4, 4)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 82,
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Down - P(5, 5)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 2,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "P Velocity",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Variance [m^2/s^2]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
                         "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "P Position",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 98,
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "North - P(6, 6)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 114,
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "East - P(7, 7)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 130,
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Up - P(8, 8)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 2,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "P Position",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Variance [m^2]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "P Accel Bias",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 146,
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "X - P(9, 9)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 162,
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Y - P(10, 10)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 178,
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Z - P(11, 11)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 2,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "P Accel Bias",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Variance [mg^2/s^2]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "P Gyro Bias",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 194,
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "X - P(12, 12)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 210,
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Y - P(13, 13)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 226,
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Z - P(14, 14)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 2,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "P Gyro Bias",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Variance [mrad^2/s^4]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "z Position Difference",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 2,
+                                "pinIndex": 5,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "North/Lat - z(0)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 3,
+                                "pinIndex": 5,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "East/Lon - z(1)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 4,
+                                "pinIndex": 5,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Up/Alt - z(2)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 6,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "z Position Difference",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Difference [m]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 0
+                    },
+                    {
+                        "headerText": "z Velocity Difference",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 5,
+                                "pinIndex": 5,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "North - z(3)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 6,
+                                "pinIndex": 5,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "East - z(4)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 7,
+                                "pinIndex": 5,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Down - z(5)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 6,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "z Velocity Difference",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Difference [m/s]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 0
                     }
                 ]
             },
@@ -4413,10 +5493,6 @@
                 {
                     "id": 245,
                     "name": "PVAError"
-                },
-                {
-                    "id": 251,
-                    "name": "ImuBiases"
                 },
                 {
                     "id": 252,
@@ -4447,7 +5523,7 @@
                     "name": "KF.R"
                 },
                 {
-                    "id": 265,
+                    "id": 456,
                     "name": "KF.K"
                 }
             ],
@@ -4548,52 +5624,43 @@
                 "angularRateEarthRotationEnabled": true,
                 "angularRateTransportRateEnabled": true,
                 "centrifgalAccelerationEnabled": true,
-                "circularTrajectoryCircleCountForStop": 7.0,
+                "circularSubHarmonicAmplitudeFactor": 0.1,
+                "circularSubHarmonicFrequency": 10,
+                "circularTrajectoryCircleCountForStop": 1.0,
                 "circularTrajectoryDirection": 1,
-                "circularTrajectoryHorizontalSpeed": 1.0,
+                "circularTrajectoryHorizontalSpeed": 10.0,
                 "circularTrajectoryOriginAngle": 0.0,
-                "circularTrajectoryRadius": 50.0,
+                "circularTrajectoryRadius": 600.0,
                 "coriolisAccelerationEnabled": true,
                 "fixedTrajectoryStartOrientation": {
                     "0": {
-                        "0": 0.0
+                        "0": 0.17453292519943295
                     },
                     "1": {
-                        "0": 0.0
+                        "0": 0.17453292519943295
                     },
                     "2": {
-                        "0": 0.0
+                        "0": 0.17453292519943295
                     }
                 },
                 "gnssFrequency": 5.0,
                 "gravitationModel": 3,
                 "helicalTrajectoryVerticalSpeed": 1.0,
-                "imuFrequency": 200.0,
-                "linearTrajectoryDistanceForStop": 100.0,
-                "n_linearTrajectoryAcceleration": {
-                    "0": {
-                        "0": 0.0
-                    },
-                    "1": {
-                        "0": 0.0
-                    },
-                    "2": {
-                        "0": 0.0
-                    }
-                },
+                "imuFrequency": 100.0,
+                "linearTrajectoryDistanceForStop": 5000.0,
                 "n_linearTrajectoryStartVelocity": {
                     "0": {
                         "0": 1.0
                     },
                     "1": {
-                        "0": 0.0
+                        "0": 2.0
                     },
                     "2": {
-                        "0": 0.0
+                        "0": 3.0
                     }
                 },
-                "simulationDuration": 2000.0,
-                "simulationStopCondition": 0,
+                "simulationDuration": 3000.0,
+                "simulationStopCondition": 1,
                 "startPosition_lla": {
                     "0": {
                         "0": 0.0
@@ -4613,7 +5680,7 @@
                 "startTimeSource": 0,
                 "trajectoryType": 2
             },
-            "enabled": false,
+            "enabled": true,
             "id": 3,
             "inputPins": [],
             "kind": "Blueprint",
@@ -4641,7 +5708,7 @@
         "node-324": {
             "data": {
                 "FileReader": {
-                    "path": "2022-02-07_PWOne_INS-Roof_Walking/vn310-imu.csv"
+                    "path": "data/2022-02-07_PWOne_INS-Roof_Walking/vn310-imu.csv"
                 },
                 "Imu": {
                     "imuPos": {
@@ -4723,7 +5790,7 @@
                     }
                 }
             },
-            "enabled": true,
+            "enabled": false,
             "id": 324,
             "inputPins": [],
             "kind": "Blueprint",
@@ -4747,7 +5814,7 @@
         "node-326": {
             "data": {
                 "FileReader": {
-                    "path": "2022-02-07_PWOne_INS-Roof_Walking/vn310-gnss.csv"
+                    "path": "data/2022-02-07_PWOne_INS-Roof_Walking/vn310-gnss.csv"
                 },
                 "Imu": {
                     "imuPos": {
@@ -4829,7 +5896,7 @@
                     }
                 }
             },
-            "enabled": true,
+            "enabled": false,
             "id": 326,
             "inputPins": [],
             "kind": "Blueprint",
@@ -4888,7 +5955,7 @@
                 "outputType": 0,
                 "posVelSource": 0
             },
-            "enabled": true,
+            "enabled": false,
             "id": 333,
             "inputPins": [
                 {
@@ -4920,7 +5987,7 @@
                 "outputType": 1,
                 "posVelSource": 0
             },
-            "enabled": true,
+            "enabled": false,
             "id": 337,
             "inputPins": [
                 {
@@ -5014,10 +6081,10 @@
                         "0": 0.01
                     },
                     "1": {
-                        "0": 0.0
+                        "0": 0.02
                     },
                     "2": {
-                        "0": 0.0
+                        "0": 0.03
                     }
                 },
                 "imuAccelerometerNoise": {
@@ -5039,13 +6106,13 @@
                 "imuGyroscopeBiasUnit": 0,
                 "imuGyroscopeBias_p": {
                     "0": {
-                        "0": 0.0
+                        "0": 0.01
                     },
                     "1": {
-                        "0": 0.05
+                        "0": 0.02
                     },
                     "2": {
-                        "0": -0.02
+                        "0": 0.03
                     }
                 },
                 "imuGyroscopeNoise": {
@@ -5352,7 +6419,7 @@
             "data": {
                 "nInputPins": 3,
                 "nPlots": 10,
-                "overridePositionStartValues": false,
+                "overridePositionStartValues": true,
                 "pinData": [
                     {
                         "dataIdentifier": "ImuObs",
@@ -5426,7 +6493,7 @@
                             }
                         ],
                         "size": 0,
-                        "stride": 8
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "PosVelAtt",
@@ -5562,7 +6629,7 @@
                             }
                         ],
                         "size": 0,
-                        "stride": 8
+                        "stride": 1
                     }
                 ],
                 "plots": [
@@ -5578,24 +6645,24 @@
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.49803921580314636,
-                                        "y": 1.0,
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
                                         "z": 0.0
                                     },
                                     "legendName": "Nominal",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -5611,24 +6678,24 @@
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 1.0,
+                                        "w": -1.0,
+                                        "x": 0.0,
                                         "y": 0.0,
-                                        "z": 1.0
+                                        "z": 0.0
                                     },
-                                    "legendName": "LCKF",
+                                    "legendName": "Filter",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -5673,24 +6740,24 @@
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.49803921580314636,
-                                        "y": 1.0,
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
                                         "z": 0.0
                                     },
                                     "legendName": "Nominal",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -5706,24 +6773,24 @@
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 1.0,
+                                        "w": -1.0,
+                                        "x": 0.0,
                                         "y": 0.0,
-                                        "z": 1.0
+                                        "z": 0.0
                                     },
-                                    "legendName": "LCKF",
+                                    "legendName": "Filter",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -5768,24 +6835,24 @@
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.49803921580314636,
-                                        "y": 1.0,
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
                                         "z": 0.0
                                     },
                                     "legendName": "Nominal",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -5801,24 +6868,24 @@
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 1.0,
+                                        "w": -1.0,
+                                        "x": 0.0,
                                         "y": 0.0,
-                                        "z": 1.0
+                                        "z": 0.0
                                     },
                                     "legendName": "Filter",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -5863,24 +6930,24 @@
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.49803921580314636,
-                                        "y": 1.0,
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
                                         "z": 0.0
                                     },
                                     "legendName": "Nominal",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -5896,24 +6963,24 @@
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 1.0,
+                                        "w": -1.0,
+                                        "x": 0.0,
                                         "y": 0.0,
-                                        "z": 1.0
+                                        "z": 0.0
                                     },
                                     "legendName": "Filter",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -5958,24 +7025,24 @@
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.49803921580314636,
-                                        "y": 1.0,
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
                                         "z": 0.0
                                     },
                                     "legendName": "Nominal",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -5991,24 +7058,24 @@
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 1.0,
+                                        "w": -1.0,
+                                        "x": 0.0,
                                         "y": 0.0,
-                                        "z": 1.0
+                                        "z": 0.0
                                     },
                                     "legendName": "Filter",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -6053,24 +7120,24 @@
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.49803921580314636,
-                                        "y": 1.0,
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
                                         "z": 0.0
                                     },
                                     "legendName": "Nominal",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -6086,24 +7153,24 @@
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 1.0,
+                                        "w": -1.0,
+                                        "x": 0.0,
                                         "y": 0.0,
-                                        "z": 1.0
+                                        "z": 0.0
                                     },
                                     "legendName": "Filter",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -6148,24 +7215,24 @@
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.49803921580314636,
-                                        "y": 1.0,
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
                                         "z": 0.0
                                     },
                                     "legendName": "Nominal",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -6181,24 +7248,24 @@
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 1.0,
+                                        "w": -1.0,
+                                        "x": 0.0,
                                         "y": 0.0,
-                                        "z": 1.0
+                                        "z": 0.0
                                     },
                                     "legendName": "Filter",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -6243,24 +7310,24 @@
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.49803921580314636,
-                                        "y": 1.0,
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
                                         "z": 0.0
                                     },
                                     "legendName": "Nominal",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -6276,24 +7343,24 @@
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 1.0,
+                                        "w": -1.0,
+                                        "x": 0.0,
                                         "y": 0.0,
-                                        "z": 1.0
+                                        "z": 0.0
                                     },
                                     "legendName": "Filter",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -6338,24 +7405,24 @@
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "Uncomp X",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -6371,24 +7438,24 @@
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "Uncomp Y",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -6404,24 +7471,24 @@
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "Uncomp Z",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -6437,24 +7504,24 @@
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.7686275243759155,
-                                        "y": 0.30588236451148987,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "Comp X",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.7686275243759155,
-                                        "y": 0.30588236451148987,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.7686275243759155,
-                                        "y": 0.30588236451148987,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -6470,24 +7537,24 @@
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.5058823823928833,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.7019608020782471
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "Comp Y",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.5058823823928833,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.7019608020782471
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.5058823823928833,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.7019608020782471
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -6503,24 +7570,24 @@
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.5764706134796143,
-                                        "y": 0.4705882668495178,
-                                        "z": 0.3764706254005432
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "Comp Z",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.5764706134796143,
-                                        "y": 0.4705882668495178,
-                                        "z": 0.3764706254005432
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.5764706134796143,
-                                        "y": 0.4705882668495178,
-                                        "z": 0.3764706254005432
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -6565,24 +7632,24 @@
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "Uncomp X",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.2980392277240753,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.6901960968971252
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -6598,24 +7665,24 @@
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "Uncomp Y",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.8666667342185974,
-                                        "y": 0.5176470875740051,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -6631,24 +7698,24 @@
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "Uncomp Z",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.3333333432674408,
-                                        "y": 0.658823549747467,
-                                        "z": 0.4078431725502014
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -6664,24 +7731,24 @@
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.7686275243759155,
-                                        "y": 0.30588236451148987,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "Comp X",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.7686275243759155,
-                                        "y": 0.30588236451148987,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.7686275243759155,
-                                        "y": 0.30588236451148987,
-                                        "z": 0.32156863808631897
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -6697,24 +7764,24 @@
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.5058823823928833,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.7019608020782471
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "Comp Y",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.5058823823928833,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.7019608020782471
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.5058823823928833,
-                                        "y": 0.44705885648727417,
-                                        "z": 0.7019608020782471
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -6730,24 +7797,24 @@
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
-                                        "w": 1.0,
-                                        "x": 0.5764706134796143,
-                                        "y": 0.4705882668495178,
-                                        "z": 0.3764706254005432
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "legendName": "Comp Z",
                                     "lineType": 1,
                                     "markerFillColor": {
-                                        "w": 1.0,
-                                        "x": 0.5764706134796143,
-                                        "y": 0.4705882668495178,
-                                        "z": 0.3764706254005432
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 0.5764706134796143,
-                                        "y": 0.4705882668495178,
-                                        "z": 0.3764706254005432
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
@@ -6780,7 +7847,9 @@
                         "y3AxisLabel": "",
                         "yAxisFlags": 2048
                     }
-                ]
+                ],
+                "startValue_East": 0.0,
+                "startValue_North": 0.0
             },
             "enabled": true,
             "id": 9,

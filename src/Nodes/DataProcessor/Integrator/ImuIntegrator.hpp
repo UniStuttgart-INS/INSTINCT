@@ -10,8 +10,7 @@
 
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
-#include "NodeData/State/PVAError.hpp"
-#include "NodeData/State/ImuBiases.hpp"
+#include "NodeData/State/LcKfInsGnssErrors.hpp"
 
 #include "Navigation/Gravity/Gravity.hpp"
 #include "Navigation/Math/NumericalIntegration.hpp"
@@ -76,24 +75,16 @@ class ImuIntegrator : public Node
     /// @param[in] linkId Id of the link over which the data is received
     void recvImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
-    /// @brief Receive function for PVAError
-    /// @param[in] nodeData PVAError received
-    /// @param[in] linkId Id of the link over which the data is received
-    void recvPVAError(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
-
-    /// @brief Receive function for ImuBiases
+    /// @brief Receive function for LcKfInsGnssErrors
     /// @param[in] nodeData Observation received
     /// @param[in] linkId Id of the link over which the data is received
-    void recvImuBiases(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void recvLcKfInsGnssErrors(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
-    /// @brief Corrects the provided Position, Velocity and Attitude with the corrections
-    /// @param[in] posVelAtt PosVelAtt to correct
-    /// @param[in] pvaError Corrections to apply
-    /// @return Newly allocated pointer to the corrected posVelAtt
-    static std::shared_ptr<const NAV::PosVelAtt> correctPosVelAtt(const std::shared_ptr<const NAV::PosVelAtt>& posVelAtt, const std::shared_ptr<const NAV::PVAError>& pvaError);
+    /// @brief Integrates the Imu Observation data in ECEF frame
+    void integrateObservationECEF();
 
-    /// @brief Integrates the Imu Observation data
-    void integrateObservation();
+    /// @brief Integrates the Imu Observation data in NED frame
+    void integrateObservationNED();
 
     // #########################################################################################################################################
 
@@ -156,18 +147,15 @@ class ImuIntegrator : public Node
     bool _angularRateTransportRateCompensationEnabled = true;
 
     /// Apply Zwiener's rotation correction for the velocity update
-    bool _velocityUpdateRotationCorrectionEnabled = true;
+    bool _velocityUpdateRotationCorrectionEnabled = false;
 
     // #########################################################################################################################################
 
     /// GUI flag, whether to show the input pin for PVA Corrections
     bool _showCorrectionsInputPin = false;
 
-    /// Pointer to the most recent PVA error
-    std::shared_ptr<const PVAError> _pvaError = nullptr;
-
     /// Accumulated IMU biases
-    std::shared_ptr<const ImuBiases> _imuBiases = nullptr;
+    std::shared_ptr<const LcKfInsGnssErrors> _lckfErrors = nullptr;
 };
 
 } // namespace NAV

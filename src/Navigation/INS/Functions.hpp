@@ -52,6 +52,17 @@ namespace NAV
 /// @return Coriolis acceleration in local-navigation coordinates in [m/s^2]
 [[nodiscard]] Eigen::Vector3d n_calcCoriolisAcceleration(const Eigen::Vector3d& n_omega_ie, const Eigen::Vector3d& n_omega_en, const Eigen::Vector3d& n_velocity);
 
+/// @brief Calculates the coriolis acceleration in [m/s^2] (acceleration due to motion in rotating reference frame)
+///
+/// \anchor eq-INS-Mechanization-CoriolisAcceleration-e \f{equation}{ \label{eq:eq-INS-Mechanization-CoriolisAcceleration-e}
+///   2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e
+/// \f}
+///
+/// @param[in] e_omega_ie ω_ie_e Angular rate of the Earth rotation in [rad/s] in ECEF coordinates
+/// @param[in] e_velocity Velocity in ECEF frame coordinates in [m/s^2]
+/// @return Coriolis acceleration in ECEF coordinates in [m/s^2]
+[[nodiscard]] Eigen::Vector3d e_calcCoriolisAcceleration(const Eigen::Vector3d& e_omega_ie, const Eigen::Vector3d& e_velocity);
+
 /// @brief Calculates the roll angle from a static acceleration measurement
 /// @param[in] b_accel Acceleration measurement in static condition in [m/s^2]
 /// @return The roll angle in [rad]

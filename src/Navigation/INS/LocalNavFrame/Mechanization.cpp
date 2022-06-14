@@ -50,12 +50,12 @@ Eigen::Vector3d n_calcTimeDerivativeForVelocity_RotationCorrection(const Eigen::
                                                                    const double& timeDifferenceSec)
 {
     // q Quaternion, from n-system to b-system
-    const Eigen::Quaterniond b_Quat_n = n_Quat_b.conjugate();
+    Eigen::Quaterniond b_Quat_n = n_Quat_b.conjugate();
     LOG_DATA("b_Quat_n = {}", b_Quat_n.coeffs().transpose());
     LOG_DATA("rollPitchYaw = {} [°]", trafo::rad2deg(trafo::quat2eulerZYX(n_Quat_b)).transpose());
 
     // Δβ⁠_nb_p The angular velocities in [rad], of the navigation to body system, in body coordinates (eq. 8.9)
-    const Eigen::Vector3d b_omega_nb = b_omega_ib - b_Quat_n * (n_omega_ie + n_omega_en);
+    Eigen::Vector3d b_omega_nb = b_omega_ib - b_Quat_n * (n_omega_ie + n_omega_en);
     LOG_DATA("b_omega_nb = {} [rad/s]", b_omega_nb.transpose());
 
     Eigen::Matrix3d rotA;
@@ -111,8 +111,8 @@ Eigen::Matrix<double, 10, 1> n_calcPosVelAttDerivative(const Eigen::Matrix<doubl
     // ∂/∂t [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h]^T
     Eigen::Matrix<double, 10, 1> y_dot = Eigen::Matrix<double, 10, 1>::Zero();
 
-    const Eigen::Quaterniond n_Quat_b{ y(0), y(1), y(2), y(3) };
-    const Eigen::Quaterniond n_Quat_e = trafo::n_Quat_e(y(7), y(8));
+    Eigen::Quaterniond n_Quat_b{ y(0), y(1), y(2), y(3) };
+    Eigen::Quaterniond n_Quat_e = trafo::n_Quat_e(y(7), y(8));
 
     LOG_DATA("rollPitchYaw = {} [°]", trafo::rad2deg(trafo::quat2eulerZYX(n_Quat_b)).transpose());
     LOG_DATA("n_velocity   = {} [m/s]", y.segment<3>(4).transpose());
@@ -120,39 +120,36 @@ Eigen::Matrix<double, 10, 1> n_calcPosVelAttDerivative(const Eigen::Matrix<doubl
     LOG_DATA("b_measuredForce = {} [m/s^2]", c.b_measuredForce.transpose());
     LOG_DATA("b_omega_ib = {} [rad/s]", c.b_omega_ib.transpose());
 
-    const auto R_N = calcEarthRadius_N(y(7));
+    auto R_N = calcEarthRadius_N(y(7));
     LOG_DATA("R_N = {} [m]", R_N);
-    const auto R_E = calcEarthRadius_E(y(7));
+    auto R_E = calcEarthRadius_E(y(7));
     LOG_DATA("R_E = {} [m]", R_E);
 
-    // ω_ie_e Turn rate of the Earth expressed in Earth frame coordinates
-    const Eigen::Vector3d& e_omega_ie = InsConst::e_omega_ie;
-    LOG_DATA("e_omega_ie = {} [rad/s]", e_omega_ie.transpose());
     // ω_ie_n Turn rate of the Earth expressed in local-navigation frame coordinates
-    const Eigen::Vector3d n_omega_ie = n_Quat_e * e_omega_ie;
+    Eigen::Vector3d n_omega_ie = n_Quat_e * InsConst::e_omega_ie;
     LOG_DATA("n_omega_ie = {} [rad/s]", n_omega_ie.transpose());
     // ω_en_n Turn rate of the local frame with respect to the Earth-fixed frame, called the transport rate, expressed in local-navigation frame coordinates
-    const Eigen::Vector3d n_omega_en = n_calcTransportRate(y.segment<3>(7), y.segment<3>(4), R_N, R_E);
+    Eigen::Vector3d n_omega_en = n_calcTransportRate(y.segment<3>(7), y.segment<3>(4), R_N, R_E);
     LOG_DATA("n_omega_en = {} [rad/s]", n_omega_en.transpose());
     // ω_nb_b = ω_ib_b - C_bn * (ω_ie_n + ω_en_n)
-    const Eigen::Vector3d b_omega_nb = c.b_omega_ib
-                                       - n_Quat_b.conjugate()
-                                             * ((c.angularRateEarthRotationCompensationEnabled ? n_omega_ie : Eigen::Vector3d::Zero())
-                                                + (c.angularRateTransportRateCompensationEnabled ? n_omega_en : Eigen::Vector3d::Zero()));
+    Eigen::Vector3d b_omega_nb = c.b_omega_ib
+                                 - n_Quat_b.conjugate()
+                                       * ((c.angularRateEarthRotationCompensationEnabled ? n_omega_ie : Eigen::Vector3d::Zero())
+                                          + (c.angularRateTransportRateCompensationEnabled ? n_omega_en : Eigen::Vector3d::Zero()));
     LOG_DATA("b_omega_nb = {} [rad/s]", b_omega_nb.transpose());
 
     // Coriolis acceleration in [m/s^2] (acceleration due to motion in rotating reference frame)
-    const Eigen::Vector3d n_coriolisAcceleration = c.coriolisAccelerationCompensationEnabled
-                                                       ? n_calcCoriolisAcceleration(n_omega_ie, n_omega_en, y.segment<3>(4))
-                                                       : Eigen::Vector3d::Zero();
+    Eigen::Vector3d n_coriolisAcceleration = c.coriolisAccelerationCompensationEnabled
+                                                 ? n_calcCoriolisAcceleration(n_omega_ie, n_omega_en, y.segment<3>(4))
+                                                 : Eigen::Vector3d::Zero();
     LOG_DATA("n_coriolisAcceleration = {} [m/s^2]", n_coriolisAcceleration.transpose());
     // Centrifugal acceleration in [m/s^2] (acceleration that makes a body follow a curved path)
-    const Eigen::Vector3d n_centrifugalAcceleration = c.centrifgalAccelerationCompensationEnabled
-                                                          ? n_Quat_e * e_calcCentrifugalAcceleration(trafo::lla2ecef_WGS84(y.segment<3>(7)), e_omega_ie)
-                                                          : Eigen::Vector3d::Zero();
+    Eigen::Vector3d n_centrifugalAcceleration = c.centrifgalAccelerationCompensationEnabled
+                                                    ? n_Quat_e * e_calcCentrifugalAcceleration(trafo::lla2ecef_WGS84(y.segment<3>(7)), InsConst::e_omega_ie)
+                                                    : Eigen::Vector3d::Zero();
     LOG_DATA("n_centrifugalAcceleration = {} [m/s^2]", n_centrifugalAcceleration.transpose());
 
-    const Eigen::Vector3d n_gravitation = n_calcGravitation(y.segment<3>(7), c.gravitationModel);
+    Eigen::Vector3d n_gravitation = n_calcGravitation(y.segment<3>(7), c.gravitationModel);
     LOG_DATA("n_gravitation = {} [m/s^2] ({})", n_gravitation.transpose(), to_string(c.gravitationModel));
 
     y_dot.segment<4>(0) = calcTimeDerivativeFor_n_Quat_b(b_omega_nb,       // ω_nb_b Body rate with respect to the navigation frame, expressed in the body frame

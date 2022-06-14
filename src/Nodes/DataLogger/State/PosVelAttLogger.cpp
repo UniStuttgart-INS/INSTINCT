@@ -1,6 +1,7 @@
 #include "PosVelAttLogger.hpp"
 
 #include "NodeData/State/PosVelAtt.hpp"
+#include "NodeData/State/InertialNavSol.hpp"
 
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 
@@ -168,7 +169,8 @@ void NAV::PosVelAttLogger::writeObservation(const std::shared_ptr<const NodeData
             }
             // -------------------------------------------------------- Velocity -----------------------------------------------------------
             if (sourcePin->dataIdentifier.front() == PosVelAtt::type()
-                || sourcePin->dataIdentifier.front() == PosVel::type())
+                || sourcePin->dataIdentifier.front() == PosVel::type()
+                || sourcePin->dataIdentifier.front() == InertialNavSol::type())
             {
                 auto obs = std::static_pointer_cast<const PosVel>(nodeData);
 
@@ -208,7 +210,8 @@ void NAV::PosVelAttLogger::writeObservation(const std::shared_ptr<const NodeData
                 _filestream << ",,,,,,";
             }
             // -------------------------------------------------------- Attitude -----------------------------------------------------------
-            if (sourcePin->dataIdentifier.front() == PosVelAtt::type())
+            if (sourcePin->dataIdentifier.front() == PosVelAtt::type()
+                || sourcePin->dataIdentifier.front() == InertialNavSol::type())
             {
                 auto obs = std::static_pointer_cast<const PosVelAtt>(nodeData);
                 if (!obs->n_Quat_b().coeffs().isZero())

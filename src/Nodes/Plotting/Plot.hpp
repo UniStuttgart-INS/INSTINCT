@@ -17,8 +17,7 @@
 
 #include "NodeData/State/PosVelAtt.hpp"
 #include "NodeData/State/InertialNavSol.hpp"
-#include "NodeData/State/PVAError.hpp"
-#include "NodeData/State/ImuBiases.hpp"
+#include "NodeData/State/LcKfInsGnssErrors.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
@@ -393,12 +392,7 @@ class Plot : public Node
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotPVAError(const std::shared_ptr<const PVAError>& obs, size_t pinIndex);
-
-    /// @brief Plot the data
-    /// @param[in] obs Observation to plot
-    /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotImuBiases(const std::shared_ptr<const ImuBiases>& obs, size_t pinIndex);
+    void plotLcKfInsGnssErrors(const std::shared_ptr<const LcKfInsGnssErrors>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
