@@ -458,9 +458,6 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                         case sensors::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
                             code = Code::G1C;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::SemiCodeless: // TODO: Z-Tracking?
-                            code = Code::G1W;
-                            break;
                         case sensors::vectornav::RawMeas::SatRawElement::Chan::Y_Code:
                             code = Code::G1Y;
                             break;
@@ -479,6 +476,9 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                         case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
                             code = Code::G1X;
                             break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Z_Tracking:
+                            code = Code::G1W;
+                            break;
                         default:
                             skipMeasurement = true;
                             break;
@@ -494,8 +494,8 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                         case sensors::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
                             code = Code::G2C;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::SemiCodeless: // TODO: Was ist G2D Semi-codeless P(Y) tracking (L1 C/A + (P2-P1)) - ist das Z-tracking?
-                            code = Code::G2W;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::SemiCodeless:
+                            code = Code::G2D;
                             break;
                         case sensors::vectornav::RawMeas::SatRawElement::Chan::Y_Code:
                             code = Code::G2Y;
@@ -506,7 +506,7 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                         case sensors::vectornav::RawMeas::SatRawElement::Chan::Codeless:
                             code = Code::G2N;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::M_Chan: // TODO: L2C medium / long richtig als M-Chan und L_Chan?
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::M_Chan:
                             code = Code::G2S;
                             break;
                         case sensors::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
@@ -514,6 +514,9 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             break;
                         case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
                             code = Code::G2X;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Z_Tracking:
+                            code = Code::G2W;
                             break;
                         default:
                             skipMeasurement = true;
@@ -524,10 +527,10 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                         frequency = G05;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan: // TODO: oder M_Chan
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
                             code = Code::G5I;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan: // TODO: oder L_Chan
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
                             code = Code::G5Q;
                             break;
                         case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
@@ -562,10 +565,10 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                         frequency = S05;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan: // TODO: oder M_Chan
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
                             code = Code::S5I;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan: // TODO: oder L_Chan
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
                             code = Code::S5Q;
                             break;
                         case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
@@ -628,7 +631,21 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                         break;
                     case sensors::vectornav::RawMeas::SatRawElement::Freq::E6:
                         frequency = E06;
-                        skipMeasurement = true; // TODO: Es gibt keine Codes für E6 in Code.hpp, im Dokument zur RINEX Version 3.04 gibt es welche.
+                        switch (satRaw.chan)
+                        {
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::B_Chan:
+                            code = Code::E6B;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                            code = Code::E6C;
+                            break;
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::E6X;
+                            break;
+                        default:
+                            skipMeasurement = true;
+                            break;
+                        }
                         break;
                     case sensors::vectornav::RawMeas::SatRawElement::Freq::E5a:
                         frequency = E05;
@@ -696,6 +713,9 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                         frequency = B06;
                         switch (satRaw.chan)
                         {
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::A_Chan:
+                            code = Code::B6A;
+                            break;
                         case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
                             code = Code::B6I;
                             break;
@@ -712,7 +732,7 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                         break;
                     case sensors::vectornav::RawMeas::SatRawElement::Freq::E5b:
                         frequency = B08;
-                        switch (satRaw.chan) //TODO: B08 ist eig B2 (B2a + B2b) (1191.795MHz), B07 ist B2b (1207.14 MHz). Ist B7I / B7Q / B7X B2 oder B2b und muss daher übersprungen werden?
+                        switch (satRaw.chan)
                         {
                         case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
                             code = Code::B7I;
@@ -761,7 +781,7 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                         frequency = J02;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::M_Chan: // TODO: medium und long richtig als M_Chan und L_Chan?
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::M_Chan:
                             code = Code::J2S;
                             break;
                         case sensors::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
@@ -779,10 +799,10 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                         frequency = J05;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan: // TODO: oder M_Chan
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
                             code = Code::J5I;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan: // TODO: oder L_Chan
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
                             code = Code::J5Q;
                             break;
                         case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
@@ -797,7 +817,7 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                         frequency = J06;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::M_Chan: // TODO: long / short richtig als M_Chan und L_Chan?
+                        case sensors::vectornav::RawMeas::SatRawElement::Chan::M_Chan:
                             code = Code::J6S;
                             break;
                         case sensors::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
