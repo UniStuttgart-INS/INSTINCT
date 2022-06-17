@@ -8,8 +8,9 @@
 #include <cstdint>
 #include <Eigen/Core>
 
-namespace NAV
+namespace NAV::math
 {
+
 /// @brief Calculates the factorial of an unsigned integer
 /// @param[in] n Unsigned integer
 /// @return The factorial of 'n'
@@ -49,12 +50,20 @@ Eigen::Matrix<_Scalar, 3, 3> skewSymmetricMatrixSquared(const Eigen::Matrix<_Sca
     return skewMat2;
 }
 
-/// @brief Calculates the secant of a value (1 / cos(x))
+/// @brief Calculates the secant of a value (sec(x) = csc(pi/2 - x) = 1 / cos(x))
 template<typename T,
          typename = std::enable_if_t<std::is_floating_point_v<T>>>
-T secant(const T& x)
+T sec(const T& x)
 {
     return 1.0 / std::cos(x);
+}
+
+/// @brief Calculates the cosecant of a value (csc(x) = sec(pi/2 - x) = 1 / sin(x))
+template<typename T,
+         typename = std::enable_if_t<std::is_floating_point_v<T>>>
+T csc(const T& x)
+{
+    return 1.0 / std::sin(x);
 }
 
 /// @brief Returns the sign of the given value
@@ -66,4 +75,4 @@ int sgn(const T& val)
     return (T(0) < val) - (val < T(0));
 }
 
-} // namespace NAV
+} // namespace NAV::math

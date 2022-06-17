@@ -715,7 +715,7 @@
                                 "displayName": "Longitude error [deg]"
                             },
                             {
-                                "displayName": "Altitude error [deg]"
+                                "displayName": "Altitude error [m]"
                             },
                             {
                                 "displayName": "Alpha_eb [deg]"
@@ -761,6 +761,9 @@
                             },
                             {
                                 "displayName": "Gyroscope bias b_Z accumulated [rad/s]"
+                            },
+                            {
+                                "displayName": "Altitude error [deg]"
                             }
                         ],
                         "size": 0,
@@ -5624,13 +5627,14 @@
                 "angularRateEarthRotationEnabled": true,
                 "angularRateTransportRateEnabled": true,
                 "centrifgalAccelerationEnabled": true,
-                "circularSubHarmonicAmplitudeFactor": 0.1,
-                "circularSubHarmonicFrequency": 10,
+                "circularHarmonicAmplitudeFactor": 0.1,
+                "circularHarmonicFrequency": 10,
                 "circularTrajectoryCircleCountForStop": 1.0,
                 "circularTrajectoryDirection": 1,
                 "circularTrajectoryHorizontalSpeed": 10.0,
                 "circularTrajectoryOriginAngle": 0.0,
                 "circularTrajectoryRadius": 600.0,
+                "circularTrajectoryVerticalSpeed": 0.0,
                 "coriolisAccelerationEnabled": true,
                 "fixedTrajectoryStartOrientation": {
                     "0": {
@@ -5645,7 +5649,6 @@
                 },
                 "gnssFrequency": 5.0,
                 "gravitationModel": 3,
-                "helicalTrajectoryVerticalSpeed": 1.0,
                 "imuFrequency": 100.0,
                 "linearTrajectoryDistanceForStop": 5000.0,
                 "n_linearTrajectoryStartVelocity": {
@@ -6530,6 +6533,15 @@
                                 "displayName": "Z-ECEF [m]"
                             },
                             {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
                                 "displayName": "North velocity [m/s]"
                             },
                             {
@@ -6596,6 +6608,15 @@
                             },
                             {
                                 "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
                             },
                             {
                                 "displayName": "North velocity [m/s]"
@@ -6831,7 +6852,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 13,
+                                "dataIndex": 16,
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -6864,7 +6885,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 13,
+                                "dataIndex": 16,
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -6926,7 +6947,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 14,
+                                "dataIndex": 17,
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -6959,7 +6980,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 14,
+                                "dataIndex": 17,
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -7021,7 +7042,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 15,
+                                "dataIndex": 18,
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -7054,7 +7075,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 15,
+                                "dataIndex": 18,
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -7116,7 +7137,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 10,
+                                "dataIndex": 13,
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -7149,7 +7170,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 10,
+                                "dataIndex": 13,
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -7211,7 +7232,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 11,
+                                "dataIndex": 14,
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -7244,7 +7265,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 11,
+                                "dataIndex": 14,
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -7306,7 +7327,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 12,
+                                "dataIndex": 15,
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -7339,7 +7360,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 12,
+                                "dataIndex": 15,
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {

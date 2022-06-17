@@ -8,6 +8,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/gui/widgets/InputWithUnit.hpp"
 
 #include "Navigation/Transformations/CoordinateFrames.hpp"
+#include "Navigation/Transformations/Units.hpp"
 
 #include "util/Eigen.hpp"
 
@@ -617,7 +618,7 @@ void NAV::ErrorModel::receiveImuObs(const std::shared_ptr<ImuObs>& imuObs)
     switch (_imuGyroscopeBiasUnit)
     {
     case ImuGyroscopeBiasUnits::deg_s:
-        gyroscopeBias_p = trafo::deg2rad(_imuGyroscopeBias_p);
+        gyroscopeBias_p = deg2rad(_imuGyroscopeBias_p);
         break;
     case ImuGyroscopeBiasUnits::rad_s:
         gyroscopeBias_p = _imuGyroscopeBias_p;
@@ -648,13 +649,13 @@ void NAV::ErrorModel::receiveImuObs(const std::shared_ptr<ImuObs>& imuObs)
         gyroscopeNoiseStd = _imuGyroscopeNoise;
         break;
     case ImuGyroscopeNoiseUnits::deg_s:
-        gyroscopeNoiseStd = trafo::deg2rad(_imuGyroscopeNoise);
+        gyroscopeNoiseStd = deg2rad(_imuGyroscopeNoise);
         break;
     case ImuGyroscopeNoiseUnits::rad2_s2:
         gyroscopeNoiseStd = _imuGyroscopeNoise.cwiseSqrt();
         break;
     case ImuGyroscopeNoiseUnits::deg2_s2:
-        gyroscopeNoiseStd = trafo::deg2rad(_imuGyroscopeNoise.cwiseSqrt());
+        gyroscopeNoiseStd = deg2rad(_imuGyroscopeNoise.cwiseSqrt());
         break;
     }
     LOG_DATA("{}: gyroscopeNoiseStd = {} [rad/s]", nameId(), gyroscopeNoiseStd.transpose());
@@ -692,7 +693,7 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
         lla_positionBias = _positionBias;
         break;
     case PositionBiasUnits::deg_deg_m:
-        lla_positionBias = Eigen::Vector3d{ trafo::deg2rad(_positionBias(0)), trafo::deg2rad(_positionBias(1)), _positionBias(2) };
+        lla_positionBias = Eigen::Vector3d{ deg2rad(_positionBias(0)), deg2rad(_positionBias(1)), _positionBias(2) };
         break;
     }
     LOG_DATA("{}: lla_positionBias = {} [rad, rad, m]", nameId(), lla_positionBias.transpose());
@@ -715,7 +716,7 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
         attitudeBias = _attitudeBias;
         break;
     case AttitudeBiasUnits::deg:
-        attitudeBias = trafo::deg2rad(_attitudeBias);
+        attitudeBias = deg2rad(_attitudeBias);
         break;
     }
     LOG_DATA("{}: attitudeBias = {} [rad]", nameId(), attitudeBias.transpose());
@@ -739,7 +740,7 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
         lla_positionNoiseStd = _positionNoise;
         break;
     case PositionNoiseUnits::deg_deg_m:
-        lla_positionNoiseStd = trafo::deg2rad(_positionNoise);
+        lla_positionNoiseStd = deg2rad(_positionNoise);
         break;
     case PositionNoiseUnits::meter2:
     {
@@ -754,7 +755,7 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
         lla_positionNoiseStd = _positionNoise.cwiseSqrt();
         break;
     case PositionNoiseUnits::deg2_deg2_m2:
-        lla_positionNoiseStd = trafo::deg2rad(_positionNoise.cwiseSqrt());
+        lla_positionNoiseStd = deg2rad(_positionNoise.cwiseSqrt());
         break;
     }
     LOG_DATA("{}: lla_positionNoiseStd = {} [rad, rad, m]", nameId(), lla_positionNoiseStd.transpose());
@@ -780,13 +781,13 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
         attitudeNoiseStd = _attitudeNoise;
         break;
     case AttitudeNoiseUnits::deg:
-        attitudeNoiseStd = trafo::deg2rad(_attitudeNoise);
+        attitudeNoiseStd = deg2rad(_attitudeNoise);
         break;
     case AttitudeNoiseUnits::rad2:
         attitudeNoiseStd = _attitudeNoise.cwiseSqrt();
         break;
     case AttitudeNoiseUnits::deg2:
-        attitudeNoiseStd = trafo::deg2rad(_attitudeNoise.cwiseSqrt());
+        attitudeNoiseStd = deg2rad(_attitudeNoise.cwiseSqrt());
         break;
     }
     LOG_DATA("{}: attitudeNoiseStd = {} [rad]", nameId(), attitudeNoiseStd.transpose());

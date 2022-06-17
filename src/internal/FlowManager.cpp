@@ -130,6 +130,8 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
         gui::saveLastAction();
     }
 
+    LOG_INFO("Loaded flow file: {}", filepath);
+
     return loadSuccessful;
 }
 

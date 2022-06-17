@@ -15,6 +15,7 @@ namespace nm = NAV::NodeManager;
 #include "util/Time/TimeBase.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
+#include "Navigation/Transformations/Units.hpp"
 
 #include <implot_internal.h>
 
@@ -297,8 +298,8 @@ NAV::Plot::Plot()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 750, 650 };
 
-    _dataIdentifier = { PosVelAtt::type(), LcKfInsGnssErrors::type(),
-                        RtklibPosObs::type(), UbloxObs::type(),
+    _dataIdentifier = { Pos::type(), PosVel::type(), PosVelAtt::type(), LcKfInsGnssErrors::type(),
+                        SppSolution::type(), RtklibPosObs::type(), UbloxObs::type(),
                         ImuObs::type(), KvhObs::type(), ImuObsWDelta::type(),
                         VectorNavBinaryOutput::type() };
 
@@ -616,17 +617,17 @@ void NAV::Plot::guiConfig()
         if (_overridePositionStartValues)
         {
             ImGui::Indent();
-            double latitudeOrigin = trafo::rad2deg(_startValue_North);
+            double latitudeOrigin = rad2deg(_startValue_North);
             if (ImGui::InputDoubleL(fmt::format("Latitude Origin##{}", size_t(id)).c_str(), &latitudeOrigin))
             {
-                _startValue_North = trafo::deg2rad(latitudeOrigin);
+                _startValue_North = deg2rad(latitudeOrigin);
                 flow::ApplyChanges();
                 LOG_DEBUG("{}: latitudeOrigin changed to {}", nameId(), latitudeOrigin);
             }
-            double longitudeOrigin = trafo::rad2deg(_startValue_East);
+            double longitudeOrigin = rad2deg(_startValue_East);
             if (ImGui::InputDoubleL(fmt::format("Longitude Origin##{}", size_t(id)).c_str(), &longitudeOrigin))
             {
-                _startValue_East = trafo::deg2rad(longitudeOrigin);
+                _startValue_East = deg2rad(longitudeOrigin);
                 flow::ApplyChanges();
                 LOG_DEBUG("{}: longitudeOrigin changed to {}", nameId(), longitudeOrigin);
             }
@@ -1362,8 +1363,44 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
 
         _pinData.at(pinIndex).dataIdentifier = startPin->dataIdentifier.front();
 
-        if (startPin->dataIdentifier.front() == PosVelAtt::type()
-            || startPin->dataIdentifier.front() == InertialNavSol::type())
+        if (startPin->dataIdentifier.front() == Pos::type())
+        {
+            // InsObs
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
+            // Pos
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Latitude [deg]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Longitude [deg]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Altitude [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "North/South [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "East/West [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "X-ECEF [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Y-ECEF [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Z-ECEF [m]");
+        }
+        else if (startPin->dataIdentifier.front() == PosVel::type())
+        {
+            // InsObs
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
+            // PosVel
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Latitude [deg]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Longitude [deg]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Altitude [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "North/South [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "East/West [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "X-ECEF [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Y-ECEF [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Z-ECEF [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "X velocity ECEF [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Y velocity ECEF [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Z velocity ECEF [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "North velocity [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "East velocity [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Down velocity [m/s]");
+        }
+        else if (startPin->dataIdentifier.front() == PosVelAtt::type()
+                 || startPin->dataIdentifier.front() == InertialNavSol::type())
         {
             // InsObs
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
@@ -1377,6 +1414,9 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "X-ECEF [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Y-ECEF [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Z-ECEF [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "X velocity ECEF [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Y velocity ECEF [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Z velocity ECEF [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "North velocity [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "East velocity [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Down velocity [m/s]");
@@ -1402,7 +1442,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "Down velocity error [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Latitude error [deg]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Longitude error [deg]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Altitude error [deg]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Altitude error [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Alpha_eb [deg]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Beta_eb [deg]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Gamma_eb [deg]");
@@ -1419,6 +1459,58 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_X accumulated [rad/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_Y accumulated [rad/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_Z accumulated [rad/s]");
+        }
+        else if (startPin->dataIdentifier.front() == SppSolution::type())
+        {
+            // InsObs
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
+            // PosVel
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Latitude [deg]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Longitude [deg]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Altitude [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "North/South [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "East/West [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "X-ECEF [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Y-ECEF [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Z-ECEF [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "X velocity ECEF [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Y velocity ECEF [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Z velocity ECEF [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "North velocity [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "East velocity [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Down velocity [m/s]");
+            // SppSolution
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Number satellites (pos)");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Number satellites (vel)");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock bias [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock drift [s/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "X-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Y-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Z-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "XY-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "XZ-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "YZ-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "North StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "East StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Down StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "NE-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "ND-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "ED-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "X velocity ECEF StDev [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Y velocity ECEF StDev [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Z velocity ECEF StDev [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "XY velocity StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "XZ velocity StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "YZ velocity StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "North velocity StDev [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "East velocity StDev [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Down velocity StDev [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "NE velocity StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "ND velocity StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "ED velocity StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock bias StDev [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock drift StDev [s/s]");
         }
         else if (startPin->dataIdentifier.front() == RtklibPosObs::type())
         {
@@ -1441,15 +1533,27 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "sdz [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "sdn [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "sde [m]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "sdu [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "sdd [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "sdxy [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "sdyz [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "sdzx [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "sdne [m]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "sdeu [m]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "sdun [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "sded [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "sddn [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "age [s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "ratio [-]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity ECEF X [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity ECEF Y [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity ECEF Z [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity North [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity East [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity Down [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "sdvn [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "sdve [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "sdvd [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "sdvne [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "sdved [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "sdvdn [m/s]");
         }
         else if (startPin->dataIdentifier.front() == UbloxObs::type())
         {
@@ -1779,6 +1883,61 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "GNSS2::RawMeas::Week");
             _pinData.at(pinIndex).addPlotDataItem(i++, "GNSS2::RawMeas::NumSats");
         }
+        // TODO: Remove
+        // else if (startPin->dataIdentifier.front() == SPPsol_old::type())
+        // {
+        //     // InsObs
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
+        //     // Sppsol
+        //     // position
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF X [m]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF Y [m]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF Z [m]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Latitude  [deg]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Longitude [deg]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Altitude  [m]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation X [m]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation Y [m]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation Z [m]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation E [m]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation N [m]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation U [m]");
+
+        //     // velocity
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity X [m/s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity Y [m/s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity Z [m/s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity E [m/s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity N [m/s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity U [m/s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation Vx [m/s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation Vy [m/s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation Vz [m/s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation Ve [m/s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation Vn [m/s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation Vu [m/s]");
+
+        //     // clock
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Clock Bias Galileo [s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation of Clock Bias Galileo [s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Clock Drift Galileo [s/s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation of Clock Drift Galileo [s/s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Clock Bias GPS [s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation of Clock Bias GPS [s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Clock Drift GPS [s/s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation of Clock Drift GPS [s/s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Clock Bias GLONASS [s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation of Clock Bias GLONASS [s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Clock Drift GLONASS [s/s]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation of Clock Drift GLONASS [s/s]");
+
+        //     // ZHD
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Zenith Hydrostatic Delay [m]");
+        //     // ZWD
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Zenith Wet Delay [m]");
+        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation of Zenith Wet Delay [m]");
+        // }
     }
     else if (inputPins.at(pinIndex).type == Pin::Type::Bool)
     {
@@ -2103,14 +2262,26 @@ void NAV::Plot::plotData(const std::shared_ptr<const NodeData>& nodeData, ax::No
         {
             size_t pinIndex = pinIndexFromId(link->endPinId);
 
-            if (sourcePin->dataIdentifier.front() == PosVelAtt::type()
-                || sourcePin->dataIdentifier.front() == InertialNavSol::type())
+            if (sourcePin->dataIdentifier.front() == Pos::type())
+            {
+                plotPos(std::static_pointer_cast<const Pos>(nodeData), pinIndex);
+            }
+            else if (sourcePin->dataIdentifier.front() == PosVel::type())
+            {
+                plotPosVel(std::static_pointer_cast<const PosVel>(nodeData), pinIndex);
+            }
+            else if (sourcePin->dataIdentifier.front() == PosVelAtt::type()
+                     || sourcePin->dataIdentifier.front() == InertialNavSol::type())
             {
                 plotPosVelAtt(std::static_pointer_cast<const PosVelAtt>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == LcKfInsGnssErrors::type())
             {
                 plotLcKfInsGnssErrors(std::static_pointer_cast<const LcKfInsGnssErrors>(nodeData), pinIndex);
+            }
+            else if (sourcePin->dataIdentifier.front() == SppSolution::type())
+            {
+                plotSppSolution(std::static_pointer_cast<const SppSolution>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
             {
@@ -2138,6 +2309,112 @@ void NAV::Plot::plotData(const std::shared_ptr<const NodeData>& nodeData, ax::No
             }
         }
     }
+}
+
+void NAV::Plot::plotPos(const std::shared_ptr<const Pos>& obs, size_t pinIndex)
+{
+    if (obs->insTime.has_value())
+    {
+        if (std::isnan(_startValue_Time))
+        {
+            _startValue_Time = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
+        }
+    }
+    size_t i = 0;
+
+    // [𝜙, λ, h] Latitude, Longitude and altitude in [rad, rad, m]
+    Eigen::Vector3d lla_position = obs->lla_position();
+
+    if (std::isnan(_startValue_North))
+    {
+        _startValue_North = lla_position.x();
+    }
+    int sign = lla_position.x() > _startValue_North ? 1 : -1;
+    // North/South deviation [m]
+    double northSouth = calcGeographicalDistance(lla_position.x(), lla_position.y(),
+                                                 _startValue_North, lla_position.y())
+                        * sign;
+
+    if (std::isnan(_startValue_East))
+    {
+        _startValue_East = lla_position.y();
+    }
+    sign = lla_position.y() > _startValue_East ? 1 : -1;
+    // East/West deviation [m]
+    double eastWest = calcGeographicalDistance(lla_position.x(), lla_position.y(),
+                                               lla_position.x(), _startValue_East)
+                      * sign;
+
+    std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
+
+    // InsObs
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - _startValue_Time : std::nan(""));
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // Pos
+    addData(pinIndex, i++, rad2deg(lla_position(0)));
+    addData(pinIndex, i++, rad2deg(lla_position(1)));
+    addData(pinIndex, i++, lla_position(2));
+    addData(pinIndex, i++, northSouth);
+    addData(pinIndex, i++, eastWest);
+    addData(pinIndex, i++, obs->e_position().x());
+    addData(pinIndex, i++, obs->e_position().y());
+    addData(pinIndex, i++, obs->e_position().z());
+}
+
+void NAV::Plot::plotPosVel(const std::shared_ptr<const PosVel>& obs, size_t pinIndex)
+{
+    if (obs->insTime.has_value())
+    {
+        if (std::isnan(_startValue_Time))
+        {
+            _startValue_Time = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
+        }
+    }
+    size_t i = 0;
+
+    // [𝜙, λ, h] Latitude, Longitude and altitude in [rad, rad, m]
+    Eigen::Vector3d lla_position = obs->lla_position();
+
+    if (std::isnan(_startValue_North))
+    {
+        _startValue_North = lla_position.x();
+    }
+    int sign = lla_position.x() > _startValue_North ? 1 : -1;
+    // North/South deviation [m]
+    double northSouth = calcGeographicalDistance(lla_position.x(), lla_position.y(),
+                                                 _startValue_North, lla_position.y())
+                        * sign;
+
+    if (std::isnan(_startValue_East))
+    {
+        _startValue_East = lla_position.y();
+    }
+    sign = lla_position.y() > _startValue_East ? 1 : -1;
+    // East/West deviation [m]
+    double eastWest = calcGeographicalDistance(lla_position.x(), lla_position.y(),
+                                               lla_position.x(), _startValue_East)
+                      * sign;
+
+    std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
+
+    // InsObs
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - _startValue_Time : std::nan(""));
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // PosVel
+    addData(pinIndex, i++, rad2deg(lla_position(0)));
+    addData(pinIndex, i++, rad2deg(lla_position(1)));
+    addData(pinIndex, i++, lla_position(2));
+    addData(pinIndex, i++, northSouth);
+    addData(pinIndex, i++, eastWest);
+    addData(pinIndex, i++, obs->e_position().x());
+    addData(pinIndex, i++, obs->e_position().y());
+    addData(pinIndex, i++, obs->e_position().z());
+    addData(pinIndex, i++, obs->e_velocity().x());
+    addData(pinIndex, i++, obs->e_velocity().y());
+    addData(pinIndex, i++, obs->e_velocity().z());
+    addData(pinIndex, i++, obs->n_velocity().x());
+    addData(pinIndex, i++, obs->n_velocity().y());
+    addData(pinIndex, i++, obs->n_velocity().z());
 }
 
 void NAV::Plot::plotPosVelAtt(const std::shared_ptr<const PosVelAtt>& obs, size_t pinIndex)
@@ -2180,20 +2457,23 @@ void NAV::Plot::plotPosVelAtt(const std::shared_ptr<const PosVelAtt>& obs, size_
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - _startValue_Time : std::nan(""));
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
     // PosVelAtt
-    addData(pinIndex, i++, trafo::rad2deg(lla_position(0)));
-    addData(pinIndex, i++, trafo::rad2deg(lla_position(1)));
+    addData(pinIndex, i++, rad2deg(lla_position(0)));
+    addData(pinIndex, i++, rad2deg(lla_position(1)));
     addData(pinIndex, i++, lla_position(2));
     addData(pinIndex, i++, northSouth);
     addData(pinIndex, i++, eastWest);
     addData(pinIndex, i++, obs->e_position().x());
     addData(pinIndex, i++, obs->e_position().y());
     addData(pinIndex, i++, obs->e_position().z());
+    addData(pinIndex, i++, obs->e_velocity().x());
+    addData(pinIndex, i++, obs->e_velocity().y());
+    addData(pinIndex, i++, obs->e_velocity().z());
     addData(pinIndex, i++, obs->n_velocity().x());
     addData(pinIndex, i++, obs->n_velocity().y());
     addData(pinIndex, i++, obs->n_velocity().z());
-    addData(pinIndex, i++, trafo::rad2deg(obs->rollPitchYaw().x()));
-    addData(pinIndex, i++, trafo::rad2deg(obs->rollPitchYaw().y()));
-    addData(pinIndex, i++, trafo::rad2deg(obs->rollPitchYaw().z()));
+    addData(pinIndex, i++, rad2deg(obs->rollPitchYaw().x()));
+    addData(pinIndex, i++, rad2deg(obs->rollPitchYaw().y()));
+    addData(pinIndex, i++, rad2deg(obs->rollPitchYaw().z()));
     addData(pinIndex, i++, obs->n_Quat_b().w());
     addData(pinIndex, i++, obs->n_Quat_b().x());
     addData(pinIndex, i++, obs->n_Quat_b().y());
@@ -2217,19 +2497,19 @@ void NAV::Plot::plotLcKfInsGnssErrors(const std::shared_ptr<const LcKfInsGnssErr
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - _startValue_Time : std::nan(""));
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
     // PVAError
-    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? trafo::rad2deg(obs->attitudeError(0)) : std::nan(""));
-    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? trafo::rad2deg(obs->attitudeError(1)) : std::nan(""));
-    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? trafo::rad2deg(obs->attitudeError(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? rad2deg(obs->attitudeError(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? rad2deg(obs->attitudeError(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? rad2deg(obs->attitudeError(2)) : std::nan(""));
     addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? obs->velocityError(0) : std::nan(""));
     addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? obs->velocityError(1) : std::nan(""));
     addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? obs->velocityError(2) : std::nan(""));
-    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? trafo::rad2deg(obs->positionError(0)) : std::nan(""));
-    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? trafo::rad2deg(obs->positionError(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? rad2deg(obs->positionError(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? rad2deg(obs->positionError(1)) : std::nan(""));
     addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? obs->positionError(2) : std::nan(""));
 
-    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::ECEF ? trafo::rad2deg(obs->attitudeError(0)) : std::nan(""));
-    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::ECEF ? trafo::rad2deg(obs->attitudeError(1)) : std::nan(""));
-    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::ECEF ? trafo::rad2deg(obs->attitudeError(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::ECEF ? rad2deg(obs->attitudeError(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::ECEF ? rad2deg(obs->attitudeError(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::ECEF ? rad2deg(obs->attitudeError(2)) : std::nan(""));
     addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::ECEF ? obs->velocityError(0) : std::nan(""));
     addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::ECEF ? obs->velocityError(1) : std::nan(""));
     addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::ECEF ? obs->velocityError(2) : std::nan(""));
@@ -2245,6 +2525,90 @@ void NAV::Plot::plotLcKfInsGnssErrors(const std::shared_ptr<const LcKfInsGnssErr
     addData(pinIndex, i++, obs->b_biasGyro(2));
 }
 
+void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, size_t pinIndex)
+{
+    if (obs->insTime.has_value())
+    {
+        if (std::isnan(_startValue_Time))
+        {
+            _startValue_Time = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
+        }
+    }
+    size_t i = 0;
+
+    if (std::isnan(_startValue_North))
+    {
+        _startValue_North = obs->lla_position().x();
+    }
+    int sign = obs->lla_position().x() > _startValue_North ? 1 : -1;
+    // North/South deviation [m]
+    double northSouth = calcGeographicalDistance(obs->lla_position().x(), obs->lla_position().y(),
+                                                 _startValue_North, obs->lla_position().y())
+                        * sign;
+
+    if (std::isnan(_startValue_East))
+    {
+        _startValue_East = obs->lla_position().y();
+    }
+    sign = obs->lla_position().y() > _startValue_East ? 1 : -1;
+    // East/West deviation [m]
+    double eastWest = calcGeographicalDistance(obs->lla_position().x(), obs->lla_position().y(),
+                                               obs->lla_position().x(), _startValue_East)
+                      * sign;
+
+    std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
+
+    // InsObs
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - _startValue_Time : std::nan(""));
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // PosVel
+    addData(pinIndex, i++, rad2deg(obs->lla_position()(0)));
+    addData(pinIndex, i++, rad2deg(obs->lla_position()(1)));
+    addData(pinIndex, i++, obs->lla_position()(2));
+    addData(pinIndex, i++, northSouth);
+    addData(pinIndex, i++, eastWest);
+    addData(pinIndex, i++, obs->e_position().x());
+    addData(pinIndex, i++, obs->e_position().y());
+    addData(pinIndex, i++, obs->e_position().z());
+    addData(pinIndex, i++, obs->e_velocity().x());
+    addData(pinIndex, i++, obs->e_velocity().y());
+    addData(pinIndex, i++, obs->e_velocity().z());
+    addData(pinIndex, i++, obs->n_velocity().x());
+    addData(pinIndex, i++, obs->n_velocity().y());
+    addData(pinIndex, i++, obs->n_velocity().z());
+    // SppSolution
+    addData(pinIndex, i++, static_cast<double>(obs->nSatellitesPosition));
+    addData(pinIndex, i++, static_cast<double>(obs->nSatellitesVelocity));
+    addData(pinIndex, i++, obs->clkBias);                 // Receiver clock bias [s]
+    addData(pinIndex, i++, obs->clkDrift);                // Receiver clock drift [s/s]
+    addData(pinIndex, i++, obs->e_positionStdev()(0, 0)); // X-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_positionStdev()(1, 1)); // Y-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_positionStdev()(2, 2)); // Z-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_positionStdev()(0, 1)); // XY-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_positionStdev()(0, 2)); // XZ-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_positionStdev()(1, 2)); // YZ-ECEF StDev [m]
+    addData(pinIndex, i++, obs->n_positionStdev()(0, 0)); // North StDev [m]
+    addData(pinIndex, i++, obs->n_positionStdev()(1, 1)); // East StDev [m]
+    addData(pinIndex, i++, obs->n_positionStdev()(2, 2)); // Down StDev [m]
+    addData(pinIndex, i++, obs->n_positionStdev()(0, 1)); // NE-ECEF StDev [m]
+    addData(pinIndex, i++, obs->n_positionStdev()(0, 2)); // ND-ECEF StDev [m]
+    addData(pinIndex, i++, obs->n_positionStdev()(1, 2)); // ED-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_velocityStdev()(0, 0)); // X velocity ECEF StDev [m/s]
+    addData(pinIndex, i++, obs->e_velocityStdev()(1, 1)); // Y velocity ECEF StDev [m/s]
+    addData(pinIndex, i++, obs->e_velocityStdev()(2, 2)); // Z velocity ECEF StDev [m/s]
+    addData(pinIndex, i++, obs->e_velocityStdev()(0, 1)); // XY velocity StDev [m]
+    addData(pinIndex, i++, obs->e_velocityStdev()(0, 2)); // XZ velocity StDev [m]
+    addData(pinIndex, i++, obs->e_velocityStdev()(1, 2)); // YZ velocity StDev [m]
+    addData(pinIndex, i++, obs->n_velocityStdev()(0, 0)); // North velocity StDev [m/s]
+    addData(pinIndex, i++, obs->n_velocityStdev()(1, 1)); // East velocity StDev [m/s]
+    addData(pinIndex, i++, obs->n_velocityStdev()(2, 2)); // Down velocity StDev [m/s]
+    addData(pinIndex, i++, obs->n_velocityStdev()(0, 1)); // NE velocity StDev [m]
+    addData(pinIndex, i++, obs->n_velocityStdev()(0, 2)); // ND velocity StDev [m]
+    addData(pinIndex, i++, obs->n_velocityStdev()(1, 2)); // ED velocity StDev [m]
+    addData(pinIndex, i++, obs->clkBiasStdev);            // Receiver clock bias StDev [s]
+    addData(pinIndex, i++, obs->clkDriftStdev);           // Receiver clock drift StDev [s/s]
+}
+
 void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs, size_t pinIndex)
 {
     if (obs->insTime.has_value())
@@ -2256,37 +2620,25 @@ void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs,
     }
     size_t i = 0;
 
-    // [𝜙, λ, h] Latitude, Longitude and altitude in [rad, rad, m]
-    std::optional<Eigen::Vector3d> lla_position;
-    // North/South deviation [m]
-    std::optional<double> northSouth;
-    // East/West deviation [m]
-    std::optional<double> eastWest;
-    if (obs->e_position.has_value())
+    if (std::isnan(_startValue_North))
     {
-        lla_position = trafo::ecef2lla_WGS84(obs->e_position.value());
-
-        if (std::isnan(_startValue_North))
-        {
-            _startValue_North = lla_position->x();
-        }
-        int sign = lla_position->x() > _startValue_North ? 1 : -1;
-        northSouth = calcGeographicalDistance(lla_position->x(), lla_position->y(),
-                                              _startValue_North, lla_position->y())
-                     * sign;
-
-        if (std::isnan(_startValue_East))
-        {
-            _startValue_East = lla_position->y();
-        }
-        sign = lla_position->y() > _startValue_East ? 1 : -1;
-        eastWest = calcGeographicalDistance(lla_position->x(), lla_position->y(),
-                                            lla_position->x(), _startValue_East)
-                   * sign;
-
-        lla_position->x() = trafo::rad2deg(lla_position->x());
-        lla_position->y() = trafo::rad2deg(lla_position->y());
+        _startValue_North = obs->lla_position().x();
     }
+    int sign = obs->lla_position().x() > _startValue_North ? 1 : -1;
+    // North/South deviation [m]
+    double northSouth = calcGeographicalDistance(obs->lla_position().x(), obs->lla_position().y(),
+                                                 _startValue_North, obs->lla_position().y())
+                        * sign;
+
+    if (std::isnan(_startValue_East))
+    {
+        _startValue_East = obs->lla_position().y();
+    }
+    sign = obs->lla_position().y() > _startValue_East ? 1 : -1;
+    // East/West deviation [m]
+    double eastWest = calcGeographicalDistance(obs->lla_position().x(), obs->lla_position().y(),
+                                               obs->lla_position().x(), _startValue_East)
+                      * sign;
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
@@ -2294,30 +2646,42 @@ void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs,
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - _startValue_Time : std::nan(""));
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
     // RtklibPosObs
-    addData(pinIndex, i++, obs->e_position.has_value() ? obs->e_position->x() : std::nan(""));
-    addData(pinIndex, i++, obs->e_position.has_value() ? obs->e_position->y() : std::nan(""));
-    addData(pinIndex, i++, obs->e_position.has_value() ? obs->e_position->z() : std::nan(""));
-    addData(pinIndex, i++, lla_position.has_value() ? lla_position->x() : std::nan(""));
-    addData(pinIndex, i++, lla_position.has_value() ? lla_position->y() : std::nan(""));
-    addData(pinIndex, i++, lla_position.has_value() ? lla_position->z() : std::nan(""));
-    addData(pinIndex, i++, northSouth.has_value() ? northSouth.value() : std::nan(""));
-    addData(pinIndex, i++, eastWest.has_value() ? eastWest.value() : std::nan(""));
+    addData(pinIndex, i++, obs->e_position().x());
+    addData(pinIndex, i++, obs->e_position().y());
+    addData(pinIndex, i++, obs->e_position().z());
+    addData(pinIndex, i++, rad2deg(obs->lla_position()(0)));
+    addData(pinIndex, i++, rad2deg(obs->lla_position()(1)));
+    addData(pinIndex, i++, obs->lla_position()(2));
+    addData(pinIndex, i++, northSouth);
+    addData(pinIndex, i++, eastWest);
     addData(pinIndex, i++, obs->Q.has_value() ? obs->Q.value() : std::nan(""));
     addData(pinIndex, i++, obs->ns.has_value() ? obs->ns.value() : std::nan(""));
-    addData(pinIndex, i++, obs->sdXYZ.has_value() ? obs->sdXYZ->x() : std::nan(""));
-    addData(pinIndex, i++, obs->sdXYZ.has_value() ? obs->sdXYZ->y() : std::nan(""));
-    addData(pinIndex, i++, obs->sdXYZ.has_value() ? obs->sdXYZ->z() : std::nan(""));
-    addData(pinIndex, i++, obs->sdNEU.has_value() ? obs->sdNEU->x() : std::nan(""));
-    addData(pinIndex, i++, obs->sdNEU.has_value() ? obs->sdNEU->y() : std::nan(""));
-    addData(pinIndex, i++, obs->sdNEU.has_value() ? obs->sdNEU->z() : std::nan(""));
-    addData(pinIndex, i++, obs->sdxy.has_value() ? obs->sdxy.value() : std::nan(""));
-    addData(pinIndex, i++, obs->sdyz.has_value() ? obs->sdyz.value() : std::nan(""));
-    addData(pinIndex, i++, obs->sdzx.has_value() ? obs->sdzx.value() : std::nan(""));
-    addData(pinIndex, i++, obs->sdne.has_value() ? obs->sdne.value() : std::nan(""));
-    addData(pinIndex, i++, obs->sdeu.has_value() ? obs->sdeu.value() : std::nan(""));
-    addData(pinIndex, i++, obs->sdun.has_value() ? obs->sdun.value() : std::nan(""));
-    addData(pinIndex, i++, obs->age.has_value() ? obs->age.value() : std::nan(""));
-    addData(pinIndex, i++, obs->ratio.has_value() ? obs->ratio.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdXYZ.x());
+    addData(pinIndex, i++, obs->sdXYZ.y());
+    addData(pinIndex, i++, obs->sdXYZ.z());
+    addData(pinIndex, i++, obs->sdNED.x());
+    addData(pinIndex, i++, obs->sdNED.y());
+    addData(pinIndex, i++, obs->sdNED.z());
+    addData(pinIndex, i++, obs->sdxy);
+    addData(pinIndex, i++, obs->sdyz);
+    addData(pinIndex, i++, obs->sdzx);
+    addData(pinIndex, i++, obs->sdne);
+    addData(pinIndex, i++, obs->sded);
+    addData(pinIndex, i++, obs->sddn);
+    addData(pinIndex, i++, obs->age);
+    addData(pinIndex, i++, obs->ratio);
+    addData(pinIndex, i++, obs->e_velocity().x());
+    addData(pinIndex, i++, obs->e_velocity().y());
+    addData(pinIndex, i++, obs->e_velocity().z());
+    addData(pinIndex, i++, obs->n_velocity().x());
+    addData(pinIndex, i++, obs->n_velocity().y());
+    addData(pinIndex, i++, obs->n_velocity().z());
+    addData(pinIndex, i++, obs->sdvNED.x());
+    addData(pinIndex, i++, obs->sdvNED.y());
+    addData(pinIndex, i++, obs->sdvNED.z());
+    addData(pinIndex, i++, obs->sdvne);
+    addData(pinIndex, i++, obs->sdved);
+    addData(pinIndex, i++, obs->sdvdn);
 }
 
 void NAV::Plot::plotUbloxObs(const std::shared_ptr<const UbloxObs>& obs, size_t pinIndex)
@@ -2349,8 +2713,8 @@ void NAV::Plot::plotUbloxObs(const std::shared_ptr<const UbloxObs>& obs, size_t 
         }
         else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_POSLLH)
         {
-            lla_position.emplace(trafo::deg2rad(std::get<sensors::ublox::UbxNavPosllh>(obs->data).lat * 1e-7),
-                                 trafo::deg2rad(std::get<sensors::ublox::UbxNavPosllh>(obs->data).lon * 1e-7),
+            lla_position.emplace(deg2rad(std::get<sensors::ublox::UbxNavPosllh>(obs->data).lat * 1e-7),
+                                 deg2rad(std::get<sensors::ublox::UbxNavPosllh>(obs->data).lon * 1e-7),
                                  std::get<sensors::ublox::UbxNavPosllh>(obs->data).height * 1e-3);
         }
         else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_VELNED)
@@ -2393,8 +2757,8 @@ void NAV::Plot::plotUbloxObs(const std::shared_ptr<const UbloxObs>& obs, size_t 
                                             lla_position->x(), _startValue_East)
                    * sign;
 
-        lla_position->x() = trafo::rad2deg(lla_position->x());
-        lla_position->y() = trafo::rad2deg(lla_position->y());
+        lla_position->x() = rad2deg(lla_position->x());
+        lla_position->y() = rad2deg(lla_position->y());
     }
 
     size_t i = 0;

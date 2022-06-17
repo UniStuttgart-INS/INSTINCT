@@ -1,0 +1,49 @@
+/// @file Ionosphere.hpp
+/// @brief Ionosphere Models
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
+/// @date 2022-05-26
+
+#pragma once
+
+#include <vector>
+#include <Eigen/Core>
+#include "Navigation/GNSS/Core/Frequency.hpp"
+
+namespace NAV
+{
+
+/// Available Ionosphere Models
+enum class IonosphereModel : int
+{
+    None,      ///< Ionosphere model turned off
+    Klobuchar, ///< Klobuchar model (GPS), also called Broadcast sometimes
+    COUNT,     ///< Amount of items in the enum
+};
+
+/// @brief Converts the enum to a string
+/// @param[in] ionosphereModel Enum value to convert into text
+/// @return String representation of the enum
+const char* to_string(IonosphereModel ionosphereModel);
+
+/// @brief Shows a ComboBox to select the ionosphere model
+/// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
+/// @param[in] ionosphereModel Reference to the ionosphere model to select
+bool ComboIonosphereModel(const char* label, IonosphereModel& ionosphereModel);
+
+/// @brief Calculates the ionospheric time delay with the Klobuchar model
+/// @param[in] tow GPS time of week in [s]
+/// @param[in] freq Frequency of the signal
+/// @param[in] lla_pos [𝜙, λ, h]^T Geodetic latitude, longitude and height in [rad, rad, m]
+/// @param[in] elevation Angle between the user and satellite [rad]
+/// @param[in] azimuth Angle between the user and satellite, measured clockwise positive from the true North [rad]
+/// @param[in] alpha The coefficients of a cubic equation representing the amplitude of the vertical delay
+/// @param[in] beta The coefficients of a cubic equation representing the period of the model
+/// @param[in] ionosphereModel Ionosphere model to use
+/// @return Ionospheric time delay in [s]
+double calcIonosphericTimeDelay(double tow, Frequency freq,
+                                const Eigen::Vector3d& lla_pos,
+                                double elevation, double azimuth,
+                                const std::vector<double>& alpha, const std::vector<double>& beta,
+                                IonosphereModel ionosphereModel = IonosphereModel::None);
+
+} // namespace NAV

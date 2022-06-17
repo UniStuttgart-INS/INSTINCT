@@ -1,0 +1,1363 @@
+{
+    "links": {
+        "link-55": {
+            "color": {
+                "a": 255,
+                "b": 215,
+                "g": 150,
+                "r": 51
+            },
+            "endPinId": 48,
+            "id": 55,
+            "startPinId": 53
+        },
+        "link-66": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 47,
+            "id": 66,
+            "startPinId": 64
+        },
+        "link-71": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 46,
+            "id": 71,
+            "startPinId": 69
+        },
+        "link-78": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 72,
+            "id": 78,
+            "startPinId": 49
+        },
+        "link-81": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 76,
+            "id": 81,
+            "startPinId": 79
+        }
+    },
+    "nodes": {
+        "node-50": {
+            "data": {
+                "codes": "111100010001001110001111110000111100011101111111111111111111110101111111111111011101110000000001000000001",
+                "elevationMask": 14.999999999999998,
+                "excludedSatellites": [],
+                "frequencies": 1,
+                "ionosphereModel": 1,
+                "nNavInfoPins": 1,
+                "troposphereModel": 1,
+                "useWeightedLeastSquares": true,
+                "zhdMappingFunction": 1,
+                "zwdMappingFunction": 1
+            },
+            "enabled": true,
+            "id": 50,
+            "inputPins": [
+                {
+                    "id": 46,
+                    "name": "PosVelInit"
+                },
+                {
+                    "id": 47,
+                    "name": "GnssObs"
+                },
+                {
+                    "id": 48,
+                    "name": "GnssNavInfo - GPS"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "SinglePointPositioning - SPP",
+            "outputPins": [
+                {
+                    "id": 49,
+                    "name": "SppSolution"
+                }
+            ],
+            "pos": {
+                "x": 189.0,
+                "y": 214.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "SinglePointPositioning - SPP"
+        },
+        "node-54": {
+            "data": {
+                "FileReader": {
+                    "path": "Skydel-static_4h_1min-rate/SkydelRINEX_S_2022152120_7200S_GN.rnx"
+                }
+            },
+            "enabled": true,
+            "id": 54,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "RinexNavFile - GPS",
+            "outputPins": [
+                {
+                    "id": 53,
+                    "name": "GnssNavInfo"
+                }
+            ],
+            "pos": {
+                "x": -83.0,
+                "y": 318.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "RinexNavFile"
+        },
+        "node-65": {
+            "data": {
+                "FileReader": {
+                    "path": "Skydel-static_4h_1min-rate/SkydelRINEX_S_20221521201_03H_01Z_MO.rnx"
+                }
+            },
+            "enabled": true,
+            "id": 65,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "RinexObsFile",
+            "outputPins": [
+                {
+                    "id": 64,
+                    "name": "GnssObs"
+                }
+            ],
+            "pos": {
+                "x": -75.0,
+                "y": 222.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "RinexObsFile"
+        },
+        "node-70": {
+            "data": {
+                "attitudeMode": 0,
+                "initDuration": 5.0,
+                "n_overrideValuesVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "overridePosition": true,
+                "overrideRollPitchYaw": [
+                    true,
+                    true,
+                    true
+                ],
+                "overrideValuesPosition_lla": [
+                    48.052040100097656,
+                    9.361396789550781,
+                    604.2813720703125
+                ],
+                "overrideValuesRollPitchYaw": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "overrideVelocity": true,
+                "positionAccuracyThreshold": 10.0,
+                "velocityAccuracyThreshold": 10.0
+            },
+            "enabled": true,
+            "id": 70,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "PosVelAttInitializer",
+            "outputPins": [
+                {
+                    "id": 69,
+                    "name": "PosVelAtt"
+                }
+            ],
+            "pos": {
+                "x": -118.0,
+                "y": 142.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "PosVelAttInitializer"
+        },
+        "node-77": {
+            "data": {
+                "nInputPins": 2,
+                "nPlots": 9,
+                "overridePositionStartValues": true,
+                "pinData": [
+                    {
+                        "dataIdentifier": "SppSolution",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "Latitude [deg]"
+                            },
+                            {
+                                "displayName": "Longitude [deg]"
+                            },
+                            {
+                                "displayName": "Altitude [m]"
+                            },
+                            {
+                                "displayName": "North/South [m]"
+                            },
+                            {
+                                "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Number satellites (pos)"
+                            },
+                            {
+                                "displayName": "Number satellites (vel)"
+                            },
+                            {
+                                "displayName": "Receiver clock bias [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "X-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XY-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "North StDev [m]"
+                            },
+                            {
+                                "displayName": "East StDev [m]"
+                            },
+                            {
+                                "displayName": "Down StDev [m]"
+                            },
+                            {
+                                "displayName": "NE-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "ND-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "ED-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "XY velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "North velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "NE velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ND velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ED velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift StDev [s/s]"
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "RtklibPosObs",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Latitude [deg]"
+                            },
+                            {
+                                "displayName": "Longitude [deg]"
+                            },
+                            {
+                                "displayName": "Altitude [m]"
+                            },
+                            {
+                                "displayName": "North/South [m]"
+                            },
+                            {
+                                "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "Q [-]"
+                            },
+                            {
+                                "displayName": "ns [-]"
+                            },
+                            {
+                                "displayName": "sdx [m]"
+                            },
+                            {
+                                "displayName": "sdy [m]"
+                            },
+                            {
+                                "displayName": "sdz [m]"
+                            },
+                            {
+                                "displayName": "sdn [m]"
+                            },
+                            {
+                                "displayName": "sde [m]"
+                            },
+                            {
+                                "displayName": "sdd [m]"
+                            },
+                            {
+                                "displayName": "sdxy [m]"
+                            },
+                            {
+                                "displayName": "sdyz [m]"
+                            },
+                            {
+                                "displayName": "sdzx [m]"
+                            },
+                            {
+                                "displayName": "sdne [m]"
+                            },
+                            {
+                                "displayName": "sded [m]"
+                            },
+                            {
+                                "displayName": "sddn [m]"
+                            },
+                            {
+                                "displayName": "age [s]"
+                            },
+                            {
+                                "displayName": "ratio [-]"
+                            },
+                            {
+                                "displayName": "Velocity ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity North [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity East [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity Down [m/s]"
+                            },
+                            {
+                                "displayName": "sdvn [m/s]"
+                            },
+                            {
+                                "displayName": "sdve [m/s]"
+                            },
+                            {
+                                "displayName": "sdvd [m/s]"
+                            },
+                            {
+                                "displayName": "sdvne [m/s]"
+                            },
+                            {
+                                "displayName": "sdved [m/s]"
+                            },
+                            {
+                                "displayName": "sdvdn [m/s]"
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 1
+                    }
+                ],
+                "plots": [
+                    {
+                        "headerText": "Position",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 5,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "INSTINCT",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 8,
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "RTKLIB",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            6,
+                            9
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Position",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "North/South [m]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "North/South",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 5,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "INSTINCT",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 8,
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "RTKLIB",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "North/South",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "North/South [m]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "East/West",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 6,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "INSTINCT",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 9,
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "RTKLIB",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "East/West",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "East/West [m]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "Altitude",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 4,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "INSTINCT",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 7,
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "RTKLIB",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Altitude",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Altitude [m]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "# Satellites",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 16,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "INSTINCT",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 11,
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "RTKLIB",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "# Satellites",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "# Satellites",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "Velocity North",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 13,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "INSTINCT",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 29,
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "RTKLIB",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Velocity North",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Velocity North [m/s]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "Velocity East",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 14,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "INSTINCT",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 30,
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "RTKLIB",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Velocity East",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Velocity East [m/s]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "Velocity Down",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 15,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "INSTINCT",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 31,
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "RTKLIB",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Velocity Down",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Velocity Down [m/s]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "StDev North",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 26,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "INSTINCT",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 15,
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "RTKLIB",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "StDev North",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "StDev North [m]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
+                    }
+                ],
+                "startValue_East": 0.16008293923125252,
+                "startValue_North": 0.8513856721132819
+            },
+            "enabled": true,
+            "id": 77,
+            "inputPins": [
+                {
+                    "id": 72,
+                    "name": "INSTINCT"
+                },
+                {
+                    "id": 76,
+                    "name": "RTKLIB"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "Plot",
+            "outputPins": [],
+            "pos": {
+                "x": 632.0,
+                "y": 222.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Plot"
+        },
+        "node-80": {
+            "data": {
+                "FileReader": {
+                    "path": "Skydel-static_4h_1min-rate/SkydelRINEX_S_20221521201_03H_01Z_MO_SPP.pos"
+                }
+            },
+            "enabled": true,
+            "id": 80,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "RtklibPosFile",
+            "outputPins": [
+                {
+                    "id": 79,
+                    "name": "RtklibPosObs"
+                }
+            ],
+            "pos": {
+                "x": 341.0,
+                "y": 350.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "RtklibPosFile"
+        }
+    }
+}

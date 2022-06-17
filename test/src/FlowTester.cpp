@@ -16,7 +16,10 @@ bool testFlow(const char* path)
                                       "--nogui",
                                       "-l", path,
                                       "--input-path=test/data",
-                                      "--output-path=test/logs", nullptr };
+                                      "--output-path=test/logs",
+                                      "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
+                                      "--file-log-level=trace",    // trace/debug/info/warning/error/critical/off
+                                      nullptr };
 
     int executionFailure = NAV::AppLogic::processCommandLineArguments(static_cast<int>(argv.size() - 1), argv.data());
 

@@ -22,8 +22,8 @@ double calcGeographicalDistance(double lat1, double lon1, double lat2, double lo
         return 0;
     }
     // First convert the latitudes 𝜙₁,𝜙₂ of the two points to reduced latitudes 𝛽₁,𝛽₂
-    double beta1 = std::atan((1 - InsConst::WGS84_f) * std::tan(lat1));
-    double beta2 = std::atan((1 - InsConst::WGS84_f) * std::tan(lat2));
+    double beta1 = std::atan((1 - InsConst::WGS84::f) * std::tan(lat1));
+    double beta2 = std::atan((1 - InsConst::WGS84::f) * std::tan(lat2));
 
     // Then calculate the central angle 𝜎 in radians between two points 𝛽₁,𝜆₁ and 𝛽₂,𝜆₂ on a sphere using the
     // Great-circle distance method (law of cosines or haversine formula), with longitudes 𝜆₁ and 𝜆₂ being the same on the sphere as on the spheroid.
@@ -36,7 +36,7 @@ double calcGeographicalDistance(double lat1, double lon1, double lat2, double lo
     double X = (sigma - std::sin(sigma)) * std::pow((std::sin(P) * std::cos(Q)) / std::cos(sigma / 2), 2);
     double Y = (sigma + std::sin(sigma)) * std::pow((std::cos(P) * std::sin(Q)) / std::sin(sigma / 2), 2);
 
-    return InsConst::WGS84_a * (sigma - InsConst::WGS84_f / 2.0 * (X + Y));
+    return InsConst::WGS84::a * (sigma - InsConst::WGS84::f / 2.0 * (X + Y));
 }
 
 double calcEarthRadius_N(const double& latitude, const double& a, const double& e_squared)

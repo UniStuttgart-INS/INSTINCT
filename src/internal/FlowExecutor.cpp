@@ -184,7 +184,7 @@ void NAV::FlowExecutor::execute()
                             if (obs->insTime.has_value())
                             {
                                 events.insert(std::make_pair(obs->insTime.value(), &outputPin));
-                                LOG_INFO("Taking Data from {} on output pin {} into account.", node->nameId(), size_t(outputPin.id));
+                                LOG_DEBUG("Taking Data from {} on output pin {} into account.", node->nameId(), size_t(outputPin.id));
                                 dataEventCreated = true;
                                 break;
                             }

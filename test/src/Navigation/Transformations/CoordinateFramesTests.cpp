@@ -2,6 +2,7 @@
 #include "EigenApprox.hpp"
 
 #include "Navigation/Transformations/CoordinateFrames.hpp"
+#include "Navigation/Transformations/Units.hpp"
 #include "util/Logger.hpp"
 
 #include "util/Eigen.hpp"
@@ -78,7 +79,7 @@ Eigen::Matrix3d e_Dcm_i(const double time, const double omega_ie)
 /// @param[in] e_squared Square of the first eccentricity of the ellipsoid
 /// @return Vector containing [latitude 𝜙, longitude λ, altitude]^T in [rad, rad, m]
 /// @note See C. Jekeli, 2001, Inertial Navigation Systems with Geodetic Applications
-Eigen::Vector3d ecef2lla_iter(const Eigen::Vector3d& e_position, double a = InsConst::WGS84_a, double e_squared = InsConst::WGS84_e_squared)
+Eigen::Vector3d ecef2lla_iter(const Eigen::Vector3d& e_position, double a = InsConst::WGS84::a, double e_squared = InsConst::WGS84::e_squared)
 {
     // Value is used every iteration and does not change
     double sqrt_x1x1_x2x2 = std::sqrt(std::pow(e_position(0), 2) + std::pow(e_position(1), 2));
@@ -123,75 +124,11 @@ Eigen::Vector3d ecef2lla_iter(const Eigen::Vector3d& e_position, double a = InsC
 
 } // namespace ref
 
-TEST_CASE("[InsTransformations] Degree to radian conversion", "[InsTransformations]")
-{
-    Logger consoleSink;
-
-    double rad_90 = trafo::deg2rad(90);
-    double rad_180 = trafo::deg2rad(180.0);
-    double rad_360 = trafo::deg2rad(360.0F);
-
-    REQUIRE(rad_90 == M_PI_2);
-    REQUIRE(rad_180 == M_PI);
-    REQUIRE(rad_360 == M_PI * 2.0);
-
-    Eigen::Vector3d rad3 = trafo::deg2rad(Eigen::Vector3d{ 90, 180, 360 });
-
-    REQUIRE(rad3.x() == M_PI_2);
-    REQUIRE(rad3.y() == M_PI);
-    REQUIRE(rad3.z() == M_PI * 2.0);
-}
-
-TEST_CASE("[InsTransformations] Degree to radian conversion constexpr", "[InsTransformations]")
-{
-    Logger consoleSink;
-
-    constexpr double rad_90 = trafo::deg2rad(90);
-    constexpr double rad_180 = trafo::deg2rad(180.0);
-    constexpr double rad_360 = trafo::deg2rad(360.0F);
-
-    STATIC_REQUIRE(rad_90 == M_PI_2);
-    STATIC_REQUIRE(rad_180 == M_PI);
-    STATIC_REQUIRE(rad_360 == M_PI * 2.0);
-}
-
-TEST_CASE("[InsTransformations] Radian to degree conversion", "[InsTransformations]")
-{
-    Logger consoleSink;
-
-    double deg_90 = trafo::rad2deg(M_PI_2);
-    double deg_180 = trafo::rad2deg(M_PI);
-    double deg_360 = trafo::rad2deg(M_PI * 2.0);
-
-    REQUIRE(deg_90 == 90);
-    REQUIRE(deg_180 == 180);
-    REQUIRE(deg_360 == 360);
-
-    Eigen::Vector3d deg3 = trafo::rad2deg(Eigen::Vector3d{ M_PI_2, M_PI, M_PI * 2.0 });
-
-    REQUIRE(deg3.x() == 90);
-    REQUIRE(deg3.y() == 180);
-    REQUIRE(deg3.z() == 360);
-}
-
-TEST_CASE("[InsTransformations] Radian to degree conversion constexpr", "[InsTransformations]")
-{
-    Logger consoleSink;
-
-    constexpr double deg_90 = trafo::rad2deg(M_PI_2);
-    constexpr double deg_180 = trafo::rad2deg(M_PI);
-    constexpr double deg_360 = trafo::rad2deg(M_PI * 2.0);
-
-    STATIC_REQUIRE(deg_90 == 90.0);
-    STATIC_REQUIRE(deg_180 == 180.0);
-    STATIC_REQUIRE(deg_360 == 360.0);
-}
-
 TEST_CASE("[InsTransformations] Euler to Quaternion conversion", "[InsTransformations]")
 {
     Logger consoleSink;
 
-    double delta = trafo::deg2rad(5);
+    double delta = deg2rad(5);
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
     for (double roll = -M_PI + delta; roll < M_PI - std::numeric_limits<float>::epsilon(); roll += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
     {
@@ -200,7 +137,7 @@ TEST_CASE("[InsTransformations] Euler to Quaternion conversion", "[InsTransforma
         auto q = Eigen::Quaterniond{ rollAngle };
         Eigen::Matrix3d C = q.toRotationMatrix();
 
-        fmt::print("Roll: {}\n", trafo::rad2deg(roll));
+        fmt::print("Roll: {}\n", rad2deg(roll));
         REQUIRE(ref::qCoeffsFromDcm(C) == EigApprox(q.coeffs()).margin(1e-12).epsilon(0));
     }
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
@@ -214,7 +151,7 @@ TEST_CASE("[InsTransformations] Euler to Quaternion conversion", "[InsTransforma
             auto q = pitchAngle * rollAngle;
             Eigen::Matrix3d C = q.toRotationMatrix();
 
-            fmt::print("Roll, Pitch: {}, {}\n", trafo::rad2deg(roll), trafo::rad2deg(pitch));
+            fmt::print("Roll, Pitch: {}, {}\n", rad2deg(roll), rad2deg(pitch));
             REQUIRE(ref::qCoeffsFromDcm(C) == EigApprox(q.coeffs()).margin(1e-12).epsilon(0));
         }
     }
@@ -242,7 +179,7 @@ TEST_CASE("[InsTransformations] Euler to Quaternion conversion", "[InsTransforma
                 auto q = yawAngle * pitchAngle * rollAngle;
                 Eigen::Matrix3d C = q.toRotationMatrix();
 
-                fmt::print("Roll, Pitch, Yaw: {}, {}, {}\n", trafo::rad2deg(roll), trafo::rad2deg(pitch), trafo::rad2deg(yaw));
+                fmt::print("Roll, Pitch, Yaw: {}, {}, {}\n", rad2deg(roll), rad2deg(pitch), rad2deg(yaw));
                 fmt::print("DCM\n{}\n", C);
 
                 // Check if in our notation the scalar quaternion is always positive
@@ -273,7 +210,7 @@ TEST_CASE("[InsTransformations] Quaternion to Euler conversion", "[InsTransforma
         return zAngle * yAngle * xAngle;
     };
 
-    double delta = trafo::deg2rad(5);
+    double delta = deg2rad(5);
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
     for (double alpha = -M_PI + delta; alpha < M_PI - std::numeric_limits<float>::epsilon(); alpha += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
     {
@@ -282,8 +219,8 @@ TEST_CASE("[InsTransformations] Quaternion to Euler conversion", "[InsTransforma
             for (double gamma = -M_PI + delta; gamma < M_PI - std::numeric_limits<float>::epsilon(); gamma += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
             {
                 auto q = quat(alpha, beta, gamma);
-                auto ZYX = trafo::rad2deg(trafo::quat2eulerZYX(q));
-                REQUIRE(ZYX == EigApprox(trafo::rad2deg(Eigen::Vector3d{ alpha, beta, gamma })).margin(1e-8).epsilon(0));
+                auto ZYX = rad2deg(trafo::quat2eulerZYX(q));
+                REQUIRE(ZYX == EigApprox(rad2deg(Eigen::Vector3d{ alpha, beta, gamma })).margin(1e-8).epsilon(0));
             }
         }
     }
@@ -301,7 +238,7 @@ TEST_CASE("[InsTransformations] Negated Quaternion to Euler conversion", "[InsTr
         return zAngle * yAngle * xAngle;
     };
 
-    double delta = trafo::deg2rad(5);
+    double delta = deg2rad(5);
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
     for (double alpha = -M_PI + delta; alpha < M_PI - std::numeric_limits<float>::epsilon(); alpha += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
     {
@@ -315,8 +252,8 @@ TEST_CASE("[InsTransformations] Negated Quaternion to Euler conversion", "[InsTr
                     q.coeffs() = -q.coeffs();
                 }
 
-                auto ZYX = trafo::rad2deg(trafo::quat2eulerZYX(q));
-                REQUIRE(ZYX == EigApprox(trafo::rad2deg(Eigen::Vector3d{ alpha, beta, gamma })).margin(1e-8).epsilon(0));
+                auto ZYX = rad2deg(trafo::quat2eulerZYX(q));
+                REQUIRE(ZYX == EigApprox(rad2deg(Eigen::Vector3d{ alpha, beta, gamma })).margin(1e-8).epsilon(0));
             }
         }
     }
@@ -361,8 +298,8 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
 {
     Logger consoleSink;
 
-    double latitude = trafo::deg2rad(88);
-    double longitude = trafo::deg2rad(-40);
+    double latitude = deg2rad(88);
+    double longitude = deg2rad(-40);
 
     auto e_Quat_n = trafo::e_Quat_n(latitude, longitude);
     CHECK(e_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
@@ -374,7 +311,7 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
 
     /* -------------------------------------------------------------------------------------------------------- */
 
-    latitude = trafo::deg2rad(90);
+    latitude = deg2rad(90);
     longitude = 0.0;
 
     auto n_Quat_e = trafo::n_Quat_e(latitude, longitude);
@@ -387,8 +324,8 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
 
     /* -------------------------------------------------------------------------------------------------------- */
 
-    latitude = trafo::deg2rad(0);
-    longitude = trafo::deg2rad(0);
+    latitude = deg2rad(0);
+    longitude = deg2rad(0);
 
     n_Quat_e = trafo::n_Quat_e(latitude, longitude);
     CHECK(n_Quat_e.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
@@ -400,8 +337,8 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
 
     /* -------------------------------------------------------------------------------------------------------- */
 
-    latitude = trafo::deg2rad(0);
-    longitude = trafo::deg2rad(0);
+    latitude = deg2rad(0);
+    longitude = deg2rad(0);
 
     n_Quat_e = trafo::n_Quat_e(latitude, longitude);
     CHECK(n_Quat_e.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
@@ -412,8 +349,8 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
 
     /* -------------------------------------------------------------------------------------------------------- */
 
-    latitude = trafo::deg2rad(45);
-    longitude = trafo::deg2rad(90);
+    latitude = deg2rad(45);
+    longitude = deg2rad(90);
 
     n_Quat_e = trafo::n_Quat_e(latitude, longitude);
     CHECK(n_Quat_e.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
@@ -427,8 +364,8 @@ TEST_CASE("[InsTransformations] NED <=> Earth-centered-earth-fixed frame convers
 {
     Logger consoleSink;
 
-    double latitude_ref = trafo::deg2rad(88);
-    double longitude_ref = trafo::deg2rad(-40);
+    double latitude_ref = deg2rad(88);
+    double longitude_ref = deg2rad(-40);
     double altitude_ref = 500;
     auto e_position_ref = trafo::lla2ecef_WGS84({ latitude_ref, longitude_ref, altitude_ref });
 
@@ -451,7 +388,7 @@ TEST_CASE("[InsTransformations] NED <=> Earth-centered-earth-fixed frame convers
 
     /* -------------------------------------------------------------------------------------------------------- */
 
-    e_position_ref = trafo::lla2ecef_WGS84({ trafo::deg2rad(-10), trafo::deg2rad(70), 2001 });
+    e_position_ref = trafo::lla2ecef_WGS84({ deg2rad(-10), deg2rad(70), 2001 });
     e_position = e_position_ref;
     for (size_t i = 0; i < 10000; i++)
     {
@@ -468,7 +405,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation DCM/Quaternion comparison", 
 {
     Logger consoleSink;
 
-    double delta = trafo::deg2rad(5);
+    double delta = deg2rad(5);
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
     for (double roll = -M_PI + delta; roll <= M_PI + std::numeric_limits<float>::epsilon(); roll += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
     {
@@ -494,7 +431,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
 
     /* -------------------------------------------------------------------------------------------------------- */
 
-    double roll = trafo::deg2rad(45);
+    double roll = deg2rad(45);
     double pitch = 0.0;
     double yaw = 0.0;
     auto b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
@@ -508,7 +445,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     /* -------------------------------------------------------------------------------------------------------- */
 
     roll = 0.0;
-    pitch = trafo::deg2rad(45);
+    pitch = deg2rad(45);
     yaw = 0.0;
     b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
     CHECK(b_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
@@ -522,7 +459,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
 
     roll = 0.0;
     pitch = 0.0;
-    yaw = trafo::deg2rad(-45);
+    yaw = deg2rad(-45);
     b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
     CHECK(b_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
@@ -534,8 +471,8 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     /* -------------------------------------------------------------------------------------------------------- */
 
     roll = 0.0;
-    pitch = trafo::deg2rad(90);
-    yaw = trafo::deg2rad(90);
+    pitch = deg2rad(90);
+    yaw = deg2rad(90);
     b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
     CHECK(b_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
@@ -546,8 +483,8 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
 
     /* -------------------------------------------------------------------------------------------------------- */
 
-    roll = trafo::deg2rad(90);
-    pitch = trafo::deg2rad(90);
+    roll = deg2rad(90);
+    pitch = deg2rad(90);
     yaw = 0.0;
     b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
     CHECK(b_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
@@ -559,9 +496,9 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
 
     /* -------------------------------------------------------------------------------------------------------- */
 
-    roll = trafo::deg2rad(90);
-    pitch = trafo::deg2rad(180);
-    yaw = trafo::deg2rad(90);
+    roll = deg2rad(90);
+    pitch = deg2rad(180);
+    yaw = deg2rad(90);
     b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
     CHECK(b_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
@@ -575,9 +512,9 @@ TEST_CASE("[InsTransformations] Platform <=> body frame conversion", "[InsTransf
 {
     Logger consoleSink;
 
-    double mountingAngleX = trafo::deg2rad(90);
+    double mountingAngleX = deg2rad(90);
     double mountingAngleY = 0.0;
-    double mountingAngleZ = trafo::deg2rad(-90);
+    double mountingAngleZ = deg2rad(-90);
 
     auto b_Quat_p = trafo::b_Quat_p(mountingAngleX, mountingAngleY, mountingAngleZ);
     CHECK(b_Quat_p.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
@@ -596,8 +533,8 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
 
     // Stuttgart, Breitscheidstraße 2
     // https://www.koordinaten-umrechner.de/decimal/48.780810,9.172012?karte=OpenStreetMap&zoom=19
-    double latitude = trafo::deg2rad(48.78081);
-    double longitude = trafo::deg2rad(9.172012);
+    double latitude = deg2rad(48.78081);
+    double longitude = deg2rad(9.172012);
     double altitude = 254;
     Eigen::Vector3d e_position_ref = Eigen::Vector3d(4157.128, 671.224, 4774.723) * 1000;
     Eigen::Vector3d e_position = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
@@ -611,8 +548,8 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
 
     // New York
     // https://www.koordinaten-umrechner.de/decimal/40.712728,-74.006015?karte=OpenStreetMap&zoom=4
-    latitude = trafo::deg2rad(40.712728);
-    longitude = trafo::deg2rad(-74.006015);
+    latitude = deg2rad(40.712728);
+    longitude = deg2rad(-74.006015);
     altitude = 13;
     e_position_ref = Eigen::Vector3d(1334.001, -4654.06, 4138.303) * 1000;
     e_position = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
@@ -637,8 +574,8 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
 
     /* -------------------------------------------------------------------------- */
 
-    latitude = trafo::deg2rad(-89.9999);
-    longitude = trafo::deg2rad(0);
+    latitude = deg2rad(-89.9999);
+    longitude = deg2rad(0);
     altitude = 2801;
     e_position_ref = Eigen::Vector3d(0.011, 0, -6359.553) * 1000;
     e_position = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
@@ -650,8 +587,8 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
 
     /* -------------------------------------------------------------------------- */
 
-    latitude = trafo::deg2rad(40);
-    longitude = trafo::deg2rad(180);
+    latitude = deg2rad(40);
+    longitude = deg2rad(180);
     altitude = -5097;
     e_position_ref = Eigen::Vector3d(-4888.803, 0, 4074.709) * 1000;
     e_position = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
@@ -665,8 +602,8 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
 
     /* -------------------------------------------------------------------------- */
 
-    latitude = trafo::deg2rad(40);
-    longitude = trafo::deg2rad(180);
+    latitude = deg2rad(40);
+    longitude = deg2rad(180);
     altitude = -5097;
     lla_position = { latitude, longitude, altitude };
     for (size_t i = 0; i < 100000; i++)
@@ -688,8 +625,8 @@ TEST_CASE("[InsTransformations] LLA => ECEF => LLA conversion", "[InsTransformat
         {
             for (int alt = -10000; alt <= 100000; alt += 10000)
             {
-                double latitude = trafo::deg2rad(lat);
-                double longitude = trafo::deg2rad(lon);
+                double latitude = deg2rad(lat);
+                double longitude = deg2rad(lon);
                 double altitude = alt;
                 Eigen::Vector3d lla{ latitude, longitude, altitude };
                 for (size_t i = 0; i < 10; i++)
@@ -714,8 +651,8 @@ TEST_CASE("[InsTransformations] LLA => ECEF => LLH-iterative conversion", "[InsT
         {
             for (int alt = -10000; alt <= 100000; alt += 10000)
             {
-                double latitude = trafo::deg2rad(lat);
-                double longitude = trafo::deg2rad(lon);
+                double latitude = deg2rad(lat);
+                double longitude = deg2rad(lon);
                 double altitude = alt;
                 Eigen::Vector3d lla{ latitude, longitude, altitude };
                 for (size_t i = 0; i < 10; i++)
@@ -731,11 +668,11 @@ TEST_CASE("[InsTransformations] LLA => ECEF => LLH-iterative conversion", "[InsT
 
     /* -------------------------------------------------------------------------------------------------------- */
 
-    double latitude = trafo::deg2rad(90);
-    double longitude = trafo::deg2rad(0);
+    double latitude = deg2rad(90);
+    double longitude = deg2rad(0);
     double altitude = 0;
     auto e_position = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
-    auto lla_position_iter = ref::ecef2lla_iter(e_position, InsConst::WGS84_a, InsConst::WGS84_e_squared);
+    auto lla_position_iter = ref::ecef2lla_iter(e_position, InsConst::WGS84::a, InsConst::WGS84::e_squared);
 
     CHECK(lla_position_iter.x() == Approx(latitude).margin(EPSILON).epsilon(0));
     CHECK(lla_position_iter.y() == Approx(longitude).margin(EPSILON).epsilon(0));
@@ -743,11 +680,11 @@ TEST_CASE("[InsTransformations] LLA => ECEF => LLH-iterative conversion", "[InsT
 
     /* -------------------------------------------------------------------------------------------------------- */
 
-    latitude = trafo::deg2rad(90);
-    longitude = trafo::deg2rad(180);
+    latitude = deg2rad(90);
+    longitude = deg2rad(180);
     altitude = 0;
     e_position = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
-    lla_position_iter = ref::ecef2lla_iter(e_position, InsConst::WGS84_a, InsConst::WGS84_e_squared);
+    lla_position_iter = ref::ecef2lla_iter(e_position, InsConst::WGS84::a, InsConst::WGS84::e_squared);
 
     CHECK(lla_position_iter.x() == Approx(latitude).margin(EPSILON).epsilon(0));
     CHECK(lla_position_iter.y() == Approx(longitude).margin(EPSILON).epsilon(0));
@@ -758,14 +695,14 @@ TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
 {
     Logger consoleSink;
 
-    double roll = trafo::deg2rad(20);
-    double pitch = trafo::deg2rad(50);
-    double yaw = trafo::deg2rad(190);
+    double roll = deg2rad(20);
+    double pitch = deg2rad(50);
+    double yaw = deg2rad(190);
 
-    double latitude = trafo::deg2rad(10);
-    double longitude = trafo::deg2rad(40);
+    double latitude = deg2rad(10);
+    double longitude = deg2rad(40);
 
-    Eigen::Quaterniond b_Quat_p(Eigen::AngleAxisd(trafo::deg2rad(-90), Eigen::Vector3d::UnitZ()));
+    Eigen::Quaterniond b_Quat_p(Eigen::AngleAxisd(deg2rad(-90), Eigen::Vector3d::UnitZ()));
     Eigen::Quaterniond n_Quat_b = trafo::n_Quat_b(roll, pitch, yaw);
     Eigen::Quaterniond e_Quat_n = trafo::e_Quat_n(latitude, longitude);
 

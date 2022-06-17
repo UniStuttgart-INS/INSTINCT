@@ -10,6 +10,7 @@
 #include "Navigation/Gravity/Gravity.hpp"
 #include "Navigation/Math/NumericalIntegration.hpp"
 #include "Navigation/Math/Math.hpp"
+#include "Navigation/Transformations/Units.hpp"
 #include "util/Time/TimeBase.hpp"
 
 #include "internal/NodeManager.hpp"
@@ -140,20 +141,20 @@ void NAV::ImuSimulator::guiConfig()
         }
 
         ImGui::SetNextItemWidth(columnWidth);
-        double latitude = trafo::rad2deg(_lla_startPosition.x());
+        double latitude = rad2deg(_lla_startPosition.x());
         if (ImGui::InputDoubleL(fmt::format("##Latitude{}", size_t(id)).c_str(), &latitude, -90, 90, 0.0, 0.0, "%.8f°"))
         {
-            _lla_startPosition.x() = trafo::deg2rad(latitude);
+            _lla_startPosition.x() = deg2rad(latitude);
             LOG_DEBUG("{}: latitude changed to {}", nameId(), latitude);
             flow::ApplyChanges();
             deinitializeNode();
         }
         ImGui::SameLine();
         ImGui::SetNextItemWidth(columnWidth);
-        double longitude = trafo::rad2deg(_lla_startPosition.y());
+        double longitude = rad2deg(_lla_startPosition.y());
         if (ImGui::InputDoubleL(fmt::format("##Longitude{}", size_t(id)).c_str(), &longitude, -180, 180, 0.0, 0.0, "%.8f°"))
         {
-            _lla_startPosition.y() = trafo::deg2rad(longitude);
+            _lla_startPosition.y() = deg2rad(longitude);
             LOG_DEBUG("{}: longitude changed to {}", nameId(), longitude);
             flow::ApplyChanges();
             deinitializeNode();
@@ -179,30 +180,30 @@ void NAV::ImuSimulator::guiConfig()
         if (_trajectoryType == TrajectoryType::Fixed)
         {
             ImGui::SetNextItemWidth(columnWidth);
-            double roll = trafo::rad2deg(_fixedTrajectoryStartOrientation.x());
+            double roll = rad2deg(_fixedTrajectoryStartOrientation.x());
             if (ImGui::InputDoubleL(fmt::format("##Roll{}", size_t(id)).c_str(), &roll, -180, 180, 0.0, 0.0, "%.3f°"))
             {
-                _fixedTrajectoryStartOrientation.x() = trafo::deg2rad(roll);
+                _fixedTrajectoryStartOrientation.x() = deg2rad(roll);
                 LOG_DEBUG("{}: roll changed to {}", nameId(), roll);
                 flow::ApplyChanges();
                 deinitializeNode();
             }
             ImGui::SameLine();
             ImGui::SetNextItemWidth(columnWidth);
-            double pitch = trafo::rad2deg(_fixedTrajectoryStartOrientation.y());
+            double pitch = rad2deg(_fixedTrajectoryStartOrientation.y());
             if (ImGui::InputDoubleL(fmt::format("##Pitch{}", size_t(id)).c_str(), &pitch, -90, 90, 0.0, 0.0, "%.3f°"))
             {
-                _fixedTrajectoryStartOrientation.y() = trafo::deg2rad(pitch);
+                _fixedTrajectoryStartOrientation.y() = deg2rad(pitch);
                 LOG_DEBUG("{}: pitch changed to {}", nameId(), pitch);
                 flow::ApplyChanges();
                 deinitializeNode();
             }
             ImGui::SameLine();
             ImGui::SetNextItemWidth(columnWidth);
-            double yaw = trafo::rad2deg(_fixedTrajectoryStartOrientation.z());
+            double yaw = rad2deg(_fixedTrajectoryStartOrientation.z());
             if (ImGui::InputDoubleL(fmt::format("##Yaw{}", size_t(id)).c_str(), &yaw, -180, 180, 0.0, 0.0, "%.3f°"))
             {
-                _fixedTrajectoryStartOrientation.z() = trafo::deg2rad(yaw);
+                _fixedTrajectoryStartOrientation.z() = deg2rad(yaw);
                 LOG_DEBUG("{}: yaw changed to {}", nameId(), yaw);
                 flow::ApplyChanges();
                 deinitializeNode();
@@ -289,10 +290,10 @@ void NAV::ImuSimulator::guiConfig()
 
                 ImGui::TableNextColumn();
                 ImGui::SetNextItemWidth(columnWidth);
-                double originAngle = trafo::rad2deg(_circularTrajectoryOriginAngle);
+                double originAngle = rad2deg(_circularTrajectoryOriginAngle);
                 if (ImGui::DragDouble(fmt::format("Origin Angle##{}", size_t(id)).c_str(), &originAngle, 15.0, -360.0, 360.0, "%.3f°"))
                 {
-                    _circularTrajectoryOriginAngle = trafo::deg2rad(originAngle);
+                    _circularTrajectoryOriginAngle = deg2rad(originAngle);
                     LOG_DEBUG("{}: originAngle changed to {}", nameId(), originAngle);
                     flow::ApplyChanges();
                     deinitializeNode();
@@ -403,26 +404,11 @@ void NAV::ImuSimulator::guiConfig()
         {
             ImGui::Indent();
             ImGui::SetNextItemWidth(230);
-            if (ImGui::BeginCombo(fmt::format("Gravitation Model##{}", size_t(id)).c_str(), NAV::to_string(_gravitationModel)))
+
+            if (ComboGravitationModel(fmt::format("Gravitation Model##{}", size_t(id)).c_str(), _gravitationModel))
             {
-                for (size_t i = 0; i < static_cast<size_t>(GravitationModel::COUNT); i++)
-                {
-                    const bool is_selected = (static_cast<size_t>(_gravitationModel) == i);
-                    if (ImGui::Selectable(NAV::to_string(static_cast<GravitationModel>(i)), is_selected))
-                    {
-                        _gravitationModel = static_cast<GravitationModel>(i);
-                        LOG_DEBUG("{}: Gravitation Model changed to {}", nameId(), NAV::to_string(_gravitationModel));
-                        flow::ApplyChanges();
-                    }
-
-                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-                    if (is_selected)
-                    {
-                        ImGui::SetItemDefaultFocus();
-                    }
-                }
-
-                ImGui::EndCombo();
+                LOG_DEBUG("{}: Gravitation Model changed to {}", nameId(), NAV::to_string(_gravitationModel));
+                flow::ApplyChanges();
             }
             if (ImGui::Checkbox(fmt::format("Coriolis acceleration##{}", size_t(id)).c_str(), &_coriolisAccelerationEnabled))
             {
@@ -936,7 +922,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     LOG_DATA("{}: Simulating IMU data for time [{}]", nameId(), obs->insTime->toYMDHMS());
 
     // --------------------------------------------------------- Calculation of data -----------------------------------------------------------
-    LOG_DATA("{}: [{:8.3f}] lla_position = {}°, {}°, {} m", nameId(), imuUpdateTime, trafo::rad2deg(lla_position(0)), trafo::rad2deg(lla_position(1)), lla_position(2));
+    LOG_DATA("{}: [{:8.3f}] lla_position = {}°, {}°, {} m", nameId(), imuUpdateTime, rad2deg(lla_position(0)), rad2deg(lla_position(1)), lla_position(2));
     Eigen::Vector3d e_position = trafo::lla2ecef_WGS84(lla_position);
     auto n_Quat_e = trafo::n_Quat_e(lla_position(0), lla_position(1));
 
@@ -944,7 +930,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     LOG_DATA("{}: [{:8.3f}] n_vel = {} [m/s]", nameId(), imuUpdateTime, n_vel.transpose());
 
     auto [roll, pitch, yaw] = calcFlightAngles(imuUpdateTime);
-    LOG_DATA("{}: [{:8.3f}] roll = {}°, pitch = {}°, yaw = {}°", nameId(), imuUpdateTime, trafo::rad2deg(roll), trafo::rad2deg(pitch), trafo::rad2deg(yaw));
+    LOG_DATA("{}: [{:8.3f}] roll = {}°, pitch = {}°, yaw = {}°", nameId(), imuUpdateTime, rad2deg(roll), rad2deg(pitch), rad2deg(yaw));
 
     auto b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
 
@@ -1035,12 +1021,12 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
     LOG_DATA("{}: Simulating GNSS data for time [{}]", nameId(), obs->insTime->toYMDHMS());
 
     // --------------------------------------------------------- Calculation of data -----------------------------------------------------------
-    LOG_DATA("{}: [{:8.3f}] lla_position = {}°, {}°, {} m", nameId(), gnssUpdateTime, trafo::rad2deg(lla_position(0)), trafo::rad2deg(lla_position(1)), lla_position(2));
+    LOG_DATA("{}: [{:8.3f}] lla_position = {}°, {}°, {} m", nameId(), gnssUpdateTime, rad2deg(lla_position(0)), rad2deg(lla_position(1)), lla_position(2));
     auto n_Quat_e = trafo::n_Quat_e(lla_position(0), lla_position(1));
     Eigen::Vector3d n_vel = n_calcVelocity(gnssUpdateTime, n_Quat_e);
     LOG_DATA("{}: [{:8.3f}] n_vel = {} [m/s]", nameId(), gnssUpdateTime, n_vel.transpose());
     auto [roll, pitch, yaw] = calcFlightAngles(gnssUpdateTime);
-    LOG_DATA("{}: [{:8.3f}] roll = {}°, pitch = {}°, yaw = {}°", nameId(), gnssUpdateTime, trafo::rad2deg(roll), trafo::rad2deg(pitch), trafo::rad2deg(yaw));
+    LOG_DATA("{}: [{:8.3f}] roll = {}°, pitch = {}°, yaw = {}°", nameId(), gnssUpdateTime, rad2deg(roll), rad2deg(pitch), rad2deg(yaw));
 
     // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
 
@@ -1080,7 +1066,7 @@ Eigen::Vector3d NAV::ImuSimulator::n_calcTrajectoryAccel(double time, const Eige
 
     // Math: \dot{C}_n^e = C_n^e \cdot \Omega_{en}^n
     Eigen::Matrix3d n_DCM_dot_e = e_Quat_n.toRotationMatrix()
-                                  * skewSymmetricMatrix(n_calcTransportRate(lla_position, n_velocity,
+                                  * math::skewSymmetricMatrix(n_calcTransportRate(lla_position, n_velocity,
                                                                             calcEarthRadius_N(lla_position(0)),
                                                                             calcEarthRadius_E(lla_position(0))));
 

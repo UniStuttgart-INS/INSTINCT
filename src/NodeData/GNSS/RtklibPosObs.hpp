@@ -5,13 +5,13 @@
 
 #pragma once
 
-#include "NodeData/InsObs.hpp"
+#include "NodeData/State/PosVel.hpp"
 #include "util/Eigen.hpp"
 
 namespace NAV
 {
 /// RTKLIB Observation Class
-class RtklibPosObs : public InsObs
+class RtklibPosObs : public PosVel
 {
   public:
     /// @brief Returns the type of the data class
@@ -28,34 +28,40 @@ class RtklibPosObs : public InsObs
         return { InsObs::type() };
     }
 
-    /// ECEF position [m]
-    std::optional<Eigen::Vector3d> e_position;
-
     /// 1:fix, 2:float, 3:sbas, 4:dgps, 5:single, 6:ppp
     std::optional<uint8_t> Q;
     /// Number of satellites
     std::optional<uint8_t> ns;
 
     /// Standard Deviation XYZ [m]
-    std::optional<Eigen::Vector3d> sdXYZ;
+    Eigen::Vector3d sdXYZ{ std::nan(""), std::nan(""), std::nan("") };
     /// Standard Deviation North East Down [m]
-    std::optional<Eigen::Vector3d> sdNEU;
+    Eigen::Vector3d sdNED{ std::nan(""), std::nan(""), std::nan("") };
     /// Standard Deviation xy [m]
-    std::optional<double> sdxy;
+    double sdxy = std::nan("");
     /// Standard Deviation yz [m]
-    std::optional<double> sdyz;
+    double sdyz = std::nan("");
     /// Standard Deviation zx [m]
-    std::optional<double> sdzx;
+    double sdzx = std::nan("");
     /// Standard Deviation ne [m]
-    std::optional<double> sdne;
-    /// Standard Deviation eu [m]
-    std::optional<double> sdeu;
-    /// Standard Deviation un [m]
-    std::optional<double> sdun;
+    double sdne = std::nan("");
+    /// Standard Deviation ed [m]
+    double sded = std::nan("");
+    /// Standard Deviation dn [m]
+    double sddn = std::nan("");
     /// Age [s]
-    std::optional<double> age;
+    double age = std::nan("");
     /// Ratio
-    std::optional<double> ratio;
+    double ratio = std::nan("");
+
+    /// Standard Deviation velocity NED [m/s]
+    Eigen::Vector3d sdvNED{ std::nan(""), std::nan(""), std::nan("") };
+    /// Standard Deviation velocity north-east [m/s]
+    double sdvne = std::nan("");
+    /// Standard Deviation velocity east-down [m/s]
+    double sdved = std::nan("");
+    /// Standard Deviation velocity down-north [m/s]
+    double sdvdn = std::nan("");
 };
 
 } // namespace NAV

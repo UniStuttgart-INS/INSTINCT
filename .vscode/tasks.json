@@ -361,6 +361,7 @@
             "args": [
                 "--config=config.ini",
                 "--load=\"flow/Default.flow\"",
+                // "--load=\"test/flow/Nodes/DataProcessor/GNSS/SPP-Skydel.flow\"",
                 // "--sigterm",
                 // "--duration=60",
                 // "--nogui",
@@ -396,8 +397,15 @@
                 // "'PVAError|PosVelAtt'",
                 // "--verbose",
             ],
-            "options": {
-                "cwd": "build/Debug-${input:compiler}",
+            "linux": {
+                "options": {
+                    "cwd": "build/Debug-${input:compiler}",
+                },
+            },
+            "windows": {
+                "options": {
+                    "cwd": "build/Debug-msvc",
+                },
             },
             "dependsOn": [
                 "TEST: Build project",

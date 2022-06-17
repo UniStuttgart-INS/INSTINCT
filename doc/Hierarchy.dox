@@ -3,9 +3,9 @@
 
 namespace Instinct {
 
-/** \page util ExamplePage
+/** <!-- \page util ExamplePage
   %This is a placeholder to show how grouping with pages works
-  - \subpage ExamplePage_Sub1
+  - \subpage ExamplePage_Sub1 -->
 */
 
 

@@ -328,8 +328,16 @@ void NAV::sensors::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& 
 
                 if (!peek)
                 {
-                    LOG_DATA("UBX:  RXM-RAWX, Size {}, rcvTow {}, numMeas {}",
-                             packet.getRawDataLength(), std::get<UbxRxmRawx>(obs->data).rcvTow, std::get<UbxRxmRawx>(obs->data).numMeas);
+                    std::string satInfo;
+                    for (const auto& sat : std::get<UbxRxmRawx>(obs->data).data)
+                    {
+                        satInfo += "[" + std::to_string(sat.gnssId);
+                        satInfo += ", " + std::to_string(sat.svId);
+                        satInfo += ", " + std::to_string(sat.sigId) + "], ";
+                    }
+
+                    LOG_DATA("UBX:  RXM-RAWX, Size {}, rcvTow {}, numMeas {}, satInfo {}",
+                             packet.getRawDataLength(), std::get<UbxRxmRawx>(obs->data).rcvTow, std::get<UbxRxmRawx>(obs->data).numMeas, satInfo);
                 }
             }
             else if (msgId == UbxRxmMessages::UBX_RXM_SFRBX)
@@ -352,8 +360,13 @@ void NAV::sensors::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& 
 
                 if (!peek)
                 {
-                    LOG_DATA("UBX:  RXM-SFRBX, gnssId {}, svId {}, freqId {}, numWords {}",
-                             std::get<UbxRxmSfrbx>(obs->data).gnssId, std::get<UbxRxmSfrbx>(obs->data).svId, std::get<UbxRxmSfrbx>(obs->data).freqId, std::get<UbxRxmSfrbx>(obs->data).numWords);
+                    LOG_DATA("UBX:  RXM-SFRBX, gnssId {}, svId {}, freqId {}, numWords {}, chn {}, version {}",
+                             std::get<UbxRxmSfrbx>(obs->data).gnssId,
+                             std::get<UbxRxmSfrbx>(obs->data).svId,
+                             std::get<UbxRxmSfrbx>(obs->data).freqId,
+                             std::get<UbxRxmSfrbx>(obs->data).numWords,
+                             std::get<UbxRxmSfrbx>(obs->data).chn,
+                             std::get<UbxRxmSfrbx>(obs->data).version);
                 }
             }
             else

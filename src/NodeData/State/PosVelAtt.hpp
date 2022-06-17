@@ -68,23 +68,6 @@ class PosVelAtt : public PosVel
     /// @return [roll, pitch, yaw]^T
     [[nodiscard]] Eigen::Vector3d rollPitchYaw() const
     {
-        // Eigen::Matrix3d DCMBodyToNED = n_Quat_b().toRotationMatrix();
-        // Eigen::Vector3d EulerAngles = Eigen::Vector3d::Zero();
-
-        // EulerAngles(1) = -asin(DCMBodyToNED(2, 0));
-        // if (fabs(trafo::rad2deg(EulerAngles(1))) < 89.0)
-        // {
-        //     EulerAngles(0) = atan2((DCMBodyToNED(2, 1) / cos(EulerAngles(1))), (DCMBodyToNED(2, 2) / cos(EulerAngles(1))));
-
-        //     EulerAngles(2) = atan2((DCMBodyToNED(1, 0) / cos(EulerAngles(1))), (DCMBodyToNED(0, 0) / cos(EulerAngles(1))));
-        // }
-        // else
-        // {
-        //     EulerAngles(0) = 0.0;
-        //     EulerAngles(2) = 0.0;
-        // }
-
-        // return EulerAngles;
         return trafo::quat2eulerZYX(n_Quat_b());
     }
 
