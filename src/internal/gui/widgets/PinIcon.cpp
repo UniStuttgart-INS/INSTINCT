@@ -39,7 +39,7 @@ void DrawIcon(ImDrawList* drawList, const ImVec2& a, const ImVec2& b, PinIcon::T
         const auto margin = 2.0F * origin_scale;
         const auto rounding = 0.1F * origin_scale;
         const auto tip_round = 0.7F; // percentage of triangle edge (for tip)
-        //const auto edge_round = 0.7F; // percentage of triangle edge (for corner)
+        // const auto edge_round = 0.7F; // percentage of triangle edge (for corner)
         const auto canvas = ImRect(
             rect.Min.x + margin + offset_x,
             rect.Min.y + margin + offset_y,
@@ -55,7 +55,7 @@ void DrawIcon(ImDrawList* drawList, const ImVec2& a, const ImVec2& b, PinIcon::T
         const auto top = canvas_y + canvas_h * 0.5F * 0.2F;
         const auto bottom = canvas_y + canvas_h - canvas_h * 0.5F * 0.2F;
         const auto center_y = (top + bottom) * 0.5F;
-        //const auto angle = AX_PI * 0.5F * 0.5F * 0.5F;
+        // const auto angle = AX_PI * 0.5F * 0.5F * 0.5F;
 
         const auto tip_top = ImVec2(canvas_x + canvas_w * 0.5F, top);
         const auto tip_right = ImVec2(right, center_y);

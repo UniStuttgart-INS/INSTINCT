@@ -171,9 +171,12 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataLogger/State/PosVelAttLogger.hpp"
 // Data Processor
 #include "Nodes/DataProcessor/ErrorModel/ErrorModel.hpp"
+#include "Nodes/DataProcessor/GNSS/SinglePointPositioning.hpp"
 #include "Nodes/DataProcessor/Integrator/ImuIntegrator.hpp"
 #include "Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.hpp"
 // Data Provider
+#include "Nodes/DataProvider/GNSS/FileReader/RINEX/RinexNavFile.hpp"
+#include "Nodes/DataProvider/GNSS/FileReader/RINEX/RinexObsFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/EmlidFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RtklibPosFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/UbloxFile.hpp"
@@ -220,9 +223,12 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<PosVelAttLogger>();
     // Data Processor
     registerNodeType<ErrorModel>();
+    registerNodeType<SinglePointPositioning>();
     registerNodeType<ImuIntegrator>();
     registerNodeType<LooselyCoupledKF>();
     // Data Provider
+    registerNodeType<RinexNavFile>();
+    registerNodeType<RinexObsFile>();
     registerNodeType<EmlidFile>();
     registerNodeType<RtklibPosFile>();
     registerNodeType<UbloxFile>();

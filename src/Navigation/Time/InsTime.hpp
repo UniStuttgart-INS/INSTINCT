@@ -20,6 +20,8 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json; ///< json namespace
 
+#include "TimeSystem.hpp"
+
 namespace NAV
 {
 /// @brief Utility Namespace for Time related tasks
@@ -600,20 +602,6 @@ struct InsTime_YDoySod
 class InsTime
 {
   public:
-    /* ----------------------------- Public Members ----------------------------- */
-
-    /// @brief List of all time systems
-    enum TIME_SYSTEM
-    {
-        UTC,    ///< Coordinated Universal Time
-        GPST,   ///< GPS Time
-        GLNT,   ///< GLONASS Time (GLONASST)
-        GST,    ///< Galileo System Time
-        BDT,    ///< BeiDou Time
-        QZSST,  ///< Quasi-Zenith Satellite System Time
-        IRNSST, ///< Indian Regional Navigation Satellite System Time
-    };
-
     /* ------------------------------ Constructors ------------------------------ */
 
     /// @brief Default Constructor
@@ -702,26 +690,26 @@ class InsTime
     /// @param[in] min Minute
     /// @param[in] sec Second
     /// @param[in] timesys Time System in which the previous values are given in
-    constexpr InsTime(uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uint16_t min, long double sec, TIME_SYSTEM timesys = TIME_SYSTEM::UTC)
+    constexpr InsTime(uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uint16_t min, long double sec, TimeSystem timesys = UTC)
         : InsTime(InsTime_YMDHMS(year, month, day, hour, min, sec))
     {
-        if (timesys == TIME_SYSTEM::GPST) // = GPS Time (UTC - leap_seconds)
+        if (timesys == GPST) // = GPS Time (UTC + leap_seconds)
         {
             auto leapSec = this->leapGps2UTC();
             *this -= std::chrono::duration<long double>(leapSec);
         }
-        else if (timesys == TIME_SYSTEM::GLNT) // = GLONASS Time (UTC+ 3h)
+        else if (timesys == GLNT) // = GLONASS Time (UTC+ 3h)
         {
             constexpr auto utcDiff = 3 * InsTimeUtil::SECONDS_PER_HOUR;
             *this -= std::chrono::duration<long double>(utcDiff);
         }
-        else if (timesys == TIME_SYSTEM::GST) // = GALILEO Time (~ GPS TIME_SYSTEM )
+        else if (timesys == GST) // = GALILEO Time (~ GPS )
         {
             //  is synchronised with TAI with a nominal offset below 50 ns
             auto leapSec = this->leapGps2UTC(); // UTC = GST - 18
             *this -= std::chrono::duration<long double>(leapSec);
         }
-        else if (timesys == TIME_SYSTEM::BDT) // = BeiDou Time (UTC)
+        else if (timesys == BDT) // = BeiDou Time (UTC)
         {
             // is synchronised with UTC within 100 ns<
         }
@@ -1034,20 +1022,6 @@ class InsTime
         // std::cout << "orbit diff " << diff << "\n";
         *this += std::chrono::duration<long double>(diff);
     }
-
-    /// @brief Returns the current time as a string
-    /// @return Time String with format YYYYMMDDHHMMSS
-    [[nodiscard]] std::string GetStringOfDate() const;
-
-    /// @brief Converts string into a time system (InsTime::TIME_SYSTEM)
-    /// @param[in] sys String which defines the name of the time system
-    /// @return The Time System
-    static TIME_SYSTEM MakeTimeSysFromString(const std::string& sys);
-
-    /// @brief Converts a time system (InsTime::TIME_SYSTEM) into a string
-    /// @param[in] sys Time System we want the get the string for
-    /// @return String representation of the time system
-    static std::string MakeStringFromTimeSys(InsTime::TIME_SYSTEM sys);
 
   private:
     /// @brief Modified Julien Date of this InsTime object

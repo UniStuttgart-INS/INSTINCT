@@ -119,26 +119,10 @@ void NAV::ImuIntegrator::guiConfig()
         {
             ImGui::Indent();
             ImGui::SetNextItemWidth(230);
-            if (ImGui::BeginCombo(fmt::format("Gravity Model##{}", size_t(id)).c_str(), NAV::to_string(_gravitationModel)))
+            if (ComboGravitationModel(fmt::format("Gravitation Model##{}", size_t(id)).c_str(), _gravitationModel))
             {
-                for (size_t i = 0; i < static_cast<size_t>(GravitationModel::COUNT); i++)
-                {
-                    const bool is_selected = (static_cast<size_t>(_gravitationModel) == i);
-                    if (ImGui::Selectable(NAV::to_string(static_cast<GravitationModel>(i)), is_selected))
-                    {
-                        _gravitationModel = static_cast<GravitationModel>(i);
-                        LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), NAV::to_string(_gravitationModel));
-                        flow::ApplyChanges();
-                    }
-
-                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-                    if (is_selected)
-                    {
-                        ImGui::SetItemDefaultFocus();
-                    }
-                }
-
-                ImGui::EndCombo();
+                LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), NAV::to_string(_gravitationModel));
+                flow::ApplyChanges();
             }
             if (ImGui::Checkbox(fmt::format("Coriolis acceleration ##{}", size_t(id)).c_str(), &_coriolisAccelerationCompensationEnabled))
             {
@@ -463,7 +447,7 @@ void NAV::ImuIntegrator::recvLcKfInsGnssErrors(const std::shared_ptr<const NodeD
             posVelAttCorrected->setVelocity_n(posVelAtt->n_velocity() - lcKfInsGnssErrors->velocityError);
 
             // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
-            Eigen::Matrix3d n_DcmCorrected_b = (Eigen::Matrix3d::Identity() - skewSymmetricMatrix(lcKfInsGnssErrors->attitudeError)) * posVelAtt->n_Quat_b().toRotationMatrix();
+            Eigen::Matrix3d n_DcmCorrected_b = (Eigen::Matrix3d::Identity() - math::skewSymmetricMatrix(lcKfInsGnssErrors->attitudeError)) * posVelAtt->n_Quat_b().toRotationMatrix();
             posVelAttCorrected->setAttitude_n_Quat_b(Eigen::Quaterniond(n_DcmCorrected_b).normalized());
         }
         else // if (lcKfInsGnssErrors->frame == LcKfInsGnssErrors::Frame::ECEF)
@@ -475,7 +459,7 @@ void NAV::ImuIntegrator::recvLcKfInsGnssErrors(const std::shared_ptr<const NodeD
             posVelAttCorrected->setVelocity_e(posVelAtt->e_velocity() - lcKfInsGnssErrors->velocityError);
 
             // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
-            Eigen::Matrix3d e_DcmCorrected_b = (Eigen::Matrix3d::Identity() - skewSymmetricMatrix(lcKfInsGnssErrors->attitudeError)) * posVelAtt->e_Quat_b().toRotationMatrix();
+            Eigen::Matrix3d e_DcmCorrected_b = (Eigen::Matrix3d::Identity() - math::skewSymmetricMatrix(lcKfInsGnssErrors->attitudeError)) * posVelAtt->e_Quat_b().toRotationMatrix();
             posVelAttCorrected->setAttitude_e_Quat_b(Eigen::Quaterniond(e_DcmCorrected_b).normalized());
         }
 

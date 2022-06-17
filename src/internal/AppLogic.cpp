@@ -62,7 +62,6 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
             bool loadSuccessful = false;
             try
             {
-                LOG_INFO("Loading flow file: {}", NAV::ConfigManager::Get<std::string>("load", ""));
                 loadSuccessful = NAV::flow::LoadFlow(NAV::ConfigManager::Get<std::string>("load", ""));
             }
             catch (...)
@@ -96,6 +95,10 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
                         NAV::Sleep::countDownSeconds(duration - static_cast<size_t>(elapsed.count()));
                     }
                 }
+
+#ifdef TESTING
+                nm::CallCleanupCallback();
+#endif
 
                 nm::DisableAllCallbacks();
                 nm::DeleteAllNodes();

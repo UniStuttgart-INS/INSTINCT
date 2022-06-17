@@ -76,7 +76,7 @@ bool NAV::gui::widgets::FileDialogLoad(std::string& path, const char* vName,
         ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, vName, vFilters, (startPath / ".").string());
         for (const auto& ext : extensions)
         {
-            ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, ext.c_str(), ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
+            ImGuiFileDialog::Instance()->SetFileStyle(ext.starts_with('(') ? IGFD_FileStyleByFullName : IGFD_FileStyleByExtention, ext.c_str(), ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
         }
     }
 

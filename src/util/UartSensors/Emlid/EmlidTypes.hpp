@@ -125,8 +125,8 @@ struct ErbRtk
     uint8_t numSV = 0;     ///< Number of satellites used for RTK calculation
     uint16_t age = 0;      ///< Age of differential [s/// 1e-2] (0 when no corrections, 0xFFFF indicates overflow)
     int32_t baselineN = 0; ///< Distance between base and rover along the north axis [mm]
-    int32_t baselineE = 0; ///<Distance between base and rover along the east axis [mm]
-    int32_t baselineD = 0; ///<Distance between base and rover along the down axis [mm]
+    int32_t baselineE = 0; ///< Distance between base and rover along the east axis [mm]
+    int32_t baselineD = 0; ///< Distance between base and rover along the down axis [mm]
     uint16_t arRatio = 0;  ///< AR Ratio [*1e-1]
     uint16_t weekGPS = 0;  ///< GPS Week Number of last baseline [weeks]
     uint32_t timeGPS = 0;  ///< GPS Time of Week of last baseline [ms]

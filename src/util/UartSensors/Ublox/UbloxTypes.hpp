@@ -690,6 +690,10 @@ struct UbxRxmSfrbx
     uint8_t version = 0;        ///< Message version (0x01 for this version)
     uint8_t reserved2 = 0;      ///< Reserved
     std::vector<uint32_t> dwrd; ///< The data words
+
+    // TODO: Make this into functions
+    // uint8_t subFrameId = 0; ///< bit 20-22 of word 2/dwrd[1]. 3 bits subframe id (HOW = Handover Word) of GPS
+    // uint8_t wrdType = 0;    ///< bit 3-8 of dwrd[0]. 6 bits word types of Galileo I/NAV
 };
 
 /// @brief The available SEC Messages

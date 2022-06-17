@@ -13,6 +13,7 @@ namespace nm = NAV::NodeManager;
 #include "UlogFileFormat.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
+#include "Navigation/Transformations/Units.hpp"
 
 #include <ctime>
 
@@ -1163,7 +1164,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 const auto& vehicleAttitude = std::get<VehicleAttitude>(attIter->second.data);
 
                 obs->insTime.emplace(0, 0, 0, 0, 0, vehicleGpsPosition.time_utc_usec * 1e-6L);
-                obs->setState_n(Eigen::Vector3d{ trafo::deg2rad(1e-7 * static_cast<double>(vehicleGpsPosition.lat)), trafo::deg2rad(1e-7 * static_cast<double>(vehicleGpsPosition.lon)), 1e-3 * (static_cast<double>(vehicleGpsPosition.alt_ellipsoid)) },
+                obs->setState_n(Eigen::Vector3d{ deg2rad(1e-7 * static_cast<double>(vehicleGpsPosition.lat)), deg2rad(1e-7 * static_cast<double>(vehicleGpsPosition.lon)), 1e-3 * (static_cast<double>(vehicleGpsPosition.alt_ellipsoid)) },
                                 Eigen::Vector3d{ vehicleGpsPosition.vel_n_m_s, vehicleGpsPosition.vel_e_m_s, vehicleGpsPosition.vel_d_m_s },
                                 Eigen::Quaterniond{ vehicleAttitude.q.at(0), vehicleAttitude.q.at(1), vehicleAttitude.q.at(2), vehicleAttitude.q.at(3) });
                 // TODO: Check order of w,x,y,z

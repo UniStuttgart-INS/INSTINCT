@@ -106,10 +106,10 @@ struct TimeInfo
 struct DOP
 {
     float gDop{}; ///< Geometric DOP
-    float pDop{}; ///< Positional DOP
-    float tDop{}; ///< Time DOP
-    float vDop{}; ///< Vertical DOP
-    float hDop{}; ///< Horizontal DOP
+    float pDop{}; ///< Positional DOP (Overall 3D position precision)
+    float tDop{}; ///< Time DOP (time precision)
+    float vDop{}; ///< Vertical DOP (vertical position precision)
+    float hDop{}; ///< Horizontal DOP (2D position precision)
     float nDop{}; ///< North DOP
     float eDop{}; ///< East DOP
 };

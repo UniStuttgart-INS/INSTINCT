@@ -9,6 +9,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "Navigation/Transformations/CoordinateFrames.hpp"
+#include "Navigation/Transformations/Units.hpp"
 
 NAV::VectorNavBinaryConverter::VectorNavBinaryConverter()
 {
@@ -238,7 +239,7 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
         }
         else if (vnObs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL)
         {
-            auto ypr = trafo::deg2rad(vnObs->attitudeOutputs->ypr.cast<double>());
+            auto ypr = deg2rad(vnObs->attitudeOutputs->ypr.cast<double>());
             n_Quat_b = trafo::n_Quat_b(ypr(2), ypr(1), ypr(0));
         }
         else if (vnObs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM)
@@ -252,8 +253,8 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
     {
         if (vnObs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA)
         {
-            lla_position = { trafo::deg2rad(vnObs->insOutputs->posLla(0)),
-                             trafo::deg2rad(vnObs->insOutputs->posLla(1)),
+            lla_position = { deg2rad(vnObs->insOutputs->posLla(0)),
+                             deg2rad(vnObs->insOutputs->posLla(1)),
                              vnObs->insOutputs->posLla(2) };
         }
         if (vnObs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSECEF)
@@ -285,8 +286,8 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
         {
             if (vnObs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
             {
-                lla_position = { trafo::deg2rad(vnObs->gnss1Outputs->posLla(0)),
-                                 trafo::deg2rad(vnObs->gnss1Outputs->posLla(1)),
+                lla_position = { deg2rad(vnObs->gnss1Outputs->posLla(0)),
+                                 deg2rad(vnObs->gnss1Outputs->posLla(1)),
                                  vnObs->gnss1Outputs->posLla(2) };
             }
             if (vnObs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
@@ -316,8 +317,8 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
         {
             if (vnObs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
             {
-                lla_position = { trafo::deg2rad(vnObs->gnss2Outputs->posLla(0)),
-                                 trafo::deg2rad(vnObs->gnss2Outputs->posLla(1)),
+                lla_position = { deg2rad(vnObs->gnss2Outputs->posLla(0)),
+                                 deg2rad(vnObs->gnss2Outputs->posLla(1)),
                                  vnObs->gnss2Outputs->posLla(2) };
             }
             if (vnObs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)

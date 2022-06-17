@@ -49,7 +49,7 @@ Eigen::Matrix3d e_F_dv_dv(double omega_ie)
 
 Eigen::Matrix3d e_F_dv_dr(const Eigen::Vector3d& e_position, const Eigen::Vector3d& e_gravitation, double r_eS_e, const Eigen::Vector3d& e_omega_ie)
 {
-    Eigen::Matrix3d e_Omega_ie = skewSymmetricMatrix(e_omega_ie);
+    Eigen::Matrix3d e_Omega_ie = math::skewSymmetricMatrix(e_omega_ie);
 
     // Math: \mathbf{F}_{23}^e = -\left( \dfrac{2 \boldsymbol{\gamma}_{ib}^e}{r_{eS}^e} \dfrac{{\mathbf{r}_{eb}^e}^T}{\left| \mathbf{r}_{eb}^e \right|} + \boldsymbol{\Omega}_{ie}^e \boldsymbol{\Omega}_{ie}^e \right)
     Eigen::Matrix3d e_F_23 = -((2 * e_gravitation * e_position.transpose()) / (r_eS_e * e_position.norm()) + e_Omega_ie * e_Omega_ie);

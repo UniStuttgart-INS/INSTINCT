@@ -6,6 +6,7 @@
 #include "Navigation/Math/Math.hpp"
 #include "Navigation/Math/NumericalIntegration.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
+#include "Navigation/Transformations/Units.hpp"
 #include "util/Logger.hpp"
 
 #include <cmath>
@@ -52,7 +53,7 @@ Eigen::Vector3d n_calcTimeDerivativeForVelocity_RotationCorrection(const Eigen::
     // q Quaternion, from n-system to b-system
     Eigen::Quaterniond b_Quat_n = n_Quat_b.conjugate();
     LOG_DATA("b_Quat_n = {}", b_Quat_n.coeffs().transpose());
-    LOG_DATA("rollPitchYaw = {} [°]", trafo::rad2deg(trafo::quat2eulerZYX(n_Quat_b)).transpose());
+    LOG_DATA("rollPitchYaw = {} [°]", rad2deg(trafo::quat2eulerZYX(n_Quat_b)).transpose());
 
     // Δβ⁠_nb_p The angular velocities in [rad], of the navigation to body system, in body coordinates (eq. 8.9)
     Eigen::Vector3d b_omega_nb = b_omega_ib - b_Quat_n * (n_omega_ie + n_omega_en);
@@ -62,17 +63,17 @@ Eigen::Vector3d n_calcTimeDerivativeForVelocity_RotationCorrection(const Eigen::
     if (b_omega_nb.norm() > 1e-5)
     {
         // Zwiener eq. (3.37)
-        rotA = 2 * skewSymmetricMatrix(b_omega_nb) * std::pow(std::sin(timeDifferenceSec * b_omega_nb.norm() * 0.5) / b_omega_nb.norm(), 2);
+        rotA = 2 * math::skewSymmetricMatrix(b_omega_nb) * std::pow(std::sin(timeDifferenceSec * b_omega_nb.norm() * 0.5) / b_omega_nb.norm(), 2);
         LOG_DATA("rotA =\n{}", rotA);
     }
     else
     {
         // Zwiener eq. (3.39)
-        rotA = skewSymmetricMatrix(b_omega_nb) * 0.5 * std::pow(timeDifferenceSec, 2);
+        rotA = math::skewSymmetricMatrix(b_omega_nb) * 0.5 * std::pow(timeDifferenceSec, 2);
         LOG_DATA("rotA (small b_omega_nb) =\n{}", rotA);
     }
     // Zwiener eq. (3.43)
-    Eigen::Matrix3d rotB = (std::pow(timeDifferenceSec, 3) / 6.0 - std::pow(b_omega_nb.norm(), 2) / 120.0 * std::pow(timeDifferenceSec, 5)) * skewSymmetricMatrixSquared(b_omega_nb);
+    Eigen::Matrix3d rotB = (std::pow(timeDifferenceSec, 3) / 6.0 - std::pow(b_omega_nb.norm(), 2) / 120.0 * std::pow(timeDifferenceSec, 5)) * math::skewSymmetricMatrixSquared(b_omega_nb);
     LOG_DATA("rotB =\n{}", rotB);
 
     // Rotation correction factor from Zwiener eq. (3.44)
@@ -114,9 +115,9 @@ Eigen::Matrix<double, 10, 1> n_calcPosVelAttDerivative(const Eigen::Matrix<doubl
     Eigen::Quaterniond n_Quat_b{ y(0), y(1), y(2), y(3) };
     Eigen::Quaterniond n_Quat_e = trafo::n_Quat_e(y(7), y(8));
 
-    LOG_DATA("rollPitchYaw = {} [°]", trafo::rad2deg(trafo::quat2eulerZYX(n_Quat_b)).transpose());
+    LOG_DATA("rollPitchYaw = {} [°]", rad2deg(trafo::quat2eulerZYX(n_Quat_b)).transpose());
     LOG_DATA("n_velocity   = {} [m/s]", y.segment<3>(4).transpose());
-    LOG_DATA("lla_position = {}°, {}°, {} m", trafo::rad2deg(y(7)), trafo::rad2deg(y(8)), y(9));
+    LOG_DATA("lla_position = {}°, {}°, {} m", rad2deg(y(7)), rad2deg(y(8)), y(9));
     LOG_DATA("b_measuredForce = {} [m/s^2]", c.b_measuredForce.transpose());
     LOG_DATA("b_omega_ib = {} [rad/s]", c.b_omega_ib.transpose());
 
