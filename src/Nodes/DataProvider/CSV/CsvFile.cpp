@@ -110,7 +110,7 @@ void NAV::CsvFile::guiConfig()
     ImGui::Text("Amount of data lines in file: %zu", _data.lines.size());
 
     // Header info
-    if (ImGui::BeginTable(fmt::format("##CSVHeaders ({})", id.AsPointer()).c_str(), 2,
+    if (ImGui::BeginTable(fmt::format("##CSVHeaders ({})", size_t(id)).c_str(), 2,
                           ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
     {
         ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed);
@@ -190,7 +190,7 @@ bool NAV::CsvFile::initialize()
         if (line.empty() || line.at(0) == _comment) { continue; } // Skip empty and comment lines
 
         auto splittedData = str::split(line, _delimiter);
-        if (!splittedData.empty()) { _data.lines.push_back(CsvData::CsvLine{}); }
+        if (!splittedData.empty()) { _data.lines.emplace_back(); }
 
         for (const auto& cell : splittedData)
         {
