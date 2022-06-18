@@ -2,7 +2,7 @@
 
 #include "util/Logger.hpp"
 #include "Navigation/Constants.hpp"
-#include "util/UartSensors/KVH/KvhUartSensor.hpp"
+#include "util/Vendor/KVH/KvhUartSensor.hpp"
 #include <array>
 
 // Static table used for the table driven implementation of the 32-bit CRC algorithm.
@@ -73,7 +73,7 @@ static const std::array<uint32_t, 256> ui32aCRCTable = {
     0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4
 }; // ui32aCRCTable[]
 
-uint32_t NAV::sensors::kvh::ui32CalcImuCRC(const std::vector<uint8_t>& rawData)
+uint32_t NAV::vendor::kvh::ui32CalcImuCRC(const std::vector<uint8_t>& rawData)
 {
     uint32_t ui32CRCVal = 0xFFFFFFFF;
 
@@ -86,13 +86,13 @@ uint32_t NAV::sensors::kvh::ui32CalcImuCRC(const std::vector<uint8_t>& rawData)
     return ui32CRCVal;
 }
 
-void NAV::sensors::kvh::decryptKvhObs(const std::shared_ptr<NAV::KvhObs>& obs)
+void NAV::vendor::kvh::decryptKvhObs(const std::shared_ptr<NAV::KvhObs>& obs)
 {
     auto headerType = obs->raw.extractUint32();
 
     if (obs->raw.type() == uart::protocol::Packet::Type::TYPE_BINARY)
     {
-        if (headerType == sensors::kvh::KvhUartSensor::HEADER_FMT_A)
+        if (headerType == vendor::kvh::KvhUartSensor::HEADER_FMT_A)
         {
             obs->gyroUncompXYZ.emplace(obs->raw.extractFloat(),
                                        obs->raw.extractFloat(),
@@ -106,7 +106,7 @@ void NAV::sensors::kvh::decryptKvhObs(const std::shared_ptr<NAV::KvhObs>& obs)
             obs->sequenceNumber = obs->raw.extractUint8();
             obs->temperature = obs->raw.extractUint16();
         }
-        else if (headerType == sensors::kvh::KvhUartSensor::HEADER_FMT_B)
+        else if (headerType == vendor::kvh::KvhUartSensor::HEADER_FMT_B)
         {
             obs->gyroUncompXYZ.emplace(obs->raw.extractFloat(),
                                        obs->raw.extractFloat(),
@@ -121,7 +121,7 @@ void NAV::sensors::kvh::decryptKvhObs(const std::shared_ptr<NAV::KvhObs>& obs)
             obs->sequenceNumber = obs->raw.extractUint8();
             obs->temperature = obs->raw.extractUint16();
         }
-        else if (headerType == sensors::kvh::KvhUartSensor::HEADER_FMT_C)
+        else if (headerType == vendor::kvh::KvhUartSensor::HEADER_FMT_C)
         {
             obs->gyroUncompXYZ.emplace(obs->raw.extractFloat(),
                                        obs->raw.extractFloat(),

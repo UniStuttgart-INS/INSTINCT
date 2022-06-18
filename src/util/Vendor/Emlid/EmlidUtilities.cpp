@@ -4,7 +4,7 @@
 #include "util/Logger.hpp"
 #include "util/Time/TimeBase.hpp"
 
-void NAV::sensors::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& obs, uart::protocol::Packet& packet, bool peek)
+void NAV::vendor::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& obs, uart::protocol::Packet& packet, bool peek)
 {
     if (packet.type() == uart::protocol::Packet::Type::TYPE_BINARY)
     {
@@ -229,7 +229,7 @@ void NAV::sensors::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& 
     }
 }
 
-std::pair<uint8_t, uint8_t> NAV::sensors::emlid::checksumUBX(const std::vector<uint8_t>& data)
+std::pair<uint8_t, uint8_t> NAV::vendor::emlid::checksumUBX(const std::vector<uint8_t>& data)
 {
     uint8_t cka = 0;
     uint8_t ckb = 0;

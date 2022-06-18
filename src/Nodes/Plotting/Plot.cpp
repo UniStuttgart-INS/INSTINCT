@@ -2701,27 +2701,27 @@ void NAV::Plot::plotUbloxObs(const std::shared_ptr<const UbloxObs>& obs, size_t 
     // Velocity in NED coordinates in [m/s]
     std::optional<Eigen::Vector3d> n_velocity;
 
-    if (obs->msgClass == sensors::ublox::UbxClass::UBX_CLASS_NAV)
+    if (obs->msgClass == vendor::ublox::UbxClass::UBX_CLASS_NAV)
     {
-        auto msgId = static_cast<sensors::ublox::UbxNavMessages>(obs->msgId);
-        if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_POSECEF)
+        auto msgId = static_cast<vendor::ublox::UbxNavMessages>(obs->msgId);
+        if (msgId == vendor::ublox::UbxNavMessages::UBX_NAV_POSECEF)
         {
-            e_position.emplace(std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefX * 1e-2,
-                               std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefY * 1e-2,
-                               std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefZ * 1e-2);
+            e_position.emplace(std::get<vendor::ublox::UbxNavPosecef>(obs->data).ecefX * 1e-2,
+                               std::get<vendor::ublox::UbxNavPosecef>(obs->data).ecefY * 1e-2,
+                               std::get<vendor::ublox::UbxNavPosecef>(obs->data).ecefZ * 1e-2);
             lla_position = trafo::ecef2lla_WGS84(e_position.value());
         }
-        else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_POSLLH)
+        else if (msgId == vendor::ublox::UbxNavMessages::UBX_NAV_POSLLH)
         {
-            lla_position.emplace(deg2rad(std::get<sensors::ublox::UbxNavPosllh>(obs->data).lat * 1e-7),
-                                 deg2rad(std::get<sensors::ublox::UbxNavPosllh>(obs->data).lon * 1e-7),
-                                 std::get<sensors::ublox::UbxNavPosllh>(obs->data).height * 1e-3);
+            lla_position.emplace(deg2rad(std::get<vendor::ublox::UbxNavPosllh>(obs->data).lat * 1e-7),
+                                 deg2rad(std::get<vendor::ublox::UbxNavPosllh>(obs->data).lon * 1e-7),
+                                 std::get<vendor::ublox::UbxNavPosllh>(obs->data).height * 1e-3);
         }
-        else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_VELNED)
+        else if (msgId == vendor::ublox::UbxNavMessages::UBX_NAV_VELNED)
         {
-            n_velocity.emplace(std::get<sensors::ublox::UbxNavVelned>(obs->data).velN * 1e-2,
-                               std::get<sensors::ublox::UbxNavVelned>(obs->data).velE * 1e-2,
-                               std::get<sensors::ublox::UbxNavVelned>(obs->data).velD * 1e-2);
+            n_velocity.emplace(std::get<vendor::ublox::UbxNavVelned>(obs->data).velN * 1e-2,
+                               std::get<vendor::ublox::UbxNavVelned>(obs->data).velE * 1e-2,
+                               std::get<vendor::ublox::UbxNavVelned>(obs->data).velD * 1e-2);
         }
         else
         {

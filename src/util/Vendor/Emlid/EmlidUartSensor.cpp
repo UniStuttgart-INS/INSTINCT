@@ -1,42 +1,33 @@
-#include "UbloxUartSensor.hpp"
+#include "EmlidUartSensor.hpp"
 
-#include "UbloxUtilities.hpp"
+#include "EmlidUtilities.hpp"
 #include "util/Logger.hpp"
 
-NAV::sensors::ublox::UbloxUartSensor::UbloxUartSensor(std::string name)
+NAV::vendor::emlid::EmlidUartSensor::EmlidUartSensor(std::string name)
     : _name(std::move(name)), _buffer(uart::sensors::UartSensor::DefaultReadBufferSize)
 {
     resetTracking();
 }
 
-void NAV::sensors::ublox::UbloxUartSensor::resetTracking()
+void NAV::vendor::emlid::EmlidUartSensor::resetTracking()
 {
     _currentlyBuildingBinaryPacket = false;
     _currentlyBuildingAsciiPacket = false;
 
     _asciiEndChar1Found = false;
     _binarySyncChar2Found = false;
-    _binaryMsgClassFound = false;
     _binaryMsgIdFound = false;
     _binaryPayloadLength1Found = false;
     _binaryPayloadLength2Found = false;
 
-#if (defined(__GNUC__) || defined(__GNUG__)) && !defined(__clang__)
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wstringop-overflow"
-#endif
-    _binaryMsgClass = 0;
     _binaryMsgId = 0;
     _binaryPayloadLength = 0;
-#if (defined(__GNUC__) || defined(__GNUG__)) && !defined(__clang__)
-    #pragma GCC diagnostic pop
-#endif
 
     _buffer.resize(0);
     _numOfBytesRemainingForCompletePacket = 0;
 }
 
-std::unique_ptr<uart::protocol::Packet> NAV::sensors::ublox::UbloxUartSensor::findPacket(uint8_t dataByte)
+std::unique_ptr<uart::protocol::Packet> NAV::vendor::emlid::EmlidUartSensor::findPacket(uint8_t dataByte)
 {
     if (_buffer.size() == _buffer.capacity())
     {
@@ -77,12 +68,6 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::ublox::UbloxUartSensor::fi
                 resetTracking();
             }
         }
-        else if (!_binaryMsgClassFound)
-        {
-            // This byte must be the message class
-            _binaryMsgClassFound = true;
-            _binaryMsgClass = dataByte;
-        }
         else if (!_binaryMsgIdFound)
         {
             // This byte must be the message id
@@ -100,7 +85,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::ublox::UbloxUartSensor::fi
             _binaryPayloadLength |= static_cast<uint16_t>(static_cast<uint16_t>(dataByte) << 8U);
             _binaryPayloadLength = uart::stoh(_binaryPayloadLength, ENDIANNESS);
             _numOfBytesRemainingForCompletePacket = _binaryPayloadLength + 2U;
-            LOG_DEBUG("{}: Binary packet: Class={:0x}, Id={:0x}, payload length={}", _name, _binaryMsgClass, _binaryMsgId, _binaryPayloadLength);
+            LOG_DATA("{}: Binary packet: Id={:0x}, payload length={}", _name, _binaryMsgId, _binaryPayloadLength);
         }
         else
         {
@@ -119,7 +104,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::ublox::UbloxUartSensor::fi
                     return p;
                 }
                 // Invalid packet!
-                LOG_ERROR("{}: Invalid binary packet: Class={:0x}, Id={:0x}, payload length={}", _name, _binaryMsgClass, _binaryMsgId, _binaryPayloadLength);
+                LOG_ERROR("{}: Invalid binary packet: Id={:0x}, payload length={}", _name, _binaryMsgId, _binaryPayloadLength);
                 resetTracking();
             }
         }
@@ -150,7 +135,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::ublox::UbloxUartSensor::fi
                     return p;
                 }
                 // Invalid packet!
-                LOG_ERROR("{}: Invalid ascii packet: {}", _name, p->datastr());
+                LOG_ERROR("Invalid ascii packet: {}", p->datastr());
             }
 
             resetTracking();
@@ -160,9 +145,9 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::ublox::UbloxUartSensor::fi
     return nullptr;
 }
 
-void NAV::sensors::ublox::UbloxUartSensor::packetFinderFunction(const std::vector<uint8_t>& data, const uart::xplat::TimeStamp& timestamp, uart::sensors::UartSensor::ValidPacketFoundHandler dispatchPacket, void* dispatchPacketUserData, void* userData)
+void NAV::vendor::emlid::EmlidUartSensor::packetFinderFunction(const std::vector<uint8_t>& data, const uart::xplat::TimeStamp& timestamp, uart::sensors::UartSensor::ValidPacketFoundHandler dispatchPacket, void* dispatchPacketUserData, void* userData)
 {
-    auto* sensor = static_cast<UbloxUartSensor*>(userData);
+    auto* sensor = static_cast<EmlidUartSensor*>(userData);
 
     for (size_t i = 0; i < data.size(); i++, sensor->_runningDataIndex++)
     {
@@ -176,7 +161,7 @@ void NAV::sensors::ublox::UbloxUartSensor::packetFinderFunction(const std::vecto
     }
 }
 
-uart::protocol::Packet::Type NAV::sensors::ublox::UbloxUartSensor::packetTypeFunction(const uart::protocol::Packet& packet)
+uart::protocol::Packet::Type NAV::vendor::emlid::EmlidUartSensor::packetTypeFunction(const uart::protocol::Packet& packet)
 {
     if (packet.getRawDataLength() < 1)
     {
@@ -198,7 +183,7 @@ uart::protocol::Packet::Type NAV::sensors::ublox::UbloxUartSensor::packetTypeFun
     return uart::protocol::Packet::Type::TYPE_UNKNOWN;
 }
 
-bool NAV::sensors::ublox::UbloxUartSensor::checksumFunction(const uart::protocol::Packet& packet)
+bool NAV::vendor::emlid::EmlidUartSensor::checksumFunction(const uart::protocol::Packet& packet)
 {
     if (packet.getRawDataLength() <= 8)
     {
@@ -207,28 +192,12 @@ bool NAV::sensors::ublox::UbloxUartSensor::checksumFunction(const uart::protocol
 
     if (packet.type() == uart::protocol::Packet::Type::TYPE_ASCII)
     {
-        // First check if we have a checksum at all
-        if (packet.getRawData().at(packet.getRawDataLength() - 5) != '*')
-        {
-            return false;
-        }
-
-        // Return true, if a wildcard checksum is present
-        if (packet.getRawData().at(packet.getRawDataLength() - 3) == 'X'
-            && packet.getRawData().at(packet.getRawDataLength() - 4) == 'X')
-        {
-            return true;
-        }
-
-        uint8_t checksumHex = ublox::checksumNMEA(packet.getRawData());
-        std::array<uint8_t, 2> checksumRecv = { packet.getRawData().at(packet.getRawDataLength() - 4),
-                                                packet.getRawData().at(packet.getRawDataLength() - 3) };
-        return uart::to_uint8_from_hexstr(reinterpret_cast<char*>(checksumRecv.data())) == checksumHex;
+        return true;
     }
 
     if (packet.type() == uart::protocol::Packet::Type::TYPE_BINARY)
     {
-        std::pair<uint8_t, uint8_t> checksum = ublox::checksumUBX(packet.getRawData());
+        std::pair<uint8_t, uint8_t> checksum = emlid::checksumUBX(packet.getRawData());
 
         return packet.getRawData().at(packet.getRawDataLength() - 2) == checksum.first
                && packet.getRawData().at(packet.getRawDataLength() - 1) == checksum.second;
@@ -238,12 +207,12 @@ bool NAV::sensors::ublox::UbloxUartSensor::checksumFunction(const uart::protocol
     return false;
 }
 
-bool NAV::sensors::ublox::UbloxUartSensor::isErrorFunction([[maybe_unused]] const uart::protocol::Packet& packet)
+bool NAV::vendor::emlid::EmlidUartSensor::isErrorFunction([[maybe_unused]] const uart::protocol::Packet& packet)
 {
     return false;
 }
 
-bool NAV::sensors::ublox::UbloxUartSensor::isResponseFunction([[maybe_unused]] const uart::protocol::Packet& packet)
+bool NAV::vendor::emlid::EmlidUartSensor::isResponseFunction([[maybe_unused]] const uart::protocol::Packet& packet)
 {
     return false;
 }

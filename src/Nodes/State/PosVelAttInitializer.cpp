@@ -9,7 +9,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/gui/widgets/HelpMarker.hpp"
 
 #include "util/Time/TimeBase.hpp"
-#include "util/UartSensors/Ublox/UbloxTypes.hpp"
+#include "util/Vendor/Ublox/UbloxTypes.hpp"
 #include "Navigation/INS/Functions.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "Navigation/Transformations/Units.hpp"
@@ -659,65 +659,65 @@ void NAV::PosVelAttInitializer::receiveGnssObs(const std::shared_ptr<const NodeD
 
 void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<const UbloxObs>& obs)
 {
-    if (obs->msgClass == sensors::ublox::UbxClass::UBX_CLASS_NAV)
+    if (obs->msgClass == vendor::ublox::UbxClass::UBX_CLASS_NAV)
     {
-        auto msgId = static_cast<sensors::ublox::UbxNavMessages>(obs->msgId);
-        if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_ATT)
+        auto msgId = static_cast<vendor::ublox::UbxNavMessages>(obs->msgId);
+        if (msgId == vendor::ublox::UbxNavMessages::UBX_NAV_ATT)
         {
             LOG_DATA("{}: UBX_NAV_ATT: Roll {}, Pitch {}, Heading {} [deg]", nameId(),
-                     std::get<sensors::ublox::UbxNavAtt>(obs->data).roll * 1e-5,
-                     std::get<sensors::ublox::UbxNavAtt>(obs->data).pitch * 1e-5,
-                     std::get<sensors::ublox::UbxNavAtt>(obs->data).heading * 1e-5);
+                     std::get<vendor::ublox::UbxNavAtt>(obs->data).roll * 1e-5,
+                     std::get<vendor::ublox::UbxNavAtt>(obs->data).pitch * 1e-5,
+                     std::get<vendor::ublox::UbxNavAtt>(obs->data).heading * 1e-5);
         }
-        else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_POSECEF)
+        else if (msgId == vendor::ublox::UbxNavMessages::UBX_NAV_POSECEF)
         {
-            _lastPositionAccuracy.at(0) = static_cast<float>(std::get<sensors::ublox::UbxNavPosecef>(obs->data).pAcc);
-            _lastPositionAccuracy.at(1) = static_cast<float>(std::get<sensors::ublox::UbxNavPosecef>(obs->data).pAcc);
-            _lastPositionAccuracy.at(2) = static_cast<float>(std::get<sensors::ublox::UbxNavPosecef>(obs->data).pAcc);
+            _lastPositionAccuracy.at(0) = static_cast<float>(std::get<vendor::ublox::UbxNavPosecef>(obs->data).pAcc);
+            _lastPositionAccuracy.at(1) = static_cast<float>(std::get<vendor::ublox::UbxNavPosecef>(obs->data).pAcc);
+            _lastPositionAccuracy.at(2) = static_cast<float>(std::get<vendor::ublox::UbxNavPosecef>(obs->data).pAcc);
 
             if (_lastPositionAccuracy.at(0) <= _positionAccuracyThreshold
                 && _lastPositionAccuracy.at(1) <= _positionAccuracyThreshold
                 && _lastPositionAccuracy.at(2) <= _positionAccuracyThreshold)
             {
-                _e_initPosition = Eigen::Vector3d(std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefX * 1e-2,
-                                                  std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefY * 1e-2,
-                                                  std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefZ * 1e-2);
+                _e_initPosition = Eigen::Vector3d(std::get<vendor::ublox::UbxNavPosecef>(obs->data).ecefX * 1e-2,
+                                                  std::get<vendor::ublox::UbxNavPosecef>(obs->data).ecefY * 1e-2,
+                                                  std::get<vendor::ublox::UbxNavPosecef>(obs->data).ecefZ * 1e-2);
 
                 _posVelAttInitialized.at(0) = true;
             }
         }
-        else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_POSLLH)
+        else if (msgId == vendor::ublox::UbxNavMessages::UBX_NAV_POSLLH)
         {
-            _lastPositionAccuracy.at(0) = static_cast<float>(std::get<sensors::ublox::UbxNavPosllh>(obs->data).hAcc * 1e-1);
-            _lastPositionAccuracy.at(1) = static_cast<float>(std::get<sensors::ublox::UbxNavPosllh>(obs->data).hAcc * 1e-1);
-            _lastPositionAccuracy.at(2) = static_cast<float>(std::get<sensors::ublox::UbxNavPosllh>(obs->data).vAcc * 1e-1);
+            _lastPositionAccuracy.at(0) = static_cast<float>(std::get<vendor::ublox::UbxNavPosllh>(obs->data).hAcc * 1e-1);
+            _lastPositionAccuracy.at(1) = static_cast<float>(std::get<vendor::ublox::UbxNavPosllh>(obs->data).hAcc * 1e-1);
+            _lastPositionAccuracy.at(2) = static_cast<float>(std::get<vendor::ublox::UbxNavPosllh>(obs->data).vAcc * 1e-1);
 
             if (_lastPositionAccuracy.at(0) <= _positionAccuracyThreshold
                 && _lastPositionAccuracy.at(1) <= _positionAccuracyThreshold
                 && _lastPositionAccuracy.at(2) <= _positionAccuracyThreshold)
             {
-                Eigen::Vector3d lla_position(deg2rad(std::get<sensors::ublox::UbxNavPosllh>(obs->data).lat * 1e-7),
-                                             deg2rad(std::get<sensors::ublox::UbxNavPosllh>(obs->data).lon * 1e-7),
-                                             std::get<sensors::ublox::UbxNavPosllh>(obs->data).height * 1e-3);
+                Eigen::Vector3d lla_position(deg2rad(std::get<vendor::ublox::UbxNavPosllh>(obs->data).lat * 1e-7),
+                                             deg2rad(std::get<vendor::ublox::UbxNavPosllh>(obs->data).lon * 1e-7),
+                                             std::get<vendor::ublox::UbxNavPosllh>(obs->data).height * 1e-3);
 
                 _e_initPosition = trafo::lla2ecef_WGS84(lla_position);
 
                 _posVelAttInitialized.at(0) = true;
             }
         }
-        else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_VELNED)
+        else if (msgId == vendor::ublox::UbxNavMessages::UBX_NAV_VELNED)
         {
-            _lastVelocityAccuracy.at(0) = static_cast<float>(std::get<sensors::ublox::UbxNavVelned>(obs->data).sAcc);
-            _lastVelocityAccuracy.at(1) = static_cast<float>(std::get<sensors::ublox::UbxNavVelned>(obs->data).sAcc);
-            _lastVelocityAccuracy.at(2) = static_cast<float>(std::get<sensors::ublox::UbxNavVelned>(obs->data).sAcc);
+            _lastVelocityAccuracy.at(0) = static_cast<float>(std::get<vendor::ublox::UbxNavVelned>(obs->data).sAcc);
+            _lastVelocityAccuracy.at(1) = static_cast<float>(std::get<vendor::ublox::UbxNavVelned>(obs->data).sAcc);
+            _lastVelocityAccuracy.at(2) = static_cast<float>(std::get<vendor::ublox::UbxNavVelned>(obs->data).sAcc);
 
             if (_lastVelocityAccuracy.at(0) <= _velocityAccuracyThreshold
                 && _lastVelocityAccuracy.at(1) <= _velocityAccuracyThreshold
                 && _lastVelocityAccuracy.at(2) <= _velocityAccuracyThreshold)
             {
-                _n_initVelocity = Eigen::Vector3d(std::get<sensors::ublox::UbxNavVelned>(obs->data).velN * 1e-2,
-                                                  std::get<sensors::ublox::UbxNavVelned>(obs->data).velE * 1e-2,
-                                                  std::get<sensors::ublox::UbxNavVelned>(obs->data).velD * 1e-2);
+                _n_initVelocity = Eigen::Vector3d(std::get<vendor::ublox::UbxNavVelned>(obs->data).velN * 1e-2,
+                                                  std::get<vendor::ublox::UbxNavVelned>(obs->data).velE * 1e-2,
+                                                  std::get<vendor::ublox::UbxNavVelned>(obs->data).velD * 1e-2);
 
                 _posVelAttInitialized.at(1) = true;
             }

@@ -8,9 +8,9 @@
 #include <cstdint>
 
 #include <vn/types.h>
-#include "util/UartSensors/VectorNav/VectorNavTypes.hpp"
+#include "util/Vendor/VectorNav/VectorNavTypes.hpp"
 
-namespace NAV::sensors::vectornav
+namespace NAV::vendor::vectornav
 {
 /// @brief Binary Group 2 – Time Outputs
 struct TimeOutputs
@@ -81,4 +81,4 @@ struct TimeOutputs
     TimeStatus timeStatus{};
 };
 
-} // namespace NAV::sensors::vectornav
+} // namespace NAV::vendor::vectornav

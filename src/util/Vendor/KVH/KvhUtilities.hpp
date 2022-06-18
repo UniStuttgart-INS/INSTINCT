@@ -11,7 +11,7 @@
 
 #include "NodeData/IMU/KvhObs.hpp"
 
-namespace NAV::sensors::kvh
+namespace NAV::vendor::kvh
 {
 /// @brief Calculates the checksum of the provided rawData vector
 /// @param[in, out] rawData Vector of the raw data including header and checksum
@@ -23,4 +23,4 @@ uint32_t ui32CalcImuCRC(const std::vector<uint8_t>& rawData);
 /// @param[in, out] obs Kvh Observation to decrypt
 void decryptKvhObs(const std::shared_ptr<NAV::KvhObs>& obs);
 
-} // namespace NAV::sensors::kvh
+} // namespace NAV::vendor::kvh

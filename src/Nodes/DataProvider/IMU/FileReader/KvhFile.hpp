@@ -8,7 +8,7 @@
 #include "Nodes/DataProvider/IMU/Imu.hpp"
 #include "Nodes/DataProvider/Protocol/FileReader.hpp"
 
-#include "util/UartSensors/KVH/KvhUartSensor.hpp"
+#include "util/Vendor/KVH/KvhUartSensor.hpp"
 
 namespace NAV
 {
@@ -72,7 +72,7 @@ class KvhFile : public Imu, public FileReader
     [[nodiscard]] FileType determineFileType() override;
 
     /// Sensor Object
-    sensors::kvh::KvhUartSensor _sensor;
+    vendor::kvh::KvhUartSensor _sensor;
 
     /// Previous Sequence number to check for order errors
     uint8_t _prevSequenceNumber = UINT8_MAX;

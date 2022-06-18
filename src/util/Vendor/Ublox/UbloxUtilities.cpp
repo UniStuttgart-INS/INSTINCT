@@ -7,7 +7,7 @@
 
 #include "util/Time/TimeBase.hpp"
 
-void NAV::sensors::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& obs, uart::protocol::Packet& packet, bool peek)
+void NAV::vendor::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& obs, uart::protocol::Packet& packet, bool peek)
 {
     if (packet.type() == uart::protocol::Packet::Type::TYPE_BINARY)
     {
@@ -82,7 +82,7 @@ void NAV::sensors::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& 
                 }
                 for (int i = 0; i < (obs->payloadLength - 4) / 8; i++)
                 {
-                    NAV::sensors::ublox::UbxEsfRaw::UbxEsfRawData ubxEsfRawData;
+                    NAV::vendor::ublox::UbxEsfRaw::UbxEsfRawData ubxEsfRawData;
                     ubxEsfRawData.data = packet.extractUint32();
                     ubxEsfRawData.sTtag = packet.extractUint32();
                     std::get<UbxEsfRaw>(obs->data).data.push_back(ubxEsfRawData);
@@ -304,7 +304,7 @@ void NAV::sensors::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& 
                 }
                 for (size_t i = 0; i < std::get<UbxRxmRawx>(obs->data).numMeas; i++)
                 {
-                    NAV::sensors::ublox::UbxRxmRawx::UbxRxmRawxData ubxRxmRawxData;
+                    NAV::vendor::ublox::UbxRxmRawx::UbxRxmRawxData ubxRxmRawxData;
                     ubxRxmRawxData.prMes = packet.extractDouble();
                     ubxRxmRawxData.cpMes = packet.extractDouble();
                     ubxRxmRawxData.doMes = packet.extractFloat();
@@ -421,7 +421,7 @@ void NAV::sensors::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& 
     }
 }
 
-std::pair<uint8_t, uint8_t> NAV::sensors::ublox::checksumUBX(const std::vector<uint8_t>& data)
+std::pair<uint8_t, uint8_t> NAV::vendor::ublox::checksumUBX(const std::vector<uint8_t>& data)
 {
     uint8_t cka = 0;
     uint8_t ckb = 0;
@@ -434,7 +434,7 @@ std::pair<uint8_t, uint8_t> NAV::sensors::ublox::checksumUBX(const std::vector<u
     return std::make_pair(cka, ckb);
 }
 
-uint8_t NAV::sensors::ublox::checksumNMEA(const std::vector<uint8_t>& data)
+uint8_t NAV::vendor::ublox::checksumNMEA(const std::vector<uint8_t>& data)
 {
     uint8_t calcChecksum = 0;
     for (size_t i = 1; i < data.size() - 5; i++)

@@ -4,8 +4,8 @@
 
 #include "NodeData/General/UartPacket.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
-#include "util/UartSensors/Ublox/UbloxUtilities.hpp"
-namespace ub = NAV::sensors::ublox;
+#include "util/Vendor/Ublox/UbloxUtilities.hpp"
+namespace ub = NAV::vendor::ublox;
 
 #include "uart/protocol/packet.hpp"
 #include "uart/sensors/sensors.hpp"

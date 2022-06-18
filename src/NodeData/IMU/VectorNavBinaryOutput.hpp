@@ -11,11 +11,11 @@
 #include "NodeData/IMU/ImuPos.hpp"
 #include "util/Eigen.hpp"
 
-#include "util/UartSensors/VectorNav/BinaryOutputs/TimeOutputs.hpp"
-#include "util/UartSensors/VectorNav/BinaryOutputs/ImuOutputs.hpp"
-#include "util/UartSensors/VectorNav/BinaryOutputs/GnssOutputs.hpp"
-#include "util/UartSensors/VectorNav/BinaryOutputs/AttitudeOutputs.hpp"
-#include "util/UartSensors/VectorNav/BinaryOutputs/InsOutputs.hpp"
+#include "util/Vendor/VectorNav/BinaryOutputs/TimeOutputs.hpp"
+#include "util/Vendor/VectorNav/BinaryOutputs/ImuOutputs.hpp"
+#include "util/Vendor/VectorNav/BinaryOutputs/GnssOutputs.hpp"
+#include "util/Vendor/VectorNav/BinaryOutputs/AttitudeOutputs.hpp"
+#include "util/Vendor/VectorNav/BinaryOutputs/InsOutputs.hpp"
 
 namespace NAV
 {
@@ -43,22 +43,22 @@ class VectorNavBinaryOutput : public InsObs
     }
 
     /// @brief Binary Group 2 – Time Outputs
-    std::shared_ptr<sensors::vectornav::TimeOutputs> timeOutputs = nullptr;
+    std::shared_ptr<vendor::vectornav::TimeOutputs> timeOutputs = nullptr;
 
     /// @brief Binary Group 3 – IMU Outputs
-    std::shared_ptr<sensors::vectornav::ImuOutputs> imuOutputs = nullptr;
+    std::shared_ptr<vendor::vectornav::ImuOutputs> imuOutputs = nullptr;
 
     /// @brief Binary Group 4 – GNSS1 Outputs
-    std::shared_ptr<sensors::vectornav::GnssOutputs> gnss1Outputs = nullptr;
+    std::shared_ptr<vendor::vectornav::GnssOutputs> gnss1Outputs = nullptr;
 
     /// @brief Binary Group 5 – Attitude Outputs
-    std::shared_ptr<sensors::vectornav::AttitudeOutputs> attitudeOutputs = nullptr;
+    std::shared_ptr<vendor::vectornav::AttitudeOutputs> attitudeOutputs = nullptr;
 
     /// @brief Binary Group 6 – INS Outputs
-    std::shared_ptr<sensors::vectornav::InsOutputs> insOutputs = nullptr;
+    std::shared_ptr<vendor::vectornav::InsOutputs> insOutputs = nullptr;
 
     /// @brief Binary Group 7 – GNSS2 Outputs
-    std::shared_ptr<sensors::vectornav::GnssOutputs> gnss2Outputs = nullptr;
+    std::shared_ptr<vendor::vectornav::GnssOutputs> gnss2Outputs = nullptr;
 
     /// Position and rotation information for conversion from platform to body frame
     const ImuPos& imuPos;

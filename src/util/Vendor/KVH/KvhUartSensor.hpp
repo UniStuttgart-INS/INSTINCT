@@ -1,7 +1,7 @@
-/// @file UbloxUartSensor.hpp
-/// @brief Class to read out Ublox Sensors
+/// @file KvhUartSensor.hpp
+/// @brief Class to read out KVH Sensors
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2020-07-22
+/// @date 2020-07-28
 
 #pragma once
 
@@ -9,28 +9,28 @@
 
 #include "uart/sensors/sensors.hpp"
 
-namespace NAV::sensors::ublox
+namespace NAV::vendor::kvh
 {
-/// @brief Class to read out Ublox Sensors
-class UbloxUartSensor
+/// @brief Class to read out KVH Sensors
+class KvhUartSensor
 {
   public:
     /// @brief Constructor
     /// @param[in] name Name of the Parent Node
-    explicit UbloxUartSensor(std::string name);
+    explicit KvhUartSensor(std::string name);
 
     /// @brief Default constructor
-    UbloxUartSensor() = default;
+    KvhUartSensor() = default;
     /// @brief Destructor
-    ~UbloxUartSensor() = default;
+    ~KvhUartSensor() = default;
     /// @brief Copy constructor
-    UbloxUartSensor(const UbloxUartSensor&) = delete;
+    KvhUartSensor(const KvhUartSensor&) = delete;
     /// @brief Move constructor
-    UbloxUartSensor(UbloxUartSensor&&) = delete;
+    KvhUartSensor(KvhUartSensor&&) = delete;
     /// @brief Copy assignment operator
-    UbloxUartSensor& operator=(const UbloxUartSensor&) = delete;
+    KvhUartSensor& operator=(const KvhUartSensor&) = delete;
     /// @brief Move assignment operator
-    UbloxUartSensor& operator=(UbloxUartSensor&&) = delete;
+    KvhUartSensor& operator=(KvhUartSensor&&) = delete;
     /// @brief Arrow operator overload
     uart::sensors::UartSensor* operator->() { return &_sensor; };
 
@@ -39,9 +39,13 @@ class UbloxUartSensor
     /// @return nullptr if no packet found yet, otherwise a pointer to the packet
     std::unique_ptr<uart::protocol::Packet> findPacket(uint8_t dataByte);
 
-    static constexpr uint8_t BINARY_SYNC_CHAR_1 = 0xB5; ///< µ - First sync character which begins a new binary message
-    static constexpr uint8_t BINARY_SYNC_CHAR_2 = 0x62; ///< b - Second sync character which begins a new binary message
-    static constexpr uint8_t ASCII_START_CHAR = '$';    ///< Ascii character which begins a new ascii message
+    static constexpr uint32_t HEADER_FMT_A = 0xFE81FF55;     ///< Header Format A
+    static constexpr uint32_t HEADER_FMT_B = 0xFE81FF56;     ///< Header Format B
+    static constexpr uint32_t HEADER_FMT_C = 0xFE81FF57;     ///< Header Format C
+    static constexpr uint32_t HEADER_FMT_XBIT = 0xFE8100AA;  ///< Header Format X Bit
+    static constexpr uint32_t HEADER_FMT_XBIT2 = 0xFE8100AB; ///< Header Format X Bit 2
+
+    static constexpr uart::Endianness ENDIANNESS = uart::Endianness::ENDIAN_BIG; ///< Endianess of the sensor
 
   private:
     /// Name of the Parent Node
@@ -86,39 +90,58 @@ class UbloxUartSensor
     /// @param[in] packet The packet to check
     static bool isResponseFunction(const uart::protocol::Packet& packet);
 
-    static constexpr uart::Endianness ENDIANNESS = uart::Endianness::ENDIAN_LITTLE; ///< Endianess of the sensor
-    static constexpr size_t PACKET_HEADER_LENGTH = 2;                               ///< Length of the header of each packet
-    static constexpr uint8_t ASCII_END_CHAR_1 = '\r';                               ///< First Ascii End character
-    static constexpr uint8_t ASCII_END_CHAR_2 = '\n';                               ///< Second Ascii End character
-    static constexpr uint8_t ASCII_ESCAPE_CHAR = '\0';                              ///< Ascii Escape charater
+    static constexpr size_t PACKET_HEADER_LENGTH = 0; ///< Length of the packet header
+
+    static constexpr uint8_t ASCII_END_CHAR_1 = '\r';    ///< First Ascii End character
+    static constexpr uint8_t ASCII_END_CHAR_2 = '\n';    ///< Second Ascii End character
+    static constexpr uint8_t ASCII_ESCAPE_CHAR = '\0';   ///< Ascii Escape charater
+    static constexpr size_t MAX_SIZE_ASCII_PACKET = 256; ///< Maximum size of a ascii packet before resetting it
 
     bool _currentlyBuildingAsciiPacket{ false };  ///< Flag if currently a ascii packet is built
     bool _currentlyBuildingBinaryPacket{ false }; ///< Flag if currently a binary packet is built
 
-    bool _asciiEndChar1Found{ false };        ///< Flag if the first ascii end character was found
-    bool _binarySyncChar2Found{ false };      ///< Flag if the second binary end character was found
-    bool _binaryMsgClassFound{ false };       ///< Flag if the message class was found
-    bool _binaryMsgIdFound{ false };          ///< Flag if the message id was found
-    bool _binaryPayloadLength1Found{ false }; ///< Flag if the first byte of the payload length was found
-    bool _binaryPayloadLength2Found{ false }; ///< Flag if the second byte of the payload length was found
+    bool _asciiEndChar1Found{ false }; ///< Flag if the first ascii end character was found
 
-    /// Message class of the current packet
-    uint8_t _binaryMsgClass{ 0 };
-    /// Message id of the current packet
-    uint8_t _binaryMsgId{ 0 };
-    /// Payload length of the current packet
-    uint16_t _binaryPayloadLength{ 0 };
+    /// @brief Possible states in the header building process
+    enum TagState
+    {
+        SM_H1,
+        SM_H2,
+        SM_H3,
+        SM_X3,
+        SM_IDLE
+    };
+
+    /// Current state of the header building process
+    TagState _eState = SM_IDLE;
+
+    /// @brief Possible Header Types
+    enum HeaderType
+    {
+        FMT_A,
+        FMT_B,
+        FMT_C,
+        FMT_XBIT,
+        FMT_XBIT2,
+        FMT_UNKNOWN
+    };
+
+    /// @brief Current packet type determined by the header
+    HeaderType _packetType = HeaderType::FMT_UNKNOWN;
+
+    /// @brief Function which finds the header from the provided data
+    /// @param[in] ui8Data Byte to construct the header from
+    /// @return Header type if found or unkown
+    HeaderType bFindImuHeader(uint8_t ui8Data);
 
     /// Buffer to collect messages till they are complete
     std::vector<uint8_t> _buffer;
 
     /// Used for correlating raw data with where the packet was found for the end user.
     size_t _runningDataIndex{ 0 };
-    /// Amount of bytes remaining for a complete packet
-    size_t _numOfBytesRemainingForCompletePacket{ 0 };
 
     /// @brief Resets the current message tracking
     void resetTracking();
 };
 
-} // namespace NAV::sensors::ublox
+} // namespace NAV::vendor::kvh

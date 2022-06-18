@@ -1,7 +1,7 @@
 #include <catch2/catch.hpp>
 
-#include "util/UartSensors/Ublox/UbloxTypes.hpp"
-namespace ub = NAV::sensors::ublox;
+#include "util/Vendor/Ublox/UbloxTypes.hpp"
+namespace ub = NAV::vendor::ublox;
 
 namespace NAV::TEST
 {
