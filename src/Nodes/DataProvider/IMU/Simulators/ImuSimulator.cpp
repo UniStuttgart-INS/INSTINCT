@@ -1078,7 +1078,7 @@ bool NAV::ImuSimulator::initializeSplines()
             {
                 InsTime insTime = getTimeFromCsvLine(csvData->lines[i], csvData->description);
                 if (insTime.empty()) { return false; }
-                LOG_DATA("{}: Time {}", nameId(), time);
+                LOG_DATA("{}: Time {}", nameId(), insTime);
                 double time = static_cast<double>((insTime - _startTime).count());
 
                 Eigen::Vector3d e_pos = e_getPositionFromCsvLine(csvData->lines[i], csvData->description);
