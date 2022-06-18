@@ -12,9 +12,9 @@
 #include "internal/gui/widgets/FileDialog.hpp"
 #include "internal/gui/widgets/HelpMarker.hpp"
 
-bool NAV::FileReader::guiConfig(const char* vFilters, const std::vector<std::string>& extensions, size_t id, const std::string& nameId)
+NAV::FileReader::GuiResult NAV::FileReader::guiConfig(const char* vFilters, const std::vector<std::string>& extensions, size_t id, const std::string& nameId)
 {
-    bool changesOccurred = false;
+    GuiResult result = PATH_UNCHANGED;
 
     if (gui::widgets::FileDialogLoad(_path, "Select File", vFilters, extensions,
                                      flow::GetProgramRootPath() / ConfigManager::Get<std::string>("input-path"), id, nameId))
@@ -23,12 +23,20 @@ bool NAV::FileReader::guiConfig(const char* vFilters, const std::vector<std::str
         {
             _path = _path.substr(ConfigManager::Get<std::string>("input-path").size() + 1);
         }
-        changesOccurred = true;
+
+        if (!std::filesystem::exists(getFilepath()))
+        {
+            result = PATH_CHANGED_INVALID;
+        }
+        else
+        {
+            result = PATH_CHANGED;
+        }
     }
     ImGui::SameLine();
     gui::widgets::HelpMarker(fmt::format("If a relative path is given, files will be searched inside {}.", flow::GetInputPath()).c_str());
 
-    return changesOccurred;
+    return result;
 }
 
 std::filesystem::path NAV::FileReader::getFilepath()

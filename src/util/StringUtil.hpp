@@ -211,4 +211,13 @@ static inline std::vector<std::string> split(const std::string& str, const std::
     return res;
 }
 
+/// @brief Splits a string into parts at a delimiter
+/// @param[in] str String to split
+/// @param[in] delimiter Character to split at
+/// @return List with splitted parts
+static inline std::vector<std::string> split(const std::string& str, char delimiter)
+{
+    return split(str, std::string(1, delimiter));
+}
+
 } // namespace NAV::str

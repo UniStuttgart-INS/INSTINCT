@@ -101,7 +101,11 @@ bool NAV::FlowExecutor::initialize()
                     hasUninitializedNodes = true;
                 }
             }
-            node->resetNode();
+            if (!node->resetNode())
+            {
+                LOG_ERROR("Node {} fails to reset. Please check the node configuration.", node->nameId());
+                hasUninitializedNodes = true;
+            }
         }
     }
 

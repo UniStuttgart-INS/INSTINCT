@@ -175,6 +175,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataProcessor/Integrator/ImuIntegrator.hpp"
 #include "Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.hpp"
 // Data Provider
+#include "Nodes/DataProvider/CSV/CsvFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RINEX/RinexNavFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RINEX/RinexObsFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/EmlidFile.hpp"
@@ -227,6 +228,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<ImuIntegrator>();
     registerNodeType<LooselyCoupledKF>();
     // Data Provider
+    registerNodeType<CsvFile>();
     registerNodeType<RinexNavFile>();
     registerNodeType<RinexObsFile>();
     registerNodeType<EmlidFile>();

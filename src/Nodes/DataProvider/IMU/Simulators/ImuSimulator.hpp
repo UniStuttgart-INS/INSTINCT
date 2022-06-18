@@ -13,7 +13,11 @@
 #include "Navigation/Math/CubicSpline.hpp"
 #include "internal/gui/widgets/TimeEdit.hpp"
 
+#include "NodeData/General/CsvData.hpp"
+
 #include <array>
+#include <Eigen/Core>
+#include <Eigen/Dense>
 
 namespace NAV
 {
@@ -58,6 +62,7 @@ class ImuSimulator : public Imu
     bool resetNode() override;
 
   private:
+    constexpr static size_t INPUT_PORT_INDEX_CSV = 0;          ///< @brief Object (CsvData)
     constexpr static size_t OUTPUT_PORT_INDEX_IMU_OBS = 0;     ///< @brief Flow (ImuObs)
     constexpr static size_t OUTPUT_PORT_INDEX_POS_VEL_ATT = 1; ///< @brief Flow (PosVelAtt)
 
@@ -116,6 +121,7 @@ class ImuSimulator : public Imu
         Fixed,    ///< Static position without movement
         Linear,   ///< Linear movement with constant velocity
         Circular, ///< Circular path
+        Csv,      ///< Get the input from the CsvData pin
         COUNT,    ///< Amount of items in the enum
     };
     /// @brief Converts the enum to a string
@@ -186,6 +192,9 @@ class ImuSimulator : public Imu
     /// Duration to simulate in [s]
     double _simulationDuration = 5 * 60;
 
+    /// Duration from the CSV file in [s]
+    double _csvDuration = 0;
+
     /// Distance in [m] to the start position to stop the simulation
     double _linearTrajectoryDistanceForStop = 100;
 
@@ -211,6 +220,24 @@ class ImuSimulator : public Imu
 
     // ###########################################################################################################
 
+    /// @brief Get the Time from a CSV line
+    /// @param[in] line Line with data from the csv
+    /// @param[in] description Description of the data
+    /// @return InsTime or empty time if data not found
+    [[nodiscard]] InsTime getTimeFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const;
+
+    /// @brief Get the Position from a CSV line
+    /// @param[in] line Line with data from the csv
+    /// @param[in] description Description of the data
+    /// @return Position in ECEF coordinates in [m] or NaN if data not found
+    [[nodiscard]] Eigen::Vector3d e_getPositionFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const;
+
+    /// @brief Get the Attitude quaternion n_quat_b from a CSV line
+    /// @param[in] line Line with data from the csv
+    /// @param[in] description Description of the data
+    /// @return Attitude quaternion n_quat_b or NaN if data not found
+    static Eigen::Quaterniond n_getAttitudeQuaternionFromCsvLine_b(const CsvData::CsvLine& line, const std::vector<std::string>& description);
+
     /// Assign a variable that holds the Spline information
     struct
     {
@@ -223,7 +250,8 @@ class ImuSimulator : public Imu
     } _splines;
 
     /// @brief Initializes the spline values
-    void initializeSplines();
+    /// @return True if everything succeeded
+    bool initializeSplines();
 
     /// Counter to calculate the IMU update time
     uint64_t _imuUpdateCnt = 0.0;
