@@ -40,6 +40,14 @@ class FileReader
     /// @brief Move assignment operator
     FileReader& operator=(FileReader&&) = delete;
 
+    /// Results enum for the gui config
+    enum GuiResult
+    {
+        PATH_UNCHANGED = 0,   ///< No changes made
+        PATH_CHANGED,         ///< The path changed and exists
+        PATH_CHANGED_INVALID, ///< The path changed but does not exist or is invalid
+    };
+
   protected:
     /// @brief Default constructor
     FileReader() = default;
@@ -50,7 +58,7 @@ class FileReader
     /// @param[in] id Unique id for creating the dialog uid
     /// @param[in] nameId Name of the node triggering the window used for logging
     /// @return True if changes occurred
-    bool guiConfig(const char* vFilters, const std::vector<std::string>& extensions, size_t id, const std::string& nameId);
+    GuiResult guiConfig(const char* vFilters, const std::vector<std::string>& extensions, size_t id, const std::string& nameId);
 
     /// @brief Returns the path of the file
     std::filesystem::path getFilepath();
