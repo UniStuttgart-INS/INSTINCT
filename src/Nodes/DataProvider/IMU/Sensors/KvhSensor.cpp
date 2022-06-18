@@ -9,7 +9,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "util/Time/TimeBase.hpp"
-#include "util/UartSensors/KVH/KvhUtilities.hpp"
+#include "util/Vendor/KVH/KvhUtilities.hpp"
 
 #include "NodeData/IMU/KvhObs.hpp"
 
@@ -149,7 +149,7 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::pro
     {
         auto obs = std::make_shared<KvhObs>(kvhSensor->_imuPos, p);
 
-        sensors::kvh::decryptKvhObs(obs);
+        vendor::kvh::decryptKvhObs(obs);
 
         LOG_DATA("DATA({}): {}, {}, {}",
                  kvhSensor->name, obs->sequenceNumber, obs->temperature.value(), obs->status);

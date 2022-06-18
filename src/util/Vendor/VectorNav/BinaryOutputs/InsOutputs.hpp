@@ -9,9 +9,9 @@
 #include <util/Eigen.hpp>
 
 #include <vn/types.h>
-#include "util/UartSensors/VectorNav/VectorNavTypes.hpp"
+#include "util/Vendor/VectorNav/VectorNavTypes.hpp"
 
-namespace NAV::sensors::vectornav
+namespace NAV::vendor::vectornav
 {
 /// @brief Binary Group 6 – INS Outputs
 struct InsOutputs
@@ -85,4 +85,4 @@ struct InsOutputs
     float velU{};
 };
 
-} // namespace NAV::sensors::vectornav
+} // namespace NAV::vendor::vectornav

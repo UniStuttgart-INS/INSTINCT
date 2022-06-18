@@ -438,7 +438,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
             {
                 if (!obs->timeOutputs)
                 {
-                    obs->timeOutputs = std::make_shared<NAV::sensors::vectornav::TimeOutputs>();
+                    obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
                     obs->timeOutputs->timeField |= _binaryOutputRegister.timeField;
                 }
 
@@ -497,7 +497,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
             {
                 if (!obs->imuOutputs)
                 {
-                    obs->imuOutputs = std::make_shared<NAV::sensors::vectornav::ImuOutputs>();
+                    obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
                     obs->imuOutputs->imuField |= _binaryOutputRegister.imuField;
                 }
 
@@ -576,7 +576,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
             {
                 if (!obs->gnss1Outputs)
                 {
-                    obs->gnss1Outputs = std::make_shared<NAV::sensors::vectornav::GnssOutputs>();
+                    obs->gnss1Outputs = std::make_shared<NAV::vendor::vectornav::GnssOutputs>();
                     obs->gnss1Outputs->gnssField |= _binaryOutputRegister.gpsField;
                 }
 
@@ -742,7 +742,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
             {
                 if (!obs->attitudeOutputs)
                 {
-                    obs->attitudeOutputs = std::make_shared<NAV::sensors::vectornav::AttitudeOutputs>();
+                    obs->attitudeOutputs = std::make_shared<NAV::vendor::vectornav::AttitudeOutputs>();
                     obs->attitudeOutputs->attitudeField |= _binaryOutputRegister.attitudeField;
                 }
 
@@ -821,7 +821,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
             {
                 if (!obs->insOutputs)
                 {
-                    obs->insOutputs = std::make_shared<NAV::sensors::vectornav::InsOutputs>();
+                    obs->insOutputs = std::make_shared<NAV::vendor::vectornav::InsOutputs>();
                     obs->insOutputs->insField |= _binaryOutputRegister.insField;
                 }
 
@@ -908,7 +908,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
             {
                 if (!obs->gnss2Outputs)
                 {
-                    obs->gnss2Outputs = std::make_shared<NAV::sensors::vectornav::GnssOutputs>();
+                    obs->gnss2Outputs = std::make_shared<NAV::vendor::vectornav::GnssOutputs>();
                     obs->gnss2Outputs->gnssField |= _binaryOutputRegister.gps2Field;
                 }
 
@@ -1104,7 +1104,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
             {
                 if (!obs->timeOutputs)
                 {
-                    obs->timeOutputs = std::make_shared<NAV::sensors::vectornav::TimeOutputs>();
+                    obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
                     obs->timeOutputs->timeField |= _binaryOutputRegister.timeField;
                 }
 
@@ -1160,7 +1160,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
             {
                 if (!obs->imuOutputs)
                 {
-                    obs->imuOutputs = std::make_shared<NAV::sensors::vectornav::ImuOutputs>();
+                    obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
                     obs->imuOutputs->imuField |= _binaryOutputRegister.imuField;
                 }
 
@@ -1215,7 +1215,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
             {
                 if (!obs->gnss1Outputs)
                 {
-                    obs->gnss1Outputs = std::make_shared<NAV::sensors::vectornav::GnssOutputs>();
+                    obs->gnss1Outputs = std::make_shared<NAV::vendor::vectornav::GnssOutputs>();
                     obs->gnss1Outputs->gnssField |= _binaryOutputRegister.gpsField;
                 }
 
@@ -1331,7 +1331,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
             {
                 if (!obs->attitudeOutputs)
                 {
-                    obs->attitudeOutputs = std::make_shared<NAV::sensors::vectornav::AttitudeOutputs>();
+                    obs->attitudeOutputs = std::make_shared<NAV::vendor::vectornav::AttitudeOutputs>();
                     obs->attitudeOutputs->attitudeField |= _binaryOutputRegister.attitudeField;
                 }
 
@@ -1377,7 +1377,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
             {
                 if (!obs->insOutputs)
                 {
-                    obs->insOutputs = std::make_shared<NAV::sensors::vectornav::InsOutputs>();
+                    obs->insOutputs = std::make_shared<NAV::vendor::vectornav::InsOutputs>();
                     obs->insOutputs->insField |= _binaryOutputRegister.insField;
                 }
 
@@ -1431,7 +1431,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
             {
                 if (!obs->gnss2Outputs)
                 {
-                    obs->gnss2Outputs = std::make_shared<NAV::sensors::vectornav::GnssOutputs>();
+                    obs->gnss2Outputs = std::make_shared<NAV::vendor::vectornav::GnssOutputs>();
                     obs->gnss2Outputs->gnssField |= _binaryOutputRegister.gps2Field;
                 }
 

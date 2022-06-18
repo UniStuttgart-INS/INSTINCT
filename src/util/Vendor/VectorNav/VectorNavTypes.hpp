@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <vector>
 
-namespace NAV::sensors::vectornav
+namespace NAV::vendor::vectornav
 {
 /// @brief The VPE status bitfield
 ///
@@ -540,4 +540,4 @@ class InsStatus
     uint16_t _status;
 };
 
-} // namespace NAV::sensors::vectornav
+} // namespace NAV::vendor::vectornav

@@ -8,7 +8,7 @@
 #include "internal/Node/Node.hpp"
 #include "Nodes/DataProvider/Protocol/FileReader.hpp"
 
-#include "util/UartSensors/Emlid/EmlidUartSensor.hpp"
+#include "util/Vendor/Emlid/EmlidUartSensor.hpp"
 
 namespace NAV
 {
@@ -71,7 +71,7 @@ class EmlidFile : public Node, public FileReader
     [[nodiscard]] FileType determineFileType() override;
 
     /// Sensor Object
-    sensors::emlid::EmlidUartSensor _sensor;
+    vendor::emlid::EmlidUartSensor _sensor;
 };
 
 } // namespace NAV

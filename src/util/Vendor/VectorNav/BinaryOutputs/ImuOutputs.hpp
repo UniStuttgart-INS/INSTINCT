@@ -10,7 +10,7 @@
 
 #include <vn/types.h>
 
-namespace NAV::sensors::vectornav
+namespace NAV::vendor::vectornav
 {
 /// @brief Binary Group 3 – IMU Outputs
 struct ImuOutputs
@@ -111,4 +111,4 @@ struct ImuOutputs
     Eigen::Vector3f angularRate{};
 };
 
-} // namespace NAV::sensors::vectornav
+} // namespace NAV::vendor::vectornav

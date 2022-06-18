@@ -9,7 +9,7 @@
 #include <vector>
 #include <string>
 
-namespace NAV::Ulog
+namespace NAV::vendor::pixhawk
 {
 #pragma pack(push, 1) // Syntax for gcc for #pragma pack
 // --------------------------------------------------------------- Header ------------------------------------------------------------------
@@ -150,4 +150,4 @@ struct message_dropout_s
 
 #pragma pack(pop)
 
-} // namespace NAV::Ulog
+} // namespace NAV::vendor::pixhawk

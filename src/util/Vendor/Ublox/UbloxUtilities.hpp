@@ -12,7 +12,7 @@
 #include "uart/protocol/packet.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
 
-namespace NAV::sensors::ublox
+namespace NAV::vendor::ublox
 {
 /// @brief Decrypts the provided Ublox observation
 /// @param[in, out] obs Ublox Observation to decrypt
@@ -30,4 +30,4 @@ std::pair<uint8_t, uint8_t> checksumUBX(const std::vector<uint8_t>& data);
 /// @return The calculated checksum
 uint8_t checksumNMEA(const std::vector<uint8_t>& data);
 
-} // namespace NAV::sensors::ublox
+} // namespace NAV::vendor::ublox

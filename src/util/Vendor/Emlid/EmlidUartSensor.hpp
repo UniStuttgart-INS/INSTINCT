@@ -9,7 +9,7 @@
 
 #include "uart/sensors/sensors.hpp"
 
-namespace NAV::sensors::emlid
+namespace NAV::vendor::emlid
 {
 /// @brief Class to read out Emlid Sensors
 class EmlidUartSensor
@@ -118,4 +118,4 @@ class EmlidUartSensor
     void resetTracking();
 };
 
-} // namespace NAV::sensors::emlid
+} // namespace NAV::vendor::emlid

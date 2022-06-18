@@ -9,8 +9,8 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-#include "util/UartSensors/Ublox/UbloxUtilities.hpp"
-#include "util/UartSensors/Emlid/EmlidUtilities.hpp"
+#include "util/Vendor/Ublox/UbloxUtilities.hpp"
+#include "util/Vendor/Emlid/EmlidUtilities.hpp"
 
 NAV::UartPacketConverter::UartPacketConverter()
 {
@@ -123,14 +123,14 @@ void NAV::UartPacketConverter::receiveObs(const std::shared_ptr<const NodeData>&
     {
         auto obs = std::make_shared<UbloxObs>();
         auto packet = uartPacket->raw; // FIXME: We have to copy our data here because of the const qualifier
-        sensors::ublox::decryptUbloxObs(obs, packet, false);
+        vendor::ublox::decryptUbloxObs(obs, packet, false);
         convertedData = obs;
     }
     else if (_outputType == OutputType_EmlidObs)
     {
         auto obs = std::make_shared<EmlidObs>();
         auto packet = uartPacket->raw; // FIXME: We have to copy our data here because of the const qualifier
-        sensors::emlid::decryptEmlidObs(obs, packet, false);
+        vendor::emlid::decryptEmlidObs(obs, packet, false);
         convertedData = obs;
     }
 

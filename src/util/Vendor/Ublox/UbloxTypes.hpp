@@ -11,7 +11,7 @@
 #include <bitset>
 #include <vector>
 
-namespace NAV::sensors::ublox
+namespace NAV::vendor::ublox
 {
 /// @brief Error detection modes available
 enum ErrorDetectionMode
@@ -759,4 +759,4 @@ enum UbxUpdMessages
 /// @return The Msg Id integer
 [[nodiscard]] uint8_t getMsgIdFromString(const std::string& className, const std::string& idName);
 
-} // namespace NAV::sensors::ublox
+} // namespace NAV::vendor::ublox

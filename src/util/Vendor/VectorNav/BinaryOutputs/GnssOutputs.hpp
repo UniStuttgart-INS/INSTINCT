@@ -9,9 +9,9 @@
 #include <util/Eigen.hpp>
 
 #include <vn/types.h>
-#include "util/UartSensors/VectorNav/VectorNavTypes.hpp"
+#include "util/Vendor/VectorNav/VectorNavTypes.hpp"
 
-namespace NAV::sensors::vectornav
+namespace NAV::vendor::vectornav
 {
 /// @brief Binary Group 4 – GNSS1 Outputs / Binary Group 7 – GNSS2 Outputs
 struct GnssOutputs
@@ -106,4 +106,4 @@ struct GnssOutputs
     RawMeas raw{};
 };
 
-} // namespace NAV::sensors::vectornav
+} // namespace NAV::vendor::vectornav

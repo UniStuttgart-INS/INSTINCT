@@ -12,7 +12,7 @@
 #include "uart/protocol/packet.hpp"
 #include "NodeData/GNSS/EmlidObs.hpp"
 
-namespace NAV::sensors::emlid
+namespace NAV::vendor::emlid
 {
 /// @brief Decrypts the provided Emlid observation
 ///
@@ -27,4 +27,4 @@ void decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& obs, uart::protocol::
 /// @return The checksums CK_A and CK_B
 std::pair<uint8_t, uint8_t> checksumUBX(const std::vector<uint8_t>& data);
 
-} // namespace NAV::sensors::emlid
+} // namespace NAV::vendor::emlid

@@ -9,9 +9,9 @@
 #include <util/Eigen.hpp>
 
 #include <vn/types.h>
-#include "util/UartSensors/VectorNav/VectorNavTypes.hpp"
+#include "util/Vendor/VectorNav/VectorNavTypes.hpp"
 
-namespace NAV::sensors::vectornav
+namespace NAV::vendor::vectornav
 {
 /// @brief Binary Group 5 – Attitude Outputs
 struct AttitudeOutputs
@@ -92,4 +92,4 @@ struct AttitudeOutputs
     Eigen::Vector3f yprU{};
 };
 
-} // namespace NAV::sensors::vectornav
+} // namespace NAV::vendor::vectornav

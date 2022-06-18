@@ -3,13 +3,13 @@
 #include "KvhUtilities.hpp"
 #include "util/Logger.hpp"
 
-NAV::sensors::kvh::KvhUartSensor::KvhUartSensor(std::string name)
+NAV::vendor::kvh::KvhUartSensor::KvhUartSensor(std::string name)
     : _name(std::move(name)), _buffer(uart::sensors::UartSensor::DefaultReadBufferSize)
 {
     resetTracking();
 }
 
-void NAV::sensors::kvh::KvhUartSensor::resetTracking()
+void NAV::vendor::kvh::KvhUartSensor::resetTracking()
 {
     _currentlyBuildingBinaryPacket = false;
     _currentlyBuildingAsciiPacket = false;
@@ -20,7 +20,7 @@ void NAV::sensors::kvh::KvhUartSensor::resetTracking()
     _buffer.resize(0);
 }
 
-NAV::sensors::kvh::KvhUartSensor::HeaderType NAV::sensors::kvh::KvhUartSensor::bFindImuHeader(uint8_t ui8Data)
+NAV::vendor::kvh::KvhUartSensor::HeaderType NAV::vendor::kvh::KvhUartSensor::bFindImuHeader(uint8_t ui8Data)
 {
     if (_eState == SM_IDLE)
     {
@@ -102,7 +102,7 @@ NAV::sensors::kvh::KvhUartSensor::HeaderType NAV::sensors::kvh::KvhUartSensor::b
     return HeaderType::FMT_UNKNOWN;
 }
 
-std::unique_ptr<uart::protocol::Packet> NAV::sensors::kvh::KvhUartSensor::findPacket(uint8_t dataByte)
+std::unique_ptr<uart::protocol::Packet> NAV::vendor::kvh::KvhUartSensor::findPacket(uint8_t dataByte)
 {
     if (_buffer.size() == _buffer.capacity())
     {
@@ -221,7 +221,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::kvh::KvhUartSensor::findPa
     return nullptr;
 }
 
-void NAV::sensors::kvh::KvhUartSensor::packetFinderFunction(const std::vector<uint8_t>& data, const uart::xplat::TimeStamp& timestamp, uart::sensors::UartSensor::ValidPacketFoundHandler dispatchPacket, void* dispatchPacketUserData, void* userData)
+void NAV::vendor::kvh::KvhUartSensor::packetFinderFunction(const std::vector<uint8_t>& data, const uart::xplat::TimeStamp& timestamp, uart::sensors::UartSensor::ValidPacketFoundHandler dispatchPacket, void* dispatchPacketUserData, void* userData)
 {
     auto* sensor = static_cast<KvhUartSensor*>(userData);
 
@@ -237,7 +237,7 @@ void NAV::sensors::kvh::KvhUartSensor::packetFinderFunction(const std::vector<ui
     }
 }
 
-uart::protocol::Packet::Type NAV::sensors::kvh::KvhUartSensor::packetTypeFunction(const uart::protocol::Packet& packet)
+uart::protocol::Packet::Type NAV::vendor::kvh::KvhUartSensor::packetTypeFunction(const uart::protocol::Packet& packet)
 {
     if (packet.getRawDataLength() < 1)
     {
@@ -263,7 +263,7 @@ uart::protocol::Packet::Type NAV::sensors::kvh::KvhUartSensor::packetTypeFunctio
     return uart::protocol::Packet::Type::TYPE_UNKNOWN;
 }
 
-bool NAV::sensors::kvh::KvhUartSensor::checksumFunction(const uart::protocol::Packet& packet)
+bool NAV::vendor::kvh::KvhUartSensor::checksumFunction(const uart::protocol::Packet& packet)
 {
     // minumum binary packet is 9 bytes
     if (packet.getRawDataLength() < 1)
@@ -292,12 +292,12 @@ bool NAV::sensors::kvh::KvhUartSensor::checksumFunction(const uart::protocol::Pa
     return false;
 }
 
-bool NAV::sensors::kvh::KvhUartSensor::isErrorFunction([[maybe_unused]] const uart::protocol::Packet& packet)
+bool NAV::vendor::kvh::KvhUartSensor::isErrorFunction([[maybe_unused]] const uart::protocol::Packet& packet)
 {
     return false;
 }
 
-bool NAV::sensors::kvh::KvhUartSensor::isResponseFunction([[maybe_unused]] const uart::protocol::Packet& packet)
+bool NAV::vendor::kvh::KvhUartSensor::isResponseFunction([[maybe_unused]] const uart::protocol::Packet& packet)
 {
     return false;
 }

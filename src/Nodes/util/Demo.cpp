@@ -426,28 +426,27 @@ std::shared_ptr<const NAV::NodeData> NAV::Demo::pollData(bool peek)
     {
         return nullptr;
     }
-    if (!peek)
-    {
-        _iPollData++;
-    }
-
-    auto obs = std::make_shared<InsObs>();
-
     std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     auto* t = std::localtime(&now); // NOLINT(concurrency-mt-unsafe) // FIXME: error: function is not thread safe
 
-    obs->insTime = InsTime(static_cast<uint16_t>(t->tm_year + 1900),
-                           static_cast<uint16_t>(t->tm_mon),
-                           static_cast<uint16_t>(t->tm_mday),
-                           static_cast<uint16_t>(t->tm_hour),
-                           static_cast<uint16_t>(t->tm_min),
-                           static_cast<long double>(t->tm_sec));
+    if (peek) // Early return with time to let the FlowExecutor sort the observations
+    {
+        auto obs = std::make_shared<InsObs>();
+        obs->insTime = InsTime(static_cast<uint16_t>(t->tm_year + 1900),
+                               static_cast<uint16_t>(t->tm_mon),
+                               static_cast<uint16_t>(t->tm_mday),
+                               static_cast<uint16_t>(t->tm_hour),
+                               static_cast<uint16_t>(t->tm_min),
+                               static_cast<long double>(t->tm_sec));
+        return obs;
+    }
+
+    _iPollData++;
+
+    auto obs = std::make_shared<InsObs>(); // Construct the real observation (here in example also from type InsObs)
 
     // Calls all the callbacks
-    if (!peek)
-    {
-        invokeCallbacks(OUTPUT_PORT_INDEX_INS_OBS, obs);
-    }
+    invokeCallbacks(OUTPUT_PORT_INDEX_INS_OBS, obs);
 
     return obs;
 }

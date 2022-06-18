@@ -9,7 +9,7 @@
 
 #include <variant>
 
-#include "util/UartSensors/Emlid/EmlidTypes.hpp"
+#include "util/Vendor/Emlid/EmlidTypes.hpp"
 
 namespace NAV
 {
@@ -38,13 +38,13 @@ class EmlidObs : public InsObs
 
     /// Decoded data
     std::variant<
-        sensors::emlid::ErbVer,  // VER: Version of protocol
-        sensors::emlid::ErbPos,  // POS: Geodetic position solution
-        sensors::emlid::ErbStat, // STAT: Receiver navigation status
-        sensors::emlid::ErbDops, // DOPS: Dilution of precision
-        sensors::emlid::ErbVel,  // VEL: Velocity solution in NED
-        sensors::emlid::ErbSvi,  // SVI: Space vehicle information
-        sensors::emlid::ErbRtk   // RTK: RTK information
+        vendor::emlid::ErbVer,  // VER: Version of protocol
+        vendor::emlid::ErbPos,  // POS: Geodetic position solution
+        vendor::emlid::ErbStat, // STAT: Receiver navigation status
+        vendor::emlid::ErbDops, // DOPS: Dilution of precision
+        vendor::emlid::ErbVel,  // VEL: Velocity solution in NED
+        vendor::emlid::ErbSvi,  // SVI: Space vehicle information
+        vendor::emlid::ErbRtk   // RTK: RTK information
         >
         data{};
 };
