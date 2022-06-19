@@ -15,6 +15,7 @@ namespace ed = ax::NodeEditor;
 #include "internal/Node/Link.hpp"
 #include "internal/Node/Pin.hpp"
 #include "internal/ConfigManager.hpp"
+#include "internal/FlowExecutor.hpp"
 
 #include "internal/gui/windows/ImPlotStyleEditor.hpp"
 
@@ -91,6 +92,8 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
         LOG_ERROR("Load Flow error: Could not open file: {}", filepath);
         return false;
     }
+
+    if (FlowExecutor::isRunning()) { FlowExecutor::stop(); }
 
     json j;
     filestream >> j;
