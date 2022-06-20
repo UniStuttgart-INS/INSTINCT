@@ -623,26 +623,40 @@ void NAV::NodeManager::DeleteLinksOnPin(ax::NodeEditor::PinId pinId)
     }
 }
 
-NAV::Pin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, NAV::Pin::PinData data)
+NAV::Pin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, NAV::Pin::PinData data, int idx)
 {
     LOG_TRACE("called for pin ({}) of type ({}) for node [{}]", name, std::string(pinType), node->nameId());
-    node->inputPins.emplace_back(GetNextPinId(), name, pinType, Pin::Kind::Input, node);
+    if (idx < 0)
+    {
+        idx = static_cast<int>(node->inputPins.size());
+    }
+    idx = std::min(idx, static_cast<int>(node->inputPins.size()));
+    auto iter = std::next(node->inputPins.begin(), idx);
 
-    node->inputPins.back().data = data;
-    node->inputPins.back().dataIdentifier = dataIdentifier;
+    node->inputPins.emplace(iter, GetNextPinId(), name, pinType, Pin::Kind::Input, node);
+
+    node->inputPins.at(static_cast<size_t>(idx)).data = data;
+    node->inputPins.at(static_cast<size_t>(idx)).dataIdentifier = dataIdentifier;
 
     flow::ApplyChanges();
 
     return &node->inputPins.back();
 }
 
-NAV::Pin* NAV::NodeManager::CreateOutputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, NAV::Pin::PinData data)
+NAV::Pin* NAV::NodeManager::CreateOutputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, NAV::Pin::PinData data, int idx)
 {
     LOG_TRACE("called for pin ({}) of type ({}) for node [{}]", name, std::string(pinType), node->nameId());
-    node->outputPins.emplace_back(GetNextPinId(), name, pinType, Pin::Kind::Output, node);
+    if (idx < 0)
+    {
+        idx = static_cast<int>(node->outputPins.size());
+    }
+    idx = std::min(idx, static_cast<int>(node->outputPins.size()));
+    auto iter = std::next(node->outputPins.begin(), idx);
 
-    node->outputPins.back().data = data;
-    node->outputPins.back().dataIdentifier = dataIdentifier;
+    node->outputPins.emplace(iter, GetNextPinId(), name, pinType, Pin::Kind::Output, node);
+
+    node->outputPins.at(static_cast<size_t>(idx)).data = data;
+    node->outputPins.at(static_cast<size_t>(idx)).dataIdentifier = dataIdentifier;
 
     flow::ApplyChanges();
 
@@ -956,6 +970,8 @@ void NAV::NodeManager::Stop()
 std::vector<std::pair<ax::NodeEditor::PinId, void (*)(const std::shared_ptr<const NAV::NodeData>&)>> watcherPinList;
 std::vector<std::pair<ax::NodeEditor::LinkId, void (*)(const std::shared_ptr<const NAV::NodeData>&)>> watcherLinkList;
 
+void (*cleanupCallback)() = nullptr;
+
 void NAV::NodeManager::RegisterWatcherCallbackToOutputPin(ax::NodeEditor::PinId id, void (*callback)(const std::shared_ptr<const NodeData>&))
 {
     watcherPinList.emplace_back(id, callback);
@@ -996,10 +1012,23 @@ void NAV::NodeManager::ApplyWatcherCallbacks()
     }
 }
 
+void NAV::NodeManager::RegisterCleanupCallback(void (*callback)())
+{
+    cleanupCallback = callback;
+}
+void NAV::NodeManager::CallCleanupCallback()
+{
+    if (cleanupCallback)
+    {
+        cleanupCallback();
+    }
+}
+
 void NAV::NodeManager::ClearRegisteredCallbacks()
 {
     watcherPinList.clear();
     watcherLinkList.clear();
+    cleanupCallback = nullptr;
 }
 
 #endif

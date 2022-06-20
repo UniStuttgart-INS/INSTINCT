@@ -101,7 +101,11 @@ bool NAV::FlowExecutor::initialize()
                     hasUninitializedNodes = true;
                 }
             }
-            node->resetNode();
+            if (!node->resetNode())
+            {
+                LOG_ERROR("Node {} fails to reset. Please check the node configuration.", node->nameId());
+                hasUninitializedNodes = true;
+            }
         }
     }
 
@@ -184,7 +188,7 @@ void NAV::FlowExecutor::execute()
                             if (obs->insTime.has_value())
                             {
                                 events.insert(std::make_pair(obs->insTime.value(), &outputPin));
-                                LOG_INFO("Taking Data from {} on output pin {} into account.", node->nameId(), size_t(outputPin.id));
+                                LOG_DEBUG("Taking Data from {} on output pin {} into account.", node->nameId(), size_t(outputPin.id));
                                 dataEventCreated = true;
                                 break;
                             }

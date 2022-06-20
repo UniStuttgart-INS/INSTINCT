@@ -16,6 +16,7 @@ namespace nm = NAV::NodeManager;
 
 #include "util/Time/TimeBase.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
+#include "Navigation/Transformations/Units.hpp"
 
 #include <map>
 
@@ -2878,7 +2879,7 @@ void NAV::VectorNavSensor::guiConfig()
                 _referenceFrameRotationMatrix.e20, _referenceFrameRotationMatrix.e21, _referenceFrameRotationMatrix.e22;
             auto b_Quat_p = Eigen::Quaterniond(dcm);
 
-            Eigen::Vector3d eulerRot = trafo::rad2deg(trafo::quat2eulerZYX(b_Quat_p.conjugate()));
+            Eigen::Vector3d eulerRot = rad2deg(trafo::quat2eulerZYX(b_Quat_p.conjugate()));
             std::array<float, 3> imuRot = { static_cast<float>(eulerRot.x()), static_cast<float>(eulerRot.y()), static_cast<float>(eulerRot.z()) };
             if (ImGui::InputFloat3(fmt::format("##rotationAngles{}", size_t(id)).c_str(), imuRot.data()))
             {
@@ -2907,7 +2908,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     imuRot.at(2) = 180;
                 }
-                auto dcmf = trafo::b_Quat_p(trafo::deg2rad(imuRot.at(0)), trafo::deg2rad(imuRot.at(1)), trafo::deg2rad(imuRot.at(2))).toRotationMatrix().cast<float>();
+                auto dcmf = trafo::b_Quat_p(deg2rad(imuRot.at(0)), deg2rad(imuRot.at(1)), deg2rad(imuRot.at(2))).toRotationMatrix().cast<float>();
                 _referenceFrameRotationMatrix = vn::math::mat3f(dcmf(0, 0), dcmf(0, 1), dcmf(0, 2),
                                                                 dcmf(1, 0), dcmf(1, 1), dcmf(1, 2),
                                                                 dcmf(2, 0), dcmf(2, 1), dcmf(2, 2));
@@ -6209,7 +6210,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     {
                         if (!obs->timeOutputs)
                         {
-                            obs->timeOutputs = std::make_shared<NAV::sensors::vectornav::TimeOutputs>();
+                            obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
                             obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
                         }
                         obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP;
@@ -6219,7 +6220,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     {
                         if (!obs->timeOutputs)
                         {
-                            obs->timeOutputs = std::make_shared<NAV::sensors::vectornav::TimeOutputs>();
+                            obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
                             obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
                         }
                         obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS;
@@ -6229,7 +6230,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     {
                         if (!obs->timeOutputs)
                         {
-                            obs->timeOutputs = std::make_shared<NAV::sensors::vectornav::TimeOutputs>();
+                            obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
                             obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
                         }
                         obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN;
@@ -6239,7 +6240,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     {
                         if (!obs->attitudeOutputs)
                         {
-                            obs->attitudeOutputs = std::make_shared<NAV::sensors::vectornav::AttitudeOutputs>();
+                            obs->attitudeOutputs = std::make_shared<NAV::vendor::vectornav::AttitudeOutputs>();
                             obs->attitudeOutputs->attitudeField |= vnSensor->_binaryOutputRegister.at(b).attitudeField;
                         }
                         obs->attitudeOutputs->attitudeField |= vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL;
@@ -6250,7 +6251,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     {
                         if (!obs->attitudeOutputs)
                         {
-                            obs->attitudeOutputs = std::make_shared<NAV::sensors::vectornav::AttitudeOutputs>();
+                            obs->attitudeOutputs = std::make_shared<NAV::vendor::vectornav::AttitudeOutputs>();
                             obs->attitudeOutputs->attitudeField |= vnSensor->_binaryOutputRegister.at(b).attitudeField;
                         }
                         obs->attitudeOutputs->attitudeField |= vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION;
@@ -6261,7 +6262,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     {
                         if (!obs->imuOutputs)
                         {
-                            obs->imuOutputs = std::make_shared<NAV::sensors::vectornav::ImuOutputs>();
+                            obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
                             obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
                         }
                         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE;
@@ -6272,7 +6273,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     {
                         if (!obs->insOutputs)
                         {
-                            obs->insOutputs = std::make_shared<NAV::sensors::vectornav::InsOutputs>();
+                            obs->insOutputs = std::make_shared<NAV::vendor::vectornav::InsOutputs>();
                             obs->insOutputs->insField |= vnSensor->_binaryOutputRegister.at(b).insField;
                         }
                         obs->insOutputs->insField |= vn::protocol::uart::InsGroup::INSGROUP_POSLLA;
@@ -6283,7 +6284,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     {
                         if (!obs->insOutputs)
                         {
-                            obs->insOutputs = std::make_shared<NAV::sensors::vectornav::InsOutputs>();
+                            obs->insOutputs = std::make_shared<NAV::vendor::vectornav::InsOutputs>();
                             obs->insOutputs->insField |= vnSensor->_binaryOutputRegister.at(b).insField;
                         }
                         obs->insOutputs->insField |= vn::protocol::uart::InsGroup::INSGROUP_VELNED;
@@ -6294,7 +6295,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     {
                         if (!obs->imuOutputs)
                         {
-                            obs->imuOutputs = std::make_shared<NAV::sensors::vectornav::ImuOutputs>();
+                            obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
                             obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
                         }
                         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL;
@@ -6305,7 +6306,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     {
                         if (!obs->imuOutputs)
                         {
-                            obs->imuOutputs = std::make_shared<NAV::sensors::vectornav::ImuOutputs>();
+                            obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
                             obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
                         }
                         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL;
@@ -6319,7 +6320,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     {
                         if (!obs->imuOutputs)
                         {
-                            obs->imuOutputs = std::make_shared<NAV::sensors::vectornav::ImuOutputs>();
+                            obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
                             obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
                         }
                         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_MAG;
@@ -6334,7 +6335,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     {
                         if (!obs->imuOutputs)
                         {
-                            obs->imuOutputs = std::make_shared<NAV::sensors::vectornav::ImuOutputs>();
+                            obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
                             obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
                         }
                         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA;
@@ -6349,7 +6350,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     {
                         if (!obs->insOutputs)
                         {
-                            obs->insOutputs = std::make_shared<NAV::sensors::vectornav::InsOutputs>();
+                            obs->insOutputs = std::make_shared<NAV::vendor::vectornav::InsOutputs>();
                             obs->insOutputs->insField |= vnSensor->_binaryOutputRegister.at(b).insField;
                         }
                         obs->insOutputs->insField |= vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS;
@@ -6359,7 +6360,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     {
                         if (!obs->timeOutputs)
                         {
-                            obs->timeOutputs = std::make_shared<NAV::sensors::vectornav::TimeOutputs>();
+                            obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
                             obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
                         }
                         obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT;
@@ -6369,7 +6370,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     {
                         if (!obs->timeOutputs)
                         {
-                            obs->timeOutputs = std::make_shared<NAV::sensors::vectornav::TimeOutputs>();
+                            obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
                             obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
                         }
                         obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS;
@@ -6381,7 +6382,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                 {
                     if (!obs->timeOutputs)
                     {
-                        obs->timeOutputs = std::make_shared<NAV::sensors::vectornav::TimeOutputs>();
+                        obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
                         obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
                     }
 
@@ -6437,7 +6438,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                 {
                     if (!obs->imuOutputs)
                     {
-                        obs->imuOutputs = std::make_shared<NAV::sensors::vectornav::ImuOutputs>();
+                        obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
                         obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
                     }
 
@@ -6500,7 +6501,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                 {
                     if (!obs->gnss1Outputs)
                     {
-                        obs->gnss1Outputs = std::make_shared<NAV::sensors::vectornav::GnssOutputs>();
+                        obs->gnss1Outputs = std::make_shared<NAV::vendor::vectornav::GnssOutputs>();
                         obs->gnss1Outputs->gnssField |= vnSensor->_binaryOutputRegister.at(b).gpsField;
                     }
 
@@ -6631,7 +6632,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                 {
                     if (!obs->attitudeOutputs)
                     {
-                        obs->attitudeOutputs = std::make_shared<NAV::sensors::vectornav::AttitudeOutputs>();
+                        obs->attitudeOutputs = std::make_shared<NAV::vendor::vectornav::AttitudeOutputs>();
                         obs->attitudeOutputs->attitudeField |= vnSensor->_binaryOutputRegister.at(b).attitudeField;
                     }
 
@@ -6689,7 +6690,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                 {
                     if (!obs->insOutputs)
                     {
-                        obs->insOutputs = std::make_shared<NAV::sensors::vectornav::InsOutputs>();
+                        obs->insOutputs = std::make_shared<NAV::vendor::vectornav::InsOutputs>();
                         obs->insOutputs->insField |= vnSensor->_binaryOutputRegister.at(b).insField;
                     }
 
@@ -6751,7 +6752,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                 {
                     if (!obs->gnss2Outputs)
                     {
-                        obs->gnss2Outputs = std::make_shared<NAV::sensors::vectornav::GnssOutputs>();
+                        obs->gnss2Outputs = std::make_shared<NAV::vendor::vectornav::GnssOutputs>();
                         obs->gnss2Outputs->gnssField |= vnSensor->_binaryOutputRegister.at(b).gps2Field;
                     }
 
@@ -7046,7 +7047,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     {
                         // FIXME: This seems like a bug in clang-tidy. Check if it is working in future versions of clang-tidy
                         // NOLINTNEXTLINE(hicpp-use-nullptr, modernize-use-nullptr)
-                        if (obs->insTime.value() - vnSensor->_lastMessageTime.at(b) >= std::chrono::microseconds(static_cast<int>(1.5 / IMU_DEFAULT_FREQUENCY * vnSensor->_binaryOutputRegister.at(b).rateDivisor * 1e6)))
+                        if (obs->insTime.value() - vnSensor->_lastMessageTime.at(b) >= std::chrono::duration<double>(1.5 / IMU_DEFAULT_FREQUENCY * vnSensor->_binaryOutputRegister.at(b).rateDivisor))
                         {
                             LOG_WARN("{}: Potentially lost a message. Previous message was at {} and current message at {} which is a time difference of {} seconds but we expect a rate of {} seconds.", vnSensor->nameId(),
                                      vnSensor->_lastMessageTime.at(b), obs->insTime.value(), (obs->insTime.value() - vnSensor->_lastMessageTime.at(b)).count(),

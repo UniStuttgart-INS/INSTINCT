@@ -4,7 +4,7 @@ AlignAfterOpenBracket: Align                            # [Align/DontAlign/Alway
 AlignConsecutiveAssignments: false                      # [true/false] This will align the assignment operators of consecutive lines
 AlignConsecutiveDeclarations: false                     # [true/false] This will align the declaration names of consecutive lines.
 AlignConsecutiveMacros: false                           # [true/false] This will align C/C++ preprocessor macros of consecutive lines
-AlignEscapedNewlines: Left                              # [DontAlign/Left/Right] 
+AlignEscapedNewlines: Left                              # [DontAlign/Left/Right]
 AlignOperands: true                                     # [true/false] Horizontally align operands of binary and ternary expressions
 AlignTrailingComments: true                             # [true/false] Aligns trailing comments
 AllowAllArgumentsOnNextLine: false                      # [true/false] If a function call or braced initializer list doesn’t fit on a line, allow putting all arguments onto the next line
@@ -13,7 +13,7 @@ AllowAllParametersOfDeclarationOnNextLine: false        # [true/false] If the fu
 AllowShortBlocksOnASingleLine: true                     # [true/false] Dependent on the value, "while (true) { continue; }" can be put on a single line
 AllowShortCaseLabelsOnASingleLine: false                # [true/false] If true, short case labels will be contracted to a single line
 AllowShortFunctionsOnASingleLine: All                   # [None/InlineOnly/Empty/Inline/All] Dependent on the value, "int f() { return 0; }" can be put on a single line
-AllowShortIfStatementsOnASingleLine: Never              # [Never/WithoutElse/Always] If true, "if (a) return;" can be put on a single line
+AllowShortIfStatementsOnASingleLine: WithoutElse        # [Never/WithoutElse/Always] If true, "if (a) return;" can be put on a single line
 AllowShortLambdasOnASingleLine: All                     # [None/Empty/Inline/All] Dependent on the value, "auto lambda []() { return 0; }" can be put on a single line
 AllowShortLoopsOnASingleLine: true                      # [true/false] If true, while (true) continue; can be put on a single line
 AlwaysBreakAfterDefinitionReturnType: None              # [None/All/TopLevel] The function definition return type breaking style to use. This option is deprecated and is retained for backwards compatibility

@@ -57,14 +57,20 @@ class PosVelAttInitializer : public Node
 
   private:
     constexpr static size_t OUTPUT_PORT_INDEX_POS_VEL_ATT = 0; ///< @brief Flow (PosVelAtt)
-    constexpr static size_t INPUT_PORT_INDEX_IMU_OBS = 0;      ///< @brief Flow (ImuObs)
-    constexpr static size_t INPUT_PORT_INDEX_GNSS_OBS = 1;     ///< @brief Flow (GnssObs)
+
+    /// Index of the input pin for IMU observations
+    int _inputPinIdxIMU = -1;
+    /// Index of the input pin for GNSS observations
+    int _inputPinIdxGNSS = -1;
 
     /// @brief Initialize the node
     bool initialize() override;
 
     /// @brief Deinitialize the node
     void deinitialize() override;
+
+    /// Add or removes input pins depending on the settings
+    void updateInputPins();
 
     /// Checks whether all Flags are set and writes logs messages
     void finalizeInit();
@@ -90,6 +96,11 @@ class PosVelAttInitializer : public Node
     /// @brief Receive PosVelAtt Observations
     /// @param[in] obs PosVelAtt Data
     void receivePosVelAttObs(const std::shared_ptr<const PosVelAtt>& obs);
+
+    /// @brief Polls the PVA solution if all is set in the GUI
+    /// @param[in] peek Specifies if the data should be peeked
+    /// @return The PVA solution
+    [[nodiscard]] std::shared_ptr<const NodeData> pollPVASolution(bool peek = false);
 
     /// Time in [s] to initialize the state
     double _initDuration = 5.0;

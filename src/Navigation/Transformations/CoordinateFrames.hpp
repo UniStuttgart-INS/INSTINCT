@@ -32,6 +32,7 @@
 
 #pragma once
 
+#include <cmath>
 #include "util/Eigen.hpp"
 
 #include "Navigation/Constants.hpp"
@@ -48,44 +49,6 @@ namespace Concepts
 
 namespace trafo
 {
-/// @brief Convert Degree to Radians
-/// @param[in] deg Value to convert in [deg]
-/// @return The converted value in [rad]
-template<class T>
-[[nodiscard]] constexpr auto deg2rad(const T& deg)
-{
-    return deg * M_PI / 180.0;
-}
-
-/// @brief Convert Degree to Radians
-/// @param[in] deg Value to convert in [deg]
-/// @return The converted value in [rad]
-template<>
-[[nodiscard]] inline auto deg2rad(const Eigen::Vector3d& deg)
-{
-    Eigen::Vector3d ret = deg * M_PI / 180.0;
-    return ret;
-}
-
-/// @brief Convert Radians to Degree
-/// @param[in] rad Value to convert in [rad]
-/// @return The converted value in [deg]
-template<class T>
-[[nodiscard]] constexpr auto rad2deg(const T& rad)
-{
-    return rad * 180.0 / M_PI;
-}
-
-/// @brief Convert Radians to Degree
-/// @param[in] rad Value to convert in [rad]
-/// @return The converted value in [deg]
-template<>
-[[nodiscard]] inline auto rad2deg(const Eigen::Vector3d& rad)
-{
-    Eigen::Vector3d ret = rad * 180.0 / M_PI;
-    return ret;
-}
-
 /// @brief Converts the quaternion to Euler rotation angles with rotation sequence ZYX
 /// @param[in] q Quaternion to convert
 /// @return [angleX, angleY, angleZ]^T vector in [rad]. The returned angles are in the ranges (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
@@ -188,6 +151,18 @@ template<>
 /// @param[in] e_position Vector with coordinates in ECEF frame in [m]
 /// @return Vector containing [latitude 𝜙, longitude λ, altitude]^T in [rad, rad, m]
 [[nodiscard]] Eigen::Vector3d ecef2lla_GRS80(const Eigen::Vector3d& e_position);
+
+/// @brief Converts PZ-90.11 coordinates to WGS84 coordinates
+/// @param[in] pz90_pos Position in PZ-90.11 coordinates
+/// @return Position in WGS84 coordinates
+/// @note See \cite PZ-90.11 PZ-90.11 Reference Document Appendix 4, p.34f
+[[nodiscard]] Eigen::Vector3d pz90toWGS84_pos(const Eigen::Vector3d& pz90_pos);
+
+/// @brief Converts PZ-90.11 vectors to WGS84 frame
+/// @param[in] pz90 Vector in PZ-90.11 frame
+/// @param[in] pz90_pos Position in PZ-90.11 frame (needed for calculation)
+/// @return Vector in WGS84 frame
+[[nodiscard]] Eigen::Vector3d pz90toWGS84(const Eigen::Vector3d& pz90, const Eigen::Vector3d& pz90_pos);
 
 /// @brief Converts spherical Earth-centered-Earth-fixed coordinates into cartesian coordinates
 /// @param[in] position_s Position in spherical coordinates to convert

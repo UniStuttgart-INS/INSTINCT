@@ -10,9 +10,10 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-#include "UlogFileFormat.hpp"
+#include "util/Vendor/Pixhawk/UlogFileFormat.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
+#include "Navigation/Transformations/Units.hpp"
 
 #include <ctime>
 
@@ -152,7 +153,7 @@ void NAV::UlogFile::readHeader()
         union
         {
             std::array<char, 16> data{};
-            Ulog::ulog_Header_s header;
+            vendor::pixhawk::ulog_Header_s header;
         } ulogHeader{};
 
         _filestream.read(ulogHeader.data.data(), ulogHeader.data.size());
@@ -171,7 +172,7 @@ void NAV::UlogFile::readHeader()
         union
         {
             std::array<char, 3> data{};
-            Ulog::message_header_s msgHeader;
+            vendor::pixhawk::message_header_s msgHeader;
         } ulogMsgHeader{};
 
         while (!((ulogMsgHeader.msgHeader.msg_type == 'A') || (ulogMsgHeader.msgHeader.msg_type == 'L')))
@@ -192,7 +193,7 @@ void NAV::UlogFile::readHeader()
                 union
                 {
                     std::array<char, 40> data{};
-                    Ulog::ulog_message_flag_bits_s ulogMsgFlagBits_s;
+                    vendor::pixhawk::ulog_message_flag_bits_s ulogMsgFlagBits_s;
                 } ulogMsgFlagBits{};
 
                 _filestream.read(ulogMsgFlagBits.data.data(), ulogMsgFlagBits.data.size() * sizeof(char)); // 'sizeof' is optional here, but it is the solution in general, since data types can be larger than one byte
@@ -201,7 +202,7 @@ void NAV::UlogFile::readHeader()
             // Format definition for a single (composite) type that can be logged or used in another definition as a nested type
             else if (ulogMsgHeader.msgHeader.msg_type == 'F')
             {
-                Ulog::message_format_s messageFormat;
+                vendor::pixhawk::message_format_s messageFormat;
                 messageFormat.header = ulogMsgHeader.msgHeader;
 
                 LOG_DATA("{}: messageFormat.header.msg_size: {}", nameId(), messageFormat.header.msg_size);
@@ -310,7 +311,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
     union
     {
         std::array<char, 3> data{};
-        Ulog::message_header_s msgHeader;
+        vendor::pixhawk::message_header_s msgHeader;
     } ulogMsgHeader{};
 
     while (true)
@@ -322,7 +323,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
 
         if (ulogMsgHeader.msgHeader.msg_type == 'A')
         {
-            Ulog::message_add_logged_s messageAddLog;
+            vendor::pixhawk::message_add_logged_s messageAddLog;
             messageAddLog.header = ulogMsgHeader.msgHeader;
             _filestream.read(reinterpret_cast<char*>(&messageAddLog.multi_id), sizeof(messageAddLog.multi_id));
             LOG_DATA("{}: multi_id: {}", nameId(), messageAddLog.multi_id);
@@ -338,7 +339,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'R')
         {
-            Ulog::message_remove_logged_s messageRemoveLog;
+            vendor::pixhawk::message_remove_logged_s messageRemoveLog;
             messageRemoveLog.header = ulogMsgHeader.msgHeader;
             _filestream.read(reinterpret_cast<char*>(&messageRemoveLog.msg_id), sizeof(messageRemoveLog.msg_id));
             LOG_DATA("{}: Removed message with 'msg_id': {}", nameId(), messageRemoveLog.msg_id);
@@ -347,7 +348,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'D')
         {
-            Ulog::message_data_s messageData;
+            vendor::pixhawk::message_data_s messageData;
             messageData.header = ulogMsgHeader.msgHeader;
             _filestream.read(reinterpret_cast<char*>(&messageData.msg_id), sizeof(messageData.msg_id));
             LOG_DATA("{}: msg_id: {}", nameId(), messageData.msg_id);
@@ -1163,7 +1164,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 const auto& vehicleAttitude = std::get<VehicleAttitude>(attIter->second.data);
 
                 obs->insTime.emplace(0, 0, 0, 0, 0, vehicleGpsPosition.time_utc_usec * 1e-6L);
-                obs->setState_n(Eigen::Vector3d{ trafo::deg2rad(1e-7 * static_cast<double>(vehicleGpsPosition.lat)), trafo::deg2rad(1e-7 * static_cast<double>(vehicleGpsPosition.lon)), 1e-3 * (static_cast<double>(vehicleGpsPosition.alt_ellipsoid)) },
+                obs->setState_n(Eigen::Vector3d{ deg2rad(1e-7 * static_cast<double>(vehicleGpsPosition.lat)), deg2rad(1e-7 * static_cast<double>(vehicleGpsPosition.lon)), 1e-3 * (static_cast<double>(vehicleGpsPosition.alt_ellipsoid)) },
                                 Eigen::Vector3d{ vehicleGpsPosition.vel_n_m_s, vehicleGpsPosition.vel_e_m_s, vehicleGpsPosition.vel_d_m_s },
                                 Eigen::Quaterniond{ vehicleAttitude.q.at(0), vehicleAttitude.q.at(1), vehicleAttitude.q.at(2), vehicleAttitude.q.at(3) });
                 // TODO: Check order of w,x,y,z
@@ -1191,7 +1192,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'L')
         {
-            Ulog::message_logging_s messageLog;
+            vendor::pixhawk::message_logging_s messageLog;
             messageLog.header = ulogMsgHeader.msgHeader;
             _filestream.read(reinterpret_cast<char*>(&messageLog.log_level), sizeof(messageLog.log_level));
 
@@ -1241,7 +1242,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'C')
         {
-            Ulog::message_logging_tagged_s messageLogTagged;
+            vendor::pixhawk::message_logging_tagged_s messageLogTagged;
             messageLogTagged.header = ulogMsgHeader.msgHeader;
             _filestream.read(reinterpret_cast<char*>(&messageLogTagged.log_level), sizeof(messageLogTagged.log_level));
 
@@ -1293,7 +1294,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'S')
         {
-            Ulog::message_sync_s messageSync;
+            vendor::pixhawk::message_sync_s messageSync;
             messageSync.header = ulogMsgHeader.msgHeader;
             std::array<uint8_t, 8> sync_magic{};
             _filestream.read(reinterpret_cast<char*>(messageSync.snyc_magic.data()), sizeof(sync_magic));
@@ -1301,7 +1302,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'O')
         {
-            Ulog::message_dropout_s messageDropout;
+            vendor::pixhawk::message_dropout_s messageDropout;
             messageDropout.header = ulogMsgHeader.msgHeader;
             _filestream.read(reinterpret_cast<char*>(&messageDropout.duration), sizeof(messageDropout.duration));
             LOG_WARN("{}: Dropout of duration: {} ms", nameId(), messageDropout.duration);
@@ -1345,7 +1346,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
 void NAV::UlogFile::readInformationMessage(uint16_t msgSize, char msgType)
 {
     // Read msg size (2B) and type (1B)
-    Ulog::message_info_s messageInfo;
+    vendor::pixhawk::message_info_s messageInfo;
     messageInfo.header.msg_size = msgSize;
     messageInfo.header.msg_type = msgType;
     _filestream.read(reinterpret_cast<char*>(&messageInfo.key_len), sizeof(messageInfo.key_len));
@@ -1367,7 +1368,7 @@ void NAV::UlogFile::readInformationMessage(uint16_t msgSize, char msgType)
 void NAV::UlogFile::readInformationMessageMulti(uint16_t msgSize, char msgType)
 {
     // Read msg size (2B) and type (1B)
-    Ulog::ulog_message_info_multiple_header_s messageInfoMulti;
+    vendor::pixhawk::ulog_message_info_multiple_header_s messageInfoMulti;
     messageInfoMulti.header.msg_size = msgSize;
     messageInfoMulti.header.msg_type = msgType;
     _filestream.read(reinterpret_cast<char*>(&messageInfoMulti.is_continued), sizeof(messageInfoMulti.is_continued));
@@ -1388,7 +1389,7 @@ void NAV::UlogFile::readInformationMessageMulti(uint16_t msgSize, char msgType)
 void NAV::UlogFile::readParameterMessage(uint16_t msgSize, char msgType)
 {
     // Read msg size (2B) and type (1B)
-    Ulog::message_info_s messageParam;
+    vendor::pixhawk::message_info_s messageParam;
     messageParam.header.msg_size = msgSize;
     messageParam.header.msg_type = msgType;
     _filestream.read(reinterpret_cast<char*>(&messageParam.key_len), sizeof(messageParam.key_len));
@@ -1417,7 +1418,7 @@ void NAV::UlogFile::readParameterMessage(uint16_t msgSize, char msgType)
 
 void NAV::UlogFile::readParameterMessageDefault(uint16_t msgSize, char msgType)
 {
-    Ulog::ulog_message_parameter_default_header_s messageParamDefault;
+    vendor::pixhawk::ulog_message_parameter_default_header_s messageParamDefault;
     messageParamDefault.header.msg_size = msgSize;
     messageParamDefault.header.msg_type = msgType;
     _filestream.read(reinterpret_cast<char*>(&messageParamDefault.default_types), sizeof(messageParamDefault.default_types));

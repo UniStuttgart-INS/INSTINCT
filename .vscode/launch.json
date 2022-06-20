@@ -8,13 +8,17 @@
             "preLaunchTask": "MAIN: Build project",
             "program": "${workspaceFolder}/bin/Debug/instinct",
             "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
-                "-fconfig.ini",
-                "-l",
-                "flow/Default.flow",
+                "--config=config.ini",
+                "--load=\"flow/Default.flow\"",
+                // "--load=\"test/flow/Nodes/DataProcessor/GNSS/SPP-Skydel.flow\"",
                 // "--nogui",
                 // "--noinit",
                 "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
                 "--file-log-level=trace", // trace/debug/info/warning/error/critical/off
+                // ================ To debug flow tests ================
+                // "--flow-path=test/flow",
+                // "--input-path=test/data",
+                // "--output-path=test/logs",
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
@@ -60,9 +64,8 @@
             "preLaunchTask": "MAIN: Build project",
             "program": "${workspaceFolder}/bin/Debug/instinct",
             "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
-                "-fconfig.ini",
-                "-l",
-                "flow/Default.flow",
+                "--config=config.ini",
+                "--load=\"flow/Default.flow\"",
                 // "--nogui",
                 // "--noinit",
                 "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
@@ -79,6 +82,9 @@
             "request": "launch",
             "preLaunchTask": "TEST: Build project",
             "program": "${workspaceFolder}/bin/Debug/tests",
+            "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
+                "[Debug]",
+            ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

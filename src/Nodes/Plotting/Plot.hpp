@@ -17,8 +17,8 @@
 
 #include "NodeData/State/PosVelAtt.hpp"
 #include "NodeData/State/InertialNavSol.hpp"
-#include "NodeData/State/PVAError.hpp"
-#include "NodeData/State/ImuBiases.hpp"
+#include "NodeData/GNSS/SppSolution.hpp"
+#include "NodeData/State/LcKfInsGnssErrors.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
@@ -183,6 +183,7 @@ class Plot : public Node
                                                [displayName](const PlotData& plotData) { return plotData.displayName == displayName; });
                 auto iter = plotData.begin();
                 std::advance(iter, dataIndex);
+                iter->markedForDelete = false;
                 if (searchIter == plotData.end()) // Item does not exist yet. Developer added a new item to the list
                 {
                     plotData.insert(iter, PlotData{ displayName, static_cast<size_t>(size) });
@@ -191,7 +192,6 @@ class Plot : public Node
                 {
                     move(plotData, static_cast<size_t>(searchIter - plotData.begin()), dataIndex);
                 }
-                iter->markedForDelete = false;
             }
             else if (std::find_if(plotData.begin(),
                                   plotData.end(),
@@ -388,17 +388,27 @@ class Plot : public Node
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
+    void plotPos(const std::shared_ptr<const Pos>& obs, size_t pinIndex);
+
+    /// @brief Plot the data
+    /// @param[in] obs Observation to plot
+    /// @param[in] pinIndex Index of the input pin where the data was received
+    void plotPosVel(const std::shared_ptr<const PosVel>& obs, size_t pinIndex);
+
+    /// @brief Plot the data
+    /// @param[in] obs Observation to plot
+    /// @param[in] pinIndex Index of the input pin where the data was received
     void plotPosVelAtt(const std::shared_ptr<const PosVelAtt>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotPVAError(const std::shared_ptr<const PVAError>& obs, size_t pinIndex);
+    void plotLcKfInsGnssErrors(const std::shared_ptr<const LcKfInsGnssErrors>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotImuBiases(const std::shared_ptr<const ImuBiases>& obs, size_t pinIndex);
+    void plotSppSolution(const std::shared_ptr<const SppSolution>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
@@ -429,6 +439,12 @@ class Plot : public Node
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
     void plotVectorNavBinaryObs(const std::shared_ptr<const VectorNavBinaryOutput>& obs, size_t pinIndex);
+
+    // TODO: Remove
+    // /// @brief Plot the data
+    // /// @param[in] obs Observation to plot
+    // /// @param[in] pinIndex Index of the input pin where the data was received
+    // void plotSPPsol(const std::shared_ptr<const SPPsol_old>& obs, size_t pinIndex);
 
     /// Data storage for each pin
     std::vector<PinData> _pinData;

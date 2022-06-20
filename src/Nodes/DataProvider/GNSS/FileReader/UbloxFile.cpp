@@ -6,7 +6,7 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-#include "util/UartSensors/Ublox/UbloxUtilities.hpp"
+#include "util/Vendor/Ublox/UbloxUtilities.hpp"
 #include "util/Time/TimeBase.hpp"
 
 #include "NodeData/GNSS/UbloxObs.hpp"
@@ -116,15 +116,14 @@ std::shared_ptr<const NAV::NodeData> NAV::UbloxFile::pollData(bool peek)
         return nullptr;
     }
 
-    auto obs = std::make_shared<UbloxObs>(*packet);
-
     // Check if package is empty
-    if (obs->raw.getRawDataLength() == 0)
+    if (packet->getRawDataLength() == 0)
     {
         return nullptr;
     }
 
-    sensors::ublox::decryptUbloxObs(obs, peek);
+    auto obs = std::make_shared<UbloxObs>();
+    vendor::ublox::decryptUbloxObs(obs, *packet, peek);
 
     if (obs->insTime.has_value())
     {
@@ -167,9 +166,9 @@ NAV::FileReader::FileType NAV::UbloxFile::determineFileType()
     {
         filestream.read(buffer.data(), BUFFER_SIZE);
 
-        if ((static_cast<uint8_t>(buffer.at(0)) == sensors::ublox::UbloxUartSensor::BINARY_SYNC_CHAR_1
-             && static_cast<uint8_t>(buffer.at(1)) == sensors::ublox::UbloxUartSensor::BINARY_SYNC_CHAR_2)
-            || buffer.at(0) == sensors::ublox::UbloxUartSensor::ASCII_START_CHAR)
+        if ((static_cast<uint8_t>(buffer.at(0)) == vendor::ublox::UbloxUartSensor::BINARY_SYNC_CHAR_1
+             && static_cast<uint8_t>(buffer.at(1)) == vendor::ublox::UbloxUartSensor::BINARY_SYNC_CHAR_2)
+            || buffer.at(0) == vendor::ublox::UbloxUartSensor::ASCII_START_CHAR)
         {
             filestream.close();
             LOG_DEBUG("{} has the file type: Binary", nameId());

@@ -1,6 +1,6 @@
 #include "Math.hpp"
 
-namespace NAV
+namespace NAV::math
 {
 
 uint64_t factorial(uint64_t n)
@@ -37,4 +37,4 @@ uint64_t factorial(uint64_t n)
     return n * factorial(n - 1);
 }
 
-} // namespace NAV
+} // namespace NAV::math

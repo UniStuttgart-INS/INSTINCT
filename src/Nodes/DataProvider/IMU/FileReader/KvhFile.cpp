@@ -6,7 +6,7 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-#include "util/UartSensors/KVH/KvhUtilities.hpp"
+#include "util/Vendor/KVH/KvhUtilities.hpp"
 
 #include "NodeData/IMU/KvhObs.hpp"
 
@@ -180,7 +180,7 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData(bool peek)
             return nullptr;
         }
 
-        sensors::kvh::decryptKvhObs(obs);
+        vendor::kvh::decryptKvhObs(obs);
     }
     else if (_fileType == FileType::CSV)
     {
@@ -359,12 +359,12 @@ NAV::FileReader::FileType NAV::KvhFile::determineFileType()
 
         if (filestream.readsome(un.buffer.data(), sizeof(uint32_t)) == sizeof(uint32_t))
         {
-            un.ui32 = uart::stoh(un.ui32, sensors::kvh::KvhUartSensor::ENDIANNESS);
-            if (un.ui32 == sensors::kvh::KvhUartSensor::HEADER_FMT_A
-                || un.ui32 == sensors::kvh::KvhUartSensor::HEADER_FMT_B
-                || un.ui32 == sensors::kvh::KvhUartSensor::HEADER_FMT_C
-                || un.ui32 == sensors::kvh::KvhUartSensor::HEADER_FMT_XBIT
-                || un.ui32 == sensors::kvh::KvhUartSensor::HEADER_FMT_XBIT2)
+            un.ui32 = uart::stoh(un.ui32, vendor::kvh::KvhUartSensor::ENDIANNESS);
+            if (un.ui32 == vendor::kvh::KvhUartSensor::HEADER_FMT_A
+                || un.ui32 == vendor::kvh::KvhUartSensor::HEADER_FMT_B
+                || un.ui32 == vendor::kvh::KvhUartSensor::HEADER_FMT_C
+                || un.ui32 == vendor::kvh::KvhUartSensor::HEADER_FMT_XBIT
+                || un.ui32 == vendor::kvh::KvhUartSensor::HEADER_FMT_XBIT2)
             {
                 return FileType::BINARY;
             }

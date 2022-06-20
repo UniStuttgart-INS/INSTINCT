@@ -161,20 +161,24 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/Simple/Delay.hpp"
 #include "Nodes/Simple/Transformation.hpp"
 // Converter
+#include "Nodes/Converter/GNSS/UartPacketConverter.hpp"
 #include "Nodes/Converter/IMU/VectorNavBinaryConverter.hpp"
 // Data Logger
-#include "Nodes/DataLogger/GNSS/EmlidDataLogger.hpp"
-#include "Nodes/DataLogger/GNSS/UbloxDataLogger.hpp"
+#include "Nodes/DataLogger/GNSS/UartDataLogger.hpp"
 #include "Nodes/DataLogger/IMU/ImuDataLogger.hpp"
 #include "Nodes/DataLogger/IMU/KvhDataLogger.hpp"
 #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
 #include "Nodes/DataLogger/State/PosVelAttLogger.hpp"
 // Data Processor
 #include "Nodes/DataProcessor/ErrorModel/ErrorModel.hpp"
+#include "Nodes/DataProcessor/GNSS/SinglePointPositioning.hpp"
 #include "Nodes/DataProcessor/Integrator/ImuIntegrator.hpp"
 #include "Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.hpp"
 #include "Nodes/DataProcessor/SensorCombiner/ImuFusion.hpp"
 // Data Provider
+#include "Nodes/DataProvider/CSV/CsvFile.hpp"
+#include "Nodes/DataProvider/GNSS/FileReader/RINEX/RinexNavFile.hpp"
+#include "Nodes/DataProvider/GNSS/FileReader/RINEX/RinexObsFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/EmlidFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RtklibPosFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/UbloxFile.hpp"
@@ -211,20 +215,24 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<NAV::experimental::Matrix>();
     registerNodeType<Transformation>();
     // Converter
+    registerNodeType<UartPacketConverter>();
     registerNodeType<VectorNavBinaryConverter>();
     // Data Logger
-    registerNodeType<EmlidDataLogger>();
-    registerNodeType<UbloxDataLogger>();
+    registerNodeType<UartDataLogger>();
     registerNodeType<ImuDataLogger>();
     registerNodeType<KvhDataLogger>();
     registerNodeType<VectorNavDataLogger>();
     registerNodeType<PosVelAttLogger>();
     // Data Processor
     registerNodeType<ErrorModel>();
+    registerNodeType<SinglePointPositioning>();
     registerNodeType<ImuIntegrator>();
     registerNodeType<LooselyCoupledKF>();
     registerNodeType<ImuFusion>();
     // Data Provider
+    registerNodeType<CsvFile>();
+    registerNodeType<RinexNavFile>();
+    registerNodeType<RinexObsFile>();
     registerNodeType<EmlidFile>();
     registerNodeType<RtklibPosFile>();
     registerNodeType<UbloxFile>();
@@ -248,7 +256,6 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<PosVelAttInitializer>();
 }
 
-#include "NodeData/NodeData.hpp"
 #include "NodeData/InsObs.hpp"
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
 #include "NodeData/General/StringObs.hpp"

@@ -4,6 +4,7 @@
 
 #include "Navigation/Math/Math.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
+#include "Navigation/Transformations/Units.hpp"
 
 #include <imgui_internal.h>
 #include "internal/gui/widgets/imgui_ex.hpp"
@@ -675,7 +676,7 @@ void NAV::ImuFusion::updateNumberOfInputPins()
         _pinData.emplace_back();
         if (outputPins.size() < _nInputPins)
         {
-            nm::CreateOutputPin(this, fmt::format("ImuBiases {}1", outputPins.size() + 1).c_str(), Pin::Type::Flow, { NAV::ImuBiases::type() });
+            nm::CreateOutputPin(this, fmt::format("ImuBiases {}1", outputPins.size() + 1).c_str(), Pin::Type::Flow, { NAV::LcKfInsGnssErrors::type() });
         }
     }
     while (inputPins.size() > _nInputPins) // TODO: while loop still necessary here? guiConfig also deletes pins
@@ -722,7 +723,7 @@ void NAV::ImuFusion::initializeKalmanFilter()
     }
     else if (_initCovarianceAngularRateUnit == InitCovarianceAngularRateUnit::deg2_s2)
     {
-        variance_angularRate = trafo::deg2rad(_initCovarianceAngularRate);
+        variance_angularRate = deg2rad(_initCovarianceAngularRate);
     }
     else if (_initCovarianceAngularRateUnit == InitCovarianceAngularRateUnit::rad_s)
     {
@@ -730,7 +731,7 @@ void NAV::ImuFusion::initializeKalmanFilter()
     }
     else if (_initCovarianceAngularRateUnit == InitCovarianceAngularRateUnit::deg_s)
     {
-        variance_angularRate = trafo::deg2rad(_initCovarianceAngularRate).array().pow(2);
+        variance_angularRate = deg2rad(_initCovarianceAngularRate).array().pow(2);
     }
 
     // Initial Covariance of the angular acceleration in [(rad^2)/(s^4)]
@@ -741,7 +742,7 @@ void NAV::ImuFusion::initializeKalmanFilter()
     }
     else if (_initCovarianceAngularAccUnit == InitCovarianceAngularAccUnit::deg2_s4)
     {
-        variance_angularAcceleration = trafo::deg2rad(_initCovarianceAngularAcc);
+        variance_angularAcceleration = deg2rad(_initCovarianceAngularAcc);
     }
     else if (_initCovarianceAngularAccUnit == InitCovarianceAngularAccUnit::rad_s2)
     {
@@ -749,7 +750,7 @@ void NAV::ImuFusion::initializeKalmanFilter()
     }
     else if (_initCovarianceAngularAccUnit == InitCovarianceAngularAccUnit::deg_s2)
     {
-        variance_angularAcceleration = trafo::deg2rad(_initCovarianceAngularAcc).array().pow(2);
+        variance_angularAcceleration = deg2rad(_initCovarianceAngularAcc).array().pow(2);
     }
 
     // Initial Covariance of the acceleration in [(m^2)/(s^4)]
@@ -784,7 +785,7 @@ void NAV::ImuFusion::initializeKalmanFilter()
         }
         else if (_initCovarianceBiasAngRateUnit[i] == InitCovarianceBiasAngRateUnit::deg2_s2)
         {
-            _biasCovariances[2 * i] = trafo::deg2rad(_initCovarianceBiasAngRate.at(i));
+            _biasCovariances[2 * i] = deg2rad(_initCovarianceBiasAngRate.at(i));
         }
         else if (_initCovarianceBiasAngRateUnit[i] == InitCovarianceBiasAngRateUnit::rad_s)
         {
@@ -792,7 +793,7 @@ void NAV::ImuFusion::initializeKalmanFilter()
         }
         else if (_initCovarianceBiasAngRateUnit[i] == InitCovarianceBiasAngRateUnit::deg_s)
         {
-            _biasCovariances[2 * i] = trafo::deg2rad(_initCovarianceBiasAngRate.at(i)).array().pow(2);
+            _biasCovariances[2 * i] = deg2rad(_initCovarianceBiasAngRate.at(i)).array().pow(2);
         }
 
         // Initial Covariance of the bias of the jerk in [(m^2)/(s^6)]
@@ -816,10 +817,10 @@ void NAV::ImuFusion::initializeKalmanFilter()
         _processNoiseVariances[0] = _varAngularAccNoise;
         break;
     case VarAngularAccNoiseUnit::deg2_s4:
-        _processNoiseVariances[0] = trafo::deg2rad(_varAngularAccNoise);
+        _processNoiseVariances[0] = deg2rad(_varAngularAccNoise);
         break;
     case VarAngularAccNoiseUnit::deg_s2:
-        _processNoiseVariances[0] = trafo::deg2rad(_varAngularAccNoise).array().pow(2);
+        _processNoiseVariances[0] = deg2rad(_varAngularAccNoise).array().pow(2);
         break;
     case VarAngularAccNoiseUnit::rad_s2:
         _processNoiseVariances[0] = _varAngularAccNoise.array().pow(2);
@@ -846,10 +847,10 @@ void NAV::ImuFusion::initializeKalmanFilter()
             _processNoiseVariances[2 + 2 * i] = _varBiasAngRateNoise.at(i);
             break;
         case VarBiasAngRateNoiseUnit::deg2_s2:
-            _processNoiseVariances[2 + 2 * i] = trafo::deg2rad(_varBiasAngRateNoise.at(i));
+            _processNoiseVariances[2 + 2 * i] = deg2rad(_varBiasAngRateNoise.at(i));
             break;
         case VarBiasAngRateNoiseUnit::deg_s:
-            _processNoiseVariances[2 + 2 * i] = trafo::deg2rad(_varBiasAngRateNoise.at(i)).array().pow(2);
+            _processNoiseVariances[2 + 2 * i] = deg2rad(_varBiasAngRateNoise.at(i)).array().pow(2);
             break;
         case VarBiasAngRateNoiseUnit::rad_s:
             _processNoiseVariances[2 + 2 * i] = _varBiasAngRateNoise.at(i).array().pow(2);
@@ -880,13 +881,13 @@ void NAV::ImuFusion::initializeKalmanFilter()
             _measurementNoiseVariances[2 * i] = (_measurementUncertaintyAngularRate.at(i)).array().pow(2);
             break;
         case MeasurementUncertaintyAngularRateUnit::deg_s:
-            _measurementNoiseVariances[2 * i] = (trafo::deg2rad(_measurementUncertaintyAngularRate.at(i))).array().pow(2);
+            _measurementNoiseVariances[2 * i] = (deg2rad(_measurementUncertaintyAngularRate.at(i))).array().pow(2);
             break;
         case MeasurementUncertaintyAngularRateUnit::rad2_s2:
             _measurementNoiseVariances[2 * i] = _measurementUncertaintyAngularRate.at(i);
             break;
         case MeasurementUncertaintyAngularRateUnit::deg2_s2:
-            _measurementNoiseVariances[2 * i] = trafo::deg2rad((_measurementUncertaintyAngularRate.at(i)).cwiseSqrt()).array().pow(2);
+            _measurementNoiseVariances[2 * i] = deg2rad((_measurementUncertaintyAngularRate.at(i)).cwiseSqrt()).array().pow(2);
             break;
         }
 
@@ -1002,7 +1003,7 @@ void NAV::ImuFusion::combineSignals(std::shared_ptr<const ImuObs>& imuObs)
     LOG_TRACE("{}: called", nameId());
 
     auto imuObsFiltered = std::make_shared<ImuObs>(this->_imuPos);
-    auto imuRelativeBiases = std::make_shared<ImuBiases>();
+    auto imuRelativeBiases = std::make_shared<LcKfInsGnssErrors>();
 
     LOG_DATA("Estimated state before prediction: x =\n{}", _kalmanFilter.x);
 

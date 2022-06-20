@@ -6,7 +6,7 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-#include "util/UartSensors/Emlid/EmlidUtilities.hpp"
+#include "util/Vendor/Emlid/EmlidUtilities.hpp"
 #include "util/Time/TimeBase.hpp"
 
 #include "NodeData/GNSS/EmlidObs.hpp"
@@ -116,15 +116,14 @@ std::shared_ptr<const NAV::NodeData> NAV::EmlidFile::pollData(bool peek)
         return nullptr;
     }
 
-    auto obs = std::make_shared<EmlidObs>(*packet);
-
     // Check if package is empty
-    if (obs->raw.getRawDataLength() == 0)
+    if (packet->getRawDataLength() == 0)
     {
         return nullptr;
     }
 
-    sensors::emlid::decryptEmlidObs(obs, peek);
+    auto obs = std::make_shared<EmlidObs>();
+    vendor::emlid::decryptEmlidObs(obs, *packet, peek);
 
     if (!obs->insTime.has_value())
     {
@@ -163,9 +162,9 @@ NAV::FileReader::FileType NAV::EmlidFile::determineFileType()
     {
         filestream.read(buffer.data(), BUFFER_SIZE);
 
-        if ((static_cast<uint8_t>(buffer.at(0)) == sensors::emlid::EmlidUartSensor::BINARY_SYNC_CHAR_1
-             && static_cast<uint8_t>(buffer.at(1)) == sensors::emlid::EmlidUartSensor::BINARY_SYNC_CHAR_2)
-            || buffer.at(0) == sensors::emlid::EmlidUartSensor::ASCII_START_CHAR)
+        if ((static_cast<uint8_t>(buffer.at(0)) == vendor::emlid::EmlidUartSensor::BINARY_SYNC_CHAR_1
+             && static_cast<uint8_t>(buffer.at(1)) == vendor::emlid::EmlidUartSensor::BINARY_SYNC_CHAR_2)
+            || buffer.at(0) == vendor::emlid::EmlidUartSensor::ASCII_START_CHAR)
         {
             filestream.close();
             LOG_DEBUG("{} has the file type: Binary", nameId());

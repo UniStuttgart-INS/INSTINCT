@@ -32,11 +32,11 @@ namespace Instinct {
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em]
     {
-      \mathbf{F}_{\dotup{\psi},\psi}^e     & \mathbf{0}_3                             & \mathbf{0}_3                             & \mathbf{0}_3   & -\mathbf{C}_b^e \\
-      \mathbf{F}_{\delta \dotup{v},\psi}^e & \mathbf{F}_{\delta \dotup{v},\delta v}^e & \mathbf{F}_{\delta \dotup{v},\delta r}^e & \mathbf{C}_b^e &  \mathbf{0}_3   \\
-      \mathbf{0}_3                         & \mathbf{I}_3                             & \mathbf{0}_3                             & \mathbf{0}_3   &  \mathbf{0}_3   \\
-      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             & \mathbf{0}_3   &  \mathbf{0}_3   \\
-      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             & \mathbf{0}_3   &  \mathbf{0}_3   \\
+      \mathbf{F}_{\dotup{\psi},\psi}^e     & \mathbf{0}_3                             & \mathbf{0}_3                             & \mathbf{0}_3   & \mathbf{C}_b^e \\
+      \mathbf{F}_{\delta \dotup{v},\psi}^e & \mathbf{F}_{\delta \dotup{v},\delta v}^e & \mathbf{F}_{\delta \dotup{v},\delta r}^e & \mathbf{C}_b^e & \mathbf{0}_3   \\
+      \mathbf{0}_3                         & \mathbf{I}_3                             & \mathbf{0}_3                             & \mathbf{0}_3   & \mathbf{0}_3   \\
+      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             & \mathbf{0}_3   & \mathbf{0}_3   \\
+      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             & \mathbf{0}_3   & \mathbf{0}_3   \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{F}$} (m-1-5.north east);
 
@@ -102,21 +102,21 @@ namespace Instinct {
                 row sep=0.3em, column sep=0.4em,
                 nodes={rectangle,minimum height=2.3em,anchor=center},
                 column 6/.style = {nodes={minimum width=1.0cm}},] {
-           0       &  \omega_{ie} &       0     &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                 & \\
-      -\omega_{ie} &       0      &       0     &                & \mathbf{0}_3  &     &  &                                                                                       \mathbf{0}_3                                                                                      &  &  &  \mathbf{0}_3  &  &  & -\mathbf{C}_b^e & \\
-           0       &       0      &       0     &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                 & \\
-           0       & -f_{ib,z}^e  &  f_{ib,y}^e &       0        & 2 \omega_{ie} &  0  &  &                                                                                                                                                                                         &  &  &                &  &  &                 & \\
-      f_{ib,z}^e   &       0      & -f_{ib,x}^e & -2 \omega_{ie} &       0       &  0  &  & - \left( \dfrac{2 \boldsymbol{\gamma}_{ib}^e}{r_{eS}^e} \dfrac{{\mathbf{r}_{eb}^e}^T}{\left| \mathbf{r}_{eb}^e \right|} + \boldsymbol{\Omega}_{ie}^e \boldsymbol{\Omega}_{ie}^e \right) &  &  & \mathbf{C}_b^e &  &  &   \mathbf{0}_3  & \\
-     -f_{ib,y}^e   &  f_{ib,x}^e  &       0     &       0        &       0       &  0  &  &                                                                                                                                                                                         &  &  &                &  &  &                 & \\
-                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                 & \\
-                   & \mathbf{0}_3 &             &                & \mathbf{I}_3  &     &  &                                                                                       \mathbf{0}_3                                                                                      &  &  &  \mathbf{0}_3  &  &  &   \mathbf{0}_3  & \\
-                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                 & \\
-                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                 & \\
-                   & \mathbf{0}_3 &             &                & \mathbf{0}_3  &     &  &                                                                                       \mathbf{0}_3                                                                                      &  &  &  \mathbf{0}_3  &  &  &   \mathbf{0}_3  & \\
-                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                 & \\
-                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                 & \\
-                   & \mathbf{0}_3 &             &                & \mathbf{0}_3  &     &  &                                                                                       \mathbf{0}_3                                                                                      &  &  &  \mathbf{0}_3  &  &  &   \mathbf{0}_3  & \\
-                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                 & \\
+           0       &  \omega_{ie} &       0     &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+      -\omega_{ie} &       0      &       0     &                & \mathbf{0}_3  &     &  &                                                                                       \mathbf{0}_3                                                                                      &  &  &  \mathbf{0}_3  &  &  & \mathbf{C}_b^e & \\
+           0       &       0      &       0     &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+           0       &  f_{ib,z}^e  & -f_{ib,y}^e &       0        & 2 \omega_{ie} &  0  &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+     -f_{ib,z}^e   &       0      &  f_{ib,x}^e & -2 \omega_{ie} &       0       &  0  &  & - \left( \dfrac{2 \boldsymbol{\gamma}_{ib}^e}{r_{eS}^e} \dfrac{{\mathbf{r}_{eb}^e}^T}{\left| \mathbf{r}_{eb}^e \right|} + \boldsymbol{\Omega}_{ie}^e \boldsymbol{\Omega}_{ie}^e \right) &  &  & \mathbf{C}_b^e &  &  &  \mathbf{0}_3  & \\
+      f_{ib,y}^e   & -f_{ib,x}^e  &       0     &       0        &       0       &  0  &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+                   & \mathbf{0}_3 &             &                & \mathbf{I}_3  &     &  &                                                                                       \mathbf{0}_3                                                                                      &  &  &  \mathbf{0}_3  &  &  &  \mathbf{0}_3  & \\
+                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+                   & \mathbf{0}_3 &             &                & \mathbf{0}_3  &     &  &                                                                                       \mathbf{0}_3                                                                                      &  &  &  \mathbf{0}_3  &  &  &  \mathbf{0}_3  & \\
+                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+                   & \mathbf{0}_3 &             &                & \mathbf{0}_3  &     &  &                                                                                       \mathbf{0}_3                                                                                      &  &  &  \mathbf{0}_3  &  &  &  \mathbf{0}_3  & \\
+                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
     };
 
     \foreach \r in {1,3,4,6,7,9} {
@@ -209,7 +209,7 @@ Process noise is introduced into the \f$ \mathbf{F} \f$ and \f$ \mathbf{G} \f$ m
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em]
     {
-      \mathbf{F}_{\dotup{\psi},\psi}^e     & \mathbf{0}_3                             & \mathbf{0}_3                             &    \mathbf{0}_3      &      -\mathbf{C}_b^e       \\
+      \mathbf{F}_{\dotup{\psi},\psi}^e     & \mathbf{0}_3                             & \mathbf{0}_3                             &    \mathbf{0}_3      &       \mathbf{C}_b^e       \\
       \mathbf{F}_{\delta \dotup{v},\psi}^e & \mathbf{F}_{\delta \dotup{v},\delta v}^e & \mathbf{F}_{\delta \dotup{v},\delta r}^e &    \mathbf{C}_b^e    &       \mathbf{0}_3         \\
       \mathbf{0}_3                         & \mathbf{I}_3                             & \mathbf{0}_3                             &    \mathbf{0}_3      &       \mathbf{0}_3         \\
       \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             & \boldsymbol{\beta}_f &       \mathbf{0}_3         \\
@@ -564,7 +564,7 @@ This section describes how the errors are applied to the total state.
 
 \subsection LooselyCoupledKF_e-Corrections-State Position, Velocity, Attitude
 
-The position and velocity errors get applied by simply subtracting them from the previous total state
+The position and velocity errors get applied by simply subtracting them from the previous total state (see \cite Groves2013 Groves, ch. 14.1.1, eq. 14.8, 14.9, p. 564)
 
 \fl{equation,eq-LCKF_e-correction-position-velocity}
 \begin{aligned}
@@ -573,7 +573,7 @@ The position and velocity errors get applied by simply subtracting them from the
 \end{aligned}
 \f}
 
-The attitude correction can be derived from equation \eqref{eq-LCKF_e-Derivation-Attitude-estimate-errors}
+The attitude correction can be derived from equation \eqref{eq-LCKF_e-Derivation-Attitude-estimate-errors}  (see \cite Groves2013 Groves, ch. 14.1.1, eq. 14.7, p. 564)
 \fl{equation,eq-LCKF_e-correction-attitude}
   \mathbf{C}_b^{e,+} = (\mathbf{I}_3 - [\boldsymbol{\delta \psi} \times]) \mathbf{C}_b^{e,-}
 \f}

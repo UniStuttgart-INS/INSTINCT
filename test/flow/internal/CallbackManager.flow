@@ -570,7 +570,7 @@
         "node-518": {
             "data": {
                 "nInputPins": 2,
-                "nPlots": 8,
+                "nPlots": 0,
                 "overridePositionStartValues": false,
                 "pinData": [
                     {
@@ -608,6 +608,15 @@
                                 "displayName": "Z-ECEF [m]"
                             },
                             {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
                                 "displayName": "North velocity [m/s]"
                             },
                             {
@@ -676,6 +685,15 @@
                                 "displayName": "Z-ECEF [m]"
                             },
                             {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
                                 "displayName": "North velocity [m/s]"
                             },
                             {
@@ -710,200 +728,7 @@
                         "stride": 1
                     }
                 ],
-                "plots": [
-                    {
-                        "headerText": "Plot 1",
-                        "leftPaneWidth": 180.0,
-                        "overrideXAxisLabel": false,
-                        "plotFlags": 0,
-                        "plotItems": [],
-                        "rightPaneWidth": 400.0,
-                        "selectedPin": 0,
-                        "selectedXdata": [
-                            0,
-                            0
-                        ],
-                        "size": {
-                            "x": -1.0,
-                            "y": 300.0
-                        },
-                        "title": "Plot 1",
-                        "xAxisFlags": 2048,
-                        "xAxisLabel": "",
-                        "y1AxisLabel": "",
-                        "y2AxisLabel": "",
-                        "y3AxisLabel": "",
-                        "yAxisFlags": 2048
-                    },
-                    {
-                        "headerText": "Plot 2",
-                        "leftPaneWidth": 180.0,
-                        "overrideXAxisLabel": false,
-                        "plotFlags": 0,
-                        "plotItems": [],
-                        "rightPaneWidth": 400.0,
-                        "selectedPin": 0,
-                        "selectedXdata": [
-                            0,
-                            0
-                        ],
-                        "size": {
-                            "x": -1.0,
-                            "y": 300.0
-                        },
-                        "title": "Plot 2",
-                        "xAxisFlags": 2048,
-                        "xAxisLabel": "",
-                        "y1AxisLabel": "",
-                        "y2AxisLabel": "",
-                        "y3AxisLabel": "",
-                        "yAxisFlags": 2048
-                    },
-                    {
-                        "headerText": "Plot 3",
-                        "leftPaneWidth": 180.0,
-                        "overrideXAxisLabel": false,
-                        "plotFlags": 0,
-                        "plotItems": [],
-                        "rightPaneWidth": 400.0,
-                        "selectedPin": 0,
-                        "selectedXdata": [
-                            0,
-                            0
-                        ],
-                        "size": {
-                            "x": -1.0,
-                            "y": 300.0
-                        },
-                        "title": "Plot 3",
-                        "xAxisFlags": 2048,
-                        "xAxisLabel": "",
-                        "y1AxisLabel": "",
-                        "y2AxisLabel": "",
-                        "y3AxisLabel": "",
-                        "yAxisFlags": 2048
-                    },
-                    {
-                        "headerText": "Plot 4",
-                        "leftPaneWidth": 180.0,
-                        "overrideXAxisLabel": false,
-                        "plotFlags": 0,
-                        "plotItems": [],
-                        "rightPaneWidth": 400.0,
-                        "selectedPin": 0,
-                        "selectedXdata": [
-                            0,
-                            0
-                        ],
-                        "size": {
-                            "x": -1.0,
-                            "y": 300.0
-                        },
-                        "title": "Plot 4",
-                        "xAxisFlags": 2048,
-                        "xAxisLabel": "",
-                        "y1AxisLabel": "",
-                        "y2AxisLabel": "",
-                        "y3AxisLabel": "",
-                        "yAxisFlags": 2048
-                    },
-                    {
-                        "headerText": "Plot 5",
-                        "leftPaneWidth": 180.0,
-                        "overrideXAxisLabel": false,
-                        "plotFlags": 0,
-                        "plotItems": [],
-                        "rightPaneWidth": 400.0,
-                        "selectedPin": 0,
-                        "selectedXdata": [
-                            0,
-                            0
-                        ],
-                        "size": {
-                            "x": -1.0,
-                            "y": 300.0
-                        },
-                        "title": "Plot 5",
-                        "xAxisFlags": 2048,
-                        "xAxisLabel": "",
-                        "y1AxisLabel": "",
-                        "y2AxisLabel": "",
-                        "y3AxisLabel": "",
-                        "yAxisFlags": 2048
-                    },
-                    {
-                        "headerText": "Plot 6",
-                        "leftPaneWidth": 180.0,
-                        "overrideXAxisLabel": false,
-                        "plotFlags": 0,
-                        "plotItems": [],
-                        "rightPaneWidth": 400.0,
-                        "selectedPin": 0,
-                        "selectedXdata": [
-                            0,
-                            0
-                        ],
-                        "size": {
-                            "x": -1.0,
-                            "y": 300.0
-                        },
-                        "title": "Plot 6",
-                        "xAxisFlags": 2048,
-                        "xAxisLabel": "",
-                        "y1AxisLabel": "",
-                        "y2AxisLabel": "",
-                        "y3AxisLabel": "",
-                        "yAxisFlags": 2048
-                    },
-                    {
-                        "headerText": "Plot 7",
-                        "leftPaneWidth": 180.0,
-                        "overrideXAxisLabel": false,
-                        "plotFlags": 0,
-                        "plotItems": [],
-                        "rightPaneWidth": 400.0,
-                        "selectedPin": 0,
-                        "selectedXdata": [
-                            0,
-                            0
-                        ],
-                        "size": {
-                            "x": -1.0,
-                            "y": 300.0
-                        },
-                        "title": "Plot 7",
-                        "xAxisFlags": 2048,
-                        "xAxisLabel": "",
-                        "y1AxisLabel": "",
-                        "y2AxisLabel": "",
-                        "y3AxisLabel": "",
-                        "yAxisFlags": 2048
-                    },
-                    {
-                        "headerText": "Plot 8",
-                        "leftPaneWidth": 180.0,
-                        "overrideXAxisLabel": false,
-                        "plotFlags": 0,
-                        "plotItems": [],
-                        "rightPaneWidth": 400.0,
-                        "selectedPin": 0,
-                        "selectedXdata": [
-                            0,
-                            0
-                        ],
-                        "size": {
-                            "x": -1.0,
-                            "y": 300.0
-                        },
-                        "title": "Plot 8",
-                        "xAxisFlags": 2048,
-                        "xAxisLabel": "",
-                        "y1AxisLabel": "",
-                        "y2AxisLabel": "",
-                        "y3AxisLabel": "",
-                        "yAxisFlags": 2048
-                    }
-                ]
+                "plots": []
             },
             "enabled": true,
             "id": 518,

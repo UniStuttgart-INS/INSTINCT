@@ -8,7 +8,7 @@
 #include "internal/Node/Node.hpp"
 #include "Nodes/DataProvider/Protocol/FileReader.hpp"
 
-#include "util/UartSensors/Ublox/UbloxUartSensor.hpp"
+#include "util/Vendor/Ublox/UbloxUartSensor.hpp"
 
 namespace NAV
 {
@@ -71,7 +71,7 @@ class UbloxFile : public Node, public FileReader
     [[nodiscard]] FileType determineFileType() override;
 
     /// Sensor Object
-    sensors::ublox::UbloxUartSensor _sensor;
+    vendor::ublox::UbloxUartSensor _sensor;
 };
 
 } // namespace NAV

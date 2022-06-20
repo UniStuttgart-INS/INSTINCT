@@ -42,6 +42,9 @@ class KalmanFilter
         // 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
         R = Eigen::MatrixXd::Zero(m, m);
 
+        // 𝗦 Measurement prediction covariance matrix
+        S = Eigen::MatrixXd::Zero(m, m);
+
         // 𝐊 Kalman gain matrix
         K = Eigen::MatrixXd::Zero(n, m);
 
@@ -76,6 +79,9 @@ class KalmanFilter
         // 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
         R.setZero();
 
+        // 𝗦 Measurement prediction covariance matrix
+        S.setZero();
+
         // 𝐊 Kalman gain matrix
         K.setZero();
     }
@@ -98,8 +104,10 @@ class KalmanFilter
     /// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 3.2.2)
     void correct()
     {
+        S = H * P * H.transpose() + R;
+
         // Math: \mathbf{K}_k = \mathbf{P}_k^- \mathbf{H}_k^T (\mathbf{H}_k \mathbf{P}_k^- \mathbf{H}_k^T + R_k)^{-1} \qquad \text{P. Groves}\,(3.21)
-        K = P * H.transpose() * (H * P * H.transpose() + R).inverse();
+        K = P * H.transpose() * S.inverse();
 
         // Math: \begin{align*} \mathbf{\hat{x}}_k^+ &= \mathbf{\hat{x}}_k^- + \mathbf{K}_k (\mathbf{z}_k - \mathbf{H}_k \mathbf{\hat{x}}_k^-) \\ &= \mathbf{\hat{x}}_k^- + \mathbf{K}_k \mathbf{\delta z}_k^{-} \end{align*} \qquad \text{P. Groves}\,(3.24)
         x = x + K * (z - H * x);
@@ -159,6 +167,9 @@ class KalmanFilter
     /// 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
     Eigen::MatrixXd R;
 
+    /// 𝗦 Measurement prediction covariance matrix
+    Eigen::MatrixXd S;
+
     /// 𝐊 Kalman gain matrix
     Eigen::MatrixXd K;
 
@@ -172,16 +183,25 @@ class KalmanFilter
 /// @param[in] tau_s time interval in [s]
 /// @param[in] order The order of the Taylor polynom to calculate
 /// @note See \cite Groves2013 Groves, ch. 3.2.3, eq. 3.34, p. 98
-template<typename _Scalar, int _Dim>
-Eigen::Matrix<_Scalar, _Dim, _Dim> transitionMatrix_Phi_Taylor(const Eigen::Matrix<_Scalar, _Dim, _Dim>& F, double tau_s, size_t order)
+template<typename Derived>
+typename Derived::PlainObject transitionMatrix_Phi_Taylor(const Eigen::MatrixBase<Derived>& F, double tau_s, size_t order)
 {
     // Transition matrix 𝚽
-    Eigen::Matrix<_Scalar, _Dim, _Dim> Phi = Eigen::Matrix<_Scalar, _Dim, _Dim>::Identity();
+    typename Derived::PlainObject Phi;
+
+    if constexpr (Derived::RowsAtCompileTime == Eigen::Dynamic)
+    {
+        Phi = Eigen::MatrixBase<Derived>::Identity(F.rows(), F.cols());
+    }
+    else
+    {
+        Phi = Eigen::MatrixBase<Derived>::Identity();
+    }
     // std::cout << "Phi = I";
 
     for (size_t i = 1; i <= order; i++)
     {
-        Eigen::Matrix<_Scalar, _Dim, _Dim> Fpower = F;
+        typename Derived::PlainObject Fpower = F;
         // std::cout << " + (F";
 
         for (size_t j = 1; j < i; j++) // F^j
@@ -190,8 +210,8 @@ Eigen::Matrix<_Scalar, _Dim, _Dim> transitionMatrix_Phi_Taylor(const Eigen::Matr
             Fpower *= F;
         }
         // std::cout << "*tau_s^" << i << ")";
-        // std::cout << "/" << factorial(i);
-        Phi += (Fpower * std::pow(tau_s, i)) / factorial(i);
+        // std::cout << "/" << math::factorial(i);
+        Phi += (Fpower * std::pow(tau_s, i)) / math::factorial(i);
     }
     // std::cout << "\n";
 
@@ -203,8 +223,8 @@ Eigen::Matrix<_Scalar, _Dim, _Dim> transitionMatrix_Phi_Taylor(const Eigen::Matr
 /// @param[in] tau_s time interval in [s]
 /// @note See \cite Groves2013 Groves, ch. 3.2.3, eq. 3.33, p. 97
 /// @attention The cost of the computation is approximately 20n^3 for matrices of size n. The number 20 depends weakly on the norm of the matrix.
-template<typename _Scalar, int _Dim>
-Eigen::Matrix<_Scalar, _Dim, _Dim> transitionMatrix_Phi_exp(const Eigen::Matrix<_Scalar, _Dim, _Dim>& F, double tau_s)
+template<typename Derived>
+typename Derived::PlainObject transitionMatrix_Phi_exp(const Eigen::MatrixBase<Derived>& F, typename Derived::Scalar tau_s)
 {
     // Transition matrix 𝚽
     return (F * tau_s).exp();

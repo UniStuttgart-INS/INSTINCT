@@ -36,10 +36,15 @@ Eigen::Vector3d n_calcCoriolisAcceleration(const Eigen::Vector3d& n_omega_ie, co
     return (2 * n_omega_ie + n_omega_en).cross(n_velocity);
 }
 
+Eigen::Vector3d e_calcCoriolisAcceleration(const Eigen::Vector3d& e_omega_ie, const Eigen::Vector3d& e_velocity)
+{
+    return (2 * e_omega_ie).cross(e_velocity);
+}
+
 double calcRollFromStaticAcceleration(const Eigen::Vector3d& b_accel)
 {
     // See E.-H. Shin (2005) - Estimation Techniques for Low-Cost Inertial Navigation (Chapter 2.6 - eq. 2.72a)
-    return sgn(b_accel.z()) * std::asin(b_accel.y() / b_accel.norm());
+    return math::sgn(b_accel.z()) * std::asin(b_accel.y() / b_accel.norm());
 
     // Another possible calculation would be:
     // return std::atan2(b_accel.y(), b_accel.z());
@@ -48,7 +53,7 @@ double calcRollFromStaticAcceleration(const Eigen::Vector3d& b_accel)
 double calcPitchFromStaticAcceleration(const Eigen::Vector3d& b_accel)
 {
     // See E.-H. Shin (2005) - Estimation Techniques for Low-Cost Inertial Navigation (Chapter 2.6 - eq. 2.72b)
-    return -sgn(b_accel.z()) * std::asin(b_accel.x() / b_accel.norm());
+    return -math::sgn(b_accel.z()) * std::asin(b_accel.x() / b_accel.norm());
 
     // Another possible calculation would be:
     // return std::atan2((-b_accel.x()), sqrt(std::pow(b_accel.y(), 2) + std::pow(b_accel.z(), 2)));

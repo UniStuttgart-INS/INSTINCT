@@ -31,6 +31,8 @@ class UartSensor
         BAUDRATE_921600 = 921600  ///< Baudrate with 921600 symbols per second [Baud]
     };
 
+    /// @brief Destructor
+    ~UartSensor() = default;
     /// @brief Copy constructor
     UartSensor(const UartSensor&) = delete;
     /// @brief Move constructor
@@ -43,8 +45,6 @@ class UartSensor
   protected:
     /// @brief Default constructor
     UartSensor() = default;
-    /// @brief Destructor
-    ~UartSensor() = default;
 
     /// @brief Saves the node into a json object
     [[nodiscard]] json save() const;

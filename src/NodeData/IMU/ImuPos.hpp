@@ -84,7 +84,13 @@ class ImuPos
     friend void from_json(const json& j, ImuPos& pos);
 };
 
+/// @brief Write info to a json object
+/// @param[out] j Json output
+/// @param[in] pos Object to read info from
 void to_json(json& j, const ImuPos& pos);
+/// @brief Read info from a json object
+/// @param[in] j Json variable to read info from
+/// @param[out] pos Output object
 void from_json(const json& j, ImuPos& pos);
 
 } // namespace NAV

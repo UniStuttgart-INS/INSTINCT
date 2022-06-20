@@ -2,6 +2,7 @@
 
 #include "util/Logger.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
+#include "Navigation/Transformations/Units.hpp"
 
 namespace NAV::trafo
 {
@@ -169,12 +170,12 @@ Eigen::Vector3d lla2ecef(const Eigen::Vector3d& lla_position, double a, double e
 
 Eigen::Vector3d lla2ecef_WGS84(const Eigen::Vector3d& lla_position)
 {
-    return lla2ecef(lla_position, InsConst::WGS84_a, InsConst::WGS84_e_squared);
+    return lla2ecef(lla_position, InsConst::WGS84::a, InsConst::WGS84::e_squared);
 }
 
 Eigen::Vector3d lla2ecef_GRS80(const Eigen::Vector3d& lla_position)
 {
-    return lla2ecef(lla_position, InsConst::GRS80_a, InsConst::GRS80_e_squared);
+    return lla2ecef(lla_position, InsConst::GRS80::a, InsConst::GRS80::e_squared);
 }
 
 Eigen::Vector3d ecef2lla(const Eigen::Vector3d& e_position, double a, double b, double e_squared)
@@ -220,12 +221,33 @@ Eigen::Vector3d ecef2lla(const Eigen::Vector3d& e_position, double a, double b, 
 
 Eigen::Vector3d ecef2lla_WGS84(const Eigen::Vector3d& e_position)
 {
-    return ecef2lla(e_position, InsConst::WGS84_a, InsConst::WGS84_b, InsConst::WGS84_e_squared);
+    return ecef2lla(e_position, InsConst::WGS84::a, InsConst::WGS84::b, InsConst::WGS84::e_squared);
 }
 
 Eigen::Vector3d ecef2lla_GRS80(const Eigen::Vector3d& e_position)
 {
-    return ecef2lla(e_position, InsConst::GRS80_a, InsConst::GRS80_b, InsConst::GRS80_e_squared);
+    return ecef2lla(e_position, InsConst::GRS80::a, InsConst::GRS80::b, InsConst::GRS80::e_squared);
+}
+
+Eigen::Vector3d pz90toWGS84_pos(const Eigen::Vector3d& pz90_pos)
+{
+    double m = -0.008e-6;
+    auto omega_x = static_cast<double>(-2.3_mas);
+    auto omega_y = static_cast<double>(3.54_mas);
+    auto omega_z = static_cast<double>(-4.21_mas);
+    Eigen::Vector3d dX{ -0.013, 0.106, 0.022 };
+
+    Eigen::Matrix3d T;
+    T << 1, -omega_z, omega_y,
+        omega_z, 1, -omega_x,
+        -omega_y, omega_x, 1;
+
+    return 1.0 / (1.0 + m) * T * (pz90_pos - dX);
+}
+
+Eigen::Vector3d pz90toWGS84(const Eigen::Vector3d& pz90_vel, const Eigen::Vector3d& pz90_pos)
+{
+    return pz90toWGS84_pos(pz90_pos + pz90_vel) - pz90toWGS84_pos(pz90_pos);
 }
 
 Eigen::Vector3d sph2ecef(const Eigen::Vector3d& position_s, const double& elevation, const double& azimuth)

@@ -7,7 +7,7 @@
 
 #include "internal/Node/Node.hpp"
 #include "Nodes/DataProvider/Protocol/UartSensor.hpp"
-#include "util/UartSensors/Ublox/UbloxUartSensor.hpp"
+#include "util/Vendor/Ublox/UbloxUartSensor.hpp"
 
 namespace NAV
 {
@@ -67,7 +67,7 @@ class UbloxSensor : public Node, public UartSensor
     static void asciiOrBinaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, size_t index);
 
     /// Sensor Object
-    sensors::ublox::UbloxUartSensor _sensor;
+    vendor::ublox::UbloxUartSensor _sensor;
 };
 
 } // namespace NAV

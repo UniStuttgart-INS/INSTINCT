@@ -10,7 +10,7 @@
 #include "util/Container/ScrollingBuffer.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
-#include "NodeData/State/ImuBiases.hpp"
+#include "NodeData/State/LcKfInsGnssErrors.hpp"
 
 #include "Navigation/Math/KalmanFilter.hpp"
 

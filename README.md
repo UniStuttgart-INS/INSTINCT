@@ -20,6 +20,9 @@ The software consists of one executable ```instinct```
 - Clone the repository
   ```
   git clone --recurse-submodules https://git.ins.uni-stuttgart.de/thomas.topp/instinct.git INSTINCT
+  cd INSTINCT
+  git lfs install
+  git lfs pull
   ```
 - Update the repository
   ```
@@ -88,7 +91,7 @@ Most library dependencies are managed by Conan.io, so you just need to install t
 #### ArchLinux
 ```shell
 # Needed
-sudo pacman -S base-devel cmake clang glfw-x11
+sudo pacman -S base-devel git-lfs cmake clang glfw-x11
 trizen -S conan # AUR package
 
 # Documentation
@@ -101,26 +104,19 @@ sudo pacman -S ccache cppcheck
 sudo pacman -S valgrind kcachegrind
 ```
 
-#### Ubuntu 20.04
+#### Ubuntu 22.04
 ```shell
 # Needed
 sudo apt update
 sudo apt upgrade -y
-sudo apt install -y build-essential clang clang-tidy cmake python3-pip libglfw3-dev libglfw3
-sudo apt install -y gcc-10 g++-10
-sudo ln -sf /usr/bin/gcc-10 /usr/bin/gcc
-sudo ln -sf /usr/bin/g++-10 /usr/bin/g++
-sudo apt install -y clang-12 clang-tidy-12
-sudo ln -sf /usr/bin/clang-12 /usr/bin/clang
-sudo ln -sf /usr/bin/clang++-12 /usr/bin/clang++
-sudo ln -sf /usr/bin/clang-tidy-12 /usr/bin/clang-tidy
+sudo apt install -y build-essential git-lfs clang clang-tidy cmake python3-pip libglfw3-dev libglfw3
 pip3 install conan --user
 
-# Documentation (Ubuntu 20.04 has too old doxygen version)
+# Documentation (Ubuntu 22.04 has too old doxygen version)
 sudo apt install -y pdf2svg texlive texlive-lang-german texlive-latex-extra ghostscript
 sudo apt install -y flex bison graphviz mscgen dia # Build dependencies
-wget -c https://www.doxygen.nl/files/doxygen-1.9.2.src.tar.gz -O - | tar -xz
-mkdir doxygen-1.9.2/build && cd doxygen-1.9.2/build
+wget -c https://www.doxygen.nl/files/doxygen-1.9.4.src.tar.gz -O - | tar -xz
+mkdir doxygen-1.9.4/build && cd doxygen-1.9.4/build
 cmake -G "Unix Makefiles" .. && make && sudo make install
 
 # Optional
@@ -138,7 +134,7 @@ xcode-select --install
 brew update
 
 # Needed
-brew install cmake llvm conan glfw3
+brew install git-lfs cmake llvm conan glfw3
 ln -s "$(brew --prefix llvm)/bin/clang-format" "/usr/local/bin/clang-format"
 ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy"
 

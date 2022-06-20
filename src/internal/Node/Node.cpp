@@ -198,6 +198,11 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
 {
     if (callbacksEnabled)
     {
+        if (data == nullptr)
+        {
+            LOG_DEBUG("{}: Tried to invokeCallbacks on pin {} with a nullptr. This is a bug!!!", nameId(), portIndex);
+            return;
+        }
 #ifdef TESTING
         for (const auto& watcherCallback : outputPins.at(portIndex).watcherCallbacks)
         {

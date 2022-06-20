@@ -7,7 +7,7 @@
 
 #include "internal/Node/Node.hpp"
 #include "Nodes/DataProvider/Protocol/UartSensor.hpp"
-#include "util/UartSensors/Emlid/EmlidUartSensor.hpp"
+#include "util/Vendor/Emlid/EmlidUartSensor.hpp"
 
 namespace NAV
 {
@@ -67,7 +67,7 @@ class EmlidSensor : public Node, public UartSensor
     static void asciiOrBinaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, size_t index);
 
     /// Sensor Object
-    sensors::emlid::EmlidUartSensor _sensor;
+    vendor::emlid::EmlidUartSensor _sensor;
 };
 
 } // namespace NAV

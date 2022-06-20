@@ -9,10 +9,7 @@
 
 #include <variant>
 
-#include "uart/protocol/packet.hpp"
-
-#include "util/UartSensors/Emlid/EmlidTypes.hpp"
-#include "util/Eigen.hpp"
+#include "util/Vendor/Emlid/EmlidTypes.hpp"
 
 namespace NAV
 {
@@ -20,11 +17,6 @@ namespace NAV
 class EmlidObs : public InsObs
 {
   public:
-    /// @brief Constructor
-    /// @param[in] packet The packet to copy into the raw data
-    explicit EmlidObs(uart::protocol::Packet& packet)
-        : raw(packet) {}
-
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()
@@ -44,23 +36,17 @@ class EmlidObs : public InsObs
     /// Payload length in bytes
     uint16_t payloadLength = 0;
 
-    /// Complete message raw binary data including header and checksum (ERB)
-    uart::protocol::Packet raw;
-
     /// Decoded data
     std::variant<
-        sensors::emlid::ErbVer,  // VER: Version of protocol
-        sensors::emlid::ErbPos,  // POS: Geodetic position solution
-        sensors::emlid::ErbStat, // STAT: Receiver navigation status
-        sensors::emlid::ErbDops, // DOPS: Dilution of precision
-        sensors::emlid::ErbVel,  // VEL: Velocity solution in NED
-        sensors::emlid::ErbSvi,  // SVI: Space vehicle information
-        sensors::emlid::ErbRtk   // RTK: RTK information
+        vendor::emlid::ErbVer,  // VER: Version of protocol
+        vendor::emlid::ErbPos,  // POS: Geodetic position solution
+        vendor::emlid::ErbStat, // STAT: Receiver navigation status
+        vendor::emlid::ErbDops, // DOPS: Dilution of precision
+        vendor::emlid::ErbVel,  // VEL: Velocity solution in NED
+        vendor::emlid::ErbSvi,  // SVI: Space vehicle information
+        vendor::emlid::ErbRtk   // RTK: RTK information
         >
         data{};
-
-    /// ECEF position [m]
-    std::optional<Eigen::Vector3d> e_position;
 };
 
 } // namespace NAV

@@ -297,7 +297,7 @@ bool ax::NodeEditor::Utilities::BlueprintNodeBuilder::SetStage(Stage stage)
         ContentMin = ImGui::GetItemRectMin();
         ContentMax = ImGui::GetItemRectMax();
 
-        //ImGui::Spring(0);
+        // ImGui::Spring(0);
         ImGui::EndVertical();
         NodeMin = ImGui::GetItemRectMin();
         NodeMax = ImGui::GetItemRectMax();

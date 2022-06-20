@@ -13,11 +13,11 @@ namespace NAV
 /// Available Gravitation Models
 enum class GravitationModel : int
 {
+    None,         ///< Gravity Model turned off
     WGS84,        ///< World Geodetic System 1984
     WGS84_Skydel, ///< World Geodetic System 1984 implemented by the Skydel Simulator // FIXME: Remove after Skydel uses the same as Instinct
     Somigliana,   ///< Somigliana gravity model
     EGM96,        ///< Earth Gravitational Model 1996
-    OFF,          ///< Gravity Model turned off
     COUNT,        ///< Amount of items in the enum
 };
 
@@ -25,6 +25,11 @@ enum class GravitationModel : int
 /// @param[in] gravitationModel Enum value to convert into text
 /// @return String representation of the enum
 const char* to_string(GravitationModel gravitationModel);
+
+/// @brief Shows a ComboBox to select the gravitation model
+/// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
+/// @param[in] gravitationModel Reference to the gravitation model to select
+bool ComboGravitationModel(const char* label, GravitationModel& gravitationModel);
 
 /// @brief Calculates the gravitation (acceleration due to mass attraction of the Earth)
 /// @param[in] lla_position [ϕ, λ, h] Latitude, Longitude, Altitude in [rad, rad, m]
@@ -66,7 +71,7 @@ const char* to_string(GravitationModel gravitationModel);
 /// @return Gravitation vector in local-navigation frame coordinates in [m/s^2]
 ///
 /// @note See Groves (2013) Chapter 2.4.3 and 'GUT User Guide' (2018) Chapter 7.4
-[[nodiscard]] Eigen::Vector3d n_calcGravitation_EGM96(const Eigen::Vector3d& lla_position, int ndegree = 10);
+[[nodiscard]] Eigen::Vector3d n_calcGravitation_EGM96(const Eigen::Vector3d& lla_position, size_t ndegree = 10);
 
 /// @brief Calculates the centrifugal acceleration
 /// @param[in] latitude Latitude in [rad]

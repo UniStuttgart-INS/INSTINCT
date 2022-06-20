@@ -1,0 +1,112 @@
+{
+    "nodes": {
+        "node-13": {
+            "data": {
+                "FileReader": {
+                    "path": "Skydel-static_4h_1min-rate/SkydelRINEX_S_2022152120_120S_SN.rnx"
+                }
+            },
+            "enabled": true,
+            "id": 13,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "RinexNavFile - SBAS",
+            "outputPins": [
+                {
+                    "id": 12,
+                    "name": "GnssNavInfo"
+                }
+            ],
+            "pos": {
+                "x": 132.0,
+                "y": 30.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "RinexNavFile"
+        },
+        "node-2": {
+            "data": {
+                "FileReader": {
+                    "path": "Skydel-static_4h_1min-rate/SkydelRINEX_S_2022152120_7200S_GN.rnx"
+                }
+            },
+            "enabled": true,
+            "id": 2,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "RinexNavFile - GPS",
+            "outputPins": [
+                {
+                    "id": 1,
+                    "name": "GnssNavInfo"
+                }
+            ],
+            "pos": {
+                "x": 125.0,
+                "y": -402.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "RinexNavFile"
+        },
+        "node-4": {
+            "data": {
+                "FileReader": {
+                    "path": "Skydel-static_4h_1min-rate/SkydelRINEX_S_2022152120_600S_EN.rnx"
+                }
+            },
+            "enabled": true,
+            "id": 4,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "RinexNavFile - GAL",
+            "outputPins": [
+                {
+                    "id": 5,
+                    "name": "GnssNavInfo"
+                }
+            ],
+            "pos": {
+                "x": 124.0,
+                "y": -306.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "RinexNavFile"
+        },
+        "node-7": {
+            "data": {
+                "FileReader": {
+                    "path": "Skydel-static_4h_1min-rate/SkydelRINEX_S_2022152120_1800S_RN.rnx"
+                }
+            },
+            "enabled": true,
+            "id": 7,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "RinexNavFile - GLO",
+            "outputPins": [
+                {
+                    "id": 6,
+                    "name": "GnssNavInfo"
+                }
+            ],
+            "pos": {
+                "x": 119.0,
+                "y": -222.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "RinexNavFile"
+        }
+    }
+}
