@@ -56,10 +56,18 @@ std::string NAV::UlogFile::category()
 
 void NAV::UlogFile::guiConfig()
 {
-    if (FileReader::guiConfig(".ulg", { ".ulg" }, size_t(id), nameId()))
+    if (auto res = FileReader::guiConfig(".ulg,.*", { ".ulg" }, size_t(id), nameId()))
     {
+        LOG_DEBUG("{}: Path changed to {}", nameId(), _path);
         flow::ApplyChanges();
-        deinitializeNode();
+        if (res == FileReader::PATH_CHANGED)
+        {
+            initializeNode();
+        }
+        else
+        {
+            deinitializeNode();
+        }
     }
 
     Imu::guiConfig();

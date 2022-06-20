@@ -42,7 +42,7 @@ std::string NAV::CsvFile::category()
 
 void NAV::CsvFile::guiConfig()
 {
-    if (auto res = FileReader::guiConfig(".csv", { ".csv" }, size_t(id), nameId()))
+    if (auto res = FileReader::guiConfig(".csv,.*", { ".csv" }, size_t(id), nameId()))
     {
         LOG_DEBUG("{}: Path changed to {}", nameId(), _path);
         flow::ApplyChanges();

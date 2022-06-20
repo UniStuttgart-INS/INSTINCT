@@ -46,10 +46,18 @@ std::string RinexNavFile::category()
 
 void RinexNavFile::guiConfig()
 {
-    if (FileReader::guiConfig("Rinex Nav (.nav .rnx .gal .geo .glo .*N){.nav,.rnx,.gal,.geo,.glo,(.+[.]\\d\\d?N)},.*", { ".nav", ".rnx", ".gal", ".geo", ".glo", "(.+[.]\\d\\d?N)" }, size_t(id), nameId()))
+    if (auto res = FileReader::guiConfig("Rinex Nav (.nav .rnx .gal .geo .glo .*N){.nav,.rnx,.gal,.geo,.glo,(.+[.]\\d\\d?N)},.*", { ".nav", ".rnx", ".gal", ".geo", ".glo", "(.+[.]\\d\\d?N)" }, size_t(id), nameId()))
     {
+        LOG_DEBUG("{}: Path changed to {}", nameId(), _path);
         flow::ApplyChanges();
-        initializeNode();
+        if (res == FileReader::PATH_CHANGED)
+        {
+            initializeNode();
+        }
+        else
+        {
+            deinitializeNode();
+        }
     }
 }
 
