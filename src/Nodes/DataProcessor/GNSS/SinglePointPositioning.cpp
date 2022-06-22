@@ -491,12 +491,6 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
 
     size_t nMeas = calcData.size();
 
-    if (nMeas < 4)
-    {
-        LOG_ERROR("{}: Cannot calculate position because only {} valid measurements. Try changing filter settings or reposition your antenna.", nameId(), nMeas);
-        return;
-    }
-
     // Find all observations providing a doppler measurement (for velocity calculation)
     size_t nDopplerMeas = 0;
     for (size_t i = 0; i < nMeas; i++)
@@ -589,6 +583,14 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
 #endif
     }
 
+    LOG_DATA("{}: nMeas {}, skipCount {}", nameId(), nMeas, skipMeas.size());
+    if (nMeas - skipMeas.size() < 4)
+    {
+        LOG_ERROR("{}: [{} GPST] Cannot calculate position because only {} valid measurements. Try changing filter settings or reposition your antenna.",
+                  nameId(), (gnssObs->insTime.value() + std::chrono::seconds(gnssObs->insTime->leapGps2UTC())).toYMDHMS(), nMeas - skipMeas.size());
+        return;
+    }
+
     for (size_t o = 0; o < 10; o++)
     {
         LOG_DATA("{}: Iteration {}", nameId(), o);
@@ -636,6 +638,13 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
             {
                 LOG_DATA("{}:     [{}]     Measurement is skipped because of elevation mask of {}°", nameId(), o, rad2deg(_elevationMask));
                 skipMeas.insert(i);
+
+                if (nMeas - skipMeas.size() < 4)
+                {
+                    LOG_ERROR("{}: [{} GPST] Cannot calculate position because only {} valid measurements. Try changing filter settings or reposition your antenna.",
+                              nameId(), (gnssObs->insTime.value() + std::chrono::seconds(gnssObs->insTime->leapGps2UTC())).toYMDHMS(), nMeas - skipMeas.size());
+                    return;
+                }
 
 #ifdef TESTING
                 sppExtendedData.elevationMaskTriggered = true;
@@ -849,7 +858,8 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
 
         if (iv < 4)
         {
-            LOG_WARN("{}: Cannot calculate velocity because only {} valid doppler measurements. Try changing filter settings or reposition your antenna.", nameId(), iv);
+            LOG_WARN("{}: [{} GPST] Cannot calculate velocity because only {} valid doppler measurements. Try changing filter settings or reposition your antenna.",
+                     nameId(), (gnssObs->insTime.value() + std::chrono::seconds(gnssObs->insTime->leapGps2UTC())).toYMDHMS(), iv);
             continue;
         }
         // Difference between measured and estimated pseudorange rates
