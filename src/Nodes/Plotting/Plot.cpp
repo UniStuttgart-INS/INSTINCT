@@ -1883,61 +1883,6 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "GNSS2::RawMeas::Week");
             _pinData.at(pinIndex).addPlotDataItem(i++, "GNSS2::RawMeas::NumSats");
         }
-        // TODO: Remove
-        // else if (startPin->dataIdentifier.front() == SPPsol_old::type())
-        // {
-        //     // InsObs
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
-        //     // Sppsol
-        //     // position
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF X [m]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF Y [m]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF Z [m]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Latitude  [deg]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Longitude [deg]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Altitude  [m]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation X [m]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation Y [m]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation Z [m]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation E [m]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation N [m]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation U [m]");
-
-        //     // velocity
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity X [m/s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity Y [m/s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity Z [m/s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity E [m/s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity N [m/s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity U [m/s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation Vx [m/s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation Vy [m/s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation Vz [m/s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation Ve [m/s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation Vn [m/s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation Vu [m/s]");
-
-        //     // clock
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Clock Bias Galileo [s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation of Clock Bias Galileo [s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Clock Drift Galileo [s/s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation of Clock Drift Galileo [s/s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Clock Bias GPS [s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation of Clock Bias GPS [s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Clock Drift GPS [s/s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation of Clock Drift GPS [s/s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Clock Bias GLONASS [s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation of Clock Bias GLONASS [s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Clock Drift GLONASS [s/s]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation of Clock Drift GLONASS [s/s]");
-
-        //     // ZHD
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Zenith Hydrostatic Delay [m]");
-        //     // ZWD
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Zenith Wet Delay [m]");
-        //     _pinData.at(pinIndex).addPlotDataItem(i++, "Standard Deviation of Zenith Wet Delay [m]");
-        // }
     }
     else if (inputPins.at(pinIndex).type == Pin::Type::Bool)
     {
