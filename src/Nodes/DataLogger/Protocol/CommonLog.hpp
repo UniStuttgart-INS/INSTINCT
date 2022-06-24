@@ -11,7 +11,7 @@
 
 namespace NAV
 {
-
+/// Common logging variables like time into run and local positions
 class CommonLog
 {
   public:

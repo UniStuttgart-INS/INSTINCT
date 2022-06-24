@@ -798,7 +798,7 @@ void compareObservations(std::shared_ptr<const NAV::VectorNavBinaryOutput>& data
     logs_vnb.reset();
 }
 
-TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", "[VectorNavDataLogger][flow]")
+TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", "[VectorNavDataLogger][flow][Debug]")
 {
     messageCounterImuDataCsv = 0;
     messageCounterImuLogCsv = 0;
