@@ -93,9 +93,9 @@ class Pos : public InsObs
 
   private:
     /// Position in ECEF coordinates [m]
-    Eigen::Vector3d _e_position{ 0, 0, 0 };
+    Eigen::Vector3d _e_position{ std::nan(""), std::nan(""), std::nan("") };
     /// Position in LatLonAlt coordinates [rad, rad, m]
-    Eigen::Vector3d _lla_position{ 0, 0, 0 };
+    Eigen::Vector3d _lla_position{ std::nan(""), std::nan(""), std::nan("") };
 };
 
 } // namespace NAV

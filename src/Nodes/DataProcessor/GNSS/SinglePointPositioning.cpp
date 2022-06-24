@@ -588,6 +588,9 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
     {
         LOG_ERROR("{}: [{} GPST] Cannot calculate position because only {} valid measurements. Try changing filter settings or reposition your antenna.",
                   nameId(), (gnssObs->insTime.value() + std::chrono::seconds(gnssObs->insTime->leapGps2UTC())).toYMDHMS(), nMeas - skipMeas.size());
+        sppSol->nSatellitesPosition = nMeas - skipMeas.size();
+        sppSol->nSatellitesVelocity = nDopplerMeas - skipMeas.size();
+        invokeCallbacks(OUTPUT_PORT_INDEX_SPPSOL, sppSol);
         return;
     }
 
@@ -845,12 +848,24 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
             LOG_DATA("{}:     [{}] stdev_dx (lsq)\n{}", nameId(), o, lsq.variance.cwiseSqrt());
         }
 
+        if (sppSol->insTime.value() == InsTime(2, 72, 216835))
+        {
+            LOG_DEBUG("lsq.variance\n{}", lsq.variance);
+        }
+
         _e_position += lsq.solution.head<3>();
         _clkBias += lsq.solution(3) / InsConst::C;
         sppSol->nSatellitesPosition = ix;
-        sppSol->setPositionAndStdDev_e(_e_position, lsq.variance.topLeftCorner<3, 3>().cwiseSqrt());
+        if (ix > 4)
+        {
+            sppSol->setPositionAndStdDev_e(_e_position, lsq.variance.topLeftCorner<3, 3>().cwiseSqrt());
+            sppSol->clkBiasStdev = std::sqrt(lsq.variance(3, 3)) / InsConst::C;
+        }
+        else
+        {
+            sppSol->setPosition_e(_e_position);
+        }
         sppSol->clkBias = _clkBias;
-        sppSol->clkBiasStdev = std::sqrt(lsq.variance(3, 3)) / InsConst::C;
 
         bool solInaccurate = lsq.solution.norm() > 1e-4;
 
@@ -874,9 +889,16 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
         _e_velocity += lsq.solution.head<3>();
         _clkDrift += lsq.solution(3) / InsConst::C;
         sppSol->nSatellitesVelocity = iv;
-        sppSol->setVelocityAndStdDev_e(_e_velocity, lsq.variance.topLeftCorner<3, 3>().cwiseSqrt());
+        if (iv > 4)
+        {
+            sppSol->setVelocityAndStdDev_e(_e_velocity, lsq.variance.topLeftCorner<3, 3>().cwiseSqrt());
+            sppSol->clkDriftStdev = std::sqrt(lsq.variance(3, 3)) / InsConst::C;
+        }
+        else
+        {
+            sppSol->setVelocity_e(_e_velocity);
+        }
         sppSol->clkDrift = _clkDrift;
-        sppSol->clkDriftStdev = std::sqrt(lsq.variance(3, 3)) / InsConst::C;
 
         solInaccurate |= lsq.solution.norm() > 1e-4;
 

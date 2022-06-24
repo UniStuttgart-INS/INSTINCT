@@ -733,6 +733,8 @@ void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(const std::shared_ptr<con
     auto gnssMeasurement = std::static_pointer_cast<const PosVel>(nodeData);
     LOG_DATA("{}: Recv GNSS t = {}", nameId(), gnssMeasurement->insTime->toYMDHMS());
 
+    if (std::isnan(gnssMeasurement->e_position().x()) || std::isnan(gnssMeasurement->e_velocity().x())) { return; }
+
     if (_latestInertialNavSol)
     {
         if (_lastPredictTime < gnssMeasurement->insTime.value()) // We need to predict to the update time before updating
