@@ -90,7 +90,9 @@ bool NAV::LcKfInsGnssErrorLogger::initialize()
         return false;
     }
 
-    _filestream << "GpsCycle,GpsWeek,GpsTow [s],"
+    CommonLog::initialize();
+
+    _filestream << "Time [s],GpsCycle,GpsWeek,GpsTow [s],"
                 // PVAError
                 << "Roll error [deg],Pitch error [deg],Yaw error [deg],"
                 << "North velocity error [m/s],East velocity error [m/s],Down velocity error [m/s],"
@@ -120,6 +122,11 @@ void NAV::LcKfInsGnssErrorLogger::writeObservation(const std::shared_ptr<const N
     constexpr int valuePrecision = 9;
 
     auto obs = std::static_pointer_cast<const LcKfInsGnssErrors>(nodeData);
+    if (obs->insTime.has_value())
+    {
+        _filestream << std::setprecision(valuePrecision) << std::round(calcTimeIntoRun(obs->insTime.value()) * 1e9) / 1e9;
+    }
+    _filestream << ",";
     if (obs->insTime.has_value())
     {
         _filestream << std::fixed << std::setprecision(gpsCyclePrecision) << obs->insTime.value().toGPSweekTow().gpsCycle;

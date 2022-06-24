@@ -90,8 +90,11 @@ bool NAV::SppSolutionLogger::initialize()
         return false;
     }
 
-    _filestream << "GpsCycle,GpsWeek,GpsTow [s],"
+    CommonLog::initialize();
+
+    _filestream << "Time [s],GpsCycle,GpsWeek,GpsTow [s],"
                 << "Pos ECEF X [m],Pos ECEF Y [m],Pos ECEF Z [m],Latitude [deg],Longitude [deg],Altitude [m],"
+                << "North/South [m],East/West [m],"
                 << "Vel ECEF X [m/s],Vel ECEF Y [m/s],Vel ECEF Z [m/s],Vel N [m/s],Vel E [m/s],Vel D [m/s],"
                 << "Number satellites (pos),Number satellites (vel),"
                 << "Receiver clock bias [s],Receiver clock drift [s/s],"
@@ -126,6 +129,11 @@ void NAV::SppSolutionLogger::writeObservation(const std::shared_ptr<const NodeDa
 
     if (obs->insTime.has_value())
     {
+        _filestream << std::setprecision(valuePrecision) << std::round(calcTimeIntoRun(obs->insTime.value()) * 1e9) / 1e9;
+    }
+    _filestream << ",";
+    if (obs->insTime.has_value())
+    {
         _filestream << std::fixed << std::setprecision(gpsCyclePrecision) << obs->insTime.value().toGPSweekTow().gpsCycle;
     }
     _filestream << ",";
@@ -154,6 +162,16 @@ void NAV::SppSolutionLogger::writeObservation(const std::shared_ptr<const NodeDa
     _filestream << ",";
     if (!std::isnan(obs->lla_position().z())) { _filestream << obs->lla_position().z(); } // Altitude [m]
     _filestream << ",";
+    if (!std::isnan(obs->lla_position().x()) && !std::isnan(obs->lla_position().y()))
+    {
+        auto localPosition = calcLocalPosition(obs->lla_position());
+        _filestream << localPosition.northSouth << ","; // North/South [m]
+        _filestream << localPosition.eastWest << ",";   // East/West [m]
+    }
+    else
+    {
+        _filestream << ",,";
+    }
 
     // -------------------------------------------------------- Velocity -----------------------------------------------------------
 
