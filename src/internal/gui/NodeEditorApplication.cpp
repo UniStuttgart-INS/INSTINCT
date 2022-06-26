@@ -814,6 +814,19 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
         static util::BlueprintNodeBuilder builder(m_HeaderBackground, GetTextureWidth(m_HeaderBackground), GetTextureHeight(m_HeaderBackground));
 
+        auto textColor = ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_NodeBg].x
+                                     + ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_NodeBg].y
+                                     + ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_NodeBg].z
+                                 > 2.0F
+                             ? IM_COL32(0, 0, 0, 255)
+                             : IM_COL32(255, 255, 255, 255);
+        auto checkBoxColor = ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_NodeBg].x
+                                         + ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_NodeBg].y
+                                         + ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_NodeBg].z
+                                     > 2.0F
+                                 ? IM_COL32(255, 255, 255, 255)
+                                 : IM_COL32(41, 74, 122, 138);
+
         for (const auto& node : nm::m_Nodes()) // Blueprint || Simple
         {
             if (node->kind != Node::Kind::Blueprint && node->kind != Node::Kind::Simple) // NOLINT(misc-redundant-expression) // FIXME: error: equivalent expression on both sides of logical operator
@@ -854,7 +867,9 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                     builder.Header(ImColor(255, 128, 128)); // Light red
                 }
                 ImGui::Spring(0);
+                ImGui::PushStyleColor(ImGuiCol_Text, textColor);
                 ImGui::TextUnformatted(node->name.c_str());
+                ImGui::PopStyleColor();
                 ImGui::Spring(1);
                 if (node->isInitializing())
                 {
@@ -873,13 +888,10 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                         itemDisabled = true;
                     }
 
+                    ImGui::PushStyleColor(ImGuiCol_FrameBg, checkBoxColor);
                     ImGui::Checkbox("", &node->callbacksEnabled);
-                    if (ImGui::IsItemHovered())
-                    {
-                        ed::Suspend();
-                        ImGui::SetTooltip("Enable Callbacks");
-                        ed::Resume();
-                    }
+                    ImGui::PopStyleColor();
+                    if (ImGui::IsItemHovered()) { tooltipText = "Enable Callbacks"; }
 
                     if (itemDisabled)
                     {
@@ -915,7 +927,9 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                         ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
                         if (!output.name.empty())
                         {
+                            ImGui::PushStyleColor(ImGuiCol_Text, textColor);
                             ImGui::TextUnformatted(output.name.c_str());
+                            ImGui::PopStyleColor();
                             ImGui::Spring(0);
                         }
                         output.drawPinIcon(nm::IsPinLinked(output.id), static_cast<int>(alpha * 255));
@@ -948,10 +962,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 builder.Input(input.id);
                 ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
                 input.drawPinIcon(nm::IsPinLinked(input.id), static_cast<int>(alpha * 255));
-                if (ImGui::IsItemHovered())
-                {
-                    tooltipText = fmt::format("{}", fmt::join(input.dataIdentifier, "\n"));
-                }
+                if (ImGui::IsItemHovered()) { tooltipText = fmt::format("{}", fmt::join(input.dataIdentifier, "\n")); }
 
                 ImGui::Spring(0);
                 if (!input.name.empty())
@@ -961,7 +972,9 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                     {
                         ImGui::PushDisabled();
                     }
+                    ImGui::PushStyleColor(ImGuiCol_Text, textColor);
                     ImGui::TextUnformatted(input.name.c_str());
+                    ImGui::PopStyleColor();
                     if (noneType)
                     {
                         ImGui::PopDisabled();
@@ -977,7 +990,9 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 builder.Middle();
 
                 ImGui::Spring(1, 0);
+                ImGui::PushStyleColor(ImGuiCol_Text, textColor);
                 ImGui::TextUnformatted(node->name.c_str());
+                ImGui::PopStyleColor();
                 ImGui::Spring(1, 0);
             }
 
@@ -1004,7 +1019,9 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                     {
                         ImGui::PushDisabled();
                     }
+                    ImGui::PushStyleColor(ImGuiCol_Text, textColor);
                     ImGui::TextUnformatted(output.name.c_str());
+                    ImGui::PopStyleColor();
                     if (noneType)
                     {
                         ImGui::PopDisabled();
@@ -1012,10 +1029,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 }
                 ImGui::Spring(0);
                 output.drawPinIcon(nm::IsPinLinked(output.id), static_cast<int>(alpha * 255));
-                if (ImGui::IsItemHovered())
-                {
-                    tooltipText = fmt::format("{}", fmt::join(output.dataIdentifier, "\n"));
-                }
+                if (ImGui::IsItemHovered()) { tooltipText = fmt::format("{}", fmt::join(output.dataIdentifier, "\n")); }
                 ImGui::PopStyleVar();
                 util::BlueprintNodeBuilder::EndOutput();
             }
@@ -1096,7 +1110,24 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
         for (const auto& link : nm::m_Links()) // Links
         {
-            ed::Link(link.id, link.startPinId, link.endPinId, link.color, 2.0F);
+            const auto* pin = nm::FindPin(link.startPinId);
+            auto color = pin->getIconColor();
+            if (pin->type == Pin::Type::Flow)
+            {
+                if (ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_Bg].x
+                        + ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_Bg].y
+                        + ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_Bg].z
+                    > 2.0F)
+                {
+                    color = { 0, 0, 0 };
+                }
+                else
+                {
+                    color = { 255, 255, 255 };
+                }
+            }
+
+            ed::Link(link.id, link.startPinId, link.endPinId, color, 2.0F);
         }
 
         if (!createNewNode)
@@ -1715,10 +1746,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     FlowAnimation::ProcessQueue();
 
     // Push the Tooltip on the stack if needed
-    if (!tooltipText.empty())
-    {
-        ImGui::SetTooltip("%s", tooltipText.c_str());
-    }
+    if (!tooltipText.empty()) { ImGui::SetTooltip("%s", tooltipText.c_str()); }
 
     gui::windows::renderGlobalWindows();
 

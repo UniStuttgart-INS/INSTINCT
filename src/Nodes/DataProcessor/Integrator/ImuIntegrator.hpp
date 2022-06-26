@@ -119,7 +119,7 @@ class ImuIntegrator : public Node
     IntegrationFrame _integrationFrame = IntegrationFrame::NED;
 
     /// @brief Integration algorithm used for the update
-    IntegrationAlgorithm _integrationAlgorithm = IntegrationAlgorithm::RungeKutta1;
+    IntegrationAlgorithm _integrationAlgorithm = IntegrationAlgorithm::Heun;
 
     // #########################################################################################################################################
 

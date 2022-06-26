@@ -157,7 +157,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
             auto iconPanelPos = start + ImVec2(paneWidth - ImGui::GetStyle().FramePadding.x - ImGui::GetStyle().IndentSpacing - ImGui::GetStyle().ItemInnerSpacing.x * 1, ImGui::GetTextLineHeight() / 2);
             ImGui::GetWindowDrawList()->AddText(
                 ImVec2(iconPanelPos.x - textSize.x - ImGui::GetStyle().ItemInnerSpacing.x, start.y),
-                IM_COL32(255, 255, 255, 255), id.c_str(), nullptr);
+                colSum > 2.0F ? IM_COL32(0, 0, 0, 255) : IM_COL32(255, 255, 255, 255), id.c_str(), nullptr);
 
             ImGui::PopID();
         }

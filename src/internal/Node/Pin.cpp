@@ -2,6 +2,8 @@
 
 #include "internal/Node/Node.hpp"
 
+#include <imgui_node_editor.h>
+
 #include "NodeRegistry.hpp"
 
 #include "internal/gui/widgets/PinIcon.hpp"
@@ -55,6 +57,13 @@ ImColor NAV::Pin::getIconColor() const
     case Type::None:
         return { 0, 0, 0 };
     case Type::Flow:
+        if (ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_NodeBg].x
+                + ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_NodeBg].y
+                + ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_NodeBg].z
+            > 2.0F)
+        {
+            return { 0, 0, 0 };
+        }
         return { 255, 255, 255 };
     case Type::Bool:
         return { 220, 48, 48 };
