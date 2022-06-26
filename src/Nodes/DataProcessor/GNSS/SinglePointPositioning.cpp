@@ -848,11 +848,6 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
             LOG_DATA("{}:     [{}] stdev_dx (lsq)\n{}", nameId(), o, lsq.variance.cwiseSqrt());
         }
 
-        if (sppSol->insTime.value() == InsTime(2, 72, 216835))
-        {
-            LOG_DEBUG("lsq.variance\n{}", lsq.variance);
-        }
-
         _e_position += lsq.solution.head<3>();
         _clkBias += lsq.solution(3) / InsConst::C;
         sppSol->nSatellitesPosition = ix;
