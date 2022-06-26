@@ -208,6 +208,54 @@ void NAV::gui::NodeEditorApplication::OnStart()
     {
         m_InstinctLogo.at(1) = LoadTexture("resources/images/INSTINCT_Logo_Text_black_small.png");
     }
+
+    if (fs.is_file("resources/images/INS_logo_rectangular_white_small.png"))
+    {
+        auto fd = fs.open("resources/images/INS_logo_rectangular_white_small.png");
+
+        LOG_DEBUG("Generating Texture for INS Logo (white) ({} byte)", fd.size());
+
+        auto is = cmrc::memstream(const_cast<char*>(fd.begin()), // NOLINT(cppcoreguidelines-pro-type-const-cast)
+                                  const_cast<char*>(fd.end()));  // NOLINT(cppcoreguidelines-pro-type-const-cast)
+
+        std::vector<char> buffer;
+        buffer.resize(fd.size(), '\0');
+
+        is.read(buffer.data(),
+                static_cast<std::streamsize>(buffer.size()));
+
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
+        m_InsLogo.at(0) = LoadTexture(reinterpret_cast<const void*>(const_cast<const char*>(buffer.data())),
+                                      static_cast<int>(fd.size()));
+    }
+    else
+    {
+        m_InsLogo.at(0) = LoadTexture("resources/images/INS_logo_rectangular_white_small.png");
+    }
+
+    if (fs.is_file("resources/images/INS_logo_rectangular_black_small.png"))
+    {
+        auto fd = fs.open("resources/images/INS_logo_rectangular_black_small.png");
+
+        LOG_DEBUG("Generating Texture for INS Logo (black) ({} byte)", fd.size());
+
+        auto is = cmrc::memstream(const_cast<char*>(fd.begin()), // NOLINT(cppcoreguidelines-pro-type-const-cast)
+                                  const_cast<char*>(fd.end()));  // NOLINT(cppcoreguidelines-pro-type-const-cast)
+
+        std::vector<char> buffer;
+        buffer.resize(fd.size(), '\0');
+
+        is.read(buffer.data(),
+                static_cast<std::streamsize>(buffer.size()));
+
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
+        m_InsLogo.at(1) = LoadTexture(reinterpret_cast<const void*>(const_cast<const char*>(buffer.data())),
+                                      static_cast<int>(fd.size()));
+    }
+    else
+    {
+        m_InsLogo.at(1) = LoadTexture("resources/images/INS_logo_rectangular_black_small.png");
+    }
 }
 
 void NAV::gui::NodeEditorApplication::OnStop()
@@ -229,6 +277,8 @@ void NAV::gui::NodeEditorApplication::OnStop()
         }
     };
 
+    releaseTexture(m_InsLogo.at(0));
+    releaseTexture(m_InsLogo.at(1));
     releaseTexture(m_InstinctLogo.at(0));
     releaseTexture(m_InstinctLogo.at(1));
     releaseTexture(m_HeaderBackground);

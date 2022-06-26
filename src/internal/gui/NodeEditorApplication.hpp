@@ -85,6 +85,9 @@ class NodeEditorApplication : public Application
     /// @brief Pointer to the texture for the instinct logo
     static inline std::array<ImTextureID, 2> m_InstinctLogo{ nullptr, nullptr };
 
+    /// @brief Pointer to the texture for the INS logo
+    static inline std::array<ImTextureID, 2> m_InsLogo{ nullptr, nullptr };
+
     /// @brief Default style of the ImPlot library to compare changes against
     static inline ImPlotStyle imPlotReferenceStyle;
 
