@@ -134,7 +134,7 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
     }
 
     std::string path = filepath;
-    if (path.find(GetProgramRootPath()) != std::string::npos)
+    if (path.find(GetProgramRootPath().string()) != std::string::npos)
     {
         path = path.substr(GetProgramRootPath().string().size());
         if (path.starts_with('\\') || path.starts_with('/')) { path = path.substr(1); }
