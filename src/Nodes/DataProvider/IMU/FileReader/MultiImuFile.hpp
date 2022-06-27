@@ -59,10 +59,16 @@ class MultiImuFile : public Imu, public FileReader
     /// @brief Deinitialize the node
     void deinitialize() override;
 
+    /// @brief Adds/Deletes Output Pins depending on the variable _nOutputPins
+    void updateNumberOfOutputPins();
+
     /// @brief Polls data from the file
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
     /// @return The read observation
     [[nodiscard]] std::shared_ptr<const NodeData> pollData(bool peek = false);
+
+    /// Number of connected sensors
+    size_t _nSensors = 5;
 };
 
 } // namespace NAV
