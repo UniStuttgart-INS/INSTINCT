@@ -1,4 +1,4 @@
-/// @file RtklibPosConverterhpp
+/// @file RtklibPosConverter.hpp
 /// @brief Convert RTKLib pos files into PosVel
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2022-06-27
