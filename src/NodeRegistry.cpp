@@ -192,6 +192,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataProvider/IMU/Sensors/Navio2Sensor.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
 #include "Nodes/DataProvider/IMU/FileReader/UlogFile.hpp"
+#include "Nodes/DataProvider/IMU/FileReader/MultiImuFile.hpp"
 // Data Simulator
 #include "Nodes/DataProvider/IMU/Simulators/ImuSimulator.hpp"
 // Plotting
@@ -246,6 +247,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<Navio2Sensor>();
     registerNodeType<VectorNavSensor>();
     registerNodeType<UlogFile>();
+    registerNodeType<MultiImuFile>();
     // Data Simulator
     registerNodeType<ImuSimulator>();
     // Experimental
