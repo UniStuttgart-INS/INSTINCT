@@ -165,6 +165,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/Converter/GNSS/UartPacketConverter.hpp"
 #include "Nodes/Converter/IMU/VectorNavBinaryConverter.hpp"
 // Data Logger
+#include "Nodes/DataLogger/General/MatrixLogger.hpp"
 #include "Nodes/DataLogger/GNSS/SppSolutionLogger.hpp"
 #include "Nodes/DataLogger/GNSS/UartDataLogger.hpp"
 #include "Nodes/DataLogger/IMU/ImuDataLogger.hpp"
@@ -221,6 +222,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<UartPacketConverter>();
     registerNodeType<VectorNavBinaryConverter>();
     // Data Logger
+    registerNodeType<MatrixLogger>();
     registerNodeType<SppSolutionLogger>();
     registerNodeType<UartDataLogger>();
     registerNodeType<ImuDataLogger>();

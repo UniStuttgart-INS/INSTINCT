@@ -5,6 +5,7 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
+#include "internal/ConfigManager.hpp"
 
 #include "internal/gui/widgets/Splitter.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
@@ -2043,6 +2044,8 @@ void NAV::Plot::addData(size_t pinIndex, size_t dataIndex, double value)
 
 void NAV::Plot::plotBoolean(ax::NodeEditor::LinkId linkId)
 {
+    if (ConfigManager::Get<bool>("nogui")) { return; }
+
     if (Link* link = nm::FindLink(linkId))
     {
         size_t pinIndex = pinIndexFromId(link->endPinId);
@@ -2068,6 +2071,8 @@ void NAV::Plot::plotBoolean(ax::NodeEditor::LinkId linkId)
 
 void NAV::Plot::plotInteger(ax::NodeEditor::LinkId linkId)
 {
+    if (ConfigManager::Get<bool>("nogui")) { return; }
+
     if (Link* link = nm::FindLink(linkId))
     {
         size_t pinIndex = pinIndexFromId(link->endPinId);
@@ -2093,6 +2098,8 @@ void NAV::Plot::plotInteger(ax::NodeEditor::LinkId linkId)
 
 void NAV::Plot::plotFloat(ax::NodeEditor::LinkId linkId)
 {
+    if (ConfigManager::Get<bool>("nogui")) { return; }
+
     if (Link* link = nm::FindLink(linkId))
     {
         size_t pinIndex = pinIndexFromId(link->endPinId);
@@ -2118,6 +2125,8 @@ void NAV::Plot::plotFloat(ax::NodeEditor::LinkId linkId)
 
 void NAV::Plot::plotMatrix(ax::NodeEditor::LinkId linkId)
 {
+    if (ConfigManager::Get<bool>("nogui")) { return; }
+
     if (Link* link = nm::FindLink(linkId))
     {
         if (Pin* sourcePin = nm::FindPin(link->startPinId))
@@ -2182,6 +2191,8 @@ void NAV::Plot::plotMatrix(ax::NodeEditor::LinkId linkId)
 
 void NAV::Plot::plotData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId)
 {
+    if (ConfigManager::Get<bool>("nogui")) { return; }
+
     if (Link* link = nm::FindLink(linkId))
     {
         if (Pin* sourcePin = nm::FindPin(link->startPinId))
