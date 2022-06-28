@@ -109,6 +109,47 @@ void NAV::MultiImuFile::updateNumberOfOutputPins()
     }
 }
 
+NAV::FileReader::FileType NAV::MultiImuFile::determineFileType()
+{
+    LOG_TRACE("called");
+
+    auto filepath = getFilepath();
+
+    if (_filestream.good())
+    {
+        return FileType::CSV;
+    }
+
+    LOG_ERROR("Could not open file {}", filepath.string());
+    return FileType::NONE;
+}
+
+void NAV::MultiImuFile::readHeader()
+{
+    LOG_TRACE("called");
+
+    bool gpggaFound = false;
+    std::string line;
+    const char* gpgga = "GPGGA";
+
+    // Find first line of data
+    while (std::getline(_filestream, line))
+    {
+        // Remove any trailing non text characters
+        line.erase(std::find_if(line.begin(), line.end(), [](int ch) { return std::iscntrl(ch); }), line.end());
+        if (line.find(gpgga) != std::string::npos)
+        {
+            gpggaFound = true;
+            continue;
+        }
+        if ((std::find_if(line.begin(), line.begin() + 1, [](int ch) { return std::isdigit(ch); }) != (std::begin(line) + 1)) && gpggaFound)
+        {
+            LOG_DEBUG("{}: Found first line of data: {}", nameId(), line);
+            // TODO: This is the beginning of the data --> reset cursor to beginning of line and finish 'readHeader()'
+        }
+    }
+}
+
 std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(bool peek)
 {
     auto obs = std::make_shared<ImuObs>(_imuPos);

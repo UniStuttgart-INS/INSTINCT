@@ -62,6 +62,13 @@ class MultiImuFile : public Imu, public FileReader
     /// @brief Adds/Deletes Output Pins depending on the variable _nOutputPins
     void updateNumberOfOutputPins();
 
+    /// @brief Function to determine the File Type
+    /// @return The File path which was recognized
+    NAV::FileReader::FileType determineFileType() override;
+
+    /// @brief Function to read the Header of a file
+    void readHeader() override;
+
     /// @brief Polls data from the file
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
     /// @return The read observation
