@@ -3,6 +3,7 @@
 #include "util/Logger.hpp"
 
 #include "Navigation/Transformations/CoordinateFrames.hpp"
+#include "Navigation/Transformations/Units.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -137,6 +138,7 @@ void NAV::MultiImuFile::readHeader()
     {
         // Remove any trailing non text characters
         line.erase(std::find_if(line.begin(), line.end(), [](int ch) { return std::iscntrl(ch); }), line.end());
+
         if (line.find(gpgga) != std::string::npos)
         {
             gpggaFound = true;
@@ -145,7 +147,7 @@ void NAV::MultiImuFile::readHeader()
         if ((std::find_if(line.begin(), line.begin() + 1, [](int ch) { return std::isdigit(ch); }) != (std::begin(line) + 1)) && gpggaFound)
         {
             LOG_DEBUG("{}: Found first line of data: {}", nameId(), line);
-            // TODO: This is the beginning of the data --> reset cursor to beginning of line and finish 'readHeader()'
+            break;
         }
     }
 }
@@ -178,7 +180,7 @@ std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(bool peek)
 
     size_t sensorId{};
     double gpsSecond{};
-    double timeNominator{};
+    double timeNumerator{};
     double timeDenominator{};
     std::optional<double> accelX;
     std::optional<double> accelY;
@@ -188,61 +190,66 @@ std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(bool peek)
     std::optional<double> gyroZ;
 
     // Split line at comma
-    for (size_t col = 0; col < 10; ++col)
+    for (const auto& col : _columns)
     {
         if (std::getline(lineStream, cell, ' '))
         {
             // Remove any trailing non text characters
             cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
-            if (cell.empty())
+            while (cell.empty())
             {
-                continue;
+                std::getline(lineStream, cell, ' ');
             }
 
-            if (col == 0)
+            if (col == "sensorId")
             {
                 sensorId = std::stoul(cell); //NOLINT(clang-diagnostic-implicit-int-conversion)
             }
-            if (col == 1)
+            if (col == "gpsSecond")
             {
-                gpsSecond = std::stod(cell);
+                gpsSecond = std::stod(cell); // [s]
+                // Start time axis from first timestamp onwards
+                if (_startTime == 0)
+                {
+                    _startTime = gpsSecond;
+                }
             }
-            if (col == 2)
+            if (col == "timeNumerator")
             {
-                timeNominator = std::stod(cell);
+                timeNumerator = std::stod(cell);
             }
-            if (col == 3)
+            if (col == "timeDenominator")
             {
                 timeDenominator = std::stod(cell);
             }
-            if (col == 4)
+            if (col == "accelX")
             {
-                accelX = 0.01 * std::stod(cell);
+                accelX = 0.001 * std::stod(cell); // [m/s²]
             }
-            if (col == 5)
+            if (col == "accelY")
             {
-                accelY = 0.01 * std::stod(cell);
+                accelY = 0.001 * std::stod(cell); // [m/s²]
             }
-            if (col == 6)
+            if (col == "accelZ")
             {
-                accelZ = 0.01 * std::stod(cell);
+                accelZ = 0.001 * std::stod(cell); // [m/s²]
             }
-            if (col == 7)
+            if (col == "gyroX")
             {
-                gyroX = std::stod(cell);
+                gyroX = deg2rad(std::stod(cell) / 131); // [deg/s]
             }
-            if (col == 8)
+            if (col == "gyroY")
             {
-                gyroY = std::stod(cell);
+                gyroY = deg2rad(std::stod(cell)) / 131; // [deg/s]
             }
-            if (col == 9)
+            if (col == "gyroZ")
             {
-                gyroZ = std::stod(cell);
+                gyroZ = deg2rad(std::stod(cell)) / 131; // [deg/s]
             }
         }
     }
 
-    auto timeStamp = gpsSecond + timeNominator / timeDenominator;
+    auto timeStamp = gpsSecond + timeNumerator / timeDenominator - _startTime;
 
     obs->insTime.emplace(0, 0, 0, 0, 0, timeStamp);
 
@@ -258,7 +265,7 @@ std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(bool peek)
     // Calls all the callbacks
     if (!peek)
     {
-        invokeCallbacks(sensorId, obs);
+        invokeCallbacks(sensorId - 1, obs);
     }
 
     return obs;

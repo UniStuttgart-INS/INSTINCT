@@ -76,6 +76,12 @@ class MultiImuFile : public Imu, public FileReader
 
     /// Number of connected sensors
     size_t _nSensors = 5;
+
+    /// @brief First 'gpsSecond', s.t. measurements start at time = 0
+    double _startTime{};
+
+    /// @brief Vector of column names
+    std::vector<std::string> _columns{ "sensorId", "gpsSecond", "timeNumerator", "timeDenominator", "accelX", "accelY", "accelZ", "gyroX", "gyroY", "gyroZ" };
 };
 
 } // namespace NAV
