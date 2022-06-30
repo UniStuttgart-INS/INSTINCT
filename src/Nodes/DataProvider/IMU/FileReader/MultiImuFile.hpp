@@ -5,13 +5,14 @@
 
 #pragma once
 
-#include "Nodes/DataProvider/IMU/Imu.hpp"
+#include "internal/Node/Node.hpp"
 #include "Nodes/DataProvider/Protocol/FileReader.hpp"
+#include "NodeData/IMU/ImuPos.hpp"
 
 namespace NAV
 {
 /// File reader for Multi-IMU data log files
-class MultiImuFile : public Imu, public FileReader
+class MultiImuFile : public Node, public FileReader
 {
   public:
     /// @brief Default constructor
@@ -49,6 +50,13 @@ class MultiImuFile : public Imu, public FileReader
 
     /// @brief Resets the node. Moves the read cursor to the start
     bool resetNode() override;
+
+    /// Position and rotation information for conversion from platform to body frame
+    [[nodiscard]] const ImuPos& imuPosition() const { return _imuPos; }
+
+  protected:
+    /// Position and rotation information for conversion from platform to body frame
+    ImuPos _imuPos;
 
   private:
     constexpr static size_t OUTPUT_PORT_INDEX_IMU_OBS = 0; ///< @brief Flow (ImuObs)
