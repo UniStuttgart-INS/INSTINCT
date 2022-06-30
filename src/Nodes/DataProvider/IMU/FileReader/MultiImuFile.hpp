@@ -88,8 +88,11 @@ class MultiImuFile : public Node, public FileReader
     /// @brief First 'gpsSecond', s.t. measurements start at time = 0
     double _startTime{};
 
-    /// @brief Vector of column names
+    /// @brief Container of column names
     std::vector<std::string> _columns{ "sensorId", "gpsSecond", "timeNumerator", "timeDenominator", "accelX", "accelY", "accelZ", "gyroX", "gyroY", "gyroZ" };
+
+    /// @brief Container for individual sensor orientations of a Multi-IMU
+    std::vector<ImuPos> _imuPosAll;
 };
 
 } // namespace NAV
