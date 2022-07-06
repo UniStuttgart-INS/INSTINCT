@@ -234,5 +234,9 @@ void NAV::CsvFile::readHeader()
     {
         std::getline(_filestream, line);
         _data.description = str::split(line, _delimiter);
+        for (auto& desc : _data.description)
+        {
+            desc.erase(std::find_if(desc.begin(), desc.end(), [](int ch) { return std::iscntrl(ch); }), desc.end());
+        }
     }
 }
