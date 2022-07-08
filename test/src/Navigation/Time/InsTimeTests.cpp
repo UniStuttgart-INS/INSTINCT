@@ -11,6 +11,7 @@ namespace NAV::TEST::InsTimeTests
 {
 #define TEST_EQUAL_OBJECT(lhs, rhs) \
     REQUIRE(lhs == rhs);            \
+    REQUIRE(rhs == lhs);            \
     REQUIRE_FALSE(lhs != rhs);      \
     REQUIRE_FALSE(lhs > rhs);       \
     REQUIRE_FALSE(lhs < rhs);       \
@@ -19,6 +20,7 @@ namespace NAV::TEST::InsTimeTests
 
 #define STATIC_TEST_EQUAL_OBJECT(lhs, rhs) \
     STATIC_REQUIRE(lhs == rhs);            \
+    STATIC_REQUIRE(rhs == lhs);            \
     STATIC_REQUIRE_FALSE(lhs != rhs);      \
     STATIC_REQUIRE_FALSE(lhs > rhs);       \
     STATIC_REQUIRE_FALSE(lhs < rhs);       \
@@ -57,7 +59,7 @@ namespace NAV::TEST::InsTimeTests
     STATIC_REQUIRE_FALSE(lhs >= rhs);        \
     STATIC_REQUIRE(lhs <= rhs);
 
-TEST_CASE("[InsTime_MJD] Comparisions", "[InsTime]")
+TEST_CASE("[InsTime_MJD] Comparisons", "[InsTime]")
 {
     Logger consoleSink;
 
@@ -79,9 +81,13 @@ TEST_CASE("[InsTime_MJD] Comparisions", "[InsTime]")
 
     TEST_GREATER_OBJECT(time, time_g_1);
     TEST_GREATER_OBJECT(time, time_g_2);
+
+    auto time_eps_0 = InsTime_MJD(53045, 0.0L + InsTimeUtil::EPSILON / 2.L);
+    auto time_eps_1 = InsTime_MJD(53045, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    TEST_EQUAL_OBJECT(time_eps_0, time_eps_1);
 }
 
-TEST_CASE("[InsTime_MJD] Comparisions constexpr", "[InsTime]")
+TEST_CASE("[InsTime_MJD] Comparisons constexpr", "[InsTime]")
 {
     Logger consoleSink;
 
@@ -103,9 +109,13 @@ TEST_CASE("[InsTime_MJD] Comparisions constexpr", "[InsTime]")
 
     STATIC_TEST_GREATER_OBJECT(time, time_g_1);
     STATIC_TEST_GREATER_OBJECT(time, time_g_2);
+
+    constexpr auto time_eps_0 = InsTime_MJD(53045, 0.0L + InsTimeUtil::EPSILON / 2.L);
+    constexpr auto time_eps_1 = InsTime_MJD(53045, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    STATIC_TEST_EQUAL_OBJECT(time_eps_0, time_eps_1);
 }
 
-TEST_CASE("[InsTime_JD] Comparisions", "[InsTime]")
+TEST_CASE("[InsTime_JD] Comparisons", "[InsTime]")
 {
     Logger consoleSink;
 
@@ -127,9 +137,13 @@ TEST_CASE("[InsTime_JD] Comparisions", "[InsTime]")
 
     TEST_GREATER_OBJECT(time, time_g_1);
     TEST_GREATER_OBJECT(time, time_g_2);
+
+    auto time_eps_0 = InsTime_JD(53045, 0.0L + InsTimeUtil::EPSILON / 2.L);
+    auto time_eps_1 = InsTime_JD(53045, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    TEST_EQUAL_OBJECT(time_eps_0, time_eps_1);
 }
 
-TEST_CASE("[InsTime_JD] Comparisions constexpr", "[InsTime]")
+TEST_CASE("[InsTime_JD] Comparisons constexpr", "[InsTime]")
 {
     Logger consoleSink;
 
@@ -151,9 +165,13 @@ TEST_CASE("[InsTime_JD] Comparisions constexpr", "[InsTime]")
 
     STATIC_TEST_GREATER_OBJECT(time, time_g_1);
     STATIC_TEST_GREATER_OBJECT(time, time_g_2);
+
+    constexpr auto time_eps_0 = InsTime_JD(53045, 0.0L + InsTimeUtil::EPSILON / 2.L);
+    constexpr auto time_eps_1 = InsTime_JD(53045, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    STATIC_TEST_EQUAL_OBJECT(time_eps_0, time_eps_1);
 }
 
-TEST_CASE("[InsTime_GPSweekTow] Comparisions", "[InsTime]")
+TEST_CASE("[InsTime_GPSweekTow] Comparisons", "[InsTime]")
 {
     Logger consoleSink;
 
@@ -181,9 +199,17 @@ TEST_CASE("[InsTime_GPSweekTow] Comparisions", "[InsTime]")
     TEST_GREATER_OBJECT(time, time_g_1);
     TEST_GREATER_OBJECT(time, time_g_2);
     TEST_GREATER_OBJECT(time, time_g_3);
+
+    auto time_eps_0 = InsTime_GPSweekTow(1, 234, 0.0L + InsTimeUtil::EPSILON / 2.L);
+    auto time_eps_1 = InsTime_GPSweekTow(1, 234, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    TEST_EQUAL_OBJECT(time_eps_0, time_eps_1);
+
+    auto time_eps_2 = InsTime_GPSweekTow(1, 0, 0.0L + InsTimeUtil::EPSILON / 2.L);
+    auto time_eps_3 = InsTime_GPSweekTow(1, 0, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    TEST_EQUAL_OBJECT(time_eps_2, time_eps_3);
 }
 
-TEST_CASE("[InsTime_GPSweekTow] Comparisions constexpr", "[InsTime]")
+TEST_CASE("[InsTime_GPSweekTow] Comparisons constexpr", "[InsTime]")
 {
     Logger consoleSink;
 
@@ -211,9 +237,17 @@ TEST_CASE("[InsTime_GPSweekTow] Comparisions constexpr", "[InsTime]")
     STATIC_TEST_GREATER_OBJECT(time, time_g_1);
     STATIC_TEST_GREATER_OBJECT(time, time_g_2);
     STATIC_TEST_GREATER_OBJECT(time, time_g_3);
+
+    constexpr auto time_eps_0 = InsTime_GPSweekTow(1, 234, 0.0L + InsTimeUtil::EPSILON / 2.L);
+    constexpr auto time_eps_1 = InsTime_GPSweekTow(1, 234, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    STATIC_TEST_EQUAL_OBJECT(time_eps_0, time_eps_1);
+
+    constexpr auto time_eps_2 = InsTime_GPSweekTow(1, 0, 0.0L + InsTimeUtil::EPSILON / 2.L);
+    constexpr auto time_eps_3 = InsTime_GPSweekTow(1, 0, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    STATIC_TEST_EQUAL_OBJECT(time_eps_2, time_eps_3);
 }
 
-TEST_CASE("[InsTime_YMDHMS] Comparisions lesser", "[InsTime]")
+TEST_CASE("[InsTime_YMDHMS] Comparisons lesser", "[InsTime]")
 {
     Logger consoleSink;
 
@@ -233,7 +267,7 @@ TEST_CASE("[InsTime_YMDHMS] Comparisions lesser", "[InsTime]")
     TEST_LESSER_OBJECT(time_l_6, time);
 }
 
-TEST_CASE("[InsTime_YMDHMS] Comparisions lesser constexpr", "[InsTime]")
+TEST_CASE("[InsTime_YMDHMS] Comparisons lesser constexpr", "[InsTime]")
 {
     Logger consoleSink;
 
@@ -253,7 +287,7 @@ TEST_CASE("[InsTime_YMDHMS] Comparisions lesser constexpr", "[InsTime]")
     STATIC_TEST_LESSER_OBJECT(time_l_6, time);
 }
 
-TEST_CASE("[InsTime_YMDHMS] Comparisions equal", "[InsTime]")
+TEST_CASE("[InsTime_YMDHMS] Comparisons equal", "[InsTime]")
 {
     Logger consoleSink;
 
@@ -291,9 +325,13 @@ TEST_CASE("[InsTime_YMDHMS] Comparisions equal", "[InsTime]")
     auto time6 = InsTime_YMDHMS(2003, 12, 31, 13, 25, 58.0L);
     auto time6_e_1 = InsTime_YMDHMS(2004, 3, 10, 13, 25, 58.0L - (10 + 31 + 29) * InsTimeUtil::SECONDS_PER_DAY);
     TEST_EQUAL_OBJECT(time6, time6_e_1);
+
+    auto time_eps_0 = InsTime_YMDHMS(2000, 0, 0, 0, 0, 0.0L + InsTimeUtil::EPSILON / 2.L);
+    auto time_eps_1 = InsTime_YMDHMS(2000, 0, 0, 0, 0, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    TEST_EQUAL_OBJECT(time_eps_0, time_eps_1);
 }
 
-TEST_CASE("[InsTime_YMDHMS] Comparisions equal constexpr", "[InsTime]")
+TEST_CASE("[InsTime_YMDHMS] Comparisons equal constexpr", "[InsTime]")
 {
     Logger consoleSink;
 
@@ -331,9 +369,13 @@ TEST_CASE("[InsTime_YMDHMS] Comparisions equal constexpr", "[InsTime]")
     constexpr auto time6 = InsTime_YMDHMS(2003, 12, 31, 13, 25, 58.0L);
     constexpr auto time6_e_1 = InsTime_YMDHMS(2004, 3, 10, 13, 25, 58.0L - (10 + 31 + 29) * InsTimeUtil::SECONDS_PER_DAY);
     STATIC_TEST_EQUAL_OBJECT(time6, time6_e_1);
+
+    constexpr auto time_eps_0 = InsTime_YMDHMS(2000, 0, 0, 0, 0, 0.0L + InsTimeUtil::EPSILON / 2.L);
+    constexpr auto time_eps_1 = InsTime_YMDHMS(2000, 0, 0, 0, 0, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    STATIC_TEST_EQUAL_OBJECT(time_eps_0, time_eps_1);
 }
 
-TEST_CASE("[InsTime_YMDHMS] Comparisions greater", "[InsTime]")
+TEST_CASE("[InsTime_YMDHMS] Comparisons greater", "[InsTime]")
 {
     Logger consoleSink;
 
@@ -353,7 +395,7 @@ TEST_CASE("[InsTime_YMDHMS] Comparisions greater", "[InsTime]")
     TEST_GREATER_OBJECT(time, time_g_6);
 }
 
-TEST_CASE("[InsTime_YMDHMS] Comparisions greater constexpr", "[InsTime]")
+TEST_CASE("[InsTime_YMDHMS] Comparisons greater constexpr", "[InsTime]")
 {
     Logger consoleSink;
 
@@ -373,7 +415,7 @@ TEST_CASE("[InsTime_YMDHMS] Comparisions greater constexpr", "[InsTime]")
     STATIC_TEST_GREATER_OBJECT(time, time_g_6);
 }
 
-TEST_CASE("[InsTime_YDoySod] Comparisions", "[InsTime]")
+TEST_CASE("[InsTime_YDoySod] Comparisons", "[InsTime]")
 {
     Logger consoleSink;
 
@@ -409,9 +451,13 @@ TEST_CASE("[InsTime_YDoySod] Comparisions", "[InsTime]")
     auto time4 = InsTime_YDoySod(2003, 364, 48358.0L);
     auto time4_e_1 = InsTime_YDoySod(2004, 6 + 31 + 29, 48358.0L - (7 + 31 + 29) * InsTimeUtil::SECONDS_PER_DAY);
     TEST_EQUAL_OBJECT(time4, time4_e_1);
+
+    auto time_eps_0 = InsTime_YDoySod(2004, 0, 0.0L + InsTimeUtil::EPSILON / 2.L);
+    auto time_eps_1 = InsTime_YDoySod(2004, 0, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    TEST_EQUAL_OBJECT(time_eps_0, time_eps_1);
 }
 
-TEST_CASE("[InsTime_YDoySod] Comparisions constexpr", "[InsTime]")
+TEST_CASE("[InsTime_YDoySod] Comparisons constexpr", "[InsTime]")
 {
     Logger consoleSink;
 
@@ -447,6 +493,10 @@ TEST_CASE("[InsTime_YDoySod] Comparisions constexpr", "[InsTime]")
     constexpr auto time4 = InsTime_YDoySod(2003, 364, 48358.0L);
     constexpr auto time4_e_1 = InsTime_YDoySod(2004, 6 + 31 + 29, 48358.0L - (7 + 31 + 29) * InsTimeUtil::SECONDS_PER_DAY);
     STATIC_TEST_EQUAL_OBJECT(time4, time4_e_1);
+
+    constexpr auto time_eps_0 = InsTime_YDoySod(2004, 0, 0.0L + InsTimeUtil::EPSILON / 2.L);
+    constexpr auto time_eps_1 = InsTime_YDoySod(2004, 0, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    STATIC_TEST_EQUAL_OBJECT(time_eps_0, time_eps_1);
 }
 
 TEST_CASE("[InsTime] Constructors & Conversion", "[InsTime]")
@@ -620,7 +670,29 @@ TEST_CASE("[InsTime] Leap Functions constexpr", "[InsTime]")
     STATIC_REQUIRE(insTime.isLeapYear() == true);
 }
 
-TEST_CASE("[InsTime] Comparisions lesser", "[InsTime]")
+TEST_CASE("[InsTime] Adding values over leap second", "[InsTime]")
+{
+    InsTime timeBeforeLeap(2016, 12, 31, 23, 30, 0.0, UTC);
+    CHECK(timeBeforeLeap.leapGps2UTC() == 17);
+
+    constexpr int64_t dt = 3600;
+    InsTime timeAfterLeap = timeBeforeLeap + std::chrono::seconds(dt);
+    CHECK(timeAfterLeap.leapGps2UTC() == 18);
+
+    auto calDate_UTC = timeAfterLeap.toYMDHMS(GPST);
+    CHECK(calDate_UTC.year == 2017);
+    CHECK(calDate_UTC.month == 1);
+    CHECK(calDate_UTC.day == 1);
+    CHECK(calDate_UTC.hour == 0);
+    CHECK(calDate_UTC.min == 30);
+    CHECK(calDate_UTC.sec == Approx(18).margin(1.0e-14));
+
+    InsTime recoveredTime = timeAfterLeap - std::chrono::seconds(dt);
+
+    CHECK(recoveredTime == timeBeforeLeap);
+}
+
+TEST_CASE("[InsTime] Comparisons lesser", "[InsTime]")
 {
     Logger consoleSink;
 
@@ -639,17 +711,17 @@ TEST_CASE("[InsTime] Comparisions lesser", "[InsTime]")
     TEST_LESSER_OBJECT(InsTime(insTime_JD_l_2), insTime);
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
-    auto insTime_GPSweekTow_l_1 = InsTime_GPSweekTow(0, 233, 221158.0L + InsTime::leapGps2UTC(insTime));
-    auto insTime_GPSweekTow_l_2 = InsTime_GPSweekTow(1, 232, 221158.0L + InsTime::leapGps2UTC(insTime));
-    auto insTime_GPSweekTow_l_3 = InsTime_GPSweekTow(1, 233, 221157.9L + InsTime::leapGps2UTC(insTime));
+    auto insTime_GPSweekTow_l_1 = InsTime_GPSweekTow(0, 233, 221158.0L);
+    auto insTime_GPSweekTow_l_2 = InsTime_GPSweekTow(1, 232, 221158.0L);
+    auto insTime_GPSweekTow_l_3 = InsTime_GPSweekTow(1, 233, 221157.9L);
     TEST_LESSER_OBJECT(InsTime(insTime_GPSweekTow_l_1), insTime);
     TEST_LESSER_OBJECT(InsTime(insTime_GPSweekTow_l_2), insTime);
     TEST_LESSER_OBJECT(InsTime(insTime_GPSweekTow_l_3), insTime);
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
-    auto insTime_YDoySod_l_1 = InsTime_YDoySod(2003, 41, 48358.0L + InsTime::leapGps2UTC(insTime));
-    auto insTime_YDoySod_l_2 = InsTime_YDoySod(2004, 40, 48358.0L + InsTime::leapGps2UTC(insTime));
-    auto insTime_YDoySod_l_3 = InsTime_YDoySod(2004, 41, 48357.8L + InsTime::leapGps2UTC(insTime));
+    auto insTime_YDoySod_l_1 = InsTime_YDoySod(2003, 41, 48358.0L);
+    auto insTime_YDoySod_l_2 = InsTime_YDoySod(2004, 40, 48358.0L);
+    auto insTime_YDoySod_l_3 = InsTime_YDoySod(2004, 41, 48357.8L);
     TEST_LESSER_OBJECT(InsTime(insTime_YDoySod_l_1), insTime);
     TEST_LESSER_OBJECT(InsTime(insTime_YDoySod_l_2), insTime);
     TEST_LESSER_OBJECT(InsTime(insTime_YDoySod_l_3), insTime);
@@ -666,7 +738,7 @@ TEST_CASE("[InsTime] Comparisions lesser", "[InsTime]")
     TEST_LESSER_OBJECT(InsTime(insTime_YMDHMS_l_5), insTime);
 }
 
-TEST_CASE("[InsTime] Comparisions lesser constexpr", "[InsTime]")
+TEST_CASE("[InsTime] Comparisons lesser constexpr", "[InsTime]")
 {
     Logger consoleSink;
 
@@ -685,17 +757,17 @@ TEST_CASE("[InsTime] Comparisions lesser constexpr", "[InsTime]")
     STATIC_TEST_LESSER_OBJECT(InsTime(insTime_JD_l_2), insTime);
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
-    constexpr auto insTime_GPSweekTow_l_1 = InsTime_GPSweekTow(0, 233, 221158.0L + InsTime::leapGps2UTC(insTime));
-    constexpr auto insTime_GPSweekTow_l_2 = InsTime_GPSweekTow(1, 232, 221158.0L + InsTime::leapGps2UTC(insTime));
-    constexpr auto insTime_GPSweekTow_l_3 = InsTime_GPSweekTow(1, 233, 221157.9L + InsTime::leapGps2UTC(insTime));
+    constexpr auto insTime_GPSweekTow_l_1 = InsTime_GPSweekTow(0, 233, 221158.0L);
+    constexpr auto insTime_GPSweekTow_l_2 = InsTime_GPSweekTow(1, 232, 221158.0L);
+    constexpr auto insTime_GPSweekTow_l_3 = InsTime_GPSweekTow(1, 233, 221157.9L);
     STATIC_TEST_LESSER_OBJECT(InsTime(insTime_GPSweekTow_l_1), insTime);
     STATIC_TEST_LESSER_OBJECT(InsTime(insTime_GPSweekTow_l_2), insTime);
     STATIC_TEST_LESSER_OBJECT(InsTime(insTime_GPSweekTow_l_3), insTime);
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
-    constexpr auto insTime_YDoySod_l_1 = InsTime_YDoySod(2003, 41, 48358.0L + InsTime::leapGps2UTC(insTime));
-    constexpr auto insTime_YDoySod_l_2 = InsTime_YDoySod(2004, 40, 48358.0L + InsTime::leapGps2UTC(insTime));
-    constexpr auto insTime_YDoySod_l_3 = InsTime_YDoySod(2004, 41, 48357.8L + InsTime::leapGps2UTC(insTime));
+    constexpr auto insTime_YDoySod_l_1 = InsTime_YDoySod(2003, 41, 48358.0L);
+    constexpr auto insTime_YDoySod_l_2 = InsTime_YDoySod(2004, 40, 48358.0L);
+    constexpr auto insTime_YDoySod_l_3 = InsTime_YDoySod(2004, 41, 48357.8L);
     STATIC_TEST_LESSER_OBJECT(InsTime(insTime_YDoySod_l_1), insTime);
     STATIC_TEST_LESSER_OBJECT(InsTime(insTime_YDoySod_l_2), insTime);
     STATIC_TEST_LESSER_OBJECT(InsTime(insTime_YDoySod_l_3), insTime);
@@ -712,7 +784,7 @@ TEST_CASE("[InsTime] Comparisions lesser constexpr", "[InsTime]")
     STATIC_TEST_LESSER_OBJECT(InsTime(insTime_YMDHMS_l_5), insTime);
 }
 
-TEST_CASE("[InsTime] Comparisions equal", "[InsTime]")
+TEST_CASE("[InsTime] Comparisons equal", "[InsTime]")
 {
     Logger consoleSink;
 
@@ -727,18 +799,20 @@ TEST_CASE("[InsTime] Comparisions equal", "[InsTime]")
     TEST_EQUAL_OBJECT(insTime, InsTime(insTime_JD));
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
-    auto insTime_GPSweekTow = InsTime_GPSweekTow(1, 233, 221158.0L + InsTime::leapGps2UTC(insTime));
-    TEST_EQUAL_OBJECT(insTime, InsTime(insTime_GPSweekTow));
+    auto insTime_GPSweekTow = InsTime_GPSweekTow(1, 233, 221158.0L);
+    TEST_EQUAL_OBJECT(insTime, InsTime(insTime_GPSweekTow, UTC));
+    auto insTime_GPSweekTow2 = InsTime_GPSweekTow(1, 233, 221158.0L + InsTime::leapGps2UTC(insTime));
+    TEST_EQUAL_OBJECT(insTime, InsTime(insTime_GPSweekTow2));
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
-    auto insTime_YDoySod = InsTime_YDoySod(2004, 41, 48358.0L + InsTime::leapGps2UTC(insTime));
+    auto insTime_YDoySod = InsTime_YDoySod(2004, 41, 48358.0L);
     TEST_EQUAL_OBJECT(insTime, InsTime(insTime_YDoySod));
 
     auto insTime_YMDHMS = InsTime_YMDHMS(2004, 2, 10, 13, 25, 58.0L);
     TEST_EQUAL_OBJECT(insTime, InsTime(insTime_YMDHMS));
 }
 
-TEST_CASE("[InsTime] Comparisions equal constexpr", "[InsTime]")
+TEST_CASE("[InsTime] Comparisons equal constexpr", "[InsTime]")
 {
     Logger consoleSink;
 
@@ -753,18 +827,20 @@ TEST_CASE("[InsTime] Comparisions equal constexpr", "[InsTime]")
     STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_JD));
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
-    constexpr auto insTime_GPSweekTow = InsTime_GPSweekTow(1, 233, 221158.0L + InsTime::leapGps2UTC(insTime));
-    STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_GPSweekTow));
+    constexpr auto insTime_GPSweekTow = InsTime_GPSweekTow(1, 233, 221158.0L);
+    STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_GPSweekTow, UTC));
+    constexpr auto insTime_GPSweekTow2 = InsTime_GPSweekTow(1, 233, 221158.0L + InsTime::leapGps2UTC(insTime));
+    STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_GPSweekTow2));
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
-    constexpr auto insTime_YDoySod = InsTime_YDoySod(2004, 41, 48358.0L + InsTime::leapGps2UTC(insTime));
+    constexpr auto insTime_YDoySod = InsTime_YDoySod(2004, 41, 48358.0L);
     STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_YDoySod));
 
     constexpr auto insTime_YMDHMS = InsTime_YMDHMS(2004, 2, 10, 13, 25, 58.0L);
     STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_YMDHMS));
 }
 
-TEST_CASE("[InsTime] Comparisions greater", "[InsTime]")
+TEST_CASE("[InsTime] Comparisons greater", "[InsTime]")
 {
     Logger consoleSink;
 
@@ -821,7 +897,7 @@ TEST_CASE("[InsTime] Comparisions greater", "[InsTime]")
     TEST_GREATER_OBJECT(insTime, InsTime(insTime_YMDHMS_g_5));
 }
 
-TEST_CASE("[InsTime] Comparisions greater constexpr", "[InsTime]")
+TEST_CASE("[InsTime] Comparisons greater constexpr", "[InsTime]")
 {
     Logger consoleSink;
 
