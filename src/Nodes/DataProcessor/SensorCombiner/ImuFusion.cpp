@@ -47,7 +47,6 @@ void to_json(json& j, const ImuFusion::PinData& data)
         { "dataIdentifier", data.dataIdentifier },
         { "size", data.size },
         { "sensorData", data.sensorData },
-        { "pinType", data.pinType },
         { "stride", data.stride },
     };
 }
@@ -67,14 +66,6 @@ void from_json(const json& j, ImuFusion::PinData& data)
     if (j.contains("sensorData"))
     {
         j.at("sensorData").get_to(data.sensorData);
-        for (auto& sensorData : data.sensorData)
-        {
-            sensorData.buffer = ScrollingBuffer<double>(static_cast<size_t>(data.size));
-        }
-    }
-    if (j.contains("pinType"))
-    {
-        j.at("pinType").get_to(data.pinType);
     }
     if (j.contains("stride"))
     {
@@ -136,8 +127,7 @@ void NAV::ImuFusion::guiConfig()
             ImGui::TableNextRow();
             ImGui::TableNextColumn(); // Pin
 
-            bool selectablePinDummy = false;
-            ImGui::Selectable(fmt::format("{}##{}", inputPins.at(pinIndex).name, size_t(id)).c_str(), &selectablePinDummy);
+            ImGui::TextUnformatted(fmt::format("{}", inputPins.at(pinIndex).name).c_str());
 
             if (inputPins.size() > 2) // Minimum # of pins for the fusion to make sense is two
             {
@@ -157,10 +147,10 @@ void NAV::ImuFusion::guiConfig()
                         _varBiasAngRateNoiseUnit.erase(_varBiasAngRateNoiseUnit.begin() + static_cast<int64_t>(pinIndex - 1));
                         _varBiasAccelerationNoise.erase(_varBiasAccelerationNoise.begin() + static_cast<int64_t>(pinIndex - 1));
                         _varBiasAccelerationNoiseUnit.erase(_varBiasAccelerationNoiseUnit.begin() + static_cast<int64_t>(pinIndex - 1));
-                        _measurementUncertaintyAngularRate.erase(_measurementUncertaintyAngularRate.begin() + static_cast<int64_t>(pinIndex - 1));
-                        _measurementUncertaintyAngularRateUnit.erase(_measurementUncertaintyAngularRateUnit.begin() + static_cast<int64_t>(pinIndex - 1));
-                        _measurementUncertaintyAcceleration.erase(_measurementUncertaintyAcceleration.begin() + static_cast<int64_t>(pinIndex - 1));
-                        _measurementUncertaintyAccelerationUnit.erase(_measurementUncertaintyAccelerationUnit.begin() + static_cast<int64_t>(pinIndex - 1));
+                        _measurementUncertaintyAngularRate.erase(_measurementUncertaintyAngularRate.begin() + static_cast<int64_t>(pinIndex));
+                        _measurementUncertaintyAngularRateUnit.erase(_measurementUncertaintyAngularRateUnit.begin() + static_cast<int64_t>(pinIndex));
+                        _measurementUncertaintyAcceleration.erase(_measurementUncertaintyAcceleration.begin() + static_cast<int64_t>(pinIndex));
+                        _measurementUncertaintyAccelerationUnit.erase(_measurementUncertaintyAccelerationUnit.begin() + static_cast<int64_t>(pinIndex));
                         --_nInputPins;
                         flow::ApplyChanges();
                         updateNumberOfInputPins();
@@ -529,11 +519,6 @@ void NAV::ImuFusion::restore(json const& j)
     if (j.contains("pinData"))
     {
         j.at("pinData").get_to(_pinData);
-
-        for (size_t inputPinIndex = 0; inputPinIndex < inputPins.size(); inputPinIndex++) //NOLINT(modernize-loop-convert)
-        {
-            inputPins.at(inputPinIndex).notifyFunc.clear();
-        }
     }
     // -------------------------------------- 𝐏 Error covariance matrix -----------------------------------------
     if (j.contains("initCovarianceAngularRateUnit"))
@@ -960,14 +945,14 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
         // Read sensor rotation info from 'imuObs'
         if (!_imuRotations_accel.contains(pinIndex))
         {
-            // Do heavy calculations
+            // Rotation matrix of the accelerometer platform to body frame
             auto DCM_accel = imuObs->imuPos.b_quatAccel_p().toRotationMatrix();
 
             _imuRotations_accel.insert_or_assign(pinIndex, DCM_accel);
         }
         if (!_imuRotations_gyro.contains(pinIndex))
         {
-            // Do heavy calculations
+            // Rotation matrix of the gyro platform to body frame
             auto DCM_gyro = imuObs->imuPos.b_quatGyro_p().toRotationMatrix();
 
             _imuRotations_gyro.insert_or_assign(pinIndex, DCM_gyro);

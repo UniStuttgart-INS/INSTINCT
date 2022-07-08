@@ -66,14 +66,11 @@ class ImuFusion : public Imu
 
             /// @brief Constructor
             /// @param[in] displayName Display name of the contained data
-            /// @param[in] size Size of the buffer
-            explicit SensorData(std::string displayName, size_t size)
-                : displayName(std::move(displayName)), buffer(size) {}
+            explicit SensorData(std::string displayName)
+                : displayName(std::move(displayName)) {}
 
             /// Display name of the contained data
             std::string displayName;
-            /// Buffer for the data
-            ScrollingBuffer<double> buffer;
             /// Flag if data was received, as the buffer contains std::nan("") otherwise
             bool hasData = false;
 
@@ -82,10 +79,11 @@ class ImuFusion : public Imu
         };
 
         /// @brief Possible Pin types
-        enum class PinType : int
-        {
-            Flow, ///< NodeData Trigger
-        };
+
+        // enum class PinType : int
+        // {
+        //     Flow, ///< NodeData Trigger
+        // };
 
         /// @brief Constructor
         PinData() = default;
@@ -93,21 +91,11 @@ class ImuFusion : public Imu
         ~PinData() = default;
         /// @brief Copy constructor
         /// @param[in] other The other element to copy
-        PinData(const PinData& other)
-            : size(other.size),
-              dataIdentifier(other.dataIdentifier),
-              sensorData(other.sensorData),
-              pinType(other.pinType),
-              stride(other.stride) {}
+        PinData(const PinData& other) = default;
 
         /// @brief Move constructor
         /// @param[in] other The other element to move
-        PinData(PinData&& other) noexcept
-            : size(other.size),
-              dataIdentifier(std::move(other.dataIdentifier)),
-              sensorData(std::move(other.sensorData)),
-              pinType(other.pinType),
-              stride(other.stride) {}
+        PinData(PinData&& other) = default;
 
         /// @brief Copy assignment operator
         /// @param[in] rhs The other element to copy
@@ -118,7 +106,6 @@ class ImuFusion : public Imu
                 size = rhs.size;
                 dataIdentifier = rhs.dataIdentifier;
                 sensorData = rhs.sensorData;
-                pinType = rhs.pinType;
                 stride = rhs.stride;
             }
 
@@ -133,59 +120,10 @@ class ImuFusion : public Imu
                 size = rhs.size;
                 dataIdentifier = std::move(rhs.dataIdentifier);
                 sensorData = std::move(rhs.sensorData);
-                pinType = rhs.pinType;
                 stride = rhs.stride;
             }
 
             return *this;
-        }
-
-        /// @brief Adds a sensorData Element to the list
-        /// @param[in] dataIndex Index where to add the data to
-        /// @param[in] displayName Display name of the contained data
-        void addSensorDataItem(size_t dataIndex, const std::string& displayName)
-        {
-            if (sensorData.size() > dataIndex)
-            {
-                if (sensorData.at(dataIndex).displayName == displayName) // Item was restored already at this position
-                {
-                    sensorData.at(dataIndex).markedForDelete = false;
-                    return;
-                }
-
-                // Some other item was restored at this position
-                if (!sensorData.at(dataIndex).markedForDelete)
-                {
-                    LOG_WARN("Adding SensorData item '{}' at position {}, but at this position exists already the item '{}'. Reordering the items to match the data. Consider resaving the flow file.",
-                             displayName, dataIndex, sensorData.at(dataIndex).displayName);
-                }
-                auto searchIter = std::find_if(sensorData.begin(),
-                                               sensorData.end(),
-                                               [displayName](const SensorData& sensorData) { return sensorData.displayName == displayName; });
-                auto iter = sensorData.begin();
-                std::advance(iter, dataIndex);
-                if (searchIter == sensorData.end()) // Item does not exist yet. Developer added a new item to the list
-                {
-                    sensorData.insert(iter, SensorData{ displayName, static_cast<size_t>(size) });
-                }
-                else // Item exists already. Developer reordered the items in the list
-                {
-                    std::rotate(searchIter, searchIter + 1, iter);
-                }
-                iter->markedForDelete = false;
-            }
-            else if (std::find_if(sensorData.begin(),
-                                  sensorData.end(),
-                                  [displayName](const SensorData& sensorData) { return sensorData.displayName == displayName; })
-                     != sensorData.end())
-            {
-                LOG_ERROR("Adding the SensorData item {} at position {}, but this sensor item was found at another position already",
-                          displayName, dataIndex);
-            }
-            else // Item not there yet. Add to the end of the list
-            {
-                sensorData.emplace_back(displayName, static_cast<size_t>(size));
-            }
         }
 
         /// Size of all buffers of the sensorData elements
@@ -194,12 +132,8 @@ class ImuFusion : public Imu
         std::string dataIdentifier;
         /// List with all the data
         std::vector<SensorData> sensorData;
-        /// Pin Type
-        PinType pinType = PinType::Flow;
         /// Amount of points to skip for plotting
         int stride = 1;
-        /// Mutex to lock the buffer so that the GUI thread and the calculation threads don't cause a data race
-        std::mutex mutex;
     };
 
   private:
@@ -303,10 +237,10 @@ class ImuFusion : public Imu
     /// Data storage for each pin
     std::vector<PinData> _pinData;
 
-    /// @brief Rotations of all connected IMUs
+    /// @brief Rotations of all connected accelerometers - key: pinIndex, value: Rotation matrix of the accelerometer platform to body frame
     std::map<size_t, Eigen::Matrix3d> _imuRotations_accel;
 
-    /// @brief Rotations of all connected IMUs
+    /// @brief Rotations of all connected gyros - key: pinIndex, value: Rotation matrix of the gyro platform to body frame
     std::map<size_t, Eigen::Matrix3d> _imuRotations_gyro;
 
     /// Kalman Filter representation
