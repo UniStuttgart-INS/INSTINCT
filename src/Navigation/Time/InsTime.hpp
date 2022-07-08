@@ -1082,6 +1082,7 @@ class InsTime
         case TimeSys_None:
             return 0;
         }
+        return 0;
     }
 
   private:
