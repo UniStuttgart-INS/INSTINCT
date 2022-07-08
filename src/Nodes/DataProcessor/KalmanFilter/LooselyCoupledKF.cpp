@@ -601,7 +601,7 @@ bool NAV::LooselyCoupledKF::initialize()
     _kalmanFilter.setZero();
 
     _latestInertialNavSol = nullptr;
-    _lastPredictTime = InsTime();
+    _lastPredictTime.reset();
     _accumulatedAccelBiases.setZero();
     _accumulatedGyroBiases.setZero();
 

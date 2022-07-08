@@ -1039,6 +1039,13 @@ class InsTime
         return _mjd.mjd_day == 0 && _mjd.mjd_frac == 0.0L;
     }
 
+    /// @brief Resets the InsTime object
+    void reset()
+    {
+        _mjd.mjd_day = 0;
+        _mjd.mjd_frac = 0.0L;
+    }
+
     /// @brief Adds the difference [seconds] between toe (OBRIT-0 last element) and toc (ORBIT-0 first element) to the current time
     /// (Changes time, so that it corresponds to the time of GLONASS ORBIT last element)
     /// @param[in] UTC_sec Seconds in UTC time

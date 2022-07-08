@@ -1301,7 +1301,7 @@ bool NAV::Plot::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    _startTime = InsTime();
+    _startTime.reset();
     if (!_overridePositionStartValues)
     {
         _originLatitude = std::nan("");

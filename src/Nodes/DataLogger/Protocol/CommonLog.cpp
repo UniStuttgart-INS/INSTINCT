@@ -16,7 +16,7 @@ void CommonLog::initialize()
         if (_referenceCounter == 0)
         {
             LOG_DEBUG("Resetting common log variables.");
-            _startTime = InsTime();
+            _startTime.reset();
             _originLatitude = std::nan("");
             _originLongitude = std::nan("");
         }

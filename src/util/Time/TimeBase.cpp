@@ -77,5 +77,5 @@ void NAV::util::time::SetCurrentTime(const NAV::InsTime& insTime)
 
 void NAV::util::time::ClearCurrentTime()
 {
-    currentTime = InsTime();
+    currentTime.reset();
 }
