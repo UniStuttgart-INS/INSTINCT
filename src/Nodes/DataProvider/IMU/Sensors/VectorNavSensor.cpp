@@ -5333,7 +5333,7 @@ void NAV::VectorNavSensor::restore(json const& j)
 
 bool NAV::VectorNavSensor::resetNode()
 {
-    _timeSyncOut.ppsTime = InsTime{};
+    _timeSyncOut.ppsTime.reset();
     _timeSyncOut.syncOutCnt = 0;
     _binaryOutputRegisterMergeObservation = nullptr;
 

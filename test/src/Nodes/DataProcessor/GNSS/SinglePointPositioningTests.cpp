@@ -57,7 +57,7 @@ struct SppReference
 
 std::vector<SppReference> sppReference; ///< SppReference files
 
-TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - Klobuchar - Saastamoinen)", "[SinglePointPositioning][flow][Debug]")
+TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - Klobuchar - Saastamoinen)", "[SinglePointPositioning][flow]")
 {
     Logger consoleSink;
 

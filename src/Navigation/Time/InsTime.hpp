@@ -52,25 +52,25 @@ constexpr long double EPSILON = 2.0L * std::numeric_limits<long double>::epsilon
 
 /// Maps GPS leap seconds to a time: array<mjd_day>, index + 1 is amount of leap seconds
 constexpr std::array<int32_t, 20> GPS_LEAP_SEC_MJD = {
-    0,     // 1 Jan 1980 and before
-    44786, // 1 Jul 1981  //diff UTC-TAI: 20
-    45151, // 1 Jul 1982  //diff UTC-TAI: 21
-    45516, // 1 Jul 1983  //diff UTC-TAI: 22
-    46247, // 1 Jul 1985  //diff UTC-TAI: 23
-    47161, // 1 Jan 1988  //diff UTC-TAI: 24
-    47892, // 1 Jan 1990  //diff UTC-TAI: 25
-    48257, // 1 Jan 1991  //diff UTC-TAI: 26
-    48804, // 1 Jul 1992  //diff UTC-TAI: 27
-    49169, // 1 Jul 1993  //diff UTC-TAI: 28
-    49534, // 1 Jul 1994  //diff UTC-TAI: 29
-    50083, // 1 Jan 1996  //diff UTC-TAI: 30
-    50630, // 1 Jul 1997  //diff UTC-TAI: 31
-    51179, // 1 Jan 1999  //diff UTC-TAI: 32
-    53736, // 1 Jan 2006  //diff UTC-TAI: 33
-    54832, // 1 Jan 2009  //diff UTC-TAI: 34
-    56109, // 1 Jul 2012  //diff UTC-TAI: 35
-    57204, // 1 Jul 2015  //diff UTC-TAI: 36
-    57754, // 1 Jan 2017  //diff UTC-TAI: 37
+    0,     // + 0 at 1 Jan 1980 and before
+    44786, // + 1 at 1 Jul 1981 = diff UTC-TAI: 20
+    45151, // + 2 at 1 Jul 1982 = diff UTC-TAI: 21
+    45516, // + 3 at 1 Jul 1983 = diff UTC-TAI: 22
+    46247, // + 4 at 1 Jul 1985 = diff UTC-TAI: 23
+    47161, // + 5 at 1 Jan 1988 = diff UTC-TAI: 24
+    47892, // + 6 at 1 Jan 1990 = diff UTC-TAI: 25
+    48257, // + 7 at 1 Jan 1991 = diff UTC-TAI: 26
+    48804, // + 8 at 1 Jul 1992 = diff UTC-TAI: 27
+    49169, // + 9 at 1 Jul 1993 = diff UTC-TAI: 28
+    49534, // +10 at 1 Jul 1994 = diff UTC-TAI: 29
+    50083, // +11 at 1 Jan 1996 = diff UTC-TAI: 30
+    50630, // +12 at 1 Jul 1997 = diff UTC-TAI: 31
+    51179, // +13 at 1 Jan 1999 = diff UTC-TAI: 32
+    53736, // +14 at 1 Jan 2006 = diff UTC-TAI: 33
+    54832, // +15 at 1 Jan 2009 = diff UTC-TAI: 34
+    56109, // +16 at 1 Jul 2012 = diff UTC-TAI: 35
+    57204, // +17 at 1 Jul 2015 = diff UTC-TAI: 36
+    57754, // +18 at 1 Jan 2017 = diff UTC-TAI: 37
     99999, // future
 };
 
@@ -169,8 +169,18 @@ struct InsTime_MJD
     /// @return Comparison result
     constexpr bool operator==(const InsTime_MJD& rhs) const
     {
-        return (mjd_day == rhs.mjd_day
-                && gcem::abs(mjd_frac - rhs.mjd_frac) <= InsTimeUtil::EPSILON);
+        if (mjd_day == rhs.mjd_day)
+        {
+            auto difference = gcem::abs(mjd_frac - rhs.mjd_frac);
+            return difference <= InsTimeUtil::EPSILON;
+        }
+        if (auto diffDays = mjd_day - rhs.mjd_day;
+            gcem::abs(diffDays) == 1)
+        {
+            auto difference = 1 + diffDays * (mjd_frac - rhs.mjd_frac);
+            return difference <= InsTimeUtil::EPSILON;
+        }
+        return false;
     }
     /// @brief Inequal comparison operator (takes double precision into account)
     /// @param[in] rhs Right-hand side to compare with
@@ -198,8 +208,8 @@ struct InsTime_MJD
     /// @return Comparison result
     constexpr bool operator<(const InsTime_MJD& rhs) const
     {
-        return (mjd_day < rhs.mjd_day
-                || (mjd_day == rhs.mjd_day && (mjd_frac < rhs.mjd_frac && *this != rhs)));
+        return (mjd_day < rhs.mjd_day || (mjd_day == rhs.mjd_day && mjd_frac < rhs.mjd_frac))
+               && *this != rhs;
     }
     /// @brief Greater comparison operator (takes double precision into account)
     /// @param[in] rhs Right-hand side to compare with
@@ -239,8 +249,18 @@ struct InsTime_JD
     /// @return Comparison result
     constexpr bool operator==(const InsTime_JD& rhs) const
     {
-        return (jd_day == rhs.jd_day
-                && gcem::abs(jd_frac - rhs.jd_frac) <= InsTimeUtil::EPSILON);
+        if (jd_day == rhs.jd_day)
+        {
+            auto difference = gcem::abs(jd_frac - rhs.jd_frac);
+            return difference <= InsTimeUtil::EPSILON;
+        }
+        if (auto diffDays = jd_day - rhs.jd_day;
+            gcem::abs(diffDays) == 1)
+        {
+            auto difference = 1 + diffDays * (jd_frac - rhs.jd_frac);
+            return difference <= InsTimeUtil::EPSILON;
+        }
+        return false;
     }
     /// @brief Inequal comparison operator (takes double precision into account)
     /// @param[in] rhs Right-hand side to compare with
@@ -268,8 +288,8 @@ struct InsTime_JD
     /// @return Comparison result
     constexpr bool operator<(const InsTime_JD& rhs) const
     {
-        return (jd_day < rhs.jd_day
-                || (jd_day == rhs.jd_day && jd_frac < rhs.jd_frac && *this != rhs));
+        return (jd_day < rhs.jd_day || (jd_day == rhs.jd_day && jd_frac < rhs.jd_frac))
+               && *this != rhs;
     }
     /// @brief Greater comparison operator (takes double precision into account)
     /// @param[in] rhs Right-hand side to compare with
@@ -322,9 +342,16 @@ struct InsTime_GPSweekTow
     /// @return Comparison result
     constexpr bool operator==(const InsTime_GPSweekTow& rhs) const
     {
-        return (gpsCycle == rhs.gpsCycle
-                && gpsWeek == rhs.gpsWeek
-                && gcem::abs(tow - rhs.tow) <= InsTimeUtil::EPSILON);
+        if (gpsCycle == rhs.gpsCycle && gpsWeek == rhs.gpsWeek)
+        {
+            return gcem::abs(tow - rhs.tow) <= InsTimeUtil::EPSILON;
+        }
+        if (auto diffWeeks = gpsCycle * InsTimeUtil::WEEKS_PER_GPS_CYCLE + gpsWeek - (rhs.gpsCycle * InsTimeUtil::WEEKS_PER_GPS_CYCLE + rhs.gpsWeek);
+            gcem::abs(diffWeeks) == 1)
+        {
+            return gcem::abs(tow + diffWeeks * InsTimeUtil::SECONDS_PER_WEEK - rhs.tow) <= InsTimeUtil::EPSILON;
+        }
+        return false;
     }
     /// @brief Inequal comparison operator (takes double precision into account)
     /// @param[in] rhs Right-hand side to compare with
@@ -353,11 +380,9 @@ struct InsTime_GPSweekTow
     constexpr bool operator<(const InsTime_GPSweekTow& rhs) const
     {
         return (gpsCycle < rhs.gpsCycle
-                || gpsWeek < rhs.gpsWeek
-                || (gpsCycle == rhs.gpsCycle
-                    && gpsWeek == rhs.gpsWeek
-                    && tow < rhs.tow
-                    && *this != rhs));
+                || (gpsCycle == rhs.gpsCycle && gpsWeek < rhs.gpsWeek)
+                || (gpsCycle == rhs.gpsCycle && gpsWeek == rhs.gpsWeek && tow < rhs.tow))
+               && *this != rhs;
     }
     /// @brief Greater comparison operator (takes double precision into account)
     /// @param[in] rhs Right-hand side to compare with
@@ -455,12 +480,17 @@ struct InsTime_YMDHMS
     /// @return Comparison result
     constexpr bool operator==(const InsTime_YMDHMS& rhs) const
     {
-        return (year == rhs.year
-                && month == rhs.month
-                && day == rhs.day
-                && hour == rhs.hour
-                && min == rhs.min
-                && gcem::abs(sec - rhs.sec) <= InsTimeUtil::EPSILON);
+        if (year == rhs.year && month == rhs.month && day == rhs.day && hour == rhs.hour && min == rhs.min)
+        {
+            return gcem::abs(sec - rhs.sec) <= InsTimeUtil::EPSILON;
+        }
+        InsTime_YMDHMS this_plus = InsTime_YMDHMS(this->year, this->month, this->day, this->hour, this->min, this->sec + 10);
+        InsTime_YMDHMS rhs_plus = InsTime_YMDHMS(rhs.year, rhs.month, rhs.day, rhs.hour, rhs.min, rhs.sec + 10);
+        if (this_plus.year == rhs_plus.year && this_plus.month == rhs_plus.month && this_plus.day == rhs_plus.day && this_plus.hour == rhs_plus.hour && this_plus.min == rhs_plus.min)
+        {
+            return gcem::abs(this_plus.sec - rhs_plus.sec) <= InsTimeUtil::EPSILON;
+        }
+        return false;
     }
     /// @brief Inequal comparison operator (takes double precision into account)
     /// @param[in] rhs Right-hand side to compare with
@@ -489,17 +519,12 @@ struct InsTime_YMDHMS
     constexpr bool operator<(const InsTime_YMDHMS& rhs) const
     {
         return (year < rhs.year
-                || month < rhs.month
-                || day < rhs.day
-                || hour < rhs.hour
-                || min < rhs.min
-                || (year == rhs.year
-                    && month == rhs.month
-                    && day == rhs.day
-                    && hour == rhs.hour
-                    && min == rhs.min
-                    && sec < rhs.sec
-                    && *this != rhs));
+                || (year == rhs.year && month < rhs.month)
+                || (year == rhs.year && month == rhs.month && day < rhs.day)
+                || (year == rhs.year && month == rhs.month && day == rhs.day && hour < rhs.hour)
+                || (year == rhs.year && month == rhs.month && day == rhs.day && hour == rhs.hour && min < rhs.min)
+                || (year == rhs.year && month == rhs.month && day == rhs.day && hour == rhs.hour && min == rhs.min && sec < rhs.sec))
+               && *this != rhs;
     }
     /// @brief Greater comparison operator (takes double precision into account)
     /// @param[in] rhs Right-hand side to compare with
@@ -552,9 +577,17 @@ struct InsTime_YDoySod
     /// @return Comparison result
     constexpr bool operator==(const InsTime_YDoySod& rhs) const
     {
-        return (year == rhs.year
-                && doy == rhs.doy
-                && gcem::abs(sod - rhs.sod) <= InsTimeUtil::EPSILON);
+        if (year == rhs.year && doy == rhs.doy)
+        {
+            return gcem::abs(sod - rhs.sod) <= InsTimeUtil::EPSILON;
+        }
+        if (auto diffDays = year * InsTimeUtil::DAYS_PER_YEAR + doy - (rhs.year * InsTimeUtil::DAYS_PER_YEAR + rhs.doy);
+            gcem::abs(diffDays) == 1)
+        {
+            auto difference = gcem::abs(sod + diffDays * InsTimeUtil::SECONDS_PER_DAY - rhs.sod);
+            return difference <= InsTimeUtil::EPSILON;
+        }
+        return false;
     }
     /// @brief Inequal comparison operator (takes double precision into account)
     /// @param[in] rhs Right-hand side to compare with
@@ -583,11 +616,9 @@ struct InsTime_YDoySod
     constexpr bool operator<(const InsTime_YDoySod& rhs) const
     {
         return (year < rhs.year
-                || doy < rhs.doy
-                || (year == rhs.year
-                    && doy == rhs.doy
-                    && sod < rhs.sod
-                    && *this != rhs));
+                || (year == rhs.year && doy < rhs.doy)
+                || (year == rhs.year && doy == rhs.doy && sod < rhs.sod))
+               && *this != rhs;
     }
     /// @brief Greater comparison operator (takes double precision into account)
     /// @param[in] rhs Right-hand side to compare with
@@ -608,32 +639,42 @@ class InsTime
     constexpr InsTime() = default;
 
     /// @brief Constructor
-    /// @param[in] mjd Time in Modified Julien Date [UTC]
-    constexpr explicit InsTime(const InsTime_MJD& mjd)
-        : _mjd(mjd) {}
+    /// @param[in] mjd Time in Modified Julien Date
+    /// @param[in] timesys Time System in which the previous values are given in
+    constexpr explicit InsTime(const InsTime_MJD& mjd, TimeSystem timesys = UTC)
+        : _mjd(mjd)
+    {
+        *this -= std::chrono::duration<long double>(differenceToUTC(timesys));
+    }
 
     /// @brief Constructor
-    /// @param[in] jd Time in Julien Date [UTC]
-    constexpr explicit InsTime(const InsTime_JD& jd)
-        : _mjd(jd.jd_day - InsTimeUtil::DIFF_MJD_TO_JD_DAYS, jd.jd_frac - InsTimeUtil::DIFF_MJD_TO_JD_FRAC) {}
+    /// @param[in] jd Time in Julien Date
+    /// @param[in] timesys Time System in which the previous values are given in
+    constexpr explicit InsTime(const InsTime_JD& jd, TimeSystem timesys = UTC)
+        : _mjd(jd.jd_day - InsTimeUtil::DIFF_MJD_TO_JD_DAYS, jd.jd_frac - InsTimeUtil::DIFF_MJD_TO_JD_FRAC)
+    {
+        *this -= std::chrono::duration<long double>(differenceToUTC(timesys));
+    }
 
     /// @brief Constructor
-    /// @param[in] gpsWeekTow Time in GPS standard time [GPST]
-    constexpr explicit InsTime(const InsTime_GPSweekTow& gpsWeekTow)
+    /// @param[in] gpsWeekTow Time as week and time of week
+    /// @param[in] timesys Time System in which the previous values are given in
+    constexpr explicit InsTime(const InsTime_GPSweekTow& gpsWeekTow, TimeSystem timesys = GPST)
     {
         auto mjd_day = static_cast<int32_t>((gpsWeekTow.gpsCycle * InsTimeUtil::WEEKS_PER_GPS_CYCLE + gpsWeekTow.gpsWeek) * InsTimeUtil::DAYS_PER_WEEK
                                             + gcem::floor(gpsWeekTow.tow / InsTimeUtil::SECONDS_PER_DAY)
                                             + InsTimeUtil::DIFF_TO_6_1_1980_MJD);
         long double mjd_frac = gcem::fmod(gpsWeekTow.tow, InsTimeUtil::SECONDS_PER_DAY) / InsTimeUtil::SECONDS_PER_DAY;
 
-        mjd_frac -= static_cast<long double>(leapGps2UTC(InsTime_MJD(mjd_day, mjd_frac))) / InsTimeUtil::SECONDS_PER_DAY; // from GPST to UTC
-
         _mjd = InsTime_MJD(mjd_day, mjd_frac);
+
+        *this -= std::chrono::duration<long double>(differenceToUTC(timesys));
     }
 
     /// @brief Constructor
-    /// @param[in] yearMonthDayHMS Time in Universal Time Coordinated [UTC]
-    constexpr explicit InsTime(const InsTime_YMDHMS& yearMonthDayHMS)
+    /// @param[in] yearMonthDayHMS Time in Universal Time Coordinated
+    /// @param[in] timesys Time System in which the previous values are given in
+    constexpr explicit InsTime(const InsTime_YMDHMS& yearMonthDayHMS, TimeSystem timesys = UTC)
     {
         auto a = static_cast<int32_t>((14 - yearMonthDayHMS.month) / static_cast<double>(InsTimeUtil::MONTHS_PER_YEAR));
         int32_t y = yearMonthDayHMS.year + 4800 - a;
@@ -652,11 +693,14 @@ class InsTime
                        / InsTimeUtil::SECONDS_PER_DAY;
 
         _mjd = InsTime(InsTime_JD(jd_day, jd_frac)).toMJD();
+
+        *this -= std::chrono::duration<long double>(differenceToUTC(timesys));
     }
 
     /// @brief Constructor
-    /// @param[in] yearDoySod Time in GPS standard time [GPST]
-    constexpr explicit InsTime(const InsTime_YDoySod& yearDoySod)
+    /// @param[in] yearDoySod Time as Year, day of year and seconds of day
+    /// @param[in] timesys Time System in which the previous values are given in
+    constexpr explicit InsTime(const InsTime_YDoySod& yearDoySod, TimeSystem timesys = UTC)
     {
         auto year = yearDoySod.year;
         auto doy = yearDoySod.doy;
@@ -668,19 +712,19 @@ class InsTime
             doy -= InsTimeUtil::daysInMonth(month, year);
             month++;
         }
-        int32_t day = doy;
 
-        sod -= static_cast<long double>(leapGps2UTC(InsTime_YMDHMS(year, month, day, 0, 0, sod)));
+        _mjd = InsTime(InsTime_YMDHMS(year, month, doy, 0, 0, sod)).toMJD();
 
-        _mjd = InsTime(InsTime_YMDHMS(year, month, day, 0, 0, sod)).toMJD();
+        *this -= std::chrono::duration<long double>(differenceToUTC(timesys));
     }
 
     /// @brief Constructor
-    /// @param[in] gpsCycle GPS cycle in GPS standard time [GPST]
-    /// @param[in] gpsWeek GPS week in GPS standard time [GPST]
-    /// @param[in] tow GPS time of week in GPS standard time [GPST]
-    constexpr InsTime(int32_t gpsCycle, int32_t gpsWeek, long double tow)
-        : InsTime(InsTime_GPSweekTow(gpsCycle, gpsWeek, tow)) {}
+    /// @param[in] gpsCycle GPS cycle in GPS standard time
+    /// @param[in] gpsWeek GPS week in GPS standard time
+    /// @param[in] tow GPS time of week in GPS standard time
+    /// @param[in] timesys Time System in which the previous values are given in
+    constexpr InsTime(int32_t gpsCycle, int32_t gpsWeek, long double tow, TimeSystem timesys = GPST)
+        : InsTime(InsTime_GPSweekTow(gpsCycle, gpsWeek, tow), timesys) {}
 
     /// @brief Constructor
     /// @param[in] year Year
@@ -691,29 +735,7 @@ class InsTime
     /// @param[in] sec Second
     /// @param[in] timesys Time System in which the previous values are given in
     constexpr InsTime(uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uint16_t min, long double sec, TimeSystem timesys = UTC)
-        : InsTime(InsTime_YMDHMS(year, month, day, hour, min, sec))
-    {
-        if (timesys == GPST) // = GPS Time (UTC + leap_seconds)
-        {
-            auto leapSec = this->leapGps2UTC();
-            *this -= std::chrono::duration<long double>(leapSec);
-        }
-        else if (timesys == GLNT) // = GLONASS Time (UTC+ 3h)
-        {
-            constexpr auto utcDiff = 3 * InsTimeUtil::SECONDS_PER_HOUR;
-            *this -= std::chrono::duration<long double>(utcDiff);
-        }
-        else if (timesys == GST) // = GALILEO Time (~ GPS )
-        {
-            //  is synchronised with TAI with a nominal offset below 50 ns
-            auto leapSec = this->leapGps2UTC(); // UTC = GST - 18
-            *this -= std::chrono::duration<long double>(leapSec);
-        }
-        else if (timesys == BDT) // = BeiDou Time (UTC)
-        {
-            // is synchronised with UTC within 100 ns<
-        }
-    }
+        : InsTime(InsTime_YMDHMS(year, month, day, hour, min, sec), timesys) {}
 
     /// @brief Destructor
     ~InsTime() = default;
@@ -729,29 +751,35 @@ class InsTime
     /* ------------------------ Transformation functions ------------------------ */
 
     /// @brief Converts this time object into a different format
+    /// @param timesys Time System in which the time should be given
     /// @return InsTime_MJD structure of the this object
-    [[nodiscard]] constexpr InsTime_MJD toMJD() const
+    [[nodiscard]] constexpr InsTime_MJD toMJD(TimeSystem timesys = UTC) const
     {
-        return _mjd;
+        long double mjdFrac = _mjd.mjd_frac + static_cast<long double>(differenceToUTC(timesys)) / static_cast<long double>(InsTimeUtil::SECONDS_PER_DAY);
+        return { _mjd.mjd_day, mjdFrac };
     }
 
     /// @brief Converts this time object into a different format
+    /// @param timesys Time System in which the time should be given
     /// @return InsTime_JD structure of the this object
-    [[nodiscard]] constexpr InsTime_JD toJD() const
+    [[nodiscard]] constexpr InsTime_JD toJD(TimeSystem timesys = UTC) const
     {
         auto jd_day = _mjd.mjd_day + InsTimeUtil::DIFF_MJD_TO_JD_DAYS;
         auto jd_frac = _mjd.mjd_frac + InsTimeUtil::DIFF_MJD_TO_JD_FRAC;
+
+        jd_frac += static_cast<long double>(differenceToUTC(timesys)) / static_cast<long double>(InsTimeUtil::SECONDS_PER_DAY);
 
         return { jd_day, jd_frac };
     }
 
     /// @brief Converts this time object into a different format
+    /// @param timesys Time System in which the time should be given
     /// @return InsTime_GPSweekTow structure of the this object
-    [[nodiscard]] constexpr InsTime_GPSweekTow toGPSweekTow() const
+    [[nodiscard]] constexpr InsTime_GPSweekTow toGPSweekTow(TimeSystem timesys = GPST) const
     {
         InsTime_MJD mjd_leap = _mjd;
-        // Convert from UTC to GPST
-        mjd_leap.mjd_frac += static_cast<long double>(leapGps2UTC(mjd_leap)) / static_cast<long double>(InsTimeUtil::SECONDS_PER_DAY);
+        // Convert from UTC to intended time system
+        mjd_leap.mjd_frac += static_cast<long double>(differenceToUTC(timesys)) / static_cast<long double>(InsTimeUtil::SECONDS_PER_DAY);
 
         // Put everything in the time of week, as it gets splitted in InsTime_GPSweekTow constructor
         auto tow = static_cast<long double>((mjd_leap.mjd_day - InsTimeUtil::DIFF_TO_6_1_1980_MJD)) * InsTimeUtil::SECONDS_PER_DAY
@@ -761,13 +789,15 @@ class InsTime
     }
 
     /// @brief Converts this time object into a different format
+    /// @param timesys Time System in which the time should be given
     /// @return InsTime_YMDHMS structure of the this object
-    [[nodiscard]] constexpr InsTime_YMDHMS toYMDHMS() const
+    [[nodiscard]] constexpr InsTime_YMDHMS toYMDHMS(TimeSystem timesys = UTC) const
     {
         // transform MJD to JD
         InsTime_JD jd = toJD();
         jd.jd_frac = jd.jd_frac + 0.5L;
-        if (jd.jd_frac >= 1.0L)
+        jd.jd_frac += static_cast<long double>(differenceToUTC(timesys)) / static_cast<long double>(InsTimeUtil::SECONDS_PER_DAY);
+        while (jd.jd_frac >= 1.0L)
         {
             jd.jd_day += 1;
             jd.jd_frac -= 1.0L;
@@ -791,8 +821,9 @@ class InsTime
     }
 
     /// @brief Converts this time object into a different format
+    /// @param timesys Time System in which the time should be given
     /// @return InsTime_YDoySod structure of the this object
-    [[nodiscard]] constexpr InsTime_YDoySod toYDoySod() const
+    [[nodiscard]] constexpr InsTime_YDoySod toYDoySod(TimeSystem timesys = UTC) const
     {
         InsTime_YMDHMS yearMonthDayHMS = toYMDHMS();
 
@@ -800,7 +831,7 @@ class InsTime
         long double sod = static_cast<long double>(yearMonthDayHMS.hour * InsTimeUtil::SECONDS_PER_HOUR
                                                    + yearMonthDayHMS.min * InsTimeUtil::SECONDS_PER_MINUTE)
                           + yearMonthDayHMS.sec
-                          + static_cast<long double>(leapGps2UTC());
+                          + static_cast<long double>(differenceToUTC(timesys));
 
         int32_t doy = 0;
         for (int32_t i = 1; i < yearMonthDayHMS.month; i++)
@@ -1008,6 +1039,13 @@ class InsTime
         return _mjd.mjd_day == 0 && _mjd.mjd_frac == 0.0L;
     }
 
+    /// @brief Resets the InsTime object
+    void reset()
+    {
+        _mjd.mjd_day = 0;
+        _mjd.mjd_frac = 0.0L;
+    }
+
     /// @brief Adds the difference [seconds] between toe (OBRIT-0 last element) and toc (ORBIT-0 first element) to the current time
     /// (Changes time, so that it corresponds to the time of GLONASS ORBIT last element)
     /// @param[in] UTC_sec Seconds in UTC time
@@ -1021,6 +1059,30 @@ class InsTime
                               + ymdhms.sec);
         // std::cout << "orbit diff " << diff << "\n";
         *this += std::chrono::duration<long double>(diff);
+    }
+
+    /// @brief Returns the time difference in [s] of a time system and UTC
+    /// @param[in] timesys Time system to get the difference from UTC
+    [[nodiscard]] constexpr int differenceToUTC(TimeSystem timesys) const
+    {
+        switch (TimeSystem_(timesys))
+        {
+        case GPST: // = GPS Time (UTC + leap_seconds)
+            return this->leapGps2UTC();
+        case GLNT: // = GLONASS Time (UTC+ 3h)
+            return 3 * InsTimeUtil::SECONDS_PER_HOUR;
+        case GST: // = GALILEO Time (~ GPS) (UTC = GST - 18) is synchronized with TAI with a nominal offset below 50 ns
+            return this->leapGps2UTC();
+        case QZSST:
+            return 0; // TODO: Implement QZSST<->UTC time difference
+        case IRNSST:
+            return 0; // TODO: Implement IRNSST<->UTC time difference
+        case UTC:
+        case BDT: // = BeiDou Time (UTC) is synchronized with UTC within 100 ns<
+        case TimeSys_None:
+            return 0;
+        }
+        return 0;
     }
 
   private:
