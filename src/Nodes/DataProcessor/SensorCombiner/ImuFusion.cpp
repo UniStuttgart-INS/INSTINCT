@@ -1000,7 +1000,7 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
     }
 }
 
-void NAV::ImuFusion::combineSignals(std::shared_ptr<const ImuObs>& imuObs)
+void NAV::ImuFusion::combineSignals(const std::shared_ptr<const ImuObs>& imuObs)
 {
     LOG_TRACE("{}: called", nameId());
 
