@@ -640,6 +640,7 @@ bool NAV::ImuFusion::initialize()
 
     _latestTimestamp = InsTime{};
 
+    initializeMountingAngles();
     initializeKalmanFilter();
 
     LOG_DEBUG("ImuFusion initialized");
@@ -682,6 +683,22 @@ void NAV::ImuFusion::updateNumberOfInputPins()
     _measurementUncertaintyAngularRateUnit.resize(_nInputPins);
     _measurementUncertaintyAcceleration.resize(_nInputPins);
     _measurementUncertaintyAccelerationUnit.resize(_nInputPins);
+    initializeMountingAngles();
+}
+
+void NAV::ImuFusion::initializeMountingAngles()
+{
+    _imuRotations_accel.resize(_nInputPins);
+    _imuRotations_gyro.resize(_nInputPins);
+    for (size_t i = 0; i < _nInputPins; ++i)
+    {
+        _imuRotations_accel[i] = Eigen::Matrix3d::Zero();
+        _imuRotations_gyro[i] = Eigen::Matrix3d::Zero();
+
+        // Assigning nan for an efficient check during runtime, whether mounting angles have been read for sensor i
+        _imuRotations_accel[i](0, 0) = std::nan("1");
+        _imuRotations_gyro[i](0, 0) = std::nan("2");
+    }
 }
 
 void NAV::ImuFusion::initializeKalmanFilter()
@@ -943,19 +960,19 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
         size_t pinIndex = pinIndexFromId(link->endPinId);
 
         // Read sensor rotation info from 'imuObs'
-        if (!_imuRotations_accel.contains(pinIndex))
+        if (std::isnan(_imuRotations_accel[pinIndex](0, 0)))
         {
             // Rotation matrix of the accelerometer platform to body frame
             auto DCM_accel = imuObs->imuPos.b_quatAccel_p().toRotationMatrix();
 
-            _imuRotations_accel.insert_or_assign(pinIndex, DCM_accel);
+            _imuRotations_accel[pinIndex] = DCM_accel;
         }
-        if (!_imuRotations_gyro.contains(pinIndex))
+        if (std::isnan(_imuRotations_gyro[pinIndex](0, 0)))
         {
             // Rotation matrix of the gyro platform to body frame
             auto DCM_gyro = imuObs->imuPos.b_quatGyro_p().toRotationMatrix();
 
-            _imuRotations_gyro.insert_or_assign(pinIndex, DCM_gyro);
+            _imuRotations_gyro[pinIndex] = DCM_gyro;
         }
 
         // Initialize H with mounting angles (DCM) of the sensor that provided the latest measurement

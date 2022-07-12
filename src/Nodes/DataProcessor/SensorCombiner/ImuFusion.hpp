@@ -152,6 +152,9 @@ class ImuFusion : public Imu
     /// @brief Initializes the Kalman Filter
     void initializeKalmanFilter();
 
+    /// @brief Initializes the rotation matrices used for the mounting angles of the sensors
+    void initializeMountingAngles();
+
     /// @brief Receive Function for the signal at the time tₖ
     /// @param[in] nodeData Signal to process
     /// @param[in] linkId Id of the link over which the data is received
@@ -238,10 +241,10 @@ class ImuFusion : public Imu
     std::vector<PinData> _pinData;
 
     /// @brief Rotations of all connected accelerometers - key: pinIndex, value: Rotation matrix of the accelerometer platform to body frame
-    std::map<size_t, Eigen::Matrix3d> _imuRotations_accel;
+    std::vector<Eigen::Matrix3d> _imuRotations_accel;
 
     /// @brief Rotations of all connected gyros - key: pinIndex, value: Rotation matrix of the gyro platform to body frame
-    std::map<size_t, Eigen::Matrix3d> _imuRotations_gyro;
+    std::vector<Eigen::Matrix3d> _imuRotations_gyro;
 
     /// Kalman Filter representation
     KalmanFilter _kalmanFilter{ _numStates, _numMeasurements };
