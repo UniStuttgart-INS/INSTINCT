@@ -1011,8 +1011,8 @@ void NAV::ImuFusion::combineSignals(std::shared_ptr<const ImuObs>& imuObs)
 
     _kalmanFilter.predict();
 
-    _kalmanFilter.z.block<3, 1>(0, 0) = *imuObs->gyroUncompXYZ;
-    _kalmanFilter.z.block<3, 1>(3, 0) = *imuObs->accelUncompXYZ;
+    _kalmanFilter.z.block<3, 1>(0, 0) = imuObs->gyroUncompXYZ.value();
+    _kalmanFilter.z.block<3, 1>(3, 0) = imuObs->accelUncompXYZ.value();
 
     LOG_DATA("Measurements z =\n{}", _kalmanFilter.z);
 
@@ -1058,8 +1058,8 @@ void NAV::ImuFusion::combineSignals(std::shared_ptr<const ImuObs>& imuObs)
     {
         auto biasIndex = _numStatesEst + static_cast<uint8_t>((OUTPUT_PORT_INDEX_BIAS - 1) * _numStatesPerPin);
 
-        imuRelativeBiases->b_biasGyro << _kalmanFilter.x(biasIndex, 0), _kalmanFilter.x(biasIndex + 1, 0), _kalmanFilter.x(biasIndex + 2, 0);
-        imuRelativeBiases->b_biasAccel << _kalmanFilter.x(biasIndex + 3, 0), _kalmanFilter.x(biasIndex + 4, 0), _kalmanFilter.x(biasIndex + 5, 0);
+        imuRelativeBiases->b_biasGyro = { _kalmanFilter.x(biasIndex, 0), _kalmanFilter.x(biasIndex + 1, 0), _kalmanFilter.x(biasIndex + 2, 0) };
+        imuRelativeBiases->b_biasAccel = { _kalmanFilter.x(biasIndex + 3, 0), _kalmanFilter.x(biasIndex + 4, 0), _kalmanFilter.x(biasIndex + 5, 0) };
 
         invokeCallbacks(OUTPUT_PORT_INDEX_BIAS, imuRelativeBiases);
     }
@@ -1071,9 +1071,7 @@ void NAV::ImuFusion::combineSignals(std::shared_ptr<const ImuObs>& imuObs)
 
 Eigen::MatrixXd NAV::ImuFusion::initialStateTransitionMatrix_Phi(double& dt) const
 {
-    Eigen::MatrixXd Phi = Eigen::MatrixXd::Zero(_numStates, _numStates);
-
-    Phi.diagonal().setOnes(); // constant part of states
+    Eigen::MatrixXd Phi = Eigen::MatrixXd::Identity(_numStates, _numStates);
 
     Phi.block<3, 3>(0, 3).diagonal().setConstant(dt); // dependency of angular rate on angular acceleration
     Phi.block<3, 3>(6, 9).diagonal().setConstant(dt); // dependency of acceleration on jerk

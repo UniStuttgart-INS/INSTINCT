@@ -217,7 +217,7 @@ class ImuFusion : public Imu
 
     /// @brief Combines the signals
     /// @param[in] imuObs Imu observation
-    void combineSignals(std::shared_ptr<const ImuObs>& imuObs);
+    void combineSignals(const std::shared_ptr<const ImuObs>& imuObs);
 
     /// Number of input pins
     size_t _nInputPins = 2;
