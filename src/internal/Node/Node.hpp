@@ -130,6 +130,17 @@ class Node
         Value value;
     };
 
+    /// @brief Possible states of the node
+    enum class State
+    {
+        Deinitialized,           ///< Node is deinitialized (red)
+        InitializationPlanned,   ///< Node is waiting to be initialized
+        Initializing,            ///< Node is currently initializing
+        Initialized,             ///< Node is initialized (green)
+        DeinitializationPlanned, ///< Node is waiting to be deinitialized
+        Deinitializing,          ///< Node is currently deinitializing
+    };
+
     /// @brief Default constructor
     Node() = default;
     /// @brief Destructor
@@ -166,10 +177,10 @@ class Node
     virtual void restoreAtferLink(const json& j);
 
     /// @brief Initialize the Node
-    bool initializeNode();
+    virtual bool initialize();
 
     /// @brief Deinitialize the Node
-    void deinitializeNode();
+    virtual void deinitialize();
 
     /// @brief Resets the node. It is guaranteed that the node is initialized when this is called.
     virtual bool resetNode();
@@ -254,14 +265,12 @@ class Node
     /// @brief Node name and id
     [[nodiscard]] std::string nameId() const;
 
-    /// @brief Flag, if the node is initialized
-    [[nodiscard]] bool isInitialized() const;
+    /// @brief Get the current state of the node
+    [[nodiscard]] State getState() const;
 
-    /// @brief Flag, if the node is currently initializing
-    [[nodiscard]] bool isInitializing() const;
-
-    /// @brief Flag, if the node is currently deinitializing
-    [[nodiscard]] bool isDeinitializing() const;
+    /// @brief Set the current state of the node
+    /// @param[in] state New state of the node
+    void setState(State state);
 
     /// @brief Flag, if the node is enabled
     [[nodiscard]] bool isEnabled() const;
@@ -299,19 +308,8 @@ class Node
     bool _hasConfig = false;
 
   private:
-    /// @brief Abstract Initialization of the Node
-    virtual bool initialize();
-
-    /// @brief Deinitialize the Node
-    virtual void deinitialize();
-
-    /// Flag, if the node is initialized
-    bool _isInitialized = false;
-
-    /// Flag, if the node is currently initializing
-    bool _isInitializing = false;
-    /// Flag, if the node is currently deinitializing
-    bool _isDeinitializing = false;
+    /// Current state of the node
+    State _state = State::Deinitialized;
 
     /// Flag if the config window is shown
     bool _showConfig = false;

@@ -14,7 +14,9 @@ void NAV::gui::menus::ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList)
     bool allNodesInitialized = true;
     for (const auto* node : nm::m_Nodes())
     {
-        if (node->isInitialized() || node->isInitializing())
+        if (node->getState() == Node::State::Initialized
+            || node->getState() == Node::State::Initializing
+            || node->getState() == Node::State::InitializationPlanned)
         {
             hasInitializedNodes = true;
         }
@@ -27,9 +29,9 @@ void NAV::gui::menus::ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList)
     {
         for (auto* node : nm::m_Nodes())
         {
-            if (node->isEnabled() && !node->isInitialized())
+            if (node->isEnabled() && node->getState() != Node::State::Initialized)
             {
-                node->_isInitializing = true;
+                node->_state = Node::State::InitializationPlanned;
                 initList.emplace_back(node, true);
             }
         }
@@ -38,9 +40,9 @@ void NAV::gui::menus::ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList)
     {
         for (auto* node : nm::m_Nodes())
         {
-            if (node->isEnabled() && node->isInitialized())
+            if (node->isEnabled() && node->getState() == Node::State::Initialized)
             {
-                node->_isDeinitializing = true;
+                node->_state = Node::State::DeinitializationPlanned;
                 initList.emplace_back(node, false);
             }
         }
@@ -48,7 +50,6 @@ void NAV::gui::menus::ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList)
         {
             if (node->isEnabled())
             {
-                node->_isInitializing = true;
                 initList.emplace_back(node, true);
             }
         }
@@ -57,9 +58,9 @@ void NAV::gui::menus::ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList)
     {
         for (auto* node : nm::m_Nodes())
         {
-            if (node->isEnabled() && node->isInitialized())
+            if (node->isEnabled() && node->getState() == Node::State::Initialized)
             {
-                node->_isDeinitializing = true;
+                node->_state = Node::State::DeinitializationPlanned;
                 initList.emplace_back(node, false);
             }
         }

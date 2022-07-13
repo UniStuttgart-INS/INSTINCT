@@ -54,14 +54,14 @@ void NAV::Navio2Sensor::guiConfig()
     {
         LOG_DEBUG("{}: IMU changed to {}", nameId(), _imuType ? "LSM9DS1" : "MPU9250");
         flow::ApplyChanges();
-        deinitializeNode();
+        nm::DeinitializeNode(*this);
     }
 
     if (ImGui::SliderInt("Frequency", &_outputFrequency, 1, 200, "%d Hz"))
     {
         LOG_DEBUG("{}: Frequency changed to {}", nameId(), _outputFrequency);
         flow::ApplyChanges();
-        deinitializeNode();
+        nm::DeinitializeNode(*this);
     }
 
     Imu::guiConfig();

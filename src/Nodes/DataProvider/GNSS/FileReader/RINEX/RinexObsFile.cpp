@@ -55,11 +55,11 @@ void RinexObsFile::guiConfig()
         flow::ApplyChanges();
         if (res == FileReader::PATH_CHANGED)
         {
-            initializeNode();
+            nm::InitializeNode(*this);
         }
         else
         {
-            deinitializeNode();
+            nm::DeinitializeNode(*this);
         }
     }
 }
@@ -151,14 +151,14 @@ FileReader::FileType RinexObsFile::determineFileType()
         if (fileType.at(0) != 'O')
         {
             LOG_ERROR("{}: Not a valid RINEX OBS file. File type '{}' not recognized.", nameId(), fileType);
-            deinitializeNode();
+            nm::DeinitializeNode(*this);
             return FileReader::FileType::NONE;
         }
         std::string satSystem = str::trim_copy(line.substr(40, 20)); // FORMAT: A1,19X
         if (SatelliteSystem::fromChar(satSystem.at(0)) == SatSys_None && satSystem.at(0) != 'M')
         {
             LOG_ERROR("{}: Not a valid RINEX OBS file. Satellite System '{}' not recognized.", nameId(), satSystem.at(0));
-            deinitializeNode();
+            nm::DeinitializeNode(*this);
             return FileReader::FileType::NONE;
         }
         // ---------------------------------------- PGM / RUN BY / DATE ------------------------------------------

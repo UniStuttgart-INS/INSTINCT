@@ -139,7 +139,7 @@ void NAV::ImuSimulator::guiConfig()
                     }
 
                     flow::ApplyChanges();
-                    deinitializeNode();
+                    nm::DeinitializeNode(*this);
                 }
 
                 if (is_selected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -269,7 +269,7 @@ void NAV::ImuSimulator::guiConfig()
                 _lla_startPosition.x() = deg2rad(latitude);
                 LOG_DEBUG("{}: latitude changed to {}", nameId(), latitude);
                 flow::ApplyChanges();
-                deinitializeNode();
+                nm::DeinitializeNode(*this);
             }
             ImGui::SameLine();
             ImGui::SetNextItemWidth(columnWidth);
@@ -279,7 +279,7 @@ void NAV::ImuSimulator::guiConfig()
                 _lla_startPosition.y() = deg2rad(longitude);
                 LOG_DEBUG("{}: longitude changed to {}", nameId(), longitude);
                 flow::ApplyChanges();
-                deinitializeNode();
+                nm::DeinitializeNode(*this);
             }
             ImGui::SameLine();
             ImGui::SetNextItemWidth(columnWidth);
@@ -287,7 +287,7 @@ void NAV::ImuSimulator::guiConfig()
             {
                 LOG_DEBUG("{}: altitude changed to {}", nameId(), _lla_startPosition.y());
                 flow::ApplyChanges();
-                deinitializeNode();
+                nm::DeinitializeNode(*this);
             }
             ImGui::SameLine();
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
@@ -309,7 +309,7 @@ void NAV::ImuSimulator::guiConfig()
                 _fixedTrajectoryStartOrientation.x() = deg2rad(roll);
                 LOG_DEBUG("{}: roll changed to {}", nameId(), roll);
                 flow::ApplyChanges();
-                deinitializeNode();
+                nm::DeinitializeNode(*this);
             }
             ImGui::SameLine();
             ImGui::SetNextItemWidth(columnWidth);
@@ -319,7 +319,7 @@ void NAV::ImuSimulator::guiConfig()
                 _fixedTrajectoryStartOrientation.y() = deg2rad(pitch);
                 LOG_DEBUG("{}: pitch changed to {}", nameId(), pitch);
                 flow::ApplyChanges();
-                deinitializeNode();
+                nm::DeinitializeNode(*this);
             }
             ImGui::SameLine();
             ImGui::SetNextItemWidth(columnWidth);
@@ -329,7 +329,7 @@ void NAV::ImuSimulator::guiConfig()
                 _fixedTrajectoryStartOrientation.z() = deg2rad(yaw);
                 LOG_DEBUG("{}: yaw changed to {}", nameId(), yaw);
                 flow::ApplyChanges();
-                deinitializeNode();
+                nm::DeinitializeNode(*this);
             }
             ImGui::SameLine();
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
@@ -342,7 +342,7 @@ void NAV::ImuSimulator::guiConfig()
             {
                 LOG_DEBUG("{}: n_linearTrajectoryStartVelocity changed to {}", nameId(), _n_linearTrajectoryStartVelocity.transpose());
                 flow::ApplyChanges();
-                deinitializeNode();
+                nm::DeinitializeNode(*this);
             }
             ImGui::SameLine();
             ImGui::SetNextItemWidth(columnWidth);
@@ -350,7 +350,7 @@ void NAV::ImuSimulator::guiConfig()
             {
                 LOG_DEBUG("{}: n_linearTrajectoryStartVelocity changed to {}", nameId(), _n_linearTrajectoryStartVelocity.transpose());
                 flow::ApplyChanges();
-                deinitializeNode();
+                nm::DeinitializeNode(*this);
             }
             ImGui::SameLine();
             ImGui::SetNextItemWidth(columnWidth);
@@ -358,7 +358,7 @@ void NAV::ImuSimulator::guiConfig()
             {
                 LOG_DEBUG("{}: n_linearTrajectoryStartVelocity changed to {}", nameId(), _n_linearTrajectoryStartVelocity.transpose());
                 flow::ApplyChanges();
-                deinitializeNode();
+                nm::DeinitializeNode(*this);
             }
             ImGui::SameLine();
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
@@ -381,7 +381,7 @@ void NAV::ImuSimulator::guiConfig()
                             _circularTrajectoryDirection = static_cast<Direction>(i);
                             LOG_DEBUG("{}: circularTrajectoryDirection changed to {}", nameId(), _circularTrajectoryDirection);
                             flow::ApplyChanges();
-                            deinitializeNode();
+                            nm::DeinitializeNode(*this);
                         }
 
                         if (is_selected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -399,7 +399,7 @@ void NAV::ImuSimulator::guiConfig()
                 {
                     LOG_DEBUG("{}: circularTrajectoryRadius changed to {}", nameId(), _circularTrajectoryRadius);
                     flow::ApplyChanges();
-                    deinitializeNode();
+                    nm::DeinitializeNode(*this);
                 }
                 // ####################################################################################################
                 ImGui::TableNextColumn();
@@ -408,7 +408,7 @@ void NAV::ImuSimulator::guiConfig()
                 {
                     LOG_DEBUG("{}: circularTrajectoryHorizontalSpeed changed to {}", nameId(), _circularTrajectoryHorizontalSpeed);
                     flow::ApplyChanges();
-                    deinitializeNode();
+                    nm::DeinitializeNode(*this);
                 }
 
                 ImGui::TableNextColumn();
@@ -419,7 +419,7 @@ void NAV::ImuSimulator::guiConfig()
                     _circularTrajectoryOriginAngle = deg2rad(originAngle);
                     LOG_DEBUG("{}: originAngle changed to {}", nameId(), originAngle);
                     flow::ApplyChanges();
-                    deinitializeNode();
+                    nm::DeinitializeNode(*this);
                 }
                 // ####################################################################################################
                 ImGui::TableNextColumn();
@@ -428,7 +428,7 @@ void NAV::ImuSimulator::guiConfig()
                 {
                     LOG_DEBUG("{}: circularTrajectoryVerticalSpeed changed to {}", nameId(), _circularTrajectoryVerticalSpeed);
                     flow::ApplyChanges();
-                    deinitializeNode();
+                    nm::DeinitializeNode(*this);
                 }
 
                 ImGui::TableNextColumn();
@@ -439,7 +439,7 @@ void NAV::ImuSimulator::guiConfig()
                 {
                     LOG_DEBUG("{}: circularHarmonicFrequency changed to {}", nameId(), _circularHarmonicFrequency);
                     flow::ApplyChanges();
-                    deinitializeNode();
+                    nm::DeinitializeNode(*this);
                 }
                 ImGui::SameLine();
                 gui::widgets::HelpMarker("This modulates a harmonic oscillation on the circular path.\n"
@@ -451,7 +451,7 @@ void NAV::ImuSimulator::guiConfig()
                 {
                     LOG_DEBUG("{}: circularHarmonicAmplitudeFactor changed to {}", nameId(), _circularHarmonicAmplitudeFactor);
                     flow::ApplyChanges();
-                    deinitializeNode();
+                    nm::DeinitializeNode(*this);
                 }
                 ImGui::SameLine();
                 gui::widgets::HelpMarker("This modulates a harmonic oscillation on the circular path.\n"
@@ -475,7 +475,7 @@ void NAV::ImuSimulator::guiConfig()
             {
                 LOG_DEBUG("{}: simulationStopCondition changed to {}", nameId(), _simulationStopCondition);
                 flow::ApplyChanges();
-                deinitializeNode();
+                nm::DeinitializeNode(*this);
             }
             ImGui::SameLine();
         }
@@ -484,7 +484,7 @@ void NAV::ImuSimulator::guiConfig()
         {
             LOG_DEBUG("{}: simulationDuration changed to {}", nameId(), _simulationDuration);
             flow::ApplyChanges();
-            deinitializeNode();
+            nm::DeinitializeNode(*this);
         }
 
         if (_trajectoryType != TrajectoryType::Fixed)
@@ -493,7 +493,7 @@ void NAV::ImuSimulator::guiConfig()
             {
                 LOG_DEBUG("{}: simulationStopCondition changed to {}", nameId(), _simulationStopCondition);
                 flow::ApplyChanges();
-                deinitializeNode();
+                nm::DeinitializeNode(*this);
             }
             ImGui::SameLine();
         }
@@ -504,7 +504,7 @@ void NAV::ImuSimulator::guiConfig()
             {
                 LOG_DEBUG("{}: linearTrajectoryDistanceForStop changed to {}", nameId(), _linearTrajectoryDistanceForStop);
                 flow::ApplyChanges();
-                deinitializeNode();
+                nm::DeinitializeNode(*this);
             }
         }
         else if (_trajectoryType == TrajectoryType::Circular)
@@ -514,7 +514,7 @@ void NAV::ImuSimulator::guiConfig()
             {
                 LOG_DEBUG("{}: circularTrajectoryCircleCountForStop changed to {}", nameId(), _circularTrajectoryCircleCountForStop);
                 flow::ApplyChanges();
-                deinitializeNode();
+                nm::DeinitializeNode(*this);
             }
         }
 

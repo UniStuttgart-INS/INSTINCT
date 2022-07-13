@@ -169,9 +169,9 @@ bool NAV::NodeManager::DeleteNode(ax::NodeEditor::NodeId nodeId)
             }
         }
 
-        if ((*it)->isInitialized())
+        if ((*it)->getState() == Node::State::Initialized)
         {
-            (*it)->deinitializeNode();
+            DeinitializeNode((*it)->id);
         }
         delete *it; // NOLINT(cppcoreguidelines-owning-memory)
         m_nodes.erase(it);
@@ -258,11 +258,11 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
             }
         }
 
-        if (startPin->parentNode && endPin->parentNode && !startPin->parentNode->isInitialized())
+        if (startPin->parentNode && endPin->parentNode && startPin->parentNode->getState() != Node::State::Initialized)
         {
-            if (endPin->parentNode->isInitialized())
+            if (endPin->parentNode->getState() == Node::State::Initialized)
             {
-                endPin->parentNode->deinitializeNode();
+                DeinitializeNode(*(endPin->parentNode));
             }
         }
     }
@@ -351,11 +351,11 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
                 }
             }
 
-            if (startPin->parentNode && endPin->parentNode && !startPin->parentNode->isInitialized())
+            if (startPin->parentNode && endPin->parentNode && startPin->parentNode->getState() != Node::State::Initialized)
             {
-                if (endPin->parentNode->isInitialized())
+                if (endPin->parentNode->getState() == Node::State::Initialized)
                 {
-                    endPin->parentNode->deinitializeNode();
+                    DeinitializeNode(*(endPin->parentNode));
                 }
             }
         }
@@ -455,11 +455,11 @@ void NAV::NodeManager::RefreshLink(ax::NodeEditor::LinkId linkId)
                 }
             }
 
-            if (startPin->parentNode && endPin->parentNode && !startPin->parentNode->isInitialized())
+            if (startPin->parentNode && endPin->parentNode && startPin->parentNode->getState() != Node::State::Initialized)
             {
-                if (endPin->parentNode->isInitialized())
+                if (endPin->parentNode->getState() == Node::State::Initialized)
                 {
-                    endPin->parentNode->deinitializeNode();
+                    DeinitializeNode(*(endPin->parentNode));
                 }
             }
         }
@@ -524,7 +524,7 @@ bool NAV::NodeManager::DeleteLink(ax::NodeEditor::LinkId linkId)
 
                 if (endPin->parentNode)
                 {
-                    endPin->parentNode->deinitializeNode();
+                    DeinitializeNode(*(endPin->parentNode));
                 }
             }
             else if (startPin->type == Pin::Type::Flow)
@@ -903,15 +903,139 @@ void NAV::NodeManager::DisableAllCallbacks()
     }
 }
 
+bool NAV::NodeManager::InitializeNode(Node& node)
+{
+    LOG_TRACE("called");
+    if (!node.isEnabled())
+    {
+        return false;
+    }
+
+    if (node.getState() == Node::State::Initialized)
+    {
+        if (node.resetNode())
+        {
+            return true;
+        }
+        DeinitializeNode(node);
+    }
+
+    if (node.getState() != Node::State::Deinitialized && node.getState() != Node::State::InitializationPlanned)
+    {
+        return false;
+    }
+
+    // Lock the node against recursive calling
+    node.setState(Node::State::Initializing);
+
+    LOG_DEBUG("{}: Initializing Node", node.nameId());
+
+    // Initialize connected Nodes
+    for (const auto& inputPin : node.inputPins)
+    {
+        if (inputPin.type != Pin::Type::Flow)
+        {
+            if (Node* connectedNode = FindConnectedNodeToInputPin(inputPin.id))
+            {
+                if (connectedNode->getState() != Node::State::Initialized && connectedNode->getState() != Node::State::Initializing)
+                {
+                    LOG_DEBUG("{}: Initializing connected Node '{}' on input Pin {}", node.nameId(), connectedNode->nameId(), size_t(inputPin.id));
+                    if (!InitializeNode(*connectedNode))
+                    {
+                        LOG_ERROR("{}: Could not initialize connected node {}", node.nameId(), connectedNode->nameId());
+                        node.setState(Node::State::Deinitialized);
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+
+    // Initialize the node itself
+    if (node.initialize())
+    {
+        node.setState(Node::State::Initialized);
+        return true;
+    }
+
+    node.setState(Node::State::Deinitialized);
+    return false;
+}
+
+bool NAV::NodeManager::InitializeNode(ax::NodeEditor::NodeId id)
+{
+    LOG_TRACE("called");
+    Node* node = FindNode(id);
+    if (node == nullptr)
+    {
+        return false;
+    }
+    return InitializeNode(*node);
+}
+
+void NAV::NodeManager::DeinitializeNode(Node& node)
+{
+    LOG_TRACE("called");
+    if (node.getState() == Node::State::Deinitializing || node.getState() == Node::State::Deinitialized)
+    {
+        return;
+    }
+
+    // Lock the node against recursive calling
+    node.setState(Node::State::Deinitializing);
+
+    LOG_DEBUG("{}: Deinitializing Node", node.nameId());
+
+    node.callbacksEnabled = false;
+
+    // Deinitialize connected Nodes
+    for (const auto& outputPin : node.outputPins)
+    {
+        if (outputPin.type != Pin::Type::Flow)
+        {
+            auto connectedNodes = FindConnectedNodesToOutputPin(outputPin.id);
+            for (auto* connectedNode : connectedNodes)
+            {
+                if (connectedNode->getState() == Node::State::Initialized)
+                {
+                    LOG_DEBUG("{}: Deinitializing connected Node '{}' on output Pin {}", node.nameId(), connectedNode->nameId(), size_t(outputPin.id));
+                    DeinitializeNode(*connectedNode);
+                }
+            }
+        }
+    }
+
+    // Deinitialize the node itself
+    node.deinitialize();
+    node.setState(Node::State::Deinitialized);
+}
+
+void NAV::NodeManager::DeinitializeNode(ax::NodeEditor::NodeId id)
+{
+    LOG_TRACE("called");
+    Node* node = FindNode(id);
+    if (node == nullptr)
+    {
+        DeinitializeNode(*node);
+    }
+}
+
 bool NAV::NodeManager::InitializeAllNodes()
 {
     LOG_TRACE("called");
     bool nodeCouldNotInitialize = false;
     for (auto* node : m_nodes)
     {
-        if (node->isEnabled() && !node->isInitialized())
+        if (node->isEnabled() && node->getState() != Node::State::Initialized)
         {
-            if (!node->initializeNode())
+            node->setState(Node::State::InitializationPlanned);
+        }
+    }
+    for (auto* node : m_nodes)
+    {
+        if (node && node->isEnabled() && node->getState() != Node::State::Initialized)
+        {
+            if (!InitializeNode(*node))
             {
                 nodeCouldNotInitialize = true;
             }
@@ -940,14 +1064,21 @@ void NAV::NodeManager::InitializeAllNodesAsync()
         size_t amountOfNodes = m_nodes.size();
         for (size_t i = 0; i < amountOfNodes && i < m_nodes.size(); i++)
         {
+            if (m_nodes.at(i)->isEnabled() && m_nodes.at(i)->getState() != Node::State::Initialized)
+            {
+                m_nodes.at(i)->setState(Node::State::InitializationPlanned);
+            }
+        }
+        for (size_t i = 0; i < amountOfNodes && i < m_nodes.size(); i++)
+        {
             // if (st.stop_requested())
             if (nodeInitThread_stopRequested)
             {
                 break;
             }
-            if (m_nodes.at(i)->isEnabled() && !m_nodes.at(i)->isInitialized())
+            if (m_nodes.at(i)->isEnabled() && m_nodes.at(i)->getState() != Node::State::Initialized)
             {
-                m_nodes.at(i)->initializeNode();
+                InitializeNode(*(m_nodes.at(i)));
             }
         }
     });

@@ -51,7 +51,7 @@ void NAV::LcKfInsGnssErrorLogger::guiConfig()
     if (FileWriter::guiConfig(".csv", { ".csv" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        deinitializeNode();
+        nm::DeinitializeNode(*this);
     }
 }
 

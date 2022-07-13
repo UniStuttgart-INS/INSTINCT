@@ -22,96 +22,6 @@ void NAV::Node::restore(const json& /*j*/) {}
 
 void NAV::Node::restoreAtferLink(const json& /*j*/) {}
 
-bool NAV::Node::initializeNode()
-{
-    if (!_isEnabled)
-    {
-        return false;
-    }
-
-    if (isInitializing())
-    {
-        return false;
-    }
-
-    // Lock the node against recursive calling
-    _isInitializing = true;
-
-    if (isInitialized())
-    {
-        resetNode();
-        deinitializeNode();
-    }
-
-    LOG_DEBUG("{}: Initializing Node", nameId());
-
-    // Initialize connected Nodes
-    for (const auto& inputPin : inputPins)
-    {
-        if (inputPin.type != Pin::Type::Flow)
-        {
-            if (Node* connectedNode = nm::FindConnectedNodeToInputPin(inputPin.id))
-            {
-                if (!connectedNode->isInitialized() && !connectedNode->isInitializing())
-                {
-                    LOG_DEBUG("{}: Initializing connected Node '{}' on input Pin {}", nameId(), connectedNode->nameId(), size_t(inputPin.id));
-                    if (!connectedNode->initializeNode())
-                    {
-                        LOG_ERROR("{}: Could not initialize connected node {}", nameId(), connectedNode->nameId());
-                        _isInitializing = false;
-                        return false;
-                    }
-                }
-            }
-        }
-    }
-
-    // Initialize the node itself
-    _isInitialized = initialize();
-
-    _isInitializing = false;
-
-    return isInitialized();
-}
-
-void NAV::Node::deinitializeNode()
-{
-    if (isDeinitializing())
-    {
-        return;
-    }
-
-    // Lock the node against recursive calling
-    _isDeinitializing = true;
-
-    LOG_DEBUG("{}: Deinitializing Node", nameId());
-
-    callbacksEnabled = false;
-
-    // Deinitialize connected Nodes
-    for (const auto& outputPin : outputPins)
-    {
-        if (outputPin.type != Pin::Type::Flow)
-        {
-            auto connectedNodes = nm::FindConnectedNodesToOutputPin(outputPin.id);
-            for (auto* connectedNode : connectedNodes)
-            {
-                if (connectedNode->isInitialized() && !connectedNode->isDeinitializing())
-                {
-                    LOG_DEBUG("{}: Deinitializing connected Node '{}' on output Pin {}", nameId(), connectedNode->nameId(), size_t(outputPin.id));
-                    connectedNode->deinitializeNode();
-                }
-            }
-        }
-    }
-
-    // Deinitialize the node itself
-    deinitialize();
-    _isInitialized = false;
-
-    _isDeinitializing = false;
-}
-
 bool NAV::Node::initialize()
 {
     return _isEnabled;
@@ -218,7 +128,7 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
         {
             const auto* node = std::get<0>(nodeCallback);
 
-            if (node->_isEnabled && node->isInitialized())
+            if (node->_isEnabled && node->getState() == State::Initialized)
             {
 #ifdef TESTING
                 const auto& linkId = std::get<2>(nodeCallback);
@@ -267,19 +177,14 @@ std::string NAV::Node::nameId() const
     return fmt::format("{} ({})", str::replaceAll_copy(name, "\n", ""), size_t(id));
 }
 
-bool NAV::Node::isInitialized() const
+NAV::Node::State NAV::Node::getState() const
 {
-    return _isInitialized;
+    return _state;
 }
 
-bool NAV::Node::isInitializing() const
+void NAV::Node::setState(NAV::Node::State state)
 {
-    return _isInitializing;
-}
-
-bool NAV::Node::isDeinitializing() const
-{
-    return _isDeinitializing;
+    _state = state;
 }
 
 bool NAV::Node::isEnabled() const
