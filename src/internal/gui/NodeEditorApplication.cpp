@@ -58,15 +58,6 @@ namespace nm = NAV::NodeManager;
 
 ax::NodeEditor::EditorContext* m_Editor = nullptr;
 
-NAV::gui::NodeEditorApplication::~NodeEditorApplication()
-{
-    if (initThread.joinable())
-    {
-        // initThread_stopRequested = true;
-        initThread.join();
-    }
-}
-
 void NAV::gui::NodeEditorApplication::OnStart()
 {
     LOG_TRACE("called");
@@ -264,7 +255,6 @@ void NAV::gui::NodeEditorApplication::OnStop()
 
     FlowExecutor::stop();
 
-    initList.clear();
     nm::Stop();
 
     nm::DeleteAllNodes();
@@ -734,55 +724,6 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         break;
     }
 
-    if (!initList.empty()) // Start thread to (De-)/Initialize Nodes
-    {
-        if (currentInitNodeId == 0) // Currently no thread running
-        {
-            Node* node = initList.front().first;
-            currentInitNodeId = size_t(node->id);
-            if (initThread.joinable())
-            {
-                // initThread.request_stop();
-                // initThread_stopRequested = true;
-                initThread.join();
-            }
-            // initThread = std::jthread([node, init]() {
-            initThread = std::thread([&, node, this]() {
-                Node* sameNode = nullptr;
-                bool init = false;
-                for (size_t i = 1; i < initList.size(); i++)
-                {
-                    if (initList[i].first->id == node->id)
-                    {
-                        sameNode = initList[i].first;
-                        init = initList[i].second;
-                        break;
-                    }
-                }
-                if (initList.front().second)
-                {
-                    if (node->_state == Node::State::Deinitialized) { node->_state = Node::State::InitializationPlanned; }
-                    nm::InitializeNode(*node);
-                    if (sameNode)
-                    {
-                        sameNode->_state = init ? Node::State::InitializationPlanned : Node::State::DeinitializationPlanned;
-                    }
-                }
-                else
-                {
-                    if (node->_state == Node::State::Initialized) { node->_state = Node::State::DeinitializationPlanned; }
-                    nm::DeinitializeNode(*node);
-                    if (sameNode)
-                    {
-                        sameNode->_state = init ? Node::State::InitializationPlanned : Node::State::DeinitializationPlanned;
-                    }
-                }
-                initList.pop_front();
-                currentInitNodeId = 0;
-            });
-        }
-    }
-
     gui::UpdateTouch(deltaTime);
 
     if (ed::AreShortcutsEnabled())
@@ -790,7 +731,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         gui::checkShortcuts(globalAction);
     }
 
-    gui::menus::ShowMainMenuBar(globalAction, initList);
+    gui::menus::ShowMainMenuBar(globalAction);
     menuBarHeight = ImGui::GetCursorPosY();
 
     ed::SetCurrentEditor(m_Editor);
@@ -872,7 +813,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 {
                     builder.Header(ImColor(192, 192, 192)); // Silver
                 }
-                else if (node->getState() == Node::State::Initialized)
+                else if (node->isInitialized())
                 {
                     builder.Header(ImColor(128, 255, 128)); // Light green
                 }
@@ -885,7 +826,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 ImGui::TextUnformatted(node->name.c_str());
                 ImGui::PopStyleColor();
                 ImGui::Spring(1);
-                if (node->getState() == Node::State::InitializationPlanned)
+                if (node->getState() == Node::State::DoInitialize)
                 {
                     gui::widgets::Spinner(("##Spinner " + node->nameId()).c_str(), ImColor(144, 202, 238), 10.0F, 1.0F);
                 }
@@ -893,7 +834,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 {
                     gui::widgets::Spinner(("##Spinner " + node->nameId()).c_str(), ImColor(144, 238, 144), 10.0F, 1.0F);
                 }
-                else if (node->getState() == Node::State::DeinitializationPlanned)
+                else if (node->getState() == Node::State::DoDeinitialize)
                 {
                     gui::widgets::Spinner(("##Spinner " + node->nameId()).c_str(), ImColor(255, 222, 122), 10.0F, 1.0F);
                 }
@@ -903,7 +844,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 }
                 else if (hasOutputFlows)
                 {
-                    bool itemDisabled = node->getState() != Node::State::Initialized && !node->callbacksEnabled;
+                    bool itemDisabled = !node->isInitialized() && !node->callbacksEnabled;
                     if (itemDisabled) { ImGui::PushDisabled(); }
 
                     ImGui::PushStyleColor(ImGuiCol_FrameBg, checkBoxColor);
@@ -1304,7 +1245,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 {
                     if (Node* node = nm::FindNode(nodeId))
                     {
-                        if (node->getState() != Node::State::Initialized && node->getState() != Node::State::Deinitialized)
+                        if (!node->isInitialized() && node->getState() != Node::State::Deinitialized)
                         {
                             break;
                         }
@@ -1369,24 +1310,26 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Text("Inputs: %lu", node->inputPins.size());
             ImGui::Text("Outputs: %lu", node->outputPins.size());
             ImGui::Separator();
-            if (ImGui::MenuItem(node->getState() == Node::State::Initialized ? "Reinitialize" : "Initialize", "",
-                                false, node->isEnabled() && (node->getState() == Node::State::Initialized || node->getState() == Node::State::Deinitialized)))
+            if (ImGui::MenuItem(node->isInitialized() ? "Reinitialize" : "Initialize", "",
+                                false, node->isEnabled() && (node->isInitialized() || node->getState() == Node::State::Deinitialized)))
             {
-                if (node->getState() == Node::State::Initialized)
-                {
-                    node->_state = Node::State::DeinitializationPlanned;
-                    initList.emplace_back(node, false);
-                }
-                else
-                {
-                    node->_state = Node::State::InitializationPlanned;
-                }
-                initList.emplace_back(node, true);
+                // TODO
+                // if (node->isInitialized())
+                // {
+                //     node->_state = Node::State::DoDeinitialize;
+                //     initList.emplace_back(node, false);
+                // }
+                // else
+                // {
+                //     node->_state = Node::State::DoInitialize;
+                // }
+                // initList.emplace_back(node, true);
             }
-            if (ImGui::MenuItem("Deinitialize", "", false, node->isEnabled() && node->getState() == Node::State::Initialized))
+            if (ImGui::MenuItem("Deinitialize", "", false, node->isEnabled() && node->isInitialized()))
             {
-                node->_state = Node::State::DeinitializationPlanned;
-                initList.emplace_back(node, false);
+                // TODO
+                // node->_state = Node::State::DoDeinitialize;
+                // initList.emplace_back(node, false);
             }
             ImGui::Separator();
             if (node->_hasConfig && ImGui::MenuItem("Configure", "", false))
@@ -1396,19 +1339,20 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             }
             if (ImGui::MenuItem(node->isEnabled() ? "Disable" : "Enable", "", false))
             {
-                if (node->isEnabled())
-                {
-                    if (node->getState() == Node::State::Initialized)
-                    {
-                        node->_state = Node::State::DeinitializationPlanned;
-                        initList.emplace_back(node, false);
-                    }
-                    node->_isEnabled = false;
-                }
-                else
-                {
-                    node->_isEnabled = true;
-                }
+                // TODO
+                // if (node->isEnabled())
+                // {
+                //     if (node->isInitialized())
+                //     {
+                //         node->_state = Node::State::DoDeinitialize;
+                //         initList.emplace_back(node, false);
+                //     }
+                //     node->_isEnabled = false;
+                // }
+                // else
+                // {
+                //     node->_isEnabled = true;
+                // }
                 flow::ApplyChanges();
             }
             if (ImGui::MenuItem("Rename"))
@@ -1416,7 +1360,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 renameNode = node;
             }
             ImGui::Separator();
-            if (ImGui::MenuItem("Delete", "", false, node->getState() == Node::State::Initialized || node->getState() == Node::State::Deinitialized))
+            if (ImGui::MenuItem("Delete", "", false, node->isInitialized() || node->getState() == Node::State::Deinitialized))
             {
                 ed::DeleteNode(contextNodeId);
             }

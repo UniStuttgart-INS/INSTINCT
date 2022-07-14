@@ -53,7 +53,7 @@ void NAV::VectorNavDataLogger::guiConfig()
     if (FileWriter::guiConfig(_fileType == FileType::CSV ? ".csv" : ".vnb", { _fileType == FileType::CSV ? ".csv" : ".vnb" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        nm::DeinitializeNode(*this);
+        doDeinitialize();
     }
 
     static constexpr std::array<FileType, 2> fileTypes = {
@@ -71,7 +71,7 @@ void NAV::VectorNavDataLogger::guiConfig()
                 LOG_DEBUG("{}: _fileType changed to {}", nameId(), FileWriter::to_string(_fileType));
                 str::replace(_path, _fileType == FileType::CSV ? ".vnb" : ".csv", _fileType == FileType::CSV ? ".csv" : ".vnb");
                 flow::ApplyChanges();
-                if (getState() == State::Initialized)
+                if (isInitialized())
                 {
                     deinitialize();
                     initialize();
@@ -112,7 +112,7 @@ bool NAV::VectorNavDataLogger::onCreateLink([[maybe_unused]] Pin* startPin, [[ma
 {
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
 
-    if (getState() == State::Initialized)
+    if (isInitialized())
     {
         deinitialize();
         initialize();

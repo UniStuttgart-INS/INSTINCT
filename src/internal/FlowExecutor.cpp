@@ -135,7 +135,7 @@ void NAV::FlowExecutor::execute()
 
     for (Node* node : nm::m_Nodes()) // Search for node pins with data callbacks
     {
-        if (node == nullptr || !node->isEnabled())
+        if (node == nullptr || !node->isInitialized())
         {
             continue;
         }

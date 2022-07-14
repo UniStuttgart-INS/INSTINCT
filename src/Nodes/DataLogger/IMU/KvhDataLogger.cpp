@@ -49,7 +49,7 @@ void NAV::KvhDataLogger::guiConfig()
     if (FileWriter::guiConfig(".csv", { ".csv" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        nm::DeinitializeNode(*this);
+        doDeinitialize();
     }
 }
 

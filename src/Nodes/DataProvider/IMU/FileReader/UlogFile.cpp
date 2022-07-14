@@ -62,11 +62,11 @@ void NAV::UlogFile::guiConfig()
         flow::ApplyChanges();
         if (res == FileReader::PATH_CHANGED)
         {
-            nm::InitializeNode(*this);
+            doInitialize();
         }
         else
         {
-            nm::DeinitializeNode(*this);
+            doDeinitialize();
         }
     }
 

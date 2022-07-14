@@ -107,7 +107,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
             {
                 circleCol = IM_COL32(192, 192, 192, 255);
             }
-            else if (node->getState() == Node::State::InitializationPlanned)
+            else if (node->getState() == Node::State::DoInitialize)
             {
                 circleCol = IM_COL32(144, 202, 238, 255);
             }
@@ -115,7 +115,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
             {
                 circleCol = IM_COL32(143, 188, 143, 255);
             }
-            else if (node->getState() == Node::State::DeinitializationPlanned)
+            else if (node->getState() == Node::State::DoDeinitialize)
             {
                 circleCol = IM_COL32(255, 222, 122, 255);
             }

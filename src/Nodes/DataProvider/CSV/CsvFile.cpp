@@ -48,11 +48,11 @@ void NAV::CsvFile::guiConfig()
         flow::ApplyChanges();
         if (res == FileReader::PATH_CHANGED)
         {
-            nm::InitializeNode(*this);
+            doInitialize();
         }
         else
         {
-            nm::DeinitializeNode(*this);
+            doDeinitialize();
         }
     }
 
@@ -78,7 +78,7 @@ void NAV::CsvFile::guiConfig()
         flow::ApplyChanges();
         if (_delimiter)
         {
-            nm::InitializeNode(*this);
+            doInitialize();
         }
     }
 
@@ -88,21 +88,21 @@ void NAV::CsvFile::guiConfig()
         _comment = tmpStr.empty() ? '\0' : tmpStr.at(0);
         LOG_DEBUG("{}: Comment character changed to {}", nameId(), _comment);
         flow::ApplyChanges();
-        nm::InitializeNode(*this);
+        doInitialize();
     }
 
     if (ImGui::InputIntL(fmt::format("Skip lines##{}", size_t(id)).c_str(), &_skipLines, 0, std::numeric_limits<int>::max()))
     {
         LOG_DEBUG("{}: Skip lines changed to {}", nameId(), _skipLines);
         flow::ApplyChanges();
-        nm::InitializeNode(*this);
+        doInitialize();
     }
 
     if (ImGui::Checkbox(fmt::format("Header line##{}", size_t(id)).c_str(), &_hasHeaderLine))
     {
         LOG_DEBUG("{}: HasHeaderLine changed to {}", nameId(), _hasHeaderLine);
         flow::ApplyChanges();
-        nm::InitializeNode(*this);
+        doInitialize();
     }
 
     ImGui::Separator();

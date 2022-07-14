@@ -54,7 +54,7 @@ void NAV::KvhSensor::guiConfig()
     {
         LOG_DEBUG("{}: SensorPort changed to {}", nameId(), _sensorPort);
         flow::ApplyChanges();
-        nm::DeinitializeNode(*this);
+        doDeinitialize();
     }
     ImGui::SameLine();
     gui::widgets::HelpMarker("COM port where the sensor is attached to\n"
@@ -124,7 +124,7 @@ void NAV::KvhSensor::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (getState() != State::Initialized)
+    if (!isInitialized())
     {
         return;
     }

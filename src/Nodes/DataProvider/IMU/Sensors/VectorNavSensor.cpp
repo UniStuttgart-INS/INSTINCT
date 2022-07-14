@@ -1314,7 +1314,7 @@ void NAV::VectorNavSensor::guiConfig()
     {
         LOG_DEBUG("{}: Sensor changed to {}", nameId(), _sensorModel);
         flow::ApplyChanges();
-        nm::DeinitializeNode(*this);
+        doDeinitialize();
 
         if (_sensorModel != VectorNavModel::VN310
             && (_asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNGPS
@@ -1391,9 +1391,9 @@ void NAV::VectorNavSensor::guiConfig()
     {
         LOG_DEBUG("{}: SensorPort changed to {}", nameId(), _sensorPort);
         flow::ApplyChanges();
-        if (getState() == State::Initialized)
+        if (isInitialized())
         {
-            nm::DeinitializeNode(*this);
+            doDeinitialize();
         }
     }
     ImGui::SameLine();
@@ -1404,7 +1404,7 @@ void NAV::VectorNavSensor::guiConfig()
                              "- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n"
                              "- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)");
 
-    bool isNodeInitialized = getState() == State::Initialized;
+    bool isNodeInitialized = isInitialized();
     if (!isNodeInitialized)
     {
         ImGui::PushDisabled();
@@ -1506,7 +1506,7 @@ void NAV::VectorNavSensor::guiConfig()
         {
             LOG_DEBUG("{}: Baudrate changed to {}", nameId(), sensorBaudrate());
             flow::ApplyChanges();
-            nm::DeinitializeNode(*this);
+            doDeinitialize();
         }
 
         if (ImGui::TreeNode(fmt::format("Async Ascii Output##{}", size_t(id)).c_str()))
@@ -1552,7 +1552,7 @@ void NAV::VectorNavSensor::guiConfig()
                         _asyncDataOutputType = asciiAsyncItem.first;
                         LOG_DEBUG("{}: _asyncDataOutputType changed to {}", nameId(), vn::protocol::uart::str(_asyncDataOutputType));
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -1561,12 +1561,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the asyncDataOutputType: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -1600,7 +1600,7 @@ void NAV::VectorNavSensor::guiConfig()
                 _asyncDataOutputFrequency = static_cast<uint32_t>(_possibleAsyncDataOutputFrequency.at(static_cast<size_t>(_asyncDataOutputFrequencySelected)));
                 LOG_DEBUG("{}: asyncDataOutputFrequency changed to {} Hz", nameId(), _asyncDataOutputFrequency);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -1609,12 +1609,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the asyncDataOutputFrequency: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -1692,7 +1692,7 @@ void NAV::VectorNavSensor::guiConfig()
                         _synchronizationControlRegister.syncInMode = synchronizationControlSyncInMode.first;
                         LOG_DEBUG("{}: synchronizationControlRegister.syncInMode changed to {}", nameId(), vn::protocol::uart::str(_synchronizationControlRegister.syncInMode));
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -1701,12 +1701,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the synchronizationControlRegister: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -1748,7 +1748,7 @@ void NAV::VectorNavSensor::guiConfig()
                         _synchronizationControlRegister.syncInEdge = synchronizationControlSyncInEdge.first;
                         LOG_DEBUG("{}: synchronizationControlRegister.syncInEdge changed to {}", nameId(), vn::protocol::uart::str(_synchronizationControlRegister.syncInEdge));
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -1757,12 +1757,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the synchronizationControlRegister: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -1797,7 +1797,7 @@ void NAV::VectorNavSensor::guiConfig()
                 _synchronizationControlRegister.syncInSkipFactor = static_cast<uint16_t>(syncInSkipFactor);
                 LOG_DEBUG("{}: synchronizationControlRegister.syncInSkipFactor changed to {}", nameId(), _synchronizationControlRegister.syncInSkipFactor);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -1806,12 +1806,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the synchronizationControlRegister: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -1849,7 +1849,7 @@ void NAV::VectorNavSensor::guiConfig()
                         }
 
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -1858,12 +1858,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the synchronizationControlRegister: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -1901,7 +1901,7 @@ void NAV::VectorNavSensor::guiConfig()
                         _synchronizationControlRegister.syncOutPolarity = synchronizationControlSyncOutPolarity.first;
                         LOG_DEBUG("{}: synchronizationControlRegister.syncOutPolarity changed to {}", nameId(), vn::protocol::uart::str(_synchronizationControlRegister.syncOutPolarity));
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -1910,12 +1910,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the synchronizationControlRegister: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -1950,7 +1950,7 @@ void NAV::VectorNavSensor::guiConfig()
                 _synchronizationControlRegister.syncOutSkipFactor = static_cast<uint16_t>(syncOutSkipFactor);
                 LOG_DEBUG("{}: synchronizationControlRegister.syncOutSkipFactor changed to {}", nameId(), _synchronizationControlRegister.syncOutSkipFactor);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -1959,12 +1959,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the synchronizationControlRegister: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -1980,7 +1980,7 @@ void NAV::VectorNavSensor::guiConfig()
                 _synchronizationControlRegister.syncOutPulseWidth = static_cast<uint32_t>(syncOutPulseWidth);
                 LOG_DEBUG("{}: synchronizationControlRegister.syncOutPulseWidth changed to {}", nameId(), _synchronizationControlRegister.syncOutPulseWidth);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -1989,12 +1989,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the synchronizationControlRegister: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -2025,7 +2025,7 @@ void NAV::VectorNavSensor::guiConfig()
                         _communicationProtocolControlRegister.serialCount = communicationProtocolControlSerialCount.first;
                         LOG_DEBUG("{}: communicationProtocolControlRegister.serialCount changed to {}", nameId(), vn::protocol::uart::str(_communicationProtocolControlRegister.serialCount));
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -2034,12 +2034,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the communicationProtocolControlRegister: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -2083,7 +2083,7 @@ void NAV::VectorNavSensor::guiConfig()
                         _communicationProtocolControlRegister.serialStatus = communicationProtocolControlSerialStatus.first;
                         LOG_DEBUG("{}: communicationProtocolControlRegister.serialStatus changed to {}", nameId(), vn::protocol::uart::str(_communicationProtocolControlRegister.serialStatus));
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -2092,12 +2092,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the communicationProtocolControlRegister: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -2139,7 +2139,7 @@ void NAV::VectorNavSensor::guiConfig()
                             _communicationProtocolControlRegister.spiCount = communicationProtocolControlSpiCount.first;
                             LOG_DEBUG("{}: communicationProtocolControlRegister.spiCount changed to {}", nameId(), vn::protocol::uart::str(_communicationProtocolControlRegister.spiCount));
                             flow::ApplyChanges();
-                            if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                            if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
                                 try
                                 {
@@ -2148,12 +2148,12 @@ void NAV::VectorNavSensor::guiConfig()
                                 catch (const std::exception& e)
                                 {
                                     LOG_ERROR("{}: Could not configure the communicationProtocolControlRegister: {}", nameId(), e.what());
-                                    nm::DeinitializeNode(*this);
+                                    doDeinitialize();
                                 }
                             }
                             else
                             {
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         if (ImGui::IsItemHovered())
@@ -2187,7 +2187,7 @@ void NAV::VectorNavSensor::guiConfig()
                             _communicationProtocolControlRegister.spiStatus = communicationProtocolControlSpiStatus.first;
                             LOG_DEBUG("{}: communicationProtocolControlRegister.spiStatus changed to {}", nameId(), vn::protocol::uart::str(_communicationProtocolControlRegister.spiStatus));
                             flow::ApplyChanges();
-                            if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                            if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
                                 try
                                 {
@@ -2196,12 +2196,12 @@ void NAV::VectorNavSensor::guiConfig()
                                 catch (const std::exception& e)
                                 {
                                     LOG_ERROR("{}: Could not configure the communicationProtocolControlRegister: {}", nameId(), e.what());
-                                    nm::DeinitializeNode(*this);
+                                    doDeinitialize();
                                 }
                             }
                             else
                             {
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         if (ImGui::IsItemHovered())
@@ -2239,7 +2239,7 @@ void NAV::VectorNavSensor::guiConfig()
                         _communicationProtocolControlRegister.serialChecksum = communicationProtocolControlSerialChecksum.first;
                         LOG_DEBUG("{}: communicationProtocolControlRegister.serialChecksum changed to {}", nameId(), vn::protocol::uart::str(_communicationProtocolControlRegister.serialChecksum));
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -2248,12 +2248,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the communicationProtocolControlRegister: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -2293,7 +2293,7 @@ void NAV::VectorNavSensor::guiConfig()
                             _communicationProtocolControlRegister.spiChecksum = communicationProtocolControlSpiChecksum.first;
                             LOG_DEBUG("{}: communicationProtocolControlRegister.spiChecksum changed to {}", nameId(), vn::protocol::uart::str(_communicationProtocolControlRegister.spiChecksum));
                             flow::ApplyChanges();
-                            if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                            if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
                                 try
                                 {
@@ -2302,12 +2302,12 @@ void NAV::VectorNavSensor::guiConfig()
                                 catch (const std::exception& e)
                                 {
                                     LOG_ERROR("{}: Could not configure the communicationProtocolControlRegister: {}", nameId(), e.what());
-                                    nm::DeinitializeNode(*this);
+                                    doDeinitialize();
                                 }
                             }
                             else
                             {
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         if (ImGui::IsItemHovered())
@@ -2345,7 +2345,7 @@ void NAV::VectorNavSensor::guiConfig()
                         _communicationProtocolControlRegister.errorMode = communicationProtocolControlErrorMode.first;
                         LOG_DEBUG("{}: communicationProtocolControlRegister.errorMode changed to {}", nameId(), vn::protocol::uart::str(_communicationProtocolControlRegister.errorMode));
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -2354,12 +2354,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the communicationProtocolControlRegister: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -2462,7 +2462,7 @@ void NAV::VectorNavSensor::guiConfig()
                             }
                             flow::ApplyChanges();
 
-                            if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                            if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
                                 for (const auto& binUpdate : binaryOutputRegistersToUpdate)
                                 {
@@ -2486,13 +2486,13 @@ void NAV::VectorNavSensor::guiConfig()
                                     catch (const std::exception& e)
                                     {
                                         LOG_ERROR("{}: Could not configure the binaryOutputRegister {}: {}", nameId(), binUpdate + 1, e.what());
-                                        nm::DeinitializeNode(*this);
+                                        doDeinitialize();
                                     }
                                 }
                             }
                             else
                             {
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         if (ImGui::IsItemHovered())
@@ -2543,7 +2543,7 @@ void NAV::VectorNavSensor::guiConfig()
                     }
 
                     flow::ApplyChanges();
-                    if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         for (const auto& binUpdate : binaryOutputRegistersToUpdate)
                         {
@@ -2567,13 +2567,13 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the binaryOutputRegister {}: {}", nameId(), binUpdate + 1, e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                     }
                     else
                     {
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 if ((_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output2 && b == 1)
@@ -2611,7 +2611,7 @@ void NAV::VectorNavSensor::guiConfig()
                                 toggleFields(_binaryOutputRegister.at(b), *reinterpret_cast<uint32_t*>(flags));
                             }
                             flow::ApplyChanges();
-                            if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                            if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
                                 try
                                 {
@@ -2646,12 +2646,12 @@ void NAV::VectorNavSensor::guiConfig()
                                 catch (const std::exception& e)
                                 {
                                     LOG_ERROR("{}: Could not configure the binaryOutputRegister {}: {}", nameId(), b + 1, e.what());
-                                    nm::DeinitializeNode(*this);
+                                    doDeinitialize();
                                 }
                             }
                             else
                             {
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
 
@@ -2914,7 +2914,7 @@ void NAV::VectorNavSensor::guiConfig()
                                                                 dcmf(2, 0), dcmf(2, 1), dcmf(2, 2));
                 LOG_DEBUG("{}: referenceFrameRotationMatrix changed to {}", nameId(), _referenceFrameRotationMatrix);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -2923,12 +2923,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the referenceFrameRotationMatrix: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
 
@@ -2944,7 +2944,7 @@ void NAV::VectorNavSensor::guiConfig()
                 _referenceFrameRotationMatrix.e02 = row.at(2);
                 LOG_DEBUG("{}: referenceFrameRotationMatrix changed to {}", nameId(), _referenceFrameRotationMatrix);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -2953,12 +2953,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the referenceFrameRotationMatrix: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
             row = { _referenceFrameRotationMatrix.e10, _referenceFrameRotationMatrix.e11, _referenceFrameRotationMatrix.e12 };
@@ -2969,7 +2969,7 @@ void NAV::VectorNavSensor::guiConfig()
                 _referenceFrameRotationMatrix.e12 = row.at(2);
                 LOG_DEBUG("{}: referenceFrameRotationMatrix changed to {}", nameId(), _referenceFrameRotationMatrix);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -2978,12 +2978,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the referenceFrameRotationMatrix: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
             row = { _referenceFrameRotationMatrix.e20, _referenceFrameRotationMatrix.e21, _referenceFrameRotationMatrix.e22 };
@@ -2994,7 +2994,7 @@ void NAV::VectorNavSensor::guiConfig()
                 _referenceFrameRotationMatrix.e22 = row.at(2);
                 LOG_DEBUG("{}: referenceFrameRotationMatrix changed to {}", nameId(), _referenceFrameRotationMatrix);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -3003,12 +3003,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the referenceFrameRotationMatrix: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
 
@@ -3036,7 +3036,7 @@ void NAV::VectorNavSensor::guiConfig()
                 _imuFilteringConfigurationRegister.magWindowSize = static_cast<uint16_t>(magWindowSize);
                 LOG_DEBUG("{}: imuFilteringConfigurationRegister.magWindowSize changed to {}", nameId(), _imuFilteringConfigurationRegister.magWindowSize);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -3045,12 +3045,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -3071,7 +3071,7 @@ void NAV::VectorNavSensor::guiConfig()
                 _imuFilteringConfigurationRegister.accelWindowSize = static_cast<uint16_t>(accelWindowSize);
                 LOG_DEBUG("{}: imuFilteringConfigurationRegister.accelWindowSize changed to {}", nameId(), _imuFilteringConfigurationRegister.accelWindowSize);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -3080,12 +3080,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -3106,7 +3106,7 @@ void NAV::VectorNavSensor::guiConfig()
                 _imuFilteringConfigurationRegister.gyroWindowSize = static_cast<uint16_t>(gyroWindowSize);
                 LOG_DEBUG("{}: imuFilteringConfigurationRegister.gyroWindowSize changed to {}", nameId(), _imuFilteringConfigurationRegister.gyroWindowSize);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -3115,12 +3115,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -3141,7 +3141,7 @@ void NAV::VectorNavSensor::guiConfig()
                 _imuFilteringConfigurationRegister.tempWindowSize = static_cast<uint16_t>(tempWindowSize);
                 LOG_DEBUG("{}: imuFilteringConfigurationRegister.tempWindowSize changed to {}", nameId(), _imuFilteringConfigurationRegister.tempWindowSize);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -3150,12 +3150,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -3176,7 +3176,7 @@ void NAV::VectorNavSensor::guiConfig()
                 _imuFilteringConfigurationRegister.presWindowSize = static_cast<uint16_t>(presWindowSize);
                 LOG_DEBUG("{}: imuFilteringConfigurationRegister.presWindowSize changed to {}", nameId(), _imuFilteringConfigurationRegister.presWindowSize);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -3185,12 +3185,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -3213,7 +3213,7 @@ void NAV::VectorNavSensor::guiConfig()
                         _imuFilteringConfigurationRegister.magFilterMode = imuFilteringConfigurationFilterMode.first;
                         LOG_DEBUG("{}: imuFilteringConfigurationRegister.magFilterMode changed to {}", nameId(), vn::protocol::uart::str(_imuFilteringConfigurationRegister.magFilterMode));
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -3222,12 +3222,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -3259,7 +3259,7 @@ void NAV::VectorNavSensor::guiConfig()
                         _imuFilteringConfigurationRegister.accelFilterMode = imuFilteringConfigurationFilterMode.first;
                         LOG_DEBUG("{}: imuFilteringConfigurationRegister.accelFilterMode changed to {}", nameId(), vn::protocol::uart::str(_imuFilteringConfigurationRegister.accelFilterMode));
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -3268,12 +3268,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -3305,7 +3305,7 @@ void NAV::VectorNavSensor::guiConfig()
                         _imuFilteringConfigurationRegister.gyroFilterMode = imuFilteringConfigurationFilterMode.first;
                         LOG_DEBUG("{}: imuFilteringConfigurationRegister.gyroFilterMode changed to {}", nameId(), vn::protocol::uart::str(_imuFilteringConfigurationRegister.gyroFilterMode));
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -3314,12 +3314,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -3351,7 +3351,7 @@ void NAV::VectorNavSensor::guiConfig()
                         _imuFilteringConfigurationRegister.tempFilterMode = imuFilteringConfigurationFilterMode.first;
                         LOG_DEBUG("{}: imuFilteringConfigurationRegister.tempFilterMode changed to {}", nameId(), vn::protocol::uart::str(_imuFilteringConfigurationRegister.tempFilterMode));
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -3360,12 +3360,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -3397,7 +3397,7 @@ void NAV::VectorNavSensor::guiConfig()
                         _imuFilteringConfigurationRegister.presFilterMode = imuFilteringConfigurationFilterMode.first;
                         LOG_DEBUG("{}: imuFilteringConfigurationRegister.presFilterMode changed to {}", nameId(), vn::protocol::uart::str(_imuFilteringConfigurationRegister.presFilterMode));
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -3406,12 +3406,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -3456,7 +3456,7 @@ void NAV::VectorNavSensor::guiConfig()
                         _deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame = deltaThetaAndDeltaVelocityConfigurationIntegrationFrame.first;
                         LOG_DEBUG("{}: deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame changed to {}", nameId(), vn::protocol::uart::str(_deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame));
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -3465,12 +3465,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the deltaThetaAndDeltaVelocityConfigurationRegister: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -3506,7 +3506,7 @@ void NAV::VectorNavSensor::guiConfig()
                         _deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation = deltaThetaAndDeltaVelocityConfigurationGyroCompensationMode.first;
                         LOG_DEBUG("{}: deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation changed to {}", nameId(), vn::protocol::uart::str(_deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation));
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -3515,12 +3515,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the deltaThetaAndDeltaVelocityConfigurationRegister: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -3557,7 +3557,7 @@ void NAV::VectorNavSensor::guiConfig()
                         _deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation = deltaThetaAndDeltaVelocityConfigurationAccelCompensationMode.first;
                         LOG_DEBUG("{}: deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation changed to {}", nameId(), vn::protocol::uart::str(_deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation));
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -3566,12 +3566,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the deltaThetaAndDeltaVelocityConfigurationRegister: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -3624,7 +3624,7 @@ void NAV::VectorNavSensor::guiConfig()
                             _gpsConfigurationRegister.mode = gpsConfigurationMode.first;
                             LOG_DEBUG("{}: gpsConfigurationRegister.mode changed to {}", nameId(), vn::protocol::uart::str(_gpsConfigurationRegister.mode));
                             flow::ApplyChanges();
-                            if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                            if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
                                 try
                                 {
@@ -3633,12 +3633,12 @@ void NAV::VectorNavSensor::guiConfig()
                                 catch (const std::exception& e)
                                 {
                                     LOG_ERROR("{}: Could not configure the gpsConfigurationRegister: {}", nameId(), e.what());
-                                    nm::DeinitializeNode(*this);
+                                    doDeinitialize();
                                 }
                             }
                             else
                             {
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         if (ImGui::IsItemHovered())
@@ -3672,7 +3672,7 @@ void NAV::VectorNavSensor::guiConfig()
                             _gpsConfigurationRegister.ppsSource = gpsConfigurationPpsSource.first;
                             LOG_DEBUG("{}: gpsConfigurationRegister.ppsSource changed to {}", nameId(), vn::protocol::uart::str(_gpsConfigurationRegister.ppsSource));
                             flow::ApplyChanges();
-                            if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                            if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
                                 try
                                 {
@@ -3681,12 +3681,12 @@ void NAV::VectorNavSensor::guiConfig()
                                 catch (const std::exception& e)
                                 {
                                     LOG_ERROR("{}: Could not configure the gpsConfigurationRegister: {}", nameId(), e.what());
-                                    nm::DeinitializeNode(*this);
+                                    doDeinitialize();
                                 }
                             }
                             else
                             {
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         if (ImGui::IsItemHovered())
@@ -3718,7 +3718,7 @@ void NAV::VectorNavSensor::guiConfig()
                             _gpsConfigurationRegister.rate = gpsConfigurationRate;
                             LOG_DEBUG("{}: gpsConfigurationRegister.rate changed to {}", nameId(), vn::protocol::uart::str(_gpsConfigurationRegister.rate));
                             flow::ApplyChanges();
-                            if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                            if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
                                 try
                                 {
@@ -3727,12 +3727,12 @@ void NAV::VectorNavSensor::guiConfig()
                                 catch (const std::exception& e)
                                 {
                                     LOG_ERROR("{}: Could not configure the gpsConfigurationRegister: {}", nameId(), e.what());
-                                    nm::DeinitializeNode(*this);
+                                    doDeinitialize();
                                 }
                             }
                             else
                             {
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
 
@@ -3761,7 +3761,7 @@ void NAV::VectorNavSensor::guiConfig()
                             _gpsConfigurationRegister.antPow = gpsConfigurationAntPower.first;
                             LOG_DEBUG("{}: gpsConfigurationRegister.antPow changed to {}", nameId(), vn::protocol::uart::str(_gpsConfigurationRegister.antPow));
                             flow::ApplyChanges();
-                            if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                            if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
                                 try
                                 {
@@ -3770,12 +3770,12 @@ void NAV::VectorNavSensor::guiConfig()
                                 catch (const std::exception& e)
                                 {
                                     LOG_ERROR("{}: Could not configure the gpsConfigurationRegister: {}", nameId(), e.what());
-                                    nm::DeinitializeNode(*this);
+                                    doDeinitialize();
                                 }
                             }
                             else
                             {
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         if (ImGui::IsItemHovered())
@@ -3807,7 +3807,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: gpsAntennaOffset changed to {}", nameId(), _gpsAntennaOffset);
                     flow::ApplyChanges();
-                    if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -3816,12 +3816,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the gpsAntennaOffset: {}", nameId(), e.what());
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
 
@@ -3837,7 +3837,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: gpsCompassBaselineRegister.position changed to {}", nameId(), _gpsCompassBaselineRegister.position);
                     flow::ApplyChanges();
-                    if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -3846,12 +3846,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the gpsCompassBaselineRegister: {}", nameId(), e.what());
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 ImGui::SameLine();
@@ -3871,7 +3871,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: gpsCompassBaselineRegister.uncertainty changed to {}", nameId(), _gpsCompassBaselineRegister.uncertainty);
                     flow::ApplyChanges();
-                    if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -3880,12 +3880,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the gpsCompassBaselineRegister: {}", nameId(), e.what());
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 ImGui::SameLine();
@@ -3932,7 +3932,7 @@ void NAV::VectorNavSensor::guiConfig()
                         _vpeBasicControlRegister.enable = vpeBasicControlEnable;
                         LOG_DEBUG("{}: vpeBasicControlRegister.enable changed to {}", nameId(), vn::protocol::uart::str(_vpeBasicControlRegister.enable));
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -3941,12 +3941,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the vpeBasicControlRegister: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
 
@@ -3973,7 +3973,7 @@ void NAV::VectorNavSensor::guiConfig()
                         _vpeBasicControlRegister.headingMode = vpeBasicControlHeadingMode;
                         LOG_DEBUG("{}: vpeBasicControlRegister.headingMode changed to {}", nameId(), vn::protocol::uart::str(_vpeBasicControlRegister.headingMode));
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -3982,12 +3982,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the vpeBasicControlRegister: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
 
@@ -4013,7 +4013,7 @@ void NAV::VectorNavSensor::guiConfig()
                         _vpeBasicControlRegister.filteringMode = vpeBasicControlMode;
                         LOG_DEBUG("{}: vpeBasicControlRegister.filteringMode changed to {}", nameId(), vn::protocol::uart::str(_vpeBasicControlRegister.filteringMode));
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -4022,12 +4022,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the vpeBasicControlRegister: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
 
@@ -4049,7 +4049,7 @@ void NAV::VectorNavSensor::guiConfig()
                         _vpeBasicControlRegister.tuningMode = vpeBasicControlMode;
                         LOG_DEBUG("{}: vpeBasicControlRegister.tuningMode changed to {}", nameId(), vn::protocol::uart::str(_vpeBasicControlRegister.tuningMode));
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -4058,12 +4058,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the vpeBasicControlRegister: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
 
@@ -4088,7 +4088,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: vpeMagnetometerBasicTuningRegister.baseTuning changed to {}", nameId(), _vpeMagnetometerBasicTuningRegister.baseTuning);
                     flow::ApplyChanges();
-                    if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4097,12 +4097,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the vpeMagnetometerBasicTuningRegister: {}", nameId(), e.what());
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 ImGui::SameLine();
@@ -4113,7 +4113,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: vpeMagnetometerBasicTuningRegister.adaptiveTuning changed to {}", nameId(), _vpeMagnetometerBasicTuningRegister.adaptiveTuning);
                     flow::ApplyChanges();
-                    if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4122,12 +4122,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the vpeMagnetometerBasicTuningRegister: {}", nameId(), e.what());
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
 
@@ -4135,7 +4135,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: vpeMagnetometerBasicTuningRegister.adaptiveFiltering changed to {}", nameId(), _vpeMagnetometerBasicTuningRegister.adaptiveFiltering);
                     flow::ApplyChanges();
-                    if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4144,12 +4144,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the vpeMagnetometerBasicTuningRegister: {}", nameId(), e.what());
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
 
@@ -4164,7 +4164,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: vpeAccelerometerBasicTuningRegister.baseTuning changed to {}", nameId(), _vpeAccelerometerBasicTuningRegister.baseTuning);
                     flow::ApplyChanges();
-                    if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4173,12 +4173,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the vpeAccelerometerBasicTuningRegister: {}", nameId(), e.what());
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 ImGui::SameLine();
@@ -4189,7 +4189,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: vpeAccelerometerBasicTuningRegister.adaptiveTuning changed to {}", nameId(), _vpeAccelerometerBasicTuningRegister.adaptiveTuning);
                     flow::ApplyChanges();
-                    if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4198,12 +4198,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the vpeAccelerometerBasicTuningRegister: {}", nameId(), e.what());
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
 
@@ -4211,7 +4211,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: vpeAccelerometerBasicTuningRegister.adaptiveFiltering changed to {}", nameId(), _vpeAccelerometerBasicTuningRegister.adaptiveFiltering);
                     flow::ApplyChanges();
-                    if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4220,12 +4220,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the vpeAccelerometerBasicTuningRegister: {}", nameId(), e.what());
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
 
@@ -4240,7 +4240,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: vpeGyroBasicTuningRegister.baseTuning changed to {}", nameId(), _vpeGyroBasicTuningRegister.baseTuning);
                     flow::ApplyChanges();
-                    if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4249,12 +4249,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the vpeGyroBasicTuningRegister: {}", nameId(), e.what());
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 ImGui::SameLine();
@@ -4264,7 +4264,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: vpeGyroBasicTuningRegister.adaptiveTuning changed to {}", nameId(), _vpeGyroBasicTuningRegister.adaptiveTuning);
                     flow::ApplyChanges();
-                    if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4273,12 +4273,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the vpeGyroBasicTuningRegister: {}", nameId(), e.what());
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
 
@@ -4286,7 +4286,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: vpeGyroBasicTuningRegister.angularWalkVariance changed to {}", nameId(), _vpeGyroBasicTuningRegister.angularWalkVariance);
                     flow::ApplyChanges();
-                    if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4295,12 +4295,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the vpeGyroBasicTuningRegister: {}", nameId(), e.what());
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
 
@@ -4315,7 +4315,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: filterStartupGyroBias changed to {}", nameId(), _filterStartupGyroBias);
                     flow::ApplyChanges();
-                    if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4324,12 +4324,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the filterStartupGyroBias: {}", nameId(), e.what());
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
 
@@ -4364,7 +4364,7 @@ void NAV::VectorNavSensor::guiConfig()
                             _insBasicConfigurationRegisterVn300.scenario = insBasicConfigurationRegisterVn300Scenario.first;
                             LOG_DEBUG("{}: insBasicConfigurationRegisterVn300.scenario changed to {}", nameId(), vn::protocol::uart::str(_insBasicConfigurationRegisterVn300.scenario));
                             flow::ApplyChanges();
-                            if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                            if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
                                 try
                                 {
@@ -4373,12 +4373,12 @@ void NAV::VectorNavSensor::guiConfig()
                                 catch (const std::exception& e)
                                 {
                                     LOG_ERROR("{}: Could not configure the insBasicConfigurationRegisterVn300: {}", nameId(), e.what());
-                                    nm::DeinitializeNode(*this);
+                                    doDeinitialize();
                                 }
                             }
                             else
                             {
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         if (ImGui::IsItemHovered())
@@ -4400,7 +4400,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: insBasicConfigurationRegisterVn300.ahrsAiding changed to {}", nameId(), _insBasicConfigurationRegisterVn300.ahrsAiding);
                     flow::ApplyChanges();
-                    if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4409,12 +4409,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the insBasicConfigurationRegisterVn300: {}", nameId(), e.what());
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 ImGui::SameLine();
@@ -4430,7 +4430,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: insBasicConfigurationRegisterVn300.estBaseline changed to {}", nameId(), _insBasicConfigurationRegisterVn300.estBaseline);
                     flow::ApplyChanges();
-                    if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4439,12 +4439,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the insBasicConfigurationRegisterVn300: {}", nameId(), e.what());
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 ImGui::SameLine();
@@ -4461,7 +4461,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: startupFilterBiasEstimateRegister.gyroBias changed to {}", nameId(), _startupFilterBiasEstimateRegister.gyroBias);
                     flow::ApplyChanges();
-                    if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4470,12 +4470,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the startupFilterBiasEstimateRegister: {}", nameId(), e.what());
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
 
@@ -4483,7 +4483,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: startupFilterBiasEstimateRegister.accelBias changed to {}", nameId(), _startupFilterBiasEstimateRegister.accelBias);
                     flow::ApplyChanges();
-                    if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4492,12 +4492,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the startupFilterBiasEstimateRegister: {}", nameId(), e.what());
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
 
@@ -4505,7 +4505,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: startupFilterBiasEstimateRegister.pressureBias changed to {}", nameId(), _startupFilterBiasEstimateRegister.pressureBias);
                     flow::ApplyChanges();
-                    if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4514,12 +4514,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the startupFilterBiasEstimateRegister: {}", nameId(), e.what());
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
 
@@ -4564,7 +4564,7 @@ void NAV::VectorNavSensor::guiConfig()
                         _magnetometerCalibrationControlRegister.hsiMode = magnetometerCalibrationControlHsiMode.first;
                         LOG_DEBUG("{}: magnetometerCalibrationControlRegister.hsiMode changed to {}", nameId(), vn::protocol::uart::str(_magnetometerCalibrationControlRegister.hsiMode));
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -4573,12 +4573,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the magnetometerCalibrationControlRegister: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -4612,7 +4612,7 @@ void NAV::VectorNavSensor::guiConfig()
                         _magnetometerCalibrationControlRegister.hsiOutput = magnetometerCalibrationControlHsiOutputMode;
                         LOG_DEBUG("{}: magnetometerCalibrationControlRegister.hsiOutput changed to {}", nameId(), vn::protocol::uart::str(_magnetometerCalibrationControlRegister.hsiOutput));
                         flow::ApplyChanges();
-                        if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -4621,12 +4621,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the magnetometerCalibrationControlRegister: {}", nameId(), e.what());
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -4654,7 +4654,7 @@ void NAV::VectorNavSensor::guiConfig()
                 _magnetometerCalibrationControlRegister.convergeRate = static_cast<uint8_t>(convergeRate);
                 LOG_DEBUG("{}: magnetometerCalibrationControlRegister.convergeRate changed to {}", nameId(), _magnetometerCalibrationControlRegister.convergeRate);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -4663,12 +4663,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the magnetometerCalibrationControlRegister: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -4712,7 +4712,7 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 LOG_DEBUG("{}: magneticAndGravityReferenceVectorsRegister.magRef changed to {}", nameId(), _magneticAndGravityReferenceVectorsRegister.magRef);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -4721,12 +4721,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the magneticAndGravityReferenceVectorsRegister: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
 
@@ -4734,7 +4734,7 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 LOG_DEBUG("{}: magneticAndGravityReferenceVectorsRegister.accRef changed to {}", nameId(), _magneticAndGravityReferenceVectorsRegister.accRef);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -4743,12 +4743,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the magneticAndGravityReferenceVectorsRegister: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
 
@@ -4780,7 +4780,7 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 LOG_DEBUG("{}: referenceVectorConfigurationRegister.useMagModel changed to {}", nameId(), _referenceVectorConfigurationRegister.useMagModel);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -4789,12 +4789,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the referenceVectorConfigurationRegister: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
 
@@ -4802,7 +4802,7 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 LOG_DEBUG("{}: referenceVectorConfigurationRegister.useGravityModel changed to {}", nameId(), _referenceVectorConfigurationRegister.useGravityModel);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -4811,12 +4811,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the referenceVectorConfigurationRegister: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
 
@@ -4826,7 +4826,7 @@ void NAV::VectorNavSensor::guiConfig()
                 _referenceVectorConfigurationRegister.recalcThreshold = static_cast<uint32_t>(recalcThreshold);
                 LOG_DEBUG("{}: referenceVectorConfigurationRegister.recalcThreshold changed to {}", nameId(), _referenceVectorConfigurationRegister.recalcThreshold);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -4835,12 +4835,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the referenceVectorConfigurationRegister: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -4850,7 +4850,7 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 LOG_DEBUG("{}: referenceVectorConfigurationRegister.year changed to {}", nameId(), _referenceVectorConfigurationRegister.year);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -4859,12 +4859,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the referenceVectorConfigurationRegister: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -4874,7 +4874,7 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 LOG_DEBUG("{}: referenceVectorConfigurationRegister.position.latitude changed to {}", nameId(), _referenceVectorConfigurationRegister.position[0]);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -4883,12 +4883,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the referenceVectorConfigurationRegister: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -4898,7 +4898,7 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 LOG_DEBUG("{}: referenceVectorConfigurationRegister.position.longitude changed to {}", nameId(), _referenceVectorConfigurationRegister.position[1]);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -4907,12 +4907,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the referenceVectorConfigurationRegister: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -4922,7 +4922,7 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 LOG_DEBUG("{}: referenceVectorConfigurationRegister.position.altitude changed to {}", nameId(), _referenceVectorConfigurationRegister.position[2]);
                 flow::ApplyChanges();
-                if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -4931,12 +4931,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the referenceVectorConfigurationRegister: {}", nameId(), e.what());
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -4973,7 +4973,7 @@ void NAV::VectorNavSensor::guiConfig()
                             _velocityCompensationControlRegister.mode = velocityCompensationControlMode;
                             LOG_DEBUG("{}: velocityCompensationControlRegister.mode changed to {}", nameId(), vn::protocol::uart::str(_velocityCompensationControlRegister.mode));
                             flow::ApplyChanges();
-                            if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                            if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
                                 try
                                 {
@@ -4982,12 +4982,12 @@ void NAV::VectorNavSensor::guiConfig()
                                 catch (const std::exception& e)
                                 {
                                     LOG_ERROR("{}: Could not configure the velocityCompensationControlRegister: {}", nameId(), e.what());
-                                    nm::DeinitializeNode(*this);
+                                    doDeinitialize();
                                 }
                             }
                             else
                             {
-                                nm::DeinitializeNode(*this);
+                                doDeinitialize();
                             }
                         }
 
@@ -5005,7 +5005,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: velocityCompensationControlRegister.velocityTuning changed to {}", nameId(), _velocityCompensationControlRegister.velocityTuning);
                     flow::ApplyChanges();
-                    if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -5014,12 +5014,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the velocityCompensationControlRegister: {}", nameId(), e.what());
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 ImGui::SameLine();
@@ -5029,7 +5029,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: velocityCompensationControlRegister.rateTuning changed to {}", nameId(), _velocityCompensationControlRegister.rateTuning);
                     flow::ApplyChanges();
-                    if (getState() == State::Initialized && _vs.isConnected() && _vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -5038,12 +5038,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the velocityCompensationControlRegister: {}", nameId(), e.what());
-                            nm::DeinitializeNode(*this);
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        nm::DeinitializeNode(*this);
+                        doDeinitialize();
                     }
                 }
                 ImGui::SameLine();
@@ -5475,7 +5475,7 @@ bool NAV::VectorNavSensor::initialize()
     if (_vs.readSerialBaudRate() != targetBaudrate)
     {
         LOG_ERROR("{}: Changing the baudrate from {} to {} was not successfull", nameId(), _vs.readSerialBaudRate(), targetBaudrate);
-        nm::DeinitializeNode(*this);
+        doDeinitialize();
         return false;
     }
 
@@ -5495,7 +5495,7 @@ bool NAV::VectorNavSensor::initialize()
                   nameId(),
                   _synchronizationControlRegister.syncInMode, _synchronizationControlRegister.syncInEdge, _synchronizationControlRegister.syncInSkipFactor, _synchronizationControlRegister.syncOutMode, _synchronizationControlRegister.syncOutPolarity, _synchronizationControlRegister.syncOutSkipFactor, _synchronizationControlRegister.syncOutPulseWidth,
                   vnSynchronizationControlRegister.syncInMode, vnSynchronizationControlRegister.syncInEdge, vnSynchronizationControlRegister.syncInSkipFactor, vnSynchronizationControlRegister.syncOutMode, vnSynchronizationControlRegister.syncOutPolarity, vnSynchronizationControlRegister.syncOutSkipFactor, vnSynchronizationControlRegister.syncOutPulseWidth);
-        nm::DeinitializeNode(*this);
+        doDeinitialize();
         return false;
     }
 
@@ -5515,7 +5515,7 @@ bool NAV::VectorNavSensor::initialize()
                   nameId(),
                   _communicationProtocolControlRegister.serialCount, _communicationProtocolControlRegister.serialStatus, _communicationProtocolControlRegister.spiCount, _communicationProtocolControlRegister.spiStatus, _communicationProtocolControlRegister.serialChecksum, _communicationProtocolControlRegister.spiChecksum, _communicationProtocolControlRegister.errorMode,
                   vnCommunicationProtocolControlRegister.serialCount, vnCommunicationProtocolControlRegister.serialStatus, vnCommunicationProtocolControlRegister.spiCount, vnCommunicationProtocolControlRegister.spiStatus, vnCommunicationProtocolControlRegister.serialChecksum, vnCommunicationProtocolControlRegister.spiChecksum, vnCommunicationProtocolControlRegister.errorMode);
-        nm::DeinitializeNode(*this);
+        doDeinitialize();
         return false;
     }
 
@@ -5543,7 +5543,7 @@ bool NAV::VectorNavSensor::initialize()
                   "Target: DCM = {}\n"
                   "Sensor: DCM = {}",
                   nameId(), _referenceFrameRotationMatrix, vnReferenceFrameRotationMatrix);
-        nm::DeinitializeNode(*this);
+        doDeinitialize();
         return false;
     }
 
@@ -5566,7 +5566,7 @@ bool NAV::VectorNavSensor::initialize()
                   nameId(),
                   _imuFilteringConfigurationRegister.magWindowSize, _imuFilteringConfigurationRegister.accelWindowSize, _imuFilteringConfigurationRegister.gyroWindowSize, _imuFilteringConfigurationRegister.tempWindowSize, _imuFilteringConfigurationRegister.presWindowSize, _imuFilteringConfigurationRegister.magFilterMode, _imuFilteringConfigurationRegister.accelFilterMode, _imuFilteringConfigurationRegister.gyroFilterMode, _imuFilteringConfigurationRegister.tempFilterMode, _imuFilteringConfigurationRegister.presFilterMode,
                   vnImuFilteringConfigurationRegister.magWindowSize, vnImuFilteringConfigurationRegister.accelWindowSize, vnImuFilteringConfigurationRegister.gyroWindowSize, vnImuFilteringConfigurationRegister.tempWindowSize, vnImuFilteringConfigurationRegister.presWindowSize, vnImuFilteringConfigurationRegister.magFilterMode, vnImuFilteringConfigurationRegister.accelFilterMode, vnImuFilteringConfigurationRegister.gyroFilterMode, vnImuFilteringConfigurationRegister.tempFilterMode, vnImuFilteringConfigurationRegister.presFilterMode);
-        nm::DeinitializeNode(*this);
+        doDeinitialize();
         return false;
     }
 
@@ -5583,7 +5583,7 @@ bool NAV::VectorNavSensor::initialize()
                   nameId(),
                   _deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame, _deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation, _deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation, _deltaThetaAndDeltaVelocityConfigurationRegister.earthRateCorrection,
                   vnDeltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame, vnDeltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation, vnDeltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation, vnDeltaThetaAndDeltaVelocityConfigurationRegister.earthRateCorrection);
-        nm::DeinitializeNode(*this);
+        doDeinitialize();
         return false;
     }
 
@@ -5606,7 +5606,7 @@ bool NAV::VectorNavSensor::initialize()
                       nameId(),
                       _gpsConfigurationRegister.mode, _gpsConfigurationRegister.ppsSource, _gpsConfigurationRegister.rate, _gpsConfigurationRegister.antPow,
                       vnGpsConfigurationRegister.mode, vnGpsConfigurationRegister.ppsSource, vnGpsConfigurationRegister.rate, vnGpsConfigurationRegister.antPow);
-            nm::DeinitializeNode(*this);
+            doDeinitialize();
             return false;
         }
 
@@ -5620,7 +5620,7 @@ bool NAV::VectorNavSensor::initialize()
                       nameId(),
                       _gpsAntennaOffset,
                       vnGpsAntennaOffset);
-            nm::DeinitializeNode(*this);
+            doDeinitialize();
             return false;
         }
 
@@ -5635,7 +5635,7 @@ bool NAV::VectorNavSensor::initialize()
                       nameId(),
                       _gpsCompassBaselineRegister.position, _gpsCompassBaselineRegister.uncertainty,
                       vnGpsCompassBaselineRegister.position, vnGpsCompassBaselineRegister.uncertainty);
-            nm::DeinitializeNode(*this);
+            doDeinitialize();
             return false;
         }
     }
@@ -5666,7 +5666,7 @@ bool NAV::VectorNavSensor::initialize()
                   nameId(),
                   _vpeBasicControlRegister.enable, _vpeBasicControlRegister.headingMode, _vpeBasicControlRegister.filteringMode, _vpeBasicControlRegister.tuningMode,
                   vnVpeBasicControlRegister.enable, vnVpeBasicControlRegister.headingMode, vnVpeBasicControlRegister.filteringMode, vnVpeBasicControlRegister.tuningMode);
-        nm::DeinitializeNode(*this);
+        doDeinitialize();
         return false;
     }
 
@@ -5684,7 +5684,7 @@ bool NAV::VectorNavSensor::initialize()
                       nameId(),
                       _vpeMagnetometerBasicTuningRegister.baseTuning, _vpeMagnetometerBasicTuningRegister.adaptiveTuning, _vpeMagnetometerBasicTuningRegister.adaptiveFiltering,
                       vnVpeMagnetometerBasicTuningRegister.baseTuning, vnVpeMagnetometerBasicTuningRegister.adaptiveTuning, vnVpeMagnetometerBasicTuningRegister.adaptiveFiltering);
-            nm::DeinitializeNode(*this);
+            doDeinitialize();
             return false;
         }
 
@@ -5700,7 +5700,7 @@ bool NAV::VectorNavSensor::initialize()
                       nameId(),
                       _vpeAccelerometerBasicTuningRegister.baseTuning, _vpeAccelerometerBasicTuningRegister.adaptiveTuning, _vpeAccelerometerBasicTuningRegister.adaptiveFiltering,
                       vnVpeAccelerometerBasicTuningRegister.baseTuning, vnVpeAccelerometerBasicTuningRegister.adaptiveTuning, vnVpeAccelerometerBasicTuningRegister.adaptiveFiltering);
-            nm::DeinitializeNode(*this);
+            doDeinitialize();
             return false;
         }
 
@@ -5714,7 +5714,7 @@ bool NAV::VectorNavSensor::initialize()
                       nameId(),
                       _filterStartupGyroBias,
                       vnFilterStartupGyroBias);
-            nm::DeinitializeNode(*this);
+            doDeinitialize();
             return false;
         }
 
@@ -5730,7 +5730,7 @@ bool NAV::VectorNavSensor::initialize()
                       nameId(),
                       _vpeGyroBasicTuningRegister.angularWalkVariance, _vpeGyroBasicTuningRegister.baseTuning, _vpeGyroBasicTuningRegister.adaptiveTuning,
                       vnVpeGyroBasicTuningRegister.angularWalkVariance, vnVpeGyroBasicTuningRegister.baseTuning, vnVpeGyroBasicTuningRegister.adaptiveTuning);
-            nm::DeinitializeNode(*this);
+            doDeinitialize();
             return false;
         }
     }
@@ -5753,7 +5753,7 @@ bool NAV::VectorNavSensor::initialize()
                       nameId(),
                       _insBasicConfigurationRegisterVn300.scenario, _insBasicConfigurationRegisterVn300.ahrsAiding, _insBasicConfigurationRegisterVn300.estBaseline,
                       vnInsBasicConfigurationRegisterVn300.scenario, vnInsBasicConfigurationRegisterVn300.ahrsAiding, vnInsBasicConfigurationRegisterVn300.estBaseline);
-            nm::DeinitializeNode(*this);
+            doDeinitialize();
             return false;
         }
 
@@ -5769,7 +5769,7 @@ bool NAV::VectorNavSensor::initialize()
                       nameId(),
                       _startupFilterBiasEstimateRegister.gyroBias, _startupFilterBiasEstimateRegister.accelBias, _startupFilterBiasEstimateRegister.pressureBias,
                       vnStartupFilterBiasEstimateRegister.gyroBias, vnStartupFilterBiasEstimateRegister.accelBias, vnStartupFilterBiasEstimateRegister.pressureBias);
-            nm::DeinitializeNode(*this);
+            doDeinitialize();
             return false;
         }
     }
@@ -5790,7 +5790,7 @@ bool NAV::VectorNavSensor::initialize()
                   nameId(),
                   _magnetometerCalibrationControlRegister.hsiMode, _magnetometerCalibrationControlRegister.hsiOutput, _magnetometerCalibrationControlRegister.convergeRate,
                   vnMagnetometerCalibrationControlRegister.hsiMode, vnMagnetometerCalibrationControlRegister.hsiOutput, vnMagnetometerCalibrationControlRegister.convergeRate);
-        nm::DeinitializeNode(*this);
+        doDeinitialize();
         return false;
     }
 
@@ -5809,7 +5809,7 @@ bool NAV::VectorNavSensor::initialize()
                   nameId(),
                   _magneticAndGravityReferenceVectorsRegister.magRef, _magneticAndGravityReferenceVectorsRegister.accRef,
                   vnMagneticAndGravityReferenceVectorsRegister.magRef, vnMagneticAndGravityReferenceVectorsRegister.accRef);
-        nm::DeinitializeNode(*this);
+        doDeinitialize();
         return false;
     }
 
@@ -5827,7 +5827,7 @@ bool NAV::VectorNavSensor::initialize()
                   nameId(),
                   _referenceVectorConfigurationRegister.useMagModel, _referenceVectorConfigurationRegister.useGravityModel, _referenceVectorConfigurationRegister.recalcThreshold, _referenceVectorConfigurationRegister.year, _referenceVectorConfigurationRegister.position,
                   vnReferenceVectorConfigurationRegister.useMagModel, vnReferenceVectorConfigurationRegister.useGravityModel, vnReferenceVectorConfigurationRegister.recalcThreshold, vnReferenceVectorConfigurationRegister.year, vnReferenceVectorConfigurationRegister.position);
-        nm::DeinitializeNode(*this);
+        doDeinitialize();
         return false;
     }
 
@@ -5849,7 +5849,7 @@ bool NAV::VectorNavSensor::initialize()
                       nameId(),
                       _velocityCompensationControlRegister.mode, _velocityCompensationControlRegister.velocityTuning, _velocityCompensationControlRegister.rateTuning,
                       vnVelocityCompensationControlRegister.mode, vnVelocityCompensationControlRegister.velocityTuning, vnVelocityCompensationControlRegister.rateTuning);
-            nm::DeinitializeNode(*this);
+            doDeinitialize();
             return false;
         }
 
@@ -5870,7 +5870,7 @@ bool NAV::VectorNavSensor::initialize()
                   nameId(),
                   _asyncDataOutputType,
                   vnAsyncDataOutputType);
-        nm::DeinitializeNode(*this);
+        doDeinitialize();
         return false;
     }
 
@@ -5886,7 +5886,7 @@ bool NAV::VectorNavSensor::initialize()
                       nameId(),
                       _asyncDataOutputFrequency,
                       vnAsyncDataOutputFrequency);
-            nm::DeinitializeNode(*this);
+            doDeinitialize();
             return false;
         }
     }
@@ -5921,7 +5921,7 @@ bool NAV::VectorNavSensor::initialize()
         _vs.writeBinaryOutput1(_binaryOutputRegister.at(0));
         // if (!checkBinaryRegister(_vs.readBinaryOutput1(), _binaryOutputRegister.at(0)))
         // {
-        //     nm::DeinitializeNode(*this);;
+        //     DoDeinitialize();;
         //     return false;
         // }
 
@@ -5929,7 +5929,7 @@ bool NAV::VectorNavSensor::initialize()
         _vs.writeBinaryOutput2(_binaryOutputRegister.at(1));
         // if (!checkBinaryRegister(_vs.readBinaryOutput2(), _binaryOutputRegister.at(1)))
         // {
-        //     nm::DeinitializeNode(*this);;
+        //     DoDeinitialize();;
         //     return false;
         // }
 
@@ -5937,14 +5937,14 @@ bool NAV::VectorNavSensor::initialize()
         _vs.writeBinaryOutput3(_binaryOutputRegister.at(2));
         // if (!checkBinaryRegister(_vs.readBinaryOutput3(), _binaryOutputRegister.at(2)))
         // {
-        //     nm::DeinitializeNode(*this);;
+        //     DoDeinitialize();;
         //     return false;
         // }
     }
     catch (const std::exception& e)
     {
         LOG_ERROR("{}: Could not configure binary output register {}: {}", nameId(), binaryOutputRegisterCounter, e.what());
-        nm::DeinitializeNode(*this);
+        doDeinitialize();
         return false;
     }
 
@@ -5974,7 +5974,7 @@ void NAV::VectorNavSensor::deinitialize()
 
     try
     {
-        if (getState() == State::Initialized && _vs.isConnected())
+        if (isInitialized() && _vs.isConnected())
         {
             try
             {

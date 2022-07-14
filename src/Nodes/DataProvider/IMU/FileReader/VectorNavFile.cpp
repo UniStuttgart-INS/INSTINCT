@@ -52,11 +52,11 @@ void NAV::VectorNavFile::guiConfig()
         flow::ApplyChanges();
         if (res == FileReader::PATH_CHANGED)
         {
-            nm::InitializeNode(*this);
+            doInitialize();
         }
         else
         {
-            nm::DeinitializeNode(*this);
+            doDeinitialize();
         }
     }
 
@@ -358,14 +358,14 @@ void NAV::VectorNavFile::readHeader()
                 else
                 {
                     LOG_ERROR("{}: Could not identify the group in CSV header - {}::{}", nameId(), group, cell);
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                     break;
                 }
 
                 if (!identified)
                 {
                     LOG_ERROR("{}: Could not identify the field in CSV header - {}::{}", nameId(), group, cell);
-                    nm::DeinitializeNode(*this);
+                    doDeinitialize();
                     break;
                 }
             }

@@ -221,24 +221,6 @@ void EnableAllCallbacks();
 /// @brief Disables all Node callbacks
 void DisableAllCallbacks();
 
-/// @brief Initialize the node
-/// @param[in] node The Node to initialize
-/// @return False if the node could not initialize
-bool InitializeNode(Node& node);
-
-/// @brief Initialize the node
-/// @param[in] id Unique Id of the Node
-/// @return False if the node could not initialize
-bool InitializeNode(ax::NodeEditor::NodeId id);
-
-/// @brief Deinitialize the node
-/// @param[in] node The Node to deinitialize
-void DeinitializeNode(Node& node);
-
-/// @brief Deinitialize the node
-/// @param[in] id Unique Id of the Node
-void DeinitializeNode(ax::NodeEditor::NodeId id);
-
 /// @brief Initializes all nodes.
 /// @return Returns false if one of the nodes could not initialize
 bool InitializeAllNodes();

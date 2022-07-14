@@ -49,7 +49,7 @@ void NAV::UartDataLogger::guiConfig()
     if (FileWriter::guiConfig(".ubx", { ".ubx" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        nm::DeinitializeNode(*this);
+        doDeinitialize();
     }
 }
 

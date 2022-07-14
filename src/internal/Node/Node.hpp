@@ -16,6 +16,10 @@
 #include <string>
 #include <vector>
 #include <deque>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <chrono>
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json; ///< json namespace
@@ -133,18 +137,21 @@ class Node
     /// @brief Possible states of the node
     enum class State
     {
-        Deinitialized,           ///< Node is deinitialized (red)
-        InitializationPlanned,   ///< Node is waiting to be initialized
-        Initializing,            ///< Node is currently initializing
-        Initialized,             ///< Node is initialized (green)
-        DeinitializationPlanned, ///< Node is waiting to be deinitialized
-        Deinitializing,          ///< Node is currently deinitializing
+        Disabled,       ///< Node is disabled and won't be initialized
+        Deinitialized,  ///< Node is deinitialized (red)
+        DoInitialize,   ///< Node should be initialized
+        Initializing,   ///< Node is currently initializing
+        Initialized,    ///< Node is initialized (green)
+        DoDeinitialize, ///< Node should be deinitialized
+        Deinitializing, ///< Node is currently deinitializing
+        DoShutdown,     ///< Node should shut down
+        Shutdown,       ///< Node is shutting down
     };
 
     /// @brief Default constructor
-    Node() = default;
+    Node();
     /// @brief Destructor
-    virtual ~Node() = default;
+    virtual ~Node();
     /// @brief Copy constructor
     Node(const Node&) = delete;
     /// @brief Move constructor
@@ -210,6 +217,9 @@ class Node
     /// @param[in] linkId Id of the link on which data is changed
     virtual void notifyOnOutputValueChanged(ax::NodeEditor::LinkId linkId);
 
+    /// @brief Function called by the flow executer after finishing to flush out remaining data
+    virtual void flush();
+
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member functions                                             */
     /* -------------------------------------------------------------------------------------------------------- */
@@ -265,21 +275,38 @@ class Node
     /// @brief Node name and id
     [[nodiscard]] std::string nameId() const;
 
-    /// @brief Get the current state of the node
-    [[nodiscard]] State getState() const;
-
-    /// @brief Set the current state of the node
-    /// @param[in] state New state of the node
-    void setState(State state);
-
-    /// @brief Flag, if the node is enabled
-    [[nodiscard]] bool isEnabled() const;
-
     /// @brief Get the size of the node
     [[nodiscard]] const ImVec2& getSize() const;
 
-    /// @brief Function called by the flow executer after finishing to flush out remaining data
-    virtual void flush();
+    // ------------------------------------------ State handling ---------------------------------------------
+
+    /// @brief Get the current state of the node
+    // [[nodiscard]] State getState() const;
+
+    /// @brief Asks the node worker to initialize the node
+    /// @param[in] wait Wait for the worker to complete the request
+    /// @return True if not waiting and the worker accepted the request otherwise if waiting only true if the node initialized correctly
+    bool doInitialize(bool wait = false);
+
+    /// @brief Asks the node worker to deinitialize the node
+    /// @param[in] wait Wait for the worker to complete the request
+    /// @return True if the worker accepted the request
+    bool doDeinitialize(bool wait = false);
+
+    /// @brief Asks the node worker to disable the node
+    /// @param[in] wait Wait for the worker to complete the request
+    /// @return True if the worker accepted the request
+    bool doDisableNode(bool wait = false);
+
+    /// @brief Enable the node
+    /// @return True if enabling was successful
+    bool doEnableNode();
+
+    /// @brief Checks if the node is disabled
+    [[nodiscard]] bool isDisabled() const;
+
+    /// @brief Checks if the node is initialized
+    [[nodiscard]] bool isInitialized() const;
 
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member variables                                             */
@@ -311,6 +338,12 @@ class Node
     /// Current state of the node
     State _state = State::Deinitialized;
 
+    /// Flag if the node should be reinitialize after deinitializing
+    bool _reinitialize = false;
+
+    /// Flag if the node should be disabled after deinitializing
+    bool _disable = false;
+
     /// Flag if the config window is shown
     bool _showConfig = false;
 
@@ -322,6 +355,26 @@ class Node
 
     /// Flag if the node is enabled
     bool _isEnabled = true;
+
+    std::chrono::duration<int64_t> _workerTimeout = std::chrono::years(1); ///< Periodic timeout of the worker to check if new data available
+    std::thread _worker;                                                   ///< Worker handling initialization and processing of data
+    std::mutex _workerMutex;                                               ///< Mutex to interact with the worker condition variable
+    std::condition_variable _workerConditionVariable;                      ///< Condition variable to signal the worker thread to do something
+
+    /// @brief Worker thread
+    /// @param[in, out] node The node where the thread belongs to
+    static void workerThread(Node* node);
+
+    /// Handler which gets triggered if the worker runs into a periodic timeout
+    virtual void workerTimeoutHandler();
+
+    /// @brief Called by the worker to initialize the node
+    /// @return True if the initialization was successful
+    bool workerInitializeNode();
+
+    /// @brief Called by the worker to deinitialize the node
+    /// @return True if the deinitialization was successful
+    bool workerDeinitializeNode();
 
     friend class gui::NodeEditorApplication;
     friend class NAV::GroupBox;
