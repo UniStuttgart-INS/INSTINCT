@@ -21,33 +21,16 @@ namespace NAV
 /// @brief Write info to a json object
 /// @param[out] j Json output
 /// @param[in] data Object to read info from
-void to_json(json& j, const ImuFusion::PinData::SensorData& data)
-{
-    j = json{
-        { "displayName", data.displayName },
-    };
-}
-/// @brief Read info from a json object
-/// @param[in] j Json variable to read info from
-/// @param[out] data Output object
-void from_json(const json& j, ImuFusion::PinData::SensorData& data)
-{
-    if (j.contains("displayName"))
-    {
-        j.at("displayName").get_to(data.displayName);
-    }
-}
-
-/// @brief Write info to a json object
-/// @param[out] j Json output
-/// @param[in] data Object to read info from
 void to_json(json& j, const ImuFusion::PinData& data)
 {
     j = json{
-        { "dataIdentifier", data.dataIdentifier },
-        { "size", data.size },
-        { "sensorData", data.sensorData },
-        { "stride", data.stride },
+        { "varJerkNoise", data.varJerkNoise },
+        { "varJerkNoiseUnit", data.varJerkNoiseUnit },
+        { "varBiasAccelerationNoise", data.varBiasAccelerationNoise },
+        { "varBiasAccelerationNoiseUnit", data.varBiasAccelerationNoiseUnit },
+        { "varBiasAngRateNoise", data.varBiasAngRateNoise },
+        { "varBiasAngRateNoiseUnit", data.varBiasAngRateNoiseUnit },
+        // TODO: extend
     };
 }
 /// @brief Read info from a json object
@@ -55,22 +38,31 @@ void to_json(json& j, const ImuFusion::PinData& data)
 /// @param[out] data Output object
 void from_json(const json& j, ImuFusion::PinData& data)
 {
-    if (j.contains("dataIdentifier"))
+    if (j.contains("varJerkNoise"))
     {
-        j.at("dataIdentifier").get_to(data.dataIdentifier);
+        j.at("varJerkNoise").get_to(data.varJerkNoise);
     }
-    if (j.contains("size"))
+    if (j.contains("varJerkNoiseUnit"))
     {
-        j.at("size").get_to(data.size);
+        j.at("varJerkNoiseUnit").get_to(data.varJerkNoiseUnit);
     }
-    if (j.contains("sensorData"))
+    if (j.contains("varBiasAccelerationNoise"))
     {
-        j.at("sensorData").get_to(data.sensorData);
+        j.at("varBiasAccelerationNoise").get_to(data.varBiasAccelerationNoise);
     }
-    if (j.contains("stride"))
+    if (j.contains("varBiasAccelerationNoiseUnit"))
     {
-        j.at("stride").get_to(data.stride);
+        j.at("varBiasAccelerationNoiseUnit").get_to(data.varBiasAccelerationNoiseUnit);
     }
+    if (j.contains("varBiasAngRateNoise"))
+    {
+        j.at("varBiasAngRateNoise").get_to(data.varBiasAngRateNoise);
+    }
+    if (j.contains("varBiasAngRateNoiseUnit"))
+    {
+        j.at("varBiasAngRateNoiseUnit").get_to(data.varBiasAngRateNoiseUnit);
+    }
+    // TODO: extend
 }
 } // namespace NAV
 
@@ -138,15 +130,11 @@ void NAV::ImuFusion::guiConfig()
                     {
                         nm::DeleteInputPin(inputPins.at(pinIndex).id);
                         nm::DeleteOutputPin(outputPins.at(pinIndex).id);
-                        _pinData.erase(_pinData.begin() + static_cast<int64_t>(pinIndex));
                         _initCovarianceBiasAngRate.erase(_initCovarianceBiasAngRate.begin() + static_cast<int64_t>(pinIndex - 1));
                         _initCovarianceBiasAngRateUnit.erase(_initCovarianceBiasAngRateUnit.begin() + static_cast<int64_t>(pinIndex - 1));
                         _initCovarianceBiasAcc.erase(_initCovarianceBiasAcc.begin() + static_cast<int64_t>(pinIndex - 1));
                         _initCovarianceBiasAccUnit.erase(_initCovarianceBiasAccUnit.begin() + static_cast<int64_t>(pinIndex - 1));
-                        _varBiasAngRateNoise.erase(_varBiasAngRateNoise.begin() + static_cast<int64_t>(pinIndex - 1));
-                        _varBiasAngRateNoiseUnit.erase(_varBiasAngRateNoiseUnit.begin() + static_cast<int64_t>(pinIndex - 1));
-                        _varBiasAccelerationNoise.erase(_varBiasAccelerationNoise.begin() + static_cast<int64_t>(pinIndex - 1));
-                        _varBiasAccelerationNoiseUnit.erase(_varBiasAccelerationNoiseUnit.begin() + static_cast<int64_t>(pinIndex - 1));
+                        _pinData.erase(_pinData.begin() + static_cast<int64_t>(pinIndex - 1));
                         _measurementUncertaintyAngularRate.erase(_measurementUncertaintyAngularRate.begin() + static_cast<int64_t>(pinIndex));
                         _measurementUncertaintyAngularRateUnit.erase(_measurementUncertaintyAngularRateUnit.begin() + static_cast<int64_t>(pinIndex));
                         _measurementUncertaintyAcceleration.erase(_measurementUncertaintyAcceleration.begin() + static_cast<int64_t>(pinIndex));
@@ -333,52 +321,52 @@ void NAV::ImuFusion::guiConfig()
         }
 
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Process noise of the jerk ({})##{}",
-                                                           _varJerkNoiseUnit == VarJerkNoiseUnit::m2_s6
+                                                           _pinData[0].varJerkNoiseUnit == PinData::PinData::JerkVarianceUnit::m2_s6
                                                                ? "Variance σ²"
                                                                : "Standard deviation σ",
                                                            size_t(id))
                                                    .c_str(),
-                                               configWidth, unitWidth, _varJerkNoise.data(), reinterpret_cast<int*>(&_varJerkNoiseUnit), "(m^2)/(s^6)\0"
-                                                                                                                                         "m/s^3\0\0",
+                                               configWidth, unitWidth, _pinData[0].varJerkNoise.data(), reinterpret_cast<int*>(&_pinData[0].varJerkNoiseUnit), "(m^2)/(s^6)\0"
+                                                                                                                                                               "m/s^3\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
-            LOG_DEBUG("{}: varJerkNoise changed to {}", nameId(), _varJerkNoise.transpose());
-            LOG_DEBUG("{}: varJerkNoiseUnit changed to {}", nameId(), _varJerkNoiseUnit);
+            LOG_DEBUG("{}: varJerkNoise changed to {}", nameId(), _pinData[0].varJerkNoise.transpose());
+            LOG_DEBUG("{}: varJerkNoiseUnit changed to {}", nameId(), _pinData[0].varJerkNoiseUnit);
             flow::ApplyChanges();
         }
 
-        for (size_t i = 0; i < _nInputPins - 1; ++i)
+        for (size_t pinIndex = 1; pinIndex < _nInputPins; ++pinIndex)
         {
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Process noise of the bias of the angular rate of sensor {} ({})##{}", i + 2,
-                                                               _varBiasAngRateNoiseUnit[i] == VarBiasAngRateNoiseUnit::rad2_s2
-                                                                       || _varBiasAngRateNoiseUnit[i] == VarBiasAngRateNoiseUnit::deg2_s2
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Process noise of the bias of the angular rate of sensor {} ({})##{}", pinIndex + 2,
+                                                               _pinData[pinIndex].varBiasAngRateNoiseUnit == PinData::AngRateVarianceUnit::rad2_s2
+                                                                       || _pinData[pinIndex].varBiasAngRateNoiseUnit == PinData::AngRateVarianceUnit::deg2_s2
                                                                    ? "Variance σ²"
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(), // FIXME: adapt config window number of sensors (if pin 3 is deleted, keep 1,2,4 instead of re-counting to 1,2,3)
-                                                   configWidth, unitWidth, _varBiasAngRateNoise.at(i).data(), reinterpret_cast<int*>(&_varBiasAngRateNoiseUnit[i]), "(rad/s)^2\0"
-                                                                                                                                                                    "rad/s\0"
-                                                                                                                                                                    "(deg/s)^2\0"
-                                                                                                                                                                    "deg/s\0\0",
+                                                   configWidth, unitWidth, _pinData[pinIndex].varBiasAngRateNoise.data(), reinterpret_cast<int*>(&_pinData[pinIndex].varBiasAngRateNoiseUnit), "(rad/s)^2\0"
+                                                                                                                                                                                               "rad/s\0"
+                                                                                                                                                                                               "(deg/s)^2\0"
+                                                                                                                                                                                               "deg/s\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
-                LOG_DEBUG("{}: varBiasAngRateNoise changed to {}", nameId(), _varBiasAngRateNoise.at(i).transpose());
-                LOG_DEBUG("{}: varBiasAngRateNoiseUnit changed to {}", nameId(), _varBiasAngRateNoiseUnit[i]);
+                LOG_DEBUG("{}: varBiasAngRateNoise changed to {}", nameId(), _pinData[pinIndex].varBiasAngRateNoise.transpose());
+                LOG_DEBUG("{}: varBiasAngRateNoiseUnit changed to {}", nameId(), _pinData[pinIndex].varBiasAngRateNoiseUnit);
                 flow::ApplyChanges();
             }
 
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Process noise of the bias of the acceleration of sensor {} ({})##{}", i + 2,
-                                                               _varBiasAccelerationNoiseUnit[i] == VarBiasAccelerationNoiseUnit::m2_s4
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Process noise of the bias of the acceleration of sensor {} ({})##{}", pinIndex + 2,
+                                                               _pinData[pinIndex].varBiasAccelerationNoiseUnit == PinData::AccelerationVarianceUnit::m2_s4
                                                                    ? "Variance σ²"
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(), // FIXME: adapt config window number of sensors (if pin 3 is deleted, keep 1,2,4 instead of re-counting to 1,2,3)
-                                                   configWidth, unitWidth, _varBiasAccelerationNoise.at(i).data(), reinterpret_cast<int*>(&_varBiasAccelerationNoiseUnit[i]), "(m^2)/(s^4)\0"
-                                                                                                                                                                              "m/s^2\0\0",
+                                                   configWidth, unitWidth, _pinData[pinIndex].varBiasAccelerationNoise.data(), reinterpret_cast<int*>(&_pinData[pinIndex].varBiasAccelerationNoiseUnit), "(m^2)/(s^4)\0"
+                                                                                                                                                                                                         "m/s^2\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
-                LOG_DEBUG("{}: varBiasAccelerationNoise changed to {}", nameId(), _varBiasAccelerationNoise.at(i).transpose());
-                LOG_DEBUG("{}: varBiasAccelerationNoiseUnit changed to {}", nameId(), _varBiasAccelerationNoiseUnit[i]);
+                LOG_DEBUG("{}: varBiasAccelerationNoise changed to {}", nameId(), _pinData[pinIndex].varBiasAccelerationNoise.transpose());
+                LOG_DEBUG("{}: varBiasAccelerationNoiseUnit changed to {}", nameId(), _pinData[pinIndex].varBiasAccelerationNoiseUnit);
                 flow::ApplyChanges();
             }
         }
@@ -444,7 +432,6 @@ void NAV::ImuFusion::guiConfig()
     j["imuRotations_gyro"] = _imuRotations_gyro;
     j["imuFrequency"] = _imuFrequency;
     j["designMatrixInitialized"] = _designMatrixInitialized;
-    j["pinData"] = _pinData;
     j["numStates"] = _numStates;
     j["numMeasurements"] = _numMeasurements;
 
@@ -462,12 +449,7 @@ void NAV::ImuFusion::guiConfig()
     j["initCovarianceBiasAcc"] = _initCovarianceBiasAcc;
     j["varAngularAccNoiseUnit"] = _varAngularAccNoiseUnit;
     j["varAngularAccNoise"] = _varAngularAccNoise;
-    j["varJerkNoiseUnit"] = _varJerkNoiseUnit;
-    j["varJerkNoise"] = _varJerkNoise;
-    j["varBiasAngRateNoiseUnit"] = _varBiasAngRateNoiseUnit;
-    j["varBiasAngRateNoise"] = _varBiasAngRateNoise;
-    j["varBiasAccelerationNoiseUnit"] = _varBiasAccelerationNoiseUnit;
-    j["varBiasAccelerationNoise"] = _varBiasAccelerationNoise;
+    j["pinData"] = _pinData;
     j["measurementUncertaintyAngularRate"] = _measurementUncertaintyAngularRate;
     j["measurementUncertaintyAcceleration"] = _measurementUncertaintyAcceleration;
     j["measurementUncertaintyAngularRateUnit"] = _measurementUncertaintyAngularRateUnit;
@@ -515,10 +497,6 @@ void NAV::ImuFusion::restore(json const& j)
     if (j.contains("numMeasurements"))
     {
         j.at("numMeasurements").get_to(_numMeasurements);
-    }
-    if (j.contains("pinData"))
-    {
-        j.at("pinData").get_to(_pinData);
     }
     // -------------------------------------- 𝐏 Error covariance matrix -----------------------------------------
     if (j.contains("initCovarianceAngularRateUnit"))
@@ -579,29 +557,9 @@ void NAV::ImuFusion::restore(json const& j)
     {
         j.at("varAngularAccNoise").get_to(_varAngularAccNoise);
     }
-    if (j.contains("varJerkNoiseUnit"))
+    if (j.contains("pinData"))
     {
-        j.at("varJerkNoiseUnit").get_to(_varJerkNoiseUnit);
-    }
-    if (j.contains("varJerkNoise"))
-    {
-        j.at("varJerkNoise").get_to(_varJerkNoise);
-    }
-    if (j.contains("varBiasAngRateNoiseUnit"))
-    {
-        j.at("varBiasAngRateNoiseUnit").get_to(_varBiasAngRateNoiseUnit);
-    }
-    if (j.contains("varBiasAngRateNoise"))
-    {
-        j.at("varBiasAngRateNoise").get_to(_varBiasAngRateNoise);
-    }
-    if (j.contains("varBiasAccelerationNoiseUnit"))
-    {
-        j.at("varBiasAccelerationNoiseUnit").get_to(_varBiasAccelerationNoiseUnit);
-    }
-    if (j.contains("varBiasAccelerationNoise"))
-    {
-        j.at("varBiasAccelerationNoise").get_to(_varBiasAccelerationNoise);
+        j.at("pinData").get_to(_pinData);
     }
 
     // -------------------------------- 𝐑 Measurement noise covariance matrix -----------------------------------
@@ -675,10 +633,7 @@ void NAV::ImuFusion::updateNumberOfInputPins()
     _initCovarianceBiasAngRateUnit.resize(_nInputPins - 1);
     _initCovarianceBiasAcc.resize(_nInputPins - 1);
     _initCovarianceBiasAccUnit.resize(_nInputPins - 1);
-    _varBiasAngRateNoise.resize(_nInputPins - 1);
-    _varBiasAngRateNoiseUnit.resize(_nInputPins - 1);
-    _varBiasAccelerationNoise.resize(_nInputPins - 1);
-    _varBiasAccelerationNoiseUnit.resize(_nInputPins - 1);
+    _pinData.resize(_nInputPins);
     _measurementUncertaintyAngularRate.resize(_nInputPins);
     _measurementUncertaintyAngularRateUnit.resize(_nInputPins);
     _measurementUncertaintyAcceleration.resize(_nInputPins);
@@ -830,43 +785,43 @@ void NAV::ImuFusion::initializeKalmanFilter()
     }
 
     // 𝜎_jerk Standard deviation of the noise on the jerk state [m/s³]
-    switch (_varJerkNoiseUnit)
+    switch (_pinData[0].varJerkNoiseUnit)
     {
-    case VarJerkNoiseUnit::m2_s6:
-        _processNoiseVariances[1] = _varJerkNoise;
+    case PinData::JerkVarianceUnit::m2_s6:
+        _processNoiseVariances[1] = _pinData[0].varJerkNoise;
         break;
-    case VarJerkNoiseUnit::m_s3:
-        _processNoiseVariances[1] = _varJerkNoise.array().pow(2);
+    case PinData::JerkVarianceUnit::m_s3:
+        _processNoiseVariances[1] = _pinData[0].varJerkNoise.array().pow(2);
         break;
     }
 
-    for (size_t i = 0; i < _nInputPins - 1; ++i)
+    for (size_t pinIndex = 0; pinIndex < _nInputPins - 1; ++pinIndex)
     {
         // 𝜎_biasAngRate Standard deviation of the bias on the angular rate state [rad/s²]
-        switch (_varBiasAngRateNoiseUnit[i])
+        switch (_pinData[1 + pinIndex].varBiasAngRateNoiseUnit)
         {
-        case VarBiasAngRateNoiseUnit::rad2_s2:
-            _processNoiseVariances[2 + 2 * i] = _varBiasAngRateNoise.at(i);
+        case PinData::AngRateVarianceUnit::rad2_s2:
+            _processNoiseVariances[2 + 2 * pinIndex] = _pinData[1 + pinIndex].varBiasAngRateNoise;
             break;
-        case VarBiasAngRateNoiseUnit::deg2_s2:
-            _processNoiseVariances[2 + 2 * i] = deg2rad(_varBiasAngRateNoise.at(i));
+        case PinData::AngRateVarianceUnit::deg2_s2:
+            _processNoiseVariances[2 + 2 * pinIndex] = deg2rad(_pinData[1 + pinIndex].varBiasAngRateNoise);
             break;
-        case VarBiasAngRateNoiseUnit::deg_s:
-            _processNoiseVariances[2 + 2 * i] = deg2rad(_varBiasAngRateNoise.at(i)).array().pow(2);
+        case PinData::AngRateVarianceUnit::deg_s:
+            _processNoiseVariances[2 + 2 * pinIndex] = deg2rad(_pinData[1 + pinIndex].varBiasAngRateNoise).array().pow(2);
             break;
-        case VarBiasAngRateNoiseUnit::rad_s:
-            _processNoiseVariances[2 + 2 * i] = _varBiasAngRateNoise.at(i).array().pow(2);
+        case PinData::AngRateVarianceUnit::rad_s:
+            _processNoiseVariances[2 + 2 * pinIndex] = _pinData[1 + pinIndex].varBiasAngRateNoise.array().pow(2);
             break;
         }
 
         // 𝜎_biasAcceleration Standard deviation of the noise on the acceleration state [m/s³]
-        switch (_varBiasAccelerationNoiseUnit[i])
+        switch (_pinData[pinIndex].varBiasAccelerationNoiseUnit)
         {
-        case VarBiasAccelerationNoiseUnit::m2_s4:
-            _processNoiseVariances[3 + 2 * i] = _varBiasAccelerationNoise.at(i);
+        case PinData::AccelerationVarianceUnit::m2_s4:
+            _processNoiseVariances[3 + 2 * pinIndex] = _pinData[1 + pinIndex].varBiasAccelerationNoise;
             break;
-        case VarBiasAccelerationNoiseUnit::m_s2:
-            _processNoiseVariances[3 + 2 * i] = _varBiasAccelerationNoise.at(i).array().pow(2);
+        case PinData::AccelerationVarianceUnit::m_s2:
+            _processNoiseVariances[3 + 2 * pinIndex] = _pinData[1 + pinIndex].varBiasAccelerationNoise.array().pow(2);
             break;
         }
     }

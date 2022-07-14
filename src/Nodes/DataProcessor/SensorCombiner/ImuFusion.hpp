@@ -55,85 +55,48 @@ class ImuFusion : public Imu
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
-    /// @brief Information needed to link imu data on a certain pin
+    /// @brief Information needed to link imu data on a certain pin // TODO: adapt
     struct PinData
     {
-        /// @brief Stores the imu data coming from a pin
-        struct SensorData
+        // ---------------------------------------- Variance Units -------------------------------------------
+        /// Possible Units for the variance for the process noise of the angular rate (standard deviation σ or Variance σ²)
+        enum class AngRateVarianceUnit
         {
-            /// @brief Default constructor (needed to make serialization with json working)
-            SensorData() = default;
-
-            /// @brief Constructor
-            /// @param[in] displayName Display name of the contained data
-            explicit SensorData(std::string displayName)
-                : displayName(std::move(displayName)) {}
-
-            /// Display name of the contained data
-            std::string displayName;
-            /// Flag if data was received, as the buffer contains std::nan("") otherwise
-            bool hasData = false;
-
-            /// When connecting a new link. All data is flagged for delete and only those who are also present in the new link are kept
-            bool markedForDelete = false;
+            rad2_s2, ///< Variance [rad²/s², rad²/s², rad²/s²]
+            rad_s,   ///< Standard deviation [rad/s, rad/s, rad/s]
+            deg2_s2, ///< Variance [deg²/s², deg²/s², deg²/s²]
+            deg_s,   ///< Standard deviation [deg/s, deg/s, deg/s]
         };
 
-        /// @brief Possible Pin types
-
-        // enum class PinType : int
-        // {
-        //     Flow, ///< NodeData Trigger
-        // };
-
-        /// @brief Constructor
-        PinData() = default;
-        /// @brief Destructor
-        ~PinData() = default;
-        /// @brief Copy constructor
-        /// @param[in] other The other element to copy
-        PinData(const PinData& other) = default;
-
-        /// @brief Move constructor
-        /// @param[in] other The other element to move
-        PinData(PinData&& other) = default;
-
-        /// @brief Copy assignment operator
-        /// @param[in] rhs The other element to copy
-        PinData& operator=(const PinData& rhs)
+        /// Possible Units for the variance for the process noise of the acceleration (standard deviation σ or Variance σ²)
+        enum class AccelerationVarianceUnit
         {
-            if (&rhs != this)
-            {
-                size = rhs.size;
-                dataIdentifier = rhs.dataIdentifier;
-                sensorData = rhs.sensorData;
-                stride = rhs.stride;
-            }
+            m2_s4, ///< Variance [(m^2)/(s^4), (m^2)/(s^4), (m^2)/(s^4)]
+            m_s2,  ///< Standard deviation [m/s², m/s², m/s²]
+        };
 
-            return *this;
-        }
-        /// @brief Move assignment operator
-        /// @param[in] rhs The other element to move
-        PinData& operator=(PinData&& rhs) noexcept
+        /// Possible Units for the variance for the process noise of the jerk (standard deviation σ or Variance σ²)
+        enum class JerkVarianceUnit
         {
-            if (&rhs != this)
-            {
-                size = rhs.size;
-                dataIdentifier = std::move(rhs.dataIdentifier);
-                sensorData = std::move(rhs.sensorData);
-                stride = rhs.stride;
-            }
+            m2_s6, ///< Variance [(m^2)/(s^6), (m^2)/(s^6), (m^2)/(s^6)]
+            m_s3,  ///< Standard deviation [m/s³, m/s³, m/s³]
+        };
 
-            return *this;
-        }
+        // --------------------------------- State unit and initialization -----------------------------------
+        /// Gui selection for the Unit of the jerk process noise
+        JerkVarianceUnit varJerkNoiseUnit = JerkVarianceUnit::m_s3;
+        /// GUI selection of the jerk process noise diagonal values
+        Eigen::Vector3d varJerkNoise{ 0.1, 0.1, 0.1 };
 
-        /// Size of all buffers of the sensorData elements
-        int size = 2000;
-        /// Data Identifier of the connected pin
-        std::string dataIdentifier;
-        /// List with all the data
-        std::vector<SensorData> sensorData;
-        /// Amount of points to skip for plotting
-        int stride = 1;
+        /// Gui selection for the Unit of the process noise of the angular rate
+        AngRateVarianceUnit varBiasAngRateNoiseUnit = AngRateVarianceUnit::deg_s;
+        /// GUI selection of the process noise of the angular rate diagonal values (standard deviation σ or Variance σ²)
+        Eigen::Vector3d varBiasAngRateNoise = { 1, 1, 1 };
+
+        /// Gui selection for the Unit of the process noise of the acceleration
+        AccelerationVarianceUnit varBiasAccelerationNoiseUnit = AccelerationVarianceUnit::m_s2;
+        /// GUI selection of the process noise of the acceleration diagonal values (standard deviation σ or Variance σ²)
+        Eigen::Vector3d varBiasAccelerationNoise{ 0.1, 0.1, 0.1 };
     };
 
   private:
@@ -379,47 +342,47 @@ class ImuFusion : public Imu
 
     // #########################################################################################################################################
 
-    /// Possible Units for the variance for the process noise of the jerk (standard deviation σ or Variance σ²)
-    enum class VarJerkNoiseUnit
-    {
-        m2_s6, ///< Variance [(m^2)/(s^6), (m^2)/(s^6), (m^2)/(s^6)]
-        m_s3,  ///< Standard deviation [m/s³, m/s³, m/s³]
-    };
-    /// Gui selection for the Unit of the jerk process noise
-    VarJerkNoiseUnit _varJerkNoiseUnit = VarJerkNoiseUnit::m_s3;
+    // /// Possible Units for the variance for the process noise of the jerk (standard deviation σ or Variance σ²)
+    // enum class VarJerkNoiseUnit
+    // {
+    //     m2_s6, ///< Variance [(m^2)/(s^6), (m^2)/(s^6), (m^2)/(s^6)]
+    //     m_s3,  ///< Standard deviation [m/s³, m/s³, m/s³]
+    // };
+    // /// Gui selection for the Unit of the jerk process noise
+    // VarJerkNoiseUnit _varJerkNoiseUnit = VarJerkNoiseUnit::m_s3;
 
-    /// GUI selection of the jerk process noise diagonal values
-    Eigen::Vector3d _varJerkNoise{ 0.1, 0.1, 0.1 };
-
-    // #########################################################################################################################################
-
-    /// Possible Units for the variance for the process noise of the angular rate (standard deviation σ or Variance σ²)
-    enum class VarBiasAngRateNoiseUnit
-    {
-        rad2_s2, ///< Variance [rad²/s², rad²/s², rad²/s²]
-        rad_s,   ///< Standard deviation [rad/s, rad/s, rad/s]
-        deg2_s2, ///< Variance [deg²/s², deg²/s², deg²/s²]
-        deg_s,   ///< Standard deviation [deg/s, deg/s, deg/s]
-    };
-    /// Gui selection for the Unit of the process noise of the angular rate
-    std::vector<VarBiasAngRateNoiseUnit> _varBiasAngRateNoiseUnit = { VarBiasAngRateNoiseUnit::deg_s };
-
-    /// GUI selection of the process noise of the angular rate diagonal values (standard deviation σ or Variance σ²)
-    std::vector<Eigen::Vector3d> _varBiasAngRateNoise = { { 1, 1, 1 } };
+    // /// GUI selection of the jerk process noise diagonal values
+    // Eigen::Vector3d _varJerkNoise{ 0.1, 0.1, 0.1 };
 
     // #########################################################################################################################################
 
-    /// Possible Units for the variance for the process noise of the acceleration (standard deviation σ or Variance σ²)
-    enum class VarBiasAccelerationNoiseUnit
-    {
-        m2_s4, ///< Variance [(m^2)/(s^4), (m^2)/(s^4), (m^2)/(s^4)]
-        m_s2,  ///< Standard deviation [m/s², m/s², m/s²]
-    };
-    /// Gui selection for the Unit of the process noise of the acceleration
-    std::vector<VarBiasAccelerationNoiseUnit> _varBiasAccelerationNoiseUnit = { VarBiasAccelerationNoiseUnit::m_s2 };
+    // /// Possible Units for the variance for the process noise of the angular rate (standard deviation σ or Variance σ²)
+    // enum class VarBiasAngRateNoiseUnit
+    // {
+    //     rad2_s2, ///< Variance [rad²/s², rad²/s², rad²/s²]
+    //     rad_s,   ///< Standard deviation [rad/s, rad/s, rad/s]
+    //     deg2_s2, ///< Variance [deg²/s², deg²/s², deg²/s²]
+    //     deg_s,   ///< Standard deviation [deg/s, deg/s, deg/s]
+    // };
+    // /// Gui selection for the Unit of the process noise of the angular rate
+    // std::vector<VarBiasAngRateNoiseUnit> _varBiasAngRateNoiseUnit = { VarBiasAngRateNoiseUnit::deg_s };
 
-    /// GUI selection of the process noise of the acceleration diagonal values (standard deviation σ or Variance σ²)
-    std::vector<Eigen::Vector3d> _varBiasAccelerationNoise{ { 0.1, 0.1, 0.1 } };
+    // /// GUI selection of the process noise of the angular rate diagonal values (standard deviation σ or Variance σ²)
+    // std::vector<Eigen::Vector3d> _varBiasAngRateNoise = { { 1, 1, 1 } };
+
+    // #########################################################################################################################################
+
+    // /// Possible Units for the variance for the process noise of the acceleration (standard deviation σ or Variance σ²)
+    // enum class VarBiasAccelerationNoiseUnit
+    // {
+    //     m2_s4, ///< Variance [(m^2)/(s^4), (m^2)/(s^4), (m^2)/(s^4)]
+    //     m_s2,  ///< Standard deviation [m/s², m/s², m/s²]
+    // };
+    // /// Gui selection for the Unit of the process noise of the acceleration
+    // std::vector<VarBiasAccelerationNoiseUnit> _varBiasAccelerationNoiseUnit = { VarBiasAccelerationNoiseUnit::m_s2 };
+
+    // /// GUI selection of the process noise of the acceleration diagonal values (standard deviation σ or Variance σ²)
+    // std::vector<Eigen::Vector3d> _varBiasAccelerationNoise{ { 0.1, 0.1, 0.1 } };
 
     // #########################################################################################################################################
     //                                                       Measurement Noise Matrix R
