@@ -55,7 +55,7 @@ class ImuFusion : public Imu
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
-    /// @brief Information needed to link imu data on a certain pin // TODO: adapt
+    /// @brief Information about a sensor which is connected to a certain pin
     struct PinData
     {
         // ---------------------------------------- Variance Units -------------------------------------------
@@ -92,38 +92,55 @@ class ImuFusion : public Imu
         };
 
         // --------------------------------- State unit and initialization -----------------------------------
-
-        // ------------------------------------- Process Noise Matrix ----------------------------------------
-        /// Gui selection for the Unit of the angular acceleration process noise
-        AngularAccVarianceUnit varAngularAccNoiseUnit = AngularAccVarianceUnit::deg_s2;
+        /// GUI selection of the initial covariance diagonal values for angular rate (standard deviation σ or Variance σ²)
+        Eigen::Vector3d initCovarianceAngularRate{ 1, 1, 1 };
+        /// GUI selection of the initial covariance diagonal values for angular acceleration (standard deviation σ or Variance σ²)
+        Eigen::Vector3d initCovarianceAngularAcc{ 0.1, 0.1, 0.1 };
+        /// GUI selection of the initial covariance diagonal values for acceleration (standard deviation σ or Variance σ²)
+        Eigen::Vector3d initCovarianceAcceleration{ 0.1, 0.1, 0.1 };
+        /// GUI selection of the initial covariance diagonal values for jerk (standard deviation σ or Variance σ²)
+        Eigen::Vector3d initCovarianceJerk{ 0.1, 0.1, 0.1 };
+        /// GUI selection of the initial covariance diagonal values for angular rate biases (standard deviation σ or Variance σ²)
+        Eigen::Vector3d initCovarianceBiasAngRate{ 1, 1, 1 };
+        /// GUI selection of the initial covariance diagonal values for acceleration biases (standard deviation σ or Variance σ²)
+        Eigen::Vector3d initCovarianceBiasAcc{ 0.1, 0.1, 0.1 };
         /// GUI selection of the angular acceleration process noise diagonal values
         Eigen::Vector3d varAngularAccNoise{ 0.1, 0.1, 0.1 };
-
-        /// Gui selection for the Unit of the jerk process noise
-        JerkVarianceUnit varJerkNoiseUnit = JerkVarianceUnit::m_s3;
         /// GUI selection of the jerk process noise diagonal values
         Eigen::Vector3d varJerkNoise{ 0.1, 0.1, 0.1 };
-
-        /// Gui selection for the Unit of the process noise of the angular rate
-        AngRateVarianceUnit varBiasAngRateNoiseUnit = AngRateVarianceUnit::deg_s;
         /// GUI selection of the process noise of the angular rate diagonal values (standard deviation σ or Variance σ²)
         Eigen::Vector3d varBiasAngRateNoise = { 1, 1, 1 };
-
-        /// Gui selection for the Unit of the process noise of the acceleration
-        AccelerationVarianceUnit varBiasAccelerationNoiseUnit = AccelerationVarianceUnit::m_s2;
         /// GUI selection of the process noise of the acceleration diagonal values (standard deviation σ or Variance σ²)
         Eigen::Vector3d varBiasAccelerationNoise{ 0.1, 0.1, 0.1 };
-
-        // ----------------------------------- Measurement Noise Matrix --------------------------------------
-        /// Gui selection for the unit of the angular rate's measurement uncertainty
-        AngRateVarianceUnit measurementUncertaintyAngularRateUnit = AngRateVarianceUnit::deg_s;
         /// Gui selection of the angular rate measurement uncertainty diagonal values
         Eigen::Vector3d measurementUncertaintyAngularRate{ 1, 1, 1 };
-
-        /// Gui selection for the unit of the acceleration's measurement uncertainty
-        AccelerationVarianceUnit measurementUncertaintyAccelerationUnit = AccelerationVarianceUnit::m_s2;
         /// Gui selection of the angular acceleration measurement uncertainty diagonal values
         Eigen::Vector3d measurementUncertaintyAcceleration{ 0.1, 0.1, 0.1 };
+
+        /// Gui selection for the Unit of the initial covariance for the angular rate
+        AngRateVarianceUnit initCovarianceAngularRateUnit = AngRateVarianceUnit::deg_s;
+        /// Gui selection for the Unit of the initial covariance for the angular acceleration
+        AngularAccVarianceUnit initCovarianceAngularAccUnit = AngularAccVarianceUnit::deg_s2;
+        /// Gui selection for the Unit of the initial covariance for the acceleration
+        AccelerationVarianceUnit initCovarianceAccelerationUnit = AccelerationVarianceUnit::m_s2;
+        /// Gui selection for the Unit of the initial covariance for the jerk
+        JerkVarianceUnit initCovarianceJerkUnit = JerkVarianceUnit::m_s3;
+        /// Gui selection for the Unit of the initial covariance for the angular rate biases
+        AngRateVarianceUnit initCovarianceBiasAngRateUnit = AngRateVarianceUnit::deg_s;
+        /// Gui selection for the Unit of the initial covariance for the acceleration biases
+        AccelerationVarianceUnit initCovarianceBiasAccUnit = AccelerationVarianceUnit::m_s2;
+        /// Gui selection for the Unit of the angular acceleration process noise
+        AngularAccVarianceUnit varAngularAccNoiseUnit = AngularAccVarianceUnit::deg_s2;
+        /// Gui selection for the Unit of the jerk process noise
+        JerkVarianceUnit varJerkNoiseUnit = JerkVarianceUnit::m_s3;
+        /// Gui selection for the Unit of the process noise of the angular rate
+        AngRateVarianceUnit varBiasAngRateNoiseUnit = AngRateVarianceUnit::deg_s;
+        /// Gui selection for the Unit of the process noise of the acceleration
+        AccelerationVarianceUnit varBiasAccelerationNoiseUnit = AccelerationVarianceUnit::m_s2;
+        /// Gui selection for the unit of the angular rate's measurement uncertainty
+        AngRateVarianceUnit measurementUncertaintyAngularRateUnit = AngRateVarianceUnit::deg_s;
+        /// Gui selection for the unit of the acceleration's measurement uncertainty
+        AccelerationVarianceUnit measurementUncertaintyAccelerationUnit = AccelerationVarianceUnit::m_s2;
     };
 
   private:
@@ -256,98 +273,6 @@ class ImuFusion : public Imu
 
     /// @brief Check the rank of the Kalman matrices every iteration (computationally expensive)
     bool _checkKalmanMatricesRanks = false;
-
-    // #########################################################################################################################################
-    //                                                        Error Covariance Matrix P
-    // #########################################################################################################################################
-
-    /// Possible Units for the initial covariance for the angular rate (standard deviation σ or Variance σ²)
-    enum class InitCovarianceAngularRateUnit
-    {
-        rad2_s2, ///< Variance [rad²/s², rad²/s², rad²/s²]
-        rad_s,   ///< Standard deviation [rad/s, rad/s, rad/s]
-        deg2_s2, ///< Variance [deg²/s², deg²/s², deg²/s²]
-        deg_s,   ///< Standard deviation [deg/s, deg/s, deg/s]
-    };
-    /// Gui selection for the Unit of the initial covariance for the angular rate
-    InitCovarianceAngularRateUnit _initCovarianceAngularRateUnit = InitCovarianceAngularRateUnit::deg_s;
-
-    /// GUI selection of the initial covariance diagonal values for angular rate (standard deviation σ or Variance σ²)
-    Eigen::Vector3d _initCovarianceAngularRate{ 1, 1, 1 };
-
-    // #########################################################################################################################################
-
-    /// Possible Units for the initial covariance for the angular acceleration (standard deviation σ or Variance σ²)
-    enum class InitCovarianceAngularAccUnit
-    {
-        rad2_s4, ///< Variance [(rad^2)/(s^4), (rad^2)/(s^4), (rad^2)/(s^4)]
-        rad_s2,  ///< Standard deviation [rad/s², rad/s², rad/s²]
-        deg2_s4, ///< Variance [(deg^2)/(s^4), (deg^2)/(s^4), (deg^2)/(s^4)]
-        deg_s2,  ///< Standard deviation [deg/s², deg/s², deg/s²]
-    };
-    /// Gui selection for the Unit of the initial covariance for the angular acceleration
-    InitCovarianceAngularAccUnit _initCovarianceAngularAccUnit = InitCovarianceAngularAccUnit::deg_s2;
-
-    /// GUI selection of the initial covariance diagonal values for angular acceleration (standard deviation σ or Variance σ²)
-    Eigen::Vector3d _initCovarianceAngularAcc{ 0.1, 0.1, 0.1 };
-
-    // #########################################################################################################################################
-
-    /// Possible Units for the initial covariance for the acceleration (standard deviation σ or Variance σ²)
-    enum class InitCovarianceAccelerationUnit
-    {
-        m2_s4, ///< Variance [(m^2)/(s^4), (m^2)/(s^4), (m^2)/(s^4)]
-        m_s2,  ///< Standard deviation [m/s², m/s², m/s²]
-    };
-    /// Gui selection for the Unit of the initial covariance for the acceleration
-    InitCovarianceAccelerationUnit _initCovarianceAccelerationUnit = InitCovarianceAccelerationUnit::m_s2;
-
-    /// GUI selection of the initial covariance diagonal values for acceleration (standard deviation σ or Variance σ²)
-    Eigen::Vector3d _initCovarianceAcceleration{ 0.1, 0.1, 0.1 };
-
-    // #########################################################################################################################################
-
-    /// Possible Units for the initial covariance for the jerk (standard deviation σ or Variance σ²)
-    enum class InitCovarianceJerkUnit
-    {
-        m2_s6, ///< Variance [(m^2)/(s^6), (m^2)/(s^6), (m^2)/(s^6)]
-        m_s3,  ///< Standard deviation [m/s³, m/s³, m/s³]
-    };
-    /// Gui selection for the Unit of the initial covariance for the jerk
-    InitCovarianceJerkUnit _initCovarianceJerkUnit = InitCovarianceJerkUnit::m_s3;
-
-    /// GUI selection of the initial covariance diagonal values for jerk (standard deviation σ or Variance σ²)
-    Eigen::Vector3d _initCovarianceJerk{ 0.1, 0.1, 0.1 };
-
-    // #########################################################################################################################################
-
-    /// Possible Units for the initial covariance for the angular rate biases (standard deviation σ or Variance σ²)
-    enum class InitCovarianceBiasAngRateUnit
-    {
-        rad2_s2, ///< Variance [rad²/s², rad²/s², rad²/s²]
-        rad_s,   ///< Standard deviation [rad/s, rad/s, rad/s]
-        deg2_s2, ///< Variance [deg²/s², deg²/s², deg²/s²]
-        deg_s,   ///< Standard deviation [deg/s, deg/s, deg/s]
-    };
-    /// Gui selection for the Unit of the initial covariance for the angular rate biases
-    std::vector<InitCovarianceBiasAngRateUnit> _initCovarianceBiasAngRateUnit = { InitCovarianceBiasAngRateUnit::deg_s };
-
-    /// GUI selection of the initial covariance diagonal values for angular rate biases (standard deviation σ or Variance σ²)
-    std::vector<Eigen::Vector3d> _initCovarianceBiasAngRate{ { 1, 1, 1 } };
-
-    // #########################################################################################################################################
-
-    /// Possible Units for the initial covariance for the acceleration biases (standard deviation σ or Variance σ²)
-    enum class InitCovarianceBiasAccUnit
-    {
-        m2_s4, ///< Variance [(m^2)/(s^4), (m^2)/(s^4), (m^2)/(s^4)]
-        m_s2,  ///< Standard deviation [m/s², m/s², m/s²]
-    };
-    /// Gui selection for the Unit of the initial covariance for the acceleration biases
-    std::vector<InitCovarianceBiasAccUnit> _initCovarianceBiasAccUnit = { InitCovarianceBiasAccUnit::m_s2 };
-
-    /// GUI selection of the initial covariance diagonal values for acceleration biases (standard deviation σ or Variance σ²)
-    std::vector<Eigen::Vector3d> _initCovarianceBiasAcc{ { 0.1, 0.1, 0.1 } };
 };
 
 } // namespace NAV

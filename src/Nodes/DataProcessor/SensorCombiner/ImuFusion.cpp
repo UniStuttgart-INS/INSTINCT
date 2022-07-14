@@ -24,6 +24,20 @@ namespace NAV
 void to_json(json& j, const ImuFusion::PinData& data)
 {
     j = json{
+        // ---------------------------------------- Initialization -------------------------------------------
+        { "initCovarianceAngularRate", data.initCovarianceAngularRate },
+        { "initCovarianceAngularRateUnit", data.initCovarianceAngularRateUnit },
+        { "initCovarianceAngularAcc", data.initCovarianceAngularAcc },
+        { "initCovarianceAngularAccUnit", data.initCovarianceAngularAccUnit },
+        { "initCovarianceAcceleration", data.initCovarianceAcceleration },
+        { "initCovarianceAccelerationUnit", data.initCovarianceAccelerationUnit },
+        { "initCovarianceJerk", data.initCovarianceJerk },
+        { "initCovarianceJerkUnit", data.initCovarianceJerkUnit },
+        { "initCovarianceBiasAngRate", data.initCovarianceBiasAngRate },
+        { "initCovarianceBiasAngRateUnit", data.initCovarianceBiasAngRateUnit },
+        { "initCovarianceBiasAcc", data.initCovarianceBiasAcc },
+        { "initCovarianceBiasAccUnit", data.initCovarianceBiasAccUnit },
+        // ----------------------------------------- Process Noise -------------------------------------------
         { "varAngularAccNoise", data.varAngularAccNoise },
         { "varAngularAccNoiseUnit", data.varAngularAccNoiseUnit },
         { "varJerkNoise", data.varJerkNoise },
@@ -32,11 +46,11 @@ void to_json(json& j, const ImuFusion::PinData& data)
         { "varBiasAccelerationNoiseUnit", data.varBiasAccelerationNoiseUnit },
         { "varBiasAngRateNoise", data.varBiasAngRateNoise },
         { "varBiasAngRateNoiseUnit", data.varBiasAngRateNoiseUnit },
+        // --------------------------------------- Measurement Noise -----------------------------------------
         { "measurementUncertaintyAngularRateUnit", data.measurementUncertaintyAngularRateUnit },
         { "measurementUncertaintyAngularRate", data.measurementUncertaintyAngularRate },
         { "measurementUncertaintyAccelerationUnit", data.measurementUncertaintyAccelerationUnit },
         { "measurementUncertaintyAcceleration", data.measurementUncertaintyAcceleration },
-        // TODO: extend
     };
 }
 /// @brief Read info from a json object
@@ -44,6 +58,56 @@ void to_json(json& j, const ImuFusion::PinData& data)
 /// @param[out] data Output object
 void from_json(const json& j, ImuFusion::PinData& data)
 {
+    // ------------------------------------------ Initialization ---------------------------------------------
+    if (j.contains("initCovarianceAngularRate"))
+    {
+        j.at("initCovarianceAngularRate").get_to(data.initCovarianceAngularRate);
+    }
+    if (j.contains("initCovarianceAngularRateUnit"))
+    {
+        j.at("initCovarianceAngularRateUnit").get_to(data.initCovarianceAngularRateUnit);
+    }
+    if (j.contains("initCovarianceAngularAcc"))
+    {
+        j.at("initCovarianceAngularAcc").get_to(data.initCovarianceAngularAcc);
+    }
+    if (j.contains("initCovarianceAngularAccUnit"))
+    {
+        j.at("initCovarianceAngularAccUnit").get_to(data.initCovarianceAngularAccUnit);
+    }
+    if (j.contains("initCovarianceAcceleration"))
+    {
+        j.at("initCovarianceAcceleration").get_to(data.initCovarianceAcceleration);
+    }
+    if (j.contains("initCovarianceAccelerationUnit"))
+    {
+        j.at("initCovarianceAccelerationUnit").get_to(data.initCovarianceAccelerationUnit);
+    }
+    if (j.contains("initCovarianceJerk"))
+    {
+        j.at("initCovarianceJerk").get_to(data.initCovarianceJerk);
+    }
+    if (j.contains("initCovarianceJerkUnit"))
+    {
+        j.at("initCovarianceJerkUnit").get_to(data.initCovarianceJerkUnit);
+    }
+    if (j.contains("initCovarianceBiasAngRate"))
+    {
+        j.at("initCovarianceBiasAngRate").get_to(data.initCovarianceBiasAngRate);
+    }
+    if (j.contains("initCovarianceBiasAngRateUnit"))
+    {
+        j.at("initCovarianceBiasAngRateUnit").get_to(data.initCovarianceBiasAngRateUnit);
+    }
+    if (j.contains("initCovarianceBiasAccUnit"))
+    {
+        j.at("initCovarianceBiasAccUnit").get_to(data.initCovarianceBiasAccUnit);
+    }
+    if (j.contains("initCovarianceBiasAccUnit"))
+    {
+        j.at("initCovarianceBiasAccUnit").get_to(data.initCovarianceBiasAccUnit);
+    }
+    // ------------------------------------------- Process Noise ---------------------------------------------
     if (j.contains("varAngularAccNoise"))
     {
         j.at("varAngularAccNoise").get_to(data.varAngularAccNoise);
@@ -76,6 +140,7 @@ void from_json(const json& j, ImuFusion::PinData& data)
     {
         j.at("varBiasAngRateNoiseUnit").get_to(data.varBiasAngRateNoiseUnit);
     }
+    // ----------------------------------------- Measurement Noise -------------------------------------------
     if (j.contains("measurementUncertaintyAngularRate"))
     {
         j.at("measurementUncertaintyAngularRate").get_to(data.measurementUncertaintyAngularRate);
@@ -92,7 +157,6 @@ void from_json(const json& j, ImuFusion::PinData& data)
     {
         j.at("measurementUncertaintyAccelerationUnit").get_to(data.measurementUncertaintyAccelerationUnit);
     }
-    // TODO: extend
 }
 } // namespace NAV
 
@@ -160,10 +224,6 @@ void NAV::ImuFusion::guiConfig()
                     {
                         nm::DeleteInputPin(inputPins.at(pinIndex).id);
                         nm::DeleteOutputPin(outputPins.at(pinIndex).id);
-                        _initCovarianceBiasAngRate.erase(_initCovarianceBiasAngRate.begin() + static_cast<int64_t>(pinIndex - 1));
-                        _initCovarianceBiasAngRateUnit.erase(_initCovarianceBiasAngRateUnit.begin() + static_cast<int64_t>(pinIndex - 1));
-                        _initCovarianceBiasAcc.erase(_initCovarianceBiasAcc.begin() + static_cast<int64_t>(pinIndex - 1));
-                        _initCovarianceBiasAccUnit.erase(_initCovarianceBiasAccUnit.begin() + static_cast<int64_t>(pinIndex - 1));
                         _pinData.erase(_pinData.begin() + static_cast<int64_t>(pinIndex - 1));
                         --_nInputPins;
                         flow::ApplyChanges();
@@ -219,103 +279,103 @@ void NAV::ImuFusion::guiConfig()
     if (ImGui::TreeNode(fmt::format("P Error covariance matrix (init)##{}", size_t(id)).c_str()))
     {
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular rate covariance ({})##{}",
-                                                           _initCovarianceAngularRateUnit == InitCovarianceAngularRateUnit::rad2_s2
-                                                                   || _initCovarianceAngularRateUnit == InitCovarianceAngularRateUnit::deg2_s2
+                                                           _pinData[0].initCovarianceAngularRateUnit == PinData::AngRateVarianceUnit::rad2_s2
+                                                                   || _pinData[0].initCovarianceAngularRateUnit == PinData::AngRateVarianceUnit::deg2_s2
                                                                ? "Variance σ²"
                                                                : "Standard deviation σ",
                                                            size_t(id))
                                                    .c_str(),
-                                               configWidth, unitWidth, _initCovarianceAngularRate.data(), reinterpret_cast<int*>(&_initCovarianceAngularRateUnit), "(rad/s)^2\0"
-                                                                                                                                                                   "rad/s\0"
-                                                                                                                                                                   "(deg/s)^2\0"
-                                                                                                                                                                   "deg/s\0\0",
+                                               configWidth, unitWidth, _pinData[0].initCovarianceAngularRate.data(), reinterpret_cast<int*>(&_pinData[0].initCovarianceAngularRateUnit), "(rad/s)^2\0"
+                                                                                                                                                                                         "rad/s\0"
+                                                                                                                                                                                         "(deg/s)^2\0"
+                                                                                                                                                                                         "deg/s\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
-            LOG_DEBUG("{}: initCovarianceAngularRate changed to {}", nameId(), _initCovarianceAngularRate);
-            LOG_DEBUG("{}: InitCovarianceAngularRateUnit changed to {}", nameId(), _initCovarianceAngularRateUnit);
+            LOG_DEBUG("{}: initCovarianceAngularRate changed to {}", nameId(), _pinData[0].initCovarianceAngularRate);
+            LOG_DEBUG("{}: AngRateVarianceUnit changed to {}", nameId(), _pinData[0].initCovarianceAngularRateUnit);
             flow::ApplyChanges();
         }
 
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular acceleration covariance ({})##{}",
-                                                           _initCovarianceAngularAccUnit == InitCovarianceAngularAccUnit::rad2_s4
-                                                                   || _initCovarianceAngularAccUnit == InitCovarianceAngularAccUnit::deg2_s4
+                                                           _pinData[0].initCovarianceAngularAccUnit == PinData::AngularAccVarianceUnit::rad2_s4
+                                                                   || _pinData[0].initCovarianceAngularAccUnit == PinData::AngularAccVarianceUnit::deg2_s4
                                                                ? "Variance σ²"
                                                                : "Standard deviation σ",
                                                            size_t(id))
                                                    .c_str(),
-                                               configWidth, unitWidth, _initCovarianceAngularAcc.data(), reinterpret_cast<int*>(&_initCovarianceAngularAccUnit), "(rad^2)/(s^4)\0"
-                                                                                                                                                                 "rad/s^2\0"
-                                                                                                                                                                 "(deg^2)/(s^4)\0"
-                                                                                                                                                                 "deg/s^2\0\0",
+                                               configWidth, unitWidth, _pinData[0].initCovarianceAngularAcc.data(), reinterpret_cast<int*>(&_pinData[0].initCovarianceAngularAccUnit), "(rad^2)/(s^4)\0"
+                                                                                                                                                                                       "rad/s^2\0"
+                                                                                                                                                                                       "(deg^2)/(s^4)\0"
+                                                                                                                                                                                       "deg/s^2\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
-            LOG_DEBUG("{}: initCovarianceAngularAcc changed to {}", nameId(), _initCovarianceAngularAcc);
-            LOG_DEBUG("{}: InitCovarianceAngularAccUnit changed to {}", nameId(), _initCovarianceAngularAccUnit);
+            LOG_DEBUG("{}: initCovarianceAngularAcc changed to {}", nameId(), _pinData[0].initCovarianceAngularAcc);
+            LOG_DEBUG("{}: PinData::AngularAccVarianceUnit changed to {}", nameId(), _pinData[0].initCovarianceAngularAccUnit);
             flow::ApplyChanges();
         }
 
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Acceleration covariance ({})##{}",
-                                                           _initCovarianceAccelerationUnit == InitCovarianceAccelerationUnit::m2_s4
+                                                           _pinData[0].initCovarianceAccelerationUnit == PinData::AccelerationVarianceUnit::m2_s4
                                                                ? "Variance σ²"
                                                                : "Standard deviation σ",
                                                            size_t(id))
                                                    .c_str(),
-                                               configWidth, unitWidth, _initCovarianceAcceleration.data(), reinterpret_cast<int*>(&_initCovarianceAccelerationUnit), "(m^2)/(s^4)\0"
-                                                                                                                                                                     "m/s^2\0\0",
+                                               configWidth, unitWidth, _pinData[0].initCovarianceAcceleration.data(), reinterpret_cast<int*>(&_pinData[0].initCovarianceAccelerationUnit), "(m^2)/(s^4)\0"
+                                                                                                                                                                                           "m/s^2\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
-            LOG_DEBUG("{}: initCovarianceAcceleration changed to {}", nameId(), _initCovarianceAcceleration);
-            LOG_DEBUG("{}: InitCovarianceAccelerationUnit changed to {}", nameId(), _initCovarianceAccelerationUnit);
+            LOG_DEBUG("{}: initCovarianceAcceleration changed to {}", nameId(), _pinData[0].initCovarianceAcceleration);
+            LOG_DEBUG("{}: PinData::AccelerationVarianceUnit changed to {}", nameId(), _pinData[0].initCovarianceAccelerationUnit);
             flow::ApplyChanges();
         }
 
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Jerk covariance ({})##{}",
-                                                           _initCovarianceJerkUnit == InitCovarianceJerkUnit::m2_s6
+                                                           _pinData[0].initCovarianceJerkUnit == PinData::JerkVarianceUnit::m2_s6
                                                                ? "Variance σ²"
                                                                : "Standard deviation σ",
                                                            size_t(id))
                                                    .c_str(),
-                                               configWidth, unitWidth, _initCovarianceJerk.data(), reinterpret_cast<int*>(&_initCovarianceJerkUnit), "(m^2)/(s^6)\0"
-                                                                                                                                                     "m/s^3\0\0",
+                                               configWidth, unitWidth, _pinData[0].initCovarianceJerk.data(), reinterpret_cast<int*>(&_pinData[0].initCovarianceJerkUnit), "(m^2)/(s^6)\0"
+                                                                                                                                                                           "m/s^3\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
-            LOG_DEBUG("{}: initCovarianceJerk changed to {}", nameId(), _initCovarianceJerk);
-            LOG_DEBUG("{}: InitCovarianceJerkUnit changed to {}", nameId(), _initCovarianceJerkUnit);
+            LOG_DEBUG("{}: initCovarianceJerk changed to {}", nameId(), _pinData[0].initCovarianceJerk);
+            LOG_DEBUG("{}: PinData::JerkVarianceUnit changed to {}", nameId(), _pinData[0].initCovarianceJerkUnit);
             flow::ApplyChanges();
         }
 
-        for (size_t i = 0; i < _nInputPins - 1; ++i)
+        for (size_t pinIndex = 1; pinIndex < _nInputPins; ++pinIndex)
         {
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular rate bias covariance of sensor {} ({})##{}", i + 2,
-                                                               _initCovarianceBiasAngRateUnit[i] == InitCovarianceBiasAngRateUnit::rad2_s2
-                                                                       || _initCovarianceBiasAngRateUnit[i] == InitCovarianceBiasAngRateUnit::deg2_s2
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular rate bias covariance of sensor {} ({})##{}", pinIndex + 2,
+                                                               _pinData[pinIndex].initCovarianceBiasAngRateUnit == PinData::AngRateVarianceUnit::rad2_s2
+                                                                       || _pinData[pinIndex].initCovarianceBiasAngRateUnit == PinData::AngRateVarianceUnit::deg2_s2
                                                                    ? "Variance σ²"
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _initCovarianceBiasAngRate.at(i).data(), reinterpret_cast<int*>(&_initCovarianceBiasAngRateUnit[i]), "(rad^2)/(s^2)\0"
-                                                                                                                                                                                "rad/s\0"
-                                                                                                                                                                                "(deg^2)/(s^2)\0"
-                                                                                                                                                                                "deg/s\0\0",
+                                                   configWidth, unitWidth, _pinData[pinIndex].initCovarianceBiasAngRate.data(), reinterpret_cast<int*>(&_pinData[pinIndex].initCovarianceBiasAngRateUnit), "(rad^2)/(s^2)\0"
+                                                                                                                                                                                                           "rad/s\0"
+                                                                                                                                                                                                           "(deg^2)/(s^2)\0"
+                                                                                                                                                                                                           "deg/s\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
-                LOG_DEBUG("{}: initCovarianceBiasAngRate changed to {}", nameId(), _initCovarianceBiasAngRate.at(i));
-                LOG_DEBUG("{}: InitCovarianceBiasAngRateUnit changed to {}", nameId(), _initCovarianceBiasAngRateUnit[i]);
+                LOG_DEBUG("{}: initCovarianceBiasAngRate changed to {}", nameId(), _pinData[pinIndex].initCovarianceBiasAngRate);
+                LOG_DEBUG("{}: PinData::AngRateVarianceUnit changed to {}", nameId(), _pinData[pinIndex].initCovarianceBiasAngRateUnit);
                 flow::ApplyChanges();
             }
 
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Acceleration bias covariance of sensor {} ({})##{}", i + 2,
-                                                               _initCovarianceBiasAccUnit[i] == InitCovarianceBiasAccUnit::m2_s4
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Acceleration bias covariance of sensor {} ({})##{}", pinIndex + 2,
+                                                               _pinData[pinIndex].initCovarianceBiasAccUnit == PinData::AccelerationVarianceUnit::m2_s4
                                                                    ? "Variance σ²"
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _initCovarianceBiasAcc.at(i).data(), reinterpret_cast<int*>(&_initCovarianceBiasAccUnit[i]), "(m^2)/(s^4)\0"
-                                                                                                                                                                        "m/s^2\0\0",
+                                                   configWidth, unitWidth, _pinData[pinIndex].initCovarianceBiasAcc.data(), reinterpret_cast<int*>(&_pinData[pinIndex].initCovarianceBiasAccUnit), "(m^2)/(s^4)\0"
+                                                                                                                                                                                                   "m/s^2\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
-                LOG_DEBUG("{}: initCovarianceBiasAcc changed to {}", nameId(), _initCovarianceBiasAcc.at(i));
-                LOG_DEBUG("{}: InitCovarianceBiasAccUnit changed to {}", nameId(), _initCovarianceBiasAccUnit[i]);
+                LOG_DEBUG("{}: initCovarianceBiasAcc changed to {}", nameId(), _pinData[pinIndex].initCovarianceBiasAcc);
+                LOG_DEBUG("{}: PinData::AccelerationVarianceUnit changed to {}", nameId(), _pinData[pinIndex].initCovarianceBiasAccUnit);
                 flow::ApplyChanges();
             }
         }
@@ -460,19 +520,6 @@ void NAV::ImuFusion::guiConfig()
     j["designMatrixInitialized"] = _designMatrixInitialized;
     j["numStates"] = _numStates;
     j["numMeasurements"] = _numMeasurements;
-
-    j["initCovarianceAngularRateUnit"] = _initCovarianceAngularRateUnit;
-    j["initCovarianceAngularRate"] = _initCovarianceAngularRate;
-    j["initCovarianceAngularAccUnit"] = _initCovarianceAngularAccUnit;
-    j["initCovarianceAngularAcc"] = _initCovarianceAngularAcc;
-    j["initCovarianceAccelerationUnit"] = _initCovarianceAccelerationUnit;
-    j["initCovarianceAcceleration"] = _initCovarianceAcceleration;
-    j["initCovarianceJerkUnit"] = _initCovarianceJerkUnit;
-    j["initCovarianceJerk"] = _initCovarianceJerk;
-    j["initCovarianceBiasAngRateUnit"] = _initCovarianceBiasAngRateUnit;
-    j["initCovarianceBiasAngRate"] = _initCovarianceBiasAngRate;
-    j["initCovarianceBiasAccUnit"] = _initCovarianceBiasAccUnit;
-    j["initCovarianceBiasAcc"] = _initCovarianceBiasAcc;
     j["pinData"] = _pinData;
 
     return j;
@@ -486,7 +533,6 @@ void NAV::ImuFusion::restore(json const& j)
     {
         j.at("checkKalmanMatricesRanks").get_to(_checkKalmanMatricesRanks);
     }
-
     if (j.contains("nInputPins"))
     {
         j.at("nInputPins").get_to(_nInputPins);
@@ -519,56 +565,6 @@ void NAV::ImuFusion::restore(json const& j)
     if (j.contains("pinData"))
     {
         j.at("pinData").get_to(_pinData);
-    }
-
-    // -------------------------------------- 𝐏 Error covariance matrix -----------------------------------------
-    if (j.contains("initCovarianceAngularRateUnit"))
-    {
-        j.at("initCovarianceAngularRateUnit").get_to(_initCovarianceAngularRateUnit);
-    }
-    if (j.contains("initCovarianceAngularRate"))
-    {
-        j.at("initCovarianceAngularRate").get_to(_initCovarianceAngularRate);
-    }
-    if (j.contains("initCovarianceAngularAccUnit"))
-    {
-        j.at("initCovarianceAngularAccUnit").get_to(_initCovarianceAngularAccUnit);
-    }
-    if (j.contains("initCovarianceAngularAcc"))
-    {
-        j.at("initCovarianceAngularAcc").get_to(_initCovarianceAngularAcc);
-    }
-    if (j.contains("initCovarianceAccelerationUnit"))
-    {
-        j.at("initCovarianceAccelerationUnit").get_to(_initCovarianceAccelerationUnit);
-    }
-    if (j.contains("initCovarianceAcceleration"))
-    {
-        j.at("initCovarianceAcceleration").get_to(_initCovarianceAcceleration);
-    }
-    if (j.contains("initCovarianceJerkUnit"))
-    {
-        j.at("initCovarianceJerkUnit").get_to(_initCovarianceJerkUnit);
-    }
-    if (j.contains("initCovarianceJerk"))
-    {
-        j.at("initCovarianceJerk").get_to(_initCovarianceJerk);
-    }
-    if (j.contains("initCovarianceBiasAngRateUnit"))
-    {
-        j.at("initCovarianceBiasAngRateUnit").get_to(_initCovarianceBiasAngRateUnit);
-    }
-    if (j.contains("initCovarianceBiasAngRate"))
-    {
-        j.at("initCovarianceBiasAngRate").get_to(_initCovarianceBiasAngRate);
-    }
-    if (j.contains("initCovarianceBiasAccUnit"))
-    {
-        j.at("initCovarianceBiasAccUnit").get_to(_initCovarianceBiasAccUnit);
-    }
-    if (j.contains("initCovarianceBiasAcc"))
-    {
-        j.at("initCovarianceBiasAcc").get_to(_initCovarianceBiasAcc);
     }
 }
 
@@ -620,10 +616,6 @@ void NAV::ImuFusion::updateNumberOfInputPins()
         nm::DeleteOutputPin(outputPins.back().id);
         _pinData.pop_back();
     }
-    _initCovarianceBiasAngRate.resize(_nInputPins - 1);
-    _initCovarianceBiasAngRateUnit.resize(_nInputPins - 1);
-    _initCovarianceBiasAcc.resize(_nInputPins - 1);
-    _initCovarianceBiasAccUnit.resize(_nInputPins - 1);
     _pinData.resize(_nInputPins);
     initializeMountingAngles();
 }
@@ -661,93 +653,93 @@ void NAV::ImuFusion::initializeKalmanFilter()
 
     // Initial Covariance of the angular rate in [rad²/s²]
     Eigen::Vector3d variance_angularRate = Eigen::Vector3d::Zero();
-    if (_initCovarianceAngularRateUnit == InitCovarianceAngularRateUnit::rad2_s2)
+    if (_pinData[0].initCovarianceAngularRateUnit == PinData::AngRateVarianceUnit::rad2_s2)
     {
-        variance_angularRate = _initCovarianceAngularRate;
+        variance_angularRate = _pinData[0].initCovarianceAngularRate;
     }
-    else if (_initCovarianceAngularRateUnit == InitCovarianceAngularRateUnit::deg2_s2)
+    else if (_pinData[0].initCovarianceAngularRateUnit == PinData::AngRateVarianceUnit::deg2_s2)
     {
-        variance_angularRate = deg2rad(_initCovarianceAngularRate);
+        variance_angularRate = deg2rad(_pinData[0].initCovarianceAngularRate);
     }
-    else if (_initCovarianceAngularRateUnit == InitCovarianceAngularRateUnit::rad_s)
+    else if (_pinData[0].initCovarianceAngularRateUnit == PinData::AngRateVarianceUnit::rad_s)
     {
-        variance_angularRate = _initCovarianceAngularRate.array().pow(2);
+        variance_angularRate = _pinData[0].initCovarianceAngularRate.array().pow(2);
     }
-    else if (_initCovarianceAngularRateUnit == InitCovarianceAngularRateUnit::deg_s)
+    else if (_pinData[0].initCovarianceAngularRateUnit == PinData::AngRateVarianceUnit::deg_s)
     {
-        variance_angularRate = deg2rad(_initCovarianceAngularRate).array().pow(2);
+        variance_angularRate = deg2rad(_pinData[0].initCovarianceAngularRate).array().pow(2);
     }
 
     // Initial Covariance of the angular acceleration in [(rad^2)/(s^4)]
     Eigen::Vector3d variance_angularAcceleration = Eigen::Vector3d::Zero();
-    if (_initCovarianceAngularAccUnit == InitCovarianceAngularAccUnit::rad2_s4)
+    if (_pinData[0].initCovarianceAngularAccUnit == PinData::AngularAccVarianceUnit::rad2_s4)
     {
-        variance_angularAcceleration = _initCovarianceAngularAcc;
+        variance_angularAcceleration = _pinData[0].initCovarianceAngularAcc;
     }
-    else if (_initCovarianceAngularAccUnit == InitCovarianceAngularAccUnit::deg2_s4)
+    else if (_pinData[0].initCovarianceAngularAccUnit == PinData::AngularAccVarianceUnit::deg2_s4)
     {
-        variance_angularAcceleration = deg2rad(_initCovarianceAngularAcc);
+        variance_angularAcceleration = deg2rad(_pinData[0].initCovarianceAngularAcc);
     }
-    else if (_initCovarianceAngularAccUnit == InitCovarianceAngularAccUnit::rad_s2)
+    else if (_pinData[0].initCovarianceAngularAccUnit == PinData::AngularAccVarianceUnit::rad_s2)
     {
-        variance_angularAcceleration = _initCovarianceAngularAcc.array().pow(2);
+        variance_angularAcceleration = _pinData[0].initCovarianceAngularAcc.array().pow(2);
     }
-    else if (_initCovarianceAngularAccUnit == InitCovarianceAngularAccUnit::deg_s2)
+    else if (_pinData[0].initCovarianceAngularAccUnit == PinData::AngularAccVarianceUnit::deg_s2)
     {
-        variance_angularAcceleration = deg2rad(_initCovarianceAngularAcc).array().pow(2);
+        variance_angularAcceleration = deg2rad(_pinData[0].initCovarianceAngularAcc).array().pow(2);
     }
 
     // Initial Covariance of the acceleration in [(m^2)/(s^4)]
     Eigen::Vector3d variance_acceleration = Eigen::Vector3d::Zero();
-    if (_initCovarianceAccelerationUnit == InitCovarianceAccelerationUnit::m2_s4)
+    if (_pinData[0].initCovarianceAccelerationUnit == PinData::AccelerationVarianceUnit::m2_s4)
     {
-        variance_acceleration = _initCovarianceAcceleration;
+        variance_acceleration = _pinData[0].initCovarianceAcceleration;
     }
-    else if (_initCovarianceAccelerationUnit == InitCovarianceAccelerationUnit::m_s2)
+    else if (_pinData[0].initCovarianceAccelerationUnit == PinData::AccelerationVarianceUnit::m_s2)
     {
-        variance_acceleration = _initCovarianceAcceleration.array().pow(2);
+        variance_acceleration = _pinData[0].initCovarianceAcceleration.array().pow(2);
     }
 
     // Initial Covariance of the jerk in [(m^2)/(s^6)]
     Eigen::Vector3d variance_jerk = Eigen::Vector3d::Zero();
-    if (_initCovarianceJerkUnit == InitCovarianceJerkUnit::m2_s6)
+    if (_pinData[0].initCovarianceJerkUnit == PinData::JerkVarianceUnit::m2_s6)
     {
-        variance_jerk = _initCovarianceJerk;
+        variance_jerk = _pinData[0].initCovarianceJerk;
     }
-    else if (_initCovarianceJerkUnit == InitCovarianceJerkUnit::m_s3)
+    else if (_pinData[0].initCovarianceJerkUnit == PinData::JerkVarianceUnit::m_s3)
     {
-        variance_jerk = _initCovarianceJerk.array().pow(2);
+        variance_jerk = _pinData[0].initCovarianceJerk.array().pow(2);
     }
 
     // Initial Covariance of the bias of the angular acceleration in [(rad^2)/(s^4)]
     _biasCovariances.resize(2 * _nInputPins);
-    for (size_t i = 0; i < _nInputPins - 1UL; ++i)
+    for (size_t pinIndex = 0; pinIndex < _nInputPins - 1UL; ++pinIndex)
     {
-        if (_initCovarianceBiasAngRateUnit[i] == InitCovarianceBiasAngRateUnit::rad2_s2)
+        if (_pinData[pinIndex].initCovarianceBiasAngRateUnit == PinData::AngRateVarianceUnit::rad2_s2)
         {
-            _biasCovariances[2 * i] = _initCovarianceBiasAngRate.at(i);
+            _biasCovariances[2 * pinIndex] = _pinData[1 + pinIndex].initCovarianceBiasAngRate;
         }
-        else if (_initCovarianceBiasAngRateUnit[i] == InitCovarianceBiasAngRateUnit::deg2_s2)
+        else if (_pinData[pinIndex].initCovarianceBiasAngRateUnit == PinData::AngRateVarianceUnit::deg2_s2)
         {
-            _biasCovariances[2 * i] = deg2rad(_initCovarianceBiasAngRate.at(i));
+            _biasCovariances[2 * pinIndex] = deg2rad(_pinData[1 + pinIndex].initCovarianceBiasAngRate);
         }
-        else if (_initCovarianceBiasAngRateUnit[i] == InitCovarianceBiasAngRateUnit::rad_s)
+        else if (_pinData[pinIndex].initCovarianceBiasAngRateUnit == PinData::AngRateVarianceUnit::rad_s)
         {
-            _biasCovariances[2 * i] = _initCovarianceBiasAngRate.at(i).array().pow(2);
+            _biasCovariances[2 * pinIndex] = _pinData[1 + pinIndex].initCovarianceBiasAngRate.array().pow(2);
         }
-        else if (_initCovarianceBiasAngRateUnit[i] == InitCovarianceBiasAngRateUnit::deg_s)
+        else if (_pinData[pinIndex].initCovarianceBiasAngRateUnit == PinData::AngRateVarianceUnit::deg_s)
         {
-            _biasCovariances[2 * i] = deg2rad(_initCovarianceBiasAngRate.at(i)).array().pow(2);
+            _biasCovariances[2 * pinIndex] = deg2rad(_pinData[1 + pinIndex].initCovarianceBiasAngRate).array().pow(2);
         }
 
         // Initial Covariance of the bias of the jerk in [(m^2)/(s^6)]
-        if (_initCovarianceBiasAccUnit[i] == InitCovarianceBiasAccUnit::m2_s4)
+        if (_pinData[pinIndex].initCovarianceBiasAccUnit == PinData::AccelerationVarianceUnit::m2_s4)
         {
-            _biasCovariances[1 + 2 * i] = _initCovarianceBiasAcc.at(i);
+            _biasCovariances[1 + 2 * pinIndex] = _pinData[1 + pinIndex].initCovarianceBiasAcc;
         }
-        else if (_initCovarianceBiasAccUnit[i] == InitCovarianceBiasAccUnit::m_s2)
+        else if (_pinData[pinIndex].initCovarianceBiasAccUnit == PinData::AccelerationVarianceUnit::m_s2)
         {
-            _biasCovariances[1 + 2 * i] = _initCovarianceBiasAcc.at(i).array().pow(2);
+            _biasCovariances[1 + 2 * pinIndex] = _pinData[1 + pinIndex].initCovarianceBiasAcc.array().pow(2);
         }
     }
 
