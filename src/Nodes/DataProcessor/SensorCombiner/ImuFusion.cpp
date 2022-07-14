@@ -24,12 +24,18 @@ namespace NAV
 void to_json(json& j, const ImuFusion::PinData& data)
 {
     j = json{
+        { "varAngularAccNoise", data.varAngularAccNoise },
+        { "varAngularAccNoiseUnit", data.varAngularAccNoiseUnit },
         { "varJerkNoise", data.varJerkNoise },
         { "varJerkNoiseUnit", data.varJerkNoiseUnit },
         { "varBiasAccelerationNoise", data.varBiasAccelerationNoise },
         { "varBiasAccelerationNoiseUnit", data.varBiasAccelerationNoiseUnit },
         { "varBiasAngRateNoise", data.varBiasAngRateNoise },
         { "varBiasAngRateNoiseUnit", data.varBiasAngRateNoiseUnit },
+        { "measurementUncertaintyAngularRateUnit", data.measurementUncertaintyAngularRateUnit },
+        { "measurementUncertaintyAngularRate", data.measurementUncertaintyAngularRate },
+        { "measurementUncertaintyAccelerationUnit", data.measurementUncertaintyAccelerationUnit },
+        { "measurementUncertaintyAcceleration", data.measurementUncertaintyAcceleration },
         // TODO: extend
     };
 }
@@ -38,6 +44,14 @@ void to_json(json& j, const ImuFusion::PinData& data)
 /// @param[out] data Output object
 void from_json(const json& j, ImuFusion::PinData& data)
 {
+    if (j.contains("varAngularAccNoise"))
+    {
+        j.at("varAngularAccNoise").get_to(data.varAngularAccNoise);
+    }
+    if (j.contains("varAngularAccNoiseUnit"))
+    {
+        j.at("varAngularAccNoiseUnit").get_to(data.varAngularAccNoiseUnit);
+    }
     if (j.contains("varJerkNoise"))
     {
         j.at("varJerkNoise").get_to(data.varJerkNoise);
@@ -61,6 +75,22 @@ void from_json(const json& j, ImuFusion::PinData& data)
     if (j.contains("varBiasAngRateNoiseUnit"))
     {
         j.at("varBiasAngRateNoiseUnit").get_to(data.varBiasAngRateNoiseUnit);
+    }
+    if (j.contains("measurementUncertaintyAngularRate"))
+    {
+        j.at("measurementUncertaintyAngularRate").get_to(data.measurementUncertaintyAngularRate);
+    }
+    if (j.contains("measurementUncertaintyAngularRateUnit"))
+    {
+        j.at("measurementUncertaintyAngularRateUnit").get_to(data.measurementUncertaintyAngularRateUnit);
+    }
+    if (j.contains("measurementUncertaintyAcceleration"))
+    {
+        j.at("measurementUncertaintyAcceleration").get_to(data.measurementUncertaintyAcceleration);
+    }
+    if (j.contains("measurementUncertaintyAccelerationUnit"))
+    {
+        j.at("measurementUncertaintyAccelerationUnit").get_to(data.measurementUncertaintyAccelerationUnit);
     }
     // TODO: extend
 }
@@ -135,10 +165,6 @@ void NAV::ImuFusion::guiConfig()
                         _initCovarianceBiasAcc.erase(_initCovarianceBiasAcc.begin() + static_cast<int64_t>(pinIndex - 1));
                         _initCovarianceBiasAccUnit.erase(_initCovarianceBiasAccUnit.begin() + static_cast<int64_t>(pinIndex - 1));
                         _pinData.erase(_pinData.begin() + static_cast<int64_t>(pinIndex - 1));
-                        _measurementUncertaintyAngularRate.erase(_measurementUncertaintyAngularRate.begin() + static_cast<int64_t>(pinIndex));
-                        _measurementUncertaintyAngularRateUnit.erase(_measurementUncertaintyAngularRateUnit.begin() + static_cast<int64_t>(pinIndex));
-                        _measurementUncertaintyAcceleration.erase(_measurementUncertaintyAcceleration.begin() + static_cast<int64_t>(pinIndex));
-                        _measurementUncertaintyAccelerationUnit.erase(_measurementUncertaintyAccelerationUnit.begin() + static_cast<int64_t>(pinIndex));
                         --_nInputPins;
                         flow::ApplyChanges();
                         updateNumberOfInputPins();
@@ -303,20 +329,20 @@ void NAV::ImuFusion::guiConfig()
         ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
 
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Process noise of the angular acceleration ({})##{}",
-                                                           _varAngularAccNoiseUnit == VarAngularAccNoiseUnit::rad2_s4
-                                                                   || _varAngularAccNoiseUnit == VarAngularAccNoiseUnit::deg2_s4
+                                                           _pinData[0].varAngularAccNoiseUnit == PinData::AngularAccVarianceUnit::rad2_s4
+                                                                   || _pinData[0].varAngularAccNoiseUnit == PinData::AngularAccVarianceUnit::deg2_s4
                                                                ? "Variance σ²"
                                                                : "Standard deviation σ",
                                                            size_t(id))
                                                    .c_str(),
-                                               configWidth, unitWidth, _varAngularAccNoise.data(), reinterpret_cast<int*>(&_varAngularAccNoiseUnit), "(rad^2)/(s^4)\0"
-                                                                                                                                                     "rad/s^2\0"
-                                                                                                                                                     "(deg^2)/(s^4)\0"
-                                                                                                                                                     "deg/s^2\0\0",
+                                               configWidth, unitWidth, _pinData[0].varAngularAccNoise.data(), reinterpret_cast<int*>(&_pinData[0].varAngularAccNoiseUnit), "(rad^2)/(s^4)\0"
+                                                                                                                                                                           "rad/s^2\0"
+                                                                                                                                                                           "(deg^2)/(s^4)\0"
+                                                                                                                                                                           "deg/s^2\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
-            LOG_DEBUG("{}: varAngularAccNoise changed to {}", nameId(), _varAngularAccNoise.transpose());
-            LOG_DEBUG("{}: varAngularAccNoiseUnit changed to {}", nameId(), _varAngularAccNoiseUnit);
+            LOG_DEBUG("{}: varAngularAccNoise changed to {}", nameId(), _pinData[0].varAngularAccNoise.transpose());
+            LOG_DEBUG("{}: varAngularAccNoiseUnit changed to {}", nameId(), _pinData[0].varAngularAccNoiseUnit);
             flow::ApplyChanges();
         }
 
@@ -379,38 +405,38 @@ void NAV::ImuFusion::guiConfig()
     {
         ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
 
-        for (size_t i = 0; i < _nInputPins; ++i)
+        for (size_t pinIndex = 0; pinIndex < _nInputPins; ++pinIndex)
         {
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Measurement uncertainty of the angular rate of sensor {} ({})##{}", i + 1,
-                                                               _measurementUncertaintyAngularRateUnit[i] == MeasurementUncertaintyAngularRateUnit::rad2_s2
-                                                                       || _measurementUncertaintyAngularRateUnit[i] == MeasurementUncertaintyAngularRateUnit::deg2_s2
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Measurement uncertainty of the angular rate of sensor {} ({})##{}", pinIndex + 1,
+                                                               _pinData[pinIndex].measurementUncertaintyAngularRateUnit == PinData::AngRateVarianceUnit::rad2_s2
+                                                                       || _pinData[pinIndex].measurementUncertaintyAngularRateUnit == PinData::AngRateVarianceUnit::deg2_s2
                                                                    ? "Variance σ²"
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _measurementUncertaintyAngularRate.at(i).data(), reinterpret_cast<int*>(&_measurementUncertaintyAngularRateUnit[i]), "(rad/s)^2\0"
-                                                                                                                                                                                                "rad/s\0"
-                                                                                                                                                                                                "(deg/s)^2\0"
-                                                                                                                                                                                                "deg/s\0\0",
+                                                   configWidth, unitWidth, _pinData[pinIndex].measurementUncertaintyAngularRate.data(), reinterpret_cast<int*>(&_pinData[pinIndex].measurementUncertaintyAngularRateUnit), "(rad/s)^2\0"
+                                                                                                                                                                                                                           "rad/s\0"
+                                                                                                                                                                                                                           "(deg/s)^2\0"
+                                                                                                                                                                                                                           "deg/s\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
-                LOG_DEBUG("{}: stdevAngularAcc changed to {}", nameId(), _measurementUncertaintyAngularRate.at(i).transpose());
-                LOG_DEBUG("{}: stdevAngularAccUnit changed to {}", nameId(), _measurementUncertaintyAngularRateUnit[i]);
+                LOG_DEBUG("{}: stdevAngularAcc changed to {}", nameId(), _pinData[pinIndex].measurementUncertaintyAngularRate.transpose());
+                LOG_DEBUG("{}: stdevAngularAccUnit changed to {}", nameId(), _pinData[pinIndex].measurementUncertaintyAngularRateUnit);
                 flow::ApplyChanges();
             }
 
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Measurement uncertainty of the acceleration of sensor {} ({})##{}", i + 1,
-                                                               _measurementUncertaintyAccelerationUnit[i] == MeasurementUncertaintyAccelerationUnit::m2_s4
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Measurement uncertainty of the acceleration of sensor {} ({})##{}", pinIndex + 1,
+                                                               _pinData[pinIndex].measurementUncertaintyAccelerationUnit == PinData::AccelerationVarianceUnit::m2_s4
                                                                    ? "Variance σ²"
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _measurementUncertaintyAcceleration.at(i).data(), reinterpret_cast<int*>(&_measurementUncertaintyAccelerationUnit[i]), "(m^2)/(s^4)\0"
-                                                                                                                                                                                                  "m/s^2\0\0",
+                                                   configWidth, unitWidth, _pinData[pinIndex].measurementUncertaintyAcceleration.data(), reinterpret_cast<int*>(&_pinData[pinIndex].measurementUncertaintyAccelerationUnit), "(m^2)/(s^4)\0"
+                                                                                                                                                                                                                             "m/s^2\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
-                LOG_DEBUG("{}: stdevJerk changed to {}", nameId(), _measurementUncertaintyAcceleration.at(i).transpose());
-                LOG_DEBUG("{}: stdevJerkUnit changed to {}", nameId(), _measurementUncertaintyAccelerationUnit[i]);
+                LOG_DEBUG("{}: stdevJerk changed to {}", nameId(), _pinData[pinIndex].measurementUncertaintyAcceleration.transpose());
+                LOG_DEBUG("{}: stdevJerkUnit changed to {}", nameId(), _pinData[pinIndex].measurementUncertaintyAccelerationUnit);
                 flow::ApplyChanges();
             }
         }
@@ -447,15 +473,7 @@ void NAV::ImuFusion::guiConfig()
     j["initCovarianceBiasAngRate"] = _initCovarianceBiasAngRate;
     j["initCovarianceBiasAccUnit"] = _initCovarianceBiasAccUnit;
     j["initCovarianceBiasAcc"] = _initCovarianceBiasAcc;
-    j["varAngularAccNoiseUnit"] = _varAngularAccNoiseUnit;
-    j["varAngularAccNoise"] = _varAngularAccNoise;
     j["pinData"] = _pinData;
-    j["measurementUncertaintyAngularRate"] = _measurementUncertaintyAngularRate;
-    j["measurementUncertaintyAcceleration"] = _measurementUncertaintyAcceleration;
-    j["measurementUncertaintyAngularRateUnit"] = _measurementUncertaintyAngularRateUnit;
-    j["measurementUncertaintyAngularRate"] = _measurementUncertaintyAngularRate;
-    j["measurementUncertaintyAccelerationUnit"] = _measurementUncertaintyAccelerationUnit;
-    j["measurementUncertaintyAcceleration"] = _measurementUncertaintyAcceleration;
 
     return j;
 }
@@ -498,6 +516,11 @@ void NAV::ImuFusion::restore(json const& j)
     {
         j.at("numMeasurements").get_to(_numMeasurements);
     }
+    if (j.contains("pinData"))
+    {
+        j.at("pinData").get_to(_pinData);
+    }
+
     // -------------------------------------- 𝐏 Error covariance matrix -----------------------------------------
     if (j.contains("initCovarianceAngularRateUnit"))
     {
@@ -546,38 +569,6 @@ void NAV::ImuFusion::restore(json const& j)
     if (j.contains("initCovarianceBiasAcc"))
     {
         j.at("initCovarianceBiasAcc").get_to(_initCovarianceBiasAcc);
-    }
-
-    // ------------------------------- 𝐐 System/Process noise covariance matrix ---------------------------------
-    if (j.contains("varAngularAccNoiseUnit"))
-    {
-        j.at("varAngularAccNoiseUnit").get_to(_varAngularAccNoiseUnit);
-    }
-    if (j.contains("varAngularAccNoise"))
-    {
-        j.at("varAngularAccNoise").get_to(_varAngularAccNoise);
-    }
-    if (j.contains("pinData"))
-    {
-        j.at("pinData").get_to(_pinData);
-    }
-
-    // -------------------------------- 𝐑 Measurement noise covariance matrix -----------------------------------
-    if (j.contains("measurementUncertaintyAngularRateUnit"))
-    {
-        j.at("measurementUncertaintyAngularRateUnit").get_to(_measurementUncertaintyAngularRateUnit);
-    }
-    if (j.contains("measurementUncertaintyAngularRate"))
-    {
-        j.at("measurementUncertaintyAngularRate").get_to(_measurementUncertaintyAngularRate);
-    }
-    if (j.contains("measurementUncertaintyAccelerationUnit"))
-    {
-        j.at("measurementUncertaintyAccelerationUnit").get_to(_measurementUncertaintyAccelerationUnit);
-    }
-    if (j.contains("measurementUncertaintyAcceleration"))
-    {
-        j.at("measurementUncertaintyAcceleration").get_to(_measurementUncertaintyAcceleration);
     }
 }
 
@@ -634,10 +625,6 @@ void NAV::ImuFusion::updateNumberOfInputPins()
     _initCovarianceBiasAcc.resize(_nInputPins - 1);
     _initCovarianceBiasAccUnit.resize(_nInputPins - 1);
     _pinData.resize(_nInputPins);
-    _measurementUncertaintyAngularRate.resize(_nInputPins);
-    _measurementUncertaintyAngularRateUnit.resize(_nInputPins);
-    _measurementUncertaintyAcceleration.resize(_nInputPins);
-    _measurementUncertaintyAccelerationUnit.resize(_nInputPins);
     initializeMountingAngles();
 }
 
@@ -768,19 +755,19 @@ void NAV::ImuFusion::initializeKalmanFilter()
     _processNoiseVariances.resize(2 * _nInputPins);
 
     // 𝜎_AngAcc Standard deviation of the noise on the angular acceleration state [rad/s²]
-    switch (_varAngularAccNoiseUnit)
+    switch (_pinData[0].varAngularAccNoiseUnit)
     {
-    case VarAngularAccNoiseUnit::rad2_s4:
-        _processNoiseVariances[0] = _varAngularAccNoise;
+    case PinData::AngularAccVarianceUnit::rad2_s4:
+        _processNoiseVariances[0] = _pinData[0].varAngularAccNoise;
         break;
-    case VarAngularAccNoiseUnit::deg2_s4:
-        _processNoiseVariances[0] = deg2rad(_varAngularAccNoise);
+    case PinData::AngularAccVarianceUnit::deg2_s4:
+        _processNoiseVariances[0] = deg2rad(_pinData[0].varAngularAccNoise);
         break;
-    case VarAngularAccNoiseUnit::deg_s2:
-        _processNoiseVariances[0] = deg2rad(_varAngularAccNoise).array().pow(2);
+    case PinData::AngularAccVarianceUnit::deg_s2:
+        _processNoiseVariances[0] = deg2rad(_pinData[0].varAngularAccNoise).array().pow(2);
         break;
-    case VarAngularAccNoiseUnit::rad_s2:
-        _processNoiseVariances[0] = _varAngularAccNoise.array().pow(2);
+    case PinData::AngularAccVarianceUnit::rad_s2:
+        _processNoiseVariances[0] = _pinData[0].varAngularAccNoise.array().pow(2);
         break;
     }
 
@@ -829,33 +816,33 @@ void NAV::ImuFusion::initializeKalmanFilter()
     // -------------------------------------------------- Measurement uncertainty matrix R -----------------------------------------------------
     _measurementNoiseVariances.resize(2 * _nInputPins);
 
-    for (size_t i = 0; i < _nInputPins; ++i)
+    for (size_t pinIndex = 0; pinIndex < _nInputPins; ++pinIndex)
     {
         // Measurement uncertainty for the angular rate (Variance σ²) in [(rad/s)^2, (rad/s)^2, (rad/s)^2]
-        switch (_measurementUncertaintyAngularRateUnit[i])
+        switch (_pinData[pinIndex].measurementUncertaintyAngularRateUnit)
         {
-        case MeasurementUncertaintyAngularRateUnit::rad_s:
-            _measurementNoiseVariances[2 * i] = (_measurementUncertaintyAngularRate.at(i)).array().pow(2);
+        case PinData::AngRateVarianceUnit::rad_s:
+            _measurementNoiseVariances[2 * pinIndex] = (_pinData[pinIndex].measurementUncertaintyAngularRate).array().pow(2);
             break;
-        case MeasurementUncertaintyAngularRateUnit::deg_s:
-            _measurementNoiseVariances[2 * i] = (deg2rad(_measurementUncertaintyAngularRate.at(i))).array().pow(2);
+        case PinData::AngRateVarianceUnit::deg_s:
+            _measurementNoiseVariances[2 * pinIndex] = (deg2rad(_pinData[pinIndex].measurementUncertaintyAngularRate)).array().pow(2);
             break;
-        case MeasurementUncertaintyAngularRateUnit::rad2_s2:
-            _measurementNoiseVariances[2 * i] = _measurementUncertaintyAngularRate.at(i);
+        case PinData::AngRateVarianceUnit::rad2_s2:
+            _measurementNoiseVariances[2 * pinIndex] = _pinData[pinIndex].measurementUncertaintyAngularRate;
             break;
-        case MeasurementUncertaintyAngularRateUnit::deg2_s2:
-            _measurementNoiseVariances[2 * i] = deg2rad((_measurementUncertaintyAngularRate.at(i)).cwiseSqrt()).array().pow(2);
+        case PinData::AngRateVarianceUnit::deg2_s2:
+            _measurementNoiseVariances[2 * pinIndex] = deg2rad((_pinData[pinIndex].measurementUncertaintyAngularRate).cwiseSqrt()).array().pow(2);
             break;
         }
 
         // Measurement uncertainty for the acceleration (Variance σ²) in [(m^2)/(s^4), (m^2)/(s^4), (m^2)/(s^4)]
-        switch (_measurementUncertaintyAccelerationUnit[i])
+        switch (_pinData[pinIndex].measurementUncertaintyAccelerationUnit)
         {
-        case MeasurementUncertaintyAccelerationUnit::m2_s4:
-            _measurementNoiseVariances[1 + 2 * i] = _measurementUncertaintyAcceleration.at(i);
+        case PinData::AccelerationVarianceUnit::m2_s4:
+            _measurementNoiseVariances[1 + 2 * pinIndex] = _pinData[pinIndex].measurementUncertaintyAcceleration;
             break;
-        case MeasurementUncertaintyAccelerationUnit::m_s2:
-            _measurementNoiseVariances[1 + 2 * i] = (_measurementUncertaintyAcceleration.at(i)).array().pow(2);
+        case PinData::AccelerationVarianceUnit::m_s2:
+            _measurementNoiseVariances[1 + 2 * pinIndex] = (_pinData[pinIndex].measurementUncertaintyAcceleration).array().pow(2);
             break;
         }
     }
