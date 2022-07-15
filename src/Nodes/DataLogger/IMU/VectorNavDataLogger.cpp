@@ -15,9 +15,8 @@ namespace nm = NAV::NodeManager;
 #include <imgui_internal.h>
 
 NAV::VectorNavDataLogger::VectorNavDataLogger()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _fileType = FileType::BINARY;

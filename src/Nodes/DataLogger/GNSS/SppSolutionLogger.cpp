@@ -13,9 +13,8 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/GNSS/SppSolution.hpp"
 
 NAV::SppSolutionLogger::SppSolutionLogger()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _fileType = FileType::CSV;

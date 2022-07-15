@@ -12,10 +12,8 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/GNSS/EmlidObs.hpp"
 
 NAV::EmlidFile::EmlidFile()
-    : _sensor(typeStatic())
+    : Node(typeStatic()), _sensor(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;

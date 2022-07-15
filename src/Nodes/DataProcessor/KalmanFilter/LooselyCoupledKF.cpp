@@ -34,9 +34,8 @@ constexpr double SCALE_FACTOR_ACCELERATION = 1e3 / NAV::InsConst::G_NORM;
 constexpr double SCALE_FACTOR_ANGULAR_RATE = 1e3;
 
 NAV::LooselyCoupledKF::LooselyCoupledKF()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;

@@ -23,9 +23,8 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/State/PosVelAtt.hpp"
 
 NAV::ImuSimulator::ImuSimulator()
+    : Imu(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;

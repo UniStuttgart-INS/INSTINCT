@@ -148,8 +148,9 @@ class Node
         Shutdown,       ///< Node is shutting down
     };
 
-    /// @brief Default constructor
-    Node();
+    /// @brief Constructor
+    /// @param[in] name Name of the node
+    Node(std::string name);
     /// @brief Destructor
     virtual ~Node();
     /// @brief Copy constructor

@@ -9,9 +9,8 @@ namespace nm = NAV::NodeManager;
 #include "internal/gui/widgets/imgui_ex.hpp"
 
 NAV::CsvFile::CsvFile()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;

@@ -11,9 +11,8 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/IMU/ImuObs.hpp"
 
 NAV::ImuFile::ImuFile()
+    : Imu(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;

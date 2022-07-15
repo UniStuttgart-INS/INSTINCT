@@ -13,10 +13,8 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/General/UartPacket.hpp"
 
 NAV::EmlidSensor::EmlidSensor()
-    : _sensor(typeStatic())
+    : Node(typeStatic()), _sensor(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;

@@ -14,7 +14,8 @@ namespace nm = NAV::NodeManager;
 #include <imgui_node_editor.h>
 namespace ed = ax::NodeEditor;
 
-NAV::Node::Node()
+NAV::Node::Node(std::string name)
+    : name(std::move(name))
 {
     _worker = std::thread(workerThread, this);
 }

@@ -17,9 +17,8 @@ namespace nm = NAV::NodeManager;
 #include "util/Time/TimeBase.hpp"
 
 NAV::Navio2Sensor::Navio2Sensor()
+    : Imu(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;

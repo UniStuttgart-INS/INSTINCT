@@ -7,9 +7,8 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/InsObs.hpp"
 
 NAV::Delay::Delay()
+    : Node(fmt::format("z^-{}", _delayLength))
 {
-    name = fmt::format("z^-{}", _delayLength);
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;

@@ -52,9 +52,8 @@ void from_json(const json& j, ErrorModel::RandomNumberGenerator& rng)
 // ---------------------------------------------------------- Member functions -------------------------------------------------------------
 
 NAV::ErrorModel::ErrorModel()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 812, 332 };

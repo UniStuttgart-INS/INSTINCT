@@ -13,9 +13,8 @@ namespace nm = NAV::NodeManager;
 #include "util/Vendor/Emlid/EmlidUtilities.hpp"
 
 NAV::UartPacketConverter::UartPacketConverter()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 340, 65 };

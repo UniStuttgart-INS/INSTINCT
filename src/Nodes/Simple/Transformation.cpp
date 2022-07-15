@@ -8,9 +8,8 @@ namespace nm = NAV::NodeManager;
 #include "Navigation/Transformations/Units.hpp"
 
 NAV::Transformation::Transformation()
+    : Node("to")
 {
-    name = "to";
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;

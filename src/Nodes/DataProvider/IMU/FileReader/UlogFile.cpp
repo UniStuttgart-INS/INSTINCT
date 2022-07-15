@@ -20,9 +20,8 @@ namespace nm = NAV::NodeManager;
 // ----------------------------------------------------------- Basic Node Functions --------------------------------------------------------------
 
 NAV::UlogFile::UlogFile()
+    : Imu(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;

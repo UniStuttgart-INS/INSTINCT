@@ -44,9 +44,8 @@ void from_json(const json& j, Demo::DemoData& data)
 } // namespace NAV
 
 NAV::Demo::Demo()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
