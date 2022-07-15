@@ -428,7 +428,8 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                     satSys = BDS;
                     break;
                 case sensors::vectornav::SatSys::IMES:
-                    skipMeasurement = true; // not in GnssObs
+                    LOG_TRACE("VectorNav SatRawElement satellite system '{}' is not supported yet. Skipping measurement.", satRaw.sys);
+                    skipMeasurement = true;
                     break;
                 case sensors::vectornav::SatSys::QZSS:
                     satSys = QZSS;
@@ -437,6 +438,7 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                     satSys = GLO;
                     break;
                 default: // IRNSS not in vectorNav
+                    LOG_TRACE("VectorNav SatRawElement satellite system '{}' is not supported yet. Skipping measurement.", satRaw.sys);
                     skipMeasurement = true;
                     break;
                 }
@@ -480,6 +482,7 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             code = Code::G1W;
                             break;
                         default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
                             skipMeasurement = true;
                             break;
                         }
@@ -519,6 +522,7 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             code = Code::G2W;
                             break;
                         default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
                             skipMeasurement = true;
                             break;
                         }
@@ -537,11 +541,13 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             code = Code::G5X;
                             break;
                         default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
                             skipMeasurement = true;
                             break;
                         }
                         break;
-                    default: // other frequencies in Freq
+                    default:
+                        LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq);
                         skipMeasurement = true;
                         break;
                     }
@@ -557,6 +563,7 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             code = Code::S1C;
                             break;
                         default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
                             skipMeasurement = true;
                             break;
                         }
@@ -575,11 +582,13 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             code = Code::S5X;
                             break;
                         default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
                             skipMeasurement = true;
                             break;
                         }
                         break;
-                    default: // other frequencies in Freq
+                    default:
+                        LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq);
                         skipMeasurement = true;
                         break;
                     }
@@ -607,6 +616,7 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             code = Code::E1Z;
                             break;
                         default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
                             skipMeasurement = true;
                             break;
                         }
@@ -625,6 +635,7 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             code = Code::E8X;
                             break;
                         default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
                             skipMeasurement = true;
                             break;
                         }
@@ -643,6 +654,7 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             code = Code::E6X;
                             break;
                         default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
                             skipMeasurement = true;
                             break;
                         }
@@ -661,6 +673,7 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             code = Code::E5X;
                             break;
                         default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
                             skipMeasurement = true;
                             break;
                         }
@@ -679,11 +692,13 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             code = Code::E7X;
                             break;
                         default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
                             skipMeasurement = true;
                             break;
                         }
                         break;
-                    default: // other frequencies in Freq
+                    default:
+                        LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq);
                         skipMeasurement = true;
                         break;
                     }
@@ -705,6 +720,7 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             code = Code::B2X;
                             break;
                         default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
                             skipMeasurement = true;
                             break;
                         }
@@ -726,6 +742,7 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             code = Code::B6X;
                             break;
                         default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
                             skipMeasurement = true;
                             break;
                         }
@@ -744,11 +761,13 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             code = Code::B7X;
                             break;
                         default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
                             skipMeasurement = true;
                             break;
                         }
                         break;
-                    default: // other frequencies in Freq
+                    default:
+                        LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq);
                         skipMeasurement = true;
                         break;
                     }
@@ -773,6 +792,7 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             code = Code::J1X;
                             break;
                         default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
                             skipMeasurement = true;
                             break;
                         }
@@ -791,6 +811,7 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             code = Code::J2X;
                             break;
                         default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
                             skipMeasurement = true;
                             break;
                         }
@@ -809,6 +830,7 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             code = Code::J5X;
                             break;
                         default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
                             skipMeasurement = true;
                             break;
                         }
@@ -827,11 +849,13 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             code = Code::J6X;
                             break;
                         default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
                             skipMeasurement = true;
                             break;
                         }
                         break;
-                    default: // other frequencies in Freq
+                    default:
+                        LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq);
                         skipMeasurement = true;
                         break;
                     }
@@ -850,6 +874,7 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             code = Code::R1P;
                             break;
                         default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
                             skipMeasurement = true;
                             break;
                         }
@@ -865,11 +890,13 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             code = Code::R2P;
                             break;
                         default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
                             skipMeasurement = true;
                             break;
                         }
                         break;
-                    default: // other frequencies in Freq
+                    default:
+                        LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq);
                         skipMeasurement = true;
                         break;
                     }

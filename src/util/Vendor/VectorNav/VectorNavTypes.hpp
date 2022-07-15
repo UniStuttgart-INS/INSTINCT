@@ -7,6 +7,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <iostream>
 
 namespace NAV::vendor::vectornav
 {
@@ -280,6 +281,59 @@ struct RawMeas
             ABC = 14,         ///< A+B+C (GAL)
         };
 
+        friend std::ostream& operator<<(std::ostream& os, const Chan& chan)
+        {
+            switch (chan)
+            {
+            case Chan::P_Code:
+                os << "P-Code";
+                break;
+            case Chan::CA_Code:
+                os << "C/A-Code or C-Chan";
+                break;
+            case Chan::SemiCodeless:
+                os << "Semi-codeless";
+                break;
+            case Chan::Y_Code:
+                os << "Y-Code";
+                break;
+            case Chan::M_Code:
+                os << "M-Code";
+                break;
+            case Chan::Codeless:
+                os << "Codeless";
+                break;
+            case Chan::A_Chan:
+                os << "A Chan";
+                break;
+            case Chan::B_Chan:
+                os << "B Chan";
+                break;
+            case Chan::I_Chan:
+                os << "I Chan";
+                break;
+            case Chan::Q_Chan:
+                os << "Q Chan";
+                break;
+            case Chan::M_Chan:
+                os << "M Chan or D Chan";
+                break;
+            case Chan::L_Chan:
+                os << "L Chan or P Chan";
+                break;
+            case Chan::BC_Chan:
+                os << "B+C Chan, I+Q Chan, M+L Chan or D+P Chan";
+                break;
+            case Chan::Z_Tracking:
+                os << "based on Z-tracking";
+                break;
+            case Chan::ABC:
+                os << "A+B+C";
+                break;
+            }
+            return os;
+        }
+
         /// @brief Frequency indicator
         enum class Freq : uint8_t
         {
@@ -291,6 +345,35 @@ struct RawMeas
             E5b = 5,       ///< E5b(GAL), B2(BDS)
             E5a = 6,       ///< E5a+b(GAL)
         };
+
+        friend std::ostream& operator<<(std::ostream& os, const Freq& freq)
+        {
+            switch (freq)
+            {
+            case Freq::RxChannel:
+                os << "Rx Channel";
+                break;
+            case Freq::L1:
+                os << "L1, G1, E2-L1-E1 or B1";
+                break;
+            case Freq::L2:
+                os << "L2 or G2";
+                break;
+            case Freq::L5:
+                os << "L5 or E5a";
+                break;
+            case Freq::E6:
+                os << "E6, LEX or B3";
+                break;
+            case Freq::E5b:
+                os << "E5b or B2";
+                break;
+            case Freq::E5a:
+                os << "E5a+b";
+                break;
+            }
+            return os;
+        }
 
         /// @brief Default Constructor
         SatRawElement() = default;
