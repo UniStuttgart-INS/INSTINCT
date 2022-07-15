@@ -170,10 +170,10 @@ class ImuFusion : public Imu
     /// @brief Calculates the state-transition-matrix 𝚽
     /// @param[in] dt Time difference between two successive measurements
     /// @return State-transition-matrix 𝚽
-    [[nodiscard]] Eigen::MatrixXd initialStateTransitionMatrix_Phi(double& dt) const;
+    [[nodiscard]] Eigen::MatrixXd initialStateTransitionMatrix_Phi(double dt) const;
 
     /// @brief Calculates the state-transition-matrix 𝚽
-    /// @param[in] Phi State transition matrix from previous iteration
+    /// @param[in, out] Phi State transition matrix from previous iteration. Returns the matrix for the current iteration.
     /// @param[in] dt Time difference between two successive measurements
     /// @return State-transition-matrix 𝚽
     [[nodiscard]] static Eigen::MatrixXd stateTransitionMatrix_Phi(Eigen::MatrixXd& Phi, double& dt);
@@ -189,7 +189,7 @@ class ImuFusion : public Imu
     /// @param[in] DCM_gyro Rotation matrix of mounting angles of a gyroscope w.r.t. a common reference
     /// @param[in] pinIndex Index of pin to identify sensor
     /// @return Design matrix H
-    [[nodiscard]] Eigen::MatrixXd designMatrix_H(Eigen::Matrix3d& DCM_accel, Eigen::Matrix3d& DCM_gyro, size_t pinIndex) const;
+    [[nodiscard]] Eigen::MatrixXd designMatrix_H(const Eigen::Matrix3d& DCM_accel, const Eigen::Matrix3d& DCM_gyro, size_t pinIndex) const;
 
     /// @brief Calculates the adaptive measurement noise matrix R
     /// @param[in] alpha Forgetting factor (i.e. weight on previous estimates), 0 < alpha < 1
@@ -200,10 +200,10 @@ class ImuFusion : public Imu
     /// @return Measurement noise matrix R
     /// @note See https://arxiv.org/pdf/1702.00884.pdf
     [[nodiscard]] static Eigen::MatrixXd measurementNoiseMatrix_R_adaptive(double alpha,
-                                                                           Eigen::MatrixXd& R,
-                                                                           Eigen::VectorXd& e,
-                                                                           Eigen::MatrixXd& H,
-                                                                           Eigen::MatrixXd& P);
+                                                                           const Eigen::MatrixXd& R,
+                                                                           const Eigen::VectorXd& e,
+                                                                           const Eigen::MatrixXd& H,
+                                                                           const Eigen::MatrixXd& P);
 
     /// @brief Calculates the initial measurement noise matrix R
     /// @param[in] R Measurement noise uncertainty matrix for sensor at 'pinIndex'
@@ -217,10 +217,10 @@ class ImuFusion : public Imu
     /// @param[in] varAcc Initial variance (3D) of the Acceleration state in [(m^2)/(s^4)]
     /// @param[in] varJerk Initial variance (3D) of the Jerk state in [(m^2)/(s^6)]
     /// @return The (_numStates) x (_numStates) matrix of initial state variances
-    [[nodiscard]] Eigen::MatrixXd initialErrorCovarianceMatrix_P0(Eigen::Vector3d& varAngRate,
-                                                                  Eigen::Vector3d& varAngAcc,
-                                                                  Eigen::Vector3d& varAcc,
-                                                                  Eigen::Vector3d& varJerk) const;
+    [[nodiscard]] Eigen::MatrixXd initialErrorCovarianceMatrix_P0(const Eigen::Vector3d& varAngRate,
+                                                                  const Eigen::Vector3d& varAngAcc,
+                                                                  const Eigen::Vector3d& varAcc,
+                                                                  const Eigen::Vector3d& varJerk) const;
 
     /// @brief Combines the signals
     /// @param[in] imuObs Imu observation

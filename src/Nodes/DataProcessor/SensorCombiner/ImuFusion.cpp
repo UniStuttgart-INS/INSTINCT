@@ -630,8 +630,8 @@ void NAV::ImuFusion::initializeMountingAngles()
         _imuRotations_gyro[i] = Eigen::Matrix3d::Zero();
 
         // Assigning nan for an efficient check during runtime, whether mounting angles have been read for sensor i
-        _imuRotations_accel[i](0, 0) = std::nan("1");
-        _imuRotations_gyro[i](0, 0) = std::nan("2");
+        _imuRotations_accel[i](0, 0) = std::nan("");
+        _imuRotations_gyro[i](0, 0) = std::nan("");
     }
 }
 
@@ -1003,7 +1003,7 @@ void NAV::ImuFusion::combineSignals(const std::shared_ptr<const ImuObs>& imuObs)
 //                                                         Kalman Filter Matrices
 // #########################################################################################################################################
 
-Eigen::MatrixXd NAV::ImuFusion::initialStateTransitionMatrix_Phi(double& dt) const
+Eigen::MatrixXd NAV::ImuFusion::initialStateTransitionMatrix_Phi(double dt) const
 {
     Eigen::MatrixXd Phi = Eigen::MatrixXd::Identity(_numStates, _numStates);
 
@@ -1021,10 +1021,10 @@ Eigen::MatrixXd NAV::ImuFusion::stateTransitionMatrix_Phi(Eigen::MatrixXd& Phi, 
     return Phi;
 }
 
-Eigen::MatrixXd NAV::ImuFusion::initialErrorCovarianceMatrix_P0(Eigen::Vector3d& varAngRate,
-                                                                Eigen::Vector3d& varAngAcc,
-                                                                Eigen::Vector3d& varAcc,
-                                                                Eigen::Vector3d& varJerk) const
+Eigen::MatrixXd NAV::ImuFusion::initialErrorCovarianceMatrix_P0(const Eigen::Vector3d& varAngRate,
+                                                                const Eigen::Vector3d& varAngAcc,
+                                                                const Eigen::Vector3d& varAcc,
+                                                                const Eigen::Vector3d& varJerk) const
 {
     Eigen::MatrixXd P = Eigen::MatrixXd::Zero(_numStates, _numStates);
 
@@ -1068,7 +1068,7 @@ Eigen::MatrixXd NAV::ImuFusion::processNoiseMatrix_Q(Eigen::MatrixXd& Q, double&
     return Q;
 }
 
-Eigen::MatrixXd NAV::ImuFusion::designMatrix_H(Eigen::Matrix3d& DCM_accel, Eigen::Matrix3d& DCM_gyro, size_t pinIndex) const
+Eigen::MatrixXd NAV::ImuFusion::designMatrix_H(const Eigen::Matrix3d& DCM_accel, const Eigen::Matrix3d& DCM_gyro, size_t pinIndex) const
 {
     Eigen::MatrixXd H = Eigen::MatrixXd::Zero(_numMeasurements, _numStates);
 
@@ -1090,7 +1090,7 @@ Eigen::MatrixXd NAV::ImuFusion::designMatrix_H(Eigen::Matrix3d& DCM_accel, Eigen
     return H;
 }
 
-Eigen::MatrixXd NAV::ImuFusion::measurementNoiseMatrix_R_adaptive(double alpha, Eigen::MatrixXd& R, Eigen::VectorXd& e, Eigen::MatrixXd& H, Eigen::MatrixXd& P)
+Eigen::MatrixXd NAV::ImuFusion::measurementNoiseMatrix_R_adaptive(double alpha, const Eigen::MatrixXd& R, const Eigen::VectorXd& e, const Eigen::MatrixXd& H, const Eigen::MatrixXd& P)
 {
     return alpha * R + (1.0 - alpha) * (e * e.transpose() + H * P * H.transpose());
 }
