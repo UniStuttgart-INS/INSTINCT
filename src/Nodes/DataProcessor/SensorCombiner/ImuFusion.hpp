@@ -173,16 +173,14 @@ class ImuFusion : public Imu
     [[nodiscard]] Eigen::MatrixXd initialStateTransitionMatrix_Phi(double dt) const;
 
     /// @brief Calculates the state-transition-matrix 𝚽
-    /// @param[in, out] Phi State transition matrix from previous iteration. Returns the matrix for the current iteration.
+    /// @param[in] Phi State transition matrix from previous iteration. Returns the matrix for the current iteration.
     /// @param[in] dt Time difference between two successive measurements
-    /// @return State-transition-matrix 𝚽
-    [[nodiscard]] static Eigen::MatrixXd stateTransitionMatrix_Phi(Eigen::MatrixXd& Phi, double& dt);
+    void static stateTransitionMatrix_Phi(Eigen::MatrixXd& Phi, double dt);
 
     /// @brief Calculates the process noise matrix Q
     /// @param[in] Q Process noise matrix of the previous time step
     /// @param[in] dt Time difference between two successive measurements
-    /// @return Process noise matrix Q
-    [[nodiscard]] Eigen::MatrixXd processNoiseMatrix_Q(Eigen::MatrixXd& Q, double& dt) const;
+    void processNoiseMatrix_Q(Eigen::MatrixXd& Q, double dt) const;
 
     /// @brief Calculates the design matrix H
     /// @param[in] DCM_accel Rotation matrix of mounting angles of an accelerometer w.r.t. a common reference
@@ -208,8 +206,7 @@ class ImuFusion : public Imu
     /// @brief Calculates the initial measurement noise matrix R
     /// @param[in] R Measurement noise uncertainty matrix for sensor at 'pinIndex'
     /// @param[in] pinIndex Index of pin to identify sensor
-    /// @return Initial measurement noise matrix R
-    [[nodiscard]] Eigen::MatrixXd measurementNoiseMatrix_R(Eigen::MatrixXd& R, size_t& pinIndex) const;
+    void measurementNoiseMatrix_R(Eigen::MatrixXd& R, size_t pinIndex) const;
 
     /// @brief Initial error covariance matrix P_0
     /// @param[in] varAngRate Initial variance (3D) of the Angular Rate state in [rad²/s²]

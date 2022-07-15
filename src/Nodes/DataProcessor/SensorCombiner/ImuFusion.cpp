@@ -846,7 +846,7 @@ void NAV::ImuFusion::initializeKalmanFilter()
     LOG_DATA("kalmanFilter.P =\n{}", _kalmanFilter.P);
     _kalmanFilter.Phi = initialStateTransitionMatrix_Phi(dtInit);
     LOG_DATA("kalmanFilter.Phi =\n{}", _kalmanFilter.Phi);
-    _kalmanFilter.Q = processNoiseMatrix_Q(_kalmanFilter.Q, dtInit);
+    processNoiseMatrix_Q(_kalmanFilter.Q, dtInit);
     LOG_DATA("kalmanFilter.Q =\n{}", _kalmanFilter.Q);
 }
 
@@ -872,9 +872,9 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
     _latestTimestamp = imuObs->insTime.value();
     LOG_DATA("dt = {}", dt);
 
-    _kalmanFilter.Phi = stateTransitionMatrix_Phi(_kalmanFilter.Phi, dt);
+    stateTransitionMatrix_Phi(_kalmanFilter.Phi, dt);
     LOG_DATA("kalmanFilter.Phi =\n{}", _kalmanFilter.Phi);
-    _kalmanFilter.Q = processNoiseMatrix_Q(_kalmanFilter.Q, dt);
+    processNoiseMatrix_Q(_kalmanFilter.Q, dt);
     LOG_DATA("kalmanFilter.Q =\n{}", _kalmanFilter.Q);
 
     if (_checkKalmanMatricesRanks)
@@ -918,7 +918,7 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
         _kalmanFilter.H = designMatrix_H(DCM_accel, DCM_gyro, pinIndex);
         LOG_DATA("kalmanFilter.H =\n", _kalmanFilter.H);
 
-        _kalmanFilter.R = measurementNoiseMatrix_R(_kalmanFilter.R, pinIndex);
+        measurementNoiseMatrix_R(_kalmanFilter.R, pinIndex);
         LOG_DATA("{}: kalmanFilter.R =\n{}", nameId(), _kalmanFilter.R);
 
         if (_checkKalmanMatricesRanks)
@@ -936,7 +936,7 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
 
 void NAV::ImuFusion::combineSignals(const std::shared_ptr<const ImuObs>& imuObs)
 {
-    LOG_TRACE("{}: called", nameId());
+    LOG_DATA("{}: called", nameId());
 
     auto imuObsFiltered = std::make_shared<ImuObs>(this->_imuPos);
     auto imuRelativeBiases = std::make_shared<LcKfInsGnssErrors>();
@@ -1013,12 +1013,10 @@ Eigen::MatrixXd NAV::ImuFusion::initialStateTransitionMatrix_Phi(double dt) cons
     return Phi;
 }
 
-Eigen::MatrixXd NAV::ImuFusion::stateTransitionMatrix_Phi(Eigen::MatrixXd& Phi, double& dt)
+void NAV::ImuFusion::stateTransitionMatrix_Phi(Eigen::MatrixXd& Phi, double dt)
 {
     Phi.block<3, 3>(0, 3).diagonal().setConstant(dt); // dependency of angular rate on angular acceleration
     Phi.block<3, 3>(6, 9).diagonal().setConstant(dt); // dependency of acceleration on jerk
-
-    return Phi;
 }
 
 Eigen::MatrixXd NAV::ImuFusion::initialErrorCovarianceMatrix_P0(const Eigen::Vector3d& varAngRate,
@@ -1043,7 +1041,7 @@ Eigen::MatrixXd NAV::ImuFusion::initialErrorCovarianceMatrix_P0(const Eigen::Vec
     return P;
 }
 
-Eigen::MatrixXd NAV::ImuFusion::processNoiseMatrix_Q(Eigen::MatrixXd& Q, double& dt) const
+void NAV::ImuFusion::processNoiseMatrix_Q(Eigen::MatrixXd& Q, double dt) const
 {
     // Integrated Random Walk of the angular rate
     Q.block<3, 3>(0, 0).diagonal() = _processNoiseVariances.at(0) / 3. * std::pow(dt, 3);
@@ -1064,8 +1062,6 @@ Eigen::MatrixXd NAV::ImuFusion::processNoiseMatrix_Q(Eigen::MatrixXd& Q, double&
         Q.block<3, 3>(i, i).diagonal() = _processNoiseVariances.at(j) * dt;             // variance for the process noise of the angular rate
         Q.block<3, 3>(i + 3, i + 3).diagonal() = _processNoiseVariances.at(j + 1) * dt; // variance for the process noise of the acceleration
     }
-
-    return Q;
 }
 
 Eigen::MatrixXd NAV::ImuFusion::designMatrix_H(const Eigen::Matrix3d& DCM_accel, const Eigen::Matrix3d& DCM_gyro, size_t pinIndex) const
@@ -1095,10 +1091,8 @@ Eigen::MatrixXd NAV::ImuFusion::measurementNoiseMatrix_R_adaptive(double alpha, 
     return alpha * R + (1.0 - alpha) * (e * e.transpose() + H * P * H.transpose());
 }
 
-Eigen::MatrixXd NAV::ImuFusion::measurementNoiseMatrix_R(Eigen::MatrixXd& R, size_t& pinIndex) const
+void NAV::ImuFusion::measurementNoiseMatrix_R(Eigen::MatrixXd& R, size_t pinIndex) const
 {
     R.block<3, 3>(0, 0).diagonal() = _measurementNoiseVariances.at(2 * pinIndex);
     R.block<3, 3>(3, 3).diagonal() = _measurementNoiseVariances.at(2 * pinIndex + 1);
-
-    return R;
 }
