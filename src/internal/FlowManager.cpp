@@ -133,7 +133,14 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
         gui::saveLastAction();
     }
 
-    LOG_INFO("Loaded flow file: {}", filepath);
+    std::string path = filepath;
+    if (path.find(GetProgramRootPath().string()) != std::string::npos)
+    {
+        path = path.substr(GetProgramRootPath().string().size());
+        if (path.starts_with('\\') || path.starts_with('/')) { path = path.substr(1); }
+    }
+
+    LOG_INFO("Loaded flow file: {}", path);
 
     return loadSuccessful;
 }

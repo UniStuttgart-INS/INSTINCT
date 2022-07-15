@@ -45,10 +45,18 @@ std::string NAV::ImuFile::category()
 
 void NAV::ImuFile::guiConfig()
 {
-    if (FileReader::guiConfig(".csv", { ".csv" }, size_t(id), nameId()))
+    if (auto res = FileReader::guiConfig(".csv,.*", { ".csv" }, size_t(id), nameId()))
     {
+        LOG_DEBUG("{}: Path changed to {}", nameId(), _path);
         flow::ApplyChanges();
-        deinitializeNode();
+        if (res == FileReader::PATH_CHANGED)
+        {
+            initializeNode();
+        }
+        else
+        {
+            deinitializeNode();
+        }
     }
 
     Imu::guiConfig();

@@ -7,13 +7,14 @@
 
 #include "internal/Node/Node.hpp"
 #include "Nodes/DataLogger/Protocol/FileWriter.hpp"
+#include "Nodes/DataLogger/Protocol/CommonLog.hpp"
 
 namespace NAV
 {
 class NodeData;
 
 /// Data Logger for PosVelAtt observations
-class PosVelAttLogger : public Node, public FileWriter
+class PosVelAttLogger : public Node, public FileWriter, public CommonLog
 {
   public:
     /// @brief Default constructor

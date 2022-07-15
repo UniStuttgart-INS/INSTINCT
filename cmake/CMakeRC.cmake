@@ -28,7 +28,9 @@ macro(run_CMakeRC)
     instinct
     resources/images/BlueprintBackground.png
     resources/images/INSTINCT_Logo_Text_white_small.png
-    resources/images/INSTINCT_Logo_Text_black_small.png)
+    resources/images/INSTINCT_Logo_Text_black_small.png
+    resources/images/INS_logo_rectangular_white_small.png
+    resources/images/INS_logo_rectangular_black_small.png)
 
   set_target_properties(instinct-resources PROPERTIES CXX_CLANG_TIDY "")
   set_target_properties(instinct-resources PROPERTIES CXX_CPPCHECK "")

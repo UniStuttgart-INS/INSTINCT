@@ -312,7 +312,7 @@ bool NAV::ImuIntegrator::initialize()
     _posVelAttStates.clear();
     _lckfErrors.reset();
 
-    _time__init = InsTime();
+    _time__init.reset();
     _timeSinceStartup__init = 0;
 
     LOG_DEBUG("ImuIntegrator initialized");

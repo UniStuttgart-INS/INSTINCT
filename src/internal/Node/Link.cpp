@@ -8,7 +8,6 @@ void NAV::to_json(json& j, const Link& link)
         { "id", size_t(link.id) },
         { "startPinId", size_t(link.startPinId) },
         { "endPinId", size_t(link.endPinId) },
-        { "color", link.color },
     };
 }
 void NAV::from_json(const json& j, Link& link)
@@ -22,9 +21,4 @@ void NAV::from_json(const json& j, Link& link)
 
     j.at("endPinId").get_to(id);
     link.endPinId = id;
-
-    if (j.contains("color"))
-    {
-        j.at("color").get_to(link.color);
-    }
 }

@@ -1,7 +1,7 @@
-/// @file KvhDataLogger.hpp
-/// @brief Data Logger for Kvh observations
+/// @file LcKfInsGnssErrorLogger.hpp
+/// @brief Data Logger for INS/GNSS LCKF Errors
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2020-06-30
+/// @date 2022-06-22
 
 #pragma once
 
@@ -13,22 +13,22 @@ namespace NAV
 {
 class NodeData;
 
-/// Data Logger for KVH observations
-class KvhDataLogger : public Node, public FileWriter, public CommonLog
+/// Data Logger for INS/GNSS LCKF Errors
+class LcKfInsGnssErrorLogger : public Node, public FileWriter, public CommonLog
 {
   public:
     /// @brief Default constructor
-    KvhDataLogger();
+    LcKfInsGnssErrorLogger();
     /// @brief Destructor
-    ~KvhDataLogger() override;
+    ~LcKfInsGnssErrorLogger() override;
     /// @brief Copy constructor
-    KvhDataLogger(const KvhDataLogger&) = delete;
+    LcKfInsGnssErrorLogger(const LcKfInsGnssErrorLogger&) = delete;
     /// @brief Move constructor
-    KvhDataLogger(KvhDataLogger&&) = delete;
+    LcKfInsGnssErrorLogger(LcKfInsGnssErrorLogger&&) = delete;
     /// @brief Copy assignment operator
-    KvhDataLogger& operator=(const KvhDataLogger&) = delete;
+    LcKfInsGnssErrorLogger& operator=(const LcKfInsGnssErrorLogger&) = delete;
     /// @brief Move assignment operator
-    KvhDataLogger& operator=(KvhDataLogger&&) = delete;
+    LcKfInsGnssErrorLogger& operator=(LcKfInsGnssErrorLogger&&) = delete;
 
     /// @brief String representation of the Class Type
     [[nodiscard]] static std::string typeStatic();

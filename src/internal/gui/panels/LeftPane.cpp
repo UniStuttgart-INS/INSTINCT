@@ -24,12 +24,18 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
 
     bool paneActive = false;
 
-    ImGui::BeginChild("Selection", ImVec2(paneWidth, 0));
+    float insLogoHeight = paneWidth * (1.0F / 3.0F) * 2967.0F / 4073.0F;
+    float childHeight = ImGui::GetContentRegionAvail().y - insLogoHeight;
+
+    ImGui::BeginGroup();
+
+    ImGui::BeginChild("Selection", ImVec2(paneWidth, childHeight));
 
     paneWidth = ImGui::GetContentRegionAvailWidth();
 
     float colSum = ImGui::GetStyle().Colors[ImGuiCol_WindowBg].x + ImGui::GetStyle().Colors[ImGuiCol_WindowBg].y + ImGui::GetStyle().Colors[ImGuiCol_WindowBg].z;
     ImTextureID instinctLogo = NodeEditorApplication::m_InstinctLogo.at(colSum > 2.0F ? 1 : 0);
+    ImTextureID insLogo = NodeEditorApplication::m_InsLogo.at(colSum > 2.0F ? 1 : 0);
 
     ImGui::Image(instinctLogo, ImVec2(paneWidth, paneWidth * 3000.0F / 13070.0F));
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0F);
@@ -151,7 +157,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
             auto iconPanelPos = start + ImVec2(paneWidth - ImGui::GetStyle().FramePadding.x - ImGui::GetStyle().IndentSpacing - ImGui::GetStyle().ItemInnerSpacing.x * 1, ImGui::GetTextLineHeight() / 2);
             ImGui::GetWindowDrawList()->AddText(
                 ImVec2(iconPanelPos.x - textSize.x - ImGui::GetStyle().ItemInnerSpacing.x, start.y),
-                IM_COL32(255, 255, 255, 255), id.c_str(), nullptr);
+                colSum > 2.0F ? IM_COL32(0, 0, 0, 255) : IM_COL32(255, 255, 255, 255), id.c_str(), nullptr);
 
             ImGui::PopID();
         }
@@ -195,6 +201,10 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
     }
 
     ImGui::EndChild();
+
+    ImGui::Image(insLogo, ImVec2(insLogoHeight * 4073.0F / 2967.0F, insLogoHeight));
+
+    ImGui::EndGroup();
 
     return paneActive;
 }

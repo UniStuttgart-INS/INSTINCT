@@ -33,9 +33,8 @@ class Link
     /// @param[in] id Unique Id of the Link
     /// @param[in] startPinId Id of the start pin of the link
     /// @param[in] endPinId Id of the end pin of the link
-    /// @param[in] color Color of the link
-    Link(ax::NodeEditor::LinkId id, ax::NodeEditor::PinId startPinId, ax::NodeEditor::PinId endPinId, ImColor color)
-        : id(id), startPinId(startPinId), endPinId(endPinId), color(color) {}
+    Link(ax::NodeEditor::LinkId id, ax::NodeEditor::PinId startPinId, ax::NodeEditor::PinId endPinId)
+        : id(id), startPinId(startPinId), endPinId(endPinId) {}
 
     /// Unique Id of the Link
     ax::NodeEditor::LinkId id;
@@ -43,8 +42,6 @@ class Link
     ax::NodeEditor::PinId startPinId;
     /// Id of the end pin of the link
     ax::NodeEditor::PinId endPinId;
-    /// Color of the link
-    ImColor color;
 };
 
 /// @brief Converts the provided link into a json object

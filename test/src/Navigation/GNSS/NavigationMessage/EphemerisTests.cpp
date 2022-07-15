@@ -107,6 +107,8 @@ TEST_CASE("[Ephemeris] GPS Ephemeris calc orbit Skydel data", "[Ephemeris]")
         {
             continue;
         }
+        LOG_DATA("eph.toc {} - {}", eph.toc.toGPSweekTow(), eph.toc.toYMDHMS(GPST));
+        LOG_DATA("recvTime {} - {}", recvTime.toGPSweekTow(), recvTime.toYMDHMS(GPST));
         LOG_DATA("toe {}", toe);
 
         auto satClk = eph.calcSatelliteClockCorrections(recvTime, distance, G01);
@@ -244,7 +246,7 @@ TEST_CASE("[Ephemeris] GAL Ephemeris calc orbit Skydel data", "[Ephemeris]")
     }
 }
 
-// TEST_CASE("[Ephemeris] GLO Ephemeris calc orbit Skydel data", "[Ephemeris][Debug]")
+// TEST_CASE("[Ephemeris] GLO Ephemeris calc orbit Skydel data", "[Ephemeris]")
 // {
 //     Logger consoleSink;
 

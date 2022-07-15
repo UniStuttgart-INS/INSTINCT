@@ -491,12 +491,6 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
 
     size_t nMeas = calcData.size();
 
-    if (nMeas < 4)
-    {
-        LOG_ERROR("{}: Cannot calculate position because only {} valid measurements. Try changing filter settings or reposition your antenna.", nameId(), nMeas);
-        return;
-    }
-
     // Find all observations providing a doppler measurement (for velocity calculation)
     size_t nDopplerMeas = 0;
     for (size_t i = 0; i < nMeas; i++)
@@ -589,6 +583,17 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
 #endif
     }
 
+    LOG_DATA("{}: nMeas {}, skipCount {}", nameId(), nMeas, skipMeas.size());
+    if (nMeas - skipMeas.size() < 4)
+    {
+        LOG_ERROR("{}: [{} GPST] Cannot calculate position because only {} valid measurements. Try changing filter settings or reposition your antenna.",
+                  nameId(), (gnssObs->insTime.value() + std::chrono::seconds(gnssObs->insTime->leapGps2UTC())).toYMDHMS(), nMeas - skipMeas.size());
+        sppSol->nSatellitesPosition = nMeas - skipMeas.size();
+        sppSol->nSatellitesVelocity = nDopplerMeas - skipMeas.size();
+        invokeCallbacks(OUTPUT_PORT_INDEX_SPPSOL, sppSol);
+        return;
+    }
+
     for (size_t o = 0; o < 10; o++)
     {
         LOG_DATA("{}: Iteration {}", nameId(), o);
@@ -636,6 +641,13 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
             {
                 LOG_DATA("{}:     [{}]     Measurement is skipped because of elevation mask of {}°", nameId(), o, rad2deg(_elevationMask));
                 skipMeas.insert(i);
+
+                if (nMeas - skipMeas.size() < 4)
+                {
+                    LOG_ERROR("{}: [{} GPST] Cannot calculate position because only {} valid measurements. Try changing filter settings or reposition your antenna.",
+                              nameId(), (gnssObs->insTime.value() + std::chrono::seconds(gnssObs->insTime->leapGps2UTC())).toYMDHMS(), nMeas - skipMeas.size());
+                    return;
+                }
 
 #ifdef TESTING
                 sppExtendedData.elevationMaskTriggered = true;
@@ -839,9 +851,16 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
         _e_position += lsq.solution.head<3>();
         _clkBias += lsq.solution(3) / InsConst::C;
         sppSol->nSatellitesPosition = ix;
-        sppSol->setPositionAndStdDev_e(_e_position, lsq.variance.topLeftCorner<3, 3>().cwiseSqrt());
+        if (ix > 4)
+        {
+            sppSol->setPositionAndStdDev_e(_e_position, lsq.variance.topLeftCorner<3, 3>().cwiseSqrt());
+            sppSol->clkBiasStdev = std::sqrt(lsq.variance(3, 3)) / InsConst::C;
+        }
+        else
+        {
+            sppSol->setPosition_e(_e_position);
+        }
         sppSol->clkBias = _clkBias;
-        sppSol->clkBiasStdev = std::sqrt(lsq.variance(3, 3)) / InsConst::C;
 
         bool solInaccurate = lsq.solution.norm() > 1e-4;
 
@@ -849,7 +868,8 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
 
         if (iv < 4)
         {
-            LOG_WARN("{}: Cannot calculate velocity because only {} valid doppler measurements. Try changing filter settings or reposition your antenna.", nameId(), iv);
+            LOG_WARN("{}: [{} GPST] Cannot calculate velocity because only {} valid doppler measurements. Try changing filter settings or reposition your antenna.",
+                     nameId(), (gnssObs->insTime.value() + std::chrono::seconds(gnssObs->insTime->leapGps2UTC())).toYMDHMS(), iv);
             continue;
         }
         // Difference between measured and estimated pseudorange rates
@@ -864,9 +884,16 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
         _e_velocity += lsq.solution.head<3>();
         _clkDrift += lsq.solution(3) / InsConst::C;
         sppSol->nSatellitesVelocity = iv;
-        sppSol->setVelocityAndStdDev_e(_e_velocity, lsq.variance.topLeftCorner<3, 3>().cwiseSqrt());
+        if (iv > 4)
+        {
+            sppSol->setVelocityAndStdDev_e(_e_velocity, lsq.variance.topLeftCorner<3, 3>().cwiseSqrt());
+            sppSol->clkDriftStdev = std::sqrt(lsq.variance(3, 3)) / InsConst::C;
+        }
+        else
+        {
+            sppSol->setVelocity_e(_e_velocity);
+        }
         sppSol->clkDrift = _clkDrift;
-        sppSol->clkDriftStdev = std::sqrt(lsq.variance(3, 3)) / InsConst::C;
 
         solInaccurate |= lsq.solution.norm() > 1e-4;
 

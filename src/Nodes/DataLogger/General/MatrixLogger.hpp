@@ -1,7 +1,7 @@
-/// @file KvhDataLogger.hpp
-/// @brief Data Logger for Kvh observations
+/// @file MatrixLogger.hpp
+/// @brief Data Logger for matrices
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2020-06-30
+/// @date 2022-06-27
 
 #pragma once
 
@@ -13,22 +13,22 @@ namespace NAV
 {
 class NodeData;
 
-/// Data Logger for KVH observations
-class KvhDataLogger : public Node, public FileWriter, public CommonLog
+/// Data Logger for PosVelAtt observations
+class MatrixLogger : public Node, public FileWriter, public CommonLog
 {
   public:
     /// @brief Default constructor
-    KvhDataLogger();
+    MatrixLogger();
     /// @brief Destructor
-    ~KvhDataLogger() override;
+    ~MatrixLogger() override;
     /// @brief Copy constructor
-    KvhDataLogger(const KvhDataLogger&) = delete;
+    MatrixLogger(const MatrixLogger&) = delete;
     /// @brief Move constructor
-    KvhDataLogger(KvhDataLogger&&) = delete;
+    MatrixLogger(MatrixLogger&&) = delete;
     /// @brief Copy assignment operator
-    KvhDataLogger& operator=(const KvhDataLogger&) = delete;
+    MatrixLogger& operator=(const MatrixLogger&) = delete;
     /// @brief Move assignment operator
-    KvhDataLogger& operator=(KvhDataLogger&&) = delete;
+    MatrixLogger& operator=(MatrixLogger&&) = delete;
 
     /// @brief String representation of the Class Type
     [[nodiscard]] static std::string typeStatic();
@@ -60,10 +60,12 @@ class KvhDataLogger : public Node, public FileWriter, public CommonLog
     /// @brief Deinitialize the node
     void deinitialize() override;
 
-    /// @brief Write Observation to the file
-    /// @param[in] nodeData The received observation
+    /// @brief Write a matrix to the file
     /// @param[in] linkId Id of the link over which the data is received
-    void writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void writeMatrix(ax::NodeEditor::LinkId linkId);
+
+    /// Flag whether the header was written
+    bool _headerWritten = false;
 };
 
 } // namespace NAV

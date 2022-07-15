@@ -229,7 +229,7 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
         return nullptr;
     }
 
-    m_links.emplace_back(GetNextLinkId(), startPin->id, endPin->id, startPin->getIconColor());
+    m_links.emplace_back(GetNextLinkId(), startPin->id, endPin->id);
     LOG_DEBUG("Creating link {} from pin {} of [{}] ==> {} of [{}]", size_t(m_links.back().id), size_t(startPin->id), startPin->parentNode->nameId(), size_t(endPin->id), endPin->parentNode->nameId());
 
     if (endPin->type == Pin::Type::Flow)

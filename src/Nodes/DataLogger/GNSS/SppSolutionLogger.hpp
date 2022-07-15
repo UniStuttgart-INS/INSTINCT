@@ -1,7 +1,7 @@
-/// @file KvhDataLogger.hpp
-/// @brief Data Logger for Kvh observations
+/// @file SppSolutionLogger.hpp
+/// @brief Data Logger for SppSolution observations
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2020-06-30
+/// @date 2022-06-22
 
 #pragma once
 
@@ -13,22 +13,22 @@ namespace NAV
 {
 class NodeData;
 
-/// Data Logger for KVH observations
-class KvhDataLogger : public Node, public FileWriter, public CommonLog
+/// Data Logger for SppSolution observations
+class SppSolutionLogger : public Node, public FileWriter, public CommonLog
 {
   public:
     /// @brief Default constructor
-    KvhDataLogger();
+    SppSolutionLogger();
     /// @brief Destructor
-    ~KvhDataLogger() override;
+    ~SppSolutionLogger() override;
     /// @brief Copy constructor
-    KvhDataLogger(const KvhDataLogger&) = delete;
+    SppSolutionLogger(const SppSolutionLogger&) = delete;
     /// @brief Move constructor
-    KvhDataLogger(KvhDataLogger&&) = delete;
+    SppSolutionLogger(SppSolutionLogger&&) = delete;
     /// @brief Copy assignment operator
-    KvhDataLogger& operator=(const KvhDataLogger&) = delete;
+    SppSolutionLogger& operator=(const SppSolutionLogger&) = delete;
     /// @brief Move assignment operator
-    KvhDataLogger& operator=(KvhDataLogger&&) = delete;
+    SppSolutionLogger& operator=(SppSolutionLogger&&) = delete;
 
     /// @brief String representation of the Class Type
     [[nodiscard]] static std::string typeStatic();
