@@ -46,10 +46,18 @@ std::string NAV::RtklibPosFile::category()
 
 void NAV::RtklibPosFile::guiConfig()
 {
-    if (FileReader::guiConfig(".pos", { ".pos" }, size_t(id), nameId()))
+    if (auto res = FileReader::guiConfig(".pos,.*", { ".pos" }, size_t(id), nameId()))
     {
+        LOG_DEBUG("{}: Path changed to {}", nameId(), _path);
         flow::ApplyChanges();
-        deinitializeNode();
+        if (res == FileReader::PATH_CHANGED)
+        {
+            initializeNode();
+        }
+        else
+        {
+            deinitializeNode();
+        }
     }
 
     ///  Header info

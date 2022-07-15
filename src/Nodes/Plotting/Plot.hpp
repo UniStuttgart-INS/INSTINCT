@@ -440,12 +440,6 @@ class Plot : public Node
     /// @param[in] pinIndex Index of the input pin where the data was received
     void plotVectorNavBinaryObs(const std::shared_ptr<const VectorNavBinaryOutput>& obs, size_t pinIndex);
 
-    // TODO: Remove
-    // /// @brief Plot the data
-    // /// @param[in] obs Observation to plot
-    // /// @param[in] pinIndex Index of the input pin where the data was received
-    // void plotSPPsol(const std::shared_ptr<const SPPsol_old>& obs, size_t pinIndex);
-
     /// Data storage for each pin
     std::vector<PinData> _pinData;
 
@@ -465,11 +459,11 @@ class Plot : public Node
     int _dragAndDropPinIndex = -1;
 
     /// Start Time for calculation of relative time with the GPS ToW
-    double _startValue_Time = std::nan("");
+    InsTime _startTime;
     /// Start Latitude [rad] for calculation of relative North-South
-    double _startValue_North = std::nan("");
+    double _originLatitude = std::nan("");
     /// Start Longitude [rad] for calculation of relative East-West
-    double _startValue_East = std::nan("");
+    double _originLongitude = std::nan("");
 
     /// Flag, whether to override the North/East startValues in the GUI
     bool _overridePositionStartValues = false;

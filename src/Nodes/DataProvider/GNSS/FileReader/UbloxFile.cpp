@@ -46,10 +46,18 @@ std::string NAV::UbloxFile::category()
 
 void NAV::UbloxFile::guiConfig()
 {
-    if (FileReader::guiConfig(".ubx", { ".ubx" }, size_t(id), nameId()))
+    if (auto res = FileReader::guiConfig(".ubx,.*", { ".ubx" }, size_t(id), nameId()))
     {
+        LOG_DEBUG("{}: Path changed to {}", nameId(), _path);
         flow::ApplyChanges();
-        deinitializeNode();
+        if (res == FileReader::PATH_CHANGED)
+        {
+            initializeNode();
+        }
+        else
+        {
+            deinitializeNode();
+        }
     }
 }
 

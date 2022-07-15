@@ -86,7 +86,7 @@ class LooselyCoupledKF : public Node
 
     /// @brief Updates the predicted state from the InertialNavSol with the GNSS measurement
     /// @param[in] gnssMeasurement Gnss measurement triggering the update
-    void looselyCoupledUpdate(const std::shared_ptr<const PosVelAtt>& gnssMeasurement);
+    void looselyCoupledUpdate(const std::shared_ptr<const PosVel>& gnssMeasurement);
 
     /// @brief Add the output pins for the Kalman matrices
     void addKalmanMatricesPins();

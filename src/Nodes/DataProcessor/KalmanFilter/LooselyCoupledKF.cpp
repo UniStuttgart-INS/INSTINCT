@@ -43,7 +43,7 @@ NAV::LooselyCoupledKF::LooselyCoupledKF()
     _guiConfigDefaultWindowSize = { 822, 721 };
 
     nm::CreateInputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() }, &LooselyCoupledKF::recvInertialNavigationSolution);
-    nm::CreateInputPin(this, "GNSSNavigationSolution", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &LooselyCoupledKF::recvGNSSNavigationSolution);
+    nm::CreateInputPin(this, "GNSSNavigationSolution", Pin::Type::Flow, { NAV::PosVel::type() }, &LooselyCoupledKF::recvGNSSNavigationSolution);
     nm::CreateOutputPin(this, "Errors", Pin::Type::Flow, { NAV::LcKfInsGnssErrors::type() });
     nm::CreateOutputPin(this, "Predict", Pin::Type::Flow, { NAV::ImuObs::type() });
 }
@@ -601,7 +601,7 @@ bool NAV::LooselyCoupledKF::initialize()
     _kalmanFilter.setZero();
 
     _latestInertialNavSol = nullptr;
-    _lastPredictTime = InsTime();
+    _lastPredictTime.reset();
     _accumulatedAccelBiases.setZero();
     _accumulatedGyroBiases.setZero();
 
@@ -730,8 +730,10 @@ void NAV::LooselyCoupledKF::recvInertialNavigationSolution(const std::shared_ptr
 
 void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    auto gnssMeasurement = std::static_pointer_cast<const PosVelAtt>(nodeData);
+    auto gnssMeasurement = std::static_pointer_cast<const PosVel>(nodeData);
     LOG_DATA("{}: Recv GNSS t = {}", nameId(), gnssMeasurement->insTime->toYMDHMS());
+
+    if (std::isnan(gnssMeasurement->e_position().x()) || std::isnan(gnssMeasurement->e_velocity().x())) { return; }
 
     if (_latestInertialNavSol)
     {
@@ -1007,7 +1009,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     }
 }
 
-void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const PosVelAtt>& gnssMeasurement)
+void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const PosVel>& gnssMeasurement)
 {
     LOG_DATA("{}: Updating to time {} (lastInertial at {})", nameId(), gnssMeasurement->insTime->toYMDHMS(), _latestInertialNavSol->insTime->toYMDHMS());
 

@@ -88,7 +88,9 @@ bool NAV::KvhDataLogger::initialize()
         return false;
     }
 
-    _filestream << "GpsCycle,GpsWeek,GpsToW,TimeStartup,"
+    CommonLog::initialize();
+
+    _filestream << "Time [s],GpsCycle,GpsWeek,GpsToW,TimeStartup,"
                 << "UnCompMagX,UnCompMagY,UnCompMagZ,UnCompAccX,UnCompAccY,UnCompAccZ,UnCompGyroX,UnCompGyroY,UnCompGyroZ,"
                 << "Temperature,Status,SequenceNumber" << std::endl;
 
@@ -110,6 +112,11 @@ void NAV::KvhDataLogger::writeObservation(const std::shared_ptr<const NodeData>&
     constexpr int gpsTimePrecision = 12;
     constexpr int valuePrecision = 9;
 
+    if (obs->insTime.has_value())
+    {
+        _filestream << std::setprecision(valuePrecision) << std::round(calcTimeIntoRun(obs->insTime.value()) * 1e9) / 1e9;
+    }
+    _filestream << ",";
     if (obs->insTime.has_value())
     {
         _filestream << std::fixed << std::setprecision(gpsCyclePrecision) << obs->insTime.value().toGPSweekTow().gpsCycle;

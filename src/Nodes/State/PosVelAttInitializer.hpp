@@ -93,6 +93,14 @@ class PosVelAttInitializer : public Node
     /// @param[in] obs RtklibPos Data
     void receiveRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs);
 
+    /// @brief Receive Pos Observations
+    /// @param[in] obs Pos Data
+    void receivePosObs(const std::shared_ptr<const Pos>& obs);
+
+    /// @brief Receive PosVel Observations
+    /// @param[in] obs PosVel Data
+    void receivePosVelObs(const std::shared_ptr<const PosVel>& obs);
+
     /// @brief Receive PosVelAtt Observations
     /// @param[in] obs PosVelAtt Data
     void receivePosVelAttObs(const std::shared_ptr<const PosVelAtt>& obs);

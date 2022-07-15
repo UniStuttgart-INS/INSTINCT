@@ -15,6 +15,7 @@ namespace nm = NAV::NodeManager;
 #include "Navigation/Transformations/Units.hpp"
 
 #include "NodeData/State/PosVelAtt.hpp"
+#include "NodeData/GNSS/SppSolution.hpp"
 
 #include <limits>
 
@@ -495,7 +496,9 @@ void NAV::PosVelAttInitializer::updateInputPins()
     }
     else if ((!_overridePosition || !_overrideVelocity || !_overrideRollPitchYaw[0] || !_overrideRollPitchYaw[1] || !_overrideRollPitchYaw[2]) && _inputPinIdxGNSS < 0)
     {
-        nm::CreateInputPin(this, "PosVelAttInit", Pin::Type::Flow, { NAV::UbloxObs::type(), NAV::RtklibPosObs::type(), NAV::PosVelAtt::type() }, &PosVelAttInitializer::receiveGnssObs);
+        nm::CreateInputPin(this, "PosVelAttInit", Pin::Type::Flow,
+                           { NAV::UbloxObs::type(), NAV::RtklibPosObs::type(), NAV::PosVelAtt::type(), NAV::PosVel::type(), NAV::Pos::type() },
+                           &PosVelAttInitializer::receiveGnssObs);
         _inputPinIdxGNSS = static_cast<int>(inputPins.size()) - 1;
     }
 }
@@ -647,6 +650,15 @@ void NAV::PosVelAttInitializer::receiveGnssObs(const std::shared_ptr<const NodeD
             {
                 receiveUbloxObs(std::static_pointer_cast<const UbloxObs>(nodeData));
             }
+            else if (sourcePin->dataIdentifier.front() == Pos::type())
+            {
+                receivePosObs(std::static_pointer_cast<const Pos>(nodeData));
+            }
+            else if (sourcePin->dataIdentifier.front() == PosVel::type()
+                     || sourcePin->dataIdentifier.front() == SppSolution::type())
+            {
+                receivePosVelObs(std::static_pointer_cast<const PosVel>(nodeData));
+            }
             else if (sourcePin->dataIdentifier.front() == PosVelAtt::type())
             {
                 receivePosVelAttObs(std::static_pointer_cast<const PosVelAtt>(nodeData));
@@ -753,13 +765,23 @@ void NAV::PosVelAttInitializer::receiveRtklibPosObs(const std::shared_ptr<const 
     }
 }
 
-void NAV::PosVelAttInitializer::receivePosVelAttObs(const std::shared_ptr<const PosVelAtt>& obs)
+void NAV::PosVelAttInitializer::receivePosObs(const std::shared_ptr<const Pos>& obs)
 {
     _e_initPosition = obs->e_position();
     _posVelAttInitialized.at(0) = true;
+}
+
+void NAV::PosVelAttInitializer::receivePosVelObs(const std::shared_ptr<const PosVel>& obs)
+{
+    receivePosObs(obs);
 
     _n_initVelocity = obs->n_velocity();
     _posVelAttInitialized.at(1) = true;
+}
+
+void NAV::PosVelAttInitializer::receivePosVelAttObs(const std::shared_ptr<const PosVelAtt>& obs)
+{
+    receivePosVelObs(obs);
 
     if (_attitudeMode == AttitudeMode::BOTH || _attitudeMode == AttitudeMode::GNSS
         || _inputPinIdxIMU < 0 || !nm::IsPinLinked(inputPins.at(static_cast<size_t>(_inputPinIdxIMU)).id))

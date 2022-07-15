@@ -135,6 +135,8 @@ bool NAV::VectorNavDataLogger::initialize()
         return false;
     }
 
+    CommonLog::initialize();
+
     _headerWritten = false;
 
     return true;
@@ -155,7 +157,7 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
     {
         if (!_headerWritten)
         {
-            _filestream << "GpsCycle,GpsWeek,GpsTow";
+            _filestream << "Time [s],GpsCycle,GpsWeek,GpsTow";
 
             // Group 2 (Time)
             if (obs->timeOutputs)
@@ -499,6 +501,11 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
         constexpr int floatPrecision = std::numeric_limits<float>::digits10 + 2;
         constexpr int doublePrecision = std::numeric_limits<double>::digits10 + 2;
 
+        if (obs->insTime.has_value())
+        {
+            _filestream << std::setprecision(doublePrecision) << std::round(calcTimeIntoRun(obs->insTime.value()) * 1e9) / 1e9;
+        }
+        _filestream << ",";
         if (obs->insTime.has_value())
         {
             _filestream << std::fixed << std::setprecision(gpsCyclePrecision) << obs->insTime->toGPSweekTow().gpsCycle;
