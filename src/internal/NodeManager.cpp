@@ -20,11 +20,6 @@ std::vector<NAV::Node*> m_nodes;
 std::vector<NAV::Link> m_links;
 size_t m_NextId = 1;
 
-bool nodeInitThread_stopRequested = false;
-std::thread nodeInitThread;                       ///< Thread which initializes nodes asynchronously
-size_t nodeInitCurrentNodeId = 0;                 ///< Id of the node currently initialized
-std::deque<std::pair<NAV::Node*, bool>> initList; ///< List of Node* & flag (init=true, deinit=false)
-
 /* -------------------------------------------------------------------------------------------------------- */
 /*                                       Private Function Declarations                                      */
 /* -------------------------------------------------------------------------------------------------------- */
@@ -135,12 +130,6 @@ void NAV::NodeManager::UpdateNode(Node* node)
 bool NAV::NodeManager::DeleteNode(ax::NodeEditor::NodeId nodeId)
 {
     LOG_TRACE("called for node with id {}", size_t(nodeId));
-    if (nodeInitThread.joinable())
-    {
-        // nodeInitThread.request_stop();
-        nodeInitThread_stopRequested = true;
-        nodeInitThread.join();
-    }
 
     auto it = std::find_if(m_nodes.begin(),
                            m_nodes.end(),
@@ -194,13 +183,6 @@ void NAV::NodeManager::DeleteAllNodes()
 
     bool saveLastActionsValue = NAV::flow::saveLastActions;
     NAV::flow::saveLastActions = false;
-
-    if (nodeInitThread.joinable())
-    {
-        // nodeInitThread.request_stop();
-        nodeInitThread_stopRequested = true;
-        nodeInitThread.join();
-    }
 
     while (!m_nodes.empty())
     {
@@ -911,13 +893,9 @@ bool NAV::NodeManager::InitializeAllNodes()
 {
     LOG_TRACE("called");
     bool nodeCouldNotInitialize = false;
-    for (auto* node : m_nodes)
-    {
-        if (node && !node->isDisabled() && !node->isInitialized())
-        {
-            node->doInitialize();
-        }
-    }
+
+    InitializeAllNodesAsync();
+
     for (auto* node : m_nodes)
     {
         if (node && !node->isDisabled() && !node->isInitialized())
@@ -935,51 +913,13 @@ bool NAV::NodeManager::InitializeAllNodes()
 void NAV::NodeManager::InitializeAllNodesAsync()
 {
     LOG_TRACE("called");
-    if (nodeInitThread.joinable())
-    {
-        LOG_DEBUG("Joining old node Init Thread");
-        // nodeInitThread.request_stop();
-        nodeInitThread_stopRequested = true;
-        nodeInitThread.join();
-    }
 
-    // nodeInitThread = std::jthread([](const std::stop_token& st) {
-    nodeInitThread_stopRequested = false;
-    nodeInitThread = std::thread([]() {
-        // If this thread is running, and a node is added, the node vector will be moved and all pointers are invalid
-        // That's why a for-range does not work here and we have to access the elements via at()
-        size_t amountOfNodes = m_nodes.size();
-        for (size_t i = 0; i < amountOfNodes && i < m_nodes.size(); i++)
-        {
-            if (m_nodes.at(i)->isEnabled() && !m_nodes.at(i)->isInitialized())
-            {
-                m_nodes.at(i)->setState(Node::State::DoInitialize);
-            }
-        }
-        for (size_t i = 0; i < amountOfNodes && i < m_nodes.size(); i++)
-        {
-            // if (st.stop_requested())
-            if (nodeInitThread_stopRequested)
-            {
-                break;
-            }
-            if (m_nodes.at(i)->isEnabled() && !m_nodes.at(i)->isInitialized())
-            {
-                InitializeNode(*(m_nodes.at(i)));
-            }
-        }
-    });
-}
-
-void NAV::NodeManager::Stop()
-{
-    LOG_TRACE("called");
-    if (nodeInitThread.joinable())
+    for (size_t i = 0; i < m_nodes.size(); i++)
     {
-        LOG_DEBUG("Joining node Init Thread");
-        // nodeInitThread.request_stop();
-        nodeInitThread_stopRequested = true;
-        nodeInitThread.join();
+        if (m_nodes.at(i) && !m_nodes.at(i)->isDisabled() && !m_nodes.at(i)->isInitialized())
+        {
+            m_nodes.at(i)->doInitialize();
+        }
     }
 }
 

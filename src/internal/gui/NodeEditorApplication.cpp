@@ -255,8 +255,6 @@ void NAV::gui::NodeEditorApplication::OnStop()
 
     FlowExecutor::stop();
 
-    nm::Stop();
-
     nm::DeleteAllNodes();
 
     auto releaseTexture = [this](ImTextureID& id) {
@@ -809,7 +807,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
             if (!isSimple) // Header Text for Blueprint Nodes
             {
-                if (!node->isEnabled()) // Node disabled
+                if (node->isDisabled()) // Node disabled
                 {
                     builder.Header(ImColor(192, 192, 192)); // Silver
                 }
@@ -1309,26 +1307,27 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Text("Kind: %s", std::string(node->kind).c_str());
             ImGui::Text("Inputs: %lu", node->inputPins.size());
             ImGui::Text("Outputs: %lu", node->outputPins.size());
+            ImGui::Text("State: %s", Node::toString(node->getState()).c_str());
             ImGui::Separator();
             if (ImGui::MenuItem(node->isInitialized() ? "Reinitialize" : "Initialize", "",
-                                false, node->isEnabled() && (node->isInitialized() || node->getState() == Node::State::Deinitialized)))
+                                false, node->isInitialized() || node->getState() == Node::State::Deinitialized))
             {
                 // TODO
                 // if (node->isInitialized())
                 // {
-                //     node->_state = Node::State::DoDeinitialize;
+                //     node->getState() = Node::State::DoDeinitialize;
                 //     initList.emplace_back(node, false);
                 // }
                 // else
                 // {
-                //     node->_state = Node::State::DoInitialize;
+                //     node->getState() = Node::State::DoInitialize;
                 // }
                 // initList.emplace_back(node, true);
             }
-            if (ImGui::MenuItem("Deinitialize", "", false, node->isEnabled() && node->isInitialized()))
+            if (ImGui::MenuItem("Deinitialize", "", false, node->isInitialized()))
             {
                 // TODO
-                // node->_state = Node::State::DoDeinitialize;
+                // node->getState() = Node::State::DoDeinitialize;
                 // initList.emplace_back(node, false);
             }
             ImGui::Separator();
@@ -1337,14 +1336,14 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 node->_showConfig = true;
                 node->_configWindowFocus = true;
             }
-            if (ImGui::MenuItem(node->isEnabled() ? "Disable" : "Enable", "", false))
+            if (ImGui::MenuItem(node->isDisabled() ? "Enable" : "Disable", "", false, node->isDisabled() || node->isInitialized() || node->getState() == Node::State::Deinitialized))
             {
                 // TODO
                 // if (node->isEnabled())
                 // {
                 //     if (node->isInitialized())
                 //     {
-                //         node->_state = Node::State::DoDeinitialize;
+                //         node->getState() = Node::State::DoDeinitialize;
                 //         initList.emplace_back(node, false);
                 //     }
                 //     node->_isEnabled = false;

@@ -18,7 +18,7 @@ void NAV::gui::menus::ShowRunMenu()
         {
             hasInitializedNodes = true;
         }
-        else if (node->isEnabled())
+        else if (!node->isDisabled())
         {
             allNodesInitialized = false;
         }
@@ -30,7 +30,7 @@ void NAV::gui::menus::ShowRunMenu()
         // {
         //     if (node->isEnabled() && !node->isInitialized())
         //     {
-        //         node->_state = Node::State::DoInitialize;
+        //         node->getState() = Node::State::DoInitialize;
         //         initList.emplace_back(node, true);
         //     }
         // }
@@ -42,7 +42,7 @@ void NAV::gui::menus::ShowRunMenu()
         // {
         //     if (node->isEnabled() && node->isInitialized())
         //     {
-        //         node->_state = Node::State::DoDeinitialize;
+        //         node->getState() = Node::State::DoDeinitialize;
         //         initList.emplace_back(node, false);
         //     }
         // }
@@ -61,7 +61,7 @@ void NAV::gui::menus::ShowRunMenu()
         // {
         //     if (node->isEnabled() && node->isInitialized())
         //     {
-        //         node->_state = Node::State::DoDeinitialize;
+        //         node->getState() = Node::State::DoDeinitialize;
         //         initList.emplace_back(node, false);
         //     }
         // }

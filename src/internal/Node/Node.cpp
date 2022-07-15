@@ -17,21 +17,23 @@ namespace ed = ax::NodeEditor;
 NAV::Node::Node(std::string name)
     : name(std::move(name))
 {
+    LOG_TRACE("{}: called", nameId());
     _worker = std::thread(workerThread, this);
 }
 
 NAV::Node::~Node()
 {
+    LOG_TRACE("{}: called", nameId());
     {
         std::lock_guard lk(_workerMutex);
         _state = State::DoShutdown;
         _workerConditionVariable.notify_all();
     }
-    // wait for the worker
-    {
-        std::unique_lock lk(_workerMutex);
-        _workerConditionVariable.wait(lk, [&, this] { return _state == State::Shutdown; });
-    }
+    // // wait for the worker
+    // {
+    //     std::unique_lock lk(_workerMutex);
+    //     _workerConditionVariable.wait(lk, [&, this] { return _state == State::Shutdown; });
+    // }
     _worker.join();
 }
 
@@ -45,7 +47,7 @@ void NAV::Node::restoreAtferLink(const json& /*j*/) {}
 
 bool NAV::Node::initialize()
 {
-    return _isEnabled;
+    return true;
 }
 
 void NAV::Node::deinitialize() {}
@@ -83,7 +85,7 @@ void NAV::Node::notifyInputValueChanged(size_t portIndex)
 
         if (Pin* startPin = nm::FindPin(connectedLink->startPinId))
         {
-            if (startPin->parentNode && startPin->parentNode->_isEnabled)
+            if (startPin->parentNode && !startPin->parentNode->isDisabled())
             {
                 // Notify the node itself that changes were made
                 startPin->parentNode->notifyOnOutputValueChanged(connectedLink->id);
@@ -110,7 +112,7 @@ void NAV::Node::notifyOutputValueChanged(size_t portIndex)
 {
     for (auto& [node, callback, linkId] : outputPins.at(portIndex).notifyFunc)
     {
-        if (!node->_isEnabled)
+        if (node->isDisabled())
         {
             continue;
         }
@@ -201,6 +203,37 @@ std::string NAV::Node::nameId() const
 const ImVec2& NAV::Node::getSize() const
 {
     return _size;
+}
+
+std::string NAV::Node::toString(State state)
+{
+    switch (state)
+    {
+    case State::Disabled:
+        return "Disabled";
+    case State::Deinitialized:
+        return "Deinitialized";
+    case State::DoInitialize:
+        return "DoInitialize";
+    case State::Initializing:
+        return "Initializing";
+    case State::Initialized:
+        return "Initialized";
+    case State::DoDeinitialize:
+        return "DoDeinitialize";
+    case State::Deinitializing:
+        return "Deinitializing";
+    case State::DoShutdown:
+        return "DoShutdown";
+    case State::Shutdown:
+        return "Shutdown";
+    }
+    return "";
+}
+
+NAV::Node::State NAV::Node::getState() const
+{
+    return _state;
 }
 
 bool NAV::Node::doInitialize(bool wait)
@@ -308,7 +341,7 @@ bool NAV::Node::doEnableNode()
 
 bool NAV::Node::isDisabled() const
 {
-    return _state != State::Disabled;
+    return _state == State::Disabled;
 }
 bool NAV::Node::isInitialized() const
 {
@@ -321,8 +354,18 @@ void NAV::Node::workerThread(Node* node)
 
     while (node->_state != State::Shutdown)
     {
+        if (node->_state == State::DoShutdown)
+        {
+            LOG_TRACE("{}: Worker doing shutdown...", node->nameId());
+            node->_state = State::Shutdown;
+            node->_workerConditionVariable.notify_all();
+            break;
+        }
+
         std::unique_lock lk(node->_workerMutex);
         std::cv_status status = node->_workerConditionVariable.wait_for(lk, node->_workerTimeout);
+
+        LOG_TRACE("{}: Worker waking up...", node->nameId());
 
         if (status == std::cv_status::timeout)
         {
@@ -332,28 +375,29 @@ void NAV::Node::workerThread(Node* node)
         {
             if (node->_state == State::DoInitialize)
             {
+                LOG_TRACE("{}: Worker doing initialization...", node->nameId());
                 node->workerInitializeNode();
-            }
-            else if (node->_state == State::DoDeinitialize)
-            {
-                node->workerDeinitializeNode();
-            }
-            else if (node->_state == State::DoShutdown)
-            {
-                node->_state = State::Shutdown;
                 // Manual unlocking is done before notifying, to avoid waking up
                 // the waiting thread only to block again (see notify_one for details)
                 lk.unlock();
                 node->_workerConditionVariable.notify_all();
-                return;
+            }
+            else if (node->_state == State::DoDeinitialize)
+            {
+                LOG_TRACE("{}: Worker doing deinitialization...", node->nameId());
+                node->workerDeinitializeNode();
+                lk.unlock();
+                node->_workerConditionVariable.notify_all();
             }
 
-            if (node->_isEnabled && node->_state == State::Initialized)
+            if (node->isInitialized())
             {
                 // TODO: Handle data here
             }
         }
     }
+
+    LOG_TRACE("{}: Worker thread ended.", node->nameId());
 }
 
 bool NAV::Node::workerInitializeNode()
@@ -495,7 +539,7 @@ void NAV::to_json(json& j, const Node& node)
         { "name", node.name },
         { "size", node._size.x == 0 && node._size.y == 0 ? node._size : realSize },
         { "pos", ed::GetNodePosition(node.id) },
-        { "enabled", node._isEnabled },
+        { "enabled", !node.isDisabled() },
         { "inputPins", node.inputPins },
         { "outputPins", node.outputPins },
     };
@@ -517,7 +561,11 @@ void NAV::from_json(const json& j, Node& node)
     }
     if (j.contains("enabled"))
     {
-        j.at("enabled").get_to(node._isEnabled);
+        bool enabled = j.at("enabled").get<bool>();
+        if (!enabled)
+        {
+            node._state = Node::State::Disabled;
+        }
     }
 
     if (j.contains("inputPins"))

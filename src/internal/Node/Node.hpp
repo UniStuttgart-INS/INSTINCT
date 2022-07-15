@@ -36,7 +36,7 @@ class NodeEditorApplication;
 
 namespace menus
 {
-void ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList);
+void ShowRunMenu();
 } // namespace menus
 
 } // namespace gui
@@ -281,8 +281,13 @@ class Node
 
     // ------------------------------------------ State handling ---------------------------------------------
 
+    /// @brief Converts the state into a printable text
+    /// @param[in] state State to convert
+    /// @return String representation of the state
+    static std::string toString(State state);
+
     /// @brief Get the current state of the node
-    // [[nodiscard]] State getState() const;
+    [[nodiscard]] State getState() const;
 
     /// @brief Asks the node worker to initialize the node
     /// @param[in] wait Wait for the worker to complete the request
@@ -354,9 +359,6 @@ class Node
     /// Size of the node in pixels
     ImVec2 _size{ 0, 0 };
 
-    /// Flag if the node is enabled
-    bool _isEnabled = true;
-
     std::chrono::duration<int64_t> _workerTimeout = std::chrono::years(1); ///< Periodic timeout of the worker to check if new data available
     std::thread _worker;                                                   ///< Worker handling initialization and processing of data
     std::mutex _workerMutex;                                               ///< Mutex to interact with the worker condition variable
@@ -390,8 +392,7 @@ class Node
     friend void NAV::from_json(const json& j, Node& node);
 
     /// @brief Show the run menu dropdown
-    /// @param[in, out] initList List of nodes which should be asynchronously initialized
-    friend void gui::menus::ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList);
+    friend void gui::menus::ShowRunMenu();
 };
 
 /// @brief Equal compares Node::Kind values
