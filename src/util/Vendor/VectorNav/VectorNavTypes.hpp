@@ -281,6 +281,10 @@ struct RawMeas
             ABC = 14,         ///< A+B+C (GAL)
         };
 
+        /// @brief Stream insertion operator overload
+        /// @param[in, out] os Output stream where data gets printed to
+        /// @param[in] chan Channel indicator
+        /// @return Output stream object
         friend std::ostream& operator<<(std::ostream& os, const Chan& chan)
         {
             switch (chan)
@@ -346,6 +350,10 @@ struct RawMeas
             E5a = 6,       ///< E5a+b(GAL)
         };
 
+        /// @brief Stream insertion operator overload
+        /// @param[in, out] os Output stream where data gets printed to
+        /// @param[in] freq Frequency indicator
+        /// @return Output stream object
         friend std::ostream& operator<<(std::ostream& os, const Freq& freq)
         {
             switch (freq)
