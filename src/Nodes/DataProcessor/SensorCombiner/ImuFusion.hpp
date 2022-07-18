@@ -7,14 +7,9 @@
 
 #include "Nodes/DataProvider/IMU/Imu.hpp"
 
-#include "util/Container/ScrollingBuffer.hpp"
-
 #include "NodeData/IMU/ImuObs.hpp"
-#include "NodeData/State/LcKfInsGnssErrors.hpp"
 
 #include "Navigation/Math/KalmanFilter.hpp"
-
-#include <deque>
 
 namespace NAV
 {

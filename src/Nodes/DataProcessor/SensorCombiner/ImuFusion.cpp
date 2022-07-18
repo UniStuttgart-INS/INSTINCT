@@ -6,6 +6,8 @@
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "Navigation/Transformations/Units.hpp"
 
+#include "NodeData/State/LcKfInsGnssErrors.hpp"
+
 #include <imgui_internal.h>
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/widgets/InputWithUnit.hpp"
