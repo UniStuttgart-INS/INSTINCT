@@ -243,7 +243,8 @@ void RinexNavFile::readHeader()
                      std::string(satSys), alphaBeta == IonosphericCorrections::A ? "A" : "B",
                      fmt::join(values.begin(), values.end(), ", "));
         }
-        else if (headerLabel == "TIME SYSTEM CORR")
+        else if (headerLabel == "TIME SYSTEM CORR"
+                 || headerLabel == "CORR TO SYSTEM TIME")
         {
             auto correctionType = str::trim_copy(line.substr(0, 4)); // FORMAT: A4,1X,
             LOG_DATA("{}: Time System Correction: {}", nameId(), correctionType);
@@ -251,14 +252,26 @@ void RinexNavFile::readHeader()
             if (correctionType == "GPUT" || correctionType == "GAUT" || correctionType == "BDUT" || correctionType == "QZUT"
                 || correctionType == "IRUT" || correctionType == "SBUT")
             {
-                auto a0 = std::stod(str::replaceAll_copy(line.substr(5, 17), "d", "e", str::IgnoreCase));
-                LOG_DATA("{}:     a0 {}", nameId(), a0);
-                auto a1 = std::stod(str::replaceAll_copy(line.substr(22, 16), "d", "e", str::IgnoreCase));
-                LOG_DATA("{}:     a1 {}", nameId(), a1);
+                auto a0_str = str::replaceAll_copy(line.substr(5, 17), "d", "e", str::IgnoreCase);
+                LOG_DATA("{}:     a0 '{}'", nameId(), a0_str);
+                auto a1_str = str::replaceAll_copy(line.substr(22, 16), "d", "e", str::IgnoreCase);
+                LOG_DATA("{}:     a1 '{}'", nameId(), a1_str);
 
-                SatelliteSystem satSys = SatelliteSystem::fromString(correctionType.substr(0, 2));
+                try
+                {
+                    auto a0 = std::stod(a0_str);
+                    LOG_DATA("{}:     a0 {}", nameId(), a0);
+                    auto a1 = std::stod(a1_str);
+                    LOG_DATA("{}:     a1 {}", nameId(), a1);
 
-                _gnssNavInfo.timeSysCorr[satSys] = { a0, a1 };
+                    SatelliteSystem satSys = SatelliteSystem::fromString(correctionType.substr(0, 2));
+
+                    _gnssNavInfo.timeSysCorr[satSys] = { a0, a1 };
+                }
+                catch (const std::exception& e)
+                {
+                    LOG_WARN("{}: Could not read values from line '{}'", nameId(), line);
+                }
             }
             else if (correctionType == "GLUT")
             {
@@ -567,7 +580,10 @@ void RinexNavFile::readOrbits()
             // Toc - Time of clock
             ephemeris.toc = epoch;
             // Coefficient of linear polynomial of time system difference [s]
-            ephemeris.tau_c = _gnssNavInfo.timeSysCorr.at(GLO).a0;
+            if (_gnssNavInfo.timeSysCorr.contains(satSys))
+            {
+                ephemeris.tau_c = _gnssNavInfo.timeSysCorr.at(satSys).a0;
+            }
 
             // GLO:  SV clock bias (sec) (-TauN)
             // SBAS: SV clock bias (sec) (aGf0)
