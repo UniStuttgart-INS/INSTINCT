@@ -12,10 +12,8 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/GNSS/UbloxObs.hpp"
 
 NAV::UbloxFile::UbloxFile()
-    : _sensor(typeStatic())
+    : Node(typeStatic()), _sensor(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
@@ -52,11 +50,11 @@ void NAV::UbloxFile::guiConfig()
         flow::ApplyChanges();
         if (res == FileReader::PATH_CHANGED)
         {
-            initializeNode();
+            doInitialize();
         }
         else
         {
-            deinitializeNode();
+            doDeinitialize();
         }
     }
 }

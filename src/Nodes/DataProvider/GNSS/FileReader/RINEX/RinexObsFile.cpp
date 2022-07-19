@@ -16,9 +16,8 @@ namespace NAV
 {
 
 RinexObsFile::RinexObsFile()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
@@ -55,11 +54,11 @@ void RinexObsFile::guiConfig()
         flow::ApplyChanges();
         if (res == FileReader::PATH_CHANGED)
         {
-            initializeNode();
+            doInitialize();
         }
         else
         {
-            deinitializeNode();
+            doDeinitialize();
         }
     }
 }
@@ -151,14 +150,14 @@ FileReader::FileType RinexObsFile::determineFileType()
         if (fileType.at(0) != 'O')
         {
             LOG_ERROR("{}: Not a valid RINEX OBS file. File type '{}' not recognized.", nameId(), fileType);
-            deinitializeNode();
+            doDeinitialize();
             return FileReader::FileType::NONE;
         }
         std::string satSystem = str::trim_copy(line.substr(40, 20)); // FORMAT: A1,19X
         if (SatelliteSystem::fromChar(satSystem.at(0)) == SatSys_None && satSystem.at(0) != 'M')
         {
             LOG_ERROR("{}: Not a valid RINEX OBS file. Satellite System '{}' not recognized.", nameId(), satSystem.at(0));
-            deinitializeNode();
+            doDeinitialize();
             return FileReader::FileType::NONE;
         }
         // ---------------------------------------- PGM / RUN BY / DATE ------------------------------------------

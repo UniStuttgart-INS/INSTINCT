@@ -6,8 +6,6 @@
 #pragma once
 
 #include <array>
-#include <thread>
-#include <deque>
 
 #include <application.h>
 #include <imgui.h>
@@ -29,7 +27,7 @@ class NodeEditorApplication : public Application
     /// @brief Default constructor
     NodeEditorApplication() = delete;
     /// @brief Destructor
-    ~NodeEditorApplication() override;
+    ~NodeEditorApplication() override = default;
     /// @brief Copy constructor
     NodeEditorApplication(const NodeEditorApplication&) = delete;
     /// @brief Move constructor
@@ -115,15 +113,6 @@ class NodeEditorApplication : public Application
 
     /// @brief Global action to execute
     GlobalActions globalAction = GlobalActions::None; // TODO: Move to the GlobalAction.cpp as a global variable
-
-    /// @brief Thread which initializes nodes asynchronously
-    std::thread initThread;
-    // bool initThread_stopRequested = false;
-
-    /// @brief Id of the node currently initialized
-    size_t currentInitNodeId = 0;
-    /// List of Node* & flag (init=true, deinit=false)
-    std::deque<std::pair<Node*, bool>> initList;
 };
 
 } // namespace gui

@@ -459,8 +459,8 @@ struct InsTime_YMDHMS
         }
         while (this->day < 1)
         {
-            this->day += InsTimeUtil::daysInMonth(this->month, this->year);
             this->month--;
+            this->day += InsTimeUtil::daysInMonth(this->month, this->year);
         }
 
         while (this->month > InsTimeUtil::MONTHS_PER_YEAR)

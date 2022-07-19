@@ -9,6 +9,7 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/InsObs.hpp"
 
 NAV::Combiner::Combiner()
+    : Node(typeStatic())
 {
     LOG_TRACE("{}: called", name);
 

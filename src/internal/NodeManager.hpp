@@ -228,9 +228,6 @@ bool InitializeAllNodes();
 /// @brief Initializes all nodes in a separate thread
 void InitializeAllNodesAsync();
 
-/// @brief Stops all active threads
-void Stop();
-
 /// @brief Generates a new node id
 ax::NodeEditor::NodeId GetNextNodeId();
 

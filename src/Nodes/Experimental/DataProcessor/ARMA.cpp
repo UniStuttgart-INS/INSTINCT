@@ -10,9 +10,8 @@ namespace nm = NAV::NodeManager;
 #include <boost/math/distributions/students_t.hpp>
 
 NAV::experimental::ARMA::ARMA()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;

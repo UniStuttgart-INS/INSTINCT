@@ -41,8 +41,9 @@ class Imu : public Node
     [[nodiscard]] const ImuPos& imuPosition() const { return _imuPos; }
 
   protected:
-    /// @brief Default constructor
-    Imu() = default;
+    /// @brief Constructor
+    /// @param[in] name Name of the node
+    explicit Imu(std::string name);
 
     /// Position and rotation information for conversion from platform to body frame
     ImuPos _imuPos;

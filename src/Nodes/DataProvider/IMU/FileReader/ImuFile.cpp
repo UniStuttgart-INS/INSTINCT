@@ -11,9 +11,8 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/IMU/ImuObs.hpp"
 
 NAV::ImuFile::ImuFile()
+    : Imu(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
@@ -51,11 +50,11 @@ void NAV::ImuFile::guiConfig()
         flow::ApplyChanges();
         if (res == FileReader::PATH_CHANGED)
         {
-            initializeNode();
+            doInitialize();
         }
         else
         {
-            deinitializeNode();
+            doDeinitialize();
         }
     }
 

@@ -17,9 +17,8 @@ namespace nm = NAV::NodeManager;
 #include "util/Time/TimeBase.hpp"
 
 NAV::Navio2Sensor::Navio2Sensor()
+    : Imu(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
@@ -54,14 +53,14 @@ void NAV::Navio2Sensor::guiConfig()
     {
         LOG_DEBUG("{}: IMU changed to {}", nameId(), _imuType ? "LSM9DS1" : "MPU9250");
         flow::ApplyChanges();
-        deinitializeNode();
+        doDeinitialize();
     }
 
     if (ImGui::SliderInt("Frequency", &_outputFrequency, 1, 200, "%d Hz"))
     {
         LOG_DEBUG("{}: Frequency changed to {}", nameId(), _outputFrequency);
         flow::ApplyChanges();
-        deinitializeNode();
+        doDeinitialize();
     }
 
     Imu::guiConfig();

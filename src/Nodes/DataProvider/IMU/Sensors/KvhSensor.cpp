@@ -14,9 +14,8 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/IMU/KvhObs.hpp"
 
 NAV::KvhSensor::KvhSensor()
+    : Imu(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
@@ -54,7 +53,7 @@ void NAV::KvhSensor::guiConfig()
     {
         LOG_DEBUG("{}: SensorPort changed to {}", nameId(), _sensorPort);
         flow::ApplyChanges();
-        deinitializeNode();
+        doDeinitialize();
     }
     ImGui::SameLine();
     gui::widgets::HelpMarker("COM port where the sensor is attached to\n"

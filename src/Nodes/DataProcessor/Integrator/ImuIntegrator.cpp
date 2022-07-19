@@ -21,9 +21,8 @@ namespace nm = NAV::NodeManager;
 #include <algorithm>
 
 NAV::ImuIntegrator::ImuIntegrator()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;

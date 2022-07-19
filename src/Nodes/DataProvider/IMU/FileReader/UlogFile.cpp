@@ -20,9 +20,8 @@ namespace nm = NAV::NodeManager;
 // ----------------------------------------------------------- Basic Node Functions --------------------------------------------------------------
 
 NAV::UlogFile::UlogFile()
+    : Imu(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
@@ -62,11 +61,11 @@ void NAV::UlogFile::guiConfig()
         flow::ApplyChanges();
         if (res == FileReader::PATH_CHANGED)
         {
-            initializeNode();
+            doInitialize();
         }
         else
         {
-            deinitializeNode();
+            doDeinitialize();
         }
     }
 

@@ -15,9 +15,8 @@ namespace nm = NAV::NodeManager;
 #include <imgui_internal.h>
 
 NAV::VectorNavDataLogger::VectorNavDataLogger()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _fileType = FileType::BINARY;
@@ -53,7 +52,7 @@ void NAV::VectorNavDataLogger::guiConfig()
     if (FileWriter::guiConfig(_fileType == FileType::CSV ? ".csv" : ".vnb", { _fileType == FileType::CSV ? ".csv" : ".vnb" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        deinitializeNode();
+        doDeinitialize();
     }
 
     static constexpr std::array<FileType, 2> fileTypes = {

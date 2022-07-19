@@ -298,6 +298,7 @@ TEST_CASE("[InsTime_YMDHMS] Comparisons equal", "[InsTime]")
     auto time_e_4 = InsTime_YMDHMS(2004, 1, 10 + 31, 13, 25, 58.0L);
     auto time_e_5 = InsTime_YMDHMS(2004 - 8, 2 + 12 * 8, 10, 13, 25, 58.0L);
     auto time_e_6 = InsTime_YMDHMS(2003, 12, 10 + 31 + 31, 13, 25, 58.0L);
+    auto time_e_7 = InsTime_YMDHMS(2004, 3, -19, 13, 25, 58.0L);
 
     TEST_EQUAL_OBJECT(time, time_e_1);
     TEST_EQUAL_OBJECT(time, time_e_2);
@@ -305,6 +306,7 @@ TEST_CASE("[InsTime_YMDHMS] Comparisons equal", "[InsTime]")
     TEST_EQUAL_OBJECT(time, time_e_4);
     TEST_EQUAL_OBJECT(time, time_e_5);
     TEST_EQUAL_OBJECT(time, time_e_6);
+    TEST_EQUAL_OBJECT(time, time_e_7);
 
     auto time2 = InsTime_YMDHMS(2004, 10, 10, 13, 25, 58.0L);
     auto time2_e_1 = InsTime_YMDHMS(2005, -2, 10, 13, 25, 58.0L);
