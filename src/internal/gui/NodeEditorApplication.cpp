@@ -1312,23 +1312,12 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             if (ImGui::MenuItem(node->isInitialized() ? "Reinitialize" : "Initialize", "",
                                 false, node->isInitialized() || node->getState() == Node::State::Deinitialized))
             {
-                // TODO
-                // if (node->isInitialized())
-                // {
-                //     node->getState() = Node::State::DoDeinitialize;
-                //     initList.emplace_back(node, false);
-                // }
-                // else
-                // {
-                //     node->getState() = Node::State::DoInitialize;
-                // }
-                // initList.emplace_back(node, true);
+                if (node->isInitialized()) { node->doReinitialize(); }
+                else { node->doInitialize(); }
             }
             if (ImGui::MenuItem("Deinitialize", "", false, node->isInitialized()))
             {
-                // TODO
-                // node->getState() = Node::State::DoDeinitialize;
-                // initList.emplace_back(node, false);
+                node->doDeinitialize();
             }
             ImGui::Separator();
             if (node->_hasConfig && ImGui::MenuItem("Configure", "", false))
@@ -1338,20 +1327,14 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             }
             if (ImGui::MenuItem(node->isDisabled() ? "Enable" : "Disable", "", false, node->isDisabled() || node->isInitialized() || node->getState() == Node::State::Deinitialized))
             {
-                // TODO
-                // if (node->isEnabled())
-                // {
-                //     if (node->isInitialized())
-                //     {
-                //         node->getState() = Node::State::DoDeinitialize;
-                //         initList.emplace_back(node, false);
-                //     }
-                //     node->_isEnabled = false;
-                // }
-                // else
-                // {
-                //     node->_isEnabled = true;
-                // }
+                if (node->isDisabled())
+                {
+                    node->doEnableNode();
+                }
+                else
+                {
+                    node->doDisableNode();
+                }
                 flow::ApplyChanges();
             }
             if (ImGui::MenuItem("Rename"))

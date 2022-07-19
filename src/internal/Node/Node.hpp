@@ -150,7 +150,7 @@ class Node
 
     /// @brief Constructor
     /// @param[in] name Name of the node
-    Node(std::string name);
+    explicit Node(std::string name);
     /// @brief Destructor
     virtual ~Node();
     /// @brief Copy constructor
@@ -293,6 +293,11 @@ class Node
     /// @param[in] wait Wait for the worker to complete the request
     /// @return True if not waiting and the worker accepted the request otherwise if waiting only true if the node initialized correctly
     bool doInitialize(bool wait = false);
+
+    /// @brief Asks the node worker to reinitialize the node
+    /// @param[in] wait Wait for the worker to complete the request
+    /// @return True if not waiting and the worker accepted the request otherwise if waiting only true if the node initialized correctly
+    bool doReinitialize(bool wait = false);
 
     /// @brief Asks the node worker to deinitialize the node
     /// @param[in] wait Wait for the worker to complete the request

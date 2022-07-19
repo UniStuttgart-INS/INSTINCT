@@ -322,7 +322,7 @@ bool NAV::Demo::initialize()
     LOG_TRACE("{}: called", nameId());
 
     // To Show the Initialization in the GUI
-    std::this_thread::sleep_until(std::chrono::steady_clock::now() + std::chrono::milliseconds(3000));
+    std::this_thread::sleep_until(std::chrono::steady_clock::now() + std::chrono::milliseconds(2000));
 
     // Currently crashes clang-tidy (Stack dump: #0 Calling std::chrono::operator<=>), so use sleep_until
     // std::this_thread::sleep_for(std::chrono::milliseconds(3000));
@@ -346,6 +346,9 @@ void NAV::Demo::deinitialize()
     {
         _timer.stop();
     }
+
+    // To Show the Deinitialization in the GUI
+    std::this_thread::sleep_until(std::chrono::steady_clock::now() + std::chrono::milliseconds(1000));
 }
 
 bool NAV::Demo::resetNode()

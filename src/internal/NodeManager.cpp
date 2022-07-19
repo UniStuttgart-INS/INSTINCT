@@ -914,11 +914,11 @@ void NAV::NodeManager::InitializeAllNodesAsync()
 {
     LOG_TRACE("called");
 
-    for (size_t i = 0; i < m_nodes.size(); i++)
+    for (auto* node : m_nodes)
     {
-        if (m_nodes.at(i) && !m_nodes.at(i)->isDisabled() && !m_nodes.at(i)->isInitialized())
+        if (node && !node->isDisabled() && !node->isInitialized())
         {
-            m_nodes.at(i)->doInitialize();
+            node->doInitialize();
         }
     }
 }

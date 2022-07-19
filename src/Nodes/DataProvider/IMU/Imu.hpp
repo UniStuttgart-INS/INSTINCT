@@ -43,7 +43,7 @@ class Imu : public Node
   protected:
     /// @brief Constructor
     /// @param[in] name Name of the node
-    Imu(std::string name);
+    explicit Imu(std::string name);
 
     /// Position and rotation information for conversion from platform to body frame
     ImuPos _imuPos;
