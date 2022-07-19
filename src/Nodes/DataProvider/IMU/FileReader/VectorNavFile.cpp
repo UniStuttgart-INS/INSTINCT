@@ -13,9 +13,8 @@ namespace nm = NAV::NodeManager;
 #include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
 
 NAV::VectorNavFile::VectorNavFile()
+    : Imu(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
@@ -52,11 +51,11 @@ void NAV::VectorNavFile::guiConfig()
         flow::ApplyChanges();
         if (res == FileReader::PATH_CHANGED)
         {
-            initializeNode();
+            doInitialize();
         }
         else
         {
-            deinitializeNode();
+            doDeinitialize();
         }
     }
 
@@ -358,14 +357,14 @@ void NAV::VectorNavFile::readHeader()
                 else
                 {
                     LOG_ERROR("{}: Could not identify the group in CSV header - {}::{}", nameId(), group, cell);
-                    deinitializeNode();
+                    doDeinitialize();
                     break;
                 }
 
                 if (!identified)
                 {
                     LOG_ERROR("{}: Could not identify the field in CSV header - {}::{}", nameId(), group, cell);
-                    deinitializeNode();
+                    doDeinitialize();
                     break;
                 }
             }

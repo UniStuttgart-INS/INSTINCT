@@ -11,10 +11,8 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/IMU/KvhObs.hpp"
 
 NAV::KvhFile::KvhFile()
-    : _sensor(typeStatic())
+    : Imu(typeStatic()), _sensor(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
@@ -52,11 +50,11 @@ void NAV::KvhFile::guiConfig()
         flow::ApplyChanges();
         if (res == FileReader::PATH_CHANGED)
         {
-            initializeNode();
+            doInitialize();
         }
         else
         {
-            deinitializeNode();
+            doDeinitialize();
         }
     }
 

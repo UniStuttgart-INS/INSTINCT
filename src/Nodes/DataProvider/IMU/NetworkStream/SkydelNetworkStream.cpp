@@ -21,10 +21,8 @@ namespace nm = NAV::NodeManager;
 using boost::asio::ip::udp;
 
 NAV::SkydelNetworkStream::SkydelNetworkStream()
-    : _senderEndpoint(udp::v4(), 4444), _socket(_ioservice, _senderEndpoint)
+    : Imu(typeStatic()), _senderEndpoint(udp::v4(), 4444), _socket(_ioservice, _senderEndpoint)
 {
-    name = typeStatic();
-
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 305, 70 };
 

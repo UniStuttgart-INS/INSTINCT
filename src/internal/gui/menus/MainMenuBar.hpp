@@ -14,7 +14,6 @@ namespace NAV::gui::menus
 {
 /// @brief Shows the main menu bar and moves down the cursor
 /// @param[in, out] globalAction Global Action to perform
-/// @param[in, out] initList List of Nodes to initialize or deinitialize
-void ShowMainMenuBar(GlobalActions& globalAction, std::deque<std::pair<Node*, bool>>& initList);
+void ShowMainMenuBar(GlobalActions& globalAction);
 
 } // namespace NAV::gui::menus

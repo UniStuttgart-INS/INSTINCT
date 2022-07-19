@@ -12,9 +12,8 @@ namespace nm = NAV::NodeManager;
 #include "Navigation/Transformations/Units.hpp"
 
 NAV::VectorNavBinaryConverter::VectorNavBinaryConverter()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 350, 123 };

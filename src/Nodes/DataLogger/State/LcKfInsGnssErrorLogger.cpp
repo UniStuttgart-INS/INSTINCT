@@ -13,9 +13,8 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 NAV::LcKfInsGnssErrorLogger::LcKfInsGnssErrorLogger()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _fileType = FileType::CSV;
@@ -51,7 +50,7 @@ void NAV::LcKfInsGnssErrorLogger::guiConfig()
     if (FileWriter::guiConfig(".csv", { ".csv" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        deinitializeNode();
+        doDeinitialize();
     }
 }
 

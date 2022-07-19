@@ -16,6 +16,10 @@
 #include <string>
 #include <vector>
 #include <deque>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <chrono>
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json; ///< json namespace
@@ -32,7 +36,7 @@ class NodeEditorApplication;
 
 namespace menus
 {
-void ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList);
+void ShowRunMenu();
 } // namespace menus
 
 } // namespace gui
@@ -130,10 +134,25 @@ class Node
         Value value;
     };
 
-    /// @brief Default constructor
-    Node() = default;
+    /// @brief Possible states of the node
+    enum class State
+    {
+        Disabled,       ///< Node is disabled and won't be initialized
+        Deinitialized,  ///< Node is deinitialized (red)
+        DoInitialize,   ///< Node should be initialized
+        Initializing,   ///< Node is currently initializing
+        Initialized,    ///< Node is initialized (green)
+        DoDeinitialize, ///< Node should be deinitialized
+        Deinitializing, ///< Node is currently deinitializing
+        DoShutdown,     ///< Node should shut down
+        Shutdown,       ///< Node is shutting down
+    };
+
+    /// @brief Constructor
+    /// @param[in] name Name of the node
+    explicit Node(std::string name);
     /// @brief Destructor
-    virtual ~Node() = default;
+    virtual ~Node();
     /// @brief Copy constructor
     Node(const Node&) = delete;
     /// @brief Move constructor
@@ -166,10 +185,10 @@ class Node
     virtual void restoreAtferLink(const json& j);
 
     /// @brief Initialize the Node
-    bool initializeNode();
+    virtual bool initialize();
 
     /// @brief Deinitialize the Node
-    void deinitializeNode();
+    virtual void deinitialize();
 
     /// @brief Resets the node. It is guaranteed that the node is initialized when this is called.
     virtual bool resetNode();
@@ -198,6 +217,9 @@ class Node
     /// @brief Notifies the node, that some data was changed on one of it's output ports
     /// @param[in] linkId Id of the link on which data is changed
     virtual void notifyOnOutputValueChanged(ax::NodeEditor::LinkId linkId);
+
+    /// @brief Function called by the flow executer after finishing to flush out remaining data
+    virtual void flush();
 
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member functions                                             */
@@ -254,23 +276,48 @@ class Node
     /// @brief Node name and id
     [[nodiscard]] std::string nameId() const;
 
-    /// @brief Flag, if the node is initialized
-    [[nodiscard]] bool isInitialized() const;
-
-    /// @brief Flag, if the node is currently initializing
-    [[nodiscard]] bool isInitializing() const;
-
-    /// @brief Flag, if the node is currently deinitializing
-    [[nodiscard]] bool isDeinitializing() const;
-
-    /// @brief Flag, if the node is enabled
-    [[nodiscard]] bool isEnabled() const;
-
     /// @brief Get the size of the node
     [[nodiscard]] const ImVec2& getSize() const;
 
-    /// @brief Function called by the flow executer after finishing to flush out remaining data
-    virtual void flush();
+    // ------------------------------------------ State handling ---------------------------------------------
+
+    /// @brief Converts the state into a printable text
+    /// @param[in] state State to convert
+    /// @return String representation of the state
+    static std::string toString(State state);
+
+    /// @brief Get the current state of the node
+    [[nodiscard]] State getState() const;
+
+    /// @brief Asks the node worker to initialize the node
+    /// @param[in] wait Wait for the worker to complete the request
+    /// @return True if not waiting and the worker accepted the request otherwise if waiting only true if the node initialized correctly
+    bool doInitialize(bool wait = false);
+
+    /// @brief Asks the node worker to reinitialize the node
+    /// @param[in] wait Wait for the worker to complete the request
+    /// @return True if not waiting and the worker accepted the request otherwise if waiting only true if the node initialized correctly
+    bool doReinitialize(bool wait = false);
+
+    /// @brief Asks the node worker to deinitialize the node
+    /// @param[in] wait Wait for the worker to complete the request
+    /// @return True if the worker accepted the request
+    bool doDeinitialize(bool wait = false);
+
+    /// @brief Asks the node worker to disable the node
+    /// @param[in] wait Wait for the worker to complete the request
+    /// @return True if the worker accepted the request
+    bool doDisableNode(bool wait = false);
+
+    /// @brief Enable the node
+    /// @return True if enabling was successful
+    bool doEnableNode();
+
+    /// @brief Checks if the node is disabled
+    [[nodiscard]] bool isDisabled() const;
+
+    /// @brief Checks if the node is initialized
+    [[nodiscard]] bool isInitialized() const;
 
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member variables                                             */
@@ -299,19 +346,14 @@ class Node
     bool _hasConfig = false;
 
   private:
-    /// @brief Abstract Initialization of the Node
-    virtual bool initialize();
+    /// Current state of the node
+    State _state = State::Deinitialized;
 
-    /// @brief Deinitialize the Node
-    virtual void deinitialize();
+    /// Flag if the node should be reinitialize after deinitializing
+    bool _reinitialize = false;
 
-    /// Flag, if the node is initialized
-    bool _isInitialized = false;
-
-    /// Flag, if the node is currently initializing
-    bool _isInitializing = false;
-    /// Flag, if the node is currently deinitializing
-    bool _isDeinitializing = false;
+    /// Flag if the node should be disabled after deinitializing
+    bool _disable = false;
 
     /// Flag if the config window is shown
     bool _showConfig = false;
@@ -322,8 +364,25 @@ class Node
     /// Size of the node in pixels
     ImVec2 _size{ 0, 0 };
 
-    /// Flag if the node is enabled
-    bool _isEnabled = true;
+    std::chrono::duration<int64_t> _workerTimeout = std::chrono::years(1); ///< Periodic timeout of the worker to check if new data available
+    std::thread _worker;                                                   ///< Worker handling initialization and processing of data
+    std::mutex _workerMutex;                                               ///< Mutex to interact with the worker condition variable
+    std::condition_variable _workerConditionVariable;                      ///< Condition variable to signal the worker thread to do something
+
+    /// @brief Worker thread
+    /// @param[in, out] node The node where the thread belongs to
+    static void workerThread(Node* node);
+
+    /// Handler which gets triggered if the worker runs into a periodic timeout
+    virtual void workerTimeoutHandler();
+
+    /// @brief Called by the worker to initialize the node
+    /// @return True if the initialization was successful
+    bool workerInitializeNode();
+
+    /// @brief Called by the worker to deinitialize the node
+    /// @return True if the deinitialization was successful
+    bool workerDeinitializeNode();
 
     friend class gui::NodeEditorApplication;
     friend class NAV::GroupBox;
@@ -338,8 +397,7 @@ class Node
     friend void NAV::from_json(const json& j, Node& node);
 
     /// @brief Show the run menu dropdown
-    /// @param[in, out] initList List of nodes which should be asynchronously initialized
-    friend void gui::menus::ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList);
+    friend void gui::menus::ShowRunMenu();
 };
 
 /// @brief Equal compares Node::Kind values
