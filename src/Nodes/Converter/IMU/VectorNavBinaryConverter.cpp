@@ -415,26 +415,26 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                 SatelliteSystem satSys = SatSys_None;
                 switch (satRaw.sys)
                 {
-                case sensors::vectornav::SatSys::GPS:
+                case vendor::vectornav::SatSys::GPS:
                     satSys = GPS;
                     break;
-                case sensors::vectornav::SatSys::SBAS:
+                case vendor::vectornav::SatSys::SBAS:
                     satSys = SBAS;
                     break;
-                case sensors::vectornav::SatSys::Galileo:
+                case vendor::vectornav::SatSys::Galileo:
                     satSys = GAL;
                     break;
-                case sensors::vectornav::SatSys::BeiDou:
+                case vendor::vectornav::SatSys::BeiDou:
                     satSys = BDS;
                     break;
-                case sensors::vectornav::SatSys::IMES:
+                case vendor::vectornav::SatSys::IMES:
                     LOG_TRACE("VectorNav SatRawElement satellite system '{}' is not supported yet. Skipping measurement.", satRaw.sys);
                     skipMeasurement = true;
                     break;
-                case sensors::vectornav::SatSys::QZSS:
+                case vendor::vectornav::SatSys::QZSS:
                     satSys = QZSS;
                     break;
-                case sensors::vectornav::SatSys::GLONASS:
+                case vendor::vectornav::SatSys::GLONASS:
                     satSys = GLO;
                     break;
                 default: // IRNSS not in vectorNav
@@ -450,35 +450,35 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                 case GPS:
                     switch (satRaw.freq)
                     {
-                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L1:
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L1:
                         frequency = G01;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::P_Code:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::P_Code:
                             code = Code::G1P;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
                             code = Code::G1C;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Y_Code:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Y_Code:
                             code = Code::G1Y;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::M_Code:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::M_Code:
                             code = Code::G1M;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Codeless:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Codeless:
                             code = Code::G1N;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::M_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::M_Chan:
                             code = Code::G1S;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
                             code = Code::G1L;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
                             code = Code::G1X;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Z_Tracking:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Z_Tracking:
                             code = Code::G1W;
                             break;
                         default:
@@ -487,38 +487,38 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             break;
                         }
                         break;
-                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L2:
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L2:
                         frequency = G02;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::P_Code:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::P_Code:
                             code = Code::G2P;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
                             code = Code::G2C;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::SemiCodeless:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::SemiCodeless:
                             code = Code::G2D;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Y_Code:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Y_Code:
                             code = Code::G2Y;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::M_Code:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::M_Code:
                             code = Code::G2M;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Codeless:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Codeless:
                             code = Code::G2N;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::M_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::M_Chan:
                             code = Code::G2S;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
                             code = Code::G2L;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
                             code = Code::G2X;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Z_Tracking:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Z_Tracking:
                             code = Code::G2W;
                             break;
                         default:
@@ -527,17 +527,17 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             break;
                         }
                         break;
-                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L5:
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L5:
                         frequency = G05;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
                             code = Code::G5I;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
                             code = Code::G5Q;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
                             code = Code::G5X;
                             break;
                         default:
@@ -555,11 +555,11 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                 case SBAS:
                     switch (satRaw.freq)
                     {
-                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L1:
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L1:
                         frequency = S01;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
                             code = Code::S1C;
                             break;
                         default:
@@ -568,17 +568,17 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             break;
                         }
                         break;
-                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L5:
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L5:
                         frequency = S05;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
                             code = Code::S5I;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
                             code = Code::S5Q;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
                             code = Code::S5X;
                             break;
                         default:
@@ -596,23 +596,23 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                 case GAL:
                     switch (satRaw.freq)
                     {
-                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L1:
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L1:
                         frequency = E01;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
                             code = Code::E1C;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::A_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::A_Chan:
                             code = Code::E1A;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::B_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::B_Chan:
                             code = Code::E1B;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
                             code = Code::E1X;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::ABC:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::ABC:
                             code = Code::E1Z;
                             break;
                         default:
@@ -621,17 +621,17 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             break;
                         }
                         break;
-                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L5:
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L5:
                         frequency = E08;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
                             code = Code::E8I;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
                             code = Code::E8Q;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
                             code = Code::E8X;
                             break;
                         default:
@@ -640,17 +640,17 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             break;
                         }
                         break;
-                    case sensors::vectornav::RawMeas::SatRawElement::Freq::E6:
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::E6:
                         frequency = E06;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::B_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::B_Chan:
                             code = Code::E6B;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
                             code = Code::E6C;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
                             code = Code::E6X;
                             break;
                         default:
@@ -659,17 +659,17 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             break;
                         }
                         break;
-                    case sensors::vectornav::RawMeas::SatRawElement::Freq::E5a:
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::E5a:
                         frequency = E05;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
                             code = Code::E5I;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
                             code = Code::E5Q;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
                             code = Code::E5X;
                             break;
                         default:
@@ -678,17 +678,17 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             break;
                         }
                         break;
-                    case sensors::vectornav::RawMeas::SatRawElement::Freq::E5b:
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::E5b:
                         frequency = E07;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
                             code = Code::E7I;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
                             code = Code::E7Q;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
                             code = Code::E7X;
                             break;
                         default:
@@ -706,17 +706,17 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                 case BDS:
                     switch (satRaw.freq)
                     {
-                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L1:
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L1:
                         frequency = B01;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
                             code = Code::B2I;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
                             code = Code::B2Q;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
                             code = Code::B2X;
                             break;
                         default:
@@ -725,20 +725,20 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             break;
                         }
                         break;
-                    case sensors::vectornav::RawMeas::SatRawElement::Freq::E6:
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::E6:
                         frequency = B06;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::A_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::A_Chan:
                             code = Code::B6A;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
                             code = Code::B6I;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
                             code = Code::B6Q;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
                             code = Code::B6X;
                             break;
                         default:
@@ -747,17 +747,17 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             break;
                         }
                         break;
-                    case sensors::vectornav::RawMeas::SatRawElement::Freq::E5b:
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::E5b:
                         frequency = B08;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
                             code = Code::B7I;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
                             code = Code::B7Q;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
                             code = Code::B7X;
                             break;
                         default:
@@ -775,20 +775,20 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                 case QZSS:
                     switch (satRaw.freq)
                     {
-                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L1:
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L1:
                         frequency = J01;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
                             code = Code::J1C;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::M_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::M_Chan:
                             code = Code::J1S;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
                             code = Code::J1L;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
                             code = Code::J1X;
                             break;
                         default:
@@ -797,17 +797,17 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             break;
                         }
                         break;
-                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L2:
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L2:
                         frequency = J02;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::M_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::M_Chan:
                             code = Code::J2S;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
                             code = Code::J2L;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
                             code = Code::J2X;
                             break;
                         default:
@@ -816,17 +816,17 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             break;
                         }
                         break;
-                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L5:
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L5:
                         frequency = J05;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
                             code = Code::J5I;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
                             code = Code::J5Q;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
                             code = Code::J5X;
                             break;
                         default:
@@ -835,17 +835,17 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             break;
                         }
                         break;
-                    case sensors::vectornav::RawMeas::SatRawElement::Freq::E6:
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::E6:
                         frequency = J06;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::M_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::M_Chan:
                             code = Code::J6S;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
                             code = Code::J6L;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
                             code = Code::J6X;
                             break;
                         default:
@@ -863,14 +863,14 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                 case GLO:
                     switch (satRaw.freq)
                     {
-                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L1:
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L1:
                         frequency = R01;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
                             code = Code::R1C;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::P_Code:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::P_Code:
                             code = Code::R1P;
                             break;
                         default:
@@ -879,14 +879,14 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                             break;
                         }
                         break;
-                    case sensors::vectornav::RawMeas::SatRawElement::Freq::L2:
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L2:
                         frequency = R02;
                         switch (satRaw.chan)
                         {
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
                             code = Code::R2C;
                             break;
-                        case sensors::vectornav::RawMeas::SatRawElement::Chan::P_Code:
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::P_Code:
                             code = Code::R2P;
                             break;
                         default:
@@ -917,7 +917,7 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                 (*gnssObs)(frequency, satRaw.svId, code).doppler = satRaw.dp;
                 (*gnssObs)(frequency, satRaw.svId, code).CN0 = satRaw.cno;
 
-                // LLI has not been implemented yet, but can be calculated from sensors::vectornav::RawMeas::SatRawElement::Flags
+                // LLI has not been implemented yet, but can be calculated from vendor::vectornav::RawMeas::SatRawElement::Flags
                 // (*gnssObs)[{ frequency, satRaw.svId }].LLI = ...
             }
         }
