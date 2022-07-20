@@ -461,7 +461,7 @@ bool NAV::Node::workerInitializeNode()
                     if (!connectedNode->doInitialize(true))
                     {
                         LOG_ERROR("{}: Could not initialize connected node {}", nameId(), connectedNode->nameId());
-                        _state = Node::State::Deinitialized;
+                        if (_state == State::Initializing) { _state = Node::State::Deinitialized; }
                         return false;
                     }
                 }
@@ -474,11 +474,11 @@ bool NAV::Node::workerInitializeNode()
     // Initialize the node itself
     if (initialize())
     {
-        _state = Node::State::Initialized;
+        if (_state == State::Initializing) { _state = Node::State::Initialized; }
         return true;
     }
 
-    _state = Node::State::Deinitialized;
+    if (_state == State::Initializing) { _state = Node::State::Deinitialized; }
     return false;
 }
 
@@ -515,9 +515,12 @@ bool NAV::Node::workerDeinitializeNode()
     // Deinitialize the node itself
     deinitialize();
 
-    if (_disable) { _state = State::Disabled; }
-    else if (_reinitialize) { _state = State::DoInitialize; }
-    else { _state = State::Deinitialized; }
+    if (_state == State::Deinitializing)
+    {
+        if (_disable) { _state = State::Disabled; }
+        else if (_reinitialize) { _state = State::DoInitialize; }
+        else { _state = State::Deinitialized; }
+    }
 
     return true;
 }
