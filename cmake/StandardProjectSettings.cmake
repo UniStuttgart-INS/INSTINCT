@@ -20,7 +20,7 @@ if(ENABLE_IPO)
     message(STATUS "Enabling LTO/IPO")
     set_target_properties(project_options PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
   else()
-    message(SEND_ERROR "IPO is not supported: ${output}")
+    message(WARNING "IPO is not supported:\n${output}")
   endif()
 endif()
 
