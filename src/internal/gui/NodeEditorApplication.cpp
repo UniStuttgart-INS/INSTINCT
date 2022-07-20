@@ -1329,11 +1329,11 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             {
                 if (node->isDisabled())
                 {
-                    node->doEnableNode();
+                    node->doEnable();
                 }
                 else
                 {
-                    node->doDisableNode();
+                    node->doDisable();
                 }
                 flow::ApplyChanges();
             }

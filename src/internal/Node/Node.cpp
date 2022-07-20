@@ -336,7 +336,7 @@ bool NAV::Node::doDeinitialize(bool wait)
     return true;
 }
 
-bool NAV::Node::doDisableNode(bool wait)
+bool NAV::Node::doDisable(bool wait)
 {
     LOG_TRACE("{}: Current state = {}", nameId(), toString(_state));
 
@@ -368,7 +368,7 @@ bool NAV::Node::doDisableNode(bool wait)
     return true;
 }
 
-bool NAV::Node::doEnableNode()
+bool NAV::Node::doEnable()
 {
     LOG_TRACE("{}: Current state = {}", nameId(), toString(_state));
 
