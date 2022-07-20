@@ -13,9 +13,8 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/IMU/ImuObs.hpp"
 
 NAV::MultiImuFile::MultiImuFile()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
@@ -49,7 +48,7 @@ void NAV::MultiImuFile::guiConfig()
     if (FileReader::guiConfig(".txt", { ".txt" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        deinitializeNode();
+        deinitialize();
     }
 
     // Set Imu Position and Rotation (from 'Imu::guiConfig();')
@@ -346,7 +345,7 @@ std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(bool peek)
 
             if (col == "sensorId")
             {
-                sensorId = std::stoul(cell); //NOLINT(clang-diagnostic-implicit-int-conversion)
+                sensorId = std::stoul(cell); // NOLINT(clang-diagnostic-implicit-int-conversion)
             }
             if (col == "gpsSecond")
             {
