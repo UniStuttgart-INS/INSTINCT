@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <util/Logger.hpp>
 #include <Eigen/Core>
 #include <Eigen/Dense>
 
@@ -38,7 +39,8 @@ void to_json(json& j, const Matrix<_Scalar, _Rows, _Cols>& matrix)
     {
         for (int c = 0; c < matrix.cols(); c++)
         {
-            j[std::to_string(r)][std::to_string(c)] = matrix(r, c);
+            if (std::isnan(matrix(r, c))) { j[std::to_string(r)][std::to_string(c)] = "NaN"; }
+            else { j[std::to_string(r)][std::to_string(c)] = matrix(r, c); }
         }
     }
 }
@@ -71,7 +73,20 @@ void from_json(const json& j, Matrix<_Scalar, _Rows, _Cols>& matrix)
     {
         for (int c = 0; j.at(std::to_string(r)).contains(std::to_string(c)); c++)
         {
-            j.at(std::to_string(r)).at(std::to_string(c)).get_to(matrix(r, c));
+            if (j.at(std::to_string(r)).at(std::to_string(c)).is_string())
+            {
+                auto str = j.at(std::to_string(r)).at(std::to_string(c)).get<std::string>();
+                if (str == "NaN") { matrix(r, c) = std::nan(""); }
+                else { LOG_WARN("Reading matrix value failed at position ({}, {}). Value is an unknown string '{}'.", r, c, str); }
+            }
+            else if (j.at(std::to_string(r)).at(std::to_string(c)).is_number())
+            {
+                j.at(std::to_string(r)).at(std::to_string(c)).get_to(matrix(r, c));
+            }
+            else
+            {
+                LOG_WARN("Reading matrix value failed at position ({}, {}). Value has the type '{}' which cannot be converted into a floating point number.", r, c, j.at(std::to_string(r)).at(std::to_string(c)).type_name());
+            }
         }
     }
 }
