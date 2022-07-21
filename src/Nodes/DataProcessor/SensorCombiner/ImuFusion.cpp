@@ -513,8 +513,6 @@ void NAV::ImuFusion::guiConfig()
     j["checkKalmanMatricesRanks"] = _checkKalmanMatricesRanks;
 
     j["nInputPins"] = _nInputPins;
-    j["imuRotations_accel"] = _imuRotations_accel;
-    j["imuRotations_gyro"] = _imuRotations_gyro;
     j["imuFrequency"] = _imuFrequency;
     j["designMatrixInitialized"] = _designMatrixInitialized;
     j["numStates"] = _numStates;
@@ -536,14 +534,6 @@ void NAV::ImuFusion::restore(json const& j)
     {
         j.at("nInputPins").get_to(_nInputPins);
         updateNumberOfInputPins();
-    }
-    if (j.contains("imuRotations_accel"))
-    {
-        j.at("imuRotations_accel").get_to(_imuRotations_accel);
-    }
-    if (j.contains("imuRotations_gyro"))
-    {
-        j.at("imuRotations_gyro").get_to(_imuRotations_gyro);
     }
     if (j.contains("imuFrequency"))
     {
