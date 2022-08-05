@@ -89,9 +89,11 @@ bool NAV::KvhDataLogger::initialize()
 
     CommonLog::initialize();
 
-    _filestream << "Time [s],GpsCycle,GpsWeek,GpsToW,TimeStartup,"
-                << "UnCompMagX,UnCompMagY,UnCompMagZ,UnCompAccX,UnCompAccY,UnCompAccZ,UnCompGyroX,UnCompGyroY,UnCompGyroZ,"
-                << "Temperature,Status,SequenceNumber" << std::endl;
+    _filestream << "Time [s],GpsCycle,GpsWeek,GpsToW [s],TimeStartup [ns],"
+                << "UnCompMagX [Gauss],UnCompMagY [Gauss],UnCompMagZ [Gauss],"
+                << "UnCompAccX [m/s^2],UnCompAccY [m/s^2],UnCompAccZ [m/s^2],"
+                << "UnCompGyroX [rad/s],UnCompGyroY [rad/s],UnCompGyroZ [rad/s],"
+                << "Temperature [Celsius],Status,SequenceNumber" << std::endl;
 
     return true;
 }

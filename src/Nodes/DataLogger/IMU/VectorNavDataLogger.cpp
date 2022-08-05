@@ -156,22 +156,22 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
     {
         if (!_headerWritten)
         {
-            _filestream << "Time [s],GpsCycle,GpsWeek,GpsTow";
+            _filestream << "Time [s],GpsCycle,GpsWeek,GpsTow [s]";
 
             // Group 2 (Time)
             if (obs->timeOutputs)
             {
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP)
                 {
-                    _filestream << ",Time::TimeStartup";
+                    _filestream << ",Time::TimeStartup [ns]";
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS)
                 {
-                    _filestream << ",Time::TimeGps";
+                    _filestream << ",Time::TimeGps [ns]";
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
                 {
-                    _filestream << ",Time::GpsTow";
+                    _filestream << ",Time::GpsTow [ns]";
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK)
                 {
@@ -179,11 +179,11 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN)
                 {
-                    _filestream << ",Time::TimeSyncIn";
+                    _filestream << ",Time::TimeSyncIn [ns]";
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS)
                 {
-                    _filestream << ",Time::TimeGpsPps";
+                    _filestream << ",Time::TimeGpsPps [ns]";
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC)
                 {
@@ -211,43 +211,43 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG)
                 {
-                    _filestream << ",IMU::UncompMag::X,IMU::UncompMag::Y,IMU::UncompMag::Z";
+                    _filestream << ",IMU::UncompMag::X [Gauss],IMU::UncompMag::Y [Gauss],IMU::UncompMag::Z [Gauss]";
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL)
                 {
-                    _filestream << ",IMU::UncompAccel::X,IMU::UncompAccel::Y,IMU::UncompAccel::Z";
+                    _filestream << ",IMU::UncompAccel::X [m/s^2],IMU::UncompAccel::Y [m/s^2],IMU::UncompAccel::Z [m/s^2]";
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO)
                 {
-                    _filestream << ",IMU::UncompGyro::X,IMU::UncompGyro::Y,IMU::UncompGyro::Z";
+                    _filestream << ",IMU::UncompGyro::X [rad/s],IMU::UncompGyro::Y [rad/s],IMU::UncompGyro::Z [rad/s]";
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_TEMP)
                 {
-                    _filestream << ",IMU::Temp";
+                    _filestream << ",IMU::Temp [Celsius]";
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_PRES)
                 {
-                    _filestream << ",IMU::Pres";
+                    _filestream << ",IMU::Pres [kPa]";
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA)
                 {
-                    _filestream << ",IMU::DeltaTime,IMU::DeltaTheta::X,IMU::DeltaTheta::Y,IMU::DeltaTheta::Z";
+                    _filestream << ",IMU::DeltaTime [s],IMU::DeltaTheta::X [deg],IMU::DeltaTheta::Y [deg],IMU::DeltaTheta::Z [deg]";
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL)
                 {
-                    _filestream << ",IMU::DeltaVel::X,IMU::DeltaVel::Y,IMU::DeltaVel::Z";
+                    _filestream << ",IMU::DeltaVel::X [m/s],IMU::DeltaVel::Y [m/s],IMU::DeltaVel::Z [m/s]";
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_MAG)
                 {
-                    _filestream << ",IMU::Mag::X,IMU::Mag::Y,IMU::Mag::Z";
+                    _filestream << ",IMU::Mag::X [Gauss],IMU::Mag::Y [Gauss],IMU::Mag::Z [Gauss]";
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL)
                 {
-                    _filestream << ",IMU::Accel::X,IMU::Accel::Y,IMU::Accel::Z";
+                    _filestream << ",IMU::Accel::X [m/s^2],IMU::Accel::Y [m/s^2],IMU::Accel::Z [m/s^2]";
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE)
                 {
-                    _filestream << ",IMU::AngularRate::X,IMU::AngularRate::Y,IMU::AngularRate::Z";
+                    _filestream << ",IMU::AngularRate::X,IMU::AngularRate::Y [rad/s],IMU::AngularRate::Z [rad/s]";
                 }
             }
             // Group 4 (GNSS1)
@@ -259,7 +259,7 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
                 {
-                    _filestream << ",GNSS1::Tow";
+                    _filestream << ",GNSS1::Tow [ns]";
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
                 {
@@ -275,31 +275,31 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
                 {
-                    _filestream << ",GNSS1::PosLla::latitude,GNSS1::PosLla::longitude,GNSS1::PosLla::altitude";
+                    _filestream << ",GNSS1::PosLla::latitude [deg],GNSS1::PosLla::longitude [deg],GNSS1::PosLla::altitude [m]";
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
                 {
-                    _filestream << ",GNSS1::PosEcef::X,GNSS1::PosEcef::Y,GNSS1::PosEcef::Z";
+                    _filestream << ",GNSS1::PosEcef::X [m],GNSS1::PosEcef::Y [m],GNSS1::PosEcef::Z [m]";
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED)
                 {
-                    _filestream << ",GNSS1::VelNed::N,GNSS1::VelNed::E,GNSS1::VelNed::D";
+                    _filestream << ",GNSS1::VelNed::N [m/s],GNSS1::VelNed::E [m/s],GNSS1::VelNed::D [m/s]";
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
                 {
-                    _filestream << ",GNSS1::VelEcef::X,GNSS1::VelEcef::Y,GNSS1::VelEcef::Z";
+                    _filestream << ",GNSS1::VelEcef::X [m/s],GNSS1::VelEcef::Y [m/s],GNSS1::VelEcef::Z [m/s]";
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSU)
                 {
-                    _filestream << ",GNSS1::PosU::N,GNSS1::PosU::E,GNSS1::PosU::D";
+                    _filestream << ",GNSS1::PosU::N [m],GNSS1::PosU::E [m],GNSS1::PosU::D [m]";
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELU)
                 {
-                    _filestream << ",GNSS1::VelU";
+                    _filestream << ",GNSS1::VelU [m/s]";
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU)
                 {
-                    _filestream << ",GNSS1::TimeU";
+                    _filestream << ",GNSS1::TimeU [s]";
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
                 {
@@ -315,7 +315,7 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
                 {
-                    _filestream << ",GNSS1::RawMeas::Tow,GNSS1::RawMeas::Week,GNSS1::RawMeas::NumSats,GNSS1::RawMeas::Satellites";
+                    _filestream << ",GNSS1::RawMeas::Tow [s],GNSS1::RawMeas::Week,GNSS1::RawMeas::NumSats,GNSS1::RawMeas::Satellites";
                 }
             }
             // Group 5 (Attitude)
@@ -335,7 +335,7 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL)
                 {
-                    _filestream << ",Att::YawPitchRoll::Y,Att::YawPitchRoll::P,Att::YawPitchRoll::R";
+                    _filestream << ",Att::YawPitchRoll::Y [deg],Att::YawPitchRoll::P [deg],Att::YawPitchRoll::R [deg]";
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION)
                 {
@@ -349,23 +349,23 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED)
                 {
-                    _filestream << ",Att::MagNed::N,Att::MagNed::E,Att::MagNed::D";
+                    _filestream << ",Att::MagNed::N [Gauss],Att::MagNed::E [Gauss],Att::MagNed::D [Gauss]";
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_ACCELNED)
                 {
-                    _filestream << ",Att::AccelNed::N,Att::AccelNed::E,Att::AccelNed::D";
+                    _filestream << ",Att::AccelNed::N [m/s^2],Att::AccelNed::E [m/s^2],Att::AccelNed::D [m/s^2]";
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELBODY)
                 {
-                    _filestream << ",Att::LinearAccelBody::X,Att::LinearAccelBody::Y,Att::LinearAccelBody::Z";
+                    _filestream << ",Att::LinearAccelBody::X [m/s^2],Att::LinearAccelBody::Y [m/s^2],Att::LinearAccelBody::Z [m/s^2]";
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELNED)
                 {
-                    _filestream << ",Att::LinearAccelNed::N,Att::LinearAccelNed::E,Att::LinearAccelNed::D";
+                    _filestream << ",Att::LinearAccelNed::N [m/s^2],Att::LinearAccelNed::E [m/s^2],Att::LinearAccelNed::D [m/s^2]";
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU)
                 {
-                    _filestream << ",Att::YprU::Y,Att::YprU::P,Att::YprU::R";
+                    _filestream << ",Att::YprU::Y [deg],Att::YprU::P [deg],Att::YprU::R [deg]";
                 }
             }
             // Group 6 (INS)
@@ -383,43 +383,43 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA)
                 {
-                    _filestream << ",INS::PosLla::latitude,INS::PosLla::longitude,INS::PosLla::altitude";
+                    _filestream << ",INS::PosLla::latitude [deg],INS::PosLla::longitude [deg],INS::PosLla::altitude [m]";
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSECEF)
                 {
-                    _filestream << ",INS::PosEcef::X,INS::PosEcef::Y,INS::PosEcef::Z";
+                    _filestream << ",INS::PosEcef::X [m],INS::PosEcef::Y [m],INS::PosEcef::Z [m]";
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELBODY)
                 {
-                    _filestream << ",INS::VelBody::X,INS::VelBody::Y,INS::VelBody::Z";
+                    _filestream << ",INS::VelBody::X [m/s],INS::VelBody::Y [m/s],INS::VelBody::Z [m/s]";
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELNED)
                 {
-                    _filestream << ",INS::VelNed::N,INS::VelNed::E,INS::VelNed::D";
+                    _filestream << ",INS::VelNed::N [m/s],INS::VelNed::E [m/s],INS::VelNed::D [m/s]";
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELECEF)
                 {
-                    _filestream << ",INS::VelEcef::X,INS::VelEcef::Y,INS::VelEcef::Z";
+                    _filestream << ",INS::VelEcef::X [m/s],INS::VelEcef::Y [m/s],INS::VelEcef::Z [m/s]";
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_MAGECEF)
                 {
-                    _filestream << ",INS::MagEcef::X,INS::MagEcef::Y,INS::MagEcef::Z";
+                    _filestream << ",INS::MagEcef::X [Gauss],INS::MagEcef::Y [Gauss],INS::MagEcef::Z [Gauss]";
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_ACCELECEF)
                 {
-                    _filestream << ",INS::AccelEcef::X,INS::AccelEcef::Y,INS::AccelEcef::Z";
+                    _filestream << ",INS::AccelEcef::X [m/s^2],INS::AccelEcef::Y [m/s^2],INS::AccelEcef::Z [m/s^2]";
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_LINEARACCELECEF)
                 {
-                    _filestream << ",INS::LinearAccelEcef::X,INS::LinearAccelEcef::Y,INS::LinearAccelEcef::Z";
+                    _filestream << ",INS::LinearAccelEcef::X [m/s^2],INS::LinearAccelEcef::Y [m/s^2],INS::LinearAccelEcef::Z [m/s^2]";
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSU)
                 {
-                    _filestream << ",INS::PosU";
+                    _filestream << ",INS::PosU [m]";
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELU)
                 {
-                    _filestream << ",INS::VelU";
+                    _filestream << ",INS::VelU [m/s]";
                 }
             }
             // Group 7 (GNSS2)
@@ -431,7 +431,7 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
                 {
-                    _filestream << ",GNSS2::Tow";
+                    _filestream << ",GNSS2::Tow [ns]";
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
                 {
@@ -447,31 +447,31 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
                 {
-                    _filestream << ",GNSS2::PosLla::latitude,GNSS2::PosLla::longitude,GNSS2::PosLla::altitude";
+                    _filestream << ",GNSS2::PosLla::latitude [deg],GNSS2::PosLla::longitude [deg],GNSS2::PosLla::altitude [m]";
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
                 {
-                    _filestream << ",GNSS2::PosEcef::X,GNSS2::PosEcef::Y,GNSS2::PosEcef::Z";
+                    _filestream << ",GNSS2::PosEcef::X [m],GNSS2::PosEcef::Y [m],GNSS2::PosEcef::Z [m]";
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED)
                 {
-                    _filestream << ",GNSS2::VelNed::N,GNSS2::VelNed::E,GNSS2::VelNed::D";
+                    _filestream << ",GNSS2::VelNed::N [m/s],GNSS2::VelNed::E [m/s],GNSS2::VelNed::D [m/s]";
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
                 {
-                    _filestream << ",GNSS2::VelEcef::X,GNSS2::VelEcef::Y,GNSS2::VelEcef::Z";
+                    _filestream << ",GNSS2::VelEcef::X [m/s],GNSS2::VelEcef::Y [m/s],GNSS2::VelEcef::Z [m/s]";
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSU)
                 {
-                    _filestream << ",GNSS2::PosU::N,GNSS2::PosU::E,GNSS2::PosU::D";
+                    _filestream << ",GNSS2::PosU::N [m],GNSS2::PosU::E [m],GNSS2::PosU::D [m]";
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELU)
                 {
-                    _filestream << ",GNSS2::VelU";
+                    _filestream << ",GNSS2::VelU [m/s]";
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU)
                 {
-                    _filestream << ",GNSS2::TimeU";
+                    _filestream << ",GNSS2::TimeU [s]";
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
                 {
@@ -487,7 +487,7 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
                 {
-                    _filestream << ",GNSS2::RawMeas::Tow,GNSS2::RawMeas::Week,GNSS2::RawMeas::NumSats,GNSS2::RawMeas::Satellites";
+                    _filestream << ",GNSS2::RawMeas::Tow [s],GNSS2::RawMeas::Week,GNSS2::RawMeas::NumSats,GNSS2::RawMeas::Satellites";
                 }
             }
 

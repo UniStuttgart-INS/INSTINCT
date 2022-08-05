@@ -267,12 +267,16 @@ void NAV::VectorNavFile::readHeader()
                 // Remove any trailing non text characters
                 cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
 
-                std::string group = cell.substr(0, cell.find("::"));
+                std::string group = cell.substr(0, cell.find("::")); // Extract the group (Time::TimeUTC::year -> 'Time')
 
-                cell = cell.substr(cell.find("::") + 2);
+                cell = cell.substr(cell.find("::") + 2); // Remove the group -> 'TimeUTC::year'
                 if (cell.find("::") != std::string::npos)
                 {
-                    cell = cell.substr(0, cell.find("::"));
+                    cell = cell.substr(0, cell.find("::")); // Remove subgroups ('TimeUTC::year' -> 'TimeUTC')
+                }
+                if (cell.find(' ') != std::string::npos)
+                {
+                    cell = cell.substr(0, cell.find(' ')); // Remove everything after a blank, which is the unit ('TimeStartup [ns]' -> 'TimeStartup')
                 }
 
                 bool identified = false;
