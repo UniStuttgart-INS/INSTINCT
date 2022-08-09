@@ -759,6 +759,43 @@ void NAV::ImuFusion::initializeKalmanFilter()
         }
     }
 
+    // -------------------------------------------- State vector x -----------------------------------------------
+    // Initial angular rate in [rad/s]
+    Eigen::Vector3d initAngularRate = Eigen::Vector3d::Zero();
+    if (_pinData[0].initAngularRateUnit == PinData::AngRateUnit::deg_s)
+    {
+        initAngularRate = deg2rad(_pinData[0].initAngularRate);
+    }
+    if (_pinData[0].initAngularRateUnit == PinData::AngRateUnit::rad_s)
+    {
+        initAngularRate = _pinData[0].initAngularRate;
+    }
+
+    // Initial acceleration in [m/s²]
+    Eigen::Vector3d initAcceleration = Eigen::Vector3d::Zero();
+    if (_pinData[0].initAccelerationUnit == PinData::AccelerationUnit::m_s2)
+    {
+        initAcceleration = _pinData[0].initAcceleration;
+    }
+
+    // Initial angular acceleration in [rad/s²]
+    Eigen::Vector3d initAngularAcc = Eigen::Vector3d::Zero();
+    if (_pinData[0].initAngularAccUnit == PinData::AngularAccUnit::deg_s2)
+    {
+        initAngularAcc = deg2rad(_pinData[0].initAngularAcc);
+    }
+    if (_pinData[0].initAngularAccUnit == PinData::AngularAccUnit::rad_s2)
+    {
+        initAngularAcc = _pinData[0].initAngularAcc;
+    }
+
+    // Initial jerk in [m/s³]
+    Eigen::Vector3d initJerk = Eigen::Vector3d::Zero();
+    if (_pinData[0].initJerkUnit == PinData::JerkUnit::m_s3)
+    {
+        initJerk = _pinData[0].initJerk;
+    }
+
     // ------------------------------------------------------ Error covariance matrix P --------------------------------------------------------
 
     // Initial Covariance of the angular rate in [rad²/s²]
@@ -952,11 +989,18 @@ void NAV::ImuFusion::initializeKalmanFilter()
     auto dtInit = 1.0 / _imuFrequency;
 
     // --------------------------------------------------------- KF Initializations ------------------------------------------------------------
-    Eigen::VectorXd bla = Eigen::VectorXd::Zero(24, 1);
+    _kalmanFilter.x.block<3, 1>(0, 0) = initAngularRate;
+    _kalmanFilter.x.block<3, 1>(3, 0) = initAngularAcc;
+    _kalmanFilter.x.block<3, 1>(6, 0) = initAcceleration;
+    _kalmanFilter.x.block<3, 1>(9, 0) = initJerk;
+
+    // hard-coded - long time measurements (kept for reference) ################################################################################
+    // Eigen::VectorXd bla = Eigen::VectorXd::Zero(24, 1);
     // bla << 0.1250, -0.1615, 0.0194, -0.1434, 0.2279, -2.5783, -0.0132, 0.0117, 0.0245, -0.2762, 0.4848, -1.5336, 0.0213, -0.0320, 0.0397, -0.1588, 0.2588, -2.9022, 0.0091, -0.0055, 0.0183, -0.2413, 0.0189, -3.6849; // entire time series
-    bla << 0.1250, -0.1616, 0.0192, -0.1447, 0.2291, -2.5865, -0.0130, 0.0117, 0.0237, -0.2725, 0.4880, -1.5728, 0.0223, -0.0330, 0.0394, -0.1571, 0.2600, -2.9525, 0.0098, -0.0060, 0.0185, -0.2440, 0.0256, -3.7012; // 1 second
-    _kalmanFilter.x.block<24, 1>(12, 0) = bla;
+    // bla << 0.1250, -0.1616, 0.0192, -0.1447, 0.2291, -2.5865, -0.0130, 0.0117, 0.0237, -0.2725, 0.4880, -1.5728, 0.0223, -0.0330, 0.0394, -0.1571, 0.2600, -2.9525, 0.0098, -0.0060, 0.0185, -0.2440, 0.0256, -3.7012; // 1 second
+    // _kalmanFilter.x.block<24, 1>(12, 0) = bla;
     LOG_WARN("kalmanFilter.x = {}", _kalmanFilter.x.transpose());
+    // hard-coded - long time measurements (kept for reference) ################################################################################
 
     _kalmanFilter.P = initialErrorCovarianceMatrix_P0(variance_angularRate, variance_angularAcceleration, variance_acceleration, variance_jerk);
     LOG_DATA("kalmanFilter.P =\n{}", _kalmanFilter.P);
