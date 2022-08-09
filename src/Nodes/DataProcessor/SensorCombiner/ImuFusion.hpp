@@ -58,6 +58,33 @@ class ImuFusion : public Imu
     /// @brief Information about a sensor which is connected to a certain pin
     struct PinData
     {
+        // ------------------------------------------ State Units --------------------------------------------
+        /// Possible Units for the angular rate
+        enum class AngRateUnit
+        {
+            deg_s, ///< in [deg/s, deg/s, deg/s]
+            rad_s, ///< in [rad/s, rad/s, rad/s]
+        };
+
+        /// Possible Units for the acceleration
+        enum class AccelerationUnit
+        {
+            m_s2, ///< in [m/s², m/s², m/s²]
+        };
+
+        /// Possible Units for the angular acceleration
+        enum class AngularAccUnit
+        {
+            deg_s2, ///< in [deg/s², deg/s², deg/s²]
+            rad_s2, ///< in [rad/s², rad/s², rad/s²]
+        };
+
+        /// Possible Units for the jerk
+        enum class JerkUnit
+        {
+            m_s3, ///< in [m/s³, m/s³, m/s³]
+        };
+
         // ---------------------------------------- Variance Units -------------------------------------------
         /// Possible Units for the variance for the process noise of the angular rate (standard deviation σ or Variance σ²)
         enum class AngRateVarianceUnit
@@ -92,6 +119,14 @@ class ImuFusion : public Imu
         };
 
         // --------------------------------- State unit and initialization -----------------------------------
+        /// GUI selection of the initial angular rate
+        Eigen::Vector3d initAngularRate{ 0, 0, 0 };
+        /// GUI selection of the initial acceleration
+        Eigen::Vector3d initAcceleration{ 0, 0, 0 };
+        /// GUI selection of the initial angular acceleration
+        Eigen::Vector3d initAngularAcc{ 0, 0, 0 };
+        /// GUI selection of the initial jerk
+        Eigen::Vector3d initJerk{ 0, 0, 0 };
         /// GUI selection of the initial covariance diagonal values for angular rate (standard deviation σ or Variance σ²)
         Eigen::Vector3d initCovarianceAngularRate{ 1, 1, 1 };
         /// GUI selection of the initial covariance diagonal values for angular acceleration (standard deviation σ or Variance σ²)
@@ -116,6 +151,15 @@ class ImuFusion : public Imu
         Eigen::Vector3d measurementUncertaintyAngularRate{ 1, 1, 1 };
         /// Gui selection of the angular acceleration measurement uncertainty diagonal values
         Eigen::Vector3d measurementUncertaintyAcceleration{ 0.1, 0.1, 0.1 };
+
+        /// Gui selection for the Unit of the initial angular rate
+        AngRateUnit initAngularRateUnit = AngRateUnit::deg_s;
+        /// Gui selection for the Unit of the initial acceleration
+        AccelerationUnit initAccelerationUnit = AccelerationUnit::m_s2;
+        /// Gui selection for the Unit of the initial angular acceleration
+        AngularAccUnit initAngularAccUnit = AngularAccUnit::deg_s2;
+        /// Gui selection for the Unit of the initial jerk
+        JerkUnit initJerkUnit = JerkUnit::m_s3;
 
         /// Gui selection for the Unit of the initial covariance for the angular rate
         AngRateVarianceUnit initCovarianceAngularRateUnit = AngRateVarianceUnit::deg_s;
@@ -270,6 +314,10 @@ class ImuFusion : public Imu
 
     /// @brief Check the rank of the Kalman matrices every iteration (computationally expensive)
     bool _checkKalmanMatricesRanks = false;
+
+    InsTime _frameStart{ 0, 0, 0, 0, 0, 6.9 }; // in [s]
+    InsTime _frameEnd{ 0, 0, 0, 0, 0, 7.1 };   // in [s]
+    InsTime _dummyTime{ 0, 0, 0, 0, 0, 0 };    // in [s]
 };
 
 } // namespace NAV

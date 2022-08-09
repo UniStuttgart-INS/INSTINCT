@@ -10,8 +10,6 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 #include "internal/gui/widgets/HelpMarker.hpp"
 
-#include "NodeData/IMU/ImuObs.hpp"
-
 NAV::MultiImuFile::MultiImuFile()
     : Node(typeStatic())
 {
@@ -246,7 +244,6 @@ bool NAV::MultiImuFile::resetNode()
 
 void NAV::MultiImuFile::updateNumberOfOutputPins()
 {
-    // nm::CreateOutputPin(this, "ImuObs 1", Pin::Type::Flow, { NAV::ImuObs::type() }, &MultiImuFile::pollData);
     while (outputPins.size() < _nSensors)
     {
         nm::CreateOutputPin(this, fmt::format("ImuObs {}", outputPins.size() + 1).c_str(), Pin::Type::Flow, { NAV::ImuObs::type() }, &MultiImuFile::pollData);
@@ -392,6 +389,11 @@ std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(bool peek)
     }
 
     auto timeStamp = gpsSecond + timeNumerator / timeDenominator - _startTime;
+    // if (!peek)
+    // {
+    //     LOG_DEBUG("line: {}", line);
+    //     LOG_DEBUG("timeStamp: {}", timeStamp);
+    // }
 
     auto obs = std::make_shared<ImuObs>(_imuPosAll[sensorId - 1]);
 

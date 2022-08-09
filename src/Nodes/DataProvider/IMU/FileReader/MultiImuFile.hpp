@@ -9,6 +9,8 @@
 #include "Nodes/DataProvider/Protocol/FileReader.hpp"
 #include "NodeData/IMU/ImuPos.hpp"
 
+#include "NodeData/IMU/ImuObs.hpp"
+
 namespace NAV
 {
 /// File reader for Multi-IMU data log files
