@@ -7,6 +7,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "internal/gui/widgets/Matrix.hpp"
+#include "internal/gui/widgets/imgui_ex.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
 
@@ -180,36 +181,38 @@ void NAV::Demo::guiConfig()
         }
         /* ------------------------------------------------ Double ------------------------------------------------ */
         ImGui::TableNextColumn();
-
-        if (auto* connectedDouble = getInputValue<double>(INPUT_PORT_INDEX_DOUBLE);
-            connectedDouble == nullptr)
+        if (const auto* connectedDouble = getInputValue<double>(INPUT_PORT_INDEX_DOUBLE))
+        {
+            ImGui::Text("Double : %.3f", *connectedDouble);
+        }
+        else
         {
             ImGui::TextUnformatted("Double: N/A");
         }
-        else if (auto floatFromDouble = static_cast<float>(*connectedDouble);
-                 ImGui::DragFloat("Double", &floatFromDouble, 1.0F, 0.0F, 0.0F, "%.6f"))
-        {
-            *connectedDouble = floatFromDouble;
-            flow::ApplyChanges();
-            notifyInputValueChanged(INPUT_PORT_INDEX_DOUBLE);
-        }
         ImGui::TableNextColumn();
-        ImGui::Text("Double: %.6f", _valueDouble);
+
+        if (ImGui::DragDouble("Double", &_valueDouble))
+        {
+            flow::ApplyChanges();
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_DOUBLE);
+        }
         /* ------------------------------------------------ String ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (auto* connectedString = getInputValue<std::string>(INPUT_PORT_INDEX_STRING);
-            connectedString == nullptr)
+        if (auto* connectedString = getInputValue<std::string>(INPUT_PORT_INDEX_STRING))
+        {
+            ImGui::Text("String: %s", connectedString->c_str());
+        }
+        else
         {
             ImGui::Text("String: N/A");
         }
-        else if (ImGui::InputText("String", connectedString))
-        {
-            flow::ApplyChanges();
-            notifyInputValueChanged(INPUT_PORT_INDEX_STRING);
-        }
         ImGui::Text("The String was updated %lu time%s", _stringUpdateCounter, _stringUpdateCounter > 1 || _stringUpdateCounter == 0 ? "s" : "");
         ImGui::TableNextColumn();
-        ImGui::Text("String: %s", _valueString.c_str());
+        if (ImGui::InputText("String", &_valueString))
+        {
+            flow::ApplyChanges();
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_STRING);
+        }
         /* ------------------------------------------------ Object ------------------------------------------------ */
         ImGui::TableNextColumn();
         if (const auto* connectedObject = getInputValue<DemoData>(INPUT_PORT_INDEX_DEMO_DATA))
@@ -235,22 +238,21 @@ void NAV::Demo::guiConfig()
         }
         /* ------------------------------------------------ Matrix ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (auto* connectedMatrix = getInputValue<Eigen::MatrixXd>(INPUT_PORT_INDEX_MATRIX);
-            connectedMatrix == nullptr)
+        if (auto* connectedMatrix = getInputValue<Eigen::MatrixXd>(INPUT_PORT_INDEX_MATRIX))
         {
-            ImGui::TextUnformatted("Matrix: N/A");
+            gui::widgets::MatrixView("Current Matrix", connectedMatrix, GuiMatrixViewFlags_Header, ImGuiTableFlags_Borders | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit, "%.1f");
         }
         else
         {
-            if (gui::widgets::InputMatrix("Init Matrix", connectedMatrix, GuiMatrixViewFlags_Header, ImGuiTableFlags_Borders | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit, 30.0F, 0.0, 0.0, "%.1f"))
-            {
-                flow::ApplyChanges();
-                notifyInputValueChanged(INPUT_PORT_INDEX_MATRIX);
-            }
+            ImGui::TextUnformatted("Matrix: N/A");
         }
         ImGui::TableNextColumn();
 
-        gui::widgets::MatrixView("Current Matrix", &_valueMatrix, GuiMatrixViewFlags_Header, ImGuiTableFlags_Borders | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit, "%.1f");
+        if (gui::widgets::InputMatrix("Init Matrix", &_valueMatrix, GuiMatrixViewFlags_Header, ImGuiTableFlags_Borders | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit, 30.0F, 0.0, 0.0, "%.1f"))
+        {
+            flow::ApplyChanges();
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_MATRIX);
+        }
 
         ImGui::EndTable();
     }

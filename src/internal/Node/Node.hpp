@@ -214,20 +214,12 @@ class Node
     /// @param[in] endPin Pin where the link ends
     virtual void afterDeleteLink(Pin* startPin, Pin* endPin);
 
-    /// @brief Notifies the node, that some data was changed on one of it's output ports
-    /// @param[in] linkId Id of the link on which data is changed
-    virtual void notifyOnOutputValueChanged(ax::NodeEditor::LinkId linkId);
-
     /// @brief Function called by the flow executer after finishing to flush out remaining data
     virtual void flush();
 
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member functions                                             */
     /* -------------------------------------------------------------------------------------------------------- */
-
-    /// @brief Notifies connected nodes about the change
-    /// @param[in] portIndex Input Port index where to set the value
-    void notifyInputValueChanged(size_t portIndex);
 
     /// @brief Notifies connected nodes about the change
     /// @param[in] portIndex Output Port index where to set the value

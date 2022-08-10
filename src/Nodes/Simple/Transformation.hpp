@@ -54,10 +54,6 @@ class Transformation : public Node
     /// @return True if link is allowed, false if link is rejected
     bool onCreateLink(Pin* startPin, Pin* endPin) override;
 
-    /// @brief Notifies the node, that some data was changed on one of it's output ports
-    /// @param[in] linkId Id of the link on which data is changed
-    void notifyOnOutputValueChanged(ax::NodeEditor::LinkId linkId) override;
-
   private:
     constexpr static size_t OUTPUT_PORT_INDEX_MATRIX = 0; ///< @brief Matrix
     constexpr static size_t INPUT_PORT_INDEX_MATRIX = 0;  ///< @brief Matrix

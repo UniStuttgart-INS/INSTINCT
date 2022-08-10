@@ -259,7 +259,6 @@ class Pin
           dataIdentifier(std::move(other.dataIdentifier)),
           parentNode(other.parentNode),
           data(other.data),
-          connectedPinIds(std::move(other.connectedPinIds)),
           notifyFunc(std::move(other.notifyFunc)),
           callbacks(std::move(other.callbacks))
 #ifdef TESTING
@@ -282,7 +281,6 @@ class Pin
             kind = other.kind;
             dataIdentifier = std::move(other.dataIdentifier);
             parentNode = other.parentNode;
-            connectedPinIds = std::move(other.connectedPinIds);
             notifyFunc = std::move(other.notifyFunc);
             callbacks = std::move(other.callbacks);
 #ifdef TESTING
@@ -341,9 +339,6 @@ class Pin
     PinData data = static_cast<void*>(nullptr);
     /// Mutex to interact with the data object
     std::mutex dataAccessMutex;
-
-    /// List of pins of other nodes that this pin is connected to
-    std::vector<ax::NodeEditor::PinId> connectedPinIds;
 
     /// Notify Function to call when the data is updated
     std::vector<NotifyFunction> notifyFunc;

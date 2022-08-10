@@ -170,65 +170,6 @@ bool NAV::Transformation::onCreateLink(Pin* startPin, Pin* endPin)
     return true;
 }
 
-void NAV::Transformation::notifyOnOutputValueChanged(ax::NodeEditor::LinkId linkId)
-{
-    if ([[maybe_unused]] Link* link = nm::FindLink(linkId))
-    {
-        LOG_DATA("{}: called for {} ==> {}", nameId(), size_t(link->startPinId), size_t(link->endPinId));
-    }
-
-    if (Pin* sourcePin = nm::FindConnectedPinToInputPin(inputPins.at(INPUT_PORT_INDEX_MATRIX).id))
-    {
-        if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
-        {
-            if (auto* inputMatrix = getInputValue<Eigen::MatrixXd>(INPUT_PORT_INDEX_MATRIX))
-            {
-                switch (_selectedTransformation)
-                {
-                case Type::ECEF_2_LLArad:
-                    *inputMatrix = trafo::lla2ecef_WGS84(Eigen::Map<Eigen::Vector3d>(_matrix.data()));
-                    break;
-                case Type::ECEF_2_LLAdeg:
-                {
-                    Eigen::Vector3d lla = Eigen::Map<Eigen::Vector3d>(_matrix.data());
-                    lla.x() = deg2rad(lla.x());
-                    lla.y() = deg2rad(lla.y());
-                    *inputMatrix = trafo::lla2ecef_WGS84(lla);
-                    break;
-                }
-                case Type::LLArad_2_ECEF:
-                    *inputMatrix = trafo::ecef2lla_WGS84(Eigen::Map<Eigen::Vector3d>(_matrix.data()));
-                    break;
-                case Type::LLAdeg_2_ECEF:
-                    *inputMatrix = trafo::ecef2lla_WGS84(Eigen::Map<Eigen::Vector3d>(_matrix.data()));
-                    (*inputMatrix)(0, 0) = rad2deg((*inputMatrix)(0, 0));
-                    (*inputMatrix)(1, 0) = rad2deg((*inputMatrix)(1, 0));
-                    break;
-                case Type::n_Quat_b_2_RollPitchYawRad:
-                    *inputMatrix = trafo::n_Quat_b(_matrix(0, 0), _matrix(1, 0), _matrix(2, 0)).coeffs();
-                    break;
-                case Type::n_Quat_b_2_RollPitchYawDeg:
-                    *inputMatrix = trafo::n_Quat_b(deg2rad(_matrix(0, 0)),
-                                                   deg2rad(_matrix(1, 0)),
-                                                   deg2rad(_matrix(2, 0)))
-                                       .coeffs();
-                    break;
-                case Type::RollPitchYawRad_2_n_Quat_b:
-                    *inputMatrix = trafo::quat2eulerZYX(Eigen::Quaterniond(_matrix(0, 0), _matrix(1, 0), _matrix(2, 0), _matrix(3, 0)));
-                    break;
-                case Type::RollPitchYawDeg_2_n_Quat_b:
-                    *inputMatrix = rad2deg(trafo::quat2eulerZYX(Eigen::Quaterniond(_matrix(0, 0),
-                                                                                   _matrix(1, 0),
-                                                                                   _matrix(2, 0),
-                                                                                   _matrix(3, 0))));
-                    break;
-                }
-                notifyInputValueChanged(INPUT_PORT_INDEX_MATRIX);
-            }
-        }
-    }
-}
-
 void NAV::Transformation::notifyOnInputValueChanged(ax::NodeEditor::LinkId linkId)
 {
     if ([[maybe_unused]] Link* link = nm::FindLink(linkId))

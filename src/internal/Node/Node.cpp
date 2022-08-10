@@ -73,42 +73,6 @@ void NAV::Node::afterCreateLink(Pin* /*startPin*/, Pin* /*endPin*/) {}
 
 void NAV::Node::afterDeleteLink(Pin* /*startPin*/, Pin* /*endPin*/) {}
 
-void NAV::Node::notifyOnOutputValueChanged(ax::NodeEditor::LinkId /*linkId*/) {}
-
-void NAV::Node::notifyInputValueChanged(size_t portIndex)
-{
-    if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.at(portIndex).id))
-    {
-        if (nm::showFlowWhenNotifyingValueChange)
-        {
-            FlowAnimation::Add(connectedLink->id, ax::NodeEditor::FlowDirection::Backward);
-        }
-
-        if (Pin* startPin = nm::FindPin(connectedLink->startPinId))
-        {
-            if (startPin->parentNode && !startPin->parentNode->isDisabled())
-            {
-                // Notify the node itself that changes were made
-                startPin->parentNode->notifyOnOutputValueChanged(connectedLink->id);
-                // Notify all nodes which registered a notify callback
-                for (auto& [node, callback, linkId] : startPin->notifyFunc)
-                {
-                    if (node->id == id)
-                    {
-                        continue;
-                    }
-                    if (nm::showFlowWhenNotifyingValueChange)
-                    {
-                        FlowAnimation::Add(linkId);
-                    }
-                    // TODO: Put this into the Callback Manager
-                    std::invoke(callback, node, linkId);
-                }
-            }
-        }
-    }
-}
-
 void NAV::Node::notifyOutputValueChanged(size_t portIndex)
 {
     for (auto& [node, callback, linkId] : outputPins.at(portIndex).notifyFunc)
