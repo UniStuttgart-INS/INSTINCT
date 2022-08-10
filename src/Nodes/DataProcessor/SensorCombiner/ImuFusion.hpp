@@ -121,12 +121,17 @@ class ImuFusion : public Imu
         // --------------------------------- State unit and initialization -----------------------------------
         /// GUI selection of the initial angular rate
         Eigen::Vector3d initAngularRate{ 0, 0, 0 };
-        /// GUI selection of the initial acceleration
-        Eigen::Vector3d initAcceleration{ 0, 0, 0 };
         /// GUI selection of the initial angular acceleration
         Eigen::Vector3d initAngularAcc{ 0, 0, 0 };
+        /// GUI selection of the initial acceleration
+        Eigen::Vector3d initAcceleration{ 0, 0, 0 };
         /// GUI selection of the initial jerk
         Eigen::Vector3d initJerk{ 0, 0, 0 };
+        /// GUI selection of the initial angular rate bias
+        Eigen::Vector3d initAngularRateBias{ 0, 0, 0 };
+        /// GUI selection of the initial angular acceleration bias
+        Eigen::Vector3d initAccelerationBias{ 0, 0, 0 };
+
         /// GUI selection of the initial covariance diagonal values for angular rate (standard deviation σ or Variance σ²)
         Eigen::Vector3d initCovarianceAngularRate{ 1, 1, 1 };
         /// GUI selection of the initial covariance diagonal values for angular acceleration (standard deviation σ or Variance σ²)
@@ -160,6 +165,10 @@ class ImuFusion : public Imu
         AngularAccUnit initAngularAccUnit = AngularAccUnit::deg_s2;
         /// Gui selection for the Unit of the initial jerk
         JerkUnit initJerkUnit = JerkUnit::m_s3;
+        /// GUI selection of the initial angular rate bias
+        AngRateUnit initAngularRateBiasUnit = AngRateUnit::deg_s;
+        /// GUI selection of the initial angular acceleration bias
+        AccelerationUnit initAccelerationBiasUnit = AccelerationUnit::m_s2;
 
         /// Gui selection for the Unit of the initial covariance for the angular rate
         AngRateVarianceUnit initCovarianceAngularRateUnit = AngRateVarianceUnit::deg_s;
@@ -303,6 +312,9 @@ class ImuFusion : public Imu
     /// @brief Saves the timestamp of the measurement before in [s]
     InsTime _latestTimestamp{};
 
+    /// @brief Container for the initial values of each bias state
+    std::vector<Eigen::Vector3d> _biasInits;
+
     /// @brief Container for process noise of each state
     std::vector<Eigen::Vector3d> _biasCovariances;
 
@@ -315,9 +327,12 @@ class ImuFusion : public Imu
     /// @brief Check the rank of the Kalman matrices every iteration (computationally expensive)
     bool _checkKalmanMatricesRanks = false;
 
+    /// @brief Beginning of time frame for specific log msgs
     InsTime _frameStart{ 0, 0, 0, 0, 0, 6.9 }; // in [s]
-    InsTime _frameEnd{ 0, 0, 0, 0, 0, 7.1 };   // in [s]
-    InsTime _dummyTime{ 0, 0, 0, 0, 0, 0 };    // in [s]
+    /// @brief End of time frame for specific log msgs
+    InsTime _frameEnd{ 0, 0, 0, 0, 0, 7.1 }; // in [s]
+    /// @brief 'Dummy Time' to calculate timestamp with InsTimes
+    InsTime _dummyTime{ 0, 0, 0, 0, 0, 0 }; // in [s]
 };
 
 } // namespace NAV
