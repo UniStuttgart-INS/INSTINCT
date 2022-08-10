@@ -15,6 +15,7 @@ using json = nlohmann::json; ///< json namespace
 #include <vector>
 #include <memory>
 #include <tuple>
+#include <mutex>
 
 namespace NAV
 {
@@ -225,23 +226,74 @@ class Pin
         Value value = Value::None;
     };
 
+    /// Callback function type to call when firable
+    using FlowCallback = void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId);
+    /// Notify function type to call when the connected value changed
+    using NotifyFunc = void (Node::*)(ax::NodeEditor::LinkId);
+    /// FileReader pollData function type
+    using PollDataFunc = std::shared_ptr<const NAV::NodeData> (Node::*)(bool);
+
     /// @brief Possible Types represented by a pin
-    using PinData = std::variant<void*, bool*, int*, float*, double*, std::string*,
-                                 void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId), // Input Flow, receive data
-                                 std::shared_ptr<const NAV::NodeData> (Node::*)(bool)>;                          // Output Flow, read data
+    using PinData = std::variant<void*,         // Object/Matrix/Delegate
+                                 bool*,         // Bool
+                                 int*,          // Int
+                                 float*,        // Float
+                                 double*,       // Float
+                                 std::string*,  // String
+                                 FlowCallback,  // InputPin (Flow):  Callback function type to call when firable
+                                 NotifyFunc,    // InputPin (Other): Notify function type to call when the connected value changed
+                                 PollDataFunc>; // OutputPin (Flow): FileReader poll data function
 
     /// @brief Default constructor
     Pin() = default;
     /// @brief Destructor
     ~Pin() = default;
     /// @brief Copy constructor
-    Pin(const Pin&) = default;
+    Pin(const Pin&) = delete;
     /// @brief Move constructor
-    Pin(Pin&&) = default;
+    Pin(Pin&& other) noexcept
+        : id(other.id),
+          name(std::move(other.name)),
+          type(other.type),
+          kind(other.kind),
+          dataIdentifier(std::move(other.dataIdentifier)),
+          parentNode(other.parentNode),
+          data(other.data),
+          connectedPinIds(std::move(other.connectedPinIds)),
+          notifyFunc(std::move(other.notifyFunc)),
+          callbacks(std::move(other.callbacks))
+#ifdef TESTING
+          ,
+          watcherCallbacks(std::move(other.watcherCallbacks))
+#endif
+    {
+        std::scoped_lock<std::mutex> guard(other.dataAccessMutex); // Make sure the mutex of the other element is not used
+    }
     /// @brief Copy assignment operator
-    Pin& operator=(const Pin&) = default;
+    Pin& operator=(const Pin&) = delete;
     /// @brief Move assignment operator
-    Pin& operator=(Pin&&) = default;
+    Pin& operator=(Pin&& other) noexcept
+    {
+        if (this != &other)
+        {
+            id = other.id;
+            name = std::move(other.name);
+            type = other.type;
+            kind = other.kind;
+            dataIdentifier = std::move(other.dataIdentifier);
+            parentNode = other.parentNode;
+            connectedPinIds = std::move(other.connectedPinIds);
+            notifyFunc = std::move(other.notifyFunc);
+            callbacks = std::move(other.callbacks);
+#ifdef TESTING
+            watcherCallbacks = std::move(other.watcherCallbacks);
+#endif
+
+            std::scoped_lock<std::mutex> guard(other.dataAccessMutex);
+            data = other.data;
+        }
+        return *this;
+    }
 
     /// @brief Constructor
     /// @param[in] id Unique Id of the Pin
@@ -280,17 +332,23 @@ class Pin
     Type type = Type::None;
     /// Kind of the Pin (Input/Output)
     Kind kind = Kind::None;
+    /// One or multiple Data Identifiers (Unique name which is used for data flows)
+    std::vector<std::string> dataIdentifier;
     /// Reference to the parent node
     Node* parentNode = nullptr;
+
     /// Pointer to data which is transferred over this pin
     PinData data = static_cast<void*>(nullptr);
+    /// Mutex to interact with the data object
+    std::mutex dataAccessMutex;
+
+    /// List of pins of other nodes that this pin is connected to
+    std::vector<ax::NodeEditor::PinId> connectedPinIds;
+
     /// Notify Function to call when the data is updated
     std::vector<NotifyFunction> notifyFunc;
     /// Callback List
     std::vector<NodeCallback> callbacks;
-    /// One or multiple Data Identifiers (Unique name which is used for data flows)
-    std::vector<std::string> dataIdentifier;
-
 #ifdef TESTING
     /// Watcher Callbacks are used in testing to check the transmitted data
     std::vector<WatcherCallback> watcherCallbacks;

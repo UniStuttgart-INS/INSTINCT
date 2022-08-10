@@ -429,7 +429,7 @@ void NAV::experimental::Matrix::restore(json const& j)
     {
         j.at("matrix").get_to(_initMatrix);
         _matrix = _initMatrix;
-        outputPins.at(OUTPUT_PORT_INDEX_FULL_MATRIX).data = Pin::PinData(&_matrix);
+        outputPins.at(OUTPUT_PORT_INDEX_FULL_MATRIX).data = { &_matrix };
     }
     if (j.contains("blocks"))
     {
@@ -437,7 +437,7 @@ void NAV::experimental::Matrix::restore(json const& j)
         for (size_t blockIndex = 0; blockIndex < _blocks.size(); blockIndex++)
         {
             _blocks.at(blockIndex).matrix = &_matrix;
-            outputPins.at(blockIndex + 1).data = Pin::PinData(&_blocks.at(blockIndex));
+            outputPins.at(blockIndex + 1).data = { &_blocks.at(blockIndex) };
         }
     }
 }
@@ -481,7 +481,7 @@ void NAV::experimental::Matrix::updateNumberOfOutputPins()
     for (size_t blockIndex = 0; blockIndex < _blocks.size(); blockIndex++)
     {
         _blocks.at(blockIndex).matrix = &_matrix;
-        outputPins.at(blockIndex + 1).data = Pin::PinData(&_blocks.at(blockIndex));
+        outputPins.at(blockIndex + 1).data = { &_blocks.at(blockIndex) };
     }
     for (auto& outputPin : outputPins)
     {
