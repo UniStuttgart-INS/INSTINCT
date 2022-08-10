@@ -16,7 +16,7 @@ NAV::Transformation::Transformation()
     _guiConfigDefaultWindowSize = { 305, 70 };
     kind = Kind::Simple;
 
-    nm::CreateInputPin(this, "ECEF", Pin::Type::Matrix, { "Eigen::MatrixXd", "BlockMatrix" }, &Transformation::notifyOnInputValueChanged);
+    nm::CreateInputPin(this, "ECEF", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &Transformation::notifyOnInputValueChanged);
     nm::CreateOutputPin(this, "LLA [rad]", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_matrix);
 }
 
@@ -226,55 +226,6 @@ void NAV::Transformation::notifyOnOutputValueChanged(ax::NodeEditor::LinkId link
                 notifyInputValueChanged(INPUT_PORT_INDEX_MATRIX);
             }
         }
-        else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
-        {
-            if (auto* value = getInputValue<BlockMatrix>(INPUT_PORT_INDEX_MATRIX))
-            {
-                auto inputMatrix = (*value)();
-
-                switch (_selectedTransformation)
-                {
-                case Type::ECEF_2_LLArad:
-                    inputMatrix = trafo::lla2ecef_WGS84(Eigen::Map<Eigen::Vector3d>(_matrix.data()));
-                    break;
-                case Type::ECEF_2_LLAdeg:
-                {
-                    Eigen::Vector3d lla = Eigen::Map<Eigen::Vector3d>(_matrix.data());
-                    lla.x() = deg2rad(lla.x());
-                    lla.y() = deg2rad(lla.y());
-                    inputMatrix = trafo::lla2ecef_WGS84(lla);
-                    break;
-                }
-                case Type::LLArad_2_ECEF:
-                    inputMatrix = trafo::ecef2lla_WGS84(Eigen::Map<Eigen::Vector3d>(_matrix.data()));
-                    break;
-                case Type::LLAdeg_2_ECEF:
-                    inputMatrix = trafo::ecef2lla_WGS84(Eigen::Map<Eigen::Vector3d>(_matrix.data()));
-                    inputMatrix(0, 0) = rad2deg(inputMatrix(0, 0));
-                    inputMatrix(1, 0) = rad2deg(inputMatrix(1, 0));
-                    break;
-                case Type::n_Quat_b_2_RollPitchYawRad:
-                    inputMatrix = trafo::n_Quat_b(_matrix(0, 0), _matrix(1, 0), _matrix(2, 0)).coeffs();
-                    break;
-                case Type::n_Quat_b_2_RollPitchYawDeg:
-                    inputMatrix = trafo::n_Quat_b(deg2rad(_matrix(0, 0)),
-                                                  deg2rad(_matrix(1, 0)),
-                                                  deg2rad(_matrix(2, 0)))
-                                      .coeffs();
-                    break;
-                case Type::RollPitchYawRad_2_n_Quat_b:
-                    inputMatrix = trafo::quat2eulerZYX(Eigen::Quaterniond(_matrix(0, 0), _matrix(1, 0), _matrix(2, 0), _matrix(3, 0)));
-                    break;
-                case Type::RollPitchYawDeg_2_n_Quat_b:
-                    inputMatrix = rad2deg(trafo::quat2eulerZYX(Eigen::Quaterniond(_matrix(0, 0),
-                                                                                  _matrix(1, 0),
-                                                                                  _matrix(2, 0),
-                                                                                  _matrix(3, 0))));
-                    break;
-                }
-                notifyInputValueChanged(INPUT_PORT_INDEX_MATRIX);
-            }
-        }
     }
 }
 
@@ -334,55 +285,6 @@ void NAV::Transformation::notifyOnInputValueChanged(ax::NodeEditor::LinkId linkI
                 notifyOutputValueChanged(OUTPUT_PORT_INDEX_MATRIX);
             }
         }
-        else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
-        {
-            if (auto* value = getInputValue<BlockMatrix>(INPUT_PORT_INDEX_MATRIX))
-            {
-                auto inputMatrix = (*value)();
-
-                switch (_selectedTransformation)
-                {
-                case Type::ECEF_2_LLArad:
-                    _matrix = trafo::ecef2lla_WGS84(Eigen::Map<Eigen::Vector3d>(inputMatrix.data()));
-                    break;
-                case Type::ECEF_2_LLAdeg:
-                    _matrix = trafo::ecef2lla_WGS84(Eigen::Map<Eigen::Vector3d>(inputMatrix.data()));
-                    _matrix(0, 0) = rad2deg(_matrix(0, 0));
-                    _matrix(1, 0) = rad2deg(_matrix(1, 0));
-                    break;
-                case Type::LLArad_2_ECEF:
-                    _matrix = trafo::lla2ecef_WGS84(Eigen::Map<Eigen::Vector3d>(inputMatrix.data()));
-                    break;
-                case Type::LLAdeg_2_ECEF:
-                {
-                    Eigen::Vector3d lla = Eigen::Map<Eigen::Vector3d>(inputMatrix.data());
-                    lla.x() = deg2rad(lla.x());
-                    lla.y() = deg2rad(lla.y());
-                    _matrix = trafo::lla2ecef_WGS84(lla);
-                    break;
-                }
-                case Type::n_Quat_b_2_RollPitchYawRad:
-                    _matrix = trafo::quat2eulerZYX(Eigen::Quaterniond(inputMatrix(0, 0), inputMatrix(1, 0), inputMatrix(2, 0), inputMatrix(3, 0)));
-                    break;
-                case Type::n_Quat_b_2_RollPitchYawDeg:
-                    _matrix = rad2deg(trafo::quat2eulerZYX(Eigen::Quaterniond(inputMatrix(0, 0),
-                                                                              inputMatrix(1, 0),
-                                                                              inputMatrix(2, 0),
-                                                                              inputMatrix(3, 0))));
-                    break;
-                case Type::RollPitchYawRad_2_n_Quat_b:
-                    _matrix = trafo::n_Quat_b(inputMatrix(0, 0), inputMatrix(1, 0), inputMatrix(2, 0)).coeffs();
-                    break;
-                case Type::RollPitchYawDeg_2_n_Quat_b:
-                    _matrix = trafo::n_Quat_b(deg2rad(inputMatrix(0, 0)),
-                                              deg2rad(inputMatrix(1, 0)),
-                                              deg2rad(inputMatrix(2, 0)))
-                                  .coeffs();
-                    break;
-                }
-                notifyOutputValueChanged(OUTPUT_PORT_INDEX_MATRIX);
-            }
-        }
     }
 }
 
@@ -421,22 +323,6 @@ bool NAV::Transformation::inputMatrixHasSize(Pin* startPin)
             if (auto* mat = static_cast<Eigen::MatrixXd*>(*pval))
             {
                 if (mat->rows() == rows && mat->cols() == cols)
-                {
-                    return true;
-                }
-
-                LOG_ERROR("{}: The Matrix needs to have the size {}x{}", nameId(), rows, cols);
-            }
-        }
-    }
-    else if (startPin->dataIdentifier.front() == "BlockMatrix")
-    {
-        if (const auto* pval = std::get_if<void*>(&startPin->data))
-        {
-            if (auto* block = static_cast<BlockMatrix*>(*pval))
-            {
-                auto mat = (*block)();
-                if (mat.rows() == rows && mat.cols() == cols)
                 {
                     return true;
                 }

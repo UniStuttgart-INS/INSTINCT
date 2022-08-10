@@ -328,7 +328,7 @@ NAV::Plot::Plot()
     // PinData::PinType::Matrix:
     _pinData.at(4).pinType = PinData::PinType::Matrix;
     inputPins.at(4).type = Pin::Type::Matrix;
-    inputPins.at(4).dataIdentifier = { "Eigen::MatrixXd", "BlockMatrix" };
+    inputPins.at(4).dataIdentifier = { "Eigen::MatrixXd" };
     inputPins.at(4).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotMatrix), 0);
 }
 
@@ -496,7 +496,7 @@ void NAV::Plot::guiConfig()
                         break;
                     case PinData::PinType::Matrix:
                         inputPins.at(pinIndex).type = Pin::Type::Matrix;
-                        inputPins.at(pinIndex).dataIdentifier = { "Eigen::MatrixXd", "BlockMatrix" };
+                        inputPins.at(pinIndex).dataIdentifier = { "Eigen::MatrixXd" };
                         inputPins.at(pinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotMatrix), 0);
                         break;
                     }
@@ -1267,7 +1267,7 @@ void NAV::Plot::restore(json const& j)
                 break;
             case Plot::PinData::PinType::Matrix:
                 inputPins.at(inputPinIndex).type = Pin::Type::Matrix;
-                inputPins.at(inputPinIndex).dataIdentifier = { "Eigen::MatrixXd", "BlockMatrix" };
+                inputPins.at(inputPinIndex).dataIdentifier = { "Eigen::MatrixXd" };
                 inputPins.at(inputPinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotMatrix), 0);
                 break;
             default:
@@ -1935,20 +1935,6 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
                 }
             }
         }
-        else if (startPin->dataIdentifier.front() == "BlockMatrix")
-        {
-            if (auto* mBlock = getInputValue<BlockMatrix>(pinIndex))
-            {
-                auto matrix = (*mBlock)();
-                for (int row = 0; row < matrix.rows(); row++)
-                {
-                    for (int col = 0; col < matrix.cols(); col++)
-                    {
-                        _pinData.at(pinIndex).addPlotDataItem(i++, fmt::format("{}, {}", row, col));
-                    }
-                }
-            }
-        }
 
         for (size_t dataIndex = i; dataIndex < _pinData.at(pinIndex).plotData.size(); dataIndex++)
         {
@@ -2153,33 +2139,6 @@ void NAV::Plot::plotMatrix(ax::NodeEditor::LinkId linkId)
                         for (int col = 0; col < value->cols(); col++)
                         {
                             addData(pinIndex, i++, (*value)(row, col));
-                        }
-                    }
-                }
-            }
-            else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
-            {
-                auto* value = getInputValue<BlockMatrix>(pinIndex);
-
-                if (value != nullptr && !currentTime.empty())
-                {
-                    if (_startTime.empty()) { _startTime = currentTime; }
-
-                    size_t i = 0;
-
-                    std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
-
-                    auto matrix = (*value)();
-
-                    // InsObs
-                    addData(pinIndex, i++, static_cast<double>((currentTime - _startTime).count()));
-                    addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
-                    // Matrix
-                    for (int row = 0; row < matrix.rows(); row++)
-                    {
-                        for (int col = 0; col < matrix.cols(); col++)
-                        {
-                            addData(pinIndex, i++, matrix(row, col));
                         }
                     }
                 }

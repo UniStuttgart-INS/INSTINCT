@@ -202,7 +202,6 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 // State
 #include "Nodes/State/PosVelAttInitializer.hpp"
 // Experimental
-#include "Nodes/Experimental/Simple/Matrix.hpp"
 #include "Nodes/Experimental/DataProcessor/ARMA.hpp"
 
 void NAV::NodeRegistry::RegisterNodeTypes()
@@ -215,7 +214,6 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     // Simple
     registerNodeType<Combiner>();
     registerNodeType<Delay>();
-    registerNodeType<NAV::experimental::Matrix>();
     registerNodeType<Transformation>();
     // Converter
     registerNodeType<RtklibPosConverter>();

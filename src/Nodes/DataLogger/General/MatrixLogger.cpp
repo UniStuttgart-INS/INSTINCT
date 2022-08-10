@@ -21,7 +21,7 @@ NAV::MatrixLogger::MatrixLogger()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 380, 70 };
 
-    nm::CreateInputPin(this, "write", Pin::Type::Matrix, { "Eigen::MatrixXd", "BlockMatrix" });
+    nm::CreateInputPin(this, "write", Pin::Type::Matrix, { "Eigen::MatrixXd" });
     inputPins.back().notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&MatrixLogger::writeMatrix), 0);
 }
 
@@ -152,42 +152,6 @@ void NAV::MatrixLogger::writeMatrix(ax::NodeEditor::LinkId linkId)
                         for (int col = 0; col < value->cols(); col++)
                         {
                             _filestream << "," << (*value)(row, col);
-                        }
-                    }
-                    _filestream << "\n";
-                }
-            }
-            else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
-            {
-                auto* value = getInputValue<BlockMatrix>(pinIndex);
-
-                if (value != nullptr && !currentTime.empty())
-                {
-                    auto matrix = (*value)();
-                    if (!_headerWritten)
-                    {
-                        for (int row = 0; row < matrix.rows(); row++)
-                        {
-                            for (int col = 0; col < matrix.cols(); col++)
-                            {
-                                _filestream << ",[" << row << ";" << col << "]";
-                            }
-                        }
-                        _filestream << std::endl;
-                        _headerWritten = true;
-                    }
-
-                    _filestream << std::setprecision(valuePrecision) << std::round(calcTimeIntoRun(currentTime) * 1e9) / 1e9;
-                    _filestream << "," << std::fixed << std::setprecision(gpsCyclePrecision) << currentTime.toGPSweekTow().gpsCycle;
-                    _filestream << "," << std::defaultfloat << std::setprecision(gpsTimePrecision) << currentTime.toGPSweekTow().gpsWeek;
-                    _filestream << "," << std::defaultfloat << std::setprecision(gpsTimePrecision) << currentTime.toGPSweekTow().tow;
-                    _filestream << std::setprecision(valuePrecision);
-
-                    for (int row = 0; row < matrix.rows(); row++)
-                    {
-                        for (int col = 0; col < matrix.cols(); col++)
-                        {
-                            _filestream << "," << matrix(row, col);
                         }
                     }
                     _filestream << "\n";
