@@ -354,6 +354,63 @@ class Pin
     static constexpr int m_PinIconSize = 24;
 };
 
+/// Output pins of nodes
+class OutputPin : public Pin
+{
+  public:
+    /// @brief Constructor
+    /// @param[in] id Unique Id of the Pin
+    /// @param[in] name Name of the Pin
+    /// @param[in] type Type of the Pin
+    /// @param[in] parentNode Reference to the parent node
+    OutputPin(ax::NodeEditor::PinId id, const char* name, Type type, Node* parentNode)
+        : Pin(id, name, type, Pin::Kind::Output, parentNode) {}
+
+    /// FileReader/Simulator pollData function type
+    using PollDataFunc = std::shared_ptr<const NAV::NodeData> (Node::*)(bool);
+
+    /// @brief Possible Types represented by an output pin
+    using PinData = std::variant<void*,         // Object/Matrix/Delegate
+                                 bool*,         // Bool
+                                 int*,          // Int
+                                 float*,        // Float
+                                 double*,       // Float
+                                 std::string*,  // String
+                                 PollDataFunc>; // Flow (FileReader poll data function)
+};
+
+/// Input pins of nodes
+class InputPin : public Pin
+{
+  public:
+    /// @brief Constructor
+    /// @param[in] id Unique Id of the Pin
+    /// @param[in] name Name of the Pin
+    /// @param[in] type Type of the Pin
+    /// @param[in] parentNode Reference to the parent node
+    InputPin(ax::NodeEditor::PinId id, const char* name, Type type, Node* parentNode)
+        : Pin(id, name, type, Pin::Kind::Input, parentNode) {}
+
+    /// @brief Possible Types represented by an input pin
+    using PinData = std::variant<void*,         // Object/Matrix/Delegate
+                                 bool*,         // Bool
+                                 int*,          // Int
+                                 float*,        // Float
+                                 double*,       // Float
+                                 std::string*>; // String
+
+    /// Flow data callback function type to call when firable
+    using FlowFirableCallbackFunc = void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId);
+    /// Notify function type to call when the connected value changed
+    using DataChangeNotifyFunc = void (Node::*)(ax::NodeEditor::LinkId);
+
+    /// Callback function types
+    using Callback = std::variant<FlowFirableCallbackFunc, // Flow (Callback function type to call when firable)
+                                  DataChangeNotifyFunc>;   // Other: Notify function type to call when the connected value changed
+
+    Callback callback;
+};
+
 /// @brief Equal compares Pin::Kind values
 /// @param[in] lhs Left-hand side of the operator
 /// @param[in] rhs Right-hand side of the operator
