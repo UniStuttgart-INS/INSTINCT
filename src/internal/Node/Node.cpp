@@ -75,7 +75,7 @@ void NAV::Node::afterDeleteLink(Pin* /*startPin*/, Pin* /*endPin*/) {}
 
 void NAV::Node::notifyOutputValueChanged(size_t portIndex)
 {
-    for (auto& [node, callback, linkId] : outputPins.at(portIndex).notifyFunc)
+    for (auto& [node, callback, linkId] : outputPins.at(portIndex).notifyFuncOld)
     {
         if (node->isDisabled())
         {
@@ -102,7 +102,7 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
             return;
         }
 #ifdef TESTING
-        for (const auto& watcherCallback : outputPins.at(portIndex).watcherCallbacks)
+        for (const auto& watcherCallback : outputPins.at(portIndex).watcherCallbacksOld)
         {
             const auto& linkId = watcherCallback.second;
             if (!linkId) // Trigger all output pin callbacks
@@ -112,7 +112,7 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
         }
 #endif
 
-        for (const auto& nodeCallback : outputPins.at(portIndex).callbacks)
+        for (const auto& nodeCallback : outputPins.at(portIndex).callbacksOld)
         {
             const auto* node = std::get<0>(nodeCallback);
 
@@ -120,7 +120,7 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
             {
 #ifdef TESTING
                 const auto& linkId = std::get<2>(nodeCallback);
-                for (const auto& watcherCallback : outputPins.at(portIndex).watcherCallbacks)
+                for (const auto& watcherCallback : outputPins.at(portIndex).watcherCallbacksOld)
                 {
                     const auto& watcherLinkId = watcherCallback.second;
                     if (linkId == watcherLinkId)

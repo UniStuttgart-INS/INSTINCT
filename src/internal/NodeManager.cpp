@@ -220,27 +220,27 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
 
     if (endPin->type == Pin::Type::Flow)
     {
-        if (endPin->data.index() == 0)
+        if (endPin->dataOld.index() == 0)
         {
             LOG_ERROR("Tried to register callback, but endPin has no data");
             m_links.pop_back();
             return nullptr;
         }
 
-        startPin->callbacks.emplace_back(endPin->parentNode,
-                                         std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
-                                         m_links.back().id);
+        startPin->callbacksOld.emplace_back(endPin->parentNode,
+                                            std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->dataOld),
+                                            m_links.back().id);
     }
     else
     {
-        endPin->data = startPin->data;
+        endPin->dataOld = startPin->dataOld;
         if (endPin->type != Pin::Type::Delegate)
         {
-            if (!endPin->notifyFunc.empty())
+            if (!endPin->notifyFuncOld.empty())
             {
-                startPin->notifyFunc.emplace_back(std::get<0>(endPin->notifyFunc.front()),
-                                                  std::get<1>(endPin->notifyFunc.front()),
-                                                  m_links.back().id);
+                startPin->notifyFuncOld.emplace_back(std::get<0>(endPin->notifyFuncOld.front()),
+                                                     std::get<1>(endPin->notifyFuncOld.front()),
+                                                     m_links.back().id);
             }
         }
 
@@ -313,27 +313,27 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
 
         if (endPin->type == Pin::Type::Flow)
         {
-            if (endPin->data.index() == 0)
+            if (endPin->dataOld.index() == 0)
             {
                 LOG_ERROR("Tried to register callback, but endPin has no data");
                 m_links.pop_back();
                 return false;
             }
 
-            startPin->callbacks.emplace_back(endPin->parentNode,
-                                             std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
-                                             link.id);
+            startPin->callbacksOld.emplace_back(endPin->parentNode,
+                                                std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->dataOld),
+                                                link.id);
         }
         else
         {
-            endPin->data = startPin->data;
+            endPin->dataOld = startPin->dataOld;
             if (endPin->type != Pin::Type::Delegate)
             {
-                if (!endPin->notifyFunc.empty())
+                if (!endPin->notifyFuncOld.empty())
                 {
-                    startPin->notifyFunc.emplace_back(std::get<0>(endPin->notifyFunc.front()),
-                                                      std::get<1>(endPin->notifyFunc.front()),
-                                                      m_links.back().id);
+                    startPin->notifyFuncOld.emplace_back(std::get<0>(endPin->notifyFuncOld.front()),
+                                                         std::get<1>(endPin->notifyFuncOld.front()),
+                                                         m_links.back().id);
                 }
             }
 
@@ -404,39 +404,39 @@ void NAV::NodeManager::RefreshLink(ax::NodeEditor::LinkId linkId)
 
         if (endPin->type == Pin::Type::Flow)
         {
-            auto iter = std::find(startPin->callbacks.begin(), startPin->callbacks.end(),
+            auto iter = std::find(startPin->callbacksOld.begin(), startPin->callbacksOld.end(),
                                   std::make_tuple(endPin->parentNode,
-                                                  std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
+                                                  std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->dataOld),
                                                   linkId));
-            if (iter != startPin->callbacks.end())
+            if (iter != startPin->callbacksOld.end())
             {
-                startPin->callbacks.erase(iter);
+                startPin->callbacksOld.erase(iter);
             }
             else
             {
                 LOG_ERROR("Tried to delete link {}, with type Flow, but could not find the callback.", linkId.AsPointer());
             }
 
-            startPin->callbacks.emplace_back(endPin->parentNode,
-                                             std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
-                                             link->id);
+            startPin->callbacksOld.emplace_back(endPin->parentNode,
+                                                std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->dataOld),
+                                                link->id);
         }
         else
         {
-            endPin->data = startPin->data;
+            endPin->dataOld = startPin->dataOld;
             if (endPin->type != Pin::Type::Delegate)
             {
-                if (!endPin->notifyFunc.empty())
+                if (!endPin->notifyFuncOld.empty())
                 {
-                    auto iter = std::find(startPin->notifyFunc.begin(), startPin->notifyFunc.end(),
-                                          std::make_tuple(std::get<0>(endPin->notifyFunc.front()),
-                                                          std::get<1>(endPin->notifyFunc.front()),
+                    auto iter = std::find(startPin->notifyFuncOld.begin(), startPin->notifyFuncOld.end(),
+                                          std::make_tuple(std::get<0>(endPin->notifyFuncOld.front()),
+                                                          std::get<1>(endPin->notifyFuncOld.front()),
                                                           linkId));
-                    if (iter == startPin->notifyFunc.end())
+                    if (iter == startPin->notifyFuncOld.end())
                     {
-                        startPin->notifyFunc.emplace_back(std::get<0>(endPin->notifyFunc.front()),
-                                                          std::get<1>(endPin->notifyFunc.front()),
-                                                          linkId);
+                        startPin->notifyFuncOld.emplace_back(std::get<0>(endPin->notifyFuncOld.front()),
+                                                             std::get<1>(endPin->notifyFuncOld.front()),
+                                                             linkId);
                     }
                 }
             }
@@ -492,18 +492,18 @@ bool NAV::NodeManager::DeleteLink(ax::NodeEditor::LinkId linkId)
 
             if (endPin->type != Pin::Type::Flow)
             {
-                endPin->data = static_cast<void*>(nullptr);
+                endPin->dataOld = static_cast<void*>(nullptr);
                 if (endPin->type != Pin::Type::Delegate)
                 {
-                    if (!endPin->notifyFunc.empty())
+                    if (!endPin->notifyFuncOld.empty())
                     {
-                        auto iter = std::find(startPin->notifyFunc.begin(), startPin->notifyFunc.end(),
-                                              std::make_tuple(std::get<0>(endPin->notifyFunc.front()),
-                                                              std::get<1>(endPin->notifyFunc.front()),
+                        auto iter = std::find(startPin->notifyFuncOld.begin(), startPin->notifyFuncOld.end(),
+                                              std::make_tuple(std::get<0>(endPin->notifyFuncOld.front()),
+                                                              std::get<1>(endPin->notifyFuncOld.front()),
                                                               linkId));
-                        if (iter != startPin->notifyFunc.end())
+                        if (iter != startPin->notifyFuncOld.end())
                         {
-                            startPin->notifyFunc.erase(iter);
+                            startPin->notifyFuncOld.erase(iter);
                         }
                     }
                 }
@@ -515,13 +515,13 @@ bool NAV::NodeManager::DeleteLink(ax::NodeEditor::LinkId linkId)
             }
             else if (startPin->type == Pin::Type::Flow)
             {
-                auto iter = std::find(startPin->callbacks.begin(), startPin->callbacks.end(),
+                auto iter = std::find(startPin->callbacksOld.begin(), startPin->callbacksOld.end(),
                                       std::make_tuple(endPin->parentNode,
-                                                      std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
+                                                      std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->dataOld),
                                                       linkId));
-                if (iter != startPin->callbacks.end())
+                if (iter != startPin->callbacksOld.end())
                 {
-                    startPin->callbacks.erase(iter);
+                    startPin->callbacksOld.erase(iter);
                 }
                 else
                 {
@@ -621,7 +621,7 @@ NAV::Pin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NA
 
     node->inputPins.emplace(iter, GetNextPinId(), name, pinType, Pin::Kind::Input, node);
 
-    node->inputPins.at(static_cast<size_t>(idx)).data = data;
+    node->inputPins.at(static_cast<size_t>(idx)).dataOld = data;
     node->inputPins.at(static_cast<size_t>(idx)).dataIdentifier = dataIdentifier;
 
     flow::ApplyChanges();
@@ -641,7 +641,7 @@ NAV::Pin* NAV::NodeManager::CreateOutputPin(NAV::Node* node, const char* name, N
 
     node->outputPins.emplace(iter, GetNextPinId(), name, pinType, Pin::Kind::Output, node);
 
-    node->outputPins.at(static_cast<size_t>(idx)).data = data;
+    node->outputPins.at(static_cast<size_t>(idx)).dataOld = data;
     node->outputPins.at(static_cast<size_t>(idx)).dataIdentifier = dataIdentifier;
 
     flow::ApplyChanges();
@@ -951,7 +951,7 @@ void NAV::NodeManager::ApplyWatcherCallbacks()
                 if (pin->kind == Pin::Kind::Output)
                 {
                     LOG_DEBUG("Adding watcher callback on node '{}' on pin {}", pin->parentNode->nameId(), pin->parentNode->pinIndexFromId(pin->id));
-                    pin->watcherCallbacks.emplace_back(callback, linkId);
+                    pin->watcherCallbacksOld.emplace_back(callback, linkId);
                 }
             }
         }
@@ -964,7 +964,7 @@ void NAV::NodeManager::ApplyWatcherCallbacks()
             if (pin->kind == Pin::Kind::Output)
             {
                 LOG_DEBUG("Adding watcher callback on node '{}' on pin {}", pin->parentNode->nameId(), pin->parentNode->pinIndexFromId(pin->id));
-                pin->watcherCallbacks.emplace_back(callback, 0);
+                pin->watcherCallbacksOld.emplace_back(callback, 0);
             }
         }
     }

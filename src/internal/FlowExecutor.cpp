@@ -154,7 +154,7 @@ void NAV::FlowExecutor::execute()
 #endif
             )
             {
-                auto* callback = std::get_if<std::shared_ptr<const NAV::NodeData> (Node::*)(bool)>(&outputPin.data);
+                auto* callback = std::get_if<std::shared_ptr<const NAV::NodeData> (Node::*)(bool)>(&outputPin.dataOld);
                 if (callback != nullptr && *callback != nullptr)
                 {
                     LOG_DEBUG("Searching node {} on output pin {} (id {}) for data", node->nameId(), node->pinIndexFromId(outputPin.id), size_t(outputPin.id));
@@ -199,7 +199,7 @@ void NAV::FlowExecutor::execute()
     {
         Pin* pin = it->second;
         Node* node = pin->parentNode;
-        auto* callback = std::get_if<std::shared_ptr<const NAV::NodeData> (Node::*)(bool)>(&pin->data);
+        auto* callback = std::get_if<std::shared_ptr<const NAV::NodeData> (Node::*)(bool)>(&pin->dataOld);
         if (callback != nullptr && *callback != nullptr)
         {
             // Update the global time

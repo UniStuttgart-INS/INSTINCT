@@ -1376,12 +1376,12 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             {
                 renamePin = pin;
             }
-            if (!pin->callbacks.empty())
+            if (!pin->callbacksOld.empty())
             {
                 ImGui::Separator();
                 ImGui::Text("Callbacks:");
                 ImGui::Indent();
-                for (auto& callback : pin->callbacks)
+                for (auto& callback : pin->callbacksOld)
                 {
                     ImGui::BulletText("%s", std::get<0>(callback)->nameId().c_str());
                 }

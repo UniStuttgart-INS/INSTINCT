@@ -23,11 +23,11 @@ class Node;
 class NodeData;
 
 /// @brief Tuple of types allowed as a node callback
-using NodeCallback = std::tuple<Node*, void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>;
+using NodeCallbackInfo = std::tuple<Node*, void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>;
 /// @brief Tuple of types allowed as notify functions
-using NotifyFunction = std::tuple<Node*, void (Node::*)(ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>;
+using NotifyFunctionInfo = std::tuple<Node*, void (Node::*)(ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>;
 /// @brief Tuple of types allowed as watcher callbacks
-using WatcherCallback = std::pair<void (*)(const std::shared_ptr<const NodeData>&), ax::NodeEditor::LinkId>;
+using WatcherCallbackInfo = std::pair<void (*)(const std::shared_ptr<const NodeData>&), ax::NodeEditor::LinkId>;
 
 /// @brief Pins in the GUI for information exchange
 class Pin
@@ -227,22 +227,22 @@ class Pin
     };
 
     /// Callback function type to call when firable
-    using FlowCallback = void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId);
+    using OldFlowCallback = void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId);
     /// Notify function type to call when the connected value changed
-    using NotifyFunc = void (Node::*)(ax::NodeEditor::LinkId);
+    using OldNotifyFunc = void (Node::*)(ax::NodeEditor::LinkId);
     /// FileReader pollData function type
-    using PollDataFunc = std::shared_ptr<const NAV::NodeData> (Node::*)(bool);
+    using OldPollDataFunc = std::shared_ptr<const NAV::NodeData> (Node::*)(bool);
 
     /// @brief Possible Types represented by a pin
-    using PinData = std::variant<void*,         // Object/Matrix/Delegate
-                                 bool*,         // Bool
-                                 int*,          // Int
-                                 float*,        // Float
-                                 double*,       // Float
-                                 std::string*,  // String
-                                 FlowCallback,  // InputPin (Flow):  Callback function type to call when firable
-                                 NotifyFunc,    // InputPin (Other): Notify function type to call when the connected value changed
-                                 PollDataFunc>; // OutputPin (Flow): FileReader poll data function
+    using PinData = std::variant<void*,            // Object/Matrix/Delegate
+                                 bool*,            // Bool
+                                 int*,             // Int
+                                 float*,           // Float
+                                 double*,          // Float
+                                 std::string*,     // String
+                                 OldFlowCallback,  // InputPin (Flow):  Callback function type to call when firable
+                                 OldNotifyFunc,    // InputPin (Other): Notify function type to call when the connected value changed
+                                 OldPollDataFunc>; // OutputPin (Flow): FileReader poll data function
 
     /// @brief Default constructor
     Pin() = default;
@@ -258,12 +258,12 @@ class Pin
           kind(other.kind),
           dataIdentifier(std::move(other.dataIdentifier)),
           parentNode(other.parentNode),
-          data(other.data),
-          notifyFunc(std::move(other.notifyFunc)),
-          callbacks(std::move(other.callbacks))
+          dataOld(other.dataOld),
+          notifyFuncOld(std::move(other.notifyFuncOld)),
+          callbacksOld(std::move(other.callbacksOld))
 #ifdef TESTING
           ,
-          watcherCallbacks(std::move(other.watcherCallbacks))
+          watcherCallbacksOld(std::move(other.watcherCallbacksOld))
 #endif
     {
         std::scoped_lock<std::mutex> guard(other.dataAccessMutex); // Make sure the mutex of the other element is not used
@@ -281,14 +281,14 @@ class Pin
             kind = other.kind;
             dataIdentifier = std::move(other.dataIdentifier);
             parentNode = other.parentNode;
-            notifyFunc = std::move(other.notifyFunc);
-            callbacks = std::move(other.callbacks);
+            notifyFuncOld = std::move(other.notifyFuncOld);
+            callbacksOld = std::move(other.callbacksOld);
 #ifdef TESTING
-            watcherCallbacks = std::move(other.watcherCallbacks);
+            watcherCallbacksOld = std::move(other.watcherCallbacksOld);
 #endif
 
             std::scoped_lock<std::mutex> guard(other.dataAccessMutex);
-            data = other.data;
+            dataOld = other.dataOld;
         }
         return *this;
     }
@@ -336,17 +336,17 @@ class Pin
     Node* parentNode = nullptr;
 
     /// Pointer to data which is transferred over this pin
-    PinData data = static_cast<void*>(nullptr);
+    PinData dataOld = static_cast<void*>(nullptr);
     /// Mutex to interact with the data object
     std::mutex dataAccessMutex;
 
     /// Notify Function to call when the data is updated
-    std::vector<NotifyFunction> notifyFunc;
+    std::vector<NotifyFunctionInfo> notifyFuncOld;
     /// Callback List
-    std::vector<NodeCallback> callbacks;
+    std::vector<NodeCallbackInfo> callbacksOld;
 #ifdef TESTING
     /// Watcher Callbacks are used in testing to check the transmitted data
-    std::vector<WatcherCallback> watcherCallbacks;
+    std::vector<WatcherCallbackInfo> watcherCallbacksOld;
 #endif
 
   private:

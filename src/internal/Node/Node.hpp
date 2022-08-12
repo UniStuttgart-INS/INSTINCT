@@ -239,14 +239,14 @@ class Node
                    || std::is_same_v<T, double>
                    || std::is_same_v<T, std::string>)
         { // clang-format on
-            if (const auto* pval = std::get_if<T*>(&inputPins.at(portIndex).data))
+            if (const auto* pval = std::get_if<T*>(&inputPins.at(portIndex).dataOld))
             {
                 return *pval;
             }
         }
         else // constexpr
         {
-            if (const auto* pval = std::get_if<void*>(&inputPins.at(portIndex).data))
+            if (const auto* pval = std::get_if<void*>(&inputPins.at(portIndex).dataOld))
             {
                 return static_cast<T*>(*pval);
             }

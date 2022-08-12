@@ -309,27 +309,27 @@ NAV::Plot::Plot()
     _pinData.at(0).pinType = PinData::PinType::Flow;
     inputPins.at(0).type = Pin::Type::Flow;
     inputPins.at(0).dataIdentifier = _dataIdentifier;
-    inputPins.at(0).data = Pin::PinData(static_cast<void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId)>(&Plot::plotData));
+    inputPins.at(0).dataOld = Pin::PinData(static_cast<void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId)>(&Plot::plotData));
     // PinData::PinType::Bool:
     _pinData.at(1).pinType = PinData::PinType::Bool;
     inputPins.at(1).type = Pin::Type::Bool;
     inputPins.at(1).dataIdentifier.clear();
-    inputPins.at(1).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotBoolean), 0);
+    inputPins.at(1).notifyFuncOld.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotBoolean), 0);
     // PinData::PinType::Int:
     _pinData.at(2).pinType = PinData::PinType::Int;
     inputPins.at(2).type = Pin::Type::Int;
     inputPins.at(2).dataIdentifier.clear();
-    inputPins.at(2).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotInteger), 0);
+    inputPins.at(2).notifyFuncOld.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotInteger), 0);
     // PinData::PinType::Float:
     _pinData.at(3).pinType = PinData::PinType::Float;
     inputPins.at(3).type = Pin::Type::Float;
     inputPins.at(3).dataIdentifier.clear();
-    inputPins.at(3).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotFloat), 0);
+    inputPins.at(3).notifyFuncOld.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotFloat), 0);
     // PinData::PinType::Matrix:
     _pinData.at(4).pinType = PinData::PinType::Matrix;
     inputPins.at(4).type = Pin::Type::Matrix;
     inputPins.at(4).dataIdentifier = { "Eigen::MatrixXd" };
-    inputPins.at(4).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotMatrix), 0);
+    inputPins.at(4).notifyFuncOld.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotMatrix), 0);
 }
 
 NAV::Plot::~Plot()
@@ -470,34 +470,34 @@ void NAV::Plot::guiConfig()
                     {
                         nm::DeleteLink(connectedLink->id);
                     }
-                    inputPins.at(pinIndex).notifyFunc.clear();
+                    inputPins.at(pinIndex).notifyFuncOld.clear();
 
                     switch (pinData.pinType)
                     {
                     case PinData::PinType::Flow:
                         inputPins.at(pinIndex).type = Pin::Type::Flow;
                         inputPins.at(pinIndex).dataIdentifier = _dataIdentifier;
-                        inputPins.at(pinIndex).data = Pin::PinData(static_cast<void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId)>(&Plot::plotData));
+                        inputPins.at(pinIndex).dataOld = Pin::PinData(static_cast<void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId)>(&Plot::plotData));
                         break;
                     case PinData::PinType::Bool:
                         inputPins.at(pinIndex).type = Pin::Type::Bool;
                         inputPins.at(pinIndex).dataIdentifier.clear();
-                        inputPins.at(pinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotBoolean), 0);
+                        inputPins.at(pinIndex).notifyFuncOld.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotBoolean), 0);
                         break;
                     case PinData::PinType::Int:
                         inputPins.at(pinIndex).type = Pin::Type::Int;
                         inputPins.at(pinIndex).dataIdentifier.clear();
-                        inputPins.at(pinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotInteger), 0);
+                        inputPins.at(pinIndex).notifyFuncOld.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotInteger), 0);
                         break;
                     case PinData::PinType::Float:
                         inputPins.at(pinIndex).type = Pin::Type::Float;
                         inputPins.at(pinIndex).dataIdentifier.clear();
-                        inputPins.at(pinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotFloat), 0);
+                        inputPins.at(pinIndex).notifyFuncOld.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotFloat), 0);
                         break;
                     case PinData::PinType::Matrix:
                         inputPins.at(pinIndex).type = Pin::Type::Matrix;
                         inputPins.at(pinIndex).dataIdentifier = { "Eigen::MatrixXd" };
-                        inputPins.at(pinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotMatrix), 0);
+                        inputPins.at(pinIndex).notifyFuncOld.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotMatrix), 0);
                         break;
                     }
 
@@ -1242,33 +1242,33 @@ void NAV::Plot::restore(json const& j)
 
         for (size_t inputPinIndex = 0; inputPinIndex < inputPins.size(); inputPinIndex++)
         {
-            inputPins.at(inputPinIndex).notifyFunc.clear();
+            inputPins.at(inputPinIndex).notifyFuncOld.clear();
             switch (_pinData.at(inputPinIndex).pinType)
             {
             case PinData::PinType::Flow:
                 inputPins.at(inputPinIndex).type = Pin::Type::Flow;
                 inputPins.at(inputPinIndex).dataIdentifier = _dataIdentifier;
-                inputPins.at(inputPinIndex).data = Pin::PinData(static_cast<void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId)>(&Plot::plotData));
+                inputPins.at(inputPinIndex).dataOld = Pin::PinData(static_cast<void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId)>(&Plot::plotData));
                 break;
             case Plot::PinData::PinType::Bool:
                 inputPins.at(inputPinIndex).type = Pin::Type::Bool;
                 inputPins.at(inputPinIndex).dataIdentifier.clear();
-                inputPins.at(inputPinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotBoolean), 0);
+                inputPins.at(inputPinIndex).notifyFuncOld.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotBoolean), 0);
                 break;
             case Plot::PinData::PinType::Int:
                 inputPins.at(inputPinIndex).type = Pin::Type::Int;
                 inputPins.at(inputPinIndex).dataIdentifier.clear();
-                inputPins.at(inputPinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotInteger), 0);
+                inputPins.at(inputPinIndex).notifyFuncOld.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotInteger), 0);
                 break;
             case Plot::PinData::PinType::Float:
                 inputPins.at(inputPinIndex).type = Pin::Type::Float;
                 inputPins.at(inputPinIndex).dataIdentifier.clear();
-                inputPins.at(inputPinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotFloat), 0);
+                inputPins.at(inputPinIndex).notifyFuncOld.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotFloat), 0);
                 break;
             case Plot::PinData::PinType::Matrix:
                 inputPins.at(inputPinIndex).type = Pin::Type::Matrix;
                 inputPins.at(inputPinIndex).dataIdentifier = { "Eigen::MatrixXd" };
-                inputPins.at(inputPinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotMatrix), 0);
+                inputPins.at(inputPinIndex).notifyFuncOld.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotMatrix), 0);
                 break;
             default:
                 break;

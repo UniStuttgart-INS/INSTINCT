@@ -12,9 +12,9 @@ namespace NAV::CallbackManager
 {
 
 /// Variant data type for callbacks
-using CallbackType = std::variant<std::pair<NodeCallback, std::shared_ptr<const NAV::NodeData>>,
-                                  NotifyFunction,
-                                  std::pair<WatcherCallback, std::shared_ptr<const NAV::NodeData>>>;
+using CallbackType = std::variant<std::pair<NodeCallbackInfo, std::shared_ptr<const NAV::NodeData>>,
+                                  NotifyFunctionInfo,
+                                  std::pair<WatcherCallbackInfo, std::shared_ptr<const NAV::NodeData>>>;
 
 /// Mutex to lock the buffer so that the GUI thread and the calculation threads don't cause a data race
 std::mutex _mutex;
@@ -22,21 +22,21 @@ std::mutex _mutex;
 /// Callback List
 std::queue<CallbackType> _callbacks;
 
-void queueNodeCallbackForInvocation(const NodeCallback& nodeCallback, const std::shared_ptr<const NAV::NodeData>& data)
+void queueNodeCallbackForInvocation(const NodeCallbackInfo& nodeCallback, const std::shared_ptr<const NAV::NodeData>& data)
 {
     std::scoped_lock<std::mutex> guard(_mutex);
 
     _callbacks.push(std::make_pair(nodeCallback, data));
 }
 
-void queueNotifyFunctionForInvocation(const NotifyFunction& notifyFunction)
+void queueNotifyFunctionForInvocation(const NotifyFunctionInfo& notifyFunction)
 {
     std::scoped_lock<std::mutex> guard(_mutex);
 
     _callbacks.push(notifyFunction);
 }
 
-void queueWatcherCallbackForInvocation(const WatcherCallback& watcherCallback, const std::shared_ptr<const NAV::NodeData>& data)
+void queueWatcherCallbackForInvocation(const WatcherCallbackInfo& watcherCallback, const std::shared_ptr<const NAV::NodeData>& data)
 {
     std::scoped_lock<std::mutex> guard(_mutex);
 

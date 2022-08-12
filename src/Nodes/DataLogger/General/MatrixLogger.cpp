@@ -22,7 +22,7 @@ NAV::MatrixLogger::MatrixLogger()
     _guiConfigDefaultWindowSize = { 380, 70 };
 
     nm::CreateInputPin(this, "write", Pin::Type::Matrix, { "Eigen::MatrixXd" });
-    inputPins.back().notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&MatrixLogger::writeMatrix), 0);
+    inputPins.back().notifyFuncOld.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&MatrixLogger::writeMatrix), 0);
 }
 
 NAV::MatrixLogger::~MatrixLogger()

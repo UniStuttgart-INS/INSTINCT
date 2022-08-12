@@ -121,7 +121,7 @@ Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::
 
     if (pin)
     {
-        pin->notifyFunc.emplace_back(node, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(notifyFunc), 0);
+        pin->notifyFuncOld.emplace_back(node, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(notifyFunc), 0);
     }
 
     return pin;

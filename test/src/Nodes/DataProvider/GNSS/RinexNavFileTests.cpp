@@ -34,7 +34,7 @@ TEST_CASE("[RinexNavFile] Read v3.03 Files and check correctness", "[RinexNavFil
         auto* gpsPin = nm::FindPin(1);
         REQUIRE(gpsPin != nullptr);
 
-        auto* gnssNavInfo_GPS = static_cast<GnssNavInfo*>(std::get<void*>(gpsPin->data));
+        auto* gnssNavInfo_GPS = static_cast<GnssNavInfo*>(std::get<void*>(gpsPin->dataOld));
 
         REQUIRE(gnssNavInfo_GPS->broadcastEphemeris.size() == 32);
         for (const auto& ephOfSat : gnssNavInfo_GPS->broadcastEphemeris)

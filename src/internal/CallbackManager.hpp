@@ -20,16 +20,16 @@ namespace CallbackManager
 /// @brief Queue a callback to invoke with the specified data
 /// @param[in] nodeCallback Callback to invoke
 /// @param[in] data Data to pass to the callback
-void queueNodeCallbackForInvocation(const NodeCallback& nodeCallback, const std::shared_ptr<const NAV::NodeData>& data);
+void queueNodeCallbackForInvocation(const NodeCallbackInfo& nodeCallback, const std::shared_ptr<const NAV::NodeData>& data);
 
 /// @brief Queue a notify function to invoke
 /// @param[in] notifyFunction Function to invoke
-void queueNotifyFunctionForInvocation(const NotifyFunction& notifyFunction);
+void queueNotifyFunctionForInvocation(const NotifyFunctionInfo& notifyFunction);
 
 /// @brief Queue a watcher callback to invoke with the specified data
 /// @param[in] watcherCallback Callback to invoke
 /// @param[in] data Data to pass to the callback
-void queueWatcherCallbackForInvocation(const WatcherCallback& watcherCallback, const std::shared_ptr<const NAV::NodeData>& data);
+void queueWatcherCallbackForInvocation(const WatcherCallbackInfo& watcherCallback, const std::shared_ptr<const NAV::NodeData>& data);
 
 /// @brief Process the next callback in the queue
 void processNextCallback();
