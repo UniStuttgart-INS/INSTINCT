@@ -316,7 +316,7 @@ void NAV::ImuFusion::guiConfig()
     constexpr float columnWidth{ 130.0F };
 
     ImGui::SetNextItemWidth(columnWidth);
-    if (ImGui::InputDoubleL(fmt::format("Highest IMU sample rate##{}", size_t(id)).c_str(), &_imuFrequency, 1e-3, 1e4, 0.0, 0.0, "%.0f Hz"))
+    if (ImGui::InputDoubleL(fmt::format("Highest IMU sample rate in [Hz]##{}", size_t(id)).c_str(), &_imuFrequency, 1e-3, 1e4, 0.0, 0.0, "%.0f"))
     {
         LOG_DATA("{}: imuFrequency changed to {}", nameId(), _imuFrequency);
         flow::ApplyChanges();
@@ -332,10 +332,27 @@ void NAV::ImuFusion::guiConfig()
     ImGui::SameLine();
     gui::widgets::HelpMarker("Computationally intensive - only recommended for debugging.");
 
+    if (ImGui::Checkbox(fmt::format("Auto-initialize Kalman filter##{}", size_t(id)).c_str(), &_autoInitKF))
+    {
+        LOG_DATA("{}: checkKalmanMatricesRanks {}", nameId(), _autoInitKF);
+        flow::ApplyChanges();
+    }
+    ImGui::SameLine();
+    gui::widgets::HelpMarker("tbd"); // TODO: add help marker msg
+
     ImGui::Separator();
 
+    ImGui::Text("Kalman Filter initialization");
+
+    ImGui::SetNextItemWidth(columnWidth);
+    if (ImGui::InputDoubleL(fmt::format("Time until averaging ends in [s]##{}", size_t(id)).c_str(), &_averageEndTime, 1e-3, 1e4, 0.0, 0.0, "%.0f"))
+    {
+        LOG_DEBUG("{}: imuFrequency changed to {}", nameId(), _averageEndTime);
+        flow::ApplyChanges();
+    }
+
     ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-    if (ImGui::TreeNode(fmt::format("x - State vector initialization##{}", size_t(id)).c_str()))
+    if (ImGui::TreeNode(fmt::format("x - State vector##{}", size_t(id)).c_str()))
     {
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular rate##{}", size_t(id)).c_str(),
                                                configWidth, unitWidth, _pinData[0].initAngularRate.data(), reinterpret_cast<int*>(&_pinData[0].initAngularRateUnit), "deg/s\0"
@@ -394,10 +411,8 @@ void NAV::ImuFusion::guiConfig()
         ImGui::TreePop();
     }
 
-    ImGui::Separator();
-
     ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-    if (ImGui::TreeNode(fmt::format("P Error covariance matrix (init)##{}", size_t(id)).c_str()))
+    if (ImGui::TreeNode(fmt::format("P - Error covariance matrix##{}", size_t(id)).c_str()))
     {
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular rate covariance ({})##{}",
                                                            _pinData[0].initCovarianceAngularRateUnit == PinData::AngRateVarianceUnit::rad2_s2
@@ -503,6 +518,10 @@ void NAV::ImuFusion::guiConfig()
 
         ImGui::TreePop();
     }
+
+    ImGui::Separator();
+
+    ImGui::Text("Kalman Filter noise setting");
 
     ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
     if (ImGui::TreeNode(fmt::format("Q - System/Process noise covariance matrix##{}", size_t(id)).c_str()))
@@ -690,7 +709,6 @@ bool NAV::ImuFusion::initialize()
     _kalmanFilter.setZero();
     _imuRotations_accel.clear();
     _imuRotations_gyro.clear();
-    _biasCovariances.clear();
     _processNoiseVariances.clear();
     _measurementNoiseVariances.clear();
 
@@ -757,157 +775,6 @@ void NAV::ImuFusion::initializeKalmanFilter()
         if (!nm::FindConnectedLinkToInputPin(inputPins.at(pinIndex).id))
         {
             LOG_INFO("Fewer links than input pins - Consider deleting pins that are not connected to limit KF matrices to the necessary size.");
-        }
-    }
-
-    // -------------------------------------------- State vector x -----------------------------------------------
-    // Initial angular rate in [rad/s]
-    Eigen::Vector3d initAngularRate = Eigen::Vector3d::Zero();
-    if (_pinData[0].initAngularRateUnit == PinData::AngRateUnit::deg_s)
-    {
-        initAngularRate = deg2rad(_pinData[0].initAngularRate);
-    }
-    if (_pinData[0].initAngularRateUnit == PinData::AngRateUnit::rad_s)
-    {
-        initAngularRate = _pinData[0].initAngularRate;
-    }
-
-    // Initial acceleration in [m/s²]
-    Eigen::Vector3d initAcceleration = Eigen::Vector3d::Zero();
-    if (_pinData[0].initAccelerationUnit == PinData::AccelerationUnit::m_s2)
-    {
-        initAcceleration = _pinData[0].initAcceleration;
-    }
-
-    // Initial angular acceleration in [rad/s²]
-    Eigen::Vector3d initAngularAcc = Eigen::Vector3d::Zero();
-    if (_pinData[0].initAngularAccUnit == PinData::AngularAccUnit::deg_s2)
-    {
-        initAngularAcc = deg2rad(_pinData[0].initAngularAcc);
-    }
-    if (_pinData[0].initAngularAccUnit == PinData::AngularAccUnit::rad_s2)
-    {
-        initAngularAcc = _pinData[0].initAngularAcc;
-    }
-
-    // Initial jerk in [m/s³]
-    Eigen::Vector3d initJerk = Eigen::Vector3d::Zero();
-    if (_pinData[0].initJerkUnit == PinData::JerkUnit::m_s3)
-    {
-        initJerk = _pinData[0].initJerk;
-    }
-
-    // Initial bias of the angular rate in [rad/s]
-    _biasInits.resize(2 * _nInputPins);
-    for (size_t pinIndex = 0; pinIndex < _nInputPins - 1UL; ++pinIndex)
-    {
-        if (_pinData[pinIndex].initAngularRateBiasUnit == PinData::AngRateUnit::deg_s)
-        {
-            _biasInits[2 * pinIndex] = _pinData[1 + pinIndex].initAngularRateBias.array();
-        }
-        else if (_pinData[pinIndex].initAngularRateBiasUnit == PinData::AngRateUnit::rad_s)
-        {
-            _biasInits[2 * pinIndex] = deg2rad(_pinData[1 + pinIndex].initAngularRateBias).array();
-        }
-
-        // Initial bias of the acceleration in [m/s²]
-        if (_pinData[pinIndex].initAccelerationBiasUnit == PinData::AccelerationUnit::m_s2)
-        {
-            _biasInits[1 + 2 * pinIndex] = _pinData[1 + pinIndex].initAccelerationBias.array();
-        }
-    }
-
-    // ------------------------------------------------------ Error covariance matrix P --------------------------------------------------------
-
-    // Initial Covariance of the angular rate in [rad²/s²]
-    Eigen::Vector3d variance_angularRate = Eigen::Vector3d::Zero();
-    if (_pinData[0].initCovarianceAngularRateUnit == PinData::AngRateVarianceUnit::rad2_s2)
-    {
-        variance_angularRate = _pinData[0].initCovarianceAngularRate;
-    }
-    else if (_pinData[0].initCovarianceAngularRateUnit == PinData::AngRateVarianceUnit::deg2_s2)
-    {
-        variance_angularRate = deg2rad(_pinData[0].initCovarianceAngularRate);
-    }
-    else if (_pinData[0].initCovarianceAngularRateUnit == PinData::AngRateVarianceUnit::rad_s)
-    {
-        variance_angularRate = _pinData[0].initCovarianceAngularRate.array().pow(2);
-    }
-    else if (_pinData[0].initCovarianceAngularRateUnit == PinData::AngRateVarianceUnit::deg_s)
-    {
-        variance_angularRate = deg2rad(_pinData[0].initCovarianceAngularRate).array().pow(2);
-    }
-
-    // Initial Covariance of the angular acceleration in [(rad^2)/(s^4)]
-    Eigen::Vector3d variance_angularAcceleration = Eigen::Vector3d::Zero();
-    if (_pinData[0].initCovarianceAngularAccUnit == PinData::AngularAccVarianceUnit::rad2_s4)
-    {
-        variance_angularAcceleration = _pinData[0].initCovarianceAngularAcc;
-    }
-    else if (_pinData[0].initCovarianceAngularAccUnit == PinData::AngularAccVarianceUnit::deg2_s4)
-    {
-        variance_angularAcceleration = deg2rad(_pinData[0].initCovarianceAngularAcc);
-    }
-    else if (_pinData[0].initCovarianceAngularAccUnit == PinData::AngularAccVarianceUnit::rad_s2)
-    {
-        variance_angularAcceleration = _pinData[0].initCovarianceAngularAcc.array().pow(2);
-    }
-    else if (_pinData[0].initCovarianceAngularAccUnit == PinData::AngularAccVarianceUnit::deg_s2)
-    {
-        variance_angularAcceleration = deg2rad(_pinData[0].initCovarianceAngularAcc).array().pow(2);
-    }
-
-    // Initial Covariance of the acceleration in [(m^2)/(s^4)]
-    Eigen::Vector3d variance_acceleration = Eigen::Vector3d::Zero();
-    if (_pinData[0].initCovarianceAccelerationUnit == PinData::AccelerationVarianceUnit::m2_s4)
-    {
-        variance_acceleration = _pinData[0].initCovarianceAcceleration;
-    }
-    else if (_pinData[0].initCovarianceAccelerationUnit == PinData::AccelerationVarianceUnit::m_s2)
-    {
-        variance_acceleration = _pinData[0].initCovarianceAcceleration.array().pow(2);
-    }
-
-    // Initial Covariance of the jerk in [(m^2)/(s^6)]
-    Eigen::Vector3d variance_jerk = Eigen::Vector3d::Zero();
-    if (_pinData[0].initCovarianceJerkUnit == PinData::JerkVarianceUnit::m2_s6)
-    {
-        variance_jerk = _pinData[0].initCovarianceJerk;
-    }
-    else if (_pinData[0].initCovarianceJerkUnit == PinData::JerkVarianceUnit::m_s3)
-    {
-        variance_jerk = _pinData[0].initCovarianceJerk.array().pow(2);
-    }
-
-    // Initial Covariance of the bias of the angular acceleration in [(rad^2)/(s^4)]
-    _biasCovariances.resize(2 * _nInputPins);
-    for (size_t pinIndex = 0; pinIndex < _nInputPins - 1UL; ++pinIndex)
-    {
-        if (_pinData[pinIndex].initCovarianceBiasAngRateUnit == PinData::AngRateVarianceUnit::rad2_s2)
-        {
-            _biasCovariances[2 * pinIndex] = _pinData[1 + pinIndex].initCovarianceBiasAngRate;
-        }
-        else if (_pinData[pinIndex].initCovarianceBiasAngRateUnit == PinData::AngRateVarianceUnit::deg2_s2)
-        {
-            _biasCovariances[2 * pinIndex] = deg2rad(_pinData[1 + pinIndex].initCovarianceBiasAngRate);
-        }
-        else if (_pinData[pinIndex].initCovarianceBiasAngRateUnit == PinData::AngRateVarianceUnit::rad_s)
-        {
-            _biasCovariances[2 * pinIndex] = _pinData[1 + pinIndex].initCovarianceBiasAngRate.array().pow(2);
-        }
-        else if (_pinData[pinIndex].initCovarianceBiasAngRateUnit == PinData::AngRateVarianceUnit::deg_s)
-        {
-            _biasCovariances[2 * pinIndex] = deg2rad(_pinData[1 + pinIndex].initCovarianceBiasAngRate).array().pow(2);
-        }
-
-        // Initial Covariance of the bias of the jerk in [(m^2)/(s^6)]
-        if (_pinData[pinIndex].initCovarianceBiasAccUnit == PinData::AccelerationVarianceUnit::m2_s4)
-        {
-            _biasCovariances[1 + 2 * pinIndex] = _pinData[1 + pinIndex].initCovarianceBiasAcc;
-        }
-        else if (_pinData[pinIndex].initCovarianceBiasAccUnit == PinData::AccelerationVarianceUnit::m_s2)
-        {
-            _biasCovariances[1 + 2 * pinIndex] = _pinData[1 + pinIndex].initCovarianceBiasAcc.array().pow(2);
         }
     }
 
@@ -1010,15 +877,17 @@ void NAV::ImuFusion::initializeKalmanFilter()
     auto dtInit = 1.0 / _imuFrequency;
 
     // --------------------------------------------------------- KF Initializations ------------------------------------------------------------
-    _kalmanFilter.x.block<3, 1>(0, 0) = initAngularRate;
-    _kalmanFilter.x.block<3, 1>(3, 0) = initAngularAcc;
-    _kalmanFilter.x.block<3, 1>(6, 0) = initAcceleration;
-    _kalmanFilter.x.block<3, 1>(9, 0) = initJerk;
+    std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> initValues = initializeKalmanFilterManually();
+
+    _kalmanFilter.x.block<3, 1>(0, 0) = initValues.first[0];
+    _kalmanFilter.x.block<3, 1>(3, 0) = initValues.first[1];
+    _kalmanFilter.x.block<3, 1>(6, 0) = initValues.first[2];
+    _kalmanFilter.x.block<3, 1>(9, 0) = initValues.first[3];
     for (uint32_t pinIndex = 0; pinIndex < _nInputPins - 1UL; ++pinIndex)
     {
-        auto containerIndex = 2 * pinIndex;
-        _kalmanFilter.x.block<3, 1>(12 + 6 * pinIndex, 0) = _biasInits[containerIndex];
-        _kalmanFilter.x.block<3, 1>(15 + 6 * pinIndex, 0) = _biasInits[1 + containerIndex];
+        auto containerIndex = 4 + 2 * pinIndex;
+        _kalmanFilter.x.block<3, 1>(12 + 6 * pinIndex, 0) = initValues.first[containerIndex];
+        _kalmanFilter.x.block<3, 1>(15 + 6 * pinIndex, 0) = initValues.first[1 + containerIndex];
     }
 
     // hard-coded - long time measurements (kept for reference) ################################################################################
@@ -1026,11 +895,11 @@ void NAV::ImuFusion::initializeKalmanFilter()
     // bla << 0.1250, -0.1615, 0.0194, -0.1434, 0.2279, -2.5783, -0.0132, 0.0117, 0.0245, -0.2762, 0.4848, -1.5336, 0.0213, -0.0320, 0.0397, -0.1588, 0.2588, -2.9022, 0.0091, -0.0055, 0.0183, -0.2413, 0.0189, -3.6849; // entire time series
     // bla << 0.1250, -0.1616, 0.0192, -0.1447, 0.2291, -2.5865, -0.0130, 0.0117, 0.0237, -0.2725, 0.4880, -1.5728, 0.0223, -0.0330, 0.0394, -0.1571, 0.2600, -2.9525, 0.0098, -0.0060, 0.0185, -0.2440, 0.0256, -3.7012; // 1 second
     // _kalmanFilter.x.block<24, 1>(12, 0) = bla;
-    LOG_DATA("kalmanFilter.x = {}", _kalmanFilter.x.transpose());
+    LOG_DEBUG("kalmanFilter.x = {}", _kalmanFilter.x.transpose());
     // hard-coded - long time measurements (kept for reference) ################################################################################
 
-    _kalmanFilter.P = initialErrorCovarianceMatrix_P0(variance_angularRate, variance_angularAcceleration, variance_acceleration, variance_jerk);
-    LOG_DATA("kalmanFilter.P =\n{}", _kalmanFilter.P);
+    _kalmanFilter.P = initialErrorCovarianceMatrix_P0(initValues.second);
+    LOG_DEBUG("kalmanFilter.P =\n{}", _kalmanFilter.P);
     _kalmanFilter.Phi = initialStateTransitionMatrix_Phi(dtInit);
     LOG_DATA("kalmanFilter.Phi =\n{}", _kalmanFilter.Phi);
     processNoiseMatrix_Q(_kalmanFilter.Q, dtInit);
@@ -1222,23 +1091,19 @@ void NAV::ImuFusion::stateTransitionMatrix_Phi(Eigen::MatrixXd& Phi, double dt)
     Phi.block<3, 3>(6, 9).diagonal().setConstant(dt); // dependency of acceleration on jerk
 }
 
-Eigen::MatrixXd NAV::ImuFusion::initialErrorCovarianceMatrix_P0(const Eigen::Vector3d& varAngRate,
-                                                                const Eigen::Vector3d& varAngAcc,
-                                                                const Eigen::Vector3d& varAcc,
-                                                                const Eigen::Vector3d& varJerk) const
+Eigen::MatrixXd NAV::ImuFusion::initialErrorCovarianceMatrix_P0(std::vector<Eigen::Vector3d>& initCovariances) const
 {
     Eigen::MatrixXd P = Eigen::MatrixXd::Zero(_numStates, _numStates);
 
-    P.block<3, 3>(0, 0).diagonal() = varAngRate;
-    P.block<3, 3>(3, 3).diagonal() = varAngAcc;
-    P.block<3, 3>(6, 6).diagonal() = varAcc;
-    P.block<3, 3>(9, 9).diagonal() = varJerk;
+    P.block<3, 3>(0, 0).diagonal() = initCovariances[0]; // initial covariance of the angular rate
+    P.block<3, 3>(3, 3).diagonal() = initCovariances[1]; // initial covariance of the angular acceleration
+    P.block<3, 3>(6, 6).diagonal() = initCovariances[2]; // initial covariance of the acceleration
+    P.block<3, 3>(9, 9).diagonal() = initCovariances[3]; // initial covariance of the jerk
 
-    for (uint32_t i = 12; i < _numStates - 1UL; i += 6)
+    for (uint32_t i = 12; i < _numStates - 1UL; i += 3)
     {
-        size_t j = (i - 12) / 3 + 2; // access 2 bias variances for each sensor from the third element onwards
-        P.block<3, 3>(i, i).diagonal() = _biasCovariances.at(j);
-        P.block<3, 3>(i + 3, i + 3).diagonal() = _biasCovariances.at(j + 1);
+        size_t j = 4 + (i - 12) / 3;                         // access bias variances for each sensor from the fifth element onwards
+        P.block<3, 3>(i, i).diagonal() = initCovariances[j]; // TODO: verify indices!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     }
 
     return P;
@@ -1298,4 +1163,154 @@ void NAV::ImuFusion::measurementNoiseMatrix_R(Eigen::MatrixXd& R, size_t pinInde
 {
     R.block<3, 3>(0, 0).diagonal() = _measurementNoiseVariances.at(2 * pinIndex);
     R.block<3, 3>(3, 3).diagonal() = _measurementNoiseVariances.at(2 * pinIndex + 1);
+}
+
+std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> NAV::ImuFusion::initializeKalmanFilterManually()
+{
+    std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> initVectors; // contains init values for all state vectors
+    initVectors.first.resize(6 + 2 * _nInputPins);
+
+    // -------------------------------------------- State vector x -----------------------------------------------
+    // Initial angular rate in [rad/s]
+    if (_pinData[0].initAngularRateUnit == PinData::AngRateUnit::deg_s)
+    {
+        initVectors.first[0] = deg2rad(_pinData[0].initAngularRate);
+    }
+    if (_pinData[0].initAngularRateUnit == PinData::AngRateUnit::rad_s)
+    {
+        initVectors.first[0] = _pinData[0].initAngularRate;
+    }
+
+    // Initial acceleration in [m/s²]
+    if (_pinData[0].initAccelerationUnit == PinData::AccelerationUnit::m_s2)
+    {
+        initVectors.first[1] = _pinData[0].initAcceleration;
+    }
+
+    // Initial angular acceleration in [rad/s²]
+    if (_pinData[0].initAngularAccUnit == PinData::AngularAccUnit::deg_s2)
+    {
+        initVectors.first[2] = deg2rad(_pinData[0].initAngularAcc);
+    }
+    if (_pinData[0].initAngularAccUnit == PinData::AngularAccUnit::rad_s2)
+    {
+        initVectors.first[2] = _pinData[0].initAngularAcc;
+    }
+
+    // Initial jerk in [m/s³]
+    if (_pinData[0].initJerkUnit == PinData::JerkUnit::m_s3)
+    {
+        initVectors.first[3] = _pinData[0].initJerk;
+    }
+
+    // Initial bias of the angular rate in [rad/s]
+    for (size_t pinIndex = 0; pinIndex < _nInputPins - 1UL; ++pinIndex)
+    {
+        if (_pinData[pinIndex].initAngularRateBiasUnit == PinData::AngRateUnit::deg_s)
+        {
+            initVectors.first[4 + 2 * pinIndex] = _pinData[1 + pinIndex].initAngularRateBias.array();
+        }
+        else if (_pinData[pinIndex].initAngularRateBiasUnit == PinData::AngRateUnit::rad_s)
+        {
+            initVectors.first[4 + 2 * pinIndex] = deg2rad(_pinData[1 + pinIndex].initAngularRateBias).array();
+        }
+
+        // Initial bias of the acceleration in [m/s²]
+        if (_pinData[pinIndex].initAccelerationBiasUnit == PinData::AccelerationUnit::m_s2)
+        {
+            initVectors.first[5 + 2 * pinIndex] = _pinData[1 + pinIndex].initAccelerationBias.array();
+        }
+    }
+
+    // ------------------------------------------------------ Error covariance matrix P --------------------------------------------------------
+    initVectors.second.resize(6 + 2 * _nInputPins);
+
+    // Initial Covariance of the angular rate in [rad²/s²]
+    if (_pinData[0].initCovarianceAngularRateUnit == PinData::AngRateVarianceUnit::rad2_s2)
+    {
+        initVectors.second[0] = _pinData[0].initCovarianceAngularRate;
+    }
+    else if (_pinData[0].initCovarianceAngularRateUnit == PinData::AngRateVarianceUnit::deg2_s2)
+    {
+        initVectors.second[0] = deg2rad(_pinData[0].initCovarianceAngularRate);
+    }
+    else if (_pinData[0].initCovarianceAngularRateUnit == PinData::AngRateVarianceUnit::rad_s)
+    {
+        initVectors.second[0] = _pinData[0].initCovarianceAngularRate.array().pow(2);
+    }
+    else if (_pinData[0].initCovarianceAngularRateUnit == PinData::AngRateVarianceUnit::deg_s)
+    {
+        initVectors.second[0] = deg2rad(_pinData[0].initCovarianceAngularRate).array().pow(2);
+    }
+
+    // Initial Covariance of the angular acceleration in [(rad^2)/(s^4)]
+    if (_pinData[0].initCovarianceAngularAccUnit == PinData::AngularAccVarianceUnit::rad2_s4)
+    {
+        initVectors.second[1] = _pinData[0].initCovarianceAngularAcc;
+    }
+    else if (_pinData[0].initCovarianceAngularAccUnit == PinData::AngularAccVarianceUnit::deg2_s4)
+    {
+        initVectors.second[1] = deg2rad(_pinData[0].initCovarianceAngularAcc);
+    }
+    else if (_pinData[0].initCovarianceAngularAccUnit == PinData::AngularAccVarianceUnit::rad_s2)
+    {
+        initVectors.second[1] = _pinData[0].initCovarianceAngularAcc.array().pow(2);
+    }
+    else if (_pinData[0].initCovarianceAngularAccUnit == PinData::AngularAccVarianceUnit::deg_s2)
+    {
+        initVectors.second[1] = deg2rad(_pinData[0].initCovarianceAngularAcc).array().pow(2);
+    }
+
+    // Initial Covariance of the acceleration in [(m^2)/(s^4)]
+    if (_pinData[0].initCovarianceAccelerationUnit == PinData::AccelerationVarianceUnit::m2_s4)
+    {
+        initVectors.second[2] = _pinData[0].initCovarianceAcceleration;
+    }
+    else if (_pinData[0].initCovarianceAccelerationUnit == PinData::AccelerationVarianceUnit::m_s2)
+    {
+        initVectors.second[2] = _pinData[0].initCovarianceAcceleration.array().pow(2);
+    }
+
+    // Initial Covariance of the jerk in [(m^2)/(s^6)]
+    if (_pinData[0].initCovarianceJerkUnit == PinData::JerkVarianceUnit::m2_s6)
+    {
+        initVectors.second[3] = _pinData[0].initCovarianceJerk;
+    }
+    else if (_pinData[0].initCovarianceJerkUnit == PinData::JerkVarianceUnit::m_s3)
+    {
+        initVectors.second[3] = _pinData[0].initCovarianceJerk.array().pow(2);
+    }
+
+    // Initial Covariance of the bias of the angular acceleration in [(rad^2)/(s^4)]
+    for (size_t pinIndex = 0; pinIndex < _nInputPins - 1UL; ++pinIndex)
+    {
+        if (_pinData[pinIndex].initCovarianceBiasAngRateUnit == PinData::AngRateVarianceUnit::rad2_s2)
+        {
+            initVectors.second[4 + 2 * pinIndex] = _pinData[1 + pinIndex].initCovarianceBiasAngRate;
+        }
+        else if (_pinData[pinIndex].initCovarianceBiasAngRateUnit == PinData::AngRateVarianceUnit::deg2_s2)
+        {
+            initVectors.second[4 + 2 * pinIndex] = deg2rad(_pinData[1 + pinIndex].initCovarianceBiasAngRate);
+        }
+        else if (_pinData[pinIndex].initCovarianceBiasAngRateUnit == PinData::AngRateVarianceUnit::rad_s)
+        {
+            initVectors.second[4 + 2 * pinIndex] = _pinData[1 + pinIndex].initCovarianceBiasAngRate.array().pow(2);
+        }
+        else if (_pinData[pinIndex].initCovarianceBiasAngRateUnit == PinData::AngRateVarianceUnit::deg_s)
+        {
+            initVectors.second[4 + 2 * pinIndex] = deg2rad(_pinData[1 + pinIndex].initCovarianceBiasAngRate).array().pow(2);
+        }
+
+        // Initial Covariance of the bias of the jerk in [(m^2)/(s^6)]
+        if (_pinData[pinIndex].initCovarianceBiasAccUnit == PinData::AccelerationVarianceUnit::m2_s4)
+        {
+            initVectors.second[5 + 2 * pinIndex] = _pinData[1 + pinIndex].initCovarianceBiasAcc;
+        }
+        else if (_pinData[pinIndex].initCovarianceBiasAccUnit == PinData::AccelerationVarianceUnit::m_s2)
+        {
+            initVectors.second[5 + 2 * pinIndex] = _pinData[1 + pinIndex].initCovarianceBiasAcc.array().pow(2);
+        }
+    }
+
+    return initVectors;
 }

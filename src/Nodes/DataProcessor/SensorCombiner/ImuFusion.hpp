@@ -15,6 +15,7 @@
 #include "Navigation/Math/KalmanFilter.hpp"
 
 #include <deque>
+#include <utility>
 
 namespace NAV
 {
@@ -212,6 +213,12 @@ class ImuFusion : public Imu
     /// @brief Initializes the Kalman Filter
     void initializeKalmanFilter();
 
+    /// @brief Initialization routines for 'manual' initialization, i.e. GUI inputs
+    std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> initializeKalmanFilterManually();
+
+    /// @brief Initialization routines for 'automatic' initialization, i.e. init values are calculated by averaging the data in the first T seconds
+    void initializeKalmanFilterAuto();
+
     /// @brief Initializes the rotation matrices used for the mounting angles of the sensors
     void initializeMountingAngles();
 
@@ -262,15 +269,9 @@ class ImuFusion : public Imu
     void measurementNoiseMatrix_R(Eigen::MatrixXd& R, size_t pinIndex) const;
 
     /// @brief Initial error covariance matrix P_0
-    /// @param[in] varAngRate Initial variance (3D) of the Angular Rate state in [rad²/s²]
-    /// @param[in] varAngAcc Initial variance (3D) of the Angular Acceleration state in [(rad^2)/(s^4)]
-    /// @param[in] varAcc Initial variance (3D) of the Acceleration state in [(m^2)/(s^4)]
-    /// @param[in] varJerk Initial variance (3D) of the Jerk state in [(m^2)/(s^6)]
+    /// @param[in] initCovariances Initial covariances of the states
     /// @return The (_numStates) x (_numStates) matrix of initial state variances
-    [[nodiscard]] Eigen::MatrixXd initialErrorCovarianceMatrix_P0(const Eigen::Vector3d& varAngRate,
-                                                                  const Eigen::Vector3d& varAngAcc,
-                                                                  const Eigen::Vector3d& varAcc,
-                                                                  const Eigen::Vector3d& varJerk) const;
+    [[nodiscard]] Eigen::MatrixXd initialErrorCovarianceMatrix_P0(std::vector<Eigen::Vector3d>& initCovariances) const;
 
     /// @brief Combines the signals
     /// @param[in] imuObs Imu observation
@@ -309,11 +310,11 @@ class ImuFusion : public Imu
     /// @brief Highest IMU sample rate (for time step in KF prediction)
     double _imuFrequency{ 100 };
 
+    /// @brief Time until averaging ends and filtering starts in [s]
+    double _averageEndTime{ 1 };
+
     /// @brief Saves the timestamp of the measurement before in [s]
     InsTime _latestTimestamp{};
-
-    /// @brief Container for the initial values of each bias state
-    std::vector<Eigen::Vector3d> _biasInits;
 
     /// @brief Container for process noise of each state
     std::vector<Eigen::Vector3d> _biasCovariances;
@@ -326,6 +327,9 @@ class ImuFusion : public Imu
 
     /// @brief Check the rank of the Kalman matrices every iteration (computationally expensive)
     bool _checkKalmanMatricesRanks = false;
+
+    /// @brief Auto-initialize the Kalman Filter
+    bool _autoInitKF = true;
 
     /// @brief Beginning of time frame for specific log msgs
     InsTime _frameStart{ 0, 0, 0, 0, 0, 6.9 }; // in [s]
