@@ -217,7 +217,7 @@ class ImuFusion : public Imu
     std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> initializeKalmanFilterManually();
 
     /// @brief Initialization routines for 'automatic' initialization, i.e. init values are calculated by averaging the data in the first T seconds
-    void initializeKalmanFilterAuto();
+    std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> initializeKalmanFilterAuto();
 
     /// @brief Initializes the rotation matrices used for the mounting angles of the sensors
     void initializeMountingAngles();
@@ -330,6 +330,12 @@ class ImuFusion : public Imu
 
     /// @brief Auto-initialize the Kalman Filter
     bool _autoInitKF = true;
+
+    /// @brief Container that collects all imuObs for averaging for auto-init of the KF
+    std::vector<std::shared_ptr<const NAV::ImuObs>> _cumulatedImuObs;
+
+    /// @brief Container that collects all pinIds for averaging for auto-init of the KF
+    std::vector<size_t> _cumulatedPinIds;
 
     /// @brief Beginning of time frame for specific log msgs
     InsTime _frameStart{ 0, 0, 0, 0, 0, 6.9 }; // in [s]

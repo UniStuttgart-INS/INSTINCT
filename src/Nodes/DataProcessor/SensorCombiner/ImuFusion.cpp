@@ -347,7 +347,7 @@ void NAV::ImuFusion::guiConfig()
     ImGui::SetNextItemWidth(columnWidth);
     if (ImGui::InputDoubleL(fmt::format("Time until averaging ends in [s]##{}", size_t(id)).c_str(), &_averageEndTime, 1e-3, 1e4, 0.0, 0.0, "%.0f"))
     {
-        LOG_DEBUG("{}: imuFrequency changed to {}", nameId(), _averageEndTime);
+        LOG_DEBUG("{}: averageEndTime changed to {}", nameId(), _averageEndTime);
         flow::ApplyChanges();
     }
 
@@ -711,6 +711,7 @@ bool NAV::ImuFusion::initialize()
     _imuRotations_gyro.clear();
     _processNoiseVariances.clear();
     _measurementNoiseVariances.clear();
+    _cumulatedImuObs.clear();
 
     _latestTimestamp = InsTime{};
 
@@ -986,7 +987,16 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
             }
         }
 
-        combineSignals(imuObs);
+        if (_autoInitKF) // && _latestTimestamp < _averageEndTime)
+        {
+            _cumulatedImuObs.push_back(imuObs);
+            _cumulatedPinIds.push_back(pinIndex);
+            // TODO: break if _latestTimestamp < _averageEndTime and continue with auto-init
+        }
+        else
+        {
+            combineSignals(imuObs);
+        }
     }
 }
 
@@ -1004,6 +1014,7 @@ void NAV::ImuFusion::combineSignals(const std::shared_ptr<const ImuObs>& imuObs)
     _kalmanFilter.z.block<3, 1>(0, 0) = imuObs->gyroUncompXYZ.value();
     _kalmanFilter.z.block<3, 1>(3, 0) = imuObs->accelUncompXYZ.value();
 
+#ifndef NDEBUG
     if ((imuObs->insTime > _frameStart) && (imuObs->insTime < _frameEnd))
     {
         // auto timebla = static_cast<double>((imuObs->insTime.value() - _dummyTime).count());
@@ -1014,6 +1025,7 @@ void NAV::ImuFusion::combineSignals(const std::shared_ptr<const ImuObs>& imuObs)
         LOG_DEBUG("AccZ measurement: kalmanFilter.z(5, 0) = {}", _kalmanFilter.z(5, 0));
         LOG_DEBUG("AccZ predicted: kalmanFilter.x(8, 0) = {}", _kalmanFilter.x(8, 0));
     }
+#endif
 
     LOG_DATA("Measurements z =\n{}", _kalmanFilter.z);
 
@@ -1102,8 +1114,8 @@ Eigen::MatrixXd NAV::ImuFusion::initialErrorCovarianceMatrix_P0(std::vector<Eige
 
     for (uint32_t i = 12; i < _numStates - 1UL; i += 3)
     {
-        size_t j = 4 + (i - 12) / 3;                         // access bias variances for each sensor from the fifth element onwards
-        P.block<3, 3>(i, i).diagonal() = initCovariances[j]; // TODO: verify indices!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        size_t j = 4 + (i - 12) / 3; // access bias variances for each sensor from the fifth element onwards
+        P.block<3, 3>(i, i).diagonal() = initCovariances[j];
     }
 
     return P;
@@ -1311,6 +1323,42 @@ std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> NAV::ImuFu
             initVectors.second[5 + 2 * pinIndex] = _pinData[1 + pinIndex].initCovarianceBiasAcc.array().pow(2);
         }
     }
+
+    return initVectors;
+}
+
+std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> NAV::ImuFusion::initializeKalmanFilterAuto()
+{
+    std::vector<std::vector<Eigen::Vector3d>> sensorMeasurements;
+    sensorMeasurements.resize(_nInputPins);
+
+    // --------------------------- Averaging single measurements of each sensor ------------------------------
+    for (size_t i = 0; i < _cumulatedImuObs.size(); ++i)
+    {
+        // Sort imuObs into separate containers for each sensor
+        for (size_t sensorAxis = 1; sensorAxis < _numMeasurements; sensorAxis++)
+        {
+            // sensorMeasurements[_cumulatedPinIds[i]] = _cumulatedImuObs[i]->accelUncompXYZ.value();
+        }
+
+        // auto accX = _cumulatedImuObs[0]->accelUncompXYZ.value();
+    }
+
+    // read single measurements from imuObs
+
+    // mean - std::accumulate each single measurement --> init-value
+    // stdDev
+
+    std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>>
+        initVectors; // contains init values for all state vectors
+
+    // -------------------------------------------- State vector x -----------------------------------------------
+    initVectors.first.resize(6 + 2 * _nInputPins);
+
+    // _averageEndTime
+
+    // ------------------------------------------------------ Error covariance matrix P --------------------------------------------------------
+    initVectors.second.resize(6 + 2 * _nInputPins);
 
     return initVectors;
 }
