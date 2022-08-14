@@ -234,7 +234,7 @@ class Pin
     using OldPollDataFunc = std::shared_ptr<const NAV::NodeData> (Node::*)(bool);
 
     /// @brief Possible Types represented by a pin
-    using PinData = std::variant<void*,            // Object/Matrix/Delegate
+    using PinDataOld = std::variant<void*,            // Object/Matrix/Delegate
                                  bool*,            // Bool
                                  int*,             // Int
                                  float*,           // Float
@@ -336,7 +336,7 @@ class Pin
     Node* parentNode = nullptr;
 
     /// Pointer to data which is transferred over this pin
-    PinData dataOld = static_cast<void*>(nullptr);
+    PinDataOld dataOld = static_cast<void*>(nullptr);
     /// Mutex to interact with the data object
     std::mutex dataAccessMutex;
 

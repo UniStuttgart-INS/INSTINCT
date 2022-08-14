@@ -82,7 +82,7 @@ void DeleteLinksOnPin(ax::NodeEditor::PinId pinId);
 /// @param[in] data Pointer to data which is represented by the pin
 /// @param[in] idx Index where to put the new pin (-1 means at the end)
 /// @return Pointer to the created pin
-Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier = {}, Pin::PinData data = static_cast<void*>(nullptr), int idx = -1);
+Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier = {}, Pin::PinDataOld data = static_cast<void*>(nullptr), int idx = -1);
 
 /// @brief Create an Input Pin object
 /// @tparam T Node Class where the function is member of
@@ -99,7 +99,7 @@ Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::
 {
     assert(pinType == Pin::Type::Flow);
 
-    return CreateInputPin(node, name, pinType, dataIdentifier, Pin::PinData(static_cast<void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId)>(callback)), idx);
+    return CreateInputPin(node, name, pinType, dataIdentifier, Pin::PinDataOld(static_cast<void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId)>(callback)), idx);
 }
 
 /// @brief Create an Input Pin object
@@ -135,7 +135,7 @@ Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::
 /// @param[in] data Pointer to data which is represented by the pin
 /// @param[in] idx Index where to put the new pin (-1 means at the end)
 /// @return Pointer to the created pin
-Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier, Pin::PinData data = static_cast<void*>(nullptr), int idx = -1);
+Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier, Pin::PinDataOld data = static_cast<void*>(nullptr), int idx = -1);
 
 /// @brief Create an Output Pin object for Flow Pins
 /// @tparam T Class where the function is member of
@@ -152,7 +152,7 @@ Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std:
 {
     assert(pinType == Pin::Type::Flow);
 
-    return CreateOutputPin(node, name, pinType, dataIdentifier, Pin::PinData(static_cast<std::shared_ptr<const NAV::NodeData> (Node::*)(bool)>(callback)), idx);
+    return CreateOutputPin(node, name, pinType, dataIdentifier, Pin::PinDataOld(static_cast<std::shared_ptr<const NAV::NodeData> (Node::*)(bool)>(callback)), idx);
 }
 
 /// @brief Deletes the output pin

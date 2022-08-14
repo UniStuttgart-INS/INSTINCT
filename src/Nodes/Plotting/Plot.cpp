@@ -309,7 +309,7 @@ NAV::Plot::Plot()
     _pinData.at(0).pinType = PinData::PinType::Flow;
     inputPins.at(0).type = Pin::Type::Flow;
     inputPins.at(0).dataIdentifier = _dataIdentifier;
-    inputPins.at(0).dataOld = Pin::PinData(static_cast<void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId)>(&Plot::plotData));
+    inputPins.at(0).dataOld = Pin::PinDataOld(static_cast<void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId)>(&Plot::plotData));
     // PinData::PinType::Bool:
     _pinData.at(1).pinType = PinData::PinType::Bool;
     inputPins.at(1).type = Pin::Type::Bool;
@@ -477,7 +477,7 @@ void NAV::Plot::guiConfig()
                     case PinData::PinType::Flow:
                         inputPins.at(pinIndex).type = Pin::Type::Flow;
                         inputPins.at(pinIndex).dataIdentifier = _dataIdentifier;
-                        inputPins.at(pinIndex).dataOld = Pin::PinData(static_cast<void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId)>(&Plot::plotData));
+                        inputPins.at(pinIndex).dataOld = Pin::PinDataOld(static_cast<void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId)>(&Plot::plotData));
                         break;
                     case PinData::PinType::Bool:
                         inputPins.at(pinIndex).type = Pin::Type::Bool;
@@ -1248,7 +1248,7 @@ void NAV::Plot::restore(json const& j)
             case PinData::PinType::Flow:
                 inputPins.at(inputPinIndex).type = Pin::Type::Flow;
                 inputPins.at(inputPinIndex).dataIdentifier = _dataIdentifier;
-                inputPins.at(inputPinIndex).dataOld = Pin::PinData(static_cast<void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId)>(&Plot::plotData));
+                inputPins.at(inputPinIndex).dataOld = Pin::PinDataOld(static_cast<void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId)>(&Plot::plotData));
                 break;
             case Plot::PinData::PinType::Bool:
                 inputPins.at(inputPinIndex).type = Pin::Type::Bool;
