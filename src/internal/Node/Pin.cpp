@@ -127,6 +127,18 @@ void NAV::Pin::drawPinIcon(bool connected, int alpha) const
                                 iconType, connected, color, ImColor(32, 32, 32, alpha));
 }
 
+NAV::Pin* NAV::InputPin::Connection::getPin() const
+{
+    if (node)
+    {
+        for (auto& outputPin : node->outputPins)
+        {
+            if (outputPin.id == pinId) { return &outputPin; }
+        }
+    }
+    return nullptr;
+}
+
 void NAV::to_json(json& j, const Pin& pin)
 {
     j = json{

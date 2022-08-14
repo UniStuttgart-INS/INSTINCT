@@ -235,14 +235,14 @@ class Pin
 
     /// @brief Possible Types represented by a pin
     using PinDataOld = std::variant<void*,            // Object/Matrix/Delegate
-                                 bool*,            // Bool
-                                 int*,             // Int
-                                 float*,           // Float
-                                 double*,          // Float
-                                 std::string*,     // String
-                                 OldFlowCallback,  // InputPin (Flow):  Callback function type to call when firable
-                                 OldNotifyFunc,    // InputPin (Other): Notify function type to call when the connected value changed
-                                 OldPollDataFunc>; // OutputPin (Flow): FileReader poll data function
+                                    bool*,            // Bool
+                                    int*,             // Int
+                                    float*,           // Float
+                                    double*,          // Float
+                                    std::string*,     // String
+                                    OldFlowCallback,  // InputPin (Flow):  Callback function type to call when firable
+                                    OldNotifyFunc,    // InputPin (Other): Notify function type to call when the connected value changed
+                                    OldPollDataFunc>; // OutputPin (Flow): FileReader poll data function
 
     /// @brief Default constructor
     Pin() = default;
@@ -370,13 +370,16 @@ class OutputPin : public Pin
     using PollDataFunc = std::shared_ptr<const NAV::NodeData> (Node::*)(bool);
 
     /// @brief Possible Types represented by an output pin
-    using PinData = std::variant<void*,         // Object/Matrix/Delegate
-                                 bool*,         // Bool
-                                 int*,          // Int
-                                 float*,        // Float
-                                 double*,       // Float
-                                 std::string*,  // String
-                                 PollDataFunc>; // Flow (FileReader poll data function)
+    using PinData = std::variant<const void*,        // Object/Matrix/Delegate
+                                 const bool*,        // Bool
+                                 const int*,         // Int
+                                 const float*,       // Float
+                                 const double*,      // Float
+                                 const std::string*, // String
+                                 PollDataFunc>;      // Flow (FileReader poll data function)
+
+    /// Pointer to data (owned by this node) which is transferred over this pin
+    PinData data = static_cast<void*>(nullptr);
 };
 
 /// Input pins of nodes
@@ -392,12 +395,15 @@ class InputPin : public Pin
         : Pin(id, name, type, Pin::Kind::Input, parentNode) {}
 
     /// @brief Possible Types represented by an input pin
-    using PinData = std::variant<void*,         // Object/Matrix/Delegate
-                                 bool*,         // Bool
-                                 int*,          // Int
-                                 float*,        // Float
-                                 double*,       // Float
-                                 std::string*>; // String
+    using PinData = std::variant<const void*,         // Object/Matrix/Delegate
+                                 const bool*,         // Bool
+                                 const int*,          // Int
+                                 const float*,        // Float
+                                 const double*,       // Float
+                                 const std::string*>; // String
+
+    /// Pointer to data (owned by the connected node) which is transferred over this pin
+    PinData data = static_cast<void*>(nullptr);
 
     /// Flow data callback function type to call when firable
     using FlowFirableCallbackFunc = void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId);
@@ -408,7 +414,53 @@ class InputPin : public Pin
     using Callback = std::variant<FlowFirableCallbackFunc, // Flow (Callback function type to call when firable)
                                   DataChangeNotifyFunc>;   // Other: Notify function type to call when the connected value changed
 
+    /// Callback to call when the node is firable or when it should be notified of data change
     Callback callback;
+
+    /// Collection of information about the connected node and pin
+    struct Connection
+    {
+        /// @brief Returns a pointer to the pin which is connected to this one
+        [[nodiscard]] Pin* getPin() const;
+
+        /// @brief Get a pointer to the value connected on the pin
+        /// @tparam T Type of the connected object
+        /// @return Pointer to the object
+        template<typename T>
+        [[nodiscard]] T* getValue() const
+        {
+            if (const auto* connectedPin = getPin())
+            {
+                // clang-format off
+                if constexpr (std::is_same_v<T, bool>
+                           || std::is_same_v<T, int>
+                           || std::is_same_v<T, float>
+                           || std::is_same_v<T, double>
+                           || std::is_same_v<T, std::string>)
+                { // clang-format on
+                    if (const auto* pval = std::get_if<T*>(&(connectedPin->dataOld)))
+                    {
+                        return *pval;
+                    }
+                }
+                else // constexpr
+                {
+                    if (const auto* pval = std::get_if<void*>(&(connectedPin->dataOld)))
+                    {
+                        return static_cast<T*>(*pval);
+                    }
+                }
+            }
+
+            return nullptr;
+        }
+
+        Node* node = nullptr;            ///< Pointer to the node, which is connected to this pin
+        ax::NodeEditor::PinId pinId = 0; ///< Id of the pin, which is connected to this pin
+    };
+
+    /// Info to identify the connected pin
+    Connection connected;
 };
 
 /// @brief Equal compares Pin::Kind values
