@@ -876,6 +876,7 @@ void NAV::ImuFusion::initializeKalmanFilter()
     }
 
     auto dtInit = 1.0 / _imuFrequency;
+    _avgEndTime = InsTime{ 0, 0, 0, 0, 0, _averageEndTime };
 
     // --------------------------------------------------------- KF Initializations ------------------------------------------------------------
     std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> initValues = initializeKalmanFilterManually();
@@ -987,11 +988,18 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
             }
         }
 
-        if (_autoInitKF) // && _latestTimestamp < _averageEndTime)
+        if (_autoInitKF)
         {
-            _cumulatedImuObs.push_back(imuObs);
-            _cumulatedPinIds.push_back(pinIndex);
-            // TODO: break if _latestTimestamp < _averageEndTime and continue with auto-init
+            if (imuObs->insTime.value() < _avgEndTime)
+            {
+                _cumulatedImuObs.push_back(imuObs);
+                _cumulatedPinIds.push_back(pinIndex);
+            }
+            else
+            {
+                initializeKalmanFilterAuto();
+                // TODO: wait with reading/receiving until KF is auto-initialized?
+            }
         }
         else
         {
@@ -1329,28 +1337,57 @@ std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> NAV::ImuFu
 
 std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> NAV::ImuFusion::initializeKalmanFilterAuto()
 {
-    std::vector<std::vector<Eigen::Vector3d>> sensorMeasurements;
+    std::vector<std::vector<std::shared_ptr<const NAV::ImuObs>>> sensorMeasurements; // pinIndex(msgIndex(imuObs))
     sensorMeasurements.resize(_nInputPins);
+    for (size_t pinIndex = 0; pinIndex < _nInputPins; pinIndex++)
+    {
+        sensorMeasurements[pinIndex].resize(static_cast<size_t>(std::ceil(_cumulatedImuObs.size() / _numMeasurements)));
+    }
+
+    // Split cumulated imuObs into vectors for each sensor
+    for (size_t msgIndex = 0; msgIndex < _cumulatedImuObs.size(); msgIndex++)
+    {
+        sensorMeasurements[_cumulatedPinIds[msgIndex]].push_back(_cumulatedImuObs[msgIndex]);
+    }
+
+    std::vector<std::vector<std::vector<double>>> sensorComponents; // pinIndex(axis(msg(double)))
+    sensorComponents.resize(_nInputPins);
+
+    for (size_t pinIndex = 0; pinIndex < _nInputPins; pinIndex++)
+    {
+        sensorComponents[pinIndex].resize(_numMeasurements);
+        for (size_t axisIndex = 0; axisIndex < _numMeasurements; axisIndex++)
+        {
+            sensorComponents[pinIndex][axisIndex].resize(sensorMeasurements[pinIndex].size());
+
+            for (size_t msgIndex = 0; msgIndex < sensorMeasurements[pinIndex].size(); msgIndex++)
+            {
+                // sensorComponents[pinIndex][0].resize(6);
+                // AccX
+                sensorComponents[pinIndex][axisIndex].push_back(sensorMeasurements[pinIndex][msgIndex]->accelUncompXYZ.value()[static_cast<uint32_t>(0)]);
+                // GyroX
+                // sensorComponents[pinIndex][0].push_back(sensorMeasurements[pinIndex][msgIndex]->gyroUncompXYZ.value()[static_cast<uint32_t>(0)]);
+                // // AccY
+                // sensorComponents[pinIndex][1].push_back(sensorMeasurements[pinIndex][msgIndex]->accelUncompXYZ.value()[static_cast<uint32_t>(1)]);
+                // // GyroY
+                // sensorComponents[pinIndex][1].push_back(sensorMeasurements[pinIndex][msgIndex]->gyroUncompXYZ.value()[static_cast<uint32_t>(1)]);
+                // // AccZ
+                // sensorComponents[pinIndex][2].push_back(sensorMeasurements[pinIndex][msgIndex]->accelUncompXYZ.value()[static_cast<uint32_t>(2)]);
+                // // GyroZ
+                // sensorComponents[pinIndex][2].push_back(sensorMeasurements[pinIndex][msgIndex]->gyroUncompXYZ.value()[static_cast<uint32_t>(2)]);
+            }
+        }
+    }
 
     // --------------------------- Averaging single measurements of each sensor ------------------------------
-    for (size_t i = 0; i < _cumulatedImuObs.size(); ++i)
-    {
-        // Sort imuObs into separate containers for each sensor
-        for (size_t sensorAxis = 1; sensorAxis < _numMeasurements; sensorAxis++)
-        {
-            // sensorMeasurements[_cumulatedPinIds[i]] = _cumulatedImuObs[i]->accelUncompXYZ.value();
-        }
-
-        // auto accX = _cumulatedImuObs[0]->accelUncompXYZ.value();
-    }
+    [[maybe_unused]] auto bla = std::accumulate(sensorComponents[0][0].begin(), sensorComponents[0][0].end(), 0.);
 
     // read single measurements from imuObs
 
     // mean - std::accumulate each single measurement --> init-value
     // stdDev
 
-    std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>>
-        initVectors; // contains init values for all state vectors
+    std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> initVectors; // contains init values for all state vectors
 
     // -------------------------------------------- State vector x -----------------------------------------------
     initVectors.first.resize(6 + 2 * _nInputPins);
@@ -1359,6 +1396,9 @@ std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> NAV::ImuFu
 
     // ------------------------------------------------------ Error covariance matrix P --------------------------------------------------------
     initVectors.second.resize(6 + 2 * _nInputPins);
+
+    // Start Kalman Filter
+    _autoInitKF = false;
 
     return initVectors;
 }

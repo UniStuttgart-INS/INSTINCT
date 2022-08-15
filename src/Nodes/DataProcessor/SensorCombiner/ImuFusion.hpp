@@ -313,6 +313,9 @@ class ImuFusion : public Imu
     /// @brief Time until averaging ends and filtering starts in [s]
     double _averageEndTime{ 1 };
 
+    /// @brief Time until averaging ends and filtering starts as 'InsTime'
+    InsTime _avgEndTime;
+
     /// @brief Saves the timestamp of the measurement before in [s]
     InsTime _latestTimestamp{};
 
