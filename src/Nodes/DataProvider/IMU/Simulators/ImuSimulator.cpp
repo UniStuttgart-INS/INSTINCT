@@ -150,6 +150,28 @@ void NAV::ImuSimulator::guiConfig()
         }
         if (_trajectoryType == TrajectoryType::Csv)
         {
+            ImGui::SetNextItemWidth(200);
+            if (ImGui::BeginCombo(fmt::format("Type##{}", size_t(id)).c_str(), Spline::to_string(_splines.type)))
+            {
+                for (size_t i = 0; i < static_cast<size_t>(Spline::Type::COUNT); i++)
+                {
+                    const bool is_selected = (static_cast<size_t>(_splines.type) == i);
+                    if (ImGui::Selectable(Spline::to_string(static_cast<Spline::Type>(i)), is_selected))
+                    {
+                        _splines.type = static_cast<Spline::Type>(i);
+                        LOG_DEBUG("{}: splines type changed to {}", nameId(), Spline::to_string(_splines.type));
+                        flow::ApplyChanges();
+                        doDeinitialize();
+                    }
+
+                    if (is_selected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+
             auto TextColoredIfExists = [this](int index, const char* text, const char* type) {
                 ImGui::TableSetColumnIndex(index);
                 if (const auto* csvData = getInputValue<CsvData>(INPUT_PORT_INDEX_CSV);
@@ -580,6 +602,7 @@ void NAV::ImuSimulator::guiConfig()
     j["gnssFrequency"] = _gnssFrequency;
     // ###########################################################################################################
     j["trajectoryType"] = _trajectoryType;
+    j["splineType"] = _splines.type;
     j["startPosition_lla"] = _lla_startPosition;
     j["fixedTrajectoryStartOrientation"] = _fixedTrajectoryStartOrientation;
     j["n_linearTrajectoryStartVelocity"] = _n_linearTrajectoryStartVelocity;
@@ -645,6 +668,10 @@ void NAV::ImuSimulator::restore(json const& j)
         {
             nm::DeleteInputPin(inputPins.front().id);
         }
+    }
+    if (j.contains("splineType"))
+    {
+        j.at("splineType").get_to(_splines.type);
     }
     if (j.contains("startPosition_lla"))
     {
@@ -865,13 +892,13 @@ bool NAV::ImuSimulator::initializeSplines()
         std::vector<double> Pitch(splineTime.size(), _fixedTrajectoryStartOrientation.y());
         std::vector<double> Yaw(splineTime.size(), _fixedTrajectoryStartOrientation.z());
 
-        _splines.x.setPoints(splineTime, X);
-        _splines.y.setPoints(splineTime, Y);
-        _splines.z.setPoints(splineTime, Z);
+        _splines.x.setPoints(splineTime, X, _splines.type);
+        _splines.y.setPoints(splineTime, Y, _splines.type);
+        _splines.z.setPoints(splineTime, Z, _splines.type);
 
-        _splines.roll.setPoints(splineTime, Roll);
-        _splines.pitch.setPoints(splineTime, Pitch);
-        _splines.yaw.setPoints(splineTime, Yaw);
+        _splines.roll.setPoints(splineTime, Roll, _splines.type);
+        _splines.pitch.setPoints(splineTime, Pitch, _splines.type);
+        _splines.yaw.setPoints(splineTime, Yaw, _splines.type);
     }
     else if (_trajectoryType == TrajectoryType::Linear)
     {
@@ -963,13 +990,13 @@ bool NAV::ImuSimulator::initializeSplines()
             }
         }
 
-        _splines.x.setPoints(splineTime, splineX);
-        _splines.y.setPoints(splineTime, splineY);
-        _splines.z.setPoints(splineTime, splineZ);
+        _splines.x.setPoints(splineTime, splineX, _splines.type);
+        _splines.y.setPoints(splineTime, splineY, _splines.type);
+        _splines.z.setPoints(splineTime, splineZ, _splines.type);
 
-        _splines.roll.setPoints(splineTime, splineRoll);
-        _splines.pitch.setPoints(splineTime, splinePitch);
-        _splines.yaw.setPoints(splineTime, splineYaw);
+        _splines.roll.setPoints(splineTime, splineRoll, _splines.type);
+        _splines.pitch.setPoints(splineTime, splinePitch, _splines.type);
+        _splines.yaw.setPoints(splineTime, splineYaw, _splines.type);
     }
     else if (_trajectoryType == TrajectoryType::Circular)
     {
@@ -1019,9 +1046,9 @@ bool NAV::ImuSimulator::initializeSplines()
             splineZ[i] = e_position[2];
         }
 
-        _splines.x.setPoints(splineTime, splineX);
-        _splines.y.setPoints(splineTime, splineY);
-        _splines.z.setPoints(splineTime, splineZ);
+        _splines.x.setPoints(splineTime, splineX, _splines.type);
+        _splines.y.setPoints(splineTime, splineY, _splines.type);
+        _splines.z.setPoints(splineTime, splineZ, _splines.type);
 
         for (uint64_t i = 0; i < splineTime.size(); i++)
         {
@@ -1052,9 +1079,9 @@ bool NAV::ImuSimulator::initializeSplines()
             splinePitch[i] = n_velocity.head<2>().norm() > 1e-8 ? calcPitchFromVelocity(n_velocity) : 0;
         }
 
-        _splines.roll.setPoints(splineTime, splineRoll);
-        _splines.pitch.setPoints(splineTime, splinePitch);
-        _splines.yaw.setPoints(splineTime, splineYaw);
+        _splines.roll.setPoints(splineTime, splineRoll, _splines.type);
+        _splines.pitch.setPoints(splineTime, splinePitch, _splines.type);
+        _splines.yaw.setPoints(splineTime, splineYaw, _splines.type);
     }
     else if (_trajectoryType == TrajectoryType::Csv)
     {
@@ -1126,13 +1153,13 @@ bool NAV::ImuSimulator::initializeSplines()
                 splineYaw.push_back(splineYaw[splineYaw.size() - 1] + h * (splineYaw[splineYaw.size() - 1] - splineYaw[splineYaw.size() - 2]) / dt);
             }
 
-            _splines.x.setPoints(splineTime, splineX);
-            _splines.y.setPoints(splineTime, splineY);
-            _splines.z.setPoints(splineTime, splineZ);
+            _splines.x.setPoints(splineTime, splineX, _splines.type);
+            _splines.y.setPoints(splineTime, splineY, _splines.type);
+            _splines.z.setPoints(splineTime, splineZ, _splines.type);
 
-            _splines.roll.setPoints(splineTime, splineRoll);
-            _splines.pitch.setPoints(splineTime, splinePitch);
-            _splines.yaw.setPoints(splineTime, splineYaw);
+            _splines.roll.setPoints(splineTime, splineRoll, _splines.type);
+            _splines.pitch.setPoints(splineTime, splinePitch, _splines.type);
+            _splines.yaw.setPoints(splineTime, splineYaw, _splines.type);
         }
         else
         {

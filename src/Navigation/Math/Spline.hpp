@@ -1,4 +1,4 @@
-/// @file CubicSpline.hpp
+/// @file Spline.hpp
 /// @brief Cubic Spline class
 /// @author T. Hobiger (thomas.hobiger@ins.uni-stuttgart.de)
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -19,9 +19,22 @@ namespace NAV
 {
 
 /// Cubic Spline class
-class CubicSpline
+class Spline
 {
   public:
+    /// Available types
+    enum class Type
+    {
+        Linear,       ///< Linear interpolation
+        Cubic,        ///< Cubic spline (twice continuously differentiable)
+        CubicHermite, ///< Cubic Hermite spline (once continuously differentiable)
+        COUNT,        ///< Amount of items in the enum
+    };
+    /// @brief Converts the enum to a string
+    /// @param[in] value Enum value to convert into text
+    /// @return String representation of the enum
+    static const char* to_string(Type value);
+
     /// @brief Boundary conditions for the spline end-points
     struct BoundaryCondition
     {
@@ -37,16 +50,18 @@ class CubicSpline
     };
 
     /// @brief Default Constructor
-    CubicSpline() = default;
+    Spline() = default;
 
     /// @brief Constructor
     /// @param[in] X List of x coordinates for the spline points/knots
     /// @param[in] Y List of y coordinates for the spline points/knots
+    /// @param[in] type Type of the spline
     /// @param[in] leftBoundaryCondition Boundary condition for the start knot
     /// @param[in] rightBoundaryCondition Boundary condition for the end knot
-    CubicSpline(const std::vector<double>& X, const std::vector<double>& Y,
-                BoundaryCondition leftBoundaryCondition = { BoundaryCondition::SecondDerivative, 0.0 },
-                BoundaryCondition rightBoundaryCondition = { BoundaryCondition::SecondDerivative, 0.0 });
+    Spline(const std::vector<double>& X, const std::vector<double>& Y,
+           Type type = Type::Cubic,
+           BoundaryCondition leftBoundaryCondition = { BoundaryCondition::SecondDerivative, 0.0 },
+           BoundaryCondition rightBoundaryCondition = { BoundaryCondition::SecondDerivative, 0.0 });
 
     /// @brief Set the boundaries conditions. Has to be called before setPoints
     /// @param[in] leftBoundaryCondition Boundary condition for the start knot
@@ -56,7 +71,8 @@ class CubicSpline
     /// @brief Set the points/knots of the spline and calculate the spline coefficients
     /// @param[in] x List of x coordinates of the points
     /// @param[in] y List of y coordinates of the points
-    void setPoints(const std::vector<double>& x, const std::vector<double>& y);
+    /// @param[in] type Type of the spline
+    void setPoints(const std::vector<double>& x, const std::vector<double>& y, Type type = Type::Cubic);
 
     /// @brief Interpolates or extrapolates a value on the spline
     /// @param[in] x X coordinate to inter-/extrapolate the value for
@@ -70,6 +86,8 @@ class CubicSpline
     [[nodiscard]] double derivative(size_t order, double x) const;
 
   private:
+    Type _type = Type::Cubic; ///< Spline type
+
     std::vector<double> vals_x; ///< x coordinates of the knots
     std::vector<double> vals_y; ///< y coordinates of the knots
     std::vector<double> coef_b; ///< Spline coefficients b
@@ -84,6 +102,9 @@ class CubicSpline
     /// @param[in] x X coordinate to search the closest knot to
     /// @return Index of a knot closest to the x coordinate given
     [[nodiscard]] size_t findClosestIdx(double x) const;
+
+    /// @brief Calculate the coefficients c and d from b
+    void calcCoeffsFromB();
 
     /// Sparse matrix whose non-zero entries are confined to a diagonal band, comprising the main diagonal and zero or more diagonals on either side.
     class BandMatrix
