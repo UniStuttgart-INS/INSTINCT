@@ -1337,20 +1337,16 @@ std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> NAV::ImuFu
 
 std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> NAV::ImuFusion::initializeKalmanFilterAuto()
 {
-    std::vector<std::vector<std::shared_ptr<const NAV::ImuObs>>> sensorMeasurements; // pinIndex(msgIndex(imuObs))
+    std::vector<std::vector<std::shared_ptr<const NAV::ImuObs>>> sensorMeasurements; // pinIndex / msgIndex(imuObs)
     sensorMeasurements.resize(_nInputPins);
-    for (size_t pinIndex = 0; pinIndex < _nInputPins; pinIndex++)
-    {
-        sensorMeasurements[pinIndex].resize(static_cast<size_t>(std::ceil(_cumulatedImuObs.size() / _numMeasurements)));
-    }
 
     // Split cumulated imuObs into vectors for each sensor
     for (size_t msgIndex = 0; msgIndex < _cumulatedImuObs.size(); msgIndex++)
     {
-        sensorMeasurements[_cumulatedPinIds[msgIndex]].push_back(_cumulatedImuObs[msgIndex]);
+        sensorMeasurements[_cumulatedPinIds[msgIndex]].push_back(_cumulatedImuObs[msgIndex]); // 'push_back' instead of 'resize()' and 'operator[]' since number of msgs of a certain pin are not known in advance
     }
 
-    std::vector<std::vector<std::vector<double>>> sensorComponents; // pinIndex(axis(msg(double)))
+    std::vector<std::vector<std::vector<double>>> sensorComponents; // pinIndex / axisIndex / msgIndex(double)
     sensorComponents.resize(_nInputPins);
 
     for (size_t pinIndex = 0; pinIndex < _nInputPins; pinIndex++)
@@ -1362,9 +1358,11 @@ std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> NAV::ImuFu
 
             for (size_t msgIndex = 0; msgIndex < sensorMeasurements[pinIndex].size(); msgIndex++)
             {
-                // sensorComponents[pinIndex][0].resize(6);
                 // AccX
-                sensorComponents[pinIndex][axisIndex].push_back(sensorMeasurements[pinIndex][msgIndex]->accelUncompXYZ.value()[static_cast<uint32_t>(0)]);
+                if (sensorMeasurements[pinIndex][msgIndex]->accelUncompXYZ.has_value())
+                {
+                    sensorComponents[pinIndex][axisIndex].push_back(sensorMeasurements[pinIndex][msgIndex]->accelUncompXYZ.value()[static_cast<uint32_t>(0)]);
+                }
                 // GyroX
                 // sensorComponents[pinIndex][0].push_back(sensorMeasurements[pinIndex][msgIndex]->gyroUncompXYZ.value()[static_cast<uint32_t>(0)]);
                 // // AccY
