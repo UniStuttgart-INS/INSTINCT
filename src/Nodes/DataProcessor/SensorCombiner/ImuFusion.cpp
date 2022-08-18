@@ -1383,22 +1383,20 @@ void NAV::ImuFusion::initializeKalmanFilterAuto()
     }
 
     // --------------------------- Averaging single measurements of each sensor ------------------------------
-    for (size_t stateIndex = 0; stateIndex < 3; stateIndex++)
-    {
-        // Accelerations X/Y/Z (pos. 6,7,8 in state vector)
-        initVectors.first[2][static_cast<int>(stateIndex)] = std::accumulate(sensorComponents[0][stateIndex].begin(), sensorComponents[0][stateIndex].end(), 0.) / static_cast<double>(sensorComponents[0][stateIndex].size());
-
-        // Jerk X/Y/Z
-        initVectors.first[3][static_cast<int>(stateIndex)] = 0.;
-
-        // Angular Rate X/Y/Z (pos. 0,1,2 in state vector)
-        initVectors.first[0][static_cast<int>(stateIndex)] = std::accumulate(sensorComponents[0][stateIndex + 3].begin(), sensorComponents[0][stateIndex + 3].end(), 0.) / static_cast<double>(sensorComponents[0][stateIndex + 3].size());
-
-        // Angular Acceleration X/Y/Z
-        initVectors.first[1][static_cast<int>(stateIndex)] = 0.;
-    }
+    // Accelerations X/Y/Z (pos. 6,7,8 in state vector) - init value is mean of reference sensor, i.e. pinIndex = 0
+    initVectors.first[2] = mean(sensorComponents[0], 0);
+    // Jerk X/Y/Z
+    initVectors.first[3] = Eigen::Vector3d::Zero();
+    // Angular Rate X/Y/Z (pos. 0,1,2 in state vector) - init value is mean of reference sensor, i.e. pinIndex = 0
+    initVectors.first[0] = mean(sensorComponents[0], 3);
+    // Angular Acceleration X/Y/Z
+    initVectors.first[1] = Eigen::Vector3d::Zero();
 
     // TODO: bias-inits, i.e. meanS2 - meanS1, etc., for all components
+    for (size_t pinIndex = 1; pinIndex < _nInputPins; pinIndex++)
+    {
+        // TODO
+    }
 
     // ----------------------------------- Standard Deviation of each sensor ------------------------------------- //TODO
     // stdDev
@@ -1430,4 +1428,16 @@ void NAV::ImuFusion::initializeKalmanFilterAuto()
     _autoInitKF = false;
 
     // return initVectors;
+}
+
+Eigen::Vector3d NAV::ImuFusion::mean(std::vector<std::vector<double>> sensorType, size_t containerPos)
+{
+    Eigen::Vector3d meanVector = Eigen::Vector3d::Zero();
+
+    for (size_t axisIndex = 0; axisIndex < 3; axisIndex++)
+    {
+        meanVector[static_cast<int>(axisIndex)] = std::accumulate(sensorType[axisIndex + containerPos].begin(), sensorType[axisIndex + containerPos].end(), 0.) / static_cast<double>(sensorType[axisIndex + containerPos].size());
+    }
+
+    return meanVector;
 }

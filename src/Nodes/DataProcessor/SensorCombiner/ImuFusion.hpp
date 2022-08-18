@@ -219,6 +219,12 @@ class ImuFusion : public Imu
     /// @brief Initialization routines for 'automatic' initialization, i.e. init values are calculated by averaging the data in the first T seconds
     void initializeKalmanFilterAuto();
 
+    /// @brief Calculates the mean values of each axis in a vector that contains 3d measurements of a certain sensor type
+    /// @param[in] sensorType type of measurement, i.e. Acceleration or gyro measurements in 3d (axisIndex / msgIndex)
+    /// @param[in] containerPos position-Index in 'sensorType' where data starts
+    /// @return Vector of mean values in 3d of a certain sensor type
+    Eigen::Vector3d static mean(std::vector<std::vector<double>> sensorType, size_t containerPos);
+
     /// @brief Initializes the rotation matrices used for the mounting angles of the sensors
     void initializeMountingAngles();
 
