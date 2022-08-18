@@ -1380,28 +1380,32 @@ void NAV::ImuFusion::initializeKalmanFilterAuto()
                 }
             }
         }
-
-        // --------------------------- Averaging single measurements of each sensor ------------------------------
-        for (size_t stateIndex = 0; stateIndex < 3; stateIndex++)
-        {
-            // Accelerations X/Y/Z (pos. 6,7,8 in state vector)
-            initVectors.first[stateIndex + 6][static_cast<int>(stateIndex)] = std::accumulate(sensorComponents[pinIndex][stateIndex].begin(), sensorComponents[pinIndex][stateIndex].end(), 0.) / static_cast<double>(sensorComponents[pinIndex][stateIndex].size());
-
-            // Jerk X/Y/Z
-            initVectors.first[stateIndex + 9][static_cast<int>(stateIndex)] = 0.;
-
-            // Gyro X/Y/Z (pos. 0,1,2 in state vector)
-            initVectors.first[stateIndex][static_cast<int>(stateIndex)] = std::accumulate(sensorComponents[pinIndex][stateIndex].begin(), sensorComponents[pinIndex][stateIndex].end(), 0.) / static_cast<double>(sensorComponents[pinIndex][stateIndex].size());
-
-            // Angular Acceleration X/Y/Z
-            initVectors.first[stateIndex + 3][static_cast<int>(stateIndex)] = 0.;
-        }
-
-        // TODO: bias-inits, i.e. meanS2 - meanS1, etc., for all components
     }
+
+    // --------------------------- Averaging single measurements of each sensor ------------------------------
+    for (size_t stateIndex = 0; stateIndex < 3; stateIndex++)
+    {
+        // Accelerations X/Y/Z (pos. 6,7,8 in state vector)
+        initVectors.first[2][static_cast<int>(stateIndex)] = std::accumulate(sensorComponents[0][stateIndex].begin(), sensorComponents[0][stateIndex].end(), 0.) / static_cast<double>(sensorComponents[0][stateIndex].size());
+
+        // Jerk X/Y/Z
+        initVectors.first[3][static_cast<int>(stateIndex)] = 0.;
+
+        // Angular Rate X/Y/Z (pos. 0,1,2 in state vector)
+        initVectors.first[0][static_cast<int>(stateIndex)] = std::accumulate(sensorComponents[0][stateIndex + 3].begin(), sensorComponents[0][stateIndex + 3].end(), 0.) / static_cast<double>(sensorComponents[0][stateIndex + 3].size());
+
+        // Angular Acceleration X/Y/Z
+        initVectors.first[1][static_cast<int>(stateIndex)] = 0.;
+    }
+
+    // TODO: bias-inits, i.e. meanS2 - meanS1, etc., for all components
 
     // ----------------------------------- Standard Deviation of each sensor ------------------------------------- //TODO
     // stdDev
+    LOG_DEBUG("initVectors.first[0] = {}", initVectors.first[0]);
+    LOG_DEBUG("initVectors.first[1] = {}", initVectors.first[1]);
+    LOG_DEBUG("initVectors.first[2] = {}", initVectors.first[2]);
+    LOG_DEBUG("initVectors.first[3] = {}", initVectors.first[3]);
 
     _kalmanFilter.x.block<3, 1>(0, 0) = initVectors.first[0];
     _kalmanFilter.x.block<3, 1>(3, 0) = initVectors.first[1];
@@ -1413,9 +1417,10 @@ void NAV::ImuFusion::initializeKalmanFilterAuto()
         _kalmanFilter.x.block<3, 1>(12 + 6 * pinIndex, 0) = initVectors.first[containerIndex];
         _kalmanFilter.x.block<3, 1>(15 + 6 * pinIndex, 0) = initVectors.first[1 + containerIndex];
     }
+    LOG_DEBUG("kalmanFilter.x = {}", _kalmanFilter.x.transpose());
 
     _kalmanFilter.P = initialErrorCovarianceMatrix_P0(initVectors.second);
-    LOG_DEBUG("kalmanFilter.P =\n{}", _kalmanFilter.P);
+    // LOG_DEBUG("kalmanFilter.P =\n{}", _kalmanFilter.P); //FIXME
     _kalmanFilter.Phi = initialStateTransitionMatrix_Phi(1.0 / _imuFrequency);
     LOG_DATA("kalmanFilter.Phi =\n{}", _kalmanFilter.Phi);
     processNoiseMatrix_Q(_kalmanFilter.Q, 1.0 / _imuFrequency);
