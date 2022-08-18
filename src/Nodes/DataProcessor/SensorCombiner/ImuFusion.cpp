@@ -2,6 +2,7 @@
 
 #include "util/Logger.hpp"
 
+#include <numeric>
 #include "Navigation/Math/Math.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "Navigation/Transformations/Units.hpp"
@@ -344,71 +345,76 @@ void NAV::ImuFusion::guiConfig()
 
     ImGui::Text("Kalman Filter initialization");
 
-    ImGui::SetNextItemWidth(columnWidth);
-    if (ImGui::InputDoubleL(fmt::format("Time until averaging ends in [s]##{}", size_t(id)).c_str(), &_averageEndTime, 1e-3, 1e4, 0.0, 0.0, "%.0f"))
+    if (_autoInitKF)
     {
-        LOG_DEBUG("{}: averageEndTime changed to {}", nameId(), _averageEndTime);
-        flow::ApplyChanges();
+        ImGui::SetNextItemWidth(columnWidth);
+        if (ImGui::InputDoubleL(fmt::format("Time until averaging ends in [s]##{}", size_t(id)).c_str(), &_averageEndTime, 1e-3, 1e4, 0.0, 0.0, "%.0f"))
+        {
+            LOG_DEBUG("{}: averageEndTime changed to {}", nameId(), _averageEndTime);
+            flow::ApplyChanges();
+        }
     }
-
-    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-    if (ImGui::TreeNode(fmt::format("x - State vector##{}", size_t(id)).c_str()))
+    else
     {
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular rate##{}", size_t(id)).c_str(),
-                                               configWidth, unitWidth, _pinData[0].initAngularRate.data(), reinterpret_cast<int*>(&_pinData[0].initAngularRateUnit), "deg/s\0"
-                                                                                                                                                                     "rad/s\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::TreeNode(fmt::format("x - State vector##{}", size_t(id)).c_str()))
         {
-            LOG_DATA("{}: initAngularRate changed to {}", nameId(), _pinData[0].initAngularRate);
-            LOG_DATA("{}: AngularRateUnit changed to {}", nameId(), _pinData[0].initAngularRateUnit);
-            flow::ApplyChanges();
-        }
-
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Acceleration##{}", size_t(id)).c_str(),
-                                               configWidth, unitWidth, _pinData[0].initAcceleration.data(), reinterpret_cast<int*>(&_pinData[0].initAccelerationUnit), "m/s²\0\0", "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DATA("{}: initAcceleration changed to {}", nameId(), _pinData[0].initAcceleration);
-            LOG_DATA("{}: initAccelerationUnit changed to {}", nameId(), _pinData[0].initAccelerationUnit);
-            flow::ApplyChanges();
-        }
-
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular Acceleration##{}", size_t(id)).c_str(),
-                                               configWidth, unitWidth, _pinData[0].initAngularAcc.data(), reinterpret_cast<int*>(&_pinData[0].initAngularAccUnit), "deg/s²\0"
-                                                                                                                                                                   "rad/s^2\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DATA("{}: initAngularAcc changed to {}", nameId(), _pinData[0].initAngularAcc);
-            LOG_DATA("{}: initAngularAccUnit changed to {}", nameId(), _pinData[0].initAngularAccUnit);
-            flow::ApplyChanges();
-        }
-
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Jerk##{}", size_t(id)).c_str(),
-                                               configWidth, unitWidth, _pinData[0].initJerk.data(), reinterpret_cast<int*>(&_pinData[0].initJerkUnit), "m/s³\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DATA("{}: initJerk changed to {}", nameId(), _pinData[0].initJerk);
-            LOG_DATA("{}: PinData::JerkVarianceUnit changed to {}", nameId(), _pinData[0].initJerkUnit);
-            flow::ApplyChanges();
-        }
-
-        for (size_t pinIndex = 1; pinIndex < _nInputPins; ++pinIndex)
-        {
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular rate bias of sensor {}##{}", pinIndex + 1, size_t(id)).c_str(),
-                                                   configWidth, unitWidth, _pinData[pinIndex].initAngularRateBias.data(), reinterpret_cast<int*>(&_pinData[pinIndex].initAngularRateBiasUnit), "deg/s\0rad/s\0\0",
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular rate##{}", size_t(id)).c_str(),
+                                                   configWidth, unitWidth, _pinData[0].initAngularRate.data(), reinterpret_cast<int*>(&_pinData[0].initAngularRateUnit), "deg/s\0"
+                                                                                                                                                                         "rad/s\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
+                LOG_DATA("{}: initAngularRate changed to {}", nameId(), _pinData[0].initAngularRate);
+                LOG_DATA("{}: AngularRateUnit changed to {}", nameId(), _pinData[0].initAngularRateUnit);
                 flow::ApplyChanges();
             }
 
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Acceleration bias of sensor {}##{}", pinIndex + 1, size_t(id)).c_str(),
-                                                   configWidth, unitWidth, _pinData[pinIndex].initAccelerationBias.data(), reinterpret_cast<int*>(&_pinData[pinIndex].initAccelerationBiasUnit), "m/s^2\0\0",
-                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Acceleration##{}", size_t(id)).c_str(),
+                                                   configWidth, unitWidth, _pinData[0].initAcceleration.data(), reinterpret_cast<int*>(&_pinData[0].initAccelerationUnit), "m/s²\0\0", "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
+                LOG_DATA("{}: initAcceleration changed to {}", nameId(), _pinData[0].initAcceleration);
+                LOG_DATA("{}: initAccelerationUnit changed to {}", nameId(), _pinData[0].initAccelerationUnit);
                 flow::ApplyChanges();
             }
-        }
 
-        ImGui::TreePop();
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular Acceleration##{}", size_t(id)).c_str(),
+                                                   configWidth, unitWidth, _pinData[0].initAngularAcc.data(), reinterpret_cast<int*>(&_pinData[0].initAngularAccUnit), "deg/s²\0"
+                                                                                                                                                                       "rad/s^2\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DATA("{}: initAngularAcc changed to {}", nameId(), _pinData[0].initAngularAcc);
+                LOG_DATA("{}: initAngularAccUnit changed to {}", nameId(), _pinData[0].initAngularAccUnit);
+                flow::ApplyChanges();
+            }
+
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Jerk##{}", size_t(id)).c_str(),
+                                                   configWidth, unitWidth, _pinData[0].initJerk.data(), reinterpret_cast<int*>(&_pinData[0].initJerkUnit), "m/s³\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DATA("{}: initJerk changed to {}", nameId(), _pinData[0].initJerk);
+                LOG_DATA("{}: PinData::JerkVarianceUnit changed to {}", nameId(), _pinData[0].initJerkUnit);
+                flow::ApplyChanges();
+            }
+
+            for (size_t pinIndex = 1; pinIndex < _nInputPins; ++pinIndex)
+            {
+                if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular rate bias of sensor {}##{}", pinIndex + 1, size_t(id)).c_str(),
+                                                       configWidth, unitWidth, _pinData[pinIndex].initAngularRateBias.data(), reinterpret_cast<int*>(&_pinData[pinIndex].initAngularRateBiasUnit), "deg/s\0rad/s\0\0",
+                                                       "%.2e", ImGuiInputTextFlags_CharsScientific))
+                {
+                    flow::ApplyChanges();
+                }
+
+                if (gui::widgets::InputDouble3WithUnit(fmt::format("Acceleration bias of sensor {}##{}", pinIndex + 1, size_t(id)).c_str(),
+                                                       configWidth, unitWidth, _pinData[pinIndex].initAccelerationBias.data(), reinterpret_cast<int*>(&_pinData[pinIndex].initAccelerationBiasUnit), "m/s^2\0\0",
+                                                       "%.2e", ImGuiInputTextFlags_CharsScientific))
+                {
+                    flow::ApplyChanges();
+                }
+            }
+
+            ImGui::TreePop();
+        }
     }
 
     ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
@@ -518,6 +524,7 @@ void NAV::ImuFusion::guiConfig()
 
         ImGui::TreePop();
     }
+    // TODO: include P-matrix in 'if(_autoInitKF)'
 
     ImGui::Separator();
 
@@ -879,33 +886,36 @@ void NAV::ImuFusion::initializeKalmanFilter()
     _avgEndTime = InsTime{ 0, 0, 0, 0, 0, _averageEndTime };
 
     // --------------------------------------------------------- KF Initializations ------------------------------------------------------------
-    std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> initValues = initializeKalmanFilterManually();
-
-    _kalmanFilter.x.block<3, 1>(0, 0) = initValues.first[0];
-    _kalmanFilter.x.block<3, 1>(3, 0) = initValues.first[1];
-    _kalmanFilter.x.block<3, 1>(6, 0) = initValues.first[2];
-    _kalmanFilter.x.block<3, 1>(9, 0) = initValues.first[3];
-    for (uint32_t pinIndex = 0; pinIndex < _nInputPins - 1UL; ++pinIndex)
+    if (!_autoInitKF)
     {
-        auto containerIndex = 4 + 2 * pinIndex;
-        _kalmanFilter.x.block<3, 1>(12 + 6 * pinIndex, 0) = initValues.first[containerIndex];
-        _kalmanFilter.x.block<3, 1>(15 + 6 * pinIndex, 0) = initValues.first[1 + containerIndex];
+        std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> initValues = initializeKalmanFilterManually();
+
+        _kalmanFilter.x.block<3, 1>(0, 0) = initValues.first[0];
+        _kalmanFilter.x.block<3, 1>(3, 0) = initValues.first[1];
+        _kalmanFilter.x.block<3, 1>(6, 0) = initValues.first[2];
+        _kalmanFilter.x.block<3, 1>(9, 0) = initValues.first[3];
+        for (uint32_t pinIndex = 0; pinIndex < _nInputPins - 1UL; ++pinIndex)
+        {
+            auto containerIndex = 4 + 2 * pinIndex;
+            _kalmanFilter.x.block<3, 1>(12 + 6 * pinIndex, 0) = initValues.first[containerIndex];
+            _kalmanFilter.x.block<3, 1>(15 + 6 * pinIndex, 0) = initValues.first[1 + containerIndex];
+        }
+
+        // hard-coded - long time measurements (kept for reference) ################################################################################
+        // Eigen::VectorXd bla = Eigen::VectorXd::Zero(24, 1);
+        // bla << 0.1250, -0.1615, 0.0194, -0.1434, 0.2279, -2.5783, -0.0132, 0.0117, 0.0245, -0.2762, 0.4848, -1.5336, 0.0213, -0.0320, 0.0397, -0.1588, 0.2588, -2.9022, 0.0091, -0.0055, 0.0183, -0.2413, 0.0189, -3.6849; // entire time series
+        // bla << 0.1250, -0.1616, 0.0192, -0.1447, 0.2291, -2.5865, -0.0130, 0.0117, 0.0237, -0.2725, 0.4880, -1.5728, 0.0223, -0.0330, 0.0394, -0.1571, 0.2600, -2.9525, 0.0098, -0.0060, 0.0185, -0.2440, 0.0256, -3.7012; // 1 second
+        // _kalmanFilter.x.block<24, 1>(12, 0) = bla;
+        LOG_DEBUG("kalmanFilter.x = {}", _kalmanFilter.x.transpose());
+        // hard-coded - long time measurements (kept for reference) ################################################################################
+
+        _kalmanFilter.P = initialErrorCovarianceMatrix_P0(initValues.second);
+        LOG_DEBUG("kalmanFilter.P =\n{}", _kalmanFilter.P);
+        _kalmanFilter.Phi = initialStateTransitionMatrix_Phi(dtInit);
+        LOG_DATA("kalmanFilter.Phi =\n{}", _kalmanFilter.Phi);
+        processNoiseMatrix_Q(_kalmanFilter.Q, dtInit);
+        LOG_DATA("kalmanFilter.Q =\n{}", _kalmanFilter.Q);
     }
-
-    // hard-coded - long time measurements (kept for reference) ################################################################################
-    // Eigen::VectorXd bla = Eigen::VectorXd::Zero(24, 1);
-    // bla << 0.1250, -0.1615, 0.0194, -0.1434, 0.2279, -2.5783, -0.0132, 0.0117, 0.0245, -0.2762, 0.4848, -1.5336, 0.0213, -0.0320, 0.0397, -0.1588, 0.2588, -2.9022, 0.0091, -0.0055, 0.0183, -0.2413, 0.0189, -3.6849; // entire time series
-    // bla << 0.1250, -0.1616, 0.0192, -0.1447, 0.2291, -2.5865, -0.0130, 0.0117, 0.0237, -0.2725, 0.4880, -1.5728, 0.0223, -0.0330, 0.0394, -0.1571, 0.2600, -2.9525, 0.0098, -0.0060, 0.0185, -0.2440, 0.0256, -3.7012; // 1 second
-    // _kalmanFilter.x.block<24, 1>(12, 0) = bla;
-    LOG_DEBUG("kalmanFilter.x = {}", _kalmanFilter.x.transpose());
-    // hard-coded - long time measurements (kept for reference) ################################################################################
-
-    _kalmanFilter.P = initialErrorCovarianceMatrix_P0(initValues.second);
-    LOG_DEBUG("kalmanFilter.P =\n{}", _kalmanFilter.P);
-    _kalmanFilter.Phi = initialStateTransitionMatrix_Phi(dtInit);
-    LOG_DATA("kalmanFilter.Phi =\n{}", _kalmanFilter.Phi);
-    processNoiseMatrix_Q(_kalmanFilter.Q, dtInit);
-    LOG_DATA("kalmanFilter.Q =\n{}", _kalmanFilter.Q);
 }
 
 void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId)
@@ -1335,10 +1345,14 @@ std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> NAV::ImuFu
     return initVectors;
 }
 
-std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> NAV::ImuFusion::initializeKalmanFilterAuto()
+void NAV::ImuFusion::initializeKalmanFilterAuto()
 {
     std::vector<std::vector<std::shared_ptr<const NAV::ImuObs>>> sensorMeasurements; // pinIndex / msgIndex(imuObs)
     sensorMeasurements.resize(_nInputPins);
+
+    std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> initVectors; // contains init values for all state vectors
+    initVectors.first.resize(6 + 2 * _nInputPins);                                     // state vector x
+    initVectors.second.resize(6 + 2 * _nInputPins);                                    // error covariance matrix P
 
     // Split cumulated imuObs into vectors for each sensor
     for (size_t msgIndex = 0; msgIndex < _cumulatedImuObs.size(); msgIndex++)
@@ -1354,8 +1368,6 @@ std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> NAV::ImuFu
         sensorComponents[pinIndex].resize(_numMeasurements);
         for (size_t axisIndex = 0; axisIndex < _numMeasurements; axisIndex++) // loop thru the 6 measurements: AccX, GyroX, AccY, GyroY, AccZ, GyroZ
         {
-            sensorComponents[pinIndex][axisIndex].resize(sensorMeasurements[pinIndex].size());
-
             for (size_t msgIndex = 0; msgIndex < sensorMeasurements[pinIndex].size(); msgIndex++) // loop thru the msg of each measurement axis
             {
                 if (axisIndex < 3) // Accelerations X/Y/Z
@@ -1368,28 +1380,49 @@ std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> NAV::ImuFu
                 }
             }
         }
+
+        // --------------------------- Averaging single measurements of each sensor ------------------------------
+        for (size_t stateIndex = 0; stateIndex < 3; stateIndex++)
+        {
+            // Accelerations X/Y/Z (pos. 6,7,8 in state vector)
+            initVectors.first[stateIndex + 6][static_cast<int>(stateIndex)] = std::accumulate(sensorComponents[pinIndex][stateIndex].begin(), sensorComponents[pinIndex][stateIndex].end(), 0.) / static_cast<double>(sensorComponents[pinIndex][stateIndex].size());
+
+            // Jerk X/Y/Z
+            initVectors.first[stateIndex + 9][static_cast<int>(stateIndex)] = 0.;
+
+            // Gyro X/Y/Z (pos. 0,1,2 in state vector)
+            initVectors.first[stateIndex][static_cast<int>(stateIndex)] = std::accumulate(sensorComponents[pinIndex][stateIndex].begin(), sensorComponents[pinIndex][stateIndex].end(), 0.) / static_cast<double>(sensorComponents[pinIndex][stateIndex].size());
+
+            // Angular Acceleration X/Y/Z
+            initVectors.first[stateIndex + 3][static_cast<int>(stateIndex)] = 0.;
+        }
+
+        // TODO: bias-inits, i.e. meanS2 - meanS1, etc., for all components
     }
 
-    // --------------------------- Averaging single measurements of each sensor ------------------------------
-    [[maybe_unused]] auto bla = std::accumulate(sensorComponents[0][0].begin(), sensorComponents[0][0].end(), 0.);
-
-    // read single measurements from imuObs
-
-    // mean - std::accumulate each single measurement --> init-value
+    // ----------------------------------- Standard Deviation of each sensor ------------------------------------- //TODO
     // stdDev
 
-    std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> initVectors; // contains init values for all state vectors
+    _kalmanFilter.x.block<3, 1>(0, 0) = initVectors.first[0];
+    _kalmanFilter.x.block<3, 1>(3, 0) = initVectors.first[1];
+    _kalmanFilter.x.block<3, 1>(6, 0) = initVectors.first[2];
+    _kalmanFilter.x.block<3, 1>(9, 0) = initVectors.first[3];
+    for (uint32_t pinIndex = 0; pinIndex < _nInputPins - 1UL; ++pinIndex)
+    {
+        auto containerIndex = 4 + 2 * pinIndex;
+        _kalmanFilter.x.block<3, 1>(12 + 6 * pinIndex, 0) = initVectors.first[containerIndex];
+        _kalmanFilter.x.block<3, 1>(15 + 6 * pinIndex, 0) = initVectors.first[1 + containerIndex];
+    }
 
-    // -------------------------------------------- State vector x -----------------------------------------------
-    initVectors.first.resize(6 + 2 * _nInputPins);
-
-    // _averageEndTime
-
-    // ------------------------------------------------------ Error covariance matrix P --------------------------------------------------------
-    initVectors.second.resize(6 + 2 * _nInputPins);
+    _kalmanFilter.P = initialErrorCovarianceMatrix_P0(initVectors.second);
+    LOG_DEBUG("kalmanFilter.P =\n{}", _kalmanFilter.P);
+    _kalmanFilter.Phi = initialStateTransitionMatrix_Phi(1.0 / _imuFrequency);
+    LOG_DATA("kalmanFilter.Phi =\n{}", _kalmanFilter.Phi);
+    processNoiseMatrix_Q(_kalmanFilter.Q, 1.0 / _imuFrequency);
+    LOG_DATA("kalmanFilter.Q =\n{}", _kalmanFilter.Q);
 
     // Start Kalman Filter
     _autoInitKF = false;
 
-    return initVectors;
+    // return initVectors;
 }

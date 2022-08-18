@@ -217,7 +217,7 @@ class ImuFusion : public Imu
     std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> initializeKalmanFilterManually();
 
     /// @brief Initialization routines for 'automatic' initialization, i.e. init values are calculated by averaging the data in the first T seconds
-    std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> initializeKalmanFilterAuto();
+    void initializeKalmanFilterAuto();
 
     /// @brief Initializes the rotation matrices used for the mounting angles of the sensors
     void initializeMountingAngles();
