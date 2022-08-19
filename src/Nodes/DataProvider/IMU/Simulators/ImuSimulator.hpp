@@ -242,6 +242,7 @@ class ImuSimulator : public Imu
     struct
     {
         Spline::Type type = Spline::Type::Cubic; ///< Spline type
+        double sampleInterval = 0.1;             ///< Spline sample interval
         Spline x;                                ///< ECEF X Position [m]
         Spline y;                                ///< ECEF Y Position [m]
         Spline z;                                ///< ECEF Z Position [m]

@@ -150,28 +150,6 @@ void NAV::ImuSimulator::guiConfig()
         }
         if (_trajectoryType == TrajectoryType::Csv)
         {
-            ImGui::SetNextItemWidth(200);
-            if (ImGui::BeginCombo(fmt::format("Type##{}", size_t(id)).c_str(), Spline::to_string(_splines.type)))
-            {
-                for (size_t i = 0; i < static_cast<size_t>(Spline::Type::COUNT); i++)
-                {
-                    const bool is_selected = (static_cast<size_t>(_splines.type) == i);
-                    if (ImGui::Selectable(Spline::to_string(static_cast<Spline::Type>(i)), is_selected))
-                    {
-                        _splines.type = static_cast<Spline::Type>(i);
-                        LOG_DEBUG("{}: splines type changed to {}", nameId(), Spline::to_string(_splines.type));
-                        flow::ApplyChanges();
-                        doDeinitialize();
-                    }
-
-                    if (is_selected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-                    {
-                        ImGui::SetItemDefaultFocus();
-                    }
-                }
-                ImGui::EndCombo();
-            }
-
             auto TextColoredIfExists = [this](int index, const char* text, const char* type) {
                 ImGui::TableSetColumnIndex(index);
                 if (const auto* csvData = getInputValue<CsvData>(INPUT_PORT_INDEX_CSV);
@@ -544,6 +522,39 @@ void NAV::ImuSimulator::guiConfig()
 
     if (ImGui::TreeNode("Simulation models"))
     {
+        ImGui::TextUnformatted("Spline");
+        {
+            ImGui::Indent();
+            ImGui::SetNextItemWidth(230);
+            if (ImGui::BeginCombo(fmt::format("Type##{}", size_t(id)).c_str(), Spline::to_string(_splines.type)))
+            {
+                for (size_t i = 0; i < static_cast<size_t>(Spline::Type::COUNT); i++)
+                {
+                    const bool is_selected = (static_cast<size_t>(_splines.type) == i);
+                    if (ImGui::Selectable(Spline::to_string(static_cast<Spline::Type>(i)), is_selected))
+                    {
+                        _splines.type = static_cast<Spline::Type>(i);
+                        LOG_DEBUG("{}: splines type changed to {}", nameId(), Spline::to_string(_splines.type));
+                        flow::ApplyChanges();
+                        doDeinitialize();
+                    }
+
+                    if (is_selected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::SetNextItemWidth(230);
+            if (ImGui::InputDoubleL(fmt::format("Sample Interval##{}", size_t(id)).c_str(), &_splines.sampleInterval, 0.0, std::numeric_limits<double>::max(), 0.0, 0.0, "%.3e s"))
+            {
+                LOG_DEBUG("{}: spline sample interval changed to {}", nameId(), _splines.sampleInterval);
+                flow::ApplyChanges();
+                doDeinitialize();
+            }
+            ImGui::Unindent();
+        }
         ImGui::TextUnformatted("Measured acceleration");
         {
             ImGui::Indent();
@@ -602,7 +613,6 @@ void NAV::ImuSimulator::guiConfig()
     j["gnssFrequency"] = _gnssFrequency;
     // ###########################################################################################################
     j["trajectoryType"] = _trajectoryType;
-    j["splineType"] = _splines.type;
     j["startPosition_lla"] = _lla_startPosition;
     j["fixedTrajectoryStartOrientation"] = _fixedTrajectoryStartOrientation;
     j["n_linearTrajectoryStartVelocity"] = _n_linearTrajectoryStartVelocity;
@@ -619,6 +629,8 @@ void NAV::ImuSimulator::guiConfig()
     j["linearTrajectoryDistanceForStop"] = _linearTrajectoryDistanceForStop;
     j["circularTrajectoryCircleCountForStop"] = _circularTrajectoryCircleCountForStop;
     // ###########################################################################################################
+    j["splineType"] = _splines.type;
+    j["splineSampleInterval"] = _splines.sampleInterval;
     j["gravitationModel"] = _gravitationModel;
     j["coriolisAccelerationEnabled"] = _coriolisAccelerationEnabled;
     j["centrifgalAccelerationEnabled"] = _centrifgalAccelerationEnabled;
@@ -668,10 +680,6 @@ void NAV::ImuSimulator::restore(json const& j)
         {
             nm::DeleteInputPin(inputPins.front().id);
         }
-    }
-    if (j.contains("splineType"))
-    {
-        j.at("splineType").get_to(_splines.type);
     }
     if (j.contains("startPosition_lla"))
     {
@@ -731,6 +739,14 @@ void NAV::ImuSimulator::restore(json const& j)
         j.at("circularTrajectoryCircleCountForStop").get_to(_circularTrajectoryCircleCountForStop);
     }
     // ###########################################################################################################
+    if (j.contains("splineType"))
+    {
+        j.at("splineType").get_to(_splines.type);
+    }
+    if (j.contains("splineSampleInterval"))
+    {
+        j.at("splineSampleInterval").get_to(_splines.sampleInterval);
+    }
     if (j.contains("gravitationModel"))
     {
         j.at("gravitationModel").get_to(_gravitationModel);
@@ -859,7 +875,6 @@ Eigen::Quaterniond NAV::ImuSimulator::n_getAttitudeQuaternionFromCsvLine_b(const
 bool NAV::ImuSimulator::initializeSplines()
 {
     std::vector<double> splineTime;
-    constexpr double splineSampleInterval = 0.1;
 
     auto unwrapAngle = [](double angle, double prevAngle, double rangeMax) {
         double x = angle - prevAngle;
@@ -932,18 +947,18 @@ bool NAV::ImuSimulator::initializeSplines()
         };
 
         Eigen::Vector3d lla_lastPosition = _lla_startPosition;
-        for (size_t i = 1; i <= static_cast<size_t>(std::round(1.0 / splineSampleInterval)); i++) // Calculate one second backwards
+        for (size_t i = 1; i <= static_cast<size_t>(std::round(1.0 / _splines.sampleInterval)); i++) // Calculate one second backwards
         {
             Eigen::Vector<double, 6> y; // [𝜙, λ, h, v_N, v_E, v_D]^T
             y << lla_lastPosition,
                 _n_linearTrajectoryStartVelocity;
 
-            y = RungeKutta1(f, -splineSampleInterval, y, Eigen::Vector3d::Zero());
+            y = RungeKutta1(f, -_splines.sampleInterval, y, Eigen::Vector3d::Zero());
             lla_lastPosition = y.head<3>();
 
             Eigen::Vector3d e_position = trafo::lla2ecef_WGS84(lla_lastPosition);
 
-            splineTime.insert(splineTime.begin(), -splineSampleInterval * static_cast<double>(i));
+            splineTime.insert(splineTime.begin(), -_splines.sampleInterval * static_cast<double>(i));
             splineX.insert(splineX.begin(), e_position(0));
             splineY.insert(splineY.begin(), e_position(1));
             splineZ.insert(splineZ.begin(), e_position(2));
@@ -959,12 +974,12 @@ bool NAV::ImuSimulator::initializeSplines()
             y << lla_lastPosition,
                 _n_linearTrajectoryStartVelocity;
 
-            y = RungeKutta1(f, splineSampleInterval, y, Eigen::Vector3d::Zero());
+            y = RungeKutta1(f, _splines.sampleInterval, y, Eigen::Vector3d::Zero());
             lla_lastPosition = y.head<3>();
 
             Eigen::Vector3d e_position = trafo::lla2ecef_WGS84(lla_lastPosition);
 
-            double simTime = splineSampleInterval * static_cast<double>(i);
+            double simTime = _splines.sampleInterval * static_cast<double>(i);
             splineTime.push_back(simTime);
             splineX.push_back(e_position(0));
             splineY.push_back(e_position(1));
@@ -1011,9 +1026,9 @@ bool NAV::ImuSimulator::initializeSplines()
             simDuration = _circularTrajectoryCircleCountForStop * 2 * M_PI / omega;
         }
 
-        for (size_t i = 0; i <= static_cast<size_t>(std::round((simDuration + 2.0) / splineSampleInterval)); i++)
+        for (size_t i = 0; i <= static_cast<size_t>(std::round((simDuration + 2.0) / _splines.sampleInterval)); i++)
         {
-            splineTime.push_back(splineSampleInterval * static_cast<double>(i) - 1.0);
+            splineTime.push_back(_splines.sampleInterval * static_cast<double>(i) - 1.0);
         }
 
         std::vector<double> splineX(splineTime.size());
