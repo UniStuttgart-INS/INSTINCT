@@ -116,7 +116,7 @@ void NAV::MatrixLogger::writeMatrix(ax::NodeEditor::LinkId linkId)
 
     if (Link* link = nm::FindLink(linkId))
     {
-        if (Pin* sourcePin = nm::FindPin(link->startPinId))
+        if (auto* sourcePin = nm::FindOutputPin(link->startPinId))
         {
             size_t pinIndex = pinIndexFromId(link->endPinId);
 

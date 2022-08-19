@@ -107,9 +107,9 @@ void NAV::VectorNavDataLogger::restore(json const& j)
     }
 }
 
-bool NAV::VectorNavDataLogger::onCreateLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pin* endPin)
+bool NAV::VectorNavDataLogger::onCreateLink([[maybe_unused]] OutputPin& startPin, [[maybe_unused]] InputPin& endPin)
 {
-    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
+    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
 
     if (isInitialized())
     {

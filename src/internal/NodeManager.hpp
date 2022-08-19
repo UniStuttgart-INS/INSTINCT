@@ -52,7 +52,7 @@ void DeleteAllNodes();
 /// @param[in] startPin Start Pin of the link
 /// @param[in] endPin End Pin of the link
 /// @return Pointer to the created link object
-Link* CreateLink(Pin* startPin, Pin* endPin);
+Link* CreateLink(OutputPin& startPin, InputPin& endPin);
 
 /// @brief Add the provided link object to the list of links
 /// @param[in] link Link object to add to the list
@@ -71,8 +71,12 @@ bool DeleteLink(ax::NodeEditor::LinkId linkId);
 void DeleteAllLinks();
 
 /// @brief Delete all links on the provided pin
-/// @param[in] pinId Id of the pin
-void DeleteLinksOnPin(ax::NodeEditor::PinId pinId);
+/// @param[in] pin An output Pin
+void DeleteLinksOnPin(const OutputPin& pin);
+
+/// @brief Delete all links on the provided pin
+/// @param[in] pin An input Pin
+void DeleteLinksOnPin(const InputPin& pin);
 
 /// @brief Create an Input Pin object
 /// @param[in] node Node to register the Pin for
@@ -156,14 +160,14 @@ Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std:
 }
 
 /// @brief Deletes the output pin
-/// @param[in] id Unique Id of the Pin to delete
+/// @param[in] pin Output Pin to delete
 /// @return True if the pin was delete
-bool DeleteOutputPin(ax::NodeEditor::PinId id);
+bool DeleteOutputPin(const OutputPin& pin);
 
 /// @brief Deletes the input pin
-/// @param[in] id Unique Id of the Pin to delete
+/// @param[in] pin Input Pin to delete
 /// @return True if the pin was delete
-bool DeleteInputPin(ax::NodeEditor::PinId id);
+bool DeleteInputPin(const InputPin& pin);
 
 /// @brief Finds the Node for the NodeId
 /// @param[in] id Unique Id of the Node to search for
@@ -178,42 +182,52 @@ Link* FindLink(ax::NodeEditor::LinkId id);
 /// @brief Finds the Pin for the PinId
 /// @param[in] id Unique Id of the Pin to search for
 /// @return Pointer to the pin or nullptr if the PinId does not exist
-Pin* FindPin(ax::NodeEditor::PinId id);
+OutputPin* FindOutputPin(ax::NodeEditor::PinId id);
+
+/// @brief Finds the Pin for the PinId
+/// @param[in] id Unique Id of the Pin to search for
+/// @return Pointer to the pin or nullptr if the PinId does not exist
+InputPin* FindInputPin(ax::NodeEditor::PinId id);
 
 /// @brief Checks if a link exists, connecting to the provided Pin
-/// @param[in] id Unique Id of the Pin to search for
+/// @param[in] pin An output Pin
 /// @return true if the Pin is linked, otherwise false
-bool IsPinLinked(ax::NodeEditor::PinId id);
+bool IsPinLinked(const OutputPin& pin);
+
+/// @brief Checks if a link exists, connecting to the provided Pin
+/// @param[in] pin An input Pin
+/// @return true if the Pin is linked, otherwise false
+bool IsPinLinked(const InputPin& pin);
 
 /// @brief Searches all nodes which are connected to the provided output pin
-/// @param[in] id Unique Id of the output Pin to search for
+/// @param[in] pin An output Pin
 /// @return List of Nodes which are connected to the output pin
-std::vector<Node*> FindConnectedNodesToOutputPin(ax::NodeEditor::PinId id);
+std::vector<Node*> FindConnectedNodesToOutputPin(const OutputPin& pin);
 
 /// @brief Searches the node which is connected to the provided input pin
-/// @param[in] id Unique Id of the input Pin to search for
+/// @param[in] pin An input Pin
 /// @return Pointer to the node which is connected to the input pin
-Node* FindConnectedNodeToInputPin(ax::NodeEditor::PinId id);
+Node* FindConnectedNodeToInputPin(const InputPin& pin);
 
 /// @brief Searches all link which are connected to the provided output pin
-/// @param[in] id Unique Id of the output Pin to search for
+/// @param[in] pin PAn output Pin
 /// @return List of Links which are connected to the pin
-std::vector<Link*> FindConnectedLinksToOutputPin(ax::NodeEditor::PinId id);
+std::vector<Link*> FindConnectedLinksToOutputPin(const OutputPin& pin);
 
 /// @brief Searches the link which is connected to the provided input pin
-/// @param[in] id Unique Id of the input Pin to search for
+/// @param[in] pin An input Pin
 /// @return Pointer to the link which is connected to the input pin
-Link* FindConnectedLinkToInputPin(ax::NodeEditor::PinId id);
+Link* FindConnectedLinkToInputPin(const InputPin& pin);
 
 /// @brief Searches all pins which are connected to the provided output pin
-/// @param[in] id Unique Id of the output Pin to search for
+/// @param[in] pin An output Pin
 /// @return List of Pins which are connected to the pin
-std::vector<Pin*> FindConnectedPinsToOutputPin(ax::NodeEditor::PinId id);
+std::vector<InputPin*> FindConnectedPinsToOutputPin(const OutputPin& pin);
 
 /// @brief Searches the pin which is connected to the provided input pin
-/// @param[in] id Unique Id of the input Pin to search for
+/// @param[in] pin An input Pin
 /// @return Pointer to the output pin which is connected to the input pin
-Pin* FindConnectedPinToInputPin(ax::NodeEditor::PinId id);
+OutputPin* FindConnectedPinToInputPin(const InputPin& pin);
 
 /// @brief Enables all Node callbacks
 void EnableAllCallbacks();

@@ -267,13 +267,20 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
                     loadSuccessful = false;
                 }
 
-                if (auto* node = nm::FindConnectedNodeToInputPin(link.endPinId))
+                auto* endPin = nm::FindInputPin(link.endPinId);
+                if (endPin)
                 {
-                    newlyLinkedNodes.insert(size_t(node->id));
+                    if (auto* node = nm::FindConnectedNodeToInputPin(*endPin))
+                    {
+                        newlyLinkedNodes.insert(size_t(node->id));
+                    }
                 }
-                for (auto* node : nm::FindConnectedNodesToOutputPin(link.startPinId))
+                if (auto* startPin = nm::FindOutputPin(link.startPinId))
                 {
-                    newlyLinkedNodes.insert(size_t(node->id));
+                    for (auto* node : nm::FindConnectedNodesToOutputPin(*startPin))
+                    {
+                        newlyLinkedNodes.insert(size_t(node->id));
+                    }
                 }
             }
         }

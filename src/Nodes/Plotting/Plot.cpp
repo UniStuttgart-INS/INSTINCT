@@ -466,7 +466,7 @@ void NAV::Plot::guiConfig()
                 if (ImGui::Combo(fmt::format("##Pin Type for Pin {} - {}", pinIndex + 1, size_t(id)).c_str(),
                                  reinterpret_cast<int*>(&pinData.pinType), "Flow\0Bool\0Int\0Float\0Matrix\0\0"))
                 {
-                    if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.at(pinIndex).id))
+                    if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.at(pinIndex)))
                     {
                         nm::DeleteLink(connectedLink->id);
                     }
@@ -546,7 +546,7 @@ void NAV::Plot::guiConfig()
                     ImGui::TableNextColumn(); // Delete
                     if (ImGui::Button(fmt::format("x##{} - {}", size_t(id), pinIndex).c_str()))
                     {
-                        nm::DeleteInputPin(inputPins.at(pinIndex).id);
+                        nm::DeleteInputPin(inputPins.at(pinIndex));
                         _pinData.erase(_pinData.begin() + static_cast<int64_t>(pinIndex));
                         --_nInputPins;
 
@@ -1326,11 +1326,11 @@ void NAV::Plot::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
+void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
 {
-    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
+    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
 
-    size_t pinIndex = pinIndexFromId(endPin->id);
+    size_t pinIndex = pinIndexFromId(endPin.id);
 
     for (auto& plotData : _pinData.at(pinIndex).plotData) // Mark all plot data for deletion
     {
@@ -1341,7 +1341,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
 
     if (inputPins.at(pinIndex).type == Pin::Type::Flow)
     {
-        if (_pinData.at(pinIndex).dataIdentifier != startPin->dataIdentifier.front())
+        if (_pinData.at(pinIndex).dataIdentifier != startPin.dataIdentifier.front())
         {
             for (auto& plot : _plots)
             {
@@ -1361,9 +1361,9 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             }
         }
 
-        _pinData.at(pinIndex).dataIdentifier = startPin->dataIdentifier.front();
+        _pinData.at(pinIndex).dataIdentifier = startPin.dataIdentifier.front();
 
-        if (startPin->dataIdentifier.front() == Pos::type())
+        if (startPin.dataIdentifier.front() == Pos::type())
         {
             // InsObs
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
@@ -1378,7 +1378,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "Y-ECEF [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Z-ECEF [m]");
         }
-        else if (startPin->dataIdentifier.front() == PosVel::type())
+        else if (startPin.dataIdentifier.front() == PosVel::type())
         {
             // InsObs
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
@@ -1399,8 +1399,8 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "East velocity [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Down velocity [m/s]");
         }
-        else if (startPin->dataIdentifier.front() == PosVelAtt::type()
-                 || startPin->dataIdentifier.front() == InertialNavSol::type())
+        else if (startPin.dataIdentifier.front() == PosVelAtt::type()
+                 || startPin.dataIdentifier.front() == InertialNavSol::type())
         {
             // InsObs
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
@@ -1428,7 +1428,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "Quaternion::y");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Quaternion::z");
         }
-        else if (startPin->dataIdentifier.front() == LcKfInsGnssErrors::type())
+        else if (startPin.dataIdentifier.front() == LcKfInsGnssErrors::type())
         {
             // InsObs
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
@@ -1460,7 +1460,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_Y accumulated [rad/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_Z accumulated [rad/s]");
         }
-        else if (startPin->dataIdentifier.front() == SppSolution::type())
+        else if (startPin.dataIdentifier.front() == SppSolution::type())
         {
             // InsObs
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
@@ -1512,7 +1512,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock bias StDev [s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock drift StDev [s/s]");
         }
-        else if (startPin->dataIdentifier.front() == RtklibPosObs::type())
+        else if (startPin.dataIdentifier.front() == RtklibPosObs::type())
         {
             // InsObs
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
@@ -1555,7 +1555,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "sdved [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "sdvdn [m/s]");
         }
-        else if (startPin->dataIdentifier.front() == UbloxObs::type())
+        else if (startPin.dataIdentifier.front() == UbloxObs::type())
         {
             // InsObs
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
@@ -1573,7 +1573,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity E [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity D [m/s]");
         }
-        else if (startPin->dataIdentifier.front() == ImuObs::type())
+        else if (startPin.dataIdentifier.front() == ImuObs::type())
         {
             // InsObs
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
@@ -1600,7 +1600,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "Gyro Comp Z [rad/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Temperature [°C]");
         }
-        else if (startPin->dataIdentifier.front() == KvhObs::type())
+        else if (startPin.dataIdentifier.front() == KvhObs::type())
         {
             // InsObs
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
@@ -1630,7 +1630,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "Status [bits]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Sequence Number [.]");
         }
-        else if (startPin->dataIdentifier.front() == ImuObsWDelta::type())
+        else if (startPin.dataIdentifier.front() == ImuObsWDelta::type())
         {
             // InsObs
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
@@ -1665,7 +1665,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "dVelocity Y [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "dVelocity Z [m/s]");
         }
-        else if (startPin->dataIdentifier.front() == VectorNavBinaryOutput::type())
+        else if (startPin.dataIdentifier.front() == VectorNavBinaryOutput::type())
         {
             // InsObs
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
@@ -1886,7 +1886,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
     }
     else if (inputPins.at(pinIndex).type == Pin::Type::Bool)
     {
-        _pinData.at(pinIndex).dataIdentifier = startPin->name;
+        _pinData.at(pinIndex).dataIdentifier = startPin.name;
 
         // InsObs
         _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
@@ -1896,7 +1896,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
     }
     else if (inputPins.at(pinIndex).type == Pin::Type::Int)
     {
-        _pinData.at(pinIndex).dataIdentifier = startPin->name;
+        _pinData.at(pinIndex).dataIdentifier = startPin.name;
 
         // InsObs
         _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
@@ -1906,7 +1906,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
     }
     else if (inputPins.at(pinIndex).type == Pin::Type::Float)
     {
-        _pinData.at(pinIndex).dataIdentifier = startPin->name;
+        _pinData.at(pinIndex).dataIdentifier = startPin.name;
 
         // InsObs
         _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
@@ -1916,13 +1916,13 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
     }
     else if (inputPins.at(pinIndex).type == Pin::Type::Matrix)
     {
-        _pinData.at(pinIndex).dataIdentifier = startPin->name;
+        _pinData.at(pinIndex).dataIdentifier = startPin.name;
 
         // InsObs
         _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
         _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
         // Matrix
-        if (startPin->dataIdentifier.front() == "Eigen::MatrixXd")
+        if (startPin.dataIdentifier.front() == "Eigen::MatrixXd")
         {
             if (auto* matrix = getInputValue<Eigen::MatrixXd>(pinIndex))
             {
@@ -1987,7 +1987,7 @@ void NAV::Plot::updateNumberOfInputPins()
             }
         }
 
-        nm::DeleteInputPin(inputPins.back().id);
+        nm::DeleteInputPin(inputPins.back());
         _pinData.pop_back();
     }
 
@@ -2114,7 +2114,7 @@ void NAV::Plot::plotMatrix(ax::NodeEditor::LinkId linkId)
 
     if (Link* link = nm::FindLink(linkId))
     {
-        if (Pin* sourcePin = nm::FindPin(link->startPinId))
+        if (auto* sourcePin = nm::FindOutputPin(link->startPinId))
         {
             size_t pinIndex = pinIndexFromId(link->endPinId);
 
@@ -2153,7 +2153,7 @@ void NAV::Plot::plotData(const std::shared_ptr<const NodeData>& nodeData, ax::No
 
     if (Link* link = nm::FindLink(linkId))
     {
-        if (Pin* sourcePin = nm::FindPin(link->startPinId))
+        if (auto* sourcePin = nm::FindOutputPin(link->startPinId))
         {
             size_t pinIndex = pinIndexFromId(link->endPinId);
 

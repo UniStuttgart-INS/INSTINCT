@@ -168,7 +168,7 @@ void NAV::SinglePointPositioning::guiConfig()
                 if (ImGui::Button(fmt::format("x##{} - {}", size_t(id), pinIndex).c_str()))
                 {
                     _nNavInfoPins--;
-                    nm::DeleteInputPin(inputPins.at(pinIndex).id);
+                    nm::DeleteInputPin(inputPins.at(pinIndex));
                     flow::ApplyChanges();
                 }
                 if (ImGui::IsItemHovered())
@@ -337,7 +337,7 @@ bool NAV::SinglePointPositioning::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (std::all_of(inputPins.begin() + INPUT_PORT_INDEX_GNSS_NAV_INFO, inputPins.end(), [](const Pin& inputPin) { return !nm::IsPinLinked(inputPin.id); }))
+    if (std::all_of(inputPins.begin() + INPUT_PORT_INDEX_GNSS_NAV_INFO, inputPins.end(), [](const InputPin& inputPin) { return !nm::IsPinLinked(inputPin); }))
     {
         LOG_ERROR("{}: You need to connect a GNSS NavigationInfo provider", nameId());
         return false;
@@ -366,7 +366,7 @@ void NAV::SinglePointPositioning::updateNumberOfInputPins()
     }
     while (inputPins.size() - INPUT_PORT_INDEX_GNSS_NAV_INFO > _nNavInfoPins)
     {
-        nm::DeleteInputPin(inputPins.back().id);
+        nm::DeleteInputPin(inputPins.back());
     }
 }
 

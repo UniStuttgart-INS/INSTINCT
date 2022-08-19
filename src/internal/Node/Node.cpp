@@ -62,16 +62,16 @@ bool NAV::Node::resetNode()
     return initialize();
 }
 
-bool NAV::Node::onCreateLink(Pin* /*startPin*/, Pin* /*endPin*/)
+bool NAV::Node::onCreateLink(OutputPin& /*startPin*/, InputPin& /*endPin*/)
 {
     return true;
 }
 
-void NAV::Node::onDeleteLink(Pin* /*startPin*/, Pin* /*endPin*/) {}
+void NAV::Node::onDeleteLink(OutputPin& /*startPin*/, InputPin& /*endPin*/) {}
 
-void NAV::Node::afterCreateLink(Pin* /*startPin*/, Pin* /*endPin*/) {}
+void NAV::Node::afterCreateLink(OutputPin& /*startPin*/, InputPin& /*endPin*/) {}
 
-void NAV::Node::afterDeleteLink(Pin* /*startPin*/, Pin* /*endPin*/) {}
+void NAV::Node::afterDeleteLink(OutputPin& /*startPin*/, InputPin& /*endPin*/) {}
 
 void NAV::Node::notifyOutputValueChanged(size_t portIndex)
 {
@@ -417,7 +417,7 @@ bool NAV::Node::workerInitializeNode()
     {
         if (inputPin.type != Pin::Type::Flow)
         {
-            if (Node* connectedNode = nm::FindConnectedNodeToInputPin(inputPin.id))
+            if (Node* connectedNode = nm::FindConnectedNodeToInputPin(inputPin))
             {
                 if (!connectedNode->isInitialized())
                 {
@@ -462,7 +462,7 @@ bool NAV::Node::workerDeinitializeNode()
     {
         if (outputPin.type != Pin::Type::Flow)
         {
-            auto connectedNodes = nm::FindConnectedNodesToOutputPin(outputPin.id);
+            auto connectedNodes = nm::FindConnectedNodesToOutputPin(outputPin);
             for (auto* connectedNode : connectedNodes)
             {
                 if (connectedNode->isInitialized())

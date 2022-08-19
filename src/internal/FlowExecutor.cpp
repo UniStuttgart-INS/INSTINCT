@@ -140,7 +140,7 @@ void NAV::FlowExecutor::execute()
             continue;
         }
 
-        for (Pin& outputPin : node->outputPins)
+        for (auto& outputPin : node->outputPins)
         {
             if (!_execute.load(std::memory_order_acquire))
             {
@@ -150,7 +150,7 @@ void NAV::FlowExecutor::execute()
 
             if (outputPin.type == Pin::Type::Flow
 #ifndef TESTING
-                && nm::IsPinLinked(outputPin.id)
+                && nm::IsPinLinked(outputPin)
 #endif
             )
             {

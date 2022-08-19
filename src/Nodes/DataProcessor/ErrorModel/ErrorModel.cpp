@@ -525,65 +525,59 @@ bool NAV::ErrorModel::resetNode()
     return true;
 }
 
-void NAV::ErrorModel::afterCreateLink(Pin* startPin, Pin* endPin)
+void NAV::ErrorModel::afterCreateLink(OutputPin& startPin, InputPin& endPin)
 {
-    if (startPin && endPin)
-    {
-        LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
+    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
 
-        if (endPin->parentNode->id != id)
+    if (endPin.parentNode->id != id)
+    {
+        return; // Link on Output Port
+    }
+
+    // Store previous output pin identifier
+    auto previousOutputPinDataIdentifier = outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier;
+    // Overwrite output pin identifier with input pin identifier
+    outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = startPin.dataIdentifier;
+
+    if (previousOutputPinDataIdentifier != outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier) // If the identifier changed
+    {
+        // Check if connected links on output port are still valid
+        for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW)))
         {
-            return; // Link on Output Port
+            auto* startPin = nm::FindOutputPin(link->startPinId);
+            auto* endPin = nm::FindInputPin(link->endPinId);
+            if (startPin && endPin)
+            {
+                if (startPin->canCreateLink(*endPin))
+                {
+                    continue;
+                }
+            }
+            // If the link is not valid anymore, delete it
+            nm::DeleteLink(link->id);
         }
 
-        // Store previous output pin identifier
-        auto previousOutputPinDataIdentifier = outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier;
-        // Overwrite output pin identifier with input pin identifier
-        outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = startPin->dataIdentifier;
-
-        if (previousOutputPinDataIdentifier != outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier) // If the identifier changed
+        // Refresh all links connected to the output pin if the type changed
+        if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier != previousOutputPinDataIdentifier)
         {
-            // Check if connected links on output port are still valid
-            for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))
+            for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW)))
             {
-                auto* startPin = nm::FindPin(link->startPinId);
-                auto* endPin = nm::FindPin(link->endPinId);
-                if (startPin && endPin)
-                {
-                    if (startPin->canCreateLink(*endPin))
-                    {
-                        continue;
-                    }
-                }
-                // If the link is not valid anymore, delete it
-                nm::DeleteLink(link->id);
-            }
-
-            // Refresh all links connected to the output pin if the type changed
-            if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier != previousOutputPinDataIdentifier)
-            {
-                for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))
-                {
-                    nm::RefreshLink(link->id);
-                }
+                nm::RefreshLink(link->id);
             }
         }
     }
 }
 
-void NAV::ErrorModel::afterDeleteLink(Pin* startPin, Pin* endPin)
+void NAV::ErrorModel::afterDeleteLink(OutputPin& startPin, InputPin& endPin)
 {
-    if (startPin && endPin)
-    {
-        LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
+    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
 
-        if ((endPin->parentNode->id != id                                       // Link on Output port is removed
-             && !nm::IsPinLinked(inputPins.at(INPUT_PORT_INDEX_FLOW).id))       //     and the Input port is not linked
-            || (startPin->parentNode->id != id                                  // Link on Input port is removed
-                && !nm::IsPinLinked(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))) //     and the Output port is not linked
-        {
-            outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = supportedDataIdentifier;
-        }
+    if ((endPin.parentNode->id != id                                     // Link on Output port is removed
+         && !nm::IsPinLinked(inputPins.at(INPUT_PORT_INDEX_FLOW)))       //     and the Input port is not linked
+        || (startPin.parentNode->id != id                                // Link on Input port is removed
+            && !nm::IsPinLinked(outputPins.at(OUTPUT_PORT_INDEX_FLOW)))) //     and the Output port is not linked
+    {
+        outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = supportedDataIdentifier;
     }
 }
 

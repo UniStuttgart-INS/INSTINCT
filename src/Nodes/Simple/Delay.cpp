@@ -95,35 +95,32 @@ void NAV::Delay::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-bool NAV::Delay::onCreateLink(Pin* startPin, Pin* endPin)
+bool NAV::Delay::onCreateLink(OutputPin& startPin, InputPin& endPin)
 {
-    if (startPin && endPin)
+    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
+
+    if (endPin.parentNode->id != id)
     {
-        LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
+        return true; // Link on Output Port
+    }
 
-        if (endPin->parentNode->id != id)
+    // New Link on the Input port, but the previously connected dataIdentifier is different from the new one.
+    // Then remove all links.
+    if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier != startPin.dataIdentifier)
+    {
+        for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW)))
         {
-            return true; // Link on Output Port
+            nm::DeleteLink(link->id);
         }
+    }
 
-        // New Link on the Input port, but the previously connected dataIdentifier is different from the new one.
-        // Then remove all links.
-        if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier != startPin->dataIdentifier)
-        {
-            for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))
-            {
-                nm::DeleteLink(link->id);
-            }
-        }
+    // Update the dataIdentifier of the output pin to the same as input pin
+    outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = startPin.dataIdentifier;
 
-        // Update the dataIdentifier of the output pin to the same as input pin
-        outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = startPin->dataIdentifier;
-
-        // Refresh all links connected to the output pin
-        for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))
-        {
-            nm::RefreshLink(link->id);
-        }
+    // Refresh all links connected to the output pin
+    for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW)))
+    {
+        nm::RefreshLink(link->id);
     }
 
     return true;

@@ -54,7 +54,7 @@ class VectorNavDataLogger : public Node, public FileWriter, public CommonLog
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
     /// @return True if link is allowed, false if link is rejected
-    bool onCreateLink(Pin* startPin, Pin* endPin) override;
+    bool onCreateLink(OutputPin& startPin, InputPin& endPin) override;
 
     /// @brief Function called by the flow executer after finishing to flush out remaining data
     void flush() override;

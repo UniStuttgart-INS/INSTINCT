@@ -6,6 +6,8 @@
 
 #include "internal/FlowManager.hpp"
 
+#include "util/Assert.h"
+
 #include <algorithm>
 #include <thread>
 #include <deque>
@@ -200,63 +202,61 @@ void NAV::NodeManager::DeleteAllNodes()
     flow::ApplyChanges();
 }
 
-NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
+NAV::Link* NAV::NodeManager::CreateLink(NAV::OutputPin& startPin, NAV::InputPin& endPin)
 {
-    if (!startPin || !endPin || !startPin->parentNode || !endPin->parentNode)
-    {
-        return nullptr;
-    }
-    LOG_TRACE("called: {} of [{}] ==> {} of [{}]", size_t(startPin->id), startPin->parentNode->nameId(), size_t(endPin->id), endPin->parentNode->nameId());
+    if (!startPin.parentNode || !endPin.parentNode) { return nullptr; }
+    LOG_TRACE("called: {} of [{}] ==> {} of [{}]", size_t(startPin.id), startPin.parentNode->nameId(), size_t(endPin.id), endPin.parentNode->nameId());
 
-    if (!startPin->parentNode->onCreateLink(startPin, endPin) || !endPin->parentNode->onCreateLink(startPin, endPin))
+    if (!startPin.parentNode->onCreateLink(startPin, endPin) || !endPin.parentNode->onCreateLink(startPin, endPin))
     {
         LOG_ERROR("The new Link between node '{}' and '{}' was refused by one of the Nodes it should connect to.",
-                  startPin->parentNode->nameId(), endPin->parentNode->nameId());
+                  startPin.parentNode->nameId(), endPin.parentNode->nameId());
         return nullptr;
     }
 
-    m_links.emplace_back(GetNextLinkId(), startPin->id, endPin->id);
-    LOG_DEBUG("Creating link {} from pin {} of [{}] ==> {} of [{}]", size_t(m_links.back().id), size_t(startPin->id), startPin->parentNode->nameId(), size_t(endPin->id), endPin->parentNode->nameId());
+    m_links.emplace_back(GetNextLinkId(), startPin.id, endPin.id);
+    LOG_DEBUG("Creating link {} from pin {} of [{}] ==> {} of [{}]", size_t(m_links.back().id), size_t(startPin.id),
+              startPin.parentNode->nameId(), size_t(endPin.id), endPin.parentNode->nameId());
 
-    if (endPin->type == Pin::Type::Flow)
+    if (endPin.type == Pin::Type::Flow)
     {
-        if (endPin->dataOld.index() == 0)
+        if (endPin.dataOld.index() == 0)
         {
             LOG_ERROR("Tried to register callback, but endPin has no data");
             m_links.pop_back();
             return nullptr;
         }
 
-        startPin->callbacksOld.emplace_back(endPin->parentNode,
-                                            std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->dataOld),
-                                            m_links.back().id);
+        startPin.callbacksOld.emplace_back(endPin.parentNode,
+                                           std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin.dataOld),
+                                           m_links.back().id);
     }
     else
     {
-        endPin->dataOld = startPin->dataOld;
-        if (endPin->type != Pin::Type::Delegate)
+        endPin.dataOld = startPin.dataOld;
+        if (endPin.type != Pin::Type::Delegate)
         {
-            if (!endPin->notifyFuncOld.empty())
+            if (!endPin.notifyFuncOld.empty())
             {
-                startPin->notifyFuncOld.emplace_back(std::get<0>(endPin->notifyFuncOld.front()),
-                                                     std::get<1>(endPin->notifyFuncOld.front()),
-                                                     m_links.back().id);
+                startPin.notifyFuncOld.emplace_back(std::get<0>(endPin.notifyFuncOld.front()),
+                                                    std::get<1>(endPin.notifyFuncOld.front()),
+                                                    m_links.back().id);
             }
         }
 
-        if (startPin->parentNode && endPin->parentNode && !startPin->parentNode->isInitialized())
+        if (startPin.parentNode && endPin.parentNode && !startPin.parentNode->isInitialized())
         {
-            if (endPin->parentNode->isInitialized())
+            if (endPin.parentNode->isInitialized())
             {
-                endPin->parentNode->doDeinitialize(true);
+                endPin.parentNode->doDeinitialize(true);
             }
         }
     }
 
-    if (startPin && endPin && startPin->parentNode && endPin->parentNode)
+    if (startPin.parentNode && endPin.parentNode)
     {
-        startPin->parentNode->afterCreateLink(startPin, endPin);
-        endPin->parentNode->afterCreateLink(startPin, endPin);
+        startPin.parentNode->afterCreateLink(startPin, endPin);
+        endPin.parentNode->afterCreateLink(startPin, endPin);
     }
 
     flow::ApplyChanges();
@@ -269,8 +269,8 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
     LOG_TRACE("called for link with id {}", size_t(link.id));
     m_links.push_back(link);
 
-    Pin* startPin = FindPin(link.startPinId);
-    Pin* endPin = FindPin(link.endPinId);
+    auto* startPin = FindOutputPin(link.startPinId);
+    auto* endPin = FindInputPin(link.endPinId);
     if (endPin && startPin)
     {
         if (!startPin->parentNode || !endPin->parentNode)
@@ -280,21 +280,21 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
             return false;
         }
 
-        if (!startPin->parentNode->onCreateLink(startPin, endPin))
+        if (!startPin->parentNode->onCreateLink(*startPin, *endPin))
         {
             LOG_ERROR("Link {} between node '{}'-{} and '{}'-{} was refused by the start Node.", size_t(link.id),
                       startPin->parentNode->nameId(), size_t(startPin->id), endPin->parentNode->nameId(), size_t(endPin->id));
             m_links.pop_back();
             return false;
         }
-        if (!endPin->parentNode->onCreateLink(startPin, endPin))
+        if (!endPin->parentNode->onCreateLink(*startPin, *endPin))
         {
             LOG_ERROR("Link {} between node '{}'-{} and '{}'-{} was refused by the end Node.", size_t(link.id),
                       startPin->parentNode->nameId(), size_t(startPin->id), endPin->parentNode->nameId(), size_t(endPin->id));
             // Undo the Link adding on the start node
-            startPin->parentNode->onDeleteLink(startPin, endPin);
+            startPin->parentNode->onDeleteLink(*startPin, *endPin);
             m_links.pop_back();
-            startPin->parentNode->afterDeleteLink(startPin, endPin);
+            startPin->parentNode->afterDeleteLink(*startPin, *endPin);
             return false;
         }
 
@@ -303,11 +303,11 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
             LOG_ERROR("Link {} between node '{}'-{} and '{}'-{} can not be added because the pins do not match", size_t(link.id),
                       startPin->parentNode->nameId(), size_t(startPin->id), endPin->parentNode->nameId(), size_t(endPin->id));
             // Undo the Link adding on the start and end node
-            startPin->parentNode->onDeleteLink(startPin, endPin);
-            endPin->parentNode->onDeleteLink(startPin, endPin);
+            startPin->parentNode->onDeleteLink(*startPin, *endPin);
+            endPin->parentNode->onDeleteLink(*startPin, *endPin);
             m_links.pop_back();
-            startPin->parentNode->afterDeleteLink(startPin, endPin);
-            endPin->parentNode->afterDeleteLink(startPin, endPin);
+            startPin->parentNode->afterDeleteLink(*startPin, *endPin);
+            endPin->parentNode->afterDeleteLink(*startPin, *endPin);
             return false;
         }
 
@@ -348,8 +348,8 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
 
         if (startPin && endPin && startPin->parentNode && endPin->parentNode)
         {
-            startPin->parentNode->afterCreateLink(startPin, endPin);
-            endPin->parentNode->afterCreateLink(startPin, endPin);
+            startPin->parentNode->afterCreateLink(*startPin, *endPin);
+            endPin->parentNode->afterCreateLink(*startPin, *endPin);
         }
     }
     else
@@ -377,8 +377,8 @@ void NAV::NodeManager::RefreshLink(ax::NodeEditor::LinkId linkId)
         return;
     }
 
-    Pin* startPin = FindPin(link->startPinId);
-    Pin* endPin = FindPin(link->endPinId);
+    auto* startPin = FindOutputPin(link->startPinId);
+    auto* endPin = FindInputPin(link->endPinId);
     if (endPin && startPin)
     {
         if (!startPin->parentNode || !endPin->parentNode)
@@ -388,15 +388,15 @@ void NAV::NodeManager::RefreshLink(ax::NodeEditor::LinkId linkId)
             return;
         }
 
-        startPin->parentNode->onDeleteLink(startPin, endPin);
-        if (!startPin->parentNode->onCreateLink(startPin, endPin))
+        startPin->parentNode->onDeleteLink(*startPin, *endPin);
+        if (!startPin->parentNode->onCreateLink(*startPin, *endPin))
         {
             LOG_ERROR("Link {} between node '{}'-{} and '{}'-{} was refused by the start Node.", size_t(link->id),
                       startPin->parentNode->nameId(), size_t(startPin->id), endPin->parentNode->nameId(), size_t(endPin->id));
         }
 
-        endPin->parentNode->onDeleteLink(startPin, endPin);
-        if (!endPin->parentNode->onCreateLink(startPin, endPin))
+        endPin->parentNode->onDeleteLink(*startPin, *endPin);
+        if (!endPin->parentNode->onCreateLink(*startPin, *endPin))
         {
             LOG_ERROR("Link {} between node '{}'-{} and '{}'-{} was refused by the end Node.", size_t(link->id),
                       startPin->parentNode->nameId(), size_t(startPin->id), endPin->parentNode->nameId(), size_t(endPin->id));
@@ -452,8 +452,8 @@ void NAV::NodeManager::RefreshLink(ax::NodeEditor::LinkId linkId)
 
         if (startPin && endPin && startPin->parentNode && endPin->parentNode)
         {
-            startPin->parentNode->afterCreateLink(startPin, endPin);
-            endPin->parentNode->afterCreateLink(startPin, endPin);
+            startPin->parentNode->afterCreateLink(*startPin, *endPin);
+            endPin->parentNode->afterCreateLink(*startPin, *endPin);
         }
     }
     else
@@ -474,8 +474,8 @@ bool NAV::NodeManager::DeleteLink(ax::NodeEditor::LinkId linkId)
                            [linkId](const auto& link) { return link.id == linkId; });
     if (id != m_links.end())
     {
-        Pin* endPin = FindPin(id->endPinId);
-        Pin* startPin = FindPin(id->startPinId);
+        auto* startPin = FindOutputPin(id->startPinId);
+        auto* endPin = FindInputPin(id->endPinId);
 
         if (startPin && endPin)
         {
@@ -483,11 +483,11 @@ bool NAV::NodeManager::DeleteLink(ax::NodeEditor::LinkId linkId)
                       size_t(startPin->id), startPin->parentNode->nameId(), size_t(endPin->id), endPin->parentNode->nameId());
             if (startPin->parentNode)
             {
-                startPin->parentNode->onDeleteLink(startPin, endPin);
+                startPin->parentNode->onDeleteLink(*startPin, *endPin);
             }
             if (endPin->parentNode)
             {
-                endPin->parentNode->onDeleteLink(startPin, endPin);
+                endPin->parentNode->onDeleteLink(*startPin, *endPin);
             }
 
             if (endPin->type != Pin::Type::Flow)
@@ -544,11 +544,11 @@ bool NAV::NodeManager::DeleteLink(ax::NodeEditor::LinkId linkId)
         {
             if (startPin->parentNode)
             {
-                startPin->parentNode->afterDeleteLink(startPin, endPin);
+                startPin->parentNode->afterDeleteLink(*startPin, *endPin);
             }
             if (endPin->parentNode)
             {
-                endPin->parentNode->afterDeleteLink(startPin, endPin);
+                endPin->parentNode->afterDeleteLink(*startPin, *endPin);
             }
         }
 
@@ -582,30 +582,24 @@ void NAV::NodeManager::DeleteAllLinks()
     flow::ApplyChanges();
 }
 
-void NAV::NodeManager::DeleteLinksOnPin(ax::NodeEditor::PinId pinId)
+void NAV::NodeManager::DeleteLinksOnPin(const NAV::OutputPin& pin)
 {
-    LOG_TRACE("called for pin ({})", size_t(pinId));
+    LOG_TRACE("called for pin ({})", size_t(pin.id));
 
-    Pin* pin = FindPin(pinId);
-    if (!pin)
+    auto connectedLinks = FindConnectedLinksToOutputPin(pin);
+    for (auto* connectedLink : connectedLinks)
     {
-        return;
+        NAV::NodeManager::DeleteLink(connectedLink->id);
     }
+}
 
-    if (pin->kind == Pin::Kind::Input)
+void NAV::NodeManager::DeleteLinksOnPin(const NAV::InputPin& pin)
+{
+    LOG_TRACE("called for pin ({})", size_t(pin.id));
+
+    if (auto* connectedLink = FindConnectedLinkToInputPin(pin))
     {
-        if (auto* connectedLink = FindConnectedLinkToInputPin(pinId))
-        {
-            NAV::NodeManager::DeleteLink(connectedLink->id);
-        }
-    }
-    else if (pin->kind == Pin::Kind::Output)
-    {
-        auto connectedLinks = FindConnectedLinksToOutputPin(pinId);
-        for (auto* connectedLink : connectedLinks)
-        {
-            NAV::NodeManager::DeleteLink(connectedLink->id);
-        }
+        NAV::NodeManager::DeleteLink(connectedLink->id);
     }
 }
 
@@ -619,7 +613,7 @@ NAV::Pin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NA
     idx = std::min(idx, static_cast<int>(node->inputPins.size()));
     auto iter = std::next(node->inputPins.begin(), idx);
 
-    node->inputPins.emplace(iter, GetNextPinId(), name, pinType, Pin::Kind::Input, node);
+    node->inputPins.emplace(iter, GetNextPinId(), name, pinType, node);
 
     node->inputPins.at(static_cast<size_t>(idx)).dataOld = data;
     node->inputPins.at(static_cast<size_t>(idx)).dataIdentifier = dataIdentifier;
@@ -639,7 +633,7 @@ NAV::Pin* NAV::NodeManager::CreateOutputPin(NAV::Node* node, const char* name, N
     idx = std::min(idx, static_cast<int>(node->outputPins.size()));
     auto iter = std::next(node->outputPins.begin(), idx);
 
-    node->outputPins.emplace(iter, GetNextPinId(), name, pinType, Pin::Kind::Output, node);
+    node->outputPins.emplace(iter, GetNextPinId(), name, pinType, node);
 
     node->outputPins.at(static_cast<size_t>(idx)).dataOld = data;
     node->outputPins.at(static_cast<size_t>(idx)).dataIdentifier = dataIdentifier;
@@ -649,38 +643,26 @@ NAV::Pin* NAV::NodeManager::CreateOutputPin(NAV::Node* node, const char* name, N
     return &node->outputPins.back();
 }
 
-bool NAV::NodeManager::DeleteOutputPin(ax::NodeEditor::PinId id)
+bool NAV::NodeManager::DeleteOutputPin(const NAV::OutputPin& pin)
 {
-    LOG_TRACE("called for pin ({})", size_t(id));
+    LOG_TRACE("called for pin ({})", size_t(pin.id));
 
-    Pin* pin = FindPin(id);
-    if (!pin)
-    {
-        return false;
-    }
+    DeleteLinksOnPin(pin);
 
-    DeleteLinksOnPin(id);
-
-    size_t pinIndex = pin->parentNode->pinIndexFromId(id);
-    pin->parentNode->outputPins.erase(pin->parentNode->outputPins.begin() + static_cast<int64_t>(pinIndex));
+    size_t pinIndex = pin.parentNode->pinIndexFromId(pin.id);
+    pin.parentNode->outputPins.erase(pin.parentNode->outputPins.begin() + static_cast<int64_t>(pinIndex));
 
     return true;
 }
 
-bool NAV::NodeManager::DeleteInputPin(ax::NodeEditor::PinId id)
+bool NAV::NodeManager::DeleteInputPin(const NAV::InputPin& pin)
 {
-    LOG_TRACE("called for pin ({})", size_t(id));
+    LOG_TRACE("called for pin ({})", size_t(pin.id));
 
-    Pin* pin = FindPin(id);
-    if (!pin)
-    {
-        return false;
-    }
+    DeleteLinksOnPin(pin);
 
-    DeleteLinksOnPin(id);
-
-    size_t pinIndex = pin->parentNode->pinIndexFromId(id);
-    pin->parentNode->inputPins.erase(pin->parentNode->inputPins.begin() + static_cast<int64_t>(pinIndex));
+    size_t pinIndex = pin.parentNode->pinIndexFromId(pin.id);
+    pin.parentNode->inputPins.erase(pin.parentNode->inputPins.begin() + static_cast<int64_t>(pinIndex));
 
     return true;
 }
@@ -731,65 +713,68 @@ NAV::Link* NAV::NodeManager::FindLink(ax::NodeEditor::LinkId id)
     return nullptr;
 }
 
-NAV::Pin* NAV::NodeManager::FindPin(ax::NodeEditor::PinId id)
+NAV::OutputPin* NAV::NodeManager::FindOutputPin(ax::NodeEditor::PinId id)
 {
-    if (!id)
-    {
-        return nullptr;
-    }
+    if (!id) { return nullptr; }
 
     for (auto& node : m_nodes)
     {
-        for (auto& pin : node->inputPins)
-        {
-            if (pin.id == id)
-            {
-                return &pin;
-            }
-        }
-
         for (auto& pin : node->outputPins)
         {
-            if (pin.id == id)
-            {
-                return &pin;
-            }
+            if (pin.id == id) { return &pin; }
         }
     }
 
     return nullptr;
 }
 
-bool NAV::NodeManager::IsPinLinked(ax::NodeEditor::PinId id)
+NAV::InputPin* NAV::NodeManager::FindInputPin(ax::NodeEditor::PinId id)
 {
-    if (!id)
+    if (!id) { return nullptr; }
+
+    for (auto& node : m_nodes)
     {
-        return false;
+        for (auto& pin : node->inputPins)
+        {
+            if (pin.id == id) { return &pin; }
+        }
     }
 
+    return nullptr;
+}
+
+bool NAV::NodeManager::IsPinLinked(const OutputPin& pin)
+{
     for (const auto& link : m_links)
     {
-        if (link.startPinId == id || link.endPinId == id)
-        {
-            return true;
-        }
+        if (link.startPinId == pin.id) { return true; }
     }
 
     return false;
 }
 
-std::vector<NAV::Node*> NAV::NodeManager::FindConnectedNodesToOutputPin(ax::NodeEditor::PinId id)
+bool NAV::NodeManager::IsPinLinked(const InputPin& pin)
+{
+    for (const auto& link : m_links)
+    {
+        if (link.endPinId == pin.id) { return true; }
+    }
+
+    return false;
+}
+
+std::vector<NAV::Node*> NAV::NodeManager::FindConnectedNodesToOutputPin(const OutputPin& pin)
 {
     std::vector<NAV::Node*> connectedNodes;
     for (const auto& link : m_links)
     {
-        if (link.startPinId == id)
+        if (link.startPinId == pin.id)
         {
-            if (Pin* pin = FindPin(link.endPinId))
+            if (auto* connectedPin = FindInputPin(link.endPinId))
             {
-                if (pin->parentNode)
+                if (connectedPin->parentNode)
                 {
-                    connectedNodes.push_back(pin->parentNode);
+                    connectedNodes.push_back(connectedPin->parentNode);
                 }
             }
         }
@@ -798,15 +783,15 @@ std::vector<NAV::Node*> NAV::NodeManager::FindConnectedNodesToOutputPin(ax::Node
     return connectedNodes;
 }
 
-NAV::Node* NAV::NodeManager::FindConnectedNodeToInputPin(ax::NodeEditor::PinId id)
+NAV::Node* NAV::NodeManager::FindConnectedNodeToInputPin(const InputPin& pin)
 {
     for (const auto& link : m_links)
     {
-        if (link.endPinId == id)
+        if (link.endPinId == pin.id)
         {
-            if (Pin* pin = FindPin(link.startPinId))
+            if (auto* connectedPin = FindOutputPin(link.startPinId))
             {
-                return pin->parentNode;
+                return connectedPin->parentNode;
             }
         }
     }
@@ -814,12 +799,12 @@ NAV::Node* NAV::NodeManager::FindConnectedNodeToInputPin(ax::NodeEditor::PinId i
     return nullptr;
 }
 
-std::vector<NAV::Link*> NAV::NodeManager::FindConnectedLinksToOutputPin(ax::NodeEditor::PinId id)
+std::vector<NAV::Link*> NAV::NodeManager::FindConnectedLinksToOutputPin(const OutputPin& pin)
 {
     std::vector<NAV::Link*> connectedLinks;
     for (auto& link : m_links)
     {
-        if (link.startPinId == id)
+        if (link.startPinId == pin.id)
         {
             connectedLinks.push_back(&link);
         }
@@ -828,11 +813,11 @@ std::vector<NAV::Link*> NAV::NodeManager::FindConnectedLinksToOutputPin(ax::Node
     return connectedLinks;
 }
 
-NAV::Link* NAV::NodeManager::FindConnectedLinkToInputPin(ax::NodeEditor::PinId id)
+NAV::Link* NAV::NodeManager::FindConnectedLinkToInputPin(const InputPin& pin)
 {
     for (auto& link : m_links)
     {
-        if (link.endPinId == id)
+        if (link.endPinId == pin.id)
         {
             return &link;
         }
@@ -841,27 +826,27 @@ NAV::Link* NAV::NodeManager::FindConnectedLinkToInputPin(ax::NodeEditor::PinId i
     return nullptr;
 }
 
-std::vector<NAV::Pin*> NAV::NodeManager::FindConnectedPinsToOutputPin(ax::NodeEditor::PinId id)
+std::vector<NAV::InputPin*> NAV::NodeManager::FindConnectedPinsToOutputPin(const OutputPin& pin)
 {
-    std::vector<NAV::Pin*> connectedPins;
+    std::vector<NAV::InputPin*> connectedPins;
     for (auto& link : m_links)
     {
-        if (link.startPinId == id)
+        if (link.startPinId == pin.id)
         {
-            connectedPins.push_back(FindPin(link.endPinId));
+            connectedPins.push_back(FindInputPin(link.endPinId));
         }
     }
 
     return connectedPins;
 }
 
-NAV::Pin* NAV::NodeManager::FindConnectedPinToInputPin(ax::NodeEditor::PinId id)
+NAV::OutputPin* NAV::NodeManager::FindConnectedPinToInputPin(const InputPin& pin)
 {
     for (auto& link : m_links)
     {
-        if (link.endPinId == id)
+        if (link.endPinId == pin.id)
         {
-            return FindPin(link.startPinId);
+            return FindOutputPin(link.startPinId);
         }
     }
 

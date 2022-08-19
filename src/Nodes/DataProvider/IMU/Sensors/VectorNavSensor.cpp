@@ -1661,7 +1661,7 @@ void NAV::VectorNavSensor::guiConfig()
                 }
                 else if (!_syncInPin && !inputPins.empty())
                 {
-                    nm::DeleteInputPin(outputPins.front().id);
+                    nm::DeleteInputPin(inputPins.front());
                 }
             }
 
@@ -1844,7 +1844,7 @@ void NAV::VectorNavSensor::guiConfig()
                         else if (_synchronizationControlRegister.syncOutMode != vn::protocol::uart::SyncOutMode::SYNCOUTMODE_GPSPPS
                                  && outputPins.size() == 5)
                         {
-                            nm::DeleteOutputPin(outputPins.at(4).id);
+                            nm::DeleteOutputPin(outputPins.at(4));
                         }
 
                         flow::ApplyChanges();
@@ -2617,7 +2617,7 @@ void NAV::VectorNavSensor::guiConfig()
                                     if (b == 0)
                                     {
                                         _vs.writeBinaryOutput1(_binaryOutputRegister.at(b));
-                                        auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(b + 2).id);
+                                        auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(b + 2));
                                         for (auto& connectedLink : connectedLinks)
                                         {
                                             nm::RefreshLink(connectedLink->id);
@@ -2626,7 +2626,7 @@ void NAV::VectorNavSensor::guiConfig()
                                     else if (b == 1)
                                     {
                                         _vs.writeBinaryOutput2(_binaryOutputRegister.at(b));
-                                        auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(b + 2).id);
+                                        auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(b + 2));
                                         for (auto& connectedLink : connectedLinks)
                                         {
                                             nm::RefreshLink(connectedLink->id);
@@ -2635,7 +2635,7 @@ void NAV::VectorNavSensor::guiConfig()
                                     else if (b == 2)
                                     {
                                         _vs.writeBinaryOutput3(_binaryOutputRegister.at(b));
-                                        auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(b + 2).id);
+                                        auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(b + 2));
                                         for (auto& connectedLink : connectedLinks)
                                         {
                                             nm::RefreshLink(connectedLink->id);
@@ -2793,7 +2793,7 @@ void NAV::VectorNavSensor::guiConfig()
                 _binaryOutputRegister.at(1).rateDivisor = _binaryOutputRegister.at(0).rateDivisor;
                 _binaryOutputSelectedFrequency.at(1) = _binaryOutputSelectedFrequency.at(0);
                 _binaryOutputRegister.at(1).asyncMode = _binaryOutputRegister.at(0).asyncMode;
-                nm::DeleteLinksOnPin(outputPins.at(2).id);
+                nm::DeleteLinksOnPin(outputPins.at(2));
                 outputPins.at(1).type = Pin::Type::Flow;
                 outputPins.at(2).type = Pin::Type::None;
                 outputPins.at(3).type = Pin::Type::Flow;
@@ -2802,7 +2802,7 @@ void NAV::VectorNavSensor::guiConfig()
                 _binaryOutputRegister.at(2).rateDivisor = _binaryOutputRegister.at(0).rateDivisor;
                 _binaryOutputSelectedFrequency.at(2) = _binaryOutputSelectedFrequency.at(0);
                 _binaryOutputRegister.at(2).asyncMode = _binaryOutputRegister.at(0).asyncMode;
-                nm::DeleteLinksOnPin(outputPins.at(3).id);
+                nm::DeleteLinksOnPin(outputPins.at(3));
                 outputPins.at(1).type = Pin::Type::Flow;
                 outputPins.at(2).type = Pin::Type::Flow;
                 outputPins.at(3).type = Pin::Type::None;
@@ -2811,7 +2811,7 @@ void NAV::VectorNavSensor::guiConfig()
                 _binaryOutputRegister.at(2).rateDivisor = _binaryOutputRegister.at(1).rateDivisor;
                 _binaryOutputSelectedFrequency.at(2) = _binaryOutputSelectedFrequency.at(1);
                 _binaryOutputRegister.at(2).asyncMode = _binaryOutputRegister.at(1).asyncMode;
-                nm::DeleteLinksOnPin(outputPins.at(3).id);
+                nm::DeleteLinksOnPin(outputPins.at(3));
                 outputPins.at(1).type = Pin::Type::Flow;
                 outputPins.at(2).type = Pin::Type::Flow;
                 outputPins.at(3).type = Pin::Type::None;
@@ -7013,7 +7013,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
 
                 if ((!obs->insTime.has_value() || obs->insTime->empty())                        // Look for master to give GNSS time
                     && (obs->timeOutputs->timeField & vn::protocol::uart::TIMEGROUP_TIMESYNCIN) // We need syncin time for this
-                    && vnSensor->_syncInPin && nm::IsPinLinked(vnSensor->inputPins.front().id)) // Try to get a sync from the master
+                    && vnSensor->_syncInPin && nm::IsPinLinked(vnSensor->inputPins.front()))    // Try to get a sync from the master
                 {
                     if (const auto* timeSyncMaster = vnSensor->getInputValue<TimeSync>(0);
                         timeSyncMaster && !timeSyncMaster->ppsTime.empty())

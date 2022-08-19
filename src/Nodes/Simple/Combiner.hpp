@@ -41,12 +41,12 @@ class Combiner : public Node
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
     /// @return True if link is allowed, false if link is rejected
-    bool onCreateLink(Pin* startPin, Pin* endPin) override;
+    bool onCreateLink(OutputPin& startPin, InputPin& endPin) override;
 
     /// @brief Called when a link was deleted
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
-    void afterDeleteLink(Pin* startPin, Pin* endPin) override;
+    void afterDeleteLink(OutputPin& startPin, InputPin& endPin) override;
 
   private:
     constexpr static size_t OUTPUT_PORT_INDEX_FLOW = 0;       ///< @brief Flow

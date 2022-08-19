@@ -112,7 +112,7 @@ void NAV::PosVelAttLogger::writeObservation(const std::shared_ptr<const NodeData
 {
     if (Link* link = nm::FindLink(linkId))
     {
-        if (Pin* sourcePin = nm::FindPin(link->startPinId))
+        if (auto* sourcePin = nm::FindOutputPin(link->startPinId))
         {
             constexpr int gpsCyclePrecision = 3;
             constexpr int gpsTimePrecision = 12;

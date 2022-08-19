@@ -134,7 +134,7 @@ void NAV::ImuSimulator::guiConfig()
                     }
                     else if (_trajectoryType != TrajectoryType::Csv && !inputPins.empty())
                     {
-                        nm::DeleteInputPin(inputPins.front().id);
+                        nm::DeleteInputPin(inputPins.front());
                     }
 
                     flow::ApplyChanges();
@@ -643,7 +643,7 @@ void NAV::ImuSimulator::restore(json const& j)
         }
         else if (_trajectoryType != TrajectoryType::Csv && !inputPins.empty())
         {
-            nm::DeleteInputPin(inputPins.front().id);
+            nm::DeleteInputPin(inputPins.front());
         }
     }
     if (j.contains("startPosition_lla"))

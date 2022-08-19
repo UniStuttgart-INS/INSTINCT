@@ -61,7 +61,7 @@ void NAV::UartPacketConverter::guiConfig()
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::EmlidObs::type();
         }
 
-        for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.front().id))
+        for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.front()))
         {
             nm::RefreshLink(link->id);
         }

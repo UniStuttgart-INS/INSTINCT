@@ -886,7 +886,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                             ImGui::PopStyleColor();
                             ImGui::Spring(0);
                         }
-                        output.drawPinIcon(nm::IsPinLinked(output.id), static_cast<int>(alpha * 255));
+                        output.drawPinIcon(nm::IsPinLinked(output), static_cast<int>(alpha * 255));
                         ImGui::Spring(0, ImGui::GetStyle().ItemSpacing.x / 2);
                         ImGui::EndHorizontal();
                         ImGui::PopStyleVar();
@@ -915,7 +915,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
                 builder.Input(input.id);
                 ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
-                input.drawPinIcon(nm::IsPinLinked(input.id), static_cast<int>(alpha * 255));
+                input.drawPinIcon(nm::IsPinLinked(input), static_cast<int>(alpha * 255));
                 if (ImGui::IsItemHovered()) { tooltipText = fmt::format("{}", fmt::join(input.dataIdentifier, "\n")); }
 
                 ImGui::Spring(0);
@@ -982,7 +982,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                     }
                 }
                 ImGui::Spring(0);
-                output.drawPinIcon(nm::IsPinLinked(output.id), static_cast<int>(alpha * 255));
+                output.drawPinIcon(nm::IsPinLinked(output), static_cast<int>(alpha * 255));
                 if (ImGui::IsItemHovered()) { tooltipText = fmt::format("{}", fmt::join(output.dataIdentifier, "\n")); }
                 ImGui::PopStyleVar();
                 util::BlueprintNodeBuilder::EndOutput();
@@ -1064,7 +1064,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
         for (const auto& link : nm::m_Links()) // Links
         {
-            const auto* pin = nm::FindPin(link.startPinId);
+            const auto* pin = nm::FindOutputPin(link.startPinId);
             auto color = pin->getIconColor();
             if (pin->type == Pin::Type::Flow)
             {
@@ -1109,8 +1109,10 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 ed::PinId endPinId = 0;
                 if (ed::QueryNewLink(&startPinId, &endPinId))
                 {
-                    auto* startPin = nm::FindPin(startPinId);
-                    auto* endPin = nm::FindPin(endPinId);
+                    Pin* startPin = nm::FindInputPin(startPinId);
+                    Pin* endPin = nm::FindInputPin(endPinId);
+                    if (!startPin) { startPin = nm::FindOutputPin(startPinId); }
+                    if (!endPin) { endPin = nm::FindOutputPin(endPinId); }
 
                     newLinkPin = startPin ? startPin : endPin;
 
@@ -1141,7 +1143,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                             showLabel("x Incompatible Pin Type", ImColor(45, 32, 32, 180));
                             ed::RejectNewItem(ImColor(255, 128, 128), 1.0F);
                         }
-                        else if (nm::IsPinLinked(endPin->id))
+                        else if (nm::IsPinLinked(*reinterpret_cast<InputPin*>(endPin)))
                         {
                             showLabel("End Pin already linked", ImColor(45, 32, 32, 180));
                             ed::RejectNewItem(ImColor(255, 128, 128), 1.0F);
@@ -1186,7 +1188,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                             showLabel("+ Create Link", ImColor(32, 45, 32, 180));
                             if (ed::AcceptNewItem(ImColor(128, 255, 128), 4.0F))
                             {
-                                nm::CreateLink(startPin, endPin);
+                                nm::CreateLink(*reinterpret_cast<OutputPin*>(startPin), *reinterpret_cast<InputPin*>(endPin));
                             }
                         }
                     }
@@ -1195,8 +1197,10 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 ed::PinId pinId = 0;
                 if (ed::QueryNewNode(&pinId))
                 {
-                    newLinkPin = nm::FindPin(pinId);
-                    if (newLinkPin && newLinkPin->kind == Pin::Kind::Input && nm::IsPinLinked(newLinkPin->id))
+                    newLinkPin = nm::FindInputPin(pinId);
+                    if (!newLinkPin) { newLinkPin = nm::FindOutputPin(pinId); }
+
+                    if (newLinkPin && newLinkPin->kind == Pin::Kind::Input && nm::IsPinLinked(*reinterpret_cast<InputPin*>(newLinkPin)))
                     {
                         showLabel("End Pin already linked", ImColor(45, 32, 32, 180));
                         ed::RejectNewItem(ImColor(255, 128, 128), 1.0F);
@@ -1211,7 +1215,8 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                         if (ed::AcceptNewItem())
                         {
                             createNewNode = true;
-                            newNodeLinkPin = nm::FindPin(pinId);
+                            newNodeLinkPin = nm::FindInputPin(pinId);
+                            if (!newNodeLinkPin) { newNodeLinkPin = nm::FindOutputPin(pinId); }
                             newLinkPin = nullptr;
                             ed::Suspend();
                             ImGui::OpenPopup("Create New Node");
@@ -1362,11 +1367,31 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
     if (ImGui::BeginPopup("Pin Context Menu"))
     {
-        auto* pin = nm::FindPin(contextPinId);
-
         ImGui::TextUnformatted("Pin Context Menu");
         ImGui::Separator();
-        if (pin)
+        if (auto* pin = nm::FindInputPin(contextPinId))
+        {
+            ImGui::Text("ID: %lu", size_t(pin->id));
+            ImGui::Text("Node: %s", pin->parentNode ? std::to_string(size_t(pin->parentNode->id)).c_str() : "<none>");
+            ImGui::Text("Type: %s", std::string(pin->type).c_str());
+            ImGui::Separator();
+            if (ImGui::MenuItem("Rename"))
+            {
+                renamePin = pin;
+            }
+            if (!pin->callbacksOld.empty())
+            {
+                ImGui::Separator();
+                ImGui::Text("Callbacks:");
+                ImGui::Indent();
+                for (auto& callback : pin->callbacksOld)
+                {
+                    ImGui::BulletText("%s", std::get<0>(callback)->nameId().c_str());
+                }
+                ImGui::Unindent();
+            }
+        }
+        else if (auto* pin = nm::FindInputPin(contextPinId))
         {
             ImGui::Text("ID: %lu", size_t(pin->id));
             ImGui::Text("Node: %s", pin->parentNode ? std::to_string(size_t(pin->parentNode->id)).c_str() : "<none>");
@@ -1502,21 +1527,26 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
             if (auto* startPin = newNodeLinkPin)
             {
-                auto& pins = startPin->kind == Pin::Kind::Input ? node->outputPins : node->inputPins;
-
-                for (auto& pin : pins)
+                if (startPin->kind == Pin::Kind::Input)
                 {
-                    if (startPin->canCreateLink(pin))
+                    for (auto& pin : node->outputPins)
                     {
-                        auto* endPin = &pin;
-                        if (startPin->kind == Pin::Kind::Input)
+                        if (startPin->canCreateLink(pin))
                         {
-                            std::swap(startPin, endPin);
+                            nm::CreateLink(pin, *reinterpret_cast<InputPin*>(startPin));
+                            break;
                         }
-
-                        nm::CreateLink(startPin, endPin);
-
-                        break;
+                    }
+                }
+                else
+                {
+                    for (auto& pin : node->inputPins)
+                    {
+                        if (startPin->canCreateLink(pin))
+                        {
+                            nm::CreateLink(*reinterpret_cast<OutputPin*>(startPin), pin);
+                            break;
+                        }
                     }
                 }
             }

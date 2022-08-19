@@ -197,22 +197,22 @@ class Node
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
     /// @return True if link is allowed, false if link is rejected
-    virtual bool onCreateLink(Pin* startPin, Pin* endPin);
+    virtual bool onCreateLink(OutputPin& startPin, InputPin& endPin);
 
     /// @brief Called when a link is to be deleted
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
-    virtual void onDeleteLink(Pin* startPin, Pin* endPin);
+    virtual void onDeleteLink(OutputPin& startPin, InputPin& endPin);
 
     /// @brief Called when a new link was established
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
-    virtual void afterCreateLink(Pin* startPin, Pin* endPin);
+    virtual void afterCreateLink(OutputPin& startPin, InputPin& endPin);
 
     /// @brief Called when a link was deleted
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
-    virtual void afterDeleteLink(Pin* startPin, Pin* endPin);
+    virtual void afterDeleteLink(OutputPin& startPin, InputPin& endPin);
 
     /// @brief Function called by the flow executer after finishing to flush out remaining data
     virtual void flush();
@@ -322,9 +322,9 @@ class Node
     /// Name of the Node
     std::string name;
     /// List of input pins
-    std::vector<Pin> inputPins;
+    std::vector<InputPin> inputPins;
     /// List of output pins
-    std::vector<Pin> outputPins;
+    std::vector<OutputPin> outputPins;
 
     /// Enables the callbacks
     bool callbacksEnabled = false;

@@ -228,14 +228,15 @@ void NAV::gui::pasteFlowElements()
 
             if (startPinKind != Pin::Kind::None && endPinKind != Pin::Kind::None)
             {
-                Pin* startPin = startPinKind == Pin::Kind::Input ? &nm::m_Nodes().at(startPinParentNodeIndex)->inputPins.at(startPinIndex)
-                                                                 : &nm::m_Nodes().at(startPinParentNodeIndex)->outputPins.at(startPinIndex);
-                Pin* endPin = endPinKind == Pin::Kind::Input ? &nm::m_Nodes().at(endPinParentNodeIndex)->inputPins.at(endPinIndex)
-                                                             : &nm::m_Nodes().at(endPinParentNodeIndex)->outputPins.at(endPinIndex);
-
-                if (!nm::FindConnectedLinkToInputPin(endPin->id))
+                if (startPinKind == Pin::Kind::Output && endPinKind == Pin::Kind::Input)
                 {
-                    nm::CreateLink(startPin, endPin);
+                    auto& startPin = nm::m_Nodes().at(startPinParentNodeIndex)->outputPins.at(startPinIndex);
+                    auto& endPin = nm::m_Nodes().at(endPinParentNodeIndex)->inputPins.at(endPinIndex);
+
+                    if (!nm::FindConnectedLinkToInputPin(endPin))
+                    {
+                        nm::CreateLink(startPin, endPin);
+                    }
                 }
 
                 newlyLinkedNodes[startPinOldParentNodeId] = nm::m_Nodes().at(startPinParentNodeIndex)->id;

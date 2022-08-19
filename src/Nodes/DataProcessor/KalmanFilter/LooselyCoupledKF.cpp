@@ -89,7 +89,7 @@ void NAV::LooselyCoupledKF::removeKalmanMatricesPins()
     LOG_TRACE("{}: called", nameId());
     while (outputPins.size() > 2)
     {
-        nm::DeleteOutputPin(outputPins.back().id);
+        nm::DeleteOutputPin(outputPins.back());
     }
 }
 

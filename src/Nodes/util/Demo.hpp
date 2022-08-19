@@ -57,12 +57,12 @@ class Demo : public Node
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
     /// @return True if link is allowed, false if link is rejected
-    bool onCreateLink(Pin* startPin, Pin* endPin) override;
+    bool onCreateLink(OutputPin& startPin, InputPin& endPin) override;
 
     /// @brief Called when a link is to be deleted
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
-    void onDeleteLink(Pin* startPin, Pin* endPin) override;
+    void onDeleteLink(OutputPin& startPin, InputPin& endPin) override;
 
     /// @brief Data struct transmitted over an output port
     struct DemoData

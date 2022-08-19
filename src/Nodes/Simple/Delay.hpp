@@ -54,7 +54,7 @@ class Delay : public Node
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
     /// @return True if link is allowed, false if link is rejected
-    bool onCreateLink(Pin* startPin, Pin* endPin) override;
+    bool onCreateLink(OutputPin& startPin, InputPin& endPin) override;
 
   private:
     constexpr static size_t OUTPUT_PORT_INDEX_FLOW = 0; ///< @brief Flow

@@ -183,7 +183,7 @@ void NAV::ImuIntegrator::guiConfig()
         {
             while (inputPins.size() >= 3)
             {
-                if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.back().id))
+                if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.back()))
                 {
                     nm::DeleteLink(connectedLink->id);
                 }
@@ -278,7 +278,7 @@ void NAV::ImuIntegrator::restore(json const& j)
         {
             while (inputPins.size() >= 3)
             {
-                if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.back().id))
+                if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.back()))
                 {
                     nm::DeleteLink(connectedLink->id);
                 }

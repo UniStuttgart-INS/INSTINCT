@@ -54,7 +54,7 @@ std::string NAV::PosVelAttInitializer::category()
 
 void NAV::PosVelAttInitializer::guiConfig()
 {
-    if (_inputPinIdxIMU >= 0 && nm::IsPinLinked(inputPins.at(static_cast<size_t>(_inputPinIdxIMU)).id)
+    if (_inputPinIdxIMU >= 0 && nm::IsPinLinked(inputPins.at(static_cast<size_t>(_inputPinIdxIMU)))
         && !(_overrideRollPitchYaw.at(0) && _overrideRollPitchYaw.at(1) && _overrideRollPitchYaw.at(2)))
     {
         ImGui::SetNextItemWidth(100);
@@ -64,8 +64,8 @@ void NAV::PosVelAttInitializer::guiConfig()
         }
     }
 
-    if (_inputPinIdxIMU >= 0 && nm::IsPinLinked(inputPins.at(static_cast<size_t>(_inputPinIdxIMU)).id)
-        && _inputPinIdxGNSS >= 0 && nm::IsPinLinked(inputPins.at(static_cast<size_t>(_inputPinIdxGNSS)).id)
+    if (_inputPinIdxIMU >= 0 && nm::IsPinLinked(inputPins.at(static_cast<size_t>(_inputPinIdxIMU)))
+        && _inputPinIdxGNSS >= 0 && nm::IsPinLinked(inputPins.at(static_cast<size_t>(_inputPinIdxGNSS)))
         && !(_overrideRollPitchYaw.at(0) && _overrideRollPitchYaw.at(1) && _overrideRollPitchYaw.at(2)))
     {
         ImGui::SetNextItemWidth(100);
@@ -474,7 +474,7 @@ void NAV::PosVelAttInitializer::updateInputPins()
 {
     if (_overrideRollPitchYaw[0] && _overrideRollPitchYaw[1] && _overrideRollPitchYaw[2] && _inputPinIdxIMU >= 0)
     {
-        nm::DeleteInputPin(inputPins.at(static_cast<size_t>(_inputPinIdxIMU)).id);
+        nm::DeleteInputPin(inputPins.at(static_cast<size_t>(_inputPinIdxIMU)));
         _inputPinIdxIMU = -1;
         _inputPinIdxGNSS--;
     }
@@ -490,7 +490,7 @@ void NAV::PosVelAttInitializer::updateInputPins()
 
     if (_overridePosition && _overrideVelocity && _overrideRollPitchYaw[0] && _overrideRollPitchYaw[1] && _overrideRollPitchYaw[2] && _inputPinIdxGNSS >= 0)
     {
-        nm::DeleteInputPin(inputPins.at(static_cast<size_t>(_inputPinIdxGNSS)).id);
+        nm::DeleteInputPin(inputPins.at(static_cast<size_t>(_inputPinIdxGNSS)));
         _inputPinIdxGNSS = -1;
     }
     else if ((!_overridePosition || !_overrideVelocity || !_overrideRollPitchYaw[0] || !_overrideRollPitchYaw[1] || !_overrideRollPitchYaw[2]) && _inputPinIdxGNSS < 0)
@@ -616,7 +616,7 @@ void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<const NodeDa
     }
 
     if ((_attitudeMode == AttitudeMode::BOTH || _attitudeMode == AttitudeMode::IMU
-         || _inputPinIdxGNSS < 0 || !nm::IsPinLinked(inputPins.at(static_cast<size_t>(_inputPinIdxGNSS)).id))
+         || _inputPinIdxGNSS < 0 || !nm::IsPinLinked(inputPins.at(static_cast<size_t>(_inputPinIdxGNSS))))
         && (static_cast<double>(obs->timeSinceStartup.value() - _startTime) * 1e-9 >= _initDuration
             || (_overrideRollPitchYaw.at(0) && _overrideRollPitchYaw.at(1) && _overrideRollPitchYaw.at(2))))
     {
@@ -637,9 +637,9 @@ void NAV::PosVelAttInitializer::receiveGnssObs(const std::shared_ptr<const NodeD
         return;
     }
 
-    if (Link* link = nm::FindLink(linkId))
+    if (auto* link = nm::FindLink(linkId))
     {
-        if (Pin* sourcePin = nm::FindPin(link->startPinId))
+        if (auto* sourcePin = nm::FindOutputPin(link->startPinId))
         {
             if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
             {
@@ -783,7 +783,7 @@ void NAV::PosVelAttInitializer::receivePosVelAttObs(const std::shared_ptr<const 
     receivePosVelObs(obs);
 
     if (_attitudeMode == AttitudeMode::BOTH || _attitudeMode == AttitudeMode::GNSS
-        || _inputPinIdxIMU < 0 || !nm::IsPinLinked(inputPins.at(static_cast<size_t>(_inputPinIdxIMU)).id))
+        || _inputPinIdxIMU < 0 || !nm::IsPinLinked(inputPins.at(static_cast<size_t>(_inputPinIdxIMU))))
     {
         if (_overrideRollPitchYaw.at(0) || _overrideRollPitchYaw.at(1) || _overrideRollPitchYaw.at(2))
         {

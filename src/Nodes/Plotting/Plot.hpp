@@ -68,7 +68,7 @@ class Plot : public Node
     /// @brief Called when a new link was established
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
-    void afterCreateLink(Pin* startPin, Pin* endPin) override;
+    void afterCreateLink(OutputPin& startPin, InputPin& endPin) override;
 
     /// @brief Information needed to plot the data on a certain pin
     struct PinData

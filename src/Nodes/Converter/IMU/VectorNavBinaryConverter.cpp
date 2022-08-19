@@ -65,7 +65,7 @@ void NAV::VectorNavBinaryConverter::guiConfig()
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::GnssObs::type();
         }
 
-        for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.front().id))
+        for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.front()))
         {
             nm::RefreshLink(link->id);
         }
