@@ -337,8 +337,11 @@ class ImuFusion : public Imu
     /// @brief Check the rank of the Kalman matrices every iteration (computationally expensive)
     bool _checkKalmanMatricesRanks = false;
 
-    /// @brief Auto-initialize the Kalman Filter
+    /// @brief Auto-initialize the Kalman Filter - GUI setting
     bool _autoInitKF = true;
+
+    /// @brief flag to check whether KF has been auto-initialized
+    bool _kfInitialized = false;
 
     /// @brief Container that collects all imuObs for averaging for auto-init of the KF
     std::vector<std::shared_ptr<const NAV::ImuObs>> _cumulatedImuObs;

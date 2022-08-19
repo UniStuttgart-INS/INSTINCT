@@ -777,6 +777,7 @@ void NAV::ImuFusion::initializeKalmanFilter()
     LOG_TRACE("{}: called", nameId());
 
     _designMatrixInitialized = false;
+    _kfInitialized = false;
 
     for (size_t pinIndex = 0; pinIndex < _pinData.size(); pinIndex++)
     {
@@ -998,7 +999,7 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
             }
         }
 
-        if (_autoInitKF)
+        if (_autoInitKF && !_kfInitialized)
         {
             if (imuObs->insTime.value() < _avgEndTime)
             {
@@ -1008,7 +1009,6 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
             else
             {
                 initializeKalmanFilterAuto();
-                // TODO: wait with reading/receiving until KF is auto-initialized?
             }
         }
         else
@@ -1392,18 +1392,16 @@ void NAV::ImuFusion::initializeKalmanFilterAuto()
     // Angular Acceleration X/Y/Z
     initVectors.first[1] = Eigen::Vector3d::Zero();
 
-    // TODO: bias-inits, i.e. meanS2 - meanS1, etc., for all components
-    for (size_t pinIndex = 1; pinIndex < _nInputPins; pinIndex++)
+    // Bias-inits
+    for (size_t pinIndex = 0; pinIndex < _nInputPins - 1; pinIndex++)
     {
-        // TODO
+        auto stateIndex = 4 + 2 * pinIndex; // 4 states are Acceleration, Jerk, Angular Rate, Angular Acceleration (see above), plus 2 bias states per sensor
+        initVectors.first[stateIndex + 1] = mean(sensorComponents[pinIndex + 1], 0) - initVectors.first[2];
+        initVectors.first[stateIndex] = mean(sensorComponents[pinIndex + 1], 3) - initVectors.first[0];
     }
 
     // ----------------------------------- Standard Deviation of each sensor ------------------------------------- //TODO
     // stdDev
-    LOG_DEBUG("initVectors.first[0] = {}", initVectors.first[0]);
-    LOG_DEBUG("initVectors.first[1] = {}", initVectors.first[1]);
-    LOG_DEBUG("initVectors.first[2] = {}", initVectors.first[2]);
-    LOG_DEBUG("initVectors.first[3] = {}", initVectors.first[3]);
 
     _kalmanFilter.x.block<3, 1>(0, 0) = initVectors.first[0];
     _kalmanFilter.x.block<3, 1>(3, 0) = initVectors.first[1];
@@ -1425,9 +1423,7 @@ void NAV::ImuFusion::initializeKalmanFilterAuto()
     LOG_DATA("kalmanFilter.Q =\n{}", _kalmanFilter.Q);
 
     // Start Kalman Filter
-    _autoInitKF = false;
-
-    // return initVectors;
+    _kfInitialized = true;
 }
 
 Eigen::Vector3d NAV::ImuFusion::mean(std::vector<std::vector<double>> sensorType, size_t containerPos)
