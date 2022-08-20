@@ -63,7 +63,7 @@ void NAV::UartPacketConverter::guiConfig()
 
         for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.front()))
         {
-            nm::RefreshLink(link->id);
+            nm::RefreshLink(*link);
         }
 
         flow::ApplyChanges();

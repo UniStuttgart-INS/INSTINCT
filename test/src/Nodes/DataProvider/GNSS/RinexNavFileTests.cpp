@@ -31,7 +31,7 @@ TEST_CASE("[RinexNavFile] Read v3.03 Files and check correctness", "[RinexNavFil
     // ###########################################################################################################
 
     nm::RegisterCleanupCallback([]() {
-        auto* gpsPin = nm::FindPin(1);
+        auto* gpsPin = nm::FindOutputPin(1);
         REQUIRE(gpsPin != nullptr);
 
         auto* gnssNavInfo_GPS = static_cast<GnssNavInfo*>(std::get<void*>(gpsPin->dataOld));

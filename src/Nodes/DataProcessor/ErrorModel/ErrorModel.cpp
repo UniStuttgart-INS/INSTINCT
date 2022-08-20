@@ -562,7 +562,7 @@ void NAV::ErrorModel::afterCreateLink(OutputPin& startPin, InputPin& endPin)
         {
             for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW)))
             {
-                nm::RefreshLink(link->id);
+                nm::RefreshLink(*link);
             }
         }
     }

@@ -2618,27 +2618,27 @@ void NAV::VectorNavSensor::guiConfig()
                                     {
                                         _vs.writeBinaryOutput1(_binaryOutputRegister.at(b));
                                         auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(b + 2));
-                                        for (auto& connectedLink : connectedLinks)
+                                        for (auto* connectedLink : connectedLinks)
                                         {
-                                            nm::RefreshLink(connectedLink->id);
+                                            nm::RefreshLink(*connectedLink);
                                         }
                                     }
                                     else if (b == 1)
                                     {
                                         _vs.writeBinaryOutput2(_binaryOutputRegister.at(b));
                                         auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(b + 2));
-                                        for (auto& connectedLink : connectedLinks)
+                                        for (auto* connectedLink : connectedLinks)
                                         {
-                                            nm::RefreshLink(connectedLink->id);
+                                            nm::RefreshLink(*connectedLink);
                                         }
                                     }
                                     else if (b == 2)
                                     {
                                         _vs.writeBinaryOutput3(_binaryOutputRegister.at(b));
                                         auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(b + 2));
-                                        for (auto& connectedLink : connectedLinks)
+                                        for (auto* connectedLink : connectedLinks)
                                         {
-                                            nm::RefreshLink(connectedLink->id);
+                                            nm::RefreshLink(*connectedLink);
                                         }
                                     }
                                 }

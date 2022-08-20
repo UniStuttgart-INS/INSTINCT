@@ -120,7 +120,7 @@ bool NAV::Delay::onCreateLink(OutputPin& startPin, InputPin& endPin)
     // Refresh all links connected to the output pin
     for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW)))
     {
-        nm::RefreshLink(link->id);
+        nm::RefreshLink(*link);
     }
 
     return true;

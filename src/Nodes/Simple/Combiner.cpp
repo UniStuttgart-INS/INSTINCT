@@ -122,7 +122,7 @@ void NAV::Combiner::updateOutputPin(const std::vector<std::string>& oldDataIdent
     {
         for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW)))
         {
-            nm::RefreshLink(link->id);
+            nm::RefreshLink(*link);
         }
     }
 }
@@ -153,7 +153,7 @@ bool NAV::Combiner::onCreateLink(OutputPin& startPin, InputPin& endPin)
     return true;
 }
 
-void NAV::Combiner::afterDeleteLink(OutputPin& startPin, InputPin& endPin)
+void NAV::Combiner::afterDeleteLink([[maybe_unused]] OutputPin& startPin, InputPin& endPin)
 {
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
 
