@@ -926,7 +926,7 @@ void NAV::NodeManager::ApplyWatcherCallbacks()
         {
             if (auto* pin = FindOutputPin(link->startPinId))
             {
-                LOG_DEBUG("Adding watcher callback on node '{}' on pin {}", pin->parentNode->nameId(), pin->parentNode->pinIndexFromId(pin->id));
+                LOG_DEBUG("Adding watcher callback on node '{}' on pin {}", pin->parentNode->nameId(), pin->parentNode->outputPinIndexFromId(pin->id));
                 pin->watcherCallbacksOld.emplace_back(callback, linkId);
             }
         }
@@ -936,7 +936,7 @@ void NAV::NodeManager::ApplyWatcherCallbacks()
     {
         if (auto* pin = FindOutputPin(id))
         {
-            LOG_DEBUG("Adding watcher callback on node '{}' on pin {}", pin->parentNode->nameId(), pin->parentNode->pinIndexFromId(pin->id));
+            LOG_DEBUG("Adding watcher callback on node '{}' on pin {}", pin->parentNode->nameId(), pin->parentNode->outputPinIndexFromId(pin->id));
             pin->watcherCallbacksOld.emplace_back(callback, 0);
         }
     }

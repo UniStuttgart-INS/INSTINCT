@@ -170,7 +170,6 @@ void NAV::Combiner::afterDeleteLink([[maybe_unused]] OutputPin& startPin, InputP
         {
             if (nm::IsPinLinked(pin))
             {
-                size_t pinIdx = inputPinIndexFromId(pin.id);
                 size_t otherPinIndex = pinIdx == INPUT_PORT_INDEX_FLOW_FIRST ? INPUT_PORT_INDEX_FLOW_SECOND : INPUT_PORT_INDEX_FLOW_FIRST;
 
                 Pin* otherNodePin = nm::FindConnectedPinToInputPin(pin);
