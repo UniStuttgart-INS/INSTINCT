@@ -1330,7 +1330,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
 {
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
 
-    size_t pinIndex = pinIndexFromId(endPin.id);
+    size_t pinIndex = inputPinIndexFromId(endPin.id);
 
     for (auto& plotData : _pinData.at(pinIndex).plotData) // Mark all plot data for deletion
     {
@@ -2033,7 +2033,7 @@ void NAV::Plot::plotBoolean(ax::NodeEditor::LinkId linkId)
 
     if (Link* link = nm::FindLink(linkId))
     {
-        size_t pinIndex = pinIndexFromId(link->endPinId);
+        size_t pinIndex = inputPinIndexFromId(link->endPinId);
 
         auto currentTime = util::time::GetCurrentInsTime();
         auto* value = getInputValue<bool>(pinIndex);
@@ -2060,7 +2060,7 @@ void NAV::Plot::plotInteger(ax::NodeEditor::LinkId linkId)
 
     if (Link* link = nm::FindLink(linkId))
     {
-        size_t pinIndex = pinIndexFromId(link->endPinId);
+        size_t pinIndex = inputPinIndexFromId(link->endPinId);
 
         auto currentTime = util::time::GetCurrentInsTime();
         auto* value = getInputValue<int>(pinIndex);
@@ -2087,7 +2087,7 @@ void NAV::Plot::plotFloat(ax::NodeEditor::LinkId linkId)
 
     if (Link* link = nm::FindLink(linkId))
     {
-        size_t pinIndex = pinIndexFromId(link->endPinId);
+        size_t pinIndex = inputPinIndexFromId(link->endPinId);
 
         auto currentTime = util::time::GetCurrentInsTime();
         auto* value = getInputValue<double>(pinIndex);
@@ -2116,7 +2116,7 @@ void NAV::Plot::plotMatrix(ax::NodeEditor::LinkId linkId)
     {
         if (auto* sourcePin = nm::FindOutputPin(link->startPinId))
         {
-            size_t pinIndex = pinIndexFromId(link->endPinId);
+            size_t pinIndex = inputPinIndexFromId(link->endPinId);
 
             auto currentTime = util::time::GetCurrentInsTime();
             if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
@@ -2155,7 +2155,7 @@ void NAV::Plot::plotData(const std::shared_ptr<const NodeData>& nodeData, ax::No
     {
         if (auto* sourcePin = nm::FindOutputPin(link->startPinId))
         {
-            size_t pinIndex = pinIndexFromId(link->endPinId);
+            size_t pinIndex = inputPinIndexFromId(link->endPinId);
 
             if (sourcePin->dataIdentifier.front() == Pos::type())
             {

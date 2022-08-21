@@ -54,6 +54,8 @@ class MatrixLogger : public Node, public FileWriter, public CommonLog
     void flush() override;
 
   private:
+    constexpr static size_t INPUT_PORT_INDEX_MATRIX = 0; ///< @brief Matrix
+
     /// @brief Initialize the node
     bool initialize() override;
 

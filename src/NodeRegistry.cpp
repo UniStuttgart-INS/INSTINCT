@@ -39,11 +39,11 @@ void registerNodeType()
     info.type = T::typeStatic();
 
     T obj;
-    for (const Pin& pin : obj.inputPins)
+    for (const InputPin& pin : obj.inputPins)
     {
         info.pinInfoList.emplace_back(pin.kind, pin.type, pin.dataIdentifier);
     }
-    for (const Pin& pin : obj.outputPins)
+    for (const OutputPin& pin : obj.outputPins)
     {
         info.pinInfoList.emplace_back(pin.kind, pin.type, pin.dataIdentifier);
     }

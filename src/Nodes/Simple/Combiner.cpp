@@ -141,7 +141,7 @@ bool NAV::Combiner::onCreateLink(OutputPin& startPin, InputPin& endPin)
         return true;
     }
 
-    size_t connectedPinIndex = pinIndexFromId(endPin.id);
+    size_t connectedPinIndex = inputPinIndexFromId(endPin.id);
     size_t otherPinIndex = connectedPinIndex == INPUT_PORT_INDEX_FLOW_FIRST ? INPUT_PORT_INDEX_FLOW_SECOND : INPUT_PORT_INDEX_FLOW_FIRST;
 
     auto outputPinIdentifier = outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier;
@@ -163,20 +163,21 @@ void NAV::Combiner::afterDeleteLink([[maybe_unused]] OutputPin& startPin, InputP
     }
 
     // Link on Input Pin
-    for (auto& pin : inputPins)
+    for (size_t pinIdx = 0; pinIdx < inputPins.size(); pinIdx++)
     {
+        auto& pin = inputPins[pinIdx];
         if (endPin.id != pin.id) // The other pin (which is not deleted)
         {
             if (nm::IsPinLinked(pin))
             {
-                size_t connectedPinIndex = pinIndexFromId(pin.id);
-                size_t otherPinIndex = connectedPinIndex == INPUT_PORT_INDEX_FLOW_FIRST ? INPUT_PORT_INDEX_FLOW_SECOND : INPUT_PORT_INDEX_FLOW_FIRST;
+                size_t pinIdx = inputPinIndexFromId(pin.id);
+                size_t otherPinIndex = pinIdx == INPUT_PORT_INDEX_FLOW_FIRST ? INPUT_PORT_INDEX_FLOW_SECOND : INPUT_PORT_INDEX_FLOW_FIRST;
 
                 Pin* otherNodePin = nm::FindConnectedPinToInputPin(pin);
 
                 auto outputPinIdentifier = outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier;
 
-                setPinIdentifiers(connectedPinIndex, otherPinIndex, otherNodePin->dataIdentifier);
+                setPinIdentifiers(pinIdx, otherPinIndex, otherNodePin->dataIdentifier);
 
                 updateOutputPin(outputPinIdentifier);
             }

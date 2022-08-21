@@ -131,7 +131,7 @@ void NAV::FlowExecutor::execute()
 
     auto start = std::chrono::steady_clock::now();
 
-    std::multimap<NAV::InsTime, Pin*> events;
+    std::multimap<NAV::InsTime, OutputPin*> events;
 
     for (Node* node : nm::m_Nodes()) // Search for node pins with data callbacks
     {
@@ -157,7 +157,7 @@ void NAV::FlowExecutor::execute()
                 auto* callback = std::get_if<std::shared_ptr<const NAV::NodeData> (Node::*)(bool)>(&outputPin.dataOld);
                 if (callback != nullptr && *callback != nullptr)
                 {
-                    LOG_DEBUG("Searching node {} on output pin {} (id {}) for data", node->nameId(), node->pinIndexFromId(outputPin.id), size_t(outputPin.id));
+                    LOG_DEBUG("Searching node {} on output pin {} (id {}) for data", node->nameId(), node->outputPinIndexFromId(outputPin.id), size_t(outputPin.id));
                     bool dataEventCreated = false;
                     while (true)
                     {
@@ -194,10 +194,10 @@ void NAV::FlowExecutor::execute()
     }
 
     LOG_INFO("Processing Data from files");
-    std::multimap<NAV::InsTime, Pin*>::iterator it;
+    std::multimap<NAV::InsTime, OutputPin*>::iterator it;
     while (it = events.begin(), it != events.end() && _execute.load(std::memory_order_acquire))
     {
-        Pin* pin = it->second;
+        OutputPin* pin = it->second;
         Node* node = pin->parentNode;
         auto* callback = std::get_if<std::shared_ptr<const NAV::NodeData> (Node::*)(bool)>(&pin->dataOld);
         if (callback != nullptr && *callback != nullptr)

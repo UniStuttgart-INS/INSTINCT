@@ -8,37 +8,44 @@
 
 #include "internal/gui/widgets/PinIcon.hpp"
 
-bool NAV::Pin::canCreateLink(const Pin& b) const
+bool NAV::InputPin::canCreateLink(const OutputPin& other) const
+{
+    return Pin::canCreateLink(other, *this);
+}
+
+bool NAV::OutputPin::canCreateLink(const InputPin& other) const
+{
+    return Pin::canCreateLink(*this, other);
+}
+
+bool NAV::Pin::canCreateLink(const OutputPin& startPin, const InputPin& endPin)
 {
     bool dataTypesMatch = true;
 
-    const Pin* startPin = (kind == Kind::Output ? this : &b);
-    const Pin* endPin = (kind == Kind::Output ? &b : this);
-
-    if (startPin->type == Pin::Type::Flow
-        && !NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPin->dataIdentifier, endPin->dataIdentifier))
+    if (startPin.type == Pin::Type::Flow
+        && !NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPin.dataIdentifier, endPin.dataIdentifier))
     {
         dataTypesMatch = false;
     }
 
-    if (startPin->type == Pin::Type::Delegate
-        && (parentNode == nullptr
-            || std::find(endPin->dataIdentifier.begin(), endPin->dataIdentifier.end(), startPin->parentNode->type()) == endPin->dataIdentifier.end()))
+    if (startPin.type == Pin::Type::Delegate
+        && (startPin.parentNode == nullptr
+            || std::find(endPin.dataIdentifier.begin(), endPin.dataIdentifier.end(), startPin.parentNode->type()) == endPin.dataIdentifier.end()))
     {
         dataTypesMatch = false;
     }
 
-    if ((startPin->type == Pin::Type::Object || startPin->type == Pin::Type::Matrix) // NOLINT(misc-redundant-expression) // FIXME: error: equivalent expression on both sides of logical operator
-        && !dataIdentifierHaveCommon(dataIdentifier, b.dataIdentifier))
+    if ((startPin.type == Pin::Type::Object || startPin.type == Pin::Type::Matrix) // NOLINT(misc-redundant-expression) // FIXME: error: equivalent expression on both sides of logical operator
+        && !dataIdentifierHaveCommon(startPin.dataIdentifier, endPin.dataIdentifier))
     {
         dataTypesMatch = false;
     }
 
-    return id != b.id                    // Different Pins
-           && kind != b.kind             // Input <=> Output
-           && type == b.type             // Same Type (Flow, Object, ...)
-           && parentNode != b.parentNode // Different Nodes
-           && dataTypesMatch;            // Data identifier match
+    return startPin.id != endPin.id                    // Different Pins
+           && startPin.kind != endPin.kind             // Input <=> Output
+           && startPin.type == endPin.type             // Same Type (Flow, Object, ...)
+           && startPin.parentNode != endPin.parentNode // Different Nodes
+           && dataTypesMatch;                          // Data identifier match
 }
 
 bool NAV::Pin::dataIdentifierHaveCommon(const std::vector<std::string>& a, const std::vector<std::string>& b)

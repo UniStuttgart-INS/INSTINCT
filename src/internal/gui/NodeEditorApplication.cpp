@@ -869,7 +869,8 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                         }
 
                         auto alpha = ImGui::GetStyle().Alpha;
-                        if (newLinkPin && !newLinkPin->canCreateLink(output) && &output != newLinkPin)
+                        if (newLinkPin && newLinkPin->kind == Pin::Kind::Input && &output != newLinkPin
+                            && !reinterpret_cast<InputPin*>(newLinkPin)->canCreateLink(output))
                         {
                             alpha = alpha * (48.0F / 255.0F);
                         }
@@ -908,7 +909,8 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             for (const auto& input : node->inputPins) // Input Pins
             {
                 auto alpha = ImGui::GetStyle().Alpha;
-                if (newLinkPin && !newLinkPin->canCreateLink(input) && &input != newLinkPin)
+                if (newLinkPin && newLinkPin->kind == Pin::Kind::Output && &input != newLinkPin
+                    && !reinterpret_cast<OutputPin*>(newLinkPin)->canCreateLink(input))
                 {
                     alpha = alpha * (48.0F / 255.0F);
                 }
@@ -958,7 +960,8 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 }
 
                 auto alpha = ImGui::GetStyle().Alpha;
-                if (newLinkPin && !newLinkPin->canCreateLink(output) && &output != newLinkPin)
+                if (newLinkPin && newLinkPin->kind == Pin::Kind::Input && &output != newLinkPin
+                    && !reinterpret_cast<InputPin*>(newLinkPin)->canCreateLink(output))
                 {
                     alpha = alpha * (48.0F / 255.0F);
                 }
@@ -1531,18 +1534,18 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 {
                     for (auto& pin : node->outputPins)
                     {
-                        if (startPin->canCreateLink(pin))
+                        if (reinterpret_cast<InputPin*>(startPin)->canCreateLink(pin))
                         {
                             nm::CreateLink(pin, *reinterpret_cast<InputPin*>(startPin));
                             break;
                         }
                     }
                 }
-                else
+                else // if (startPin->kind == Pin::Kind::Output)
                 {
                     for (auto& pin : node->inputPins)
                     {
-                        if (startPin->canCreateLink(pin))
+                        if (reinterpret_cast<OutputPin*>(startPin)->canCreateLink(pin))
                         {
                             nm::CreateLink(*reinterpret_cast<OutputPin*>(startPin), pin);
                             break;

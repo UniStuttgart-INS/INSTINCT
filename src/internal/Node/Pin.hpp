@@ -21,6 +21,8 @@ namespace NAV
 {
 class Node;
 class NodeData;
+class InputPin;
+class OutputPin;
 
 /// @brief Tuple of types allowed as a node callback
 using NodeCallbackInfo = std::tuple<Node*, void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>;
@@ -302,10 +304,11 @@ class Pin
     Pin(ax::NodeEditor::PinId id, const char* name, Type type, Kind kind, Node* parentNode)
         : id(id), name(name), type(type), kind(kind), parentNode(parentNode) {}
 
-    /// @brief Checks if this pin can connect to the provided pin
-    /// @param[in] b The pin to create a link to
-    /// @return True if it can create a link
-    [[nodiscard]] bool canCreateLink(const Pin& b) const;
+    /// @brief Checks if pins can connect
+    /// @param[in] startPin The start pin to create a link to
+    /// @param[in] endPin The end pin to create a link to
+    /// @return True if the pins can create a link
+    [[nodiscard]] static bool canCreateLink(const OutputPin& startPin, const InputPin& endPin);
 
     /// @brief Checks if the first list of data identifiers has a common entry with the second
     /// @param[in] a First list of data identifiers
@@ -366,6 +369,11 @@ class OutputPin : public Pin
     OutputPin(ax::NodeEditor::PinId id, const char* name, Type type, Node* parentNode)
         : Pin(id, name, type, Pin::Kind::Output, parentNode) {}
 
+    /// @brief Checks if this pin can connect to the provided pin
+    /// @param[in] other The pin to create a link to
+    /// @return True if it can create a link
+    [[nodiscard]] bool canCreateLink(const InputPin& other) const;
+
     /// FileReader/Simulator pollData function type
     using PollDataFunc = std::shared_ptr<const NAV::NodeData> (Node::*)(bool);
 
@@ -393,6 +401,11 @@ class InputPin : public Pin
     /// @param[in] parentNode Reference to the parent node
     InputPin(ax::NodeEditor::PinId id, const char* name, Type type, Node* parentNode)
         : Pin(id, name, type, Pin::Kind::Input, parentNode) {}
+
+    /// @brief Checks if this pin can connect to the provided pin
+    /// @param[in] other The pin to create a link to
+    /// @return True if it can create a link
+    [[nodiscard]] bool canCreateLink(const OutputPin& other) const;
 
     /// @brief Possible Types represented by an input pin
     using PinData = std::variant<const void*,         // Object/Matrix/Delegate

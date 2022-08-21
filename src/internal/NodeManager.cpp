@@ -139,7 +139,7 @@ bool NAV::NodeManager::DeleteNode(ax::NodeEditor::NodeId nodeId)
     if (it != m_nodes.end())
     {
         LOG_DEBUG("Deleting node: {}", (*it)->nameId());
-        for (Pin& inputPin : (*it)->inputPins)
+        for (auto& inputPin : (*it)->inputPins)
         {
             for (size_t i = 0; i < m_links.size();)
             {
@@ -151,7 +151,7 @@ bool NAV::NodeManager::DeleteNode(ax::NodeEditor::NodeId nodeId)
                 i++;
             }
         }
-        for (Pin& outputPin : (*it)->outputPins)
+        for (auto& outputPin : (*it)->outputPins)
         {
             for (size_t i = 0; i < m_links.size();)
             {
@@ -596,7 +596,7 @@ void NAV::NodeManager::DeleteLinksOnPin(const NAV::InputPin& pin)
     }
 }
 
-NAV::Pin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, NAV::Pin::PinDataOld data, int idx)
+NAV::InputPin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, NAV::Pin::PinDataOld data, int idx)
 {
     LOG_TRACE("called for pin ({}) of type ({}) for node [{}]", name, std::string(pinType), node->nameId());
     if (idx < 0)
@@ -616,7 +616,7 @@ NAV::Pin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NA
     return &node->inputPins.back();
 }
 
-NAV::Pin* NAV::NodeManager::CreateOutputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, NAV::Pin::PinDataOld data, int idx)
+NAV::OutputPin* NAV::NodeManager::CreateOutputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, NAV::Pin::PinDataOld data, int idx)
 {
     LOG_TRACE("called for pin ({}) of type ({}) for node [{}]", name, std::string(pinType), node->nameId());
     if (idx < 0)
@@ -642,7 +642,7 @@ bool NAV::NodeManager::DeleteOutputPin(const NAV::OutputPin& pin)
 
     DeleteLinksOnPin(pin);
 
-    size_t pinIndex = pin.parentNode->pinIndexFromId(pin.id);
+    size_t pinIndex = pin.parentNode->outputPinIndexFromId(pin.id);
     pin.parentNode->outputPins.erase(pin.parentNode->outputPins.begin() + static_cast<int64_t>(pinIndex));
 
     return true;
@@ -654,7 +654,7 @@ bool NAV::NodeManager::DeleteInputPin(const NAV::InputPin& pin)
 
     DeleteLinksOnPin(pin);
 
-    size_t pinIndex = pin.parentNode->pinIndexFromId(pin.id);
+    size_t pinIndex = pin.parentNode->inputPinIndexFromId(pin.id);
     pin.parentNode->inputPins.erase(pin.parentNode->inputPins.begin() + static_cast<int64_t>(pinIndex));
 
     return true;
@@ -924,20 +924,17 @@ void NAV::NodeManager::ApplyWatcherCallbacks()
     {
         if (Link* link = FindLink(linkId))
         {
-            if (Pin* pin = FindOutputPin(link->startPinId))
+            if (auto* pin = FindOutputPin(link->startPinId))
             {
-                if (pin->kind == Pin::Kind::Output)
-                {
-                    LOG_DEBUG("Adding watcher callback on node '{}' on pin {}", pin->parentNode->nameId(), pin->parentNode->pinIndexFromId(pin->id));
-                    pin->watcherCallbacksOld.emplace_back(callback, linkId);
-                }
+                LOG_DEBUG("Adding watcher callback on node '{}' on pin {}", pin->parentNode->nameId(), pin->parentNode->pinIndexFromId(pin->id));
+                pin->watcherCallbacksOld.emplace_back(callback, linkId);
             }
         }
     }
 
     for (auto& [id, callback] : watcherPinList)
     {
-        if (Pin* pin = FindOutputPin(id))
+        if (auto* pin = FindOutputPin(id))
         {
             LOG_DEBUG("Adding watcher callback on node '{}' on pin {}", pin->parentNode->nameId(), pin->parentNode->pinIndexFromId(pin->id));
             pin->watcherCallbacksOld.emplace_back(callback, 0);

@@ -263,7 +263,12 @@ class Node
     /// @brief Returns the index of the pin
     /// @param[in] pinId Id of the Pin
     /// @return The index of the pin
-    [[nodiscard]] size_t pinIndexFromId(ax::NodeEditor::PinId pinId) const;
+    [[nodiscard]] size_t inputPinIndexFromId(ax::NodeEditor::PinId pinId) const;
+
+    /// @brief Returns the index of the pin
+    /// @param[in] pinId Id of the Pin
+    /// @return The index of the pin
+    [[nodiscard]] size_t outputPinIndexFromId(ax::NodeEditor::PinId pinId) const;
 
     /// @brief Node name and id
     [[nodiscard]] std::string nameId() const;

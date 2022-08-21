@@ -118,13 +118,11 @@ void NAV::MatrixLogger::writeMatrix(ax::NodeEditor::LinkId linkId)
     {
         if (auto* sourcePin = nm::FindOutputPin(link->startPinId))
         {
-            size_t pinIndex = pinIndexFromId(link->endPinId);
-
             InsTime currentTime = util::time::GetCurrentInsTime();
             // Matrix
             if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
             {
-                auto* value = getInputValue<Eigen::MatrixXd>(pinIndex);
+                auto* value = getInputValue<Eigen::MatrixXd>(INPUT_PORT_INDEX_MATRIX);
 
                 if (value != nullptr && !currentTime.empty())
                 {
