@@ -407,25 +407,14 @@ class InputPin : public Pin
     /// @return True if it can create a link
     [[nodiscard]] bool canCreateLink(const OutputPin& other) const;
 
-    /// @brief Possible Types represented by an input pin
-    using PinData = std::variant<const void*,         // Object/Matrix/Delegate
-                                 const bool*,         // Bool
-                                 const int*,          // Int
-                                 const float*,        // Float
-                                 const double*,       // Float
-                                 const std::string*>; // String
-
-    /// Pointer to data (owned by the connected node) which is transferred over this pin
-    PinData data = static_cast<void*>(nullptr);
-
     /// Flow data callback function type to call when firable
     using FlowFirableCallbackFunc = void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId);
     /// Notify function type to call when the connected value changed
-    using DataChangeNotifyFunc = void (Node::*)(ax::NodeEditor::LinkId);
+    using DataChangedNotifyFunc = void (Node::*)(ax::NodeEditor::LinkId);
 
     /// Callback function types
-    using Callback = std::variant<FlowFirableCallbackFunc, // Flow (Callback function type to call when firable)
-                                  DataChangeNotifyFunc>;   // Other: Notify function type to call when the connected value changed
+    using Callback = std::variant<FlowFirableCallbackFunc, // Flow:  Callback function type to call when firable
+                                  DataChangedNotifyFunc>;  // Other: Notify function type to call when the connected value changed
 
     /// Callback to call when the node is firable or when it should be notified of data change
     Callback callback;
@@ -434,33 +423,34 @@ class InputPin : public Pin
     struct Connection
     {
         /// @brief Returns a pointer to the pin which is connected to this one
-        [[nodiscard]] Pin* getPin() const;
+        [[nodiscard]] const OutputPin* getPin() const;
 
         /// @brief Get a pointer to the value connected on the pin
         /// @tparam T Type of the connected object
         /// @return Pointer to the object
         template<typename T>
-        [[nodiscard]] T* getValue() const
+        [[nodiscard]] const T* getValue() const
         {
             if (const auto* connectedPin = getPin())
             {
                 // clang-format off
-                if constexpr (std::is_same_v<T, bool>
-                           || std::is_same_v<T, int>
-                           || std::is_same_v<T, float>
-                           || std::is_same_v<T, double>
-                           || std::is_same_v<T, std::string>)
+                if constexpr (std::is_same_v<T, const bool>
+                           || std::is_same_v<T, const int>
+                           || std::is_same_v<T, const float>
+                           || std::is_same_v<T, const double>
+                           || std::is_same_v<T, const std::string>)
                 { // clang-format on
-                    if (const auto* pval = std::get_if<T*>(&(connectedPin->dataOld)))
+                    if (const auto* pVal = std::get_if<T*>(&(connectedPin->data)))
                     {
-                        return *pval;
+                        return *pVal;
                     }
                 }
-                else // constexpr
+                else // if constexpr (std::is_same_v<T, void>
+                     //            || std::is_same_v<T, PollDataFunc>)
                 {
-                    if (const auto* pval = std::get_if<void*>(&(connectedPin->dataOld)))
+                    if (const auto* pVal = std::get_if<const void*>(&(connectedPin->data)))
                     {
-                        return static_cast<T*>(*pval);
+                        return static_cast<T*>(*pVal);
                     }
                 }
             }
