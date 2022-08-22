@@ -899,13 +899,15 @@ bool NAV::ImuSimulator::initializeSplines()
         double yaw = _n_linearTrajectoryStartVelocity.head<2>().norm() > 1e-8 ? calcYawFromVelocity(_n_linearTrajectoryStartVelocity) : 0;
         Eigen::Vector3d e_startPosition = trafo::lla2ecef_WGS84(_lla_startPosition);
 
-        splineTime = { 0.0 };
-        std::vector<double> splineX = { e_startPosition[0] };
-        std::vector<double> splineY = { e_startPosition[1] };
-        std::vector<double> splineZ = { e_startPosition[2] };
-        std::vector<double> splineRoll = { roll };
-        std::vector<double> splinePitch = { pitch };
-        std::vector<double> splineYaw = { yaw };
+        size_t nOverhead = static_cast<size_t>(std::round(1.0 / _splines.sampleInterval)) + 1;
+
+        splineTime = std::vector<double>(nOverhead, 0.0);
+        std::vector<double> splineX(nOverhead, e_startPosition[0]);
+        std::vector<double> splineY(nOverhead, e_startPosition[1]);
+        std::vector<double> splineZ(nOverhead, e_startPosition[2]);
+        std::vector<double> splineRoll(nOverhead, roll);
+        std::vector<double> splinePitch(nOverhead, pitch);
+        std::vector<double> splineYaw(nOverhead, yaw);
 
         // @brief Calculates the derivative of the curvilinear position and velocity
         // @param[in] y [𝜙, λ, h, v_N, v_E, v_D]^T Latitude, longitude, altitude, velocity NED in [rad, rad, m, m/s, m/s, m/s]
@@ -924,7 +926,7 @@ bool NAV::ImuSimulator::initializeSplines()
         };
 
         Eigen::Vector3d lla_lastPosition = _lla_startPosition;
-        for (size_t i = 1; i <= static_cast<size_t>(std::round(1.0 / _splines.sampleInterval)); i++) // Calculate one second backwards
+        for (size_t i = 2; i <= nOverhead; i++) // Calculate one second backwards
         {
             Eigen::Vector<double, 6> y; // [𝜙, λ, h, v_N, v_E, v_D]^T
             y << lla_lastPosition,
@@ -935,13 +937,10 @@ bool NAV::ImuSimulator::initializeSplines()
 
             Eigen::Vector3d e_position = trafo::lla2ecef_WGS84(lla_lastPosition);
 
-            splineTime.insert(splineTime.begin(), -_splines.sampleInterval * static_cast<double>(i));
-            splineX.insert(splineX.begin(), e_position(0));
-            splineY.insert(splineY.begin(), e_position(1));
-            splineZ.insert(splineZ.begin(), e_position(2));
-            splineRoll.insert(splineRoll.begin(), roll);
-            splinePitch.insert(splinePitch.begin(), pitch);
-            splineYaw.insert(splineYaw.begin(), yaw);
+            splineTime.at(nOverhead - i) = -_splines.sampleInterval * static_cast<double>(i - 1);
+            splineX.at(nOverhead - i) = e_position(0);
+            splineY.at(nOverhead - i) = e_position(1);
+            splineZ.at(nOverhead - i) = e_position(2);
         }
 
         lla_lastPosition = _lla_startPosition;
