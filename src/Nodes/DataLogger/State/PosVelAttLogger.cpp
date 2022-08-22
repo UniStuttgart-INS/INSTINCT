@@ -116,7 +116,7 @@ void NAV::PosVelAttLogger::writeObservation(const std::shared_ptr<const NodeData
         {
             constexpr int gpsCyclePrecision = 3;
             constexpr int gpsTimePrecision = 12;
-            constexpr int valuePrecision = 9;
+            constexpr int valuePrecision = 15;
 
             {
                 auto obs = std::static_pointer_cast<const Pos>(nodeData);

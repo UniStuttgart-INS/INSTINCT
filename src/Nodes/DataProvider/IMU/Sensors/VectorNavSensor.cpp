@@ -2907,7 +2907,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     imuRot.at(2) = 180;
                 }
-                auto dcmf = trafo::b_Quat_p(deg2rad(imuRot.at(0)), deg2rad(imuRot.at(1)), deg2rad(imuRot.at(2))).toRotationMatrix().cast<float>();
+                Eigen::Matrix3f dcmf = trafo::b_Quat_p(deg2rad(imuRot.at(0)), deg2rad(imuRot.at(1)), deg2rad(imuRot.at(2))).toRotationMatrix().cast<float>();
                 _referenceFrameRotationMatrix = vn::math::mat3f(dcmf(0, 0), dcmf(0, 1), dcmf(0, 2),
                                                                 dcmf(1, 0), dcmf(1, 1), dcmf(1, 2),
                                                                 dcmf(2, 0), dcmf(2, 1), dcmf(2, 2));

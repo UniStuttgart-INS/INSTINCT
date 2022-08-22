@@ -522,6 +522,21 @@ void NAV::ImuSimulator::guiConfig()
 
     if (ImGui::TreeNode("Simulation models"))
     {
+        if (_trajectoryType != TrajectoryType::Fixed && _trajectoryType != TrajectoryType::Csv)
+        {
+            ImGui::TextUnformatted("Spline");
+            {
+                ImGui::Indent();
+                ImGui::SetNextItemWidth(230);
+                if (ImGui::InputDoubleL(fmt::format("Sample Interval##{}", size_t(id)).c_str(), &_splines.sampleInterval, 0.0, std::numeric_limits<double>::max(), 0.0, 0.0, "%.3e s"))
+                {
+                    LOG_DEBUG("{}: spline sample interval changed to {}", nameId(), _splines.sampleInterval);
+                    flow::ApplyChanges();
+                    doDeinitialize();
+                }
+                ImGui::Unindent();
+            }
+        }
         ImGui::TextUnformatted("Measured acceleration");
         {
             ImGui::Indent();
@@ -596,6 +611,7 @@ void NAV::ImuSimulator::guiConfig()
     j["linearTrajectoryDistanceForStop"] = _linearTrajectoryDistanceForStop;
     j["circularTrajectoryCircleCountForStop"] = _circularTrajectoryCircleCountForStop;
     // ###########################################################################################################
+    j["splineSampleInterval"] = _splines.sampleInterval;
     j["gravitationModel"] = _gravitationModel;
     j["coriolisAccelerationEnabled"] = _coriolisAccelerationEnabled;
     j["centrifgalAccelerationEnabled"] = _centrifgalAccelerationEnabled;
@@ -704,6 +720,10 @@ void NAV::ImuSimulator::restore(json const& j)
         j.at("circularTrajectoryCircleCountForStop").get_to(_circularTrajectoryCircleCountForStop);
     }
     // ###########################################################################################################
+    if (j.contains("splineSampleInterval"))
+    {
+        j.at("splineSampleInterval").get_to(_splines.sampleInterval);
+    }
     if (j.contains("gravitationModel"))
     {
         j.at("gravitationModel").get_to(_gravitationModel);
@@ -832,7 +852,6 @@ Eigen::Quaterniond NAV::ImuSimulator::n_getAttitudeQuaternionFromCsvLine_b(const
 bool NAV::ImuSimulator::initializeSplines()
 {
     std::vector<double> splineTime;
-    constexpr double splineSampleInterval = 0.1;
 
     auto unwrapAngle = [](double angle, double prevAngle, double rangeMax) {
         double x = angle - prevAngle;
@@ -880,13 +899,15 @@ bool NAV::ImuSimulator::initializeSplines()
         double yaw = _n_linearTrajectoryStartVelocity.head<2>().norm() > 1e-8 ? calcYawFromVelocity(_n_linearTrajectoryStartVelocity) : 0;
         Eigen::Vector3d e_startPosition = trafo::lla2ecef_WGS84(_lla_startPosition);
 
-        splineTime = { 0.0 };
-        std::vector<double> splineX = { e_startPosition[0] };
-        std::vector<double> splineY = { e_startPosition[1] };
-        std::vector<double> splineZ = { e_startPosition[2] };
-        std::vector<double> splineRoll = { roll };
-        std::vector<double> splinePitch = { pitch };
-        std::vector<double> splineYaw = { yaw };
+        size_t nOverhead = static_cast<size_t>(std::round(1.0 / _splines.sampleInterval)) + 1;
+
+        splineTime = std::vector<double>(nOverhead, 0.0);
+        std::vector<double> splineX(nOverhead, e_startPosition[0]);
+        std::vector<double> splineY(nOverhead, e_startPosition[1]);
+        std::vector<double> splineZ(nOverhead, e_startPosition[2]);
+        std::vector<double> splineRoll(nOverhead, roll);
+        std::vector<double> splinePitch(nOverhead, pitch);
+        std::vector<double> splineYaw(nOverhead, yaw);
 
         // @brief Calculates the derivative of the curvilinear position and velocity
         // @param[in] y [𝜙, λ, h, v_N, v_E, v_D]^T Latitude, longitude, altitude, velocity NED in [rad, rad, m, m/s, m/s, m/s]
@@ -905,24 +926,21 @@ bool NAV::ImuSimulator::initializeSplines()
         };
 
         Eigen::Vector3d lla_lastPosition = _lla_startPosition;
-        for (size_t i = 1; i <= static_cast<size_t>(std::round(1.0 / splineSampleInterval)); i++) // Calculate one second backwards
+        for (size_t i = 2; i <= nOverhead; i++) // Calculate one second backwards
         {
             Eigen::Vector<double, 6> y; // [𝜙, λ, h, v_N, v_E, v_D]^T
             y << lla_lastPosition,
                 _n_linearTrajectoryStartVelocity;
 
-            y = RungeKutta1(f, -splineSampleInterval, y, Eigen::Vector3d::Zero());
+            y = RungeKutta1(f, -_splines.sampleInterval, y, Eigen::Vector3d::Zero());
             lla_lastPosition = y.head<3>();
 
             Eigen::Vector3d e_position = trafo::lla2ecef_WGS84(lla_lastPosition);
 
-            splineTime.insert(splineTime.begin(), -splineSampleInterval * static_cast<double>(i));
-            splineX.insert(splineX.begin(), e_position(0));
-            splineY.insert(splineY.begin(), e_position(1));
-            splineZ.insert(splineZ.begin(), e_position(2));
-            splineRoll.insert(splineRoll.begin(), roll);
-            splinePitch.insert(splinePitch.begin(), pitch);
-            splineYaw.insert(splineYaw.begin(), yaw);
+            splineTime.at(nOverhead - i) = -_splines.sampleInterval * static_cast<double>(i - 1);
+            splineX.at(nOverhead - i) = e_position(0);
+            splineY.at(nOverhead - i) = e_position(1);
+            splineZ.at(nOverhead - i) = e_position(2);
         }
 
         lla_lastPosition = _lla_startPosition;
@@ -932,12 +950,12 @@ bool NAV::ImuSimulator::initializeSplines()
             y << lla_lastPosition,
                 _n_linearTrajectoryStartVelocity;
 
-            y = RungeKutta1(f, splineSampleInterval, y, Eigen::Vector3d::Zero());
+            y = RungeKutta1(f, _splines.sampleInterval, y, Eigen::Vector3d::Zero());
             lla_lastPosition = y.head<3>();
 
             Eigen::Vector3d e_position = trafo::lla2ecef_WGS84(lla_lastPosition);
 
-            double simTime = splineSampleInterval * static_cast<double>(i);
+            double simTime = _splines.sampleInterval * static_cast<double>(i);
             splineTime.push_back(simTime);
             splineX.push_back(e_position(0));
             splineY.push_back(e_position(1));
@@ -984,9 +1002,9 @@ bool NAV::ImuSimulator::initializeSplines()
             simDuration = _circularTrajectoryCircleCountForStop * 2 * M_PI / omega;
         }
 
-        for (size_t i = 0; i <= static_cast<size_t>(std::round((simDuration + 2.0) / splineSampleInterval)); i++)
+        for (size_t i = 0; i <= static_cast<size_t>(std::round((simDuration + 2.0) / _splines.sampleInterval)); i++)
         {
-            splineTime.push_back(splineSampleInterval * static_cast<double>(i) - 1.0);
+            splineTime.push_back(_splines.sampleInterval * static_cast<double>(i) - 1.0);
         }
 
         std::vector<double> splineX(splineTime.size());
