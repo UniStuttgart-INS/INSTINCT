@@ -140,13 +140,19 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
         const auto& parentTypes = _registeredNodeDataTypes.at(type);
 
         // Add all the immediate parents
-        returnTypes.insert(returnTypes.end(), parentTypes.begin(), parentTypes.end());
+        if (!parentTypes.empty())
+        {
+            returnTypes.insert(returnTypes.end(), parentTypes.begin(), parentTypes.end());
+        }
 
         // Add parents of parents
         for (const auto& parentType : parentTypes)
         {
-            const auto& parentParentTypes = GetParentNodeDataTypes(parentType);
-            returnTypes.insert(returnTypes.end(), parentParentTypes.begin(), parentParentTypes.end());
+            auto parentParentTypes = GetParentNodeDataTypes(parentType);
+            if (!parentParentTypes.empty())
+            {
+                returnTypes.insert(returnTypes.end(), parentParentTypes.begin(), parentParentTypes.end());
+            }
         }
     }
 
