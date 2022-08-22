@@ -160,12 +160,12 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
                 ImGui::SetTooltip("Type: %s", node->type().c_str());
             }
 
-            auto id = fmt::format("({})", size_t(node->id)).c_str();
-            auto textSize = ImGui::CalcTextSize(id, nullptr);
+            auto id = fmt::format("({})", size_t(node->id));
+            auto textSize = ImGui::CalcTextSize(id.c_str(), nullptr);
             auto iconPanelPos = start + ImVec2(paneWidth - ImGui::GetStyle().FramePadding.x - ImGui::GetStyle().IndentSpacing - ImGui::GetStyle().ItemInnerSpacing.x * 1, ImGui::GetTextLineHeight() / 2);
             ImGui::GetWindowDrawList()->AddText(
                 ImVec2(iconPanelPos.x - textSize.x - ImGui::GetStyle().ItemInnerSpacing.x, start.y),
-                colSum > 2.0F ? IM_COL32(0, 0, 0, 255) : IM_COL32(255, 255, 255, 255), id, nullptr);
+                colSum > 2.0F ? IM_COL32(0, 0, 0, 255) : IM_COL32(255, 255, 255, 255), id.c_str(), nullptr);
 
             ImGui::PopID();
         }
