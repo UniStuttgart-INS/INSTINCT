@@ -1400,8 +1400,17 @@ void NAV::ImuFusion::initializeKalmanFilterAuto()
         initVectors.first[stateIndex] = mean(sensorComponents[pinIndex + 1], 3) - initVectors.first[0];
     }
 
-    // ----------------------------------- Standard Deviation of each sensor ------------------------------------- //TODO
-    // stdDev
+    // -------------------------------------- Variance of each sensor ----------------------------------------
+    // Acceleration variances X/Y/Z (pos. 6,7,8 on diagonal of P matrix)
+    initVectors.second[2] = variance(sensorComponents[0], 0);
+    // Jerk variances X/Y/Z
+    initVectors.second[3] = Eigen::Vector3d::Zero();
+    // Angular Rate variances X/Y/Z (pos. 0,1,2 on diagonal of P matrix)
+    initVectors.second[0] = variance(sensorComponents[0], 3);
+    // Angular Acceleration variances X/Y/Z
+    initVectors.second[1] = Eigen::Vector3d::Zero();
+
+    // TODO: init P of bias states
 
     _kalmanFilter.x.block<3, 1>(0, 0) = initVectors.first[0];
     _kalmanFilter.x.block<3, 1>(3, 0) = initVectors.first[1];
@@ -1416,7 +1425,7 @@ void NAV::ImuFusion::initializeKalmanFilterAuto()
     LOG_DEBUG("kalmanFilter.x = {}", _kalmanFilter.x.transpose());
 
     _kalmanFilter.P = initialErrorCovarianceMatrix_P0(initVectors.second);
-    // LOG_DEBUG("kalmanFilter.P =\n{}", _kalmanFilter.P); //FIXME
+    LOG_DEBUG("kalmanFilter.P =\n{}", _kalmanFilter.P);
     _kalmanFilter.Phi = initialStateTransitionMatrix_Phi(1.0 / _imuFrequency);
     LOG_DATA("kalmanFilter.Phi =\n{}", _kalmanFilter.Phi);
     processNoiseMatrix_Q(_kalmanFilter.Q, 1.0 / _imuFrequency);
@@ -1436,4 +1445,28 @@ Eigen::Vector3d NAV::ImuFusion::mean(std::vector<std::vector<double>> sensorType
     }
 
     return meanVector;
+}
+
+Eigen::Vector3d NAV::ImuFusion::variance(std::vector<std::vector<double>> sensorType, size_t containerPos)
+{
+    Eigen::Vector3d varianceVector = Eigen::Vector3d::Zero();
+
+    auto means = mean(sensorType, containerPos); // mean values for each axis
+
+    for (size_t axisIndex = 0; axisIndex < 3; axisIndex++)
+    {
+        auto N = sensorType[axisIndex + containerPos].size(); // Number of msgs along the specific axis
+
+        std::vector<double> absolSquared; // Inner part of the variance calculation (squared absolute values)
+        absolSquared.resize(N);
+
+        for (size_t msgIndex = 0; msgIndex < N; msgIndex++)
+        {
+            absolSquared[msgIndex] = std::pow(std::abs(sensorType[axisIndex + containerPos][msgIndex] - means[static_cast<int>(axisIndex)]), 2);
+        }
+
+        varianceVector[static_cast<int>(axisIndex)] = (1. / (static_cast<double>(N) - 1.)) * std::accumulate(absolSquared.begin(), absolSquared.end(), 0.);
+    }
+
+    return varianceVector;
 }

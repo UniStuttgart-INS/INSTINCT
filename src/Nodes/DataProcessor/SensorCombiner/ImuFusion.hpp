@@ -221,9 +221,15 @@ class ImuFusion : public Imu
 
     /// @brief Calculates the mean values of each axis in a vector that contains 3d measurements of a certain sensor type
     /// @param[in] sensorType type of measurement, i.e. Acceleration or gyro measurements in 3d (axisIndex / msgIndex)
-    /// @param[in] containerPos position-Index in 'sensorType' where data starts
+    /// @param[in] containerPos position-Index in 'sensorType' where data starts (e.g. Accel at 0, Gyro at 3)
     /// @return Vector of mean values in 3d of a certain sensor type
     Eigen::Vector3d static mean(std::vector<std::vector<double>> sensorType, size_t containerPos);
+
+    /// @brief Calculates the variance of each axis in a vector that contains 3d measurements of a certain sensor type
+    /// @param[in] sensorType type of measurement, i.e. Acceleration or gyro measurements in 3d (axisIndex / msgIndex)
+    /// @param[in] containerPos position-Index in 'sensorType' where data starts (e.g. Accel at 0, Gyro at 3)
+    /// @return Vector of variance values in 3d of a certain sensor type
+    Eigen::Vector3d static variance(std::vector<std::vector<double>> sensorType, size_t containerPos);
 
     /// @brief Initializes the rotation matrices used for the mounting angles of the sensors
     void initializeMountingAngles();
