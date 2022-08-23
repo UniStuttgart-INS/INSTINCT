@@ -314,7 +314,7 @@ void NAV::ImuFusion::guiConfig()
 
     ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
 
-    constexpr float columnWidth{ 130.0F };
+    constexpr float columnWidth{ 50.0F };
 
     ImGui::SetNextItemWidth(columnWidth);
     if (ImGui::InputDoubleL(fmt::format("Highest IMU sample rate in [Hz]##{}", size_t(id)).c_str(), &_imuFrequency, 1e-3, 1e4, 0.0, 0.0, "%.0f"))
@@ -348,7 +348,7 @@ void NAV::ImuFusion::guiConfig()
         ImGui::Text("Kalman Filter initialization (auto-init)");
 
         ImGui::SetNextItemWidth(columnWidth);
-        if (ImGui::InputDoubleL(fmt::format("Time until averaging ends in [s]##{}", size_t(id)).c_str(), &_averageEndTime, 1e-3, 1e4, 0.0, 0.0, "%.0f"))
+        if (ImGui::InputDoubleL(fmt::format("Averaging time in [s]##{}", size_t(id)).c_str(), &_averageEndTime, 1e-3, 1e4, 0.0, 0.0, "%.0f"))
         {
             LOG_DEBUG("{}: averageEndTime changed to {}", nameId(), _averageEndTime);
             flow::ApplyChanges();
@@ -670,13 +670,16 @@ void NAV::ImuFusion::guiConfig()
     json j;
 
     j["checkKalmanMatricesRanks"] = _checkKalmanMatricesRanks;
-
     j["nInputPins"] = _nInputPins;
     j["imuFrequency"] = _imuFrequency;
     j["designMatrixInitialized"] = _designMatrixInitialized;
     j["numStates"] = _numStates;
     j["numMeasurements"] = _numMeasurements;
     j["pinData"] = _pinData;
+    j["autoInitKF"] = _autoInitKF;
+    j["initJerkAngAcc"] = _initJerkAngAcc;
+    j["kfInitialized"] = _kfInitialized;
+    j["averageEndTime"] = _averageEndTime;
 
     return j;
 }
@@ -713,6 +716,22 @@ void NAV::ImuFusion::restore(json const& j)
     if (j.contains("pinData"))
     {
         j.at("pinData").get_to(_pinData);
+    }
+    if (j.contains("autoInitKF"))
+    {
+        j.at("autoInitKF").get_to(_autoInitKF);
+    }
+    if (j.contains("initJerkAngAcc"))
+    {
+        j.at("initJerkAngAcc").get_to(_initJerkAngAcc);
+    }
+    if (j.contains("_kfInitialized"))
+    {
+        j.at("_kfInitialized").get_to(_kfInitialized);
+    }
+    if (j.contains("averageEndTime"))
+    {
+        j.at("averageEndTime").get_to(_averageEndTime);
     }
 }
 
@@ -1443,14 +1462,14 @@ void NAV::ImuFusion::initializeKalmanFilterAuto()
         for (int axisIndex = 0; axisIndex < 3; axisIndex++)
         {
             // Acceleration variance
-            if (initVectors.second[stateIndex + 1][axisIndex] < initVectors.second[2][axisIndex])
+            if (initVectors.second[stateIndex + 1](axisIndex) < initVectors.second[2](axisIndex))
             {
-                initVectors.second[stateIndex + 1][axisIndex] = initVectors.second[2][axisIndex];
+                initVectors.second[stateIndex + 1](axisIndex) = initVectors.second[2](axisIndex);
             }
             // Angular rate variance
-            if (initVectors.second[stateIndex][axisIndex] < initVectors.second[0][axisIndex])
+            if (initVectors.second[stateIndex](axisIndex) < initVectors.second[0](axisIndex))
             {
-                initVectors.second[stateIndex][axisIndex] = initVectors.second[0][axisIndex];
+                initVectors.second[stateIndex](axisIndex) = initVectors.second[0](axisIndex);
             }
         }
     }
@@ -1465,10 +1484,10 @@ void NAV::ImuFusion::initializeKalmanFilterAuto()
         _kalmanFilter.x.block<3, 1>(12 + 6 * pinIndex, 0) = initVectors.first[containerIndex];
         _kalmanFilter.x.block<3, 1>(15 + 6 * pinIndex, 0) = initVectors.first[1 + containerIndex];
     }
-    LOG_DEBUG("kalmanFilter.x = {}", _kalmanFilter.x.transpose());
 
+    LOG_DATA("kalmanFilter.x = {}", _kalmanFilter.x.transpose());
     _kalmanFilter.P = initialErrorCovarianceMatrix_P0(initVectors.second);
-    LOG_DEBUG("kalmanFilter.P =\n{}", _kalmanFilter.P);
+    LOG_DATA("kalmanFilter.P =\n{}", _kalmanFilter.P);
     _kalmanFilter.Phi = initialStateTransitionMatrix_Phi(1.0 / _imuFrequency);
     LOG_DATA("kalmanFilter.Phi =\n{}", _kalmanFilter.Phi);
     processNoiseMatrix_Q(_kalmanFilter.Q, 1.0 / _imuFrequency);
@@ -1478,19 +1497,19 @@ void NAV::ImuFusion::initializeKalmanFilterAuto()
     _kfInitialized = true;
 }
 
-Eigen::Vector3d NAV::ImuFusion::mean(std::vector<std::vector<double>> sensorType, size_t containerPos)
+Eigen::Vector3d NAV::ImuFusion::mean(const std::vector<std::vector<double>>& sensorType, size_t containerPos)
 {
     Eigen::Vector3d meanVector = Eigen::Vector3d::Zero();
 
     for (size_t axisIndex = 0; axisIndex < 3; axisIndex++)
     {
-        meanVector[static_cast<int>(axisIndex)] = std::accumulate(sensorType[axisIndex + containerPos].begin(), sensorType[axisIndex + containerPos].end(), 0.) / static_cast<double>(sensorType[axisIndex + containerPos].size());
+        meanVector(static_cast<int>(axisIndex)) = std::accumulate(sensorType[axisIndex + containerPos].begin(), sensorType[axisIndex + containerPos].end(), 0.) / static_cast<double>(sensorType[axisIndex + containerPos].size());
     }
 
     return meanVector;
 }
 
-Eigen::Vector3d NAV::ImuFusion::variance(std::vector<std::vector<double>> sensorType, size_t containerPos)
+Eigen::Vector3d NAV::ImuFusion::variance(const std::vector<std::vector<double>>& sensorType, size_t containerPos)
 {
     Eigen::Vector3d varianceVector = Eigen::Vector3d::Zero();
 
@@ -1498,17 +1517,17 @@ Eigen::Vector3d NAV::ImuFusion::variance(std::vector<std::vector<double>> sensor
 
     for (size_t axisIndex = 0; axisIndex < 3; axisIndex++)
     {
-        auto N = sensorType[axisIndex + containerPos].size(); // Number of msgs along the specific axis
+        auto N = sensorType.at(axisIndex + containerPos).size(); // Number of msgs along the specific axis
 
         std::vector<double> absolSquared; // Inner part of the variance calculation (squared absolute values)
         absolSquared.resize(N);
 
         for (size_t msgIndex = 0; msgIndex < N; msgIndex++)
         {
-            absolSquared[msgIndex] = std::pow(std::abs(sensorType[axisIndex + containerPos][msgIndex] - means[static_cast<int>(axisIndex)]), 2);
+            absolSquared[msgIndex] = std::pow(std::abs(sensorType[axisIndex + containerPos][msgIndex] - means(static_cast<int>(axisIndex))), 2);
         }
 
-        varianceVector[static_cast<int>(axisIndex)] = (1. / (static_cast<double>(N) - 1.)) * std::accumulate(absolSquared.begin(), absolSquared.end(), 0.);
+        varianceVector(static_cast<int>(axisIndex)) = (1. / (static_cast<double>(N) - 1.)) * std::accumulate(absolSquared.begin(), absolSquared.end(), 0.);
     }
 
     return varianceVector;

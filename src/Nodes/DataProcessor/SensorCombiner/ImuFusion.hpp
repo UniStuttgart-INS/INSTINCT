@@ -223,13 +223,13 @@ class ImuFusion : public Imu
     /// @param[in] sensorType type of measurement, i.e. Acceleration or gyro measurements in 3d (axisIndex / msgIndex)
     /// @param[in] containerPos position-Index in 'sensorType' where data starts (e.g. Accel at 0, Gyro at 3)
     /// @return Vector of mean values in 3d of a certain sensor type
-    Eigen::Vector3d static mean(std::vector<std::vector<double>> sensorType, size_t containerPos);
+    Eigen::Vector3d static mean(const std::vector<std::vector<double>>& sensorType, size_t containerPos);
 
     /// @brief Calculates the variance of each axis in a vector that contains 3d measurements of a certain sensor type
     /// @param[in] sensorType type of measurement, i.e. Acceleration or gyro measurements in 3d (axisIndex / msgIndex)
     /// @param[in] containerPos position-Index in 'sensorType' where data starts (e.g. Accel at 0, Gyro at 3)
     /// @return Vector of variance values in 3d of a certain sensor type
-    Eigen::Vector3d static variance(std::vector<std::vector<double>> sensorType, size_t containerPos);
+    Eigen::Vector3d static variance(const std::vector<std::vector<double>>& sensorType, size_t containerPos);
 
     /// @brief Initializes the rotation matrices used for the mounting angles of the sensors
     void initializeMountingAngles();
@@ -358,12 +358,14 @@ class ImuFusion : public Imu
     /// @brief Container that collects all pinIds for averaging for auto-init of the KF
     std::vector<size_t> _cumulatedPinIds;
 
+#ifndef NDEBUG
     /// @brief Beginning of time frame for specific log msgs
     InsTime _frameStart{ 0, 0, 0, 0, 0, 6.9 }; // in [s]
     /// @brief End of time frame for specific log msgs
     InsTime _frameEnd{ 0, 0, 0, 0, 0, 7.1 }; // in [s]
     /// @brief 'Dummy Time' to calculate timestamp with InsTimes
     InsTime _dummyTime{ 0, 0, 0, 0, 0, 0 }; // in [s]
+#endif
 };
 
 } // namespace NAV
