@@ -19,7 +19,6 @@
 /* -------------------------------------------------------------------------------------------------------- */
 
 std::vector<NAV::Node*> m_nodes;
-std::vector<NAV::Link> m_links;
 size_t m_NextId = 1;
 
 /* -------------------------------------------------------------------------------------------------------- */
@@ -55,25 +54,6 @@ bool showFlowWhenNotifyingValueChange = false;
 const std::vector<NAV::Node*>& NAV::NodeManager::m_Nodes()
 {
     return m_nodes;
-}
-
-const std::vector<NAV::Link>& NAV::NodeManager::m_Links()
-{
-    return m_links;
-}
-
-void NAV::NodeManager::DeleteAllLinksAndNodes()
-{
-    LOG_TRACE("called");
-
-    bool saveLastActionsValue = NAV::flow::saveLastActions;
-    NAV::flow::saveLastActions = false;
-
-    DeleteAllLinks();
-    DeleteAllNodes();
-
-    NAV::flow::saveLastActions = saveLastActionsValue;
-    flow::ApplyChanges();
 }
 
 void NAV::NodeManager::AddNode(NAV::Node* node)
@@ -202,48 +182,26 @@ void NAV::NodeManager::DeleteAllNodes()
     flow::ApplyChanges();
 }
 
-NAV::Link* NAV::NodeManager::CreateLink(NAV::OutputPin& startPin, NAV::InputPin& endPin)
+bool NAV::NodeManager::CreateLink(NAV::OutputPin& startPin, NAV::InputPin& endPin)
 {
-    if (!startPin.parentNode || !endPin.parentNode) { return nullptr; }
+    if (!startPin.parentNode || !endPin.parentNode) { return false; }
     LOG_TRACE("called: {} of [{}] ==> {} of [{}]", size_t(startPin.id), startPin.parentNode->nameId(), size_t(endPin.id), endPin.parentNode->nameId());
 
     if (!startPin.parentNode->onCreateLink(startPin, endPin) || !endPin.parentNode->onCreateLink(startPin, endPin))
     {
         LOG_ERROR("The new Link between node '{}' and '{}' was refused by one of the Nodes it should connect to.",
                   startPin.parentNode->nameId(), endPin.parentNode->nameId());
-        return nullptr;
+        return false;
     }
 
     m_links.emplace_back(GetNextLinkId(), startPin.id, endPin.id);
     LOG_DEBUG("Creating link {} from pin {} of [{}] ==> {} of [{}]", size_t(m_links.back().id), size_t(startPin.id),
               startPin.parentNode->nameId(), size_t(endPin.id), endPin.parentNode->nameId());
 
-    if (endPin.type == Pin::Type::Flow)
-    {
-        if (endPin.dataOld.index() == 0)
-        {
-            LOG_ERROR("Tried to register callback, but endPin has no data");
-            m_links.pop_back();
-            return nullptr;
-        }
+    startPin.connect(endPin);
 
-        startPin.callbacksOld.emplace_back(endPin.parentNode,
-                                           std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin.dataOld),
-                                           m_links.back().id);
-    }
-    else
+    if (endPin.type != Pin::Type::Flow)
     {
-        endPin.dataOld = startPin.dataOld;
-        if (endPin.type != Pin::Type::Delegate)
-        {
-            if (!endPin.notifyFuncOld.empty())
-            {
-                startPin.notifyFuncOld.emplace_back(std::get<0>(endPin.notifyFuncOld.front()),
-                                                    std::get<1>(endPin.notifyFuncOld.front()),
-                                                    m_links.back().id);
-            }
-        }
-
         if (startPin.parentNode && endPin.parentNode && !startPin.parentNode->isInitialized())
         {
             if (endPin.parentNode->isInitialized())
@@ -261,112 +219,10 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::OutputPin& startPin, NAV::InputPin&
 
     flow::ApplyChanges();
 
-    return &m_links.back();
-}
-
-bool NAV::NodeManager::AddLink(const NAV::Link& link)
-{
-    LOG_TRACE("called for link with id {}", size_t(link.id));
-    m_links.push_back(link);
-
-    auto* startPin = FindOutputPin(link.startPinId);
-    auto* endPin = FindInputPin(link.endPinId);
-    if (endPin && startPin)
-    {
-        if (!startPin->parentNode || !endPin->parentNode)
-        {
-            LOG_ERROR("Tried to add Link from pinId {} to {}, but the pins do not have parentNodes",
-                      size_t(link.startPinId), size_t(link.endPinId));
-            return false;
-        }
-
-        if (!startPin->parentNode->onCreateLink(*startPin, *endPin))
-        {
-            LOG_ERROR("Link {} between node '{}'-{} and '{}'-{} was refused by the start Node.", size_t(link.id),
-                      startPin->parentNode->nameId(), size_t(startPin->id), endPin->parentNode->nameId(), size_t(endPin->id));
-            m_links.pop_back();
-            return false;
-        }
-        if (!endPin->parentNode->onCreateLink(*startPin, *endPin))
-        {
-            LOG_ERROR("Link {} between node '{}'-{} and '{}'-{} was refused by the end Node.", size_t(link.id),
-                      startPin->parentNode->nameId(), size_t(startPin->id), endPin->parentNode->nameId(), size_t(endPin->id));
-            // Undo the Link adding on the start node
-            startPin->parentNode->onDeleteLink(*startPin, *endPin);
-            m_links.pop_back();
-            startPin->parentNode->afterDeleteLink(*startPin, *endPin);
-            return false;
-        }
-
-        if (!startPin->canCreateLink(*endPin))
-        {
-            LOG_ERROR("Link {} between node '{}'-{} and '{}'-{} can not be added because the pins do not match", size_t(link.id),
-                      startPin->parentNode->nameId(), size_t(startPin->id), endPin->parentNode->nameId(), size_t(endPin->id));
-            // Undo the Link adding on the start and end node
-            startPin->parentNode->onDeleteLink(*startPin, *endPin);
-            endPin->parentNode->onDeleteLink(*startPin, *endPin);
-            m_links.pop_back();
-            startPin->parentNode->afterDeleteLink(*startPin, *endPin);
-            endPin->parentNode->afterDeleteLink(*startPin, *endPin);
-            return false;
-        }
-
-        if (endPin->type == Pin::Type::Flow)
-        {
-            if (endPin->dataOld.index() == 0)
-            {
-                LOG_ERROR("Tried to register callback, but endPin has no data");
-                m_links.pop_back();
-                return false;
-            }
-
-            startPin->callbacksOld.emplace_back(endPin->parentNode,
-                                                std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->dataOld),
-                                                link.id);
-        }
-        else
-        {
-            endPin->dataOld = startPin->dataOld;
-            if (endPin->type != Pin::Type::Delegate)
-            {
-                if (!endPin->notifyFuncOld.empty())
-                {
-                    startPin->notifyFuncOld.emplace_back(std::get<0>(endPin->notifyFuncOld.front()),
-                                                         std::get<1>(endPin->notifyFuncOld.front()),
-                                                         m_links.back().id);
-                }
-            }
-
-            if (startPin->parentNode && endPin->parentNode && !startPin->parentNode->isInitialized())
-            {
-                if (endPin->parentNode->isInitialized())
-                {
-                    endPin->parentNode->doDeinitialize(true);
-                }
-            }
-        }
-
-        if (startPin && endPin && startPin->parentNode && endPin->parentNode)
-        {
-            startPin->parentNode->afterCreateLink(*startPin, *endPin);
-            endPin->parentNode->afterCreateLink(*startPin, *endPin);
-        }
-    }
-    else
-    {
-        LOG_ERROR("Tried to add Link from pinId {} to {}, but one of them does not exist",
-                  size_t(link.startPinId), size_t(link.endPinId));
-        return false;
-    }
-
-    m_NextId = std::max(m_NextId, size_t(link.id) + 1);
-
-    flow::ApplyChanges();
-
     return true;
 }
 
-void NAV::NodeManager::RefreshLink(NAV::Link& link)
+void NAV::NodeManager::RefreshLink(InputPin& endPin)
 {
     LOG_TRACE("called for link with id {}", size_t(link.id));
 
@@ -551,28 +407,6 @@ bool NAV::NodeManager::DeleteLink(ax::NodeEditor::LinkId linkId)
     }
 
     return false;
-}
-
-void NAV::NodeManager::DeleteAllLinks()
-{
-    LOG_TRACE("called");
-
-    bool saveLastActionsValue = NAV::flow::saveLastActions;
-    NAV::flow::saveLastActions = false;
-    while (!m_links.empty())
-    {
-        NodeManager::DeleteLink(m_links.back().id);
-    }
-
-    m_NextId = 1;
-
-    for (const auto& node : m_nodes)
-    {
-        m_NextId = std::max(m_NextId, size_t(node->id) + 1);
-    }
-
-    NAV::flow::saveLastActions = saveLastActionsValue;
-    flow::ApplyChanges();
 }
 
 void NAV::NodeManager::DeleteLinksOnPin(const NAV::OutputPin& pin)

@@ -24,12 +24,12 @@ class NodeData;
 class InputPin;
 class OutputPin;
 
-/// @brief Tuple of types allowed as a node callback
-using NodeCallbackInfo = std::tuple<Node*, void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>;
-/// @brief Tuple of types allowed as notify functions
-using NotifyFunctionInfo = std::tuple<Node*, void (Node::*)(ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>;
-/// @brief Tuple of types allowed as watcher callbacks
-using WatcherCallbackInfo = std::pair<void (*)(const std::shared_ptr<const NodeData>&), ax::NodeEditor::LinkId>;
+// /// @brief Tuple of types allowed as a node callback
+// using NodeCallbackInfo = std::tuple<Node*, void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>;
+// /// @brief Tuple of types allowed as notify functions
+// using NotifyFunctionInfo = std::tuple<Node*, void (Node::*)(ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>;
+// /// @brief Tuple of types allowed as watcher callbacks
+// using WatcherCallbackInfo = std::pair<void (*)(const std::shared_ptr<const NodeData>&), ax::NodeEditor::LinkId>;
 
 /// @brief Pins in the GUI for information exchange
 class Pin
@@ -228,72 +228,33 @@ class Pin
         Value value = Value::None;
     };
 
-    /// Callback function type to call when firable
-    using OldFlowCallback = void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId);
-    /// Notify function type to call when the connected value changed
-    using OldNotifyFunc = void (Node::*)(ax::NodeEditor::LinkId);
-    /// FileReader pollData function type
-    using OldPollDataFunc = std::shared_ptr<const NAV::NodeData> (Node::*)(bool);
-
-    /// @brief Possible Types represented by a pin
-    using PinDataOld = std::variant<void*,            // Object/Matrix/Delegate
-                                    bool*,            // Bool
-                                    int*,             // Int
-                                    float*,           // Float
-                                    double*,          // Float
-                                    std::string*,     // String
-                                    OldFlowCallback,  // InputPin (Flow):  Callback function type to call when firable
-                                    OldNotifyFunc,    // InputPin (Other): Notify function type to call when the connected value changed
-                                    OldPollDataFunc>; // OutputPin (Flow): FileReader poll data function
-
-    /// @brief Default constructor
-    Pin() = default;
-    /// @brief Destructor
-    ~Pin() = default;
-    /// @brief Copy constructor
-    Pin(const Pin&) = delete;
-    /// @brief Move constructor
-    Pin(Pin&& other) noexcept
-        : id(other.id),
-          name(std::move(other.name)),
-          type(other.type),
-          kind(other.kind),
-          dataIdentifier(std::move(other.dataIdentifier)),
-          parentNode(other.parentNode),
-          dataOld(other.dataOld),
-          notifyFuncOld(std::move(other.notifyFuncOld)),
-          callbacksOld(std::move(other.callbacksOld))
-#ifdef TESTING
-          ,
-          watcherCallbacksOld(std::move(other.watcherCallbacksOld))
-#endif
+    /// Link between two pins
+    struct Link
     {
-        std::scoped_lock<std::mutex> guard(other.dataAccessMutex); // Make sure the mutex of the other element is not used
-    }
-    /// @brief Copy assignment operator
-    Pin& operator=(const Pin&) = delete;
-    /// @brief Move assignment operator
-    Pin& operator=(Pin&& other) noexcept
-    {
-        if (this != &other)
-        {
-            id = other.id;
-            name = std::move(other.name);
-            type = other.type;
-            kind = other.kind;
-            dataIdentifier = std::move(other.dataIdentifier);
-            parentNode = other.parentNode;
-            notifyFuncOld = std::move(other.notifyFuncOld);
-            callbacksOld = std::move(other.callbacksOld);
-#ifdef TESTING
-            watcherCallbacksOld = std::move(other.watcherCallbacksOld);
-#endif
+        ax::NodeEditor::LinkId linkId = 0;        ///< Unique id of the link
+        Node* connectedNode = nullptr;            ///< Pointer to the node, which is connected to this pin
+        ax::NodeEditor::PinId connectedPinId = 0; ///< Id of the pin, which is connected to this pin
 
-            std::scoped_lock<std::mutex> guard(other.dataAccessMutex);
-            dataOld = other.dataOld;
-        }
-        return *this;
-    }
+      protected:
+        /// @brief Default Constructor
+        Link() = default;
+
+        /// @brief Constructor
+        /// @param[in] linkId Unique id of the link
+        /// @param[in] connectedNode Node connected on the other end of the link
+        /// @param[in] connectedPinId Id of the pin, which is connected on the other end of the link
+        Link(ax::NodeEditor::LinkId linkId,
+             Node* connectedNode,
+             ax::NodeEditor::PinId connectedPinId)
+            : linkId(linkId), connectedNode(connectedNode), connectedPinId(connectedPinId) {}
+    };
+
+    // /// Callback function type to call when firable
+    // using OldFlowCallback = void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId);
+    // /// Notify function type to call when the connected value changed
+    // using OldNotifyFunc = void (Node::*)(ax::NodeEditor::LinkId);
+    // /// FileReader pollData function type
+    // using OldPollDataFunc = std::shared_ptr<const NAV::NodeData> (Node::*)(bool);
 
     /// @brief Constructor
     /// @param[in] id Unique Id of the Pin
@@ -338,19 +299,9 @@ class Pin
     /// Reference to the parent node
     Node* parentNode = nullptr;
 
-    /// Pointer to data which is transferred over this pin
-    PinDataOld dataOld = static_cast<void*>(nullptr);
-    /// Mutex to interact with the data object
-    std::mutex dataAccessMutex;
-
-    /// Notify Function to call when the data is updated
-    std::vector<NotifyFunctionInfo> notifyFuncOld;
-    /// Callback List
-    std::vector<NodeCallbackInfo> callbacksOld;
-#ifdef TESTING
-    /// Watcher Callbacks are used in testing to check the transmitted data
-    std::vector<WatcherCallbackInfo> watcherCallbacksOld;
-#endif
+  protected:
+    /// @brief Default constructor
+    Pin() = default;
 
   private:
     /// Size of the Pin Icons in [px]
@@ -368,6 +319,32 @@ class OutputPin : public Pin
     /// @param[in] parentNode Reference to the parent node
     OutputPin(ax::NodeEditor::PinId id, const char* name, Type type, Node* parentNode)
         : Pin(id, name, type, Pin::Kind::Output, parentNode) {}
+
+    /// @brief Destructor
+    ~OutputPin() = default;
+    /// @brief Copy constructor
+    OutputPin(const OutputPin&) = delete;
+    /// @brief Move constructor
+    OutputPin(OutputPin&& other) noexcept
+        : Pin(other)
+    {
+        std::scoped_lock<std::mutex> guard(other.dataAccessMutex); // Make sure the mutex of the other element is not used
+        data = other.data;
+    }
+    /// @brief Copy assignment operator
+    OutputPin& operator=(const OutputPin&) = delete;
+    /// @brief Move assignment operator
+    OutputPin& operator=(OutputPin&& other) noexcept
+    {
+        if (this != &other)
+        {
+            *static_cast<Pin*>(this) = other;
+
+            std::scoped_lock<std::mutex> guard(other.dataAccessMutex);
+            data = other.data;
+        }
+        return *this;
+    }
 
     /// @brief Checks if this pin can connect to the provided pin
     /// @param[in] other The pin to create a link to
@@ -388,6 +365,37 @@ class OutputPin : public Pin
 
     /// Pointer to data (owned by this node) which is transferred over this pin
     PinData data = static_cast<void*>(nullptr);
+
+    /// Mutex to interact with the data object
+    std::mutex dataAccessMutex;
+
+    /// @brief Connects this pin to another
+    /// @param[in] endPin Pin which should be linked to this pin
+    /// @return True if the link could be created
+    bool connect(InputPin& endPin);
+
+    /// @brief Disconnects the link
+    /// @param[in] endPin Pin which should be disconnected from this pin
+    void disconnect(InputPin& endPin);
+
+    /// Collection of information about the connected node and pin
+    struct OutgoingLink : public Link
+    {
+        /// @brief Default Constructor
+        OutgoingLink() = default;
+
+        /// @brief Constructor
+        /// @param[in] linkId Unique id of the link
+        /// @param[in] connectedNode Node connected on the other end of the link
+        /// @param[in] connectedPinId Id of the pin, which is connected on the other end of the link
+        OutgoingLink(ax::NodeEditor::LinkId linkId,
+                     Node* connectedNode,
+                     ax::NodeEditor::PinId connectedPinId)
+            : Link(linkId, connectedNode, connectedPinId) {}
+    };
+
+    /// Info to identify the linked pins
+    std::vector<OutgoingLink> links;
 };
 
 /// Input pins of nodes
@@ -419,11 +427,32 @@ class InputPin : public Pin
     /// Callback to call when the node is firable or when it should be notified of data change
     Callback callback;
 
+    /// @brief Connects this pin to another
+    /// @param[in] startPin Pin which should be linked to this pin
+    /// @return True if the link could be created
+    bool connect(OutputPin& startPin);
+
+    /// @brief Disconnects the link
+    /// @param[in] startPin Pin which should be disconnected from this pin
+    void disconnect(OutputPin& startPin);
+
     /// Collection of information about the connected node and pin
-    struct Connection
+    struct IncomingLink : public Link
     {
+        /// @brief Default Constructor
+        IncomingLink() = default;
+
+        /// @brief Constructor
+        /// @param[in] linkId Unique id of the link
+        /// @param[in] connectedNode Node connected on the other end of the link
+        /// @param[in] connectedPinId Id of the pin, which is connected on the other end of the link
+        IncomingLink(ax::NodeEditor::LinkId linkId,
+                     Node* connectedNode,
+                     ax::NodeEditor::PinId connectedPinId)
+            : Link(linkId, connectedNode, connectedPinId) {}
+
         /// @brief Returns a pointer to the pin which is connected to this one
-        [[nodiscard]] const OutputPin* getPin() const;
+        [[nodiscard]] const OutputPin* getConnectedPin() const;
 
         /// @brief Get a pointer to the value connected on the pin
         /// @tparam T Type of the connected object
@@ -431,7 +460,7 @@ class InputPin : public Pin
         template<typename T>
         [[nodiscard]] const T* getValue() const
         {
-            if (const auto* connectedPin = getPin())
+            if (const auto* connectedPin = getConnectedPin())
             {
                 // clang-format off
                 if constexpr (std::is_same_v<T, const bool>
@@ -440,7 +469,7 @@ class InputPin : public Pin
                            || std::is_same_v<T, const double>
                            || std::is_same_v<T, const std::string>)
                 { // clang-format on
-                    if (const auto* pVal = std::get_if<T*>(&(connectedPin->data)))
+                    if (const auto* pVal = std::get_if<const T*>(&(connectedPin->data)))
                     {
                         return *pVal;
                     }
@@ -450,20 +479,17 @@ class InputPin : public Pin
                 {
                     if (const auto* pVal = std::get_if<const void*>(&(connectedPin->data)))
                     {
-                        return static_cast<T*>(*pVal);
+                        return static_cast<const T*>(*pVal);
                     }
                 }
             }
 
             return nullptr;
         }
-
-        Node* node = nullptr;            ///< Pointer to the node, which is connected to this pin
-        ax::NodeEditor::PinId pinId = 0; ///< Id of the pin, which is connected to this pin
     };
 
-    /// Info to identify the connected pin
-    Connection connected;
+    /// Info to identify the linked pin
+    IncomingLink link;
 };
 
 /// @brief Equal compares Pin::Kind values

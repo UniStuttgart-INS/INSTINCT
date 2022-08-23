@@ -132,7 +132,7 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
                 }
                 catch (...)
                 {
-                    nm::DeleteAllLinksAndNodes();
+                    nm::DeleteAllNodes();
                     NAV::flow::DiscardChanges();
                     NAV::flow::SetCurrentFilename("");
                     LOG_ERROR("Loading flow file failed");

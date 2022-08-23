@@ -33,7 +33,6 @@ namespace util = ax::NodeEditor::Utilities;
 
 #include "internal/Node/Pin.hpp"
 #include "internal/Node/Node.hpp"
-#include "internal/Node/Link.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -415,7 +414,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
             {
                 flow::SaveFlowAs(flow::GetCurrentFilename());
                 globalAction = GlobalActions::None;
-                nm::DeleteAllLinksAndNodes();
+                nm::DeleteAllNodes();
                 flow::DiscardChanges();
                 flow::SetCurrentFilename("");
                 ImGui::CloseCurrentPopup();
@@ -430,7 +429,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
                 flow::SaveFlowAs(flow::GetCurrentFilename());
 
                 ImGuiFileDialog::Instance()->Close();
-                nm::DeleteAllLinksAndNodes();
+                nm::DeleteAllNodes();
                 flow::DiscardChanges();
                 flow::SetCurrentFilename("");
             }
@@ -443,7 +442,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
         if (ImGui::Button("Discard"))
         {
             globalAction = GlobalActions::None;
-            nm::DeleteAllLinksAndNodes();
+            nm::DeleteAllNodes();
             flow::DiscardChanges();
             flow::SetCurrentFilename("");
             ImGui::CloseCurrentPopup();

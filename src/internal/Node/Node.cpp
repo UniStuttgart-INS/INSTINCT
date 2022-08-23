@@ -8,7 +8,6 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
-#include "internal/CallbackManager.hpp"
 #include "internal/gui/FlowAnimation.hpp"
 #include "util/Json.hpp"
 

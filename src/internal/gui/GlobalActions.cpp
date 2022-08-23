@@ -303,7 +303,7 @@ void restoreAction(const json& target)
     // }
 
     NAV::flow::saveLastActions = false;
-    nm::DeleteAllLinksAndNodes();
+    nm::DeleteAllNodes();
 
     NAV::flow::LoadJson(target);
     if (!target["unsavedChanges"].get<bool>())

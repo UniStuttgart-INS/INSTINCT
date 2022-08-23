@@ -8,7 +8,6 @@
 #include <imgui_node_editor.h>
 
 #include "internal/Node/Node.hpp"
-#include "internal/Node/Link.hpp"
 #include "internal/Node/Pin.hpp"
 
 #include "NodeData/NodeData.hpp"
@@ -25,12 +24,6 @@ extern bool showFlowWhenNotifyingValueChange;
 
 /// @brief List of all registered Nodes
 const std::vector<Node*>& m_Nodes();
-
-/// @brief List of all registered Links
-const std::vector<Link>& m_Links();
-
-/// @brief Delete all links and nodes
-void DeleteAllLinksAndNodes();
 
 /// @brief Add the provided node object to the list of nodes
 /// @param[in] node Node object to add to the list
@@ -51,24 +44,17 @@ void DeleteAllNodes();
 /// @brief Create a Link object
 /// @param[in] startPin Start Pin of the link
 /// @param[in] endPin End Pin of the link
-/// @return Pointer to the created link object
-Link* CreateLink(OutputPin& startPin, InputPin& endPin);
-
-/// @brief Add the provided link object to the list of links
-/// @param[in] link Link object to add to the list
-bool AddLink(const Link& link);
+/// @return True if the link could be created
+bool CreateLink(OutputPin& startPin, InputPin& endPin);
 
 /// @brief Refresh the link and the connected nodes
-/// @param[in] link The Link to refresh
-void RefreshLink(Link& link);
+/// @param[in] endPin End Pin of the link
+void RefreshLink(InputPin& endPin);
 
 /// @brief Delete the link provided by id
 /// @param[in] linkId Unique Id of the Link to delete
 /// @return True if delete was successful, false if LinkId does not exist
 bool DeleteLink(ax::NodeEditor::LinkId linkId);
-
-/// @brief Delete all links
-void DeleteAllLinks();
 
 /// @brief Delete all links on the provided pin
 /// @param[in] pin An output Pin
@@ -83,10 +69,11 @@ void DeleteLinksOnPin(const InputPin& pin);
 /// @param[in] name Display name of the Pin
 /// @param[in] pinType Type of the pin
 /// @param[in] dataIdentifier Identifier of the data which is represented by the pin
-/// @param[in] data Pointer to data which is represented by the pin
+/// @param[in] callback Callback to register with the pin
 /// @param[in] idx Index where to put the new pin (-1 means at the end)
 /// @return Pointer to the created pin
-InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier = {}, Pin::PinDataOld data = static_cast<void*>(nullptr), int idx = -1);
+InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier = {},
+                         InputPin::Callback callback = static_cast<InputPin::FlowFirableCallbackFunc>(nullptr), int idx = -1);
 
 /// @brief Create an Input Pin object
 /// @tparam T Node Class where the function is member of
@@ -94,16 +81,17 @@ InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const 
 /// @param[in] name Display name of the Pin
 /// @param[in] pinType Type of the pin
 /// @param[in] dataIdentifier Identifier of the data which is represented by the pin
-/// @param[in] callback Callback to register with the pin
+/// @param[in] callback Flow firable callback function to register with the pin
 /// @param[in] idx Index where to put the new pin (-1 means at the end)
 /// @return Pointer to the created pin
 template<typename T,
          typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
-InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier = {}, void (T::*callback)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId) = nullptr, int idx = -1)
+InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier = {},
+                         void (T::*callback)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId) = nullptr, int idx = -1)
 {
     assert(pinType == Pin::Type::Flow);
 
-    return CreateInputPin(node, name, pinType, dataIdentifier, Pin::PinDataOld(static_cast<void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId)>(callback)), idx);
+    return CreateInputPin(node, name, pinType, dataIdentifier, static_cast<InputPin::FlowFirableCallbackFunc>(callback), idx);
 }
 
 /// @brief Create an Input Pin object
@@ -117,18 +105,12 @@ InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const 
 /// @return Pointer to the created pin
 template<typename T,
          typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
-InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier, void (T::*notifyFunc)(ax::NodeEditor::LinkId), int idx = -1)
+InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier,
+                         void (T::*notifyFunc)(ax::NodeEditor::LinkId), int idx = -1)
 {
     assert(pinType != Pin::Type::Flow && pinType != Pin::Type::Delegate);
 
-    auto* pin = CreateInputPin(node, name, pinType, dataIdentifier, static_cast<void*>(nullptr), idx);
-
-    if (pin)
-    {
-        pin->notifyFuncOld.emplace_back(node, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(notifyFunc), 0);
-    }
-
-    return pin;
+    return CreateInputPin(node, name, pinType, dataIdentifier, static_cast<InputPin::DataChangedNotifyFunc>(notifyFunc), idx);
 }
 
 /// @brief Create an Output Pin object
@@ -139,7 +121,7 @@ InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const 
 /// @param[in] data Pointer to data which is represented by the pin
 /// @param[in] idx Index where to put the new pin (-1 means at the end)
 /// @return Pointer to the created pin
-OutputPin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier, Pin::PinDataOld data = static_cast<void*>(nullptr), int idx = -1);
+OutputPin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier, OutputPin::PinData data = static_cast<void*>(nullptr), int idx = -1);
 
 /// @brief Create an Output Pin object for Flow Pins
 /// @tparam T Class where the function is member of
@@ -147,16 +129,17 @@ OutputPin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, cons
 /// @param[in] name Display name of the Pin
 /// @param[in] pinType Type of the pin
 /// @param[in] dataIdentifier Identifier of the data which is represented by the pin
-/// @param[in] callback Callback to register with the pin
+/// @param[in] pollDataFunc Function to poll for data on this pin
 /// @param[in] idx Index where to put the new pin (-1 means at the end)
 /// @return Pointer to the created pin
 template<typename T,
          typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
-OutputPin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier, std::shared_ptr<const NAV::NodeData> (T::*callback)(bool) = nullptr, int idx = -1)
+OutputPin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier,
+                           std::shared_ptr<const NAV::NodeData> (T::*pollDataFunc)(bool) = nullptr, int idx = -1)
 {
     assert(pinType == Pin::Type::Flow);
 
-    return CreateOutputPin(node, name, pinType, dataIdentifier, Pin::PinDataOld(static_cast<std::shared_ptr<const NAV::NodeData> (Node::*)(bool)>(callback)), idx);
+    return CreateOutputPin(node, name, pinType, dataIdentifier, static_cast<OutputPin::PollDataFunc>(pollDataFunc), idx);
 }
 
 /// @brief Deletes the output pin

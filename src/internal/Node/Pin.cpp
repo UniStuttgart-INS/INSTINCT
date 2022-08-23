@@ -8,6 +8,9 @@
 
 #include "internal/gui/widgets/PinIcon.hpp"
 
+#include "internal/NodeManager.hpp"
+namespace nm = NAV::NodeManager;
+
 bool NAV::InputPin::canCreateLink(const OutputPin& other) const
 {
     return Pin::canCreateLink(other, *this);
@@ -134,13 +137,107 @@ void NAV::Pin::drawPinIcon(bool connected, int alpha) const
                                 iconType, connected, color, ImColor(32, 32, 32, alpha));
 }
 
-const NAV::OutputPin* NAV::InputPin::Connection::getPin() const
+bool NAV::OutputPin::connect(NAV::InputPin& endPin)
 {
-    if (node)
+    if (!canCreateLink(endPin))
     {
-        for (auto& outputPin : node->outputPins)
+        return false;
+    }
+
+    auto iter = std::find(links.begin(), links.end(), [&endPin](const OutgoingLink& link) {
+        return link.connectedNode == endPin.parentNode && link.connectedPinId == endPin.id;
+    });
+    if (iter == links.end()) // Link does not yet exist
+    {
+        if (endPin.link.connectedNode == parentNode && endPin.link.connectedPinId == id)
         {
-            if (outputPin.id == pinId) { return &outputPin; }
+            // Connected pin is already linked, so get linkId from the connected pin
+            links.emplace_back(endPin.link.linkId, endPin.parentNode, endPin.id);
+        }
+        else
+        {
+            // Connected pin is not linked, so get new linkId
+            links.emplace_back(nm::GetNextLinkId(), endPin.parentNode, endPin.id);
+            // Also connect the endPin to this one
+            endPin.connect(*this);
+        }
+    }
+
+    return true;
+}
+
+void NAV::OutputPin::disconnect(InputPin& endPin)
+{
+    auto iter = std::find(links.begin(), links.end(), [&endPin](const OutgoingLink& link) {
+        return link.connectedNode == endPin.parentNode && link.connectedPinId == endPin.id;
+    });
+    if (iter != links.end())
+    {
+        links.erase(iter);
+        if (endPin.link.connectedNode == parentNode && endPin.link.connectedPinId == id)
+        {
+            endPin.disconnect(*this);
+        }
+    }
+}
+
+bool NAV::InputPin::connect(NAV::OutputPin& startPin)
+{
+    if (!canCreateLink(startPin))
+    {
+        return false;
+    }
+
+    if (link.connectedNode != startPin.parentNode || link.connectedPinId != startPin.id) // Link does not yet exist
+    {
+        link.connectedNode = startPin.parentNode;
+        link.connectedPinId = startPin.id;
+
+        auto iter = std::find(startPin.links.begin(), startPin.links.end(), [&, this](const OutputPin::OutgoingLink& link) {
+            return link.connectedNode == parentNode && link.connectedPinId == id;
+        });
+
+        if (iter != startPin.links.end())
+        {
+            // Connected pin is already linked, so get linkId from the connected pin
+            link.linkId = iter->linkId;
+        }
+        else
+        {
+            // Connected pin is not linked, so get new linkId
+            link.linkId = nm::GetNextLinkId();
+            // Also connect the startPin to this one
+            startPin.connect(*this);
+        }
+    }
+}
+
+void NAV::InputPin::disconnect(NAV::OutputPin& startPin)
+{
+    if (link.connectedNode || link.connectedPinId || link.linkId)
+    {
+        link.linkId = 0;
+        link.connectedNode = nullptr;
+        link.connectedPinId = 0;
+
+        auto iter = std::find(startPin.links.begin(), startPin.links.end(), [&, this](const OutputPin::OutgoingLink& link) {
+            return link.connectedNode == parentNode && link.connectedPinId == id;
+        });
+
+        if (iter != startPin.links.end())
+        {
+            startPin.disconnect(*this);
+        }
+    }
+}
+
+const NAV::OutputPin* NAV::InputPin::IncomingLink::getConnectedPin() const
+{
+    if (connectedNode)
+    {
+        for (auto& outputPin : connectedNode->outputPins)
+        {
+            if (outputPin.id == connectedPinId) { return &outputPin; }
         }
     }
     return nullptr;

@@ -100,7 +100,7 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
 
     saveLastActions = false;
 
-    nm::DeleteAllLinksAndNodes();
+    nm::DeleteAllNodes();
 
     LoadJson(j);
 
