@@ -357,15 +357,6 @@ class ImuFusion : public Imu
 
     /// @brief Container that collects all pinIds for averaging for auto-init of the KF
     std::vector<size_t> _cumulatedPinIds;
-
-#ifndef NDEBUG
-    /// @brief Beginning of time frame for specific log msgs
-    InsTime _frameStart{ 0, 0, 0, 0, 0, 6.9 }; // in [s]
-    /// @brief End of time frame for specific log msgs
-    InsTime _frameEnd{ 0, 0, 0, 0, 0, 7.1 }; // in [s]
-    /// @brief 'Dummy Time' to calculate timestamp with InsTimes
-    InsTime _dummyTime{ 0, 0, 0, 0, 0, 0 }; // in [s]
-#endif
 };
 
 } // namespace NAV

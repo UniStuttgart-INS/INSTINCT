@@ -1062,28 +1062,10 @@ void NAV::ImuFusion::combineSignals(const std::shared_ptr<const ImuObs>& imuObs)
     _kalmanFilter.z.block<3, 1>(0, 0) = imuObs->gyroUncompXYZ.value();
     _kalmanFilter.z.block<3, 1>(3, 0) = imuObs->accelUncompXYZ.value();
 
-#ifndef NDEBUG
-    if ((imuObs->insTime > _frameStart) && (imuObs->insTime < _frameEnd))
-    {
-        // auto timebla = static_cast<double>((imuObs->insTime.value() - _dummyTime).count());
-        // LOG_DEBUG("timebla = {}", timebla);
-        LOG_DEBUG("kalmanFilter.Phi.block<6, 6>(6,6) =\n{}", _kalmanFilter.Phi.block<6, 6>(6, 6));
-        // LOG_DEBUG("", _kalmanFilter.P.block<>());
-        LOG_DEBUG("kalmanFilter.H =\n{}", _kalmanFilter.H);
-        LOG_DEBUG("AccZ measurement: kalmanFilter.z(5, 0) = {}", _kalmanFilter.z(5, 0));
-        LOG_DEBUG("AccZ predicted: kalmanFilter.x(8, 0) = {}", _kalmanFilter.x(8, 0));
-    }
-#endif
-
     LOG_DATA("Measurements z =\n{}", _kalmanFilter.z);
 
     _kalmanFilter.correct();
     LOG_DATA("Estimated state after correction: x =\n{}", _kalmanFilter.x);
-
-    if (imuObs->insTime > _frameStart && imuObs->insTime < _frameEnd)
-    {
-        LOG_DEBUG("AccZ updated: kalmanFilter.x(8, 0) = {}", _kalmanFilter.x(8, 0));
-    }
 
     if (_checkKalmanMatricesRanks)
     {
