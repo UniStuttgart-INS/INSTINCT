@@ -1393,24 +1393,45 @@ void NAV::ImuFusion::initializeKalmanFilterAuto()
     initVectors.first[1] = Eigen::Vector3d::Zero();
 
     // Bias-inits
-    for (size_t pinIndex = 0; pinIndex < _nInputPins - 1; pinIndex++)
+    for (size_t pinIndex = 0; pinIndex < _nInputPins - 1; pinIndex++) // _nInputPins - 1 since there are only relative biases
     {
-        auto stateIndex = 4 + 2 * pinIndex; // 4 states are Acceleration, Jerk, Angular Rate, Angular Acceleration (see above), plus 2 bias states per sensor
-        initVectors.first[stateIndex + 1] = mean(sensorComponents[pinIndex + 1], 0) - initVectors.first[2];
-        initVectors.first[stateIndex] = mean(sensorComponents[pinIndex + 1], 3) - initVectors.first[0];
+        auto stateIndex = 4 + 2 * pinIndex;                                                                 // 4 states are Acceleration, Jerk, Angular Rate, Angular Acceleration (see above), plus 2 bias states per sensor
+        initVectors.first[stateIndex + 1] = mean(sensorComponents[pinIndex + 1], 0) - initVectors.first[2]; // Acceleration biases
+        initVectors.first[stateIndex] = mean(sensorComponents[pinIndex + 1], 3) - initVectors.first[0];     // Angular rate biases
     }
 
     // -------------------------------------- Variance of each sensor ----------------------------------------
-    // Acceleration variances X/Y/Z (pos. 6,7,8 on diagonal of P matrix)
+    // Acceleration variances X/Y/Z (pos. 6,7,8 on diagonal of P matrix) - init value is variance of reference sensor, i.e. pinIndex = 0
     initVectors.second[2] = variance(sensorComponents[0], 0);
     // Jerk variances X/Y/Z
     initVectors.second[3] = Eigen::Vector3d::Zero();
-    // Angular Rate variances X/Y/Z (pos. 0,1,2 on diagonal of P matrix)
+    // Angular Rate variances X/Y/Z (pos. 0,1,2 on diagonal of P matrix) - init value is variance of reference sensor, i.e. pinIndex = 0
     initVectors.second[0] = variance(sensorComponents[0], 3);
     // Angular Acceleration variances X/Y/Z
     initVectors.second[1] = Eigen::Vector3d::Zero();
 
-    // TODO: init P of bias states
+    // P-matrix bias inits
+    for (size_t pinIndex = 0; pinIndex < _nInputPins - 1; pinIndex++) // _nInputPins - 1 since there are only relative biases
+    {
+        auto stateIndex = 4 + 2 * pinIndex;                                               // 4 states are Acceleration, Jerk, Angular Rate, Angular Acceleration (see above), plus 2 bias states per sensor
+        initVectors.second[stateIndex + 1] = variance(sensorComponents[pinIndex + 1], 0); // Acceleration biases
+        initVectors.second[stateIndex] = variance(sensorComponents[pinIndex + 1], 3);     // Angular rate biases
+
+        // Choose the bigger one of the two variances, i.e. of sensor #'pinIndex' and the reference sensor #0 (since bias is the difference of these two sensors)
+        for (int axisIndex = 0; axisIndex < 3; axisIndex++)
+        {
+            // Acceleration variance
+            if (initVectors.second[stateIndex + 1][axisIndex] < initVectors.second[2][axisIndex])
+            {
+                initVectors.second[stateIndex + 1][axisIndex] = initVectors.second[2][axisIndex];
+            }
+            // Angular rate variance
+            if (initVectors.second[stateIndex][axisIndex] < initVectors.second[0][axisIndex])
+            {
+                initVectors.second[stateIndex][axisIndex] = initVectors.second[0][axisIndex];
+            }
+        }
+    }
 
     _kalmanFilter.x.block<3, 1>(0, 0) = initVectors.first[0];
     _kalmanFilter.x.block<3, 1>(3, 0) = initVectors.first[1];
