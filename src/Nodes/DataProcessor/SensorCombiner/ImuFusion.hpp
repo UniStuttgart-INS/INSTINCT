@@ -346,6 +346,9 @@ class ImuFusion : public Imu
     /// @brief Auto-initialize the Kalman Filter - GUI setting
     bool _autoInitKF = true;
 
+    /// @brief flag to determine how jerk and angular acceleration states are initialized if '_autoInitKF = true'
+    bool _initJerkAngAcc = true;
+
     /// @brief flag to check whether KF has been auto-initialized
     bool _kfInitialized = false;
 
