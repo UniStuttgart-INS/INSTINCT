@@ -13,9 +13,8 @@ namespace nm = NAV::NodeManager;
 #include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
 
 NAV::VectorNavFile::VectorNavFile()
+    : Imu(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
@@ -52,11 +51,11 @@ void NAV::VectorNavFile::guiConfig()
         flow::ApplyChanges();
         if (res == FileReader::PATH_CHANGED)
         {
-            initializeNode();
+            doInitialize();
         }
         else
         {
-            deinitializeNode();
+            doDeinitialize();
         }
     }
 
@@ -268,12 +267,16 @@ void NAV::VectorNavFile::readHeader()
                 // Remove any trailing non text characters
                 cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
 
-                std::string group = cell.substr(0, cell.find("::"));
+                std::string group = cell.substr(0, cell.find("::")); // Extract the group (Time::TimeUTC::year -> 'Time')
 
-                cell = cell.substr(cell.find("::") + 2);
+                cell = cell.substr(cell.find("::") + 2); // Remove the group -> 'TimeUTC::year'
                 if (cell.find("::") != std::string::npos)
                 {
-                    cell = cell.substr(0, cell.find("::"));
+                    cell = cell.substr(0, cell.find("::")); // Remove subgroups ('TimeUTC::year' -> 'TimeUTC')
+                }
+                if (cell.find(' ') != std::string::npos)
+                {
+                    cell = cell.substr(0, cell.find(' ')); // Remove everything after a blank, which is the unit ('TimeStartup [ns]' -> 'TimeStartup')
                 }
 
                 bool identified = false;
@@ -358,14 +361,14 @@ void NAV::VectorNavFile::readHeader()
                 else
                 {
                     LOG_ERROR("{}: Could not identify the group in CSV header - {}::{}", nameId(), group, cell);
-                    deinitializeNode();
+                    doDeinitialize();
                     break;
                 }
 
                 if (!identified)
                 {
                     LOG_ERROR("{}: Could not identify the field in CSV header - {}::{}", nameId(), group, cell);
-                    deinitializeNode();
+                    doDeinitialize();
                     break;
                 }
             }

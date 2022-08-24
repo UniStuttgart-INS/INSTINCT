@@ -39,14 +39,21 @@ image: ins-cpp:10
   before_script:
     - 'call "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat"'
 
+.linux:
+  tags:
+    - linux
+
+.raspberry:
+  tags:
+    - armv8
+
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                              Prepare                                             ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 check-image:
   stage: prepare
-  tags:
-    - linux
+  extends: .linux
   script:
     - g++ --version
     - clang++ --version
@@ -64,6 +71,16 @@ check-image:
     - latex --version
     - command -v pdf2svg
 
+check-raspberry:
+  stage: prepare
+  extends: .raspberry
+  script:
+    - g++ --version
+    - clang++ --version
+    - cmake --version
+    - conan --version
+    - xml_grep --version
+
 check-windows:
   stage: prepare
   extends: .windows
@@ -78,9 +95,8 @@ check-windows:
 
 clang-tidy:
   stage: checks
-  tags:
-    - linux
   extends:
+    - .linux
     - .clang
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
@@ -89,9 +105,8 @@ clang-tidy:
 
 clang-tidy:tests:
   stage: checks
-  tags:
-    - linux
   extends:
+    - .linux
     - .clang
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
@@ -100,8 +115,7 @@ clang-tidy:tests:
 
 documentation:
   stage: checks
-  tags:
-    - linux
+  extends: .linux
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES
     - cmake --build build/Release --target doc
@@ -117,8 +131,7 @@ documentation:
 
 .build:main:
   stage: build
-  tags:
-    - linux
+  extends: .linux
   needs: ["check-image"]
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
@@ -179,14 +192,36 @@ main:win:LOG_OFF:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release -- -maxCpuCount
 
+.build:main:raspberry:
+  stage: build
+  extends: .raspberry
+  needs: ["check-raspberry"]
+  script:
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DEBUG -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Release -- -j2
+    - mv bin/Release/instinct .
+
+main:raspberry:clang:
+  extends:
+    - .build:main:raspberry
+    - .clang
+
+main:raspberry:gcc:
+  extends:
+    - .build:main:raspberry
+    - .gcc
+  artifacts:
+    paths:
+      - instinct
+    expire_in: 2h
+
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                            Build Tests                                           ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 .build:tests:
   stage: build
-  tags:
-    - linux
+  extends: .linux
   needs: ["check-image"]
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
@@ -194,8 +229,7 @@ main:win:LOG_OFF:
 
 .build:tests-win:
   stage: build
-  extends:
-    - .windows
+  extends: .windows
   needs: ["check-windows"]
 
 .build:test-artifacts:
@@ -253,14 +287,32 @@ tests:win:LOG_OFF:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -maxCpuCount
 
+.build:raspberry:tests:
+  stage: build
+  extends: .raspberry
+  needs: ["check-image"]
+  script:
+    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Debug -- -j2
+
+tests:raspberry:clang:
+  extends:
+    - .build:raspberry:tests
+    - .build:test-artifacts
+    - .clang
+
+tests:raspberry:gcc:
+  extends:
+    - .build:raspberry:tests
+    - .build:test-artifacts
+    - .gcc
+
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                               Test                                               ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 .run-tests:
   stage: test
-  tags:
-    - linux
   script:
     - cd build/Debug
     - ctest -j2 --output-on-failure
@@ -275,11 +327,15 @@ tests:win:LOG_OFF:
     expire_in: 2h
 
 run-tests:clang:
-  extends: .run-tests
+  extends:
+    - .linux
+    - .run-tests
   needs: ["tests:clang"]
 
 run-tests:gcc:
-  extends: .run-tests
+  extends:
+    - .linux
+    - .run-tests
   needs: ["tests:gcc"]
   artifacts:
     untracked: true # For the coverage report
@@ -293,14 +349,25 @@ run-tests:win:
     - cd build/Debug/test
     - ctest --output-on-failure
 
+run-tests:raspberry:clang:
+  extends:
+    - .raspberry
+    - .run-tests
+  needs: ["tests:raspberry:clang"]
+
+run-tests:raspberry:gcc:
+  extends:
+    - .raspberry
+    - .run-tests
+  needs: ["tests:raspberry:gcc"]
+
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                             Analyze                                              ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 doxygen:
   stage: analyze
-  tags:
-    - linux
+  extends: .linux
   needs: ["check-image"]
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
@@ -314,8 +381,7 @@ doxygen:
 
 coverage:
   stage: analyze
-  tags:
-    - linux
+  extends: .linux
   needs: ["run-tests:gcc"]
   script:
     - mkdir -p coverage
@@ -341,8 +407,7 @@ coverage:
 pages:
   # extends: .schedule
   stage: deploy
-  tags:
-    - linux
+  extends: .linux
   needs: ["doxygen", "coverage"]
   script:
     - mv bin/doc/html/ public/
@@ -367,9 +432,9 @@ pages:
 
 .build:ubuntu:22.04:
   stage: build
-  tags:
-    - linux
-  extends: .schedule
+  extends:
+    - .linux
+    - .schedule
   image: ubuntu:22.04
   needs: []
   variables:
@@ -423,9 +488,9 @@ ubuntu:22.04:gcc:debug:
 
 .run-tests:ubuntu:22.04:
   stage: test
-  tags:
-    - linux
-  extends: .schedule
+  extends:
+    - .linux
+    - .schedule
   image: ubuntu:22.04
   variables:
     DEBIAN_FRONTEND: noninteractive
@@ -473,9 +538,9 @@ run-tests:ubuntu:22.04:gcc:debug:
 
 .build:archlinux:latest:
   stage: build
-  tags:
-    - linux
-  extends: .schedule
+  extends:
+    - .linux
+    - .schedule
   image: archlinux:latest
   needs: []
   before_script:
@@ -525,9 +590,9 @@ archlinux:latest:gcc:debug:
 
 .run-tests:archlinux:latest:
   stage: test
-  tags:
-    - linux
-  extends: .schedule
+  extends:
+    - .linux
+    - .schedule
   image: archlinux:latest
   before_script:
     - pacman -Sy archlinux-keyring --noconfirm && pacman -Syyu --noconfirm --needed

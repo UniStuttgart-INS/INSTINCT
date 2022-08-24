@@ -3,6 +3,7 @@
 #include <stdexcept>
 
 #include "util/StringUtil.hpp"
+#include "util/Assert.h"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -14,6 +15,29 @@ namespace nm = NAV::NodeManager;
 #include <imgui_node_editor.h>
 namespace ed = ax::NodeEditor;
 
+NAV::Node::Node(std::string name)
+    : name(std::move(name))
+{
+    LOG_TRACE("{}: called", nameId());
+    _worker = std::thread(workerThread, this);
+}
+
+NAV::Node::~Node()
+{
+    LOG_TRACE("{}: called", nameId());
+    {
+        std::lock_guard lk(_workerMutex);
+        _state = State::DoShutdown;
+        _workerConditionVariable.notify_all();
+    }
+    // // wait for the worker
+    // {
+    //     std::unique_lock lk(_workerMutex);
+    //     _workerConditionVariable.wait(lk, [&, this] { return _state == State::Shutdown; });
+    // }
+    _worker.join();
+}
+
 void NAV::Node::guiConfig() {}
 
 json NAV::Node::save() const { return {}; }
@@ -22,99 +46,9 @@ void NAV::Node::restore(const json& /*j*/) {}
 
 void NAV::Node::restoreAtferLink(const json& /*j*/) {}
 
-bool NAV::Node::initializeNode()
-{
-    if (!_isEnabled)
-    {
-        return false;
-    }
-
-    if (isInitializing())
-    {
-        return false;
-    }
-
-    // Lock the node against recursive calling
-    _isInitializing = true;
-
-    if (isInitialized())
-    {
-        resetNode();
-        deinitializeNode();
-    }
-
-    LOG_DEBUG("{}: Initializing Node", nameId());
-
-    // Initialize connected Nodes
-    for (const auto& inputPin : inputPins)
-    {
-        if (inputPin.type != Pin::Type::Flow)
-        {
-            if (Node* connectedNode = nm::FindConnectedNodeToInputPin(inputPin.id))
-            {
-                if (!connectedNode->isInitialized() && !connectedNode->isInitializing())
-                {
-                    LOG_DEBUG("{}: Initializing connected Node '{}' on input Pin {}", nameId(), connectedNode->nameId(), size_t(inputPin.id));
-                    if (!connectedNode->initializeNode())
-                    {
-                        LOG_ERROR("{}: Could not initialize connected node {}", nameId(), connectedNode->nameId());
-                        _isInitializing = false;
-                        return false;
-                    }
-                }
-            }
-        }
-    }
-
-    // Initialize the node itself
-    _isInitialized = initialize();
-
-    _isInitializing = false;
-
-    return isInitialized();
-}
-
-void NAV::Node::deinitializeNode()
-{
-    if (isDeinitializing())
-    {
-        return;
-    }
-
-    // Lock the node against recursive calling
-    _isDeinitializing = true;
-
-    LOG_DEBUG("{}: Deinitializing Node", nameId());
-
-    callbacksEnabled = false;
-
-    // Deinitialize connected Nodes
-    for (const auto& outputPin : outputPins)
-    {
-        if (outputPin.type != Pin::Type::Flow)
-        {
-            auto connectedNodes = nm::FindConnectedNodesToOutputPin(outputPin.id);
-            for (auto* connectedNode : connectedNodes)
-            {
-                if (connectedNode->isInitialized() && !connectedNode->isDeinitializing())
-                {
-                    LOG_DEBUG("{}: Deinitializing connected Node '{}' on output Pin {}", nameId(), connectedNode->nameId(), size_t(outputPin.id));
-                    connectedNode->deinitializeNode();
-                }
-            }
-        }
-    }
-
-    // Deinitialize the node itself
-    deinitialize();
-    _isInitialized = false;
-
-    _isDeinitializing = false;
-}
-
 bool NAV::Node::initialize()
 {
-    return _isEnabled;
+    return true;
 }
 
 void NAV::Node::deinitialize() {}
@@ -152,7 +86,7 @@ void NAV::Node::notifyInputValueChanged(size_t portIndex)
 
         if (Pin* startPin = nm::FindPin(connectedLink->startPinId))
         {
-            if (startPin->parentNode && startPin->parentNode->_isEnabled)
+            if (startPin->parentNode && !startPin->parentNode->isDisabled())
             {
                 // Notify the node itself that changes were made
                 startPin->parentNode->notifyOnOutputValueChanged(connectedLink->id);
@@ -179,7 +113,7 @@ void NAV::Node::notifyOutputValueChanged(size_t portIndex)
 {
     for (auto& [node, callback, linkId] : outputPins.at(portIndex).notifyFunc)
     {
-        if (!node->_isEnabled)
+        if (node->isDisabled())
         {
             continue;
         }
@@ -218,7 +152,7 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
         {
             const auto* node = std::get<0>(nodeCallback);
 
-            if (node->_isEnabled && node->isInitialized())
+            if (node->isInitialized())
             {
 #ifdef TESTING
                 const auto& linkId = std::get<2>(nodeCallback);
@@ -267,29 +201,333 @@ std::string NAV::Node::nameId() const
     return fmt::format("{} ({})", str::replaceAll_copy(name, "\n", ""), size_t(id));
 }
 
-bool NAV::Node::isInitialized() const
-{
-    return _isInitialized;
-}
-
-bool NAV::Node::isInitializing() const
-{
-    return _isInitializing;
-}
-
-bool NAV::Node::isDeinitializing() const
-{
-    return _isDeinitializing;
-}
-
-bool NAV::Node::isEnabled() const
-{
-    return _isEnabled;
-}
-
 const ImVec2& NAV::Node::getSize() const
 {
     return _size;
+}
+
+std::string NAV::Node::toString(State state)
+{
+    switch (state)
+    {
+    case State::Disabled:
+        return "Disabled";
+    case State::Deinitialized:
+        return "Deinitialized";
+    case State::DoInitialize:
+        return "DoInitialize";
+    case State::Initializing:
+        return "Initializing";
+    case State::Initialized:
+        return "Initialized";
+    case State::DoDeinitialize:
+        return "DoDeinitialize";
+    case State::Deinitializing:
+        return "Deinitializing";
+    case State::DoShutdown:
+        return "DoShutdown";
+    case State::Shutdown:
+        return "Shutdown";
+    }
+    return "";
+}
+
+NAV::Node::State NAV::Node::getState() const
+{
+    return _state;
+}
+
+bool NAV::Node::doInitialize(bool wait)
+{
+    LOG_TRACE("{}: Current state = {}", nameId(), toString(_state));
+
+    switch (_state)
+    {
+    case State::Initialized:
+        return true;
+    case State::Disabled:
+    case State::DoShutdown:
+    case State::Shutdown:
+        return false;
+    case State::DoDeinitialize:
+    case State::Deinitializing:
+        if (_reinitialize) { break; }
+        return false;
+    case State::DoInitialize:
+    case State::Initializing:
+        break;
+    case State::Deinitialized:
+        _state = State::DoInitialize;
+        _workerConditionVariable.notify_all();
+        break;
+    }
+
+    if (wait)
+    {
+        std::unique_lock lk(_workerMutex);
+        _workerConditionVariable.wait(lk, [&, this] { return _state == State::Initialized || _state == State::Deinitialized; });
+        return _state == State::Initialized;
+    }
+    return true;
+}
+
+bool NAV::Node::doReinitialize(bool wait)
+{
+    LOG_TRACE("{}: Current state = {}", nameId(), toString(_state));
+
+    switch (_state)
+    {
+    case State::Disabled:
+    case State::DoShutdown:
+    case State::Shutdown:
+        return false;
+    case State::DoDeinitialize:
+    case State::Deinitializing:
+        _reinitialize = true;
+        break;
+    case State::DoInitialize:
+    case State::Initializing:
+    case State::Deinitialized:
+        break;
+    case State::Initialized:
+        _state = State::DoDeinitialize;
+        _reinitialize = true;
+        _workerConditionVariable.notify_all();
+        break;
+    }
+
+    if (wait)
+    {
+        std::unique_lock lk(_workerMutex);
+        _workerConditionVariable.wait(lk, [&, this] { return _state == State::Initialized || _state == State::Deinitialized; });
+        return _state == State::Initialized;
+    }
+    return true;
+}
+
+bool NAV::Node::doDeinitialize(bool wait)
+{
+    LOG_TRACE("{}: Current state = {}", nameId(), toString(_state));
+
+    switch (_state)
+    {
+    case State::Deinitialized:
+        return true;
+    case State::Disabled:
+    case State::DoShutdown:
+    case State::Shutdown:
+    case State::DoInitialize:
+    case State::Initializing:
+        return false;
+    case State::DoDeinitialize:
+    case State::Deinitializing:
+        break;
+    case State::Initialized:
+        _state = State::DoDeinitialize;
+        _workerConditionVariable.notify_all();
+        break;
+    }
+
+    if (wait)
+    {
+        std::unique_lock lk(_workerMutex);
+        _workerConditionVariable.wait(lk, [&, this] { return _state == State::Deinitialized; });
+    }
+    return true;
+}
+
+bool NAV::Node::doDisable(bool wait)
+{
+    LOG_TRACE("{}: Current state = {}", nameId(), toString(_state));
+
+    switch (_state)
+    {
+    case State::Disabled:
+        return true;
+    case State::DoShutdown:
+    case State::Shutdown:
+    case State::Initializing:
+        return false;
+    case State::Initialized:
+    case State::DoDeinitialize:
+    case State::Deinitializing:
+        _disable = true;
+        doDeinitialize();
+        break;
+    case State::DoInitialize:
+    case State::Deinitialized:
+        _state = State::Disabled;
+        break;
+    }
+
+    if (wait)
+    {
+        std::unique_lock lk(_workerMutex);
+        _workerConditionVariable.wait(lk, [&, this] { return _state == State::Deinitialized; });
+    }
+    return true;
+}
+
+bool NAV::Node::doEnable()
+{
+    LOG_TRACE("{}: Current state = {}", nameId(), toString(_state));
+
+    if (_state == State::Disabled)
+    {
+        _state = State::Deinitialized;
+    }
+    return true;
+}
+
+bool NAV::Node::isDisabled() const
+{
+    return _state == State::Disabled;
+}
+bool NAV::Node::isInitialized() const
+{
+    return _state == State::Initialized;
+}
+
+void NAV::Node::workerThread(Node* node)
+{
+    LOG_TRACE("{}: Worker thread started.", node->nameId());
+
+    while (node->_state != State::Shutdown)
+    {
+        if (node->_state == State::DoShutdown)
+        {
+            LOG_TRACE("{}: Worker doing shutdown...", node->nameId());
+            node->_state = State::Shutdown;
+            node->_workerConditionVariable.notify_all();
+            break;
+        }
+        if (node->_state == State::DoInitialize)
+        {
+            LOG_TRACE("{}: Worker doing initialization...", node->nameId());
+            node->workerInitializeNode();
+            LOG_TRACE("{}: Worker finished initialization, notifying all waiting threads.", node->nameId());
+            node->_workerConditionVariable.notify_all();
+            continue;
+        }
+        if (node->_state == State::DoDeinitialize)
+        {
+            LOG_TRACE("{}: Worker doing deinitialization...", node->nameId());
+            node->workerDeinitializeNode();
+            LOG_TRACE("{}: Worker finished deinitialization, notifying all waiting threads.", node->nameId());
+            node->_workerConditionVariable.notify_all();
+            continue;
+        }
+
+        std::unique_lock lk(node->_workerMutex);
+        std::cv_status status = node->_workerConditionVariable.wait_for(lk, node->_workerTimeout);
+
+        LOG_TRACE("{}: Worker waking up...", node->nameId());
+
+        if (status == std::cv_status::timeout)
+        {
+            node->workerTimeoutHandler();
+        }
+        else // Triggered by '_workerConditionVariable.notify_all();'
+        {
+            if (node->isInitialized())
+            {
+                // TODO: Handle data here
+            }
+        }
+    }
+
+    LOG_TRACE("{}: Worker thread ended.", node->nameId());
+}
+
+bool NAV::Node::workerInitializeNode()
+{
+    LOG_TRACE("{}: called", nameId());
+
+    INS_ASSERT_USER_ERROR(_state == State::DoInitialize, fmt::format("Worker can only initialize the node if the state is set to DoInitialize, but it is {}.", toString(_state)).c_str());
+
+    _state = Node::State::Initializing;
+    LOG_DEBUG("{}: Initializing Node", nameId());
+
+    // Initialize Nodes connected to the input pins
+    for (const auto& inputPin : inputPins)
+    {
+        if (inputPin.type != Pin::Type::Flow)
+        {
+            if (Node* connectedNode = nm::FindConnectedNodeToInputPin(inputPin.id))
+            {
+                if (!connectedNode->isInitialized())
+                {
+                    LOG_DEBUG("{}: Initializing connected Node '{}' on input Pin {}", nameId(), connectedNode->nameId(), size_t(inputPin.id));
+                    if (!connectedNode->doInitialize(true))
+                    {
+                        LOG_ERROR("{}: Could not initialize connected node {}", nameId(), connectedNode->nameId());
+                        if (_state == State::Initializing) { _state = Node::State::Deinitialized; }
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+
+    _reinitialize = false;
+
+    // Initialize the node itself
+    if (initialize())
+    {
+        if (_state == State::Initializing) { _state = Node::State::Initialized; }
+        return true;
+    }
+
+    if (_state == State::Initializing) { _state = Node::State::Deinitialized; }
+    return false;
+}
+
+bool NAV::Node::workerDeinitializeNode()
+{
+    LOG_TRACE("{}: called", nameId());
+
+    INS_ASSERT_USER_ERROR(_state == State::DoDeinitialize, fmt::format("Worker can only deinitialize the node if the state is set to DoDeinitialize, but it is {}.", toString(_state)).c_str());
+
+    _state = Node::State::Deinitializing;
+    LOG_DEBUG("{}: Deinitializing Node", nameId());
+
+    callbacksEnabled = false;
+
+    // Re-/Deinitialize Nodes connected to the output pins
+    for (const auto& outputPin : outputPins)
+    {
+        if (outputPin.type != Pin::Type::Flow)
+        {
+            auto connectedNodes = nm::FindConnectedNodesToOutputPin(outputPin.id);
+            for (auto* connectedNode : connectedNodes)
+            {
+                if (connectedNode->isInitialized())
+                {
+                    LOG_DEBUG("{}: {} connected Node '{}' on output Pin {}", nameId(),
+                              _reinitialize ? "Reinitializing" : "Deinitializing", connectedNode->nameId(), size_t(outputPin.id));
+                    if (_reinitialize) { connectedNode->doReinitialize(); }
+                    else { connectedNode->doDeinitialize(); }
+                }
+            }
+        }
+    }
+
+    // Deinitialize the node itself
+    deinitialize();
+
+    if (_state == State::Deinitializing)
+    {
+        if (_disable) { _state = State::Disabled; }
+        else if (_reinitialize) { _state = State::DoInitialize; }
+        else { _state = State::Deinitialized; }
+    }
+
+    return true;
+}
+
+void NAV::Node::workerTimeoutHandler()
+{
+    LOG_TRACE("{}: called", nameId());
 }
 
 void NAV::to_json(json& j, const Node& node)
@@ -304,7 +542,7 @@ void NAV::to_json(json& j, const Node& node)
         { "name", node.name },
         { "size", node._size.x == 0 && node._size.y == 0 ? node._size : realSize },
         { "pos", ed::GetNodePosition(node.id) },
-        { "enabled", node._isEnabled },
+        { "enabled", !node.isDisabled() },
         { "inputPins", node.inputPins },
         { "outputPins", node.outputPins },
     };
@@ -326,7 +564,11 @@ void NAV::from_json(const json& j, Node& node)
     }
     if (j.contains("enabled"))
     {
-        j.at("enabled").get_to(node._isEnabled);
+        bool enabled = j.at("enabled").get<bool>();
+        if (!enabled)
+        {
+            node._state = Node::State::Disabled;
+        }
     }
 
     if (j.contains("inputPins"))

@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <thread>
+#include <deque>
 
 #include "NodeRegistry.hpp"
 
@@ -18,8 +19,6 @@
 std::vector<NAV::Node*> m_nodes;
 std::vector<NAV::Link> m_links;
 size_t m_NextId = 1;
-bool nodeInitThread_stopRequested = false;
-std::thread nodeInitThread;
 
 /* -------------------------------------------------------------------------------------------------------- */
 /*                                       Private Function Declarations                                      */
@@ -131,12 +130,6 @@ void NAV::NodeManager::UpdateNode(Node* node)
 bool NAV::NodeManager::DeleteNode(ax::NodeEditor::NodeId nodeId)
 {
     LOG_TRACE("called for node with id {}", size_t(nodeId));
-    if (nodeInitThread.joinable())
-    {
-        // nodeInitThread.request_stop();
-        nodeInitThread_stopRequested = true;
-        nodeInitThread.join();
-    }
 
     auto it = std::find_if(m_nodes.begin(),
                            m_nodes.end(),
@@ -171,7 +164,7 @@ bool NAV::NodeManager::DeleteNode(ax::NodeEditor::NodeId nodeId)
 
         if ((*it)->isInitialized())
         {
-            (*it)->deinitializeNode();
+            (*it)->doDeinitialize(true);
         }
         delete *it; // NOLINT(cppcoreguidelines-owning-memory)
         m_nodes.erase(it);
@@ -190,13 +183,6 @@ void NAV::NodeManager::DeleteAllNodes()
 
     bool saveLastActionsValue = NAV::flow::saveLastActions;
     NAV::flow::saveLastActions = false;
-
-    if (nodeInitThread.joinable())
-    {
-        // nodeInitThread.request_stop();
-        nodeInitThread_stopRequested = true;
-        nodeInitThread.join();
-    }
 
     while (!m_nodes.empty())
     {
@@ -262,7 +248,7 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
         {
             if (endPin->parentNode->isInitialized())
             {
-                endPin->parentNode->deinitializeNode();
+                endPin->parentNode->doDeinitialize(true);
             }
         }
     }
@@ -355,7 +341,7 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
             {
                 if (endPin->parentNode->isInitialized())
                 {
-                    endPin->parentNode->deinitializeNode();
+                    endPin->parentNode->doDeinitialize(true);
                 }
             }
         }
@@ -459,7 +445,7 @@ void NAV::NodeManager::RefreshLink(ax::NodeEditor::LinkId linkId)
             {
                 if (endPin->parentNode->isInitialized())
                 {
-                    endPin->parentNode->deinitializeNode();
+                    endPin->parentNode->doDeinitialize(true);
                 }
             }
         }
@@ -524,7 +510,7 @@ bool NAV::NodeManager::DeleteLink(ax::NodeEditor::LinkId linkId)
 
                 if (endPin->parentNode)
                 {
-                    endPin->parentNode->deinitializeNode();
+                    endPin->parentNode->doDeinitialize(true);
                 }
             }
             else if (startPin->type == Pin::Type::Flow)
@@ -887,7 +873,7 @@ void NAV::NodeManager::EnableAllCallbacks()
     LOG_TRACE("called");
     for (auto* node : m_nodes)
     {
-        if (node->isEnabled())
+        if (!node->isDisabled())
         {
             node->callbacksEnabled = true;
         }
@@ -907,11 +893,14 @@ bool NAV::NodeManager::InitializeAllNodes()
 {
     LOG_TRACE("called");
     bool nodeCouldNotInitialize = false;
+
+    InitializeAllNodesAsync();
+
     for (auto* node : m_nodes)
     {
-        if (node->isEnabled() && !node->isInitialized())
+        if (node && !node->isDisabled() && !node->isInitialized())
         {
-            if (!node->initializeNode())
+            if (!node->doInitialize(true))
             {
                 nodeCouldNotInitialize = true;
             }
@@ -924,44 +913,13 @@ bool NAV::NodeManager::InitializeAllNodes()
 void NAV::NodeManager::InitializeAllNodesAsync()
 {
     LOG_TRACE("called");
-    if (nodeInitThread.joinable())
-    {
-        LOG_DEBUG("Joining old node Init Thread");
-        // nodeInitThread.request_stop();
-        nodeInitThread_stopRequested = true;
-        nodeInitThread.join();
-    }
 
-    // nodeInitThread = std::jthread([](const std::stop_token& st) {
-    nodeInitThread_stopRequested = false;
-    nodeInitThread = std::thread([]() {
-        // If this thread is running, and a node is added, the node vector will be moved and all pointers are invalid
-        // That's why a for-range does not work here and we have to access the elements via at()
-        size_t amountOfNodes = m_nodes.size();
-        for (size_t i = 0; i < amountOfNodes && i < m_nodes.size(); i++)
+    for (auto* node : m_nodes)
+    {
+        if (node && !node->isDisabled() && !node->isInitialized())
         {
-            // if (st.stop_requested())
-            if (nodeInitThread_stopRequested)
-            {
-                break;
-            }
-            if (m_nodes.at(i)->isEnabled() && !m_nodes.at(i)->isInitialized())
-            {
-                m_nodes.at(i)->initializeNode();
-            }
+            node->doInitialize();
         }
-    });
-}
-
-void NAV::NodeManager::Stop()
-{
-    LOG_TRACE("called");
-    if (nodeInitThread.joinable())
-    {
-        LOG_DEBUG("Joining node Init Thread");
-        // nodeInitThread.request_stop();
-        nodeInitThread_stopRequested = true;
-        nodeInitThread.join();
     }
 }
 

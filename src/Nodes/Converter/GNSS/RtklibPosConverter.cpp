@@ -10,9 +10,8 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 
 NAV::RtklibPosConverter::RtklibPosConverter()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
     _hasConfig = false;
 

@@ -11,9 +11,8 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 NAV::UartDataLogger::UartDataLogger()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _fileType = FileType::BINARY;
@@ -49,7 +48,7 @@ void NAV::UartDataLogger::guiConfig()
     if (FileWriter::guiConfig(".ubx", { ".ubx" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        deinitializeNode();
+        doDeinitialize();
     }
 }
 

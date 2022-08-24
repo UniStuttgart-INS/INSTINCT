@@ -151,7 +151,7 @@ Eigen::Vector3d n_calcGravitation_EGM96(const Eigen::Vector3d& lla_position, siz
     double azimuth = lla_position(1);               // [rad]
 
     // Gravitation vector in local-navigation frame coordinates in [m/s^2]
-    Eigen::Vector3d n_gravity = Eigen::Vector3d::Zero();
+    Eigen::Vector3d n_gravitation = Eigen::Vector3d::Zero();
 
     double Pnm = 0;
     double Pnmd = 0;
@@ -183,30 +183,16 @@ Eigen::Vector3d n_calcGravitation_EGM96(const Eigen::Vector3d& lla_position, siz
             auto nd = static_cast<double>(n);
             auto md = static_cast<double>(m);
 
-            // Gravity vector from differentiation of the gravity potential in spherical coordinates (see 'GUT User Guide' eq. 7.4.2) - centrifugal acceleration added below
-            n_gravity(0) += std::pow((InsConst::WGS84::a / radius), nd) * (C * std::cos(md * azimuth) + S * std::sin(md * azimuth)) * Pnmd;
-            n_gravity(1) += std::pow((InsConst::WGS84::a / radius), nd) * md * (C * std::sin(md * azimuth) - S * std::cos(md * azimuth)) * Pnm;
-            n_gravity(2) += (nd + 1.0) * std::pow((InsConst::WGS84::a / radius), nd) * (C * std::cos(md * azimuth) + S * std::sin(md * azimuth)) * Pnm;
+            // Gravity vector from differentiation of the gravity potential in spherical coordinates (see 'GUT User Guide' eq. 7.4.2)
+            n_gravitation(0) += std::pow((InsConst::WGS84::a / radius), nd) * (C * std::cos(md * azimuth) + S * std::sin(md * azimuth)) * Pnmd;
+            n_gravitation(1) += std::pow((InsConst::WGS84::a / radius), nd) * md * (C * std::sin(md * azimuth) - S * std::cos(md * azimuth)) * Pnm;
+            n_gravitation(2) += (nd + 1.0) * std::pow((InsConst::WGS84::a / radius), nd) * (C * std::cos(md * azimuth) + S * std::sin(md * azimuth)) * Pnm;
         }
     }
 
-    return { -InsConst::WGS84::MU / (radius * radius) * n_gravity(0),
-             (1.0 / std::sin(elevation)) * (-InsConst::WGS84::MU / (radius * radius)) * n_gravity(1),
-             InsConst::WGS84::MU / (radius * radius) * (1.0 + n_gravity(2)) };
-}
-
-Eigen::Vector3d n_calcCentrifugalAcceleration(const double& latitude, const double& altitude)
-{
-    // Geocentric latitude determination from geographic latitude
-    double latitudeGeocentric = std::atan((std::pow(InsConst::WGS84::b, 2.0) / std::pow(InsConst::WGS84::a, 2.0)) * std::tan(latitude));
-    // Radius of spheroid determination
-    double radiusEarthBody = InsConst::WGS84::a * (1.0 - InsConst::WGS84::f * std::pow(std::sin(latitudeGeocentric), 2.0)) + std::abs(altitude);
-
-    // Centrifugal acceleration - components North and Down (see 'GUT User Guide' eq. 7.4.2)
-    double centrifugalN = InsConst::omega_ie * InsConst::omega_ie * radiusEarthBody * std::sin(M_PI_2 - latitudeGeocentric) * std::cos(M_PI_2 - latitudeGeocentric);
-    double centrifugalD = InsConst::omega_ie * InsConst::omega_ie * radiusEarthBody * std::sin(M_PI_2 - latitudeGeocentric) * std::sin(M_PI_2 - latitudeGeocentric);
-
-    return { -centrifugalN, 0, -centrifugalD };
+    return { -InsConst::WGS84::MU / (radius * radius) * n_gravitation(0),
+             (1.0 / std::sin(elevation)) * (-InsConst::WGS84::MU / (radius * radius)) * n_gravitation(1),
+             InsConst::WGS84::MU / (radius * radius) * (1.0 + n_gravitation(2)) };
 }
 
 } // namespace NAV

@@ -3,10 +3,10 @@
 #include "util/Logger.hpp"
 
 NAV::GroupBox::GroupBox()
+    : Node(typeStatic())
 {
     LOG_TRACE("called");
 
-    name = typeStatic();
     kind = Node::Kind::GroupBox;
     _hasConfig = false;
     _size = ImVec2(400, 300);

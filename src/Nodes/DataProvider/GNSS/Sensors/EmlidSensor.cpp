@@ -13,10 +13,8 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/General/UartPacket.hpp"
 
 NAV::EmlidSensor::EmlidSensor()
-    : _sensor(typeStatic())
+    : Node(typeStatic()), _sensor(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
@@ -54,7 +52,7 @@ void NAV::EmlidSensor::guiConfig()
     {
         LOG_DEBUG("{}: SensorPort changed to {}", nameId(), _sensorPort);
         flow::ApplyChanges();
-        deinitializeNode();
+        doDeinitialize();
     }
     ImGui::SameLine();
     gui::widgets::HelpMarker("COM port where the sensor is attached to\n"

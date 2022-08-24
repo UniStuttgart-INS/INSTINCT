@@ -1251,9 +1251,8 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 11> NAV::VectorNavSensor
 } };
 
 NAV::VectorNavSensor::VectorNavSensor()
+    : Imu(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
@@ -1314,7 +1313,7 @@ void NAV::VectorNavSensor::guiConfig()
     {
         LOG_DEBUG("{}: Sensor changed to {}", nameId(), _sensorModel);
         flow::ApplyChanges();
-        deinitializeNode();
+        doDeinitialize();
 
         if (_sensorModel != VectorNavModel::VN310
             && (_asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNGPS
@@ -1393,7 +1392,7 @@ void NAV::VectorNavSensor::guiConfig()
         flow::ApplyChanges();
         if (isInitialized())
         {
-            deinitializeNode();
+            doDeinitialize();
         }
     }
     ImGui::SameLine();
@@ -1506,7 +1505,7 @@ void NAV::VectorNavSensor::guiConfig()
         {
             LOG_DEBUG("{}: Baudrate changed to {}", nameId(), sensorBaudrate());
             flow::ApplyChanges();
-            deinitializeNode();
+            doDeinitialize();
         }
 
         if (ImGui::TreeNode(fmt::format("Async Ascii Output##{}", size_t(id)).c_str()))
@@ -1561,12 +1560,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the asyncDataOutputType: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -1609,12 +1608,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the asyncDataOutputFrequency: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -1701,12 +1700,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the synchronizationControlRegister: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -1757,12 +1756,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the synchronizationControlRegister: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -1806,12 +1805,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the synchronizationControlRegister: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -1858,12 +1857,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the synchronizationControlRegister: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -1910,12 +1909,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the synchronizationControlRegister: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -1959,12 +1958,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the synchronizationControlRegister: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -1989,12 +1988,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the synchronizationControlRegister: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -2034,12 +2033,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the communicationProtocolControlRegister: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -2092,12 +2091,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the communicationProtocolControlRegister: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -2148,12 +2147,12 @@ void NAV::VectorNavSensor::guiConfig()
                                 catch (const std::exception& e)
                                 {
                                     LOG_ERROR("{}: Could not configure the communicationProtocolControlRegister: {}", nameId(), e.what());
-                                    deinitializeNode();
+                                    doDeinitialize();
                                 }
                             }
                             else
                             {
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         if (ImGui::IsItemHovered())
@@ -2196,12 +2195,12 @@ void NAV::VectorNavSensor::guiConfig()
                                 catch (const std::exception& e)
                                 {
                                     LOG_ERROR("{}: Could not configure the communicationProtocolControlRegister: {}", nameId(), e.what());
-                                    deinitializeNode();
+                                    doDeinitialize();
                                 }
                             }
                             else
                             {
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         if (ImGui::IsItemHovered())
@@ -2248,12 +2247,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the communicationProtocolControlRegister: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -2302,12 +2301,12 @@ void NAV::VectorNavSensor::guiConfig()
                                 catch (const std::exception& e)
                                 {
                                     LOG_ERROR("{}: Could not configure the communicationProtocolControlRegister: {}", nameId(), e.what());
-                                    deinitializeNode();
+                                    doDeinitialize();
                                 }
                             }
                             else
                             {
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         if (ImGui::IsItemHovered())
@@ -2354,12 +2353,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the communicationProtocolControlRegister: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -2486,13 +2485,13 @@ void NAV::VectorNavSensor::guiConfig()
                                     catch (const std::exception& e)
                                     {
                                         LOG_ERROR("{}: Could not configure the binaryOutputRegister {}: {}", nameId(), binUpdate + 1, e.what());
-                                        deinitializeNode();
+                                        doDeinitialize();
                                     }
                                 }
                             }
                             else
                             {
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         if (ImGui::IsItemHovered())
@@ -2567,13 +2566,13 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the binaryOutputRegister {}: {}", nameId(), binUpdate + 1, e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                     }
                     else
                     {
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 if ((_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output2 && b == 1)
@@ -2646,12 +2645,12 @@ void NAV::VectorNavSensor::guiConfig()
                                 catch (const std::exception& e)
                                 {
                                     LOG_ERROR("{}: Could not configure the binaryOutputRegister {}: {}", nameId(), b + 1, e.what());
-                                    deinitializeNode();
+                                    doDeinitialize();
                                 }
                             }
                             else
                             {
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
 
@@ -2908,7 +2907,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     imuRot.at(2) = 180;
                 }
-                auto dcmf = trafo::b_Quat_p(deg2rad(imuRot.at(0)), deg2rad(imuRot.at(1)), deg2rad(imuRot.at(2))).toRotationMatrix().cast<float>();
+                Eigen::Matrix3f dcmf = trafo::b_Quat_p(deg2rad(imuRot.at(0)), deg2rad(imuRot.at(1)), deg2rad(imuRot.at(2))).toRotationMatrix().cast<float>();
                 _referenceFrameRotationMatrix = vn::math::mat3f(dcmf(0, 0), dcmf(0, 1), dcmf(0, 2),
                                                                 dcmf(1, 0), dcmf(1, 1), dcmf(1, 2),
                                                                 dcmf(2, 0), dcmf(2, 1), dcmf(2, 2));
@@ -2923,12 +2922,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the referenceFrameRotationMatrix: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
 
@@ -2953,12 +2952,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the referenceFrameRotationMatrix: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
             row = { _referenceFrameRotationMatrix.e10, _referenceFrameRotationMatrix.e11, _referenceFrameRotationMatrix.e12 };
@@ -2978,12 +2977,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the referenceFrameRotationMatrix: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
             row = { _referenceFrameRotationMatrix.e20, _referenceFrameRotationMatrix.e21, _referenceFrameRotationMatrix.e22 };
@@ -3003,12 +3002,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the referenceFrameRotationMatrix: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
 
@@ -3045,12 +3044,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -3080,12 +3079,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -3115,12 +3114,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -3150,12 +3149,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -3185,12 +3184,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -3222,12 +3221,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -3268,12 +3267,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -3314,12 +3313,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -3360,12 +3359,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -3406,12 +3405,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -3465,12 +3464,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the deltaThetaAndDeltaVelocityConfigurationRegister: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -3515,12 +3514,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the deltaThetaAndDeltaVelocityConfigurationRegister: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -3566,12 +3565,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the deltaThetaAndDeltaVelocityConfigurationRegister: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -3633,12 +3632,12 @@ void NAV::VectorNavSensor::guiConfig()
                                 catch (const std::exception& e)
                                 {
                                     LOG_ERROR("{}: Could not configure the gpsConfigurationRegister: {}", nameId(), e.what());
-                                    deinitializeNode();
+                                    doDeinitialize();
                                 }
                             }
                             else
                             {
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         if (ImGui::IsItemHovered())
@@ -3681,12 +3680,12 @@ void NAV::VectorNavSensor::guiConfig()
                                 catch (const std::exception& e)
                                 {
                                     LOG_ERROR("{}: Could not configure the gpsConfigurationRegister: {}", nameId(), e.what());
-                                    deinitializeNode();
+                                    doDeinitialize();
                                 }
                             }
                             else
                             {
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         if (ImGui::IsItemHovered())
@@ -3727,12 +3726,12 @@ void NAV::VectorNavSensor::guiConfig()
                                 catch (const std::exception& e)
                                 {
                                     LOG_ERROR("{}: Could not configure the gpsConfigurationRegister: {}", nameId(), e.what());
-                                    deinitializeNode();
+                                    doDeinitialize();
                                 }
                             }
                             else
                             {
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
 
@@ -3770,12 +3769,12 @@ void NAV::VectorNavSensor::guiConfig()
                                 catch (const std::exception& e)
                                 {
                                     LOG_ERROR("{}: Could not configure the gpsConfigurationRegister: {}", nameId(), e.what());
-                                    deinitializeNode();
+                                    doDeinitialize();
                                 }
                             }
                             else
                             {
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         if (ImGui::IsItemHovered())
@@ -3816,12 +3815,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the gpsAntennaOffset: {}", nameId(), e.what());
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
 
@@ -3846,12 +3845,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the gpsCompassBaselineRegister: {}", nameId(), e.what());
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 ImGui::SameLine();
@@ -3880,12 +3879,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the gpsCompassBaselineRegister: {}", nameId(), e.what());
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 ImGui::SameLine();
@@ -3941,12 +3940,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the vpeBasicControlRegister: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
 
@@ -3982,12 +3981,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the vpeBasicControlRegister: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
 
@@ -4022,12 +4021,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the vpeBasicControlRegister: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
 
@@ -4058,12 +4057,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the vpeBasicControlRegister: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
 
@@ -4097,12 +4096,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the vpeMagnetometerBasicTuningRegister: {}", nameId(), e.what());
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 ImGui::SameLine();
@@ -4122,12 +4121,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the vpeMagnetometerBasicTuningRegister: {}", nameId(), e.what());
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
 
@@ -4144,12 +4143,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the vpeMagnetometerBasicTuningRegister: {}", nameId(), e.what());
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
 
@@ -4173,12 +4172,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the vpeAccelerometerBasicTuningRegister: {}", nameId(), e.what());
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 ImGui::SameLine();
@@ -4198,12 +4197,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the vpeAccelerometerBasicTuningRegister: {}", nameId(), e.what());
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
 
@@ -4220,12 +4219,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the vpeAccelerometerBasicTuningRegister: {}", nameId(), e.what());
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
 
@@ -4249,12 +4248,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the vpeGyroBasicTuningRegister: {}", nameId(), e.what());
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 ImGui::SameLine();
@@ -4273,12 +4272,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the vpeGyroBasicTuningRegister: {}", nameId(), e.what());
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
 
@@ -4295,12 +4294,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the vpeGyroBasicTuningRegister: {}", nameId(), e.what());
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
 
@@ -4324,12 +4323,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the filterStartupGyroBias: {}", nameId(), e.what());
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
 
@@ -4373,12 +4372,12 @@ void NAV::VectorNavSensor::guiConfig()
                                 catch (const std::exception& e)
                                 {
                                     LOG_ERROR("{}: Could not configure the insBasicConfigurationRegisterVn300: {}", nameId(), e.what());
-                                    deinitializeNode();
+                                    doDeinitialize();
                                 }
                             }
                             else
                             {
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         if (ImGui::IsItemHovered())
@@ -4409,12 +4408,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the insBasicConfigurationRegisterVn300: {}", nameId(), e.what());
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 ImGui::SameLine();
@@ -4439,12 +4438,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the insBasicConfigurationRegisterVn300: {}", nameId(), e.what());
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 ImGui::SameLine();
@@ -4470,12 +4469,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the startupFilterBiasEstimateRegister: {}", nameId(), e.what());
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
 
@@ -4492,12 +4491,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the startupFilterBiasEstimateRegister: {}", nameId(), e.what());
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
 
@@ -4514,12 +4513,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the startupFilterBiasEstimateRegister: {}", nameId(), e.what());
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
 
@@ -4573,12 +4572,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the magnetometerCalibrationControlRegister: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -4621,12 +4620,12 @@ void NAV::VectorNavSensor::guiConfig()
                             catch (const std::exception& e)
                             {
                                 LOG_ERROR("{}: Could not configure the magnetometerCalibrationControlRegister: {}", nameId(), e.what());
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
                         else
                         {
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     if (ImGui::IsItemHovered())
@@ -4663,12 +4662,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the magnetometerCalibrationControlRegister: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -4721,12 +4720,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the magneticAndGravityReferenceVectorsRegister: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
 
@@ -4743,12 +4742,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the magneticAndGravityReferenceVectorsRegister: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
 
@@ -4789,12 +4788,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the referenceVectorConfigurationRegister: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
 
@@ -4811,12 +4810,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the referenceVectorConfigurationRegister: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
 
@@ -4835,12 +4834,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the referenceVectorConfigurationRegister: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -4859,12 +4858,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the referenceVectorConfigurationRegister: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -4883,12 +4882,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the referenceVectorConfigurationRegister: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -4907,12 +4906,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the referenceVectorConfigurationRegister: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -4931,12 +4930,12 @@ void NAV::VectorNavSensor::guiConfig()
                     catch (const std::exception& e)
                     {
                         LOG_ERROR("{}: Could not configure the referenceVectorConfigurationRegister: {}", nameId(), e.what());
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 else
                 {
-                    deinitializeNode();
+                    doDeinitialize();
                 }
             }
             ImGui::SameLine();
@@ -4982,12 +4981,12 @@ void NAV::VectorNavSensor::guiConfig()
                                 catch (const std::exception& e)
                                 {
                                     LOG_ERROR("{}: Could not configure the velocityCompensationControlRegister: {}", nameId(), e.what());
-                                    deinitializeNode();
+                                    doDeinitialize();
                                 }
                             }
                             else
                             {
-                                deinitializeNode();
+                                doDeinitialize();
                             }
                         }
 
@@ -5014,12 +5013,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the velocityCompensationControlRegister: {}", nameId(), e.what());
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 ImGui::SameLine();
@@ -5038,12 +5037,12 @@ void NAV::VectorNavSensor::guiConfig()
                         catch (const std::exception& e)
                         {
                             LOG_ERROR("{}: Could not configure the velocityCompensationControlRegister: {}", nameId(), e.what());
-                            deinitializeNode();
+                            doDeinitialize();
                         }
                     }
                     else
                     {
-                        deinitializeNode();
+                        doDeinitialize();
                     }
                 }
                 ImGui::SameLine();
@@ -5475,7 +5474,7 @@ bool NAV::VectorNavSensor::initialize()
     if (_vs.readSerialBaudRate() != targetBaudrate)
     {
         LOG_ERROR("{}: Changing the baudrate from {} to {} was not successfull", nameId(), _vs.readSerialBaudRate(), targetBaudrate);
-        deinitializeNode();
+        doDeinitialize();
         return false;
     }
 
@@ -5495,7 +5494,7 @@ bool NAV::VectorNavSensor::initialize()
                   nameId(),
                   _synchronizationControlRegister.syncInMode, _synchronizationControlRegister.syncInEdge, _synchronizationControlRegister.syncInSkipFactor, _synchronizationControlRegister.syncOutMode, _synchronizationControlRegister.syncOutPolarity, _synchronizationControlRegister.syncOutSkipFactor, _synchronizationControlRegister.syncOutPulseWidth,
                   vnSynchronizationControlRegister.syncInMode, vnSynchronizationControlRegister.syncInEdge, vnSynchronizationControlRegister.syncInSkipFactor, vnSynchronizationControlRegister.syncOutMode, vnSynchronizationControlRegister.syncOutPolarity, vnSynchronizationControlRegister.syncOutSkipFactor, vnSynchronizationControlRegister.syncOutPulseWidth);
-        deinitializeNode();
+        doDeinitialize();
         return false;
     }
 
@@ -5515,7 +5514,7 @@ bool NAV::VectorNavSensor::initialize()
                   nameId(),
                   _communicationProtocolControlRegister.serialCount, _communicationProtocolControlRegister.serialStatus, _communicationProtocolControlRegister.spiCount, _communicationProtocolControlRegister.spiStatus, _communicationProtocolControlRegister.serialChecksum, _communicationProtocolControlRegister.spiChecksum, _communicationProtocolControlRegister.errorMode,
                   vnCommunicationProtocolControlRegister.serialCount, vnCommunicationProtocolControlRegister.serialStatus, vnCommunicationProtocolControlRegister.spiCount, vnCommunicationProtocolControlRegister.spiStatus, vnCommunicationProtocolControlRegister.serialChecksum, vnCommunicationProtocolControlRegister.spiChecksum, vnCommunicationProtocolControlRegister.errorMode);
-        deinitializeNode();
+        doDeinitialize();
         return false;
     }
 
@@ -5543,7 +5542,7 @@ bool NAV::VectorNavSensor::initialize()
                   "Target: DCM = {}\n"
                   "Sensor: DCM = {}",
                   nameId(), _referenceFrameRotationMatrix, vnReferenceFrameRotationMatrix);
-        deinitializeNode();
+        doDeinitialize();
         return false;
     }
 
@@ -5566,7 +5565,7 @@ bool NAV::VectorNavSensor::initialize()
                   nameId(),
                   _imuFilteringConfigurationRegister.magWindowSize, _imuFilteringConfigurationRegister.accelWindowSize, _imuFilteringConfigurationRegister.gyroWindowSize, _imuFilteringConfigurationRegister.tempWindowSize, _imuFilteringConfigurationRegister.presWindowSize, _imuFilteringConfigurationRegister.magFilterMode, _imuFilteringConfigurationRegister.accelFilterMode, _imuFilteringConfigurationRegister.gyroFilterMode, _imuFilteringConfigurationRegister.tempFilterMode, _imuFilteringConfigurationRegister.presFilterMode,
                   vnImuFilteringConfigurationRegister.magWindowSize, vnImuFilteringConfigurationRegister.accelWindowSize, vnImuFilteringConfigurationRegister.gyroWindowSize, vnImuFilteringConfigurationRegister.tempWindowSize, vnImuFilteringConfigurationRegister.presWindowSize, vnImuFilteringConfigurationRegister.magFilterMode, vnImuFilteringConfigurationRegister.accelFilterMode, vnImuFilteringConfigurationRegister.gyroFilterMode, vnImuFilteringConfigurationRegister.tempFilterMode, vnImuFilteringConfigurationRegister.presFilterMode);
-        deinitializeNode();
+        doDeinitialize();
         return false;
     }
 
@@ -5583,7 +5582,7 @@ bool NAV::VectorNavSensor::initialize()
                   nameId(),
                   _deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame, _deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation, _deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation, _deltaThetaAndDeltaVelocityConfigurationRegister.earthRateCorrection,
                   vnDeltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame, vnDeltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation, vnDeltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation, vnDeltaThetaAndDeltaVelocityConfigurationRegister.earthRateCorrection);
-        deinitializeNode();
+        doDeinitialize();
         return false;
     }
 
@@ -5606,7 +5605,7 @@ bool NAV::VectorNavSensor::initialize()
                       nameId(),
                       _gpsConfigurationRegister.mode, _gpsConfigurationRegister.ppsSource, _gpsConfigurationRegister.rate, _gpsConfigurationRegister.antPow,
                       vnGpsConfigurationRegister.mode, vnGpsConfigurationRegister.ppsSource, vnGpsConfigurationRegister.rate, vnGpsConfigurationRegister.antPow);
-            deinitializeNode();
+            doDeinitialize();
             return false;
         }
 
@@ -5620,7 +5619,7 @@ bool NAV::VectorNavSensor::initialize()
                       nameId(),
                       _gpsAntennaOffset,
                       vnGpsAntennaOffset);
-            deinitializeNode();
+            doDeinitialize();
             return false;
         }
 
@@ -5635,7 +5634,7 @@ bool NAV::VectorNavSensor::initialize()
                       nameId(),
                       _gpsCompassBaselineRegister.position, _gpsCompassBaselineRegister.uncertainty,
                       vnGpsCompassBaselineRegister.position, vnGpsCompassBaselineRegister.uncertainty);
-            deinitializeNode();
+            doDeinitialize();
             return false;
         }
     }
@@ -5666,7 +5665,7 @@ bool NAV::VectorNavSensor::initialize()
                   nameId(),
                   _vpeBasicControlRegister.enable, _vpeBasicControlRegister.headingMode, _vpeBasicControlRegister.filteringMode, _vpeBasicControlRegister.tuningMode,
                   vnVpeBasicControlRegister.enable, vnVpeBasicControlRegister.headingMode, vnVpeBasicControlRegister.filteringMode, vnVpeBasicControlRegister.tuningMode);
-        deinitializeNode();
+        doDeinitialize();
         return false;
     }
 
@@ -5684,7 +5683,7 @@ bool NAV::VectorNavSensor::initialize()
                       nameId(),
                       _vpeMagnetometerBasicTuningRegister.baseTuning, _vpeMagnetometerBasicTuningRegister.adaptiveTuning, _vpeMagnetometerBasicTuningRegister.adaptiveFiltering,
                       vnVpeMagnetometerBasicTuningRegister.baseTuning, vnVpeMagnetometerBasicTuningRegister.adaptiveTuning, vnVpeMagnetometerBasicTuningRegister.adaptiveFiltering);
-            deinitializeNode();
+            doDeinitialize();
             return false;
         }
 
@@ -5700,7 +5699,7 @@ bool NAV::VectorNavSensor::initialize()
                       nameId(),
                       _vpeAccelerometerBasicTuningRegister.baseTuning, _vpeAccelerometerBasicTuningRegister.adaptiveTuning, _vpeAccelerometerBasicTuningRegister.adaptiveFiltering,
                       vnVpeAccelerometerBasicTuningRegister.baseTuning, vnVpeAccelerometerBasicTuningRegister.adaptiveTuning, vnVpeAccelerometerBasicTuningRegister.adaptiveFiltering);
-            deinitializeNode();
+            doDeinitialize();
             return false;
         }
 
@@ -5714,7 +5713,7 @@ bool NAV::VectorNavSensor::initialize()
                       nameId(),
                       _filterStartupGyroBias,
                       vnFilterStartupGyroBias);
-            deinitializeNode();
+            doDeinitialize();
             return false;
         }
 
@@ -5730,7 +5729,7 @@ bool NAV::VectorNavSensor::initialize()
                       nameId(),
                       _vpeGyroBasicTuningRegister.angularWalkVariance, _vpeGyroBasicTuningRegister.baseTuning, _vpeGyroBasicTuningRegister.adaptiveTuning,
                       vnVpeGyroBasicTuningRegister.angularWalkVariance, vnVpeGyroBasicTuningRegister.baseTuning, vnVpeGyroBasicTuningRegister.adaptiveTuning);
-            deinitializeNode();
+            doDeinitialize();
             return false;
         }
     }
@@ -5753,7 +5752,7 @@ bool NAV::VectorNavSensor::initialize()
                       nameId(),
                       _insBasicConfigurationRegisterVn300.scenario, _insBasicConfigurationRegisterVn300.ahrsAiding, _insBasicConfigurationRegisterVn300.estBaseline,
                       vnInsBasicConfigurationRegisterVn300.scenario, vnInsBasicConfigurationRegisterVn300.ahrsAiding, vnInsBasicConfigurationRegisterVn300.estBaseline);
-            deinitializeNode();
+            doDeinitialize();
             return false;
         }
 
@@ -5769,7 +5768,7 @@ bool NAV::VectorNavSensor::initialize()
                       nameId(),
                       _startupFilterBiasEstimateRegister.gyroBias, _startupFilterBiasEstimateRegister.accelBias, _startupFilterBiasEstimateRegister.pressureBias,
                       vnStartupFilterBiasEstimateRegister.gyroBias, vnStartupFilterBiasEstimateRegister.accelBias, vnStartupFilterBiasEstimateRegister.pressureBias);
-            deinitializeNode();
+            doDeinitialize();
             return false;
         }
     }
@@ -5790,7 +5789,7 @@ bool NAV::VectorNavSensor::initialize()
                   nameId(),
                   _magnetometerCalibrationControlRegister.hsiMode, _magnetometerCalibrationControlRegister.hsiOutput, _magnetometerCalibrationControlRegister.convergeRate,
                   vnMagnetometerCalibrationControlRegister.hsiMode, vnMagnetometerCalibrationControlRegister.hsiOutput, vnMagnetometerCalibrationControlRegister.convergeRate);
-        deinitializeNode();
+        doDeinitialize();
         return false;
     }
 
@@ -5809,7 +5808,7 @@ bool NAV::VectorNavSensor::initialize()
                   nameId(),
                   _magneticAndGravityReferenceVectorsRegister.magRef, _magneticAndGravityReferenceVectorsRegister.accRef,
                   vnMagneticAndGravityReferenceVectorsRegister.magRef, vnMagneticAndGravityReferenceVectorsRegister.accRef);
-        deinitializeNode();
+        doDeinitialize();
         return false;
     }
 
@@ -5827,7 +5826,7 @@ bool NAV::VectorNavSensor::initialize()
                   nameId(),
                   _referenceVectorConfigurationRegister.useMagModel, _referenceVectorConfigurationRegister.useGravityModel, _referenceVectorConfigurationRegister.recalcThreshold, _referenceVectorConfigurationRegister.year, _referenceVectorConfigurationRegister.position,
                   vnReferenceVectorConfigurationRegister.useMagModel, vnReferenceVectorConfigurationRegister.useGravityModel, vnReferenceVectorConfigurationRegister.recalcThreshold, vnReferenceVectorConfigurationRegister.year, vnReferenceVectorConfigurationRegister.position);
-        deinitializeNode();
+        doDeinitialize();
         return false;
     }
 
@@ -5849,7 +5848,7 @@ bool NAV::VectorNavSensor::initialize()
                       nameId(),
                       _velocityCompensationControlRegister.mode, _velocityCompensationControlRegister.velocityTuning, _velocityCompensationControlRegister.rateTuning,
                       vnVelocityCompensationControlRegister.mode, vnVelocityCompensationControlRegister.velocityTuning, vnVelocityCompensationControlRegister.rateTuning);
-            deinitializeNode();
+            doDeinitialize();
             return false;
         }
 
@@ -5870,7 +5869,7 @@ bool NAV::VectorNavSensor::initialize()
                   nameId(),
                   _asyncDataOutputType,
                   vnAsyncDataOutputType);
-        deinitializeNode();
+        doDeinitialize();
         return false;
     }
 
@@ -5886,7 +5885,7 @@ bool NAV::VectorNavSensor::initialize()
                       nameId(),
                       _asyncDataOutputFrequency,
                       vnAsyncDataOutputFrequency);
-            deinitializeNode();
+            doDeinitialize();
             return false;
         }
     }
@@ -5921,7 +5920,7 @@ bool NAV::VectorNavSensor::initialize()
         _vs.writeBinaryOutput1(_binaryOutputRegister.at(0));
         // if (!checkBinaryRegister(_vs.readBinaryOutput1(), _binaryOutputRegister.at(0)))
         // {
-        //     deinitializeNode();
+        //     DoDeinitialize();;
         //     return false;
         // }
 
@@ -5929,7 +5928,7 @@ bool NAV::VectorNavSensor::initialize()
         _vs.writeBinaryOutput2(_binaryOutputRegister.at(1));
         // if (!checkBinaryRegister(_vs.readBinaryOutput2(), _binaryOutputRegister.at(1)))
         // {
-        //     deinitializeNode();
+        //     DoDeinitialize();;
         //     return false;
         // }
 
@@ -5937,14 +5936,14 @@ bool NAV::VectorNavSensor::initialize()
         _vs.writeBinaryOutput3(_binaryOutputRegister.at(2));
         // if (!checkBinaryRegister(_vs.readBinaryOutput3(), _binaryOutputRegister.at(2)))
         // {
-        //     deinitializeNode();
+        //     DoDeinitialize();;
         //     return false;
         // }
     }
     catch (const std::exception& e)
     {
         LOG_ERROR("{}: Could not configure binary output register {}: {}", nameId(), binaryOutputRegisterCounter, e.what());
-        deinitializeNode();
+        doDeinitialize();
         return false;
     }
 

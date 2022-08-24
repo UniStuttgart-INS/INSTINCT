@@ -12,9 +12,8 @@ namespace nm = NAV::NodeManager;
 #include "Navigation/Transformations/Units.hpp"
 
 NAV::VectorNavBinaryConverter::VectorNavBinaryConverter()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 350, 123 };
@@ -46,7 +45,7 @@ std::string NAV::VectorNavBinaryConverter::category()
 
 void NAV::VectorNavBinaryConverter::guiConfig()
 {
-    if (ImGui::Combo(fmt::format("Output Type##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_outputType), "ImuObsWDelta\0PosVelAtt\0\0"))
+    if (ImGui::Combo(fmt::format("Output Type##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_outputType), "ImuObsWDelta\0PosVelAtt\0GnssObs\0\0"))
     {
         LOG_DEBUG("{}: Output Type changed to {}", nameId(), _outputType ? "PosVelAtt" : "ImuObsWDelta");
 
@@ -59,6 +58,11 @@ void NAV::VectorNavBinaryConverter::guiConfig()
         {
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::PosVelAtt::type() };
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::PosVelAtt::type();
+        }
+        else if (_outputType == OutputType_GnssObs)
+        {
+            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::GnssObs::type() };
+            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::GnssObs::type();
         }
 
         for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.front().id))
@@ -117,6 +121,11 @@ void NAV::VectorNavBinaryConverter::restore(json const& j)
                 outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::PosVelAtt::type() };
                 outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::PosVelAtt::type();
             }
+            else if (_outputType == OutputType_GnssObs)
+            {
+                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::GnssObs::type() };
+                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::GnssObs::type();
+            }
         }
     }
     if (j.contains("posVelSource"))
@@ -151,6 +160,10 @@ void NAV::VectorNavBinaryConverter::receiveObs(const std::shared_ptr<const NodeD
     else if (_outputType == OutputType_PosVelAtt)
     {
         convertedData = convert2PosVelAtt(vnObs);
+    }
+    else if (_outputType == OutputType_GnssObs)
+    {
+        convertedData = convert2GnssObs(vnObs);
     }
 
     if (convertedData)
@@ -384,4 +397,531 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
 
     LOG_ERROR("{}: Conversion failed. No position or velocity data found in the input data.", nameId());
     return nullptr;
+}
+
+std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssObs(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs)
+{
+    auto gnssObs = std::make_shared<GnssObs>();
+
+    gnssObs->insTime = vnObs->insTime;
+
+    if (vnObs->gnss1Outputs)
+    {
+        if (vnObs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
+        {
+            for (const auto& satRaw : vnObs->gnss1Outputs->raw.satellites)
+            {
+                bool skipMeasurement = false;
+                SatelliteSystem satSys = SatSys_None;
+                switch (satRaw.sys)
+                {
+                case vendor::vectornav::SatSys::GPS:
+                    satSys = GPS;
+                    break;
+                case vendor::vectornav::SatSys::SBAS:
+                    satSys = SBAS;
+                    break;
+                case vendor::vectornav::SatSys::Galileo:
+                    satSys = GAL;
+                    break;
+                case vendor::vectornav::SatSys::BeiDou:
+                    satSys = BDS;
+                    break;
+                case vendor::vectornav::SatSys::IMES:
+                    LOG_TRACE("VectorNav SatRawElement satellite system '{}' is not supported yet. Skipping measurement.", satRaw.sys);
+                    skipMeasurement = true;
+                    break;
+                case vendor::vectornav::SatSys::QZSS:
+                    satSys = QZSS;
+                    break;
+                case vendor::vectornav::SatSys::GLONASS:
+                    satSys = GLO;
+                    break;
+                default: // IRNSS not in vectorNav
+                    LOG_TRACE("VectorNav SatRawElement satellite system '{}' is not supported yet. Skipping measurement.", satRaw.sys);
+                    skipMeasurement = true;
+                    break;
+                }
+
+                Frequency frequency = Freq_None;
+                Code code;
+                switch (SatelliteSystem_(satSys))
+                {
+                case GPS:
+                    switch (satRaw.freq)
+                    {
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L1:
+                        frequency = G01;
+                        switch (satRaw.chan)
+                        {
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::P_Code:
+                            code = Code::G1P;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                            code = Code::G1C;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Y_Code:
+                            code = Code::G1Y;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::M_Code:
+                            code = Code::G1M;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Codeless:
+                            code = Code::G1N;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::M_Chan:
+                            code = Code::G1S;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
+                            code = Code::G1L;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::G1X;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Z_Tracking:
+                            code = Code::G1W;
+                            break;
+                        default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
+                            skipMeasurement = true;
+                            break;
+                        }
+                        break;
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L2:
+                        frequency = G02;
+                        switch (satRaw.chan)
+                        {
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::P_Code:
+                            code = Code::G2P;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                            code = Code::G2C;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::SemiCodeless:
+                            code = Code::G2D;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Y_Code:
+                            code = Code::G2Y;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::M_Code:
+                            code = Code::G2M;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Codeless:
+                            code = Code::G2N;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::M_Chan:
+                            code = Code::G2S;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
+                            code = Code::G2L;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::G2X;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Z_Tracking:
+                            code = Code::G2W;
+                            break;
+                        default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
+                            skipMeasurement = true;
+                            break;
+                        }
+                        break;
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L5:
+                        frequency = G05;
+                        switch (satRaw.chan)
+                        {
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                            code = Code::G5I;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                            code = Code::G5Q;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::G5X;
+                            break;
+                        default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
+                            skipMeasurement = true;
+                            break;
+                        }
+                        break;
+                    default:
+                        LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq);
+                        skipMeasurement = true;
+                        break;
+                    }
+                    break;
+                case SBAS:
+                    switch (satRaw.freq)
+                    {
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L1:
+                        frequency = S01;
+                        switch (satRaw.chan)
+                        {
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                            code = Code::S1C;
+                            break;
+                        default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
+                            skipMeasurement = true;
+                            break;
+                        }
+                        break;
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L5:
+                        frequency = S05;
+                        switch (satRaw.chan)
+                        {
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                            code = Code::S5I;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                            code = Code::S5Q;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::S5X;
+                            break;
+                        default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
+                            skipMeasurement = true;
+                            break;
+                        }
+                        break;
+                    default:
+                        LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq);
+                        skipMeasurement = true;
+                        break;
+                    }
+                    break;
+                case GAL:
+                    switch (satRaw.freq)
+                    {
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L1:
+                        frequency = E01;
+                        switch (satRaw.chan)
+                        {
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                            code = Code::E1C;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::A_Chan:
+                            code = Code::E1A;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::B_Chan:
+                            code = Code::E1B;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::E1X;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::ABC:
+                            code = Code::E1Z;
+                            break;
+                        default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
+                            skipMeasurement = true;
+                            break;
+                        }
+                        break;
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L5:
+                        frequency = E08;
+                        switch (satRaw.chan)
+                        {
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                            code = Code::E8I;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                            code = Code::E8Q;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::E8X;
+                            break;
+                        default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
+                            skipMeasurement = true;
+                            break;
+                        }
+                        break;
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::E6:
+                        frequency = E06;
+                        switch (satRaw.chan)
+                        {
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::B_Chan:
+                            code = Code::E6B;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                            code = Code::E6C;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::E6X;
+                            break;
+                        default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
+                            skipMeasurement = true;
+                            break;
+                        }
+                        break;
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::E5a:
+                        frequency = E05;
+                        switch (satRaw.chan)
+                        {
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                            code = Code::E5I;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                            code = Code::E5Q;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::E5X;
+                            break;
+                        default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
+                            skipMeasurement = true;
+                            break;
+                        }
+                        break;
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::E5b:
+                        frequency = E07;
+                        switch (satRaw.chan)
+                        {
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                            code = Code::E7I;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                            code = Code::E7Q;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::E7X;
+                            break;
+                        default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
+                            skipMeasurement = true;
+                            break;
+                        }
+                        break;
+                    default:
+                        LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq);
+                        skipMeasurement = true;
+                        break;
+                    }
+                    break;
+                case BDS:
+                    switch (satRaw.freq)
+                    {
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L1:
+                        frequency = B01;
+                        switch (satRaw.chan)
+                        {
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                            code = Code::B2I;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                            code = Code::B2Q;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::B2X;
+                            break;
+                        default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
+                            skipMeasurement = true;
+                            break;
+                        }
+                        break;
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::E6:
+                        frequency = B06;
+                        switch (satRaw.chan)
+                        {
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::A_Chan:
+                            code = Code::B6A;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                            code = Code::B6I;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                            code = Code::B6Q;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::B6X;
+                            break;
+                        default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
+                            skipMeasurement = true;
+                            break;
+                        }
+                        break;
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::E5b:
+                        frequency = B08;
+                        switch (satRaw.chan)
+                        {
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                            code = Code::B7I;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                            code = Code::B7Q;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::B7X;
+                            break;
+                        default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
+                            skipMeasurement = true;
+                            break;
+                        }
+                        break;
+                    default:
+                        LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq);
+                        skipMeasurement = true;
+                        break;
+                    }
+                    break;
+                case QZSS:
+                    switch (satRaw.freq)
+                    {
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L1:
+                        frequency = J01;
+                        switch (satRaw.chan)
+                        {
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                            code = Code::J1C;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::M_Chan:
+                            code = Code::J1S;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
+                            code = Code::J1L;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::J1X;
+                            break;
+                        default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
+                            skipMeasurement = true;
+                            break;
+                        }
+                        break;
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L2:
+                        frequency = J02;
+                        switch (satRaw.chan)
+                        {
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::M_Chan:
+                            code = Code::J2S;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
+                            code = Code::J2L;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::J2X;
+                            break;
+                        default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
+                            skipMeasurement = true;
+                            break;
+                        }
+                        break;
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L5:
+                        frequency = J05;
+                        switch (satRaw.chan)
+                        {
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::I_Chan:
+                            code = Code::J5I;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::Q_Chan:
+                            code = Code::J5Q;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::J5X;
+                            break;
+                        default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
+                            skipMeasurement = true;
+                            break;
+                        }
+                        break;
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::E6:
+                        frequency = J06;
+                        switch (satRaw.chan)
+                        {
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::M_Chan:
+                            code = Code::J6S;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::L_Chan:
+                            code = Code::J6L;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::BC_Chan:
+                            code = Code::J6X;
+                            break;
+                        default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
+                            skipMeasurement = true;
+                            break;
+                        }
+                        break;
+                    default:
+                        LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq);
+                        skipMeasurement = true;
+                        break;
+                    }
+                    break;
+                case GLO:
+                    switch (satRaw.freq)
+                    {
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L1:
+                        frequency = R01;
+                        switch (satRaw.chan)
+                        {
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                            code = Code::R1C;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::P_Code:
+                            code = Code::R1P;
+                            break;
+                        default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
+                            skipMeasurement = true;
+                            break;
+                        }
+                        break;
+                    case vendor::vectornav::RawMeas::SatRawElement::Freq::L2:
+                        frequency = R02;
+                        switch (satRaw.chan)
+                        {
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::CA_Code:
+                            code = Code::R2C;
+                            break;
+                        case vendor::vectornav::RawMeas::SatRawElement::Chan::P_Code:
+                            code = Code::R2P;
+                            break;
+                        default:
+                            LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' channel '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq, satRaw.chan);
+                            skipMeasurement = true;
+                            break;
+                        }
+                        break;
+                    default:
+                        LOG_TRACE("VectorNav SatRawElement satellite system '{}' frequency '{}' is not supported yet. Skipping measurement.", satRaw.sys, satRaw.freq);
+                        skipMeasurement = true;
+                        break;
+                    }
+                    break;
+                case IRNSS: // IRNSS not in vectorNav
+                case SatSys_None:
+                    skipMeasurement = true;
+                    break;
+                }
+
+                if (skipMeasurement)
+                {
+                    continue;
+                }
+
+                (*gnssObs)(frequency, satRaw.svId, code).pseudorange = satRaw.pr;
+                (*gnssObs)(frequency, satRaw.svId, code).carrierPhase = satRaw.cp;
+                (*gnssObs)(frequency, satRaw.svId, code).doppler = satRaw.dp;
+                (*gnssObs)(frequency, satRaw.svId, code).CN0 = satRaw.cno;
+
+                // LLI has not been implemented yet, but can be calculated from vendor::vectornav::RawMeas::SatRawElement::Flags
+                // (*gnssObs)[{ frequency, satRaw.svId }].LLI = ...
+            }
+        }
+    }
+
+    return gnssObs;
 }

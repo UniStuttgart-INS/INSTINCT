@@ -11,10 +11,8 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/IMU/KvhObs.hpp"
 
 NAV::KvhFile::KvhFile()
-    : _sensor(typeStatic())
+    : Imu(typeStatic()), _sensor(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
@@ -52,11 +50,11 @@ void NAV::KvhFile::guiConfig()
         flow::ApplyChanges();
         if (res == FileReader::PATH_CHANGED)
         {
-            initializeNode();
+            doInitialize();
         }
         else
         {
-            deinitializeNode();
+            doDeinitialize();
         }
     }
 
@@ -85,14 +83,14 @@ void NAV::KvhFile::guiConfig()
             };
 
             ImGui::TableNextRow();
-            TextColoredIfExists(0, "GpsTime", "GpsToW");
-            TextColoredIfExists(1, "UnCompMag", "UnCompMagX");
+            TextColoredIfExists(0, "GpsTime", "GpsToW [s]");
+            TextColoredIfExists(1, "UnCompMag", "UnCompMagX [Gauss]");
             ImGui::TableNextRow();
-            TextColoredIfExists(0, "TimeStartup", "TimeStartup");
-            TextColoredIfExists(1, "UnCompAcc", "UnCompAccX");
+            TextColoredIfExists(0, "TimeStartup", "TimeStartup [ns]");
+            TextColoredIfExists(1, "UnCompAcc", "UnCompAccX [m/s^2]");
             ImGui::TableNextRow();
-            TextColoredIfExists(0, "Temperature", "Temperature");
-            TextColoredIfExists(1, "UnCompGyro", "UnCompGyroX");
+            TextColoredIfExists(0, "Temperature", "Temperature [Celsius]");
+            TextColoredIfExists(1, "UnCompGyro", "UnCompGyroX [rad/s]");
             ImGui::TableNextRow();
             TextColoredIfExists(0, "Status", "Status");
             ImGui::TableNextRow();
@@ -242,51 +240,51 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData(bool peek)
                 {
                     gpsWeek = static_cast<uint16_t>(std::stoul(cell));
                 }
-                else if (column == "GpsToW")
+                else if (column == "GpsToW [s]")
                 {
                     gpsToW = std::stold(cell);
                 }
-                else if (column == "TimeStartup")
+                else if (column == "TimeStartup [ns]")
                 {
                     obs->timeSinceStartup.emplace(std::stoull(cell));
                 }
-                else if (column == "UnCompMagX")
+                else if (column == "UnCompMagX [Gauss]")
                 {
                     magUncompX = std::stod(cell);
                 }
-                else if (column == "UnCompMagY")
+                else if (column == "UnCompMagY [Gauss]")
                 {
                     magUncompY = std::stod(cell);
                 }
-                else if (column == "UnCompMagZ")
+                else if (column == "UnCompMagZ [Gauss]")
                 {
                     magUncompZ = std::stod(cell);
                 }
-                else if (column == "UnCompAccX")
+                else if (column == "UnCompAccX [m/s^2]")
                 {
                     accelUncompX = std::stod(cell);
                 }
-                else if (column == "UnCompAccY")
+                else if (column == "UnCompAccY [m/s^2]")
                 {
                     accelUncompY = std::stod(cell);
                 }
-                else if (column == "UnCompAccZ")
+                else if (column == "UnCompAccZ [m/s^2]")
                 {
                     accelUncompZ = std::stod(cell);
                 }
-                else if (column == "UnCompGyroX")
+                else if (column == "UnCompGyroX [rad/s]")
                 {
                     gyroUncompX = std::stod(cell);
                 }
-                else if (column == "UnCompGyroY")
+                else if (column == "UnCompGyroY [rad/s]")
                 {
                     gyroUncompY = std::stod(cell);
                 }
-                else if (column == "UnCompGyroZ")
+                else if (column == "UnCompGyroZ [rad/s]")
                 {
                     gyroUncompZ = std::stod(cell);
                 }
-                else if (column == "Temperature")
+                else if (column == "Temperature [Celsius]")
                 {
                     obs->temperature.emplace(std::stod(cell));
                 }

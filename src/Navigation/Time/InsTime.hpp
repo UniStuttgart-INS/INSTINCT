@@ -47,8 +47,11 @@ constexpr int32_t SECONDS_PER_HOUR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR;     
 constexpr int32_t SECONDS_PER_DAY = SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY; ///< Seconds / Day
 constexpr int32_t SECONDS_PER_WEEK = SECONDS_PER_DAY * DAYS_PER_WEEK;                      ///< Seconds / Week
 
-/// Numerical precision for 'long double' variables
-constexpr long double EPSILON = 2.0L * std::numeric_limits<long double>::epsilon();
+/// Numerical precision/epsilon for 'long double' variables
+/// - Linux/x64:   1e-19
+/// - Windows/x64  1e-16
+/// - Linux/armv8: 1e-34 (Epsilon reports too small precision. Real precision is only approx. 1e-17)
+constexpr long double EPSILON = std::max(1e-17L, 10 * std::numeric_limits<long double>::epsilon());
 
 /// Maps GPS leap seconds to a time: array<mjd_day>, index + 1 is amount of leap seconds
 constexpr std::array<int32_t, 20> GPS_LEAP_SEC_MJD = {
@@ -459,8 +462,8 @@ struct InsTime_YMDHMS
         }
         while (this->day < 1)
         {
-            this->day += InsTimeUtil::daysInMonth(this->month, this->year);
             this->month--;
+            this->day += InsTimeUtil::daysInMonth(this->month, this->year);
         }
 
         while (this->month > InsTimeUtil::MONTHS_PER_YEAR)

@@ -291,9 +291,8 @@ void from_json(const json& j, Plot::PlotInfo& data)
 } // namespace NAV
 
 NAV::Plot::Plot()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;

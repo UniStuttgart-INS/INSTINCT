@@ -11,9 +11,8 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/IMU/ImuObs.hpp"
 
 NAV::ImuFile::ImuFile()
+    : Imu(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
@@ -51,11 +50,11 @@ void NAV::ImuFile::guiConfig()
         flow::ApplyChanges();
         if (res == FileReader::PATH_CHANGED)
         {
-            initializeNode();
+            doInitialize();
         }
         else
         {
-            deinitializeNode();
+            doDeinitialize();
         }
     }
 
@@ -84,19 +83,19 @@ void NAV::ImuFile::guiConfig()
 
         ImGui::TableNextRow();
         TextColoredIfExists(0, "GpsCycle", "GpsCycle");
-        TextColoredIfExists(1, "UnCompMag", "UnCompMagX");
-        TextColoredIfExists(2, "CompMag", "MagX");
+        TextColoredIfExists(1, "UnCompMag", "UnCompMagX [Gauss]");
+        TextColoredIfExists(2, "CompMag", "MagX [Gauss]");
         ImGui::TableNextRow();
         TextColoredIfExists(0, "GpsWeek", "GpsWeek");
-        TextColoredIfExists(1, "UnCompAcc", "UnCompAccX");
-        TextColoredIfExists(2, "CompAcc", "AccX");
+        TextColoredIfExists(1, "UnCompAcc", "UnCompAccX [m/s^2]");
+        TextColoredIfExists(2, "CompAcc", "AccX [m/s^2]");
         ImGui::TableNextRow();
-        TextColoredIfExists(0, "GpsToW", "GpsToW");
-        TextColoredIfExists(1, "UnCompGyro", "UnCompGyroX");
-        TextColoredIfExists(2, "CompGyro", "GyroX");
+        TextColoredIfExists(0, "GpsToW", "GpsToW [s]");
+        TextColoredIfExists(1, "UnCompGyro", "UnCompGyroX [rad/s]");
+        TextColoredIfExists(2, "CompGyro", "GyroX [rad/s]");
         ImGui::TableNextRow();
-        TextColoredIfExists(0, "TimeStartup", "TimeStartup");
-        TextColoredIfExists(1, "Temperature", "Temperature");
+        TextColoredIfExists(0, "TimeStartup", "TimeStartup [ns]");
+        TextColoredIfExists(1, "Temperature", "Temperature [Celsius]");
 
         ImGui::EndTable();
     }
@@ -217,87 +216,87 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData(bool peek)
             {
                 gpsWeek = static_cast<uint16_t>(std::stoul(cell));
             }
-            else if (column == "GpsToW")
+            else if (column == "GpsToW [s]")
             {
                 gpsToW = std::stold(cell);
             }
-            else if (column == "TimeStartup")
+            else if (column == "TimeStartup [ns]")
             {
                 obs->timeSinceStartup.emplace(std::stoull(cell));
             }
-            else if (column == "UnCompMagX")
+            else if (column == "UnCompMagX [Gauss]")
             {
                 magUncompX = std::stod(cell);
             }
-            else if (column == "UnCompMagY")
+            else if (column == "UnCompMagY [Gauss]")
             {
                 magUncompY = std::stod(cell);
             }
-            else if (column == "UnCompMagZ")
+            else if (column == "UnCompMagZ [Gauss]")
             {
                 magUncompZ = std::stod(cell);
             }
-            else if (column == "UnCompAccX")
+            else if (column == "UnCompAccX [m/s^2]")
             {
                 accelUncompX = std::stod(cell);
             }
-            else if (column == "UnCompAccY")
+            else if (column == "UnCompAccY [m/s^2]")
             {
                 accelUncompY = std::stod(cell);
             }
-            else if (column == "UnCompAccZ")
+            else if (column == "UnCompAccZ [m/s^2]")
             {
                 accelUncompZ = std::stod(cell);
             }
-            else if (column == "UnCompGyroX")
+            else if (column == "UnCompGyroX [rad/s]")
             {
                 gyroUncompX = std::stod(cell);
             }
-            else if (column == "UnCompGyroY")
+            else if (column == "UnCompGyroY [rad/s]")
             {
                 gyroUncompY = std::stod(cell);
             }
-            else if (column == "UnCompGyroZ")
+            else if (column == "UnCompGyroZ [rad/s]")
             {
                 gyroUncompZ = std::stod(cell);
             }
-            else if (column == "Temperature")
+            else if (column == "Temperature [Celsius]")
             {
                 obs->temperature.emplace(std::stod(cell));
             }
-            else if (column == "MagX")
+            else if (column == "MagX [Gauss]")
             {
                 magCompX = std::stod(cell);
             }
-            else if (column == "MagY")
+            else if (column == "MagY [Gauss]")
             {
                 magCompY = std::stod(cell);
             }
-            else if (column == "MagZ")
+            else if (column == "MagZ [Gauss]")
             {
                 magCompZ = std::stod(cell);
             }
-            else if (column == "AccX")
+            else if (column == "AccX [m/s^2]")
             {
                 accelCompX = std::stod(cell);
             }
-            else if (column == "AccY")
+            else if (column == "AccY [m/s^2]")
             {
                 accelCompY = std::stod(cell);
             }
-            else if (column == "AccZ")
+            else if (column == "AccZ [m/s^2]")
             {
                 accelCompZ = std::stod(cell);
             }
-            else if (column == "GyroX")
+            else if (column == "GyroX [rad/s]")
             {
                 gyroCompX = std::stod(cell);
             }
-            else if (column == "GyroY")
+            else if (column == "GyroY [rad/s]")
             {
                 gyroCompY = std::stod(cell);
             }
-            else if (column == "GyroZ")
+            else if (column == "GyroZ [rad/s]")
             {
                 gyroCompZ = std::stod(cell);
             }

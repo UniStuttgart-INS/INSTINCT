@@ -35,6 +35,9 @@ void TrafoHelperMarker(const Eigen::Quaterniond& q)
     }
 }
 
+NAV::Imu::Imu(std::string name)
+    : Node(std::move(name)) {}
+
 void NAV::Imu::guiConfig()
 {
     ImGui::SetNextItemOpen(false, ImGuiCond_Appearing);

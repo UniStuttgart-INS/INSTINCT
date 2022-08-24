@@ -13,9 +13,8 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/GNSS/SppSolution.hpp"
 
 NAV::SppSolutionLogger::SppSolutionLogger()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _fileType = FileType::CSV;
@@ -51,7 +50,7 @@ void NAV::SppSolutionLogger::guiConfig()
     if (FileWriter::guiConfig(".csv", { ".csv" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        deinitializeNode();
+        doDeinitialize();
     }
 }
 

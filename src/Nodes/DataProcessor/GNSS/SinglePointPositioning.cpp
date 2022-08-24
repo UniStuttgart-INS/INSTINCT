@@ -23,9 +23,8 @@ namespace nm = NAV::NodeManager;
 #include "Navigation/Math/LeastSquares.hpp"
 
 NAV::SinglePointPositioning::SinglePointPositioning()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;

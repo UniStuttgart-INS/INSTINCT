@@ -5,9 +5,8 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 NAV::experimental::Matrix::Matrix()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;

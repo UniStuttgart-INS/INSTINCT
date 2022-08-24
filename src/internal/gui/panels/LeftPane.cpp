@@ -88,7 +88,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
         ImGui::SameLine();
         ImGui::TextUnformatted("Nodes");
         ImGui::Indent();
-        for (const auto& node : nm::m_Nodes())
+        for (const auto* node : nm::m_Nodes())
         {
             ImGui::PushID(node->id.AsPointer());
             auto start = ImGui::GetCursorScreenPos();
@@ -103,23 +103,31 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
 
             // Circle to show init status
             ImU32 circleCol = 0;
-            if (!node->isEnabled())
+            if (node->isDisabled())
             {
                 circleCol = IM_COL32(192, 192, 192, 255);
             }
-            else if (node->isInitializing())
+            else if (node->getState() == Node::State::DoInitialize)
+            {
+                circleCol = IM_COL32(144, 202, 238, 255);
+            }
+            else if (node->getState() == Node::State::Initializing)
             {
                 circleCol = IM_COL32(143, 188, 143, 255);
             }
-            else if (node->isDeinitializing())
+            else if (node->getState() == Node::State::DoDeinitialize)
+            {
+                circleCol = IM_COL32(255, 222, 122, 255);
+            }
+            else if (node->getState() == Node::State::Deinitializing)
             {
                 circleCol = IM_COL32(240, 128, 128, 255);
             }
-            else if (node->isInitialized())
+            else if (node->getState() == Node::State::Initialized)
             {
                 circleCol = IM_COL32(0, 255, 0, 255);
             }
-            else // if (!node->isInitialized())
+            else // if (!node->getState() == Node::State::Deinitialized)
             {
                 circleCol = IM_COL32(255, 0, 0, 255);
             }
@@ -152,7 +160,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
                 ImGui::SetTooltip("Type: %s", node->type().c_str());
             }
 
-            auto id = std::string("(") + std::to_string(size_t(node->id)) + ")";
+            auto id = fmt::format("({})", size_t(node->id));
             auto textSize = ImGui::CalcTextSize(id.c_str(), nullptr);
             auto iconPanelPos = start + ImVec2(paneWidth - ImGui::GetStyle().FramePadding.x - ImGui::GetStyle().IndentSpacing - ImGui::GetStyle().ItemInnerSpacing.x * 1, ImGui::GetTextLineHeight() / 2);
             ImGui::GetWindowDrawList()->AddText(

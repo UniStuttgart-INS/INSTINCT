@@ -43,15 +43,10 @@ void compareObservations(std::shared_ptr<const NAV::VectorNavBinaryOutput>& data
     if (data_csv->insTime.has_value())
     {
         REQUIRE(logs_csv->insTime.has_value());
+        REQUIRE((data_csv->insTime.value() - logs_csv->insTime.value()).count() < 1e-6L);
+
         REQUIRE(logs_vnb->insTime.has_value());
-
-        REQUIRE(data_csv->insTime->toGPSweekTow().gpsCycle == logs_csv->insTime->toGPSweekTow().gpsCycle);
-        REQUIRE(data_csv->insTime->toGPSweekTow().gpsWeek == logs_csv->insTime->toGPSweekTow().gpsWeek);
-        REQUIRE(data_csv->insTime->toGPSweekTow().tow == logs_csv->insTime->toGPSweekTow().tow);
-
-        REQUIRE(data_csv->insTime->toGPSweekTow().gpsCycle == logs_vnb->insTime->toGPSweekTow().gpsCycle);
-        REQUIRE(data_csv->insTime->toGPSweekTow().gpsWeek == logs_vnb->insTime->toGPSweekTow().gpsWeek);
-        REQUIRE(data_csv->insTime->toGPSweekTow().tow == logs_vnb->insTime->toGPSweekTow().tow);
+        REQUIRE((data_csv->insTime.value() - logs_vnb->insTime.value()).count() < 1e-6L);
     }
 
     // ----------------------------------------------- TimeGroup -------------------------------------------------

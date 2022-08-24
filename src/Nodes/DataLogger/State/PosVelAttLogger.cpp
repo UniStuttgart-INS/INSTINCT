@@ -14,9 +14,8 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 NAV::PosVelAttLogger::PosVelAttLogger()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _fileType = FileType::CSV;
@@ -52,7 +51,7 @@ void NAV::PosVelAttLogger::guiConfig()
     if (FileWriter::guiConfig(".csv", { ".csv" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        deinitializeNode();
+        doDeinitialize();
     }
 }
 
@@ -117,7 +116,7 @@ void NAV::PosVelAttLogger::writeObservation(const std::shared_ptr<const NodeData
         {
             constexpr int gpsCyclePrecision = 3;
             constexpr int gpsTimePrecision = 12;
-            constexpr int valuePrecision = 9;
+            constexpr int valuePrecision = 15;
 
             {
                 auto obs = std::static_pointer_cast<const Pos>(nodeData);

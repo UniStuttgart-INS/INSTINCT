@@ -11,9 +11,8 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 NAV::ImuDataLogger::ImuDataLogger()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _fileType = FileType::CSV;
@@ -49,7 +48,7 @@ void NAV::ImuDataLogger::guiConfig()
     if (FileWriter::guiConfig(".csv", { ".csv" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        deinitializeNode();
+        doDeinitialize();
     }
 }
 
@@ -90,9 +89,11 @@ bool NAV::ImuDataLogger::initialize()
 
     CommonLog::initialize();
 
-    _filestream << "Time [s],GpsCycle,GpsWeek,GpsToW,TimeStartup,"
-                << "UnCompMagX,UnCompMagY,UnCompMagZ,UnCompAccX,UnCompAccY,UnCompAccZ,UnCompGyroX,UnCompGyroY,UnCompGyroZ,"
-                << "Temperature" << std::endl;
+    _filestream << "Time [s],GpsCycle,GpsWeek,GpsToW [s],TimeStartup [ns],"
+                << "UnCompMagX [Gauss],UnCompMagY [Gauss],UnCompMagZ [Gauss],"
+                << "UnCompAccX [m/s^2],UnCompAccY [m/s^2],UnCompAccZ [m/s^2],"
+                << "UnCompGyroX [rad/s],UnCompGyroY [rad/s],UnCompGyroZ [rad/s],"
+                << "Temperature [Celsius]" << std::endl;
 
     return true;
 }

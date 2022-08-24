@@ -20,9 +20,8 @@ namespace nm = NAV::NodeManager;
 #include <limits>
 
 NAV::PosVelAttInitializer::PosVelAttInitializer()
+    : Node(typeStatic())
 {
-    name = typeStatic();
-
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
