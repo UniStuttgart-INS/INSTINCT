@@ -1467,9 +1467,9 @@ void NAV::ImuFusion::initializeKalmanFilterAuto()
         _kalmanFilter.x.block<3, 1>(15 + 6 * pinIndex, 0) = initVectors.first[1 + containerIndex];
     }
 
-    LOG_DATA("kalmanFilter.x = {}", _kalmanFilter.x.transpose());
+    LOG_DEBUG("kalmanFilter.x = {}", _kalmanFilter.x.transpose());
     _kalmanFilter.P = initialErrorCovarianceMatrix_P0(initVectors.second);
-    LOG_DATA("kalmanFilter.P =\n{}", _kalmanFilter.P);
+    LOG_DEBUG("kalmanFilter.P =\n{}", _kalmanFilter.P);
     _kalmanFilter.Phi = initialStateTransitionMatrix_Phi(1.0 / _imuFrequency);
     LOG_DATA("kalmanFilter.Phi =\n{}", _kalmanFilter.Phi);
     processNoiseMatrix_Q(_kalmanFilter.Q, 1.0 / _imuFrequency);
@@ -1501,8 +1501,7 @@ Eigen::Vector3d NAV::ImuFusion::variance(const std::vector<std::vector<double>>&
     {
         auto N = sensorType.at(axisIndex + containerPos).size(); // Number of msgs along the specific axis
 
-        std::vector<double> absolSquared; // Inner part of the variance calculation (squared absolute values)
-        absolSquared.resize(N);
+        std::vector<double> absolSquared(N, 0.); // Inner part of the variance calculation (squared absolute values)
 
         for (size_t msgIndex = 0; msgIndex < N; msgIndex++)
         {
