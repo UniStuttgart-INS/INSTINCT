@@ -265,6 +265,9 @@ class ImuFusion : public Imu
 
     /// @brief Check the rank of the Kalman matrices every iteration (computationally expensive)
     bool _checkKalmanMatricesRanks = false;
+
+    /// @brief Check whether the combined solution has an '_imuPos' set
+    bool _imuPosSet = false;
 };
 
 } // namespace NAV

@@ -584,6 +584,7 @@ bool NAV::ImuFusion::initialize()
     _biasCovariances.clear();
     _processNoiseVariances.clear();
     _measurementNoiseVariances.clear();
+    _imuPosSet = false;
 
     _latestTimestamp = InsTime{};
 
@@ -916,6 +917,13 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
         LOG_DATA("DCM_accel =\n{}", DCM_accel);
         auto DCM_gyro = _imuRotations_gyro.at(pinIndex);
         LOG_DATA("DCM_gyro =\n{}", DCM_gyro);
+
+        // Initialize '_imuPos' of the combined solution - that of the reference sensor
+        if (!_imuPosSet && pinIndex == 0)
+        {
+            this->_imuPos = imuObs->imuPos;
+            _imuPosSet = true;
+        }
 
         _kalmanFilter.H = designMatrix_H(DCM_accel, DCM_gyro, pinIndex);
         LOG_DATA("kalmanFilter.H =\n", _kalmanFilter.H);
