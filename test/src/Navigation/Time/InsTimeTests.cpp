@@ -13,8 +13,6 @@ namespace NAV::TEST::InsTimeTests
     REQUIRE(lhs == rhs);            \
     REQUIRE(rhs == lhs);            \
     REQUIRE_FALSE(lhs != rhs);      \
-    REQUIRE_FALSE(lhs > rhs);       \
-    REQUIRE_FALSE(lhs < rhs);       \
     REQUIRE(lhs <= rhs);            \
     REQUIRE(lhs >= rhs);
 
@@ -22,8 +20,6 @@ namespace NAV::TEST::InsTimeTests
     STATIC_REQUIRE(lhs == rhs);            \
     STATIC_REQUIRE(rhs == lhs);            \
     STATIC_REQUIRE_FALSE(lhs != rhs);      \
-    STATIC_REQUIRE_FALSE(lhs > rhs);       \
-    STATIC_REQUIRE_FALSE(lhs < rhs);       \
     STATIC_REQUIRE(lhs <= rhs);            \
     STATIC_REQUIRE(lhs >= rhs);
 
@@ -82,8 +78,8 @@ TEST_CASE("[InsTime_MJD] Comparisons", "[InsTime]")
     TEST_GREATER_OBJECT(time, time_g_1);
     TEST_GREATER_OBJECT(time, time_g_2);
 
-    auto time_eps_0 = InsTime_MJD(53045, 0.0L + InsTimeUtil::EPSILON / 2.L);
-    auto time_eps_1 = InsTime_MJD(53045, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    auto time_eps_0 = InsTime_MJD(53045, 0.0L + InsTimeUtil::EPSILON / 3.L);
+    auto time_eps_1 = InsTime_MJD(53045, 0.0L - InsTimeUtil::EPSILON / 3.L);
     TEST_EQUAL_OBJECT(time_eps_0, time_eps_1);
 }
 
@@ -110,8 +106,8 @@ TEST_CASE("[InsTime_MJD] Comparisons constexpr", "[InsTime]")
     STATIC_TEST_GREATER_OBJECT(time, time_g_1);
     STATIC_TEST_GREATER_OBJECT(time, time_g_2);
 
-    constexpr auto time_eps_0 = InsTime_MJD(53045, 0.0L + InsTimeUtil::EPSILON / 2.L);
-    constexpr auto time_eps_1 = InsTime_MJD(53045, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    constexpr auto time_eps_0 = InsTime_MJD(53045, 0.0L + InsTimeUtil::EPSILON / 3.L);
+    constexpr auto time_eps_1 = InsTime_MJD(53045, 0.0L - InsTimeUtil::EPSILON / 3.L);
     STATIC_TEST_EQUAL_OBJECT(time_eps_0, time_eps_1);
 }
 
@@ -138,8 +134,8 @@ TEST_CASE("[InsTime_JD] Comparisons", "[InsTime]")
     TEST_GREATER_OBJECT(time, time_g_1);
     TEST_GREATER_OBJECT(time, time_g_2);
 
-    auto time_eps_0 = InsTime_JD(53045, 0.0L + InsTimeUtil::EPSILON / 2.L);
-    auto time_eps_1 = InsTime_JD(53045, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    auto time_eps_0 = InsTime_JD(53045, 0.0L + InsTimeUtil::EPSILON / 3.L);
+    auto time_eps_1 = InsTime_JD(53045, 0.0L - InsTimeUtil::EPSILON / 3.L);
     TEST_EQUAL_OBJECT(time_eps_0, time_eps_1);
 }
 
@@ -166,8 +162,8 @@ TEST_CASE("[InsTime_JD] Comparisons constexpr", "[InsTime]")
     STATIC_TEST_GREATER_OBJECT(time, time_g_1);
     STATIC_TEST_GREATER_OBJECT(time, time_g_2);
 
-    constexpr auto time_eps_0 = InsTime_JD(53045, 0.0L + InsTimeUtil::EPSILON / 2.L);
-    constexpr auto time_eps_1 = InsTime_JD(53045, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    constexpr auto time_eps_0 = InsTime_JD(53045, 0.0L + InsTimeUtil::EPSILON / 3.L);
+    constexpr auto time_eps_1 = InsTime_JD(53045, 0.0L - InsTimeUtil::EPSILON / 3.L);
     STATIC_TEST_EQUAL_OBJECT(time_eps_0, time_eps_1);
 }
 
@@ -200,12 +196,12 @@ TEST_CASE("[InsTime_GPSweekTow] Comparisons", "[InsTime]")
     TEST_GREATER_OBJECT(time, time_g_2);
     TEST_GREATER_OBJECT(time, time_g_3);
 
-    auto time_eps_0 = InsTime_GPSweekTow(1, 234, 0.0L + InsTimeUtil::EPSILON / 2.L);
-    auto time_eps_1 = InsTime_GPSweekTow(1, 234, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    auto time_eps_0 = InsTime_GPSweekTow(1, 234, 0.0L + InsTimeUtil::EPSILON / 3.L);
+    auto time_eps_1 = InsTime_GPSweekTow(1, 234, 0.0L - InsTimeUtil::EPSILON / 3.L);
     TEST_EQUAL_OBJECT(time_eps_0, time_eps_1);
 
-    auto time_eps_2 = InsTime_GPSweekTow(1, 0, 0.0L + InsTimeUtil::EPSILON / 2.L);
-    auto time_eps_3 = InsTime_GPSweekTow(1, 0, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    auto time_eps_2 = InsTime_GPSweekTow(1, 0, 0.0L + InsTimeUtil::EPSILON / 3.L);
+    auto time_eps_3 = InsTime_GPSweekTow(1, 0, 0.0L - InsTimeUtil::EPSILON / 3.L);
     TEST_EQUAL_OBJECT(time_eps_2, time_eps_3);
 }
 
@@ -238,12 +234,12 @@ TEST_CASE("[InsTime_GPSweekTow] Comparisons constexpr", "[InsTime]")
     STATIC_TEST_GREATER_OBJECT(time, time_g_2);
     STATIC_TEST_GREATER_OBJECT(time, time_g_3);
 
-    constexpr auto time_eps_0 = InsTime_GPSweekTow(1, 234, 0.0L + InsTimeUtil::EPSILON / 2.L);
-    constexpr auto time_eps_1 = InsTime_GPSweekTow(1, 234, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    constexpr auto time_eps_0 = InsTime_GPSweekTow(1, 234, 0.0L + InsTimeUtil::EPSILON / 3.L);
+    constexpr auto time_eps_1 = InsTime_GPSweekTow(1, 234, 0.0L - InsTimeUtil::EPSILON / 3.L);
     STATIC_TEST_EQUAL_OBJECT(time_eps_0, time_eps_1);
 
-    constexpr auto time_eps_2 = InsTime_GPSweekTow(1, 0, 0.0L + InsTimeUtil::EPSILON / 2.L);
-    constexpr auto time_eps_3 = InsTime_GPSweekTow(1, 0, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    constexpr auto time_eps_2 = InsTime_GPSweekTow(1, 0, 0.0L + InsTimeUtil::EPSILON / 3.L);
+    constexpr auto time_eps_3 = InsTime_GPSweekTow(1, 0, 0.0L - InsTimeUtil::EPSILON / 3.L);
     STATIC_TEST_EQUAL_OBJECT(time_eps_2, time_eps_3);
 }
 
@@ -328,8 +324,8 @@ TEST_CASE("[InsTime_YMDHMS] Comparisons equal", "[InsTime]")
     auto time6_e_1 = InsTime_YMDHMS(2004, 3, 10, 13, 25, 58.0L - (10 + 31 + 29) * InsTimeUtil::SECONDS_PER_DAY);
     TEST_EQUAL_OBJECT(time6, time6_e_1);
 
-    auto time_eps_0 = InsTime_YMDHMS(2000, 0, 0, 0, 0, 0.0L + InsTimeUtil::EPSILON / 2.L);
-    auto time_eps_1 = InsTime_YMDHMS(2000, 0, 0, 0, 0, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    auto time_eps_0 = InsTime_YMDHMS(2000, 1, 1, 0, 0, 0.0L + InsTimeUtil::EPSILON / 3.L);
+    auto time_eps_1 = InsTime_YMDHMS(2000, 1, 1, 0, 0, 0.0L - InsTimeUtil::EPSILON / 3.L);
     TEST_EQUAL_OBJECT(time_eps_0, time_eps_1);
 }
 
@@ -372,8 +368,8 @@ TEST_CASE("[InsTime_YMDHMS] Comparisons equal constexpr", "[InsTime]")
     constexpr auto time6_e_1 = InsTime_YMDHMS(2004, 3, 10, 13, 25, 58.0L - (10 + 31 + 29) * InsTimeUtil::SECONDS_PER_DAY);
     STATIC_TEST_EQUAL_OBJECT(time6, time6_e_1);
 
-    constexpr auto time_eps_0 = InsTime_YMDHMS(2000, 0, 0, 0, 0, 0.0L + InsTimeUtil::EPSILON / 2.L);
-    constexpr auto time_eps_1 = InsTime_YMDHMS(2000, 0, 0, 0, 0, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    constexpr auto time_eps_0 = InsTime_YMDHMS(2000, 1, 1, 0, 0, 0.0L + InsTimeUtil::EPSILON / 3.L);
+    constexpr auto time_eps_1 = InsTime_YMDHMS(2000, 1, 1, 0, 0, 0.0L - InsTimeUtil::EPSILON / 3.L);
     STATIC_TEST_EQUAL_OBJECT(time_eps_0, time_eps_1);
 }
 
@@ -454,8 +450,8 @@ TEST_CASE("[InsTime_YDoySod] Comparisons", "[InsTime]")
     auto time4_e_1 = InsTime_YDoySod(2004, 6 + 31 + 29, 48358.0L - (7 + 31 + 29) * InsTimeUtil::SECONDS_PER_DAY);
     TEST_EQUAL_OBJECT(time4, time4_e_1);
 
-    auto time_eps_0 = InsTime_YDoySod(2004, 0, 0.0L + InsTimeUtil::EPSILON / 2.L);
-    auto time_eps_1 = InsTime_YDoySod(2004, 0, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    auto time_eps_0 = InsTime_YDoySod(2004, 1, 0.0L + InsTimeUtil::EPSILON / 3.L);
+    auto time_eps_1 = InsTime_YDoySod(2004, 1, 0.0L - InsTimeUtil::EPSILON / 3.L);
     TEST_EQUAL_OBJECT(time_eps_0, time_eps_1);
 }
 
@@ -496,8 +492,8 @@ TEST_CASE("[InsTime_YDoySod] Comparisons constexpr", "[InsTime]")
     constexpr auto time4_e_1 = InsTime_YDoySod(2004, 6 + 31 + 29, 48358.0L - (7 + 31 + 29) * InsTimeUtil::SECONDS_PER_DAY);
     STATIC_TEST_EQUAL_OBJECT(time4, time4_e_1);
 
-    constexpr auto time_eps_0 = InsTime_YDoySod(2004, 0, 0.0L + InsTimeUtil::EPSILON / 2.L);
-    constexpr auto time_eps_1 = InsTime_YDoySod(2004, 0, 0.0L - InsTimeUtil::EPSILON / 2.L);
+    constexpr auto time_eps_0 = InsTime_YDoySod(2004, 1, 0.0L + InsTimeUtil::EPSILON / 3.L);
+    constexpr auto time_eps_1 = InsTime_YDoySod(2004, 1, 0.0L - InsTimeUtil::EPSILON / 3.L);
     STATIC_TEST_EQUAL_OBJECT(time_eps_0, time_eps_1);
 }
 
@@ -793,25 +789,31 @@ TEST_CASE("[InsTime] Comparisons equal", "[InsTime]")
     auto insTime = InsTime(2004, 2, 10, 13, 25, 58.0L);
 
     // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
-    auto insTime_MJD = InsTime_MJD(53045, 0.5596990740740740740L);
-    TEST_EQUAL_OBJECT(insTime, InsTime(insTime_MJD));
+    auto insTime_MJD = InsTime(InsTime_MJD(53045, 0.5596990740740740740L));
+    LOG_DEBUG("insTime_MJD: {} <= {}", (insTime - insTime_MJD).count(), InsTimeUtil::EPSILON);
+    TEST_EQUAL_OBJECT(insTime, insTime_MJD);
 
     // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
-    auto insTime_JD = InsTime_JD(2453046, 0.0596990740740740740L);
-    TEST_EQUAL_OBJECT(insTime, InsTime(insTime_JD));
+    auto insTime_JD = InsTime(InsTime_JD(2453046, 0.0596990740740740740L));
+    LOG_DEBUG("insTime_JD: {} <= {}", (insTime - insTime_JD).count(), InsTimeUtil::EPSILON);
+    TEST_EQUAL_OBJECT(insTime, insTime_JD);
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
-    auto insTime_GPSweekTow = InsTime_GPSweekTow(1, 233, 221158.0L);
-    TEST_EQUAL_OBJECT(insTime, InsTime(insTime_GPSweekTow, UTC));
-    auto insTime_GPSweekTow2 = InsTime_GPSweekTow(1, 233, 221158.0L + InsTime::leapGps2UTC(insTime));
-    TEST_EQUAL_OBJECT(insTime, InsTime(insTime_GPSweekTow2));
+    auto insTime_GPSweekTow = InsTime(InsTime_GPSweekTow(1, 233, 221158.0L), UTC);
+    LOG_DEBUG("insTime_GPSweekTow: {} <= {}", (insTime - insTime_GPSweekTow).count(), InsTimeUtil::EPSILON);
+    TEST_EQUAL_OBJECT(insTime, insTime_GPSweekTow);
+    auto insTime_GPSweekTow2 = InsTime(InsTime_GPSweekTow(1, 233, 221158.0L + InsTime::leapGps2UTC(insTime)));
+    LOG_DEBUG("insTime_GPSweekTow2: {} <= {}", (insTime - insTime_GPSweekTow2).count(), InsTimeUtil::EPSILON);
+    TEST_EQUAL_OBJECT(insTime, insTime_GPSweekTow2);
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
-    auto insTime_YDoySod = InsTime_YDoySod(2004, 41, 48358.0L);
-    TEST_EQUAL_OBJECT(insTime, InsTime(insTime_YDoySod));
+    auto insTime_YDoySod = InsTime(InsTime_YDoySod(2004, 41, 48358.0L));
+    LOG_DEBUG("insTime_YDoySod: {} <= {}", (insTime - insTime_YDoySod).count(), InsTimeUtil::EPSILON);
+    TEST_EQUAL_OBJECT(insTime, insTime_YDoySod);
 
-    auto insTime_YMDHMS = InsTime_YMDHMS(2004, 2, 10, 13, 25, 58.0L);
-    TEST_EQUAL_OBJECT(insTime, InsTime(insTime_YMDHMS));
+    auto insTime_YMDHMS = InsTime(InsTime_YMDHMS(2004, 2, 10, 13, 25, 58.0L));
+    LOG_DEBUG("insTime_YMDHMS: {} <= {}", (insTime - insTime_YMDHMS).count(), InsTimeUtil::EPSILON);
+    TEST_EQUAL_OBJECT(insTime, insTime_YMDHMS);
 }
 
 TEST_CASE("[InsTime] Comparisons equal constexpr", "[InsTime]")
@@ -821,25 +823,25 @@ TEST_CASE("[InsTime] Comparisons equal constexpr", "[InsTime]")
     constexpr auto insTime = InsTime(2004, 2, 10, 13, 25, 58.0L);
 
     // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
-    constexpr auto insTime_MJD = InsTime_MJD(53045, 0.5596990740740740740L);
-    STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_MJD));
+    constexpr auto insTime_MJD = InsTime(InsTime_MJD(53045, 0.5596990740740740740L));
+    STATIC_TEST_EQUAL_OBJECT(insTime, insTime_MJD);
 
     // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
-    constexpr auto insTime_JD = InsTime_JD(2453046, 0.0596990740740740740L);
-    STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_JD));
+    constexpr auto insTime_JD = InsTime(InsTime_JD(2453046, 0.0596990740740740740L));
+    STATIC_TEST_EQUAL_OBJECT(insTime, insTime_JD);
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
-    constexpr auto insTime_GPSweekTow = InsTime_GPSweekTow(1, 233, 221158.0L);
-    STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_GPSweekTow, UTC));
-    constexpr auto insTime_GPSweekTow2 = InsTime_GPSweekTow(1, 233, 221158.0L + InsTime::leapGps2UTC(insTime));
-    STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_GPSweekTow2));
+    constexpr auto insTime_GPSweekTow = InsTime(InsTime_GPSweekTow(1, 233, 221158.0L), UTC);
+    STATIC_TEST_EQUAL_OBJECT(insTime, insTime_GPSweekTow);
+    constexpr auto insTime_GPSweekTow2 = InsTime(InsTime_GPSweekTow(1, 233, 221158.0L + InsTime::leapGps2UTC(insTime)));
+    STATIC_TEST_EQUAL_OBJECT(insTime, insTime_GPSweekTow2);
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
-    constexpr auto insTime_YDoySod = InsTime_YDoySod(2004, 41, 48358.0L);
-    STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_YDoySod));
+    constexpr auto insTime_YDoySod = InsTime(InsTime_YDoySod(2004, 41, 48358.0L));
+    STATIC_TEST_EQUAL_OBJECT(insTime, insTime_YDoySod);
 
-    constexpr auto insTime_YMDHMS = InsTime_YMDHMS(2004, 2, 10, 13, 25, 58.0L);
-    STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_YMDHMS));
+    constexpr auto insTime_YMDHMS = InsTime(InsTime_YMDHMS(2004, 2, 10, 13, 25, 58.0L));
+    STATIC_TEST_EQUAL_OBJECT(insTime, insTime_YMDHMS);
 }
 
 TEST_CASE("[InsTime] Comparisons greater", "[InsTime]")
@@ -849,54 +851,58 @@ TEST_CASE("[InsTime] Comparisons greater", "[InsTime]")
     auto insTime = InsTime(2004, 2, 10, 13, 25, 58.0L);
 
     // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
-    auto insTime_MJD_g_1 = InsTime_MJD(53046, 0.5596990740740740740L);
-    auto insTime_MJD_g_2 = InsTime_MJD(53045, 0.5596991740740740740L);
-    TEST_GREATER_OBJECT(insTime, InsTime(insTime_MJD_g_1));
-    TEST_GREATER_OBJECT(insTime, InsTime(insTime_MJD_g_2));
+    auto insTime_MJD_g_1 = InsTime(InsTime_MJD(53046, 0.5596990740740740740L));
+    auto insTime_MJD_g_2 = InsTime(InsTime_MJD(53045, 0.5596991740740740740L));
+    LOG_DEBUG("insTime_MJD_g_1: {}", (insTime - insTime_MJD_g_1).count());
+    TEST_GREATER_OBJECT(insTime, insTime_MJD_g_1);
+    LOG_DEBUG("insTime_MJD_g_2: {}", (insTime - insTime_MJD_g_2).count());
+    TEST_GREATER_OBJECT(insTime, insTime_MJD_g_2);
 
     // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
-    auto insTime_JD_g_1 = InsTime_JD(2453047, 0.0596990740740740740L);
-    auto insTime_JD_g_2 = InsTime_JD(2453046, 0.0596990740740750740L);
-
-    // auto insTime_JD_g_2 = InsTime_JD(2453046, 0.0596990740740741740L);
-    // Works only in Linux                  |         (long double precision too small in Windows)
-    // InsTime_JD(2453046, 0.0596990740740740740L) <  // 5158 Sekunden
-    // InsTime_JD(2453046, 0.0596990740740741740L);   // 5158.000000000009 (9 Picosekunden)
-    //
-    // Works in Windows and Linux          |
-    // InsTime_JD(2453046, 0.0596990740740740740L) <  // 5158
-    // InsTime_JD(2453046, 0.0596990740740750740L);   // 5158.000000000086 (86 Picosekunden)
-    // TODO: Consider using boost::multiprecision for the
-
-    TEST_GREATER_OBJECT(insTime, InsTime(insTime_JD_g_1));
-    TEST_GREATER_OBJECT(insTime, InsTime(insTime_JD_g_2));
+    auto insTime_JD_g_1 = InsTime(InsTime_JD(2453047, 0.0596990740740740740L));
+    auto insTime_JD_g_2 = InsTime(InsTime_JD(2453046, 0.0596990740740740740L + 2 * InsTimeUtil::EPSILON));
+    LOG_DEBUG("insTime_JD_g_1: {}", (insTime - insTime_JD_g_1).count());
+    TEST_GREATER_OBJECT(insTime, insTime_JD_g_1);
+    LOG_DEBUG("insTime_JD_g_2: {}", (insTime - insTime_JD_g_2).count());
+    TEST_GREATER_OBJECT(insTime, insTime_JD_g_2);
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
-    auto insTime_GPSweekTow_g_1 = InsTime_GPSweekTow(2, 233, 221158.0L + InsTime::leapGps2UTC(insTime));
-    auto insTime_GPSweekTow_g_2 = InsTime_GPSweekTow(1, 234, 221158.0L + InsTime::leapGps2UTC(insTime));
-    auto insTime_GPSweekTow_g_3 = InsTime_GPSweekTow(1, 233, 221158.000000001L + InsTime::leapGps2UTC(insTime));
-    TEST_GREATER_OBJECT(insTime, InsTime(insTime_GPSweekTow_g_1));
-    TEST_GREATER_OBJECT(insTime, InsTime(insTime_GPSweekTow_g_2));
-    TEST_GREATER_OBJECT(insTime, InsTime(insTime_GPSweekTow_g_3));
+    auto insTime_GPSweekTow_g_1 = InsTime(InsTime_GPSweekTow(2, 233, 221158.0L + InsTime::leapGps2UTC(insTime)));
+    auto insTime_GPSweekTow_g_2 = InsTime(InsTime_GPSweekTow(1, 234, 221158.0L + InsTime::leapGps2UTC(insTime)));
+    auto insTime_GPSweekTow_g_3 = InsTime(InsTime_GPSweekTow(1, 233, 221158.000000001L + InsTime::leapGps2UTC(insTime)));
+    LOG_DEBUG("insTime_GPSweekTow_g_1: {}", (insTime - insTime_GPSweekTow_g_1).count());
+    TEST_GREATER_OBJECT(insTime, insTime_GPSweekTow_g_1);
+    LOG_DEBUG("insTime_GPSweekTow_g_2: {}", (insTime - insTime_GPSweekTow_g_2).count());
+    TEST_GREATER_OBJECT(insTime, insTime_GPSweekTow_g_2);
+    LOG_DEBUG("insTime_GPSweekTow_g_3: {}", (insTime - insTime_GPSweekTow_g_3).count());
+    TEST_GREATER_OBJECT(insTime, insTime_GPSweekTow_g_3);
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
-    auto insTime_YDoySod_g_1 = InsTime_YDoySod(2005, 41, 48358.0L + InsTime::leapGps2UTC(insTime));
-    auto insTime_YDoySod_g_2 = InsTime_YDoySod(2004, 42, 48358.0L + InsTime::leapGps2UTC(insTime));
-    auto insTime_YDoySod_g_3 = InsTime_YDoySod(2004, 41, 48358.01L + InsTime::leapGps2UTC(insTime));
-    TEST_GREATER_OBJECT(insTime, InsTime(insTime_YDoySod_g_1));
-    TEST_GREATER_OBJECT(insTime, InsTime(insTime_YDoySod_g_2));
-    TEST_GREATER_OBJECT(insTime, InsTime(insTime_YDoySod_g_3));
+    auto insTime_YDoySod_g_1 = InsTime(InsTime_YDoySod(2005, 41, 48358.0L + InsTime::leapGps2UTC(insTime)));
+    auto insTime_YDoySod_g_2 = InsTime(InsTime_YDoySod(2004, 42, 48358.0L + InsTime::leapGps2UTC(insTime)));
+    auto insTime_YDoySod_g_3 = InsTime(InsTime_YDoySod(2004, 41, 48358.01L + InsTime::leapGps2UTC(insTime)));
+    LOG_DEBUG("insTime_YDoySod_g_1: {}", (insTime - insTime_YDoySod_g_1).count());
+    TEST_GREATER_OBJECT(insTime, insTime_YDoySod_g_1);
+    LOG_DEBUG("insTime_YDoySod_g_2: {}", (insTime - insTime_YDoySod_g_2).count());
+    TEST_GREATER_OBJECT(insTime, insTime_YDoySod_g_2);
+    LOG_DEBUG("insTime_YDoySod_g_3: {}", (insTime - insTime_YDoySod_g_3).count());
+    TEST_GREATER_OBJECT(insTime, insTime_YDoySod_g_3);
 
-    auto insTime_YMDHMS_g_1 = InsTime_YMDHMS(2004, 3, 10, 13, 25, 58.0L);
-    auto insTime_YMDHMS_g_2 = InsTime_YMDHMS(2004, 2, 11, 13, 25, 58.0L);
-    auto insTime_YMDHMS_g_3 = InsTime_YMDHMS(2004, 2, 10, 14, 25, 58.0L);
-    auto insTime_YMDHMS_g_4 = InsTime_YMDHMS(2004, 2, 10, 13, 26, 58.0L);
-    auto insTime_YMDHMS_g_5 = InsTime_YMDHMS(2004, 2, 10, 13, 25, 58.0000000001L);
-    TEST_GREATER_OBJECT(insTime, InsTime(insTime_YMDHMS_g_1));
-    TEST_GREATER_OBJECT(insTime, InsTime(insTime_YMDHMS_g_2));
-    TEST_GREATER_OBJECT(insTime, InsTime(insTime_YMDHMS_g_3));
-    TEST_GREATER_OBJECT(insTime, InsTime(insTime_YMDHMS_g_4));
-    TEST_GREATER_OBJECT(insTime, InsTime(insTime_YMDHMS_g_5));
+    auto insTime_YMDHMS_g_1 = InsTime(InsTime_YMDHMS(2004, 3, 10, 13, 25, 58.0L));
+    auto insTime_YMDHMS_g_2 = InsTime(InsTime_YMDHMS(2004, 2, 11, 13, 25, 58.0L));
+    auto insTime_YMDHMS_g_3 = InsTime(InsTime_YMDHMS(2004, 2, 10, 14, 25, 58.0L));
+    auto insTime_YMDHMS_g_4 = InsTime(InsTime_YMDHMS(2004, 2, 10, 13, 26, 58.0L));
+    auto insTime_YMDHMS_g_5 = InsTime(InsTime_YMDHMS(2004, 2, 10, 13, 25, 58.000000001L));
+    LOG_DEBUG("insTime_YMDHMS_g_1: {}", (insTime - insTime_YMDHMS_g_1).count());
+    TEST_GREATER_OBJECT(insTime, insTime_YMDHMS_g_1);
+    LOG_DEBUG("insTime_YMDHMS_g_2: {}", (insTime - insTime_YMDHMS_g_2).count());
+    TEST_GREATER_OBJECT(insTime, insTime_YMDHMS_g_2);
+    LOG_DEBUG("insTime_YMDHMS_g_3: {}", (insTime - insTime_YMDHMS_g_3).count());
+    TEST_GREATER_OBJECT(insTime, insTime_YMDHMS_g_3);
+    LOG_DEBUG("insTime_YMDHMS_g_4: {}", (insTime - insTime_YMDHMS_g_4).count());
+    TEST_GREATER_OBJECT(insTime, insTime_YMDHMS_g_4);
+    LOG_DEBUG("insTime_YMDHMS_g_5: {}", (insTime - insTime_YMDHMS_g_5).count());
+    TEST_GREATER_OBJECT(insTime, insTime_YMDHMS_g_5);
 }
 
 TEST_CASE("[InsTime] Comparisons greater constexpr", "[InsTime]")
@@ -912,10 +918,10 @@ TEST_CASE("[InsTime] Comparisons greater constexpr", "[InsTime]")
     STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_MJD_g_2));
 
     // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
-    constexpr auto insTime_JD_g_1 = InsTime_JD(2453047, 0.0596990740740740740L);
-    constexpr auto insTime_JD_g_2 = InsTime_JD(2453046, 0.0596990740740750740L);
-    STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_JD_g_1));
-    STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_JD_g_2));
+    constexpr auto insTime_JD_g_1 = InsTime(InsTime_JD(2453047, 0.0596990740740740740L));
+    constexpr auto insTime_JD_g_2 = InsTime(InsTime_JD(2453046, 0.0596990740740740740L + 2 * InsTimeUtil::EPSILON));
+    STATIC_TEST_GREATER_OBJECT(insTime, insTime_JD_g_1);
+    STATIC_TEST_GREATER_OBJECT(insTime, insTime_JD_g_2);
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
     constexpr auto insTime_GPSweekTow_g_1 = InsTime_GPSweekTow(2, 233, 221158.0L + InsTime::leapGps2UTC(insTime));
@@ -937,7 +943,7 @@ TEST_CASE("[InsTime] Comparisons greater constexpr", "[InsTime]")
     constexpr auto insTime_YMDHMS_g_2 = InsTime_YMDHMS(2004, 2, 11, 13, 25, 58.0L);
     constexpr auto insTime_YMDHMS_g_3 = InsTime_YMDHMS(2004, 2, 10, 14, 25, 58.0L);
     constexpr auto insTime_YMDHMS_g_4 = InsTime_YMDHMS(2004, 2, 10, 13, 26, 58.0L);
-    constexpr auto insTime_YMDHMS_g_5 = InsTime_YMDHMS(2004, 2, 10, 13, 25, 58.0000000001L);
+    constexpr auto insTime_YMDHMS_g_5 = InsTime_YMDHMS(2004, 2, 10, 13, 25, 58.000000001L);
     STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_YMDHMS_g_1));
     STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_YMDHMS_g_2));
     STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_YMDHMS_g_3));
@@ -967,16 +973,20 @@ TEST_CASE("[InsTime] Arithmetic operators", "[InsTime]")
     TEST_EQUAL_OBJECT(insTime_target, insTime_eq_1);
 
     auto diff = insTime_target - insTime;
-    TEST_EQUAL_OBJECT(diff, 1 * 7 * 24h
-                                - 2 * 24h
-                                + 1h
-                                - 2min
-                                + 3s + 4ms + 5us + 6ns);
-    TEST_EQUAL_OBJECT(diff.count(), 1.0L * InsTimeUtil::SECONDS_PER_WEEK
-                                        - 2.0L * InsTimeUtil::SECONDS_PER_DAY
-                                        + 1.0L * InsTimeUtil::SECONDS_PER_HOUR
-                                        - 2.0L * InsTimeUtil::SECONDS_PER_MINUTE
-                                        + 3.004005006L);
+    TEST_LESSER_OBJECT(diff
+                           - (1 * 7 * 24h
+                              - 2 * 24h
+                              + 1h
+                              - 2min
+                              + 3s + 4ms + 5us + 6ns),
+                       std::chrono::duration<long double>(InsTimeUtil::EPSILON));
+    TEST_LESSER_OBJECT(diff.count()
+                           - (1.0L * InsTimeUtil::SECONDS_PER_WEEK
+                              - 2.0L * InsTimeUtil::SECONDS_PER_DAY
+                              + 1.0L * InsTimeUtil::SECONDS_PER_HOUR
+                              - 2.0L * InsTimeUtil::SECONDS_PER_MINUTE
+                              + 3.004005006L),
+                       InsTimeUtil::EPSILON);
 
     insTime += 1 * 7 * 24h;
     insTime -= 2 * 24h;
@@ -1008,16 +1018,20 @@ TEST_CASE("[InsTime] Arithmetic operators constexpr", "[InsTime]")
     STATIC_TEST_EQUAL_OBJECT(insTime_target, insTime_eq_1);
 
     constexpr auto diff = insTime_target - insTime;
-    STATIC_TEST_EQUAL_OBJECT(diff, 1 * 7 * 24h
-                                       - 2 * 24h
-                                       + 1h
-                                       - 2min
-                                       + 3s + 4ms + 5us + 6ns);
-    STATIC_TEST_EQUAL_OBJECT(diff.count(), 1.0L * InsTimeUtil::SECONDS_PER_WEEK
-                                               - 2.0L * InsTimeUtil::SECONDS_PER_DAY
-                                               + 1.0L * InsTimeUtil::SECONDS_PER_HOUR
-                                               - 2.0L * InsTimeUtil::SECONDS_PER_MINUTE
-                                               + 3.004005006L);
+    STATIC_TEST_LESSER_OBJECT(diff
+                                  - (1 * 7 * 24h
+                                     - 2 * 24h
+                                     + 1h
+                                     - 2min
+                                     + 3s + 4ms + 5us + 6ns),
+                              std::chrono::duration<long double>(InsTimeUtil::EPSILON));
+    STATIC_TEST_LESSER_OBJECT(diff.count()
+                                  - (1.0L * InsTimeUtil::SECONDS_PER_WEEK
+                                     - 2.0L * InsTimeUtil::SECONDS_PER_DAY
+                                     + 1.0L * InsTimeUtil::SECONDS_PER_HOUR
+                                     - 2.0L * InsTimeUtil::SECONDS_PER_MINUTE
+                                     + 3.004005006L),
+                              InsTimeUtil::EPSILON);
 }
 
 } // namespace NAV::TEST::InsTimeTests

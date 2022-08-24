@@ -7,10 +7,7 @@
 
 #include "Nodes/DataProvider/IMU/Imu.hpp"
 
-#include "util/Container/ScrollingBuffer.hpp"
-
 #include "NodeData/IMU/ImuObs.hpp"
-#include "NodeData/State/LcKfInsGnssErrors.hpp"
 
 #include "Navigation/Math/KalmanFilter.hpp"
 
@@ -342,6 +339,9 @@ class ImuFusion : public Imu
 
     /// @brief Check the rank of the Kalman matrices every iteration (computationally expensive)
     bool _checkKalmanMatricesRanks = false;
+
+    /// @brief Check whether the combined solution has an '_imuPos' set
+    bool _imuPosSet = false;
 
     /// @brief Auto-initialize the Kalman Filter - GUI setting
     bool _autoInitKF = true;

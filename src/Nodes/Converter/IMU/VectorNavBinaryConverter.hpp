@@ -10,6 +10,7 @@
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
 #include "NodeData/IMU/ImuObsWDelta.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
+#include "NodeData/GNSS/GnssObs.hpp"
 
 #include <array>
 #include <memory>
@@ -62,6 +63,7 @@ class VectorNavBinaryConverter : public Node
     {
         OutputType_ImuObsWDelta, ///< Extract ImuObsWDelta data
         OutputType_PosVelAtt,    ///< Extract PosVelAtt data
+        OutputType_GnssObs,      ///< Extract GnssObs data
     };
 
     /// The selected output type in the GUI
@@ -102,6 +104,11 @@ class VectorNavBinaryConverter : public Node
     /// @param[in] vnObs VectorNavBinaryOutput to process
     /// @return The converted data
     std::shared_ptr<const PosVelAtt> convert2PosVelAtt(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs);
+
+    /// @brief Converts the VectorNavBinaryOutput to a GnssObs observation
+    /// @param[in] vnObs VectorNavBinaryOutput to process
+    /// @return The converted data
+    static std::shared_ptr<const GnssObs> convert2GnssObs(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs);
 };
 
 } // namespace NAV

@@ -90,6 +90,10 @@ bool NAV::FlowExecutor::initialize()
 
     if (nm::InitializeAllNodes())
     {
+        for (Node* node : nm::m_Nodes())
+        {
+            if (node->isInitialized()) { node->resetNode(); }
+        }
         util::time::SetMode(util::time::Mode::POST_PROCESSING);
         util::time::ClearCurrentTime();
 

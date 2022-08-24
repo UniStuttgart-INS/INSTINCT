@@ -307,11 +307,11 @@ class Node
     /// @brief Asks the node worker to disable the node
     /// @param[in] wait Wait for the worker to complete the request
     /// @return True if the worker accepted the request
-    bool doDisableNode(bool wait = false);
+    bool doDisable(bool wait = false);
 
     /// @brief Enable the node
     /// @return True if enabling was successful
-    bool doEnableNode();
+    bool doEnable();
 
     /// @brief Checks if the node is disabled
     [[nodiscard]] bool isDisabled() const;

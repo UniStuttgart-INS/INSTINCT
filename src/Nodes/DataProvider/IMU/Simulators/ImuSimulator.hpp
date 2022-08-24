@@ -241,12 +241,13 @@ class ImuSimulator : public Imu
     /// Assign a variable that holds the Spline information
     struct
     {
-        CubicSpline x;     ///< ECEF X Position [m]
-        CubicSpline y;     ///< ECEF Y Position [m]
-        CubicSpline z;     ///< ECEF Z Position [m]
-        CubicSpline roll;  ///< Roll angle [rad]
-        CubicSpline pitch; ///< Pitch angle [rad]
-        CubicSpline yaw;   ///< Yaw angle [rad]
+        double sampleInterval = 0.1; ///< Spline sample interval
+        CubicSpline x;               ///< ECEF X Position [m]
+        CubicSpline y;               ///< ECEF Y Position [m]
+        CubicSpline z;               ///< ECEF Z Position [m]
+        CubicSpline roll;            ///< Roll angle [rad]
+        CubicSpline pitch;           ///< Pitch angle [rad]
+        CubicSpline yaw;             ///< Yaw angle [rad]
     } _splines;
 
     /// @brief Initializes the spline values
