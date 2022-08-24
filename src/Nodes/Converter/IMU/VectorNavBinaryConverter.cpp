@@ -65,9 +65,12 @@ void NAV::VectorNavBinaryConverter::guiConfig()
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::GnssObs::type();
         }
 
-        for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.front()))
+        for (auto& link : outputPins.front().links)
         {
-            nm::RefreshLink(*link);
+            if (auto* connectedPin = link.getConnectedPin())
+            {
+                nm::RefreshLink(*connectedPin);
+            }
         }
 
         flow::ApplyChanges();
@@ -147,7 +150,7 @@ bool NAV::VectorNavBinaryConverter::initialize()
     return true;
 }
 
-void NAV::VectorNavBinaryConverter::receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::VectorNavBinaryConverter::receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /*pinId*/)
 {
     auto vnObs = std::static_pointer_cast<const VectorNavBinaryOutput>(nodeData);
 

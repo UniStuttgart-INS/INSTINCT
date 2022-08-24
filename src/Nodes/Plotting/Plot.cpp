@@ -466,9 +466,9 @@ void NAV::Plot::guiConfig()
                 if (ImGui::Combo(fmt::format("##Pin Type for Pin {} - {}", pinIndex + 1, size_t(id)).c_str(),
                                  reinterpret_cast<int*>(&pinData.pinType), "Flow\0Bool\0Int\0Float\0Matrix\0\0"))
                 {
-                    if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.at(pinIndex)))
+                    if (inputPins.at(pinIndex).isPinLinked())
                     {
-                        nm::DeleteLink(connectedLink->id);
+                        nm::DeleteLink(inputPins.at(pinIndex).link.linkId);
                     }
 
                     switch (pinData.pinType)
@@ -2025,7 +2025,7 @@ void NAV::Plot::addData(size_t pinIndex, size_t dataIndex, double value)
     }
 }
 
-void NAV::Plot::plotBoolean(ax::NodeEditor::LinkId linkId)
+void NAV::Plot::plotBoolean(ax::NodeEditor::PinId pinId)
 {
     if (ConfigManager::Get<bool>("nogui")) { return; }
 
@@ -2052,7 +2052,7 @@ void NAV::Plot::plotBoolean(ax::NodeEditor::LinkId linkId)
     }
 }
 
-void NAV::Plot::plotInteger(ax::NodeEditor::LinkId linkId)
+void NAV::Plot::plotInteger(ax::NodeEditor::PinId pinId)
 {
     if (ConfigManager::Get<bool>("nogui")) { return; }
 
@@ -2079,7 +2079,7 @@ void NAV::Plot::plotInteger(ax::NodeEditor::LinkId linkId)
     }
 }
 
-void NAV::Plot::plotFloat(ax::NodeEditor::LinkId linkId)
+void NAV::Plot::plotFloat(ax::NodeEditor::pinId pinId)
 {
     if (ConfigManager::Get<bool>("nogui")) { return; }
 
@@ -2106,38 +2106,35 @@ void NAV::Plot::plotFloat(ax::NodeEditor::LinkId linkId)
     }
 }
 
-void NAV::Plot::plotMatrix(ax::NodeEditor::LinkId linkId)
+void NAV::Plot::plotMatrix(ax::NodeEditor::PinId pinId)
 {
     if (ConfigManager::Get<bool>("nogui")) { return; }
 
-    if (Link* link = nm::FindLink(linkId))
+    if (auto* sourcePin = inputPinFromId(pinId).link.getConnectedPin())
     {
-        if (auto* sourcePin = nm::FindOutputPin(link->startPinId))
+        size_t pinIndex = inputPinIndexFromId(pinId);
+
+        auto currentTime = util::time::GetCurrentInsTime();
+        if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
         {
-            size_t pinIndex = inputPinIndexFromId(link->endPinId);
+            auto* value = getInputValue<Eigen::MatrixXd>(pinIndex);
 
-            auto currentTime = util::time::GetCurrentInsTime();
-            if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
+            if (value != nullptr && !currentTime.empty())
             {
-                auto* value = getInputValue<Eigen::MatrixXd>(pinIndex);
+                if (_startTime.empty()) { _startTime = currentTime; }
+                size_t i = 0;
 
-                if (value != nullptr && !currentTime.empty())
+                std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
+
+                // InsObs
+                addData(pinIndex, i++, static_cast<double>((currentTime - _startTime).count()));
+                addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
+                // Matrix
+                for (int row = 0; row < value->rows(); row++)
                 {
-                    if (_startTime.empty()) { _startTime = currentTime; }
-                    size_t i = 0;
-
-                    std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
-
-                    // InsObs
-                    addData(pinIndex, i++, static_cast<double>((currentTime - _startTime).count()));
-                    addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
-                    // Matrix
-                    for (int row = 0; row < value->rows(); row++)
+                    for (int col = 0; col < value->cols(); col++)
                     {
-                        for (int col = 0; col < value->cols(); col++)
-                        {
-                            addData(pinIndex, i++, (*value)(row, col));
-                        }
+                        addData(pinIndex, i++, (*value)(row, col));
                     }
                 }
             }
@@ -2145,7 +2142,7 @@ void NAV::Plot::plotMatrix(ax::NodeEditor::LinkId linkId)
     }
 }
 
-void NAV::Plot::plotData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId)
+void NAV::Plot::plotData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId)
 {
     if (ConfigManager::Get<bool>("nogui")) { return; }
 

@@ -2617,28 +2617,21 @@ void NAV::VectorNavSensor::guiConfig()
                                     if (b == 0)
                                     {
                                         _vs.writeBinaryOutput1(_binaryOutputRegister.at(b));
-                                        auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(b + 2));
-                                        for (auto* connectedLink : connectedLinks)
-                                        {
-                                            nm::RefreshLink(*connectedLink);
-                                        }
                                     }
                                     else if (b == 1)
                                     {
                                         _vs.writeBinaryOutput2(_binaryOutputRegister.at(b));
-                                        auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(b + 2));
-                                        for (auto* connectedLink : connectedLinks)
-                                        {
-                                            nm::RefreshLink(*connectedLink);
-                                        }
                                     }
                                     else if (b == 2)
                                     {
                                         _vs.writeBinaryOutput3(_binaryOutputRegister.at(b));
-                                        auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(b + 2));
-                                        for (auto* connectedLink : connectedLinks)
+                                    }
+
+                                    for (auto& link : outputPins.at(b + 2).links)
+                                    {
+                                        if (auto* connectedPin = link.getConnectedPin())
                                         {
-                                            nm::RefreshLink(*connectedLink);
+                                            nm::RefreshLink(*connectedPin);
                                         }
                                     }
                                 }
@@ -7013,7 +7006,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
 
                 if ((!obs->insTime.has_value() || obs->insTime->empty())                        // Look for master to give GNSS time
                     && (obs->timeOutputs->timeField & vn::protocol::uart::TIMEGROUP_TIMESYNCIN) // We need syncin time for this
-                    && vnSensor->_syncInPin && nm::IsPinLinked(vnSensor->inputPins.front()))    // Try to get a sync from the master
+                    && vnSensor->_syncInPin && vnSensor->inputPins.front().isPinLinked())       // Try to get a sync from the master
                 {
                     if (const auto* timeSyncMaster = vnSensor->getInputValue<TimeSync>(0);
                         timeSyncMaster && !timeSyncMaster->ppsTime.empty())

@@ -337,7 +337,7 @@ bool NAV::SinglePointPositioning::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (std::all_of(inputPins.begin() + INPUT_PORT_INDEX_GNSS_NAV_INFO, inputPins.end(), [](const InputPin& inputPin) { return !nm::IsPinLinked(inputPin); }))
+    if (std::all_of(inputPins.begin() + INPUT_PORT_INDEX_GNSS_NAV_INFO, inputPins.end(), [](const InputPin& inputPin) { return !inputPin.isPinLinked(); }))
     {
         LOG_ERROR("{}: You need to connect a GNSS NavigationInfo provider", nameId());
         return false;
@@ -370,7 +370,7 @@ void NAV::SinglePointPositioning::updateNumberOfInputPins()
     }
 }
 
-void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /* pinId */)
 {
     std::vector<const GnssNavInfo*> gnssNavInfos(_nNavInfoPins);
     for (size_t i = 0; i < _nNavInfoPins; i++)
@@ -905,7 +905,7 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
     invokeCallbacks(OUTPUT_PORT_INDEX_SPPSOL, sppSol);
 }
 
-void NAV::SinglePointPositioning::recvPosVelInit(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::SinglePointPositioning::recvPosVelInit(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /* pinId */)
 {
     if (_e_position.isZero())
     {

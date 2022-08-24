@@ -154,7 +154,7 @@ void NAV::FlowExecutor::execute()
 
             if (outputPin.type == Pin::Type::Flow
 #ifndef TESTING
-                && nm::IsPinLinked(outputPin)
+                && outputPin.isPinLinked()
 #endif
             )
             {

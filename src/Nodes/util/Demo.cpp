@@ -374,14 +374,14 @@ void NAV::Demo::onDeleteLink([[maybe_unused]] OutputPin& startPin, [[maybe_unuse
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
 }
 
-void NAV::Demo::receiveSensorData(const std::shared_ptr<const NodeData>& /*nodeData*/, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::Demo::receiveSensorData(const std::shared_ptr<const NodeData>& /*nodeData*/, ax::NodeEditor::PinId /*pinId*/)
 {
     LOG_INFO("{}: received Sensor Data", nameId());
 
     _receivedDataFromSensorCnt++;
 }
 
-void NAV::Demo::receiveFileReaderData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::Demo::receiveFileReaderData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /*pinId*/)
 {
     auto obs = std::static_pointer_cast<const InsObs>(nodeData);
     LOG_INFO("{}: received FileReader Data: {}", nameId(), obs->insTime->toYMDHMS());
@@ -455,7 +455,7 @@ std::shared_ptr<const NAV::NodeData> NAV::Demo::pollData(bool peek)
     return obs;
 }
 
-void NAV::Demo::stringUpdatedNotifyFunction(ax::NodeEditor::LinkId /*linkId*/)
+void NAV::Demo::stringUpdatedNotifyFunction(ax::NodeEditor::PinId /*pinId*/)
 {
     _stringUpdateCounter++;
 }

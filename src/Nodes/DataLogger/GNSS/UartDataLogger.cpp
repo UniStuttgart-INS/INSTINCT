@@ -92,7 +92,7 @@ void NAV::UartDataLogger::deinitialize()
     FileWriter::deinitialize();
 }
 
-void NAV::UartDataLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::UartDataLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /*pinId*/)
 {
     auto obs = std::static_pointer_cast<const UartPacket>(nodeData);
 

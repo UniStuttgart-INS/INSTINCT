@@ -68,8 +68,8 @@ class Delay : public Node
 
     /// @brief Delays the observation
     /// @param[in] nodeData Observation to delay
-    /// @param[in] linkId Id of the link over which the data is received
-    void delayObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] pinId Id of the pin the data is received on
+    void delayObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
 
     /// @brief The amount to delay messages for
     int _delayLength = 1;

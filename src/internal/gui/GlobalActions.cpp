@@ -233,7 +233,7 @@ void NAV::gui::pasteFlowElements()
                     auto& startPin = nm::m_Nodes().at(startPinParentNodeIndex)->outputPins.at(startPinIndex);
                     auto& endPin = nm::m_Nodes().at(endPinParentNodeIndex)->inputPins.at(endPinIndex);
 
-                    if (!nm::FindConnectedLinkToInputPin(endPin))
+                    if (!endPin.isPinLinked())
                     {
                         nm::CreateLink(startPin, endPin);
                     }

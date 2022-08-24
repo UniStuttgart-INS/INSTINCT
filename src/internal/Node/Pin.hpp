@@ -321,7 +321,7 @@ class OutputPin : public Pin
         : Pin(id, name, type, Pin::Kind::Output, parentNode) {}
 
     /// @brief Destructor
-    ~OutputPin() = default;
+    ~OutputPin();
     /// @brief Copy constructor
     OutputPin(const OutputPin&) = delete;
     /// @brief Move constructor
@@ -351,6 +351,24 @@ class OutputPin : public Pin
     /// @return True if it can create a link
     [[nodiscard]] bool canCreateLink(const InputPin& other) const;
 
+    /// @brief Checks if the pin is linked
+    /// @return True if a link exists on this pin
+    [[nodiscard]] bool isPinLinked() const;
+
+    /// @brief Checks if the pin is linked to the other pin
+    /// @param[in] endPin The pin to check if they are linked
+    /// @return True if a link exists on the pins
+    [[nodiscard]] bool isPinLinked(const InputPin& endPin) const;
+
+    /// @brief Connects this pin to another
+    /// @param[in] endPin Pin which should be linked to this pin
+    /// @return True if the link could be created
+    bool connect(InputPin& endPin);
+
+    /// @brief Disconnects the link
+    /// @param[in] endPin Pin which should be disconnected from this pin
+    void disconnect(InputPin& endPin);
+
     /// FileReader/Simulator pollData function type
     using PollDataFunc = std::shared_ptr<const NAV::NodeData> (Node::*)(bool);
 
@@ -369,15 +387,6 @@ class OutputPin : public Pin
     /// Mutex to interact with the data object
     std::mutex dataAccessMutex;
 
-    /// @brief Connects this pin to another
-    /// @param[in] endPin Pin which should be linked to this pin
-    /// @return True if the link could be created
-    bool connect(InputPin& endPin);
-
-    /// @brief Disconnects the link
-    /// @param[in] endPin Pin which should be disconnected from this pin
-    void disconnect(InputPin& endPin);
-
     /// Collection of information about the connected node and pin
     struct OutgoingLink : public Link
     {
@@ -392,6 +401,9 @@ class OutputPin : public Pin
                      Node* connectedNode,
                      ax::NodeEditor::PinId connectedPinId)
             : Link(linkId, connectedNode, connectedPinId) {}
+
+        /// @brief Returns a pointer to the pin which is connected to this one
+        [[nodiscard]] InputPin* getConnectedPin() const;
     };
 
     /// Info to identify the linked pins
@@ -410,15 +422,22 @@ class InputPin : public Pin
     InputPin(ax::NodeEditor::PinId id, const char* name, Type type, Node* parentNode)
         : Pin(id, name, type, Pin::Kind::Input, parentNode) {}
 
+    /// @brief Destructor
+    ~InputPin();
+
     /// @brief Checks if this pin can connect to the provided pin
     /// @param[in] other The pin to create a link to
     /// @return True if it can create a link
     [[nodiscard]] bool canCreateLink(const OutputPin& other) const;
 
+    /// @brief Checks if the pin is linked
+    /// @return True if a link exists on this pin
+    [[nodiscard]] bool isPinLinked() const;
+
     /// Flow data callback function type to call when firable
-    using FlowFirableCallbackFunc = void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId);
+    using FlowFirableCallbackFunc = void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::PinId);
     /// Notify function type to call when the connected value changed
-    using DataChangedNotifyFunc = void (Node::*)(ax::NodeEditor::LinkId);
+    using DataChangedNotifyFunc = void (Node::*)(ax::NodeEditor::PinId);
 
     /// Callback function types
     using Callback = std::variant<FlowFirableCallbackFunc, // Flow:  Callback function type to call when firable
@@ -433,8 +452,7 @@ class InputPin : public Pin
     bool connect(OutputPin& startPin);
 
     /// @brief Disconnects the link
-    /// @param[in] startPin Pin which should be disconnected from this pin
-    void disconnect(OutputPin& startPin);
+    void disconnect();
 
     /// Collection of information about the connected node and pin
     struct IncomingLink : public Link
@@ -452,7 +470,7 @@ class InputPin : public Pin
             : Link(linkId, connectedNode, connectedPinId) {}
 
         /// @brief Returns a pointer to the pin which is connected to this one
-        [[nodiscard]] const OutputPin* getConnectedPin() const;
+        [[nodiscard]] OutputPin* getConnectedPin() const;
 
         /// @brief Get a pointer to the value connected on the pin
         /// @tparam T Type of the connected object

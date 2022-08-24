@@ -116,13 +116,13 @@ class SinglePointPositioning : public Node
 
     /// @brief Receive Function for the Gnss Observations
     /// @param[in] nodeData PosVelAtt to process
-    /// @param[in] linkId Id of the link over which the data is received
-    void recvGnssObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] pinId Id of the pin the data is received on
+    void recvGnssObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
 
     /// @brief Receive Function for the Initial PosVel Observation
     /// @param[in] nodeData PosVelAtt to process
-    /// @param[in] linkId Id of the link over which the data is received
-    void recvPosVelInit(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] pinId Id of the pin the data is received on
+    void recvPosVelInit(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
 };
 
 } // namespace NAV

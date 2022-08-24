@@ -240,6 +240,16 @@ class Node
     /// @param[in] data The data to pass to the callback targets
     void invokeCallbacks(size_t portIndex, const std::shared_ptr<const NodeData>& data);
 
+    /// @brief Returns the pin with the given id
+    /// @param[in] pinId Id of the Pin
+    /// @return The input pin
+    [[nodiscard]] InputPin& inputPinFromId(ax::NodeEditor::PinId pinId);
+
+    /// @brief Returns the pin with the given id
+    /// @param[in] pinId Id of the Pin
+    /// @return The output pin
+    [[nodiscard]] OutputPin& outputPinFromId(ax::NodeEditor::PinId pinId);
+
     /// @brief Returns the index of the pin
     /// @param[in] pinId Id of the Pin
     /// @return The index of the pin

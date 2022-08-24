@@ -542,27 +542,28 @@ void NAV::ErrorModel::afterCreateLink(OutputPin& startPin, InputPin& endPin)
     if (previousOutputPinDataIdentifier != outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier) // If the identifier changed
     {
         // Check if connected links on output port are still valid
-        for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW)))
+        for (auto& link : outputPins.at(OUTPUT_PORT_INDEX_FLOW).links)
         {
-            auto* startPin = nm::FindOutputPin(link->startPinId);
-            auto* endPin = nm::FindInputPin(link->endPinId);
-            if (startPin && endPin)
+            if (auto* endPin = link.getConnectedPin())
             {
-                if (startPin->canCreateLink(*endPin))
+                if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).canCreateLink(*endPin))
                 {
                     continue;
                 }
             }
             // If the link is not valid anymore, delete it
-            nm::DeleteLink(link->id);
+            nm::DeleteLink(link.linkId);
         }
 
         // Refresh all links connected to the output pin if the type changed
         if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier != previousOutputPinDataIdentifier)
         {
-            for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW)))
+            for (auto& link : outputPins.at(OUTPUT_PORT_INDEX_FLOW).links)
             {
-                nm::RefreshLink(*link);
+                if (auto* connectedPin = link.getConnectedPin())
+                {
+                    nm::RefreshLink(*connectedPin);
+                }
             }
         }
     }
@@ -572,16 +573,16 @@ void NAV::ErrorModel::afterDeleteLink(OutputPin& startPin, InputPin& endPin)
 {
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
 
-    if ((endPin.parentNode->id != id                                     // Link on Output port is removed
-         && !nm::IsPinLinked(inputPins.at(INPUT_PORT_INDEX_FLOW)))       //     and the Input port is not linked
-        || (startPin.parentNode->id != id                                // Link on Input port is removed
-            && !nm::IsPinLinked(outputPins.at(OUTPUT_PORT_INDEX_FLOW)))) //     and the Output port is not linked
+    if ((endPin.parentNode->id != id                                  // Link on Output port is removed
+         && !inputPins.at(INPUT_PORT_INDEX_FLOW).isPinLinked())       //     and the Input port is not linked
+        || (startPin.parentNode->id != id                             // Link on Input port is removed
+            && !outputPins.at(OUTPUT_PORT_INDEX_FLOW).isPinLinked())) //     and the Output port is not linked
     {
         outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = supportedDataIdentifier;
     }
 }
 
-void NAV::ErrorModel::receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::ErrorModel::receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /* pinId */)
 {
     // Select the correct data type and make a copy of the node data to modify
     if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == ImuObs::type())

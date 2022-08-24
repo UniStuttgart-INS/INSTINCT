@@ -67,18 +67,18 @@ class ImuIntegrator : public Node
 
     /// @brief Receive Function for the PosVelAtt initial values
     /// @param[in] nodeData PosVelAtt to process
-    /// @param[in] linkId Id of the link over which the data is received
-    void recvPosVelAttInit(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] pinId Id of the pin the data is received on
+    void recvPosVelAttInit(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
 
     /// @brief Receive Function for the ImuObs at the time tₖ
     /// @param[in] nodeData ImuObs to process
-    /// @param[in] linkId Id of the link over which the data is received
-    void recvImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] pinId Id of the pin the data is received on
+    void recvImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
 
     /// @brief Receive function for LcKfInsGnssErrors
     /// @param[in] nodeData Observation received
-    /// @param[in] linkId Id of the link over which the data is received
-    void recvLcKfInsGnssErrors(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] pinId Id of the pin the data is received on
+    void recvLcKfInsGnssErrors(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
 
     /// @brief Integrates the Imu Observation data in ECEF frame
     void integrateObservationECEF();

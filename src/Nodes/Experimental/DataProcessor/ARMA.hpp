@@ -64,8 +64,8 @@ class ARMA : public Node
 
     /// @brief Receive Sensor Data
     /// @param[in] nodeData Data to plot
-    /// @param[in] linkId Id of the link over which the data is received
-    void receiveImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] pinId Id of the pin the data is received on
+    void receiveImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
 
     /// @brief calculate autocorrelation function (ACF)
     /// @param[in] y vector of data

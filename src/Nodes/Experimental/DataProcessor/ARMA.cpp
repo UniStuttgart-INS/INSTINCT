@@ -299,7 +299,7 @@ void NAV::experimental::ARMA::hannan_rissanen(Eigen::VectorXd& y, int p, int q, 
     }
 }
 
-void NAV::experimental::ARMA::receiveImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::experimental::ARMA::receiveImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /*pinId*/)
 {
     auto obs = std::static_pointer_cast<const ImuObs>(nodeData);
     auto newImuObs = std::make_shared<ImuObs>(obs->imuPos);

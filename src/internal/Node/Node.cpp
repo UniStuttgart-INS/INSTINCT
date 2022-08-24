@@ -139,6 +139,26 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
     }
 }
 
+NAV::InputPin& NAV::Node::inputPinFromId(ax::NodeEditor::PinId pinId)
+{
+    for (auto& inputPin : inputPins)
+    {
+        if (pinId == inputPin.id) { return inputPin; }
+    }
+
+    throw std::runtime_error(fmt::format("{}: The Pin {} is not on this node.", nameId(), size_t(pinId)).c_str());
+}
+
+NAV::OutputPin& NAV::Node::outputPinFromId(ax::NodeEditor::PinId pinId)
+{
+    for (auto& outputPin : outputPins)
+    {
+        if (pinId == outputPin.id) { return outputPin; }
+    }
+
+    throw std::runtime_error(fmt::format("{}: The Pin {} is not on this node.", nameId(), size_t(pinId)).c_str());
+}
+
 size_t NAV::Node::inputPinIndexFromId(ax::NodeEditor::PinId pinId) const
 {
     for (size_t i = 0; i < inputPins.size(); i++)
@@ -442,7 +462,7 @@ bool NAV::Node::workerInitializeNode()
     {
         if (inputPin.type != Pin::Type::Flow)
         {
-            if (Node* connectedNode = nm::FindConnectedNodeToInputPin(inputPin))
+            if (Node* connectedNode = inputPin.link.connectedNode)
             {
                 if (!connectedNode->isInitialized())
                 {
@@ -501,15 +521,14 @@ bool NAV::Node::workerDeinitializeNode()
     {
         if (outputPin.type != Pin::Type::Flow)
         {
-            auto connectedNodes = nm::FindConnectedNodesToOutputPin(outputPin);
-            for (auto* connectedNode : connectedNodes)
+            for (auto& link : outputPin.links)
             {
-                if (connectedNode->isInitialized())
+                if (link.connectedNode->isInitialized())
                 {
                     LOG_DEBUG("{}: {} connected Node '{}' on output Pin {}", nameId(),
-                              _reinitialize ? "Reinitializing" : "Deinitializing", connectedNode->nameId(), size_t(outputPin.id));
-                    if (_reinitialize) { connectedNode->doReinitialize(); }
-                    else { connectedNode->doDeinitialize(); }
+                              _reinitialize ? "Reinitializing" : "Deinitializing", link.connectedNode->nameId(), size_t(outputPin.id));
+                    if (_reinitialize) { link.connectedNode->doReinitialize(); }
+                    else { link.connectedNode->doDeinitialize(); }
                 }
             }
         }

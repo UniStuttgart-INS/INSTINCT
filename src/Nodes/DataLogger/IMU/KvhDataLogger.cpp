@@ -105,7 +105,7 @@ void NAV::KvhDataLogger::deinitialize()
     FileWriter::deinitialize();
 }
 
-void NAV::KvhDataLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::KvhDataLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /*pinId*/)
 {
     auto obs = std::static_pointer_cast<const KvhObs>(nodeData);
 

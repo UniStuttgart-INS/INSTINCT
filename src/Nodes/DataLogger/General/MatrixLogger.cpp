@@ -102,7 +102,7 @@ void NAV::MatrixLogger::deinitialize()
     FileWriter::deinitialize();
 }
 
-void NAV::MatrixLogger::writeMatrix(ax::NodeEditor::LinkId linkId)
+void NAV::MatrixLogger::writeMatrix(ax::NodeEditor::PinId pinId)
 {
     constexpr int gpsCyclePrecision = 3;
     constexpr int gpsTimePrecision = 12;
@@ -113,46 +113,43 @@ void NAV::MatrixLogger::writeMatrix(ax::NodeEditor::LinkId linkId)
         _filestream << "Time [s],GpsCycle,GpsWeek,GpsTow [s]";
     }
 
-    if (Link* link = nm::FindLink(linkId))
+    if (auto* sourcePin = inputPinFromId(pinId).link.getConnectedPin())
     {
-        if (auto* sourcePin = nm::FindOutputPin(link->startPinId))
+        InsTime currentTime = util::time::GetCurrentInsTime();
+        // Matrix
+        if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
         {
-            InsTime currentTime = util::time::GetCurrentInsTime();
-            // Matrix
-            if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
+            auto* value = getInputValue<Eigen::MatrixXd>(INPUT_PORT_INDEX_MATRIX);
+
+            if (value != nullptr && !currentTime.empty())
             {
-                auto* value = getInputValue<Eigen::MatrixXd>(INPUT_PORT_INDEX_MATRIX);
-
-                if (value != nullptr && !currentTime.empty())
+                if (!_headerWritten)
                 {
-                    if (!_headerWritten)
-                    {
-                        for (int row = 0; row < value->rows(); row++)
-                        {
-                            for (int col = 0; col < value->cols(); col++)
-                            {
-                                _filestream << ",[" << row << ";" << col << "]";
-                            }
-                        }
-                        _filestream << std::endl;
-                        _headerWritten = true;
-                    }
-
-                    _filestream << std::setprecision(valuePrecision) << std::round(calcTimeIntoRun(currentTime) * 1e9) / 1e9;
-                    _filestream << "," << std::fixed << std::setprecision(gpsCyclePrecision) << currentTime.toGPSweekTow().gpsCycle;
-                    _filestream << "," << std::defaultfloat << std::setprecision(gpsTimePrecision) << currentTime.toGPSweekTow().gpsWeek;
-                    _filestream << "," << std::defaultfloat << std::setprecision(gpsTimePrecision) << currentTime.toGPSweekTow().tow;
-                    _filestream << std::setprecision(valuePrecision);
-
                     for (int row = 0; row < value->rows(); row++)
                     {
                         for (int col = 0; col < value->cols(); col++)
                         {
-                            _filestream << "," << (*value)(row, col);
+                            _filestream << ",[" << row << ";" << col << "]";
                         }
                     }
-                    _filestream << "\n";
+                    _filestream << std::endl;
+                    _headerWritten = true;
                 }
+
+                _filestream << std::setprecision(valuePrecision) << std::round(calcTimeIntoRun(currentTime) * 1e9) / 1e9;
+                _filestream << "," << std::fixed << std::setprecision(gpsCyclePrecision) << currentTime.toGPSweekTow().gpsCycle;
+                _filestream << "," << std::defaultfloat << std::setprecision(gpsTimePrecision) << currentTime.toGPSweekTow().gpsWeek;
+                _filestream << "," << std::defaultfloat << std::setprecision(gpsTimePrecision) << currentTime.toGPSweekTow().tow;
+                _filestream << std::setprecision(valuePrecision);
+
+                for (int row = 0; row < value->rows(); row++)
+                {
+                    for (int col = 0; col < value->cols(); col++)
+                    {
+                        _filestream << "," << (*value)(row, col);
+                    }
+                }
+                _filestream << "\n";
             }
         }
     }

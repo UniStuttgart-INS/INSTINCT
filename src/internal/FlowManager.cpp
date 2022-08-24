@@ -12,7 +12,6 @@ namespace ed = ax::NodeEditor;
 #include "NodeRegistry.hpp"
 
 #include "internal/Node/Node.hpp"
-#include "internal/Node/Link.hpp"
 #include "internal/Node/Pin.hpp"
 #include "internal/ConfigManager.hpp"
 #include "internal/FlowExecutor.hpp"
@@ -65,10 +64,6 @@ void NAV::flow::SaveFlowAs(const std::string& filepath)
     {
         j["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
         j["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
-    }
-    for (const auto& link : nm::m_Links())
-    {
-        j["links"]["link-" + std::to_string(size_t(link.id))] = link;
     }
     if (gui::windows::saveConfigInFlow)
     {
@@ -256,33 +251,34 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
 
     if (j.contains("links"))
     {
-        for (const auto& linkJson : j.at("links"))
+        for ([[maybe_unused]] const auto& linkJson : j.at("links"))
         {
-            Link link = linkJson.get<Link>();
+            // TODO: Refactor this
+            // Link link = linkJson.get<Link>();
 
-            if (!nm::FindLink(link.id))
-            {
-                if (!nm::AddLink(link))
-                {
-                    loadSuccessful = false;
-                }
+            // if (!nm::FindLink(link.id))
+            // {
+            //     if (!nm::AddLink(link))
+            //     {
+            //         loadSuccessful = false;
+            //     }
 
-                auto* endPin = nm::FindInputPin(link.endPinId);
-                if (endPin)
-                {
-                    if (auto* node = nm::FindConnectedNodeToInputPin(*endPin))
-                    {
-                        newlyLinkedNodes.insert(size_t(node->id));
-                    }
-                }
-                if (auto* startPin = nm::FindOutputPin(link.startPinId))
-                {
-                    for (auto* node : nm::FindConnectedNodesToOutputPin(*startPin))
-                    {
-                        newlyLinkedNodes.insert(size_t(node->id));
-                    }
-                }
-            }
+            //     auto* endPin = nm::FindInputPin(link.endPinId);
+            //     if (endPin)
+            //     {
+            //         if (endPin->link.connectedNode)
+            //         {
+            //             newlyLinkedNodes.insert(size_t(endPin->link.connectedNode->id));
+            //         }
+            //     }
+            //     if (auto* startPin = nm::FindOutputPin(link.startPinId))
+            //     {
+            //         for (auto& link : startPin->links)
+            //         {
+            //             newlyLinkedNodes.insert(size_t(link.connectedNode->id));
+            //         }
+            //     }
+            // }
         }
     }
     if (j.contains("nodes"))

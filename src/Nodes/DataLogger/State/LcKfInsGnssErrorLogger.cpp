@@ -114,7 +114,7 @@ void NAV::LcKfInsGnssErrorLogger::deinitialize()
     FileWriter::deinitialize();
 }
 
-void NAV::LcKfInsGnssErrorLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::LcKfInsGnssErrorLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /* pinId */)
 {
     constexpr int gpsCyclePrecision = 3;
     constexpr int gpsTimePrecision = 12;

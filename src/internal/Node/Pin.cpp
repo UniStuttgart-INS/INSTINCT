@@ -11,15 +11,11 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
-bool NAV::InputPin::canCreateLink(const OutputPin& other) const
-{
-    return Pin::canCreateLink(other, *this);
-}
+#include <algorithm>
 
-bool NAV::OutputPin::canCreateLink(const InputPin& other) const
-{
-    return Pin::canCreateLink(*this, other);
-}
+// ###########################################################################################################
+//                                                    Pin
+// ###########################################################################################################
 
 bool NAV::Pin::canCreateLink(const OutputPin& startPin, const InputPin& endPin)
 {
@@ -137,6 +133,40 @@ void NAV::Pin::drawPinIcon(bool connected, int alpha) const
                                 iconType, connected, color, ImColor(32, 32, 32, alpha));
 }
 
+// ###########################################################################################################
+//                                                 OutputPin
+// ###########################################################################################################
+
+NAV::OutputPin::~OutputPin()
+{
+    // TODO: Delete link on both sides
+    for (auto& link : links)
+    {
+        if (auto* connectedPin = link.getConnectedPin())
+        {
+            disconnect(*connectedPin);
+        }
+    }
+}
+
+bool NAV::OutputPin::canCreateLink(const NAV::InputPin& other) const
+{
+    return Pin::canCreateLink(*this, other);
+}
+
+bool NAV::OutputPin::isPinLinked() const
+{
+    return !links.empty();
+}
+
+bool NAV::OutputPin::isPinLinked(const NAV::InputPin& endPin) const
+{
+    auto iter = std::find_if(links.cbegin(), links.cend(), [&endPin](const OutgoingLink& link) {
+        return link.connectedNode == endPin.parentNode && link.connectedPinId == endPin.id;
+    });
+    return iter != links.cend();
+}
+
 bool NAV::OutputPin::connect(NAV::InputPin& endPin)
 {
     if (!canCreateLink(endPin))
@@ -144,7 +174,7 @@ bool NAV::OutputPin::connect(NAV::InputPin& endPin)
         return false;
     }
 
-    auto iter = std::find(links.begin(), links.end(), [&endPin](const OutgoingLink& link) {
+    auto iter = std::find_if(links.begin(), links.end(), [&endPin](const OutgoingLink& link) {
         return link.connectedNode == endPin.parentNode && link.connectedPinId == endPin.id;
     });
     if (iter == links.end()) // Link does not yet exist
@@ -168,7 +198,7 @@ bool NAV::OutputPin::connect(NAV::InputPin& endPin)
 
 void NAV::OutputPin::disconnect(InputPin& endPin)
 {
-    auto iter = std::find(links.begin(), links.end(), [&endPin](const OutgoingLink& link) {
+    auto iter = std::find_if(links.begin(), links.end(), [&endPin](const OutgoingLink& link) {
         return link.connectedNode == endPin.parentNode && link.connectedPinId == endPin.id;
     });
     if (iter != links.end())
@@ -176,9 +206,41 @@ void NAV::OutputPin::disconnect(InputPin& endPin)
         links.erase(iter);
         if (endPin.link.connectedNode == parentNode && endPin.link.connectedPinId == id)
         {
-            endPin.disconnect(*this);
+            endPin.disconnect();
         }
     }
+}
+
+NAV::InputPin* NAV::OutputPin::OutgoingLink::getConnectedPin() const
+{
+    if (connectedNode)
+    {
+        for (auto& inputPin : connectedNode->inputPins)
+        {
+            if (inputPin.id == connectedPinId) { return &inputPin; }
+        }
+    }
+    return nullptr;
+}
+
+// ###########################################################################################################
+//                                                 InputPin
+// ###########################################################################################################
+
+NAV::InputPin::~InputPin()
+{
+    // TODO: Delete link on both sides
+    disconnect();
+}
+
+bool NAV::InputPin::canCreateLink(const OutputPin& other) const
+{
+    return Pin::canCreateLink(other, *this);
+}
+
+bool NAV::InputPin::isPinLinked() const
+{
+    return link.linkId && link.connectedNode && link.connectedPinId;
 }
 
 bool NAV::InputPin::connect(NAV::OutputPin& startPin)
@@ -193,7 +255,7 @@ bool NAV::InputPin::connect(NAV::OutputPin& startPin)
         link.connectedNode = startPin.parentNode;
         link.connectedPinId = startPin.id;
 
-        auto iter = std::find(startPin.links.begin(), startPin.links.end(), [&, this](const OutputPin::OutgoingLink& link) {
+        auto iter = std::find_if(startPin.links.begin(), startPin.links.end(), [&, this](const OutputPin::OutgoingLink& link) {
             return link.connectedNode == parentNode && link.connectedPinId == id;
         });
 
@@ -212,26 +274,31 @@ bool NAV::InputPin::connect(NAV::OutputPin& startPin)
     }
 }
 
-void NAV::InputPin::disconnect(NAV::OutputPin& startPin)
+void NAV::InputPin::disconnect()
 {
     if (link.connectedNode || link.connectedPinId || link.linkId)
     {
+        auto* startPin = link.getConnectedPin();
+
         link.linkId = 0;
         link.connectedNode = nullptr;
         link.connectedPinId = 0;
 
-        auto iter = std::find(startPin.links.begin(), startPin.links.end(), [&, this](const OutputPin::OutgoingLink& link) {
-            return link.connectedNode == parentNode && link.connectedPinId == id;
-        });
-
-        if (iter != startPin.links.end())
+        if (startPin)
         {
-            startPin.disconnect(*this);
+            auto iter = std::find_if(startPin->links.begin(), startPin->links.end(), [&, this](const OutputPin::OutgoingLink& link) {
+                return link.connectedNode == parentNode && link.connectedPinId == id;
+            });
+
+            if (iter != startPin->links.end())
+            {
+                startPin->disconnect(*this);
+            }
         }
     }
 }
 
-const NAV::OutputPin* NAV::InputPin::IncomingLink::getConnectedPin() const
+NAV::OutputPin* NAV::InputPin::IncomingLink::getConnectedPin() const
 {
     if (connectedNode)
     {
@@ -242,6 +309,8 @@ const NAV::OutputPin* NAV::InputPin::IncomingLink::getConnectedPin() const
     }
     return nullptr;
 }
+
+// ###########################################################################################################
 
 void NAV::to_json(json& j, const Pin& pin)
 {

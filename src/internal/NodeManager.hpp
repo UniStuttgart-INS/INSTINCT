@@ -87,11 +87,11 @@ InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const 
 template<typename T,
          typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
 InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier = {},
-                         void (T::*callback)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId) = nullptr, int idx = -1)
+                         void (T::*callback)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::PinId) = nullptr, int idx = -1)
 {
     assert(pinType == Pin::Type::Flow);
 
-    return CreateInputPin(node, name, pinType, dataIdentifier, static_cast<InputPin::FlowFirableCallbackFunc>(callback), idx);
+    return CreateInputPin(node, name, pinType, dataIdentifier, InputPin::Callback(static_cast<InputPin::FlowFirableCallbackFunc>(callback)), idx);
 }
 
 /// @brief Create an Input Pin object
@@ -106,11 +106,11 @@ InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const 
 template<typename T,
          typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
 InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier,
-                         void (T::*notifyFunc)(ax::NodeEditor::LinkId), int idx = -1)
+                         void (T::*notifyFunc)(ax::NodeEditor::PinId), int idx = -1)
 {
     assert(pinType != Pin::Type::Flow && pinType != Pin::Type::Delegate);
 
-    return CreateInputPin(node, name, pinType, dataIdentifier, static_cast<InputPin::DataChangedNotifyFunc>(notifyFunc), idx);
+    return CreateInputPin(node, name, pinType, dataIdentifier, InputPin::Callback(static_cast<InputPin::DataChangedNotifyFunc>(notifyFunc)), idx);
 }
 
 /// @brief Create an Output Pin object
@@ -139,7 +139,7 @@ OutputPin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, cons
 {
     assert(pinType == Pin::Type::Flow);
 
-    return CreateOutputPin(node, name, pinType, dataIdentifier, static_cast<OutputPin::PollDataFunc>(pollDataFunc), idx);
+    return CreateOutputPin(node, name, pinType, dataIdentifier, OutputPin::PinData(static_cast<OutputPin::PollDataFunc>(pollDataFunc)), idx);
 }
 
 /// @brief Deletes the output pin
@@ -157,11 +157,6 @@ bool DeleteInputPin(const InputPin& pin);
 /// @return Pointer to the node or nullptr if the NodeId does not exist
 Node* FindNode(ax::NodeEditor::NodeId id);
 
-/// @brief Finds the Link for the LinkId
-/// @param[in] id Unique Id of the Link to search for
-/// @return Pointer to the link or nullptr if the LinkId does not exist
-Link* FindLink(ax::NodeEditor::LinkId id);
-
 /// @brief Finds the Pin for the PinId
 /// @param[in] id Unique Id of the Pin to search for
 /// @return Pointer to the pin or nullptr if the PinId does not exist
@@ -171,46 +166,6 @@ OutputPin* FindOutputPin(ax::NodeEditor::PinId id);
 /// @param[in] id Unique Id of the Pin to search for
 /// @return Pointer to the pin or nullptr if the PinId does not exist
 InputPin* FindInputPin(ax::NodeEditor::PinId id);
-
-/// @brief Checks if a link exists, connecting to the provided Pin
-/// @param[in] pin An output Pin
-/// @return true if the Pin is linked, otherwise false
-bool IsPinLinked(const OutputPin& pin);
-
-/// @brief Checks if a link exists, connecting to the provided Pin
-/// @param[in] pin An input Pin
-/// @return true if the Pin is linked, otherwise false
-bool IsPinLinked(const InputPin& pin);
-
-/// @brief Searches all nodes which are connected to the provided output pin
-/// @param[in] pin An output Pin
-/// @return List of Nodes which are connected to the output pin
-std::vector<Node*> FindConnectedNodesToOutputPin(const OutputPin& pin);
-
-/// @brief Searches the node which is connected to the provided input pin
-/// @param[in] pin An input Pin
-/// @return Pointer to the node which is connected to the input pin
-Node* FindConnectedNodeToInputPin(const InputPin& pin);
-
-/// @brief Searches all link which are connected to the provided output pin
-/// @param[in] pin PAn output Pin
-/// @return List of Links which are connected to the pin
-std::vector<Link*> FindConnectedLinksToOutputPin(const OutputPin& pin);
-
-/// @brief Searches the link which is connected to the provided input pin
-/// @param[in] pin An input Pin
-/// @return Pointer to the link which is connected to the input pin
-Link* FindConnectedLinkToInputPin(const InputPin& pin);
-
-/// @brief Searches all pins which are connected to the provided output pin
-/// @param[in] pin An output Pin
-/// @return List of Pins which are connected to the pin
-std::vector<InputPin*> FindConnectedPinsToOutputPin(const OutputPin& pin);
-
-/// @brief Searches the pin which is connected to the provided input pin
-/// @param[in] pin An input Pin
-/// @return Pointer to the output pin which is connected to the input pin
-OutputPin* FindConnectedPinToInputPin(const InputPin& pin);
 
 /// @brief Enables all Node callbacks
 void EnableAllCallbacks();

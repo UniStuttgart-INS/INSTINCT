@@ -62,8 +62,8 @@ class KvhDataLogger : public Node, public FileWriter, public CommonLog
 
     /// @brief Write Observation to the file
     /// @param[in] nodeData The received observation
-    /// @param[in] linkId Id of the link over which the data is received
-    void writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] pinId Id of the pin the data is received on
+    void writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
 };
 
 } // namespace NAV

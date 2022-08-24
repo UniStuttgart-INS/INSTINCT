@@ -183,10 +183,6 @@ void NAV::ImuIntegrator::guiConfig()
         {
             while (inputPins.size() >= 3)
             {
-                if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.back()))
-                {
-                    nm::DeleteLink(connectedLink->id);
-                }
                 inputPins.pop_back();
             }
         }
@@ -278,10 +274,6 @@ void NAV::ImuIntegrator::restore(json const& j)
         {
             while (inputPins.size() >= 3)
             {
-                if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.back()))
-                {
-                    nm::DeleteLink(connectedLink->id);
-                }
                 inputPins.pop_back();
             }
         }
@@ -324,7 +316,7 @@ void NAV::ImuIntegrator::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-void NAV::ImuIntegrator::recvPosVelAttInit(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::ImuIntegrator::recvPosVelAttInit(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /* pinId */)
 {
     LOG_DATA("{}: recvPosVelAttInit", nameId());
     auto posVelAtt = std::static_pointer_cast<const PosVelAtt>(nodeData);
@@ -369,7 +361,7 @@ void NAV::ImuIntegrator::recvPosVelAttInit(const std::shared_ptr<const NodeData>
     }
 }
 
-void NAV::ImuIntegrator::recvImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::ImuIntegrator::recvImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /* pinId */)
 {
     auto imuObs = std::static_pointer_cast<const ImuObs>(nodeData);
     LOG_DATA("{}: recvImuObs at time [{}]", nameId(), imuObs->insTime->toYMDHMS());
@@ -426,7 +418,7 @@ void NAV::ImuIntegrator::recvImuObs(const std::shared_ptr<const NodeData>& nodeD
     }
 }
 
-void NAV::ImuIntegrator::recvLcKfInsGnssErrors(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::ImuIntegrator::recvLcKfInsGnssErrors(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /* pinId */)
 {
     auto lcKfInsGnssErrors = std::static_pointer_cast<const LcKfInsGnssErrors>(nodeData);
     LOG_DATA("{}: recvLcKfInsGnssErrors at time [{}]", nameId(), lcKfInsGnssErrors->insTime->toYMDHMS());

@@ -98,13 +98,13 @@ class Demo : public Node
 
     /// @brief Receive Sensor Data
     /// @param[in] nodeData Data to plot
-    /// @param[in] linkId Id of the link over which the data is received
-    void receiveSensorData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] pinId Id of the pin the data is received on
+    void receiveSensorData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
 
     /// @brief Receive File Reader Data
     /// @param[in] nodeData Data to plot
-    /// @param[in] linkId Id of the link over which the data is received
-    void receiveFileReaderData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] pinId Id of the pin the data is received on
+    void receiveFileReaderData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
 
     /// @brief Polls data from the file
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
@@ -140,8 +140,8 @@ class Demo : public Node
     size_t _stringUpdateCounter = 0;                                ///< Counter of how often the string was updated
 
     /// @brief Function to call when the string is updated
-    /// @param[in] linkId Id of the Link where the string is connected over
-    void stringUpdatedNotifyFunction(ax::NodeEditor::LinkId linkId);
+    /// @param[in] pinId Id of the pin the data is received on
+    void stringUpdatedNotifyFunction(ax::NodeEditor::PinId pinId);
 };
 
 } // namespace NAV

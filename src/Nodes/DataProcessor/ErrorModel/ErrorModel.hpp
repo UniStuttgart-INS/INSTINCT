@@ -79,8 +79,8 @@ class ErrorModel : public Node
 
     /// @brief Callback when receiving data on a port
     /// @param[in] nodeData Data to process
-    /// @param[in] linkId Id of the link over which the data is received
-    void receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] pinId Id of the pin the data is received on
+    void receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
 
     /// @brief Callback when receiving an ImuObs
     /// @param[in] imuObs Copied data to modify and send out again

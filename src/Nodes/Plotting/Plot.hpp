@@ -365,25 +365,25 @@ class Plot : public Node
     void addData(size_t pinIndex, size_t dataIndex, double value);
 
     /// @brief Plots the data on this port
-    /// @param[in] linkId Id of the link over which the data is received
-    void plotBoolean(ax::NodeEditor::LinkId linkId);
+    /// @param[in] pinId Id of the pin the data is received on
+    void plotBoolean(ax::NodeEditor::PinId pinId);
 
     /// @brief Plots the data on this port
-    /// @param[in] linkId Id of the link over which the data is received
-    void plotInteger(ax::NodeEditor::LinkId linkId);
+    /// @param[in] pinId Id of the pin the data is received on
+    void plotInteger(ax::NodeEditor::PinId pinId);
 
     /// @brief Plots the data on this port
-    /// @param[in] linkId Id of the link over which the data is received
-    void plotFloat(ax::NodeEditor::LinkId linkId);
+    /// @param[in] pinId Id of the pin the data is received on
+    void plotFloat(ax::NodeEditor::PinId pinId);
 
     /// @brief Plots the data on this port
-    /// @param[in] linkId Id of the link over which the data is received
-    void plotMatrix(ax::NodeEditor::LinkId linkId);
+    /// @param[in] pinId Id of the pin the data is received on
+    void plotMatrix(ax::NodeEditor::PinId pinId);
 
     /// @brief Plot the data on this port
     /// @param[in] nodeData Data to plot
-    /// @param[in] linkId Id of the link over which the data is received
-    void plotData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] pinId Id of the pin the data is received on
+    void plotData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot

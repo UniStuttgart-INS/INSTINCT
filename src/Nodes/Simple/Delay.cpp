@@ -108,9 +108,9 @@ bool NAV::Delay::onCreateLink(OutputPin& startPin, InputPin& endPin)
     // Then remove all links.
     if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier != startPin.dataIdentifier)
     {
-        for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW)))
+        for (auto& link : outputPins.at(OUTPUT_PORT_INDEX_FLOW).links)
         {
-            nm::DeleteLink(link->id);
+            nm::DeleteLink(link.linkId);
         }
     }
 
@@ -118,15 +118,18 @@ bool NAV::Delay::onCreateLink(OutputPin& startPin, InputPin& endPin)
     outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = startPin.dataIdentifier;
 
     // Refresh all links connected to the output pin
-    for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW)))
+    for (auto& link : outputPins.at(OUTPUT_PORT_INDEX_FLOW).links)
     {
-        nm::RefreshLink(*link);
+        if (auto* connectedPin = link.getConnectedPin())
+        {
+            nm::RefreshLink(*connectedPin);
+        }
     }
 
     return true;
 }
 
-void NAV::Delay::delayObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::Delay::delayObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /* pinId */)
 {
     if (_buffer.size() == static_cast<size_t>(_delayLength))
     {

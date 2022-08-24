@@ -77,13 +77,13 @@ class PosVelAttInitializer : public Node
 
     /// @brief Receive Imu Observations
     /// @param[in] nodeData Imu Data
-    /// @param[in] linkId Id of the link over which the data is received
-    void receiveImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] pinId Id of the pin the data is received on
+    void receiveImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
 
     /// @brief Receive Gnss Observations
     /// @param[in] nodeData Gnss Data
-    /// @param[in] linkId Id of the link over which the data is received
-    void receiveGnssObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] pinId Id of the pin the data is received on
+    void receiveGnssObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
 
     /// @brief Receive Ublox Observations
     /// @param[in] obs Ublox Data

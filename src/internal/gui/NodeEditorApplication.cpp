@@ -886,7 +886,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                             ImGui::PopStyleColor();
                             ImGui::Spring(0);
                         }
-                        output.drawPinIcon(nm::IsPinLinked(output), static_cast<int>(alpha * 255));
+                        output.drawPinIcon(output.isPinLinked(), static_cast<int>(alpha * 255));
                         ImGui::Spring(0, ImGui::GetStyle().ItemSpacing.x / 2);
                         ImGui::EndHorizontal();
                         ImGui::PopStyleVar();
@@ -916,7 +916,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
                 builder.Input(input.id);
                 ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
-                input.drawPinIcon(nm::IsPinLinked(input), static_cast<int>(alpha * 255));
+                input.drawPinIcon(input.isPinLinked(), static_cast<int>(alpha * 255));
                 if (ImGui::IsItemHovered()) { tooltipText = fmt::format("{}", fmt::join(input.dataIdentifier, "\n")); }
 
                 ImGui::Spring(0);
@@ -984,7 +984,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                     }
                 }
                 ImGui::Spring(0);
-                output.drawPinIcon(nm::IsPinLinked(output), static_cast<int>(alpha * 255));
+                output.drawPinIcon(output.isPinLinked(), static_cast<int>(alpha * 255));
                 if (ImGui::IsItemHovered()) { tooltipText = fmt::format("{}", fmt::join(output.dataIdentifier, "\n")); }
                 ImGui::PopStyleVar();
                 util::BlueprintNodeBuilder::EndOutput();
@@ -1145,7 +1145,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                             showLabel("x Incompatible Pin Type", ImColor(45, 32, 32, 180));
                             ed::RejectNewItem(ImColor(255, 128, 128), 1.0F);
                         }
-                        else if (nm::IsPinLinked(*reinterpret_cast<InputPin*>(endPin)))
+                        else if (reinterpret_cast<InputPin*>(endPin)->isPinLinked())
                         {
                             showLabel("End Pin already linked", ImColor(45, 32, 32, 180));
                             ed::RejectNewItem(ImColor(255, 128, 128), 1.0F);
@@ -1202,7 +1202,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                     newLinkPin = nm::FindInputPin(pinId);
                     if (!newLinkPin) { newLinkPin = nm::FindOutputPin(pinId); }
 
-                    if (newLinkPin && newLinkPin->kind == Pin::Kind::Input && nm::IsPinLinked(*reinterpret_cast<InputPin*>(newLinkPin)))
+                    if (newLinkPin && newLinkPin->kind == Pin::Kind::Input && reinterpret_cast<InputPin*>(newLinkPin)->isPinLinked())
                     {
                         showLabel("End Pin already linked", ImColor(45, 32, 32, 180));
                         ed::RejectNewItem(ImColor(255, 128, 128), 1.0F);

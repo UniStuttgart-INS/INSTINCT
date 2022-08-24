@@ -72,8 +72,8 @@ class UartPacketConverter : public Node
 
     /// @brief Converts the UartPacket to the selected message type
     /// @param[in] nodeData UartPacket to process
-    /// @param[in] linkId Id of the link over which the data is received
-    void receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] pinId Id of the pin the data is received on
+    void receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
 };
 
 } // namespace NAV

@@ -148,7 +148,7 @@ void NAV::VectorNavDataLogger::deinitialize()
     FileWriter::deinitialize();
 }
 
-void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /*pinId*/)
 {
     auto obs = std::static_pointer_cast<const VectorNavBinaryOutput>(nodeData);
 
