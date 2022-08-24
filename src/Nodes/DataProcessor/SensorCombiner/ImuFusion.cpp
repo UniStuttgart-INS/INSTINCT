@@ -163,6 +163,7 @@ void from_json(const json& j, ImuFusion::PinData& data)
 } // namespace NAV
 
 NAV::ImuFusion::ImuFusion()
+    : Imu(typeStatic())
 {
     name = typeStatic();
 
