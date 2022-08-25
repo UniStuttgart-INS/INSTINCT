@@ -917,7 +917,6 @@ void NAV::ImuFusion::initializeKalmanFilter()
     }
 
     auto dtInit = 1.0 / _imuFrequency;
-    _avgEndTime = InsTime{ 0, 0, 0, 0, 0, _averageEndTime };
 
     // --------------------------------------------------------- KF Initializations ------------------------------------------------------------
     if (!_autoInitKF)
@@ -967,6 +966,9 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
         // Initial time step for KF prediction
         InsTime dt_init = InsTime{ 0, 0, 0, 0, 0, 1.0 / _imuFrequency };
         _latestTimestamp = InsTime{ 0, 0, 0, 0, 0, (imuObs->insTime.value() - dt_init).count() };
+
+        // Time until averaging ends and filtering starts (for auto-init of KF)
+        _avgEndTime = imuObs->insTime.value() + std::chrono::milliseconds(static_cast<int>(1e3 * _averageEndTime));
     }
 
     // Predict states over the time difference between the latest signal and the one before
