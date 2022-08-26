@@ -5,9 +5,6 @@
 #include "util/StringUtil.hpp"
 #include "util/Assert.h"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
-
 #include "internal/gui/FlowAnimation.hpp"
 #include "util/Json.hpp"
 
@@ -72,71 +69,73 @@ void NAV::Node::afterCreateLink(OutputPin& /*startPin*/, InputPin& /*endPin*/) {
 
 void NAV::Node::afterDeleteLink(OutputPin& /*startPin*/, InputPin& /*endPin*/) {}
 
-void NAV::Node::notifyOutputValueChanged(size_t portIndex)
+void NAV::Node::notifyOutputValueChanged(size_t /* portIndex */)
 {
-    for (auto& [node, callback, linkId] : outputPins.at(portIndex).notifyFuncOld)
-    {
-        if (node->isDisabled())
-        {
-            continue;
-        }
+    // TODO: Refactor this
 
-        if (nm::showFlowWhenNotifyingValueChange)
-        {
-            FlowAnimation::Add(linkId);
-        }
+    // for (auto& [node, callback, linkId] : outputPins.at(portIndex).notifyFuncOld)
+    // {
+    //     if (node->isDisabled())
+    //     {
+    //         continue;
+    //     }
 
-        // TODO: Put this into the Callback Manager
-        std::invoke(callback, node, linkId);
-    }
+    //     if (nm::showFlowWhenNotifyingValueChange)
+    //     {
+    //         FlowAnimation::Add(linkId);
+    //     }
+
+    //     // TODO: Put this into the Callback Manager
+    //     std::invoke(callback, node, linkId);
+    // }
 }
 
-void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NAV::NodeData>& data)
+void NAV::Node::invokeCallbacks(size_t /* portIndex */, const std::shared_ptr<const NAV::NodeData>& /* data */)
 {
-    if (callbacksEnabled)
-    {
-        if (data == nullptr)
-        {
-            LOG_DEBUG("{}: Tried to invokeCallbacks on pin {} with a nullptr. This is a bug!!!", nameId(), portIndex);
-            return;
-        }
-#ifdef TESTING
-        for (const auto& watcherCallback : outputPins.at(portIndex).watcherCallbacksOld)
-        {
-            const auto& linkId = watcherCallback.second;
-            if (!linkId) // Trigger all output pin callbacks
-            {
-                CallbackManager::queueWatcherCallbackForInvocation(watcherCallback, data);
-            }
-        }
-#endif
+    //     if (callbacksEnabled)
+    //     {
+    //         if (data == nullptr)
+    //         {
+    //             LOG_DEBUG("{}: Tried to invokeCallbacks on pin {} with a nullptr. This is a bug!!!", nameId(), portIndex);
+    //             return;
+    //         }
+    // #ifdef TESTING
+    //         for (const auto& watcherCallback : outputPins.at(portIndex).watcherCallbacksOld)
+    //         {
+    //             const auto& linkId = watcherCallback.second;
+    //             if (!linkId) // Trigger all output pin callbacks
+    //             {
+    //                 CallbackManager::queueWatcherCallbackForInvocation(watcherCallback, data);
+    //             }
+    //         }
+    // #endif
 
-        for (const auto& nodeCallback : outputPins.at(portIndex).callbacksOld)
-        {
-            const auto* node = std::get<0>(nodeCallback);
+    //         for (const auto& nodeCallback : outputPins.at(portIndex).callbacksOld)
+    //         {
+    //             const auto* node = std::get<0>(nodeCallback);
 
-            if (node->isInitialized())
-            {
-#ifdef TESTING
-                const auto& linkId = std::get<2>(nodeCallback);
-                for (const auto& watcherCallback : outputPins.at(portIndex).watcherCallbacksOld)
-                {
-                    const auto& watcherLinkId = watcherCallback.second;
-                    if (linkId == watcherLinkId)
-                    {
-                        CallbackManager::queueWatcherCallbackForInvocation(watcherCallback, data);
-                    }
-                }
-#endif
-                CallbackManager::queueNodeCallbackForInvocation(nodeCallback, data);
-            }
-        }
+    //             if (node->isInitialized())
+    //             {
+    // #ifdef TESTING
+    //                 const auto& linkId = std::get<2>(nodeCallback);
+    //                 for (const auto& watcherCallback : outputPins.at(portIndex).watcherCallbacksOld)
+    //                 {
+    //                     const auto& watcherLinkId = watcherCallback.second;
+    //                     if (linkId == watcherLinkId)
+    //                     {
+    //                         CallbackManager::queueWatcherCallbackForInvocation(watcherCallback, data);
+    //                     }
+    //                 }
+    // #endif
+    //                 CallbackManager::queueNodeCallbackForInvocation(nodeCallback, data);
+    //             }
+    //         }
 
-        while (CallbackManager::hasUnprocessedCallbacks())
-        {
-            CallbackManager::processNextCallback();
-        }
-    }
+    //         while (CallbackManager::hasUnprocessedCallbacks())
+    //         {
+    //             CallbackManager::processNextCallback();
+    //         }
+    //     }
 }
 
 NAV::InputPin& NAV::Node::inputPinFromId(ax::NodeEditor::PinId pinId)
@@ -521,7 +520,7 @@ bool NAV::Node::workerDeinitializeNode()
     {
         if (outputPin.type != Pin::Type::Flow)
         {
-            for (auto& link : outputPin.links)
+            for (const auto& link : outputPin.links)
             {
                 if (link.connectedNode->isInitialized())
                 {
@@ -608,7 +607,7 @@ void NAV::from_json(const json& j, Node& node)
 
     if (j.contains("inputPins"))
     {
-        auto inputPins = j.at("inputPins").get<std::vector<Pin>>();
+        auto inputPins = j.at("inputPins").get<std::vector<InputPin>>();
         for (size_t i = 0; i < inputPins.size(); ++i)
         {
             if (node.inputPins.size() <= i)
@@ -621,7 +620,7 @@ void NAV::from_json(const json& j, Node& node)
 
     if (j.contains("outputPins"))
     {
-        auto outputPins = j.at("outputPins").get<std::vector<Pin>>();
+        auto outputPins = j.at("outputPins").get<std::vector<OutputPin>>();
         for (size_t i = 0; i < outputPins.size(); ++i)
         {
             if (node.outputPins.size() <= i)

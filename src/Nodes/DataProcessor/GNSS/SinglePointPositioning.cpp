@@ -136,7 +136,7 @@ void NAV::SinglePointPositioning::guiConfig()
             }
 
             ImGui::TableNextColumn(); // # Sat
-            if (auto* gnssNavInfo = getInputValue<GnssNavInfo>(pinIndex))
+            if (const auto* gnssNavInfo = getInputValue<GnssNavInfo>(pinIndex))
             {
                 size_t usedSatNum = 0;
                 std::string usedSats;

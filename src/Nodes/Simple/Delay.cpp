@@ -108,10 +108,7 @@ bool NAV::Delay::onCreateLink(OutputPin& startPin, InputPin& endPin)
     // Then remove all links.
     if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier != startPin.dataIdentifier)
     {
-        for (auto& link : outputPins.at(OUTPUT_PORT_INDEX_FLOW).links)
-        {
-            nm::DeleteLink(link.linkId);
-        }
+        outputPins.at(OUTPUT_PORT_INDEX_FLOW).deleteLinks();
     }
 
     // Update the dataIdentifier of the output pin to the same as input pin
@@ -122,7 +119,7 @@ bool NAV::Delay::onCreateLink(OutputPin& startPin, InputPin& endPin)
     {
         if (auto* connectedPin = link.getConnectedPin())
         {
-            nm::RefreshLink(*connectedPin);
+            outputPins.at(OUTPUT_PORT_INDEX_FLOW).recreateLink(*connectedPin);
         }
     }
 

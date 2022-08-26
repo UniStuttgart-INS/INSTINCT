@@ -110,9 +110,10 @@ void NAV::Combiner::updateOutputPin(const std::vector<std::string>& oldDataIdent
             {
                 continue;
             }
-        }
 
-        nm::DeleteLink(link.linkId);
+            // If the link is not valid anymore, delete it
+            outputPins.at(OUTPUT_PORT_INDEX_FLOW).deleteLink(*endPin);
+        }
     }
 
     // Refresh all links connected to the output pin if the type changed
@@ -122,7 +123,7 @@ void NAV::Combiner::updateOutputPin(const std::vector<std::string>& oldDataIdent
         {
             if (auto* connectedPin = link.getConnectedPin())
             {
-                nm::RefreshLink(*connectedPin);
+                outputPins.at(OUTPUT_PORT_INDEX_FLOW).recreateLink(*connectedPin);
             }
         }
     }

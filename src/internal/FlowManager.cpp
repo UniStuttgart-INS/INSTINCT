@@ -64,6 +64,17 @@ void NAV::flow::SaveFlowAs(const std::string& filepath)
     {
         j["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
         j["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
+
+        for (const auto& outputPin : node->outputPins)
+        {
+            for (const auto& link : outputPin.links)
+            {
+                auto& jLink = j["links"]["link-" + std::to_string(size_t(link.linkId))];
+                jLink["id"] = size_t(link.linkId);
+                jLink["startPinId"] = size_t(outputPin.id);
+                jLink["endPinId"] = size_t(link.connectedPinId);
+            }
+        }
     }
     if (gui::windows::saveConfigInFlow)
     {
@@ -247,45 +258,52 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
     }
 
     // Collect the node ids which get new links to call the restoreAfterLinks function on them
-    std::set<size_t> newlyLinkedNodes;
+    std::set<Node*> newlyLinkedNodes;
 
     if (j.contains("links"))
     {
         for ([[maybe_unused]] const auto& linkJson : j.at("links"))
         {
-            // TODO: Refactor this
-            // Link link = linkJson.get<Link>();
+            auto linkId = linkJson.at("id").get<size_t>();
+            auto startPinId = linkJson.at("startPinId").get<size_t>();
+            auto endPinId = linkJson.at("endPinId").get<size_t>();
 
-            // if (!nm::FindLink(link.id))
-            // {
-            //     if (!nm::AddLink(link))
-            //     {
-            //         loadSuccessful = false;
-            //     }
-
-            //     auto* endPin = nm::FindInputPin(link.endPinId);
-            //     if (endPin)
-            //     {
-            //         if (endPin->link.connectedNode)
-            //         {
-            //             newlyLinkedNodes.insert(size_t(endPin->link.connectedNode->id));
-            //         }
-            //     }
-            //     if (auto* startPin = nm::FindOutputPin(link.startPinId))
-            //     {
-            //         for (auto& link : startPin->links)
-            //         {
-            //             newlyLinkedNodes.insert(size_t(link.connectedNode->id));
-            //         }
-            //     }
-            // }
+            InputPin* endPin = nullptr;
+            OutputPin* startPin = nullptr;
+            for (auto* node : nm::m_Nodes())
+            {
+                if (!endPin)
+                {
+                    for (auto& inputPin : node->inputPins)
+                    {
+                        if (endPinId == size_t(inputPin.id)) { endPin = &inputPin; }
+                    }
+                }
+                if (!startPin)
+                {
+                    for (auto& outputPin : node->outputPins)
+                    {
+                        if (startPinId == size_t(outputPin.id)) { startPin = &outputPin; }
+                    }
+                }
+                if (startPin && endPin) { break; }
+            }
+            if (startPin && endPin)
+            {
+                if (!startPin->createLink(*endPin, linkId))
+                {
+                    loadSuccessful = false;
+                    continue;
+                }
+                newlyLinkedNodes.insert(startPin->parentNode);
+                newlyLinkedNodes.insert(endPin->parentNode);
+            }
         }
     }
     if (j.contains("nodes"))
     {
-        for (auto nodeId : newlyLinkedNodes)
+        for (auto* node : newlyLinkedNodes)
         {
-            auto* node = nm::FindNode(nodeId);
             if (j.at("nodes").contains("node-" + std::to_string(size_t(node->id))))
             {
                 LOG_DEBUG("Calling restoreAtferLink() for new node '{}'", node->nameId());

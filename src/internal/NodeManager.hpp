@@ -41,29 +41,6 @@ bool DeleteNode(ax::NodeEditor::NodeId nodeId);
 /// @brief Delete all nodes
 void DeleteAllNodes();
 
-/// @brief Create a Link object
-/// @param[in] startPin Start Pin of the link
-/// @param[in] endPin End Pin of the link
-/// @return True if the link could be created
-bool CreateLink(OutputPin& startPin, InputPin& endPin);
-
-/// @brief Refresh the link and the connected nodes
-/// @param[in] endPin End Pin of the link
-void RefreshLink(InputPin& endPin);
-
-/// @brief Delete the link provided by id
-/// @param[in] linkId Unique Id of the Link to delete
-/// @return True if delete was successful, false if LinkId does not exist
-bool DeleteLink(ax::NodeEditor::LinkId linkId);
-
-/// @brief Delete all links on the provided pin
-/// @param[in] pin An output Pin
-void DeleteLinksOnPin(const OutputPin& pin);
-
-/// @brief Delete all links on the provided pin
-/// @param[in] pin An input Pin
-void DeleteLinksOnPin(const InputPin& pin);
-
 /// @brief Create an Input Pin object
 /// @param[in] node Node to register the Pin for
 /// @param[in] name Display name of the Pin

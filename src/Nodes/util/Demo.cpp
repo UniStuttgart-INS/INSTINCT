@@ -198,7 +198,7 @@ void NAV::Demo::guiConfig()
         }
         /* ------------------------------------------------ String ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (auto* connectedString = getInputValue<std::string>(INPUT_PORT_INDEX_STRING))
+        if (const auto* connectedString = getInputValue<std::string>(INPUT_PORT_INDEX_STRING))
         {
             ImGui::Text("String: %s", connectedString->c_str());
         }
@@ -238,7 +238,7 @@ void NAV::Demo::guiConfig()
         }
         /* ------------------------------------------------ Matrix ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (auto* connectedMatrix = getInputValue<Eigen::MatrixXd>(INPUT_PORT_INDEX_MATRIX))
+        if (const auto* connectedMatrix = getInputValue<Eigen::MatrixXd>(INPUT_PORT_INDEX_MATRIX))
         {
             gui::widgets::MatrixView("Current Matrix", connectedMatrix, GuiMatrixViewFlags_Header, ImGuiTableFlags_Borders | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit, "%.1f");
         }

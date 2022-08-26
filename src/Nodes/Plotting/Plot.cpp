@@ -468,7 +468,7 @@ void NAV::Plot::guiConfig()
                 {
                     if (inputPins.at(pinIndex).isPinLinked())
                     {
-                        nm::DeleteLink(inputPins.at(pinIndex).link.linkId);
+                        inputPins.at(pinIndex).deleteLink();
                     }
 
                     switch (pinData.pinType)
@@ -1922,7 +1922,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
         // Matrix
         if (startPin.dataIdentifier.front() == "Eigen::MatrixXd")
         {
-            if (auto* matrix = getInputValue<Eigen::MatrixXd>(pinIndex))
+            if (const auto* matrix = getInputValue<Eigen::MatrixXd>(pinIndex))
             {
                 for (int row = 0; row < matrix->rows(); row++)
                 {
@@ -2029,26 +2029,23 @@ void NAV::Plot::plotBoolean(ax::NodeEditor::PinId pinId)
 {
     if (ConfigManager::Get<bool>("nogui")) { return; }
 
-    if (Link* link = nm::FindLink(linkId))
+    size_t pinIndex = inputPinIndexFromId(pinId);
+
+    auto currentTime = util::time::GetCurrentInsTime();
+    const auto* value = getInputValue<bool>(pinIndex);
+
+    if (value != nullptr && !currentTime.empty())
     {
-        size_t pinIndex = inputPinIndexFromId(link->endPinId);
+        if (_startTime.empty()) { _startTime = currentTime; }
+        size_t i = 0;
 
-        auto currentTime = util::time::GetCurrentInsTime();
-        auto* value = getInputValue<bool>(pinIndex);
+        std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
-        if (value != nullptr && !currentTime.empty())
-        {
-            if (_startTime.empty()) { _startTime = currentTime; }
-            size_t i = 0;
-
-            std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
-
-            // InsObs
-            addData(pinIndex, i++, static_cast<double>((currentTime - _startTime).count()));
-            addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
-            // Boolean
-            addData(pinIndex, i++, static_cast<double>(*value));
-        }
+        // InsObs
+        addData(pinIndex, i++, static_cast<double>((currentTime - _startTime).count()));
+        addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
+        // Boolean
+        addData(pinIndex, i++, static_cast<double>(*value));
     }
 }
 
@@ -2056,53 +2053,47 @@ void NAV::Plot::plotInteger(ax::NodeEditor::PinId pinId)
 {
     if (ConfigManager::Get<bool>("nogui")) { return; }
 
-    if (Link* link = nm::FindLink(linkId))
+    size_t pinIndex = inputPinIndexFromId(pinId);
+
+    auto currentTime = util::time::GetCurrentInsTime();
+    const auto* value = getInputValue<int>(pinIndex);
+
+    if (value != nullptr && !currentTime.empty())
     {
-        size_t pinIndex = inputPinIndexFromId(link->endPinId);
+        if (_startTime.empty()) { _startTime = currentTime; }
+        size_t i = 0;
 
-        auto currentTime = util::time::GetCurrentInsTime();
-        auto* value = getInputValue<int>(pinIndex);
+        std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
-        if (value != nullptr && !currentTime.empty())
-        {
-            if (_startTime.empty()) { _startTime = currentTime; }
-            size_t i = 0;
-
-            std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
-
-            // InsObs
-            addData(pinIndex, i++, static_cast<double>((currentTime - _startTime).count()));
-            addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
-            // Integer
-            addData(pinIndex, i++, static_cast<double>(*value));
-        }
+        // InsObs
+        addData(pinIndex, i++, static_cast<double>((currentTime - _startTime).count()));
+        addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
+        // Integer
+        addData(pinIndex, i++, static_cast<double>(*value));
     }
 }
 
-void NAV::Plot::plotFloat(ax::NodeEditor::pinId pinId)
+void NAV::Plot::plotFloat(ax::NodeEditor::PinId pinId)
 {
     if (ConfigManager::Get<bool>("nogui")) { return; }
 
-    if (Link* link = nm::FindLink(linkId))
+    size_t pinIndex = inputPinIndexFromId(pinId);
+
+    auto currentTime = util::time::GetCurrentInsTime();
+    const auto* value = getInputValue<double>(pinIndex);
+
+    if (value != nullptr && !currentTime.empty())
     {
-        size_t pinIndex = inputPinIndexFromId(link->endPinId);
+        if (_startTime.empty()) { _startTime = currentTime; }
+        size_t i = 0;
 
-        auto currentTime = util::time::GetCurrentInsTime();
-        auto* value = getInputValue<double>(pinIndex);
+        std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
-        if (value != nullptr && !currentTime.empty())
-        {
-            if (_startTime.empty()) { _startTime = currentTime; }
-            size_t i = 0;
-
-            std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
-
-            // InsObs
-            addData(pinIndex, i++, static_cast<double>((currentTime - _startTime).count()));
-            addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
-            // Double
-            addData(pinIndex, i++, *value);
-        }
+        // InsObs
+        addData(pinIndex, i++, static_cast<double>((currentTime - _startTime).count()));
+        addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
+        // Double
+        addData(pinIndex, i++, *value);
     }
 }
 
@@ -2117,7 +2108,7 @@ void NAV::Plot::plotMatrix(ax::NodeEditor::PinId pinId)
         auto currentTime = util::time::GetCurrentInsTime();
         if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
         {
-            auto* value = getInputValue<Eigen::MatrixXd>(pinIndex);
+            const auto* value = getInputValue<Eigen::MatrixXd>(pinIndex);
 
             if (value != nullptr && !currentTime.empty())
             {
@@ -2146,57 +2137,54 @@ void NAV::Plot::plotData(const std::shared_ptr<const NodeData>& nodeData, ax::No
 {
     if (ConfigManager::Get<bool>("nogui")) { return; }
 
-    if (Link* link = nm::FindLink(linkId))
+    if (auto* sourcePin = inputPinFromId(pinId).link.getConnectedPin())
     {
-        if (auto* sourcePin = nm::FindOutputPin(link->startPinId))
-        {
-            size_t pinIndex = inputPinIndexFromId(link->endPinId);
+        size_t pinIndex = inputPinIndexFromId(pinId);
 
-            if (sourcePin->dataIdentifier.front() == Pos::type())
-            {
-                plotPos(std::static_pointer_cast<const Pos>(nodeData), pinIndex);
-            }
-            else if (sourcePin->dataIdentifier.front() == PosVel::type())
-            {
-                plotPosVel(std::static_pointer_cast<const PosVel>(nodeData), pinIndex);
-            }
-            else if (sourcePin->dataIdentifier.front() == PosVelAtt::type()
-                     || sourcePin->dataIdentifier.front() == InertialNavSol::type())
-            {
-                plotPosVelAtt(std::static_pointer_cast<const PosVelAtt>(nodeData), pinIndex);
-            }
-            else if (sourcePin->dataIdentifier.front() == LcKfInsGnssErrors::type())
-            {
-                plotLcKfInsGnssErrors(std::static_pointer_cast<const LcKfInsGnssErrors>(nodeData), pinIndex);
-            }
-            else if (sourcePin->dataIdentifier.front() == SppSolution::type())
-            {
-                plotSppSolution(std::static_pointer_cast<const SppSolution>(nodeData), pinIndex);
-            }
-            else if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
-            {
-                plotRtklibPosObs(std::static_pointer_cast<const RtklibPosObs>(nodeData), pinIndex);
-            }
-            else if (sourcePin->dataIdentifier.front() == UbloxObs::type())
-            {
-                plotUbloxObs(std::static_pointer_cast<const UbloxObs>(nodeData), pinIndex);
-            }
-            else if (sourcePin->dataIdentifier.front() == ImuObs::type())
-            {
-                plotImuObs(std::static_pointer_cast<const ImuObs>(nodeData), pinIndex);
-            }
-            else if (sourcePin->dataIdentifier.front() == KvhObs::type())
-            {
-                plotKvhObs(std::static_pointer_cast<const KvhObs>(nodeData), pinIndex);
-            }
-            else if (sourcePin->dataIdentifier.front() == ImuObsWDelta::type())
-            {
-                plotImuObsWDeltaObs(std::static_pointer_cast<const ImuObsWDelta>(nodeData), pinIndex);
-            }
-            else if (sourcePin->dataIdentifier.front() == VectorNavBinaryOutput::type())
-            {
-                plotVectorNavBinaryObs(std::static_pointer_cast<const VectorNavBinaryOutput>(nodeData), pinIndex);
-            }
+        if (sourcePin->dataIdentifier.front() == Pos::type())
+        {
+            plotPos(std::static_pointer_cast<const Pos>(nodeData), pinIndex);
+        }
+        else if (sourcePin->dataIdentifier.front() == PosVel::type())
+        {
+            plotPosVel(std::static_pointer_cast<const PosVel>(nodeData), pinIndex);
+        }
+        else if (sourcePin->dataIdentifier.front() == PosVelAtt::type()
+                 || sourcePin->dataIdentifier.front() == InertialNavSol::type())
+        {
+            plotPosVelAtt(std::static_pointer_cast<const PosVelAtt>(nodeData), pinIndex);
+        }
+        else if (sourcePin->dataIdentifier.front() == LcKfInsGnssErrors::type())
+        {
+            plotLcKfInsGnssErrors(std::static_pointer_cast<const LcKfInsGnssErrors>(nodeData), pinIndex);
+        }
+        else if (sourcePin->dataIdentifier.front() == SppSolution::type())
+        {
+            plotSppSolution(std::static_pointer_cast<const SppSolution>(nodeData), pinIndex);
+        }
+        else if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
+        {
+            plotRtklibPosObs(std::static_pointer_cast<const RtklibPosObs>(nodeData), pinIndex);
+        }
+        else if (sourcePin->dataIdentifier.front() == UbloxObs::type())
+        {
+            plotUbloxObs(std::static_pointer_cast<const UbloxObs>(nodeData), pinIndex);
+        }
+        else if (sourcePin->dataIdentifier.front() == ImuObs::type())
+        {
+            plotImuObs(std::static_pointer_cast<const ImuObs>(nodeData), pinIndex);
+        }
+        else if (sourcePin->dataIdentifier.front() == KvhObs::type())
+        {
+            plotKvhObs(std::static_pointer_cast<const KvhObs>(nodeData), pinIndex);
+        }
+        else if (sourcePin->dataIdentifier.front() == ImuObsWDelta::type())
+        {
+            plotImuObsWDeltaObs(std::static_pointer_cast<const ImuObsWDelta>(nodeData), pinIndex);
+        }
+        else if (sourcePin->dataIdentifier.front() == VectorNavBinaryOutput::type())
+        {
+            plotVectorNavBinaryObs(std::static_pointer_cast<const VectorNavBinaryOutput>(nodeData), pinIndex);
         }
     }
 }

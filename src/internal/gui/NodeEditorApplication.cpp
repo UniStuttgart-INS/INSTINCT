@@ -779,7 +779,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                                  ? IM_COL32(255, 255, 255, 255)
                                  : IM_COL32(41, 74, 122, 138);
 
-        for (const auto& node : nm::m_Nodes()) // Blueprint || Simple
+        for (auto* node : nm::m_Nodes()) // Blueprint || Simple
         {
             if (node->kind != Node::Kind::Blueprint && node->kind != Node::Kind::Simple) // NOLINT(misc-redundant-expression) // FIXME: error: equivalent expression on both sides of logical operator
             {
@@ -993,7 +993,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             builder.End();
         }
 
-        for (const auto& node : nm::m_Nodes()) // GroupBox
+        for (const auto* node : nm::m_Nodes()) // GroupBox
         {
             if (node->kind != Node::Kind::GroupBox)
             {
@@ -1064,26 +1064,31 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ed::EndGroupHint();
         }
 
-        for (const auto& link : nm::m_Links()) // Links
+        for (const auto* node : nm::m_Nodes())
         {
-            const auto* pin = nm::FindOutputPin(link.startPinId);
-            auto color = pin->getIconColor();
-            if (pin->type == Pin::Type::Flow)
+            for (const auto& output : node->outputPins) // Output Pins
             {
-                if (ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_Bg].x
-                        + ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_Bg].y
-                        + ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_Bg].z
-                    > 2.0F)
+                auto color = output.getIconColor();
+                if (output.type == Pin::Type::Flow)
                 {
-                    color = { 0, 0, 0 };
+                    if (ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_Bg].x
+                            + ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_Bg].y
+                            + ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_Bg].z
+                        > 2.0F)
+                    {
+                        color = { 0, 0, 0 };
+                    }
+                    else
+                    {
+                        color = { 255, 255, 255 };
+                    }
                 }
-                else
+
+                for (const auto& link : output.links)
                 {
-                    color = { 255, 255, 255 };
+                    ed::Link(link.linkId, output.id, link.connectedPinId, color, 2.0F);
                 }
             }
-
-            ed::Link(link.id, link.startPinId, link.endPinId, color, 2.0F);
         }
 
         if (!createNewNode)
@@ -1190,7 +1195,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                             showLabel("+ Create Link", ImColor(32, 45, 32, 180));
                             if (ed::AcceptNewItem(ImColor(128, 255, 128), 4.0F))
                             {
-                                nm::CreateLink(*reinterpret_cast<OutputPin*>(startPin), *reinterpret_cast<InputPin*>(endPin));
+                                reinterpret_cast<OutputPin*>(startPin)->createLink(*reinterpret_cast<InputPin*>(endPin));
                             }
                         }
                     }
@@ -1241,7 +1246,24 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 {
                     if (ed::AcceptDeletedItem())
                     {
-                        nm::DeleteLink(linkId);
+                        bool deleted = false;
+                        for (auto* node : nm::m_Nodes())
+                        {
+                            if (deleted) { break; }
+                            for (auto& output : node->outputPins)
+                            {
+                                if (deleted) { break; }
+                                for (const auto& link : output.links)
+                                {
+                                    if (link.linkId == linkId)
+                                    {
+                                        output.deleteLink(*link.getConnectedPin());
+                                        deleted = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -1381,17 +1403,6 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             {
                 renamePin = pin;
             }
-            if (!pin->callbacksOld.empty())
-            {
-                ImGui::Separator();
-                ImGui::Text("Callbacks:");
-                ImGui::Indent();
-                for (auto& callback : pin->callbacksOld)
-                {
-                    ImGui::BulletText("%s", std::get<0>(callback)->nameId().c_str());
-                }
-                ImGui::Unindent();
-            }
         }
         else if (auto* pin = nm::FindInputPin(contextPinId))
         {
@@ -1402,17 +1413,6 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             if (ImGui::MenuItem("Rename"))
             {
                 renamePin = pin;
-            }
-            if (!pin->callbacksOld.empty())
-            {
-                ImGui::Separator();
-                ImGui::Text("Callbacks:");
-                ImGui::Indent();
-                for (auto& callback : pin->callbacksOld)
-                {
-                    ImGui::BulletText("%s", std::get<0>(callback)->nameId().c_str());
-                }
-                ImGui::Unindent();
             }
         }
         else
@@ -1430,15 +1430,33 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
     if (ImGui::BeginPopup("Link Context Menu"))
     {
-        auto* link = nm::FindLink(contextLinkId);
+        ax::NodeEditor::PinId startPinId = 0;
+        ax::NodeEditor::PinId endPinId = 0;
+        for (const auto* node : nm::m_Nodes())
+        {
+            if (startPinId) { break; }
+            for (const auto& output : node->outputPins)
+            {
+                if (startPinId) { break; }
+                for (const auto& link : output.links)
+                {
+                    if (link.linkId == contextLinkId)
+                    {
+                        startPinId = output.id;
+                        endPinId = link.connectedPinId;
+                        break;
+                    }
+                }
+            }
+        }
 
         ImGui::TextUnformatted("Link Context Menu");
         ImGui::Separator();
-        if (link)
+        if (startPinId)
         {
-            ImGui::Text("ID: %lu", size_t(link->id));
-            ImGui::Text("From: %lu", size_t(link->startPinId));
-            ImGui::Text("To: %lu", size_t(link->endPinId));
+            ImGui::Text("ID: %lu", size_t(contextLinkId));
+            ImGui::Text("From: %lu", size_t(startPinId));
+            ImGui::Text("To: %lu", size_t(endPinId));
         }
         else
         {
@@ -1535,7 +1553,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                     {
                         if (reinterpret_cast<InputPin*>(startPin)->canCreateLink(pin))
                         {
-                            nm::CreateLink(pin, *reinterpret_cast<InputPin*>(startPin));
+                            pin.createLink(*reinterpret_cast<InputPin*>(startPin));
                             break;
                         }
                     }
@@ -1546,7 +1564,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                     {
                         if (reinterpret_cast<OutputPin*>(startPin)->canCreateLink(pin))
                         {
-                            nm::CreateLink(*reinterpret_cast<OutputPin*>(startPin), pin);
+                            reinterpret_cast<OutputPin*>(startPin)->createLink(pin);
                             break;
                         }
                     }
@@ -1564,7 +1582,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     }
     ImGui::PopStyleVar();
 
-    for (const auto& node : nm::m_Nodes()) // Config Windows for nodes
+    for (auto* node : nm::m_Nodes()) // Config Windows for nodes
     {
         if (node->_hasConfig && node->_showConfig)
         {

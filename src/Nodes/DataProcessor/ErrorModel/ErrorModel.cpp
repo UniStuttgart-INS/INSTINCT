@@ -546,13 +546,12 @@ void NAV::ErrorModel::afterCreateLink(OutputPin& startPin, InputPin& endPin)
         {
             if (auto* endPin = link.getConnectedPin())
             {
-                if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).canCreateLink(*endPin))
+                if (!outputPins.at(OUTPUT_PORT_INDEX_FLOW).canCreateLink(*endPin))
                 {
-                    continue;
+                    // If the link is not valid anymore, delete it
+                    outputPins.at(OUTPUT_PORT_INDEX_FLOW).deleteLink(*endPin);
                 }
             }
-            // If the link is not valid anymore, delete it
-            nm::DeleteLink(link.linkId);
         }
 
         // Refresh all links connected to the output pin if the type changed
@@ -562,7 +561,7 @@ void NAV::ErrorModel::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             {
                 if (auto* connectedPin = link.getConnectedPin())
                 {
-                    nm::RefreshLink(*connectedPin);
+                    outputPins.at(OUTPUT_PORT_INDEX_FLOW).recreateLink(*connectedPin);
                 }
             }
         }

@@ -69,7 +69,7 @@ void NAV::VectorNavBinaryConverter::guiConfig()
         {
             if (auto* connectedPin = link.getConnectedPin())
             {
-                nm::RefreshLink(*connectedPin);
+                outputPins.front().recreateLink(*connectedPin);
             }
         }
 

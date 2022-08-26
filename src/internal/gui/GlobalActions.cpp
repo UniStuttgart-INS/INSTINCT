@@ -55,17 +55,23 @@ void NAV::gui::cutFlowElements()
     clipboard.clear();
     NAV::flow::saveLastActions = false;
 
-    for (const auto& link : nm::m_Links())
-    {
-        clipboard["links"]["link-" + std::to_string(size_t(link.id))] = link;
-    }
-
     for (const auto& nodeId : selectedNodeIds)
     {
         const NAV::Node* node = nm::FindNode(nodeId);
 
         clipboard["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
         clipboard["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
+
+        for (const auto& outputPin : node->outputPins)
+        {
+            for (const auto& link : outputPin.links)
+            {
+                auto& j = clipboard["links"]["link-" + std::to_string(size_t(link.linkId))];
+                j["id"] = size_t(link.linkId);
+                j["startPinId"] = size_t(outputPin.id);
+                j["endPinId"] = size_t(link.connectedPinId);
+            }
+        }
 
         nm::DeleteNode(nodeId);
     }
@@ -86,17 +92,23 @@ void NAV::gui::copyFlowElements()
 
     clipboard.clear();
 
-    for (const auto& link : nm::m_Links())
-    {
-        clipboard["links"]["link-" + std::to_string(size_t(link.id))] = link;
-    }
-
     for (const auto& nodeId : selectedNodeIds)
     {
         const NAV::Node* node = nm::FindNode(nodeId);
 
         clipboard["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
         clipboard["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
+
+        for (const auto& outputPin : node->outputPins)
+        {
+            for (const auto& link : outputPin.links)
+            {
+                auto& j = clipboard["links"]["link-" + std::to_string(size_t(link.linkId))];
+                j["id"] = size_t(link.linkId);
+                j["startPinId"] = size_t(outputPin.id);
+                j["endPinId"] = size_t(link.connectedPinId);
+            }
+        }
     }
 
     elementsCutted = false;
@@ -235,7 +247,7 @@ void NAV::gui::pasteFlowElements()
 
                     if (!endPin.isPinLinked())
                     {
-                        nm::CreateLink(startPin, endPin);
+                        startPin.createLink(endPin);
                     }
                 }
 
@@ -357,15 +369,23 @@ void NAV::gui::saveLastAction()
     }
 
     json j;
-    for (const auto& node : nm::m_Nodes())
+    for (const auto* node : nm::m_Nodes())
     {
         j["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
         j["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
+
+        for (const auto& outputPin : node->outputPins)
+        {
+            for (const auto& link : outputPin.links)
+            {
+                auto& j = clipboard["links"]["link-" + std::to_string(size_t(link.linkId))];
+                j["id"] = size_t(link.linkId);
+                j["startPinId"] = size_t(outputPin.id);
+                j["endPinId"] = size_t(link.connectedPinId);
+            }
+        }
     }
-    for (const auto& link : nm::m_Links())
-    {
-        j["links"]["link-" + std::to_string(size_t(link.id))] = link;
-    }
+
     j["unsavedChanges"] = NAV::flow::HasUnsavedChanges();
 
     if (!actionList.empty())

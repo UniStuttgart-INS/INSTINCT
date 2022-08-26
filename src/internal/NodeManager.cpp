@@ -152,252 +152,7 @@ void NAV::NodeManager::DeleteAllNodes()
     flow::ApplyChanges();
 }
 
-bool NAV::NodeManager::CreateLink(NAV::OutputPin& startPin, NAV::InputPin& endPin)
-{
-    if (!startPin.parentNode || !endPin.parentNode) { return false; }
-    LOG_TRACE("called: {} of [{}] ==> {} of [{}]", size_t(startPin.id), startPin.parentNode->nameId(), size_t(endPin.id), endPin.parentNode->nameId());
-
-    if (!startPin.parentNode->onCreateLink(startPin, endPin) || !endPin.parentNode->onCreateLink(startPin, endPin))
-    {
-        LOG_ERROR("The new Link between node '{}' and '{}' was refused by one of the Nodes it should connect to.",
-                  startPin.parentNode->nameId(), endPin.parentNode->nameId());
-        return false;
-    }
-
-    LOG_DEBUG("Creating link from pin {} of [{}] ==> {} of [{}]",
-              size_t(startPin.id), startPin.parentNode->nameId(),
-              size_t(endPin.id), endPin.parentNode->nameId());
-
-    startPin.connect(endPin);
-
-    if (endPin.type != Pin::Type::Flow)
-    {
-        if (startPin.parentNode && endPin.parentNode && !startPin.parentNode->isInitialized())
-        {
-            if (endPin.parentNode->isInitialized())
-            {
-                endPin.parentNode->doDeinitialize(true);
-            }
-        }
-    }
-
-    if (startPin.parentNode && endPin.parentNode)
-    {
-        startPin.parentNode->afterCreateLink(startPin, endPin);
-        endPin.parentNode->afterCreateLink(startPin, endPin);
-    }
-
-    flow::ApplyChanges();
-
-    return true;
-}
-
-void NAV::NodeManager::RefreshLink(InputPin& endPin)
-{
-    LOG_TRACE("called for link with id {}", size_t(endPin.link.linkId));
-
-    if (auto* startPin = endPin.link.getConnectedPin())
-    {
-        if (!startPin->parentNode || !endPin.parentNode)
-        {
-            LOG_ERROR("Tried to refresh Link {} from pinId {} to {}, but the pins do not have parentNodes", endPin.link.linkId,
-                      size_t(startPin->id), size_t(endPin.id));
-            return;
-        }
-
-        startPin->parentNode->onDeleteLink(*startPin, endPin);
-        if (!startPin->parentNode->onCreateLink(*startPin, endPin))
-        {
-            LOG_ERROR("Link {} between node '{}'-{} and '{}'-{} was refused by the start Node.", size_t(endPin.link.linkId),
-                      startPin->parentNode->nameId(), size_t(startPin->id), endPin.parentNode->nameId(), size_t(endPin.id));
-        }
-
-        endPin.parentNode->onDeleteLink(*startPin, endPin);
-        if (!endPin.parentNode->onCreateLink(*startPin, endPin))
-        {
-            LOG_ERROR("Link {} between node '{}'-{} and '{}'-{} was refused by the end Node.", size_t(endPin.link.linkId),
-                      startPin->parentNode->nameId(), size_t(startPin->id), endPin.parentNode->nameId(), size_t(endPin.id));
-        }
-
-        if (endPin.type == Pin::Type::Flow)
-        {
-            auto iter = std::find(startPin->callbacksOld.begin(), startPin->callbacksOld.end(),
-                                  std::make_tuple(endPin.parentNode,
-                                                  std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin.dataOld),
-                                                  link.id));
-            if (iter != startPin->callbacksOld.end())
-            {
-                startPin->callbacksOld.erase(iter);
-            }
-            else
-            {
-                LOG_ERROR("Tried to delete link {}, with type Flow, but could not find the callback.", size_t(endPin.link.linkId));
-            }
-
-            startPin->callbacksOld.emplace_back(endPin.parentNode,
-                                                std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin.dataOld),
-                                                endPin.link.linkId);
-        }
-        else
-        {
-            endPin.dataOld = startPin->dataOld;
-            if (endPin.type != Pin::Type::Delegate)
-            {
-                if (!endPin.notifyFuncOld.empty())
-                {
-                    auto iter = std::find(startPin->notifyFuncOld.begin(), startPin->notifyFuncOld.end(),
-                                          std::make_tuple(std::get<0>(endPin.notifyFuncOld.front()),
-                                                          std::get<1>(endPin.notifyFuncOld.front()),
-                                                          endPin.link.linkId));
-                    if (iter == startPin->notifyFuncOld.end())
-                    {
-                        startPin->notifyFuncOld.emplace_back(std::get<0>(endPin.notifyFuncOld.front()),
-                                                             std::get<1>(endPin.notifyFuncOld.front()),
-                                                             endPin.link.linkId);
-                    }
-                }
-            }
-
-            if (startPin->parentNode && endPin.parentNode && !startPin->parentNode->isInitialized())
-            {
-                if (endPin.parentNode->isInitialized())
-                {
-                    endPin.parentNode->doDeinitialize(true);
-                }
-            }
-        }
-
-        if (startPin && startPin->parentNode && endPin.parentNode)
-        {
-            startPin->parentNode->afterCreateLink(*startPin, endPin);
-            endPin.parentNode->afterCreateLink(*startPin, endPin);
-        }
-    }
-    else
-    {
-        LOG_ERROR("Tried to refresh Link from pinId {} to {}, but one of them does not exist",
-                  size_t(link.startPinId), size_t(link.endPinId));
-        return;
-    }
-
-    flow::ApplyChanges();
-}
-
-bool NAV::NodeManager::DeleteLink(ax::NodeEditor::LinkId linkId)
-{
-    LOG_TRACE("called for link with id {}", size_t(linkId));
-    auto id = std::find_if(m_links.begin(),
-                           m_links.end(),
-                           [linkId](const auto& link) { return link.id == linkId; });
-    if (id != m_links.end())
-    {
-        auto* startPin = FindOutputPin(id->startPinId);
-        auto* endPin = FindInputPin(id->endPinId);
-
-        if (startPin && endPin)
-        {
-            LOG_DEBUG("Deleting link {} from pin {} of [{}] ==> pin {} of [{}]", size_t(linkId),
-                      size_t(startPin->id), startPin->parentNode->nameId(), size_t(endPin->id), endPin->parentNode->nameId());
-            if (startPin->parentNode)
-            {
-                startPin->parentNode->onDeleteLink(*startPin, *endPin);
-            }
-            if (endPin->parentNode)
-            {
-                endPin->parentNode->onDeleteLink(*startPin, *endPin);
-            }
-
-            if (endPin->type != Pin::Type::Flow)
-            {
-                endPin->dataOld = static_cast<void*>(nullptr);
-                if (endPin->type != Pin::Type::Delegate)
-                {
-                    if (!endPin->notifyFuncOld.empty())
-                    {
-                        auto iter = std::find(startPin->notifyFuncOld.begin(), startPin->notifyFuncOld.end(),
-                                              std::make_tuple(std::get<0>(endPin->notifyFuncOld.front()),
-                                                              std::get<1>(endPin->notifyFuncOld.front()),
-                                                              linkId));
-                        if (iter != startPin->notifyFuncOld.end())
-                        {
-                            startPin->notifyFuncOld.erase(iter);
-                        }
-                    }
-                }
-
-                if (endPin->parentNode)
-                {
-                    endPin->parentNode->doDeinitialize(true);
-                }
-            }
-            else if (startPin->type == Pin::Type::Flow)
-            {
-                auto iter = std::find(startPin->callbacksOld.begin(), startPin->callbacksOld.end(),
-                                      std::make_tuple(endPin->parentNode,
-                                                      std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->dataOld),
-                                                      linkId));
-                if (iter != startPin->callbacksOld.end())
-                {
-                    startPin->callbacksOld.erase(iter);
-                }
-                else
-                {
-                    LOG_ERROR("Tried to delete link {}, with type Flow, but could not find the callback.", linkId.AsPointer());
-                }
-            }
-        }
-
-        // Iterator 'id' can be invalidated if the input link caused also the ouput link to be deleted
-        // Therefore the iterator needs to be searched again
-        id = std::find_if(m_links.begin(),
-                          m_links.end(),
-                          [linkId](const auto& link) { return link.id == linkId; });
-        if (id != m_links.end())
-        {
-            m_links.erase(id);
-        }
-
-        if (startPin && endPin)
-        {
-            if (startPin->parentNode)
-            {
-                startPin->parentNode->afterDeleteLink(*startPin, *endPin);
-            }
-            if (endPin->parentNode)
-            {
-                endPin->parentNode->afterDeleteLink(*startPin, *endPin);
-            }
-        }
-
-        flow::ApplyChanges();
-
-        return true;
-    }
-
-    return false;
-}
-
-void NAV::NodeManager::DeleteLinksOnPin(const NAV::OutputPin& pin)
-{
-    LOG_TRACE("called for pin ({})", size_t(pin.id));
-
-    for (auto& link : pin.links)
-    {
-        NAV::NodeManager::DeleteLink(link.linkId);
-    }
-}
-
-void NAV::NodeManager::DeleteLinksOnPin(const NAV::InputPin& pin)
-{
-    LOG_TRACE("called for pin ({})", size_t(pin.id));
-
-    if (pin.isPinLinked())
-    {
-        NAV::NodeManager::DeleteLink(pin.link.linkId);
-    }
-}
-
-NAV::InputPin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, NAV::Pin::PinDataOld data, int idx)
+NAV::InputPin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, InputPin::Callback callback, int idx)
 {
     LOG_TRACE("called for pin ({}) of type ({}) for node [{}]", name, std::string(pinType), node->nameId());
     if (idx < 0)
@@ -409,7 +164,7 @@ NAV::InputPin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* nam
 
     node->inputPins.emplace(iter, GetNextPinId(), name, pinType, node);
 
-    node->inputPins.at(static_cast<size_t>(idx)).dataOld = data;
+    node->inputPins.at(static_cast<size_t>(idx)).callback = callback;
     node->inputPins.at(static_cast<size_t>(idx)).dataIdentifier = dataIdentifier;
 
     flow::ApplyChanges();
@@ -417,7 +172,7 @@ NAV::InputPin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* nam
     return &node->inputPins.back();
 }
 
-NAV::OutputPin* NAV::NodeManager::CreateOutputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, NAV::Pin::PinDataOld data, int idx)
+NAV::OutputPin* NAV::NodeManager::CreateOutputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, OutputPin::PinData data, int idx)
 {
     LOG_TRACE("called for pin ({}) of type ({}) for node [{}]", name, std::string(pinType), node->nameId());
     if (idx < 0)
@@ -429,7 +184,7 @@ NAV::OutputPin* NAV::NodeManager::CreateOutputPin(NAV::Node* node, const char* n
 
     node->outputPins.emplace(iter, GetNextPinId(), name, pinType, node);
 
-    node->outputPins.at(static_cast<size_t>(idx)).dataOld = data;
+    node->outputPins.at(static_cast<size_t>(idx)).data = data;
     node->outputPins.at(static_cast<size_t>(idx)).dataIdentifier = dataIdentifier;
 
     flow::ApplyChanges();
@@ -441,8 +196,6 @@ bool NAV::NodeManager::DeleteOutputPin(const NAV::OutputPin& pin)
 {
     LOG_TRACE("called for pin ({})", size_t(pin.id));
 
-    DeleteLinksOnPin(pin);
-
     size_t pinIndex = pin.parentNode->outputPinIndexFromId(pin.id);
     pin.parentNode->outputPins.erase(pin.parentNode->outputPins.begin() + static_cast<int64_t>(pinIndex));
 
@@ -452,8 +205,6 @@ bool NAV::NodeManager::DeleteOutputPin(const NAV::OutputPin& pin)
 bool NAV::NodeManager::DeleteInputPin(const NAV::InputPin& pin)
 {
     LOG_TRACE("called for pin ({})", size_t(pin.id));
-
-    DeleteLinksOnPin(pin);
 
     size_t pinIndex = pin.parentNode->inputPinIndexFromId(pin.id);
     pin.parentNode->inputPins.erase(pin.parentNode->inputPins.begin() + static_cast<int64_t>(pinIndex));
@@ -598,26 +349,27 @@ void NAV::NodeManager::RegisterWatcherCallbackToLink(ax::NodeEditor::LinkId id, 
 
 void NAV::NodeManager::ApplyWatcherCallbacks()
 {
-    for (auto& [linkId, callback] : watcherLinkList)
-    {
-        if (Link* link = FindLink(linkId))
-        {
-            if (auto* pin = FindOutputPin(link->startPinId))
-            {
-                LOG_DEBUG("Adding watcher callback on node '{}' on pin {}", pin->parentNode->nameId(), pin->parentNode->outputPinIndexFromId(pin->id));
-                pin->watcherCallbacksOld.emplace_back(callback, linkId);
-            }
-        }
-    }
+    // TODO: Refactor this
+    // for (auto& [linkId, callback] : watcherLinkList)
+    // {
+    //     if (Link* link = FindLink(linkId))
+    //     {
+    //         if (auto* pin = FindOutputPin(link->startPinId))
+    //         {
+    //             LOG_DEBUG("Adding watcher callback on node '{}' on pin {}", pin->parentNode->nameId(), pin->parentNode->outputPinIndexFromId(pin->id));
+    //             pin->watcherCallbacksOld.emplace_back(callback, linkId);
+    //         }
+    //     }
+    // }
 
-    for (auto& [id, callback] : watcherPinList)
-    {
-        if (auto* pin = FindOutputPin(id))
-        {
-            LOG_DEBUG("Adding watcher callback on node '{}' on pin {}", pin->parentNode->nameId(), pin->parentNode->outputPinIndexFromId(pin->id));
-            pin->watcherCallbacksOld.emplace_back(callback, 0);
-        }
-    }
+    // for (auto& [id, callback] : watcherPinList)
+    // {
+    //     if (auto* pin = FindOutputPin(id))
+    //     {
+    //         LOG_DEBUG("Adding watcher callback on node '{}' on pin {}", pin->parentNode->nameId(), pin->parentNode->outputPinIndexFromId(pin->id));
+    //         pin->watcherCallbacksOld.emplace_back(callback, 0);
+    //     }
+    // }
 }
 
 void NAV::NodeManager::RegisterCleanupCallback(void (*callback)())

@@ -2631,7 +2631,7 @@ void NAV::VectorNavSensor::guiConfig()
                                     {
                                         if (auto* connectedPin = link.getConnectedPin())
                                         {
-                                            nm::RefreshLink(*connectedPin);
+                                            outputPins.at(b + 2).recreateLink(*connectedPin);
                                         }
                                     }
                                 }
@@ -2786,7 +2786,7 @@ void NAV::VectorNavSensor::guiConfig()
                 _binaryOutputRegister.at(1).rateDivisor = _binaryOutputRegister.at(0).rateDivisor;
                 _binaryOutputSelectedFrequency.at(1) = _binaryOutputSelectedFrequency.at(0);
                 _binaryOutputRegister.at(1).asyncMode = _binaryOutputRegister.at(0).asyncMode;
-                nm::DeleteLinksOnPin(outputPins.at(2));
+                outputPins.at(2).deleteLinks();
                 outputPins.at(1).type = Pin::Type::Flow;
                 outputPins.at(2).type = Pin::Type::None;
                 outputPins.at(3).type = Pin::Type::Flow;
@@ -2795,7 +2795,7 @@ void NAV::VectorNavSensor::guiConfig()
                 _binaryOutputRegister.at(2).rateDivisor = _binaryOutputRegister.at(0).rateDivisor;
                 _binaryOutputSelectedFrequency.at(2) = _binaryOutputSelectedFrequency.at(0);
                 _binaryOutputRegister.at(2).asyncMode = _binaryOutputRegister.at(0).asyncMode;
-                nm::DeleteLinksOnPin(outputPins.at(3));
+                outputPins.at(3).deleteLinks();
                 outputPins.at(1).type = Pin::Type::Flow;
                 outputPins.at(2).type = Pin::Type::Flow;
                 outputPins.at(3).type = Pin::Type::None;
@@ -2804,7 +2804,7 @@ void NAV::VectorNavSensor::guiConfig()
                 _binaryOutputRegister.at(2).rateDivisor = _binaryOutputRegister.at(1).rateDivisor;
                 _binaryOutputSelectedFrequency.at(2) = _binaryOutputSelectedFrequency.at(1);
                 _binaryOutputRegister.at(2).asyncMode = _binaryOutputRegister.at(1).asyncMode;
-                nm::DeleteLinksOnPin(outputPins.at(3));
+                outputPins.at(3).deleteLinks();
                 outputPins.at(1).type = Pin::Type::Flow;
                 outputPins.at(2).type = Pin::Type::Flow;
                 outputPins.at(3).type = Pin::Type::None;

@@ -303,6 +303,24 @@ class Pin
     /// @brief Default constructor
     Pin() = default;
 
+    /// @brief Create a Link between the two given pins
+    /// @param[in] startPin Start Pin of the link
+    /// @param[in] endPin End Pin of the link
+    /// @param[in] linkId Id of the link to create
+    /// @return True if the link could be created
+    static bool createLink(OutputPin& startPin, InputPin& endPin, ax::NodeEditor::LinkId linkId = 0);
+
+    /// @brief Destroys and recreates a link from this pin to another
+    /// @param[in] startPin Start Pin of the link
+    /// @param[in] endPin End Pin of the link
+    /// @return True if the link could be created
+    static bool recreateLink(OutputPin& startPin, InputPin& endPin);
+
+    /// @brief Disconnects the link
+    /// @param[in] startPin Start Pin of the link
+    /// @param[in] endPin End Pin of the link
+    static void deleteLink(OutputPin& startPin, InputPin& endPin);
+
   private:
     /// Size of the Pin Icons in [px]
     static constexpr int m_PinIconSize = 24;
@@ -320,17 +338,15 @@ class OutputPin : public Pin
     OutputPin(ax::NodeEditor::PinId id, const char* name, Type type, Node* parentNode)
         : Pin(id, name, type, Pin::Kind::Output, parentNode) {}
 
+    /// @brief Default constructor (for serialization)
+    OutputPin() = default;
     /// @brief Destructor
     ~OutputPin();
     /// @brief Copy constructor
     OutputPin(const OutputPin&) = delete;
     /// @brief Move constructor
     OutputPin(OutputPin&& other) noexcept
-        : Pin(other)
-    {
-        std::scoped_lock<std::mutex> guard(other.dataAccessMutex); // Make sure the mutex of the other element is not used
-        data = other.data;
-    }
+        : Pin(std::move(other)), data(other.data) {}
     /// @brief Copy assignment operator
     OutputPin& operator=(const OutputPin&) = delete;
     /// @brief Move assignment operator
@@ -338,10 +354,8 @@ class OutputPin : public Pin
     {
         if (this != &other)
         {
-            *static_cast<Pin*>(this) = other;
-
-            std::scoped_lock<std::mutex> guard(other.dataAccessMutex);
             data = other.data;
+            Pin::operator=(std::move(other));
         }
         return *this;
     }
@@ -360,14 +374,23 @@ class OutputPin : public Pin
     /// @return True if a link exists on the pins
     [[nodiscard]] bool isPinLinked(const InputPin& endPin) const;
 
-    /// @brief Connects this pin to another
+    /// @brief Creates a link from this pin to another, calling all node specific callbacks
+    /// @param[in] endPin Pin which should be linked to this pin
+    /// @param[in] linkId Id of the link to create
+    /// @return True if the link could be created
+    bool createLink(InputPin& endPin, ax::NodeEditor::LinkId linkId = 0);
+
+    /// @brief Destroys and recreates a link from this pin to another
     /// @param[in] endPin Pin which should be linked to this pin
     /// @return True if the link could be created
-    bool connect(InputPin& endPin);
+    bool recreateLink(InputPin& endPin);
 
     /// @brief Disconnects the link
-    /// @param[in] endPin Pin which should be disconnected from this pin
-    void disconnect(InputPin& endPin);
+    /// @param[in] endPin Pin which should be linked to this pin
+    void deleteLink(InputPin& endPin);
+
+    /// @brief Disconnects all links
+    void deleteLinks();
 
     /// FileReader/Simulator pollData function type
     using PollDataFunc = std::shared_ptr<const NAV::NodeData> (Node::*)(bool);
@@ -408,6 +431,19 @@ class OutputPin : public Pin
 
     /// Info to identify the linked pins
     std::vector<OutgoingLink> links;
+
+    friend class Pin;
+    friend class InputPin;
+
+  private:
+    /// @brief Connects this pin to another
+    /// @param[in] endPin Pin which should be linked to this pin
+    /// @param[in] linkId Id of the link to create
+    void connect(InputPin& endPin, ax::NodeEditor::LinkId linkId = 0);
+
+    /// @brief Disconnects the link
+    /// @param[in] endPin Pin which should be disconnected from this pin
+    void disconnect(InputPin& endPin);
 };
 
 /// Input pins of nodes
@@ -422,8 +458,18 @@ class InputPin : public Pin
     InputPin(ax::NodeEditor::PinId id, const char* name, Type type, Node* parentNode)
         : Pin(id, name, type, Pin::Kind::Input, parentNode) {}
 
+    /// @brief Default constructor (for serialization)
+    InputPin() = default;
     /// @brief Destructor
     ~InputPin();
+    /// @brief Copy constructor
+    InputPin(const InputPin&) = delete;
+    /// @brief Move constructor
+    InputPin(InputPin&&) = default;
+    /// @brief Copy assignment operator
+    InputPin& operator=(const InputPin&) = delete;
+    /// @brief Move assignment operator
+    InputPin& operator=(InputPin&&) = default;
 
     /// @brief Checks if this pin can connect to the provided pin
     /// @param[in] other The pin to create a link to
@@ -433,6 +479,20 @@ class InputPin : public Pin
     /// @brief Checks if the pin is linked
     /// @return True if a link exists on this pin
     [[nodiscard]] bool isPinLinked() const;
+
+    /// @brief Creates a link from this pin to another, calling all node specific callbacks
+    /// @param[in] startPin Pin which should be linked to this pin
+    /// @param[in] linkId Id of the link to create
+    /// @return True if the link could be created
+    bool createLink(OutputPin& startPin, ax::NodeEditor::LinkId linkId = 0);
+
+    /// @brief Destroys and recreates a link from this pin to another
+    /// @param[in] startPin Pin which should be linked to this pin
+    /// @return True if the link could be created
+    bool recreateLink(OutputPin& startPin);
+
+    /// @brief Disconnects the link
+    void deleteLink();
 
     /// Flow data callback function type to call when firable
     using FlowFirableCallbackFunc = void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::PinId);
@@ -445,14 +505,6 @@ class InputPin : public Pin
 
     /// Callback to call when the node is firable or when it should be notified of data change
     Callback callback;
-
-    /// @brief Connects this pin to another
-    /// @param[in] startPin Pin which should be linked to this pin
-    /// @return True if the link could be created
-    bool connect(OutputPin& startPin);
-
-    /// @brief Disconnects the link
-    void disconnect();
 
     /// Collection of information about the connected node and pin
     struct IncomingLink : public Link
@@ -508,6 +560,18 @@ class InputPin : public Pin
 
     /// Info to identify the linked pin
     IncomingLink link;
+
+    friend class Pin;
+    friend class OutputPin;
+
+  private:
+    /// @brief Connects this pin to another
+    /// @param[in] startPin Pin which should be linked to this pin
+    /// @param[in] linkId Id of the link to create
+    void connect(OutputPin& startPin, ax::NodeEditor::LinkId linkId = 0);
+
+    /// @brief Disconnects the link
+    void disconnect();
 };
 
 /// @brief Equal compares Pin::Kind values
@@ -577,10 +641,19 @@ constexpr bool operator!=(const Pin::Type::Value& lhs, const Pin::Type& rhs) { r
 /// @brief Converts the provided pin into a json object
 /// @param[out] j Json object which gets filled with the info
 /// @param[in] pin Node to convert into json
-void to_json(json& j, const Pin& pin);
+void to_json(json& j, const OutputPin& pin);
 /// @brief Converts the provided json object into a pin object
 /// @param[in] j Json object with the needed values
 /// @param[out] pin Object to fill from the json
-void from_json(const json& j, Pin& pin);
+void from_json(const json& j, OutputPin& pin);
+
+/// @brief Converts the provided pin into a json object
+/// @param[out] j Json object which gets filled with the info
+/// @param[in] pin Node to convert into json
+void to_json(json& j, const InputPin& pin);
+/// @brief Converts the provided json object into a pin object
+/// @param[in] j Json object with the needed values
+/// @param[out] pin Object to fill from the json
+void from_json(const json& j, InputPin& pin);
 
 } // namespace NAV
