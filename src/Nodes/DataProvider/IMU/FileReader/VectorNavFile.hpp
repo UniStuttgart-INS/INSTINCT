@@ -82,6 +82,9 @@ class VectorNavFile : public Imu, public FileReader
 
     /// @brief Amount of messages read
     uint32_t _messageCount = 0;
+
+    /// @brief Flag whether the file has the 'Time [s]' column. Backwards compatibility to older files.
+    bool _hasTimeColumn = false;
 };
 
 } // namespace NAV
