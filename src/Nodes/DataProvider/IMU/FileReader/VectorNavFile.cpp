@@ -231,7 +231,7 @@ NAV::FileReader::FileType NAV::VectorNavFile::determineFileType()
             _hasTimeColumn = true;
             return FileType::CSV;
         }
-        else if (std::string(buffer.data(), buffer.size()).starts_with("GpsCycle,GpsWeek,GpsTow"))
+        if (std::string(buffer.data(), buffer.size()).starts_with("GpsCycle,GpsWeek,GpsTow"))
         {
             _hasTimeColumn = false;
             return FileType::CSV;
