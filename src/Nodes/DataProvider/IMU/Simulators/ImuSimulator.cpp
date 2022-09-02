@@ -520,6 +520,7 @@ void NAV::ImuSimulator::guiConfig()
         ImGui::TreePop();
     }
 
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
     if (ImGui::TreeNode("Simulation models"))
     {
         if (_trajectoryType != TrajectoryType::Fixed && _trajectoryType != TrajectoryType::Csv)
