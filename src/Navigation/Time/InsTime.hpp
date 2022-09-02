@@ -737,7 +737,7 @@ class InsTime
     /// @param[in] min Minute
     /// @param[in] sec Second
     /// @param[in] timesys Time System in which the previous values are given in
-    constexpr InsTime(uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uint16_t min, long double sec, TimeSystem timesys = UTC)
+    constexpr InsTime(int32_t year, int32_t month, int32_t day, int32_t hour, int32_t min, long double sec, TimeSystem timesys = UTC)
         : InsTime(InsTime_YMDHMS(year, month, day, hour, min, sec), timesys) {}
 
     /// @brief Destructor
