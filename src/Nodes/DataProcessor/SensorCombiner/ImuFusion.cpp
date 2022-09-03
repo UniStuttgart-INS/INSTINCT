@@ -12,6 +12,7 @@
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/widgets/InputWithUnit.hpp"
 #include "internal/gui/widgets/HelpMarker.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
 #include "util/Json.hpp"
 
 #include "internal/NodeManager.hpp"
@@ -257,7 +258,7 @@ void NAV::ImuFusion::guiConfig()
 
     ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
 
-    constexpr float columnWidth{ 130.0F };
+    float columnWidth = 130.0F * gui::NodeEditorApplication::windowFontRatio();
 
     ImGui::SetNextItemWidth(columnWidth);
     if (ImGui::InputDoubleL(fmt::format("Highest IMU sample rate##{}", size_t(id)).c_str(), &_imuFrequency, 1e-3, 1e4, 0.0, 0.0, "%.0f Hz"))

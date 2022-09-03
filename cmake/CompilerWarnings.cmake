@@ -46,7 +46,6 @@ function(set_project_warnings project_name)
       -Wpedantic # warn if non-standard C++ is used
       -Wconversion # warn on type conversions that may lose data
       -Wsign-conversion # warn on sign conversions
-      -Wnull-dereference # warn if a null dereference is detected
       # -Wdouble-promotion # warn if float is implicit promoted to double
       -Wformat=2 # warn on security issues around functions that format output (ie printf)
   )
@@ -65,10 +64,14 @@ function(set_project_warnings project_name)
       -Wlogical-op # warn about logical operations being used where bitwise were probably wanted
       -Wuseless-cast # warn if you perform a cast to the same type
       -Wno-comment # don't warn on misleading multi-line comments (comments which line ends with \ go into next line. Doxygen equations do all the time)
+      -Wno-restrict # warns on built-in memcpy when adding a string to a const char*
   )
 
   # Clang only warnings
-  set(CLANG_WARNINGS ${CLANG_WARNINGS} -Wdocumentation # warn on wrong documentation
+  set(CLANG_WARNINGS
+      ${CLANG_WARNINGS}
+      -Wdocumentation # warn on wrong documentation
+      -Wnull-dereference # warn if a null dereference is detected
   )
 
   if(MSVC)

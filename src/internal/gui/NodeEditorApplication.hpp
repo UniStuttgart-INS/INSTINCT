@@ -12,6 +12,7 @@
 #include <implot.h>
 
 #include "internal/gui/GlobalActions.hpp"
+#include "internal/gui/windows/FontSizeEditor.hpp"
 
 namespace NAV
 {
@@ -72,10 +73,10 @@ class NodeEditorApplication : public Application
     void ShowLoadRequested();
     /// @brief Shows a PopupModal where the user can rename the node
     /// @param[in, out] renameNode Pointer to the node to rename. Pointer gets nulled when finished.
-    static void ShowRenameNodeRequest(Node*& renameNode);
+    void ShowRenameNodeRequest(Node*& renameNode);
     /// @brief Shows a PopupModal where the user can rename the pin
     /// @param[in, out] renamePin Pointer to the pin to rename. Pointer gets nulled when finished.
-    static void ShowRenamePinRequest(Pin*& renamePin);
+    void ShowRenamePinRequest(Pin*& renamePin);
 
     /// @brief Frame counter to block the navigate to content function till nodes are correctly loaded
     int frameCountNavigate = 0;
@@ -93,6 +94,15 @@ class NodeEditorApplication : public Application
     inline static float rightPaneWidth = 850.0F;      ///< Width of the right pane
     inline static float menuBarHeight = 20;           ///< Height of the menu bar on top
     constexpr static float SPLITTER_THICKNESS = 4.0F; ///< Thickness of the splitter between left and right pane
+
+    /// Ratio to multiply for default GUI elements
+    static float defaultFontRatio();
+    /// Ratio to multiply for GUI window elements
+    static float windowFontRatio();
+    /// Ratio to multiply for log output GUI elements
+    static float monoFontRatio();
+    /// Ratio to multiply for node header elements
+    static float headerFontRatio();
 
   private:
     constexpr static float BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT = 23.0F;    ///< Minimal height of the bottom view if it is collapsed
@@ -113,6 +123,10 @@ class NodeEditorApplication : public Application
 
     /// @brief Global action to execute
     GlobalActions globalAction = GlobalActions::None; // TODO: Move to the GlobalAction.cpp as a global variable
+
+    /// @brief Shows a window for choosing the font size
+    /// @param[in, out] show Flag which indicates whether the window is shown
+    friend void windows::ShowFontSizeEditor(bool* show);
 };
 
 } // namespace gui

@@ -6,6 +6,7 @@ namespace nm = NAV::NodeManager;
 
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/widgets/InputWithUnit.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
 
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "Navigation/Transformations/Units.hpp"
@@ -91,8 +92,8 @@ void NAV::ErrorModel::guiConfig()
         return;
     }
 
-    float itemWidth = 470;
-    float unitWidth = 180;
+    float itemWidth = 470 * gui::NodeEditorApplication::windowFontRatio();
+    float unitWidth = 180 * gui::NodeEditorApplication::windowFontRatio();
 
     ImGui::TextUnformatted("Offsets:");
     ImGui::Indent();

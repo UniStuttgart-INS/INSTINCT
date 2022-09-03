@@ -17,6 +17,8 @@ extern bool showImPlotDemoWindow;
 extern bool showNodeEditorStyleEditor;
 /// @brief Flag whether the ImPlot style editor windows should be displayed
 extern bool showImPlotStyleEditor;
+/// @brief Flag whether the Font size editor window should be displayed
+extern bool showFontSizeEditor;
 
 /// @brief Called every frame to render global windows
 void renderGlobalWindows();

@@ -8,7 +8,7 @@
 namespace NAV::gui::windows
 {
 /// @brief Shows a window for editing the style of the ImPlot windows
-/// @param[in, out] show Flag which indicates wheather the window is shown
+/// @param[in, out] show Flag which indicates whether the window is shown
 void ShowImPlotStyleEditor(bool* show = nullptr);
 
 /// @brief If true, the ImPlot config will be saved into the flow file

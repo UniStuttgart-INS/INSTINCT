@@ -24,7 +24,9 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
 
     bool paneActive = false;
 
-    float insLogoHeight = paneWidth * (1.0F / 3.0F) * 2967.0F / 4073.0F;
+    float insLogoWidth = paneWidth < 150 ? paneWidth : 150;
+
+    float insLogoHeight = insLogoWidth * 2967.0F / 4073.0F;
     float childHeight = ImGui::GetContentRegionAvail().y - insLogoHeight;
 
     ImGui::BeginGroup();
@@ -210,7 +212,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
 
     ImGui::EndChild();
 
-    ImGui::Image(insLogo, ImVec2(insLogoHeight * 4073.0F / 2967.0F, insLogoHeight));
+    ImGui::Image(insLogo, ImVec2(insLogoWidth, insLogoHeight));
 
     ImGui::EndGroup();
 
