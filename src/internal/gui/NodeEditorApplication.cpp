@@ -756,7 +756,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     static bool createNewNode = false;
     static Pin* newNodeLinkPin = nullptr;
 
-    gui::widgets::Splitter("Main Splitter", true, SPLITTER_THICKNESS, &leftPaneWidth, &rightPaneWidth, 50.0F, 50.0F);
+    gui::widgets::Splitter("Main Splitter", true, SPLITTER_THICKNESS, &leftPaneWidth, &rightPaneWidth, 25.0F, 50.0F);
 
     bool leftPaneActive = gui::panels::ShowLeftPane(leftPaneWidth - SPLITTER_THICKNESS);
 
@@ -1595,7 +1595,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         if (ImGui::BeginTabItem("▼"))
         {
             bottomViewSelectedTab = BottomViewTabItem::None;
-            bottomViewHeight = BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT;
+            bottomViewHeight = BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT * defaultFontRatio();
             ImGui::EndTabItem();
         }
         else

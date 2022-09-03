@@ -150,10 +150,10 @@ void Application::RecreateFontAtlas()
 
     strcpy(config.Name, "Play Regular Big");
     m_DefaultFontBig = io.Fonts->AddFontFromMemoryCompressedTTF(PlayRegular_compressed_data, PlayRegular_compressed_size, defaultFontSize[1], &config);
-    // config.MergeMode = true;
+    config.MergeMode = true;
     // io.Fonts->AddFontFromMemoryCompressedTTF(InconsolataNerdFontComplete_compressed_data, InconsolataNerdFontComplete_compressed_size, defaultFontSize[1], &config, icons_ranges);
     // io.Fonts->AddFontFromMemoryCompressedTTF(NotoSansRegular_compressed_data, NotoSansRegular_compressed_size, defaultFontSize[1], &config, icons_ranges);
-    // io.Fonts->AddFontFromMemoryCompressedTTF(FreeMono_compressed_data, FreeMono_compressed_size, defaultFontSize[1], &config, icons_ranges);
+    io.Fonts->AddFontFromMemoryCompressedTTF(FreeMono_compressed_data, FreeMono_compressed_size, defaultFontSize[1], &config, icons_ranges);
     // // io.Fonts->AddFontFromFileTTF("resources/fonts/Inconsolata-Nerd-Font-Complete.otf", defaultFontSize[1], &config, icons_ranges);
     // // io.Fonts->AddFontFromFileTTF("resources/fonts/NotoSans-Regular.ttf", defaultFontSize[1], &config, icons_ranges);
 
