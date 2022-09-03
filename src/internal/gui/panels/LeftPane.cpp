@@ -133,10 +133,11 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
             {
                 circleCol = IM_COL32(255, 0, 0, 255);
             }
-            ImGui::GetWindowDrawList()->AddCircleFilled(start + ImVec2(-8, ImGui::GetTextLineHeight() / 2.0F + 1.0F),
-                                                        5.0F, circleCol);
+            ImGui::GetWindowDrawList()->AddCircleFilled(start + ImVec2(-8 + (NodeEditorApplication::defaultFontRatio() - 1.F) * 5.F, ImGui::GetTextLineHeight() / 2.0F + 1.0F),
+                                                        5.0F * NodeEditorApplication::defaultFontRatio(), circleCol);
 
             bool isSelected = std::find(selectedNodes.begin(), selectedNodes.end(), node->id) != selectedNodes.end();
+            if (NodeEditorApplication::defaultFontRatio() != 1.F) { ImGui::Indent((NodeEditorApplication::defaultFontRatio() - 1.F) * 15.F); }
             if (ImGui::Selectable((str::replaceAll_copy(node->name, "\n", "") + "##" + std::to_string(size_t(node->id))).c_str(), &isSelected))
             {
                 if (io.KeyCtrl)
@@ -161,10 +162,11 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
             {
                 ImGui::SetTooltip("Type: %s", node->type().c_str());
             }
+            if (NodeEditorApplication::defaultFontRatio() != 1.F) { ImGui::Unindent((NodeEditorApplication::defaultFontRatio() - 1.F) * 15.F); }
 
             auto id = fmt::format("({})", size_t(node->id));
             auto textSize = ImGui::CalcTextSize(id.c_str(), nullptr);
-            auto iconPanelPos = start + ImVec2(paneWidth - ImGui::GetStyle().FramePadding.x - ImGui::GetStyle().IndentSpacing - ImGui::GetStyle().ItemInnerSpacing.x * 1, ImGui::GetTextLineHeight() / 2);
+            auto iconPanelPos = start + ImVec2(std::max(paneWidth, 150.F) - ImGui::GetStyle().FramePadding.x - ImGui::GetStyle().IndentSpacing - ImGui::GetStyle().ItemInnerSpacing.x * 1, ImGui::GetTextLineHeight() / 2);
             ImGui::GetWindowDrawList()->AddText(
                 ImVec2(iconPanelPos.x - textSize.x - ImGui::GetStyle().ItemInnerSpacing.x, start.y),
                 colSum > 2.0F ? IM_COL32(0, 0, 0, 255) : IM_COL32(255, 255, 255, 255), id.c_str(), nullptr);
