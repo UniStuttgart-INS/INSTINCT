@@ -10,6 +10,7 @@
 #include "Navigation/Math/Math.hpp"
 
 #include "internal/gui/widgets/HelpMarker.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
 #include <imgui_internal.h>
 
 #include "internal/NodeManager.hpp"
@@ -56,7 +57,7 @@ std::string NAV::ImuIntegrator::category()
 
 void NAV::ImuIntegrator::guiConfig()
 {
-    ImGui::SetNextItemWidth(250);
+    ImGui::SetNextItemWidth(250 * gui::NodeEditorApplication::windowFontRatio());
     if (ImGui::Combo(fmt::format("Integration Frame##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_integrationFrame), "ECEF\0NED\0\0"))
     {
         LOG_DEBUG("{}: Integration Frame changed to {}", nameId(), _integrationFrame == IntegrationFrame::NED ? "NED" : "ECEF");
@@ -67,7 +68,7 @@ void NAV::ImuIntegrator::guiConfig()
         flow::ApplyChanges();
     }
 
-    ImGui::SetNextItemWidth(250);
+    ImGui::SetNextItemWidth(250 * gui::NodeEditorApplication::windowFontRatio());
     if (ImGui::BeginCombo(fmt::format("Integration Algorithm##{}", size_t(id)).c_str(), to_string(_integrationAlgorithm)))
     {
         for (size_t i = 0; i < static_cast<size_t>(IntegrationAlgorithm::COUNT); i++)
@@ -117,7 +118,7 @@ void NAV::ImuIntegrator::guiConfig()
         ImGui::TextUnformatted("Acceleration compensation");
         {
             ImGui::Indent();
-            ImGui::SetNextItemWidth(230);
+            ImGui::SetNextItemWidth(230 * gui::NodeEditorApplication::windowFontRatio());
             if (ComboGravitationModel(fmt::format("Gravitation Model##{}", size_t(id)).c_str(), _gravitationModel))
             {
                 LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), NAV::to_string(_gravitationModel));

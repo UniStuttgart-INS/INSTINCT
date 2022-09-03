@@ -306,6 +306,7 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
         }
     }
 
+    ImGui::PushFont(WindowFont());
     ImGui::OpenPopup("Quit with unsaved changes?");
     if (ImGui::BeginPopupModal("Quit with unsaved changes?", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
@@ -356,10 +357,12 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
         }
         ImGui::EndPopup();
     }
+    ImGui::PopFont();
 }
 
 void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
 {
+    ImGui::PushFont(WindowFont());
     ImGuiFileDialog::Instance()->OpenDialog("Save Flow", "Save Flow", ".flow", (flow::GetFlowPath() / ".").string(), 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
     ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, ".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
 
@@ -370,6 +373,7 @@ void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
         {
             globalAction = GlobalActions::None;
             ImGuiFileDialog::Instance()->Close();
+            ImGui::PopFont();
             return;
         }
     }
@@ -385,6 +389,7 @@ void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
         globalAction = GlobalActions::None;
         ImGuiFileDialog::Instance()->Close();
     }
+    ImGui::PopFont();
 }
 
 void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
@@ -399,6 +404,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
         }
     }
 
+    ImGui::PushFont(WindowFont());
     ImGui::OpenPopup("Clear Nodes and discard unsaved changes?");
     if (ImGui::BeginPopupModal("Clear Nodes and discard unsaved changes?", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
@@ -455,10 +461,12 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
         }
         ImGui::EndPopup();
     }
+    ImGui::PopFont();
 }
 
 void NAV::gui::NodeEditorApplication::ShowLoadRequested()
 {
+    ImGui::PushFont(WindowFont());
     if (flow::HasUnsavedChanges())
     {
         ImGui::OpenPopup("Discard unsaved changes?");
@@ -522,6 +530,7 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
                 globalAction = GlobalActions::None;
                 loadSuccessful = true;
                 ImGuiFileDialog::Instance()->Close();
+                ImGui::PopFont();
                 return;
             }
         }
@@ -560,10 +569,12 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
             ImGui::EndPopup();
         }
     }
+    ImGui::PopFont();
 }
 
 void NAV::gui::NodeEditorApplication::ShowRenameNodeRequest(Node*& renameNode)
 {
+    ImGui::PushFont(WindowFont());
     const char* title = renameNode->kind == Node::Kind::GroupBox ? "Rename Group Box" : "Rename Node";
     ImGui::OpenPopup(title);
     if (ImGui::BeginPopupModal(title, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
@@ -587,6 +598,7 @@ void NAV::gui::NodeEditorApplication::ShowRenameNodeRequest(Node*& renameNode)
                 renameNode = nullptr;
                 ImGui::CloseCurrentPopup();
                 ImGui::EndPopup();
+                ImGui::PopFont();
                 return;
             }
         }
@@ -624,10 +636,12 @@ void NAV::gui::NodeEditorApplication::ShowRenameNodeRequest(Node*& renameNode)
         }
         ImGui::EndPopup();
     }
+    ImGui::PopFont();
 }
 
 void NAV::gui::NodeEditorApplication::ShowRenamePinRequest(Pin*& renamePin)
 {
+    ImGui::PushFont(WindowFont());
     const char* title = "Rename Pin";
     ImGui::OpenPopup(title);
     if (ImGui::BeginPopupModal(title, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
@@ -651,6 +665,7 @@ void NAV::gui::NodeEditorApplication::ShowRenamePinRequest(Pin*& renamePin)
                 renamePin = nullptr;
                 ImGui::CloseCurrentPopup();
                 ImGui::EndPopup();
+                ImGui::PopFont();
                 return;
             }
         }
@@ -688,6 +703,7 @@ void NAV::gui::NodeEditorApplication::ShowRenamePinRequest(Pin*& renamePin)
         }
         ImGui::EndPopup();
     }
+    ImGui::PopFont();
 }
 
 void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
@@ -1086,7 +1102,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
                 for (const auto& link : output.links)
                 {
-                    ed::Link(link.linkId, output.id, link.connectedPinId, color, 2.0F);
+                    ed::Link(link.linkId, output.id, link.connectedPinId, color, 2.0F * defaultFontRatio());
                 }
             }
         }
@@ -1598,7 +1614,9 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             if (ImGui::Begin(fmt::format("{} ({})", node->nameId(), node->type()).c_str(), &(node->_showConfig),
                              ImGuiWindowFlags_None))
             {
+                ImGui::PushFont(WindowFont());
                 node->guiConfig();
+                ImGui::PopFont();
             }
             else // Window is collapsed
             {
@@ -1664,7 +1682,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 ImGui::OpenPopup("Options");
             }
             ImGui::SameLine();
-            ImGui::SetNextItemWidth(100.0F);
+            ImGui::SetNextItemWidth(100.0F * defaultFontRatio());
             static int logLevelFilterSelected = spdlog::level::info;
             if (ImGui::BeginCombo("##LogLevelCombo", spdlog::level::to_string_view(static_cast<spdlog::level::level_enum>(logLevelFilterSelected)).begin()))
             {
@@ -1691,7 +1709,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::BeginChild("scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
             {
                 ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
-                ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
+                ImGui::PushFont(MonoFont());
 
                 auto logMessages = Logger::GetRingBufferSink()->last_formatted();
 
@@ -1743,10 +1761,32 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     // Push the Tooltip on the stack if needed
     if (!tooltipText.empty()) { ImGui::SetTooltip("%s", tooltipText.c_str()); }
 
+    ImGui::PushFont(WindowFont());
     gui::windows::renderGlobalWindows();
+    ImGui::PopFont();
 
     std::string title = (flow::HasUnsavedChanges() ? "● " : "")
                         + (flow::GetCurrentFilename().empty() ? "" : flow::GetCurrentFilename() + " - ")
                         + "INSTINCT";
     SetTitle(title.c_str());
+}
+
+float NAV::gui::NodeEditorApplication::defaultFontRatio()
+{
+    return defaultFontSize.at(isUsingBigDefaultFont() ? 1 : 0) / defaultFontSize[0];
+}
+
+float NAV::gui::NodeEditorApplication::windowFontRatio()
+{
+    return windowFontSize.at(isUsingBigWindowFont() ? 1 : 0) / windowFontSize[0];
+}
+
+float NAV::gui::NodeEditorApplication::monoFontRatio()
+{
+    return monoFontSize.at(isUsingBigMonoFont() ? 1 : 0) / monoFontSize[0];
+}
+
+float NAV::gui::NodeEditorApplication::headerFontRatio()
+{
+    return headerFontSize.at(isUsingBigHeaderFont() ? 1 : 0) / headerFontSize[0];
 }

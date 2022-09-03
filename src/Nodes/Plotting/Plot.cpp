@@ -7,6 +7,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 #include "internal/ConfigManager.hpp"
 
+#include "internal/gui/NodeEditorApplication.hpp"
 #include "internal/gui/widgets/Splitter.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "util/Json.hpp"
@@ -462,7 +463,7 @@ void NAV::Plot::guiConfig()
                 }
 
                 ImGui::TableNextColumn(); // Pin Type
-                ImGui::SetNextItemWidth(100.0F);
+                ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
                 if (ImGui::Combo(fmt::format("##Pin Type for Pin {} - {}", pinIndex + 1, size_t(id)).c_str(),
                                  reinterpret_cast<int*>(&pinData.pinType), "Flow\0Bool\0Int\0Float\0Matrix\0\0"))
                 {
@@ -504,7 +505,7 @@ void NAV::Plot::guiConfig()
                 }
 
                 ImGui::TableNextColumn(); // # Data Points
-                ImGui::SetNextItemWidth(100.0F);
+                ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
                 if (ImGui::DragInt(fmt::format("##Data Points {} - {}", size_t(id), pinIndex + 1).c_str(),
                                    &pinData.size, 10.0F, 0, INT32_MAX / 2))
                 {
@@ -525,7 +526,7 @@ void NAV::Plot::guiConfig()
                 }
 
                 ImGui::TableNextColumn(); // Stride
-                ImGui::SetNextItemWidth(100.0F);
+                ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
                 if (ImGui::InputInt(fmt::format("##Stride {} - {}", size_t(id), pinIndex + 1).c_str(),
                                     &pinData.stride))
                 {
@@ -769,7 +770,7 @@ void NAV::Plot::guiConfig()
                         ImGui::TableNextColumn(); // X Data
                         if (!pinData.plotData.empty())
                         {
-                            ImGui::SetNextItemWidth(200.0F);
+                            ImGui::SetNextItemWidth(200.0F * gui::NodeEditorApplication::windowFontRatio());
                             if (ImGui::BeginCombo(fmt::format("##X Data for Pin {} - {} - {}", pinIndex + 1, size_t(id), plotIdx).c_str(),
                                                   pinData.plotData.at(plot.selectedXdata.at(pinIndex)).displayName.c_str()))
                             {
@@ -835,7 +836,7 @@ void NAV::Plot::guiConfig()
             }
 
             gui::widgets::Splitter(fmt::format("Splitter {} - {}", size_t(id), plotIdx).c_str(),
-                                   true, 4.0F, &plot.leftPaneWidth, &plot.rightPaneWidth, 150.0F, 80.0F, plot.size.y);
+                                   true, 4.0F, &plot.leftPaneWidth, &plot.rightPaneWidth, 3.0F, 80.0F, plot.size.y);
 
             ImGui::SetNextItemWidth(plot.leftPaneWidth - 2.0F);
 

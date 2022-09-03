@@ -569,7 +569,7 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
                     {
                         ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.25F);
                     }
-                    if (ImGui::Button(name, ImVec2(100, 0)))
+                    if (ImGui::Button(name, ImVec2(100 * gui::NodeEditorApplication::windowFontRatio(), 0)))
                     {
                         gp.Style.Colormap = i;
                         ImPlot::BustItemCache();
@@ -640,7 +640,7 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
             {
                 custom.pop_back();
             }
-            ImGui::SetNextItemWidth(100);
+            ImGui::SetNextItemWidth(100 * gui::NodeEditorApplication::windowFontRatio());
             ImGui::InputText("##Name", &name, ImGuiInputTextFlags_CharsNoBlank);
             static bool qual = true;
             ImGui::Checkbox("Qualitative", &qual);
