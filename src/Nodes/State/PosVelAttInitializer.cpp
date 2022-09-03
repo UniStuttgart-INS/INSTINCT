@@ -7,6 +7,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "internal/gui/widgets/HelpMarker.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
 
 #include "util/Time/TimeBase.hpp"
 #include "util/Vendor/Ublox/UbloxTypes.hpp"
@@ -57,7 +58,7 @@ void NAV::PosVelAttInitializer::guiConfig()
     if (_inputPinIdxIMU >= 0 && nm::IsPinLinked(inputPins.at(static_cast<size_t>(_inputPinIdxIMU)).id)
         && !(_overrideRollPitchYaw.at(0) && _overrideRollPitchYaw.at(1) && _overrideRollPitchYaw.at(2)))
     {
-        ImGui::SetNextItemWidth(100);
+        ImGui::SetNextItemWidth(100 * gui::NodeEditorApplication::windowFontRatio());
         if (ImGui::InputDouble(fmt::format("Initialization Duration Attitude##{}", size_t(id)).c_str(), &_initDuration, 0.0, 0.0, "%.3f s"))
         {
             flow::ApplyChanges();
@@ -68,7 +69,7 @@ void NAV::PosVelAttInitializer::guiConfig()
         && _inputPinIdxGNSS >= 0 && nm::IsPinLinked(inputPins.at(static_cast<size_t>(_inputPinIdxGNSS)).id)
         && !(_overrideRollPitchYaw.at(0) && _overrideRollPitchYaw.at(1) && _overrideRollPitchYaw.at(2)))
     {
-        ImGui::SetNextItemWidth(100);
+        ImGui::SetNextItemWidth(100 * gui::NodeEditorApplication::windowFontRatio());
         if (ImGui::BeginCombo(fmt::format("Attitude Init Source##{}", size_t(id)).c_str(), to_string(_attitudeMode)))
         {
             for (size_t i = 0; i < static_cast<size_t>(AttitudeMode::COUNT); i++)
@@ -273,17 +274,17 @@ void NAV::PosVelAttInitializer::guiConfig()
     {
         ImGui::Indent();
 
-        ImGui::SetNextItemWidth(100);
+        ImGui::SetNextItemWidth(100 * gui::NodeEditorApplication::windowFontRatio());
         if (ImGui::DragFloat(fmt::format("Latitude [deg]##{}", size_t(id)).c_str(), &_lla_overrideValuesPosition.at(0), 1.0F, -90.0F, 90.0F, "%.6f"))
         {
             flow::ApplyChanges();
         }
-        ImGui::SetNextItemWidth(100);
+        ImGui::SetNextItemWidth(100 * gui::NodeEditorApplication::windowFontRatio());
         if (ImGui::DragFloat(fmt::format("Longitude [deg]##{}", size_t(id)).c_str(), &_lla_overrideValuesPosition.at(1), 1.0F, -180.0F, 180.0F, "%.6f"))
         {
             flow::ApplyChanges();
         }
-        ImGui::SetNextItemWidth(100);
+        ImGui::SetNextItemWidth(100 * gui::NodeEditorApplication::windowFontRatio());
         if (ImGui::DragFloat(fmt::format("Altitude [m]##{}", size_t(id)).c_str(), &_lla_overrideValuesPosition.at(2)))
         {
             flow::ApplyChanges();
@@ -301,17 +302,17 @@ void NAV::PosVelAttInitializer::guiConfig()
     {
         ImGui::Indent();
 
-        ImGui::SetNextItemWidth(100);
+        ImGui::SetNextItemWidth(100 * gui::NodeEditorApplication::windowFontRatio());
         if (ImGui::DragFloat(fmt::format("Velocity N [m/s]##{}", size_t(id)).c_str(), &_n_overrideValuesVelocity.at(0)))
         {
             flow::ApplyChanges();
         }
-        ImGui::SetNextItemWidth(100);
+        ImGui::SetNextItemWidth(100 * gui::NodeEditorApplication::windowFontRatio());
         if (ImGui::DragFloat(fmt::format("Velocity E [m/s]##{}", size_t(id)).c_str(), &_n_overrideValuesVelocity.at(1)))
         {
             flow::ApplyChanges();
         }
-        ImGui::SetNextItemWidth(100);
+        ImGui::SetNextItemWidth(100 * gui::NodeEditorApplication::windowFontRatio());
         if (ImGui::DragFloat(fmt::format("Velocity D [m/s]##{}", size_t(id)).c_str(), &_n_overrideValuesVelocity.at(2)))
         {
             flow::ApplyChanges();
@@ -332,7 +333,7 @@ void NAV::PosVelAttInitializer::guiConfig()
         ImGui::TableNextColumn();
         if (_overrideRollPitchYaw.at(0))
         {
-            ImGui::SetNextItemWidth(60);
+            ImGui::SetNextItemWidth(60 * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::DragFloat(("##overrideValuesRollPitchYaw.at(0)" + std::to_string(size_t(id))).c_str(),
                                  &_overrideValuesRollPitchYaw.at(0), 1.0F, -180.0F, 180.0F, "%.1f °"))
             {
@@ -349,7 +350,7 @@ void NAV::PosVelAttInitializer::guiConfig()
         ImGui::TableNextColumn();
         if (_overrideRollPitchYaw.at(1))
         {
-            ImGui::SetNextItemWidth(60);
+            ImGui::SetNextItemWidth(60 * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::DragFloat(("##overrideValuesRollPitchYaw.at(1)" + std::to_string(size_t(id))).c_str(),
                                  &_overrideValuesRollPitchYaw.at(1), 1.0F, -90.0F, 90.0F, "%.1f °"))
             {
@@ -366,7 +367,7 @@ void NAV::PosVelAttInitializer::guiConfig()
         ImGui::TableNextColumn();
         if (_overrideRollPitchYaw.at(2))
         {
-            ImGui::SetNextItemWidth(60);
+            ImGui::SetNextItemWidth(60 * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::DragFloat(("##overrideValuesRollPitchYaw.at(2)" + std::to_string(size_t(id))).c_str(),
                                  &_overrideValuesRollPitchYaw.at(2), 1.0F, -180.0F, 180.0F, "%.1f °"))
             {

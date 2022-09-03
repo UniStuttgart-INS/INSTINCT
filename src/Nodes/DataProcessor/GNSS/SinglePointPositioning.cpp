@@ -8,6 +8,7 @@
 
 #include "Navigation/Constants.hpp"
 
+#include "internal/gui/NodeEditorApplication.hpp"
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
 
@@ -196,7 +197,7 @@ void NAV::SinglePointPositioning::guiConfig()
         ImGui::EndTable();
     }
 
-    constexpr float itemWidth = 220.0F;
+    float itemWidth = 220.0F * gui::NodeEditorApplication::windowFontRatio();
 
     ImGui::SetNextItemWidth(itemWidth);
     if (ShowFrequencySelector(fmt::format("Satellite Frequencies##{}", size_t(id)).c_str(), _filterFreq))

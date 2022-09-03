@@ -7,6 +7,7 @@
 #include "NodeRegistry.hpp"
 
 #include "internal/gui/widgets/PinIcon.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
 
 bool NAV::Pin::canCreateLink(const Pin& b) const
 {
@@ -123,7 +124,8 @@ void NAV::Pin::drawPinIcon(bool connected, int alpha) const
         return;
     }
 
-    gui::widgets::PinIcon::Draw(ImVec2(static_cast<float>(m_PinIconSize), static_cast<float>(m_PinIconSize)),
+    gui::widgets::PinIcon::Draw(ImVec2(static_cast<float>(m_PinIconSize) * gui::NodeEditorApplication::defaultFontRatio(),
+                                       static_cast<float>(m_PinIconSize) * gui::NodeEditorApplication::defaultFontRatio()),
                                 iconType, connected, color, ImColor(32, 32, 32, alpha));
 }
 

@@ -4,6 +4,8 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
+#include "internal/gui/NodeEditorApplication.hpp"
+
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "Navigation/Transformations/Units.hpp"
 
@@ -42,7 +44,7 @@ std::string NAV::Transformation::category()
 
 void NAV::Transformation::guiConfig()
 {
-    ImGui::SetNextItemWidth(280.0F);
+    ImGui::SetNextItemWidth(280.0F * gui::NodeEditorApplication::windowFontRatio());
     if (ImGui::Combo(("##Transformation" + std::to_string(size_t(id))).c_str(),
                      reinterpret_cast<int*>(&_selectedTransformation),
                      "ECEF to LLA [rad]\0"
