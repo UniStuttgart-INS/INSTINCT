@@ -62,7 +62,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
 #endif
 
         ImGui::Checkbox("Show Callback Flow", &nm::showFlowWhenInvokingCallbacks);
-        ImGui::SameLine();
+        if (NodeEditorApplication::defaultFontRatio() == 1.F) { ImGui::SameLine(); }
         ImGui::Checkbox("Show Notify Flow", &nm::showFlowWhenNotifyingValueChange);
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
@@ -189,7 +189,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
         size_t selectedCount = selectedNodes.size() + selectedLinks.size();
         ImGui::Text("%lu item%s selected", selectedCount, (selectedCount > 1 || selectedCount == 0) ? "s" : "");
         ImGui::Spring();
-        if (ImGui::Button("Deselect All"))
+        if (ImGui::Button("Deselect"))
         {
             ed::ClearSelection();
         }

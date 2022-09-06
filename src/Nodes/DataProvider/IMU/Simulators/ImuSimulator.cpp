@@ -100,13 +100,13 @@ void NAV::ImuSimulator::guiConfig()
     if (ImGui::TreeNode("Output datarate"))
     {
         ImGui::SetNextItemWidth(columnWidth);
-        if (ImGui::InputDoubleL(fmt::format("IMU sample rate##{}", size_t(id)).c_str(), &_imuFrequency, 1e-3, 1e4, 0.0, 0.0, "%.3f Hz"))
+        if (ImGui::InputDoubleL(fmt::format("IMU output rate##{}", size_t(id)).c_str(), &_imuFrequency, 1e-3, 1e4, 0.0, 0.0, "%.3f Hz"))
         {
             LOG_DEBUG("{}: imuFrequency changed to {}", nameId(), _imuFrequency);
             flow::ApplyChanges();
         }
         ImGui::SetNextItemWidth(columnWidth);
-        if (ImGui::InputDouble(fmt::format("GNSS sample rate##{}", size_t(id)).c_str(), &_gnssFrequency, 0.0, 0.0, "%.3f Hz"))
+        if (ImGui::InputDouble(fmt::format("Trajectory output rate##{}", size_t(id)).c_str(), &_gnssFrequency, 0.0, 0.0, "%.3f Hz"))
         {
             LOG_DEBUG("{}: gnssFrequency changed to {}", nameId(), _gnssFrequency);
             flow::ApplyChanges();
@@ -333,7 +333,7 @@ void NAV::ImuSimulator::guiConfig()
             }
             ImGui::SameLine();
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
-            ImGui::TextUnformatted("startOrientation (Roll, Pitch, Yaw)");
+            ImGui::TextUnformatted("Orientation (Roll, Pitch, Yaw)");
         }
         else if (_trajectoryType == TrajectoryType::Linear)
         {
@@ -362,7 +362,7 @@ void NAV::ImuSimulator::guiConfig()
             }
             ImGui::SameLine();
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
-            ImGui::TextUnformatted("Start velocity (North, East, Down)");
+            ImGui::TextUnformatted("Velocity (North, East, Down)");
         }
         else if (_trajectoryType == TrajectoryType::Circular)
         {
