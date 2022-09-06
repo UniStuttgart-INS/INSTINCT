@@ -1035,49 +1035,6 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ed::EndNode();
             ed::PopStyleColor(2);
             ImGui::PopStyleVar();
-
-            if (ed::BeginGroupHint(node->id))
-            {
-                // auto alpha   = static_cast<int>(commentAlpha * ImGui::GetStyle().Alpha * 255);
-                auto bgAlpha = static_cast<int>(ImGui::GetStyle().Alpha * 255);
-
-                // ImGui::PushStyleVar(ImGuiStyleVar_Alpha, commentAlpha * ImGui::GetStyle().Alpha);
-
-                auto min = ed::GetGroupMin();
-                // auto max = ed::GetGroupMax();
-
-                ImGui::SetCursorScreenPos(min - ImVec2(-8, ImGui::GetTextLineHeightWithSpacing() + 4));
-                ImGui::BeginGroup();
-                ImGui::TextUnformatted(node->name.c_str());
-                ImGui::EndGroup();
-
-                auto* drawList = ed::GetHintBackgroundDrawList();
-
-                auto ImRect_Expanded = [](const ImRect& rect, float x, float y) -> ImRect {
-                    auto result = rect;
-                    result.Min.x -= x;
-                    result.Min.y -= y;
-                    result.Max.x += x;
-                    result.Max.y += y;
-                    return result;
-                };
-
-                auto hintBounds = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
-                auto hintFrameBounds = ImRect_Expanded(hintBounds, 8, 4);
-
-                drawList->AddRectFilled(
-                    hintFrameBounds.GetTL(),
-                    hintFrameBounds.GetBR(),
-                    IM_COL32(255, 255, 255, 64 * bgAlpha / 255), 4.0F);
-
-                drawList->AddRect(
-                    hintFrameBounds.GetTL(),
-                    hintFrameBounds.GetBR(),
-                    IM_COL32(255, 255, 255, 128 * bgAlpha / 255), 4.0F);
-
-                // ImGui::PopStyleVar();
-            }
-            ed::EndGroupHint();
         }
 
         for (const auto* node : nm::m_Nodes())
