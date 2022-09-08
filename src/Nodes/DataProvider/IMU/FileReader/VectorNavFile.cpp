@@ -268,7 +268,7 @@ void NAV::VectorNavFile::readHeader()
         // Split line at comma
         while (std::getline(lineStream, cell, ','))
         {
-            if (column++ > 3)
+            if (column++ > (_hasTimeColumn ? 3 : 2))
             {
                 // Remove any trailing non text characters
                 cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
