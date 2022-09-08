@@ -424,6 +424,13 @@ void NAV::Node::workerThread(Node* node)
             continue;
         }
 
+        // Check if state was changed for short lived node objects (only relevant for NodeRegistry)
+        if (std::lock_guard lk(node->_workerMutex);
+            node->_state == State::DoShutdown || node->_state == State::Shutdown)
+        {
+            continue;
+        }
+
         std::unique_lock lk(node->_workerMutex);
         std::cv_status status = node->_workerConditionVariable.wait_for(lk, node->_workerTimeout);
 
