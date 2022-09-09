@@ -6,6 +6,7 @@
 #include "util/Assert.h"
 
 #include "internal/gui/FlowAnimation.hpp"
+#include "internal/NodeManager.hpp"
 #include "util/Json.hpp"
 
 #include <imgui_node_editor.h>
@@ -90,52 +91,54 @@ void NAV::Node::notifyOutputValueChanged(size_t /* portIndex */)
     // }
 }
 
-void NAV::Node::invokeCallbacks(size_t /* portIndex */, const std::shared_ptr<const NAV::NodeData>& /* data */)
+void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NAV::NodeData>& data)
 {
-    //     if (callbacksEnabled)
-    //     {
-    //         if (data == nullptr)
-    //         {
-    //             LOG_DEBUG("{}: Tried to invokeCallbacks on pin {} with a nullptr. This is a bug!!!", nameId(), portIndex);
-    //             return;
-    //         }
-    // #ifdef TESTING
-    //         for (const auto& watcherCallback : outputPins.at(portIndex).watcherCallbacksOld)
-    //         {
-    //             const auto& linkId = watcherCallback.second;
-    //             if (!linkId) // Trigger all output pin callbacks
-    //             {
-    //                 CallbackManager::queueWatcherCallbackForInvocation(watcherCallback, data);
-    //             }
-    //         }
-    // #endif
+    if (callbacksEnabled)
+    {
+        if (data == nullptr)
+        {
+            LOG_DEBUG("{}: Tried to invokeCallbacks on pin {} with a nullptr. This is a bug!!!", nameId(), portIndex);
+            return;
+        }
+        // #ifdef TESTING
+        //         for (const auto& watcherCallback : outputPins.at(portIndex).watcherCallbacksOld)
+        //         {
+        //             const auto& linkId = watcherCallback.second;
+        //             if (!linkId) // Trigger all output pin callbacks
+        //             {
+        //                 CallbackManager::queueWatcherCallbackForInvocation(watcherCallback, data);
+        //             }
+        //         }
+        // #endif
 
-    //         for (const auto& nodeCallback : outputPins.at(portIndex).callbacksOld)
-    //         {
-    //             const auto* node = std::get<0>(nodeCallback);
+        for (const auto& link : outputPins.at(portIndex).links)
+        {
+            auto* targetPin = link.getConnectedPin();
+            if (link.connectedNode->isInitialized())
+            {
+                // #ifdef TESTING
+                //                 const auto& linkId = std::get<2>(nodeCallback);
+                //                 for (const auto& watcherCallback : outputPins.at(portIndex).watcherCallbacksOld)
+                //                 {
+                //                     const auto& watcherLinkId = watcherCallback.second;
+                //                     if (linkId == watcherLinkId)
+                //                     {
+                //                         CallbackManager::queueWatcherCallbackForInvocation(watcherCallback, data);
+                //                     }
+                //                 }
+                // #endif
 
-    //             if (node->isInitialized())
-    //             {
-    // #ifdef TESTING
-    //                 const auto& linkId = std::get<2>(nodeCallback);
-    //                 for (const auto& watcherCallback : outputPins.at(portIndex).watcherCallbacksOld)
-    //                 {
-    //                     const auto& watcherLinkId = watcherCallback.second;
-    //                     if (linkId == watcherLinkId)
-    //                     {
-    //                         CallbackManager::queueWatcherCallbackForInvocation(watcherCallback, data);
-    //                     }
-    //                 }
-    // #endif
-    //                 CallbackManager::queueNodeCallbackForInvocation(nodeCallback, data);
-    //             }
-    //         }
+                if (NodeManager::showFlowWhenNotifyingValueChange)
+                {
+                    FlowAnimation::Add(link.linkId);
+                }
 
-    //         while (CallbackManager::hasUnprocessedCallbacks())
-    //         {
-    //             CallbackManager::processNextCallback();
-    //         }
-    //     }
+                std::lock_guard lk(targetPin->queueAccessMutex);
+                targetPin->queue.push_back(data);
+                link.connectedNode->_workerConditionVariable.notify_all();
+            }
+        }
+    }
 }
 
 NAV::InputPin& NAV::Node::inputPinFromId(ax::NodeEditor::PinId pinId)
@@ -498,6 +501,14 @@ bool NAV::Node::workerInitializeNode()
             std::lock_guard lk(_workerMutex);
             _state = Node::State::Initialized;
         }
+
+        for (auto& inputPin : inputPins)
+        {
+            std::lock_guard lk(inputPin.queueAccessMutex);
+            inputPin.queue.clear();
+        }
+        resetNode();
+
         return true;
     }
 

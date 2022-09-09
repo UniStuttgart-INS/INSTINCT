@@ -921,7 +921,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 builder.EndHeader();
             }
 
-            for (const auto& input : node->inputPins) // Input Pins
+            for (auto& input : node->inputPins) // Input Pins
             {
                 auto alpha = ImGui::GetStyle().Alpha;
                 if (newLinkPin && newLinkPin->kind == Pin::Kind::Output && &input != newLinkPin
@@ -934,6 +934,17 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
                 input.drawPinIcon(input.isPinLinked(), static_cast<int>(alpha * 255));
                 if (ImGui::IsItemHovered()) { tooltipText = fmt::format("{}", fmt::join(input.dataIdentifier, "\n")); }
+                if (_showQueueSizeOnPins && input.type == Pin::Type::Flow && input.isPinLinked())
+                {
+                    auto cursor = ImGui::GetCursorPos();
+                    ImGui::SetCursorPos(ImVec2(cursor.x - 26.0F, cursor.y + 2.F));
+
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImColor(255, 0, 0).Value);
+                    std::lock_guard lk(input.queueAccessMutex);
+                    ImGui::Text("%lu", input.queue.size());
+                    ImGui::PopStyleColor();
+                    ImGui::SetCursorPos(cursor);
+                }
 
                 ImGui::Spring(0);
                 if (!input.name.empty())
@@ -1371,6 +1382,10 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Text("ID: %lu", size_t(pin->id));
             ImGui::Text("Node: %s", pin->parentNode ? std::to_string(size_t(pin->parentNode->id)).c_str() : "<none>");
             ImGui::Text("Type: %s", std::string(pin->type).c_str());
+            {
+                std::lock_guard lk(pin->queueAccessMutex);
+                ImGui::Text("Queue: %lu", pin->queue.size());
+            }
             ImGui::Separator();
             if (ImGui::MenuItem("Rename"))
             {

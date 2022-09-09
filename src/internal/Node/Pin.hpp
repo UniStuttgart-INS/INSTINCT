@@ -16,6 +16,7 @@ using json = nlohmann::json; ///< json namespace
 #include <memory>
 #include <tuple>
 #include <mutex>
+#include <deque>
 
 namespace NAV
 {
@@ -346,7 +347,7 @@ class OutputPin : public Pin
     OutputPin(const OutputPin&) = delete;
     /// @brief Move constructor
     OutputPin(OutputPin&& other) noexcept
-        : Pin(std::move(other)), data(other.data) {}
+        : Pin(std::move(other)), data(other.data), links(other.links) {}
     /// @brief Copy assignment operator
     OutputPin& operator=(const OutputPin&) = delete;
     /// @brief Move assignment operator
@@ -355,6 +356,7 @@ class OutputPin : public Pin
         if (this != &other)
         {
             data = other.data;
+            links = other.links;
             Pin::operator=(std::move(other));
         }
         return *this;
@@ -465,11 +467,22 @@ class InputPin : public Pin
     /// @brief Copy constructor
     InputPin(const InputPin&) = delete;
     /// @brief Move constructor
-    InputPin(InputPin&&) = default;
+    InputPin(InputPin&& other)
+        : Pin(std::move(other)), callback(other.callback), queue(other.queue), link(other.link) {}
     /// @brief Copy assignment operator
     InputPin& operator=(const InputPin&) = delete;
     /// @brief Move assignment operator
-    InputPin& operator=(InputPin&&) = default;
+    InputPin& operator=(InputPin&& other)
+    {
+        if (this != &other)
+        {
+            callback = other.callback;
+            queue = other.queue;
+            link = other.link;
+            Pin::operator=(std::move(other));
+        }
+        return *this;
+    }
 
     /// @brief Checks if this pin can connect to the provided pin
     /// @param[in] other The pin to create a link to
@@ -505,6 +518,12 @@ class InputPin : public Pin
 
     /// Callback to call when the node is firable or when it should be notified of data change
     Callback callback;
+
+    /// Queue with received data
+    std::deque<std::shared_ptr<const NAV::NodeData>> queue;
+
+    /// Mutex to interact with the queue object
+    std::mutex queueAccessMutex;
 
     /// Collection of information about the connected node and pin
     struct IncomingLink : public Link

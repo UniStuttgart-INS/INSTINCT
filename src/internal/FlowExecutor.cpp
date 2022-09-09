@@ -92,7 +92,15 @@ bool NAV::FlowExecutor::initialize()
     {
         for (Node* node : nm::m_Nodes())
         {
-            if (node->isInitialized()) { node->resetNode(); }
+            if (node->isInitialized())
+            {
+                node->resetNode();
+                for (auto& inputPin : node->inputPins)
+                {
+                    std::lock_guard lk(inputPin.queueAccessMutex);
+                    inputPin.queue.clear();
+                }
+            }
         }
         util::time::SetMode(util::time::Mode::POST_PROCESSING);
         util::time::ClearCurrentTime();

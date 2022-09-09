@@ -81,6 +81,9 @@ class NodeEditorApplication : public Application
     /// @brief Frame counter to block the navigate to content function till nodes are correctly loaded
     int frameCountNavigate = 0;
 
+    /// Shows the queue size on the pins (every frame the queue mutex will be locked)
+    static inline bool _showQueueSizeOnPins = false;
+
     /// @brief Pointer to the texture for the instinct logo
     static inline std::array<ImTextureID, 2> m_InstinctLogo{ nullptr, nullptr };
 
