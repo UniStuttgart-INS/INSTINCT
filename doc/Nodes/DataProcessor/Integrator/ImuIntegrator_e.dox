@@ -89,7 +89,7 @@ The derivative of the velocity in Earth frame coordinates can be expressed as
       = \mathbf{C}_b^e \cdot \overbrace{\boldsymbol{f}_{ib}^b}^{\hidewidth\text{measured}\hidewidth}
         -\ \underbrace{2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e}_{\hidewidth\text{coriolis acceleration}\hidewidth}
         +\ \overbrace{\boldsymbol{\gamma}^e}^{\hidewidth\text{gravitation}\hidewidth}
-        -\ \underbrace{\left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{r}^e ] \right)}_{\hidewidth\text{centrifugal acceleration}\hidewidth}
+        -\ \underbrace{\left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right)}_{\hidewidth\text{centrifugal acceleration}\hidewidth}
 \f}
 where
 - \f$ \boldsymbol{v}^e \f$ is the velocity with respect to the Earth in Earth-fixed frame coordinates,
@@ -113,6 +113,80 @@ see
 - \cite Titterton2004 Titterton, ch. 3.5.2, p. 28ff
 - \cite Jekeli2001 Jekeli, ch. 4.3.3, eq. 4.82, p. 126
 - \cite Groves2013 Groves, ch. 5.3.4, eq. 5.37, p. 175
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section ImuIntegrator-e-Numerical-Integration Numerical Integration
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection ImuIntegrator-e-Numerical-Integration-RK4 Runge Kutta 4th order
+
+The universal Runge Kutta 4th order equations are
+
+\fl{equation,eq-ImuIntegrator-e-RK4}
+\begin{aligned}
+  y_{i} &= y_{i-1} + \frac{h}{6} \left( k_1 + 2 k_2 + 2 k_3 + k_4 \right) \\
+  k_1 &= f(y_{i-1}, t_{i-1}) \\
+  k_2 &= f(y_{i-1} + \frac{h}{2} k_1, t_{i-1} + \frac{h}{2}) \\
+  k_3 &= f(y_{i-1} + \frac{h}{2} k_2, t_{i-1} + \frac{h}{2}) \\
+  k_4 &= f(y_{i-1} + h \cdot k_2, t_{i-1} + h) \\
+\end{aligned}
+\f}
+
+As the position, velocity and attitude depend on each other, the equations have to be solved simultaneously and we should not first advance \f$ \boldsymbol{v} \f$ and then advance \f$ \boldsymbol{x} \f$.
+
+\fl{equation,eq-ImuIntegrator-e-ODE}
+  f =\\
+  \begin{pmatrix} \dotup{a} \\ \dotup{b} \\ \dotup{c} \\ \dotup{d} \\ \dotup{v}_x \\ \dotup{v}_y \\ \dotup{v}_z \\ \dotup{x} \\ \dotup{y} \\ \dotup{z} \end{pmatrix}
+  =
+  \begin{pmatrix}
+    \frac{1}{2} \begin{bmatrix}        0        & -\omega_{eb,x}^b & -\omega_{eb,y}^b & -\omega_{eb,z}^b \\
+                                \omega_{eb,x}^b &        0         &  \omega_{eb,z}^b & -\omega_{eb,y}^b \\
+                                \omega_{eb,y}^b & -\omega_{eb,z}^b &        0         &  \omega_{eb,x}^b \\
+                                \omega_{eb,z}^b &  \omega_{eb,y}^b & -\omega_{eb,x}^b &        0         \end{bmatrix} \begin{bmatrix} a \\ b \\ c \\ d \end{bmatrix} \\
+    \\
+    \mathbf{C}_b^e \cdot \boldsymbol{f}_{ib}^b -\ 2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e +\ \boldsymbol{\gamma}^e -\ \left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right) \\
+    \\
+    v_x \\ v_y \\ v_z
+  \end{pmatrix}
+\f}
+
+Taking only the position and velocity terms and simplifying we get
+
+\fl{equation,eq-ImuIntegrator-e-ODE-posvel}
+  f = \begin{pmatrix} \boldsymbol{\dot{v}} \\ \boldsymbol{\dot{x}} \end{pmatrix} =
+  \begin{pmatrix}
+    \mathbf{C}_b^e \cdot \boldsymbol{f}_{ib}^b -\ 2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e +\ \boldsymbol{\gamma}^e (\mathbf{x}^e) -\ \left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right) \\
+    \boldsymbol{v}
+  \end{pmatrix} =
+  \begin{pmatrix}
+    \boldsymbol{a} (\mathbf{C}_b^e,  \boldsymbol{v}^e, \mathbf{x}^e) \\
+    \boldsymbol{v}
+  \end{pmatrix} \approx
+  \begin{pmatrix}
+    \boldsymbol{a} (\mathbf{x}^e) \\
+    \boldsymbol{v}
+  \end{pmatrix}
+\f}
+
+Which leads to the terms
+
+\fl{equation,eq-ImuIntegrator-e-RK4-ODE}
+\begin{aligned}
+  k_1 &= \begin{pmatrix} k_{1_{v}} \\ k_{1_{x}} \end{pmatrix} = f(y_{i-1}, t_{i-1}) =
+  \begin{pmatrix}
+    \boldsymbol{a} (\mathbf{x}^e_{i-1}) \\
+    \boldsymbol{v}_{i-1}
+  \end{pmatrix} \\
+  k_2 &= \begin{pmatrix} k_{2_{v}} \\ k_{2_{x}} \end{pmatrix} = f(y_{i-1} + \frac{h}{2} k_1, t_{i-1} + \frac{h}{2}) =
+  \begin{pmatrix}
+    \boldsymbol{a} (\mathbf{x}^e_{i-1} + \frac{h}{2} k_{1_{x}}) \\
+    \boldsymbol{v}_{i-1} + \frac{h}{2} k_{1_{v}}
+  \end{pmatrix} \\
+  k_3 &= \dots
+\end{aligned}
+\f}
+
+These terms coincide with \cite Voesenek2008 Voesenek, eq. 9,10
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 \section ImuIntegrator-e-Appendix Appendix
