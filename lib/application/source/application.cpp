@@ -117,7 +117,8 @@ void Application::RecreateFontAtlas()
     config.OversampleH = 4;
     config.OversampleV = 4;
     config.PixelSnapH = false;
-    static const ImWchar icons_ranges[] = { 0x20, 0xFFFF, 0 };
+    static const ImWchar icons_ranges[] = { 0x2000, 0xFFFF, 0 };
+    static const ImWchar icons_ranges2[] = { 0x2500, 0x2E00, 0 };
 
     strcpy(config.Name, "Play Regular");
     m_DefaultFont = io.Fonts->AddFontFromMemoryCompressedTTF(PlayRegular_compressed_data, PlayRegular_compressed_size, defaultFontSize[0], &config);
@@ -125,21 +126,13 @@ void Application::RecreateFontAtlas()
     config.MergeMode = true;
     io.Fonts->AddFontFromMemoryCompressedTTF(InconsolataNerdFontComplete_compressed_data, InconsolataNerdFontComplete_compressed_size, defaultFontSize[0], &config, icons_ranges);
     io.Fonts->AddFontFromMemoryCompressedTTF(NotoSansRegular_compressed_data, NotoSansRegular_compressed_size, defaultFontSize[0], &config, icons_ranges);
-    io.Fonts->AddFontFromMemoryCompressedTTF(FreeMono_compressed_data, FreeMono_compressed_size, defaultFontSize[0], &config, icons_ranges);
-    // io.Fonts->AddFontFromFileTTF("resources/fonts/Inconsolata-Nerd-Font-Complete.otf", defaultFontSize[0], &config, icons_ranges);
-    // io.Fonts->AddFontFromFileTTF("resources/fonts/NotoSans-Regular.ttf", defaultFontSize[0], &config, icons_ranges);
+    io.Fonts->AddFontFromMemoryCompressedTTF(FreeMono_compressed_data, FreeMono_compressed_size, defaultFontSize[0], &config, icons_ranges2);
+
+    m_WindowFont = m_DefaultFont;
+    m_WindowFontSmall = m_DefaultFontSmall;
 
     config.MergeMode = false;
-    strcpy(config.Name, "Play Regular Window");
-    m_WindowFont = io.Fonts->AddFontFromMemoryCompressedTTF(PlayRegular_compressed_data, PlayRegular_compressed_size, windowFontSize[0], &config);
-    m_WindowFontSmall = m_WindowFont;
-    config.MergeMode = true;
-    io.Fonts->AddFontFromMemoryCompressedTTF(InconsolataNerdFontComplete_compressed_data, InconsolataNerdFontComplete_compressed_size, windowFontSize[0], &config, icons_ranges);
-    io.Fonts->AddFontFromMemoryCompressedTTF(NotoSansRegular_compressed_data, NotoSansRegular_compressed_size, windowFontSize[0], &config, icons_ranges);
-    io.Fonts->AddFontFromMemoryCompressedTTF(FreeMono_compressed_data, FreeMono_compressed_size, windowFontSize[0], &config, icons_ranges);
-
-    config.MergeMode = false;
-    strcpy(config.Name, "Inconsolata");
+    strcpy(config.Name, "Inconsolata Mono");
     m_MonoFont = io.Fonts->AddFontFromMemoryCompressedTTF(InconsolataNerdFontComplete_compressed_data, InconsolataNerdFontComplete_compressed_size, monoFontSize[0], &config);
     m_MonoFontSmall = m_MonoFont;
     strcpy(config.Name, "Cuprum Bold");
@@ -153,20 +146,12 @@ void Application::RecreateFontAtlas()
     config.MergeMode = true;
     // io.Fonts->AddFontFromMemoryCompressedTTF(InconsolataNerdFontComplete_compressed_data, InconsolataNerdFontComplete_compressed_size, defaultFontSize[1], &config, icons_ranges);
     // io.Fonts->AddFontFromMemoryCompressedTTF(NotoSansRegular_compressed_data, NotoSansRegular_compressed_size, defaultFontSize[1], &config, icons_ranges);
-    io.Fonts->AddFontFromMemoryCompressedTTF(FreeMono_compressed_data, FreeMono_compressed_size, defaultFontSize[1], &config, icons_ranges);
-    // // io.Fonts->AddFontFromFileTTF("resources/fonts/Inconsolata-Nerd-Font-Complete.otf", defaultFontSize[1], &config, icons_ranges);
-    // // io.Fonts->AddFontFromFileTTF("resources/fonts/NotoSans-Regular.ttf", defaultFontSize[1], &config, icons_ranges);
+    io.Fonts->AddFontFromMemoryCompressedTTF(FreeMono_compressed_data, FreeMono_compressed_size, defaultFontSize[1], &config, icons_ranges2);
+
+    m_WindowFontBig = m_DefaultFontBig;
 
     config.MergeMode = false;
-    strcpy(config.Name, "Play Regular Window Big");
-    m_WindowFontBig = io.Fonts->AddFontFromMemoryCompressedTTF(PlayRegular_compressed_data, PlayRegular_compressed_size, windowFontSize[1], &config);
-    // config.MergeMode = true;
-    // io.Fonts->AddFontFromMemoryCompressedTTF(InconsolataNerdFontComplete_compressed_data, InconsolataNerdFontComplete_compressed_size, windowFontSize[1], &config, icons_ranges);
-    // io.Fonts->AddFontFromMemoryCompressedTTF(NotoSansRegular_compressed_data, NotoSansRegular_compressed_size, windowFontSize[1], &config, icons_ranges);
-    // io.Fonts->AddFontFromMemoryCompressedTTF(FreeMono_compressed_data, FreeMono_compressed_size, windowFontSize[1], &config, icons_ranges);
-
-    config.MergeMode = false;
-    strcpy(config.Name, "Inconsolata Big");
+    strcpy(config.Name, "Inconsolata Mono Big");
     m_MonoFontBig = io.Fonts->AddFontFromMemoryCompressedTTF(InconsolataNerdFontComplete_compressed_data, InconsolataNerdFontComplete_compressed_size, monoFontSize[1], &config);
     strcpy(config.Name, "Cuprum Bold Big");
     m_HeaderFontBig = io.Fonts->AddFontFromMemoryCompressedTTF(CuprumBold_compressed_data, CuprumBold_compressed_size, headerFontSize[1], &config);
