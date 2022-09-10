@@ -213,6 +213,8 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 {
     LOG_TRACE("called");
 
+    Node::_autostartWorker = false;
+
     // Utility
     registerNodeType<Demo>();
     registerNodeType<GroupBox>();
@@ -262,6 +264,8 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<Plot>();
     // State
     registerNodeType<PosVelAttInitializer>();
+
+    Node::_autostartWorker = true;
 }
 
 #include "NodeData/InsObs.hpp"

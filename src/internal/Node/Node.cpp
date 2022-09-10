@@ -16,23 +16,28 @@ NAV::Node::Node(std::string name)
     : name(std::move(name))
 {
     LOG_TRACE("{}: called", nameId());
-    _worker = std::thread(workerThread, this);
+    if (_autostartWorker)
+    {
+        _worker = std::thread(workerThread, this);
+    }
 }
 
 NAV::Node::~Node()
 {
     LOG_TRACE("{}: called", nameId());
+
+    if (_autostartWorker)
     {
-        std::lock_guard lk(_workerMutex);
         _state = State::DoShutdown;
         _workerConditionVariable.notify_all();
+
+        // // wait for the worker
+        // {
+        //     std::unique_lock lk(_workerMutex);
+        //     _workerConditionVariable.wait(lk, [&, this] { return _state == State::Shutdown; });
+        // }
+        _worker.join();
     }
-    // // wait for the worker
-    // {
-    //     std::unique_lock lk(_workerMutex);
-    //     _workerConditionVariable.wait(lk, [&, this] { return _state == State::Shutdown; });
-    // }
-    _worker.join();
 }
 
 void NAV::Node::guiConfig() {}
@@ -243,10 +248,7 @@ bool NAV::Node::doInitialize(bool wait)
         break;
     case State::Deinitialized:
     {
-        {
-            std::lock_guard lk(_workerMutex);
-            _state = State::DoInitialize;
-        }
+        _state = State::DoInitialize;
         _workerConditionVariable.notify_all();
         break;
     }
@@ -280,15 +282,10 @@ bool NAV::Node::doReinitialize(bool wait)
     case State::Deinitialized:
         break;
     case State::Initialized:
-    {
-        {
-            std::lock_guard lk(_workerMutex);
-            _state = State::DoDeinitialize;
-            _reinitialize = true;
-        }
+        _state = State::DoDeinitialize;
+        _reinitialize = true;
         _workerConditionVariable.notify_all();
         break;
-    }
     }
 
     if (wait)
@@ -319,10 +316,7 @@ bool NAV::Node::doDeinitialize(bool wait)
         break;
     case State::Initialized:
     {
-        {
-            std::lock_guard lk(_workerMutex);
-            _state = State::DoDeinitialize;
-        }
+        _state = State::DoDeinitialize;
         _workerConditionVariable.notify_all();
         break;
     }
@@ -357,10 +351,7 @@ bool NAV::Node::doDisable(bool wait)
     case State::DoInitialize:
     case State::Deinitialized:
     {
-        {
-            std::lock_guard lk(_workerMutex);
-            _state = State::Disabled;
-        }
+        _state = State::Disabled;
         break;
     }
     }
@@ -379,7 +370,6 @@ bool NAV::Node::doEnable()
 
     if (_state == State::Disabled)
     {
-        std::lock_guard lk(_workerMutex);
         _state = State::Deinitialized;
     }
     return true;
@@ -403,10 +393,7 @@ void NAV::Node::workerThread(Node* node)
         if (node->_state == State::DoShutdown)
         {
             LOG_TRACE("{}: Worker doing shutdown...", node->nameId());
-            {
-                std::lock_guard lk(node->_workerMutex);
-                node->_state = State::Shutdown;
-            }
+            node->_state = State::Shutdown;
             node->_workerConditionVariable.notify_all();
             break;
         }
@@ -427,27 +414,24 @@ void NAV::Node::workerThread(Node* node)
             continue;
         }
 
-        // Check if state was changed for short lived node objects (only relevant for NodeRegistry)
-        if (std::lock_guard lk(node->_workerMutex);
-            node->_state == State::DoShutdown || node->_state == State::Shutdown)
+        if (node->_state == State::Initialized || node->_state == State::Deinitialized || node->_state == State::Disabled)
         {
-            continue;
-        }
+            // Wait for data or state change
+            std::unique_lock lk(node->_workerMutex);
+            std::cv_status status = node->_workerConditionVariable.wait_for(lk, node->_workerTimeout);
 
-        std::unique_lock lk(node->_workerMutex);
-        std::cv_status status = node->_workerConditionVariable.wait_for(lk, node->_workerTimeout);
+            LOG_TRACE("{}: Worker waking up...", node->nameId());
 
-        LOG_TRACE("{}: Worker waking up...", node->nameId());
-
-        if (status == std::cv_status::timeout)
-        {
-            node->workerTimeoutHandler();
-        }
-        else // Triggered by '_workerConditionVariable.notify_all();'
-        {
-            if (node->isInitialized())
+            if (status == std::cv_status::timeout)
             {
-                // TODO: Handle data here
+                node->workerTimeoutHandler();
+            }
+            else // Triggered by '_workerConditionVariable.notify_all();'
+            {
+                if (node->isInitialized())
+                {
+                    // TODO: Handle data here
+                }
             }
         }
     }
@@ -460,10 +444,8 @@ bool NAV::Node::workerInitializeNode()
     LOG_TRACE("{}: called", nameId());
 
     INS_ASSERT_USER_ERROR(_state == State::DoInitialize, fmt::format("Worker can only initialize the node if the state is set to DoInitialize, but it is {}.", toString(_state)).c_str());
-    {
-        std::lock_guard lk(_workerMutex);
-        _state = Node::State::Initializing;
-    }
+    _state = Node::State::Initializing;
+
     LOG_DEBUG("{}: Initializing Node", nameId());
 
     // Initialize Nodes connected to the input pins
@@ -481,7 +463,6 @@ bool NAV::Node::workerInitializeNode()
                         LOG_ERROR("{}: Could not initialize connected node {}", nameId(), connectedNode->nameId());
                         if (_state == State::Initializing)
                         {
-                            std::lock_guard lk(_workerMutex);
                             _state = Node::State::Deinitialized;
                         }
                         return false;
@@ -498,7 +479,6 @@ bool NAV::Node::workerInitializeNode()
     {
         if (_state == State::Initializing)
         {
-            std::lock_guard lk(_workerMutex);
             _state = Node::State::Initialized;
         }
 
@@ -514,7 +494,6 @@ bool NAV::Node::workerInitializeNode()
 
     if (_state == State::Initializing)
     {
-        std::lock_guard lk(_workerMutex);
         _state = Node::State::Deinitialized;
     }
     return false;
@@ -526,7 +505,6 @@ bool NAV::Node::workerDeinitializeNode()
 
     INS_ASSERT_USER_ERROR(_state == State::DoDeinitialize, fmt::format("Worker can only deinitialize the node if the state is set to DoDeinitialize, but it is {}.", toString(_state)).c_str());
     {
-        std::lock_guard lk(_workerMutex);
         _state = Node::State::Deinitializing;
     }
     LOG_DEBUG("{}: Deinitializing Node", nameId());
@@ -558,17 +536,14 @@ bool NAV::Node::workerDeinitializeNode()
     {
         if (_disable)
         {
-            std::lock_guard lk(_workerMutex);
             _state = State::Disabled;
         }
         else if (_reinitialize)
         {
-            std::lock_guard lk(_workerMutex);
             _state = State::DoInitialize;
         }
         else
         {
-            std::lock_guard lk(_workerMutex);
             _state = State::Deinitialized;
         }
     }
@@ -618,7 +593,6 @@ void NAV::from_json(const json& j, Node& node)
         bool enabled = j.at("enabled").get<bool>();
         if (!enabled)
         {
-            std::lock_guard lk(node._workerMutex);
             node._state = Node::State::Disabled;
         }
     }

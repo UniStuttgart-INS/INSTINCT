@@ -30,6 +30,11 @@ class Node;
 class NodeData;
 class GroupBox;
 
+namespace NodeRegistry
+{
+void RegisterNodeTypes();
+} // namespace NodeRegistry
+
 namespace gui
 {
 class NodeEditorApplication;
@@ -334,7 +339,7 @@ class Node
 
   private:
     /// Current state of the node
-    State _state = State::Deinitialized;
+    std::atomic<State> _state = State::Deinitialized;
 
     /// Flag if the node should be reinitialize after deinitializing
     bool _reinitialize = false;
@@ -350,6 +355,9 @@ class Node
 
     /// Size of the node in pixels
     ImVec2 _size{ 0, 0 };
+
+    /// Flag which prevents the worker to be autostarted if false
+    static inline bool _autostartWorker = true;
 
     std::chrono::duration<int64_t> _workerTimeout = std::chrono::years(1); ///< Periodic timeout of the worker to check if new data available
     std::thread _worker;                                                   ///< Worker handling initialization and processing of data
@@ -373,6 +381,9 @@ class Node
 
     friend class gui::NodeEditorApplication;
     friend class NAV::GroupBox;
+
+    /// @brief Register all available Node types for the program
+    friend void NAV::NodeRegistry::RegisterNodeTypes();
 
     /// @brief Converts the provided node into a json object
     /// @param[out] j Json object which gets filled with the info
