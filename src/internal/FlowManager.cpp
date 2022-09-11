@@ -262,41 +262,44 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
 
     if (j.contains("links"))
     {
-        for ([[maybe_unused]] const auto& linkJson : j.at("links"))
+        for (size_t i = 0; i < 2; i++) // Run twice because pins can change type depending on other links
         {
-            auto linkId = linkJson.at("id").get<size_t>();
-            auto startPinId = linkJson.at("startPinId").get<size_t>();
-            auto endPinId = linkJson.at("endPinId").get<size_t>();
+            for (const auto& linkJson : j.at("links"))
+            {
+                auto linkId = linkJson.at("id").get<size_t>();
+                auto startPinId = linkJson.at("startPinId").get<size_t>();
+                auto endPinId = linkJson.at("endPinId").get<size_t>();
 
-            InputPin* endPin = nullptr;
-            OutputPin* startPin = nullptr;
-            for (auto* node : nm::m_Nodes())
-            {
-                if (!endPin)
+                InputPin* endPin = nullptr;
+                OutputPin* startPin = nullptr;
+                for (auto* node : nm::m_Nodes())
                 {
-                    for (auto& inputPin : node->inputPins)
+                    if (!endPin)
                     {
-                        if (endPinId == size_t(inputPin.id)) { endPin = &inputPin; }
+                        for (auto& inputPin : node->inputPins)
+                        {
+                            if (endPinId == size_t(inputPin.id)) { endPin = &inputPin; }
+                        }
                     }
-                }
-                if (!startPin)
-                {
-                    for (auto& outputPin : node->outputPins)
+                    if (!startPin)
                     {
-                        if (startPinId == size_t(outputPin.id)) { startPin = &outputPin; }
+                        for (auto& outputPin : node->outputPins)
+                        {
+                            if (startPinId == size_t(outputPin.id)) { startPin = &outputPin; }
+                        }
                     }
+                    if (startPin && endPin) { break; }
                 }
-                if (startPin && endPin) { break; }
-            }
-            if (startPin && endPin)
-            {
-                if (!startPin->createLink(*endPin, linkId))
+                if (startPin && endPin)
                 {
-                    loadSuccessful = false;
-                    continue;
+                    if (!startPin->createLink(*endPin, linkId))
+                    {
+                        loadSuccessful = false;
+                        continue;
+                    }
+                    newlyLinkedNodes.insert(startPin->parentNode);
+                    newlyLinkedNodes.insert(endPin->parentNode);
                 }
-                newlyLinkedNodes.insert(startPin->parentNode);
-                newlyLinkedNodes.insert(endPin->parentNode);
             }
         }
     }

@@ -1392,7 +1392,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 renamePin = pin;
             }
         }
-        else if (auto* pin = nm::FindInputPin(contextPinId))
+        else if (auto* pin = nm::FindOutputPin(contextPinId))
         {
             ImGui::Text("ID: %lu", size_t(pin->id));
             ImGui::Text("Node: %s", pin->parentNode ? std::to_string(size_t(pin->parentNode->id)).c_str() : "<none>");

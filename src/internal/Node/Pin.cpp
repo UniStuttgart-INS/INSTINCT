@@ -137,7 +137,9 @@ void NAV::Pin::drawPinIcon(bool connected, int alpha) const
 
 bool NAV::Pin::createLink(OutputPin& startPin, InputPin& endPin, ax::NodeEditor::LinkId linkId)
 {
-    if (!startPin.canCreateLink(endPin)) { return false; }
+    if (startPin.isPinLinked(endPin)) { return true; } // Pins are already linked
+
+    if (!startPin.canCreateLink(endPin)) { return false; } // Types do not match
 
     if (!startPin.parentNode || !endPin.parentNode) { return false; }
     LOG_TRACE("called: {} of [{}] ==> {} of [{}]", size_t(startPin.id), startPin.parentNode->nameId(), size_t(endPin.id), endPin.parentNode->nameId());
