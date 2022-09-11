@@ -519,6 +519,10 @@ class InputPin : public Pin
     /// Callback to call when the node is firable or when it should be notified of data change
     Callback callback;
 
+
+    /// If true no more messages are accepted to the queue
+    bool queueBlocked = false;
+
     /// Queue with received data
     std::deque<std::shared_ptr<const NAV::NodeData>> queue;
 

@@ -119,7 +119,7 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
         for (const auto& link : outputPins.at(portIndex).links)
         {
             auto* targetPin = link.getConnectedPin();
-            if (link.connectedNode->isInitialized())
+            if (link.connectedNode->isInitialized() && !targetPin->queueBlocked)
             {
                 // #ifdef TESTING
                 //                 const auto& linkId = std::get<2>(nodeCallback);

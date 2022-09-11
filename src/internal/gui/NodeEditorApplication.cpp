@@ -929,6 +929,10 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 {
                     alpha = alpha * (48.0F / 255.0F);
                 }
+                if (input.queueBlocked)
+                {
+                    alpha = alpha * (80.0F / 255.0F);
+                }
 
                 builder.Input(input.id);
                 ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
