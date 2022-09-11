@@ -41,6 +41,10 @@ bool DeleteNode(ax::NodeEditor::NodeId nodeId);
 /// @brief Delete all nodes
 void DeleteAllNodes();
 
+/// @brief Adds the link
+/// @param[in] linkId Unique Id of the link
+void AddLink(ax::NodeEditor::LinkId linkId);
+
 /// @brief Create an Input Pin object
 /// @param[in] node Node to register the Pin for
 /// @param[in] name Display name of the Pin

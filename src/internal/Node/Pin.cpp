@@ -162,6 +162,8 @@ bool NAV::Pin::createLink(OutputPin& startPin, InputPin& endPin, ax::NodeEditor:
     startPin.connect(endPin, linkId);
     endPin.connect(startPin, linkId);
 
+    nm::AddLink(linkId);
+
     if (endPin.type != Pin::Type::Flow)
     {
         if (startPin.parentNode && endPin.parentNode && !startPin.parentNode->isInitialized())

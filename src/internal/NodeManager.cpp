@@ -152,6 +152,11 @@ void NAV::NodeManager::DeleteAllNodes()
     flow::ApplyChanges();
 }
 
+void NAV::NodeManager::AddLink(ax::NodeEditor::LinkId linkId)
+{
+    m_NextId = std::max(m_NextId, size_t(linkId) + 1);
+}
+
 NAV::InputPin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, InputPin::Callback callback, int idx)
 {
     LOG_TRACE("called for pin ({}) of type ({}) for node [{}]", name, std::string(pinType), node->nameId());
