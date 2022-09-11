@@ -426,11 +426,19 @@ void NAV::Node::workerThread(Node* node)
             {
                 node->workerTimeoutHandler();
             }
-            else // Triggered by '_workerConditionVariable.notify_all();'
+            else if (node->isInitialized()) // Triggered by '_workerConditionVariable.notify_all();'
             {
-                if (node->isInitialized())
+                for (size_t prio = 0; prio < node->inputPins.size(); prio++)
                 {
-                    // TODO: Handle data here
+                    for (size_t i = 0; i < node->inputPins.size(); i++)
+                    {
+                        auto& inputPin = node->inputPins.at(i);
+                        if (inputPin.type == Pin::Type::Flow && inputPin.priority == prio
+                            && inputPin.firable && inputPin.firable())
+                        {
+                            std::invoke(std::get<InputPin::FlowFirableCallbackFunc>(inputPin.callback), node, inputPin.queue, i);
+                        }
+                    }
                 }
             }
         }

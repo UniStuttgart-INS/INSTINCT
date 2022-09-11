@@ -43,9 +43,9 @@ class RtklibPosConverter : public Node
     bool initialize() override;
 
     /// @brief Converts the RtklibPosObs into PosVel
-    /// @param[in] nodeData RtklibPosObs to process
-    /// @param[in] pinId Id of the pin the data is received on
-    void receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void receiveObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
 };
 
 } // namespace NAV

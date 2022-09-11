@@ -17,6 +17,7 @@ using json = nlohmann::json; ///< json namespace
 #include <tuple>
 #include <mutex>
 #include <deque>
+#include <functional>
 
 namespace NAV
 {
@@ -507,8 +508,13 @@ class InputPin : public Pin
     /// @brief Disconnects the link
     void deleteLink();
 
-    /// Flow data callback function type to call when firable
-    using FlowFirableCallbackFunc = void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::PinId);
+    /// Type of the NodeData queue
+    using NodeDataQueue = std::deque<std::shared_ptr<const NAV::NodeData>>;
+
+    /// Flow data callback function type to call when firable.
+    /// 1st parameter: Reference of the queue with the data messages
+    /// 2nd parameter: Pin index of the pin the data is received on
+    using FlowFirableCallbackFunc = void (Node::*)(NodeDataQueue&, size_t);
     /// Notify function type to call when the connected value changed
     using DataChangedNotifyFunc = void (Node::*)(ax::NodeEditor::PinId);
 
@@ -519,12 +525,17 @@ class InputPin : public Pin
     /// Callback to call when the node is firable or when it should be notified of data change
     Callback callback;
 
+    /// @brief Function to check if the callback is firable
+    std::function<bool()> firable = nullptr;
+
+    /// @brief Priority when checking firable condition related to other pins (0 = highest priority)
+    size_t priority = 0;
 
     /// If true no more messages are accepted to the queue
     bool queueBlocked = false;
 
     /// Queue with received data
-    std::deque<std::shared_ptr<const NAV::NodeData>> queue;
+    NodeDataQueue queue;
 
     /// Mutex to interact with the queue object
     std::mutex queueAccessMutex;

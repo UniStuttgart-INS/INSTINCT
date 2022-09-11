@@ -47,9 +47,9 @@ bool NAV::RtklibPosConverter::initialize()
     return true;
 }
 
-void NAV::RtklibPosConverter::receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /*pinId*/)
+void NAV::RtklibPosConverter::receiveObs(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto rtklibPosObs = std::static_pointer_cast<const RtklibPosObs>(nodeData);
+    auto rtklibPosObs = std::static_pointer_cast<const RtklibPosObs>(queue.front());
 
     auto posVelObs = std::make_shared<PosVel>();
 
@@ -58,4 +58,6 @@ void NAV::RtklibPosConverter::receiveObs(const std::shared_ptr<const NodeData>& 
     posVelObs->setVelocity_e(rtklibPosObs->e_velocity());
 
     invokeCallbacks(OUTPUT_PORT_INDEX_POSVEL, posVelObs);
+
+    queue.pop_front();
 }

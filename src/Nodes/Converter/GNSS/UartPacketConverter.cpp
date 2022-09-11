@@ -115,9 +115,9 @@ bool NAV::UartPacketConverter::initialize()
     return true;
 }
 
-void NAV::UartPacketConverter::receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /*pinId*/)
+void NAV::UartPacketConverter::receiveObs(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto uartPacket = std::static_pointer_cast<const UartPacket>(nodeData);
+    auto uartPacket = std::static_pointer_cast<const UartPacket>(queue.front());
 
     std::shared_ptr<InsObs> convertedData = nullptr;
 
@@ -153,4 +153,6 @@ void NAV::UartPacketConverter::receiveObs(const std::shared_ptr<const NodeData>&
     {
         invokeCallbacks(OUTPUT_PORT_INDEX_CONVERTED, convertedData);
     }
+
+    queue.pop_front();
 }

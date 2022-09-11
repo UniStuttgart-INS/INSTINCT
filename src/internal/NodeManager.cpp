@@ -157,7 +157,7 @@ void NAV::NodeManager::AddLink(ax::NodeEditor::LinkId linkId)
     m_NextId = std::max(m_NextId, size_t(linkId) + 1);
 }
 
-NAV::InputPin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, InputPin::Callback callback, int idx)
+NAV::InputPin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, InputPin::Callback callback, size_t priority, int idx)
 {
     LOG_TRACE("called for pin ({}) of type ({}) for node [{}]", name, std::string(pinType), node->nameId());
     if (idx < 0)
@@ -171,6 +171,7 @@ NAV::InputPin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* nam
 
     node->inputPins.at(static_cast<size_t>(idx)).callback = callback;
     node->inputPins.at(static_cast<size_t>(idx)).dataIdentifier = dataIdentifier;
+    node->inputPins.at(static_cast<size_t>(idx)).priority = priority;
 
     flow::ApplyChanges();
 
