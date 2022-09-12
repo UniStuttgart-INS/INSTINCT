@@ -47,7 +47,7 @@ bool NAV::RtklibPosConverter::initialize()
     return true;
 }
 
-void NAV::RtklibPosConverter::receiveObs(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
+void NAV::RtklibPosConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     auto rtklibPosObs = std::static_pointer_cast<const RtklibPosObs>(queue.front());
 

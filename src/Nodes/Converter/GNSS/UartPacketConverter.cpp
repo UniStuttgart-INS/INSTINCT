@@ -115,7 +115,7 @@ bool NAV::UartPacketConverter::initialize()
     return true;
 }
 
-void NAV::UartPacketConverter::receiveObs(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
+void NAV::UartPacketConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     auto uartPacket = std::static_pointer_cast<const UartPacket>(queue.front());
 

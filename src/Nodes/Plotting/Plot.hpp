@@ -381,9 +381,9 @@ class Plot : public Node
     void plotMatrix(ax::NodeEditor::PinId pinId);
 
     /// @brief Plot the data on this port
-    /// @param[in] nodeData Data to plot
-    /// @param[in] pinId Id of the pin the data is received on
-    void plotData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void plotData(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot

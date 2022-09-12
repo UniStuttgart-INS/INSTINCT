@@ -148,9 +148,9 @@ void NAV::VectorNavDataLogger::deinitialize()
     FileWriter::deinitialize();
 }
 
-void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /*pinId*/)
+void NAV::VectorNavDataLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto obs = std::static_pointer_cast<const VectorNavBinaryOutput>(nodeData);
+    auto obs = std::static_pointer_cast<const VectorNavBinaryOutput>(queue.front());
 
     if (_fileType == FileType::CSV)
     {
@@ -1525,6 +1525,8 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
             }
         }
     }
+
+    queue.pop_front();
 
     LOG_DATA("{}: Message logged", nameId());
 }

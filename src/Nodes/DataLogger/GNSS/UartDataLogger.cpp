@@ -92,9 +92,9 @@ void NAV::UartDataLogger::deinitialize()
     FileWriter::deinitialize();
 }
 
-void NAV::UartDataLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /*pinId*/)
+void NAV::UartDataLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto obs = std::static_pointer_cast<const UartPacket>(nodeData);
+    auto obs = std::static_pointer_cast<const UartPacket>(queue.front());
 
     if (obs->raw.getRawDataLength() > 0)
     {
@@ -104,4 +104,6 @@ void NAV::UartDataLogger::writeObservation(const std::shared_ptr<const NodeData>
     {
         LOG_ERROR("{}: Tried to write binary, but observation had no binary data.", nameId());
     }
+
+    queue.pop_front();
 }

@@ -16,8 +16,9 @@ using json = nlohmann::json; ///< json namespace
 #include <memory>
 #include <tuple>
 #include <mutex>
-#include <deque>
 #include <functional>
+
+#include "util/Container/TsDeque.hpp"
 
 namespace NAV
 {
@@ -395,24 +396,6 @@ class OutputPin : public Pin
     /// @brief Disconnects all links
     void deleteLinks();
 
-    /// FileReader/Simulator pollData function type
-    using PollDataFunc = std::shared_ptr<const NAV::NodeData> (Node::*)(bool);
-
-    /// @brief Possible Types represented by an output pin
-    using PinData = std::variant<const void*,        // Object/Matrix/Delegate
-                                 const bool*,        // Bool
-                                 const int*,         // Int
-                                 const float*,       // Float
-                                 const double*,      // Float
-                                 const std::string*, // String
-                                 PollDataFunc>;      // Flow (FileReader poll data function)
-
-    /// Pointer to data (owned by this node) which is transferred over this pin
-    PinData data = static_cast<void*>(nullptr);
-
-    /// Mutex to interact with the data object
-    std::mutex dataAccessMutex;
-
     /// Collection of information about the connected node and pin
     struct OutgoingLink : public Link
     {
@@ -434,6 +417,24 @@ class OutputPin : public Pin
 
     /// Info to identify the linked pins
     std::vector<OutgoingLink> links;
+
+    /// FileReader/Simulator pollData function type
+    using PollDataFunc = std::shared_ptr<const NAV::NodeData> (Node::*)(bool);
+
+    /// @brief Possible Types represented by an output pin
+    using PinData = std::variant<const void*,        // Object/Matrix/Delegate
+                                 const bool*,        // Bool
+                                 const int*,         // Int
+                                 const float*,       // Float
+                                 const double*,      // Float
+                                 const std::string*, // String
+                                 PollDataFunc>;      // Flow (FileReader poll data function)
+
+    /// Pointer to data (owned by this node) which is transferred over this pin
+    PinData data = static_cast<void*>(nullptr);
+
+    /// Mutex to interact with the data object
+    std::mutex dataAccessMutex;
 
     friend class Pin;
     friend class InputPin;
@@ -508,38 +509,6 @@ class InputPin : public Pin
     /// @brief Disconnects the link
     void deleteLink();
 
-    /// Type of the NodeData queue
-    using NodeDataQueue = std::deque<std::shared_ptr<const NAV::NodeData>>;
-
-    /// Flow data callback function type to call when firable.
-    /// 1st parameter: Reference of the queue with the data messages
-    /// 2nd parameter: Pin index of the pin the data is received on
-    using FlowFirableCallbackFunc = void (Node::*)(NodeDataQueue&, size_t);
-    /// Notify function type to call when the connected value changed
-    using DataChangedNotifyFunc = void (Node::*)(ax::NodeEditor::PinId);
-
-    /// Callback function types
-    using Callback = std::variant<FlowFirableCallbackFunc, // Flow:  Callback function type to call when firable
-                                  DataChangedNotifyFunc>;  // Other: Notify function type to call when the connected value changed
-
-    /// Callback to call when the node is firable or when it should be notified of data change
-    Callback callback;
-
-    /// @brief Function to check if the callback is firable
-    std::function<bool()> firable = nullptr;
-
-    /// @brief Priority when checking firable condition related to other pins (0 = highest priority)
-    size_t priority = 0;
-
-    /// If true no more messages are accepted to the queue
-    bool queueBlocked = false;
-
-    /// Queue with received data
-    NodeDataQueue queue;
-
-    /// Mutex to interact with the queue object
-    std::mutex queueAccessMutex;
-
     /// Collection of information about the connected node and pin
     struct IncomingLink : public Link
     {
@@ -594,6 +563,34 @@ class InputPin : public Pin
 
     /// Info to identify the linked pin
     IncomingLink link;
+
+    /// Node data queue type
+    using NodeDataQueue = TsDeque<std::shared_ptr<const NAV::NodeData>>;
+
+    /// Flow data callback function type to call when firable.
+    /// - 1st Parameter: Queue with the received messages
+    /// - 2nd Parameter: Pin index of the pin the data is received on
+    using FlowFirableCallbackFunc = void (Node::*)(NodeDataQueue&, size_t);
+    /// Notify function type to call when the connected value changed
+    using DataChangedNotifyFunc = void (Node::*)(ax::NodeEditor::PinId);
+    /// Callback function types
+    using Callback = std::variant<FlowFirableCallbackFunc, // Flow:  Callback function type to call when firable
+                                  DataChangedNotifyFunc>;  // Other: Notify function type to call when the connected value changed
+
+    /// Callback to call when the node is firable or when it should be notified of data change
+    Callback callback;
+
+    /// @brief Function to check if the callback is firable
+    std::function<bool()> firable = nullptr;
+
+    /// @brief Priority when checking firable condition related to other pins (0 = highest priority)
+    size_t priority = 0;
+
+    /// If true no more messages are accepted to the queue
+    bool queueBlocked = false;
+
+    /// Queue with received data
+    NodeDataQueue queue;
 
     friend class Pin;
     friend class OutputPin;

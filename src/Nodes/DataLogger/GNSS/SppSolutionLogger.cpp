@@ -118,9 +118,9 @@ void NAV::SppSolutionLogger::deinitialize()
     FileWriter::deinitialize();
 }
 
-void NAV::SppSolutionLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /* pinId */)
+void NAV::SppSolutionLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto obs = std::static_pointer_cast<const SppSolution>(nodeData);
+    auto obs = std::static_pointer_cast<const SppSolution>(queue.front());
 
     constexpr int gpsCyclePrecision = 3;
     constexpr int gpsTimePrecision = 12;
@@ -245,4 +245,6 @@ void NAV::SppSolutionLogger::writeObservation(const std::shared_ptr<const NodeDa
     _filestream << ",";
     if (!std::isnan(obs->clkDriftStdev)) { _filestream << obs->clkDriftStdev; } // Receiver clock drift StDev [s/s]
     _filestream << '\n';
+
+    queue.pop_front();
 }

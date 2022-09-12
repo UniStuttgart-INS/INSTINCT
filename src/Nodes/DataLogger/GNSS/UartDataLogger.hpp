@@ -60,9 +60,9 @@ class UartDataLogger : public Node, public FileWriter
     void deinitialize() override;
 
     /// @brief Write Observation to the file
-    /// @param[in] nodeData The received observation
-    /// @param[in] pinId Id of the pin the data is received on
-    void writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void writeObservation(InputPin::NodeDataQueue& queue, size_t pinIdx);
 };
 
 } // namespace NAV
