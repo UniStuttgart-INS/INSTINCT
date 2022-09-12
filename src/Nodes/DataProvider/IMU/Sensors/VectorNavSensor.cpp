@@ -5966,7 +5966,7 @@ void NAV::VectorNavSensor::deinitialize()
 
     try
     {
-        if (isInitialized() && _vs.isConnected())
+        if (_vs.isConnected())
         {
             try
             {
@@ -7039,7 +7039,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     {
                         // FIXME: This seems like a bug in clang-tidy. Check if it is working in future versions of clang-tidy
                         // NOLINTNEXTLINE(hicpp-use-nullptr, modernize-use-nullptr)
-                        if (obs->insTime.value() - vnSensor->_lastMessageTime.at(b) >= std::chrono::duration<double>(1.5 / IMU_DEFAULT_FREQUENCY * vnSensor->_binaryOutputRegister.at(b).rateDivisor))
+                        if (obs->insTime.value() - vnSensor->_lastMessageTime.at(b) >= std::chrono::duration<double>(1.5 * (vnSensor->_binaryOutputRegister.at(b).rateDivisor / IMU_DEFAULT_FREQUENCY)))
                         {
                             LOG_WARN("{}: Potentially lost a message. Previous message was at {} and current message at {} which is a time difference of {} seconds but we expect a rate of {} seconds.", vnSensor->nameId(),
                                      vnSensor->_lastMessageTime.at(b), obs->insTime.value(), (obs->insTime.value() - vnSensor->_lastMessageTime.at(b)).count(),
@@ -7071,9 +7071,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     }
                     else
                     {
-                        auto allowedTimeDiff = std::chrono::microseconds(static_cast<int>(0.5 / IMU_DEFAULT_FREQUENCY
-                                                                                          * vnSensor->_binaryOutputRegister.at(b).rateDivisor
-                                                                                          * 1e6));
+                        auto allowedTimeDiff = std::chrono::microseconds(static_cast<int>(0.5 * (vnSensor->_binaryOutputRegister.at(b).rateDivisor / IMU_DEFAULT_FREQUENCY) * 1e6));
                         if (vnSensor->_binaryOutputRegisterMergeIndex != b
                             && ((obs->insTime.has_value() && vnSensor->_binaryOutputRegisterMergeObservation->insTime.has_value()
                                  && (obs->insTime.value() - vnSensor->_binaryOutputRegisterMergeObservation->insTime.value() < allowedTimeDiff)) // NOLINT(hicpp-use-nullptr, modernize-use-nullptr)
