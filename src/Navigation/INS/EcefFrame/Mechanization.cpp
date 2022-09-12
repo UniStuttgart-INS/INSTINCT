@@ -86,8 +86,6 @@ Eigen::Matrix<double, 16, 1> e_calcPosVelAttDerivative(const Eigen::Matrix<doubl
     y_dot.segment<4>(0) = calcTimeDerivativeFor_e_Quat_b(b_omega_eb,       // ω_eb_b Body rate with respect to the ECEF frame, expressed in the body frame
                                                          y.segment<4>(0)); // e_Quat_b_coeffs Coefficients of the quaternion e_Quat_b in order w, x, y, z (q = w + ix + jy + kz)
 
-    // TODO: Zwiener c.velocityUpdateRotationCorrectionEnabled
-
     y_dot.segment<3>(4) = e_calcTimeDerivativeForVelocity(e_Quat_b * b_measuredForce, // f_n Specific force vector as measured by a triad of accelerometers and resolved into ECEF frame coordinates
                                                           e_coriolisAcceleration,     // Coriolis acceleration in ECEF coordinates in [m/s^2]
                                                           e_gravitation,              // Local gravitation vector (caused by effects of mass attraction) in ECEF frame coordinates [m/s^2]

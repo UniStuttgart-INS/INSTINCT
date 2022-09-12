@@ -40,54 +40,6 @@ Eigen::Vector3d n_calcTimeDerivativeForVelocity(const Eigen::Vector3d& n_measure
            - n_centrifugalAcceleration;
 }
 
-Eigen::Vector3d n_calcTimeDerivativeForVelocity_RotationCorrection(const Eigen::Vector3d& n_measuredForce,
-                                                                   const Eigen::Vector3d& n_coriolisAcceleration,
-                                                                   const Eigen::Vector3d& n_gravitation,
-                                                                   const Eigen::Vector3d& n_centrifugalAcceleration,
-                                                                   const Eigen::Vector3d& b_omega_ib,
-                                                                   const Eigen::Vector3d& n_omega_ie,
-                                                                   const Eigen::Vector3d& n_omega_en,
-                                                                   const Eigen::Quaterniond& n_Quat_b,
-                                                                   const double& timeDifferenceSec)
-{
-    // q Quaternion, from n-system to b-system
-    Eigen::Quaterniond b_Quat_n = n_Quat_b.conjugate();
-    LOG_DATA("b_Quat_n = {}", b_Quat_n.coeffs().transpose());
-    LOG_DATA("rollPitchYaw = {} [°]", rad2deg(trafo::quat2eulerZYX(n_Quat_b)).transpose());
-
-    // Δβ⁠_nb_p The angular velocities in [rad], of the navigation to body system, in body coordinates (eq. 8.9)
-    Eigen::Vector3d b_omega_nb = b_omega_ib - b_Quat_n * (n_omega_ie + n_omega_en);
-    LOG_DATA("b_omega_nb = {} [rad/s]", b_omega_nb.transpose());
-
-    Eigen::Matrix3d rotA;
-    if (b_omega_nb.norm() > 1e-5)
-    {
-        // Zwiener eq. (3.37)
-        rotA = 2 * math::skewSymmetricMatrix(b_omega_nb) * std::pow(std::sin(timeDifferenceSec * b_omega_nb.norm() * 0.5) / b_omega_nb.norm(), 2);
-        LOG_DATA("rotA =\n{}", rotA);
-    }
-    else
-    {
-        // Zwiener eq. (3.39)
-        rotA = math::skewSymmetricMatrix(b_omega_nb) * 0.5 * std::pow(timeDifferenceSec, 2);
-        LOG_DATA("rotA (small b_omega_nb) =\n{}", rotA);
-    }
-    // Zwiener eq. (3.43)
-    Eigen::Matrix3d rotB = (std::pow(timeDifferenceSec, 3) / 6.0 - std::pow(b_omega_nb.norm(), 2) / 120.0 * std::pow(timeDifferenceSec, 5)) * math::skewSymmetricMatrixSquared(b_omega_nb);
-    LOG_DATA("rotB =\n{}", rotB);
-
-    // Rotation correction factor from Zwiener eq. (3.44)
-    Eigen::Matrix3d rotCorr = Eigen::Matrix3d::Identity(3, 3) * timeDifferenceSec + rotA + rotB;
-    rotCorr /= timeDifferenceSec;
-    LOG_DATA("rotCorr =\n{}", rotCorr);
-
-    // Specific force in body coordinates
-    Eigen::Vector3d b_measuredForce = b_Quat_n * n_measuredForce;
-    LOG_DATA("b_measuredForce = {} [m/s^2]", b_measuredForce.transpose());
-
-    return n_Quat_b * (rotCorr * b_measuredForce) - n_coriolisAcceleration + n_gravitation - n_centrifugalAcceleration;
-}
-
 Eigen::Vector3d lla_calcTimeDerivativeForPosition(const Eigen::Vector3d& n_velocity,
                                                   const double& phi,
                                                   const double& h,
@@ -159,25 +111,10 @@ Eigen::Matrix<double, 16, 1> n_calcPosVelAttDerivative(const Eigen::Matrix<doubl
     y_dot.segment<4>(0) = calcTimeDerivativeFor_n_Quat_b(b_omega_nb,       // ω_nb_b Body rate with respect to the navigation frame, expressed in the body frame
                                                          y.segment<4>(0)); // n_Quat_b_coeffs Coefficients of the quaternion n_Quat_b in order w, x, y, z (q = w + ix + jy + kz)
 
-    if (c.velocityUpdateRotationCorrectionEnabled)
-    {
-        y_dot.segment<3>(4) = n_calcTimeDerivativeForVelocity_RotationCorrection(n_Quat_b * b_measuredForce, //  Specific force vector as measured by a triad of accelerometers and resolved into local-navigation frame coordinates
-                                                                                 n_coriolisAcceleration,     // Coriolis acceleration in local-navigation coordinates in [m/s^2]
-                                                                                 n_gravitation,              // Local gravitation vector (caused by effects of mass attraction) in local-navigation frame coordinates [m/s^2]
-                                                                                 n_centrifugalAcceleration,  // Centrifugal acceleration in local-navigation coordinates in [m/s^2]
-                                                                                 b_omega_ib,
-                                                                                 n_omega_ie,
-                                                                                 n_omega_en,
-                                                                                 n_Quat_b,
-                                                                                 c.timeDifferenceSec);
-    }
-    else
-    {
-        y_dot.segment<3>(4) = n_calcTimeDerivativeForVelocity(n_Quat_b * b_measuredForce, // f_n Specific force vector as measured by a triad of accelerometers and resolved into local-navigation frame coordinates
-                                                              n_coriolisAcceleration,     // Coriolis acceleration in local-navigation coordinates in [m/s^2]
-                                                              n_gravitation,              // Local gravitation vector (caused by effects of mass attraction) in local-navigation frame coordinates [m/s^2]
-                                                              n_centrifugalAcceleration); // Centrifugal acceleration in local-navigation coordinates in [m/s^2]
-    }
+    y_dot.segment<3>(4) = n_calcTimeDerivativeForVelocity(n_Quat_b * b_measuredForce, // f_n Specific force vector as measured by a triad of accelerometers and resolved into local-navigation frame coordinates
+                                                          n_coriolisAcceleration,     // Coriolis acceleration in local-navigation coordinates in [m/s^2]
+                                                          n_gravitation,              // Local gravitation vector (caused by effects of mass attraction) in local-navigation frame coordinates [m/s^2]
+                                                          n_centrifugalAcceleration); // Centrifugal acceleration in local-navigation coordinates in [m/s^2]
 
     y_dot.segment<3>(7) = lla_calcTimeDerivativeForPosition(y.segment<3>(4), // Velocity with respect to the Earth in local-navigation frame coordinates [m/s]
                                                             y(7),            // 𝜙 Latitude in [rad]

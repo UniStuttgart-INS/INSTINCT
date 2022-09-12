@@ -75,7 +75,6 @@ struct PosVelAttDerivativeConstants_e
     bool coriolisAccelerationCompensationEnabled = true;         ///< Apply the coriolis acceleration compensation to the measured accelerations
     bool centrifgalAccelerationCompensationEnabled = true;       ///< Apply the centrifugal acceleration compensation to the measured accelerations
     bool angularRateEarthRotationCompensationEnabled = true;     ///< Apply the Earth rotation rate compensation to the measured angular rates
-    bool velocityUpdateRotationCorrectionEnabled = false;        ///< Apply Zwiener's rotation correction for the velocity update
 };
 
 /// @brief Calculates the derivative of the quaternion, velocity and position in ECEF coordinates

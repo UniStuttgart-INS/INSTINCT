@@ -61,10 +61,6 @@ void NAV::ImuIntegrator::guiConfig()
     if (ImGui::Combo(fmt::format("Integration Frame##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_integrationFrame), "ECEF\0NED\0\0"))
     {
         LOG_DEBUG("{}: Integration Frame changed to {}", nameId(), _integrationFrame == IntegrationFrame::NED ? "NED" : "ECEF");
-        if (_integrationFrame == IntegrationFrame::ECEF)
-        {
-            _velocityUpdateRotationCorrectionEnabled = false;
-        }
         flow::ApplyChanges();
     }
 
@@ -154,19 +150,6 @@ void NAV::ImuIntegrator::guiConfig()
             }
             ImGui::Unindent();
         }
-        if (_integrationFrame == IntegrationFrame::ECEF)
-        {
-            ImGui::PushDisabled();
-        }
-        if (ImGui::Checkbox(fmt::format("Zwiener Rotation Correction##{}", size_t(id)).c_str(), &_velocityUpdateRotationCorrectionEnabled))
-        {
-            LOG_DEBUG("{}: velocityUpdateRotationCorrectionEnabled changed to {}", nameId(), _velocityUpdateRotationCorrectionEnabled);
-            flow::ApplyChanges();
-        }
-        if (_integrationFrame == IntegrationFrame::ECEF)
-        {
-            ImGui::PopDisabled();
-        }
         ImGui::TreePop();
     }
 
@@ -213,7 +196,6 @@ void NAV::ImuIntegrator::guiConfig()
     j["centrifgalAccelerationCompensationEnabled"] = _centrifgalAccelerationCompensationEnabled;
     j["angularRateEarthRotationCompensationEnabled"] = _angularRateEarthRotationCompensationEnabled;
     j["angularRateTransportRateCompensationEnabled"] = _angularRateTransportRateCompensationEnabled;
-    j["velocityUpdateRotationCorrectionEnabled"] = _velocityUpdateRotationCorrectionEnabled;
     // #########################################################################################################################################
     j["showCorrectionsInputPin"] = _showCorrectionsInputPin;
 
@@ -261,10 +243,6 @@ void NAV::ImuIntegrator::restore(json const& j)
     if (j.contains("angularRateTransportRateCompensationEnabled"))
     {
         _angularRateTransportRateCompensationEnabled = j.at("angularRateTransportRateCompensationEnabled");
-    }
-    if (j.contains("velocityUpdateRotationCorrectionEnabled"))
-    {
-        _velocityUpdateRotationCorrectionEnabled = j.at("velocityUpdateRotationCorrectionEnabled");
     }
     // #########################################################################################################################################
     if (j.contains("showCorrectionsInputPin"))
@@ -626,7 +604,6 @@ void NAV::ImuIntegrator::integrateObservationECEF()
     c.coriolisAccelerationCompensationEnabled = _coriolisAccelerationCompensationEnabled;
     c.centrifgalAccelerationCompensationEnabled = _centrifgalAccelerationCompensationEnabled;
     c.angularRateEarthRotationCompensationEnabled = _angularRateEarthRotationCompensationEnabled;
-    c.velocityUpdateRotationCorrectionEnabled = _velocityUpdateRotationCorrectionEnabled;
 
     if (_integrationAlgorithm == IntegrationAlgorithm::Heun)
     {
@@ -803,7 +780,6 @@ void NAV::ImuIntegrator::integrateObservationNED()
     c.centrifgalAccelerationCompensationEnabled = _centrifgalAccelerationCompensationEnabled;
     c.angularRateEarthRotationCompensationEnabled = _angularRateEarthRotationCompensationEnabled;
     c.angularRateTransportRateCompensationEnabled = _angularRateTransportRateCompensationEnabled;
-    c.velocityUpdateRotationCorrectionEnabled = _velocityUpdateRotationCorrectionEnabled;
 
     if (_integrationAlgorithm == IntegrationAlgorithm::Heun)
     {
