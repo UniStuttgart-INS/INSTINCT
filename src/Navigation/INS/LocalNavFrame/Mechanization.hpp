@@ -82,7 +82,6 @@ struct PosVelAttDerivativeConstants_n
 {
     Eigen::Vector3d b_omega_ib_dot;                              ///< ∂/∂t ω_ip_b Angular velocity rate in [rad/s²], of the inertial to platform system, in body coordinates
     Eigen::Vector3d b_measuredForce_dot;                         ///< ∂/∂t f_b Acceleration rate in [m/s^3], in body coordinates
-    double timeDifferenceSec = 0;                                ///< Time difference Δtₖ = (tₖ - tₖ₋₁) in [seconds]
     GravitationModel gravitationModel = GravitationModel::EGM96; ///< Gravity Model to use
     bool coriolisAccelerationCompensationEnabled = true;         ///< Apply the coriolis acceleration compensation to the measured accelerations
     bool centrifgalAccelerationCompensationEnabled = true;       ///< Apply the centrifugal acceleration compensation to the measured accelerations

@@ -599,7 +599,6 @@ void NAV::ImuIntegrator::integrateObservationECEF()
     PosVelAttDerivativeConstants_e c;
     c.b_omega_ib_dot = (b_omega_ip__t0 - b_omega_ip__t1) / static_cast<double>(timeDifferenceSec);
     c.b_measuredForce_dot = (b_f__t0 - b_f__t1) / static_cast<double>(timeDifferenceSec);
-    c.timeDifferenceSec = static_cast<double>(timeDifferenceSec);
     c.gravitationModel = _gravitationModel;
     c.coriolisAccelerationCompensationEnabled = _coriolisAccelerationCompensationEnabled;
     c.centrifgalAccelerationCompensationEnabled = _centrifgalAccelerationCompensationEnabled;
@@ -774,7 +773,6 @@ void NAV::ImuIntegrator::integrateObservationNED()
     PosVelAttDerivativeConstants_n c;
     c.b_omega_ib_dot = (b_omega_ip__t0 - b_omega_ip__t1) / static_cast<double>(timeDifferenceSec);
     c.b_measuredForce_dot = (b_f__t0 - b_f__t1) / static_cast<double>(timeDifferenceSec);
-    c.timeDifferenceSec = static_cast<double>(timeDifferenceSec);
     c.gravitationModel = _gravitationModel;
     c.coriolisAccelerationCompensationEnabled = _coriolisAccelerationCompensationEnabled;
     c.centrifgalAccelerationCompensationEnabled = _centrifgalAccelerationCompensationEnabled;
