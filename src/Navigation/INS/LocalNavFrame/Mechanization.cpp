@@ -106,20 +106,23 @@ Eigen::Vector3d lla_calcTimeDerivativeForPosition(const Eigen::Vector3d& n_veloc
              -v_D };
 }
 
-Eigen::Matrix<double, 10, 1> n_calcPosVelAttDerivative(const Eigen::Matrix<double, 10, 1>& y, const PosVelAttDerivativeConstants_n& c)
+Eigen::Matrix<double, 16, 1> n_calcPosVelAttDerivative(const Eigen::Matrix<double, 16, 1>& y, const PosVelAttDerivativeConstants_n& c)
 {
-    //       0  1  2  3   4    5    6   7  8  9
-    // ∂/∂t [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h]^T
-    Eigen::Matrix<double, 10, 1> y_dot = Eigen::Matrix<double, 10, 1>::Zero();
+    //  0  1  2  3   4    5    6   7  8  9  10  11  12  13  14  15
+    // [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h, fx, fy, fz, ωx, ωy, ωz]^T
+    Eigen::Matrix<double, 16, 1> y_dot = Eigen::Matrix<double, 16, 1>::Zero();
 
     Eigen::Quaterniond n_Quat_b{ y(0), y(1), y(2), y(3) };
     Eigen::Quaterniond n_Quat_e = trafo::n_Quat_e(y(7), y(8));
 
+    Eigen::Vector3d b_measuredForce = y.segment<3>(10);
+    Eigen::Vector3d b_omega_ib = y.segment<3>(13);
+
     LOG_DATA("rollPitchYaw = {} [°]", rad2deg(trafo::quat2eulerZYX(n_Quat_b)).transpose());
     LOG_DATA("n_velocity   = {} [m/s]", y.segment<3>(4).transpose());
     LOG_DATA("lla_position = {}°, {}°, {} m", rad2deg(y(7)), rad2deg(y(8)), y(9));
-    LOG_DATA("b_measuredForce = {} [m/s^2]", c.b_measuredForce.transpose());
-    LOG_DATA("b_omega_ib = {} [rad/s]", c.b_omega_ib.transpose());
+    LOG_DATA("b_measuredForce = {} [m/s^2]", b_measuredForce.transpose());
+    LOG_DATA("b_omega_ib = {} [rad/s]", b_omega_ib.transpose());
 
     auto R_N = calcEarthRadius_N(y(7));
     LOG_DATA("R_N = {} [m]", R_N);
@@ -133,7 +136,7 @@ Eigen::Matrix<double, 10, 1> n_calcPosVelAttDerivative(const Eigen::Matrix<doubl
     Eigen::Vector3d n_omega_en = n_calcTransportRate(y.segment<3>(7), y.segment<3>(4), R_N, R_E);
     LOG_DATA("n_omega_en = {} [rad/s]", n_omega_en.transpose());
     // ω_nb_b = ω_ib_b - C_bn * (ω_ie_n + ω_en_n)
-    Eigen::Vector3d b_omega_nb = c.b_omega_ib
+    Eigen::Vector3d b_omega_nb = b_omega_ib
                                  - n_Quat_b.conjugate()
                                        * ((c.angularRateEarthRotationCompensationEnabled ? n_omega_ie : Eigen::Vector3d::Zero())
                                           + (c.angularRateTransportRateCompensationEnabled ? n_omega_en : Eigen::Vector3d::Zero()));
@@ -158,11 +161,11 @@ Eigen::Matrix<double, 10, 1> n_calcPosVelAttDerivative(const Eigen::Matrix<doubl
 
     if (c.velocityUpdateRotationCorrectionEnabled)
     {
-        y_dot.segment<3>(4) = n_calcTimeDerivativeForVelocity_RotationCorrection(n_Quat_b * c.b_measuredForce, //  Specific force vector as measured by a triad of accelerometers and resolved into local-navigation frame coordinates
-                                                                                 n_coriolisAcceleration,       // Coriolis acceleration in local-navigation coordinates in [m/s^2]
-                                                                                 n_gravitation,                // Local gravitation vector (caused by effects of mass attraction) in local-navigation frame coordinates [m/s^2]
-                                                                                 n_centrifugalAcceleration,    // Centrifugal acceleration in local-navigation coordinates in [m/s^2]
-                                                                                 c.b_omega_ib,
+        y_dot.segment<3>(4) = n_calcTimeDerivativeForVelocity_RotationCorrection(n_Quat_b * b_measuredForce, //  Specific force vector as measured by a triad of accelerometers and resolved into local-navigation frame coordinates
+                                                                                 n_coriolisAcceleration,     // Coriolis acceleration in local-navigation coordinates in [m/s^2]
+                                                                                 n_gravitation,              // Local gravitation vector (caused by effects of mass attraction) in local-navigation frame coordinates [m/s^2]
+                                                                                 n_centrifugalAcceleration,  // Centrifugal acceleration in local-navigation coordinates in [m/s^2]
+                                                                                 b_omega_ib,
                                                                                  n_omega_ie,
                                                                                  n_omega_en,
                                                                                  n_Quat_b,
@@ -170,10 +173,10 @@ Eigen::Matrix<double, 10, 1> n_calcPosVelAttDerivative(const Eigen::Matrix<doubl
     }
     else
     {
-        y_dot.segment<3>(4) = n_calcTimeDerivativeForVelocity(n_Quat_b * c.b_measuredForce, // f_n Specific force vector as measured by a triad of accelerometers and resolved into local-navigation frame coordinates
-                                                              n_coriolisAcceleration,       // Coriolis acceleration in local-navigation coordinates in [m/s^2]
-                                                              n_gravitation,                // Local gravitation vector (caused by effects of mass attraction) in local-navigation frame coordinates [m/s^2]
-                                                              n_centrifugalAcceleration);   // Centrifugal acceleration in local-navigation coordinates in [m/s^2]
+        y_dot.segment<3>(4) = n_calcTimeDerivativeForVelocity(n_Quat_b * b_measuredForce, // f_n Specific force vector as measured by a triad of accelerometers and resolved into local-navigation frame coordinates
+                                                              n_coriolisAcceleration,     // Coriolis acceleration in local-navigation coordinates in [m/s^2]
+                                                              n_gravitation,              // Local gravitation vector (caused by effects of mass attraction) in local-navigation frame coordinates [m/s^2]
+                                                              n_centrifugalAcceleration); // Centrifugal acceleration in local-navigation coordinates in [m/s^2]
     }
 
     y_dot.segment<3>(7) = lla_calcTimeDerivativeForPosition(y.segment<3>(4), // Velocity with respect to the Earth in local-navigation frame coordinates [m/s]
@@ -182,9 +185,14 @@ Eigen::Matrix<double, 10, 1> n_calcPosVelAttDerivative(const Eigen::Matrix<doubl
                                                             R_N,             // North/South (meridian) earth radius [m]
                                                             R_E);            // East/West (prime vertical) earth radius [m]
 
+    y_dot.segment<3>(10) = c.b_measuredForce_dot;
+    y_dot.segment<3>(13) = c.b_omega_ib_dot;
+
     LOG_DATA("n_Quat_b_dot = {} ", y_dot.segment<4>(0).transpose());
     LOG_DATA("n_velocity_dot = {} [m/s^2]", y_dot.segment<3>(4).transpose());
     LOG_DATA("lla_position_dot = {} [rad/s, rad/s, m/s]", y_dot.segment<3>(7).transpose());
+    LOG_DATA("b_measuredForce_dot = {} [m/s^3]", y_dot.segment<3>(10).transpose());
+    LOG_DATA("b_omega_ib_dot = {} [rad/s^2]", y_dot.segment<3>(13).transpose());
 
     return y_dot;
 }

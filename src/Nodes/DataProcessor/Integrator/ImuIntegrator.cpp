@@ -596,29 +596,31 @@ void NAV::ImuIntegrator::integrateObservationECEF()
     LOG_DATA("{}: e_position__t1 = {}", nameId(), e_position__t1.transpose());
 
     // ω_ip_b (tₖ₋₁) Angular velocity in [rad/s], of the inertial to platform system, in body coordinates, at the time tₖ₋₁
-    Eigen::Vector3d b_omega_ip__t1 = imuPosition.b_quatGyro_p() * p_omega_ip__t1;
+    [[maybe_unused]] Eigen::Vector3d b_omega_ip__t1 = imuPosition.b_quatGyro_p() * p_omega_ip__t1;
     LOG_DATA("{}: b_omega_ip__t1 = {}", nameId(), b_omega_ip__t1.transpose());
     // ω_ip_b (tₖ) Angular velocity in [rad/s], of the inertial to platform system, in body coordinates, at the time tₖ
-    Eigen::Vector3d b_omega_ip__t0 = imuPosition.b_quatGyro_p() * p_omega_ip__t0;
+    [[maybe_unused]] Eigen::Vector3d b_omega_ip__t0 = imuPosition.b_quatGyro_p() * p_omega_ip__t0;
     LOG_DATA("{}: b_omega_ip__t0 = {}", nameId(), b_omega_ip__t0.transpose());
 
     // f_b (tₖ₋₁) Acceleration in [m/s^2], in body coordinates, at the time tₖ₋₁
-    Eigen::Vector3d b_f__t1 = imuPosition.b_quatAccel_p() * p_f_ip__t1;
+    [[maybe_unused]] Eigen::Vector3d b_f__t1 = imuPosition.b_quatAccel_p() * p_f_ip__t1;
     LOG_DATA("{}: b_f__t1 = {}", nameId(), b_f__t1.transpose());
     // f_b (tₖ) Acceleration in [m/s^2], in body coordinates, at the time tₖ
-    Eigen::Vector3d b_f__t0 = imuPosition.b_quatAccel_p() * p_f_ip__t0;
+    [[maybe_unused]] Eigen::Vector3d b_f__t0 = imuPosition.b_quatAccel_p() * p_f_ip__t0;
     LOG_DATA("{}: b_f__t0 = {}", nameId(), b_f__t0.transpose());
 
-    //  0  1  2  3   4    5    6   7  8  9
-    // [w, x, y, z, v_x, v_y, v_z, x, y, z]^T
-    Eigen::Matrix<double, 10, 1> y;
+    //  0  1  2  3   4    5    6   7  8  9  10  11  12  13  14  15
+    // [w, x, y, z, v_x, v_y, v_z, x, y, z, fx, fy, fz, ωx, ωy, ωz]^T
+    Eigen::Matrix<double, 16, 1> y;
     y.segment<4>(0) = Eigen::Vector4d{ e_Quat_b__t1.w(), e_Quat_b__t1.x(), e_Quat_b__t1.y(), e_Quat_b__t1.z() };
     y.segment<3>(4) = e_velocity__t1;
     y.segment<3>(7) = e_position__t1;
+    y.segment<3>(10) = b_f__t1;
+    y.segment<3>(13) = b_omega_ip__t1;
 
     PosVelAttDerivativeConstants_e c;
-    c.b_omega_ib = b_omega_ip__t1; // platform system does not rotate with respect to body system
-    c.b_measuredForce = b_f__t1;
+    c.b_omega_ib_dot = (b_omega_ip__t0 - b_omega_ip__t1) / static_cast<double>(timeDifferenceSec);
+    c.b_measuredForce_dot = (b_f__t0 - b_f__t1) / static_cast<double>(timeDifferenceSec);
     c.timeDifferenceSec = static_cast<double>(timeDifferenceSec);
     c.gravitationModel = _gravitationModel;
     c.coriolisAccelerationCompensationEnabled = _coriolisAccelerationCompensationEnabled;
@@ -628,29 +630,7 @@ void NAV::ImuIntegrator::integrateObservationECEF()
 
     if (_integrationAlgorithm == IntegrationAlgorithm::Heun)
     {
-        // Values needed to calculate the PosVelAttDerivative for the local-navigation frame
-        struct AccelGyroMeasurement
-        {
-            Eigen::Vector3d b_omega_ib;      // ω_ip_b Angular velocity in [rad/s], of the inertial to platform system, in body coordinates
-            Eigen::Vector3d b_measuredForce; // b_measuredForce Acceleration in [m/s^2], in body coordinates
-        };
-        auto posVelAttDerivativeWrapper = [](const Eigen::Matrix<double, 10, 1>& y, const AccelGyroMeasurement& z, const PosVelAttDerivativeConstants_e& c) {
-            PosVelAttDerivativeConstants_e c_new;
-            c_new.b_omega_ib = z.b_omega_ib;
-            c_new.b_measuredForce = z.b_measuredForce;
-            c_new.timeDifferenceSec = c.timeDifferenceSec;
-            c_new.gravitationModel = c.gravitationModel;
-            c_new.coriolisAccelerationCompensationEnabled = c.coriolisAccelerationCompensationEnabled;
-            c_new.centrifgalAccelerationCompensationEnabled = c.centrifgalAccelerationCompensationEnabled;
-            c_new.angularRateEarthRotationCompensationEnabled = c.angularRateEarthRotationCompensationEnabled;
-            c_new.velocityUpdateRotationCorrectionEnabled = c.velocityUpdateRotationCorrectionEnabled;
-
-            return e_calcPosVelAttDerivative(y, c_new);
-        };
-        AccelGyroMeasurement z__t0{ b_omega_ip__t0, b_f__t0 };
-        AccelGyroMeasurement z__t1{ b_omega_ip__t1, b_f__t1 };
-
-        y = Heun(posVelAttDerivativeWrapper, timeDifferenceSec, y, z__t1, z__t0, c); // NOLINT(readability-suspicious-call-argument)
+        y = Heun(e_calcPosVelAttDerivative, timeDifferenceSec, y, c);
     }
     else if (_integrationAlgorithm == IntegrationAlgorithm::RungeKutta1)
     {
@@ -805,16 +785,18 @@ void NAV::ImuIntegrator::integrateObservationNED()
     Eigen::Vector3d b_f__t0 = imuPosition.b_quatAccel_p() * p_f_ip__t0;
     LOG_DATA("{}: b_f__t0 = {}", nameId(), b_f__t0.transpose());
 
-    //  0  1  2  3   4    5    6   7  8  9
-    // [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h]^T
-    Eigen::Matrix<double, 10, 1> y;
+    //  0  1  2  3   4    5    6   7  8  9  10  11  12  13  14  15
+    // [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h, fx, fy, fz, ωx, ωy, ωz]^T
+    Eigen::Matrix<double, 16, 1> y;
     y.segment<4>(0) = Eigen::Vector4d{ n_Quat_b__t1.w(), n_Quat_b__t1.x(), n_Quat_b__t1.y(), n_Quat_b__t1.z() };
     y.segment<3>(4) = n_velocity__t1;
     y.segment<3>(7) = lla_position__t1;
+    y.segment<3>(10) = b_f__t1;
+    y.segment<3>(13) = b_omega_ip__t1;
 
     PosVelAttDerivativeConstants_n c;
-    c.b_omega_ib = b_omega_ip__t1; // platform system does not rotate with respect to body system
-    c.b_measuredForce = b_f__t1;
+    c.b_omega_ib_dot = (b_omega_ip__t0 - b_omega_ip__t1) / static_cast<double>(timeDifferenceSec);
+    c.b_measuredForce_dot = (b_f__t0 - b_f__t1) / static_cast<double>(timeDifferenceSec);
     c.timeDifferenceSec = static_cast<double>(timeDifferenceSec);
     c.gravitationModel = _gravitationModel;
     c.coriolisAccelerationCompensationEnabled = _coriolisAccelerationCompensationEnabled;
@@ -825,30 +807,7 @@ void NAV::ImuIntegrator::integrateObservationNED()
 
     if (_integrationAlgorithm == IntegrationAlgorithm::Heun)
     {
-        // Values needed to calculate the PosVelAttDerivative for the local-navigation frame
-        struct AccelGyroMeasurement
-        {
-            Eigen::Vector3d b_omega_ib;      // ω_ip_b Angular velocity in [rad/s], of the inertial to platform system, in body coordinates
-            Eigen::Vector3d b_measuredForce; // b_measuredForce Acceleration in [m/s^2], in body coordinates
-        };
-        auto posVelAttDerivativeWrapper = [](const Eigen::Matrix<double, 10, 1>& y, const AccelGyroMeasurement& z, const PosVelAttDerivativeConstants_n& c) {
-            PosVelAttDerivativeConstants_n c_new;
-            c_new.b_omega_ib = z.b_omega_ib;
-            c_new.b_measuredForce = z.b_measuredForce;
-            c_new.timeDifferenceSec = c.timeDifferenceSec;
-            c_new.gravitationModel = c.gravitationModel;
-            c_new.coriolisAccelerationCompensationEnabled = c.coriolisAccelerationCompensationEnabled;
-            c_new.centrifgalAccelerationCompensationEnabled = c.centrifgalAccelerationCompensationEnabled;
-            c_new.angularRateEarthRotationCompensationEnabled = c.angularRateEarthRotationCompensationEnabled;
-            c_new.angularRateTransportRateCompensationEnabled = c.angularRateTransportRateCompensationEnabled;
-            c_new.velocityUpdateRotationCorrectionEnabled = c.velocityUpdateRotationCorrectionEnabled;
-
-            return n_calcPosVelAttDerivative(y, c_new);
-        };
-        AccelGyroMeasurement z__t0{ b_omega_ip__t0, b_f__t0 };
-        AccelGyroMeasurement z__t1{ b_omega_ip__t1, b_f__t1 };
-
-        y = Heun(posVelAttDerivativeWrapper, timeDifferenceSec, y, z__t1, z__t0, c); // NOLINT(readability-suspicious-call-argument)
+        y = Heun(n_calcPosVelAttDerivative, timeDifferenceSec, y, c);
     }
     else if (_integrationAlgorithm == IntegrationAlgorithm::RungeKutta1)
     {

@@ -43,11 +43,11 @@ Eigen::Vector3d e_calcTimeDerivativeForPosition(const Eigen::Vector3d& e_velocit
     return e_velocity;
 }
 
-Eigen::Matrix<double, 10, 1> e_calcPosVelAttDerivative(const Eigen::Matrix<double, 10, 1>& y, const PosVelAttDerivativeConstants_e& c)
+Eigen::Matrix<double, 16, 1> e_calcPosVelAttDerivative(const Eigen::Matrix<double, 16, 1>& y, const PosVelAttDerivativeConstants_e& c)
 {
-    //       0  1  2  3   4    5    6   7  8  9
-    // ∂/∂t [w, x, y, z, v_x, v_y, v_z, x, y, z]^T
-    Eigen::Matrix<double, 10, 1> y_dot = Eigen::Matrix<double, 10, 1>::Zero();
+    //       0  1  2  3   4    5    6   7  8  9  10  11  12  13  14  15
+    // ∂/∂t [w, x, y, z, v_x, v_y, v_z, x, y, z, fx, fy, fz, ωx, ωy, ωz]^T
+    Eigen::Matrix<double, 16, 1> y_dot = Eigen::Matrix<double, 16, 1>::Zero();
 
     Eigen::Vector3d lla_position = trafo::ecef2lla_WGS84(y.segment<3>(7));
 
@@ -57,13 +57,16 @@ Eigen::Matrix<double, 10, 1> e_calcPosVelAttDerivative(const Eigen::Matrix<doubl
     Eigen::Quaterniond b_Quat_e = e_Quat_b.conjugate();
     Eigen::Quaterniond e_Quat_n = n_Quat_e.conjugate();
 
+    Eigen::Vector3d b_measuredForce = y.segment<3>(10);
+    Eigen::Vector3d b_omega_ib = y.segment<3>(13);
+
     LOG_DATA("e_velocity   = {} [m/s]", y.segment<3>(4).transpose());
     LOG_DATA("e_position = {} [m]", y.segment<3>(7).transpose());
-    LOG_DATA("b_measuredForce = {} [m/s^2]", c.b_measuredForce.transpose());
-    LOG_DATA("b_omega_ib = {} [rad/s]", c.b_omega_ib.transpose());
+    LOG_DATA("b_measuredForce = {} [m/s^2]", b_measuredForce.transpose());
+    LOG_DATA("b_omega_ib = {} [rad/s]", b_omega_ib.transpose());
 
     // ω_eb_b = ω_ib_b - C_be * ω_ie_e
-    Eigen::Vector3d b_omega_eb = c.b_omega_ib - b_Quat_e * (c.angularRateEarthRotationCompensationEnabled ? InsConst::e_omega_ie : Eigen::Vector3d::Zero());
+    Eigen::Vector3d b_omega_eb = b_omega_ib - b_Quat_e * (c.angularRateEarthRotationCompensationEnabled ? InsConst::e_omega_ie : Eigen::Vector3d::Zero());
     LOG_DATA("b_omega_eb = {} [rad/s]", b_omega_eb.transpose());
 
     // Coriolis acceleration in [m/s^2] (acceleration due to motion in rotating reference frame)
@@ -85,16 +88,21 @@ Eigen::Matrix<double, 10, 1> e_calcPosVelAttDerivative(const Eigen::Matrix<doubl
 
     // TODO: Zwiener c.velocityUpdateRotationCorrectionEnabled
 
-    y_dot.segment<3>(4) = e_calcTimeDerivativeForVelocity(e_Quat_b * c.b_measuredForce, // f_n Specific force vector as measured by a triad of accelerometers and resolved into ECEF frame coordinates
-                                                          e_coriolisAcceleration,       // Coriolis acceleration in ECEF coordinates in [m/s^2]
-                                                          e_gravitation,                // Local gravitation vector (caused by effects of mass attraction) in ECEF frame coordinates [m/s^2]
-                                                          e_centrifugalAcceleration);   // Centrifugal acceleration in ECEF coordinates in [m/s^2]
+    y_dot.segment<3>(4) = e_calcTimeDerivativeForVelocity(e_Quat_b * b_measuredForce, // f_n Specific force vector as measured by a triad of accelerometers and resolved into ECEF frame coordinates
+                                                          e_coriolisAcceleration,     // Coriolis acceleration in ECEF coordinates in [m/s^2]
+                                                          e_gravitation,              // Local gravitation vector (caused by effects of mass attraction) in ECEF frame coordinates [m/s^2]
+                                                          e_centrifugalAcceleration); // Centrifugal acceleration in ECEF coordinates in [m/s^2]
 
     y_dot.segment<3>(7) = e_calcTimeDerivativeForPosition(y.segment<3>(4)); // Velocity with respect to the Earth in ECEF frame coordinates [m/s]
+
+    y_dot.segment<3>(10) = c.b_measuredForce_dot;
+    y_dot.segment<3>(13) = c.b_omega_ib_dot;
 
     LOG_DATA("e_Quat_b_dot = {} ", y_dot.segment<4>(0).transpose());
     LOG_DATA("e_velocity_dot = {} [m/s^2]", y_dot.segment<3>(4).transpose());
     LOG_DATA("e_position_dot = {} [m/s]", y_dot.segment<3>(7).transpose());
+    LOG_DATA("b_measuredForce_dot = {} [m/s^3]", y_dot.segment<3>(10).transpose());
+    LOG_DATA("b_omega_ib_dot = {} [rad/s^2]", y_dot.segment<3>(13).transpose());
 
     return y_dot;
 }

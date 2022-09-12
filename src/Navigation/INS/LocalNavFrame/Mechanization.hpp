@@ -102,8 +102,8 @@ Eigen::Vector3d lla_calcTimeDerivativeForPosition(const Eigen::Vector3d& n_veloc
 /// @brief Values needed to calculate the PosVelAttDerivative for the local-navigation frame
 struct PosVelAttDerivativeConstants_n
 {
-    Eigen::Vector3d b_omega_ib;                                  ///< ω_ip_b Angular velocity in [rad/s], of the inertial to platform system, in body coordinates
-    Eigen::Vector3d b_measuredForce;                             ///< f_b Acceleration in [m/s^2], in body coordinates
+    Eigen::Vector3d b_omega_ib_dot;                              ///< ∂/∂t ω_ip_b Angular velocity rate in [rad/s²], of the inertial to platform system, in body coordinates
+    Eigen::Vector3d b_measuredForce_dot;                         ///< ∂/∂t f_b Acceleration rate in [m/s^3], in body coordinates
     double timeDifferenceSec = 0;                                ///< Time difference Δtₖ = (tₖ - tₖ₋₁) in [seconds]
     GravitationModel gravitationModel = GravitationModel::EGM96; ///< Gravity Model to use
     bool coriolisAccelerationCompensationEnabled = true;         ///< Apply the coriolis acceleration compensation to the measured accelerations
@@ -114,9 +114,9 @@ struct PosVelAttDerivativeConstants_n
 };
 
 /// @brief Calculates the derivative of the quaternion, velocity and curvilinear position
-/// @param[in] y [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h]^T
+/// @param[in] y [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h, fx, fy, fz, ωx, ωy, ωz]^T
 /// @param[in] c Constant values needed to calculate the derivatives
-/// @return The derivative ∂/∂t [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h]^T
-Eigen::Matrix<double, 10, 1> n_calcPosVelAttDerivative(const Eigen::Matrix<double, 10, 1>& y, const PosVelAttDerivativeConstants_n& c);
+/// @return The derivative ∂/∂t [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h, fx, fy, fz, ωx, ωy, ωz]^T
+Eigen::Matrix<double, 16, 1> n_calcPosVelAttDerivative(const Eigen::Matrix<double, 16, 1>& y, const PosVelAttDerivativeConstants_n& c);
 
 } // namespace NAV
