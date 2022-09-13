@@ -146,9 +146,6 @@ class ImuIntegrator : public Node
     /// Apply the transport rate compensation to the measured angular rates
     bool _angularRateTransportRateCompensationEnabled = true;
 
-    /// Apply Zwiener's rotation correction for the velocity update
-    bool _velocityUpdateRotationCorrectionEnabled = false;
-
     // #########################################################################################################################################
 
     /// GUI flag, whether to show the input pin for PVA Corrections
