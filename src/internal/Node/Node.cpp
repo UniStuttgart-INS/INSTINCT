@@ -449,7 +449,7 @@ void NAV::Node::workerThread(Node* node)
                 bool callbackTriggered = false;
                 do {
                     callbackTriggered = false;
-                    for (size_t prio = 0; prio < node->inputPins.size(); prio++)
+                    for (size_t prio = 0; prio < node->inputPins.size(); prio++) // TODO: Before prioritizing, the temporal order should be enforced. Also in POST_PROCESSING mode, nodes should wait till all Flow pins have data to enable temporal order checking
                     {
                         for (size_t i = 0; i < node->inputPins.size(); i++)
                         {
