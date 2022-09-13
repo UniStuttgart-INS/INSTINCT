@@ -446,18 +446,25 @@ void NAV::Node::workerThread(Node* node)
             }
             else if (node->isInitialized()) // Triggered by '_workerConditionVariable.notify_all();'
             {
-                for (size_t prio = 0; prio < node->inputPins.size(); prio++)
-                {
-                    for (size_t i = 0; i < node->inputPins.size(); i++)
+                bool callbackTriggered = false;
+                do {
+                    callbackTriggered = false;
+                    for (size_t prio = 0; prio < node->inputPins.size(); prio++)
                     {
-                        auto& inputPin = node->inputPins.at(i);
-                        if (inputPin.type == Pin::Type::Flow && inputPin.priority == prio
-                            && inputPin.firable && inputPin.firable(inputPin.queue))
+                        for (size_t i = 0; i < node->inputPins.size(); i++)
                         {
-                            std::invoke(std::get<InputPin::FlowFirableCallbackFunc>(inputPin.callback), node, inputPin.queue, i);
+                            auto& inputPin = node->inputPins.at(i);
+                            if (inputPin.type == Pin::Type::Flow && inputPin.priority == prio
+                                && inputPin.firable && inputPin.firable(inputPin.queue))
+                            {
+                                std::invoke(std::get<InputPin::FlowFirableCallbackFunc>(inputPin.callback), node, inputPin.queue, i);
+                                callbackTriggered = true;
+                                break;
+                            }
                         }
+                        if (callbackTriggered) { break; }
                     }
-                }
+                } while (callbackTriggered && node->isInitialized());
             }
         }
     }
