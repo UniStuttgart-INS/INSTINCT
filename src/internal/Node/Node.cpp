@@ -430,7 +430,7 @@ void NAV::Node::workerThread(Node* node)
             continue;
         }
 
-        if (node->_state == State::Initialized || node->_state == State::Deinitialized || node->_state == State::Disabled)
+        if (!node->isTransient())
         {
             // Wait for data or state change
             std::unique_lock lk(node->_workerMutex);
