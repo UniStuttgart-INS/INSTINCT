@@ -19,6 +19,149 @@ class TsDeque
 {
   public:
     // #######################################################################################################
+    //                                           Member functions
+    // #######################################################################################################
+
+    /// @brief Default Constructor. Constructs an empty container with a default-constructed allocator.
+    TsDeque() = default;
+
+    /// Destructor
+    ~TsDeque() = default;
+
+    /// @brief Constructs an empty container with the given allocator alloc.
+    /// @param alloc Allocator to use for all memory allocations of this container
+    explicit TsDeque(const Alloc& alloc)
+        : _queue(alloc) {}
+
+    /// @brief Constructs the container with count copies of elements with value value.
+    /// @param count The size of the container
+    /// @param value The value to initialize elements of the container with
+    /// @param alloc Allocator to use for all memory allocations of this container
+    TsDeque(typename std::deque<T, Alloc>::size_type count, const T& value, const Alloc& alloc = Alloc())
+        : _queue(count, value, alloc) {}
+
+    /// @brief Constructs the container with count default-inserted instances of T. No copies are made.
+    /// @param count The size of the container
+    /// @param alloc Allocator to use for all memory allocations of this container
+    explicit TsDeque(typename std::deque<T, Alloc>::size_type count, const Alloc& alloc = Alloc())
+        : _queue(count, alloc) {}
+
+    /// @brief Constructs the container with the contents of the range [first, last).
+    /// @param first First element of the range to copy the elements from
+    /// @param last Last element the range to copy the elements from
+    /// @param alloc Allocator to use for all memory allocations of this container
+    template<class InputIt>
+    TsDeque(InputIt first, InputIt last, const Alloc& alloc = Alloc())
+        : _queue(first, last, alloc)
+    {}
+
+    /// @brief Copy constructor. Constructs the container with the copy of the contents of other.
+    /// @param other Another container to be used as source to initialize the elements of the container with
+    TsDeque(const TsDeque& other)
+    {
+        std::lock_guard lk(other._mutex);
+        _queue = std::deque<T, Alloc>(other._queue); // NOLINT(cppcoreguidelines-prefer-member-initializer)
+    }
+    /// @brief Constructs the container with the copy of the contents of other, using alloc as the allocator.
+    /// @param other Another container to be used as source to initialize the elements of the container with
+    /// @param alloc Allocator to use for all memory allocations of this container
+    TsDeque(const TsDeque& other, const Alloc& alloc)
+    {
+        std::lock_guard lk(other._mutex);
+        _queue = std::deque<T, Alloc>(other._queue, alloc); // NOLINT(cppcoreguidelines-prefer-member-initializer)
+    }
+    /// @brief Move constructor. Constructs the container with the contents of other using move semantics.
+    ///        Allocator is obtained by move-construction from the allocator belonging to other.
+    /// @param other Another container to be used as source to initialize the elements of the container with
+    TsDeque(TsDeque&& other) noexcept
+    {
+        std::lock_guard lk(other._mutex);
+        _queue = std::deque<T, Alloc>(std::move(other._queue)); // NOLINT(cppcoreguidelines-prefer-member-initializer)
+    }
+    /// @brief Allocator-extended move constructor. Using alloc as the allocator for the new container, moving the contents from other;
+    ///        if alloc != other.get_allocator(), this results in an element-wise move.
+    /// @param other Another container to be used as source to initialize the elements of the container with
+    /// @param alloc Allocator to use for all memory allocations of this container
+    TsDeque(TsDeque&& other, const Alloc& alloc) noexcept
+    {
+        std::lock_guard lk(other._mutex);
+        _queue = std::deque<T, Alloc>(std::move(other._queue), alloc); // NOLINT(cppcoreguidelines-prefer-member-initializer)
+    }
+    /// @brief Constructs the container with the contents of the initializer list init.
+    /// @param init Initializer list to initialize the elements of the container with
+    /// @param alloc Allocator to use for all memory allocations of this container
+    TsDeque(std::initializer_list<T> init, const Alloc& alloc = Alloc())
+        : _queue(init, alloc) {}
+
+    /// @brief Copy assignment operator
+    TsDeque& operator=(const TsDeque& other)
+    {
+        if (this != &other)
+        {
+            std::lock_guard lk(_mutex);
+            std::lock_guard lko(other._mutex);
+            _queue = other._queue;
+        }
+        return *this;
+    }
+    /// @brief Move assignment operator
+    TsDeque& operator=(TsDeque&& other) noexcept
+    {
+        if (this != &other)
+        {
+            std::lock_guard lk(_mutex);
+            std::lock_guard lko(other._mutex);
+            _queue = std::move(other._queue);
+        }
+        return *this;
+    }
+    /// @brief Replaces the contents with those identified by initializer list ilist.
+    /// @param ilist Initializer list to use as data source
+    TsDeque& operator=(std::initializer_list<T> ilist)
+    {
+        _queue = ilist;
+    }
+
+    /// @brief Replaces the contents with count copies of value value
+    ///
+    /// All iterators, pointers and references to the elements of the container are invalidated. The past-the-end iterator is also invalidated.
+    /// @param count The new size of the container
+    /// @param value The value to initialize elements of the container with
+    void assign(typename std::deque<T, Alloc>::size_type count, const T& value)
+    {
+        std::lock_guard lk(_mutex);
+        _queue.assign(count, value);
+    }
+
+    /// @brief Replaces the contents with copies of those in the range [first, last). The behavior is undefined if either argument is an iterator into *this.
+    ///
+    /// All iterators, pointers and references to the elements of the container are invalidated. The past-the-end iterator is also invalidated.
+    /// @param[in] first The first element of the range to copy the elements from
+    /// @param[in] last The last element of the range to copy the elements from
+    template<class InputIt>
+    void assign(InputIt first, InputIt last)
+    {
+        std::lock_guard lk(_mutex);
+        _queue.assign(first, last);
+    }
+    /// @brief Replaces the contents with the elements from the initializer list ilist.
+    ///
+    /// All iterators, pointers and references to the elements of the container are invalidated. The past-the-end iterator is also invalidated.
+    /// @param ilist Initializer list to copy the values from
+    void assign(std::initializer_list<T> ilist)
+    {
+        std::lock_guard lk(_mutex);
+        _queue.assign(ilist);
+    }
+
+    /// @brief Returns the allocator associated with the container.
+    /// @return The associated allocator.
+    typename std::deque<T, Alloc>::allocator_type get_allocator() const noexcept
+    {
+        return _queue.get_allocator();
+    }
+
+    // #######################################################################################################
     //                                            Element access
     // #######################################################################################################
 
@@ -63,57 +206,57 @@ class TsDeque
     /// @brief Returns an iterator to the first element of the deque.
     ///        If the deque is empty, the returned iterator will be equal to end().
     /// @return Iterator to the first element.
-    std::deque<T>::iterator begin() noexcept { return _queue.begin(); }
+    typename std::deque<T>::iterator begin() noexcept { return _queue.begin(); }
     /// @brief Returns an iterator to the first element of the deque.
     ///        If the deque is empty, the returned iterator will be equal to end().
     /// @return Iterator to the first element.
-    std::deque<T>::const_iterator begin() const noexcept { return _queue.begin(); }
+    typename std::deque<T>::const_iterator begin() const noexcept { return _queue.begin(); }
     /// @brief Returns an iterator to the first element of the deque.
     ///        If the deque is empty, the returned iterator will be equal to end().
     /// @return Iterator to the first element.
-    std::deque<T>::const_iterator cbegin() const noexcept { return _queue.cbegin(); }
+    typename std::deque<T>::const_iterator cbegin() const noexcept { return _queue.cbegin(); }
 
     /// @brief Returns an iterator to the element following the last element of the deque.
     ///        This element acts as a placeholder; attempting to access it results in undefined behavior.
     /// @return Iterator to the element following the last element.
-    std::deque<T>::iterator end() noexcept { return _queue.end(); }
+    typename std::deque<T>::iterator end() noexcept { return _queue.end(); }
     /// @brief Returns an iterator to the element following the last element of the deque.
     ///        This element acts as a placeholder; attempting to access it results in undefined behavior.
     /// @return Iterator to the element following the last element.
-    std::deque<T>::const_iterator end() const noexcept { return _queue.end(); }
+    typename std::deque<T>::const_iterator end() const noexcept { return _queue.end(); }
     /// @brief Returns an iterator to the element following the last element of the deque.
     ///        This element acts as a placeholder; attempting to access it results in undefined behavior.
     /// @return Iterator to the element following the last element.
-    std::deque<T>::const_iterator cend() const noexcept { return _queue.cend(); }
+    typename std::deque<T>::const_iterator cend() const noexcept { return _queue.cend(); }
 
     /// @brief Returns a reverse iterator to the first element of the reversed deque. It corresponds to the last element of the non-reversed deque.
     ///        If the deque is empty, the returned iterator is equal to rend().
     /// @return Reverse iterator to the first element.
-    std::deque<T>::reverse_iterator rbegin() noexcept { return _queue.rbegin(); }
+    typename std::deque<T>::reverse_iterator rbegin() noexcept { return _queue.rbegin(); }
     /// @brief Returns a reverse iterator to the first element of the reversed deque. It corresponds to the last element of the non-reversed deque.
     ///        If the deque is empty, the returned iterator is equal to rend().
     /// @return Reverse iterator to the first element.
-    std::deque<T>::const_reverse_iterator rbegin() const noexcept { return _queue.rbegin(); }
+    typename std::deque<T>::const_reverse_iterator rbegin() const noexcept { return _queue.rbegin(); }
     /// @brief Returns a reverse iterator to the first element of the reversed deque. It corresponds to the last element of the non-reversed deque.
     ///        If the deque is empty, the returned iterator is equal to rend().
     /// @return Reverse iterator to the first element.
-    std::deque<T>::const_reverse_iterator crbegin() const noexcept { return _queue.crbegin(); }
+    typename std::deque<T>::const_reverse_iterator crbegin() const noexcept { return _queue.crbegin(); }
 
     /// @brief Returns a reverse iterator to the element following the last element of the reversed deque.
     ///        It corresponds to the element preceding the first element of the non-reversed deque.
     ///        This element acts as a placeholder, attempting to access it results in undefined behavior.
     /// @return Reverse iterator to the element following the last element.
-    std::deque<T>::reverse_iterator rend() noexcept { return _queue.rend(); }
+    typename std::deque<T>::reverse_iterator rend() noexcept { return _queue.rend(); }
     /// @brief Returns a reverse iterator to the element following the last element of the reversed deque.
     ///        It corresponds to the element preceding the first element of the non-reversed deque.
     ///        This element acts as a placeholder, attempting to access it results in undefined behavior.
     /// @return Reverse iterator to the element following the last element.
-    std::deque<T>::const_reverse_iterator rend() const noexcept { return _queue.rend(); }
+    typename std::deque<T>::const_reverse_iterator rend() const noexcept { return _queue.rend(); }
     /// @brief Returns a reverse iterator to the element following the last element of the reversed deque.
     ///        It corresponds to the element preceding the first element of the non-reversed deque.
     ///        This element acts as a placeholder, attempting to access it results in undefined behavior.
     /// @return Reverse iterator to the element following the last element.
-    std::deque<T>::const_reverse_iterator crend() const noexcept { return _queue.crend(); }
+    typename std::deque<T>::const_reverse_iterator crend() const noexcept { return _queue.crend(); }
 
     // #######################################################################################################
     //                                               Capacity
@@ -135,6 +278,21 @@ class TsDeque
         return _queue.size();
     }
 
+    /// @brief Returns the maximum number of elements the container is able to hold due to system or library implementation limitations, i.e. std::distance(begin(), end()) for the largest container.
+    /// @return Maximum number of elements.
+    typename std::deque<T, Alloc>::size_type max_size() const noexcept
+    {
+        std::lock_guard lk(_mutex);
+        return _queue.max_size();
+    }
+
+    /// @brief Requests the removal of unused capacity.
+    void shrink_to_fit()
+    {
+        std::lock_guard lk(_mutex);
+        _queue.shrink_to_fit();
+    }
+
     // #######################################################################################################
     //                                               Modifiers
     // #######################################################################################################
@@ -151,7 +309,7 @@ class TsDeque
     /// @param[in] pos Iterator before which the content will be inserted. pos may be the end() iterator
     /// @param[in] value Element value to insert
     /// @return Iterator pointing to the inserted value
-    std::deque<T>::iterator insert(std::deque<T>::const_iterator pos, const T& value)
+    typename std::deque<T>::iterator insert(typename std::deque<T>::const_iterator pos, const T& value)
     {
         std::lock_guard lk(_mutex);
         return _queue.insert(pos, value);
@@ -161,7 +319,7 @@ class TsDeque
     /// @param[in] pos Iterator before which the content will be inserted. pos may be the end() iterator
     /// @param[in] value Element value to insert
     /// @return Iterator pointing to the inserted value
-    std::deque<T>::iterator insert(std::deque<T>::const_iterator pos, T&& value)
+    typename std::deque<T>::iterator insert(typename std::deque<T>::const_iterator pos, T&& value)
     {
         std::lock_guard lk(_mutex);
         return _queue.insert(pos, value);
@@ -172,7 +330,7 @@ class TsDeque
     /// @param[in] count Number of elements to insert
     /// @param[in] value Element value to insert
     /// @return Linear in count plus linear in the lesser of the distances between pos and either of the ends of the container.
-    std::deque<T>::iterator insert(std::deque<T>::const_iterator pos, typename std::deque<T, Alloc>::size_type count, const T& value)
+    typename std::deque<T>::iterator insert(typename std::deque<T>::const_iterator pos, typename std::deque<T, Alloc>::size_type count, const T& value)
     {
         std::lock_guard lk(_mutex);
         return _queue.insert(pos, count, value);
@@ -185,7 +343,7 @@ class TsDeque
     /// @param[in] last The last element of the range of elements to insert, can't be iterators into container for which insert is called
     /// @return Iterator pointing to the first element inserted, or pos if first==last.
     template<class InputIt>
-    std::deque<T>::iterator insert(std::deque<T>::const_iterator pos, InputIt first, InputIt last)
+    typename std::deque<T>::iterator insert(typename std::deque<T>::const_iterator pos, InputIt first, InputIt last)
     {
         std::lock_guard lk(_mutex);
         return _queue.insert(pos, first, last);
@@ -195,7 +353,7 @@ class TsDeque
     /// @param[in] pos Iterator before which the content will be inserted. pos may be the end() iterator
     /// @param[in] ilist Initializer list to insert the values from
     /// @return Iterator pointing to the first element inserted, or pos if ilist is empty.
-    std::deque<T>::iterator insert(std::deque<T>::const_iterator pos, std::initializer_list<T> ilist)
+    typename std::deque<T>::iterator insert(typename std::deque<T>::const_iterator pos, std::initializer_list<T> ilist)
     {
         std::lock_guard lk(_mutex);
         return _queue.insert(pos, ilist);
@@ -206,7 +364,7 @@ class TsDeque
     /// @param[in] args Arguments to forward to the constructor of the element
     /// @return Iterator pointing to the emplaced element.
     template<class... Args>
-    std::deque<T>::iterator emplace(std::deque<T>::const_iterator pos, Args&&... args)
+    typename std::deque<T>::iterator emplace(typename std::deque<T>::const_iterator pos, Args&&... args)
     {
         std::lock_guard lk(_mutex);
         return _queue.emplace(pos, std::forward<Args>(args)...);
@@ -215,7 +373,7 @@ class TsDeque
     /// @brief Removes the element at pos.
     /// @param[in] pos Iterator to the element to remove
     /// @return Iterator following the last removed element.
-    std::deque<T>::iterator erase(std::deque<T>::const_iterator pos)
+    typename std::deque<T>::iterator erase(typename std::deque<T>::const_iterator pos)
     {
         std::lock_guard lk(_mutex);
         return _queue.erase(pos);
@@ -226,7 +384,7 @@ class TsDeque
     /// @param[in] first First element of the range of elements to remove
     /// @param[in] last Last element of the range of elements to remove
     /// @return Iterator following the last removed element.
-    std::deque<T>::iterator erase(std::deque<T>::const_iterator first, std::deque<T>::const_iterator last)
+    typename std::deque<T>::iterator erase(typename std::deque<T>::const_iterator first, typename std::deque<T>::const_iterator last)
     {
         std::lock_guard lk(_mutex);
         return _queue.erase(first, last);
@@ -321,6 +479,16 @@ class TsDeque
     {
         std::lock_guard lk(_mutex);
         _queue.swap(other);
+    }
+
+    /// @brief Returns a copy of the first element in the container and removes it from the container.
+    /// @return Copy of the first element
+    auto extract_front()
+    {
+        std::lock_guard lk(_mutex);
+        auto front = _queue.front();
+        pop_front();
+        return front;
     }
 
   private:
