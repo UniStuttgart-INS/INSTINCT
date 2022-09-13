@@ -35,7 +35,7 @@ bool NAV::Pin::canCreateLink(const OutputPin& startPin, const InputPin& endPin)
         dataTypesMatch = false;
     }
 
-    if ((startPin.type == Pin::Type::Object || startPin.type == Pin::Type::Matrix) // NOLINT(misc-redundant-expression) // FIXME: error: equivalent expression on both sides of logical operator
+    if ((startPin.type == Pin::Type::Object || startPin.type == Pin::Type::Matrix) // NOLINT(misc-redundant-expression) - false positive warning
         && !dataIdentifierHaveCommon(startPin.dataIdentifier, endPin.dataIdentifier))
     {
         dataTypesMatch = false;

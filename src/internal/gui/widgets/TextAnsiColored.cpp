@@ -471,7 +471,7 @@ void RenderAnsiText(ImVec2 pos, const char* text, const char* text_end, bool hid
     {
         if (!text_end)
         {
-            text_end = text + strlen(text); // FIXME-OPT
+            text_end = text + strlen(text);
         }
         text_display_end = text_end;
     }
@@ -493,7 +493,7 @@ void RenderAnsiTextWrapped(ImVec2 pos, const char* text, const char* text_end, f
 
     if (!text_end)
     {
-        text_end = text + strlen(text); // FIXME-OPT
+        text_end = text + strlen(text);
     }
 
     if (text != text_end)
@@ -521,7 +521,7 @@ void ImGui::TextAnsiUnformatted(const char* text, const char* text_end)
     const char* text_begin = text;
     if (text_end == nullptr)
     {
-        text_end = text + strlen(text); // FIXME-OPT
+        text_end = text + strlen(text);
     }
 
     const ImVec2 text_pos(window->DC.CursorPos.x, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);

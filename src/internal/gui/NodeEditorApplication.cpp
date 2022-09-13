@@ -797,7 +797,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
         for (auto* node : nm::m_Nodes()) // Blueprint || Simple
         {
-            if (node->kind != Node::Kind::Blueprint && node->kind != Node::Kind::Simple) // NOLINT(misc-redundant-expression) // FIXME: error: equivalent expression on both sides of logical operator
+            if (node->kind != Node::Kind::Blueprint && node->kind != Node::Kind::Simple) // NOLINT(misc-redundant-expression) - false positive warning
             {
                 continue;
             }
@@ -1166,7 +1166,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
                             ed::RejectNewItem(ImColor(255, 128, 128), 1.0F);
                         }
-                        else if ((startPin->type == Pin::Type::Object || startPin->type == Pin::Type::Matrix) // NOLINT(misc-redundant-expression) // FIXME: error: equivalent expression on both sides of logical operator
+                        else if ((startPin->type == Pin::Type::Object || startPin->type == Pin::Type::Matrix) // NOLINT(misc-redundant-expression) - false positive warning
                                  && !Pin::dataIdentifierHaveCommon(startPin->dataIdentifier, endPin->dataIdentifier))
                         {
                             showLabel(fmt::format("The data type [{}]\ncan't be linked to [{}]",

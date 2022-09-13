@@ -51,11 +51,13 @@ void AddLink(ax::NodeEditor::LinkId linkId);
 /// @param[in] pinType Type of the pin
 /// @param[in] dataIdentifier Identifier of the data which is represented by the pin
 /// @param[in] callback Callback to register with the pin
+/// @param[in] firable Function to check whether the callback is firable
 /// @param[in] priority Priority when checking firable condition related to other pins (0 = highest priority)
 /// @param[in] idx Index where to put the new pin (-1 means at the end)
 /// @return Pointer to the created pin
 InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier = {},
-                         InputPin::Callback callback = static_cast<InputPin::FlowFirableCallbackFunc>(nullptr), std::function<bool(const InputPin::NodeDataQueue&)> firable = nullptr,
+                         InputPin::Callback callback = static_cast<InputPin::FlowFirableCallbackFunc>(nullptr),
+                         std::function<bool(const InputPin::NodeDataQueue&)> firable = nullptr,
                          size_t priority = 0, int idx = -1);
 
 /// @brief Create an Input Pin object
@@ -72,7 +74,8 @@ InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const 
 template<typename T,
          typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
 InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier = {},
-                         void (T::*callback)(InputPin::NodeDataQueue&, size_t) = nullptr, std::function<bool(const InputPin::NodeDataQueue&)> firable = nullptr,
+                         void (T::*callback)(InputPin::NodeDataQueue&, size_t) = nullptr,
+                         std::function<bool(const InputPin::NodeDataQueue&)> firable = nullptr,
                          size_t priority = 0, int idx = -1)
 {
     assert(pinType == Pin::Type::Flow);
