@@ -108,16 +108,16 @@ void NAV::PosVelAttLogger::deinitialize()
     FileWriter::deinitialize();
 }
 
-void NAV::PosVelAttLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId)
+void NAV::PosVelAttLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
 {
-    if (auto* sourcePin = inputPinFromId(pinId).link.getConnectedPin())
+    if (auto* sourcePin = inputPins[pinIdx].link.getConnectedPin())
     {
         constexpr int gpsCyclePrecision = 3;
         constexpr int gpsTimePrecision = 12;
         constexpr int valuePrecision = 15;
 
         {
-            auto obs = std::static_pointer_cast<const Pos>(nodeData);
+            auto obs = std::static_pointer_cast<const Pos>(queue.front());
             if (obs->insTime.has_value())
             {
                 _filestream << std::setprecision(valuePrecision) << std::round(calcTimeIntoRun(obs->insTime.value()) * 1e9) / 1e9;
@@ -187,7 +187,7 @@ void NAV::PosVelAttLogger::writeObservation(const std::shared_ptr<const NodeData
             || sourcePin->dataIdentifier.front() == PosVel::type()
             || sourcePin->dataIdentifier.front() == InertialNavSol::type())
         {
-            auto obs = std::static_pointer_cast<const PosVel>(nodeData);
+            auto obs = std::static_pointer_cast<const PosVel>(queue.front());
 
             if (!std::isnan(obs->e_velocity().x()))
             {
@@ -228,7 +228,7 @@ void NAV::PosVelAttLogger::writeObservation(const std::shared_ptr<const NodeData
         if (sourcePin->dataIdentifier.front() == PosVelAtt::type()
             || sourcePin->dataIdentifier.front() == InertialNavSol::type())
         {
-            auto obs = std::static_pointer_cast<const PosVelAtt>(nodeData);
+            auto obs = std::static_pointer_cast<const PosVelAtt>(queue.front());
             if (!obs->n_Quat_b().coeffs().isZero())
             {
                 _filestream << obs->n_Quat_b().w();
@@ -259,4 +259,6 @@ void NAV::PosVelAttLogger::writeObservation(const std::shared_ptr<const NodeData
 
         _filestream << '\n';
     }
+
+    queue.pop_front();
 }

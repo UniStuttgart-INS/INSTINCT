@@ -94,7 +94,7 @@ InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const 
 {
     assert(pinType != Pin::Type::Flow && pinType != Pin::Type::Delegate);
 
-    return CreateInputPin(node, name, pinType, dataIdentifier, InputPin::Callback(static_cast<InputPin::DataChangedNotifyFunc>(notifyFunc)), idx);
+    return CreateInputPin(node, name, pinType, dataIdentifier, InputPin::Callback(static_cast<InputPin::DataChangedNotifyFunc>(notifyFunc)), 0, idx);
 }
 
 /// @brief Create an Output Pin object

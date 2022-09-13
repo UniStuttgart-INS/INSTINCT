@@ -78,9 +78,9 @@ class ErrorModel : public Node
     void afterDeleteLink(OutputPin& startPin, InputPin& endPin) override;
 
     /// @brief Callback when receiving data on a port
-    /// @param[in] nodeData Data to process
-    /// @param[in] pinId Id of the pin the data is received on
-    void receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void receiveObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief Callback when receiving an ImuObs
     /// @param[in] imuObs Copied data to modify and send out again

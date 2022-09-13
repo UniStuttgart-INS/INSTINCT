@@ -138,7 +138,6 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
                     FlowAnimation::Add(link.linkId);
                 }
 
-                std::lock_guard lk(targetPin->queueAccessMutex);
                 targetPin->queue.push_back(data);
                 link.connectedNode->_workerConditionVariable.notify_all();
             }
@@ -383,6 +382,23 @@ bool NAV::Node::isInitialized() const
 {
     return _state == State::Initialized;
 }
+bool NAV::Node::isTransient() const
+{
+    switch (_state)
+    {
+    case State::Disabled:
+    case State::Initialized:
+    case State::Deinitialized:
+        return false;
+    case State::DoShutdown:
+    case State::Shutdown:
+    case State::Initializing:
+    case State::DoDeinitialize:
+    case State::Deinitializing:
+    case State::DoInitialize:
+        return true;
+    }
+}
 
 void NAV::Node::workerThread(Node* node)
 {
@@ -492,7 +508,6 @@ bool NAV::Node::workerInitializeNode()
 
         for (auto& inputPin : inputPins)
         {
-            std::lock_guard lk(inputPin.queueAccessMutex);
             inputPin.queue.clear();
         }
         resetNode();

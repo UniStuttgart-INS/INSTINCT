@@ -708,9 +708,9 @@ void NAV::LooselyCoupledKF::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-void NAV::LooselyCoupledKF::recvInertialNavigationSolution(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /*pinId*/) // NOLINT(readability-convert-member-functions-to-static)
+void NAV::LooselyCoupledKF::recvInertialNavigationSolution(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */) // NOLINT(readability-convert-member-functions-to-static)
 {
-    auto inertialNavSol = std::static_pointer_cast<const InertialNavSol>(nodeData);
+    auto inertialNavSol = std::static_pointer_cast<const InertialNavSol>(queue.front());
     LOG_DATA("{}: Recv Inertial t = {}", nameId(), inertialNavSol->insTime->toYMDHMS());
 
     double tau_i = !_lastPredictTime.empty()
@@ -726,11 +726,13 @@ void NAV::LooselyCoupledKF::recvInertialNavigationSolution(const std::shared_ptr
         _lastPredictTime = inertialNavSol->insTime.value();
     }
     _latestInertialNavSol = inertialNavSol;
+
+    queue.pop_front();
 }
 
-void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /*pinId*/)
+void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto gnssMeasurement = std::static_pointer_cast<const PosVel>(nodeData);
+    auto gnssMeasurement = std::static_pointer_cast<const PosVel>(queue.front());
     LOG_DATA("{}: Recv GNSS t = {}", nameId(), gnssMeasurement->insTime->toYMDHMS());
 
     if (std::isnan(gnssMeasurement->e_position().x()) || std::isnan(gnssMeasurement->e_velocity().x())) { return; }
@@ -747,6 +749,8 @@ void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(const std::shared_ptr<con
 
         looselyCoupledUpdate(gnssMeasurement);
     }
+
+    queue.pop_front();
 }
 
 // ###########################################################################################################

@@ -70,14 +70,14 @@ class LooselyCoupledKF : public Node
     void deinitialize() override;
 
     /// @brief Receive Function for the intertial navigation solution
-    /// @param[in] nodeData State vector (PosVelAtt)
-    /// @param[in] pinId Id of the pin the data is received on
-    void recvInertialNavigationSolution(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void recvInertialNavigationSolution(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief Receive Function for the GNSS navigation solution
-    /// @param[in] nodeData State vector (PosVel)
-    /// @param[in] pinId Id of the pin the data is received on
-    void recvGNSSNavigationSolution(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void recvGNSSNavigationSolution(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief Predicts the state from the InertialNavSol
     /// @param[in] inertialNavSol Inertial navigation solution triggering the prediction

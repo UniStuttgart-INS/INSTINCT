@@ -374,19 +374,23 @@ void NAV::Demo::onDeleteLink([[maybe_unused]] OutputPin& startPin, [[maybe_unuse
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
 }
 
-void NAV::Demo::receiveSensorData(const std::shared_ptr<const NodeData>& /*nodeData*/, ax::NodeEditor::PinId /*pinId*/)
+void NAV::Demo::receiveSensorData(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     LOG_INFO("{}: received Sensor Data", nameId());
 
     _receivedDataFromSensorCnt++;
+
+    queue.pop_front();
 }
 
-void NAV::Demo::receiveFileReaderData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /*pinId*/)
+void NAV::Demo::receiveFileReaderData(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto obs = std::static_pointer_cast<const InsObs>(nodeData);
+    auto obs = std::static_pointer_cast<const InsObs>(queue.front());
     LOG_INFO("{}: received FileReader Data: {}", nameId(), obs->insTime->toYMDHMS());
 
     _receivedDataFromFileReaderCnt++;
+
+    queue.pop_front();
 }
 
 void NAV::Demo::readSensorDataThread(void* userData)

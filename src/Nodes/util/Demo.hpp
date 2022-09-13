@@ -97,14 +97,14 @@ class Demo : public Node
     void deinitialize() override;
 
     /// @brief Receive Sensor Data
-    /// @param[in] nodeData Data to plot
-    /// @param[in] pinId Id of the pin the data is received on
-    void receiveSensorData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void receiveSensorData(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief Receive File Reader Data
-    /// @param[in] nodeData Data to plot
-    /// @param[in] pinId Id of the pin the data is received on
-    void receiveFileReaderData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void receiveFileReaderData(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief Polls data from the file
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read

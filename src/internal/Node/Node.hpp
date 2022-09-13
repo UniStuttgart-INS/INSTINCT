@@ -32,7 +32,7 @@ class GroupBox;
 
 namespace NodeRegistry
 {
-void RegisterNodeTypes();
+void RegisterNodeTypes(); // NOLINT(readability-redundant-declaration) - false warning. This is needed for the friend declaration below
 } // namespace NodeRegistry
 
 namespace gui
@@ -310,6 +310,9 @@ class Node
 
     /// @brief Checks if the node is initialized
     [[nodiscard]] bool isInitialized() const;
+
+    /// @brief Checks if the node is changing its state currently
+    [[nodiscard]] bool isTransient() const;
 
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member variables                                             */

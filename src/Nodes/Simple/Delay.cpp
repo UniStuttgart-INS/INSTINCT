@@ -126,15 +126,15 @@ bool NAV::Delay::onCreateLink(OutputPin& startPin, InputPin& endPin)
     return true;
 }
 
-void NAV::Delay::delayObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /* pinId */)
+void NAV::Delay::delayObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     if (_buffer.size() == static_cast<size_t>(_delayLength))
     {
         auto oldest = _buffer.front();
         _buffer.pop_front();
-        _buffer.push_back(nodeData);
+        _buffer.push_back(queue.front());
 
-        if (auto obs = std::static_pointer_cast<const InsObs>(nodeData))
+        if (auto obs = std::static_pointer_cast<const InsObs>(_buffer.back()))
         {
             LOG_DATA("{}: Delay pushing out message: {}", nameId(), obs->insTime->toGPSweekTow());
         }
@@ -152,6 +152,8 @@ void NAV::Delay::delayObs(const std::shared_ptr<const NodeData>& nodeData, ax::N
     }
     else
     {
-        _buffer.push_back(nodeData);
+        _buffer.push_back(queue.front());
     }
+
+    queue.pop_front();
 }

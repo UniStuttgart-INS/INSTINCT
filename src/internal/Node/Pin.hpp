@@ -349,7 +349,7 @@ class OutputPin : public Pin
     OutputPin(const OutputPin&) = delete;
     /// @brief Move constructor
     OutputPin(OutputPin&& other) noexcept
-        : Pin(std::move(other)), data(other.data), links(other.links) {}
+        : Pin(std::move(other)), links(std::move(other.links)), data(other.data) {}
     /// @brief Copy assignment operator
     OutputPin& operator=(const OutputPin&) = delete;
     /// @brief Move assignment operator
@@ -358,7 +358,7 @@ class OutputPin : public Pin
         if (this != &other)
         {
             data = other.data;
-            links = other.links;
+            links = std::move(other.links);
             Pin::operator=(std::move(other));
         }
         return *this;
@@ -469,12 +469,12 @@ class InputPin : public Pin
     /// @brief Copy constructor
     InputPin(const InputPin&) = delete;
     /// @brief Move constructor
-    InputPin(InputPin&& other)
-        : Pin(std::move(other)), callback(other.callback), queue(other.queue), link(other.link) {}
+    InputPin(InputPin&& other) noexcept
+        : Pin(std::move(other)), link(other.link), callback(other.callback), queue(other.queue) {}
     /// @brief Copy assignment operator
     InputPin& operator=(const InputPin&) = delete;
     /// @brief Move assignment operator
-    InputPin& operator=(InputPin&& other)
+    InputPin& operator=(InputPin&& other) noexcept
     {
         if (this != &other)
         {

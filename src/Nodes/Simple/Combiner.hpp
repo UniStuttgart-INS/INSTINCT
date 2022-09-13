@@ -64,9 +64,9 @@ class Combiner : public Node
     void updateOutputPin(const std::vector<std::string>& oldDataIdentifiers);
 
     /// @brief Receive data
-    /// @param[in] nodeData Observation received
-    /// @param[in] pinId Id of the pin the data is received on
-    void receiveData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx);
 };
 
 } // namespace NAV

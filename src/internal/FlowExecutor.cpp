@@ -97,7 +97,6 @@ bool NAV::FlowExecutor::initialize()
                 node->resetNode();
                 for (auto& inputPin : node->inputPins)
                 {
-                    std::lock_guard lk(inputPin.queueAccessMutex);
                     inputPin.queue.clear();
                 }
             }

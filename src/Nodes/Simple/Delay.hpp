@@ -67,9 +67,9 @@ class Delay : public Node
     void deinitialize() override;
 
     /// @brief Delays the observation
-    /// @param[in] nodeData Observation to delay
-    /// @param[in] pinId Id of the pin the data is received on
-    void delayObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void delayObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief The amount to delay messages for
     int _delayLength = 1;

@@ -481,7 +481,7 @@ void NAV::PosVelAttInitializer::updateInputPins()
     }
     else if ((!_overrideRollPitchYaw[0] || !_overrideRollPitchYaw[1] || !_overrideRollPitchYaw[2]) && _inputPinIdxIMU < 0)
     {
-        nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &PosVelAttInitializer::receiveImuObs, 0);
+        nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &PosVelAttInitializer::receiveImuObs, 0, 0);
         _inputPinIdxIMU = 0;
         if (_inputPinIdxGNSS >= 0)
         {
@@ -558,14 +558,14 @@ void NAV::PosVelAttInitializer::finalizeInit()
     }
 }
 
-void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /*pinId*/)
+void NAV::PosVelAttInitializer::receiveImuObs(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     if (_posVelAttInitialized.at(3))
     {
         return;
     }
 
-    auto obs = std::static_pointer_cast<const ImuObs>(nodeData);
+    auto obs = std::static_pointer_cast<const ImuObs>(queue.front());
 
     if (!obs->timeSinceStartup.has_value()) // TODO: Make this work with insTime
     {
@@ -629,40 +629,44 @@ void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<const NodeDa
     }
 
     finalizeInit();
+
+    queue.pop_front();
 }
 
-void NAV::PosVelAttInitializer::receiveGnssObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId pinId)
+void NAV::PosVelAttInitializer::receiveGnssObs(InputPin::NodeDataQueue& queue, size_t pinIdx)
 {
     if (_posVelAttInitialized.at(3))
     {
         return;
     }
 
-    const auto& sourcePin = inputPinFromId(pinId);
+    const auto& sourcePin = inputPins[pinIdx];
 
     if (sourcePin.dataIdentifier.front() == RtklibPosObs::type())
     {
-        receiveRtklibPosObs(std::static_pointer_cast<const RtklibPosObs>(nodeData));
+        receiveRtklibPosObs(std::static_pointer_cast<const RtklibPosObs>(queue.front()));
     }
     else if (sourcePin.dataIdentifier.front() == UbloxObs::type())
     {
-        receiveUbloxObs(std::static_pointer_cast<const UbloxObs>(nodeData));
+        receiveUbloxObs(std::static_pointer_cast<const UbloxObs>(queue.front()));
     }
     else if (sourcePin.dataIdentifier.front() == Pos::type())
     {
-        receivePosObs(std::static_pointer_cast<const Pos>(nodeData));
+        receivePosObs(std::static_pointer_cast<const Pos>(queue.front()));
     }
     else if (sourcePin.dataIdentifier.front() == PosVel::type()
              || sourcePin.dataIdentifier.front() == SppSolution::type())
     {
-        receivePosVelObs(std::static_pointer_cast<const PosVel>(nodeData));
+        receivePosVelObs(std::static_pointer_cast<const PosVel>(queue.front()));
     }
     else if (sourcePin.dataIdentifier.front() == PosVelAtt::type())
     {
-        receivePosVelAttObs(std::static_pointer_cast<const PosVelAtt>(nodeData));
+        receivePosVelAttObs(std::static_pointer_cast<const PosVelAtt>(queue.front()));
     }
 
     finalizeInit();
+
+    queue.pop_front();
 }
 
 void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<const UbloxObs>& obs)

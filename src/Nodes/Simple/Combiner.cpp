@@ -194,12 +194,14 @@ void NAV::Combiner::afterDeleteLink([[maybe_unused]] OutputPin& startPin, InputP
     }
 }
 
-void NAV::Combiner::receiveData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /* pinId */)
+void NAV::Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     if (!(NAV::Node::callbacksEnabled))
     {
         NAV::Node::callbacksEnabled = true;
     }
 
-    invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, nodeData);
+    invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, queue.front());
+
+    queue.pop_front();
 }

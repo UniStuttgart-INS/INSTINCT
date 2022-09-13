@@ -942,9 +942,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 {
                     auto cursor = ImGui::GetCursorPos();
                     ImGui::SetCursorPos(ImVec2(cursor.x - 26.0F, cursor.y + 2.F));
-
                     ImGui::PushStyleColor(ImGuiCol_Text, ImColor(255, 0, 0).Value);
-                    std::lock_guard lk(input.queueAccessMutex);
                     ImGui::Text("%lu", input.queue.size());
                     ImGui::PopStyleColor();
                     ImGui::SetCursorPos(cursor);
@@ -1260,7 +1258,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 {
                     if (Node* node = nm::FindNode(nodeId))
                     {
-                        if (!node->isInitialized() && node->getState() != Node::State::Deinitialized)
+                        if (node->isTransient())
                         {
                             break;
                         }
@@ -1342,7 +1340,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 node->_showConfig = true;
                 node->_configWindowFocus = true;
             }
-            if (ImGui::MenuItem(node->isDisabled() ? "Enable" : "Disable", "", false, node->isDisabled() || node->isInitialized() || node->getState() == Node::State::Deinitialized))
+            if (ImGui::MenuItem(node->isDisabled() ? "Enable" : "Disable", "", false, node->isTransient()))
             {
                 if (node->isDisabled())
                 {
@@ -1359,7 +1357,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 renameNode = node;
             }
             ImGui::Separator();
-            if (ImGui::MenuItem("Delete", "", false, node->isInitialized() || node->getState() == Node::State::Deinitialized))
+            if (ImGui::MenuItem("Delete", "", false, !node->isTransient()))
             {
                 ed::DeleteNode(contextNodeId);
             }
@@ -1386,15 +1384,9 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Text("ID: %lu", size_t(pin->id));
             ImGui::Text("Node: %s", pin->parentNode ? std::to_string(size_t(pin->parentNode->id)).c_str() : "<none>");
             ImGui::Text("Type: %s", std::string(pin->type).c_str());
-            {
-                std::lock_guard lk(pin->queueAccessMutex);
-                ImGui::Text("Queue: %lu", pin->queue.size());
-            }
+            ImGui::Text("Queue: %lu", pin->queue.size());
             ImGui::Separator();
-            if (ImGui::MenuItem("Rename"))
-            {
-                renamePin = pin;
-            }
+            if (ImGui::MenuItem("Rename")) { renamePin = pin; }
         }
         else if (auto* pin = nm::FindOutputPin(contextPinId))
         {

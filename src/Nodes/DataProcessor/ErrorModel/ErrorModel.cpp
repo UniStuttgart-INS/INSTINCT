@@ -582,17 +582,19 @@ void NAV::ErrorModel::afterDeleteLink(OutputPin& startPin, InputPin& endPin)
     }
 }
 
-void NAV::ErrorModel::receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::PinId /* pinId */)
+void NAV::ErrorModel::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     // Select the correct data type and make a copy of the node data to modify
     if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == ImuObs::type())
     {
-        receiveImuObs(std::make_shared<ImuObs>(*std::static_pointer_cast<const ImuObs>(nodeData)));
+        receiveImuObs(std::make_shared<ImuObs>(*std::static_pointer_cast<const ImuObs>(queue.front())));
     }
     else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type())
     {
-        receivePosVelAtt(std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(nodeData)));
+        receivePosVelAtt(std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(queue.front())));
     }
+
+    queue.pop_front();
 }
 
 void NAV::ErrorModel::receiveImuObs(const std::shared_ptr<ImuObs>& imuObs)
