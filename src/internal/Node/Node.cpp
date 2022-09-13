@@ -398,6 +398,8 @@ bool NAV::Node::isTransient() const
     case State::DoInitialize:
         return true;
     }
+
+    return true;
 }
 
 void NAV::Node::workerThread(Node* node)
