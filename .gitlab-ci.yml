@@ -55,6 +55,8 @@ check-image:
   stage: prepare
   extends: .linux
   script:
+    - uname -a
+    - cat /etc/issue
     - g++ --version
     - clang++ --version
     - clang-tidy --version
@@ -95,6 +97,7 @@ check-windows:
 
 clang-tidy:
   stage: checks
+  needs: ["check-image"]
   extends:
     - .linux
     - .clang
@@ -105,6 +108,7 @@ clang-tidy:
 
 clang-tidy:tests:
   stage: checks
+  needs: ["check-image"]
   extends:
     - .linux
     - .clang
@@ -115,6 +119,7 @@ clang-tidy:tests:
 
 documentation:
   stage: checks
+  needs: ["check-image"]
   extends: .linux
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES
@@ -290,7 +295,7 @@ tests:win:LOG_OFF:
 .build:raspberry:tests:
   stage: build
   extends: .raspberry
-  needs: ["check-image"]
+  needs: ["check-raspberry"]
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -j2
