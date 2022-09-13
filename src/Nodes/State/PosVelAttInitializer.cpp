@@ -481,7 +481,7 @@ void NAV::PosVelAttInitializer::updateInputPins()
     }
     else if ((!_overrideRollPitchYaw[0] || !_overrideRollPitchYaw[1] || !_overrideRollPitchYaw[2]) && _inputPinIdxIMU < 0)
     {
-        nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &PosVelAttInitializer::receiveImuObs, 0, 0);
+        nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &PosVelAttInitializer::receiveImuObs, nullptr, 0, 0);
         _inputPinIdxIMU = 0;
         if (_inputPinIdxGNSS >= 0)
         {

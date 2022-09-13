@@ -485,8 +485,11 @@ class TsDeque
     /// @return Copy of the first element
     auto extract_front()
     {
-        std::lock_guard lk(_mutex);
-        auto front = _queue.front();
+        T front;
+        {
+            std::lock_guard lk(_mutex);
+            front = _queue.front();
+        }
         pop_front();
         return front;
     }

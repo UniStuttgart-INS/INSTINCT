@@ -450,7 +450,7 @@ void NAV::Node::workerThread(Node* node)
                     {
                         auto& inputPin = node->inputPins.at(i);
                         if (inputPin.type == Pin::Type::Flow && inputPin.priority == prio
-                            && inputPin.firable && inputPin.firable())
+                            && inputPin.firable && inputPin.firable(inputPin.queue))
                         {
                             std::invoke(std::get<InputPin::FlowFirableCallbackFunc>(inputPin.callback), node, inputPin.queue, i);
                         }

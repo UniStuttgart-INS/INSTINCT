@@ -470,7 +470,13 @@ class InputPin : public Pin
     InputPin(const InputPin&) = delete;
     /// @brief Move constructor
     InputPin(InputPin&& other) noexcept
-        : Pin(std::move(other)), link(other.link), callback(other.callback), queue(other.queue) {}
+        : Pin(std::move(other)),
+          link(other.link),
+          callback(other.callback),
+          firable(std::move(other.firable)),
+          priority(other.priority),
+          queueBlocked(other.queueBlocked),
+          queue(other.queue) {}
     /// @brief Copy assignment operator
     InputPin& operator=(const InputPin&) = delete;
     /// @brief Move assignment operator
@@ -478,9 +484,13 @@ class InputPin : public Pin
     {
         if (this != &other)
         {
-            callback = other.callback;
-            queue = other.queue;
+            // copy if trivially-copyable, otherwise move
             link = other.link;
+            callback = other.callback;
+            firable = std::move(other.firable);
+            priority = other.priority;
+            queueBlocked = other.queueBlocked;
+            queue = std::move(other.queue);
             Pin::operator=(std::move(other));
         }
         return *this;
@@ -540,15 +550,14 @@ class InputPin : public Pin
                            || std::is_same_v<T, const int>
                            || std::is_same_v<T, const float>
                            || std::is_same_v<T, const double>
-                           || std::is_same_v<T, const std::string>)
-                { // clang-format on
+                           || std::is_same_v<T, const std::string>) // clang-format on
+                {
                     if (const auto* pVal = std::get_if<const T*>(&(connectedPin->data)))
                     {
                         return *pVal;
                     }
                 }
-                else // if constexpr (std::is_same_v<T, void>
-                     //            || std::is_same_v<T, PollDataFunc>)
+                else
                 {
                     if (const auto* pVal = std::get_if<const void*>(&(connectedPin->data)))
                     {
@@ -581,7 +590,7 @@ class InputPin : public Pin
     Callback callback;
 
     /// @brief Function to check if the callback is firable
-    std::function<bool()> firable = nullptr;
+    std::function<bool(const NodeDataQueue&)> firable = [](const NodeDataQueue& queue) { return !queue.empty(); };
 
     /// @brief Priority when checking firable condition related to other pins (0 = highest priority)
     size_t priority = 0;

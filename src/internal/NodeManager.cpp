@@ -157,7 +157,8 @@ void NAV::NodeManager::AddLink(ax::NodeEditor::LinkId linkId)
     m_NextId = std::max(m_NextId, size_t(linkId) + 1);
 }
 
-NAV::InputPin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, InputPin::Callback callback, size_t priority, int idx)
+NAV::InputPin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier,
+                                                InputPin::Callback callback, std::function<bool(const InputPin::NodeDataQueue&)> firable, size_t priority, int idx)
 {
     LOG_TRACE("called for pin ({}) of type ({}) for node [{}]", name, std::string(pinType), node->nameId());
     if (idx < 0)
@@ -170,6 +171,10 @@ NAV::InputPin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* nam
     node->inputPins.emplace(iter, GetNextPinId(), name, pinType, node);
 
     node->inputPins.at(static_cast<size_t>(idx)).callback = callback;
+    if (firable != nullptr)
+    {
+        node->inputPins.at(static_cast<size_t>(idx)).firable = std::move(firable);
+    }
     node->inputPins.at(static_cast<size_t>(idx)).dataIdentifier = dataIdentifier;
     node->inputPins.at(static_cast<size_t>(idx)).priority = priority;
 

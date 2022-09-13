@@ -55,8 +55,8 @@ void AddLink(ax::NodeEditor::LinkId linkId);
 /// @param[in] idx Index where to put the new pin (-1 means at the end)
 /// @return Pointer to the created pin
 InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier = {},
-                         InputPin::Callback callback = static_cast<InputPin::FlowFirableCallbackFunc>(nullptr), size_t priority = 0,
-                         int idx = -1);
+                         InputPin::Callback callback = static_cast<InputPin::FlowFirableCallbackFunc>(nullptr), std::function<bool(const InputPin::NodeDataQueue&)> firable = nullptr,
+                         size_t priority = 0, int idx = -1);
 
 /// @brief Create an Input Pin object
 /// @tparam T Node Class where the function is member of
@@ -65,17 +65,19 @@ InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const 
 /// @param[in] pinType Type of the pin
 /// @param[in] dataIdentifier Identifier of the data which is represented by the pin
 /// @param[in] callback Flow firable callback function to register with the pin
+/// @param[in] firable Function to check whether the callback is firable
 /// @param[in] priority Priority when checking firable condition related to other pins (0 = highest priority)
 /// @param[in] idx Index where to put the new pin (-1 means at the end)
 /// @return Pointer to the created pin
 template<typename T,
          typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
 InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier = {},
-                         void (T::*callback)(InputPin::NodeDataQueue&, size_t) = nullptr, size_t priority = 0, int idx = -1)
+                         void (T::*callback)(InputPin::NodeDataQueue&, size_t) = nullptr, std::function<bool(const InputPin::NodeDataQueue&)> firable = nullptr,
+                         size_t priority = 0, int idx = -1)
 {
     assert(pinType == Pin::Type::Flow);
 
-    return CreateInputPin(node, name, pinType, dataIdentifier, InputPin::Callback(static_cast<InputPin::FlowFirableCallbackFunc>(callback)), priority, idx);
+    return CreateInputPin(node, name, pinType, dataIdentifier, InputPin::Callback(static_cast<InputPin::FlowFirableCallbackFunc>(callback)), std::move(firable), priority, idx);
 }
 
 /// @brief Create an Input Pin object
@@ -94,7 +96,7 @@ InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const 
 {
     assert(pinType != Pin::Type::Flow && pinType != Pin::Type::Delegate);
 
-    return CreateInputPin(node, name, pinType, dataIdentifier, InputPin::Callback(static_cast<InputPin::DataChangedNotifyFunc>(notifyFunc)), 0, idx);
+    return CreateInputPin(node, name, pinType, dataIdentifier, InputPin::Callback(static_cast<InputPin::DataChangedNotifyFunc>(notifyFunc)), nullptr, 0, idx);
 }
 
 /// @brief Create an Output Pin object
