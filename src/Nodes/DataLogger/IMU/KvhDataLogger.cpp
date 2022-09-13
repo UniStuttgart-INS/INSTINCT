@@ -107,7 +107,7 @@ void NAV::KvhDataLogger::deinitialize()
 
 void NAV::KvhDataLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto obs = std::static_pointer_cast<const KvhObs>(queue.front());
+    auto obs = std::static_pointer_cast<const KvhObs>(queue.extract_front());
 
     constexpr int gpsCyclePrecision = 3;
     constexpr int gpsTimePrecision = 12;
@@ -192,6 +192,4 @@ void NAV::KvhDataLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, s
     _filestream << ",";
     _filestream << static_cast<uint16_t>(obs->sequenceNumber);
     _filestream << '\n';
-
-    queue.pop_front();
 }

@@ -384,7 +384,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
         return;
     }
 
-    auto gnssObs = std::static_pointer_cast<const GnssObs>(queue.front());
+    auto gnssObs = std::static_pointer_cast<const GnssObs>(queue.extract_front());
     LOG_DATA("{}: Calculating SPP for {}", nameId(), gnssObs->insTime->toYMDHMS());
 
     // Data calculated for each observation
@@ -904,18 +904,15 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     }
 
     invokeCallbacks(OUTPUT_PORT_INDEX_SPPSOL, sppSol);
-
-    queue.pop_front();
 }
 
 void NAV::SinglePointPositioning::recvPosVelInit(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     if (_e_position.isZero())
     {
-        auto posVel = std::static_pointer_cast<const PosVel>(queue.front());
+        auto posVel = std::static_pointer_cast<const PosVel>(queue.extract_front());
 
         _e_position = posVel->e_position();
         _e_velocity = posVel->e_velocity();
     }
-    queue.pop_front();
 }

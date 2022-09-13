@@ -320,7 +320,7 @@ void NAV::ImuIntegrator::deinitialize()
 void NAV::ImuIntegrator::recvPosVelAttInit(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     LOG_DATA("{}: recvPosVelAttInit", nameId());
-    auto posVelAtt = std::static_pointer_cast<const PosVelAtt>(queue.front());
+    auto posVelAtt = std::static_pointer_cast<const PosVelAtt>(queue.extract_front());
 
     // Fill the list with the initial state to the start of the list
     if (_posVelAttStates.empty())
@@ -360,13 +360,11 @@ void NAV::ImuIntegrator::recvPosVelAttInit(NAV::InputPin::NodeDataQueue& queue, 
             }
         }
     }
-
-    queue.pop_front();
 }
 
 void NAV::ImuIntegrator::recvImuObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto imuObs = std::static_pointer_cast<const ImuObs>(queue.front());
+    auto imuObs = std::static_pointer_cast<const ImuObs>(queue.extract_front());
     LOG_DATA("{}: recvImuObs at time [{}]", nameId(), imuObs->insTime->toYMDHMS());
 
     if (!imuObs->insTime.has_value() && !imuObs->timeSinceStartup.has_value())
@@ -419,13 +417,11 @@ void NAV::ImuIntegrator::recvImuObs(NAV::InputPin::NodeDataQueue& queue, size_t 
             break;
         }
     }
-
-    queue.pop_front();
 }
 
 void NAV::ImuIntegrator::recvLcKfInsGnssErrors(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto lcKfInsGnssErrors = std::static_pointer_cast<const LcKfInsGnssErrors>(queue.front());
+    auto lcKfInsGnssErrors = std::static_pointer_cast<const LcKfInsGnssErrors>(queue.extract_front());
     LOG_DATA("{}: recvLcKfInsGnssErrors at time [{}]", nameId(), lcKfInsGnssErrors->insTime->toYMDHMS());
 
     for (auto& posVelAtt : _posVelAttStates)
@@ -482,8 +478,6 @@ void NAV::ImuIntegrator::recvLcKfInsGnssErrors(NAV::InputPin::NodeDataQueue& que
     }
 
     _lckfErrors = lcKfInsGnssErrors;
-
-    queue.pop_front();
 }
 
 void NAV::ImuIntegrator::integrateObservationECEF()

@@ -150,7 +150,7 @@ void NAV::VectorNavDataLogger::deinitialize()
 
 void NAV::VectorNavDataLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto obs = std::static_pointer_cast<const VectorNavBinaryOutput>(queue.front());
+    auto obs = std::static_pointer_cast<const VectorNavBinaryOutput>(queue.extract_front());
 
     if (_fileType == FileType::CSV)
     {
@@ -1525,8 +1525,6 @@ void NAV::VectorNavDataLogger::writeObservation(NAV::InputPin::NodeDataQueue& qu
             }
         }
     }
-
-    queue.pop_front();
 
     LOG_DATA("{}: Message logged", nameId());
 }

@@ -132,7 +132,7 @@ void NAV::Delay::delayObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx 
     {
         auto oldest = _buffer.front();
         _buffer.pop_front();
-        _buffer.push_back(queue.front());
+        _buffer.push_back(queue.extract_front());
 
         if (auto obs = std::static_pointer_cast<const InsObs>(_buffer.back()))
         {
@@ -152,8 +152,6 @@ void NAV::Delay::delayObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx 
     }
     else
     {
-        _buffer.push_back(queue.front());
+        _buffer.push_back(queue.extract_front());
     }
-
-    queue.pop_front();
 }

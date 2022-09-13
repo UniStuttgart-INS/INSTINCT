@@ -107,7 +107,7 @@ void NAV::ImuDataLogger::deinitialize()
 
 void NAV::ImuDataLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto obs = std::static_pointer_cast<const ImuObs>(queue.front());
+    auto obs = std::static_pointer_cast<const ImuObs>(queue.extract_front());
 
     constexpr int gpsCyclePrecision = 3;
     constexpr int gpsTimePrecision = 12;
@@ -188,6 +188,4 @@ void NAV::ImuDataLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, s
         _filestream << obs->temperature.value();
     }
     _filestream << '\n';
-
-    queue.pop_front();
 }

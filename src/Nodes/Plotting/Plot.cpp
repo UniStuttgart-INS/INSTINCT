@@ -2138,10 +2138,10 @@ void NAV::Plot::plotData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
 {
     if (ConfigManager::Get<bool>("nogui")) { return; }
 
+    auto nodeData = queue.extract_front();
+
     if (auto* sourcePin = inputPins[pinIdx].link.getConnectedPin())
     {
-        auto nodeData = queue.front();
-
         if (sourcePin->dataIdentifier.front() == Pos::type())
         {
             plotPos(std::static_pointer_cast<const Pos>(nodeData), pinIdx);
@@ -2188,7 +2188,6 @@ void NAV::Plot::plotData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
             plotVectorNavBinaryObs(std::static_pointer_cast<const VectorNavBinaryOutput>(nodeData), pinIdx);
         }
     }
-    queue.pop_front();
 }
 
 void NAV::Plot::plotPos(const std::shared_ptr<const Pos>& obs, size_t pinIndex)

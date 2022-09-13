@@ -587,14 +587,12 @@ void NAV::ErrorModel::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* 
     // Select the correct data type and make a copy of the node data to modify
     if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == ImuObs::type())
     {
-        receiveImuObs(std::make_shared<ImuObs>(*std::static_pointer_cast<const ImuObs>(queue.front())));
+        receiveImuObs(std::make_shared<ImuObs>(*std::static_pointer_cast<const ImuObs>(queue.extract_front())));
     }
     else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type())
     {
-        receivePosVelAtt(std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(queue.front())));
+        receivePosVelAtt(std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(queue.extract_front())));
     }
-
-    queue.pop_front();
 }
 
 void NAV::ErrorModel::receiveImuObs(const std::shared_ptr<ImuObs>& imuObs)

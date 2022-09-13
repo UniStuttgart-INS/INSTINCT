@@ -565,7 +565,7 @@ void NAV::PosVelAttInitializer::receiveImuObs(InputPin::NodeDataQueue& queue, si
         return;
     }
 
-    auto obs = std::static_pointer_cast<const ImuObs>(queue.front());
+    auto obs = std::static_pointer_cast<const ImuObs>(queue.extract_front());
 
     if (!obs->timeSinceStartup.has_value()) // TODO: Make this work with insTime
     {
@@ -629,8 +629,6 @@ void NAV::PosVelAttInitializer::receiveImuObs(InputPin::NodeDataQueue& queue, si
     }
 
     finalizeInit();
-
-    queue.pop_front();
 }
 
 void NAV::PosVelAttInitializer::receiveGnssObs(InputPin::NodeDataQueue& queue, size_t pinIdx)
@@ -642,31 +640,31 @@ void NAV::PosVelAttInitializer::receiveGnssObs(InputPin::NodeDataQueue& queue, s
 
     const auto& sourcePin = inputPins[pinIdx];
 
+    auto nodeData = queue.extract_front();
+
     if (sourcePin.dataIdentifier.front() == RtklibPosObs::type())
     {
-        receiveRtklibPosObs(std::static_pointer_cast<const RtklibPosObs>(queue.front()));
+        receiveRtklibPosObs(std::static_pointer_cast<const RtklibPosObs>(nodeData));
     }
     else if (sourcePin.dataIdentifier.front() == UbloxObs::type())
     {
-        receiveUbloxObs(std::static_pointer_cast<const UbloxObs>(queue.front()));
+        receiveUbloxObs(std::static_pointer_cast<const UbloxObs>(nodeData));
     }
     else if (sourcePin.dataIdentifier.front() == Pos::type())
     {
-        receivePosObs(std::static_pointer_cast<const Pos>(queue.front()));
+        receivePosObs(std::static_pointer_cast<const Pos>(nodeData));
     }
     else if (sourcePin.dataIdentifier.front() == PosVel::type()
              || sourcePin.dataIdentifier.front() == SppSolution::type())
     {
-        receivePosVelObs(std::static_pointer_cast<const PosVel>(queue.front()));
+        receivePosVelObs(std::static_pointer_cast<const PosVel>(nodeData));
     }
     else if (sourcePin.dataIdentifier.front() == PosVelAtt::type())
     {
-        receivePosVelAttObs(std::static_pointer_cast<const PosVelAtt>(queue.front()));
+        receivePosVelAttObs(std::static_pointer_cast<const PosVelAtt>(nodeData));
     }
 
     finalizeInit();
-
-    queue.pop_front();
 }
 
 void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<const UbloxObs>& obs)

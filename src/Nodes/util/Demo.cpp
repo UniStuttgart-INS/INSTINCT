@@ -324,10 +324,7 @@ bool NAV::Demo::initialize()
     LOG_TRACE("{}: called", nameId());
 
     // To Show the Initialization in the GUI
-    std::this_thread::sleep_until(std::chrono::steady_clock::now() + std::chrono::milliseconds(2000));
-
-    // Currently crashes clang-tidy (Stack dump: #0 Calling std::chrono::operator<=>), so use sleep_until
-    // std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 
     _receivedDataFromSensorCnt = 0;
     _receivedDataFromFileReaderCnt = 0;
@@ -350,7 +347,7 @@ void NAV::Demo::deinitialize()
     }
 
     // To Show the Deinitialization in the GUI
-    std::this_thread::sleep_until(std::chrono::steady_clock::now() + std::chrono::milliseconds(1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }
 
 bool NAV::Demo::resetNode()
@@ -380,17 +377,16 @@ void NAV::Demo::receiveSensorData(NAV::InputPin::NodeDataQueue& queue, size_t /*
 
     _receivedDataFromSensorCnt++;
 
-    queue.pop_front();
+    queue.pop_front(); // Here we did not read the data, so lets just pop it from the queue
 }
 
 void NAV::Demo::receiveFileReaderData(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto obs = std::static_pointer_cast<const InsObs>(queue.front());
+    // Here we are reading the data, so extracts gets the value and automatically pops it from the queue
+    auto obs = std::static_pointer_cast<const InsObs>(queue.extract_front());
     LOG_INFO("{}: received FileReader Data: {}", nameId(), obs->insTime->toYMDHMS());
 
     _receivedDataFromFileReaderCnt++;
-
-    queue.pop_front();
 }
 
 void NAV::Demo::readSensorDataThread(void* userData)

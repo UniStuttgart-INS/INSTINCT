@@ -120,7 +120,7 @@ void NAV::LcKfInsGnssErrorLogger::writeObservation(NAV::InputPin::NodeDataQueue&
     constexpr int gpsTimePrecision = 12;
     constexpr int valuePrecision = 9;
 
-    auto obs = std::static_pointer_cast<const LcKfInsGnssErrors>(queue.front());
+    auto obs = std::static_pointer_cast<const LcKfInsGnssErrors>(queue.extract_front());
     if (obs->insTime.has_value())
     {
         _filestream << std::setprecision(valuePrecision) << std::round(calcTimeIntoRun(obs->insTime.value()) * 1e9) / 1e9;
@@ -195,6 +195,4 @@ void NAV::LcKfInsGnssErrorLogger::writeObservation(NAV::InputPin::NodeDataQueue&
     _filestream << ",";
     if (!std::isnan(obs->b_biasGyro(2))) { _filestream << obs->b_biasGyro(2); }; // Gyroscope bias b_Z accumulated [rad/s]
     _filestream << '\n';
-
-    queue.pop_front();
 }

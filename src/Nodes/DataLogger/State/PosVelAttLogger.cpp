@@ -116,8 +116,10 @@ void NAV::PosVelAttLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue,
         constexpr int gpsTimePrecision = 12;
         constexpr int valuePrecision = 15;
 
+        auto nodeData = queue.extract_front();
+
         {
-            auto obs = std::static_pointer_cast<const Pos>(queue.front());
+            auto obs = std::static_pointer_cast<const Pos>(nodeData);
             if (obs->insTime.has_value())
             {
                 _filestream << std::setprecision(valuePrecision) << std::round(calcTimeIntoRun(obs->insTime.value()) * 1e9) / 1e9;
@@ -187,7 +189,7 @@ void NAV::PosVelAttLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue,
             || sourcePin->dataIdentifier.front() == PosVel::type()
             || sourcePin->dataIdentifier.front() == InertialNavSol::type())
         {
-            auto obs = std::static_pointer_cast<const PosVel>(queue.front());
+            auto obs = std::static_pointer_cast<const PosVel>(nodeData);
 
             if (!std::isnan(obs->e_velocity().x()))
             {
@@ -228,7 +230,7 @@ void NAV::PosVelAttLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue,
         if (sourcePin->dataIdentifier.front() == PosVelAtt::type()
             || sourcePin->dataIdentifier.front() == InertialNavSol::type())
         {
-            auto obs = std::static_pointer_cast<const PosVelAtt>(queue.front());
+            auto obs = std::static_pointer_cast<const PosVelAtt>(nodeData);
             if (!obs->n_Quat_b().coeffs().isZero())
             {
                 _filestream << obs->n_Quat_b().w();
@@ -259,6 +261,4 @@ void NAV::PosVelAttLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue,
 
         _filestream << '\n';
     }
-
-    queue.pop_front();
 }

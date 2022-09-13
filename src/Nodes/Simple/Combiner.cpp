@@ -201,7 +201,5 @@ void NAV::Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t /* pinIdx
         NAV::Node::callbacksEnabled = true;
     }
 
-    invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, queue.front());
-
-    queue.pop_front();
+    invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, queue.extract_front());
 }

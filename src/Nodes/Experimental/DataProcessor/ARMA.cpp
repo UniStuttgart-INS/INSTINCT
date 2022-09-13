@@ -301,7 +301,7 @@ void NAV::experimental::ARMA::hannan_rissanen(Eigen::VectorXd& y, int p, int q, 
 
 void NAV::experimental::ARMA::receiveImuObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto obs = std::static_pointer_cast<const ImuObs>(queue.front());
+    auto obs = std::static_pointer_cast<const ImuObs>(queue.extract_front());
     auto newImuObs = std::make_shared<ImuObs>(obs->imuPos);
     _buffer.push_back(obs); // push latest IMU epoch to deque
 
@@ -380,6 +380,4 @@ void NAV::experimental::ARMA::receiveImuObs(NAV::InputPin::NodeDataQueue& queue,
     {
         invokeCallbacks(OUTPUT_PORT_INDEX_IMU_OBS, obs);
     }
-
-    queue.pop_front();
 }

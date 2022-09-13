@@ -152,7 +152,7 @@ bool NAV::VectorNavBinaryConverter::initialize()
 
 void NAV::VectorNavBinaryConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto vnObs = std::static_pointer_cast<const VectorNavBinaryOutput>(queue.front());
+    auto vnObs = std::static_pointer_cast<const VectorNavBinaryOutput>(queue.extract_front());
 
     std::shared_ptr<const NodeData> convertedData = nullptr;
 
@@ -173,8 +173,6 @@ void NAV::VectorNavBinaryConverter::receiveObs(NAV::InputPin::NodeDataQueue& que
     {
         invokeCallbacks(OUTPUT_PORT_INDEX_CONVERTED, convertedData);
     }
-
-    queue.pop_front();
 }
 
 std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2ImuObsWDelta(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs)
