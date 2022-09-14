@@ -4,7 +4,7 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-#include "NodeData/InsObs.hpp"
+#include "NodeData/NodeData.hpp"
 
 NAV::Delay::Delay()
     : Node(fmt::format("z^-{}", _delayLength))
@@ -15,8 +15,8 @@ NAV::Delay::Delay()
     _guiConfigDefaultWindowSize = { 305, 70 };
     kind = Kind::Simple;
 
-    nm::CreateInputPin(this, "", Pin::Type::Flow, { InsObs::type() }, &Delay::delayObs);
-    nm::CreateOutputPin(this, "", Pin::Type::Flow, { InsObs::type() });
+    nm::CreateInputPin(this, "", Pin::Type::Flow, { NodeData::type() }, &Delay::delayObs);
+    nm::CreateOutputPin(this, "", Pin::Type::Flow, { NodeData::type() });
 }
 
 NAV::Delay::~Delay()
@@ -134,14 +134,7 @@ void NAV::Delay::delayObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx 
         _buffer.pop_front();
         _buffer.push_back(queue.extract_front());
 
-        if (auto obs = std::static_pointer_cast<const InsObs>(_buffer.back()))
-        {
-            LOG_DATA("{}: Delay pushing out message: {}", nameId(), obs->insTime->toGPSweekTow());
-        }
-        else
-        {
-            LOG_DATA("{}: Delay pushing out message", nameId());
-        }
+        LOG_DATA("{}: Delay pushing out message: {}", nameId(), _buffer.back()->insTime.toGPSweekTow());
 
         if (!(NAV::Node::callbacksEnabled))
         {

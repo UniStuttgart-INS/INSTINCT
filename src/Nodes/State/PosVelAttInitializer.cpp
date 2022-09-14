@@ -842,7 +842,7 @@ std::shared_ptr<const NAV::NodeData> NAV::PosVelAttInitializer::pollPVASolution(
         }
         else
         {
-            posVelAtt->insTime.emplace(InsTime_GPSweekTow(0, 0, 0));
+            posVelAtt->insTime = InsTime(InsTime_GPSweekTow(0, 0, 0));
         }
         return posVelAtt;
     }

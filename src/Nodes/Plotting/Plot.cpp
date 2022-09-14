@@ -1364,7 +1364,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
 
         if (startPin.dataIdentifier.front() == Pos::type())
         {
-            // InsObs
+            // NodeData
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
             // Pos
@@ -1379,7 +1379,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
         }
         else if (startPin.dataIdentifier.front() == PosVel::type())
         {
-            // InsObs
+            // NodeData
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
             // PosVel
@@ -1401,7 +1401,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
         else if (startPin.dataIdentifier.front() == PosVelAtt::type()
                  || startPin.dataIdentifier.front() == InertialNavSol::type())
         {
-            // InsObs
+            // NodeData
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
             // PosVelAtt
@@ -1429,7 +1429,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
         }
         else if (startPin.dataIdentifier.front() == LcKfInsGnssErrors::type())
         {
-            // InsObs
+            // NodeData
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
             // PVAError
@@ -1461,7 +1461,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
         }
         else if (startPin.dataIdentifier.front() == SppSolution::type())
         {
-            // InsObs
+            // NodeData
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
             // PosVel
@@ -1513,7 +1513,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
         }
         else if (startPin.dataIdentifier.front() == RtklibPosObs::type())
         {
-            // InsObs
+            // NodeData
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
             // RtklibPosObs
@@ -1556,7 +1556,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
         }
         else if (startPin.dataIdentifier.front() == UbloxObs::type())
         {
-            // InsObs
+            // NodeData
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
             // UbloxObs
@@ -1574,7 +1574,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
         }
         else if (startPin.dataIdentifier.front() == ImuObs::type())
         {
-            // InsObs
+            // NodeData
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
             // ImuObs
@@ -1601,7 +1601,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
         }
         else if (startPin.dataIdentifier.front() == KvhObs::type())
         {
-            // InsObs
+            // NodeData
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
             // ImuObs
@@ -1631,7 +1631,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
         }
         else if (startPin.dataIdentifier.front() == ImuObsWDelta::type())
         {
-            // InsObs
+            // NodeData
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
             // ImuObs
@@ -1666,7 +1666,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
         }
         else if (startPin.dataIdentifier.front() == VectorNavBinaryOutput::type())
         {
-            // InsObs
+            // NodeData
             _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
             // VectorNavBinaryOutput
@@ -1887,7 +1887,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
     {
         _pinData.at(pinIndex).dataIdentifier = startPin.name;
 
-        // InsObs
+        // NodeData
         _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
         _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
         // Bool
@@ -1897,7 +1897,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
     {
         _pinData.at(pinIndex).dataIdentifier = startPin.name;
 
-        // InsObs
+        // NodeData
         _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
         _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
         // Int
@@ -1907,7 +1907,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
     {
         _pinData.at(pinIndex).dataIdentifier = startPin.name;
 
-        // InsObs
+        // NodeData
         _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
         _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
         // Float
@@ -1917,7 +1917,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
     {
         _pinData.at(pinIndex).dataIdentifier = startPin.name;
 
-        // InsObs
+        // NodeData
         _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
         _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
         // Matrix
@@ -2042,7 +2042,7 @@ void NAV::Plot::plotBoolean(ax::NodeEditor::PinId pinId)
 
         std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
-        // InsObs
+        // NodeData
         addData(pinIndex, i++, static_cast<double>((currentTime - _startTime).count()));
         addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
         // Boolean
@@ -2066,7 +2066,7 @@ void NAV::Plot::plotInteger(ax::NodeEditor::PinId pinId)
 
         std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
-        // InsObs
+        // NodeData
         addData(pinIndex, i++, static_cast<double>((currentTime - _startTime).count()));
         addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
         // Integer
@@ -2090,7 +2090,7 @@ void NAV::Plot::plotFloat(ax::NodeEditor::PinId pinId)
 
         std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
-        // InsObs
+        // NodeData
         addData(pinIndex, i++, static_cast<double>((currentTime - _startTime).count()));
         addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
         // Double
@@ -2118,7 +2118,7 @@ void NAV::Plot::plotMatrix(ax::NodeEditor::PinId pinId)
 
                 std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
-                // InsObs
+                // NodeData
                 addData(pinIndex, i++, static_cast<double>((currentTime - _startTime).count()));
                 addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
                 // Matrix
@@ -2192,7 +2192,7 @@ void NAV::Plot::plotData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
 
 void NAV::Plot::plotPos(const std::shared_ptr<const Pos>& obs, size_t pinIndex)
 {
-    if (obs->insTime.has_value() && _startTime.empty()) { _startTime = obs->insTime.value(); }
+    if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
     size_t i = 0;
 
     // [𝜙, λ, h] Latitude, Longitude and altitude in [rad, rad, m]
@@ -2220,9 +2220,9 @@ void NAV::Plot::plotPos(const std::shared_ptr<const Pos>& obs, size_t pinIndex)
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
-    // InsObs
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>((obs->insTime.value() - _startTime).count()) : std::nan(""));
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // NodeData
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>((obs->insTime - _startTime).count()) : std::nan(""));
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>(obs->insTime.toGPSweekTow().tow) : std::nan(""));
     // Pos
     addData(pinIndex, i++, rad2deg(lla_position(0)));
     addData(pinIndex, i++, rad2deg(lla_position(1)));
@@ -2236,7 +2236,7 @@ void NAV::Plot::plotPos(const std::shared_ptr<const Pos>& obs, size_t pinIndex)
 
 void NAV::Plot::plotPosVel(const std::shared_ptr<const PosVel>& obs, size_t pinIndex)
 {
-    if (obs->insTime.has_value() && _startTime.empty()) { _startTime = obs->insTime.value(); }
+    if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
     size_t i = 0;
 
     // [𝜙, λ, h] Latitude, Longitude and altitude in [rad, rad, m]
@@ -2264,9 +2264,9 @@ void NAV::Plot::plotPosVel(const std::shared_ptr<const PosVel>& obs, size_t pinI
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
-    // InsObs
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>((obs->insTime.value() - _startTime).count()) : std::nan(""));
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // NodeData
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>((obs->insTime - _startTime).count()) : std::nan(""));
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>(obs->insTime.toGPSweekTow().tow) : std::nan(""));
     // PosVel
     addData(pinIndex, i++, rad2deg(lla_position(0)));
     addData(pinIndex, i++, rad2deg(lla_position(1)));
@@ -2286,7 +2286,7 @@ void NAV::Plot::plotPosVel(const std::shared_ptr<const PosVel>& obs, size_t pinI
 
 void NAV::Plot::plotPosVelAtt(const std::shared_ptr<const PosVelAtt>& obs, size_t pinIndex)
 {
-    if (obs->insTime.has_value() && _startTime.empty()) { _startTime = obs->insTime.value(); }
+    if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
     size_t i = 0;
 
     // [𝜙, λ, h] Latitude, Longitude and altitude in [rad, rad, m]
@@ -2314,9 +2314,9 @@ void NAV::Plot::plotPosVelAtt(const std::shared_ptr<const PosVelAtt>& obs, size_
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
-    // InsObs
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>((obs->insTime.value() - _startTime).count()) : std::nan(""));
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // NodeData
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>((obs->insTime - _startTime).count()) : std::nan(""));
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>(obs->insTime.toGPSweekTow().tow) : std::nan(""));
     // PosVelAtt
     addData(pinIndex, i++, rad2deg(lla_position(0)));
     addData(pinIndex, i++, rad2deg(lla_position(1)));
@@ -2343,14 +2343,14 @@ void NAV::Plot::plotPosVelAtt(const std::shared_ptr<const PosVelAtt>& obs, size_
 
 void NAV::Plot::plotLcKfInsGnssErrors(const std::shared_ptr<const LcKfInsGnssErrors>& obs, size_t pinIndex)
 {
-    if (obs->insTime.has_value() && _startTime.empty()) { _startTime = obs->insTime.value(); }
+    if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
     size_t i = 0;
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
-    // InsObs
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>((obs->insTime.value() - _startTime).count()) : std::nan(""));
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // NodeData
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>((obs->insTime - _startTime).count()) : std::nan(""));
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>(obs->insTime.toGPSweekTow().tow) : std::nan(""));
     // PVAError
     addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? rad2deg(obs->attitudeError(0)) : std::nan(""));
     addData(pinIndex, i++, obs->frame == LcKfInsGnssErrors::Frame::NED ? rad2deg(obs->attitudeError(1)) : std::nan(""));
@@ -2382,7 +2382,7 @@ void NAV::Plot::plotLcKfInsGnssErrors(const std::shared_ptr<const LcKfInsGnssErr
 
 void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, size_t pinIndex)
 {
-    if (obs->insTime.has_value() && _startTime.empty()) { _startTime = obs->insTime.value(); }
+    if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
     size_t i = 0;
 
     if (std::isnan(_originLatitude))
@@ -2407,9 +2407,9 @@ void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, s
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
-    // InsObs
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>((obs->insTime.value() - _startTime).count()) : std::nan(""));
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // NodeData
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>((obs->insTime - _startTime).count()) : std::nan(""));
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>(obs->insTime.toGPSweekTow().tow) : std::nan(""));
     // PosVel
     addData(pinIndex, i++, rad2deg(obs->lla_position()(0)));
     addData(pinIndex, i++, rad2deg(obs->lla_position()(1)));
@@ -2460,7 +2460,7 @@ void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, s
 
 void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs, size_t pinIndex)
 {
-    if (obs->insTime.has_value() && _startTime.empty()) { _startTime = obs->insTime.value(); }
+    if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
     size_t i = 0;
 
     if (std::isnan(_originLatitude))
@@ -2485,9 +2485,9 @@ void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs,
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
-    // InsObs
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>((obs->insTime.value() - _startTime).count()) : std::nan(""));
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // NodeData
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>((obs->insTime - _startTime).count()) : std::nan(""));
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>(obs->insTime.toGPSweekTow().tow) : std::nan(""));
     // RtklibPosObs
     addData(pinIndex, i++, obs->e_position().x());
     addData(pinIndex, i++, obs->e_position().y());
@@ -2529,7 +2529,7 @@ void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs,
 
 void NAV::Plot::plotUbloxObs(const std::shared_ptr<const UbloxObs>& obs, size_t pinIndex)
 {
-    if (obs->insTime.has_value() && _startTime.empty()) { _startTime = obs->insTime.value(); }
+    if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
 
     // Position in ECEF coordinates in [m]
     std::optional<Eigen::Vector3d> e_position;
@@ -2602,9 +2602,9 @@ void NAV::Plot::plotUbloxObs(const std::shared_ptr<const UbloxObs>& obs, size_t 
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
-    // InsObs
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>((obs->insTime.value() - _startTime).count()) : std::nan(""));
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // NodeData
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>((obs->insTime - _startTime).count()) : std::nan(""));
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>(obs->insTime.toGPSweekTow().tow) : std::nan(""));
     // UbloxObs
     addData(pinIndex, i++, e_position.has_value() ? e_position->x() : std::nan(""));
     addData(pinIndex, i++, e_position.has_value() ? e_position->y() : std::nan(""));
@@ -2621,14 +2621,14 @@ void NAV::Plot::plotUbloxObs(const std::shared_ptr<const UbloxObs>& obs, size_t 
 
 void NAV::Plot::plotImuObs(const std::shared_ptr<const ImuObs>& obs, size_t pinIndex)
 {
-    if (obs->insTime.has_value() && _startTime.empty()) { _startTime = obs->insTime.value(); }
+    if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
     size_t i = 0;
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
-    // InsObs
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>((obs->insTime.value() - _startTime).count()) : std::nan(""));
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // NodeData
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>((obs->insTime - _startTime).count()) : std::nan(""));
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>(obs->insTime.toGPSweekTow().tow) : std::nan(""));
     // ImuObs
     addData(pinIndex, i++, obs->timeSinceStartup.has_value() ? static_cast<double>(obs->timeSinceStartup.value()) : std::nan(""));
     addData(pinIndex, i++, obs->magUncompXYZ.has_value() ? obs->magUncompXYZ->x() : std::nan(""));
@@ -2654,14 +2654,14 @@ void NAV::Plot::plotImuObs(const std::shared_ptr<const ImuObs>& obs, size_t pinI
 
 void NAV::Plot::plotKvhObs(const std::shared_ptr<const KvhObs>& obs, size_t pinIndex)
 {
-    if (obs->insTime.has_value() && _startTime.empty()) { _startTime = obs->insTime.value(); }
+    if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
     size_t i = 0;
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
-    // InsObs
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>((obs->insTime.value() - _startTime).count()) : std::nan(""));
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // NodeData
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>((obs->insTime - _startTime).count()) : std::nan(""));
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>(obs->insTime.toGPSweekTow().tow) : std::nan(""));
     // ImuObs
     addData(pinIndex, i++, obs->timeSinceStartup.has_value() ? static_cast<double>(obs->timeSinceStartup.value()) : std::nan(""));
     addData(pinIndex, i++, obs->magUncompXYZ.has_value() ? obs->magUncompXYZ->x() : std::nan(""));
@@ -2690,14 +2690,14 @@ void NAV::Plot::plotKvhObs(const std::shared_ptr<const KvhObs>& obs, size_t pinI
 
 void NAV::Plot::plotImuObsWDeltaObs(const std::shared_ptr<const ImuObsWDelta>& obs, size_t pinIndex)
 {
-    if (obs->insTime.has_value() && _startTime.empty()) { _startTime = obs->insTime.value(); }
+    if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
     size_t i = 0;
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
-    // InsObs
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>((obs->insTime.value() - _startTime).count()) : std::nan(""));
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // NodeData
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>((obs->insTime - _startTime).count()) : std::nan(""));
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>(obs->insTime.toGPSweekTow().tow) : std::nan(""));
     // ImuObs
     addData(pinIndex, i++, obs->timeSinceStartup.has_value() ? static_cast<double>(obs->timeSinceStartup.value()) : std::nan(""));
     addData(pinIndex, i++, obs->magUncompXYZ.has_value() ? obs->magUncompXYZ->x() : std::nan(""));
@@ -2731,14 +2731,14 @@ void NAV::Plot::plotImuObsWDeltaObs(const std::shared_ptr<const ImuObsWDelta>& o
 
 void NAV::Plot::plotVectorNavBinaryObs(const std::shared_ptr<const VectorNavBinaryOutput>& obs, size_t pinIndex)
 {
-    if (obs->insTime.has_value() && _startTime.empty()) { _startTime = obs->insTime.value(); }
+    if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
     size_t i = 0;
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
-    // InsObs
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>((obs->insTime.value() - _startTime).count()) : std::nan(""));
-    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // NodeData
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>((obs->insTime - _startTime).count()) : std::nan(""));
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>(obs->insTime.toGPSweekTow().tow) : std::nan(""));
     // VectorNavBinaryOutput
     // Group 2 (Time)
     addData(pinIndex, i++, obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP) ? static_cast<double>(obs->timeOutputs->timeStartup) : std::nan(""));

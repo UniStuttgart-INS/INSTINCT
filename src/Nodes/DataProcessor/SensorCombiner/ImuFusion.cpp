@@ -859,7 +859,7 @@ void NAV::ImuFusion::recvSignal(NAV::InputPin::NodeDataQueue& queue, size_t pinI
 {
     auto imuObs = std::static_pointer_cast<const ImuObs>(queue.extract_front());
 
-    if (!imuObs->insTime.has_value() && !imuObs->timeSinceStartup.has_value())
+    if (imuObs->insTime.empty() && !imuObs->timeSinceStartup.has_value())
     {
         LOG_ERROR("{}: Can't set new imuObs__t0 because the observation has no time tag (insTime/timeSinceStartup)", nameId());
         return;
@@ -869,12 +869,12 @@ void NAV::ImuFusion::recvSignal(NAV::InputPin::NodeDataQueue& queue, size_t pinI
     {
         // Initial time step for KF prediction
         InsTime dt_init = InsTime{ 0, 0, 0, 0, 0, 1.0 / _imuFrequency };
-        _latestTimestamp = InsTime{ 0, 0, 0, 0, 0, (imuObs->insTime.value() - dt_init).count() };
+        _latestTimestamp = InsTime{ 0, 0, 0, 0, 0, (imuObs->insTime - dt_init).count() };
     }
 
     // Predict states over the time difference between the latest signal and the one before
-    auto dt = static_cast<double>((imuObs->insTime.value() - _latestTimestamp).count());
-    _latestTimestamp = imuObs->insTime.value();
+    auto dt = static_cast<double>((imuObs->insTime - _latestTimestamp).count());
+    _latestTimestamp = imuObs->insTime;
     LOG_DATA("dt = {}", dt);
 
     stateTransitionMatrix_Phi(_kalmanFilter.Phi, dt);

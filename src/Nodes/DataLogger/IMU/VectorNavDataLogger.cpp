@@ -500,24 +500,24 @@ void NAV::VectorNavDataLogger::writeObservation(NAV::InputPin::NodeDataQueue& qu
         constexpr int floatPrecision = std::numeric_limits<float>::digits10 + 2;
         constexpr int doublePrecision = std::numeric_limits<double>::digits10 + 2;
 
-        if (obs->insTime.has_value())
+        if (!obs->insTime.empty())
         {
-            _filestream << std::setprecision(doublePrecision) << std::round(calcTimeIntoRun(obs->insTime.value()) * 1e9) / 1e9;
+            _filestream << std::setprecision(doublePrecision) << std::round(calcTimeIntoRun(obs->insTime) * 1e9) / 1e9;
         }
         _filestream << ",";
-        if (obs->insTime.has_value())
+        if (!obs->insTime.empty())
         {
-            _filestream << std::fixed << std::setprecision(gpsCyclePrecision) << obs->insTime->toGPSweekTow().gpsCycle;
+            _filestream << std::fixed << std::setprecision(gpsCyclePrecision) << obs->insTime.toGPSweekTow().gpsCycle;
         }
         _filestream << ',';
-        if (obs->insTime.has_value())
+        if (!obs->insTime.empty())
         {
-            _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime->toGPSweekTow().gpsWeek;
+            _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.toGPSweekTow().gpsWeek;
         }
         _filestream << ',';
-        if (obs->insTime.has_value())
+        if (!obs->insTime.empty())
         {
-            _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime->toGPSweekTow().tow;
+            _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.toGPSweekTow().tow;
         }
         // Group 2 (Time)
         if (obs->timeOutputs)
@@ -1106,9 +1106,9 @@ void NAV::VectorNavDataLogger::writeObservation(NAV::InputPin::NodeDataQueue& qu
             _headerWritten = true;
         }
 
-        if (obs->insTime.has_value())
+        if (!obs->insTime.empty())
         {
-            auto insTimeGPS = obs->insTime->toGPSweekTow();
+            auto insTimeGPS = obs->insTime.toGPSweekTow();
             auto tow = static_cast<double>(insTimeGPS.tow);
             _filestream.write(reinterpret_cast<const char*>(&insTimeGPS.gpsCycle), sizeof(insTimeGPS.gpsCycle));
             _filestream.write(reinterpret_cast<const char*>(&insTimeGPS.gpsWeek), sizeof(insTimeGPS.gpsWeek));

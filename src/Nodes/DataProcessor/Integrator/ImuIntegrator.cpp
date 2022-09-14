@@ -343,9 +343,9 @@ void NAV::ImuIntegrator::recvPosVelAttInit(NAV::InputPin::NodeDataQueue& queue, 
 void NAV::ImuIntegrator::recvImuObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     auto imuObs = std::static_pointer_cast<const ImuObs>(queue.extract_front());
-    LOG_DATA("{}: recvImuObs at time [{}]", nameId(), imuObs->insTime->toYMDHMS());
+    LOG_DATA("{}: recvImuObs at time [{}]", nameId(), imuObs->insTime.toYMDHMS());
 
-    if (!imuObs->insTime.has_value() && !imuObs->timeSinceStartup.has_value())
+    if (imuObs->insTime.empty() && !imuObs->timeSinceStartup.has_value())
     {
         LOG_ERROR("{}: Can't set new imuObs__t0 because the observation has no time tag (insTime/timeSinceStartup)", nameId());
         return;
@@ -400,11 +400,11 @@ void NAV::ImuIntegrator::recvImuObs(NAV::InputPin::NodeDataQueue& queue, size_t 
 void NAV::ImuIntegrator::recvLcKfInsGnssErrors(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     auto lcKfInsGnssErrors = std::static_pointer_cast<const LcKfInsGnssErrors>(queue.extract_front());
-    LOG_DATA("{}: recvLcKfInsGnssErrors at time [{}]", nameId(), lcKfInsGnssErrors->insTime->toYMDHMS());
+    LOG_DATA("{}: recvLcKfInsGnssErrors at time [{}]", nameId(), lcKfInsGnssErrors->insTime.toYMDHMS());
 
     for (auto& posVelAtt : _posVelAttStates)
     {
-        LOG_DATA("{}: Correcting posVelAtt at time [{}] with error from time [{}]", nameId(), posVelAtt->insTime->toYMDHMS(), lcKfInsGnssErrors->insTime->toYMDHMS());
+        LOG_DATA("{}: Correcting posVelAtt at time [{}] with error from time [{}]", nameId(), posVelAtt->insTime.toYMDHMS(), lcKfInsGnssErrors->insTime.toYMDHMS());
         auto posVelAttCorrected = std::make_shared<PosVelAtt>(*posVelAtt);
 
         if (lcKfInsGnssErrors->frame == LcKfInsGnssErrors::Frame::NED)
@@ -473,12 +473,12 @@ void NAV::ImuIntegrator::integrateObservationECEF()
     // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
     long double timeDifferenceSec = 0;
 
-    if (imuObs__t0->insTime.has_value() && !(_prefereTimeSinceStartupOverInsTime && imuObs__t0->timeSinceStartup.has_value()))
+    if (!imuObs__t0->insTime.empty() && !(_prefereTimeSinceStartupOverInsTime && imuObs__t0->timeSinceStartup.has_value()))
     {
         // tₖ₋₁ Time at previous epoch
-        const InsTime& time__t1 = imuObs__t1->insTime.value();
+        const InsTime& time__t1 = imuObs__t1->insTime;
         // tₖ Current Time
-        const InsTime& time__t0 = imuObs__t0->insTime.value();
+        const InsTime& time__t0 = imuObs__t0->insTime;
 
         // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
         timeDifferenceSec = (time__t0 - time__t1).count();
@@ -501,7 +501,7 @@ void NAV::ImuIntegrator::integrateObservationECEF()
         if (_timeSinceStartup__init == 0)
         {
             _timeSinceStartup__init = imuObs__t0->timeSinceStartup.value();
-            _time__init = imuObs__t0->insTime.has_value() ? imuObs__t0->insTime.value() : InsTime(2000, 1, 1, 1, 1, 1);
+            _time__init = !imuObs__t0->insTime.empty() ? imuObs__t0->insTime : InsTime(2000, 1, 1, 1, 1, 1);
         }
 
         // Update time
@@ -512,7 +512,7 @@ void NAV::ImuIntegrator::integrateObservationECEF()
     auto dt = fmt::format("{:0.5f}", timeDifferenceSec);
     dt.erase(std::find_if(dt.rbegin(), dt.rend(), [](char ch) { return ch != '0'; }).base(), dt.end());
     LOG_DATA("{}: Integrating (dt = {}s) from [{}] to [{}] in ECEF frame", nameId(), dt,
-             imuObs__t1->insTime->toYMDHMS(), imuObs__t0->insTime->toYMDHMS());
+             imuObs__t1->insTime.toYMDHMS(), imuObs__t0->insTime.toYMDHMS());
 
     // Position, Velocity and Attitude at the time tₖ₋₁
     const std::shared_ptr<const PosVelAtt>& posVelAtt__t1 = _posVelAttStates.at(0);
@@ -647,12 +647,12 @@ void NAV::ImuIntegrator::integrateObservationNED()
     // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
     long double timeDifferenceSec = 0;
 
-    if (imuObs__t0->insTime.has_value() && !(_prefereTimeSinceStartupOverInsTime && imuObs__t0->timeSinceStartup.has_value()))
+    if (!imuObs__t0->insTime.empty() && !(_prefereTimeSinceStartupOverInsTime && imuObs__t0->timeSinceStartup.has_value()))
     {
         // tₖ₋₁ Time at previous epoch
-        const InsTime& time__t1 = imuObs__t1->insTime.value();
+        const InsTime& time__t1 = imuObs__t1->insTime;
         // tₖ Current Time
-        const InsTime& time__t0 = imuObs__t0->insTime.value();
+        const InsTime& time__t0 = imuObs__t0->insTime;
 
         // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
         timeDifferenceSec = (time__t0 - time__t1).count();
@@ -675,7 +675,7 @@ void NAV::ImuIntegrator::integrateObservationNED()
         if (_timeSinceStartup__init == 0)
         {
             _timeSinceStartup__init = imuObs__t0->timeSinceStartup.value();
-            _time__init = imuObs__t0->insTime.has_value() ? imuObs__t0->insTime.value() : InsTime(2000, 1, 1, 1, 1, 1);
+            _time__init = !imuObs__t0->insTime.empty() ? imuObs__t0->insTime : InsTime(2000, 1, 1, 1, 1, 1);
         }
 
         // Update time
@@ -686,7 +686,7 @@ void NAV::ImuIntegrator::integrateObservationNED()
     auto dt = fmt::format("{:0.5f}", timeDifferenceSec);
     dt.erase(std::find_if(dt.rbegin(), dt.rend(), [](char ch) { return ch != '0'; }).base(), dt.end());
     LOG_DATA("{}: Integrating (dt = {}s) from [{}] to [{}] in NED frame", nameId(), dt,
-             imuObs__t1->insTime->toYMDHMS(), imuObs__t0->insTime->toYMDHMS());
+             imuObs__t1->insTime.toYMDHMS(), imuObs__t0->insTime.toYMDHMS());
 
     // Position, Velocity and Attitude at the time tₖ₋₁
     const std::shared_ptr<const PosVelAtt>& posVelAtt__t1 = _posVelAttStates.at(0);

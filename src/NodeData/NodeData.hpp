@@ -7,6 +7,9 @@
 
 #include <string>
 #include <vector>
+#include <optional>
+
+#include "Navigation/Time/InsTime.hpp"
 
 namespace NAV
 {
@@ -29,11 +32,14 @@ class NodeData
 
     /// @brief Returns the type of the data class
     /// @return The data type
-    [[nodiscard]] static std::string type() { return ""; }
+    [[nodiscard]] static std::string type() { return "NodeData"; }
 
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes() { return {}; }
+
+    /// Time at which the message was received
+    InsTime insTime;
 };
 
 } // namespace NAV

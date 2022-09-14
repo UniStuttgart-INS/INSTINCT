@@ -270,7 +270,6 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     Node::_autostartWorker = true;
 }
 
-#include "NodeData/InsObs.hpp"
 #include "NodeData/General/StringObs.hpp"
 #include "NodeData/GNSS/EmlidObs.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
@@ -290,7 +289,6 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 void NAV::NodeRegistry::RegisterNodeDataTypes()
 {
     registerNodeDataType<NodeData>();
-    registerNodeDataType<InsObs>();
     // General
     registerNodeDataType<StringObs>();
     // GNSS

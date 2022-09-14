@@ -1256,7 +1256,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     // ------------------------------------- Early return in case of peeking to avoid heavy calculations ---------------------------------------
     if (peek)
     {
-        auto obs = std::make_shared<InsObs>();
+        auto obs = std::make_shared<NodeData>();
         obs->insTime = _startTime + std::chrono::duration<double>(imuUpdateTime - 1e-9);
         return obs;
     }
@@ -1264,7 +1264,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     auto obs = std::make_shared<ImuObs>(_imuPos);
     obs->timeSinceStartup = static_cast<uint64_t>(imuUpdateTime * 1e9);
     obs->insTime = _startTime + std::chrono::duration<double>(imuUpdateTime);
-    LOG_DATA("{}: Simulating IMU data for time [{}]", nameId(), obs->insTime->toYMDHMS());
+    LOG_DATA("{}: Simulating IMU data for time [{}]", nameId(), obs->insTime.toYMDHMS());
 
     // --------------------------------------------------------- Calculation of data -----------------------------------------------------------
     LOG_DATA("{}: [{:8.3f}] lla_position = {}°, {}°, {} m", nameId(), imuUpdateTime, rad2deg(lla_position(0)), rad2deg(lla_position(1)), lla_position(2));
@@ -1357,13 +1357,13 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
     // ------------------------------------- Early return in case of peeking to avoid heavy calculations ---------------------------------------
     if (peek)
     {
-        auto obs = std::make_shared<InsObs>();
+        auto obs = std::make_shared<NodeData>();
         obs->insTime = _startTime + std::chrono::duration<double>(gnssUpdateTime);
         return obs;
     }
     auto obs = std::make_shared<PosVelAtt>();
     obs->insTime = _startTime + std::chrono::duration<double>(gnssUpdateTime);
-    LOG_DATA("{}: Simulating GNSS data for time [{}]", nameId(), obs->insTime->toYMDHMS());
+    LOG_DATA("{}: Simulating GNSS data for time [{}]", nameId(), obs->insTime.toYMDHMS());
 
     // --------------------------------------------------------- Calculation of data -----------------------------------------------------------
     LOG_DATA("{}: [{:8.3f}] lla_position = {}°, {}°, {} m", nameId(), gnssUpdateTime, rad2deg(lla_position(0)), rad2deg(lla_position(1)), lla_position(2));

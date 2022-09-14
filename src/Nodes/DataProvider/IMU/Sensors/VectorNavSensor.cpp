@@ -6023,7 +6023,7 @@ void NAV::VectorNavSensor::deinitialize()
 
 void NAV::VectorNavSensor::mergeVectorNavBinaryObservations(const std::shared_ptr<VectorNavBinaryOutput>& target, const std::shared_ptr<VectorNavBinaryOutput>& source)
 {
-    target->insTime = target->insTime.has_value() ? target->insTime : source->insTime;
+    target->insTime = !target->insTime.empty() ? target->insTime : source->insTime;
     // Group 2 (Time)
     if (!target->timeOutputs && source->timeOutputs)
     {
@@ -6880,7 +6880,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                             vnSensor->_timeSyncOut.ppsTime = ppsTime;
                             vnSensor->_timeSyncOut.syncOutCnt = obs->timeOutputs->syncOutCnt;
                             LOG_DATA("{}: Syncing time {}, pps {}, syncOutCnt {}",
-                                     vnSensor->nameId(), obs->insTime->toGPSweekTow(),
+                                     vnSensor->nameId(), obs->insTime.toGPSweekTow(),
                                      vnSensor->_timeSyncOut.ppsTime.toGPSweekTow(), vnSensor->_timeSyncOut.syncOutCnt);
                         }
                     }
@@ -6896,7 +6896,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                             && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
                             && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK))
                         {
-                            obs->insTime.emplace(InsTime_GPSweekTow(0, obs->timeOutputs->gpsWeek, obs->timeOutputs->gpsTow * 1e-9L));
+                            obs->insTime = InsTime(InsTime_GPSweekTow(0, obs->timeOutputs->gpsWeek, obs->timeOutputs->gpsTow * 1e-9L));
                             updateSyncOut(InsTime(0, obs->timeOutputs->gpsWeek, std::floor(obs->timeOutputs->gpsTow * 1e-9L)));
                         }
                         else if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS)
@@ -6905,20 +6905,20 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                             auto week = static_cast<uint16_t>(secondsSinceEpoche / static_cast<long double>(InsTimeUtil::SECONDS_PER_DAY * InsTimeUtil::DAYS_PER_WEEK));
                             auto tow = secondsSinceEpoche - week * InsTimeUtil::SECONDS_PER_DAY * InsTimeUtil::DAYS_PER_WEEK;
 
-                            obs->insTime.emplace(InsTime_GPSweekTow(0, week, tow));
+                            obs->insTime = InsTime(InsTime_GPSweekTow(0, week, tow));
                             updateSyncOut(InsTime(0, week, std::floor(tow)));
                         }
                     }
-                    if ((!obs->insTime.has_value() || obs->insTime->empty())
+                    if (obs->insTime.empty()
                         && obs->timeOutputs->timeStatus.utcTimeValid()
                         && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC))
                     {
-                        obs->insTime.emplace(InsTime_YMDHMS(2000 + obs->timeOutputs->timeUtc.year,
-                                                            obs->timeOutputs->timeUtc.month,
-                                                            obs->timeOutputs->timeUtc.day,
-                                                            obs->timeOutputs->timeUtc.hour,
-                                                            obs->timeOutputs->timeUtc.min,
-                                                            obs->timeOutputs->timeUtc.sec + static_cast<long double>(obs->timeOutputs->timeUtc.ms) * 1e-3L));
+                        obs->insTime = InsTime(InsTime_YMDHMS(2000 + obs->timeOutputs->timeUtc.year,
+                                                              obs->timeOutputs->timeUtc.month,
+                                                              obs->timeOutputs->timeUtc.day,
+                                                              obs->timeOutputs->timeUtc.hour,
+                                                              obs->timeOutputs->timeUtc.min,
+                                                              obs->timeOutputs->timeUtc.sec + static_cast<long double>(obs->timeOutputs->timeUtc.ms) * 1e-3L));
                         updateSyncOut(InsTime(InsTime_YMDHMS(2000 + obs->timeOutputs->timeUtc.year,
                                                              obs->timeOutputs->timeUtc.month,
                                                              obs->timeOutputs->timeUtc.day,
@@ -6928,7 +6928,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     }
                 }
                 // Group 4 (GNSS1)
-                if ((!obs->insTime.has_value() || obs->insTime->empty())
+                if ((obs->insTime.empty() || obs->insTime.empty())
                     && obs->gnss1Outputs
                     && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO))
                 {
@@ -6937,26 +6937,26 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         if ((obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
                             && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK))
                         {
-                            obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss1Outputs->week, obs->gnss1Outputs->tow * 1e-9L));
+                            obs->insTime = InsTime(InsTime_GPSweekTow(0, obs->gnss1Outputs->week, obs->gnss1Outputs->tow * 1e-9L));
                             updateSyncOut(InsTime(0, obs->gnss1Outputs->week, std::floor(obs->gnss1Outputs->tow * 1e-9L)));
                         }
                         else if ((obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
                                  && obs->gnss1Outputs->raw.numSats)
                         {
-                            obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss1Outputs->raw.week, obs->gnss1Outputs->raw.tow));
+                            obs->insTime = InsTime(InsTime_GPSweekTow(0, obs->gnss1Outputs->raw.week, obs->gnss1Outputs->raw.tow));
                             updateSyncOut(InsTime(0, obs->gnss1Outputs->raw.week, std::floor(obs->gnss1Outputs->raw.tow)));
                         }
                     }
-                    if ((!obs->insTime.has_value() || obs->insTime->empty())
+                    if (obs->insTime.empty()
                         && obs->gnss1Outputs->timeInfo.status.utcTimeValid()
                         && obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
                     {
-                        obs->insTime.emplace(InsTime_YMDHMS(2000 + obs->gnss1Outputs->timeUtc.year,
-                                                            obs->gnss1Outputs->timeUtc.month,
-                                                            obs->gnss1Outputs->timeUtc.day,
-                                                            obs->gnss1Outputs->timeUtc.hour,
-                                                            obs->gnss1Outputs->timeUtc.min,
-                                                            obs->gnss1Outputs->timeUtc.sec + static_cast<long double>(obs->gnss1Outputs->timeUtc.ms) * 1e-3L));
+                        obs->insTime = InsTime(InsTime_YMDHMS(2000 + obs->gnss1Outputs->timeUtc.year,
+                                                              obs->gnss1Outputs->timeUtc.month,
+                                                              obs->gnss1Outputs->timeUtc.day,
+                                                              obs->gnss1Outputs->timeUtc.hour,
+                                                              obs->gnss1Outputs->timeUtc.min,
+                                                              obs->gnss1Outputs->timeUtc.sec + static_cast<long double>(obs->gnss1Outputs->timeUtc.ms) * 1e-3L));
                         updateSyncOut(InsTime(InsTime_YMDHMS(2000 + obs->gnss1Outputs->timeUtc.year,
                                                              obs->gnss1Outputs->timeUtc.month,
                                                              obs->gnss1Outputs->timeUtc.day,
@@ -6966,7 +6966,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     }
                 }
                 // Group 7 (GNSS2)
-                if ((!obs->insTime.has_value() || obs->insTime->empty())
+                if (obs->insTime.empty()
                     && obs->gnss2Outputs
                     && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO))
                 {
@@ -6975,26 +6975,26 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         if ((obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
                             && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK))
                         {
-                            obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss2Outputs->week, obs->gnss2Outputs->tow * 1e-9L));
+                            obs->insTime = InsTime(InsTime_GPSweekTow(0, obs->gnss2Outputs->week, obs->gnss2Outputs->tow * 1e-9L));
                             updateSyncOut(InsTime(0, obs->gnss2Outputs->week, std::floor(obs->gnss2Outputs->tow * 1e-9L)));
                         }
                         else if ((obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
                                  && obs->gnss2Outputs->raw.numSats)
                         {
-                            obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss2Outputs->raw.week, obs->gnss2Outputs->raw.tow));
+                            obs->insTime = InsTime(InsTime_GPSweekTow(0, obs->gnss2Outputs->raw.week, obs->gnss2Outputs->raw.tow));
                             updateSyncOut(InsTime(0, obs->gnss2Outputs->raw.week, std::floor(obs->gnss2Outputs->raw.tow)));
                         }
                     }
-                    if ((!obs->insTime.has_value() || obs->insTime->empty())
+                    if (obs->insTime.empty()
                         && obs->gnss2Outputs->timeInfo.status.utcTimeValid()
                         && obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
                     {
-                        obs->insTime.emplace(InsTime_YMDHMS(2000 + obs->gnss2Outputs->timeUtc.year,
-                                                            obs->gnss2Outputs->timeUtc.month,
-                                                            obs->gnss2Outputs->timeUtc.day,
-                                                            obs->gnss2Outputs->timeUtc.hour,
-                                                            obs->gnss2Outputs->timeUtc.min,
-                                                            obs->gnss2Outputs->timeUtc.sec + static_cast<long double>(obs->gnss2Outputs->timeUtc.ms) * 1e-3L));
+                        obs->insTime = InsTime(InsTime_YMDHMS(2000 + obs->gnss2Outputs->timeUtc.year,
+                                                              obs->gnss2Outputs->timeUtc.month,
+                                                              obs->gnss2Outputs->timeUtc.day,
+                                                              obs->gnss2Outputs->timeUtc.hour,
+                                                              obs->gnss2Outputs->timeUtc.min,
+                                                              obs->gnss2Outputs->timeUtc.sec + static_cast<long double>(obs->gnss2Outputs->timeUtc.ms) * 1e-3L));
                         updateSyncOut(InsTime(InsTime_YMDHMS(2000 + obs->gnss2Outputs->timeUtc.year,
                                                              obs->gnss2Outputs->timeUtc.month,
                                                              obs->gnss2Outputs->timeUtc.day,
@@ -7004,7 +7004,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     }
                 }
 
-                if ((!obs->insTime.has_value() || obs->insTime->empty())                        // Look for master to give GNSS time
+                if (obs->insTime.empty()                                                        // Look for master to give GNSS time
                     && (obs->timeOutputs->timeField & vn::protocol::uart::TIMEGROUP_TIMESYNCIN) // We need syncin time for this
                     && vnSensor->_syncInPin && vnSensor->inputPins.front().isPinLinked())       // Try to get a sync from the master
                 {
@@ -7019,12 +7019,12 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         obs->insTime = timeSyncMaster->ppsTime + std::chrono::nanoseconds(obs->timeOutputs->timeSyncIn)
                                        + std::chrono::seconds(syncCntDiff);
                         LOG_DATA("{}: Syncing time {}, pps {}, syncOutCnt {}, syncInCnt {}, syncCntDiff {}",
-                                 vnSensor->nameId(), obs->insTime->toGPSweekTow(), timeSyncMaster->ppsTime.toGPSweekTow(),
+                                 vnSensor->nameId(), obs->insTime.toGPSweekTow(), timeSyncMaster->ppsTime.toGPSweekTow(),
                                  timeSyncMaster->syncOutCnt, obs->timeOutputs->syncInCnt, syncCntDiff);
                     }
                 }
 
-                if (!obs->insTime.has_value() || obs->insTime->empty()) // Look if other sensors have set a global time
+                if (obs->insTime.empty()) // Look if other sensors have set a global time
                 {
                     if (InsTime currentTime = util::time::GetCurrentInsTime();
                         !currentTime.empty())
@@ -7033,20 +7033,20 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     }
                 }
 
-                if (obs->insTime.has_value() && !obs->insTime->empty())
+                if (!obs->insTime.empty())
                 {
                     if (!vnSensor->_lastMessageTime.at(b).empty())
                     {
                         // FIXME: This seems like a bug in clang-tidy. Check if it is working in future versions of clang-tidy
                         // NOLINTNEXTLINE(hicpp-use-nullptr, modernize-use-nullptr)
-                        if (obs->insTime.value() - vnSensor->_lastMessageTime.at(b) >= std::chrono::duration<double>(1.5 * (vnSensor->_binaryOutputRegister.at(b).rateDivisor / IMU_DEFAULT_FREQUENCY)))
+                        if (obs->insTime - vnSensor->_lastMessageTime.at(b) >= std::chrono::duration<double>(1.5 * (vnSensor->_binaryOutputRegister.at(b).rateDivisor / IMU_DEFAULT_FREQUENCY)))
                         {
                             LOG_WARN("{}: Potentially lost a message. Previous message was at {} and current message at {} which is a time difference of {} seconds but we expect a rate of {} seconds.", vnSensor->nameId(),
-                                     vnSensor->_lastMessageTime.at(b), obs->insTime.value(), (obs->insTime.value() - vnSensor->_lastMessageTime.at(b)).count(),
+                                     vnSensor->_lastMessageTime.at(b), obs->insTime, (obs->insTime - vnSensor->_lastMessageTime.at(b)).count(),
                                      1. / IMU_DEFAULT_FREQUENCY * vnSensor->_binaryOutputRegister.at(b).rateDivisor);
                         }
                     }
-                    vnSensor->_lastMessageTime.at(b) = obs->insTime.value();
+                    vnSensor->_lastMessageTime.at(b) = obs->insTime;
                 }
 
                 if ((vnSensor->_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output2 && (b == 0 || b == 1))
@@ -7056,9 +7056,9 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     if (vnSensor->_binaryOutputRegisterMergeObservation == nullptr)
                     {
                         std::stringstream sstream;
-                        if (obs->insTime.has_value())
+                        if (!obs->insTime.empty())
                         {
-                            sstream << obs->insTime.value();
+                            sstream << obs->insTime;
                         }
                         else
                         {
@@ -7073,8 +7073,8 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     {
                         auto allowedTimeDiff = std::chrono::microseconds(static_cast<int>(0.5 * (vnSensor->_binaryOutputRegister.at(b).rateDivisor / IMU_DEFAULT_FREQUENCY) * 1e6));
                         if (vnSensor->_binaryOutputRegisterMergeIndex != b
-                            && ((obs->insTime.has_value() && vnSensor->_binaryOutputRegisterMergeObservation->insTime.has_value()
-                                 && (obs->insTime.value() - vnSensor->_binaryOutputRegisterMergeObservation->insTime.value() < allowedTimeDiff)) // NOLINT(hicpp-use-nullptr, modernize-use-nullptr)
+                            && ((!obs->insTime.empty() && !vnSensor->_binaryOutputRegisterMergeObservation->insTime.empty()
+                                 && (obs->insTime - vnSensor->_binaryOutputRegisterMergeObservation->insTime < allowedTimeDiff)) // NOLINT(hicpp-use-nullptr, modernize-use-nullptr)
                                 || (obs->timeOutputs != nullptr && vnSensor->_binaryOutputRegisterMergeObservation->timeOutputs != nullptr
                                     && obs->timeOutputs->timeField & vn::protocol::uart::TIMEGROUP_TIMESTARTUP
                                     && vnSensor->_binaryOutputRegisterMergeObservation->timeOutputs->timeField & vn::protocol::uart::TIMEGROUP_TIMESTARTUP
@@ -7085,9 +7085,9 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                             vnSensor->_binaryOutputRegisterMergeObservation = nullptr;
 
                             std::stringstream sstream;
-                            if (obs->insTime.has_value())
+                            if (!obs->insTime.empty())
                             {
-                                sstream << obs->insTime.value();
+                                sstream << obs->insTime;
                             }
                             else
                             {
@@ -7102,11 +7102,11 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                             [[maybe_unused]] long double timeDiff = 0.0L;
                             std::stringstream sstreamOld;
                             std::stringstream sstreamNew;
-                            if (obs->insTime.has_value() && vnSensor->_binaryOutputRegisterMergeObservation->insTime.has_value())
+                            if (!obs->insTime.empty() && !vnSensor->_binaryOutputRegisterMergeObservation->insTime.empty())
                             {
-                                timeDiff = (obs->insTime.value() - vnSensor->_binaryOutputRegisterMergeObservation->insTime.value()).count();
-                                sstreamOld << vnSensor->_binaryOutputRegisterMergeObservation->insTime.value();
-                                sstreamNew << obs->insTime.value();
+                                timeDiff = (obs->insTime - vnSensor->_binaryOutputRegisterMergeObservation->insTime).count();
+                                sstreamOld << vnSensor->_binaryOutputRegisterMergeObservation->insTime;
+                                sstreamNew << obs->insTime;
                             }
                             else
                             {
@@ -7129,9 +7129,9 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                 }
                 else
                 {
-                    if (obs->insTime.has_value())
+                    if (!obs->insTime.empty())
                     {
-                        LOG_DATA("{}: {} - Normal  message with time {}", vnSensor->nameId(), b, obs->insTime.value());
+                        LOG_DATA("{}: {} - Normal  message with time {}", vnSensor->nameId(), b, obs->insTime);
                     }
                     // Calls all the callbacks
                     vnSensor->invokeCallbacks(b + 1, obs);

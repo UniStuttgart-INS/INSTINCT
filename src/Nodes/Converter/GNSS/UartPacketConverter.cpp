@@ -119,7 +119,7 @@ void NAV::UartPacketConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, s
 {
     auto uartPacket = std::static_pointer_cast<const UartPacket>(queue.extract_front());
 
-    std::shared_ptr<InsObs> convertedData = nullptr;
+    std::shared_ptr<NodeData> convertedData = nullptr;
 
     if (_outputType == OutputType_UbloxObs)
     {
@@ -136,11 +136,11 @@ void NAV::UartPacketConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, s
         convertedData = obs;
     }
 
-    if (convertedData->insTime.has_value())
+    if (!convertedData->insTime.empty())
     {
         if (util::time::GetMode() == util::time::Mode::REAL_TIME)
         {
-            util::time::SetCurrentTime(convertedData->insTime.value());
+            util::time::SetCurrentTime(convertedData->insTime);
         }
     }
     else if (auto currentTime = util::time::GetCurrentInsTime();

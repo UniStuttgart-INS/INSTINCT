@@ -25,7 +25,7 @@ class RtklibPosObs : public PosVel
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
     {
-        return { InsObs::type() };
+        return { NodeData::type() };
     }
 
     /// 1:fix, 2:float, 3:sbas, 4:dgps, 5:single, 6:ppp

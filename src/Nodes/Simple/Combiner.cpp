@@ -6,7 +6,7 @@ namespace nm = NAV::NodeManager;
 
 #include "NodeRegistry.hpp"
 
-#include "NodeData/InsObs.hpp"
+#include "NodeData/NodeData.hpp"
 
 NAV::Combiner::Combiner()
     : Node(typeStatic())
@@ -16,9 +16,9 @@ NAV::Combiner::Combiner()
     _hasConfig = false;
     kind = Kind::Simple;
 
-    nm::CreateInputPin(this, "", Pin::Type::Flow, { InsObs::type() }, &Combiner::receiveData);
-    nm::CreateInputPin(this, "", Pin::Type::Flow, { InsObs::type() }, &Combiner::receiveData);
-    nm::CreateOutputPin(this, "", Pin::Type::Flow, { InsObs::type() });
+    nm::CreateInputPin(this, "", Pin::Type::Flow, { NodeData::type() }, &Combiner::receiveData);
+    nm::CreateInputPin(this, "", Pin::Type::Flow, { NodeData::type() }, &Combiner::receiveData);
+    nm::CreateOutputPin(this, "", Pin::Type::Flow, { NodeData::type() });
 }
 
 NAV::Combiner::~Combiner()
@@ -53,7 +53,7 @@ void NAV::Combiner::setPinIdentifiers(size_t connectedPinIndex, size_t otherPinI
         for (const auto& dataIdentifier : dataIdentifiers)
         {
             auto parentIdentifiers = NodeRegistry::GetParentNodeDataTypes(dataIdentifier);
-            std::erase(parentIdentifiers, InsObs::type());
+            std::erase(parentIdentifiers, NodeData::type());
             inputPins.at(otherPinIndex).dataIdentifier.insert(inputPins.at(otherPinIndex).dataIdentifier.end(), parentIdentifiers.rbegin(), parentIdentifiers.rend());
         }
 
@@ -81,7 +81,7 @@ void NAV::Combiner::setPinIdentifiers(size_t connectedPinIndex, size_t otherPinI
         for (const auto& dataIdentifier : inputPins.at(connectedPinIndex).dataIdentifier)
         {
             auto parentIdentifiers = NodeRegistry::GetParentNodeDataTypes(dataIdentifier);
-            std::erase(parentIdentifiers, InsObs::type());
+            std::erase(parentIdentifiers, NodeData::type());
             connectedPinParents.insert(connectedPinParents.begin(), parentIdentifiers.begin(), parentIdentifiers.end());
         }
 
@@ -186,7 +186,7 @@ void NAV::Combiner::afterDeleteLink([[maybe_unused]] OutputPin& startPin, InputP
             {
                 for (auto& pinReset : inputPins)
                 {
-                    pinReset.dataIdentifier = { InsObs::type() };
+                    pinReset.dataIdentifier = { NodeData::type() };
                 }
             }
             break;

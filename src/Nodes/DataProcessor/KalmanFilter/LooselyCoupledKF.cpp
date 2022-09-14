@@ -711,10 +711,10 @@ void NAV::LooselyCoupledKF::deinitialize()
 void NAV::LooselyCoupledKF::recvInertialNavigationSolution(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */) // NOLINT(readability-convert-member-functions-to-static)
 {
     auto inertialNavSol = std::static_pointer_cast<const InertialNavSol>(queue.extract_front());
-    LOG_DATA("{}: Recv Inertial t = {}", nameId(), inertialNavSol->insTime->toYMDHMS());
+    LOG_DATA("{}: Recv Inertial t = {}", nameId(), inertialNavSol->insTime.toYMDHMS());
 
     double tau_i = !_lastPredictTime.empty()
-                       ? static_cast<double>((inertialNavSol->insTime.value() - _lastPredictTime).count())
+                       ? static_cast<double>((inertialNavSol->insTime - _lastPredictTime).count())
                        : 0.0;
 
     if (tau_i > 0)
@@ -723,7 +723,7 @@ void NAV::LooselyCoupledKF::recvInertialNavigationSolution(NAV::InputPin::NodeDa
     }
     else
     {
-        _lastPredictTime = inertialNavSol->insTime.value();
+        _lastPredictTime = inertialNavSol->insTime;
     }
     _latestInertialNavSol = inertialNavSol;
 }
@@ -731,13 +731,13 @@ void NAV::LooselyCoupledKF::recvInertialNavigationSolution(NAV::InputPin::NodeDa
 void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     auto gnssMeasurement = std::static_pointer_cast<const PosVel>(queue.extract_front());
-    LOG_DATA("{}: Recv GNSS t = {}", nameId(), gnssMeasurement->insTime->toYMDHMS());
+    LOG_DATA("{}: Recv GNSS t = {}", nameId(), gnssMeasurement->insTime.toYMDHMS());
 
     if (std::isnan(gnssMeasurement->e_position().x()) || std::isnan(gnssMeasurement->e_velocity().x())) { return; }
 
     if (_latestInertialNavSol)
     {
-        if (_lastPredictTime < gnssMeasurement->insTime.value()) // We need to predict to the update time before updating
+        if (_lastPredictTime < gnssMeasurement->insTime) // We need to predict to the update time before updating
         {
             auto imuObs = std::make_shared<ImuObs>(*_latestInertialNavSol->imuObs);
             imuObs->insTime = gnssMeasurement->insTime;
@@ -759,8 +759,8 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     dt.erase(std::find_if(dt.rbegin(), dt.rend(), [](char ch) { return ch != '0'; }).base(), dt.end());
 
     LOG_DATA("{}: Predicting (dt = {}s) from [{}] to [{}]", nameId(), dt,
-             inertialNavSol->insTime->toYMDHMS(), (inertialNavSol->insTime.value() + std::chrono::duration<double>(tau_i)).toYMDHMS());
-    _lastPredictTime = inertialNavSol->insTime.value() + std::chrono::duration<double>(tau_i);
+             inertialNavSol->insTime.toYMDHMS(), (inertialNavSol->insTime + std::chrono::duration<double>(tau_i)).toYMDHMS());
+    _lastPredictTime = inertialNavSol->insTime + std::chrono::duration<double>(tau_i);
 
     // ------------------------------------------- GUI Parameters ----------------------------------------------
 
@@ -1011,7 +1011,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
 
 void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const PosVel>& gnssMeasurement)
 {
-    LOG_DATA("{}: Updating to time {} (lastInertial at {})", nameId(), gnssMeasurement->insTime->toYMDHMS(), _latestInertialNavSol->insTime->toYMDHMS());
+    LOG_DATA("{}: Updating to time {} (lastInertial at {})", nameId(), gnssMeasurement->insTime.toYMDHMS(), _latestInertialNavSol->insTime.toYMDHMS());
 
     // -------------------------------------------- GUI Parameters -----------------------------------------------
 

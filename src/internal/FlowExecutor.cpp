@@ -4,7 +4,6 @@
 #include "Navigation/Time/InsTime.hpp"
 
 #include "internal/Node/Node.hpp"
-#include "NodeData/InsObs.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;

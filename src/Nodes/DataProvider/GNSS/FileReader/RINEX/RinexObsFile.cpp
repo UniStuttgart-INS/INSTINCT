@@ -514,10 +514,10 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData(bool peek)
 
             if (peek)
             {
-                auto insObs = std::make_shared<InsObs>();
-                insObs->insTime = epochTime;
+                auto obs = std::make_shared<NodeData>();
+                obs->insTime = epochTime;
                 _filestream.seekg(pos, std::ios_base::beg);
-                return insObs;
+                return obs;
             }
         }
     }

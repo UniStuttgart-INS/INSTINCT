@@ -54,7 +54,7 @@ NAV::Demo::Demo()
 
     nm::CreateOutputPin(this, "", Pin::Type::Delegate, { typeStatic() }, this);
     nm::CreateOutputPin(this, "Sensor\nData", Pin::Type::Flow, { NAV::ImuObs::type() });
-    nm::CreateOutputPin(this, "FileReader\n Data", Pin::Type::Flow, { NAV::InsObs::type() }, &Demo::pollData);
+    nm::CreateOutputPin(this, "FileReader\n Data", Pin::Type::Flow, { NAV::NodeData::type() }, &Demo::pollData);
     nm::CreateOutputPin(this, "Bool", Pin::Type::Bool, { "" }, &_valueBool);
     nm::CreateOutputPin(this, "Int", Pin::Type::Int, { "" }, &_valueInt);
     nm::CreateOutputPin(this, "Float", Pin::Type::Float, { "" }, &_valueFloat);
@@ -65,7 +65,7 @@ NAV::Demo::Demo()
 
     nm::CreateInputPin(this, "Demo Node", Pin::Type::Delegate, { typeStatic() });
     nm::CreateInputPin(this, "Sensor\nData", Pin::Type::Flow, { NAV::ImuObs::type() }, &Demo::receiveSensorData);
-    nm::CreateInputPin(this, "FileReader\n Data", Pin::Type::Flow, { NAV::InsObs::type() }, &Demo::receiveFileReaderData);
+    nm::CreateInputPin(this, "FileReader\n Data", Pin::Type::Flow, { NAV::NodeData::type() }, &Demo::receiveFileReaderData);
     nm::CreateInputPin(this, "Bool", Pin::Type::Bool);
     nm::CreateInputPin(this, "Int", Pin::Type::Int);
     nm::CreateInputPin(this, "Float", Pin::Type::Float);
@@ -383,8 +383,8 @@ void NAV::Demo::receiveSensorData(NAV::InputPin::NodeDataQueue& queue, size_t /*
 void NAV::Demo::receiveFileReaderData(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     // Here we are reading the data, so extracts gets the value and automatically pops it from the queue
-    auto obs = std::static_pointer_cast<const InsObs>(queue.extract_front());
-    LOG_INFO("{}: received FileReader Data: {}", nameId(), obs->insTime->toYMDHMS());
+    auto obs = queue.extract_front();
+    LOG_INFO("{}: received FileReader Data: {}", nameId(), obs->insTime.toYMDHMS());
 
     _receivedDataFromFileReaderCnt++;
 }
@@ -421,7 +421,7 @@ void NAV::Demo::readSensorDataThread(void* userData)
     distribution = std::uniform_real_distribution<double>(15.0, 25.0);
     obs->temperature = distribution(generator);
 
-    node->invokeCallbacks(OUTPUT_PORT_INDEX_NODE_DATA, obs);
+    node->invokeCallbacks(OUTPUT_PORT_INDEX_FLOW_SENSOR, obs);
 }
 
 std::shared_ptr<const NAV::NodeData> NAV::Demo::pollData(bool peek)
@@ -435,7 +435,7 @@ std::shared_ptr<const NAV::NodeData> NAV::Demo::pollData(bool peek)
 
     if (peek) // Early return with time to let the FlowExecutor sort the observations
     {
-        auto obs = std::make_shared<InsObs>();
+        auto obs = std::make_shared<NodeData>();
         obs->insTime = InsTime(static_cast<uint16_t>(t->tm_year + 1900),
                                static_cast<uint16_t>(t->tm_mon),
                                static_cast<uint16_t>(t->tm_mday),
@@ -447,10 +447,16 @@ std::shared_ptr<const NAV::NodeData> NAV::Demo::pollData(bool peek)
 
     _iPollData++;
 
-    auto obs = std::make_shared<InsObs>(); // Construct the real observation (here in example also from type InsObs)
+    auto obs = std::make_shared<NodeData>(); // Construct the real observation (here in example also from type NodeData)
+    obs->insTime = InsTime(static_cast<uint16_t>(t->tm_year + 1900),
+                           static_cast<uint16_t>(t->tm_mon),
+                           static_cast<uint16_t>(t->tm_mday),
+                           static_cast<uint16_t>(t->tm_hour),
+                           static_cast<uint16_t>(t->tm_min),
+                           static_cast<long double>(t->tm_sec));
 
     // Calls all the callbacks
-    invokeCallbacks(OUTPUT_PORT_INDEX_INS_OBS, obs);
+    invokeCallbacks(OUTPUT_PORT_INDEX_FLOW_FILE, obs);
 
     return obs;
 }

@@ -121,24 +121,24 @@ void NAV::LcKfInsGnssErrorLogger::writeObservation(NAV::InputPin::NodeDataQueue&
     constexpr int valuePrecision = 9;
 
     auto obs = std::static_pointer_cast<const LcKfInsGnssErrors>(queue.extract_front());
-    if (obs->insTime.has_value())
+    if (!obs->insTime.empty())
     {
-        _filestream << std::setprecision(valuePrecision) << std::round(calcTimeIntoRun(obs->insTime.value()) * 1e9) / 1e9;
+        _filestream << std::setprecision(valuePrecision) << std::round(calcTimeIntoRun(obs->insTime) * 1e9) / 1e9;
     }
     _filestream << ",";
-    if (obs->insTime.has_value())
+    if (!obs->insTime.empty())
     {
-        _filestream << std::fixed << std::setprecision(gpsCyclePrecision) << obs->insTime.value().toGPSweekTow().gpsCycle;
+        _filestream << std::fixed << std::setprecision(gpsCyclePrecision) << obs->insTime.toGPSweekTow().gpsCycle;
     }
     _filestream << ",";
-    if (obs->insTime.has_value())
+    if (!obs->insTime.empty())
     {
-        _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.value().toGPSweekTow().gpsWeek;
+        _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.toGPSweekTow().gpsWeek;
     }
     _filestream << ",";
-    if (obs->insTime.has_value())
+    if (!obs->insTime.empty())
     {
-        _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.value().toGPSweekTow().tow;
+        _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.toGPSweekTow().tow;
     }
     _filestream << "," << std::setprecision(valuePrecision);
 

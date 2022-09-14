@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "NodeData/InsObs.hpp"
+#include "NodeData/NodeData.hpp"
 
 #include "ImuPos.hpp"
 #include "util/Eigen.hpp"
@@ -13,7 +13,7 @@
 namespace NAV
 {
 /// IMU Observation storage class
-class ImuObs : public InsObs
+class ImuObs : public NodeData
 {
   public:
     /// @brief Constructor
@@ -32,7 +32,7 @@ class ImuObs : public InsObs
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
     {
-        return { InsObs::type() };
+        return { NodeData::type() };
     }
 
     /// Position and rotation information for conversion from platform to body frame

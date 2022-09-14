@@ -72,23 +72,23 @@ class Demo : public Node
     };
 
   private:
-    constexpr static size_t OUTPUT_PORT_INDEX_NODE_DATA = 1; ///< @brief Flow (NodeData)
-    constexpr static size_t OUTPUT_PORT_INDEX_INS_OBS = 2;   ///< @brief Flow (InsObs)
-    constexpr static size_t OUTPUT_PORT_INDEX_BOOL = 3;      ///< @brief Bool
-    constexpr static size_t OUTPUT_PORT_INDEX_INT = 4;       ///< @brief Int
-    constexpr static size_t OUTPUT_PORT_INDEX_FLOAT = 5;     ///< @brief Float
-    constexpr static size_t OUTPUT_PORT_INDEX_DOUBLE = 6;    ///< @brief Double
-    constexpr static size_t OUTPUT_PORT_INDEX_STRING = 7;    ///< @brief String
-    constexpr static size_t OUTPUT_PORT_INDEX_DEMO_DATA = 8; ///< @brief DemoData
-    constexpr static size_t OUTPUT_PORT_INDEX_MATRIX = 9;    ///< @brief Matrix
-    constexpr static size_t INPUT_PORT_INDEX_DEMO_NODE = 0;  ///< @brief Delegate (Demo)
-    constexpr static size_t INPUT_PORT_INDEX_BOOL = 3;       ///< @brief Bool
-    constexpr static size_t INPUT_PORT_INDEX_INT = 4;        ///< @brief Int
-    constexpr static size_t INPUT_PORT_INDEX_FLOAT = 5;      ///< @brief Float
-    constexpr static size_t INPUT_PORT_INDEX_DOUBLE = 6;     ///< @brief Double
-    constexpr static size_t INPUT_PORT_INDEX_STRING = 7;     ///< @brief String
-    constexpr static size_t INPUT_PORT_INDEX_DEMO_DATA = 8;  ///< @brief DemoData
-    constexpr static size_t INPUT_PORT_INDEX_MATRIX = 9;     ///< @brief Matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_FLOW_SENSOR = 1; ///< @brief Flow (ImuObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_FLOW_FILE = 2;   ///< @brief Flow (NodeData)
+    constexpr static size_t OUTPUT_PORT_INDEX_BOOL = 3;        ///< @brief Bool
+    constexpr static size_t OUTPUT_PORT_INDEX_INT = 4;         ///< @brief Int
+    constexpr static size_t OUTPUT_PORT_INDEX_FLOAT = 5;       ///< @brief Float
+    constexpr static size_t OUTPUT_PORT_INDEX_DOUBLE = 6;      ///< @brief Double
+    constexpr static size_t OUTPUT_PORT_INDEX_STRING = 7;      ///< @brief String
+    constexpr static size_t OUTPUT_PORT_INDEX_DEMO_DATA = 8;   ///< @brief DemoData
+    constexpr static size_t OUTPUT_PORT_INDEX_MATRIX = 9;      ///< @brief Matrix
+    constexpr static size_t INPUT_PORT_INDEX_DEMO_NODE = 0;    ///< @brief Delegate (Demo)
+    constexpr static size_t INPUT_PORT_INDEX_BOOL = 3;         ///< @brief Bool
+    constexpr static size_t INPUT_PORT_INDEX_INT = 4;          ///< @brief Int
+    constexpr static size_t INPUT_PORT_INDEX_FLOAT = 5;        ///< @brief Float
+    constexpr static size_t INPUT_PORT_INDEX_DOUBLE = 6;       ///< @brief Double
+    constexpr static size_t INPUT_PORT_INDEX_STRING = 7;       ///< @brief String
+    constexpr static size_t INPUT_PORT_INDEX_DEMO_DATA = 8;    ///< @brief DemoData
+    constexpr static size_t INPUT_PORT_INDEX_MATRIX = 9;       ///< @brief Matrix
 
     /// @brief Initialize the node
     bool initialize() override;
