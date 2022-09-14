@@ -35,6 +35,12 @@ namespace NodeRegistry
 void RegisterNodeTypes(); // NOLINT(readability-redundant-declaration) - false warning. This is needed for the friend declaration below
 } // namespace NodeRegistry
 
+namespace FlowExecutor
+{
+bool initialize();   // NOLINT(readability-redundant-declaration) - false warning. This is needed for the friend declaration below
+void deinitialize(); // NOLINT(readability-redundant-declaration) - false warning. This is needed for the friend declaration below
+} // namespace FlowExecutor
+
 namespace gui
 {
 class NodeEditorApplication;
@@ -151,6 +157,13 @@ class Node
         Deinitializing, ///< Node is currently deinitializing
         DoShutdown,     ///< Node should shut down
         Shutdown,       ///< Node is shutting down
+    };
+
+    /// @brief Different Modes the Node can work in
+    enum class Mode
+    {
+        REAL_TIME,       ///< Node running in real-time mode
+        POST_PROCESSING, ///< Node running in post-processing mode
     };
 
     /// @brief Constructor
@@ -281,6 +294,9 @@ class Node
     /// @brief Get the current state of the node
     [[nodiscard]] State getState() const;
 
+    /// @brief Get the current mode of the node
+    [[nodiscard]] Mode getMode() const;
+
     /// @brief Asks the node worker to initialize the node
     /// @param[in] wait Wait for the worker to complete the request
     /// @return True if not waiting and the worker accepted the request otherwise if waiting only true if the node initialized correctly
@@ -304,6 +320,9 @@ class Node
     /// @brief Enable the node
     /// @return True if enabling was successful
     bool doEnable();
+
+    /// Wakes the worker thread
+    void wakeWorker();
 
     /// @brief Checks if the node is disabled
     [[nodiscard]] bool isDisabled() const;
@@ -332,6 +351,9 @@ class Node
     /// Enables the callbacks
     bool callbacksEnabled = false;
 
+    /// Tell the node to send out data for post-processing
+    bool postprocessingRunning = false;
+
   protected:
     /// The Default Window size for new config windows.
     /// Only set the variable if the object/window has no persistently saved data (no entry in .ini file)
@@ -343,6 +365,9 @@ class Node
   private:
     /// Current state of the node
     std::atomic<State> _state = State::Deinitialized;
+
+    /// Mode the node is currently running in
+    Mode _mode = Mode::REAL_TIME;
 
     /// Flag if the node should be reinitialize after deinitializing
     bool _reinitialize = false;
@@ -384,6 +409,15 @@ class Node
 
     friend class gui::NodeEditorApplication;
     friend class NAV::GroupBox;
+
+    /// @brief Main task of the FlowExecutor thread
+    friend void NAV::FlowExecutor::execute();
+
+    /// @brief Initializes all Nodes if they are not initialized yet
+    friend bool NAV::FlowExecutor::initialize();
+
+    /// @brief Deinitialize all Nodes
+    friend void NAV::FlowExecutor::deinitialize();
 
     /// @brief Register all available Node types for the program
     friend void NAV::NodeRegistry::RegisterNodeTypes();

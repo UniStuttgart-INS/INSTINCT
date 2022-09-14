@@ -19,4 +19,7 @@ void stop();
 /// @brief Waits for a thread to finish its execution
 void waitForFinish();
 
+/// @brief Called by nodes when they finished with sending data
+void deregisterNode();
+
 } // namespace NAV::FlowExecutor

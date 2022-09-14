@@ -30,3 +30,6 @@ junit.xml
 
 # Imgui files
 INSTINCT.ini
+
+# DrawIO temporary files
+.$*

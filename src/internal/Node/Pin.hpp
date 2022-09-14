@@ -436,6 +436,9 @@ class OutputPin : public Pin
     /// Mutex to interact with the data object
     std::mutex dataAccessMutex;
 
+    /// Flag whether the node still has post-processing data left
+    bool hasPollDataRemaining = false;
+
     friend class Pin;
     friend class InputPin;
 
@@ -594,6 +597,9 @@ class InputPin : public Pin
 
     /// @brief Priority when checking firable condition related to other pins (0 = highest priority)
     size_t priority = 0;
+
+    /// @brief Whether it should be checked for temporal ordering
+    bool neededForTemporalQueueCheck = true;
 
     /// If true no more messages are accepted to the queue
     bool queueBlocked = false;

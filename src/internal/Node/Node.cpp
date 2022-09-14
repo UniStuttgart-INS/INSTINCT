@@ -226,6 +226,11 @@ NAV::Node::State NAV::Node::getState() const
     return _state;
 }
 
+NAV::Node::Mode NAV::Node::getMode() const
+{
+    return _mode;
+}
+
 bool NAV::Node::doInitialize(bool wait)
 {
     LOG_TRACE("{}: Current state = {}", nameId(), toString(_state));
@@ -374,6 +379,11 @@ bool NAV::Node::doEnable()
     return true;
 }
 
+void NAV::Node::wakeWorker()
+{
+    _workerConditionVariable.notify_all();
+}
+
 bool NAV::Node::isDisabled() const
 {
     return _state == State::Disabled;
@@ -438,7 +448,7 @@ void NAV::Node::workerThread(Node* node)
             std::unique_lock lk(node->_workerMutex);
             std::cv_status status = node->_workerConditionVariable.wait_for(lk, node->_workerTimeout);
 
-            LOG_TRACE("{}: Worker waking up...", node->nameId());
+            LOG_TRACE("{}: Worker waking up", node->nameId());
 
             if (status == std::cv_status::timeout)
             {
@@ -449,22 +459,67 @@ void NAV::Node::workerThread(Node* node)
                 bool callbackTriggered = false;
                 do {
                     callbackTriggered = false;
-                    for (size_t prio = 0; prio < node->inputPins.size(); prio++) // TODO: Before prioritizing, the temporal order should be enforced. Also in POST_PROCESSING mode, nodes should wait till all Flow pins have data to enable temporal order checking
-                    {
-                        for (size_t i = 0; i < node->inputPins.size(); i++)
+
+                    LOG_TRACE("{}:     Checking for firable input pins", node->nameId());
+
+                    if (node->_mode == Mode::POST_PROCESSING) {}
+                    // TODO: Continue here. Do only check if all pins have data in post_processing and if connected pin still has data
+
+                    // Check if all input flow pins have data
+                    bool allInputPinsHaveData = !node->inputPins.empty();
+                    if (node->postprocessingRunning)
+                        for (const auto& inputPin : node->inputPins)
                         {
-                            auto& inputPin = node->inputPins.at(i);
-                            if (inputPin.type == Pin::Type::Flow && inputPin.priority == prio
-                                && inputPin.firable && inputPin.firable(inputPin.queue))
+                            if (inputPin.type == Pin::Type::Flow && inputPin.neededForTemporalQueueCheck && inputPin.queue.empty())
                             {
-                                std::invoke(std::get<InputPin::FlowFirableCallbackFunc>(inputPin.callback), node, inputPin.queue, i);
-                                callbackTriggered = true;
+                                allInputPinsHaveData = false;
                                 break;
                             }
                         }
-                        if (callbackTriggered) { break; }
+                    if (allInputPinsHaveData) // All pins have data for temporal comparison
+                    {
+                        LOG_TRACE("{}:     All pins have data for temporal sorting", node->nameId());
+
+                        // Find pin with the earliest data
+                        InsTime earliestTime;
+                        size_t earliestInputPinIdx = 0;
+                        size_t earliestInputPinPriority = 100;
+                        for (size_t i = 0; i < node->inputPins.size(); i++)
+                        {
+                            auto& inputPin = node->inputPins[i];
+                            if (inputPin.type == Pin::Type::Flow && !inputPin.queue.empty()
+                                && (earliestTime.empty()
+                                    || inputPin.queue.front()->insTime < earliestTime
+                                    || (inputPin.queue.front()->insTime == earliestTime && inputPin.priority < earliestInputPinPriority)))
+                            {
+                                earliestTime = inputPin.queue.front()->insTime;
+                                earliestInputPinIdx = i;
+                                earliestInputPinPriority = inputPin.priority;
+                            }
+                        }
+
+                        auto& inputPin = node->inputPins[earliestInputPinIdx];
+                        if (inputPin.firable && inputPin.firable(inputPin.queue))
+                        {
+                            LOG_TRACE("{}:     Invoking callback on input pin with index {}", node->nameId(), earliestInputPinIdx);
+                            std::invoke(std::get<InputPin::FlowFirableCallbackFunc>(inputPin.callback), node, inputPin.queue, earliestInputPinIdx);
+                            callbackTriggered = true;
+                        }
                     }
+                    else { LOG_TRACE("{}:     Not all pins have data for temporal sorting", node->nameId()); }
                 } while (callbackTriggered && node->isInitialized());
+
+                // Post-processing (FileReader/Simulator)
+                if (node->postprocessingRunning)
+                {
+                    for (const auto& outputPin : node->outputPins)
+                    {
+                        if (auto* callback = std::get_if<OutputPin::PollDataFunc>(&outputPin.data);
+                            callback != nullptr && *callback != nullptr)
+                        {
+                        }
+                    }
+                }
             }
         }
     }
