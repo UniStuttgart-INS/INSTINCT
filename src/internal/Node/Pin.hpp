@@ -16,6 +16,7 @@ using json = nlohmann::json; ///< json namespace
 #include <memory>
 #include <tuple>
 #include <mutex>
+#include <atomic>
 #include <functional>
 
 #include "util/Container/TsDeque.hpp"
@@ -349,7 +350,7 @@ class OutputPin : public Pin
     OutputPin(const OutputPin&) = delete;
     /// @brief Move constructor
     OutputPin(OutputPin&& other) noexcept
-        : Pin(std::move(other)), links(std::move(other.links)), data(other.data) {}
+        : Pin(std::move(other)), links(std::move(other.links)), data(other.data), mode(other.mode.load()) {}
     /// @brief Copy assignment operator
     OutputPin& operator=(const OutputPin&) = delete;
     /// @brief Move assignment operator
@@ -357,12 +358,20 @@ class OutputPin : public Pin
     {
         if (this != &other)
         {
-            data = other.data;
             links = std::move(other.links);
+            data = other.data;
+            mode = other.mode.load();
             Pin::operator=(std::move(other));
         }
         return *this;
     }
+
+    /// @brief Different Modes the Pin can work in
+    enum class Mode
+    {
+        REAL_TIME,       ///< Pin running in real-time mode
+        POST_PROCESSING, ///< Pin running in post-processing mode
+    };
 
     /// @brief Checks if this pin can connect to the provided pin
     /// @param[in] other The pin to create a link to
@@ -437,7 +446,7 @@ class OutputPin : public Pin
     std::mutex dataAccessMutex;
 
     /// Flag whether the node still has post-processing data left
-    bool hasPollDataRemaining = false;
+    std::atomic<Mode> mode = Mode::REAL_TIME;
 
     friend class Pin;
     friend class InputPin;
@@ -478,6 +487,7 @@ class InputPin : public Pin
           callback(other.callback),
           firable(std::move(other.firable)),
           priority(other.priority),
+          neededForTemporalQueueCheck(other.neededForTemporalQueueCheck),
           queueBlocked(other.queueBlocked),
           queue(other.queue) {}
     /// @brief Copy assignment operator
@@ -492,6 +502,7 @@ class InputPin : public Pin
             callback = other.callback;
             firable = std::move(other.firable);
             priority = other.priority;
+            neededForTemporalQueueCheck = other.neededForTemporalQueueCheck;
             queueBlocked = other.queueBlocked;
             queue = std::move(other.queue);
             Pin::operator=(std::move(other));

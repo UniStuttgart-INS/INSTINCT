@@ -33,9 +33,6 @@ std::chrono::time_point<std::chrono::steady_clock> _startTime;
 
 namespace NAV::FlowExecutor
 {
-/// @brief Initializes all Nodes if they are not initialized yet
-/// @return True if all nodes are initialized
-bool initialize();
 
 /// @brief Deinitialize all Nodes
 void deinitialize();
@@ -109,35 +106,15 @@ void NAV::FlowExecutor::waitForFinish()
     }
 }
 
-void NAV::FlowExecutor::deregisterNode()
+void NAV::FlowExecutor::deregisterNode([[maybe_unused]] ax::NodeEditor::NodeId id)
 {
+    LOG_DEBUG("Node {} finished.", size_t(id));
     _activeNodes--;
-}
 
-bool NAV::FlowExecutor::initialize()
-{
-    LOG_TRACE("called");
-
-    if (nm::InitializeAllNodes())
+    if (_activeNodes == 0)
     {
-        for (Node* node : nm::m_Nodes())
-        {
-            if (node->isInitialized())
-            {
-                node->resetNode();
-                for (auto& inputPin : node->inputPins)
-                {
-                    inputPin.queue.clear();
-                }
-                node->_mode = Node::Mode::POST_PROCESSING;
-            }
-        }
-
-        nm::EnableAllCallbacks();
-        return true;
+        deinitialize();
     }
-
-    return false;
 }
 
 void NAV::FlowExecutor::deinitialize()
@@ -153,8 +130,14 @@ void NAV::FlowExecutor::deinitialize()
 
     for (Node* node : nm::m_Nodes())
     {
+        if (node == nullptr || !node->isInitialized()) { continue; }
+
         node->flush();
         node->_mode = Node::Mode::REAL_TIME;
+        for (auto& outputPin : node->outputPins)
+        {
+            outputPin.mode = OutputPin::Mode::REAL_TIME;
+        }
     }
 
     if (!ConfigManager::Get<bool>("nogui")
@@ -170,54 +153,58 @@ void NAV::FlowExecutor::execute()
 {
     LOG_TRACE("called");
 
-    if (!initialize())
+    if (!nm::InitializeAllNodes())
     {
         _execute.store(false, std::memory_order_release);
         return;
     }
 
-    LOG_INFO("Post-processing started");
-    _startTime = std::chrono::steady_clock::now();
-
-    std::multimap<NAV::InsTime, OutputPin*> events;
-
-    for (Node* node : nm::m_Nodes()) // Search for node pins with data callbacks
+    for (Node* node : nm::m_Nodes())
     {
-        if (node == nullptr || !node->isInitialized())
-        {
-            continue;
-        }
+        if (node == nullptr || !node->isInitialized()) { continue; }
 
+        _activeNodes += 1;
+        node->resetNode();
+        for (auto& inputPin : node->inputPins)
+        {
+            inputPin.queue.clear();
+        }
+        node->_mode = Node::Mode::POST_PROCESSING;
+        LOG_TRACE("Putting node '{}' into post-processing mode and adding to active nodes.", node->nameId());
         for (auto& outputPin : node->outputPins)
         {
-            if (!_execute.load(std::memory_order_acquire))
-            {
-                deinitialize();
-                return;
-            }
-
             if (outputPin.type == Pin::Type::Flow
 #ifndef TESTING
                 && outputPin.isPinLinked()
 #endif
             )
             {
-                if (auto* callback = std::get_if<OutputPin::PollDataFunc>(&outputPin.data);
-                    callback != nullptr && *callback != nullptr)
-                {
-                    LOG_DEBUG("Enabling post-processing mode for node '{}' on pin '{} ({})'", node->nameId(), outputPin.name, size_t(outputPin.id));
-                    outputPin.hasPollDataRemaining = true;
-                    node->postprocessingRunning = true;
-                }
+                outputPin.mode = OutputPin::Mode::POST_PROCESSING;
+                LOG_TRACE("    Putting pin '{}' into post-processing mode", outputPin.name);
             }
         }
     }
+
+    nm::EnableAllCallbacks();
+
+    LOG_INFO("Post-processing started");
+    _startTime = std::chrono::steady_clock::now();
+
     for (Node* node : nm::m_Nodes()) // Search for node pins with data callbacks
     {
-        if (node != nullptr && node->isInitialized() && node->postprocessingRunning)
+        if (node != nullptr && node->isInitialized() && node->_mode == Node::Mode::POST_PROCESSING
+            && std::any_of(node->outputPins.begin(), node->outputPins.end(), [](const OutputPin& outputPin) {
+                   return std::holds_alternative<OutputPin::PollDataFunc>(outputPin.data)
+#ifndef TESTING
+                          && outputPin.isPinLinked()
+#endif
+                       ;
+               }))
         {
-            _activeNodes += 1;
+            LOG_DEBUG("Waking up node {}", node->nameId());
             node->wakeWorker();
         }
     }
+
+    _execute.store(false, std::memory_order_release);
 }

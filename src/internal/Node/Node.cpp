@@ -5,9 +5,11 @@
 #include "util/StringUtil.hpp"
 #include "util/Assert.h"
 
+#include "internal/FlowExecutor.hpp"
 #include "internal/gui/FlowAnimation.hpp"
 #include "internal/NodeManager.hpp"
 #include "util/Json.hpp"
+#include "util/StringUtil.hpp"
 
 #include <imgui_node_editor.h>
 namespace ed = ax::NodeEditor;
@@ -456,29 +458,39 @@ void NAV::Node::workerThread(Node* node)
             }
             else if (node->isInitialized()) // Triggered by '_workerConditionVariable.notify_all();'
             {
-                bool callbackTriggered = false;
-                do {
-                    callbackTriggered = false;
+                if (std::any_of(node->inputPins.begin(), node->inputPins.end(), [](const InputPin& inputPin) {
+                        return inputPin.type == Pin::Type::Flow && inputPin.isPinLinked();
+                    }))
+                {
+                    bool callbackTriggered = false;
+                    do {
+                        callbackTriggered = false;
 
-                    LOG_TRACE("{}:     Checking for firable input pins", node->nameId());
+                        LOG_TRACE("{}:   Checking for firable input pins", node->nameId());
 
-                    if (node->_mode == Mode::POST_PROCESSING) {}
-                    // TODO: Continue here. Do only check if all pins have data in post_processing and if connected pin still has data
-
-                    // Check if all input flow pins have data
-                    bool allInputPinsHaveData = !node->inputPins.empty();
-                    if (node->postprocessingRunning)
-                        for (const auto& inputPin : node->inputPins)
+                        if (node->_mode == Mode::POST_PROCESSING)
                         {
-                            if (inputPin.type == Pin::Type::Flow && inputPin.neededForTemporalQueueCheck && inputPin.queue.empty())
+                            // Check if all input flow pins have data
+                            bool allInputPinsHaveData = !node->inputPins.empty();
+                            for (const auto& inputPin : node->inputPins)
                             {
-                                allInputPinsHaveData = false;
-                                break;
+                                if (inputPin.type == Pin::Type::Flow && inputPin.neededForTemporalQueueCheck && inputPin.queue.empty())
+                                {
+                                    if (auto* connectedPin = inputPin.link.getConnectedPin();
+                                        connectedPin && connectedPin->mode == OutputPin::Mode::POST_PROCESSING)
+                                    {
+                                        allInputPinsHaveData = false;
+                                        break;
+                                    }
+                                }
                             }
+                            if (!allInputPinsHaveData)
+                            {
+                                LOG_TRACE("{}:     Not all pins have data for temporal sorting", node->nameId());
+                                continue;
+                            }
+                            else { LOG_TRACE("{}:     All pins have data for temporal sorting", node->nameId()); }
                         }
-                    if (allInputPinsHaveData) // All pins have data for temporal comparison
-                    {
-                        LOG_TRACE("{}:     All pins have data for temporal sorting", node->nameId());
 
                         // Find pin with the earliest data
                         InsTime earliestTime;
@@ -497,27 +509,64 @@ void NAV::Node::workerThread(Node* node)
                                 earliestInputPinPriority = inputPin.priority;
                             }
                         }
+                        if (earliestTime.empty()) { continue; }
 
                         auto& inputPin = node->inputPins[earliestInputPinIdx];
                         if (inputPin.firable && inputPin.firable(inputPin.queue))
                         {
-                            LOG_TRACE("{}:     Invoking callback on input pin with index {}", node->nameId(), earliestInputPinIdx);
+                            LOG_TRACE("{}:     Invoking callback on input pin (idx = {})", node->nameId(), earliestInputPinIdx);
                             std::invoke(std::get<InputPin::FlowFirableCallbackFunc>(inputPin.callback), node, inputPin.queue, earliestInputPinIdx);
                             callbackTriggered = true;
                         }
-                    }
-                    else { LOG_TRACE("{}:     Not all pins have data for temporal sorting", node->nameId()); }
-                } while (callbackTriggered && node->isInitialized());
+                    } while (callbackTriggered && node->isInitialized());
+                }
 
                 // Post-processing (FileReader/Simulator)
-                if (node->postprocessingRunning)
+                if (node->_mode == Node::Mode::POST_PROCESSING)
                 {
-                    for (const auto& outputPin : node->outputPins)
-                    {
-                        if (auto* callback = std::get_if<OutputPin::PollDataFunc>(&outputPin.data);
-                            callback != nullptr && *callback != nullptr)
+                    LOG_TRACE("{}:   Checking for callable poll data output pins", node->nameId());
+                    bool callbackTriggered = false;
+                    do {
+                        callbackTriggered = false;
+                        for (auto& outputPin : node->outputPins)
                         {
+                            if (auto* callback = std::get_if<OutputPin::PollDataFunc>(&outputPin.data);
+                                outputPin.mode == OutputPin::Mode::POST_PROCESSING && callback != nullptr && *callback != nullptr)
+                            {
+                                LOG_TRACE("{}:     Polling data from output pin '{}'", node->nameId(), str::replaceAll_copy(outputPin.name, "\n", ""));
+                                if ((node->**callback)(false) == nullptr) // All messages from this pin read
+                                {
+                                    outputPin.mode = OutputPin::Mode::REAL_TIME;
+
+                                    if (std::none_of(node->outputPins.begin(), node->outputPins.end(), [](const OutputPin& outputPin) {
+                                            return std::holds_alternative<OutputPin::PollDataFunc>(outputPin.data) && outputPin.mode == OutputPin::Mode::POST_PROCESSING;
+                                        }))
+                                    {
+                                        node->_mode = Node::Mode::REAL_TIME;
+                                        FlowExecutor::deregisterNode(node->id);
+                                    }
+                                }
+                                callbackTriggered = true;
+                                break;
+                            }
                         }
+                    } while (callbackTriggered && node->isInitialized());
+                }
+
+                if (node->_mode == Mode::POST_PROCESSING)
+                {
+                    // Check if node finished
+                    if (std::all_of(node->inputPins.begin(), node->inputPins.end(), [](const InputPin& inputPin) {
+                            return inputPin.type != Pin::Type::Flow || !inputPin.isPinLinked() || (inputPin.queue.empty() && inputPin.link.getConnectedPin()->mode == OutputPin::Mode::REAL_TIME);
+                        }))
+                    {
+                        for (auto& outputPin : node->outputPins)
+                        {
+                            outputPin.mode = OutputPin::Mode::REAL_TIME;
+                        }
+                        node->_mode = Node::Mode::REAL_TIME;
+                        FlowExecutor::deregisterNode(node->id);
+                        break;
                     }
                 }
             }

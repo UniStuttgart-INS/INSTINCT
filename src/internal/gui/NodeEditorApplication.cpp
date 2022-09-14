@@ -1015,6 +1015,16 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 ImGui::Spring(0);
                 output.drawPinIcon(output.isPinLinked(), static_cast<int>(alpha * 255));
                 if (ImGui::IsItemHovered()) { tooltipText = fmt::format("{}", fmt::join(output.dataIdentifier, "\n")); }
+                if (_showQueueSizeOnPins && output.type == Pin::Type::Flow && output.isPinLinked())
+                {
+                    auto cursor = ImGui::GetCursorPos();
+                    ImGui::SetCursorPos(ImVec2(cursor.x - 26.0F, cursor.y + 2.F));
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImColor(255, 0, 0).Value);
+                    ImGui::Text("%s", output.mode == OutputPin::Mode::REAL_TIME ? "R" : "P");
+                    ImGui::PopStyleColor();
+                    ImGui::SetCursorPos(cursor);
+                }
+
                 ImGui::PopStyleVar();
                 util::BlueprintNodeBuilder::EndOutput();
             }
@@ -1393,6 +1403,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Text("ID: %lu", size_t(pin->id));
             ImGui::Text("Node: %s", pin->parentNode ? std::to_string(size_t(pin->parentNode->id)).c_str() : "<none>");
             ImGui::Text("Type: %s", std::string(pin->type).c_str());
+            ImGui::Text("Mode: %s", pin->mode == OutputPin::Mode::REAL_TIME ? "Real-time" : "Post-processing");
             ImGui::Separator();
             if (ImGui::MenuItem("Rename"))
             {

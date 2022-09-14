@@ -37,7 +37,7 @@ void RegisterNodeTypes(); // NOLINT(readability-redundant-declaration) - false w
 
 namespace FlowExecutor
 {
-bool initialize();   // NOLINT(readability-redundant-declaration) - false warning. This is needed for the friend declaration below
+void execute();      // NOLINT(readability-redundant-declaration) - false warning. This is needed for the friend declaration below
 void deinitialize(); // NOLINT(readability-redundant-declaration) - false warning. This is needed for the friend declaration below
 } // namespace FlowExecutor
 
@@ -351,9 +351,6 @@ class Node
     /// Enables the callbacks
     bool callbacksEnabled = false;
 
-    /// Tell the node to send out data for post-processing
-    bool postprocessingRunning = false;
-
   protected:
     /// The Default Window size for new config windows.
     /// Only set the variable if the object/window has no persistently saved data (no entry in .ini file)
@@ -412,9 +409,6 @@ class Node
 
     /// @brief Main task of the FlowExecutor thread
     friend void NAV::FlowExecutor::execute();
-
-    /// @brief Initializes all Nodes if they are not initialized yet
-    friend bool NAV::FlowExecutor::initialize();
 
     /// @brief Deinitialize all Nodes
     friend void NAV::FlowExecutor::deinitialize();
