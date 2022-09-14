@@ -27,35 +27,31 @@ enum class IntegrationAlgorithm
 /// @param[in] f  Model function
 /// @param[in] h Integration step in [s]
 /// @param[in] n_y State vector at time n_t
-/// @param[in] n_z Measurement vector at time n_t
-/// @param[in] z_n_p1 Measurement vector at time t_(n+1)
 /// @param[in] n_t Time to evaluate the model function at in [s]
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-template<typename Y, typename Z, typename Scalar,
+template<typename Y, typename Scalar,
          typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
-Y Heun(const auto& f, const Scalar& h, const Y& n_y, const Z& n_z, const Z& z_n_p1, const Scalar& n_t, const auto& c)
+Y Heun(const auto& f, const Scalar& h, const Y& n_y, const Scalar& n_t, const auto& c)
 {
-    Y y_n_p1 = n_y + h * f(n_y, n_z, n_t, c);
+    Y y_n_p1 = n_y + h * f(n_y, n_t, c);
 
-    return 0.5 * n_y + 0.5 * (y_n_p1 + h * f(y_n_p1, z_n_p1, n_t + h, c));
+    return 0.5 * n_y + 0.5 * (y_n_p1 + h * f(y_n_p1, n_t + h, c));
 }
 
 /// @brief Heun's method
 /// @param[in] f  Model function
 /// @param[in] h Integration step in [s]
 /// @param[in] n_y State vector at time n_t
-/// @param[in] n_z Measurement vector at time n_t
-/// @param[in] z_n_p1 Measurement vector at time t_(n+1)
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-template<typename Y, typename Z, typename Scalar,
+template<typename Y, typename Scalar,
          typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
-Y Heun(const auto& f, const Scalar& h, const Y& n_y, const Z& n_z, const Z& z_n_p1, const auto& c)
+Y Heun(const auto& f, const Scalar& h, const Y& n_y, const auto& c)
 {
-    Y y_n_p1 = n_y + h * f(n_y, n_z, c);
+    Y y_n_p1 = n_y + h * f(n_y, c);
 
-    return 0.5 * n_y + 0.5 * (y_n_p1 + h * f(y_n_p1, z_n_p1, c));
+    return 0.5 * n_y + 0.5 * (y_n_p1 + h * f(y_n_p1, c));
 }
 
 /// @brief Runge-Kutta First Order Algorithm

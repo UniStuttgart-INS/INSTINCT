@@ -4,6 +4,8 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
+#include "internal/gui/NodeEditorApplication.hpp"
+
 NAV::experimental::Matrix::Matrix()
     : Node(typeStatic())
 {
@@ -190,7 +192,7 @@ void NAV::experimental::Matrix::guiConfig()
                 for (int64_t col = 0; col < _initMatrix.cols(); col++)
                 {
                     ImGui::TableNextColumn();
-                    ImGui::SetNextItemWidth(50);
+                    ImGui::SetNextItemWidth(50 * gui::NodeEditorApplication::windowFontRatio());
                     if (ImGui::InputDouble(("##initMatrix(" + std::to_string(row) + ", " + std::to_string(col) + ")").c_str(),
                                            &_initMatrix(row, col), 0.0, 0.0, "%.1f"))
                     {

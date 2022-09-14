@@ -18,6 +18,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/widgets/HelpMarker.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
@@ -56,7 +57,7 @@ std::string NAV::ImuSimulator::category()
 
 void NAV::ImuSimulator::guiConfig()
 {
-    constexpr float columnWidth{ 130.0F };
+    float columnWidth = 130.0F * gui::NodeEditorApplication::windowFontRatio();
 
     if (_trajectoryType != TrajectoryType::Csv && ImGui::TreeNode("Start Time"))
     {
@@ -99,13 +100,13 @@ void NAV::ImuSimulator::guiConfig()
     if (ImGui::TreeNode("Output datarate"))
     {
         ImGui::SetNextItemWidth(columnWidth);
-        if (ImGui::InputDoubleL(fmt::format("IMU sample rate##{}", size_t(id)).c_str(), &_imuFrequency, 1e-3, 1e4, 0.0, 0.0, "%.3f Hz"))
+        if (ImGui::InputDoubleL(fmt::format("IMU output rate##{}", size_t(id)).c_str(), &_imuFrequency, 1e-3, 1e4, 0.0, 0.0, "%.3f Hz"))
         {
             LOG_DEBUG("{}: imuFrequency changed to {}", nameId(), _imuFrequency);
             flow::ApplyChanges();
         }
         ImGui::SetNextItemWidth(columnWidth);
-        if (ImGui::InputDouble(fmt::format("GNSS sample rate##{}", size_t(id)).c_str(), &_gnssFrequency, 0.0, 0.0, "%.3f Hz"))
+        if (ImGui::InputDouble(fmt::format("Trajectory output rate##{}", size_t(id)).c_str(), &_gnssFrequency, 0.0, 0.0, "%.3f Hz"))
         {
             LOG_DEBUG("{}: gnssFrequency changed to {}", nameId(), _gnssFrequency);
             flow::ApplyChanges();
@@ -332,7 +333,7 @@ void NAV::ImuSimulator::guiConfig()
             }
             ImGui::SameLine();
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
-            ImGui::TextUnformatted("startOrientation (Roll, Pitch, Yaw)");
+            ImGui::TextUnformatted("Orientation (Roll, Pitch, Yaw)");
         }
         else if (_trajectoryType == TrajectoryType::Linear)
         {
@@ -361,7 +362,7 @@ void NAV::ImuSimulator::guiConfig()
             }
             ImGui::SameLine();
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
-            ImGui::TextUnformatted("Start velocity (North, East, Down)");
+            ImGui::TextUnformatted("Velocity (North, East, Down)");
         }
         else if (_trajectoryType == TrajectoryType::Circular)
         {
@@ -369,7 +370,7 @@ void NAV::ImuSimulator::guiConfig()
             {
                 ImGui::TableNextColumn();
                 auto tableStartX = ImGui::GetCursorPosX();
-                ImGui::SetNextItemWidth(200);
+                ImGui::SetNextItemWidth(200 * gui::NodeEditorApplication::windowFontRatio());
                 if (ImGui::BeginCombo(fmt::format("Motion##{}", size_t(id)).c_str(), to_string(_circularTrajectoryDirection)))
                 {
                     for (size_t i = 0; i < static_cast<size_t>(Direction::COUNT); i++)
@@ -520,6 +521,7 @@ void NAV::ImuSimulator::guiConfig()
         ImGui::TreePop();
     }
 
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
     if (ImGui::TreeNode("Simulation models"))
     {
         if (_trajectoryType != TrajectoryType::Fixed && _trajectoryType != TrajectoryType::Csv)
@@ -527,7 +529,7 @@ void NAV::ImuSimulator::guiConfig()
             ImGui::TextUnformatted("Spline");
             {
                 ImGui::Indent();
-                ImGui::SetNextItemWidth(230);
+                ImGui::SetNextItemWidth(columnWidth - ImGui::GetStyle().IndentSpacing);
                 if (ImGui::InputDoubleL(fmt::format("Sample Interval##{}", size_t(id)).c_str(), &_splines.sampleInterval, 0.0, std::numeric_limits<double>::max(), 0.0, 0.0, "%.3e s"))
                 {
                     LOG_DEBUG("{}: spline sample interval changed to {}", nameId(), _splines.sampleInterval);
@@ -540,7 +542,7 @@ void NAV::ImuSimulator::guiConfig()
         ImGui::TextUnformatted("Measured acceleration");
         {
             ImGui::Indent();
-            ImGui::SetNextItemWidth(230);
+            ImGui::SetNextItemWidth(columnWidth - ImGui::GetStyle().IndentSpacing);
 
             if (ComboGravitationModel(fmt::format("Gravitation Model##{}", size_t(id)).c_str(), _gravitationModel))
             {

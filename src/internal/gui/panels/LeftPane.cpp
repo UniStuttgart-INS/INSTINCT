@@ -24,7 +24,9 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
 
     bool paneActive = false;
 
-    float insLogoHeight = paneWidth * (1.0F / 3.0F) * 2967.0F / 4073.0F;
+    float insLogoWidth = paneWidth < 150 ? paneWidth : 150;
+
+    float insLogoHeight = insLogoWidth * 2967.0F / 4073.0F;
     float childHeight = ImGui::GetContentRegionAvail().y - insLogoHeight;
 
     ImGui::BeginGroup();
@@ -60,7 +62,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
 #endif
 
         ImGui::Checkbox("Show Callback Flow", &nm::showFlowWhenInvokingCallbacks);
-        ImGui::SameLine();
+        if (NodeEditorApplication::defaultFontRatio() == 1.F) { ImGui::SameLine(); }
         ImGui::Checkbox("Show Notify Flow", &nm::showFlowWhenNotifyingValueChange);
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
@@ -131,10 +133,11 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
             {
                 circleCol = IM_COL32(255, 0, 0, 255);
             }
-            ImGui::GetWindowDrawList()->AddCircleFilled(start + ImVec2(-8, ImGui::GetTextLineHeight() / 2.0F + 1.0F),
-                                                        5.0F, circleCol);
+            ImGui::GetWindowDrawList()->AddCircleFilled(start + ImVec2(-8 + (NodeEditorApplication::defaultFontRatio() - 1.F) * 5.F, ImGui::GetTextLineHeight() / 2.0F + 1.0F),
+                                                        5.0F * NodeEditorApplication::defaultFontRatio(), circleCol);
 
             bool isSelected = std::find(selectedNodes.begin(), selectedNodes.end(), node->id) != selectedNodes.end();
+            if (NodeEditorApplication::defaultFontRatio() != 1.F) { ImGui::Indent((NodeEditorApplication::defaultFontRatio() - 1.F) * 15.F); }
             if (ImGui::Selectable((str::replaceAll_copy(node->name, "\n", "") + "##" + std::to_string(size_t(node->id))).c_str(), &isSelected))
             {
                 if (io.KeyCtrl)
@@ -159,10 +162,11 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
             {
                 ImGui::SetTooltip("Type: %s", node->type().c_str());
             }
+            if (NodeEditorApplication::defaultFontRatio() != 1.F) { ImGui::Unindent((NodeEditorApplication::defaultFontRatio() - 1.F) * 15.F); }
 
             auto id = fmt::format("({})", size_t(node->id));
             auto textSize = ImGui::CalcTextSize(id.c_str(), nullptr);
-            auto iconPanelPos = start + ImVec2(paneWidth - ImGui::GetStyle().FramePadding.x - ImGui::GetStyle().IndentSpacing - ImGui::GetStyle().ItemInnerSpacing.x * 1, ImGui::GetTextLineHeight() / 2);
+            auto iconPanelPos = start + ImVec2(std::max(paneWidth, 150.F) - ImGui::GetStyle().FramePadding.x - ImGui::GetStyle().IndentSpacing - ImGui::GetStyle().ItemInnerSpacing.x * 1, ImGui::GetTextLineHeight() / 2);
             ImGui::GetWindowDrawList()->AddText(
                 ImVec2(iconPanelPos.x - textSize.x - ImGui::GetStyle().ItemInnerSpacing.x, start.y),
                 colSum > 2.0F ? IM_COL32(0, 0, 0, 255) : IM_COL32(255, 255, 255, 255), id.c_str(), nullptr);
@@ -185,7 +189,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
         size_t selectedCount = selectedNodes.size() + selectedLinks.size();
         ImGui::Text("%lu item%s selected", selectedCount, (selectedCount > 1 || selectedCount == 0) ? "s" : "");
         ImGui::Spring();
-        if (ImGui::Button("Deselect All"))
+        if (ImGui::Button("Deselect"))
         {
             ed::ClearSelection();
         }
@@ -210,7 +214,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
 
     ImGui::EndChild();
 
-    ImGui::Image(insLogo, ImVec2(insLogoHeight * 4073.0F / 2967.0F, insLogoHeight));
+    ImGui::Image(insLogo, ImVec2(insLogoWidth, insLogoHeight));
 
     ImGui::EndGroup();
 

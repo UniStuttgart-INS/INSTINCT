@@ -53,28 +53,6 @@ Eigen::Vector3d n_calcTimeDerivativeForVelocity(const Eigen::Vector3d& n_measure
                                                 const Eigen::Vector3d& n_gravitation,
                                                 const Eigen::Vector3d& n_centrifugalAcceleration);
 
-/// @brief Equations to perform an update of the velocity, including rotational correction
-/// @param[in] n_measuredForce f_n = [f_N  f_E  f_D]^T Specific force vector as measured by a triad of accelerometers and resolved into local-navigation frame coordinates
-/// @param[in] n_coriolisAcceleration Coriolis acceleration in local-navigation coordinates in [m/s^2]
-/// @param[in] n_gravitation Local gravitation vector (caused by effects of mass attraction) in local-navigation frame coordinates [m/s^2]
-/// @param[in] n_centrifugalAcceleration Centrifugal acceleration in local-navigation coordinates in [m/s^2]
-/// @param[in] b_omega_ib Angular velocity of platform system with respect to inertial system, represented in body coordinates in [rad/s]
-/// @param[in] n_omega_ie Angular velocity of earth with respect to inertial system, represented in n-sys
-/// @param[in] n_omega_en Transport rate represented in n-sys
-/// @param[in] n_Quat_b Orientation of body with respect to n-sys
-/// @param[in] timeDifferenceSec Time difference Δtₖ = (tₖ - tₖ₋₁) in [seconds]
-/// @return Derivative of the velocity
-/// @note See Zwiener (2019) - Robuste Zustandsschätzung zur Navigation und Regelung autonomer und bemannter Multikopter mit verteilten Sensoren, chapter 3.3.2
-Eigen::Vector3d n_calcTimeDerivativeForVelocity_RotationCorrection(const Eigen::Vector3d& n_measuredForce,
-                                                                   const Eigen::Vector3d& n_coriolisAcceleration,
-                                                                   const Eigen::Vector3d& n_gravitation,
-                                                                   const Eigen::Vector3d& n_centrifugalAcceleration,
-                                                                   const Eigen::Vector3d& b_omega_ib,
-                                                                   const Eigen::Vector3d& n_omega_ie,
-                                                                   const Eigen::Vector3d& n_omega_en,
-                                                                   const Eigen::Quaterniond& n_Quat_b,
-                                                                   const double& timeDifferenceSec);
-
 /// @brief Calculates the time derivative of the curvilinear position
 ///
 /// \anchor eq-INS-Mechanization-p_lla-dot \f{equation}{ \label{eq:eq-INS-Mechanization-p_lla-dot}
@@ -102,21 +80,19 @@ Eigen::Vector3d lla_calcTimeDerivativeForPosition(const Eigen::Vector3d& n_veloc
 /// @brief Values needed to calculate the PosVelAttDerivative for the local-navigation frame
 struct PosVelAttDerivativeConstants_n
 {
-    Eigen::Vector3d b_omega_ib;                                  ///< ω_ip_b Angular velocity in [rad/s], of the inertial to platform system, in body coordinates
-    Eigen::Vector3d b_measuredForce;                             ///< f_b Acceleration in [m/s^2], in body coordinates
-    double timeDifferenceSec = 0;                                ///< Time difference Δtₖ = (tₖ - tₖ₋₁) in [seconds]
+    Eigen::Vector3d b_omega_ib_dot;                              ///< ∂/∂t ω_ip_b Angular velocity rate in [rad/s²], of the inertial to platform system, in body coordinates
+    Eigen::Vector3d b_measuredForce_dot;                         ///< ∂/∂t f_b Acceleration rate in [m/s^3], in body coordinates
     GravitationModel gravitationModel = GravitationModel::EGM96; ///< Gravity Model to use
     bool coriolisAccelerationCompensationEnabled = true;         ///< Apply the coriolis acceleration compensation to the measured accelerations
     bool centrifgalAccelerationCompensationEnabled = true;       ///< Apply the centrifugal acceleration compensation to the measured accelerations
     bool angularRateEarthRotationCompensationEnabled = true;     ///< Apply the Earth rotation rate compensation to the measured angular rates
     bool angularRateTransportRateCompensationEnabled = true;     ///< Apply the transport rate compensation to the measured angular rates
-    bool velocityUpdateRotationCorrectionEnabled = false;        ///< Apply Zwiener's rotation correction for the velocity update
 };
 
 /// @brief Calculates the derivative of the quaternion, velocity and curvilinear position
-/// @param[in] y [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h]^T
+/// @param[in] y [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h, fx, fy, fz, ωx, ωy, ωz]^T
 /// @param[in] c Constant values needed to calculate the derivatives
-/// @return The derivative ∂/∂t [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h]^T
-Eigen::Matrix<double, 10, 1> n_calcPosVelAttDerivative(const Eigen::Matrix<double, 10, 1>& y, const PosVelAttDerivativeConstants_n& c);
+/// @return The derivative ∂/∂t [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h, fx, fy, fz, ωx, ωy, ωz]^T
+Eigen::Matrix<double, 16, 1> n_calcPosVelAttDerivative(const Eigen::Matrix<double, 16, 1>& y, const PosVelAttDerivativeConstants_n& c);
 
 } // namespace NAV

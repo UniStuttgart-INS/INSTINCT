@@ -68,20 +68,18 @@ Eigen::Vector3d e_calcTimeDerivativeForPosition(const Eigen::Vector3d& e_velocit
 /// @brief Values needed to calculate the PosVelAttDerivative for the ECEF frame
 struct PosVelAttDerivativeConstants_e
 {
-    Eigen::Vector3d b_omega_ib;                                  ///< ω_ip_b Angular velocity in [rad/s], of the inertial to platform system, in body coordinates
-    Eigen::Vector3d b_measuredForce;                             ///< f_b Acceleration in [m/s^2], in body coordinates
-    double timeDifferenceSec = 0;                                ///< Time difference Δtₖ = (tₖ - tₖ₋₁) in [seconds]
+    Eigen::Vector3d b_omega_ib_dot;                              ///< ∂/∂t ω_ip_b Angular velocity rate in [rad/s²], of the inertial to platform system, in body coordinates
+    Eigen::Vector3d b_measuredForce_dot;                         ///< ∂/∂t f_b Acceleration rate in [m/s^3], in body coordinates
     GravitationModel gravitationModel = GravitationModel::EGM96; ///< Gravity Model to use
     bool coriolisAccelerationCompensationEnabled = true;         ///< Apply the coriolis acceleration compensation to the measured accelerations
     bool centrifgalAccelerationCompensationEnabled = true;       ///< Apply the centrifugal acceleration compensation to the measured accelerations
     bool angularRateEarthRotationCompensationEnabled = true;     ///< Apply the Earth rotation rate compensation to the measured angular rates
-    bool velocityUpdateRotationCorrectionEnabled = false;        ///< Apply Zwiener's rotation correction for the velocity update
 };
 
 /// @brief Calculates the derivative of the quaternion, velocity and position in ECEF coordinates
-/// @param[in] y [w, x, y, z, v_x, v_y, v_z, x, y, z]^T
+/// @param[in] y [w, x, y, z, v_x, v_y, v_z, x, y, z, fx, fy, fz, ωx, ωy, ωz]^T
 /// @param[in] c Constant values needed to calculate the derivatives
-/// @return The derivative ∂/∂t [w, x, y, z, v_x, v_y, v_z, x, y, z]^T
-Eigen::Matrix<double, 10, 1> e_calcPosVelAttDerivative(const Eigen::Matrix<double, 10, 1>& y, const PosVelAttDerivativeConstants_e& c);
+/// @return The derivative ∂/∂t [w, x, y, z, v_x, v_y, v_z, x, y, z, fx, fy, fz, ωx, ωy, ωz]^T
+Eigen::Matrix<double, 16, 1> e_calcPosVelAttDerivative(const Eigen::Matrix<double, 16, 1>& y, const PosVelAttDerivativeConstants_e& c);
 
 } // namespace NAV

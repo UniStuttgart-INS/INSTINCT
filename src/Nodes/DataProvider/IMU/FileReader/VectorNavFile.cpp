@@ -222,12 +222,18 @@ NAV::FileReader::FileType NAV::VectorNavFile::determineFileType()
     auto filestreamHeader = std::ifstream(filepath);
     if (_filestream.good())
     {
-        std::array<char, std::string_view("Time [s]").length()> buffer{};
+        std::array<char, std::string_view("GpsCycle,GpsWeek,GpsTow").length()> buffer{};
         filestreamHeader.read(buffer.data(), buffer.size());
         filestreamHeader.close();
 
-        if (std::string(buffer.data(), buffer.size()) == "Time [s]")
+        if (std::string(buffer.data(), buffer.size()).starts_with("Time [s]"))
         {
+            _hasTimeColumn = true;
+            return FileType::CSV;
+        }
+        if (std::string(buffer.data(), buffer.size()).starts_with("GpsCycle,GpsWeek,GpsTow"))
+        {
+            _hasTimeColumn = false;
             return FileType::CSV;
         }
 
@@ -262,7 +268,7 @@ void NAV::VectorNavFile::readHeader()
         // Split line at comma
         while (std::getline(lineStream, cell, ','))
         {
-            if (column++ > 3)
+            if (column++ > (_hasTimeColumn ? 3 : 2))
             {
                 // Remove any trailing non text characters
                 cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
@@ -436,7 +442,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
 
         try
         {
-            extractCell(); // Time [s]
+            if (_hasTimeColumn) { extractCell(); } // Time [s]
             std::string gpsCycle = extractCell();
             std::string gpsWeek = extractCell();
             std::string gpsTow = extractCell();

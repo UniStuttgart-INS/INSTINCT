@@ -1,6 +1,7 @@
 #pragma once
 #include <imgui.h>
 #include <string>
+#include <array>
 #include <memory>
 
 struct Platform;
@@ -24,7 +25,19 @@ struct Application
     const std::string& GetName() const;
 
     ImFont* DefaultFont() const;
+    ImFont* WindowFont() const;
+    ImFont* MonoFont() const;
     ImFont* HeaderFont() const;
+
+    static void swapDefaultFont(bool big = false);
+    static void swapWindowFont(bool big = false);
+    static void swapMonoFont(bool big = false);
+    static void swapHeaderFont(bool big = false);
+
+    static bool isUsingBigDefaultFont();
+    static bool isUsingBigWindowFont();
+    static bool isUsingBigMonoFont();
+    static bool isUsingBigHeaderFont();
 
     ImTextureID LoadTexture(const void* data, int len);
     ImTextureID LoadTexture(const char* path);
@@ -42,6 +55,12 @@ struct Application
 
     virtual bool CanClose() { return true; }
 
+  protected:
+    static constexpr std::array<float, 2> defaultFontSize = { 18.F, 38.F };
+    static constexpr std::array<float, 2> windowFontSize = { 18.F, 38.F };
+    static constexpr std::array<float, 2> monoFontSize = { 18.F, 38.F };
+    static constexpr std::array<float, 2> headerFontSize = { 20.F, 42.F };
+
   private:
     void RecreateFontAtlas();
 
@@ -52,8 +71,18 @@ struct Application
     std::unique_ptr<Platform> m_Platform;
     std::unique_ptr<Renderer> m_Renderer;
     ImGuiContext* m_Context = nullptr;
-    ImFont* m_DefaultFont = nullptr;
-    ImFont* m_HeaderFont = nullptr;
+    static inline ImFont* m_DefaultFont = nullptr;
+    static inline ImFont* m_DefaultFontSmall = nullptr;
+    static inline ImFont* m_DefaultFontBig = nullptr;
+    static inline ImFont* m_WindowFont = nullptr;
+    static inline ImFont* m_WindowFontSmall = nullptr;
+    static inline ImFont* m_WindowFontBig = nullptr;
+    static inline ImFont* m_MonoFont = nullptr;
+    static inline ImFont* m_MonoFontSmall = nullptr;
+    static inline ImFont* m_MonoFontBig = nullptr;
+    static inline ImFont* m_HeaderFont = nullptr;
+    static inline ImFont* m_HeaderFontSmall = nullptr;
+    static inline ImFont* m_HeaderFontBig = nullptr;
 };
 
 int Main(int argc, const char* argv[]);

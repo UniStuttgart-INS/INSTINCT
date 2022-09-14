@@ -8,6 +8,7 @@
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/widgets/InputWithUnit.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
 
 #include "internal/FlowManager.hpp"
 #include "internal/NodeManager.hpp"
@@ -95,10 +96,10 @@ void NAV::LooselyCoupledKF::removeKalmanMatricesPins()
 
 void NAV::LooselyCoupledKF::guiConfig()
 {
-    constexpr float configWidth = 380.0F;
-    constexpr float unitWidth = 150.0F;
+    float configWidth = 380.0F * gui::NodeEditorApplication::windowFontRatio();
+    float unitWidth = 150.0F * gui::NodeEditorApplication::windowFontRatio();
 
-    float taylorOrderWidth = 75.0F;
+    float taylorOrderWidth = 75.0F * gui::NodeEditorApplication::windowFontRatio();
 
     if (ImGui::Checkbox(fmt::format("Show Kalman Filter matrices as output pins##{}", size_t(id)).c_str(), &_showKalmanFilterOutputPins))
     {
