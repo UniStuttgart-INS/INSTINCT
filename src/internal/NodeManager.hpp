@@ -58,7 +58,7 @@ void AddLink(ax::NodeEditor::LinkId linkId);
 InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier = {},
                          InputPin::Callback callback = static_cast<InputPin::FlowFirableCallbackFunc>(nullptr),
                          InputPin::FlowFirableCheckFunc firable = nullptr,
-                         size_t priority = 0, int idx = -1);
+                         size_t priority = 10, int idx = -1);
 
 /// @brief Create an Input Pin object
 /// @tparam T Node Class where the function is member of
@@ -76,7 +76,7 @@ template<typename T,
 InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier = {},
                          void (T::*callback)(InputPin::NodeDataQueue&, size_t) = nullptr,
                          InputPin::FlowFirableCheckFunc firable = nullptr,
-                         size_t priority = 0, int idx = -1)
+                         size_t priority = 10, int idx = -1)
 {
     assert(pinType == Pin::Type::Flow);
 

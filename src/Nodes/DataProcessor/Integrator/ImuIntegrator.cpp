@@ -34,7 +34,7 @@ NAV::ImuIntegrator::ImuIntegrator()
                            auto imuIntegrator = static_cast<const ImuIntegrator*>(node);
                            return !inputPin.queue.empty() && !imuIntegrator->_posVelAttStates.empty();
                        });
-    nm::CreateInputPin(this, "PosVelAttInit", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvPosVelAttInit);
+    nm::CreateInputPin(this, "PosVelAttInit", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvPosVelAttInit, nullptr, 8);
 
     nm::CreateOutputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() });
 }
@@ -91,6 +91,7 @@ void NAV::ImuIntegrator::guiConfig()
         ImGui::EndCombo();
     }
 
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
     if (ImGui::TreeNode(fmt::format("Data selection##{}", size_t(id)).c_str()))
     {
         if (ImGui::Checkbox(fmt::format("Prefere TimeSinceStartup over InsTime##{}", size_t(id)).c_str(), &_prefereTimeSinceStartupOverInsTime))
@@ -302,8 +303,8 @@ void NAV::ImuIntegrator::deinitialize()
 
 void NAV::ImuIntegrator::recvPosVelAttInit(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    LOG_DATA("{}: recvPosVelAttInit", nameId());
     auto posVelAtt = std::static_pointer_cast<const PosVelAtt>(queue.extract_front());
+    LOG_DATA("{}: recvPosVelAttInit at time [{}]", nameId(), posVelAtt->insTime.toYMDHMS());
 
     inputPins[INPUT_PORT_INDEX_POS_VEL_ATT_INIT].queueBlocked = true;
 

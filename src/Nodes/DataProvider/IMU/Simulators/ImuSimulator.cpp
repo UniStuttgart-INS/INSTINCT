@@ -583,7 +583,7 @@ void NAV::ImuSimulator::guiConfig()
     Imu::guiConfig();
 }
 
-[[nodiscard]] json NAV::ImuSimulator::save() const
+json NAV::ImuSimulator::save() const
 {
     LOG_TRACE("{}: called", nameId());
 
@@ -1257,7 +1257,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     if (peek)
     {
         auto obs = std::make_shared<NodeData>();
-        obs->insTime = _startTime + std::chrono::duration<double>(imuUpdateTime - 1e-9);
+        obs->insTime = _startTime + std::chrono::duration<double>(imuUpdateTime);
         return obs;
     }
 

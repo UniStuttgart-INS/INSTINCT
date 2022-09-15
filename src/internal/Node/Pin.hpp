@@ -609,7 +609,7 @@ class InputPin : public Pin
     FlowFirableCheckFunc firable = [](const Node*, const InputPin& inputPin) { return !inputPin.queue.empty(); };
 
     /// @brief Priority when checking firable condition related to other pins (0 = highest priority)
-    size_t priority = 0;
+    size_t priority = 10;
 
     /// @brief Whether it should be checked for temporal ordering
     bool neededForTemporalQueueCheck = true;
