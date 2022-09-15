@@ -52,13 +52,13 @@ void AddLink(ax::NodeEditor::LinkId linkId);
 /// @param[in] dataIdentifier Identifier of the data which is represented by the pin
 /// @param[in] callback Callback to register with the pin
 /// @param[in] firable Function to check whether the callback is firable
-/// @param[in] priority Priority when checking firable condition related to other pins (0 = highest priority)
+/// @param[in] priority Priority when checking firable condition related to other pins (higher priority gets triggered first)
 /// @param[in] idx Index where to put the new pin (-1 means at the end)
 /// @return Pointer to the created pin
 InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier = {},
                          InputPin::Callback callback = static_cast<InputPin::FlowFirableCallbackFunc>(nullptr),
                          InputPin::FlowFirableCheckFunc firable = nullptr,
-                         size_t priority = 10, int idx = -1);
+                         int priority = 0, int idx = -1);
 
 /// @brief Create an Input Pin object
 /// @tparam T Node Class where the function is member of
@@ -68,7 +68,7 @@ InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const 
 /// @param[in] dataIdentifier Identifier of the data which is represented by the pin
 /// @param[in] callback Flow firable callback function to register with the pin
 /// @param[in] firable Function to check whether the callback is firable
-/// @param[in] priority Priority when checking firable condition related to other pins (0 = highest priority)
+/// @param[in] priority Priority when checking firable condition related to other pins (higher priority gets triggered first)
 /// @param[in] idx Index where to put the new pin (-1 means at the end)
 /// @return Pointer to the created pin
 template<typename T,
@@ -76,7 +76,7 @@ template<typename T,
 InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier = {},
                          void (T::*callback)(InputPin::NodeDataQueue&, size_t) = nullptr,
                          InputPin::FlowFirableCheckFunc firable = nullptr,
-                         size_t priority = 10, int idx = -1)
+                         int priority = 0, int idx = -1)
 {
     assert(pinType == Pin::Type::Flow);
 

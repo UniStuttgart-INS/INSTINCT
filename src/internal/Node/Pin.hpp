@@ -487,6 +487,7 @@ class InputPin : public Pin
           firable(std::move(other.firable)),
           priority(other.priority),
           neededForTemporalQueueCheck(other.neededForTemporalQueueCheck),
+          dropQueueIfNotFirable(other.dropQueueIfNotFirable),
           queueBlocked(other.queueBlocked),
           queue(other.queue) {}
     /// @brief Copy assignment operator
@@ -502,6 +503,7 @@ class InputPin : public Pin
             firable = std::move(other.firable);
             priority = other.priority;
             neededForTemporalQueueCheck = other.neededForTemporalQueueCheck;
+            dropQueueIfNotFirable = other.dropQueueIfNotFirable;
             queueBlocked = other.queueBlocked;
             queue = std::move(other.queue);
             Pin::operator=(std::move(other));
@@ -608,11 +610,14 @@ class InputPin : public Pin
     /// @brief Function to check if the callback is firable
     FlowFirableCheckFunc firable = [](const Node*, const InputPin& inputPin) { return !inputPin.queue.empty(); };
 
-    /// @brief Priority when checking firable condition related to other pins (0 = highest priority)
-    size_t priority = 10;
+    /// @brief Priority when checking firable condition related to other pins (higher priority gets triggered first)
+    int priority = 0;
 
     /// @brief Whether it should be checked for temporal ordering
     bool neededForTemporalQueueCheck = true;
+
+    /// @brief If true, drops elements from the queue if not firable, otherwise sleeps the worker
+    bool dropQueueIfNotFirable = true;
 
     /// If true no more messages are accepted to the queue
     bool queueBlocked = false;

@@ -159,7 +159,7 @@ void NAV::NodeManager::AddLink(ax::NodeEditor::LinkId linkId)
 }
 
 NAV::InputPin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier,
-                                                InputPin::Callback callback, InputPin::FlowFirableCheckFunc firable, size_t priority, int idx)
+                                                InputPin::Callback callback, InputPin::FlowFirableCheckFunc firable, int priority, int idx)
 {
     LOG_TRACE("called for pin ({}) of type ({}) for node [{}]", name, std::string(pinType), node->nameId());
     if (idx < 0)

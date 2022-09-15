@@ -503,7 +503,7 @@ void NAV::Node::workerThread(Node* node)
                             if (inputPin.type == Pin::Type::Flow && !inputPin.queue.empty()
                                 && (earliestTime.empty()
                                     || inputPin.queue.front()->insTime < earliestTime
-                                    || (inputPin.queue.front()->insTime == earliestTime && inputPin.priority < earliestInputPinPriority)))
+                                    || (inputPin.queue.front()->insTime == earliestTime && inputPin.priority > earliestInputPinPriority)))
                             {
                                 earliestTime = inputPin.queue.front()->insTime;
                                 earliestInputPinIdx = i;
@@ -515,13 +515,18 @@ void NAV::Node::workerThread(Node* node)
                         auto& inputPin = node->inputPins[earliestInputPinIdx];
                         if (inputPin.firable && inputPin.firable(node, inputPin))
                         {
-                            LOG_DATA("{}: Invoking callback on input pin (idx = {})", node->nameId(), earliestInputPinIdx);
+                            LOG_TRACE("{}: Invoking callback on input pin (idx = {})", node->nameId(), earliestInputPinIdx);
                             std::invoke(std::get<InputPin::FlowFirableCallbackFunc>(inputPin.callback), node, inputPin.queue, earliestInputPinIdx);
+                        }
+                        else if (inputPin.dropQueueIfNotFirable)
+                        {
+                            LOG_TRACE("{}: Dropping message on input pin (idx = {})", node->nameId(), earliestInputPinIdx);
+                            inputPin.queue.pop_front();
                         }
                         else
                         {
-                            LOG_DATA("{}: Dropping message on input pin (idx = {})", node->nameId(), earliestInputPinIdx);
-                            inputPin.queue.pop_front();
+                            LOG_TRACE("{}: Skipping message on input pin (idx = {})", node->nameId(), earliestInputPinIdx);
+                            break; // Do not drop an item, but put the worker to sleep
                         }
                     }
                 }
