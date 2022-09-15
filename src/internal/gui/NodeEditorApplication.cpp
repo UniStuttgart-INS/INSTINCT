@@ -1591,7 +1591,10 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                              ImGuiWindowFlags_None))
             {
                 ImGui::PushFont(WindowFont());
+                bool locked = node->_lockConfigDuringRun && (node->callbacksEnabled || FlowExecutor::isRunning());
+                if (locked) { ImGui::PushDisabled(); }
                 node->guiConfig();
+                if (locked) { ImGui::PopDisabled(); }
                 ImGui::PopFont();
             }
             else // Window is collapsed

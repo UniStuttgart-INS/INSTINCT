@@ -364,6 +364,9 @@ class Node
     /// Flag if the config window should be shown
     bool _hasConfig = false;
 
+    /// Lock the config when executing post-processing
+    bool _lockConfigDuringRun = true;
+
   private:
     /// Current state of the node
     std::atomic<State> _state = State::Deinitialized;

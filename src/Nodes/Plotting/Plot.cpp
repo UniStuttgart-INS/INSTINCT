@@ -297,6 +297,7 @@ NAV::Plot::Plot()
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
+    _lockConfigDuringRun = false;
     _guiConfigDefaultWindowSize = { 750, 650 };
 
     _dataIdentifier = { Pos::type(), PosVel::type(), PosVelAtt::type(), LcKfInsGnssErrors::type(),
