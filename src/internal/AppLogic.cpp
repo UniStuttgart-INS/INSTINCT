@@ -83,6 +83,7 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
                 if (NAV::ConfigManager::Get<bool>("nogui")
                     && NAV::ConfigManager::Get<bool>("sigterm"))
                 {
+                    nm::EnableAllCallbacks();
                     NAV::Sleep::waitForSignal(true);
                 }
                 else if (size_t duration = NAV::ConfigManager::Get<size_t>("duration");

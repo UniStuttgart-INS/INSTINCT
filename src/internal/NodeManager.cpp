@@ -117,14 +117,15 @@ bool NAV::NodeManager::DeleteNode(ax::NodeEditor::NodeId nodeId)
                            [nodeId](const auto& node) { return node->id == nodeId; });
     if (it != m_nodes.end())
     {
-        LOG_DEBUG("Deleting node: {}", (*it)->nameId());
-
-        if ((*it)->isInitialized())
-        {
-            (*it)->doDeinitialize(true);
-        }
-        delete *it; // NOLINT(cppcoreguidelines-owning-memory)
+        Node* node = *it;
         m_nodes.erase(it);
+        LOG_DEBUG("Deleting node: {}", node->nameId());
+
+        if (node->isInitialized())
+        {
+            node->doDeinitialize(true);
+        }
+        delete node; // NOLINT(cppcoreguidelines-owning-memory)
 
         flow::ApplyChanges();
 
@@ -158,7 +159,7 @@ void NAV::NodeManager::AddLink(ax::NodeEditor::LinkId linkId)
 }
 
 NAV::InputPin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier,
-                                                InputPin::Callback callback, std::function<bool(const InputPin::NodeDataQueue&)> firable, size_t priority, int idx)
+                                                InputPin::Callback callback, InputPin::FlowFirableCheckFunc firable, size_t priority, int idx)
 {
     LOG_TRACE("called for pin ({}) of type ({}) for node [{}]", name, std::string(pinType), node->nameId());
     if (idx < 0)

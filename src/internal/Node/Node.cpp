@@ -431,7 +431,7 @@ void NAV::Node::workerThread(Node* node)
         {
             LOG_TRACE("{}: Worker doing initialization...", node->nameId());
             node->workerInitializeNode();
-            LOG_TRACE("{}: Worker finished initialization, notifying all waiting threads.", node->nameId());
+            LOG_TRACE("{}: Worker finished initialization, notifying all waiting threads (state = {})", node->nameId(), Node::toString(node->_state));
             node->_workerConditionVariable.notify_all();
             continue;
         }
@@ -439,18 +439,20 @@ void NAV::Node::workerThread(Node* node)
         {
             LOG_TRACE("{}: Worker doing deinitialization...", node->nameId());
             node->workerDeinitializeNode();
-            LOG_TRACE("{}: Worker finished deinitialization, notifying all waiting threads.", node->nameId());
+            LOG_TRACE("{}: Worker finished deinitialization, notifying all waiting threads (state = {})", node->nameId(), Node::toString(node->_state));
             node->_workerConditionVariable.notify_all();
             continue;
         }
 
         if (!node->isTransient())
         {
+            LOG_DATA("{}: Worker going to sleep", node->nameId());
+
             // Wait for data or state change
             std::unique_lock lk(node->_workerMutex);
             std::cv_status status = node->_workerConditionVariable.wait_for(lk, node->_workerTimeout);
 
-            LOG_TRACE("{}: Worker waking up", node->nameId());
+            LOG_DATA("{}: Worker waking up", node->nameId());
 
             if (status == std::cv_status::timeout)
             {
@@ -458,15 +460,14 @@ void NAV::Node::workerThread(Node* node)
             }
             else if (node->isInitialized()) // Triggered by '_workerConditionVariable.notify_all();'
             {
+                // Data processing on input pins
                 if (std::any_of(node->inputPins.begin(), node->inputPins.end(), [](const InputPin& inputPin) {
                         return inputPin.type == Pin::Type::Flow && inputPin.isPinLinked();
                     }))
                 {
-                    bool callbackTriggered = false;
-                    do {
-                        callbackTriggered = false;
-
-                        LOG_TRACE("{}:   Checking for firable input pins", node->nameId());
+                    while (node->isInitialized())
+                    {
+                        LOG_DATA("{}: Checking for firable input pins", node->nameId());
 
                         if (node->_mode == Mode::POST_PROCESSING)
                         {
@@ -474,7 +475,7 @@ void NAV::Node::workerThread(Node* node)
                             bool allInputPinsHaveData = !node->inputPins.empty();
                             for (const auto& inputPin : node->inputPins)
                             {
-                                if (inputPin.type == Pin::Type::Flow && inputPin.neededForTemporalQueueCheck && inputPin.queue.empty())
+                                if (inputPin.type == Pin::Type::Flow && inputPin.neededForTemporalQueueCheck && !inputPin.queueBlocked && inputPin.queue.empty())
                                 {
                                     if (auto* connectedPin = inputPin.link.getConnectedPin();
                                         connectedPin && connectedPin->mode == OutputPin::Mode::POST_PROCESSING)
@@ -486,10 +487,10 @@ void NAV::Node::workerThread(Node* node)
                             }
                             if (!allInputPinsHaveData)
                             {
-                                LOG_TRACE("{}:     Not all pins have data for temporal sorting", node->nameId());
-                                continue;
+                                LOG_DATA("{}: Not all pins have data for temporal sorting", node->nameId());
+                                break;
                             }
-                            else { LOG_TRACE("{}:     All pins have data for temporal sorting", node->nameId()); }
+                            else { LOG_DATA("{}: All pins have data for temporal sorting", node->nameId()); }
                         }
 
                         // Find pin with the earliest data
@@ -509,65 +510,112 @@ void NAV::Node::workerThread(Node* node)
                                 earliestInputPinPriority = inputPin.priority;
                             }
                         }
-                        if (earliestTime.empty()) { continue; }
+                        if (earliestTime.empty()) { break; }
 
                         auto& inputPin = node->inputPins[earliestInputPinIdx];
-                        if (inputPin.firable && inputPin.firable(inputPin.queue))
+                        if (inputPin.firable && inputPin.firable(node, inputPin))
                         {
-                            LOG_TRACE("{}:     Invoking callback on input pin (idx = {})", node->nameId(), earliestInputPinIdx);
+                            LOG_DATA("{}: Invoking callback on input pin (idx = {})", node->nameId(), earliestInputPinIdx);
                             std::invoke(std::get<InputPin::FlowFirableCallbackFunc>(inputPin.callback), node, inputPin.queue, earliestInputPinIdx);
-                            callbackTriggered = true;
                         }
-                    } while (callbackTriggered && node->isInitialized());
+                        else
+                        {
+                            LOG_DATA("{}: Dropping message on input pin (idx = {})", node->nameId(), earliestInputPinIdx);
+                            inputPin.queue.pop_front();
+                        }
+                    }
                 }
 
                 // Post-processing (FileReader/Simulator)
-                if (node->_mode == Node::Mode::POST_PROCESSING)
+                if (node->_mode == Node::Mode::POST_PROCESSING && !node->pollEvents.empty())
                 {
-                    LOG_TRACE("{}:   Checking for callable poll data output pins", node->nameId());
-                    bool callbackTriggered = false;
-                    do {
-                        callbackTriggered = false;
-                        for (auto& outputPin : node->outputPins)
+                    std::multimap<InsTime, OutputPin*>::iterator it;
+                    while (it = node->pollEvents.begin(), it != node->pollEvents.end() && node->isInitialized())
+                    {
+                        OutputPin* outputPin = it->second;
+                        Node* node = outputPin->parentNode;
+                        auto* callback = std::get_if<OutputPin::PollDataFunc>(&outputPin->data);
+                        if (callback != nullptr && *callback != nullptr)
                         {
-                            if (auto* callback = std::get_if<OutputPin::PollDataFunc>(&outputPin.data);
-                                outputPin.mode == OutputPin::Mode::POST_PROCESSING && callback != nullptr && *callback != nullptr)
+                            LOG_DATA("{}: Polling data from output pin '{}'", node->nameId(), str::replaceAll_copy(outputPin->name, "\n", ""));
+                            // Trigger the already peeked observation and invoke it's callbacks (peek = false)
+                            if ((node->**callback)(false) == nullptr)
                             {
-                                LOG_TRACE("{}:     Polling data from output pin '{}'", node->nameId(), str::replaceAll_copy(outputPin.name, "\n", ""));
-                                if ((node->**callback)(false) == nullptr) // All messages from this pin read
-                                {
-                                    outputPin.mode = OutputPin::Mode::REAL_TIME;
+                                LOG_ERROR("{}: {} could not poll its observation despite being able to peek it.", node->nameId(), outputPin->name);
+                            }
 
-                                    if (std::none_of(node->outputPins.begin(), node->outputPins.end(), [](const OutputPin& outputPin) {
-                                            return std::holds_alternative<OutputPin::PollDataFunc>(outputPin.data) && outputPin.mode == OutputPin::Mode::POST_PROCESSING;
-                                        }))
+                            // Add next data event from the node
+                            while (true)
+                            {
+                                // Check if data available (peek = true)
+                                if (auto obs = (node->**callback)(true))
+                                {
+                                    // Check if data has a time
+                                    if (!obs->insTime.empty())
                                     {
-                                        node->_mode = Node::Mode::REAL_TIME;
-                                        FlowExecutor::deregisterNode(node->id);
+                                        node->pollEvents.insert(std::make_pair(obs->insTime, outputPin));
+                                        break;
                                     }
+
+                                    // Remove data without calling the callback if no time stamp
+                                    // For post processing all data needs a time stamp
+                                    node->callbacksEnabled = false;
+                                    (node->**callback)(false);
+                                    node->callbacksEnabled = true;
                                 }
-                                callbackTriggered = true;
-                                break;
+                                else
+                                {
+                                    outputPin->mode = OutputPin::Mode::REAL_TIME;
+                                    break;
+                                }
                             }
                         }
-                    } while (callbackTriggered && node->isInitialized());
-                }
+                        else
+                        {
+                            LOG_ERROR("{} - {}: Callback is not valid anymore", node->nameId(), size_t(outputPin->id));
+                        }
 
-                if (node->_mode == Mode::POST_PROCESSING)
-                {
-                    // Check if node finished
-                    if (std::all_of(node->inputPins.begin(), node->inputPins.end(), [](const InputPin& inputPin) {
-                            return inputPin.type != Pin::Type::Flow || !inputPin.isPinLinked() || (inputPin.queue.empty() && inputPin.link.getConnectedPin()->mode == OutputPin::Mode::REAL_TIME);
-                        }))
+                        node->pollEvents.erase(it);
+                    }
+
+                    if (node->pollEvents.empty())
                     {
+                        LOG_TRACE("{}: Finished polling all pins.", node->nameId());
+
+                        node->callbacksEnabled = false;
                         for (auto& outputPin : node->outputPins)
                         {
                             outputPin.mode = OutputPin::Mode::REAL_TIME;
                         }
+                        for (auto& inputPin : node->inputPins)
+                        {
+                            inputPin.queueBlocked = false;
+                        }
                         node->_mode = Node::Mode::REAL_TIME;
                         FlowExecutor::deregisterNode(node->id);
-                        break;
                     }
+                }
+            }
+
+            if (node->_mode == Mode::POST_PROCESSING)
+            {
+                // Check if node finished
+                if (std::all_of(node->inputPins.begin(), node->inputPins.end(), [](const InputPin& inputPin) {
+                        return inputPin.type != Pin::Type::Flow || !inputPin.isPinLinked() || inputPin.link.connectedNode->isDisabled()
+                               || (inputPin.queue.empty() && inputPin.link.getConnectedPin()->mode == OutputPin::Mode::REAL_TIME);
+                    }))
+                {
+                    node->callbacksEnabled = false;
+                    for (auto& outputPin : node->outputPins)
+                    {
+                        outputPin.mode = OutputPin::Mode::REAL_TIME;
+                    }
+                    for (auto& inputPin : node->inputPins)
+                    {
+                        inputPin.queueBlocked = false;
+                    }
+                    node->_mode = Node::Mode::REAL_TIME;
+                    FlowExecutor::deregisterNode(node->id);
                 }
             }
         }

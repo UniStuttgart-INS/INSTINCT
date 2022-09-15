@@ -408,8 +408,8 @@ struct InsTime_YMDHMS
 
     /// @brief Constructor
     /// @param[in] year Year in Universal Time Coordinated [UTC]
-    /// @param[in] month Month in Universal Time Coordinated [UTC]
-    /// @param[in] day Day in Universal Time Coordinated [UTC]
+    /// @param[in] month Month in Universal Time Coordinated (1 = January) [UTC]
+    /// @param[in] day Day in Universal Time Coordinated (1 = first day) [UTC]
     /// @param[in] hour Hour in Universal Time Coordinated [UTC]
     /// @param[in] min Minute in Universal Time Coordinated [UTC]
     /// @param[in] sec Second in Universal Time Coordinated [UTC]
@@ -731,8 +731,8 @@ class InsTime
 
     /// @brief Constructor
     /// @param[in] year Year
-    /// @param[in] month Month
-    /// @param[in] day Day
+    /// @param[in] month Month (1 = January)
+    /// @param[in] day Day (1 = first day)
     /// @param[in] hour Hour
     /// @param[in] min Minute
     /// @param[in] sec Second

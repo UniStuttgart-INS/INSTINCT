@@ -58,6 +58,7 @@ class ImuIntegrator : public Node
 
   private:
     constexpr static size_t OUTPUT_PORT_INDEX_INERTIAL_NAV_SOL = 0; ///< @brief Flow (InertialNavSol)
+    constexpr static size_t INPUT_PORT_INDEX_POS_VEL_ATT_INIT = 1;  ///< @brief Flow (PosVelAtt)
 
     /// @brief Initialize the node
     bool initialize() override;

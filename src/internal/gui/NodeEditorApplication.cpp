@@ -929,10 +929,6 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 {
                     alpha = alpha * (48.0F / 255.0F);
                 }
-                if (input.queueBlocked)
-                {
-                    alpha = alpha * (80.0F / 255.0F);
-                }
 
                 builder.Input(input.id);
                 ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
@@ -943,7 +939,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                     auto cursor = ImGui::GetCursorPos();
                     ImGui::SetCursorPos(ImVec2(cursor.x - 26.0F, cursor.y + 2.F));
                     ImGui::PushStyleColor(ImGuiCol_Text, ImColor(255, 0, 0).Value);
-                    ImGui::Text("%lu", input.queue.size());
+                    ImGui::Text("%lu%s", input.queue.size(), input.queueBlocked ? "*" : "");
                     ImGui::PopStyleColor();
                     ImGui::SetCursorPos(cursor);
                 }
@@ -1333,6 +1329,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Text("Inputs: %lu", node->inputPins.size());
             ImGui::Text("Outputs: %lu", node->outputPins.size());
             ImGui::Text("State: %s", Node::toString(node->getState()).c_str());
+            ImGui::Text("Mode: %s", node->getMode() == Node::Mode::POST_PROCESSING ? "Post-processing" : "Real-time");
             ImGui::Separator();
             if (ImGui::MenuItem(node->isInitialized() ? "Reinitialize" : "Initialize", "",
                                 false, node->isInitialized() || node->getState() == Node::State::Deinitialized))
@@ -1350,7 +1347,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 node->_showConfig = true;
                 node->_configWindowFocus = true;
             }
-            if (ImGui::MenuItem(node->isDisabled() ? "Enable" : "Disable", "", false, node->isTransient()))
+            if (ImGui::MenuItem(node->isDisabled() ? "Enable" : "Disable", "", false, !node->isTransient()))
             {
                 if (node->isDisabled())
                 {

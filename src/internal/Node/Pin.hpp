@@ -17,7 +17,6 @@ using json = nlohmann::json; ///< json namespace
 #include <tuple>
 #include <mutex>
 #include <atomic>
-#include <functional>
 
 #include "util/Container/TsDeque.hpp"
 
@@ -603,8 +602,11 @@ class InputPin : public Pin
     /// Callback to call when the node is firable or when it should be notified of data change
     Callback callback;
 
+    /// Function type to call when checking if a pin is firable
+    using FlowFirableCheckFunc = bool (*)(const Node*, const InputPin&);
+
     /// @brief Function to check if the callback is firable
-    std::function<bool(const NodeDataQueue&)> firable = [](const NodeDataQueue& queue) { return !queue.empty(); };
+    FlowFirableCheckFunc firable = [](const Node*, const InputPin& inputPin) { return !inputPin.queue.empty(); };
 
     /// @brief Priority when checking firable condition related to other pins (0 = highest priority)
     size_t priority = 0;

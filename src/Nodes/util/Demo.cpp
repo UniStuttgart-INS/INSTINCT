@@ -65,6 +65,7 @@ NAV::Demo::Demo()
 
     nm::CreateInputPin(this, "Demo Node", Pin::Type::Delegate, { typeStatic() });
     nm::CreateInputPin(this, "Sensor\nData", Pin::Type::Flow, { NAV::ImuObs::type() }, &Demo::receiveSensorData);
+    inputPins.back().neededForTemporalQueueCheck = false;
     nm::CreateInputPin(this, "FileReader\n Data", Pin::Type::Flow, { NAV::NodeData::type() }, &Demo::receiveFileReaderData);
     nm::CreateInputPin(this, "Bool", Pin::Type::Bool);
     nm::CreateInputPin(this, "Int", Pin::Type::Int);
@@ -373,9 +374,8 @@ void NAV::Demo::onDeleteLink([[maybe_unused]] OutputPin& startPin, [[maybe_unuse
 
 void NAV::Demo::receiveSensorData(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    LOG_INFO("{}: received Sensor Data", nameId());
-
     _receivedDataFromSensorCnt++;
+    LOG_DEBUG("{}: received {} Sensor Data", nameId(), _receivedDataFromSensorCnt);
 
     queue.pop_front(); // Here we did not read the data, so lets just pop it from the queue
 }
@@ -384,14 +384,16 @@ void NAV::Demo::receiveFileReaderData(NAV::InputPin::NodeDataQueue& queue, size_
 {
     // Here we are reading the data, so extracts gets the value and automatically pops it from the queue
     auto obs = queue.extract_front();
-    LOG_INFO("{}: received FileReader Data: {}", nameId(), obs->insTime.toYMDHMS());
-
     _receivedDataFromFileReaderCnt++;
+
+    LOG_DEBUG("{}: received {} FileReader Data: {}", nameId(), _receivedDataFromFileReaderCnt, obs->insTime.toYMDHMS());
 }
 
 void NAV::Demo::readSensorDataThread(void* userData)
 {
     auto* node = static_cast<Demo*>(userData);
+
+    if (node->getMode() == Mode::POST_PROCESSING) { return; }
 
     auto imuPos = ImuPos();
     auto obs = std::make_shared<ImuObs>(imuPos);
@@ -424,37 +426,17 @@ void NAV::Demo::readSensorDataThread(void* userData)
     node->invokeCallbacks(OUTPUT_PORT_INDEX_FLOW_SENSOR, obs);
 }
 
-std::shared_ptr<const NAV::NodeData> NAV::Demo::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::Demo::pollData(bool /* peek */)
 {
     if (_iPollData >= _nPollData)
     {
         return nullptr;
     }
-    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    auto* t = std::localtime(&now); // NOLINT(concurrency-mt-unsafe) // FIXME: error: function is not thread safe
-
-    if (peek) // Early return with time to let the FlowExecutor sort the observations
-    {
-        auto obs = std::make_shared<NodeData>();
-        obs->insTime = InsTime(static_cast<uint16_t>(t->tm_year + 1900),
-                               static_cast<uint16_t>(t->tm_mon),
-                               static_cast<uint16_t>(t->tm_mday),
-                               static_cast<uint16_t>(t->tm_hour),
-                               static_cast<uint16_t>(t->tm_min),
-                               static_cast<long double>(t->tm_sec));
-        return obs;
-    }
-
-    _iPollData++;
 
     auto obs = std::make_shared<NodeData>(); // Construct the real observation (here in example also from type NodeData)
-    obs->insTime = InsTime(static_cast<uint16_t>(t->tm_year + 1900),
-                           static_cast<uint16_t>(t->tm_mon),
-                           static_cast<uint16_t>(t->tm_mday),
-                           static_cast<uint16_t>(t->tm_hour),
-                           static_cast<uint16_t>(t->tm_min),
-                           static_cast<long double>(t->tm_sec));
+    obs->insTime = InsTime(2000, 1, 1, 0, 0, _iPollData);
 
+    _iPollData++;
     // Calls all the callbacks
     invokeCallbacks(OUTPUT_PORT_INDEX_FLOW_FILE, obs);
 

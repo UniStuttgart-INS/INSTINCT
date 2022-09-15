@@ -10,6 +10,7 @@
 #include <imgui_stdlib.h>
 
 #include "internal/Node/Pin.hpp"
+#include "Navigation/Time/InsTime.hpp"
 
 #include "util/Logger.hpp"
 
@@ -20,6 +21,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <chrono>
+#include <map>
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json; ///< json namespace
@@ -351,6 +353,9 @@ class Node
     /// Enables the callbacks
     bool callbacksEnabled = false;
 
+    /// Map with callback events (sorted by time)
+    std::multimap<InsTime, OutputPin*> pollEvents;
+
   protected:
     /// The Default Window size for new config windows.
     /// Only set the variable if the object/window has no persistently saved data (no entry in .ini file)
@@ -364,7 +369,7 @@ class Node
     std::atomic<State> _state = State::Deinitialized;
 
     /// Mode the node is currently running in
-    Mode _mode = Mode::REAL_TIME;
+    std::atomic<Mode> _mode = Mode::REAL_TIME;
 
     /// Flag if the node should be reinitialize after deinitializing
     bool _reinitialize = false;
@@ -409,10 +414,8 @@ class Node
 
     /// @brief Main task of the FlowExecutor thread
     friend void NAV::FlowExecutor::execute();
-
     /// @brief Deinitialize all Nodes
     friend void NAV::FlowExecutor::deinitialize();
-
     /// @brief Register all available Node types for the program
     friend void NAV::NodeRegistry::RegisterNodeTypes();
 

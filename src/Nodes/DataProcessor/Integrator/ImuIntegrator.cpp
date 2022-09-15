@@ -29,7 +29,11 @@ NAV::ImuIntegrator::ImuIntegrator()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 483, 350 };
 
-    nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs);
+    nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs,
+                       [](const Node* node, const InputPin& inputPin) {
+                           auto imuIntegrator = static_cast<const ImuIntegrator*>(node);
+                           return !inputPin.queue.empty() && !imuIntegrator->_posVelAttStates.empty();
+                       });
     nm::CreateInputPin(this, "PosVelAttInit", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvPosVelAttInit);
 
     nm::CreateOutputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() });
@@ -284,6 +288,7 @@ bool NAV::ImuIntegrator::initialize()
 
     _time__init.reset();
     _timeSinceStartup__init = 0;
+    inputPins[INPUT_PORT_INDEX_POS_VEL_ATT_INIT].queueBlocked = false;
 
     LOG_DEBUG("ImuIntegrator initialized");
 
@@ -299,6 +304,8 @@ void NAV::ImuIntegrator::recvPosVelAttInit(NAV::InputPin::NodeDataQueue& queue, 
 {
     LOG_DATA("{}: recvPosVelAttInit", nameId());
     auto posVelAtt = std::static_pointer_cast<const PosVelAtt>(queue.extract_front());
+
+    inputPins[INPUT_PORT_INDEX_POS_VEL_ATT_INIT].queueBlocked = true;
 
     // Fill the list with the initial state to the start of the list
     if (_posVelAttStates.empty())
