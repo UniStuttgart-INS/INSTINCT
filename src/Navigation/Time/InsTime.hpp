@@ -221,6 +221,9 @@ struct InsTime_MJD
     {
         return !(*this <= rhs);
     }
+
+    /// @brief Converts the object into a readable string
+    explicit operator std::string() const;
 };
 
 /// Julien Date [UTC]
@@ -301,6 +304,9 @@ struct InsTime_JD
     {
         return !(*this <= rhs);
     }
+
+    /// @brief Converts the object into a readable string
+    explicit operator std::string() const;
 };
 
 /// GPS week and time of week in GPS standard time [GPST]
@@ -394,6 +400,9 @@ struct InsTime_GPSweekTow
     {
         return !(*this <= rhs);
     }
+
+    /// @brief Converts the object into a readable string
+    explicit operator std::string() const;
 };
 
 /// Universal Time Coordinated [UTC]
@@ -536,6 +545,9 @@ struct InsTime_YMDHMS
     {
         return !(*this <= rhs);
     }
+
+    /// @brief Converts the object into a readable string
+    explicit operator std::string() const;
 };
 
 /// GPS year and day of year in GPS standard time [GPST]
@@ -630,6 +642,9 @@ struct InsTime_YDoySod
     {
         return !(*this <= rhs);
     }
+
+    /// @brief Converts the object into a readable string
+    explicit operator std::string() const;
 };
 
 /// The class is responsible for all time-related tasks
@@ -1035,6 +1050,9 @@ class InsTime
     }
 
     /* ---------------------------- Utility Functions --------------------------- */
+
+    /// @brief Converts the object into a readable string
+    explicit operator std::string() const;
 
     /// @brief Checks if the Time object has a value
     [[nodiscard]] constexpr bool empty() const

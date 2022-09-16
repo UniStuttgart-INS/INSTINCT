@@ -498,7 +498,7 @@ void NAV::PosVelAttInitializer::updateInputPins()
     {
         nm::CreateInputPin(this, "PosVelAttInit", Pin::Type::Flow,
                            { NAV::UbloxObs::type(), NAV::RtklibPosObs::type(), NAV::PosVelAtt::type(), NAV::PosVel::type(), NAV::Pos::type() },
-                           &PosVelAttInitializer::receiveGnssObs);
+                           &PosVelAttInitializer::receiveGnssObs, nullptr, 1);
         _inputPinIdxGNSS = static_cast<int>(inputPins.size()) - 1;
     }
 }
@@ -510,6 +510,10 @@ void NAV::PosVelAttInitializer::finalizeInit()
         && (_posVelAttInitialized.at(1) || _overrideVelocity)
         && (_posVelAttInitialized.at(2) || (_overrideRollPitchYaw.at(0) && _overrideRollPitchYaw.at(1) && _overrideRollPitchYaw.at(2))))
     {
+        for (auto& inputPin : inputPins)
+        {
+            inputPin.queueBlocked = true;
+        }
         _posVelAttInitialized.at(3) = true;
 
         if (_overridePosition)
@@ -551,6 +555,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
                  rad2deg(rollPitchYaw.z()));
 
         auto posVelAtt = std::make_shared<PosVelAtt>();
+        posVelAtt->insTime = InsTime(InsTime_GPSweekTow(0, 0, 0));
         posVelAtt->setPosition_e(_e_initPosition);
         posVelAtt->setVelocity_n(_n_initVelocity);
         posVelAtt->setAttitude_n_Quat_b(_n_Quat_b_init);
@@ -560,12 +565,10 @@ void NAV::PosVelAttInitializer::finalizeInit()
 
 void NAV::PosVelAttInitializer::receiveImuObs(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    if (_posVelAttInitialized.at(3))
-    {
-        return;
-    }
-
     auto obs = std::static_pointer_cast<const ImuObs>(queue.extract_front());
+
+    if (_posVelAttInitialized.at(3)) { return; }
+    LOG_DATA("{}: receiveImuObs at time [{}]", nameId(), obs->insTime.toYMDHMS());
 
     if (!obs->timeSinceStartup.has_value()) // TODO: Make this work with insTime
     {
@@ -633,33 +636,31 @@ void NAV::PosVelAttInitializer::receiveImuObs(InputPin::NodeDataQueue& queue, si
 
 void NAV::PosVelAttInitializer::receiveGnssObs(InputPin::NodeDataQueue& queue, size_t pinIdx)
 {
-    if (_posVelAttInitialized.at(3))
-    {
-        return;
-    }
-
-    const auto& sourcePin = inputPins[pinIdx];
-
     auto nodeData = queue.extract_front();
 
-    if (sourcePin.dataIdentifier.front() == RtklibPosObs::type())
+    if (_posVelAttInitialized.at(3)) { return; }
+    LOG_DATA("{}: receiveGnssObs at time [{}]", nameId(), nodeData->insTime.toYMDHMS());
+
+    const auto* sourcePin = inputPins[pinIdx].link.getConnectedPin();
+
+    if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
     {
         receiveRtklibPosObs(std::static_pointer_cast<const RtklibPosObs>(nodeData));
     }
-    else if (sourcePin.dataIdentifier.front() == UbloxObs::type())
+    else if (sourcePin->dataIdentifier.front() == UbloxObs::type())
     {
         receiveUbloxObs(std::static_pointer_cast<const UbloxObs>(nodeData));
     }
-    else if (sourcePin.dataIdentifier.front() == Pos::type())
+    else if (sourcePin->dataIdentifier.front() == Pos::type())
     {
         receivePosObs(std::static_pointer_cast<const Pos>(nodeData));
     }
-    else if (sourcePin.dataIdentifier.front() == PosVel::type()
-             || sourcePin.dataIdentifier.front() == SppSolution::type())
+    else if (sourcePin->dataIdentifier.front() == PosVel::type()
+             || sourcePin->dataIdentifier.front() == SppSolution::type())
     {
         receivePosVelObs(std::static_pointer_cast<const PosVel>(nodeData));
     }
-    else if (sourcePin.dataIdentifier.front() == PosVelAtt::type())
+    else if (sourcePin->dataIdentifier.front() == PosVelAtt::type())
     {
         receivePosVelAttObs(std::static_pointer_cast<const PosVelAtt>(nodeData));
     }
@@ -832,6 +833,7 @@ std::shared_ptr<const NAV::NodeData> NAV::PosVelAttInitializer::pollPVASolution(
     if (initCount == 3 && !_posVelAttInitialized.at(3))
     {
         auto posVelAtt = std::make_shared<PosVelAtt>();
+        posVelAtt->insTime = InsTime(InsTime_GPSweekTow(0, 0, 0));
         if (!peek)
         {
             _posVelAttInitialized.at(3) = true;
@@ -839,10 +841,6 @@ std::shared_ptr<const NAV::NodeData> NAV::PosVelAttInitializer::pollPVASolution(
             posVelAtt->setVelocity_n(_n_initVelocity);
             posVelAtt->setAttitude_n_Quat_b(_n_Quat_b_init);
             invokeCallbacks(OUTPUT_PORT_INDEX_POS_VEL_ATT, posVelAtt);
-        }
-        else
-        {
-            posVelAtt->insTime = InsTime(InsTime_GPSweekTow(0, 0, 0));
         }
         return posVelAtt;
     }

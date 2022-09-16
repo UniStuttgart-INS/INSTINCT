@@ -145,9 +145,9 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - Klo
             std::vector<std::string> v = str::split(line, ",");
 
             InsTime refRecvTime = InsTime(0, std::stoi(v[30]), std::stold(v[29])); // GPS Week Number, GPS TOW [s]
-            REQUIRE(sppSol->insTime.value() <= refRecvTime);
+            REQUIRE(sppSol->insTime <= refRecvTime);
 
-            if (sppSol->insTime.value() == refRecvTime)
+            if (sppSol->insTime == refRecvTime)
             {
                 LOG_DEBUG("line: {}", line);
                 LOG_DEBUG("[{}][{}-{}] Processing line in file {}", refRecvTime.toYMDHMS(), ref.satSigId, ref.code, ref.counter + 2);
@@ -211,8 +211,8 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - Klo
                 }
                 else
                 {
-                    double timeDiffRange_ref = (std::stod(v[0]) - std::stod(v[33])) * 1e-3;                                    // [s]
-                    double timeDiffRecvTrans = static_cast<double>((sppSol->insTime.value() - calcData.transmitTime).count()); // [s]
+                    double timeDiffRange_ref = (std::stod(v[0]) - std::stod(v[33])) * 1e-3;                            // [s]
+                    double timeDiffRecvTrans = static_cast<double>((sppSol->insTime - calcData.transmitTime).count()); // [s]
                     timeDiffRecvTrans += calcData.dpsr_I / InsConst::C;
                     timeDiffRecvTrans += calcData.dpsr_T / InsConst::C; // TODO: Do we need to add the values here?
                     LOG_DEBUG("    timeDiffRecvTrans {} [s]", timeDiffRecvTrans);
@@ -241,7 +241,7 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - Klo
                     REQUIRE(calcData.geometricDist - refGeometricDist == Approx(0.0).margin(180).epsilon(0)); // TODO: this is very high
                 }
             }
-            else // if (sppSol->insTime.value() < refRecvTime)
+            else // if (sppSol->insTime < refRecvTime)
             {
                 ref.fs.seekg(pos);
             }

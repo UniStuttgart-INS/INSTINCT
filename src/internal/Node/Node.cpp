@@ -9,7 +9,6 @@
 #include "internal/gui/FlowAnimation.hpp"
 #include "internal/NodeManager.hpp"
 #include "util/Json.hpp"
-#include "util/StringUtil.hpp"
 
 #include <imgui_node_editor.h>
 namespace ed = ax::NodeEditor;
@@ -31,7 +30,7 @@ NAV::Node::~Node()
     if (_autostartWorker)
     {
         _state = State::DoShutdown;
-        _workerConditionVariable.notify_all();
+        wakeWorker();
 
         // // wait for the worker
         // {
@@ -141,7 +140,8 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
                 }
 
                 targetPin->queue.push_back(data);
-                link.connectedNode->_workerConditionVariable.notify_all();
+                LOG_DATA("{}: Waking up worker of node '{}'", nameId(), link.connectedNode->nameId());
+                link.connectedNode->wakeWorker();
             }
         }
     }
@@ -255,7 +255,7 @@ bool NAV::Node::doInitialize(bool wait)
     case State::Deinitialized:
     {
         _state = State::DoInitialize;
-        _workerConditionVariable.notify_all();
+        wakeWorker();
         break;
     }
     }
@@ -290,7 +290,7 @@ bool NAV::Node::doReinitialize(bool wait)
     case State::Initialized:
         _state = State::DoDeinitialize;
         _reinitialize = true;
-        _workerConditionVariable.notify_all();
+        wakeWorker();
         break;
     }
 
@@ -323,7 +323,7 @@ bool NAV::Node::doDeinitialize(bool wait)
     case State::Initialized:
     {
         _state = State::DoDeinitialize;
-        _workerConditionVariable.notify_all();
+        wakeWorker();
         break;
     }
     }
@@ -383,6 +383,10 @@ bool NAV::Node::doEnable()
 
 void NAV::Node::wakeWorker()
 {
+    {
+        std::lock_guard lk(_workerMutex);
+        _workerWakeup = true;
+    }
     _workerConditionVariable.notify_all();
 }
 
@@ -446,26 +450,28 @@ void NAV::Node::workerThread(Node* node)
 
         if (!node->isTransient())
         {
-            LOG_DATA("{}: Worker going to sleep", node->nameId());
-
             // Wait for data or state change
+            LOG_DATA("{}: Worker going to sleep", node->nameId());
             std::unique_lock lk(node->_workerMutex);
-            std::cv_status status = node->_workerConditionVariable.wait_for(lk, node->_workerTimeout);
+            bool result = node->_workerConditionVariable.wait_for(lk, node->_workerTimeout, [node] { return node->_workerWakeup; });
+            bool wakeup = node->_workerWakeup;
+            node->_workerWakeup = false;
+            lk.unlock();
+            LOG_DATA("{}: Worker woke up", node->nameId());
 
-            LOG_DATA("{}: Worker waking up", node->nameId());
-
-            if (status == std::cv_status::timeout)
+            if (result != wakeup) // Timeout reached
             {
                 node->workerTimeoutHandler();
             }
-            else if (node->isInitialized()) // Triggered by '_workerConditionVariable.notify_all();'
+
+            if (node->isInitialized() && node->callbacksEnabled) // Triggered by '_workerConditionVariable.notify_all();'
             {
                 // Data processing on input pins
                 if (std::any_of(node->inputPins.begin(), node->inputPins.end(), [](const InputPin& inputPin) {
                         return inputPin.type == Pin::Type::Flow && inputPin.isPinLinked();
                     }))
                 {
-                    while (node->isInitialized())
+                    while (node->isInitialized() && node->callbacksEnabled)
                     {
                         LOG_DATA("{}: Checking for firable input pins", node->nameId());
 
@@ -490,13 +496,13 @@ void NAV::Node::workerThread(Node* node)
                                 LOG_DATA("{}: Not all pins have data for temporal sorting", node->nameId());
                                 break;
                             }
-                            else { LOG_DATA("{}: All pins have data for temporal sorting", node->nameId()); }
+                            LOG_DATA("{}: All pins have data for temporal sorting", node->nameId());
                         }
 
                         // Find pin with the earliest data
                         InsTime earliestTime;
                         size_t earliestInputPinIdx = 0;
-                        size_t earliestInputPinPriority = 100;
+                        int earliestInputPinPriority = -1000;
                         for (size_t i = 0; i < node->inputPins.size(); i++)
                         {
                             auto& inputPin = node->inputPins[i];
@@ -515,17 +521,17 @@ void NAV::Node::workerThread(Node* node)
                         auto& inputPin = node->inputPins[earliestInputPinIdx];
                         if (inputPin.firable && inputPin.firable(node, inputPin))
                         {
-                            LOG_TRACE("{}: Invoking callback on input pin (idx = {})", node->nameId(), earliestInputPinIdx);
+                            LOG_DATA("{}: Invoking callback on input pin (idx = {})", node->nameId(), earliestInputPinIdx);
                             std::invoke(std::get<InputPin::FlowFirableCallbackFunc>(inputPin.callback), node, inputPin.queue, earliestInputPinIdx);
                         }
                         else if (inputPin.dropQueueIfNotFirable)
                         {
-                            LOG_TRACE("{}: Dropping message on input pin (idx = {})", node->nameId(), earliestInputPinIdx);
+                            LOG_DATA("{}: Dropping message on input pin (idx = {})", node->nameId(), earliestInputPinIdx);
                             inputPin.queue.pop_front();
                         }
                         else
                         {
-                            LOG_TRACE("{}: Skipping message on input pin (idx = {})", node->nameId(), earliestInputPinIdx);
+                            LOG_DATA("{}: Skipping message on input pin (idx = {})", node->nameId(), earliestInputPinIdx);
                             break; // Do not drop an item, but put the worker to sleep
                         }
                     }
@@ -535,7 +541,7 @@ void NAV::Node::workerThread(Node* node)
                 if (node->_mode == Node::Mode::POST_PROCESSING && !node->pollEvents.empty())
                 {
                     std::multimap<InsTime, OutputPin*>::iterator it;
-                    while (it = node->pollEvents.begin(), it != node->pollEvents.end() && node->isInitialized())
+                    while (it = node->pollEvents.begin(), it != node->pollEvents.end() && node->isInitialized() && node->callbacksEnabled)
                     {
                         OutputPin* outputPin = it->second;
                         Node* node = outputPin->parentNode;
@@ -571,6 +577,10 @@ void NAV::Node::workerThread(Node* node)
                                 else
                                 {
                                     outputPin->mode = OutputPin::Mode::REAL_TIME;
+                                    for (auto& link : outputPin->links)
+                                    {
+                                        link.connectedNode->wakeWorker();
+                                    }
                                     break;
                                 }
                             }
@@ -590,11 +600,14 @@ void NAV::Node::workerThread(Node* node)
                         node->callbacksEnabled = false;
                         for (auto& outputPin : node->outputPins)
                         {
-                            outputPin.mode = OutputPin::Mode::REAL_TIME;
-                        }
-                        for (auto& inputPin : node->inputPins)
-                        {
-                            inputPin.queueBlocked = false;
+                            if (outputPin.mode != OutputPin::Mode::REAL_TIME)
+                            {
+                                outputPin.mode = OutputPin::Mode::REAL_TIME;
+                                for (auto& link : outputPin.links)
+                                {
+                                    link.connectedNode->wakeWorker();
+                                }
+                            }
                         }
                         node->_mode = Node::Mode::REAL_TIME;
                         FlowExecutor::deregisterNode(node->id);
@@ -602,9 +615,9 @@ void NAV::Node::workerThread(Node* node)
                 }
             }
 
+            // Check if node finished
             if (node->_mode == Mode::POST_PROCESSING)
             {
-                // Check if node finished
                 if (std::all_of(node->inputPins.begin(), node->inputPins.end(), [](const InputPin& inputPin) {
                         return inputPin.type != Pin::Type::Flow || !inputPin.isPinLinked() || inputPin.link.connectedNode->isDisabled()
                                || (inputPin.queue.empty() && inputPin.link.getConnectedPin()->mode == OutputPin::Mode::REAL_TIME);
@@ -614,10 +627,10 @@ void NAV::Node::workerThread(Node* node)
                     for (auto& outputPin : node->outputPins)
                     {
                         outputPin.mode = OutputPin::Mode::REAL_TIME;
-                    }
-                    for (auto& inputPin : node->inputPins)
-                    {
-                        inputPin.queueBlocked = false;
+                        for (auto& link : outputPin.links)
+                        {
+                            link.connectedNode->wakeWorker();
+                        }
                     }
                     node->_mode = Node::Mode::REAL_TIME;
                     FlowExecutor::deregisterNode(node->id);
@@ -635,6 +648,7 @@ bool NAV::Node::workerInitializeNode()
 
     INS_ASSERT_USER_ERROR(_state == State::DoInitialize, fmt::format("Worker can only initialize the node if the state is set to DoInitialize, but it is {}.", toString(_state)).c_str());
     _state = Node::State::Initializing;
+    _mode = Node::Mode::REAL_TIME;
 
     LOG_DEBUG("{}: Initializing Node", nameId());
 
@@ -675,7 +689,17 @@ bool NAV::Node::workerInitializeNode()
         for (auto& inputPin : inputPins)
         {
             inputPin.queue.clear();
+            inputPin.queueBlocked = false;
         }
+        for (auto& outputPin : outputPins)
+        {
+            outputPin.mode = OutputPin::Mode::REAL_TIME;
+            for (auto& link : outputPin.links)
+            {
+                link.connectedNode->wakeWorker();
+            }
+        }
+        pollEvents.clear();
         resetNode();
 
         return true;

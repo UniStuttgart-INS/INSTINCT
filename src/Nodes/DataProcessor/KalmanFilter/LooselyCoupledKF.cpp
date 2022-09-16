@@ -42,10 +42,16 @@ NAV::LooselyCoupledKF::LooselyCoupledKF()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 822, 721 };
 
-    nm::CreateInputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() }, &LooselyCoupledKF::recvInertialNavigationSolution);
-    nm::CreateInputPin(this, "GNSSNavigationSolution", Pin::Type::Flow, { NAV::PosVel::type() }, &LooselyCoupledKF::recvGNSSNavigationSolution);
+    nm::CreateInputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() }, &LooselyCoupledKF::recvInertialNavigationSolution, nullptr, 1);
+    inputPins.back().neededForTemporalQueueCheck = false;
+    nm::CreateInputPin(this, "GNSSNavigationSolution", Pin::Type::Flow, { NAV::PosVel::type() }, &LooselyCoupledKF::recvGNSSNavigationSolution,
+                       [](const Node* node, const InputPin& inputPin) {
+                           const auto* lckf = static_cast<const LooselyCoupledKF*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
+                           return !inputPin.queue.empty() && lckf->_lastPredictRequestedTime < inputPin.queue.front()->insTime;
+                       });
+    inputPins.back().dropQueueIfNotFirable = false;
     nm::CreateOutputPin(this, "Errors", Pin::Type::Flow, { NAV::LcKfInsGnssErrors::type() });
-    nm::CreateOutputPin(this, "Predict", Pin::Type::Flow, { NAV::ImuObs::type() });
+    nm::CreateOutputPin(this, "Sync", Pin::Type::Flow, { NAV::NodeData::type() });
 }
 
 NAV::LooselyCoupledKF::~LooselyCoupledKF()
@@ -602,6 +608,7 @@ bool NAV::LooselyCoupledKF::initialize()
 
     _latestInertialNavSol = nullptr;
     _lastPredictTime.reset();
+    _lastPredictRequestedTime.reset();
     _accumulatedAccelBiases.setZero();
     _accumulatedGyroBiases.setZero();
 
@@ -711,7 +718,7 @@ void NAV::LooselyCoupledKF::deinitialize()
 void NAV::LooselyCoupledKF::recvInertialNavigationSolution(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */) // NOLINT(readability-convert-member-functions-to-static)
 {
     auto inertialNavSol = std::static_pointer_cast<const InertialNavSol>(queue.extract_front());
-    LOG_DATA("{}: Recv Inertial t = {}", nameId(), inertialNavSol->insTime.toYMDHMS());
+    LOG_DATA("{}: recvInertialNavigationSolution at time [{}]", nameId(), inertialNavSol->insTime.toYMDHMS());
 
     double tau_i = !_lastPredictTime.empty()
                        ? static_cast<double>((inertialNavSol->insTime - _lastPredictTime).count())
@@ -719,6 +726,7 @@ void NAV::LooselyCoupledKF::recvInertialNavigationSolution(NAV::InputPin::NodeDa
 
     if (tau_i > 0)
     {
+        _lastPredictTime = _latestInertialNavSol->insTime + std::chrono::duration<double>(tau_i);
         looselyCoupledPrediction(_latestInertialNavSol, tau_i);
     }
     else
@@ -726,27 +734,31 @@ void NAV::LooselyCoupledKF::recvInertialNavigationSolution(NAV::InputPin::NodeDa
         _lastPredictTime = inertialNavSol->insTime;
     }
     _latestInertialNavSol = inertialNavSol;
+
+    if (!inputPins[INPUT_PORT_INDEX_GNSS].queue.empty() && inputPins[INPUT_PORT_INDEX_GNSS].queue.front()->insTime == _lastPredictTime)
+    {
+        looselyCoupledUpdate(std::static_pointer_cast<const PosVel>(inputPins[INPUT_PORT_INDEX_GNSS].queue.extract_front()));
+        if (inputPins[INPUT_PORT_INDEX_GNSS].queue.empty() && inputPins[INPUT_PORT_INDEX_GNSS].link.getConnectedPin()->mode == OutputPin::Mode::REAL_TIME)
+        {
+            outputPins[OUTPUT_PORT_INDEX_SYNC].mode = OutputPin::Mode::REAL_TIME;
+            for (auto& link : outputPins[OUTPUT_PORT_INDEX_SYNC].links)
+            {
+                link.connectedNode->wakeWorker();
+            }
+        }
+    }
 }
 
 void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto gnssMeasurement = std::static_pointer_cast<const PosVel>(queue.extract_front());
-    LOG_DATA("{}: Recv GNSS t = {}", nameId(), gnssMeasurement->insTime.toYMDHMS());
+    auto gnssMeasurement = queue.front();
+    LOG_DATA("{}: recvGNSSNavigationSolution at time [{}]", nameId(), gnssMeasurement->insTime.toYMDHMS());
 
-    if (std::isnan(gnssMeasurement->e_position().x()) || std::isnan(gnssMeasurement->e_velocity().x())) { return; }
+    auto nodeData = std::make_shared<NodeData>();
+    nodeData->insTime = gnssMeasurement->insTime;
+    _lastPredictRequestedTime = gnssMeasurement->insTime;
 
-    if (_latestInertialNavSol)
-    {
-        if (_lastPredictTime < gnssMeasurement->insTime) // We need to predict to the update time before updating
-        {
-            auto imuObs = std::make_shared<ImuObs>(*_latestInertialNavSol->imuObs);
-            imuObs->insTime = gnssMeasurement->insTime;
-
-            invokeCallbacks(OUTPUT_PORT_INDEX_MANUAL_PREDICT, imuObs); // Prediction consists out of ImuIntegration and prediction (gets triggered from it)
-        }
-
-        looselyCoupledUpdate(gnssMeasurement);
-    }
+    invokeCallbacks(OUTPUT_PORT_INDEX_SYNC, nodeData); // Prediction consists out of ImuIntegration and prediction (gets triggered from it)
 }
 
 // ###########################################################################################################
@@ -760,7 +772,6 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
 
     LOG_DATA("{}: Predicting (dt = {}s) from [{}] to [{}]", nameId(), dt,
              inertialNavSol->insTime.toYMDHMS(), (inertialNavSol->insTime + std::chrono::duration<double>(tau_i)).toYMDHMS());
-    _lastPredictTime = inertialNavSol->insTime + std::chrono::duration<double>(tau_i);
 
     // ------------------------------------------- GUI Parameters ----------------------------------------------
 
@@ -844,8 +855,10 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     LOG_DATA("{}:     r_eS_e = {} [m]", nameId(), r_eS_e);
 
     // a_p Acceleration in [m/s^2], in body coordinates
-    Eigen::Vector3d b_acceleration = inertialNavSol->imuObs->imuPos.b_quatAccel_p() * inertialNavSol->imuObs->accelUncompXYZ.value()
-                                     - _accumulatedAccelBiases;
+    auto b_acceleration = _latestInertialNavSol->imuObs == nullptr
+                              ? Eigen::Vector3d::Zero()
+                              : Eigen::Vector3d(inertialNavSol->imuObs->imuPos.b_quatAccel_p() * inertialNavSol->imuObs->accelUncompXYZ.value()
+                                                - _accumulatedAccelBiases);
     LOG_DATA("{}:     b_acceleration = {} [m/s^2]", nameId(), b_acceleration.transpose());
 
     // System Matrix
@@ -1061,8 +1074,10 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     // ---------------------------------------------- Correction -------------------------------------------------
 
     // Angular rate measured in units of [rad/s], and given in the body frame
-    Eigen::Vector3d b_omega_ip = _latestInertialNavSol->imuObs->imuPos.b_quatGyro_p() * _latestInertialNavSol->imuObs->gyroUncompXYZ.value()
-                                 - _accumulatedGyroBiases;
+    auto b_omega_ip = _latestInertialNavSol->imuObs == nullptr
+                          ? Eigen::Vector3d::Zero()
+                          : Eigen::Vector3d(_latestInertialNavSol->imuObs->imuPos.b_quatGyro_p() * _latestInertialNavSol->imuObs->gyroUncompXYZ.value()
+                                            - _accumulatedGyroBiases);
     LOG_DATA("{}:     b_omega_ip = {} [rad/s]", nameId(), b_omega_ip.transpose());
 
     if (_frame == Frame::NED)

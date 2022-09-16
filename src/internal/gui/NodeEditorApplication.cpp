@@ -937,11 +937,9 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 if (_showQueueSizeOnPins && input.type == Pin::Type::Flow && input.isPinLinked())
                 {
                     auto cursor = ImGui::GetCursorPos();
-                    ImGui::SetCursorPos(ImVec2(cursor.x - 26.0F, cursor.y + 2.F));
-                    ImGui::PushStyleColor(ImGuiCol_Text, ImColor(255, 0, 0).Value);
-                    ImGui::Text("%lu%s", input.queue.size(), input.queueBlocked ? "*" : "");
-                    ImGui::PopStyleColor();
-                    ImGui::SetCursorPos(cursor);
+                    std::string text = fmt::format("{}{}", input.queue.size(), input.queueBlocked ? "*" : "");
+                    auto* drawList = ImGui::GetWindowDrawList();
+                    drawList->AddText(ImVec2(cursor.x - 26.0F, cursor.y + 2.F), IM_COL32(255, 0, 0, 255), text.c_str());
                 }
 
                 ImGui::Spring(0);
@@ -1014,11 +1012,9 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 if (_showQueueSizeOnPins && output.type == Pin::Type::Flow && output.isPinLinked())
                 {
                     auto cursor = ImGui::GetCursorPos();
-                    ImGui::SetCursorPos(ImVec2(cursor.x - 26.0F, cursor.y + 2.F));
-                    ImGui::PushStyleColor(ImGuiCol_Text, ImColor(255, 0, 0).Value);
-                    ImGui::Text("%s", output.mode == OutputPin::Mode::REAL_TIME ? "R" : "P");
-                    ImGui::PopStyleColor();
-                    ImGui::SetCursorPos(cursor);
+                    std::string text = fmt::format("{}", output.mode == OutputPin::Mode::REAL_TIME ? "R" : "P");
+                    auto* drawList = ImGui::GetWindowDrawList();
+                    drawList->AddText(ImVec2(cursor.x - 26.0F, cursor.y + 2.F), IM_COL32(255, 0, 0, 255), text.c_str());
                 }
 
                 ImGui::PopStyleVar();
@@ -1341,6 +1337,10 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             {
                 node->doDeinitialize();
             }
+            if (ImGui::MenuItem("Wake Worker"))
+            {
+                node->wakeWorker();
+            }
             ImGui::Separator();
             if (node->_hasConfig && ImGui::MenuItem("Configure", "", false))
             {
@@ -1391,7 +1391,12 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Text("ID: %lu", size_t(pin->id));
             ImGui::Text("Node: %s", pin->parentNode ? std::to_string(size_t(pin->parentNode->id)).c_str() : "<none>");
             ImGui::Text("Type: %s", std::string(pin->type).c_str());
+            ImGui::Separator();
             ImGui::Text("Queue: %lu", pin->queue.size());
+            ImGui::Text("Queue front: %s", !pin->queue.empty() ? std::string(pin->queue.front()->insTime.toYMDHMS()).c_str() : "N/A");
+            ImGui::Text("Queue blocked: %s", pin->queueBlocked ? "true" : "false");
+            ImGui::Text("Temporal check: %s", pin->neededForTemporalQueueCheck ? "true" : "false");
+            ImGui::Text("Drop queue: %s", pin->dropQueueIfNotFirable ? "true" : "false");
             ImGui::Separator();
             if (ImGui::MenuItem("Rename")) { renamePin = pin; }
         }

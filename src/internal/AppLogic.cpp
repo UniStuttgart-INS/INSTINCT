@@ -89,6 +89,7 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
                 else if (size_t duration = NAV::ConfigManager::Get<size_t>("duration");
                          NAV::ConfigManager::Get<bool>("nogui") && duration)
                 {
+                    nm::EnableAllCallbacks();
                     auto now = std::chrono::steady_clock::now();
                     std::chrono::duration<double> elapsed = now - start;
                     if (elapsed.count() < static_cast<double>(duration))

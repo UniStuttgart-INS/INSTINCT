@@ -33,11 +33,11 @@ namespace StaticData
 void compareImuObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutput>& obs, size_t messageCounterImuData)
 {
     // ------------------------------------------------ InsTime --------------------------------------------------
-    REQUIRE(obs->insTime.has_value());
+    REQUIRE(!obs->insTime.empty());
 
-    REQUIRE(obs->insTime->toGPSweekTow().gpsCycle == static_cast<int32_t>(IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsCycle)));
-    REQUIRE(obs->insTime->toGPSweekTow().gpsWeek == static_cast<int32_t>(IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsWeek)));
-    REQUIRE(obs->insTime->toGPSweekTow().tow == Approx(IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsTow)).margin(EPSILON));
+    REQUIRE(obs->insTime.toGPSweekTow().gpsCycle == static_cast<int32_t>(IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsCycle)));
+    REQUIRE(obs->insTime.toGPSweekTow().gpsWeek == static_cast<int32_t>(IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsWeek)));
+    REQUIRE(obs->insTime.toGPSweekTow().tow == Approx(IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsTow)).margin(EPSILON));
 
     // ----------------------------------------------- TimeGroup -------------------------------------------------
     REQUIRE(obs->timeOutputs != nullptr);
@@ -215,11 +215,11 @@ TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/StaticSize/vn310-imu.vnb' 
 void compareGnssObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutput>& obs, size_t messageCounterGnssData)
 {
     // ------------------------------------------------ InsTime --------------------------------------------------
-    REQUIRE(obs->insTime.has_value());
+    REQUIRE(!obs->insTime.empty());
 
-    REQUIRE(obs->insTime->toGPSweekTow().gpsCycle == static_cast<int32_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssData).at(GnssRef_GpsCycle)));
-    REQUIRE(obs->insTime->toGPSweekTow().gpsWeek == static_cast<int32_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssData).at(GnssRef_GpsWeek)));
-    REQUIRE(obs->insTime->toGPSweekTow().tow == Approx(GNSS_REFERENCE_DATA.at(messageCounterGnssData).at(GnssRef_GpsTow)).margin(EPSILON));
+    REQUIRE(obs->insTime.toGPSweekTow().gpsCycle == static_cast<int32_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssData).at(GnssRef_GpsCycle)));
+    REQUIRE(obs->insTime.toGPSweekTow().gpsWeek == static_cast<int32_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssData).at(GnssRef_GpsWeek)));
+    REQUIRE(obs->insTime.toGPSweekTow().tow == Approx(GNSS_REFERENCE_DATA.at(messageCounterGnssData).at(GnssRef_GpsTow)).margin(EPSILON));
 
     // ----------------------------------------------- TimeGroup -------------------------------------------------
     REQUIRE(obs->timeOutputs != nullptr);
@@ -543,11 +543,11 @@ namespace DynamicData
 void compareDynamicSizeObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutput>& obs, size_t messageCounterData)
 {
     // ------------------------------------------------ InsTime --------------------------------------------------
-    REQUIRE(obs->insTime.has_value());
+    REQUIRE(!obs->insTime.empty());
 
-    REQUIRE(obs->insTime->toGPSweekTow().gpsCycle == static_cast<int32_t>(REFERENCE_DATA.at(messageCounterData).at(Ref_GpsCycle)));
-    REQUIRE(obs->insTime->toGPSweekTow().gpsWeek == static_cast<int32_t>(REFERENCE_DATA.at(messageCounterData).at(Ref_GpsWeek)));
-    REQUIRE(obs->insTime->toGPSweekTow().tow == Approx(REFERENCE_DATA.at(messageCounterData).at(Ref_GpsTow)).margin(EPSILON));
+    REQUIRE(obs->insTime.toGPSweekTow().gpsCycle == static_cast<int32_t>(REFERENCE_DATA.at(messageCounterData).at(Ref_GpsCycle)));
+    REQUIRE(obs->insTime.toGPSweekTow().gpsWeek == static_cast<int32_t>(REFERENCE_DATA.at(messageCounterData).at(Ref_GpsWeek)));
+    REQUIRE(obs->insTime.toGPSweekTow().tow == Approx(REFERENCE_DATA.at(messageCounterData).at(Ref_GpsTow)).margin(EPSILON));
 
     // ----------------------------------------------- TimeGroup -------------------------------------------------
     REQUIRE(obs->timeOutputs != nullptr);

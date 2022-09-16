@@ -484,7 +484,7 @@ class InputPin : public Pin
         : Pin(std::move(other)),
           link(other.link),
           callback(other.callback),
-          firable(std::move(other.firable)),
+          firable(other.firable),
           priority(other.priority),
           neededForTemporalQueueCheck(other.neededForTemporalQueueCheck),
           dropQueueIfNotFirable(other.dropQueueIfNotFirable),
@@ -500,7 +500,7 @@ class InputPin : public Pin
             // copy if trivially-copyable, otherwise move
             link = other.link;
             callback = other.callback;
-            firable = std::move(other.firable);
+            firable = other.firable;
             priority = other.priority;
             neededForTemporalQueueCheck = other.neededForTemporalQueueCheck;
             dropQueueIfNotFirable = other.dropQueueIfNotFirable;

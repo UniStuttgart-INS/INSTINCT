@@ -40,13 +40,13 @@ void compareObservations(std::shared_ptr<const NAV::VectorNavBinaryOutput>& data
     }
 
     // ------------------------------------------------ InsTime --------------------------------------------------
-    if (data_csv->insTime.has_value())
+    if (!data_csv->insTime.empty())
     {
-        REQUIRE(logs_csv->insTime.has_value());
-        REQUIRE((data_csv->insTime.value() - logs_csv->insTime.value()).count() < 1e-6L);
+        REQUIRE(!logs_csv->insTime.empty());
+        REQUIRE((data_csv->insTime - logs_csv->insTime).count() < 1e-6L);
 
-        REQUIRE(logs_vnb->insTime.has_value());
-        REQUIRE((data_csv->insTime.value() - logs_vnb->insTime.value()).count() < 1e-6L);
+        REQUIRE(!logs_vnb->insTime.empty());
+        REQUIRE((data_csv->insTime - logs_vnb->insTime).count() < 1e-6L);
     }
 
     // ----------------------------------------------- TimeGroup -------------------------------------------------

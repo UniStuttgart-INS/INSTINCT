@@ -31,10 +31,10 @@ NAV::ImuIntegrator::ImuIntegrator()
 
     nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs,
                        [](const Node* node, const InputPin& inputPin) {
-                           auto imuIntegrator = static_cast<const ImuIntegrator*>(node);
+                           const auto* imuIntegrator = static_cast<const ImuIntegrator*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
                            return !inputPin.queue.empty() && !imuIntegrator->_posVelAttStates.empty();
                        });
-    nm::CreateInputPin(this, "PosVelAttInit", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvPosVelAttInit, nullptr, 8);
+    nm::CreateInputPin(this, "PosVelAttInit", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvPosVelAttInit, nullptr, 1);
 
     nm::CreateOutputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() });
 }
@@ -162,20 +162,7 @@ void NAV::ImuIntegrator::guiConfig()
     if (ImGui::Checkbox(fmt::format("Show Corrections input pins##{}", size_t(id)).c_str(), &_showCorrectionsInputPin))
     {
         LOG_DEBUG("{}: showCorrectionsInputPin changed to {}", nameId(), _showCorrectionsInputPin);
-
-        if (_showCorrectionsInputPin && inputPins.size() < 4)
-        {
-            nm::CreateInputPin(this, "Errors", Pin::Type::Flow, { LcKfInsGnssErrors::type() }, &ImuIntegrator::recvLcKfInsGnssErrors);
-            nm::CreateInputPin(this, "Predict", Pin::Type::Flow, { ImuObs::type() }, &ImuIntegrator::recvImuObs);
-        }
-        else if (!_showCorrectionsInputPin)
-        {
-            while (inputPins.size() >= 3)
-            {
-                inputPins.pop_back();
-            }
-        }
-
+        updateNumberOfInputPins();
         flow::ApplyChanges();
     }
 }
@@ -249,18 +236,7 @@ void NAV::ImuIntegrator::restore(json const& j)
     if (j.contains("showCorrectionsInputPin"))
     {
         _showCorrectionsInputPin = j.at("showCorrectionsInputPin");
-        if (_showCorrectionsInputPin && inputPins.size() < 4)
-        {
-            nm::CreateInputPin(this, "Errors", Pin::Type::Flow, { LcKfInsGnssErrors::type() }, &ImuIntegrator::recvLcKfInsGnssErrors);
-            nm::CreateInputPin(this, "Predict", Pin::Type::Flow, { ImuObs::type() }, &ImuIntegrator::recvImuObs);
-        }
-        else if (!_showCorrectionsInputPin)
-        {
-            while (inputPins.size() >= 3)
-            {
-                inputPins.pop_back();
-            }
-        }
+        updateNumberOfInputPins();
     }
 }
 
@@ -289,7 +265,7 @@ bool NAV::ImuIntegrator::initialize()
 
     _time__init.reset();
     _timeSinceStartup__init = 0;
-    inputPins[INPUT_PORT_INDEX_POS_VEL_ATT_INIT].queueBlocked = false;
+    inputPins[INPUT_PORT_INDEX_PVA_ERROR].neededForTemporalQueueCheck = false;
 
     LOG_DEBUG("ImuIntegrator initialized");
 
@@ -301,10 +277,67 @@ void NAV::ImuIntegrator::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
+void NAV::ImuIntegrator::updateNumberOfInputPins()
+{
+    LOG_TRACE("{}: called", nameId());
+
+    if (_showCorrectionsInputPin && inputPins.size() < 4)
+    {
+        nm::CreateInputPin(this, "Errors", Pin::Type::Flow, { LcKfInsGnssErrors::type() }, &ImuIntegrator::recvLcKfInsGnssErrors, nullptr, -2);
+        inputPins.back().neededForTemporalQueueCheck = false;
+        // Lower priority than ImuObs, so the real measurement is preferred.
+        nm::CreateInputPin(
+            this, "Sync", Pin::Type::Flow, { NodeData::type() }, &ImuIntegrator::recvSync, [](const Node* node, const InputPin& inputPin) {
+                const auto* imuIntegrator = static_cast<const ImuIntegrator*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
+                return !inputPin.queue.empty() && !imuIntegrator->_posVelAttStates.empty();
+            },
+            -1);
+    }
+    else if (!_showCorrectionsInputPin)
+    {
+        while (inputPins.size() >= 3)
+        {
+            inputPins.pop_back();
+        }
+    }
+}
+
+void NAV::ImuIntegrator::recvImuObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
+{
+    auto imuObs = std::static_pointer_cast<const ImuObs>(queue.extract_front());
+    LOG_DATA("{}: recvImuObs at time [{}]", nameId(), imuObs->insTime.toYMDHMS());
+
+    if (imuObs->insTime.empty() && !imuObs->timeSinceStartup.has_value())
+    {
+        LOG_ERROR("{}: Can't set new imuObs__t0 because the observation has no time tag (insTime/timeSinceStartup)", nameId());
+        return;
+    }
+
+    // Add imuObs tₖ to the start of the list
+    _imuObservations.push_front(imuObs);
+
+    // Remove observations at the end of the list till the max size is reached
+    while (_imuObservations.size() > _maxSizeImuObservations)
+    {
+        _imuObservations.pop_back();
+    }
+
+    integrateObservation();
+}
+
 void NAV::ImuIntegrator::recvPosVelAttInit(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     auto posVelAtt = std::static_pointer_cast<const PosVelAtt>(queue.extract_front());
-    LOG_DATA("{}: recvPosVelAttInit at time [{}]", nameId(), posVelAtt->insTime.toYMDHMS());
+    if (!_posVelAttStates.empty()) { return; }
+
+    if (posVelAtt->insTime == InsTime(InsTime_GPSweekTow(0, 0, 0)))
+    {
+        LOG_DATA("{}: recvPosVelAttInit at time [{}] (the time is intended for PosVelAttInitializer)", nameId(), posVelAtt->insTime.toYMDHMS());
+    }
+    else
+    {
+        LOG_DATA("{}: recvPosVelAttInit at time [{}]", nameId(), posVelAtt->insTime.toYMDHMS());
+    }
 
     inputPins[INPUT_PORT_INDEX_POS_VEL_ATT_INIT].queueBlocked = true;
 
@@ -333,75 +366,7 @@ void NAV::ImuIntegrator::recvPosVelAttInit(NAV::InputPin::NodeDataQueue& queue, 
         }
 
         // If enough imu observations received, integrate the observation
-        if (_imuObservations.size() == _maxSizeImuObservations)
-        {
-            switch (_integrationFrame)
-            {
-            case IntegrationFrame::NED:
-                integrateObservationNED();
-                break;
-            case IntegrationFrame::ECEF:
-                integrateObservationECEF();
-                break;
-            }
-        }
-    }
-}
-
-void NAV::ImuIntegrator::recvImuObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
-{
-    auto imuObs = std::static_pointer_cast<const ImuObs>(queue.extract_front());
-    LOG_DATA("{}: recvImuObs at time [{}]", nameId(), imuObs->insTime.toYMDHMS());
-
-    if (imuObs->insTime.empty() && !imuObs->timeSinceStartup.has_value())
-    {
-        LOG_ERROR("{}: Can't set new imuObs__t0 because the observation has no time tag (insTime/timeSinceStartup)", nameId());
-        return;
-    }
-
-    // Add imuObs tₖ to the start of the list
-    _imuObservations.push_front(imuObs);
-
-    // Remove observations at the end of the list till the max size is reached
-    while (_imuObservations.size() > _maxSizeImuObservations)
-    {
-        if (!_posVelAttStates.empty())
-        {
-            LOG_WARN("{}: Receive new Imu observation, but list is full --> discarding oldest observation", nameId());
-        }
-        _imuObservations.pop_back();
-    }
-
-    // First ImuObs and already has state
-    if (_imuObservations.size() == 1 && _posVelAttStates.size() == _maxSizeStates)
-    {
-        // Push out a message with the initial state and a matching imu Observation
-        auto inertialNavSol = std::make_shared<InertialNavSol>();
-
-        inertialNavSol->setState_n(_posVelAttStates.front()->lla_position(),
-                                   _posVelAttStates.front()->n_velocity(),
-                                   _posVelAttStates.front()->n_Quat_b());
-
-        inertialNavSol->insTime = imuObs->insTime;
-        inertialNavSol->imuObs = imuObs;
-
-        invokeCallbacks(OUTPUT_PORT_INDEX_INERTIAL_NAV_SOL, inertialNavSol);
-        return;
-    }
-
-    // If enough imu observations and states received, integrate the observation
-    if (_imuObservations.size() == _maxSizeImuObservations
-        && _posVelAttStates.size() == _maxSizeStates)
-    {
-        switch (_integrationFrame)
-        {
-        case IntegrationFrame::NED:
-            integrateObservationNED();
-            break;
-        case IntegrationFrame::ECEF:
-            integrateObservationECEF();
-            break;
-        }
+        integrateObservation();
     }
 }
 
@@ -409,6 +374,8 @@ void NAV::ImuIntegrator::recvLcKfInsGnssErrors(NAV::InputPin::NodeDataQueue& que
 {
     auto lcKfInsGnssErrors = std::static_pointer_cast<const LcKfInsGnssErrors>(queue.extract_front());
     LOG_DATA("{}: recvLcKfInsGnssErrors at time [{}]", nameId(), lcKfInsGnssErrors->insTime.toYMDHMS());
+
+    inputPins[INPUT_PORT_INDEX_PVA_ERROR].neededForTemporalQueueCheck = false;
 
     for (auto& posVelAtt : _posVelAttStates)
     {
@@ -466,7 +433,74 @@ void NAV::ImuIntegrator::recvLcKfInsGnssErrors(NAV::InputPin::NodeDataQueue& que
     _lckfErrors = lcKfInsGnssErrors;
 }
 
-void NAV::ImuIntegrator::integrateObservationECEF()
+void NAV::ImuIntegrator::recvSync(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
+{
+    auto syncData = queue.extract_front();
+    LOG_DATA("{}: recvSync at time [{}]", nameId(), syncData->insTime.toYMDHMS());
+
+    inputPins[INPUT_PORT_INDEX_PVA_ERROR].neededForTemporalQueueCheck = true;
+
+    if (_imuObservations.size() < _maxSizeImuObservations) // Happens only at the start
+    {
+        LOG_DEBUG("{}: Not enough IMU observations yet. Manually syncing.", nameId());
+        auto posVelAtt = std::make_shared<InertialNavSol>();
+        posVelAtt->insTime = syncData->insTime;
+        posVelAtt->setState_e(_posVelAttStates.front()->e_position(), _posVelAttStates.front()->e_velocity(), _posVelAttStates.front()->e_Quat_b());
+        if (!_imuObservations.empty()) { posVelAtt->imuObs = _imuObservations.front(); }
+        invokeCallbacks(OUTPUT_PORT_INDEX_INERTIAL_NAV_SOL, posVelAtt);
+        return;
+    }
+
+    if (_imuObservations.front()->insTime < syncData->insTime)
+    {
+        // Create observation to the sync time
+        auto imuObs = std::make_shared<ImuObs>(*_imuObservations.front());
+        imuObs->insTime = syncData->insTime;
+        _imuObservations.push_front(imuObs);
+
+        integrateObservation();
+    }
+    else if (_imuObservations.front()->insTime > syncData->insTime)
+    {
+        LOG_ERROR("{}: Node tries syncing to [{}] but last processed IMU obs is from [{}]", nameId(), syncData->insTime, _imuObservations.front()->insTime);
+    }
+}
+
+void NAV::ImuIntegrator::integrateObservation()
+{
+    // If enough imu observations and states received, integrate the observation
+    if (_imuObservations.size() == _maxSizeImuObservations
+        && _posVelAttStates.size() == _maxSizeStates)
+    {
+        std::shared_ptr<const PosVelAtt> newPosVelAtt = nullptr;
+        switch (_integrationFrame)
+        {
+        case IntegrationFrame::NED:
+            newPosVelAtt = integrateObservationNED();
+            break;
+        case IntegrationFrame::ECEF:
+            newPosVelAtt = integrateObservationECEF();
+            break;
+        }
+        // Cycle lists
+        _posVelAttStates.pop_back();
+        _posVelAttStates.push_front(newPosVelAtt);
+
+        // Push out new data
+        invokeCallbacks(OUTPUT_PORT_INDEX_INERTIAL_NAV_SOL, newPosVelAtt);
+
+        if (inputPins[INPUT_PORT_INDEX_IMU_OBS].queue.empty() && inputPins[INPUT_PORT_INDEX_IMU_OBS].link.getConnectedPin()->mode == OutputPin::Mode::REAL_TIME)
+        {
+            outputPins[OUTPUT_PORT_INDEX_INERTIAL_NAV_SOL].mode = OutputPin::Mode::REAL_TIME;
+            for (auto& link : outputPins[OUTPUT_PORT_INDEX_INERTIAL_NAV_SOL].links)
+            {
+                link.connectedNode->wakeWorker();
+            }
+        }
+    }
+}
+
+std::shared_ptr<const NAV::PosVelAtt> NAV::ImuIntegrator::integrateObservationECEF()
 {
     // IMU Observation at the time tₖ
     const std::shared_ptr<const ImuObs>& imuObs__t0 = _imuObservations.at(0);
@@ -631,16 +665,10 @@ void NAV::ImuIntegrator::integrateObservationECEF()
     LOG_DATA("{}: posVelAtt__t0->e_velocity() = {}", nameId(), posVelAtt__t0->e_velocity().transpose());
     LOG_DATA("{}: posVelAtt__t0->e_Quat_b() = {}", nameId(), posVelAtt__t0->e_Quat_b());
 
-    // Cycle lists
-    _imuObservations.pop_back();
-    _posVelAttStates.pop_back();
-    _posVelAttStates.push_front(posVelAtt__t0);
-
-    // Push out new data
-    invokeCallbacks(OUTPUT_PORT_INDEX_INERTIAL_NAV_SOL, posVelAtt__t0);
+    return posVelAtt__t0;
 }
 
-void NAV::ImuIntegrator::integrateObservationNED()
+std::shared_ptr<const NAV::PosVelAtt> NAV::ImuIntegrator::integrateObservationNED()
 {
     // IMU Observation at the time tₖ
     const std::shared_ptr<const ImuObs>& imuObs__t0 = _imuObservations.at(0);
@@ -808,11 +836,5 @@ void NAV::ImuIntegrator::integrateObservationNED()
     LOG_DATA("{}: posVelAtt__t0->n_velocity() = {}", nameId(), posVelAtt__t0->n_velocity().transpose());
     LOG_DATA("{}: posVelAtt__t0->n_Quat_b() = {}", nameId(), posVelAtt__t0->n_Quat_b());
 
-    // Cycle lists
-    _imuObservations.pop_back();
-    _posVelAttStates.pop_back();
-    _posVelAttStates.push_front(posVelAtt__t0);
-
-    // Push out new data
-    invokeCallbacks(OUTPUT_PORT_INDEX_INERTIAL_NAV_SOL, posVelAtt__t0);
+    return posVelAtt__t0;
 }

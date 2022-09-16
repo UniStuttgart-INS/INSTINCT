@@ -20,6 +20,7 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <atomic>
 #include <chrono>
 #include <map>
 
@@ -34,13 +35,20 @@ class GroupBox;
 
 namespace NodeRegistry
 {
+
 void RegisterNodeTypes(); // NOLINT(readability-redundant-declaration) - false warning. This is needed for the friend declaration below
+
 } // namespace NodeRegistry
 
 namespace FlowExecutor
 {
-void execute();      // NOLINT(readability-redundant-declaration) - false warning. This is needed for the friend declaration below
+
+/// @brief Main task of the FlowExecutor thread
+void execute(); // NOLINT(readability-redundant-declaration) - false warning. This is needed for the friend declaration below
+
+/// @brief Deinitialize all Nodes
 void deinitialize(); // NOLINT(readability-redundant-declaration) - false warning. This is needed for the friend declaration below
+
 } // namespace FlowExecutor
 
 namespace gui
@@ -49,7 +57,9 @@ class NodeEditorApplication;
 
 namespace menus
 {
+
 void ShowRunMenu();
+
 } // namespace menus
 
 } // namespace gui
@@ -396,6 +406,7 @@ class Node
     std::thread _worker;                                                   ///< Worker handling initialization and processing of data
     std::mutex _workerMutex;                                               ///< Mutex to interact with the worker condition variable
     std::condition_variable _workerConditionVariable;                      ///< Condition variable to signal the worker thread to do something
+    bool _workerWakeup = false;                                            ///< Variable to prevent the worker from sleeping
 
     /// @brief Worker thread
     /// @param[in, out] node The node where the thread belongs to

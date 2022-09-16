@@ -80,7 +80,7 @@ InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const 
 {
     assert(pinType == Pin::Type::Flow);
 
-    return CreateInputPin(node, name, pinType, dataIdentifier, InputPin::Callback(static_cast<InputPin::FlowFirableCallbackFunc>(callback)), std::move(firable), priority, idx);
+    return CreateInputPin(node, name, pinType, dataIdentifier, InputPin::Callback(static_cast<InputPin::FlowFirableCallbackFunc>(callback)), firable, priority, idx);
 }
 
 /// @brief Create an Input Pin object

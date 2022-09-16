@@ -104,21 +104,18 @@ void NAV::FlowExecutor::deinitialize()
 {
     LOG_TRACE("called");
 
-    if (!ConfigManager::Get<bool>("nogui"))
-    {
-        nm::DisableAllCallbacks();
-    }
+    nm::DisableAllCallbacks();
 
     for (Node* node : nm::m_Nodes())
     {
         if (node == nullptr || !node->isInitialized()) { continue; }
 
-        node->flush();
         node->_mode = Node::Mode::REAL_TIME;
         for (auto& outputPin : node->outputPins)
         {
             outputPin.mode = OutputPin::Mode::REAL_TIME;
         }
+        node->flush();
     }
 
     if (!ConfigManager::Get<bool>("nogui")
@@ -140,7 +137,17 @@ void NAV::FlowExecutor::execute()
 {
     LOG_TRACE("called");
 
-    if (!nm::InitializeAllNodes())
+    for (Node* node : nm::m_Nodes())
+    {
+        for (auto& inputPin : node->inputPins)
+        {
+            inputPin.queue.clear();
+            inputPin.queueBlocked = false;
+        }
+        node->pollEvents.clear();
+    }
+
+    if (!nm::InitializeAllNodes()) // This wakes the threads
     {
         _execute.store(false, std::memory_order_release);
         return;
@@ -150,13 +157,9 @@ void NAV::FlowExecutor::execute()
     {
         if (node == nullptr || !node->isInitialized()) { continue; }
 
+        node->_mode = Node::Mode::POST_PROCESSING;
         _activeNodes += 1;
         node->resetNode();
-        for (auto& inputPin : node->inputPins)
-        {
-            inputPin.queue.clear();
-        }
-        node->_mode = Node::Mode::POST_PROCESSING;
         LOG_TRACE("Putting node '{}' into post-processing mode and adding to active nodes.", node->nameId());
         for (auto& outputPin : node->outputPins)
         {

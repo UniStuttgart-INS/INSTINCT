@@ -15,8 +15,6 @@
 #include "Navigation/Gravity/Gravity.hpp"
 #include "Navigation/Math/NumericalIntegration.hpp"
 
-#include <deque>
-
 namespace NAV
 {
 /// @brief Numerically integrates Imu data
@@ -58,13 +56,19 @@ class ImuIntegrator : public Node
 
   private:
     constexpr static size_t OUTPUT_PORT_INDEX_INERTIAL_NAV_SOL = 0; ///< @brief Flow (InertialNavSol)
+    constexpr static size_t INPUT_PORT_INDEX_IMU_OBS = 0;           ///< @brief Flow (ImuObs)
     constexpr static size_t INPUT_PORT_INDEX_POS_VEL_ATT_INIT = 1;  ///< @brief Flow (PosVelAtt)
+    constexpr static size_t INPUT_PORT_INDEX_PVA_ERROR = 2;         ///< @brief Flow (LcKfInsGnssErrors)
+    constexpr static size_t INPUT_PORT_INDEX_SYNC = 3;              ///< @brief Flow (NodeData)
 
     /// @brief Initialize the node
     bool initialize() override;
 
     /// @brief Deinitialize the node
     void deinitialize() override;
+
+    /// @brief Adds/Deletes Input Pins depending on the variable _showCorrectionsInputPin
+    void updateNumberOfInputPins();
 
     /// @brief Receive Function for the PosVelAtt initial values
     /// @param[in] queue Queue with all the received data messages
@@ -81,11 +85,19 @@ class ImuIntegrator : public Node
     /// @param[in] pinIdx Index of the pin the data is received on
     void recvLcKfInsGnssErrors(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
+    /// @brief Receive function for sync message
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void recvSync(InputPin::NodeDataQueue& queue, size_t pinIdx);
+
+    /// @brief Integrates the Imu Observation data
+    void integrateObservation();
+
     /// @brief Integrates the Imu Observation data in ECEF frame
-    void integrateObservationECEF();
+    std::shared_ptr<const PosVelAtt> integrateObservationECEF();
 
     /// @brief Integrates the Imu Observation data in NED frame
-    void integrateObservationNED();
+    std::shared_ptr<const PosVelAtt> integrateObservationNED();
 
     // #########################################################################################################################################
 
