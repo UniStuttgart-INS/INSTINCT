@@ -5,9 +5,13 @@
 
 #pragma once
 
-#include <imgui_node_editor.h>
+namespace NAV
+{
 
-namespace NAV::FlowExecutor
+class Node;
+
+namespace FlowExecutor
+
 {
 /// @brief Checks if the thread is running
 [[nodiscard]] bool isRunning() noexcept;
@@ -22,7 +26,9 @@ void stop();
 void waitForFinish();
 
 /// @brief Called by nodes when they finished with sending data
-/// @param[in] id Id of the node
-void deregisterNode(ax::NodeEditor::NodeId id);
+/// @param[in] node The node to deregister
+void deregisterNode(const Node* node);
 
-} // namespace NAV::FlowExecutor
+} // namespace FlowExecutor
+
+} // namespace NAV

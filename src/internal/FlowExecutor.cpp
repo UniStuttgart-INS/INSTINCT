@@ -89,9 +89,9 @@ void NAV::FlowExecutor::waitForFinish()
     LOG_TRACE("FlowExecutor finished.");
 }
 
-void NAV::FlowExecutor::deregisterNode([[maybe_unused]] ax::NodeEditor::NodeId id)
+void NAV::FlowExecutor::deregisterNode([[maybe_unused]] const Node* node)
 {
-    LOG_DEBUG("Node {} finished.", size_t(id));
+    LOG_DEBUG("Node {} finished.", node->nameId());
     _activeNodes--;
 
     if (_activeNodes == 0)

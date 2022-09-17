@@ -459,6 +459,7 @@ void NAV::ImuIntegrator::recvSync(NAV::InputPin::NodeDataQueue& queue, size_t /*
         _imuObservations.push_front(imuObs);
         _imuObservations.pop_back();
 
+        LOG_DATA("{}: Manually predicting/integrating to time [{}]", nameId(), syncData->insTime.toYMDHMS());
         integrateObservation();
     }
     else if (_imuObservations.front()->insTime > syncData->insTime)

@@ -55,6 +55,9 @@ class CsvFile : public Node, FileReader
     /// @brief Deinitialize the node
     void deinitialize() override;
 
+    /// @brief Resets the node. It is guaranteed that the node is initialized when this is called.
+    bool resetNode() override;
+
     /// @brief Determines the type of the file
     /// @return The File Type
     [[nodiscard]] FileType determineFileType() override;

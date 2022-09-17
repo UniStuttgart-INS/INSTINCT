@@ -2031,7 +2031,12 @@ void NAV::Plot::addData(size_t pinIndex, size_t dataIndex, double value)
 
 void NAV::Plot::plotBoolean(const InsTime& insTime, size_t pinIdx)
 {
-    if (ConfigManager::Get<bool>("nogui")) { return; }
+    LOG_DATA("{}: Plotting boolean on pin '{}' with time {}", nameId(), inputPins[pinIdx].name, insTime.toYMDHMS());
+    if (ConfigManager::Get<bool>("nogui"))
+    {
+        releaseInputValue(pinIdx);
+        return;
+    }
 
     const auto* value = getInputValue<bool>(pinIdx);
 
@@ -2053,7 +2058,12 @@ void NAV::Plot::plotBoolean(const InsTime& insTime, size_t pinIdx)
 
 void NAV::Plot::plotInteger(const InsTime& insTime, size_t pinIdx)
 {
-    if (ConfigManager::Get<bool>("nogui")) { return; }
+    LOG_DATA("{}: Plotting integer on pin '{}' with time {}", nameId(), inputPins[pinIdx].name, insTime.toYMDHMS());
+    if (ConfigManager::Get<bool>("nogui"))
+    {
+        releaseInputValue(pinIdx);
+        return;
+    }
 
     const auto* value = getInputValue<int>(pinIdx);
 
@@ -2075,7 +2085,12 @@ void NAV::Plot::plotInteger(const InsTime& insTime, size_t pinIdx)
 
 void NAV::Plot::plotFloat(const InsTime& insTime, size_t pinIdx)
 {
-    if (ConfigManager::Get<bool>("nogui")) { return; }
+    LOG_DATA("{}: Plotting float on pin '{}' with time {}", nameId(), inputPins[pinIdx].name, insTime.toYMDHMS());
+    if (ConfigManager::Get<bool>("nogui"))
+    {
+        releaseInputValue(pinIdx);
+        return;
+    }
 
     const auto* value = getInputValue<double>(pinIdx);
 
@@ -2097,7 +2112,12 @@ void NAV::Plot::plotFloat(const InsTime& insTime, size_t pinIdx)
 
 void NAV::Plot::plotMatrix(const InsTime& insTime, size_t pinIdx)
 {
-    if (ConfigManager::Get<bool>("nogui")) { return; }
+    LOG_DATA("{}: Plotting matrix on pin '{}' with time {}", nameId(), inputPins[pinIdx].name, insTime.toYMDHMS());
+    if (ConfigManager::Get<bool>("nogui"))
+    {
+        releaseInputValue(pinIdx);
+        return;
+    }
 
     if (auto* sourcePin = inputPins[pinIdx].link.getConnectedPin())
     {
@@ -2131,9 +2151,11 @@ void NAV::Plot::plotMatrix(const InsTime& insTime, size_t pinIdx)
 
 void NAV::Plot::plotData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
 {
+    auto nodeData = queue.extract_front();
+
     if (ConfigManager::Get<bool>("nogui")) { return; }
 
-    auto nodeData = queue.extract_front();
+    LOG_DATA("{}: Plotting data on pin '{}' with time {}", nameId(), inputPins[pinIdx].name, nodeData->insTime.toYMDHMS());
 
     if (auto* sourcePin = inputPins[pinIdx].link.getConnectedPin())
     {

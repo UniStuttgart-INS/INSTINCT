@@ -206,6 +206,14 @@ bool NAV::CsvFile::initialize()
         }
     }
 
+    LOG_TRACE("{}: initialize() finished. Read {} columns over {} lines.", nameId(), _data.description.size(), _data.lines.size());
+
+    return true;
+}
+
+bool NAV::CsvFile::resetNode()
+{
+    LOG_TRACE("{}: called", nameId());
     return true;
 }
 
