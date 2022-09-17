@@ -457,6 +457,7 @@ void NAV::ImuIntegrator::recvSync(NAV::InputPin::NodeDataQueue& queue, size_t /*
         auto imuObs = std::make_shared<ImuObs>(*_imuObservations.front());
         imuObs->insTime = syncData->insTime;
         _imuObservations.push_front(imuObs);
+        _imuObservations.pop_back();
 
         integrateObservation();
     }

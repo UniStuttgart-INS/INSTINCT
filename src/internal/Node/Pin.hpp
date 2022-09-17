@@ -19,6 +19,7 @@ using json = nlohmann::json; ///< json namespace
 #include <atomic>
 
 #include "util/Container/TsDeque.hpp"
+#include "Navigation/Time/InsTime.hpp"
 
 namespace NAV
 {
@@ -444,6 +445,9 @@ class OutputPin : public Pin
     /// Mutex to interact with the data object
     std::mutex dataAccessMutex;
 
+    /// @brief Counter for data accessing
+    std::atomic<size_t> dataAccessCounter = 0;
+
     /// Flag whether the node still has post-processing data left
     std::atomic<Mode> mode = Mode::REAL_TIME;
 
@@ -596,7 +600,9 @@ class InputPin : public Pin
     /// - 2nd Parameter: Pin index of the pin the data is received on
     using FlowFirableCallbackFunc = void (Node::*)(NodeDataQueue&, size_t);
     /// Notify function type to call when the connected value changed
-    using DataChangedNotifyFunc = void (Node::*)(ax::NodeEditor::PinId);
+    /// - 1st Parameter: Time when the message was received
+    /// - 2nd Parameter: Pin index of the pin the data is received on
+    using DataChangedNotifyFunc = void (Node::*)(const InsTime&, size_t);
     /// Callback function types
     using Callback = std::variant<FlowFirableCallbackFunc, // Flow:  Callback function type to call when firable
                                   DataChangedNotifyFunc>;  // Other: Notify function type to call when the connected value changed

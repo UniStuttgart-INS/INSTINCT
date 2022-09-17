@@ -253,17 +253,26 @@ class Node
 
     /// @brief Notifies connected nodes about the change
     /// @param[in] portIndex Output Port index where to set the value
-    void notifyOutputValueChanged(size_t portIndex);
+    /// @param[in] insTime Time the value was generated
+    void notifyOutputValueChanged(size_t portIndex, const InsTime& insTime);
 
-    /// @brief Get Input Value connected on the pin
+    /// @brief Get Input Value connected on the pin. Only const data types.
     /// @tparam T Type of the connected object
-    /// @param[in] portIndex Input port where to call the callbacks
+    /// @param[in] portIndex Input port where to retrieve the data from
     /// @return Pointer to the object
-    template<typename T>
+    template<typename T> // TODO: Template to only accept const
     [[nodiscard]] const T* getInputValue(size_t portIndex) const
     {
         return inputPins.at(portIndex).link.getValue<T>();
     }
+
+    /// @brief Gets the mutex of the connected node pin data
+    /// @param[in] portIndex Input port where the data should be locked
+    std::mutex* getInputValueMutex(size_t portIndex);
+
+    /// @brief Unblocks the connected node. Has to be called when the input value was retrieved
+    /// @param[in] portIndex Input port where the data should be released
+    void releaseInputValue(size_t portIndex);
 
     /// @brief Calls all registered callbacks on the specified output port
     /// @param[in] portIndex Output port where to call the callbacks

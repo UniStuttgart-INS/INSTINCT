@@ -365,20 +365,24 @@ class Plot : public Node
     void addData(size_t pinIndex, size_t dataIndex, double value);
 
     /// @brief Plots the data on this port
-    /// @param[in] pinId Id of the pin the data is received on
-    void plotBoolean(ax::NodeEditor::PinId pinId);
+    /// @param[in] insTime Time the data was received
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void plotBoolean(const InsTime& insTime, size_t pinIdx);
 
     /// @brief Plots the data on this port
-    /// @param[in] pinId Id of the pin the data is received on
-    void plotInteger(ax::NodeEditor::PinId pinId);
+    /// @param[in] insTime Time the data was received
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void plotInteger(const InsTime& insTime, size_t pinIdx);
 
     /// @brief Plots the data on this port
-    /// @param[in] pinId Id of the pin the data is received on
-    void plotFloat(ax::NodeEditor::PinId pinId);
+    /// @param[in] insTime Time the data was received
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void plotFloat(const InsTime& insTime, size_t pinIdx);
 
     /// @brief Plots the data on this port
-    /// @param[in] pinId Id of the pin the data is received on
-    void plotMatrix(ax::NodeEditor::PinId pinId);
+    /// @param[in] insTime Time the data was received
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void plotMatrix(const InsTime& insTime, size_t pinIdx);
 
     /// @brief Plot the data on this port
     /// @param[in] queue Queue with all the received data messages

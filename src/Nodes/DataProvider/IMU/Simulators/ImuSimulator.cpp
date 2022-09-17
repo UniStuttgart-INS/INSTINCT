@@ -153,6 +153,8 @@ void NAV::ImuSimulator::guiConfig()
         {
             auto TextColoredIfExists = [this](int index, const char* text, const char* type) {
                 ImGui::TableSetColumnIndex(index);
+                auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_CSV);
+                if (mutex) { mutex->lock(); }
                 if (const auto* csvData = getInputValue<CsvData>(INPUT_PORT_INDEX_CSV);
                     csvData && std::find(csvData->description.begin(), csvData->description.end(), text) != csvData->description.end())
                 {
@@ -166,6 +168,7 @@ void NAV::ImuSimulator::guiConfig()
                     ImGui::TableNextColumn();
                     ImGui::TextDisabled("%s", type);
                 }
+                if (mutex) { mutex->unlock(); }
             };
 
             if (ImGui::TreeNode(fmt::format("Format description##{}", size_t(id)).c_str()))
@@ -1078,6 +1081,8 @@ bool NAV::ImuSimulator::initializeSplines()
     }
     else if (_trajectoryType == TrajectoryType::Csv)
     {
+        auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_CSV);
+        if (mutex) { mutex->lock(); }
         if (const auto* csvData = getInputValue<CsvData>(INPUT_PORT_INDEX_CSV);
             csvData && csvData->lines.size() >= 2)
         {
@@ -1124,6 +1129,7 @@ bool NAV::ImuSimulator::initializeSplines()
                 splineYaw.push_back(i > 0 ? unwrapAngle(rpy(2), splineYaw.back(), M_PI) : rpy(2));
                 LOG_DATA("{}: R {}, P {}, Y {} [deg] (in Spline)", nameId(), rad2deg(splineRoll.back()), rad2deg(splinePitch.back()), rad2deg(splineYaw.back()));
             }
+            if (mutex) { mutex->unlock(); }
             _csvDuration = splineTime.back();
 
             double dt = splineTime[nVirtPoints + 1] - splineTime[nVirtPoints];
@@ -1156,6 +1162,7 @@ bool NAV::ImuSimulator::initializeSplines()
         }
         else
         {
+            if (mutex) { mutex->unlock(); }
             LOG_ERROR("{}: Can't calculate the data without a connected CSV file with at least two datasets", nameId());
             return false;
         }
@@ -1183,10 +1190,13 @@ bool NAV::ImuSimulator::resetNode()
 
     if (_trajectoryType == TrajectoryType::Csv)
     {
+        auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_CSV);
+        if (mutex) { mutex->lock(); }
         if (const auto* csvData = getInputValue<CsvData>(INPUT_PORT_INDEX_CSV);
             csvData && !csvData->lines.empty())
         {
             _startTime = getTimeFromCsvLine(csvData->lines.front(), csvData->description);
+            if (mutex) { mutex->unlock(); }
             if (_startTime.empty())
             {
                 return false;
@@ -1195,6 +1205,7 @@ bool NAV::ImuSimulator::resetNode()
         }
         else
         {
+            if (mutex) { mutex->unlock(); }
             LOG_ERROR("{}: Can't reset the ImuSimulator without a connected CSV file", nameId());
             return false;
         }

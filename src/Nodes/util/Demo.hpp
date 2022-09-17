@@ -135,13 +135,15 @@ class Demo : public Node
     float _valueFloat = 65.4F;                                      ///< Value which is represented over the Float pin
     double _valueDouble = 1242.342;                                 ///< Value which is represented over the Double pin
     std::string _valueString = "Demo";                              ///< Value which is represented over the String pin
+    std::string _connectedString = "N/A";                           ///< Value which is represented over the String pin
     DemoData _valueObject;                                          ///< Value which is represented over the Object pin
     Eigen::MatrixXd _valueMatrix = Eigen::MatrixXd::Identity(3, 3); ///< Value which is represented over the Matrix pin
     size_t _stringUpdateCounter = 0;                                ///< Counter of how often the string was updated
 
     /// @brief Function to call when the string is updated
-    /// @param[in] pinId Id of the pin the data is received on
-    void stringUpdatedNotifyFunction(ax::NodeEditor::PinId pinId);
+    /// @param[in] insTime Time the data was received
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void stringUpdatedNotifyFunction(const InsTime& insTime, size_t pinIdx);
 };
 
 } // namespace NAV

@@ -7008,6 +7008,8 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     && (obs->timeOutputs->timeField & vn::protocol::uart::TIMEGROUP_TIMESYNCIN) // We need syncin time for this
                     && vnSensor->_syncInPin && vnSensor->inputPins.front().isPinLinked())       // Try to get a sync from the master
                 {
+                    auto* mutex = vnSensor->getInputValueMutex(0);
+                    if (mutex) { mutex->lock(); }
                     if (const auto* timeSyncMaster = vnSensor->getInputValue<TimeSync>(0);
                         timeSyncMaster && !timeSyncMaster->ppsTime.empty())
                     {
@@ -7022,6 +7024,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                                  vnSensor->nameId(), obs->insTime.toGPSweekTow(), timeSyncMaster->ppsTime.toGPSweekTow(),
                                  timeSyncMaster->syncOutCnt, obs->timeOutputs->syncInCnt, syncCntDiff);
                     }
+                    if (mutex) { mutex->unlock(); }
                 }
 
                 if (obs->insTime.empty()) // Look if other sensors have set a global time

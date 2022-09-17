@@ -1926,6 +1926,8 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
         {
             if (const auto* matrix = getInputValue<Eigen::MatrixXd>(pinIndex))
             {
+                auto* mutex = getInputValueMutex(pinIndex);
+                if (mutex) { mutex->lock(); }
                 for (int row = 0; row < matrix->rows(); row++)
                 {
                     for (int col = 0; col < matrix->cols(); col++)
@@ -1933,6 +1935,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
                         _pinData.at(pinIndex).addPlotDataItem(i++, fmt::format("{}, {}", row, col));
                     }
                 }
+                if (mutex) { mutex->unlock(); }
             }
         }
 
@@ -1973,8 +1976,7 @@ void NAV::Plot::updateNumberOfInputPins()
 {
     while (inputPins.size() < _nInputPins)
     {
-        nm::CreateInputPin(this, fmt::format("Pin {}", inputPins.size() + 1).c_str(), Pin::Type::Flow,
-                           _dataIdentifier, &Plot::plotData);
+        nm::CreateInputPin(this, fmt::format("Pin {}", inputPins.size() + 1).c_str(), Pin::Type::Flow, _dataIdentifier, &Plot::plotData);
         _pinData.emplace_back();
     }
     while (inputPins.size() > _nInputPins)
@@ -2027,112 +2029,104 @@ void NAV::Plot::addData(size_t pinIndex, size_t dataIndex, double value)
     }
 }
 
-void NAV::Plot::plotBoolean(ax::NodeEditor::PinId pinId)
+void NAV::Plot::plotBoolean(const InsTime& insTime, size_t pinIdx)
 {
     if (ConfigManager::Get<bool>("nogui")) { return; }
 
-    size_t pinIndex = inputPinIndexFromId(pinId);
+    const auto* value = getInputValue<bool>(pinIdx);
 
-    auto currentTime = util::time::GetCurrentInsTime();
-    const auto* value = getInputValue<bool>(pinIndex);
-
-    if (value != nullptr && !currentTime.empty())
+    if (value != nullptr && !insTime.empty())
     {
-        if (_startTime.empty()) { _startTime = currentTime; }
+        if (_startTime.empty()) { _startTime = insTime; }
         size_t i = 0;
 
-        std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
+        std::scoped_lock<std::mutex> guard(_pinData.at(pinIdx).mutex);
 
         // NodeData
-        addData(pinIndex, i++, static_cast<double>((currentTime - _startTime).count()));
-        addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
+        addData(pinIdx, i++, static_cast<double>((insTime - _startTime).count()));
+        addData(pinIdx, i++, static_cast<double>(insTime.toGPSweekTow().tow));
         // Boolean
-        addData(pinIndex, i++, static_cast<double>(*value));
+        addData(pinIdx, i++, static_cast<double>(*value));
     }
+    releaseInputValue(pinIdx);
 }
 
-void NAV::Plot::plotInteger(ax::NodeEditor::PinId pinId)
+void NAV::Plot::plotInteger(const InsTime& insTime, size_t pinIdx)
 {
     if (ConfigManager::Get<bool>("nogui")) { return; }
 
-    size_t pinIndex = inputPinIndexFromId(pinId);
+    const auto* value = getInputValue<int>(pinIdx);
 
-    auto currentTime = util::time::GetCurrentInsTime();
-    const auto* value = getInputValue<int>(pinIndex);
-
-    if (value != nullptr && !currentTime.empty())
+    if (value != nullptr && !insTime.empty())
     {
-        if (_startTime.empty()) { _startTime = currentTime; }
+        if (_startTime.empty()) { _startTime = insTime; }
         size_t i = 0;
 
-        std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
+        std::scoped_lock<std::mutex> guard(_pinData.at(pinIdx).mutex);
 
         // NodeData
-        addData(pinIndex, i++, static_cast<double>((currentTime - _startTime).count()));
-        addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
+        addData(pinIdx, i++, static_cast<double>((insTime - _startTime).count()));
+        addData(pinIdx, i++, static_cast<double>(insTime.toGPSweekTow().tow));
         // Integer
-        addData(pinIndex, i++, static_cast<double>(*value));
+        addData(pinIdx, i++, static_cast<double>(*value));
     }
+    releaseInputValue(pinIdx);
 }
 
-void NAV::Plot::plotFloat(ax::NodeEditor::PinId pinId)
+void NAV::Plot::plotFloat(const InsTime& insTime, size_t pinIdx)
 {
     if (ConfigManager::Get<bool>("nogui")) { return; }
 
-    size_t pinIndex = inputPinIndexFromId(pinId);
+    const auto* value = getInputValue<double>(pinIdx);
 
-    auto currentTime = util::time::GetCurrentInsTime();
-    const auto* value = getInputValue<double>(pinIndex);
-
-    if (value != nullptr && !currentTime.empty())
+    if (value != nullptr && !insTime.empty())
     {
-        if (_startTime.empty()) { _startTime = currentTime; }
+        if (_startTime.empty()) { _startTime = insTime; }
         size_t i = 0;
 
-        std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
+        std::scoped_lock<std::mutex> guard(_pinData.at(pinIdx).mutex);
 
         // NodeData
-        addData(pinIndex, i++, static_cast<double>((currentTime - _startTime).count()));
-        addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
+        addData(pinIdx, i++, static_cast<double>((insTime - _startTime).count()));
+        addData(pinIdx, i++, static_cast<double>(insTime.toGPSweekTow().tow));
         // Double
-        addData(pinIndex, i++, *value);
+        addData(pinIdx, i++, *value);
     }
+    releaseInputValue(pinIdx);
 }
 
-void NAV::Plot::plotMatrix(ax::NodeEditor::PinId pinId)
+void NAV::Plot::plotMatrix(const InsTime& insTime, size_t pinIdx)
 {
     if (ConfigManager::Get<bool>("nogui")) { return; }
 
-    if (auto* sourcePin = inputPinFromId(pinId).link.getConnectedPin())
+    if (auto* sourcePin = inputPins[pinIdx].link.getConnectedPin())
     {
-        size_t pinIndex = inputPinIndexFromId(pinId);
-
-        auto currentTime = util::time::GetCurrentInsTime();
         if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
         {
-            const auto* value = getInputValue<Eigen::MatrixXd>(pinIndex);
+            const auto* value = getInputValue<Eigen::MatrixXd>(pinIdx);
 
-            if (value != nullptr && !currentTime.empty())
+            if (value != nullptr && !insTime.empty())
             {
-                if (_startTime.empty()) { _startTime = currentTime; }
+                if (_startTime.empty()) { _startTime = insTime; }
                 size_t i = 0;
 
-                std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
+                std::scoped_lock<std::mutex> guard(_pinData.at(pinIdx).mutex);
 
                 // NodeData
-                addData(pinIndex, i++, static_cast<double>((currentTime - _startTime).count()));
-                addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
+                addData(pinIdx, i++, static_cast<double>((insTime - _startTime).count()));
+                addData(pinIdx, i++, static_cast<double>(insTime.toGPSweekTow().tow));
                 // Matrix
                 for (int row = 0; row < value->rows(); row++)
                 {
                     for (int col = 0; col < value->cols(); col++)
                     {
-                        addData(pinIndex, i++, (*value)(row, col));
+                        addData(pinIdx, i++, (*value)(row, col));
                     }
                 }
             }
         }
     }
+    releaseInputValue(pinIdx);
 }
 
 void NAV::Plot::plotData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)

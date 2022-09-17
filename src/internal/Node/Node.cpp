@@ -8,6 +8,7 @@
 #include "internal/FlowExecutor.hpp"
 #include "internal/gui/FlowAnimation.hpp"
 #include "internal/NodeManager.hpp"
+namespace nm = NAV::NodeManager;
 #include "util/Json.hpp"
 
 #include <imgui_node_editor.h>
@@ -76,25 +77,63 @@ void NAV::Node::afterCreateLink(OutputPin& /*startPin*/, InputPin& /*endPin*/) {
 
 void NAV::Node::afterDeleteLink(OutputPin& /*startPin*/, InputPin& /*endPin*/) {}
 
-void NAV::Node::notifyOutputValueChanged(size_t /* portIndex */)
+void NAV::Node::notifyOutputValueChanged(size_t portIndex, const InsTime& insTime)
 {
-    // TODO: Refactor this
+    if (callbacksEnabled && isInitialized())
+    {
+        auto& outputPin = outputPins.at(portIndex);
 
-    // for (auto& [node, callback, linkId] : outputPins.at(portIndex).notifyFuncOld)
-    // {
-    //     if (node->isDisabled())
-    //     {
-    //         continue;
-    //     }
+        if (!outputPin.isPinLinked()) { return; }
 
-    //     if (nm::showFlowWhenNotifyingValueChange)
-    //     {
-    //         FlowAnimation::Add(linkId);
-    //     }
+        bool mutexLocked = false;
+        for (const auto& link : outputPin.links)
+        {
+            auto* targetPin = link.getConnectedPin();
+            if (link.connectedNode->isInitialized() && !targetPin->queueBlocked)
+            {
+                if (!mutexLocked)
+                {
+                    mutexLocked = true;
+                    outputPin.dataAccessMutex.lock();
+                }
+                outputPin.dataAccessCounter++;
 
-    //     // TODO: Put this into the Callback Manager
-    //     std::invoke(callback, node, linkId);
-    // }
+                if (nm::showFlowWhenNotifyingValueChange)
+                {
+                    FlowAnimation::Add(link.linkId);
+                }
+
+                auto data = std::make_shared<NodeData>();
+                data->insTime = insTime;
+
+                targetPin->queue.push_back(data);
+                LOG_DATA("{}: Waking up worker of node '{}'", nameId(), link.connectedNode->nameId());
+                link.connectedNode->wakeWorker();
+            }
+        }
+    }
+}
+
+std::mutex* NAV::Node::getInputValueMutex(size_t portIndex)
+{
+    if (OutputPin* outputPin = inputPins.at(portIndex).link.getConnectedPin())
+    {
+        return &outputPin->dataAccessMutex;
+    }
+    return nullptr;
+}
+
+void NAV::Node::releaseInputValue(size_t portIndex)
+{
+    OutputPin* outputPin = inputPins.at(portIndex).link.getConnectedPin();
+    if (outputPin && outputPin->dataAccessCounter > 0)
+    {
+        outputPin->dataAccessCounter--;
+        if (outputPin->dataAccessCounter == 0)
+        {
+            outputPin->dataAccessMutex.unlock();
+        }
+    }
 }
 
 void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NAV::NodeData>& data)
@@ -464,14 +503,40 @@ void NAV::Node::workerThread(Node* node)
                 node->workerTimeoutHandler();
             }
 
-            if (node->isInitialized() && node->callbacksEnabled) // Triggered by '_workerConditionVariable.notify_all();'
+            // -------------------------- Data processing on input non-flow pins -----------------------------
+            if (std::any_of(node->inputPins.begin(), node->inputPins.end(), [](const InputPin& inputPin) {
+                    return inputPin.type != Pin::Type::Flow && inputPin.isPinLinked();
+                }))
             {
-                // Data processing on input pins
+                while (node->isInitialized()) // Notify Events
+                {
+                    bool notifyTriggered = false;
+                    for (size_t i = 0; i < node->inputPins.size(); i++)
+                    {
+                        auto& inputPin = node->inputPins[i];
+                        if (inputPin.type != Pin::Type::Flow && !inputPin.queue.empty())
+                        {
+                            if (auto callback = std::get<InputPin::DataChangedNotifyFunc>(inputPin.callback))
+                            {
+                                LOG_DATA("{}: Invoking notify callback on input pin '{}'", node->nameId(), inputPin.name);
+                                std::invoke(callback, node, inputPin.queue.extract_front()->insTime, i);
+                                notifyTriggered = true;
+                            }
+                        }
+                    }
+                    if (!notifyTriggered) { break; }
+                }
+            }
+
+            // ------------------------------ Process data on input flow pins --------------------------------
+            if (node->isInitialized() && (node->callbacksEnabled || node->_mode == Node::Mode::REAL_TIME))
+            {
+                // Check input pin for data and trigger callbacks
                 if (std::any_of(node->inputPins.begin(), node->inputPins.end(), [](const InputPin& inputPin) {
                         return inputPin.type == Pin::Type::Flow && inputPin.isPinLinked();
                     }))
                 {
-                    while (node->isInitialized() && node->callbacksEnabled)
+                    while (node->isInitialized() && (node->callbacksEnabled || node->_mode == Node::Mode::REAL_TIME))
                     {
                         LOG_DATA("{}: Checking for firable input pins", node->nameId());
 
@@ -521,17 +586,20 @@ void NAV::Node::workerThread(Node* node)
                         auto& inputPin = node->inputPins[earliestInputPinIdx];
                         if (inputPin.firable && inputPin.firable(node, inputPin))
                         {
-                            LOG_DATA("{}: Invoking callback on input pin (idx = {})", node->nameId(), earliestInputPinIdx);
-                            std::invoke(std::get<InputPin::FlowFirableCallbackFunc>(inputPin.callback), node, inputPin.queue, earliestInputPinIdx);
+                            if (auto callback = std::get<InputPin::FlowFirableCallbackFunc>(inputPin.callback))
+                            {
+                                LOG_DATA("{}: Invoking callback on input pin '{}'", node->nameId(), inputPin.name);
+                                std::invoke(callback, node, inputPin.queue, earliestInputPinIdx);
+                            }
                         }
                         else if (inputPin.dropQueueIfNotFirable)
                         {
-                            LOG_DATA("{}: Dropping message on input pin (idx = {})", node->nameId(), earliestInputPinIdx);
+                            LOG_DATA("{}: Dropping message on input pin '{}'", node->nameId(), inputPin.name);
                             inputPin.queue.pop_front();
                         }
                         else
                         {
-                            LOG_DATA("{}: Skipping message on input pin (idx = {})", node->nameId(), earliestInputPinIdx);
+                            LOG_DATA("{}: Skipping message on input pin '{}'", node->nameId(), inputPin.name);
                             break; // Do not drop an item, but put the worker to sleep
                         }
                     }

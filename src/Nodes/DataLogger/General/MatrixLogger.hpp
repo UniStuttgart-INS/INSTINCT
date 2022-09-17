@@ -63,8 +63,9 @@ class MatrixLogger : public Node, public FileWriter, public CommonLog
     void deinitialize() override;
 
     /// @brief Write a matrix to the file
-    /// @param[in] pinId Id of the pin the data is received on
-    void writeMatrix(ax::NodeEditor::PinId pinId);
+    /// @param[in] insTime Time the data was received
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void writeMatrix(const InsTime& insTime, size_t pinIdx);
 
     /// Flag whether the header was written
     bool _headerWritten = false;
