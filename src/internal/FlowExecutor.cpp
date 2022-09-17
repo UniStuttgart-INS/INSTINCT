@@ -175,9 +175,12 @@ void NAV::FlowExecutor::execute()
 
             if (auto* callback = std::get_if<OutputPin::PollDataFunc>(&outputPin.data);
                 outputPin.mode == OutputPin::Mode::POST_PROCESSING && callback != nullptr && *callback != nullptr
+#ifndef TESTING
                 && std::any_of(outputPin.links.begin(), outputPin.links.end(), [](const OutputPin::OutgoingLink& link) {
                        return link.connectedNode->isInitialized();
-                   }))
+                   })
+#endif
+            )
             {
                 if (auto obs = (node->**callback)(true)) // Peek the data
                 {

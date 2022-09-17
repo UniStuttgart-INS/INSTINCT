@@ -489,7 +489,7 @@ std::shared_ptr<const NAV::NodeData> NAV::Demo::pollData(bool peek)
     return obs;
 }
 
-void NAV::Demo::stringUpdatedNotifyFunction(const InsTime& insTime, size_t pinIdx) // TODO: This does not work
+void NAV::Demo::stringUpdatedNotifyFunction([[maybe_unused]] const InsTime& insTime, size_t pinIdx) // TODO: This does not work
 {
     _stringUpdateCounter++;
 

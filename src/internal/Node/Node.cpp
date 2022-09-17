@@ -153,34 +153,12 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
             LOG_DEBUG("{}: Tried to invokeCallbacks on pin {} with a nullptr. This is a bug!!!", nameId(), portIndex);
             return;
         }
-        // #ifdef TESTING
-        //         for (const auto& watcherCallback : outputPins.at(portIndex).watcherCallbacksOld)
-        //         {
-        //             const auto& linkId = watcherCallback.second;
-        //             if (!linkId) // Trigger all output pin callbacks
-        //             {
-        //                 CallbackManager::queueWatcherCallbackForInvocation(watcherCallback, data);
-        //             }
-        //         }
-        // #endif
 
         for (const auto& link : outputPins.at(portIndex).links)
         {
             auto* targetPin = link.getConnectedPin();
             if (link.connectedNode->isInitialized() && !targetPin->queueBlocked)
             {
-                // #ifdef TESTING
-                //                 const auto& linkId = std::get<2>(nodeCallback);
-                //                 for (const auto& watcherCallback : outputPins.at(portIndex).watcherCallbacksOld)
-                //                 {
-                //                     const auto& watcherLinkId = watcherCallback.second;
-                //                     if (linkId == watcherLinkId)
-                //                     {
-                //                         CallbackManager::queueWatcherCallbackForInvocation(watcherCallback, data);
-                //                     }
-                //                 }
-                // #endif
-
                 if (NodeManager::showFlowWhenNotifyingValueChange)
                 {
                     FlowAnimation::Add(link.linkId);
@@ -530,7 +508,17 @@ void NAV::Node::workerThread(Node* node)
                                 if (auto callback = std::get<InputPin::DataChangedNotifyFunc>(inputPin.callback))
                                 {
                                     LOG_DATA("{}: Invoking notify callback on input pin '{}'", node->nameId(), inputPin.name);
-                                    std::invoke(callback, node, inputPin.queue.extract_front()->insTime, i);
+                                    InsTime insTime = inputPin.queue.extract_front()->insTime;
+#ifdef TESTING
+                                    for (const auto& watcherCallback : inputPin.watcherCallbacks)
+                                    {
+                                        if (auto watcherCall = std::get<InputPin::DataChangedWatcherNotifyFunc>(watcherCallback))
+                                        {
+                                            std::invoke(watcherCall, node, insTime, i);
+                                        }
+                                    }
+#endif
+                                    std::invoke(callback, node, insTime, i);
                                     notifyTriggered = true;
                                 }
                             }
@@ -591,6 +579,15 @@ void NAV::Node::workerThread(Node* node)
                                 if (auto callback = std::get<InputPin::FlowFirableCallbackFunc>(inputPin.callback))
                                 {
                                     LOG_DATA("{}: Invoking callback on input pin '{}'", node->nameId(), inputPin.name);
+#ifdef TESTING
+                                    for (const auto& watcherCallback : inputPin.watcherCallbacks)
+                                    {
+                                        if (auto watcherCall = std::get<InputPin::FlowFirableWatcherCallbackFunc>(watcherCallback))
+                                        {
+                                            std::invoke(watcherCall, node, inputPin.queue, earliestInputPinIdx);
+                                        }
+                                    }
+#endif
                                     std::invoke(callback, node, inputPin.queue, earliestInputPinIdx);
                                 }
                             }
@@ -623,11 +620,14 @@ void NAV::Node::workerThread(Node* node)
                         auto* callback = std::get_if<OutputPin::PollDataFunc>(&outputPin->data);
                         if (callback != nullptr && *callback != nullptr)
                         {
-                            LOG_DATA("{}: Polling data from output pin '{}'", node->nameId(), str::replaceAll_copy(outputPin->name, "\n", ""));
-                            // Trigger the already peeked observation and invoke it's callbacks (peek = false)
-                            if ((node->**callback)(false) == nullptr)
+                            if (!it->first.empty())
                             {
-                                LOG_ERROR("{}: {} could not poll its observation despite being able to peek it.", node->nameId(), outputPin->name);
+                                LOG_DATA("{}: Polling data from output pin '{}'", node->nameId(), str::replaceAll_copy(outputPin->name, "\n", ""));
+                                // Trigger the already peeked observation and invoke it's callbacks (peek = false)
+                                if ((node->**callback)(false) == nullptr)
+                                {
+                                    LOG_ERROR("{}: {} could not poll its observation despite being able to peek it.", node->nameId(), outputPin->name);
+                                }
                             }
 
                             // Add next data event from the node

@@ -1,56 +1,26 @@
 {
     "links": {
         "link-55": {
-            "color": {
-                "a": 255,
-                "b": 215,
-                "g": 150,
-                "r": 51
-            },
             "endPinId": 48,
             "id": 55,
             "startPinId": 53
         },
         "link-66": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 47,
             "id": 66,
             "startPinId": 64
         },
         "link-71": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 46,
             "id": 71,
             "startPinId": 69
         },
         "link-78": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 72,
             "id": 78,
             "startPinId": 49
         },
         "link-81": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 76,
             "id": 81,
             "startPinId": 79
@@ -83,7 +53,7 @@
                 },
                 {
                     "id": 48,
-                    "name": "GnssNavInfo - GPS"
+                    "name": "GnssNavInfo"
                 }
             ],
             "kind": "Blueprint",
@@ -1312,7 +1282,7 @@
             "inputPins": [
                 {
                     "id": 72,
-                    "name": "INSTINCT"
+                    "name": "SPP"
                 },
                 {
                     "id": 76,
@@ -1323,8 +1293,8 @@
             "name": "Plot",
             "outputPins": [],
             "pos": {
-                "x": 632.0,
-                "y": 222.0
+                "x": 568.0,
+                "y": 210.0
             },
             "size": {
                 "x": 0.0,
@@ -1350,7 +1320,7 @@
                 }
             ],
             "pos": {
-                "x": 341.0,
+                "x": 309.0,
                 "y": 350.0
             },
             "size": {

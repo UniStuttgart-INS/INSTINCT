@@ -168,14 +168,15 @@ TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/StaticSize/vn310-imu.csv' 
     //                                     VectorNavFile-vn310-imu-csv.flow
     // ###########################################################################################################
     //
-    // VectorNavFile("data/VectorNav/StaticSize/vn310-imu.csv")
+    // VectorNavFile("data/VectorNav/StaticSize/vn310-imu.csv") (2)           Plot (8)
+    //                                         (1) Binary Output |>  --(9)->  |> Pin 1 (3)
     //
     // ###########################################################################################################
 
-    nm::RegisterWatcherCallbackToOutputPin(1, [](const std::shared_ptr<const NAV::NodeData>& data) {
+    nm::RegisterWatcherCallbackToInputPin(3, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         LOG_TRACE("messageCounterImuDataCsv = {}", messageCounterImuDataCsv);
 
-        compareImuObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data), messageCounterImuDataCsv);
+        compareImuObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounterImuDataCsv);
 
         messageCounterImuDataCsv++;
     });
@@ -195,14 +196,15 @@ TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/StaticSize/vn310-imu.vnb' 
     //                                     VectorNavFile-vn310-imu-vnb.flow
     // ###########################################################################################################
     //
-    // VectorNavFile("data/VectorNav/StaticSize/vn310-imu.vnb")
+    // VectorNavFile("data/VectorNav/StaticSize/vn310-imu.vnb") (2)           Plot (8)
+    //                                         (1) Binary Output |>  --(9)->  |> Pin 1 (3)
     //
     // ###########################################################################################################
 
-    nm::RegisterWatcherCallbackToOutputPin(1, [](const std::shared_ptr<const NAV::NodeData>& data) {
+    nm::RegisterWatcherCallbackToInputPin(3, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         LOG_TRACE("messageCounterImuDataVnb = {}", messageCounterImuDataVnb);
 
-        compareImuObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data), messageCounterImuDataVnb);
+        compareImuObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounterImuDataVnb);
 
         messageCounterImuDataVnb++;
     });
@@ -491,14 +493,15 @@ TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/StaticSize/vn310-gnss.csv'
     //                                     VectorNavFile-vn310-gnss-csv.flow
     // ###########################################################################################################
     //
-    // VectorNavFile("data/VectorNav/StaticSize/vn310-gnss.csv")
+    // VectorNavFile("data/VectorNav/StaticSize/vn310-gnss.csv") (6)            Plot (13)
+    //                                          (7) Binary Output |>  --(14)->  |> Pin 1 (8)
     //
     // ###########################################################################################################
 
-    nm::RegisterWatcherCallbackToOutputPin(7, [](const std::shared_ptr<const NAV::NodeData>& data) {
+    nm::RegisterWatcherCallbackToInputPin(8, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         LOG_TRACE("messageCounterGnssDataCsv = {}", messageCounterGnssDataCsv);
 
-        compareGnssObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data), messageCounterGnssDataCsv);
+        compareGnssObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounterGnssDataCsv);
 
         messageCounterGnssDataCsv++;
     });
@@ -518,14 +521,15 @@ TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/StaticSize/vn310-gnss.vnb'
     //                                     VectorNavFile-vn310-gnss-vnb.flow
     // ###########################################################################################################
     //
-    // VectorNavFile("data/VectorNav/StaticSize/vn310-gnss.vnb")
+    // VectorNavFile("data/VectorNav/StaticSize/vn310-gnss.vnb") (6)            Plot (13)
+    //                                          (7) Binary Output |>  --(14)->  |> Pin 1 (8)
     //
     // ###########################################################################################################
 
-    nm::RegisterWatcherCallbackToOutputPin(7, [](const std::shared_ptr<const NAV::NodeData>& data) {
+    nm::RegisterWatcherCallbackToInputPin(8, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         LOG_TRACE("messageCounterGnssDataVnb = {}", messageCounterGnssDataVnb);
 
-        compareGnssObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data), messageCounterGnssDataVnb);
+        compareGnssObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounterGnssDataVnb);
 
         messageCounterGnssDataVnb++;
     });
@@ -822,17 +826,18 @@ TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/DynamicSize/vn310-gnss.csv
     Logger logger;
 
     // ###########################################################################################################
-    //                                     VectorNavFile-vn310-gnss-csv.flow
+    //                                 VectorNavFile-vn310-gnss-dynamic-csv.flow
     // ###########################################################################################################
     //
-    // VectorNavFile("data/VectorNav/DynamicSize/vn310-gnss.csv")
+    // VectorNavFile("data/VectorNav/DynamicSize/vn310-gnss.csv") (6)            Plot (13)
+    //                                           (7) Binary Output |>  --(14)->  |> Pin 1 (8)
     //
     // ###########################################################################################################
 
-    nm::RegisterWatcherCallbackToOutputPin(7, [](const std::shared_ptr<const NAV::NodeData>& data) {
+    nm::RegisterWatcherCallbackToInputPin(8, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         LOG_TRACE("messageCounterDataCsv = {}", messageCounterDataCsv);
 
-        compareDynamicSizeObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data), messageCounterDataCsv);
+        compareDynamicSizeObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounterDataCsv);
 
         messageCounterDataCsv++;
     });
@@ -849,17 +854,18 @@ TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/DynamicSize/vn310-gnss.vnb
     Logger logger;
 
     // ###########################################################################################################
-    //                                     VectorNavFile-vn310-gnss-vnb.flow
+    //                                 VectorNavFile-vn310-gnss-dynamic-vnb.flow
     // ###########################################################################################################
     //
-    // VectorNavFile("data/VectorNav/DynamicSize/vn310-gnss.vnb")
+    // VectorNavFile("data/VectorNav/DynamicSize/vn310-gnss.vnb") (6)            Plot (13)
+    //                                           (7) Binary Output |>  --(14)->  |> Pin 1 (8)
     //
     // ###########################################################################################################
 
-    nm::RegisterWatcherCallbackToOutputPin(7, [](const std::shared_ptr<const NAV::NodeData>& data) {
+    nm::RegisterWatcherCallbackToInputPin(8, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         LOG_TRACE("messageCounterDataVnb = {}", messageCounterDataVnb);
 
-        compareDynamicSizeObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data), messageCounterDataVnb);
+        compareDynamicSizeObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounterDataVnb);
 
         messageCounterDataVnb++;
     });

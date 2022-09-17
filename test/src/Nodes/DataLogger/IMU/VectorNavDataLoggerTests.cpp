@@ -2,6 +2,9 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <deque>
+#include <atomic>
+#include <mutex>
 
 #include "FlowTester.hpp"
 
@@ -17,27 +20,35 @@ namespace NAV::TEST::VectorNavDataLoggerTests
 constexpr size_t MESSAGE_COUNT_IMU = 18;  ///< Amount of messages expected in the Imu files
 constexpr size_t MESSAGE_COUNT_GNSS = 12; ///< Amount of messages expected in the Gnss files
 
-size_t messageCounterImuDataCsv = 0;  ///< Message Counter for the Imu data csv file
-size_t messageCounterImuLogCsv = 0;   ///< Message Counter for the Imu log csv file
-size_t messageCounterImuLogVnb = 0;   ///< Message Counter for the Imu log vnb file
-size_t messageCounterGnssDataCsv = 0; ///< Message Counter for the Gnss data csv fil
-size_t messageCounterGnssLogCsv = 0;  ///< Message Counter for the Gnss log csv file
-size_t messageCounterGnssLogVnb = 0;  ///< Message Counter for the Gnss log vnb file
+std::atomic<size_t> messageCounterImuDataCsv = 0;  ///< Message Counter for the Imu data csv file
+std::atomic<size_t> messageCounterImuLogCsv = 0;   ///< Message Counter for the Imu log csv file
+std::atomic<size_t> messageCounterImuLogVnb = 0;   ///< Message Counter for the Imu log vnb file
+std::atomic<size_t> messageCounterGnssDataCsv = 0; ///< Message Counter for the Gnss data csv fil
+std::atomic<size_t> messageCounterGnssLogCsv = 0;  ///< Message Counter for the Gnss log csv file
+std::atomic<size_t> messageCounterGnssLogVnb = 0;  ///< Message Counter for the Gnss log vnb file
 
-std::shared_ptr<const NAV::VectorNavBinaryOutput> data_vn310_imu_csv = nullptr; ///< Pointer to the current observation from the file 'test/data/vn310-imu.csv'
-std::shared_ptr<const NAV::VectorNavBinaryOutput> logs_vn310_imu_csv = nullptr; ///< Pointer to the current observation from the file 'test/logs/vn310-imu.csv'
-std::shared_ptr<const NAV::VectorNavBinaryOutput> logs_vn310_imu_vnb = nullptr; ///< Pointer to the current observation from the file 'test/logs/vn310-imu.vnb'
+std::deque<std::shared_ptr<const NAV::VectorNavBinaryOutput>> data_vn310_imu_csv; ///< Pointer to the current observation from the file 'data/VectorNav/StaticSize/vn310-imu.csv'
+std::deque<std::shared_ptr<const NAV::VectorNavBinaryOutput>> logs_vn310_imu_csv; ///< Pointer to the current observation from the file 'logs/vn310-imu.csv'
+std::deque<std::shared_ptr<const NAV::VectorNavBinaryOutput>> logs_vn310_imu_vnb; ///< Pointer to the current observation from the file 'logs/vn310-imu.vnb'
 
-std::shared_ptr<const NAV::VectorNavBinaryOutput> data_vn310_gnss_csv = nullptr; ///< Pointer to the current observation from the file 'test/data/vn310-gnss.csv'
-std::shared_ptr<const NAV::VectorNavBinaryOutput> logs_vn310_gnss_csv = nullptr; ///< Pointer to the current observation from the file 'test/logs/vn310-gnss.csv'
-std::shared_ptr<const NAV::VectorNavBinaryOutput> logs_vn310_gnss_vnb = nullptr; ///< Pointer to the current observation from the file 'test/logs/vn310-gnss.vnb'
+std::deque<std::shared_ptr<const NAV::VectorNavBinaryOutput>> data_vn310_gnss_csv; ///< Pointer to the current observation from the file 'data/VectorNav/StaticSize/vn310-gnss.csv'
+std::deque<std::shared_ptr<const NAV::VectorNavBinaryOutput>> logs_vn310_gnss_csv; ///< Pointer to the current observation from the file 'logs/vn310-gnss.csv'
+std::deque<std::shared_ptr<const NAV::VectorNavBinaryOutput>> logs_vn310_gnss_vnb; ///< Pointer to the current observation from the file 'logs/vn310-gnss.vnb'
 
-void compareObservations(std::shared_ptr<const NAV::VectorNavBinaryOutput>& data_csv, std::shared_ptr<const NAV::VectorNavBinaryOutput>& logs_csv, std::shared_ptr<const NAV::VectorNavBinaryOutput>& logs_vnb)
+std::mutex comparisonMutex;
+
+void compareObservations(std::deque<std::shared_ptr<const NAV::VectorNavBinaryOutput>>& queue_data_csv,
+                         std::deque<std::shared_ptr<const NAV::VectorNavBinaryOutput>>& queue_logs_csv,
+                         std::deque<std::shared_ptr<const NAV::VectorNavBinaryOutput>>& queue_logs_vnb)
 {
-    if (!data_csv || !logs_csv || !logs_vnb)
-    {
-        return;
-    }
+    if (queue_data_csv.empty() || queue_logs_csv.empty() || queue_logs_vnb.empty()) { return; }
+
+    auto data_csv = queue_data_csv.front();
+    queue_data_csv.pop_front();
+    auto logs_csv = queue_logs_csv.front();
+    queue_logs_csv.pop_front();
+    auto logs_vnb = queue_logs_vnb.front();
+    queue_logs_vnb.pop_front();
 
     // ------------------------------------------------ InsTime --------------------------------------------------
     if (!data_csv->insTime.empty())
@@ -802,19 +813,30 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
     messageCounterGnssLogCsv = 0;
     messageCounterGnssLogVnb = 0;
 
+    data_vn310_imu_csv.clear();
+    logs_vn310_imu_csv.clear();
+    logs_vn310_imu_vnb.clear();
+    data_vn310_gnss_csv.clear();
+    logs_vn310_gnss_csv.clear();
+    logs_vn310_gnss_vnb.clear();
+
     Logger consoleSink;
 
     // ###########################################################################################################
     //                                         VectorNavDataLogger.flow
     // ###########################################################################################################
     //
-    //                                     / VectorNavDataLogger("logs/vn310-imu.csv")
-    // VectorNavFile("data/vn310-imu.csv")
-    //                                     \ VectorNavDataLogger("logs/vn310-imu.vnb")
+    // VectorNavFile("data/vn310-imu.csv") (2)              VectorNavDataLogger("logs/vn310-imu.csv") (4)
+    //                    (1) Binary Output |>  --(11)-->  |> Binary Output (3)
+    //                                          \
+    //                                           \          VectorNavDataLogger("logs/vn310-imu.vnb") (9)
+    //                                            (12)-->  |> Binary Output (10)
     //
-    //                                     / VectorNavDataLogger("logs/vn310-gnss.csv")
-    // VectorNavFile("data/vn310-gnss.csv")
-    //                                     \ VectorNavDataLogger("logs/vn310-gnss.vnb")
+    // VectorNavFile("data/vn310-gnss.csv") (6)              VectorNavDataLogger("logs/vn310-gnss.csv") (14)
+    //                     (7) Binary Output |>  --(19)-->  |> Binary Output (15)
+    //                                           \
+    //                                            \          VectorNavDataLogger("logs/vn310-gnss.vnb") (17)
+    //                                             (20)-->  |> Binary Output (18)
     //
     // ###########################################################################################################
 
@@ -824,81 +846,93 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
     //                                       VectorNavDataLoggerCheck.flow
     // ###########################################################################################################
     //
-    // VectorNavFile("data/vn310-imu.csv")
-    // VectorNavFile("logs/vn310-imu.csv")
-    // VectorNavFile("logs/vn310-imu.vnb")
-    // VectorNavFile("data/vn310-gnss.csv")
-    // VectorNavFile("logs/vn310-gnss.csv")
-    // VectorNavFile("logs/vn310-gnss.vnb")
+    // VectorNavFile("data/VectorNav/StaticSize/vn310-imu.csv") (2)            Plot (46)
+    //                                         (1) Binary Output |>  --(47)->  |> Pin 1 (41)
+    //
+    // VectorNavFile("logs/vn310-imu.csv") (28)            Plot (53)
+    //                    (29) Binary Output |>  --(83)->  |> Pin 1 (54)
+    //
+    // VectorNavFile("logs/vn310-imu.vnb") (31)            Plot (60)
+    //                    (32) Binary Output |>  --(84)->  |> Pin 1 (61)
+    //
+    //
+    // VectorNavFile("data/VectorNav/StaticSize/vn310-gnss.csv") (6)           Plot (67)
+    //                                         (7) Binary Output |>  --(85)->  |> Pin 1 (68)
+    //
+    // VectorNavFile("logs/vn310-gnss.csv") (34)           Plot (74)
+    //                    (35) Binary Output |>  --(86)->  |> Pin 1 (75)
+    //
+    // VectorNavFile("logs/vn310-gnss.vnb") (37)           Plot (81)
+    //                    (38) Binary Output |>  --(87)->  |> Pin 1 (82)
     //
     // ###########################################################################################################
 
     // -------------------------------------------------- IMU ----------------------------------------------------
 
-    nm::RegisterWatcherCallbackToOutputPin(1, [](const std::shared_ptr<const NAV::NodeData>& data) { // test/data/vn310-imu.csv
+    nm::RegisterWatcherCallbackToInputPin(41, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) { // data/VectorNav/StaticSize/vn310-imu.csv
         messageCounterImuDataCsv++;
 
         LOG_TRACE("messageCounterImuDataCsv = {}, messageCounterImuLogCsv = {}, messageCounterImuLogVnb = {}", messageCounterImuDataCsv, messageCounterImuLogCsv, messageCounterImuLogVnb);
 
-        REQUIRE(data_vn310_imu_csv == nullptr); // Check if messages are missing in the other nodes
-        data_vn310_imu_csv = std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data);
+        std::lock_guard lk(comparisonMutex);
+        data_vn310_imu_csv.push_back(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()));
 
         compareObservations(data_vn310_imu_csv, logs_vn310_imu_csv, logs_vn310_imu_vnb);
     });
 
-    nm::RegisterWatcherCallbackToOutputPin(29, [](const std::shared_ptr<const NAV::NodeData>& data) { // test/logs/vn310-imu.csv
+    nm::RegisterWatcherCallbackToInputPin(54, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) { // logs/vn310-imu.csv
         messageCounterImuLogCsv++;
 
         LOG_TRACE("messageCounterImuDataCsv = {}, messageCounterImuLogCsv = {}, messageCounterImuLogVnb = {}", messageCounterImuDataCsv, messageCounterImuLogCsv, messageCounterImuLogVnb);
 
-        REQUIRE(logs_vn310_imu_csv == nullptr); // Check if messages are missing in the other nodes
-        logs_vn310_imu_csv = std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data);
+        std::lock_guard lk(comparisonMutex);
+        logs_vn310_imu_csv.push_back(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()));
 
         compareObservations(data_vn310_imu_csv, logs_vn310_imu_csv, logs_vn310_imu_vnb);
     });
 
-    nm::RegisterWatcherCallbackToOutputPin(32, [](const std::shared_ptr<const NAV::NodeData>& data) { // test/logs/vn310-imu.vnb
+    nm::RegisterWatcherCallbackToInputPin(61, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) { // logs/vn310-imu.vnb
         messageCounterImuLogVnb++;
 
         LOG_TRACE("messageCounterImuDataCsv = {}, messageCounterImuLogCsv = {}, messageCounterImuLogVnb = {}", messageCounterImuDataCsv, messageCounterImuLogCsv, messageCounterImuLogVnb);
 
-        REQUIRE(logs_vn310_imu_vnb == nullptr); // Check if messages are missing in the other nodes
-        logs_vn310_imu_vnb = std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data);
+        std::lock_guard lk(comparisonMutex);
+        logs_vn310_imu_vnb.push_back(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()));
 
         compareObservations(data_vn310_imu_csv, logs_vn310_imu_csv, logs_vn310_imu_vnb);
     });
 
     // ------------------------------------------------- GNSS ----------------------------------------------------
 
-    nm::RegisterWatcherCallbackToOutputPin(7, [](const std::shared_ptr<const NAV::NodeData>& data) { // test/data/vn310-gnss.csv
+    nm::RegisterWatcherCallbackToInputPin(68, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) { // data/VectorNav/StaticSize/vn310-gnss.csv
         messageCounterGnssDataCsv++;
 
         LOG_TRACE("messageCounterGnssDataCsv = {}, messageCounterGnssLogCsv = {}, messageCounterGnssLogVnb = {}", messageCounterGnssDataCsv, messageCounterGnssLogCsv, messageCounterGnssLogVnb);
 
-        REQUIRE(data_vn310_gnss_csv == nullptr); // Check if messages are missing in the other nodes
-        data_vn310_gnss_csv = std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data);
+        std::lock_guard lk(comparisonMutex);
+        data_vn310_gnss_csv.push_back(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()));
 
         compareObservations(data_vn310_gnss_csv, logs_vn310_gnss_csv, logs_vn310_gnss_vnb);
     });
 
-    nm::RegisterWatcherCallbackToOutputPin(35, [](const std::shared_ptr<const NAV::NodeData>& data) { // test/logs/vn310-gnss.csv
+    nm::RegisterWatcherCallbackToInputPin(75, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) { // logs/vn310-gnss.csv
         messageCounterGnssLogCsv++;
 
         LOG_TRACE("messageCounterGnssDataCsv = {}, messageCounterGnssLogCsv = {}, messageCounterGnssLogVnb = {}", messageCounterGnssDataCsv, messageCounterGnssLogCsv, messageCounterGnssLogVnb);
 
-        REQUIRE(logs_vn310_gnss_csv == nullptr); // Check if messages are missing in the other nodes
-        logs_vn310_gnss_csv = std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data);
+        std::lock_guard lk(comparisonMutex);
+        logs_vn310_gnss_csv.push_back(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()));
 
         compareObservations(data_vn310_gnss_csv, logs_vn310_gnss_csv, logs_vn310_gnss_vnb);
     });
 
-    nm::RegisterWatcherCallbackToOutputPin(38, [](const std::shared_ptr<const NAV::NodeData>& data) { // test/logs/vn310-gnss.vnb
+    nm::RegisterWatcherCallbackToInputPin(82, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) { // logs/vn310-gnss.vnb
         messageCounterGnssLogVnb++;
 
         LOG_TRACE("messageCounterGnssDataCsv = {}, messageCounterGnssLogCsv = {}, messageCounterGnssLogVnb = {}", messageCounterGnssDataCsv, messageCounterGnssLogCsv, messageCounterGnssLogVnb);
 
-        REQUIRE(logs_vn310_gnss_vnb == nullptr); // Check if messages are missing in the other nodes
-        logs_vn310_gnss_vnb = std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data);
+        std::lock_guard lk(comparisonMutex);
+        logs_vn310_gnss_vnb.push_back(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()));
 
         compareObservations(data_vn310_gnss_csv, logs_vn310_gnss_csv, logs_vn310_gnss_vnb);
     });

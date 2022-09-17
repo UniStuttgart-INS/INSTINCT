@@ -28,13 +28,6 @@ class NodeData;
 class InputPin;
 class OutputPin;
 
-// /// @brief Tuple of types allowed as a node callback
-// using NodeCallbackInfo = std::tuple<Node*, void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>;
-// /// @brief Tuple of types allowed as notify functions
-// using NotifyFunctionInfo = std::tuple<Node*, void (Node::*)(ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>;
-// /// @brief Tuple of types allowed as watcher callbacks
-// using WatcherCallbackInfo = std::pair<void (*)(const std::shared_ptr<const NodeData>&), ax::NodeEditor::LinkId>;
-
 /// @brief Pins in the GUI for information exchange
 class Pin
 {
@@ -630,6 +623,24 @@ class InputPin : public Pin
 
     /// Queue with received data
     NodeDataQueue queue;
+
+#ifdef TESTING
+    /// Flow data watcher callback function type to call when firable.
+    /// - 1st Parameter: Queue with the received messages
+    /// - 2nd Parameter: Pin index of the pin the data is received on
+    using FlowFirableWatcherCallbackFunc = void (*)(const Node*, const NodeDataQueue&, size_t);
+    /// Notify watcher function type to call when the connected value changed
+    /// - 1st Parameter: Time when the message was received
+    /// - 2nd Parameter: Pin index of the pin the data is received on
+    using DataChangedWatcherNotifyFunc = void (*)(const Node*, const InsTime&, size_t);
+
+    /// Watcher callback function types
+    using WatcherCallback = std::variant<FlowFirableWatcherCallbackFunc, // Flow:  Callback function type to call when firable
+                                         DataChangedWatcherNotifyFunc>;  // Other: Notify function type to call when the connected value changed
+
+    /// Watcher Callbacks are used in testing to check the transmitted data
+    std::vector<WatcherCallback> watcherCallbacks;
+#endif
 
     friend class Pin;
     friend class OutputPin;

@@ -344,44 +344,54 @@ void NAV::NodeManager::InitializeAllNodesAsync()
 
 #ifdef TESTING
 
-std::vector<std::pair<ax::NodeEditor::PinId, void (*)(const std::shared_ptr<const NAV::NodeData>&)>> watcherPinList;
-std::vector<std::pair<ax::NodeEditor::LinkId, void (*)(const std::shared_ptr<const NAV::NodeData>&)>> watcherLinkList;
+std::vector<std::pair<ax::NodeEditor::PinId, NAV::InputPin::WatcherCallback>> watcherPinList;
+std::vector<std::pair<ax::NodeEditor::LinkId, NAV::InputPin::WatcherCallback>> watcherLinkList;
 
 void (*cleanupCallback)() = nullptr;
 
-void NAV::NodeManager::RegisterWatcherCallbackToOutputPin(ax::NodeEditor::PinId id, void (*callback)(const std::shared_ptr<const NodeData>&))
+void NAV::NodeManager::RegisterWatcherCallbackToInputPin(ax::NodeEditor::PinId id, InputPin::WatcherCallback callback)
 {
     watcherPinList.emplace_back(id, callback);
 }
 
-void NAV::NodeManager::RegisterWatcherCallbackToLink(ax::NodeEditor::LinkId id, void (*callback)(const std::shared_ptr<const NodeData>&))
+void NAV::NodeManager::RegisterWatcherCallbackToLink(ax::NodeEditor::LinkId id, InputPin::WatcherCallback callback)
 {
     watcherLinkList.emplace_back(id, callback);
 }
 
 void NAV::NodeManager::ApplyWatcherCallbacks()
 {
-    // TODO: Refactor this
-    // for (auto& [linkId, callback] : watcherLinkList)
-    // {
-    //     if (Link* link = FindLink(linkId))
-    //     {
-    //         if (auto* pin = FindOutputPin(link->startPinId))
-    //         {
-    //             LOG_DEBUG("Adding watcher callback on node '{}' on pin {}", pin->parentNode->nameId(), pin->parentNode->outputPinIndexFromId(pin->id));
-    //             pin->watcherCallbacksOld.emplace_back(callback, linkId);
-    //         }
-    //     }
-    // }
+    for (auto& [linkId, callback] : watcherLinkList)
+    {
+        for (auto& node : m_nodes)
+        {
+            for (size_t pinIdx = 0; pinIdx < node->inputPins.size(); pinIdx++)
+            {
+                auto& pin = node->inputPins[pinIdx];
+                if (pin.isPinLinked() && pin.link.linkId == linkId)
+                {
+                    LOG_DEBUG("Adding watcher callback on node '{}' on pin with index {}", pin.parentNode->nameId(), pinIdx);
+                    pin.watcherCallbacks.emplace_back(callback);
+                }
+            }
+        }
+    }
 
-    // for (auto& [id, callback] : watcherPinList)
-    // {
-    //     if (auto* pin = FindOutputPin(id))
-    //     {
-    //         LOG_DEBUG("Adding watcher callback on node '{}' on pin {}", pin->parentNode->nameId(), pin->parentNode->outputPinIndexFromId(pin->id));
-    //         pin->watcherCallbacksOld.emplace_back(callback, 0);
-    //     }
-    // }
+    for (auto& [id, callback] : watcherPinList)
+    {
+        for (auto& node : m_nodes)
+        {
+            for (size_t pinIdx = 0; pinIdx < node->inputPins.size(); pinIdx++)
+            {
+                auto& pin = node->inputPins[pinIdx];
+                if (pin.id == id)
+                {
+                    LOG_DEBUG("Adding watcher callback on node '{}' on pin with index {}", pin.parentNode->nameId(), pinIdx);
+                    pin.watcherCallbacks.emplace_back(callback);
+                }
+            }
+        }
+    }
 }
 
 void NAV::NodeManager::RegisterCleanupCallback(void (*callback)())
