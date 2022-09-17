@@ -155,7 +155,7 @@ void NAV::ImuSimulator::guiConfig()
                 ImGui::TableSetColumnIndex(index);
                 auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_CSV);
                 if (mutex) { mutex->lock(); }
-                if (const auto* csvData = getInputValue<CsvData>(INPUT_PORT_INDEX_CSV);
+                if (const auto* csvData = getInputValue<const CsvData>(INPUT_PORT_INDEX_CSV);
                     csvData && std::find(csvData->description.begin(), csvData->description.end(), text) != csvData->description.end())
                 {
                     ImGui::TextUnformatted(text);
@@ -1083,7 +1083,7 @@ bool NAV::ImuSimulator::initializeSplines()
     {
         auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_CSV);
         if (mutex) { mutex->lock(); }
-        if (const auto* csvData = getInputValue<CsvData>(INPUT_PORT_INDEX_CSV);
+        if (const auto* csvData = getInputValue<const CsvData>(INPUT_PORT_INDEX_CSV);
             csvData && csvData->lines.size() >= 2)
         {
             _startTime = getTimeFromCsvLine(csvData->lines.front(), csvData->description);
@@ -1192,7 +1192,7 @@ bool NAV::ImuSimulator::resetNode()
     {
         auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_CSV);
         if (mutex) { mutex->lock(); }
-        if (const auto* csvData = getInputValue<CsvData>(INPUT_PORT_INDEX_CSV);
+        if (const auto* csvData = getInputValue<const CsvData>(INPUT_PORT_INDEX_CSV);
             csvData && !csvData->lines.empty())
         {
             _startTime = getTimeFromCsvLine(csvData->lines.front(), csvData->description);

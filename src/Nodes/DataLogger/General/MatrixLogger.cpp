@@ -118,7 +118,7 @@ void NAV::MatrixLogger::writeMatrix(const InsTime& insTime, size_t pinIdx)
         // Matrix
         if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
         {
-            const auto* value = getInputValue<Eigen::MatrixXd>(INPUT_PORT_INDEX_MATRIX);
+            const auto* value = getInputValue<const Eigen::MatrixXd>(INPUT_PORT_INDEX_MATRIX);
 
             if (value != nullptr && !insTime.empty())
             {

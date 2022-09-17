@@ -137,7 +137,7 @@ void NAV::SinglePointPositioning::guiConfig()
             }
 
             ImGui::TableNextColumn(); // # Sat
-            if (const auto* gnssNavInfo = getInputValue<GnssNavInfo>(pinIndex))
+            if (const auto* gnssNavInfo = getInputValue<const GnssNavInfo>(pinIndex))
             {
                 size_t usedSatNum = 0;
                 std::string usedSats;
@@ -376,7 +376,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     std::vector<const GnssNavInfo*> gnssNavInfos(_nNavInfoPins);
     for (size_t i = 0; i < _nNavInfoPins; i++)
     {
-        gnssNavInfos[i] = getInputValue<GnssNavInfo>(INPUT_PORT_INDEX_GNSS_NAV_INFO + i);
+        gnssNavInfos[i] = getInputValue<const GnssNavInfo>(INPUT_PORT_INDEX_GNSS_NAV_INFO + i);
     }
 
     if (_e_position.isZero() || std::all_of(gnssNavInfos.begin(), gnssNavInfos.end(), [](const GnssNavInfo* info) { return info == nullptr; }))

@@ -1924,7 +1924,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
         // Matrix
         if (startPin.dataIdentifier.front() == "Eigen::MatrixXd")
         {
-            if (const auto* matrix = getInputValue<Eigen::MatrixXd>(pinIndex))
+            if (const auto* matrix = getInputValue<const Eigen::MatrixXd>(pinIndex))
             {
                 auto* mutex = getInputValueMutex(pinIndex);
                 if (mutex) { mutex->lock(); }
@@ -2038,7 +2038,7 @@ void NAV::Plot::plotBoolean(const InsTime& insTime, size_t pinIdx)
         return;
     }
 
-    const auto* value = getInputValue<bool>(pinIdx);
+    const auto* value = getInputValue<const bool>(pinIdx);
 
     if (value != nullptr && !insTime.empty())
     {
@@ -2065,7 +2065,7 @@ void NAV::Plot::plotInteger(const InsTime& insTime, size_t pinIdx)
         return;
     }
 
-    const auto* value = getInputValue<int>(pinIdx);
+    const auto* value = getInputValue<const int>(pinIdx);
 
     if (value != nullptr && !insTime.empty())
     {
@@ -2092,7 +2092,7 @@ void NAV::Plot::plotFloat(const InsTime& insTime, size_t pinIdx)
         return;
     }
 
-    const auto* value = getInputValue<double>(pinIdx);
+    const auto* value = getInputValue<const double>(pinIdx);
 
     if (value != nullptr && !insTime.empty())
     {
@@ -2123,7 +2123,7 @@ void NAV::Plot::plotMatrix(const InsTime& insTime, size_t pinIdx)
     {
         if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
         {
-            const auto* value = getInputValue<Eigen::MatrixXd>(pinIdx);
+            const auto* value = getInputValue<const Eigen::MatrixXd>(pinIdx);
 
             if (value != nullptr && !insTime.empty())
             {

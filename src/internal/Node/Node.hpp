@@ -260,8 +260,9 @@ class Node
     /// @tparam T Type of the connected object
     /// @param[in] portIndex Input port where to retrieve the data from
     /// @return Pointer to the object
-    template<typename T> // TODO: Template to only accept const
-    [[nodiscard]] const T* getInputValue(size_t portIndex) const
+    template<typename T,
+             typename = std::enable_if_t<std::is_const_v<T>>>
+    [[nodiscard]] T* getInputValue(size_t portIndex) const
     {
         return inputPins.at(portIndex).link.getValue<T>();
     }

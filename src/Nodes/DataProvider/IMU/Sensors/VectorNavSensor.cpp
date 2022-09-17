@@ -7010,7 +7010,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                 {
                     auto* mutex = vnSensor->getInputValueMutex(0);
                     if (mutex) { mutex->lock(); }
-                    if (const auto* timeSyncMaster = vnSensor->getInputValue<TimeSync>(0);
+                    if (const auto* timeSyncMaster = vnSensor->getInputValue<const TimeSync>(0);
                         timeSyncMaster && !timeSyncMaster->ppsTime.empty())
                     {
                         // This can have the following values
