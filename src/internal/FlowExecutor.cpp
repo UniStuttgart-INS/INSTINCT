@@ -163,11 +163,7 @@ void NAV::FlowExecutor::execute()
         LOG_TRACE("Putting node '{}' into post-processing mode and adding to active nodes.", node->nameId());
         for (auto& outputPin : node->outputPins)
         {
-            if (outputPin.type == Pin::Type::Flow
-#ifndef TESTING
-                && outputPin.isPinLinked()
-#endif
-            )
+            if (outputPin.type == Pin::Type::Flow && outputPin.isPinLinked())
             {
                 outputPin.mode = OutputPin::Mode::POST_PROCESSING;
                 LOG_TRACE("    Putting pin '{}' into post-processing mode", outputPin.name);
@@ -175,12 +171,9 @@ void NAV::FlowExecutor::execute()
 
             if (auto* callback = std::get_if<OutputPin::PollDataFunc>(&outputPin.data);
                 outputPin.mode == OutputPin::Mode::POST_PROCESSING && callback != nullptr && *callback != nullptr
-#ifndef TESTING
                 && std::any_of(outputPin.links.begin(), outputPin.links.end(), [](const OutputPin::OutgoingLink& link) {
                        return link.connectedNode->isInitialized();
-                   })
-#endif
-            )
+                   }))
             {
                 if (auto obs = (node->**callback)(true)) // Peek the data
                 {
