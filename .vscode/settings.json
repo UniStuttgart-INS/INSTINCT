@@ -59,7 +59,7 @@
         "License, v. 2.0. If a copy of the MPL was not distributed with this",
         "file, You can obtain one at https://mozilla.org/MPL/2.0/.",
         "",
-        "<-- KEEP ONE EMPTY LINE HERE AND MAKE LICENCSE COMMENTS only 2 slashes '//'",
+        "<-- KEEP ONE EMPTY LINE HERE AND MAKE LICENSE COMMENTS only 2 slashes '//'",
         "",
     ],
     "doxdocgen.generic.order": [

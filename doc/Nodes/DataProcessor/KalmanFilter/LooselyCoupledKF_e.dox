@@ -507,12 +507,12 @@ see
 - \cite Groves2013 Groves, ch. 3.4.1, eq. 3.90, p. 119
 
 \fl{equation,eq-LCKF_e-H}
-  \mathbf{H}^n =
+  \mathbf{H}^e =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
                 nodes={rectangle,text width=2.5em,align=center,minimum height=2.3em,anchor=center},] {
       \mathbf{H}_{r,\delta \psi}^e &  \mathbf{0}_3 & -\mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3                          \\
-      \mathbf{H}_{v,\delta \psi}^e & -\mathbf{I}_3 &  \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{H}_{\delta v,\omega_{ib}^b}^e \\
+      \mathbf{H}_{v,\delta \psi}^e & -\mathbf{I}_3 &  \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{H}_{v,\omega_{ib}^b}^e \\
     };
 
     \begin{pgfonlayer}{background}
