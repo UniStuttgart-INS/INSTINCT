@@ -1137,7 +1137,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
 
                 if (!peek)
                 {
-                    LOG_DATA("{}: Sending out ImuObs {}: {} - {}", nameId(), multi_id, obs->insTime->toYMDHMS(), obs->timeSinceStartup.value());
+                    LOG_DATA("{}: Sending out ImuObs {}: {} - {}", nameId(), multi_id, obs->insTime.toYMDHMS(), obs->timeSinceStartup.value());
                     if (multi_id == 0)
                     {
                         invokeCallbacks(OUTPUT_PORT_INDEX_IMUOBS_1, obs);
@@ -1170,7 +1170,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 const auto& vehicleGpsPosition = std::get<VehicleGpsPosition>(gpsIter->second.data);
                 const auto& vehicleAttitude = std::get<VehicleAttitude>(attIter->second.data);
 
-                obs->insTime.emplace(0, 0, 0, 0, 0, vehicleGpsPosition.time_utc_usec * 1e-6L);
+                obs->insTime = InsTime(0, 0, 0, 0, 0, vehicleGpsPosition.time_utc_usec * 1e-6L);
                 obs->setState_n(Eigen::Vector3d{ deg2rad(1e-7 * static_cast<double>(vehicleGpsPosition.lat)), deg2rad(1e-7 * static_cast<double>(vehicleGpsPosition.lon)), 1e-3 * (static_cast<double>(vehicleGpsPosition.alt_ellipsoid)) },
                                 Eigen::Vector3d{ vehicleGpsPosition.vel_n_m_s, vehicleGpsPosition.vel_e_m_s, vehicleGpsPosition.vel_d_m_s },
                                 Eigen::Quaterniond{ vehicleAttitude.q.at(0), vehicleAttitude.q.at(1), vehicleAttitude.q.at(2), vehicleAttitude.q.at(3) });
@@ -1184,7 +1184,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
 
                 if (!peek)
                 {
-                    LOG_DATA("{}: Sending out PosVelAtt: {}", nameId(), obs->insTime->toYMDHMS());
+                    LOG_DATA("{}: Sending out PosVelAtt: {}", nameId(), obs->insTime.toYMDHMS());
                     invokeCallbacks(OUTPUT_PORT_INDEX_POSVELATT, obs);
                 }
                 else

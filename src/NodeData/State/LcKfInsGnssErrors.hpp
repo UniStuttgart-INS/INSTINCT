@@ -6,12 +6,12 @@
 #pragma once
 
 #include "util/Eigen.hpp"
-#include "NodeData/InsObs.hpp"
+#include "NodeData/NodeData.hpp"
 
 namespace NAV
 {
 /// Loosely-coupled Kalman Filter INS/GNSS errors
-class LcKfInsGnssErrors : public InsObs
+class LcKfInsGnssErrors : public NodeData
 {
   public:
     /// @brief Returns the type of the data class
@@ -25,7 +25,7 @@ class LcKfInsGnssErrors : public InsObs
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
     {
-        return { InsObs::type() };
+        return { NodeData::type() };
     }
 
     /// @brief Available Frames

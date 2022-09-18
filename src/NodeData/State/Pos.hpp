@@ -8,12 +8,12 @@
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 
 #include "util/Eigen.hpp"
-#include "NodeData/InsObs.hpp"
+#include "NodeData/NodeData.hpp"
 
 namespace NAV
 {
 /// Position, Velocity and Attitude Storage Class
-class Pos : public InsObs
+class Pos : public NodeData
 {
   public:
     /// @brief Returns the type of the data class
@@ -27,7 +27,7 @@ class Pos : public InsObs
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
     {
-        return { InsObs::type() };
+        return { NodeData::type() };
     }
 
     /* -------------------------------------------------------------------------------------------------------- */

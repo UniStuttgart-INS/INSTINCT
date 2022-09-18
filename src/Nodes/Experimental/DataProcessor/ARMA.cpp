@@ -299,9 +299,9 @@ void NAV::experimental::ARMA::hannan_rissanen(Eigen::VectorXd& y, int p, int q, 
     }
 }
 
-void NAV::experimental::ARMA::receiveImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::experimental::ARMA::receiveImuObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto obs = std::static_pointer_cast<const ImuObs>(nodeData);
+    auto obs = std::static_pointer_cast<const ImuObs>(queue.extract_front());
     auto newImuObs = std::make_shared<ImuObs>(obs->imuPos);
     _buffer.push_back(obs); // push latest IMU epoch to deque
 
@@ -369,8 +369,8 @@ void NAV::experimental::ARMA::receiveImuObs(const std::shared_ptr<const NodeData
             _y_hat_t(obs_nr) = _y_hat(_deque_size - 1) + _y_mean; // hand over last entry of y_hat and add y_mean
         }
         // output
-        LOG_TRACE("{}: called {}", nameId(), obs->insTime->toYMDHMS());
-        newImuObs->insTime = obs->insTime.value();
+        LOG_TRACE("{}: called {}", nameId(), obs->insTime.toYMDHMS());
+        newImuObs->insTime = obs->insTime;
         newImuObs->accelCompXYZ = Eigen::Vector3d(_y_hat_t.head(3)); // output estimations of accelerometer observations
         newImuObs->gyroCompXYZ = Eigen::Vector3d(_y_hat_t.tail(3));  // output estimations of gyro observations
         invokeCallbacks(OUTPUT_PORT_INDEX_IMU_OBS, newImuObs);

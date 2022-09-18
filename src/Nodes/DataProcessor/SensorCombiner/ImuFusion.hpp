@@ -158,9 +158,9 @@ class ImuFusion : public Imu
     void initializeMountingAngles();
 
     /// @brief Receive Function for the signal at the time tₖ
-    /// @param[in] nodeData Signal to process
-    /// @param[in] linkId Id of the link over which the data is received
-    void recvSignal(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void recvSignal(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief Calculates the state-transition-matrix 𝚽
     /// @param[in] dt Time difference between two successive measurements

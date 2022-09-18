@@ -221,6 +221,9 @@ struct InsTime_MJD
     {
         return !(*this <= rhs);
     }
+
+    /// @brief Converts the object into a readable string
+    explicit operator std::string() const;
 };
 
 /// Julien Date [UTC]
@@ -301,6 +304,9 @@ struct InsTime_JD
     {
         return !(*this <= rhs);
     }
+
+    /// @brief Converts the object into a readable string
+    explicit operator std::string() const;
 };
 
 /// GPS week and time of week in GPS standard time [GPST]
@@ -394,6 +400,9 @@ struct InsTime_GPSweekTow
     {
         return !(*this <= rhs);
     }
+
+    /// @brief Converts the object into a readable string
+    explicit operator std::string() const;
 };
 
 /// Universal Time Coordinated [UTC]
@@ -408,8 +417,8 @@ struct InsTime_YMDHMS
 
     /// @brief Constructor
     /// @param[in] year Year in Universal Time Coordinated [UTC]
-    /// @param[in] month Month in Universal Time Coordinated [UTC]
-    /// @param[in] day Day in Universal Time Coordinated [UTC]
+    /// @param[in] month Month in Universal Time Coordinated (1 = January) [UTC]
+    /// @param[in] day Day in Universal Time Coordinated (1 = first day) [UTC]
     /// @param[in] hour Hour in Universal Time Coordinated [UTC]
     /// @param[in] min Minute in Universal Time Coordinated [UTC]
     /// @param[in] sec Second in Universal Time Coordinated [UTC]
@@ -536,6 +545,9 @@ struct InsTime_YMDHMS
     {
         return !(*this <= rhs);
     }
+
+    /// @brief Converts the object into a readable string
+    explicit operator std::string() const;
 };
 
 /// GPS year and day of year in GPS standard time [GPST]
@@ -630,6 +642,9 @@ struct InsTime_YDoySod
     {
         return !(*this <= rhs);
     }
+
+    /// @brief Converts the object into a readable string
+    explicit operator std::string() const;
 };
 
 /// The class is responsible for all time-related tasks
@@ -731,13 +746,13 @@ class InsTime
 
     /// @brief Constructor
     /// @param[in] year Year
-    /// @param[in] month Month
-    /// @param[in] day Day
+    /// @param[in] month Month (1 = January)
+    /// @param[in] day Day (1 = first day)
     /// @param[in] hour Hour
     /// @param[in] min Minute
     /// @param[in] sec Second
     /// @param[in] timesys Time System in which the previous values are given in
-    constexpr InsTime(uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uint16_t min, long double sec, TimeSystem timesys = UTC)
+    constexpr InsTime(int32_t year, int32_t month, int32_t day, int32_t hour, int32_t min, long double sec, TimeSystem timesys = UTC)
         : InsTime(InsTime_YMDHMS(year, month, day, hour, min, sec), timesys) {}
 
     /// @brief Destructor
@@ -1035,6 +1050,9 @@ class InsTime
     }
 
     /* ---------------------------- Utility Functions --------------------------- */
+
+    /// @brief Converts the object into a readable string
+    explicit operator std::string() const;
 
     /// @brief Checks if the Time object has a value
     [[nodiscard]] constexpr bool empty() const

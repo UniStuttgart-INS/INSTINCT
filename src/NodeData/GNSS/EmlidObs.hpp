@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "NodeData/InsObs.hpp"
+#include "NodeData/NodeData.hpp"
 
 #include <variant>
 
@@ -14,7 +14,7 @@
 namespace NAV
 {
 /// Emlid Observation Class
-class EmlidObs : public InsObs
+class EmlidObs : public NodeData
 {
   public:
     /// @brief Returns the type of the data class
@@ -28,7 +28,7 @@ class EmlidObs : public InsObs
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
     {
-        return { InsObs::type() };
+        return { NodeData::type() };
     }
 
     /// Erb Message ID

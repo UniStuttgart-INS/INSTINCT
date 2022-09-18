@@ -34,4 +34,6 @@ void SetCurrentTime(const InsTime& insTime);
 /// @brief Clears the current time object
 void ClearCurrentTime();
 
+// TODO: Remove this all. Nodes have to give the time to each other over links. Each message needs a time, not globally
+
 } // namespace NAV::util::time

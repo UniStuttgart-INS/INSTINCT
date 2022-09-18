@@ -70,17 +70,17 @@ class ErrorModel : public Node
     /// @brief Called when a new link was established
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
-    void afterCreateLink(Pin* startPin, Pin* endPin) override;
+    void afterCreateLink(OutputPin& startPin, InputPin& endPin) override;
 
     /// @brief Called when a link was deleted
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
-    void afterDeleteLink(Pin* startPin, Pin* endPin) override;
+    void afterDeleteLink(OutputPin& startPin, InputPin& endPin) override;
 
     /// @brief Callback when receiving data on a port
-    /// @param[in] nodeData Data to process
-    /// @param[in] linkId Id of the link over which the data is received
-    void receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void receiveObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief Callback when receiving an ImuObs
     /// @param[in] imuObs Copied data to modify and send out again

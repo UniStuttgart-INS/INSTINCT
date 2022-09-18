@@ -5,7 +5,13 @@
 
 #pragma once
 
-namespace NAV::FlowExecutor
+namespace NAV
+{
+
+class Node;
+
+namespace FlowExecutor
+
 {
 /// @brief Checks if the thread is running
 [[nodiscard]] bool isRunning() noexcept;
@@ -19,4 +25,10 @@ void stop();
 /// @brief Waits for a thread to finish its execution
 void waitForFinish();
 
-} // namespace NAV::FlowExecutor
+/// @brief Called by nodes when they finished with sending data
+/// @param[in] node The node to deregister
+void deregisterNode(const Node* node);
+
+} // namespace FlowExecutor
+
+} // namespace NAV

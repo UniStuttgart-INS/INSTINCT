@@ -131,11 +131,11 @@ std::shared_ptr<const NAV::NodeData> NAV::UbloxFile::pollData(bool peek)
     auto obs = std::make_shared<UbloxObs>();
     vendor::ublox::decryptUbloxObs(obs, *packet, peek);
 
-    if (obs->insTime.has_value())
+    if (!obs->insTime.empty())
     {
         if (util::time::GetMode() == util::time::Mode::REAL_TIME)
         {
-            util::time::SetCurrentTime(obs->insTime.value());
+            util::time::SetCurrentTime(obs->insTime);
         }
     }
     else if (auto currentTime = util::time::GetCurrentInsTime();

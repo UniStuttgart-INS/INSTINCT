@@ -226,8 +226,8 @@ void NAV::ImuFusion::guiConfig()
                 {
                     if (ImGui::Button(fmt::format("x##{} - {}", size_t(id), pinIndex).c_str()))
                     {
-                        nm::DeleteInputPin(inputPins.at(pinIndex).id);
-                        nm::DeleteOutputPin(outputPins.at(pinIndex).id);
+                        nm::DeleteInputPin(inputPins.at(pinIndex));
+                        nm::DeleteOutputPin(outputPins.at(pinIndex));
                         _pinData.erase(_pinData.begin() + static_cast<int64_t>(pinIndex - 1));
                         --_nInputPins;
                         flow::ApplyChanges();
@@ -617,8 +617,8 @@ void NAV::ImuFusion::updateNumberOfInputPins()
     }
     while (inputPins.size() > _nInputPins) // TODO: while loop still necessary here? guiConfig also deletes pins
     {
-        nm::DeleteInputPin(inputPins.back().id);
-        nm::DeleteOutputPin(outputPins.back().id);
+        nm::DeleteInputPin(inputPins.back());
+        nm::DeleteOutputPin(outputPins.back());
         _pinData.pop_back();
     }
     _pinData.resize(_nInputPins);
@@ -648,7 +648,7 @@ void NAV::ImuFusion::initializeKalmanFilter()
 
     for (size_t pinIndex = 0; pinIndex < _pinData.size(); pinIndex++)
     {
-        if (!nm::FindConnectedLinkToInputPin(inputPins.at(pinIndex).id))
+        if (!inputPins.at(pinIndex).isPinLinked())
         {
             LOG_INFO("Fewer links than input pins - Consider deleting pins that are not connected to limit KF matrices to the necessary size.");
         }
@@ -855,11 +855,11 @@ void NAV::ImuFusion::initializeKalmanFilter()
     LOG_DATA("kalmanFilter.Q =\n{}", _kalmanFilter.Q);
 }
 
-void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId)
+void NAV::ImuFusion::recvSignal(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
 {
-    auto imuObs = std::static_pointer_cast<const ImuObs>(nodeData);
+    auto imuObs = std::static_pointer_cast<const ImuObs>(queue.extract_front());
 
-    if (!imuObs->insTime.has_value() && !imuObs->timeSinceStartup.has_value())
+    if (imuObs->insTime.empty() && !imuObs->timeSinceStartup.has_value())
     {
         LOG_ERROR("{}: Can't set new imuObs__t0 because the observation has no time tag (insTime/timeSinceStartup)", nameId());
         return;
@@ -869,12 +869,12 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
     {
         // Initial time step for KF prediction
         InsTime dt_init = InsTime{ 0, 0, 0, 0, 0, 1.0 / _imuFrequency };
-        _latestTimestamp = InsTime{ 0, 0, 0, 0, 0, (imuObs->insTime.value() - dt_init).count() };
+        _latestTimestamp = InsTime{ 0, 0, 0, 0, 0, (imuObs->insTime - dt_init).count() };
     }
 
     // Predict states over the time difference between the latest signal and the one before
-    auto dt = static_cast<double>((imuObs->insTime.value() - _latestTimestamp).count());
-    _latestTimestamp = imuObs->insTime.value();
+    auto dt = static_cast<double>((imuObs->insTime - _latestTimestamp).count());
+    _latestTimestamp = imuObs->insTime;
     LOG_DATA("dt = {}", dt);
 
     stateTransitionMatrix_Phi(_kalmanFilter.Phi, dt);
@@ -884,7 +884,7 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
 
     if (_checkKalmanMatricesRanks)
     {
-        if (nm::FindConnectedLinkToInputPin(inputPins.at(_pinData.size() - 1).id))
+        if (inputPins.at(_pinData.size() - 1).isPinLinked())
         {
             auto rank = _kalmanFilter.P.fullPivLu().rank();
             if (rank != _kalmanFilter.P.rows())
@@ -894,56 +894,51 @@ void NAV::ImuFusion::recvSignal(const std::shared_ptr<const NodeData>& nodeData,
         }
     }
 
-    if (Link* link = nm::FindLink(linkId))
+    // Read sensor rotation info from 'imuObs'
+    if (std::isnan(_imuRotations_accel[pinIdx](0, 0)))
     {
-        size_t pinIndex = pinIndexFromId(link->endPinId);
+        // Rotation matrix of the accelerometer platform to body frame
+        auto DCM_accel = imuObs->imuPos.b_quatAccel_p().toRotationMatrix();
 
-        // Read sensor rotation info from 'imuObs'
-        if (std::isnan(_imuRotations_accel[pinIndex](0, 0)))
-        {
-            // Rotation matrix of the accelerometer platform to body frame
-            auto DCM_accel = imuObs->imuPos.b_quatAccel_p().toRotationMatrix();
-
-            _imuRotations_accel[pinIndex] = DCM_accel;
-        }
-        if (std::isnan(_imuRotations_gyro[pinIndex](0, 0)))
-        {
-            // Rotation matrix of the gyro platform to body frame
-            auto DCM_gyro = imuObs->imuPos.b_quatGyro_p().toRotationMatrix();
-
-            _imuRotations_gyro[pinIndex] = DCM_gyro;
-        }
-
-        // Initialize H with mounting angles (DCM) of the sensor that provided the latest measurement
-        auto DCM_accel = _imuRotations_accel.at(pinIndex);
-        LOG_DATA("DCM_accel =\n{}", DCM_accel);
-        auto DCM_gyro = _imuRotations_gyro.at(pinIndex);
-        LOG_DATA("DCM_gyro =\n{}", DCM_gyro);
-
-        // Initialize '_imuPos' of the combined solution - that of the reference sensor
-        if (!_imuPosSet && pinIndex == 0)
-        {
-            this->_imuPos = imuObs->imuPos;
-            _imuPosSet = true;
-        }
-
-        _kalmanFilter.H = designMatrix_H(DCM_accel, DCM_gyro, pinIndex);
-        LOG_DATA("kalmanFilter.H =\n", _kalmanFilter.H);
-
-        measurementNoiseMatrix_R(_kalmanFilter.R, pinIndex);
-        LOG_DATA("{}: kalmanFilter.R =\n{}", nameId(), _kalmanFilter.R);
-
-        if (_checkKalmanMatricesRanks)
-        {
-            auto rank = (_kalmanFilter.H * _kalmanFilter.P * _kalmanFilter.H.transpose() + _kalmanFilter.R).fullPivLu().rank();
-            if (rank != _kalmanFilter.H.rows())
-            {
-                LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank);
-            }
-        }
-
-        combineSignals(imuObs);
+        _imuRotations_accel[pinIdx] = DCM_accel;
     }
+    if (std::isnan(_imuRotations_gyro[pinIdx](0, 0)))
+    {
+        // Rotation matrix of the gyro platform to body frame
+        auto DCM_gyro = imuObs->imuPos.b_quatGyro_p().toRotationMatrix();
+
+        _imuRotations_gyro[pinIdx] = DCM_gyro;
+    }
+
+    // Initialize H with mounting angles (DCM) of the sensor that provided the latest measurement
+    auto DCM_accel = _imuRotations_accel.at(pinIdx);
+    LOG_DATA("DCM_accel =\n{}", DCM_accel);
+    auto DCM_gyro = _imuRotations_gyro.at(pinIdx);
+    LOG_DATA("DCM_gyro =\n{}", DCM_gyro);
+
+    // Initialize '_imuPos' of the combined solution - that of the reference sensor
+    if (!_imuPosSet && pinIdx == 0)
+    {
+        this->_imuPos = imuObs->imuPos;
+        _imuPosSet = true;
+    }
+
+    _kalmanFilter.H = designMatrix_H(DCM_accel, DCM_gyro, pinIdx);
+    LOG_DATA("kalmanFilter.H =\n", _kalmanFilter.H);
+
+    measurementNoiseMatrix_R(_kalmanFilter.R, pinIdx);
+    LOG_DATA("{}: kalmanFilter.R =\n{}", nameId(), _kalmanFilter.R);
+
+    if (_checkKalmanMatricesRanks)
+    {
+        auto rank = (_kalmanFilter.H * _kalmanFilter.P * _kalmanFilter.H.transpose() + _kalmanFilter.R).fullPivLu().rank();
+        if (rank != _kalmanFilter.H.rows())
+        {
+            LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank);
+        }
+    }
+
+    combineSignals(imuObs);
 }
 
 void NAV::ImuFusion::combineSignals(const std::shared_ptr<const ImuObs>& imuObs)
@@ -981,7 +976,7 @@ void NAV::ImuFusion::combineSignals(const std::shared_ptr<const ImuObs>& imuObs)
     }
     if (_checkKalmanMatricesRanks)
     {
-        if (nm::FindConnectedLinkToInputPin(inputPins.at(_pinData.size() - 1).id))
+        if (inputPins.at(_pinData.size() - 1).isPinLinked())
         {
             auto rank = _kalmanFilter.P.fullPivLu().rank();
             if (rank != _kalmanFilter.P.rows())

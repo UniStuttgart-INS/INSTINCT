@@ -118,32 +118,32 @@ void NAV::SppSolutionLogger::deinitialize()
     FileWriter::deinitialize();
 }
 
-void NAV::SppSolutionLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::SppSolutionLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto obs = std::static_pointer_cast<const SppSolution>(nodeData);
+    auto obs = std::static_pointer_cast<const SppSolution>(queue.extract_front());
 
     constexpr int gpsCyclePrecision = 3;
     constexpr int gpsTimePrecision = 12;
     constexpr int valuePrecision = 12;
 
-    if (obs->insTime.has_value())
+    if (!obs->insTime.empty())
     {
-        _filestream << std::setprecision(valuePrecision) << std::round(calcTimeIntoRun(obs->insTime.value()) * 1e9) / 1e9;
+        _filestream << std::setprecision(valuePrecision) << std::round(calcTimeIntoRun(obs->insTime) * 1e9) / 1e9;
     }
     _filestream << ",";
-    if (obs->insTime.has_value())
+    if (!obs->insTime.empty())
     {
-        _filestream << std::fixed << std::setprecision(gpsCyclePrecision) << obs->insTime.value().toGPSweekTow().gpsCycle;
+        _filestream << std::fixed << std::setprecision(gpsCyclePrecision) << obs->insTime.toGPSweekTow().gpsCycle;
     }
     _filestream << ",";
-    if (obs->insTime.has_value())
+    if (!obs->insTime.empty())
     {
-        _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.value().toGPSweekTow().gpsWeek;
+        _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.toGPSweekTow().gpsWeek;
     }
     _filestream << ",";
-    if (obs->insTime.has_value())
+    if (!obs->insTime.empty())
     {
-        _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.value().toGPSweekTow().tow;
+        _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.toGPSweekTow().tow;
     }
     _filestream << "," << std::setprecision(valuePrecision);
 

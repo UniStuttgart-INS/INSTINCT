@@ -107,9 +107,9 @@ void NAV::VectorNavDataLogger::restore(json const& j)
     }
 }
 
-bool NAV::VectorNavDataLogger::onCreateLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pin* endPin)
+bool NAV::VectorNavDataLogger::onCreateLink([[maybe_unused]] OutputPin& startPin, [[maybe_unused]] InputPin& endPin)
 {
-    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
+    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
 
     if (isInitialized())
     {
@@ -148,9 +148,9 @@ void NAV::VectorNavDataLogger::deinitialize()
     FileWriter::deinitialize();
 }
 
-void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::VectorNavDataLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto obs = std::static_pointer_cast<const VectorNavBinaryOutput>(nodeData);
+    auto obs = std::static_pointer_cast<const VectorNavBinaryOutput>(queue.extract_front());
 
     if (_fileType == FileType::CSV)
     {
@@ -500,24 +500,24 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
         constexpr int floatPrecision = std::numeric_limits<float>::digits10 + 2;
         constexpr int doublePrecision = std::numeric_limits<double>::digits10 + 2;
 
-        if (obs->insTime.has_value())
+        if (!obs->insTime.empty())
         {
-            _filestream << std::setprecision(doublePrecision) << std::round(calcTimeIntoRun(obs->insTime.value()) * 1e9) / 1e9;
+            _filestream << std::setprecision(doublePrecision) << std::round(calcTimeIntoRun(obs->insTime) * 1e9) / 1e9;
         }
         _filestream << ",";
-        if (obs->insTime.has_value())
+        if (!obs->insTime.empty())
         {
-            _filestream << std::fixed << std::setprecision(gpsCyclePrecision) << obs->insTime->toGPSweekTow().gpsCycle;
+            _filestream << std::fixed << std::setprecision(gpsCyclePrecision) << obs->insTime.toGPSweekTow().gpsCycle;
         }
         _filestream << ',';
-        if (obs->insTime.has_value())
+        if (!obs->insTime.empty())
         {
-            _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime->toGPSweekTow().gpsWeek;
+            _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.toGPSweekTow().gpsWeek;
         }
         _filestream << ',';
-        if (obs->insTime.has_value())
+        if (!obs->insTime.empty())
         {
-            _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime->toGPSweekTow().tow;
+            _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.toGPSweekTow().tow;
         }
         // Group 2 (Time)
         if (obs->timeOutputs)
@@ -1106,9 +1106,9 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
             _headerWritten = true;
         }
 
-        if (obs->insTime.has_value())
+        if (!obs->insTime.empty())
         {
-            auto insTimeGPS = obs->insTime->toGPSweekTow();
+            auto insTimeGPS = obs->insTime.toGPSweekTow();
             auto tow = static_cast<double>(insTimeGPS.tow);
             _filestream.write(reinterpret_cast<const char*>(&insTimeGPS.gpsCycle), sizeof(insTimeGPS.gpsCycle));
             _filestream.write(reinterpret_cast<const char*>(&insTimeGPS.gpsWeek), sizeof(insTimeGPS.gpsWeek));

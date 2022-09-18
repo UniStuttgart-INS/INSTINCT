@@ -39,11 +39,11 @@ void registerNodeType()
     info.type = T::typeStatic();
 
     T obj;
-    for (const Pin& pin : obj.inputPins)
+    for (const InputPin& pin : obj.inputPins)
     {
         info.pinInfoList.emplace_back(pin.kind, pin.type, pin.dataIdentifier);
     }
-    for (const Pin& pin : obj.outputPins)
+    for (const OutputPin& pin : obj.outputPins)
     {
         info.pinInfoList.emplace_back(pin.kind, pin.type, pin.dataIdentifier);
     }
@@ -86,7 +86,7 @@ bool NAV::NodeRegistry::NodeInfo::hasCompatiblePin(const Pin* pin) const
                  && NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPinDataIdentifier, endPinDataIdentifier))
                 || (pinInfo.type == Pin::Type::Delegate
                     && std::find(endPinDataIdentifier.begin(), endPinDataIdentifier.end(), startPinParentNodeType) != endPinDataIdentifier.end())
-                || ((pinInfo.type == Pin::Type::Object || pinInfo.type == Pin::Type::Matrix) // NOLINT(misc-redundant-expression) // FIXME: error: equivalent expression on both sides of logical operator
+                || ((pinInfo.type == Pin::Type::Object || pinInfo.type == Pin::Type::Matrix) // NOLINT(misc-redundant-expression) - false positive warning
                     && Pin::dataIdentifierHaveCommon(startPinDataIdentifier, endPinDataIdentifier))
                 || pinInfo.type == Pin::Type::Bool || pinInfo.type == Pin::Type::Int || pinInfo.type == Pin::Type::Float || pinInfo.type == Pin::Type::String)
             {
@@ -165,7 +165,6 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 // Simple
 #include "Nodes/Simple/Combiner.hpp"
 #include "Nodes/Simple/Delay.hpp"
-#include "Nodes/Simple/Transformation.hpp"
 // Converter
 #include "Nodes/Converter/GNSS/RtklibPosConverter.hpp"
 #include "Nodes/Converter/GNSS/UartPacketConverter.hpp"
@@ -209,12 +208,13 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 // State
 #include "Nodes/State/PosVelAttInitializer.hpp"
 // Experimental
-#include "Nodes/Experimental/Simple/Matrix.hpp"
 #include "Nodes/Experimental/DataProcessor/ARMA.hpp"
 
 void NAV::NodeRegistry::RegisterNodeTypes()
 {
     LOG_TRACE("called");
+
+    Node::_autostartWorker = false;
 
     // Utility
     registerNodeType<Demo>();
@@ -222,8 +222,6 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     // Simple
     registerNodeType<Combiner>();
     registerNodeType<Delay>();
-    registerNodeType<NAV::experimental::Matrix>();
-    registerNodeType<Transformation>();
     // Converter
     registerNodeType<RtklibPosConverter>();
     registerNodeType<UartPacketConverter>();
@@ -268,9 +266,10 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<Plot>();
     // State
     registerNodeType<PosVelAttInitializer>();
+
+    Node::_autostartWorker = true;
 }
 
-#include "NodeData/InsObs.hpp"
 #include "NodeData/General/StringObs.hpp"
 #include "NodeData/GNSS/EmlidObs.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
@@ -290,7 +289,6 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 void NAV::NodeRegistry::RegisterNodeDataTypes()
 {
     registerNodeDataType<NodeData>();
-    registerNodeDataType<InsObs>();
     // General
     registerNodeDataType<StringObs>();
     // GNSS

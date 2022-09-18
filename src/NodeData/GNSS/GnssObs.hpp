@@ -9,7 +9,7 @@
 #include <vector>
 #include <algorithm>
 
-#include "NodeData/InsObs.hpp"
+#include "NodeData/NodeData.hpp"
 
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "Navigation/GNSS/Core/Code.hpp"
@@ -18,7 +18,7 @@
 namespace NAV
 {
 /// GNSS Observation message information
-class GnssObs : public InsObs
+class GnssObs : public NodeData
 {
   public:
     /// @brief Returns the type of the data class

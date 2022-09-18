@@ -2,12 +2,54 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <iomanip>
 
 #include "util/Logger.hpp"
 
 namespace NAV
 {
+InsTime::operator std::string() const
+{
+    std::stringstream stream;
+    stream << *this;
+    return stream.str();
+}
+
+InsTime_MJD::operator std::string() const
+{
+    std::stringstream stream;
+    stream << *this;
+    return stream.str();
+}
+
+InsTime_JD::operator std::string() const
+{
+    std::stringstream stream;
+    stream << *this;
+    return stream.str();
+}
+
+InsTime_GPSweekTow::operator std::string() const
+{
+    std::stringstream stream;
+    stream << *this;
+    return stream.str();
+}
+
+InsTime_YMDHMS::operator std::string() const
+{
+    std::stringstream stream;
+    stream << *this;
+    return stream.str();
+}
+
+InsTime_YDoySod::operator std::string() const
+{
+    std::stringstream stream;
+    stream << *this;
+    return stream.str();
+}
 
 // ----------------------- Out of Class Definitions --------------------------
 

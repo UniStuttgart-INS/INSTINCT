@@ -55,6 +55,8 @@ check-image:
   stage: prepare
   extends: .linux
   script:
+    - uname -a
+    - cat /etc/issue
     - g++ --version
     - clang++ --version
     - clang-tidy --version
@@ -95,6 +97,7 @@ check-windows:
 
 clang-tidy:
   stage: checks
+  needs: ["check-image"]
   extends:
     - .linux
     - .clang
@@ -105,6 +108,7 @@ clang-tidy:
 
 clang-tidy:tests:
   stage: checks
+  needs: ["check-image"]
   extends:
     - .linux
     - .clang
@@ -115,6 +119,7 @@ clang-tidy:tests:
 
 documentation:
   stage: checks
+  needs: ["check-image"]
   extends: .linux
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES
@@ -129,30 +134,19 @@ documentation:
 # ║                                         Build Main & GUI                                         ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-.build:main:
-  stage: build
-  extends: .linux
-  needs: ["check-image"]
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -j2
-
-main:clang:
-  extends:
-    - .build:main
-    - .clang
-
-main:gcc:
-  extends:
-    - .build:main
-    - .gcc
-
 main:win:
   stage: build
   extends: .windows
   needs: ["check-windows"]
   script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Release -- -maxCpuCount
+
+main:win:LOG_OFF:
+  extends:
+    - main:win
+  script:
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release -- -maxCpuCount
 
 main:win:LOG_INFO:
@@ -167,6 +161,24 @@ main:win:LOG_INFO:
     expire_in: 1 week
   only:
     - master
+
+.build:main:
+  stage: build
+  extends: .linux
+  needs: ["check-image"]
+  script:
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Release -- -j2
+
+main:clang:
+  extends:
+    - .build:main
+    - .clang
+
+main:gcc:
+  extends:
+    - .build:main
+    - .gcc
 
 .build:main:LOG_OFF:
   extends:
@@ -185,12 +197,22 @@ main:gcc:LOG_OFF:
     - .build:main:LOG_OFF
     - .gcc
 
-main:win:LOG_OFF:
+.build:main:LOG_DATA:
   extends:
-    - main:win
+    - .build:main
   script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -maxCpuCount
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Release -- -j2
+
+main:clang:LOG_DATA:
+  extends:
+    - .build:main:LOG_DATA
+    - .clang
+
+main:gcc:LOG_DATA:
+  extends:
+    - .build:main:LOG_DATA
+    - .gcc
 
 .build:main:raspberry:
   stage: build
@@ -220,6 +242,14 @@ main:raspberry:gcc:
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 .build:tests:
+  stage: build
+  extends: .linux
+  needs: ["check-image"]
+  script:
+    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Debug -- -j2
+
+.build:tests:LOG_DATA:
   stage: build
   extends: .linux
   needs: ["check-image"]
@@ -255,13 +285,15 @@ tests:gcc:
     untracked: true # For the coverage report
     expire_in: 2h
 
-tests:win:
+tests:clang:LOG_DATA:
   extends:
-    - .build:tests-win
-    - .build:test-artifacts
-  script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug -- -maxCpuCount
+    - .build:tests:LOG_DATA
+    - .clang
+
+tests:gcc:LOG_DATA:
+  extends:
+    - .build:tests:LOG_DATA
+    - .gcc
 
 .build:tests:LOG_OFF:
   extends:
@@ -280,6 +312,14 @@ tests:gcc:LOG_OFF:
     - .build:tests:LOG_OFF
     - .gcc
 
+tests:win:
+  extends:
+    - .build:tests-win
+    - .build:test-artifacts
+  script:
+    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Debug -- -maxCpuCount
+
 tests:win:LOG_OFF:
   extends:
     - .build:tests-win
@@ -290,9 +330,9 @@ tests:win:LOG_OFF:
 .build:raspberry:tests:
   stage: build
   extends: .raspberry
-  needs: ["check-image"]
+  needs: ["check-raspberry"]
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -j2
 
 tests:raspberry:clang:
@@ -452,7 +492,7 @@ pages:
     - conan --version
     - cppcheck --version
   script:
-    - cmake -Bbuild/$BUILD_TYPE -S. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/$BUILD_TYPE -S. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/$BUILD_TYPE -- -j2
   artifacts:
     paths:
@@ -554,7 +594,7 @@ run-tests:ubuntu:22.04:gcc:debug:
     - conan --version
     - cppcheck --version
   script:
-    - cmake -Bbuild/$BUILD_TYPE -S. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/$BUILD_TYPE -S. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/$BUILD_TYPE -- -j2
   artifacts:
     paths:

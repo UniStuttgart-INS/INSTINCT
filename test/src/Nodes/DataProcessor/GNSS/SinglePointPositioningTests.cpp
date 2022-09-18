@@ -65,9 +65,15 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - Klo
     //                                       SinglePointPositioningSkydel.flow
     // ###########################################################################################################
     //
-    // PosVelAttInitializer()                                                                     \
-    // RinexObsFile("data/Skydel-static_4h_1min-rate/SkydelRINEX_S_20221521201_03H_01Z_MO.rnx")  - SinglePointPositioning - 49 (SppSolutionExtended)
-    // RinexNavFile("data/Skydel-static_4h_1min-rate/SkydelRINEX_S_2022152120_7200S_GN.rnx")      /
+    // PosVelAttInitializer (70)
+    //         (69) PosVelAtt |>  -
+    //                             \              SinglePointPositioning (50)                     Plot (77)
+    // RinexObsFile (65)            (71)-->  |> PosVelInit (46)   (49) SppSolution |>  --(78)-->  |> SPP (72)
+    //         (64) PosVelAtt |>  --(66)-->  |> GnssObs (47)                             (81)-->  |> RTKLIB (76)
+    //                              (55)-->  |> GnssNavInfo (48)                        /
+    // RinexNavFile() (54)         /                                                   /
+    //         (53) PosVelAtt <>  -                            RtklibPosFile (80)     /
+    //                                                         (79) RtklibPosObs |>  -
     //
     // ###########################################################################################################
 
@@ -94,9 +100,9 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - Klo
     sppReference.emplace_back(G01, 28, Code::G1C, "L1CA 28.csv");
     sppReference.emplace_back(G01, 32, Code::G1C, "L1CA 32.csv");
 
-    nm::RegisterWatcherCallbackToOutputPin(49, [](const std::shared_ptr<const NAV::NodeData>& data) { // SppSolutionExtended
+    nm::RegisterWatcherCallbackToInputPin(72, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) { // SppSolutionExtended
         messageCounter++;
-        auto sppSol = std::static_pointer_cast<const NAV::SppSolutionExtended>(data);
+        auto sppSol = std::dynamic_pointer_cast<const NAV::SppSolutionExtended>(queue.front());
 
         for (auto& ref : sppReference)
         {
@@ -145,9 +151,9 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - Klo
             std::vector<std::string> v = str::split(line, ",");
 
             InsTime refRecvTime = InsTime(0, std::stoi(v[30]), std::stold(v[29])); // GPS Week Number, GPS TOW [s]
-            REQUIRE(sppSol->insTime.value() <= refRecvTime);
+            REQUIRE(sppSol->insTime <= refRecvTime);
 
-            if (sppSol->insTime.value() == refRecvTime)
+            if (sppSol->insTime == refRecvTime)
             {
                 LOG_DEBUG("line: {}", line);
                 LOG_DEBUG("[{}][{}-{}] Processing line in file {}", refRecvTime.toYMDHMS(), ref.satSigId, ref.code, ref.counter + 2);
@@ -211,8 +217,8 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - Klo
                 }
                 else
                 {
-                    double timeDiffRange_ref = (std::stod(v[0]) - std::stod(v[33])) * 1e-3;                                    // [s]
-                    double timeDiffRecvTrans = static_cast<double>((sppSol->insTime.value() - calcData.transmitTime).count()); // [s]
+                    double timeDiffRange_ref = (std::stod(v[0]) - std::stod(v[33])) * 1e-3;                            // [s]
+                    double timeDiffRecvTrans = static_cast<double>((sppSol->insTime - calcData.transmitTime).count()); // [s]
                     timeDiffRecvTrans += calcData.dpsr_I / InsConst::C;
                     timeDiffRecvTrans += calcData.dpsr_T / InsConst::C; // TODO: Do we need to add the values here?
                     LOG_DEBUG("    timeDiffRecvTrans {} [s]", timeDiffRecvTrans);
@@ -241,7 +247,7 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - Klo
                     REQUIRE(calcData.geometricDist - refGeometricDist == Approx(0.0).margin(180).epsilon(0)); // TODO: this is very high
                 }
             }
-            else // if (sppSol->insTime.value() < refRecvTime)
+            else // if (sppSol->insTime < refRecvTime)
             {
                 ref.fs.seekg(pos);
             }

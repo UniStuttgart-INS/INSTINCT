@@ -526,78 +526,72 @@ bool NAV::ErrorModel::resetNode()
     return true;
 }
 
-void NAV::ErrorModel::afterCreateLink(Pin* startPin, Pin* endPin)
+void NAV::ErrorModel::afterCreateLink(OutputPin& startPin, InputPin& endPin)
 {
-    if (startPin && endPin)
-    {
-        LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
+    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
 
-        if (endPin->parentNode->id != id)
+    if (endPin.parentNode->id != id)
+    {
+        return; // Link on Output Port
+    }
+
+    // Store previous output pin identifier
+    auto previousOutputPinDataIdentifier = outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier;
+    // Overwrite output pin identifier with input pin identifier
+    outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = startPin.dataIdentifier;
+
+    if (previousOutputPinDataIdentifier != outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier) // If the identifier changed
+    {
+        // Check if connected links on output port are still valid
+        for (auto& link : outputPins.at(OUTPUT_PORT_INDEX_FLOW).links)
         {
-            return; // Link on Output Port
+            if (auto* endPin = link.getConnectedPin())
+            {
+                if (!outputPins.at(OUTPUT_PORT_INDEX_FLOW).canCreateLink(*endPin))
+                {
+                    // If the link is not valid anymore, delete it
+                    outputPins.at(OUTPUT_PORT_INDEX_FLOW).deleteLink(*endPin);
+                }
+            }
         }
 
-        // Store previous output pin identifier
-        auto previousOutputPinDataIdentifier = outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier;
-        // Overwrite output pin identifier with input pin identifier
-        outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = startPin->dataIdentifier;
-
-        if (previousOutputPinDataIdentifier != outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier) // If the identifier changed
+        // Refresh all links connected to the output pin if the type changed
+        if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier != previousOutputPinDataIdentifier)
         {
-            // Check if connected links on output port are still valid
-            for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))
+            for (auto& link : outputPins.at(OUTPUT_PORT_INDEX_FLOW).links)
             {
-                auto* startPin = nm::FindPin(link->startPinId);
-                auto* endPin = nm::FindPin(link->endPinId);
-                if (startPin && endPin)
+                if (auto* connectedPin = link.getConnectedPin())
                 {
-                    if (startPin->canCreateLink(*endPin))
-                    {
-                        continue;
-                    }
-                }
-                // If the link is not valid anymore, delete it
-                nm::DeleteLink(link->id);
-            }
-
-            // Refresh all links connected to the output pin if the type changed
-            if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier != previousOutputPinDataIdentifier)
-            {
-                for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))
-                {
-                    nm::RefreshLink(link->id);
+                    outputPins.at(OUTPUT_PORT_INDEX_FLOW).recreateLink(*connectedPin);
                 }
             }
         }
     }
 }
 
-void NAV::ErrorModel::afterDeleteLink(Pin* startPin, Pin* endPin)
+void NAV::ErrorModel::afterDeleteLink(OutputPin& startPin, InputPin& endPin)
 {
-    if (startPin && endPin)
-    {
-        LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
+    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
 
-        if ((endPin->parentNode->id != id                                       // Link on Output port is removed
-             && !nm::IsPinLinked(inputPins.at(INPUT_PORT_INDEX_FLOW).id))       //     and the Input port is not linked
-            || (startPin->parentNode->id != id                                  // Link on Input port is removed
-                && !nm::IsPinLinked(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))) //     and the Output port is not linked
-        {
-            outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = supportedDataIdentifier;
-        }
+    if ((endPin.parentNode->id != id                                  // Link on Output port is removed
+         && !inputPins.at(INPUT_PORT_INDEX_FLOW).isPinLinked())       //     and the Input port is not linked
+        || (startPin.parentNode->id != id                             // Link on Input port is removed
+            && !outputPins.at(OUTPUT_PORT_INDEX_FLOW).isPinLinked())) //     and the Output port is not linked
+    {
+        outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = supportedDataIdentifier;
     }
 }
 
-void NAV::ErrorModel::receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::ErrorModel::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     // Select the correct data type and make a copy of the node data to modify
     if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == ImuObs::type())
     {
-        receiveImuObs(std::make_shared<ImuObs>(*std::static_pointer_cast<const ImuObs>(nodeData)));
+        receiveImuObs(std::make_shared<ImuObs>(*std::static_pointer_cast<const ImuObs>(queue.extract_front())));
     }
     else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type())
     {
-        receivePosVelAtt(std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(nodeData)));
+        receivePosVelAtt(std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(queue.extract_front())));
     }
 }
 

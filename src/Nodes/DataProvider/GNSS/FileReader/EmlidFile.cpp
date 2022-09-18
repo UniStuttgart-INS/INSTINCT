@@ -131,7 +131,7 @@ std::shared_ptr<const NAV::NodeData> NAV::EmlidFile::pollData(bool peek)
     auto obs = std::make_shared<EmlidObs>();
     vendor::emlid::decryptEmlidObs(obs, *packet, peek);
 
-    if (!obs->insTime.has_value())
+    if (obs->insTime.empty())
     {
         if (auto currentTime = util::time::GetCurrentInsTime();
             !currentTime.empty())

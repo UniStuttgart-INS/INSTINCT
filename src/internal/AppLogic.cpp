@@ -83,11 +83,13 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
                 if (NAV::ConfigManager::Get<bool>("nogui")
                     && NAV::ConfigManager::Get<bool>("sigterm"))
                 {
+                    nm::EnableAllCallbacks();
                     NAV::Sleep::waitForSignal(true);
                 }
                 else if (size_t duration = NAV::ConfigManager::Get<size_t>("duration");
                          NAV::ConfigManager::Get<bool>("nogui") && duration)
                 {
+                    nm::EnableAllCallbacks();
                     auto now = std::chrono::steady_clock::now();
                     std::chrono::duration<double> elapsed = now - start;
                     if (elapsed.count() < static_cast<double>(duration))
@@ -132,7 +134,7 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
                 }
                 catch (...)
                 {
-                    nm::DeleteAllLinksAndNodes();
+                    nm::DeleteAllNodes();
                     NAV::flow::DiscardChanges();
                     NAV::flow::SetCurrentFilename("");
                     LOG_ERROR("Loading flow file failed");

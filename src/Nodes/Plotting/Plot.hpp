@@ -68,7 +68,7 @@ class Plot : public Node
     /// @brief Called when a new link was established
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
-    void afterCreateLink(Pin* startPin, Pin* endPin) override;
+    void afterCreateLink(OutputPin& startPin, InputPin& endPin) override;
 
     /// @brief Information needed to plot the data on a certain pin
     struct PinData
@@ -365,25 +365,29 @@ class Plot : public Node
     void addData(size_t pinIndex, size_t dataIndex, double value);
 
     /// @brief Plots the data on this port
-    /// @param[in] linkId Id of the link over which the data is received
-    void plotBoolean(ax::NodeEditor::LinkId linkId);
+    /// @param[in] insTime Time the data was received
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void plotBoolean(const InsTime& insTime, size_t pinIdx);
 
     /// @brief Plots the data on this port
-    /// @param[in] linkId Id of the link over which the data is received
-    void plotInteger(ax::NodeEditor::LinkId linkId);
+    /// @param[in] insTime Time the data was received
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void plotInteger(const InsTime& insTime, size_t pinIdx);
 
     /// @brief Plots the data on this port
-    /// @param[in] linkId Id of the link over which the data is received
-    void plotFloat(ax::NodeEditor::LinkId linkId);
+    /// @param[in] insTime Time the data was received
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void plotFloat(const InsTime& insTime, size_t pinIdx);
 
     /// @brief Plots the data on this port
-    /// @param[in] linkId Id of the link over which the data is received
-    void plotMatrix(ax::NodeEditor::LinkId linkId);
+    /// @param[in] insTime Time the data was received
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void plotMatrix(const InsTime& insTime, size_t pinIdx);
 
     /// @brief Plot the data on this port
-    /// @param[in] nodeData Data to plot
-    /// @param[in] linkId Id of the link over which the data is received
-    void plotData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void plotData(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot

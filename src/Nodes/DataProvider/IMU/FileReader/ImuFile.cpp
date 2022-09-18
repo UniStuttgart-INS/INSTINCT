@@ -305,7 +305,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData(bool peek)
 
     if (gpsWeek.has_value() && gpsToW.has_value())
     {
-        obs->insTime.emplace(gpsCycle.value(), gpsWeek.value(), gpsToW.value());
+        obs->insTime = InsTime(gpsCycle.value(), gpsWeek.value(), gpsToW.value());
     }
     if (magUncompX.has_value() && magUncompY.has_value() && magUncompZ.has_value())
     {

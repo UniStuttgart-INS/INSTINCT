@@ -61,9 +61,9 @@ class SppSolutionLogger : public Node, public FileWriter, public CommonLog
     void deinitialize() override;
 
     /// @brief Write Observation to the file
-    /// @param[in] nodeData The received observation
-    /// @param[in] linkId Id of the link over which the data is received
-    void writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void writeObservation(InputPin::NodeDataQueue& queue, size_t pinIdx);
 };
 
 } // namespace NAV

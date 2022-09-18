@@ -137,7 +137,7 @@ void NAV::SinglePointPositioning::guiConfig()
             }
 
             ImGui::TableNextColumn(); // # Sat
-            if (auto* gnssNavInfo = getInputValue<GnssNavInfo>(pinIndex))
+            if (const auto* gnssNavInfo = getInputValue<const GnssNavInfo>(pinIndex))
             {
                 size_t usedSatNum = 0;
                 std::string usedSats;
@@ -169,7 +169,7 @@ void NAV::SinglePointPositioning::guiConfig()
                 if (ImGui::Button(fmt::format("x##{} - {}", size_t(id), pinIndex).c_str()))
                 {
                     _nNavInfoPins--;
-                    nm::DeleteInputPin(inputPins.at(pinIndex).id);
+                    nm::DeleteInputPin(inputPins.at(pinIndex));
                     flow::ApplyChanges();
                 }
                 if (ImGui::IsItemHovered())
@@ -338,7 +338,7 @@ bool NAV::SinglePointPositioning::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (std::all_of(inputPins.begin() + INPUT_PORT_INDEX_GNSS_NAV_INFO, inputPins.end(), [](const Pin& inputPin) { return !nm::IsPinLinked(inputPin.id); }))
+    if (std::all_of(inputPins.begin() + INPUT_PORT_INDEX_GNSS_NAV_INFO, inputPins.end(), [](const InputPin& inputPin) { return !inputPin.isPinLinked(); }))
     {
         LOG_ERROR("{}: You need to connect a GNSS NavigationInfo provider", nameId());
         return false;
@@ -367,16 +367,16 @@ void NAV::SinglePointPositioning::updateNumberOfInputPins()
     }
     while (inputPins.size() - INPUT_PORT_INDEX_GNSS_NAV_INFO > _nNavInfoPins)
     {
-        nm::DeleteInputPin(inputPins.back().id);
+        nm::DeleteInputPin(inputPins.back());
     }
 }
 
-void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     std::vector<const GnssNavInfo*> gnssNavInfos(_nNavInfoPins);
     for (size_t i = 0; i < _nNavInfoPins; i++)
     {
-        gnssNavInfos[i] = getInputValue<GnssNavInfo>(INPUT_PORT_INDEX_GNSS_NAV_INFO + i);
+        gnssNavInfos[i] = getInputValue<const GnssNavInfo>(INPUT_PORT_INDEX_GNSS_NAV_INFO + i);
     }
 
     if (_e_position.isZero() || std::all_of(gnssNavInfos.begin(), gnssNavInfos.end(), [](const GnssNavInfo* info) { return info == nullptr; }))
@@ -384,8 +384,8 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
         return;
     }
 
-    auto gnssObs = std::static_pointer_cast<const GnssObs>(nodeData);
-    LOG_DATA("{}: Calculating SPP for {}", nameId(), gnssObs->insTime->toYMDHMS());
+    auto gnssObs = std::static_pointer_cast<const GnssObs>(queue.extract_front());
+    LOG_DATA("{}: Calculating SPP for {}", nameId(), gnssObs->insTime.toYMDHMS());
 
     // Data calculated for each observation
     struct CalcData
@@ -502,7 +502,7 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
             int8_t num = -128;
             if (obsData.satSigId.freq & (R01 | R02))
             {
-                num = std::get<GLONASSEphemeris>(gnssNavInfos[calcData[i].navIdx]->getEphemeris(obsData.satSigId.toSatId(), gnssObs->insTime.value())).frequencyNumber;
+                num = std::get<GLONASSEphemeris>(gnssNavInfos[calcData[i].navIdx]->getEphemeris(obsData.satSigId.toSatId(), gnssObs->insTime)).frequencyNumber;
             }
 
             calcData[i].pseudorangeRate = doppler2psrRate(obsData.doppler, obsData.satSigId.freq, num);
@@ -548,9 +548,9 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
         auto satId = obsData.satSigId.toSatId();
         const auto* navInfo = gnssNavInfos[calcData[i].navIdx];
 
-        LOG_DATA("{}: satellite {} {} [{}]", nameId(), obsData.satSigId.freq, obsData.satSigId.satNum, gnssObs->insTime->toGPSweekTow());
+        LOG_DATA("{}: satellite {} {} [{}]", nameId(), obsData.satSigId.freq, obsData.satSigId.satNum, gnssObs->insTime.toGPSweekTow());
 
-        if (!navInfo->isHealthy(satId, gnssObs->insTime.value()))
+        if (!navInfo->isHealthy(satId, gnssObs->insTime))
         {
             LOG_DATA("{}:     Measurement is skipped because the signal is not healthy.", nameId());
             skipMeas.insert(i);
@@ -564,7 +564,7 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
 
         LOG_DATA("{}:     pseudorange  {}", nameId(), obsData.pseudorange);
 
-        auto satClk = navInfo->calcSatelliteClockCorrections(obsData.satSigId, gnssObs->insTime.value(), obsData.pseudorange);
+        auto satClk = navInfo->calcSatelliteClockCorrections(obsData.satSigId, gnssObs->insTime, obsData.pseudorange);
         calcData[i].satClkBias = satClk.bias;
         calcData[i].satClkDrift = satClk.drift;
         LOG_DATA("{}:     satClkBias {}, satClkDrift {}", nameId(), calcData[i].satClkBias, calcData[i].satClkDrift);
@@ -587,7 +587,7 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
     if (nMeas - skipMeas.size() < 4)
     {
         LOG_ERROR("{}: [{} GPST] Cannot calculate position because only {} valid measurements. Try changing filter settings or reposition your antenna.",
-                  nameId(), (gnssObs->insTime.value() + std::chrono::seconds(gnssObs->insTime->leapGps2UTC())).toYMDHMS(), nMeas - skipMeas.size());
+                  nameId(), (gnssObs->insTime + std::chrono::seconds(gnssObs->insTime.leapGps2UTC())).toYMDHMS(), nMeas - skipMeas.size());
         sppSol->nSatellitesPosition = nMeas - skipMeas.size();
         sppSol->nSatellitesVelocity = nDopplerMeas - skipMeas.size();
         invokeCallbacks(OUTPUT_PORT_INDEX_SPPSOL, sppSol);
@@ -609,7 +609,7 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
         for (size_t i = 0; i < nMeas; i++)
         {
             const auto& obsData = gnssObs->data[calcData[i].obsIdx];
-            LOG_DATA("{}:     [{}] satellite {} {} [{}]", nameId(), o, obsData.satSigId.freq, obsData.satSigId.satNum, gnssObs->insTime->toGPSweekTow());
+            LOG_DATA("{}:     [{}] satellite {} {} [{}]", nameId(), o, obsData.satSigId.freq, obsData.satSigId.satNum, gnssObs->insTime.toGPSweekTow());
 
             if (skipMeas.contains(i))
             {
@@ -645,7 +645,7 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
                 if (nMeas - skipMeas.size() < 4)
                 {
                     LOG_ERROR("{}: [{} GPST] Cannot calculate position because only {} valid measurements. Try changing filter settings or reposition your antenna.",
-                              nameId(), (gnssObs->insTime.value() + std::chrono::seconds(gnssObs->insTime->leapGps2UTC())).toYMDHMS(), nMeas - skipMeas.size());
+                              nameId(), (gnssObs->insTime + std::chrono::seconds(gnssObs->insTime.leapGps2UTC())).toYMDHMS(), nMeas - skipMeas.size());
                     return;
                 }
 
@@ -688,7 +688,7 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
             // Pseudorange measurement [m] - Groves ch. 8.5.3, eq. 8.48, p. 342
             double psrMeas = obsData.pseudorange /* + (multipath and/or NLOS errors) + (tracking errors) */;
             // Estimated modulation ionosphere propagation error [m]
-            double dpsr_I = calcIonosphericTimeDelay(static_cast<double>(gnssObs->insTime->toGPSweekTow().tow), obsData.satSigId.freq, lla_pos,
+            double dpsr_I = calcIonosphericTimeDelay(static_cast<double>(gnssObs->insTime.toGPSweekTow().tow), obsData.satSigId.freq, lla_pos,
                                                      satElevation, satAzimuth,
                                                      ionoModel != IonosphereModel::None ? alpha.value() : std::vector<double>{},
                                                      ionoModel != IonosphereModel::None ? beta.value() : std::vector<double>{},
@@ -744,7 +744,7 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
                 double varPsrMeas = std::pow(satSysErrFactor, 2) * std::pow(opt_err[0], 2) * (std::pow(opt_err[1], 2) + std::pow(opt_err[2], 2) / std::sin(ele));
                 LOG_DATA("{}:     [{}]     varPsrMeas {}", nameId(), o, varPsrMeas);
 
-                const auto& ephemeris = gnssNavInfos[calcData[i].navIdx]->getEphemeris(satId, gnssObs->insTime.value());
+                const auto& ephemeris = gnssNavInfos[calcData[i].navIdx]->getEphemeris(satId, gnssObs->insTime);
                 double varEph = 0.0;
                 switch (SatelliteSystem_(satId.satSys))
                 {
@@ -869,7 +869,7 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
         if (iv < 4)
         {
             LOG_WARN("{}: [{} GPST] Cannot calculate velocity because only {} valid doppler measurements. Try changing filter settings or reposition your antenna.",
-                     nameId(), (gnssObs->insTime.value() + std::chrono::seconds(gnssObs->insTime->leapGps2UTC())).toYMDHMS(), iv);
+                     nameId(), (gnssObs->insTime + std::chrono::seconds(gnssObs->insTime.leapGps2UTC())).toYMDHMS(), iv);
             continue;
         }
         // Difference between measured and estimated pseudorange rates
@@ -906,11 +906,11 @@ void NAV::SinglePointPositioning::recvGnssObs(const std::shared_ptr<const NodeDa
     invokeCallbacks(OUTPUT_PORT_INDEX_SPPSOL, sppSol);
 }
 
-void NAV::SinglePointPositioning::recvPosVelInit(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::SinglePointPositioning::recvPosVelInit(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     if (_e_position.isZero())
     {
-        auto posVel = std::static_pointer_cast<const PosVel>(nodeData);
+        auto posVel = std::static_pointer_cast<const PosVel>(queue.extract_front());
 
         _e_position = posVel->e_position();
         _e_velocity = posVel->e_velocity();

@@ -42,10 +42,16 @@ NAV::LooselyCoupledKF::LooselyCoupledKF()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 822, 721 };
 
-    nm::CreateInputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() }, &LooselyCoupledKF::recvInertialNavigationSolution);
-    nm::CreateInputPin(this, "GNSSNavigationSolution", Pin::Type::Flow, { NAV::PosVel::type() }, &LooselyCoupledKF::recvGNSSNavigationSolution);
+    nm::CreateInputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() }, &LooselyCoupledKF::recvInertialNavigationSolution, nullptr, 1);
+    inputPins.back().neededForTemporalQueueCheck = false;
+    nm::CreateInputPin(this, "GNSSNavigationSolution", Pin::Type::Flow, { NAV::PosVel::type() }, &LooselyCoupledKF::recvGNSSNavigationSolution,
+                       [](const Node* node, const InputPin& inputPin) {
+                           const auto* lckf = static_cast<const LooselyCoupledKF*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
+                           return !inputPin.queue.empty() && lckf->_lastPredictRequestedTime < inputPin.queue.front()->insTime;
+                       });
+    inputPins.back().dropQueueIfNotFirable = false;
     nm::CreateOutputPin(this, "Errors", Pin::Type::Flow, { NAV::LcKfInsGnssErrors::type() });
-    nm::CreateOutputPin(this, "Predict", Pin::Type::Flow, { NAV::ImuObs::type() });
+    nm::CreateOutputPin(this, "Sync", Pin::Type::Flow, { NAV::NodeData::type() });
 }
 
 NAV::LooselyCoupledKF::~LooselyCoupledKF()
@@ -90,7 +96,7 @@ void NAV::LooselyCoupledKF::removeKalmanMatricesPins()
     LOG_TRACE("{}: called", nameId());
     while (outputPins.size() > 2)
     {
-        nm::DeleteOutputPin(outputPins.back().id);
+        nm::DeleteOutputPin(outputPins.back());
     }
 }
 
@@ -602,6 +608,7 @@ bool NAV::LooselyCoupledKF::initialize()
 
     _latestInertialNavSol = nullptr;
     _lastPredictTime.reset();
+    _lastPredictRequestedTime.reset();
     _accumulatedAccelBiases.setZero();
     _accumulatedGyroBiases.setZero();
 
@@ -708,45 +715,50 @@ void NAV::LooselyCoupledKF::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-void NAV::LooselyCoupledKF::recvInertialNavigationSolution(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/) // NOLINT(readability-convert-member-functions-to-static)
+void NAV::LooselyCoupledKF::recvInertialNavigationSolution(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */) // NOLINT(readability-convert-member-functions-to-static)
 {
-    auto inertialNavSol = std::static_pointer_cast<const InertialNavSol>(nodeData);
-    LOG_DATA("{}: Recv Inertial t = {}", nameId(), inertialNavSol->insTime->toYMDHMS());
+    auto inertialNavSol = std::static_pointer_cast<const InertialNavSol>(queue.extract_front());
+    LOG_DATA("{}: recvInertialNavigationSolution at time [{}]", nameId(), inertialNavSol->insTime.toYMDHMS());
 
     double tau_i = !_lastPredictTime.empty()
-                       ? static_cast<double>((inertialNavSol->insTime.value() - _lastPredictTime).count())
+                       ? static_cast<double>((inertialNavSol->insTime - _lastPredictTime).count())
                        : 0.0;
 
     if (tau_i > 0)
     {
+        _lastPredictTime = _latestInertialNavSol->insTime + std::chrono::duration<double>(tau_i);
         looselyCoupledPrediction(_latestInertialNavSol, tau_i);
     }
     else
     {
-        _lastPredictTime = inertialNavSol->insTime.value();
+        _lastPredictTime = inertialNavSol->insTime;
     }
     _latestInertialNavSol = inertialNavSol;
+
+    if (!inputPins[INPUT_PORT_INDEX_GNSS].queue.empty() && inputPins[INPUT_PORT_INDEX_GNSS].queue.front()->insTime == _lastPredictTime)
+    {
+        looselyCoupledUpdate(std::static_pointer_cast<const PosVel>(inputPins[INPUT_PORT_INDEX_GNSS].queue.extract_front()));
+        if (inputPins[INPUT_PORT_INDEX_GNSS].queue.empty() && inputPins[INPUT_PORT_INDEX_GNSS].link.getConnectedPin()->mode == OutputPin::Mode::REAL_TIME)
+        {
+            outputPins[OUTPUT_PORT_INDEX_SYNC].mode = OutputPin::Mode::REAL_TIME;
+            for (auto& link : outputPins[OUTPUT_PORT_INDEX_SYNC].links)
+            {
+                link.connectedNode->wakeWorker();
+            }
+        }
+    }
 }
 
-void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto gnssMeasurement = std::static_pointer_cast<const PosVel>(nodeData);
-    LOG_DATA("{}: Recv GNSS t = {}", nameId(), gnssMeasurement->insTime->toYMDHMS());
+    auto gnssMeasurement = queue.front();
+    LOG_DATA("{}: recvGNSSNavigationSolution at time [{}]", nameId(), gnssMeasurement->insTime.toYMDHMS());
 
-    if (std::isnan(gnssMeasurement->e_position().x()) || std::isnan(gnssMeasurement->e_velocity().x())) { return; }
+    auto nodeData = std::make_shared<NodeData>();
+    nodeData->insTime = gnssMeasurement->insTime;
+    _lastPredictRequestedTime = gnssMeasurement->insTime;
 
-    if (_latestInertialNavSol)
-    {
-        if (_lastPredictTime < gnssMeasurement->insTime.value()) // We need to predict to the update time before updating
-        {
-            auto imuObs = std::make_shared<ImuObs>(*_latestInertialNavSol->imuObs);
-            imuObs->insTime = gnssMeasurement->insTime;
-
-            invokeCallbacks(OUTPUT_PORT_INDEX_MANUAL_PREDICT, imuObs); // Prediction consists out of ImuIntegration and prediction (gets triggered from it)
-        }
-
-        looselyCoupledUpdate(gnssMeasurement);
-    }
+    invokeCallbacks(OUTPUT_PORT_INDEX_SYNC, nodeData); // Prediction consists out of ImuIntegration and prediction (gets triggered from it)
 }
 
 // ###########################################################################################################
@@ -758,9 +770,9 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     auto dt = fmt::format("{:0.5f}", tau_i);
     dt.erase(std::find_if(dt.rbegin(), dt.rend(), [](char ch) { return ch != '0'; }).base(), dt.end());
 
+    InsTime predictTime = inertialNavSol->insTime + std::chrono::duration<double>(tau_i);
     LOG_DATA("{}: Predicting (dt = {}s) from [{}] to [{}]", nameId(), dt,
-             inertialNavSol->insTime->toYMDHMS(), (inertialNavSol->insTime.value() + std::chrono::duration<double>(tau_i)).toYMDHMS());
-    _lastPredictTime = inertialNavSol->insTime.value() + std::chrono::duration<double>(tau_i);
+             inertialNavSol->insTime.toYMDHMS(), predictTime.toYMDHMS());
 
     // ------------------------------------------- GUI Parameters ----------------------------------------------
 
@@ -844,8 +856,10 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     LOG_DATA("{}:     r_eS_e = {} [m]", nameId(), r_eS_e);
 
     // a_p Acceleration in [m/s^2], in body coordinates
-    Eigen::Vector3d b_acceleration = inertialNavSol->imuObs->imuPos.b_quatAccel_p() * inertialNavSol->imuObs->accelUncompXYZ.value()
-                                     - _accumulatedAccelBiases;
+    auto b_acceleration = _latestInertialNavSol->imuObs == nullptr
+                              ? Eigen::Vector3d::Zero()
+                              : Eigen::Vector3d(inertialNavSol->imuObs->imuPos.b_quatAccel_p() * inertialNavSol->imuObs->accelUncompXYZ.value()
+                                                - _accumulatedAccelBiases);
     LOG_DATA("{}:     b_acceleration = {} [m/s^2]", nameId(), b_acceleration.transpose());
 
     // System Matrix
@@ -883,6 +897,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         if (_qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
         {
             // 2. Calculate the system noise covariance matrix Q_{k-1}
+            std::lock_guard lk(outputPins[OUTPUT_PORT_INDEX_Q].dataAccessMutex);
             _kalmanFilter.Q = n_systemNoiseCovarianceMatrix_Q(sigma_ra.array().square(), sigma_rg.array().square(),
                                                               sigma_bad.array().square(), sigma_bgd.array().square(),
                                                               _tau_bad, _tau_bgd,
@@ -909,6 +924,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         if (_qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
         {
             // 2. Calculate the system noise covariance matrix Q_{k-1}
+            std::lock_guard lk(outputPins[OUTPUT_PORT_INDEX_Q].dataAccessMutex);
             _kalmanFilter.Q = e_systemNoiseCovarianceMatrix_Q(sigma_ra.array().square(), sigma_rg.array().square(),
                                                               sigma_bad.array().square(), sigma_bgd.array().square(),
                                                               _tau_bad, _tau_bgd,
@@ -934,15 +950,22 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         auto [Phi, Q] = calcPhiAndQWithVanLoanMethod(F, G, W, tau_i);
 
         // 1. Calculate the transition matrix 𝚽_{k-1}
-        _kalmanFilter.Phi = Phi;
+        {
+            std::lock_guard lk(outputPins[OUTPUT_PORT_INDEX_Phi].dataAccessMutex);
+            _kalmanFilter.Phi = Phi;
+        }
 
         // 2. Calculate the system noise covariance matrix Q_{k-1}
-        _kalmanFilter.Q = Q;
+        {
+            std::lock_guard lk(outputPins[OUTPUT_PORT_INDEX_Q].dataAccessMutex);
+            _kalmanFilter.Q = Q;
+        }
     }
 
     // If Q was calculated over Van Loan, then the Phi matrix was automatically calculated with the exponential matrix
     if (_phiCalculationAlgorithm != PhiCalculationAlgorithm::Exponential || _qCalculationAlgorithm != QCalculationAlgorithm::VanLoan)
     {
+        std::lock_guard lk(outputPins[OUTPUT_PORT_INDEX_Phi].dataAccessMutex);
         if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Exponential)
         {
             // 1. Calculate the transition matrix 𝚽_{k-1}
@@ -962,11 +985,11 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     LOG_DATA("{}:     KF.Phi =\n{}", nameId(), _kalmanFilter.Phi);
     if (_showKalmanFilterOutputPins)
     {
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi, predictTime);
     }
     if (_showKalmanFilterOutputPins)
     {
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q, predictTime);
     }
     LOG_DATA("{}:     KF.Q =\n{}", nameId(), _kalmanFilter.Q);
 
@@ -975,11 +998,15 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     // 3. Propagate the state vector estimate from x(+) and x(-)
     // 4. Propagate the error covariance matrix from P(+) and P(-)
     LOG_DATA("{}:     KF.P (before prediction) =\n{}", nameId(), _kalmanFilter.P);
-    _kalmanFilter.predict();
+    {
+        std::lock_guard lk_x(outputPins[OUTPUT_PORT_INDEX_x].dataAccessMutex);
+        std::lock_guard lk_P(outputPins[OUTPUT_PORT_INDEX_P].dataAccessMutex);
+        _kalmanFilter.predict();
+    }
     if (_showKalmanFilterOutputPins)
     {
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, predictTime);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P, predictTime);
     }
     LOG_DATA("{}:     KF.x = {}", nameId(), _kalmanFilter.x.transpose());
     LOG_DATA("{}:     KF.P (after prediction) =\n{}", nameId(), _kalmanFilter.P);
@@ -1011,7 +1038,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
 
 void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const PosVel>& gnssMeasurement)
 {
-    LOG_DATA("{}: Updating to time {} (lastInertial at {})", nameId(), gnssMeasurement->insTime->toYMDHMS(), _latestInertialNavSol->insTime->toYMDHMS());
+    LOG_DATA("{}: Updating to time {} (lastInertial at {})", nameId(), gnssMeasurement->insTime.toYMDHMS(), _latestInertialNavSol->insTime.toYMDHMS());
 
     // -------------------------------------------- GUI Parameters -----------------------------------------------
 
@@ -1061,8 +1088,10 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     // ---------------------------------------------- Correction -------------------------------------------------
 
     // Angular rate measured in units of [rad/s], and given in the body frame
-    Eigen::Vector3d b_omega_ip = _latestInertialNavSol->imuObs->imuPos.b_quatGyro_p() * _latestInertialNavSol->imuObs->gyroUncompXYZ.value()
-                                 - _accumulatedGyroBiases;
+    auto b_omega_ip = _latestInertialNavSol->imuObs == nullptr
+                          ? Eigen::Vector3d::Zero()
+                          : Eigen::Vector3d(_latestInertialNavSol->imuObs->imuPos.b_quatGyro_p() * _latestInertialNavSol->imuObs->gyroUncompXYZ.value()
+                                            - _accumulatedGyroBiases);
     LOG_DATA("{}:     b_omega_ip = {} [rad/s]", nameId(), b_omega_ip.transpose());
 
     if (_frame == Frame::NED)
@@ -1087,15 +1116,24 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         LOG_DATA("{}:     n_Omega_ie =\n{}", nameId(), n_Omega_ie);
 
         // 5. Calculate the measurement matrix H_k
-        _kalmanFilter.H = n_measurementMatrix_H(T_rn_p, n_Dcm_b, b_omega_ip, _b_leverArm_InsGnss, n_Omega_ie);
+        {
+            std::lock_guard lk(outputPins[OUTPUT_PORT_INDEX_H].dataAccessMutex);
+            _kalmanFilter.H = n_measurementMatrix_H(T_rn_p, n_Dcm_b, b_omega_ip, _b_leverArm_InsGnss, n_Omega_ie);
+        }
 
         // 6. Calculate the measurement noise covariance matrix R_k
-        _kalmanFilter.R = n_measurementNoiseCovariance_R(gnssSigmaSquaredLatLonAlt, gnssSigmaSquaredVelocity);
+        {
+            std::lock_guard lk(outputPins[OUTPUT_PORT_INDEX_R].dataAccessMutex);
+            _kalmanFilter.R = n_measurementNoiseCovariance_R(gnssSigmaSquaredLatLonAlt, gnssSigmaSquaredVelocity);
+        }
 
         // 8. Formulate the measurement z_k
-        _kalmanFilter.z = n_measurementInnovation_dz(gnssMeasurement->lla_position(), _latestInertialNavSol->lla_position(),
-                                                     gnssMeasurement->n_velocity(), _latestInertialNavSol->n_velocity(),
-                                                     T_rn_p, _latestInertialNavSol->n_Quat_b(), _b_leverArm_InsGnss, b_omega_ip, n_Omega_ie);
+        {
+            std::lock_guard lk(outputPins[OUTPUT_PORT_INDEX_z].dataAccessMutex);
+            _kalmanFilter.z = n_measurementInnovation_dz(gnssMeasurement->lla_position(), _latestInertialNavSol->lla_position(),
+                                                         gnssMeasurement->n_velocity(), _latestInertialNavSol->n_velocity(),
+                                                         T_rn_p, _latestInertialNavSol->n_Quat_b(), _b_leverArm_InsGnss, b_omega_ip, n_Omega_ie);
+        }
     }
     else // if (_frame == Frame::ECEF)
     {
@@ -1108,23 +1146,31 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         LOG_DATA("{}:     e_Omega_ie =\n{}", nameId(), e_Omega_ie);
 
         // 5. Calculate the measurement matrix H_k
-        _kalmanFilter.H = e_measurementMatrix_H(e_Dcm_b, b_omega_ip, _b_leverArm_InsGnss, e_Omega_ie);
+        {
+            std::lock_guard lk(outputPins[OUTPUT_PORT_INDEX_H].dataAccessMutex);
+            _kalmanFilter.H = e_measurementMatrix_H(e_Dcm_b, b_omega_ip, _b_leverArm_InsGnss, e_Omega_ie);
+        }
 
         // 6. Calculate the measurement noise covariance matrix R_k
-        _kalmanFilter.R = e_measurementNoiseCovariance_R(gnssSigmaSquaredPosition, gnssSigmaSquaredVelocity);
+        {
+            std::lock_guard lk(outputPins[OUTPUT_PORT_INDEX_R].dataAccessMutex);
+            _kalmanFilter.R = e_measurementNoiseCovariance_R(gnssSigmaSquaredPosition, gnssSigmaSquaredVelocity);
+        }
 
         // 8. Formulate the measurement z_k
-        _kalmanFilter.z = e_measurementInnovation_dz(gnssMeasurement->e_position(), _latestInertialNavSol->e_position(),
-                                                     gnssMeasurement->e_velocity(), _latestInertialNavSol->e_velocity(),
-                                                     _latestInertialNavSol->e_Quat_b(), _b_leverArm_InsGnss, b_omega_ip,
-                                                     e_Omega_ie);
+        {
+            std::lock_guard lk(outputPins[OUTPUT_PORT_INDEX_z].dataAccessMutex);
+            _kalmanFilter.z = e_measurementInnovation_dz(gnssMeasurement->e_position(), _latestInertialNavSol->e_position(),
+                                                         gnssMeasurement->e_velocity(), _latestInertialNavSol->e_velocity(),
+                                                         _latestInertialNavSol->e_Quat_b(), _b_leverArm_InsGnss, b_omega_ip, e_Omega_ie);
+        }
     }
 
     if (_showKalmanFilterOutputPins)
     {
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_H);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_R);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_z);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_H, gnssMeasurement->insTime);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_R, gnssMeasurement->insTime);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_z, gnssMeasurement->insTime);
     }
     LOG_DATA("{}:     KF.H =\n{}", nameId(), _kalmanFilter.H);
     LOG_DATA("{}:     KF.R =\n{}", nameId(), _kalmanFilter.R);
@@ -1143,12 +1189,17 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     // 7. Calculate the Kalman gain matrix K_k
     // 9. Update the state vector estimate from x(-) to x(+)
     // 10. Update the error covariance matrix from P(-) to P(+)
-    _kalmanFilter.correctWithMeasurementInnovation();
+    {
+        std::lock_guard lk_K(outputPins[OUTPUT_PORT_INDEX_K].dataAccessMutex);
+        std::lock_guard lk_x(outputPins[OUTPUT_PORT_INDEX_x].dataAccessMutex);
+        std::lock_guard lk_P(outputPins[OUTPUT_PORT_INDEX_P].dataAccessMutex);
+        _kalmanFilter.correctWithMeasurementInnovation();
+    }
     if (_showKalmanFilterOutputPins)
     {
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_K);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_K, gnssMeasurement->insTime);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, gnssMeasurement->insTime);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P, gnssMeasurement->insTime);
     }
     LOG_DATA("{}:     KF.K =\n{}", nameId(), _kalmanFilter.K);
     LOG_DATA("{}:     KF.x =\n{}", nameId(), _kalmanFilter.x);
@@ -1216,7 +1267,10 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     }
 
     // Closed loop
-    _kalmanFilter.x.setZero();
+    {
+        std::lock_guard lk(outputPins[OUTPUT_PORT_INDEX_x].dataAccessMutex);
+        _kalmanFilter.x.setZero();
+    }
 
     invokeCallbacks(OUTPUT_PORT_INDEX_ERROR, lcKfInsGnssErrors);
 }

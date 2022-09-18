@@ -54,7 +54,7 @@ class Delay : public Node
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
     /// @return True if link is allowed, false if link is rejected
-    bool onCreateLink(Pin* startPin, Pin* endPin) override;
+    bool onCreateLink(OutputPin& startPin, InputPin& endPin) override;
 
   private:
     constexpr static size_t OUTPUT_PORT_INDEX_FLOW = 0; ///< @brief Flow
@@ -67,9 +67,9 @@ class Delay : public Node
     void deinitialize() override;
 
     /// @brief Delays the observation
-    /// @param[in] nodeData Observation to delay
-    /// @param[in] linkId Id of the link over which the data is received
-    void delayObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void delayObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief The amount to delay messages for
     int _delayLength = 1;

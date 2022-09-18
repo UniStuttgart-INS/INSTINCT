@@ -4,7 +4,7 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-#include "NodeData/InsObs.hpp"
+#include "NodeData/NodeData.hpp"
 
 NAV::Delay::Delay()
     : Node(fmt::format("z^-{}", _delayLength))
@@ -15,8 +15,8 @@ NAV::Delay::Delay()
     _guiConfigDefaultWindowSize = { 305, 70 };
     kind = Kind::Simple;
 
-    nm::CreateInputPin(this, "", Pin::Type::Flow, { InsObs::type() }, &Delay::delayObs);
-    nm::CreateOutputPin(this, "", Pin::Type::Flow, { InsObs::type() });
+    nm::CreateInputPin(this, "", Pin::Type::Flow, { NodeData::type() }, &Delay::delayObs);
+    nm::CreateOutputPin(this, "", Pin::Type::Flow, { NodeData::type() });
 }
 
 NAV::Delay::~Delay()
@@ -95,56 +95,46 @@ void NAV::Delay::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-bool NAV::Delay::onCreateLink(Pin* startPin, Pin* endPin)
+bool NAV::Delay::onCreateLink(OutputPin& startPin, InputPin& endPin)
 {
-    if (startPin && endPin)
+    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
+
+    if (endPin.parentNode->id != id)
     {
-        LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
+        return true; // Link on Output Port
+    }
 
-        if (endPin->parentNode->id != id)
+    // New Link on the Input port, but the previously connected dataIdentifier is different from the new one.
+    // Then remove all links.
+    if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier != startPin.dataIdentifier)
+    {
+        outputPins.at(OUTPUT_PORT_INDEX_FLOW).deleteLinks();
+    }
+
+    // Update the dataIdentifier of the output pin to the same as input pin
+    outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = startPin.dataIdentifier;
+
+    // Refresh all links connected to the output pin
+    for (auto& link : outputPins.at(OUTPUT_PORT_INDEX_FLOW).links)
+    {
+        if (auto* connectedPin = link.getConnectedPin())
         {
-            return true; // Link on Output Port
-        }
-
-        // New Link on the Input port, but the previously connected dataIdentifier is different from the new one.
-        // Then remove all links.
-        if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier != startPin->dataIdentifier)
-        {
-            for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))
-            {
-                nm::DeleteLink(link->id);
-            }
-        }
-
-        // Update the dataIdentifier of the output pin to the same as input pin
-        outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = startPin->dataIdentifier;
-
-        // Refresh all links connected to the output pin
-        for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))
-        {
-            nm::RefreshLink(link->id);
+            outputPins.at(OUTPUT_PORT_INDEX_FLOW).recreateLink(*connectedPin);
         }
     }
 
     return true;
 }
 
-void NAV::Delay::delayObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::Delay::delayObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     if (_buffer.size() == static_cast<size_t>(_delayLength))
     {
         auto oldest = _buffer.front();
         _buffer.pop_front();
-        _buffer.push_back(nodeData);
+        _buffer.push_back(queue.extract_front());
 
-        if (auto obs = std::static_pointer_cast<const InsObs>(nodeData))
-        {
-            LOG_DATA("{}: Delay pushing out message: {}", nameId(), obs->insTime->toGPSweekTow());
-        }
-        else
-        {
-            LOG_DATA("{}: Delay pushing out message", nameId());
-        }
+        LOG_DATA("{}: Delay pushing out message: {}", nameId(), _buffer.back()->insTime.toGPSweekTow());
 
         if (!(NAV::Node::callbacksEnabled))
         {
@@ -155,6 +145,6 @@ void NAV::Delay::delayObs(const std::shared_ptr<const NodeData>& nodeData, ax::N
     }
     else
     {
-        _buffer.push_back(nodeData);
+        _buffer.push_back(queue.extract_front());
     }
 }

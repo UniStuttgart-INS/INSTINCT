@@ -21,8 +21,7 @@ NAV::MatrixLogger::MatrixLogger()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 380, 70 };
 
-    nm::CreateInputPin(this, "write", Pin::Type::Matrix, { "Eigen::MatrixXd", "BlockMatrix" });
-    inputPins.back().notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&MatrixLogger::writeMatrix), 0);
+    nm::CreateInputPin(this, "write", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &MatrixLogger::writeMatrix);
 }
 
 NAV::MatrixLogger::~MatrixLogger()
@@ -103,7 +102,7 @@ void NAV::MatrixLogger::deinitialize()
     FileWriter::deinitialize();
 }
 
-void NAV::MatrixLogger::writeMatrix(ax::NodeEditor::LinkId linkId)
+void NAV::MatrixLogger::writeMatrix(const InsTime& insTime, size_t pinIdx)
 {
     constexpr int gpsCyclePrecision = 3;
     constexpr int gpsTimePrecision = 12;
@@ -114,85 +113,44 @@ void NAV::MatrixLogger::writeMatrix(ax::NodeEditor::LinkId linkId)
         _filestream << "Time [s],GpsCycle,GpsWeek,GpsTow [s]";
     }
 
-    if (Link* link = nm::FindLink(linkId))
+    if (auto* sourcePin = inputPins[pinIdx].link.getConnectedPin())
     {
-        if (Pin* sourcePin = nm::FindPin(link->startPinId))
+        // Matrix
+        if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
         {
-            size_t pinIndex = pinIndexFromId(link->endPinId);
+            const auto* value = getInputValue<const Eigen::MatrixXd>(INPUT_PORT_INDEX_MATRIX);
 
-            InsTime currentTime = util::time::GetCurrentInsTime();
-            // Matrix
-            if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
+            if (value != nullptr && !insTime.empty())
             {
-                auto* value = getInputValue<Eigen::MatrixXd>(pinIndex);
-
-                if (value != nullptr && !currentTime.empty())
+                if (!_headerWritten)
                 {
-                    if (!_headerWritten)
-                    {
-                        for (int row = 0; row < value->rows(); row++)
-                        {
-                            for (int col = 0; col < value->cols(); col++)
-                            {
-                                _filestream << ",[" << row << ";" << col << "]";
-                            }
-                        }
-                        _filestream << std::endl;
-                        _headerWritten = true;
-                    }
-
-                    _filestream << std::setprecision(valuePrecision) << std::round(calcTimeIntoRun(currentTime) * 1e9) / 1e9;
-                    _filestream << "," << std::fixed << std::setprecision(gpsCyclePrecision) << currentTime.toGPSweekTow().gpsCycle;
-                    _filestream << "," << std::defaultfloat << std::setprecision(gpsTimePrecision) << currentTime.toGPSweekTow().gpsWeek;
-                    _filestream << "," << std::defaultfloat << std::setprecision(gpsTimePrecision) << currentTime.toGPSweekTow().tow;
-                    _filestream << std::setprecision(valuePrecision);
-
                     for (int row = 0; row < value->rows(); row++)
                     {
                         for (int col = 0; col < value->cols(); col++)
                         {
-                            _filestream << "," << (*value)(row, col);
+                            _filestream << ",[" << row << ";" << col << "]";
                         }
                     }
-                    _filestream << "\n";
+                    _filestream << std::endl;
+                    _headerWritten = true;
                 }
-            }
-            else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
-            {
-                auto* value = getInputValue<BlockMatrix>(pinIndex);
 
-                if (value != nullptr && !currentTime.empty())
+                _filestream << std::setprecision(valuePrecision) << std::round(calcTimeIntoRun(insTime) * 1e9) / 1e9;
+                _filestream << "," << std::fixed << std::setprecision(gpsCyclePrecision) << insTime.toGPSweekTow().gpsCycle;
+                _filestream << "," << std::defaultfloat << std::setprecision(gpsTimePrecision) << insTime.toGPSweekTow().gpsWeek;
+                _filestream << "," << std::defaultfloat << std::setprecision(gpsTimePrecision) << insTime.toGPSweekTow().tow;
+                _filestream << std::setprecision(valuePrecision);
+
+                for (int row = 0; row < value->rows(); row++)
                 {
-                    auto matrix = (*value)();
-                    if (!_headerWritten)
+                    for (int col = 0; col < value->cols(); col++)
                     {
-                        for (int row = 0; row < matrix.rows(); row++)
-                        {
-                            for (int col = 0; col < matrix.cols(); col++)
-                            {
-                                _filestream << ",[" << row << ";" << col << "]";
-                            }
-                        }
-                        _filestream << std::endl;
-                        _headerWritten = true;
+                        _filestream << "," << (*value)(row, col);
                     }
-
-                    _filestream << std::setprecision(valuePrecision) << std::round(calcTimeIntoRun(currentTime) * 1e9) / 1e9;
-                    _filestream << "," << std::fixed << std::setprecision(gpsCyclePrecision) << currentTime.toGPSweekTow().gpsCycle;
-                    _filestream << "," << std::defaultfloat << std::setprecision(gpsTimePrecision) << currentTime.toGPSweekTow().gpsWeek;
-                    _filestream << "," << std::defaultfloat << std::setprecision(gpsTimePrecision) << currentTime.toGPSweekTow().tow;
-                    _filestream << std::setprecision(valuePrecision);
-
-                    for (int row = 0; row < matrix.rows(); row++)
-                    {
-                        for (int col = 0; col < matrix.cols(); col++)
-                        {
-                            _filestream << "," << matrix(row, col);
-                        }
-                    }
-                    _filestream << "\n";
                 }
+                _filestream << "\n";
             }
         }
     }
+    releaseInputValue(pinIdx);
 }

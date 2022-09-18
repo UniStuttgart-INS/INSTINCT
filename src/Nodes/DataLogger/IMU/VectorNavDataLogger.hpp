@@ -54,7 +54,7 @@ class VectorNavDataLogger : public Node, public FileWriter, public CommonLog
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
     /// @return True if link is allowed, false if link is rejected
-    bool onCreateLink(Pin* startPin, Pin* endPin) override;
+    bool onCreateLink(OutputPin& startPin, InputPin& endPin) override;
 
     /// @brief Function called by the flow executer after finishing to flush out remaining data
     void flush() override;
@@ -67,9 +67,9 @@ class VectorNavDataLogger : public Node, public FileWriter, public CommonLog
     void deinitialize() override;
 
     /// @brief Write Observation to the file
-    /// @param[in] nodeData The received observation
-    /// @param[in] linkId Id of the link over which the data is received
-    void writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void writeObservation(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief Flag to write the header once
     bool _headerWritten = false;

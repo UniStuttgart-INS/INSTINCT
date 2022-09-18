@@ -12,7 +12,6 @@ namespace ed = ax::NodeEditor;
 #include "NodeRegistry.hpp"
 
 #include "internal/Node/Node.hpp"
-#include "internal/Node/Link.hpp"
 #include "internal/Node/Pin.hpp"
 #include "internal/ConfigManager.hpp"
 #include "internal/FlowExecutor.hpp"
@@ -65,10 +64,17 @@ void NAV::flow::SaveFlowAs(const std::string& filepath)
     {
         j["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
         j["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
-    }
-    for (const auto& link : nm::m_Links())
-    {
-        j["links"]["link-" + std::to_string(size_t(link.id))] = link;
+
+        for (const auto& outputPin : node->outputPins)
+        {
+            for (const auto& link : outputPin.links)
+            {
+                auto& jLink = j["links"]["link-" + std::to_string(size_t(link.linkId))];
+                jLink["id"] = size_t(link.linkId);
+                jLink["startPinId"] = size_t(outputPin.id);
+                jLink["endPinId"] = size_t(link.connectedPinId);
+            }
+        }
     }
     if (gui::windows::saveConfigInFlow)
     {
@@ -100,7 +106,7 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
 
     saveLastActions = false;
 
-    nm::DeleteAllLinksAndNodes();
+    nm::DeleteAllNodes();
 
     LoadJson(j);
 
@@ -252,37 +258,55 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
     }
 
     // Collect the node ids which get new links to call the restoreAfterLinks function on them
-    std::set<size_t> newlyLinkedNodes;
+    std::set<Node*> newlyLinkedNodes;
 
     if (j.contains("links"))
     {
-        for (const auto& linkJson : j.at("links"))
+        for (size_t i = 0; i < 2; i++) // Run twice because pins can change type depending on other links
         {
-            Link link = linkJson.get<Link>();
-
-            if (!nm::FindLink(link.id))
+            for (const auto& linkJson : j.at("links"))
             {
-                if (!nm::AddLink(link))
-                {
-                    loadSuccessful = false;
-                }
+                auto linkId = linkJson.at("id").get<size_t>();
+                auto startPinId = linkJson.at("startPinId").get<size_t>();
+                auto endPinId = linkJson.at("endPinId").get<size_t>();
 
-                if (auto* node = nm::FindConnectedNodeToInputPin(link.endPinId))
+                InputPin* endPin = nullptr;
+                OutputPin* startPin = nullptr;
+                for (auto* node : nm::m_Nodes())
                 {
-                    newlyLinkedNodes.insert(size_t(node->id));
+                    if (!endPin)
+                    {
+                        for (auto& inputPin : node->inputPins)
+                        {
+                            if (endPinId == size_t(inputPin.id)) { endPin = &inputPin; }
+                        }
+                    }
+                    if (!startPin)
+                    {
+                        for (auto& outputPin : node->outputPins)
+                        {
+                            if (startPinId == size_t(outputPin.id)) { startPin = &outputPin; }
+                        }
+                    }
+                    if (startPin && endPin) { break; }
                 }
-                for (auto* node : nm::FindConnectedNodesToOutputPin(link.startPinId))
+                if (startPin && endPin)
                 {
-                    newlyLinkedNodes.insert(size_t(node->id));
+                    if (!startPin->createLink(*endPin, linkId))
+                    {
+                        loadSuccessful = false;
+                        continue;
+                    }
+                    newlyLinkedNodes.insert(startPin->parentNode);
+                    newlyLinkedNodes.insert(endPin->parentNode);
                 }
             }
         }
     }
     if (j.contains("nodes"))
     {
-        for (auto nodeId : newlyLinkedNodes)
+        for (auto* node : newlyLinkedNodes)
         {
-            auto* node = nm::FindNode(nodeId);
             if (j.at("nodes").contains("node-" + std::to_string(size_t(node->id))))
             {
                 LOG_DEBUG("Calling restoreAtferLink() for new node '{}'", node->nameId());

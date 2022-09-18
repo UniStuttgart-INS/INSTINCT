@@ -65,6 +65,8 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
         if (NodeEditorApplication::defaultFontRatio() == 1.F) { ImGui::SameLine(); }
         ImGui::Checkbox("Show Notify Flow", &nm::showFlowWhenNotifyingValueChange);
 
+        ImGui::Checkbox("Show Queue size on pins", &NodeEditorApplication::_showQueueSizeOnPins);
+
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
         ImGui::PopDisabled();
 #endif
