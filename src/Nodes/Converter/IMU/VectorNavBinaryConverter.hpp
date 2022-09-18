@@ -13,15 +13,17 @@
 
 #pragma once
 
-#include "internal/Node/Node.hpp"
+#ifdef HAS_VECTORNAV_LIBRARY
 
-#include "NodeData/IMU/VectorNavBinaryOutput.hpp"
-#include "NodeData/IMU/ImuObsWDelta.hpp"
-#include "NodeData/State/PosVelAtt.hpp"
-#include "NodeData/GNSS/GnssObs.hpp"
+    #include "internal/Node/Node.hpp"
 
-#include <array>
-#include <memory>
+    #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
+    #include "NodeData/IMU/ImuObsWDelta.hpp"
+    #include "NodeData/State/PosVelAtt.hpp"
+    #include "NodeData/GNSS/GnssObs.hpp"
+
+    #include <array>
+    #include <memory>
 
 namespace NAV
 {
@@ -120,3 +122,5 @@ class VectorNavBinaryConverter : public Node
 };
 
 } // namespace NAV
+
+#endif

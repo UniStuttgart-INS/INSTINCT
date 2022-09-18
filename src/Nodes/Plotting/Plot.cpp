@@ -310,8 +310,11 @@ NAV::Plot::Plot()
 
     _dataIdentifier = { Pos::type(), PosVel::type(), PosVelAtt::type(), LcKfInsGnssErrors::type(),
                         SppSolution::type(), RtklibPosObs::type(), UbloxObs::type(),
-                        ImuObs::type(), KvhObs::type(), ImuObsWDelta::type(),
-                        VectorNavBinaryOutput::type() };
+                        ImuObs::type(), KvhObs::type(), ImuObsWDelta::type()
+#ifdef HAS_VECTORNAV_LIBRARY // clang-format off
+                      , VectorNavBinaryOutput::type()
+#endif // clag-format on
+    };
 
     updateNumberOfInputPins();
 
@@ -1673,6 +1676,8 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "dVelocity Y [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "dVelocity Z [m/s]");
         }
+
+#ifdef HAS_VECTORNAV_LIBRARY
         else if (startPin.dataIdentifier.front() == VectorNavBinaryOutput::type())
         {
             // NodeData
@@ -1891,6 +1896,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "GNSS2::RawMeas::Week");
             _pinData.at(pinIndex).addPlotDataItem(i++, "GNSS2::RawMeas::NumSats");
         }
+#endif
     }
     else if (inputPins.at(pinIndex).type == Pin::Type::Bool)
     {
@@ -2208,10 +2214,12 @@ void NAV::Plot::plotData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
         {
             plotImuObsWDeltaObs(std::static_pointer_cast<const ImuObsWDelta>(nodeData), pinIdx);
         }
+#ifdef HAS_VECTORNAV_LIBRARY
         else if (sourcePin->dataIdentifier.front() == VectorNavBinaryOutput::type())
         {
             plotVectorNavBinaryObs(std::static_pointer_cast<const VectorNavBinaryOutput>(nodeData), pinIdx);
         }
+#endif
     }
 }
 
@@ -2754,6 +2762,8 @@ void NAV::Plot::plotImuObsWDeltaObs(const std::shared_ptr<const ImuObsWDelta>& o
     addData(pinIndex, i++, obs->dvel.has_value() ? obs->dvel->z() : std::nan(""));
 }
 
+#ifdef HAS_VECTORNAV_LIBRARY
+
 void NAV::Plot::plotVectorNavBinaryObs(const std::shared_ptr<const VectorNavBinaryOutput>& obs, size_t pinIndex)
 {
     if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
@@ -2977,3 +2987,5 @@ void NAV::Plot::plotVectorNavBinaryObs(const std::shared_ptr<const VectorNavBina
     addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS) ? static_cast<double>(obs->gnss2Outputs->raw.week) : std::nan(""));
     addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS) ? static_cast<double>(obs->gnss2Outputs->raw.numSats) : std::nan(""));
 }
+
+#endif

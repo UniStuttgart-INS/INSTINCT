@@ -34,8 +34,12 @@ if(ENABLE_MAIN)
             ImGuiFileDialog
             implot
             application
-            libvncxx
             libUartSensor)
+
+  if(ENABLE_VECTORNAV)
+    target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC HAS_VECTORNAV_LIBRARY=1)
+    target_link_libraries(${PROJECT_NAME_LOWERCASE} PRIVATE libvncxx)
+  endif()
 
   if(NOT APPLE AND NOT WIN32)
     target_link_libraries(${PROJECT_NAME_LOWERCASE} PRIVATE libnavio)

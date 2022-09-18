@@ -8,16 +8,18 @@
 
 #include "VectorNavBinaryConverter.hpp"
 
-#include <cmath>
+#ifdef HAS_VECTORNAV_LIBRARY
 
-#include "util/Logger.hpp"
+    #include <cmath>
 
-#include "internal/NodeManager.hpp"
+    #include "util/Logger.hpp"
+
+    #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
-#include "internal/FlowManager.hpp"
+    #include "internal/FlowManager.hpp"
 
-#include "Navigation/Transformations/CoordinateFrames.hpp"
-#include "Navigation/Transformations/Units.hpp"
+    #include "Navigation/Transformations/CoordinateFrames.hpp"
+    #include "Navigation/Transformations/Units.hpp"
 
 NAV::VectorNavBinaryConverter::VectorNavBinaryConverter()
     : Node(typeStatic())
@@ -936,3 +938,5 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
 
     return gnssObs;
 }
+
+#endif

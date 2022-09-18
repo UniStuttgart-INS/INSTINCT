@@ -8,25 +8,27 @@
 
 #include "VectorNavSensor.hpp"
 
-#include "util/Logger.hpp"
-#include "vn/searcher.h"
-#include "vn/util.h"
+#ifdef HAS_VECTORNAV_LIBRARY
 
-#include "internal/gui/widgets/HelpMarker.hpp"
+    #include "util/Logger.hpp"
+    #include "vn/searcher.h"
+    #include "vn/util.h"
 
-#include "internal/NodeManager.hpp"
+    #include "internal/gui/widgets/HelpMarker.hpp"
+
+    #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
-#include "internal/FlowManager.hpp"
+    #include "internal/FlowManager.hpp"
 
-#include <imgui_internal.h>
+    #include <imgui_internal.h>
 
-#include "NodeData/General/StringObs.hpp"
+    #include "NodeData/General/StringObs.hpp"
 
-#include "util/Time/TimeBase.hpp"
-#include "Navigation/Transformations/CoordinateFrames.hpp"
-#include "Navigation/Transformations/Units.hpp"
+    #include "util/Time/TimeBase.hpp"
+    #include "Navigation/Transformations/CoordinateFrames.hpp"
+    #include "Navigation/Transformations/Units.hpp"
 
-#include <map>
+    #include <map>
 
 // to_json / from_json
 namespace vn
@@ -7166,3 +7168,5 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
         vnSensor->invokeCallbacks(VectorNavSensor::OUTPUT_PORT_INDEX_ASCII_OUTPUT, obs);
     }
 }
+
+#endif

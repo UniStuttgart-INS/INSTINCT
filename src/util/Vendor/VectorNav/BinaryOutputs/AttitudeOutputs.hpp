@@ -13,11 +13,13 @@
 
 #pragma once
 
-#include <cstdint>
-#include <util/Eigen.hpp>
+#ifdef HAS_VECTORNAV_LIBRARY
 
-#include <vn/types.h>
-#include "util/Vendor/VectorNav/VectorNavTypes.hpp"
+    #include <cstdint>
+    #include <util/Eigen.hpp>
+
+    #include <vn/types.h>
+    #include "util/Vendor/VectorNav/VectorNavTypes.hpp"
 
 namespace NAV::vendor::vectornav
 {
@@ -101,3 +103,5 @@ struct AttitudeOutputs
 };
 
 } // namespace NAV::vendor::vectornav
+
+#endif

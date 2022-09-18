@@ -8,19 +8,21 @@
 
 #include "VectorNavDataLogger.hpp"
 
-#include "NodeData/IMU/VectorNavBinaryOutput.hpp"
+#ifdef HAS_VECTORNAV_LIBRARY
 
-#include "util/Logger.hpp"
-#include "util/StringUtil.hpp"
+    #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
 
-#include <iomanip> // std::setprecision
-#include <limits>
+    #include "util/Logger.hpp"
+    #include "util/StringUtil.hpp"
 
-#include "internal/NodeManager.hpp"
+    #include <iomanip> // std::setprecision
+    #include <limits>
+
+    #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
-#include "internal/FlowManager.hpp"
+    #include "internal/FlowManager.hpp"
 
-#include <imgui_internal.h>
+    #include <imgui_internal.h>
 
 NAV::VectorNavDataLogger::VectorNavDataLogger()
     : Node(typeStatic())
@@ -1536,3 +1538,5 @@ void NAV::VectorNavDataLogger::writeObservation(NAV::InputPin::NodeDataQueue& qu
 
     LOG_DATA("{}: Message logged", nameId());
 }
+
+#endif

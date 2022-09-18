@@ -13,10 +13,12 @@
 
 #pragma once
 
-#include "Nodes/DataProvider/IMU/Imu.hpp"
-#include "Nodes/DataProvider/Protocol/FileReader.hpp"
+#ifdef HAS_VECTORNAV_LIBRARY
 
-#include "vn/sensors.h"
+    #include "Nodes/DataProvider/IMU/Imu.hpp"
+    #include "Nodes/DataProvider/Protocol/FileReader.hpp"
+
+    #include "vn/sensors.h"
 
 namespace NAV
 {
@@ -96,3 +98,5 @@ class VectorNavFile : public Imu, public FileReader
 };
 
 } // namespace NAV
+
+#endif
