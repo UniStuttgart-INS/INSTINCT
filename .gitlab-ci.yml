@@ -355,7 +355,7 @@ tests:raspberry:gcc:
   stage: test
   script:
     - cd build/Debug
-    - ctest -j2 --output-on-failure
+    - ctest --output-on-failure # -j2
   after_script:
     - cd build/Debug/test
     - xml_grep --pretty_print indented --wrap '' --descr '' --cond "testsuites" *.xml > ../../../junit.xml
