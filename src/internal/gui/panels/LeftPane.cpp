@@ -41,7 +41,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
 
     ImGui::BeginChild("Selection", ImVec2(paneWidth, childHeight));
 
-    paneWidth = ImGui::GetContentRegionAvailWidth();
+    paneWidth = ImGui::GetContentRegionAvail().x;
 
     float colSum = ImGui::GetStyle().Colors[ImGuiCol_WindowBg].x + ImGui::GetStyle().Colors[ImGuiCol_WindowBg].y + ImGui::GetStyle().Colors[ImGuiCol_WindowBg].z;
     ImTextureID instinctLogo = NodeEditorApplication::m_InstinctLogo.at(colSum > 2.0F ? 1 : 0);
@@ -66,7 +66,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
         // TODO: The flow animations currently crash under windows
-        ImGui::PushDisabled();
+        ImGui::BeginDisabled();
 #endif
 
         ImGui::Checkbox("Show Callback Flow", &nm::showFlowWhenInvokingCallbacks);
@@ -76,7 +76,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
         ImGui::Checkbox("Show Queue size on pins", &NodeEditorApplication::_showQueueSizeOnPins);
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
-        ImGui::PopDisabled();
+        ImGui::EndDisabled();
 #endif
     }
 

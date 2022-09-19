@@ -581,7 +581,7 @@ void ImGui::TextAnsiUnformatted(const char* text, const char* text_end)
                 ImRect line_rect(pos, pos + ImVec2(FLT_MAX, line_height));
                 while (line < text_end)
                 {
-                    if (IsClippedEx(line_rect, 0, false))
+                    if (IsClippedEx(line_rect, 0))
                     {
                         break;
                     }
@@ -651,9 +651,9 @@ void ImGui::TextAnsiV(const char* fmt, va_list args)
     ImGuiContext& g = *GImGui;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
-    const char* text_end = g.TempBuffer + ImFormatStringV(g.TempBuffer, IM_ARRAYSIZE(g.TempBuffer), fmt, args); // NOLINT(clang-diagnostic-format-nonliteral)
+    const char* text_end = g.TempBuffer.Data + ImFormatStringV(g.TempBuffer.Data, IM_ARRAYSIZE(g.TempBuffer.Data), fmt, args); // NOLINT(clang-diagnostic-format-nonliteral)
 #pragma GCC diagnostic pop
-    TextAnsiUnformatted(g.TempBuffer, text_end);
+    TextAnsiUnformatted(g.TempBuffer.Data, text_end);
 }
 
 void ImGui::TextAnsiColoredV(const ImVec4& col, const char* fmt, va_list args)

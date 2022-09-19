@@ -15,7 +15,7 @@
 	url = ../imgui-node-editor.git
 [submodule "lib/imgui"]
 	path = lib/imgui
-	url = ../imgui.git
+	url = https://github.com/thedmd/imgui.git
 [submodule "lib/ImGuiFileDialog"]
 	path = lib/ImGuiFileDialog
 	url = https://github.com/aiekick/ImGuiFileDialog.git

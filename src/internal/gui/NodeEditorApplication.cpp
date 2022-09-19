@@ -866,14 +866,14 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 else if (hasOutputFlows)
                 {
                     bool itemDisabled = !node->isInitialized() && !node->callbacksEnabled;
-                    if (itemDisabled) { ImGui::PushDisabled(); }
+                    if (itemDisabled) { ImGui::BeginDisabled(); }
 
                     ImGui::PushStyleColor(ImGuiCol_FrameBg, checkBoxColor);
                     ImGui::Checkbox("", &node->callbacksEnabled);
                     ImGui::PopStyleColor();
                     if (ImGui::IsItemHovered()) { tooltipText = "Enable Callbacks"; }
 
-                    if (itemDisabled) { ImGui::PopDisabled(); }
+                    if (itemDisabled) { ImGui::EndDisabled(); }
                     ImGui::Dummy(ImVec2(0, 26));
                 }
                 else
@@ -956,14 +956,14 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                     bool noneType = input.type == Pin::Type::None;
                     if (noneType)
                     {
-                        ImGui::PushDisabled();
+                        ImGui::BeginDisabled();
                     }
                     ImGui::PushStyleColor(ImGuiCol_Text, textColor);
                     ImGui::TextUnformatted(input.name.c_str());
                     ImGui::PopStyleColor();
                     if (noneType)
                     {
-                        ImGui::PopDisabled();
+                        ImGui::EndDisabled();
                     }
                     ImGui::Spring(0);
                 }
@@ -1004,14 +1004,14 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                     bool noneType = output.type == Pin::Type::None;
                     if (noneType)
                     {
-                        ImGui::PushDisabled();
+                        ImGui::BeginDisabled();
                     }
                     ImGui::PushStyleColor(ImGuiCol_Text, textColor);
                     ImGui::TextUnformatted(output.name.c_str());
                     ImGui::PopStyleColor();
                     if (noneType)
                     {
-                        ImGui::PopDisabled();
+                        ImGui::EndDisabled();
                     }
                 }
                 ImGui::Spring(0);
@@ -1605,9 +1605,9 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             {
                 ImGui::PushFont(WindowFont());
                 bool locked = node->_lockConfigDuringRun && (node->callbacksEnabled || FlowExecutor::isRunning());
-                if (locked) { ImGui::PushDisabled(); }
+                if (locked) { ImGui::BeginDisabled(); }
                 node->guiConfig();
-                if (locked) { ImGui::PopDisabled(); }
+                if (locked) { ImGui::EndDisabled(); }
                 ImGui::PopFont();
             }
             else // Window is collapsed

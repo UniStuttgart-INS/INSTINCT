@@ -13,9 +13,9 @@
 
 void NAV::gui::widgets::HelpMarker(const char* desc, const char* symbol) // NOLINT(clang-diagnostic-unused-function)
 {
-    ImGui::PushDisabled();
+    ImGui::BeginDisabled();
     ImGui::TextUnformatted(symbol);
-    ImGui::PopDisabled();
+    ImGui::EndDisabled();
 
     if (ImGui::IsItemHovered())
     {
@@ -29,9 +29,9 @@ void NAV::gui::widgets::HelpMarker(const char* desc, const char* symbol) // NOLI
 
 bool NAV::gui::widgets::BeginHelpMarker(const char* symbol)
 {
-    ImGui::PushDisabled();
+    ImGui::BeginDisabled();
     ImGui::TextUnformatted(symbol);
-    ImGui::PopDisabled();
+    ImGui::EndDisabled();
 
     if (ImGui::IsItemHovered())
     {

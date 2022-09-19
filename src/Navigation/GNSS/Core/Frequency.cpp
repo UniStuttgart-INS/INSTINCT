@@ -397,7 +397,7 @@ bool ShowFrequencySelector(const char* label, Frequency& frequency)
                     ImGui::TableSetColumnIndex(c);
                     if (c >= 1)
                     {
-                        ImGui::PushDisabled();
+                        ImGui::BeginDisabled();
                     }
                     ImU64 value = Frequency_(frequency);
                     if (ImGui::CheckboxFlags(text.c_str(), &value, flag))
@@ -407,7 +407,7 @@ bool ShowFrequencySelector(const char* label, Frequency& frequency)
                     }
                     if (c >= 1)
                     {
-                        ImGui::PopDisabled();
+                        ImGui::EndDisabled();
                     }
                 }
             }
