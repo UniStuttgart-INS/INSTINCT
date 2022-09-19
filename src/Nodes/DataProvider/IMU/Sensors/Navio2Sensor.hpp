@@ -16,7 +16,7 @@
 #include "Nodes/DataProvider/IMU/Imu.hpp"
 
 #if !__APPLE__ && !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
-    #include "navio/Common/InertialSensor.h"
+    #include "Navio/Common/InertialSensor.h"
 #endif
 
 #include "util/CallbackTimer.hpp"

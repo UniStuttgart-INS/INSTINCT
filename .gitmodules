@@ -6,7 +6,7 @@
 	url = ../../ins/ins_staff/vnproglib.git
 [submodule "lib/navio2"]
 	path = lib/navio2
-	url = ../../ins/ins_staff/navio2.git
+	url = https://github.com/emlid/Navio2.git
 [submodule "lib/uartsensor"]
 	path = lib/uartsensor
 	url = ../uart-sensor.git

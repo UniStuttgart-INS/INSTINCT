@@ -11,9 +11,9 @@
 #include "util/Logger.hpp"
 
 #if !__APPLE__ && !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
-    #include "navio/Common/MPU9250.h"
-    #include "navio/Navio2/LSM9DS1.h"
-    #include "navio/Common/Util.h"
+    #include "Navio/Common/MPU9250.h"
+    #include "Navio/Navio2/LSM9DS1.h"
+    #include "Navio/Common/Util.h"
 #endif
 
 #include "internal/NodeManager.hpp"

@@ -203,8 +203,41 @@ endif()
 
 if(NOT APPLE AND NOT WIN32)
   # Include navio2 library
-  add_subdirectory(lib/navio2 libnavio)
-  include_directories(SYSTEM lib/navio2/include)
+  add_library(libnavio lib/navio2/C++/Navio/Common/gpio.cpp
+                       lib/navio2/C++/Navio/Common/I2Cdev.cpp
+                       lib/navio2/C++/Navio/Common/MPU9250.cpp
+                       lib/navio2/C++/Navio/Common/MS5611.cpp
+                       lib/navio2/C++/Navio/Common/Ublox.cpp
+                       lib/navio2/C++/Navio/Common/Util.cpp
+                       lib/navio2/C++/Navio/Navio2/ADC_Navio2.cpp
+                       lib/navio2/C++/Navio/Navio2/Led_Navio2.cpp
+                       lib/navio2/C++/Navio/Navio2/LSM9DS1.cpp
+                       lib/navio2/C++/Navio/Navio2/PWM.cpp
+                       lib/navio2/C++/Navio/Navio2/RCInput_Navio2.cpp
+                       lib/navio2/C++/Navio/Navio2/RCOutput_Navio2.cpp
+                       lib/navio2/C++/Navio/Navio2/RGBled.cpp
+                       lib/navio2/C++/Navio/Common/ADC.h
+                       lib/navio2/C++/Navio/Common/gpio.h
+                       lib/navio2/C++/Navio/Common/I2Cdev.h
+                       lib/navio2/C++/Navio/Common/InertialSensor.h
+                       lib/navio2/C++/Navio/Common/Led.h
+                       lib/navio2/C++/Navio/Common/MPU9250.h
+                       lib/navio2/C++/Navio/Common/MS5611.h
+                       lib/navio2/C++/Navio/Common/RCInput.h
+                       lib/navio2/C++/Navio/Common/RCOutput.h
+                       lib/navio2/C++/Navio/Common/SPIdev.h
+                       lib/navio2/C++/Navio/Common/Ublox.h
+                       lib/navio2/C++/Navio/Common/Util.h
+                       lib/navio2/C++/Navio/Navio2/ADC_Navio2.h
+                       lib/navio2/C++/Navio/Navio2/Led_Navio2.h
+                       lib/navio2/C++/Navio/Navio2/LSM9DS1.h
+                       lib/navio2/C++/Navio/Navio2/PWM.h
+                       lib/navio2/C++/Navio/Navio2/RCInput_Navio2.h
+                       lib/navio2/C++/Navio/Navio2/RCOutput_Navio2.h
+                       lib/navio2/C++/Navio/Navio2/RGBled.h)
+  target_include_directories(libnavio SYSTEM PRIVATE lib/navio2/C++/Navio)
+  include_directories(SYSTEM lib/navio2/C++
+                             lib/navio2/C++/Navio)
   set_target_properties(libnavio PROPERTIES CXX_CLANG_TIDY "")
   set_target_properties(libnavio PROPERTIES CXX_CPPCHECK "")
 endif()
