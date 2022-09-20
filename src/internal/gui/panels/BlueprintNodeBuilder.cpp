@@ -167,7 +167,6 @@ bool ax::NodeEditor::Utilities::BlueprintNodeBuilder::SetStage(Stage stage)
     auto oldStage = CurrentStage;
     CurrentStage = stage;
 
-    ImVec2 cursor;
     switch (oldStage)
     {
     case Stage::Begin:

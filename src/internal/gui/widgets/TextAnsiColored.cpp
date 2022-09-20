@@ -529,7 +529,7 @@ void ImGui::TextAnsiUnformatted(const char* text, const char* text_end)
     const char* text_begin = text;
     if (text_end == nullptr)
     {
-        text_end = text + strlen(text);
+        text_end = text + strlen(text); // NOLINT(clang-analyzer-core.NonNullParamChecker) - false positive, as checked by IM_ASSERT
     }
 
     const ImVec2 text_pos(window->DC.CursorPos.x, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);
