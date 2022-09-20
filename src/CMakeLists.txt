@@ -33,12 +33,16 @@ if(ENABLE_MAIN)
             imgui_node_editor
             ImGuiFileDialog
             implot
-            application
-            libUartSensor)
+            application)
 
   if(ENABLE_VECTORNAV)
     target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC HAS_VECTORNAV_LIBRARY=1)
     target_link_libraries(${PROJECT_NAME_LOWERCASE} PRIVATE libvncxx)
+  endif()
+
+  if(ENABLE_UARTSENSORS)
+    target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC HAS_UARTSENSOR_LIBRARY=1)
+    target_link_libraries(${PROJECT_NAME_LOWERCASE} PRIVATE libUartSensor)
   endif()
 
   if(NOT APPLE AND NOT WIN32)

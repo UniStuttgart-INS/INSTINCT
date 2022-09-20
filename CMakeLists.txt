@@ -244,10 +244,17 @@ endif()
 
 # ------------------------------------------------- UART ------------------------------------------------- */
 
-add_subdirectory(lib/uartsensor libUartSensor)
-include_directories(SYSTEM lib/uartsensor/include)
-set_target_properties(libUartSensor PROPERTIES CXX_CLANG_TIDY "")
-set_target_properties(libUartSensor PROPERTIES CXX_CPPCHECK "")
+# To enable this, you need a copy of the VectorNav library and some patch files from us.
+# The library or the patch files will be released later on, after communicating with the manufacturer.
+option(ENABLE_UARTSENSORS "Enable UART Sensor related nodes" ON)
+if(ENABLE_UARTSENSORS)
+  add_subdirectory(lib/uartsensor libUartSensor)
+  include_directories(SYSTEM lib/uartsensor/include)
+  set_target_properties(libUartSensor PROPERTIES CXX_CLANG_TIDY "")
+  set_target_properties(libUartSensor PROPERTIES CXX_CPPCHECK "")
+else()
+  include_directories(src/util/uartsensor)
+endif()
 
 # ------------------------------------------------- gcem ------------------------------------------------- */
 
