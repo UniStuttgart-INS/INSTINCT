@@ -33,6 +33,13 @@ image: ins-cpp:10
   only:
     - schedules
 
+.retry:
+  retry:
+    max: 2
+    when:
+      - stuck_or_timeout_failure
+      - job_execution_timeout
+
 .windows:
   tags:
     - windows
@@ -353,6 +360,8 @@ tests:raspberry:gcc:
 
 .run-tests:
   stage: test
+  extends:
+    - .retry
   script:
     - cd build/Debug
     - ctest --output-on-failure # -j2
@@ -383,7 +392,9 @@ run-tests:gcc:
 
 run-tests:win:
   stage: test
-  extends: .windows
+  extends:
+    - .windows
+    - .retry
   needs: ["tests:win"]
   script:
     - cd build/Debug/test
@@ -475,6 +486,7 @@ pages:
   extends:
     - .linux
     - .schedule
+    - .retry
   image: ubuntu:22.04
   needs: []
   variables:
@@ -531,6 +543,7 @@ ubuntu:22.04:gcc:debug:
   extends:
     - .linux
     - .schedule
+    - .retry
   image: ubuntu:22.04
   variables:
     DEBIAN_FRONTEND: noninteractive
@@ -581,6 +594,7 @@ run-tests:ubuntu:22.04:gcc:debug:
   extends:
     - .linux
     - .schedule
+    - .retry
   image: archlinux:latest
   needs: []
   before_script:
@@ -633,6 +647,7 @@ archlinux:latest:gcc:debug:
   extends:
     - .linux
     - .schedule
+    - .retry
   image: archlinux:latest
   before_script:
     - pacman -Sy archlinux-keyring --noconfirm && pacman -Syyu --noconfirm --needed
