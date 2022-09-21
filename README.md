@@ -6,9 +6,9 @@ Flow-Based Navigation Software of the Institut of Navigation (INS) of the Univer
 
 ## Description
 
-INSTINCT is a PNT software implementing various PNT algorithms (e.g. multi-sensor data fusion) and following the Flow-Based Programming paradigm. It can operate in real-time, reading measurements from sensors, as well as in post-processing mode, reading from files or simulating values.
+INSTINCT is a PNT software which implements a manifold of PNT algorithms (e.g. multi-sensor data fusion) while following the Flow-Based Programming paradigm. It can operate in real-time, interfacing to different sensors, or it can be used in post-processing mode for which data are read from files or generated from the software's own simulation tools.
 
-The GUI provides a dataflow editor which can be used to connect Nodes (modules encapsuling functionality) and create a custom-tailored application. For performance, every Node runs in an own thread, providing parallelism out of the box.
+The GUI provides a dataflow editor which can be used to connect Nodes (modules encapsuling functionality) and create custom-tailored applications. For performance, every Node runs in an own thread, providing parallelism out of the box.
 
 If now GUI is required, the application can be run in ```--nogui``` mode and a `.flow` file can be loaded.
 
