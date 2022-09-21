@@ -59,7 +59,7 @@ void NAV::gui::windows::ShowNodeEditorStyleEditor(bool* show /* = nullptr*/)
     ImGui::Separator();
 
     static ImGuiColorEditFlags edit_mode = ImGuiColorEditFlags_DisplayRGB;
-    ImGui::BeginHorizontal("Color Mode", ImVec2(paneWidth, 0), 1.0f);
+    ImGui::BeginHorizontal("Color Mode", ImVec2(paneWidth, 0), 1.0F);
     ImGui::TextUnformatted("Filter Colors");
     ImGui::Spring();
     ImGui::RadioButton("RGB", &edit_mode, ImGuiColorEditFlags_DisplayRGB);
