@@ -8,19 +8,17 @@
 
 #include "VectorNavFile.hpp"
 
-#ifdef HAS_VECTORNAV_LIBRARY
+#include <exception>
 
-    #include <exception>
+#include "util/Logger.hpp"
+#include "Navigation/Transformations/CoordinateFrames.hpp"
 
-    #include "util/Logger.hpp"
-    #include "Navigation/Transformations/CoordinateFrames.hpp"
-
-    #include "internal/NodeManager.hpp"
+#include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
-    #include "internal/FlowManager.hpp"
+#include "internal/FlowManager.hpp"
 
-    #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
-    #include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
+#include "NodeData/IMU/VectorNavBinaryOutput.hpp"
+#include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
 
 NAV::VectorNavFile::VectorNavFile()
     : Imu(typeStatic())
@@ -1593,5 +1591,3 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
 
     return obs;
 }
-
-#endif

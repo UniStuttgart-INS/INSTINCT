@@ -13,20 +13,18 @@
 
 #pragma once
 
-#ifdef HAS_VECTORNAV_LIBRARY
+#include "Nodes/DataProvider/IMU/Imu.hpp"
+#include "Nodes/DataProvider/Protocol/UartSensor.hpp"
+#include "vn/sensors.h"
 
-    #include "Nodes/DataProvider/IMU/Imu.hpp"
-    #include "Nodes/DataProvider/Protocol/UartSensor.hpp"
-    #include "vn/sensors.h"
+#include "NodeData/IMU/VectorNavBinaryOutput.hpp"
 
-    #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
+#include "Navigation/Time/InsTime.hpp"
+#include "util/Container/ScrollingBuffer.hpp"
 
-    #include "Navigation/Time/InsTime.hpp"
-    #include "util/Container/ScrollingBuffer.hpp"
-
-    #include <vector>
-    #include <array>
-    #include <cstdint>
+#include <vector>
+#include <array>
+#include <cstdint>
 
 namespace NAV
 {
@@ -507,5 +505,3 @@ class VectorNavSensor : public Imu, public UartSensor
 };
 
 } // namespace NAV
-
-#endif

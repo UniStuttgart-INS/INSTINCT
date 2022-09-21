@@ -11,9 +11,9 @@
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2022-09-20
 
-#ifndef HAS_UARTSENSOR_LIBRARY
+#pragma once
 
-    #pragma once
+#ifndef HAS_UARTSENSOR_LIBRARY
 
     #include <string>
     #include <vector>
@@ -36,7 +36,8 @@ namespace uart::sensors
 class UartSensor
 {
   public:
-    friend protocol::Packet;
+    /// Packet class
+    friend struct protocol::Packet;
 
     /// Size of the Serial Port read buffer
     static constexpr size_t DefaultReadBufferSize = 4096;

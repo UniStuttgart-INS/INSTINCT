@@ -13,19 +13,17 @@
 
 #pragma once
 
-#ifdef HAS_VECTORNAV_LIBRARY
+#include <memory>
 
-    #include <memory>
+#include "NodeData/NodeData.hpp"
+#include "NodeData/IMU/ImuPos.hpp"
+#include "util/Eigen.hpp"
 
-    #include "NodeData/NodeData.hpp"
-    #include "NodeData/IMU/ImuPos.hpp"
-    #include "util/Eigen.hpp"
-
-    #include "util/Vendor/VectorNav/BinaryOutputs/TimeOutputs.hpp"
-    #include "util/Vendor/VectorNav/BinaryOutputs/ImuOutputs.hpp"
-    #include "util/Vendor/VectorNav/BinaryOutputs/GnssOutputs.hpp"
-    #include "util/Vendor/VectorNav/BinaryOutputs/AttitudeOutputs.hpp"
-    #include "util/Vendor/VectorNav/BinaryOutputs/InsOutputs.hpp"
+#include "util/Vendor/VectorNav/BinaryOutputs/TimeOutputs.hpp"
+#include "util/Vendor/VectorNav/BinaryOutputs/ImuOutputs.hpp"
+#include "util/Vendor/VectorNav/BinaryOutputs/GnssOutputs.hpp"
+#include "util/Vendor/VectorNav/BinaryOutputs/AttitudeOutputs.hpp"
+#include "util/Vendor/VectorNav/BinaryOutputs/InsOutputs.hpp"
 
 namespace NAV
 {
@@ -75,5 +73,3 @@ class VectorNavBinaryOutput : public NodeData
 };
 
 } // namespace NAV
-
-#endif

@@ -13,12 +13,10 @@
 
 #pragma once
 
-#ifdef HAS_VECTORNAV_LIBRARY
+#include <cstdint>
+#include <util/Eigen.hpp>
 
-    #include <cstdint>
-    #include <util/Eigen.hpp>
-
-    #include <vn/types.h>
+#include <vn/types.h>
 
 namespace NAV::vendor::vectornav
 {
@@ -122,5 +120,3 @@ struct ImuOutputs
 };
 
 } // namespace NAV::vendor::vectornav
-
-#endif

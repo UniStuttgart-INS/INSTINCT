@@ -8,27 +8,25 @@
 
 #include "VectorNavSensor.hpp"
 
-#ifdef HAS_VECTORNAV_LIBRARY
+#include "util/Logger.hpp"
+#include "vn/searcher.h"
+#include "vn/util.h"
 
-    #include "util/Logger.hpp"
-    #include "vn/searcher.h"
-    #include "vn/util.h"
+#include "internal/gui/widgets/HelpMarker.hpp"
 
-    #include "internal/gui/widgets/HelpMarker.hpp"
-
-    #include "internal/NodeManager.hpp"
+#include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
-    #include "internal/FlowManager.hpp"
+#include "internal/FlowManager.hpp"
 
-    #include <imgui_internal.h>
+#include <imgui_internal.h>
 
-    #include "NodeData/General/StringObs.hpp"
+#include "NodeData/General/StringObs.hpp"
 
-    #include "util/Time/TimeBase.hpp"
-    #include "Navigation/Transformations/CoordinateFrames.hpp"
-    #include "Navigation/Transformations/Units.hpp"
+#include "util/Time/TimeBase.hpp"
+#include "Navigation/Transformations/CoordinateFrames.hpp"
+#include "Navigation/Transformations/Units.hpp"
 
-    #include <map>
+#include <map>
 
 // to_json / from_json
 namespace vn
@@ -5346,6 +5344,11 @@ bool NAV::VectorNavSensor::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+#ifndef HAS_VECTORNAV_LIBRARY
+    LOG_ERROR("{}: Can't initialize without the vnproglib library.", nameId());
+    return false;
+#endif
+
     // Some settings need to be wrote to the device and reset afterwards
     bool deviceNeedsResetAfterInitialization = false;
 
@@ -5973,6 +5976,10 @@ bool NAV::VectorNavSensor::initialize()
 void NAV::VectorNavSensor::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
+
+#ifndef HAS_VECTORNAV_LIBRARY
+    return;
+#endif
 
     try
     {
@@ -7168,5 +7175,3 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
         vnSensor->invokeCallbacks(VectorNavSensor::OUTPUT_PORT_INDEX_ASCII_OUTPUT, obs);
     }
 }
-
-#endif

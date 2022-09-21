@@ -651,7 +651,7 @@ void ImGui::TextAnsiV(const char* fmt, va_list args)
     ImGuiContext& g = *GImGui;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
-    const char* text_end = g.TempBuffer.Data + ImFormatStringV(g.TempBuffer.Data, IM_ARRAYSIZE(g.TempBuffer.Data), fmt, args); // NOLINT(clang-diagnostic-format-nonliteral)
+    const char* text_end = g.TempBuffer.Data + ImFormatStringV(g.TempBuffer.Data, strlen(g.TempBuffer.Data), fmt, args); // NOLINT(clang-diagnostic-format-nonliteral)
 #pragma GCC diagnostic pop
     TextAnsiUnformatted(g.TempBuffer.Data, text_end);
 }

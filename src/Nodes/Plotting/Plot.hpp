@@ -447,12 +447,10 @@ class Plot : public Node
     /// @param[in] pinIndex Index of the input pin where the data was received
     void plotImuObsWDeltaObs(const std::shared_ptr<const ImuObsWDelta>& obs, size_t pinIndex);
 
-#ifdef HAS_VECTORNAV_LIBRARY
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
     void plotVectorNavBinaryObs(const std::shared_ptr<const VectorNavBinaryOutput>& obs, size_t pinIndex);
-#endif
 
     /// Data storage for each pin
     std::vector<PinData> _pinData;

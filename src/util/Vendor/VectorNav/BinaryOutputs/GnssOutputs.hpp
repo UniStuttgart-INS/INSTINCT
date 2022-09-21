@@ -13,13 +13,11 @@
 
 #pragma once
 
-#ifdef HAS_VECTORNAV_LIBRARY
+#include <cstdint>
+#include <util/Eigen.hpp>
 
-    #include <cstdint>
-    #include <util/Eigen.hpp>
-
-    #include <vn/types.h>
-    #include "util/Vendor/VectorNav/VectorNavTypes.hpp"
+#include <vn/types.h>
+#include "util/Vendor/VectorNav/VectorNavTypes.hpp"
 
 namespace NAV::vendor::vectornav
 {
@@ -117,5 +115,3 @@ struct GnssOutputs
 };
 
 } // namespace NAV::vendor::vectornav
-
-#endif

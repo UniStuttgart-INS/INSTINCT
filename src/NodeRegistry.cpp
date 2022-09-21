@@ -176,18 +176,15 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 // Converter
 #include "Nodes/Converter/GNSS/RtklibPosConverter.hpp"
 #include "Nodes/Converter/GNSS/UartPacketConverter.hpp"
-#ifdef HAS_VECTORNAV_LIBRARY
-    #include "Nodes/Converter/IMU/VectorNavBinaryConverter.hpp"
-#endif
+#include "Nodes/Converter/IMU/VectorNavBinaryConverter.hpp"
+
 // Data Logger
 #include "Nodes/DataLogger/General/MatrixLogger.hpp"
 #include "Nodes/DataLogger/GNSS/SppSolutionLogger.hpp"
 #include "Nodes/DataLogger/GNSS/UartDataLogger.hpp"
 #include "Nodes/DataLogger/IMU/ImuDataLogger.hpp"
 #include "Nodes/DataLogger/IMU/KvhDataLogger.hpp"
-#ifdef HAS_VECTORNAV_LIBRARY
-    #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
-#endif
+#include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
 #include "Nodes/DataLogger/State/LcKfInsGnssErrorLogger.hpp"
 #include "Nodes/DataLogger/State/PosVelAttLogger.hpp"
 // Data Processor
@@ -207,15 +204,11 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataProvider/GNSS/Sensors/UbloxSensor.hpp"
 #include "Nodes/DataProvider/IMU/FileReader/ImuFile.hpp"
 #include "Nodes/DataProvider/IMU/FileReader/KvhFile.hpp"
-#ifdef HAS_VECTORNAV_LIBRARY
-    #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
-#endif
+#include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
 #include "Nodes/DataProvider/IMU/NetworkStream/SkydelNetworkStream.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/KvhSensor.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/Navio2Sensor.hpp"
-#ifdef HAS_VECTORNAV_LIBRARY
-    #include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
-#endif
+#include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
 #include "Nodes/DataProvider/IMU/FileReader/UlogFile.hpp"
 // Data Simulator
 #include "Nodes/DataProvider/IMU/Simulators/ImuSimulator.hpp"
@@ -241,18 +234,14 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     // Converter
     registerNodeType<RtklibPosConverter>();
     registerNodeType<UartPacketConverter>();
-#ifdef HAS_VECTORNAV_LIBRARY
     registerNodeType<VectorNavBinaryConverter>();
-#endif
     // Data Logger
     registerNodeType<MatrixLogger>();
     registerNodeType<SppSolutionLogger>();
     registerNodeType<UartDataLogger>();
     registerNodeType<ImuDataLogger>();
     registerNodeType<KvhDataLogger>();
-#ifdef HAS_VECTORNAV_LIBRARY
     registerNodeType<VectorNavDataLogger>();
-#endif
     registerNodeType<LcKfInsGnssErrorLogger>();
     registerNodeType<PosVelAttLogger>();
     // Data Processor
@@ -269,20 +258,14 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<RtklibPosFile>();
     registerNodeType<UbloxFile>();
     registerNodeType<EmlidSensor>();
-#ifdef HAS_VECTORNAV_LIBRARY
     registerNodeType<UbloxSensor>();
-#endif
     registerNodeType<ImuFile>();
     registerNodeType<SkydelNetworkStream>();
     registerNodeType<KvhFile>();
-#ifdef HAS_VECTORNAV_LIBRARY
     registerNodeType<VectorNavFile>();
-#endif
     registerNodeType<KvhSensor>();
     registerNodeType<Navio2Sensor>();
-#ifdef HAS_VECTORNAV_LIBRARY
     registerNodeType<VectorNavSensor>();
-#endif
     registerNodeType<UlogFile>();
     // Data Simulator
     registerNodeType<ImuSimulator>();
@@ -305,9 +288,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/ImuObsWDelta.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
-#ifdef HAS_VECTORNAV_LIBRARY
-    #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
-#endif
+#include "NodeData/IMU/VectorNavBinaryOutput.hpp"
 #include "NodeData/State/InertialNavSol.hpp"
 #include "NodeData/State/LcKfInsGnssErrors.hpp"
 #include "NodeData/State/Pos.hpp"
@@ -329,9 +310,7 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     registerNodeDataType<ImuObs>();
     registerNodeDataType<ImuObsWDelta>();
     registerNodeDataType<KvhObs>();
-#ifdef HAS_VECTORNAV_LIBRARY
     registerNodeDataType<VectorNavBinaryOutput>();
-#endif
     // State
     registerNodeDataType<InertialNavSol>();
     registerNodeDataType<LcKfInsGnssErrors>();

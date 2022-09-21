@@ -6,25 +6,30 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-/// @file timestamp.hpp
-/// @brief Extract from the timestamp implementation
+/// @file vntime.h
+/// @brief Extract from the vnproglib
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2022-09-20
 
 #pragma once
 
-#ifndef HAS_UARTSENSOR_LIBRARY
+#ifndef HAS_VECTORNAV_LIBRARY
 
     #include <cstdint>
 
-namespace uart::xplat
+// NOLINTBEGIN
+
+namespace vn
 {
+namespace xplat
+{
+
 /// Timestamp class
 struct TimeStamp
 {
   public:
     /// Default constructor
-    TimeStamp() = default;
+    TimeStamp();
 
   private:
     /// @brief Constructor
@@ -33,14 +38,21 @@ struct TimeStamp
     TimeStamp(int64_t sec, uint64_t usec);
 
   public:
-    /// @brief Returns a timestamp.
-    /// @return The timestamp.
+    // \brief Returns a timestamp.
+    // \return The timestamp.
     static TimeStamp get();
 
-    int64_t _sec{ 0 };   ///< Seconds.
-    uint64_t _usec{ 0 }; ///< Microseconds.
+    // HACK: Current values are made public until the TimeStamp interface
+    // is fully worked out.
+    // private:
+  public:
+    int64_t _sec;   ///< Seconds.
+    uint64_t _usec; ///< Microseconds.
 };
 
-} // namespace uart::xplat
+} // namespace xplat
+} // namespace vn
+
+// NOLINTEND
 
 #endif

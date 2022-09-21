@@ -109,6 +109,11 @@ bool NAV::KvhSensor::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+#ifndef HAS_UARTSENSOR_LIBRARY
+    LOG_ERROR("{}: Can't initialize without the UART sensor library.", nameId());
+    return false;
+#endif
+
     // connect to the sensor
     try
     {
@@ -130,6 +135,10 @@ bool NAV::KvhSensor::initialize()
 void NAV::KvhSensor::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
+
+#ifndef HAS_UARTSENSOR_LIBRARY
+    return;
+#endif
 
     if (!isInitialized())
     {

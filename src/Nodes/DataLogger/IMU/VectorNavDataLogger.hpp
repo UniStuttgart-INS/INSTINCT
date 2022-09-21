@@ -13,11 +13,9 @@
 
 #pragma once
 
-#ifdef HAS_VECTORNAV_LIBRARY
-
-    #include "internal/Node/Node.hpp"
-    #include "Nodes/DataLogger/Protocol/FileWriter.hpp"
-    #include "Nodes/DataLogger/Protocol/CommonLog.hpp"
+#include "internal/Node/Node.hpp"
+#include "Nodes/DataLogger/Protocol/FileWriter.hpp"
+#include "Nodes/DataLogger/Protocol/CommonLog.hpp"
 
 namespace NAV
 {
@@ -86,5 +84,3 @@ class VectorNavDataLogger : public Node, public FileWriter, public CommonLog
 };
 
 } // namespace NAV
-
-#endif

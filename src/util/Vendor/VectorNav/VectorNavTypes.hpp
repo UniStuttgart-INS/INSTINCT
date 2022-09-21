@@ -13,11 +13,9 @@
 
 #pragma once
 
-#ifdef HAS_VECTORNAV_LIBRARY
-
-    #include <cstdint>
-    #include <vector>
-    #include <iostream>
+#include <cstdint>
+#include <vector>
+#include <iostream>
 
 namespace NAV::vendor::vectornav
 {
@@ -642,5 +640,3 @@ class InsStatus
 };
 
 } // namespace NAV::vendor::vectornav
-
-#endif

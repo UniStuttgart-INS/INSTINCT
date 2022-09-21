@@ -92,6 +92,11 @@ bool NAV::EmlidFile::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+#ifndef HAS_UARTSENSOR_LIBRARY
+    LOG_ERROR("{}: Can't initialize without the UART sensor library.", nameId());
+    return false;
+#endif
+
     return FileReader::initialize();
 }
 
@@ -99,11 +104,19 @@ void NAV::EmlidFile::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+#ifndef HAS_UARTSENSOR_LIBRARY
+    return;
+#endif
+
     FileReader::deinitialize();
 }
 
 bool NAV::EmlidFile::resetNode()
 {
+#ifndef HAS_UARTSENSOR_LIBRARY
+    return false;
+#endif
+
     FileReader::resetReader();
 
     return true;
