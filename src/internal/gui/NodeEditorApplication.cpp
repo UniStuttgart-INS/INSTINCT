@@ -1493,6 +1493,10 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             LOG_DEBUG("New Node will spawn at {}x{} - Zoom {}", newNodeSpawnPos.x, newNodeSpawnPos.y, ed::GetCurrentZoom());
         }
 
+        if (setKeyboardFocus)
+        {
+            ImGui::SetKeyboardFocusHere(0);
+        }
         static ImGuiTextFilter filter;
 
         filter.Draw("");
@@ -1501,7 +1505,6 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         {
             filter.Clear();
             setKeyboardFocus = false;
-            ImGui::SetKeyboardFocusHere(0);
         }
 
         Node* node = nullptr;
