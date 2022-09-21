@@ -10,7 +10,7 @@ INSTINCT is a PNT software which implements a manifold of PNT algorithms (e.g. m
 
 The GUI provides a dataflow editor which can be used to connect Nodes (modules encapsuling functionality) and create custom-tailored applications. For performance, every Node runs in an own thread, providing parallelism out of the box.
 
-If now GUI is required, the application can be run in ```--nogui``` mode and a `.flow` file can be loaded.
+If no GUI is required, the application can be run in ```--nogui``` mode and a `.flow` file can be loaded.
 
 ## Getting Started
 
@@ -181,11 +181,11 @@ Recommended plugins for working with this project
 * [cmake-format](https://marketplace.visualstudio.com/items?itemName=cheshirekow.cmake-format) Format listfiles so they don't look like crap
 * [mathover](https://marketplace.visualstudio.com/items?itemName=Remisa.mathover) Render LaTeX comments on hover
 * [Status Bar Parameter](https://marketplace.visualstudio.com/items?itemName=mschababerle.status-bar-param) Add selectable parameter to the status bar
-* [matched-line-dimmer](https://marketplace.visualstudio.com/items?itemName=ldlework.matched-line-dimmer)
+* [matched-line-dimmer](https://marketplace.visualstudio.com/items?itemName=ldlework.matched-line-dimmer) Visually dim lines that match regex patterns.
 
 #### Settings
 
-Recommended changes to the User's ```settings.json``` (**not** the project .vscode/settings.json)
+Recommended changes to the User's ```settings.json``` (**not** the project .vscode/settings.json) in case you plan to contribute to the project.
 ```
 "editor.formatOnType": true,
 "doxdocgen.generic.authorEmail": "your.name@ins.uni-stuttgart.de",
@@ -238,7 +238,7 @@ Recommended changes to the User's ```keybindings.json```
     * [Catch2](https://github.com/catchorg/Catch2) Modern, C++-native, header-only, test framework for unit-tests, TDD and BDD [![License](https://img.shields.io/badge/License-Boost%201.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
     * [nlohmann_json](https://github.com/nlohmann/json) JSON for Modern C++ parser and generator. [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
     * [gcem](https://github.com/kthohr/gcem) GCE-Math (Generalized Constant Expression Math) is a templated C++ library enabling compile-time computation of mathematical functions. [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-    * [vnproglib](https://www.vectornav.com/resources/programming-libraries/vectornav-programming-library) VectorNav programming library ![License](https://img.shields.io/badge/License-Unkown-red.svg)
+    * [vnproglib](https://www.vectornav.com/resources/programming-libraries/vectornav-programming-library) VectorNav programming library ![License](https://img.shields.io/badge/License-Unkown-red.svg) (need a copy of the VectorNav library and some patch files from us)
     * [Navio2](https://github.com/emlid/Navio2) Collection of drivers and examples for Navio 2 - autopilot shield for Raspberry Pi. [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 * GUI (optional):
     * [Dear ImGui](https://github.com/ocornut/imgui) Bloat-free Immediate Mode Graphical User interface for C++ with minimal dependencies [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
