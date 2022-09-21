@@ -1499,7 +1499,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         }
         static ImGuiTextFilter filter;
 
-        filter.Draw("");
+        filter.Draw("##NewNodeFilter");
 
         if (setKeyboardFocus)
         {
