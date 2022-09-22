@@ -1,3 +1,11 @@
+# This file is part of INSTINCT, the INS Toolkit for Integrated
+# Navigation Concepts and Training by the Institute of Navigation of
+# the University of Stuttgart, Germany.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 cmake_minimum_required(VERSION 3.15)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
@@ -181,27 +189,73 @@ set_target_properties(application PROPERTIES CXX_CPPCHECK "")
 
 # ----------------------------------------------- VectorNav ---------------------------------------------- */
 
-add_subdirectory(lib/vnproglib libvncxx)
-include_directories(SYSTEM lib/vnproglib/include)
-set_target_properties(libvncxx PROPERTIES CXX_CLANG_TIDY "")
-set_target_properties(libvncxx PROPERTIES CXX_CPPCHECK "")
+# To enable this, you need a copy of the VectorNav library and some patch files from us.
+# The library or the patch files will be released later on, after communicating with the manufacturer.
+option(ENABLE_VECTORNAV "Enable VectorNav related Nodes" ON)
+if(ENABLE_VECTORNAV)
+  add_subdirectory(lib/vnproglib libvncxx)
+  include_directories(SYSTEM lib/vnproglib/include)
+  set_target_properties(libvncxx PROPERTIES CXX_CLANG_TIDY "")
+  set_target_properties(libvncxx PROPERTIES CXX_CPPCHECK "")
+else()
+  include_directories(src/util/vnproglib)
+endif()
 
 # ------------------------------------------------ Navio2 ------------------------------------------------ */
 
 if(NOT APPLE AND NOT WIN32)
   # Include navio2 library
-  add_subdirectory(lib/navio2 libnavio)
-  include_directories(SYSTEM lib/navio2/include)
+  add_library(libnavio lib/navio2/C++/Navio/Common/gpio.cpp
+                       lib/navio2/C++/Navio/Common/I2Cdev.cpp
+                       lib/navio2/C++/Navio/Common/MPU9250.cpp
+                       lib/navio2/C++/Navio/Common/MS5611.cpp
+                       lib/navio2/C++/Navio/Common/Ublox.cpp
+                       lib/navio2/C++/Navio/Common/Util.cpp
+                       lib/navio2/C++/Navio/Navio2/ADC_Navio2.cpp
+                       lib/navio2/C++/Navio/Navio2/Led_Navio2.cpp
+                       lib/navio2/C++/Navio/Navio2/LSM9DS1.cpp
+                       lib/navio2/C++/Navio/Navio2/PWM.cpp
+                       lib/navio2/C++/Navio/Navio2/RCInput_Navio2.cpp
+                       lib/navio2/C++/Navio/Navio2/RCOutput_Navio2.cpp
+                       lib/navio2/C++/Navio/Navio2/RGBled.cpp
+                       lib/navio2/C++/Navio/Common/ADC.h
+                       lib/navio2/C++/Navio/Common/gpio.h
+                       lib/navio2/C++/Navio/Common/I2Cdev.h
+                       lib/navio2/C++/Navio/Common/InertialSensor.h
+                       lib/navio2/C++/Navio/Common/Led.h
+                       lib/navio2/C++/Navio/Common/MPU9250.h
+                       lib/navio2/C++/Navio/Common/MS5611.h
+                       lib/navio2/C++/Navio/Common/RCInput.h
+                       lib/navio2/C++/Navio/Common/RCOutput.h
+                       lib/navio2/C++/Navio/Common/SPIdev.h
+                       lib/navio2/C++/Navio/Common/Ublox.h
+                       lib/navio2/C++/Navio/Common/Util.h
+                       lib/navio2/C++/Navio/Navio2/ADC_Navio2.h
+                       lib/navio2/C++/Navio/Navio2/Led_Navio2.h
+                       lib/navio2/C++/Navio/Navio2/LSM9DS1.h
+                       lib/navio2/C++/Navio/Navio2/PWM.h
+                       lib/navio2/C++/Navio/Navio2/RCInput_Navio2.h
+                       lib/navio2/C++/Navio/Navio2/RCOutput_Navio2.h
+                       lib/navio2/C++/Navio/Navio2/RGBled.h)
+  target_include_directories(libnavio SYSTEM PRIVATE lib/navio2/C++/Navio)
+  include_directories(SYSTEM lib/navio2/C++
+                             lib/navio2/C++/Navio)
   set_target_properties(libnavio PROPERTIES CXX_CLANG_TIDY "")
   set_target_properties(libnavio PROPERTIES CXX_CPPCHECK "")
 endif()
 
 # ------------------------------------------------- UART ------------------------------------------------- */
 
-add_subdirectory(lib/uartsensor libUartSensor)
-include_directories(SYSTEM lib/uartsensor/include)
-set_target_properties(libUartSensor PROPERTIES CXX_CLANG_TIDY "")
-set_target_properties(libUartSensor PROPERTIES CXX_CPPCHECK "")
+# The Uart library is not open source, but will be exchanged for an open source alternative in the future.
+option(ENABLE_UARTSENSORS "Enable UART Sensor related nodes" ON)
+if(ENABLE_UARTSENSORS)
+  add_subdirectory(lib/uartsensor libUartSensor)
+  include_directories(SYSTEM lib/uartsensor/include)
+  set_target_properties(libUartSensor PROPERTIES CXX_CLANG_TIDY "")
+  set_target_properties(libUartSensor PROPERTIES CXX_CPPCHECK "")
+else()
+  include_directories(src/util/uartsensor)
+endif()
 
 # ------------------------------------------------- gcem ------------------------------------------------- */
 

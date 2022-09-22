@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "Plot.hpp"
 
 #include "util/Logger.hpp"
@@ -302,8 +310,7 @@ NAV::Plot::Plot()
 
     _dataIdentifier = { Pos::type(), PosVel::type(), PosVelAtt::type(), LcKfInsGnssErrors::type(),
                         SppSolution::type(), RtklibPosObs::type(), UbloxObs::type(),
-                        ImuObs::type(), KvhObs::type(), ImuObsWDelta::type(),
-                        VectorNavBinaryOutput::type() };
+                        ImuObs::type(), KvhObs::type(), ImuObsWDelta::type(), VectorNavBinaryOutput::type() };
 
     updateNumberOfInputPins();
 

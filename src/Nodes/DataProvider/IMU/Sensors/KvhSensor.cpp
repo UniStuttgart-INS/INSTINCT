@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "KvhSensor.hpp"
 
 #include "util/Logger.hpp"
@@ -101,6 +109,11 @@ bool NAV::KvhSensor::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+#ifndef HAS_UARTSENSOR_LIBRARY
+    LOG_ERROR("{}: Can't initialize without the UART sensor library.", nameId());
+    return false;
+#endif
+
     // connect to the sensor
     try
     {
@@ -122,6 +135,10 @@ bool NAV::KvhSensor::initialize()
 void NAV::KvhSensor::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
+
+#ifndef HAS_UARTSENSOR_LIBRARY
+    return;
+#endif
 
     if (!isInitialized())
     {

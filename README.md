@@ -1,16 +1,16 @@
 # INSTINCT - INS Toolkit for Integrated Navigation Concepts and Training
 
-Navigation Software of the Institut of Navigation (University of Stuttgart)
+Flow-Based Navigation Software of the Institut of Navigation (INS) of the University of Stuttgart, Germany.
 
-![overview](resources/images/Demo.gif)
+![overview](resources/images/titleimage.png)
 
 ## Description
 
-This software provides real-time and post processing functionality for navigational tasks. It can read from sensors and fuse together the data. It can fuse GNSS data with IMU data and do advanced functions like RTK, RAIM, ...
+INSTINCT is a PNT software which implements a manifold of PNT algorithms (e.g. multi-sensor data fusion) while following the Flow-Based Programming paradigm. It can operate in real-time, interfacing to different sensors, or it can be used in post-processing mode for which data are read from files or generated from the software's own simulation tools.
 
-The software consists of one executable ```instinct```
-* It spawns a GUI on default where you can edit your flow
-* If now GUI is required, the application can be run in ```--nogui``` mode and a `.flow` file can be loaded manually
+The GUI provides a dataflow editor which can be used to connect Nodes (modules encapsuling functionality) and create custom-tailored applications. For performance, every Node runs in an own thread, providing parallelism out of the box.
+
+If no GUI is required, the application can be run in ```--nogui``` mode and a `.flow` file can be loaded.
 
 ## Getting Started
 
@@ -19,7 +19,7 @@ The software consists of one executable ```instinct```
 ##### Git (either clone or update)
 - Clone the repository
   ```
-  git clone --recurse-submodules https://git.ins.uni-stuttgart.de/thomas.topp/instinct.git INSTINCT
+  git clone --recurse-submodules <URL> INSTINCT
   cd INSTINCT
   git lfs install
   git lfs pull
@@ -40,7 +40,7 @@ cmake --build build/Release -- -j
 
 ##### Run the executable
 ```shell
-./bin/Release/instinct -f config.ini -l flow/Default.flow
+./bin/Release/instinct
 ```
 
 ##### Build the documentation
@@ -48,12 +48,12 @@ cmake --build build/Release -- -j
 cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=NO
 cmake --build build/Release --target doc
 ```
-The doxygen main page can then be opened under `bin/doc/html/index.html`
+The doxygen main page can then be opened under `bin/doc/html/index.html` (GitHub Pages integration is planned)
 
 ##### Help message
 
 ```
-INSTINCT 0.2.0 - INS Toolkit for Integrated Navigation Concepts and Training
+INSTINCT 1.0.0 - INS Toolkit for Integrated Navigation Concepts and Training
 
 Allowed options:
   --config arg                          List of configuration files to read
@@ -146,49 +146,10 @@ brew install doxygen pdf2svg
 brew install ccache cppcheck
 ```
 
-#### Windows 10 (WSL)
-[Windows Subsystem for Linux Installation Guide for Windows 10](https://docs.microsoft.com/de-de/windows/wsl/install-win10):
+#### Windows 11
 
-PowerShell (Administrator):
-```shell
-dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
-
-dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
-```
-* Restart your computer
-* Download & Install the Linux kernel update package [WSL2-Linux-Kernel for x64 computer](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi)
-* Set WSL 2 as your default version: ```wsl --set-default-version 2```
-* Next open the Microsoft Store and install [Ubuntu](https://www.microsoft.com/de-de/p/ubuntu/9nblggh4msv6)
-* Launch Ubuntu and create a user account and password
-* Follow the instructions for Ubuntu here in the Readme
-
-[VSCode Developing in WSL](https://code.visualstudio.com/docs/remote/wsl):
-* Install [Visual Studio Code](https://code.visualstudio.com/download) on the Windows side (not in WSL)
-* Install the [Remote Development extension pack](https://aka.ms/vscode-remote/download/extension)
-* Navigate with Linux terminal to your source code folder and type ```code .```
-
-[Get the GUI to work](https://github.com/microsoft/WSL/issues/4793#issuecomment-577232999):
-* In Ubuntu install a new [OpenGL Version](https://launchpad.net/~oibaf/+archive/ubuntu/graphics-drivers/):
-```shell
-sudo add-apt-repository ppa:oibaf/graphics-drivers
-sudo apt-get update
-sudo apt-get upgrade -y
-sudo apt purge mesa-vulkan-drivers
-```
-* Install [VcXsrv](https://sourceforge.net/projects/vcxsrv/) in Windows
-* Run with these settings:
-    * Multiple windows, Display number: -1
-    * Start no client
-    * Extra Settings
-        * [ ] Native opengl
-        * [x] Disable access control
-* Hover with your mouse over the system tray icon and verify that it says ```hostname:0.0```
-* Find your host IP address (run in windows console: ```ipconfig```), e.g. 192.168.1.3
-* In the ```.bashrc``` add the following and replace the ip address there:
-```
-export DISPLAY=192.168.1.3:0.0
-```
-* Restart your computer
+- For development Windows Subsystem for Linux is recommended. Follow the Ubuntu instructions
+- For executing, INSTINCT can be compiled with MSVC
 
 ### VSCode Configuration
 
@@ -220,10 +181,11 @@ Recommended plugins for working with this project
 * [cmake-format](https://marketplace.visualstudio.com/items?itemName=cheshirekow.cmake-format) Format listfiles so they don't look like crap
 * [mathover](https://marketplace.visualstudio.com/items?itemName=Remisa.mathover) Render LaTeX comments on hover
 * [Status Bar Parameter](https://marketplace.visualstudio.com/items?itemName=mschababerle.status-bar-param) Add selectable parameter to the status bar
+* [matched-line-dimmer](https://marketplace.visualstudio.com/items?itemName=ldlework.matched-line-dimmer) Visually dim lines that match regex patterns.
 
 #### Settings
 
-Recommended changes to the User's ```settings.json``` (**not** the project .vscode/settings.json)
+Recommended changes to the User's ```settings.json``` (**not** the project .vscode/settings.json) in case you plan to contribute to the project.
 ```
 "editor.formatOnType": true,
 "doxdocgen.generic.authorEmail": "your.name@ins.uni-stuttgart.de",
@@ -276,7 +238,7 @@ Recommended changes to the User's ```keybindings.json```
     * [Catch2](https://github.com/catchorg/Catch2) Modern, C++-native, header-only, test framework for unit-tests, TDD and BDD [![License](https://img.shields.io/badge/License-Boost%201.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
     * [nlohmann_json](https://github.com/nlohmann/json) JSON for Modern C++ parser and generator. [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
     * [gcem](https://github.com/kthohr/gcem) GCE-Math (Generalized Constant Expression Math) is a templated C++ library enabling compile-time computation of mathematical functions. [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-    * [vnproglib](https://www.vectornav.com/resources/programming-libraries/vectornav-programming-library) VectorNav programming library ![License](https://img.shields.io/badge/License-Unkown-red.svg)
+    * [vnproglib](https://www.vectornav.com/resources/programming-libraries/vectornav-programming-library) VectorNav programming library ![License](https://img.shields.io/badge/License-Unkown-red.svg) (need a copy of the VectorNav library and some patch files from us)
     * [Navio2](https://github.com/emlid/Navio2) Collection of drivers and examples for Navio 2 - autopilot shield for Raspberry Pi. [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 * GUI (optional):
     * [Dear ImGui](https://github.com/ocornut/imgui) Bloat-free Immediate Mode Graphical User interface for C++ with minimal dependencies [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
@@ -286,14 +248,16 @@ Recommended changes to the User's ```keybindings.json```
 
 ## Authors
 
-* [M.Sc. Thomas Topp](mailto:topp@ins.uni-stuttgart.de?subject=[GitLab/INSTINCT]%20)
-* [M.Sc. Marcel Maier](mailto:marcel.maier@ins.uni-stuttgart.de?subject=[GitLab/INSTINCT]%20)
-* [M.Sc. Rui Wang](mailto:rui.wang@ins.uni-stuttgart.de?subject=[GitLab/INSTINCT]%20)
+* [M.Sc. Thomas Topp](mailto:topp@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
+* [M.Sc. Marcel Maier](mailto:marcel.maier@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
+* [Prof. Dr. Thomas Hobiger](mailto:thomas.hobiger@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
 
 ## Version History
 
+- **v1.0.0:** Public Release
+
 ## License
 
-```This is only a placeholder so far...```
+This project is licensed under the [MPL 2.0](https://mozilla.org/MPL/2.0/) License - see the LICENSE file for details.
 
-This project is licensed under the [TBD] License - see the LICENSE.md file for details
+If this license does not suit your needs, feel free to contact us for further details.

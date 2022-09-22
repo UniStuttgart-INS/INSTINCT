@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "VectorNavSensor.hpp"
 
 #include "util/Logger.hpp"
@@ -1406,7 +1414,7 @@ void NAV::VectorNavSensor::guiConfig()
     bool isNodeInitialized = isInitialized();
     if (!isNodeInitialized)
     {
-        ImGui::PushDisabled();
+        ImGui::BeginDisabled();
     }
     if (ImGui::Button("Write settings"))
     {
@@ -1421,7 +1429,7 @@ void NAV::VectorNavSensor::guiConfig()
     }
     if (!isNodeInitialized)
     {
-        ImGui::PopDisabled();
+        ImGui::EndDisabled();
     }
     if (ImGui::IsItemHovered())
     {
@@ -1439,7 +1447,7 @@ void NAV::VectorNavSensor::guiConfig()
     ImGui::SameLine();
     if (!isNodeInitialized)
     {
-        ImGui::PushDisabled();
+        ImGui::BeginDisabled();
     }
     if (ImGui::Button("Restore factory settings"))
     {
@@ -1454,7 +1462,7 @@ void NAV::VectorNavSensor::guiConfig()
     }
     if (!isNodeInitialized)
     {
-        ImGui::PopDisabled();
+        ImGui::EndDisabled();
     }
     if (ImGui::IsItemHovered())
     {
@@ -1465,7 +1473,7 @@ void NAV::VectorNavSensor::guiConfig()
     ImGui::SameLine();
     if (!isNodeInitialized)
     {
-        ImGui::PushDisabled();
+        ImGui::BeginDisabled();
     }
     if (ImGui::Button("Reset sensor"))
     {
@@ -1480,7 +1488,7 @@ void NAV::VectorNavSensor::guiConfig()
     }
     if (!isNodeInitialized)
     {
-        ImGui::PopDisabled();
+        ImGui::EndDisabled();
     }
     if (ImGui::IsItemHovered())
     {
@@ -1678,7 +1686,7 @@ void NAV::VectorNavSensor::guiConfig()
             };
             if (_syncInPin)
             {
-                ImGui::PushDisabled();
+                ImGui::BeginDisabled();
             }
 
             if (ImGui::BeginCombo(fmt::format("SyncIn Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(_synchronizationControlRegister.syncInMode).c_str()))
@@ -1730,7 +1738,7 @@ void NAV::VectorNavSensor::guiConfig()
                                      "asynchronous serial messages upon each trigger event.");
             if (_syncInPin)
             {
-                ImGui::PopDisabled();
+                ImGui::EndDisabled();
             }
 
             static constexpr std::array<std::pair<vn::protocol::uart::SyncInEdge, const char*>, 2> synchronizationControlSyncInEdges = {
@@ -2431,7 +2439,7 @@ void NAV::VectorNavSensor::guiConfig()
                     || (_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output3 && b == 2)
                     || (_binaryOutputRegisterMerge == BinaryRegisterMerge::Output2_Output3 && b == 2))
                 {
-                    ImGui::PushDisabled();
+                    ImGui::BeginDisabled();
                 }
 
                 if (ImGui::BeginCombo(fmt::format("Async Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(_binaryOutputRegister.at(b).asyncMode).c_str()))
@@ -2579,7 +2587,7 @@ void NAV::VectorNavSensor::guiConfig()
                     || (_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output3 && b == 2)
                     || (_binaryOutputRegisterMerge == BinaryRegisterMerge::Output2_Output3 && b == 2))
                 {
-                    ImGui::PopDisabled();
+                    ImGui::EndDisabled();
                 }
 
                 if (ImGui::BeginTable(fmt::format("##VectorNavSensorConfig ({})", size_t(id)).c_str(), 7,
@@ -2599,7 +2607,7 @@ void NAV::VectorNavSensor::guiConfig()
 
                         if (!enabled)
                         {
-                            ImGui::PushDisabled();
+                            ImGui::BeginDisabled();
                         }
 
                         if (ImGui::CheckboxFlags(label, flags, flags_value))
@@ -2649,7 +2657,7 @@ void NAV::VectorNavSensor::guiConfig()
 
                         if (!enabled)
                         {
-                            ImGui::PopDisabled();
+                            ImGui::EndDisabled();
                         }
                     };
 
@@ -5336,6 +5344,11 @@ bool NAV::VectorNavSensor::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+#ifndef HAS_VECTORNAV_LIBRARY
+    LOG_ERROR("{}: Can't initialize without the vnproglib library.", nameId());
+    return false;
+#endif
+
     // Some settings need to be wrote to the device and reset afterwards
     bool deviceNeedsResetAfterInitialization = false;
 
@@ -5963,6 +5976,10 @@ bool NAV::VectorNavSensor::initialize()
 void NAV::VectorNavSensor::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
+
+#ifndef HAS_VECTORNAV_LIBRARY
+    return;
+#endif
 
     try
     {

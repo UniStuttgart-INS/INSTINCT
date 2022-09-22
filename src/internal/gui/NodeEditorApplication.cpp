@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "NodeEditorApplication.hpp"
 
 #include <imgui_node_editor.h>
@@ -858,14 +866,14 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 else if (hasOutputFlows)
                 {
                     bool itemDisabled = !node->isInitialized() && !node->callbacksEnabled;
-                    if (itemDisabled) { ImGui::PushDisabled(); }
+                    if (itemDisabled) { ImGui::BeginDisabled(); }
 
                     ImGui::PushStyleColor(ImGuiCol_FrameBg, checkBoxColor);
                     ImGui::Checkbox("", &node->callbacksEnabled);
                     ImGui::PopStyleColor();
                     if (ImGui::IsItemHovered()) { tooltipText = "Enable Callbacks"; }
 
-                    if (itemDisabled) { ImGui::PopDisabled(); }
+                    if (itemDisabled) { ImGui::EndDisabled(); }
                     ImGui::Dummy(ImVec2(0, 26));
                 }
                 else
@@ -948,14 +956,14 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                     bool noneType = input.type == Pin::Type::None;
                     if (noneType)
                     {
-                        ImGui::PushDisabled();
+                        ImGui::BeginDisabled();
                     }
                     ImGui::PushStyleColor(ImGuiCol_Text, textColor);
                     ImGui::TextUnformatted(input.name.c_str());
                     ImGui::PopStyleColor();
                     if (noneType)
                     {
-                        ImGui::PopDisabled();
+                        ImGui::EndDisabled();
                     }
                     ImGui::Spring(0);
                 }
@@ -996,14 +1004,14 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                     bool noneType = output.type == Pin::Type::None;
                     if (noneType)
                     {
-                        ImGui::PushDisabled();
+                        ImGui::BeginDisabled();
                     }
                     ImGui::PushStyleColor(ImGuiCol_Text, textColor);
                     ImGui::TextUnformatted(output.name.c_str());
                     ImGui::PopStyleColor();
                     if (noneType)
                     {
-                        ImGui::PopDisabled();
+                        ImGui::EndDisabled();
                     }
                 }
                 ImGui::Spring(0);
@@ -1485,15 +1493,18 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             LOG_DEBUG("New Node will spawn at {}x{} - Zoom {}", newNodeSpawnPos.x, newNodeSpawnPos.y, ed::GetCurrentZoom());
         }
 
+        if (setKeyboardFocus)
+        {
+            ImGui::SetKeyboardFocusHere(0);
+        }
         static ImGuiTextFilter filter;
 
-        filter.Draw("");
+        filter.Draw("##NewNodeFilter");
 
         if (setKeyboardFocus)
         {
             filter.Clear();
             setKeyboardFocus = false;
-            ImGui::SetKeyboardFocusHere(0);
         }
 
         Node* node = nullptr;
@@ -1597,9 +1608,9 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             {
                 ImGui::PushFont(WindowFont());
                 bool locked = node->_lockConfigDuringRun && (node->callbacksEnabled || FlowExecutor::isRunning());
-                if (locked) { ImGui::PushDisabled(); }
+                if (locked) { ImGui::BeginDisabled(); }
                 node->guiConfig();
-                if (locked) { ImGui::PopDisabled(); }
+                if (locked) { ImGui::EndDisabled(); }
                 ImGui::PopFont();
             }
             else // Window is collapsed

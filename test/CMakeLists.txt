@@ -1,3 +1,11 @@
+# This file is part of INSTINCT, the INS Toolkit for Integrated
+# Navigation Concepts and Training by the Institute of Navigation of
+# the University of Stuttgart, Germany.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 # https://github.com/catchorg/Catch2/blob/devel/docs/cmake-integration.md
 
 # automatically enable catch2 to generate ctest targets
@@ -47,9 +55,17 @@ target_link_libraries(
           imgui_node_editor
           ImGuiFileDialog
           implot
-          application
-          libvncxx
-          libUartSensor)
+          application)
+
+if(ENABLE_VECTORNAV)
+  target_compile_definitions(tests PUBLIC HAS_VECTORNAV_LIBRARY=1)
+  target_link_libraries(tests PRIVATE libvncxx)
+endif()
+
+if(ENABLE_UARTSENSORS)
+  target_compile_definitions(tests PUBLIC HAS_UARTSENSOR_LIBRARY=1)
+  target_link_libraries(tests PRIVATE libUartSensor)
+endif()
 
 if(NOT APPLE AND NOT WIN32)
   target_link_libraries(tests PRIVATE libnavio)

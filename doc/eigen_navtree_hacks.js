@@ -1,4 +1,5 @@
-
+// File from Eigen3 library
+//
 // generate a table of contents in the side-nav based on the h1/h2 tags of the current page.
 function generate_autotoc() {
   var headers = $("h1, h2, h3");

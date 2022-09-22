@@ -3,9 +3,7 @@
 Please read this!
 
 Before opening a new issue, make sure to search for keywords in the issues
-filtered by the "Type::Bug" label:
-
-- https://git.ins.uni-stuttgart.de/thomas.topp/instinct/-/issues?label_name=Type%3A%3ABug
+filtered by the "Type::Bug" label.
 
 and verify the issue you're about to submit isn't a duplicate.
 --->

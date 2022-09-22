@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "ErrorModel.hpp"
 
 #include "internal/NodeManager.hpp"
@@ -176,7 +184,7 @@ void NAV::ErrorModel::guiConfig()
         ImGui::SameLine();
         if (!_imuAccelerometerRandomNumberGenerator.useSeedInsteadOfSystemTime)
         {
-            ImGui::PushDisabled();
+            ImGui::BeginDisabled();
         }
         ImGui::SetNextItemWidth(itemWidth - (ImGui::GetCursorPosX() - currentCursorX) + ImGui::GetStyle().ItemSpacing.x);
         if (ImGui::SliderULong(fmt::format("Accelerometer Noise Seed##{}", size_t(id)).c_str(), &_imuAccelerometerRandomNumberGenerator.seed, 0, std::numeric_limits<uint64_t>::max() / 2, "%lu", ImGuiSliderFlags_Logarithmic))
@@ -186,7 +194,7 @@ void NAV::ErrorModel::guiConfig()
         }
         if (!_imuAccelerometerRandomNumberGenerator.useSeedInsteadOfSystemTime)
         {
-            ImGui::PopDisabled();
+            ImGui::EndDisabled();
         }
 
         // #########################################################################################################################################
@@ -215,7 +223,7 @@ void NAV::ErrorModel::guiConfig()
         ImGui::SameLine();
         if (!_imuGyroscopeRandomNumberGenerator.useSeedInsteadOfSystemTime)
         {
-            ImGui::PushDisabled();
+            ImGui::BeginDisabled();
         }
         ImGui::SetNextItemWidth(itemWidth - (ImGui::GetCursorPosX() - currentCursorX) + ImGui::GetStyle().ItemSpacing.x);
         if (ImGui::SliderULong(fmt::format("Gyroscope Noise Seed##{}", size_t(id)).c_str(), &(_imuGyroscopeRandomNumberGenerator.seed), 0, std::numeric_limits<uint64_t>::max() / 2UL, "%lu", ImGuiSliderFlags_Logarithmic))
@@ -225,7 +233,7 @@ void NAV::ErrorModel::guiConfig()
         }
         if (!_imuGyroscopeRandomNumberGenerator.useSeedInsteadOfSystemTime)
         {
-            ImGui::PopDisabled();
+            ImGui::EndDisabled();
         }
         // #########################################################################################################################################
     }
@@ -257,7 +265,7 @@ void NAV::ErrorModel::guiConfig()
         ImGui::SameLine();
         if (!_positionRandomNumberGenerator.useSeedInsteadOfSystemTime)
         {
-            ImGui::PushDisabled();
+            ImGui::BeginDisabled();
         }
         ImGui::SetNextItemWidth(itemWidth - (ImGui::GetCursorPosX() - currentCursorX) + ImGui::GetStyle().ItemSpacing.x);
         if (ImGui::SliderULong(fmt::format("Position Noise Seed##{}", size_t(id)).c_str(), &_positionRandomNumberGenerator.seed, 0, std::numeric_limits<uint64_t>::max() / 2, "%lu", ImGuiSliderFlags_Logarithmic))
@@ -267,7 +275,7 @@ void NAV::ErrorModel::guiConfig()
         }
         if (!_positionRandomNumberGenerator.useSeedInsteadOfSystemTime)
         {
-            ImGui::PopDisabled();
+            ImGui::EndDisabled();
         }
 
         // #########################################################################################################################################
@@ -294,7 +302,7 @@ void NAV::ErrorModel::guiConfig()
         ImGui::SameLine();
         if (!_velocityRandomNumberGenerator.useSeedInsteadOfSystemTime)
         {
-            ImGui::PushDisabled();
+            ImGui::BeginDisabled();
         }
         ImGui::SetNextItemWidth(itemWidth - (ImGui::GetCursorPosX() - currentCursorX) + ImGui::GetStyle().ItemSpacing.x);
         if (ImGui::SliderULong(fmt::format("Velocity Noise Seed##{}", size_t(id)).c_str(), &_velocityRandomNumberGenerator.seed, 0, std::numeric_limits<uint64_t>::max() / 2, "%lu", ImGuiSliderFlags_Logarithmic))
@@ -304,7 +312,7 @@ void NAV::ErrorModel::guiConfig()
         }
         if (!_velocityRandomNumberGenerator.useSeedInsteadOfSystemTime)
         {
-            ImGui::PopDisabled();
+            ImGui::EndDisabled();
         }
 
         // #########################################################################################################################################
@@ -333,7 +341,7 @@ void NAV::ErrorModel::guiConfig()
         ImGui::SameLine();
         if (!_attitudeRandomNumberGenerator.useSeedInsteadOfSystemTime)
         {
-            ImGui::PushDisabled();
+            ImGui::BeginDisabled();
         }
         ImGui::SetNextItemWidth(itemWidth - (ImGui::GetCursorPosX() - currentCursorX) + ImGui::GetStyle().ItemSpacing.x);
         if (ImGui::SliderULong(fmt::format("Attitude Noise Seed##{}", size_t(id)).c_str(), &_attitudeRandomNumberGenerator.seed, 0, std::numeric_limits<uint64_t>::max() / 2, "%lu", ImGuiSliderFlags_Logarithmic))
@@ -343,7 +351,7 @@ void NAV::ErrorModel::guiConfig()
         }
         if (!_attitudeRandomNumberGenerator.useSeedInsteadOfSystemTime)
         {
-            ImGui::PopDisabled();
+            ImGui::EndDisabled();
         }
         // #########################################################################################################################################
     }

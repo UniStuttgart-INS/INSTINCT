@@ -1,5 +1,13 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file Navio2Sensor.hpp
-/// @brief Vector Nav Sensors
+/// @brief Navio2 Sensors
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-07-13
 
@@ -8,7 +16,7 @@
 #include "Nodes/DataProvider/IMU/Imu.hpp"
 
 #if !__APPLE__ && !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
-    #include "navio/Common/InertialSensor.h"
+    #include "Navio/Common/InertialSensor.h"
 #endif
 
 #include "util/CallbackTimer.hpp"

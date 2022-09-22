@@ -391,7 +391,7 @@
             "group": "test",
             "command": "ctest",
             "args": [
-                "-j4",
+                // "-j4",
                 "--output-on-failure",
                 // "--tests-regex",
                 // "'PVAError|PosVelAtt'",

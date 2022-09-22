@@ -44,11 +44,23 @@
     ],
     "doxdocgen.generic.paramTemplate": "@param[in, out] {param} ",
     "doxdocgen.file.fileOrder": [
+        "custom",
         "file",
         "brief",
         "author",
         "date",
-        "custom"
+    ],
+    "doxdocgen.file.customTag": [
+        "This file is part of INSTINCT, the INS Toolkit for Integrated",
+        "Navigation Concepts and Training by the Institute of Navigation of",
+        "the University of Stuttgart, Germany.",
+        "",
+        "This Source Code Form is subject to the terms of the Mozilla Public",
+        "License, v. 2.0. If a copy of the MPL was not distributed with this",
+        "file, You can obtain one at https://mozilla.org/MPL/2.0/.",
+        "",
+        "<-- KEEP ONE EMPTY LINE HERE AND MAKE LICENSE COMMENTS only 2 slashes '//'",
+        "",
     ],
     "doxdocgen.generic.order": [
         "brief",
@@ -130,6 +142,8 @@
     "mathover.matchRegex": "\\/\\/\\sMath:\\s(.+)",
     "mathover.forwardSkip": 9,
     "search.exclude": {
+        "**/.git": true,
+        "**/.DS_Store": true,
         ".vscode": true,
         "bin": true,
         "build": true,
@@ -166,5 +180,5 @@
     "matched-line-dimmer.patterns": [
         "LOG_(DATA)",
     ],
-    "matched-line-dimmer.opacity": 40
+    "matched-line-dimmer.opacity": 40,
 }

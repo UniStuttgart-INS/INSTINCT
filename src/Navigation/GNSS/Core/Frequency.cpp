@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "Frequency.hpp"
 
 #include "util/Assert.h"
@@ -389,7 +397,7 @@ bool ShowFrequencySelector(const char* label, Frequency& frequency)
                     ImGui::TableSetColumnIndex(c);
                     if (c >= 1)
                     {
-                        ImGui::PushDisabled();
+                        ImGui::BeginDisabled();
                     }
                     ImU64 value = Frequency_(frequency);
                     if (ImGui::CheckboxFlags(text.c_str(), &value, flag))
@@ -399,7 +407,7 @@ bool ShowFrequencySelector(const char* label, Frequency& frequency)
                     }
                     if (c >= 1)
                     {
-                        ImGui::PopDisabled();
+                        ImGui::EndDisabled();
                     }
                 }
             }
