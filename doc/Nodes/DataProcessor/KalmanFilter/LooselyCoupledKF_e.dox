@@ -1,0 +1,872 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+namespace Instinct {
+
+/** \defgroup LooselyCoupledKF_e INS/GNSS Loosely-coupled Kalman Filter (Earth-fixed frame)
+
+\section LooselyCoupledKF_e-ErrorStateEquations Earth Frame Error State Equations
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-ErrorStateEquations-ShortForm Short form
+
+\fl{equation,eq-LCKF_e-stateMatrix-short}
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.4em] {
+      \boldsymbol{\delta \dot{\psi}}_{eb}^e \\
+      \boldsymbol{\delta \dot{v}}_{eb}^e \\
+      \boldsymbol{\delta \dot{r}}_{eb}^e \\
+      \boldsymbol{\delta \dot{f}}_{ib}^{\raise-0.45ex\hbox{$\scriptstyle b$}} \\
+      \boldsymbol{\delta \dot{\omega}}_{ib}^b \\
+    };
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\boldsymbol{\delta}\mathbf{\dot{x}}$} (m-1-1.north east);
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[green!20]{m-1-1}{m-1-1}
+      \fhighlight[blue!20]{m-2-1}{m-2-1}
+      \fhighlight[cyan!20]{m-3-1}{m-3-1}
+      \fhighlight[red!20]{m-4-1}{m-4-1}
+      \fhighlight[orange!20]{m-5-1}{m-5-1}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+  =
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em]
+    {
+      \mathbf{F}_{\dotup{\psi},\psi}^e     & \mathbf{0}_3                             & \mathbf{0}_3                             & \mathbf{0}_3   & \mathbf{C}_b^e \\
+      \mathbf{F}_{\delta \dotup{v},\psi}^e & \mathbf{F}_{\delta \dotup{v},\delta v}^e & \mathbf{F}_{\delta \dotup{v},\delta r}^e & \mathbf{C}_b^e & \mathbf{0}_3   \\
+      \mathbf{0}_3                         & \mathbf{I}_3                             & \mathbf{0}_3                             & \mathbf{0}_3   & \mathbf{0}_3   \\
+      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             & \mathbf{0}_3   & \mathbf{0}_3   \\
+      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             & \mathbf{0}_3   & \mathbf{0}_3   \\
+    };
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{F}$} (m-1-5.north east);
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[green!20]{m-1-1}{m-1-1}
+      \fhighlight[orange!20]{m-1-5}{m-1-5}
+      \fhighlight[purple!20]{m-2-1}{m-2-1}
+      \fhighlight[blue!20]{m-2-2}{m-2-2}
+      \fhighlight[violet!20]{m-2-3}{m-2-3}
+      \fhighlight[red!20]{m-2-4}{m-2-4}
+      \fhighlight[cyan!20]{m-3-2}{m-3-2}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+  \cdot
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.4em] {
+      \boldsymbol{\delta\psi}_{eb}^e \\
+      \boldsymbol{\delta v}_{eb}^e \\
+      \boldsymbol{\delta r}_{eb}^e \\
+      \boldsymbol{\delta f}_{ib}^b \\
+      \boldsymbol{\delta \omega}_{ib}^b \\
+    };
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\boldsymbol{\delta}\mathbf{x}$} (m-1-1.north east);
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[green!20]{m-1-1}{m-1-1}
+      \fhighlight[blue!20]{m-2-1}{m-2-1}
+      \fhighlight[cyan!20]{m-3-1}{m-3-1}
+      \fhighlight[red!20]{m-4-1}{m-4-1}
+      \fhighlight[orange!20]{m-5-1}{m-5-1}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+\f}
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-ErrorStateEquations-DetailedForm Detailed form
+
+\fl{equation,eq-LCKF_e-stateMatrix}
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                nodes={rectangle,text width=2.4em,align=center,minimum height=2.3em,anchor=center},row sep=0.3em, column sep=0.4em,] {
+      \delta \dotup{\psi}_{eb,1}^e  \\ \delta \dotup{\psi}_{eb,2}^e  \\ \delta \dotup{\psi}_{eb,3}^e  \\
+      \delta \dotup{v}_{eb,x}^e     \\ \delta \dotup{v}_{eb,y}^e     \\ \delta \dotup{v}_{eb,z}^e     \\
+      \delta \dotup{r}_{eb,x}^e     \\ \delta \dotup{r}_{eb,y}^e     \\ \delta \dotup{r}_{eb,z}^e     \\
+      \delta \dotup{f}_{x}^{b}      \\ \delta \dotup{f}_{y}^{b}      \\ \delta \dotup{f}_{z}^{b}      \\
+      \delta \dotup{\omega}_{x}^{b} \\ \delta \dotup{\omega}_{y}^{b} \\ \delta \dotup{\omega}_{z}^{b} \\
+    };
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\boldsymbol{\delta}\mathbf{\dot{x}}$} (m-1-1.north east);
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[green!20]{m-1-1}{m-3-1}
+      \fhighlight[blue!20]{m-4-1}{m-6-1}
+      \fhighlight[cyan!20]{m-7-1}{m-9-1}
+      \fhighlight[red!20]{m-10-1}{m-12-1}
+      \fhighlight[orange!20]{m-13-1}{m-15-1}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+  =
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes in empty cells,
+                row sep=0.3em, column sep=0.4em,
+                nodes={rectangle,minimum height=2.3em,anchor=center},
+                column 6/.style = {nodes={minimum width=1.0cm}},] {
+           0       &  \omega_{ie} &       0     &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+      -\omega_{ie} &       0      &       0     &                & \mathbf{0}_3  &     &  &                                                                                       \mathbf{0}_3                                                                                      &  &  &  \mathbf{0}_3  &  &  & \mathbf{C}_b^e & \\
+           0       &       0      &       0     &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+           0       &  f_{ib,z}^e  & -f_{ib,y}^e &       0        & 2 \omega_{ie} &  0  &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+     -f_{ib,z}^e   &       0      &  f_{ib,x}^e & -2 \omega_{ie} &       0       &  0  &  & - \left( \dfrac{2 \boldsymbol{\gamma}_{ib}^e}{r_{eS}^e} \dfrac{{\mathbf{r}_{eb}^e}^T}{\left| \mathbf{r}_{eb}^e \right|} + \boldsymbol{\Omega}_{ie}^e \boldsymbol{\Omega}_{ie}^e \right) &  &  & \mathbf{C}_b^e &  &  &  \mathbf{0}_3  & \\
+      f_{ib,y}^e   & -f_{ib,x}^e  &       0     &       0        &       0       &  0  &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+                   & \mathbf{0}_3 &             &                & \mathbf{I}_3  &     &  &                                                                                       \mathbf{0}_3                                                                                      &  &  &  \mathbf{0}_3  &  &  &  \mathbf{0}_3  & \\
+                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+                   & \mathbf{0}_3 &             &                & \mathbf{0}_3  &     &  &                                                                                       \mathbf{0}_3                                                                                      &  &  &  \mathbf{0}_3  &  &  &  \mathbf{0}_3  & \\
+                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+                   & \mathbf{0}_3 &             &                & \mathbf{0}_3  &     &  &                                                                                       \mathbf{0}_3                                                                                      &  &  &  \mathbf{0}_3  &  &  &  \mathbf{0}_3  & \\
+                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+    };
+
+    \foreach \r in {1,3,4,6,7,9} {
+      \foreach \c in {1,3,4,6,7,9,10,12,13,15} {
+        \coordinate (m-\r-\c-nw) at (100,-100);
+        \coordinate (m-\r-\c-se) at (-100,100);
+
+        \foreach \row in {1,...,9} {
+          \path let \p1=(m-\row-\c.west), \p2=(m-\r-\c-nw) in coordinate (m-\r-\c-nw) at ({min(\x1,\x2)},\y2);
+          \path let \p1=(m-\row-\c.east), \p2=(m-\r-\c-se) in coordinate (m-\r-\c-se) at ({max(\x1,\x2)},\y2);
+        }
+        \foreach \col in {1,...,15} {
+          \path let \p1=(m-\r-\col.north), \p2=(m-\r-\c-nw) in coordinate (m-\r-\c-nw) at (\x2,{max(\y1,\y2)});
+          \path let \p1=(m-\r-\col.south), \p2=(m-\r-\c-se) in coordinate (m-\r-\c-se) at (\x2,{min(\y1,\y2)});
+        }
+      }
+    }
+
+    \path let \p1=(m-1-1-nw), \p2=(m-1-15-se) in coordinate (m-1-15-ne) at (\x2,\y1);
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1-nw) -- node[above=2pt] {$\mathbf{F}$} (m-1-15-ne);
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[green!20]{m-1-1-nw}{m-3-3-se}
+      \fhighlight[orange!20]{m-1-13-nw}{m-3-15-se}
+      \fhighlight[purple!20]{m-4-1-nw}{m-6-3-se}
+      \fhighlight[blue!20]{m-4-4-nw}{m-6-6-se}
+      \fhighlight[violet!20]{m-4-7-nw}{m-6-9-se}
+      \fhighlight[red!20]{m-4-10-nw}{m-6-12-se}
+      \fhighlight[cyan!20]{m-7-4-nw}{m-9-6-se}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+  \cdot
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
+                nodes={rectangle,text width=2.4em,align=center,minimum height=2.3em,anchor=center},] {
+      \delta \psi_{eb,1}^e  \\ \delta \psi_{eb,2}^e  \\ \delta \psi_{eb,3}^e  \\
+      \delta v_{eb,x}^e     \\ \delta v_{eb,y}^e     \\ \delta v_{eb,z}^e     \\
+      \delta r_{eb,x}^e     \\ \delta r_{eb,y}^e     \\ \delta r_{eb,z}^e     \\
+      \delta f_{x}^{b}      \\ \delta f_{y}^{b}      \\ \delta f_{z}^{b}      \\
+      \delta \omega_{x}^{b} \\ \delta \omega_{y}^{b} \\ \delta \omega_{z}^{b} \\
+    };
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\boldsymbol{\delta}\mathbf{x}$} (m-1-1.north east);
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[green!20]{m-1-1}{m-3-1}
+      \fhighlight[blue!20]{m-4-1}{m-6-1}
+      \fhighlight[cyan!20]{m-7-1}{m-9-1}
+      \fhighlight[red!20]{m-10-1}{m-12-1}
+      \fhighlight[orange!20]{m-13-1}{m-15-1}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+\f}
+
+This form corresponds to
+- \cite Groves2013 Groves, ch. 14.2.3, eq. 14.48, p. 583
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section LooselyCoupledKF_e-Noise Augmented State with Noise
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+The continuous linear dynamic system can be expressed as
+\fl{equation,eq-LCKF_e-dynamicModel}
+  \boldsymbol{\delta} \mathbf{\dot{x}} = \mathbf{F} \cdot \boldsymbol{\delta} \mathbf{x} + \mathbf{G} \cdot \mathbf{w}
+\f}
+
+Process noise is introduced into the \f$ \mathbf{F} \f$ and \f$ \mathbf{G} \f$ matrices in the accelerometer and gyroscope bias terms. Therefore the error equations can be extended as follows
+
+\fl{equation,eq-LCKF_e-dynamicModel-short}
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.4em] {
+      \boldsymbol{\delta \dot{\psi}}_{eb}^e \\
+      \boldsymbol{\delta \dot{v}}_{eb}^e \\
+      \boldsymbol{\delta \dot{r}}_{eb}^e \\
+      \boldsymbol{\delta \dot{f}}_{ib}^{\raise-0.45ex\hbox{$\scriptstyle b$}} \\
+      \boldsymbol{\delta \dot{\omega}}_{ib}^b \\
+    };
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\boldsymbol{\delta} \mathbf{\dot{x}}$} (m-1-1.north east);
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[green!20]{m-1-1}{m-1-1}
+      \fhighlight[blue!20]{m-2-1}{m-2-1}
+      \fhighlight[cyan!20]{m-3-1}{m-3-1}
+      \fhighlight[red!20]{m-4-1}{m-4-1}
+      \fhighlight[orange!20]{m-5-1}{m-5-1}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+  =
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em]
+    {
+      \mathbf{F}_{\dotup{\psi},\psi}^e     & \mathbf{0}_3                             & \mathbf{0}_3                             &    \mathbf{0}_3      &       \mathbf{C}_b^e       \\
+      \mathbf{F}_{\delta \dotup{v},\psi}^e & \mathbf{F}_{\delta \dotup{v},\delta v}^e & \mathbf{F}_{\delta \dotup{v},\delta r}^e &    \mathbf{C}_b^e    &       \mathbf{0}_3         \\
+      \mathbf{0}_3                         & \mathbf{I}_3                             & \mathbf{0}_3                             &    \mathbf{0}_3      &       \mathbf{0}_3         \\
+      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             & \boldsymbol{\beta}_f &       \mathbf{0}_3         \\
+      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             &    \mathbf{0}_3      &  \boldsymbol{\beta}_\omega \\
+    };
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{F}$} (m-1-5.north east);
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[green!20]{m-1-1}{m-1-1}
+      \fhighlight[orange!20]{m-1-5}{m-1-5}
+      \fhighlight[purple!20]{m-2-1}{m-2-1}
+      \fhighlight[blue!20]{m-2-2}{m-2-2}
+      \fhighlight[violet!20]{m-2-3}{m-2-3}
+      \fhighlight[red!20]{m-2-4}{m-2-4}
+      \fhighlight[cyan!20]{m-3-2}{m-3-2}
+      \fhighlight[magenta!20]{m-4-4}{m-4-4}
+      \fhighlight[olive!20]{m-5-5}{m-5-5}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+  \cdot
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.4em] {
+      \boldsymbol{\delta \psi}_{eb}^e \\
+      \boldsymbol{\delta v}_{eb}^e \\
+      \boldsymbol{\delta r}_{eb}^e \\
+      \boldsymbol{\delta f}_{ib}^b \\
+      \boldsymbol{\delta \omega}_{ib}^b \\
+    };
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\boldsymbol{\delta} \mathbf{x}$} (m-1-1.north east);
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[green!20]{m-1-1}{m-1-1}
+      \fhighlight[blue!20]{m-2-1}{m-2-1}
+      \fhighlight[cyan!20]{m-3-1}{m-3-1}
+      \fhighlight[red!20]{m-4-1}{m-4-1}
+      \fhighlight[orange!20]{m-5-1}{m-5-1}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+  +
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                nodes={rectangle,text width=2em,align=center},row sep=0.3em, column sep=0.4em]
+    {
+       \mathbf{C}_b^e & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{C}_b^e & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{I}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{I}_3 \\
+    };
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{G}$} (m-1-4.north east);
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[darkgray!20]{m-1-1}{m-1-1}
+      \fhighlight[brown!20]{m-2-2}{m-2-2}
+      \fhighlight[pink!20]{m-4-3}{m-4-3}
+      \fhighlight[lightgray!20]{m-5-4}{m-5-4}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+  \cdot
+  \mathbf{w}
+\f}
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-Noise-RW Random Walk
+
+The random noise on the accelerometer and gyro measurements can be estimated as a Random Walk in the angle and velocity errors.
+
+\fl{equation,eq-LCKF_e-random-walk}
+  \dotup{x} = 0 + W(t)
+\f}
+
+The terms in the noise input matrix \f$ \mathbf{G} \f$ are not scaled and therefore need to be compensated with a noise scale matrix \f$ \mathbf{W} \f$ depending on the amplitude of the power spectral density (PSD) of the noise process.
+
+White noise has a PSD of \f$ \sigma^2 \f$ and therefore the <b>PSDs of the accelerometer and gyro noise</b> are
+
+\fl{equation,eq-LCKF_e-random-walk-S-noise}
+  \highlight[darkgray!20]{S_{ra,j}} = \sigma_{ra,j}^2 \tau_i, \qquad
+  \highlight[brown!20]{S_{rg,j}} = \sigma_{rg,j}^2 \tau_i, \qquad\qquad j \in x,y,z
+\f}
+where
+- \f$ \sigma_{ra} \f$ is the standard deviation of the noise on the accelerometer specific-force measurements
+- \f$ \sigma_{rg} \f$ is the standard deviation of the noise on the gyro angular-rate measurements
+- \f$ \tau_i \f$ is the interval between the input of successive accelerometer and gyro outputs to the inertial navigation equations
+
+see \cite Groves2013 Groves, ch. 14.2.6, eq. 14.83, p. 592
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-Noise-GM1 Gauss-Markov 1. Order
+
+On the other hand, the dynamic bias of the accelerometer and gyro can be estimated with a Gauss-Markov 1. Order.
+
+\fl{equation,eq-LCKF_e-gauss-markov-1}
+  \dotup{x} = -\beta x + W(t)
+\f}
+
+The terms in the  \f$ \mathbf{F} \f$ matrix are
+\fl{equation,eq-LCKF_e-random-walk-beta}
+  \highlight[magenta!20]{\boldsymbol{\beta}_f} = \begin{pmatrix} -\beta_{f} &      0     &      0     \\
+                                                                    0       & -\beta_{f} &      0     \\
+                                                                    0       &      0     & -\beta_{f} \end{pmatrix}, \qquad
+  \highlight[olive!20]{\boldsymbol{\beta}_\omega} = \begin{pmatrix} -\beta_{\omega} &        0        &        0        \\
+                                                                           0        & -\beta_{\omega} &        0        \\
+                                                                           0        &        0        & -\beta_{\omega} \end{pmatrix}
+\f}
+where
+- \f$ \beta_{f} \f$ is the Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
+- \f$ \beta_{\omega} \f$ is the Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
+
+Like before, the scaling is done inside the noise scale matrix and the <b>Bias variation PSDs</b> are
+
+\fl{equation,eq-LCKF_e-random-walk-S-bias}
+  \highlight[pink!20]{S_{bad,j}} = \frac{\sigma_{bad,j}^2}{\tau_{bad}} , \qquad
+  \highlight[lightgray!20]{S_{bgd,j}} = \frac{\sigma_{bgd,j}^2}{\tau_{bgd}}, \qquad\qquad j \in x,y,z
+\f}
+where
+- \f$ \sigma_{bad} \f$ and \f$ \sigma_{bgd} \f$ are the standard deviations of the accelerometer and gyro dynamic biases
+- \f$ \tau_{bad} \f$ and \f$ \tau_{bgd} \f$ are the correlation times of the dynamic accelerometer and gyro biases
+
+see \cite Groves2013 Groves, ch. 14.2.6, eq. 14.84, p. 592
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-Noise-Scale-matrix Noise scale matrix W
+
+\fl{equation,eq-LCKF_e-random-walk-noise-scale-matrix-W}
+  \mathbf{W} =
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                nodes={rectangle,text width=2em,align=center},row sep=0.3em, column sep=0.4em]
+    {
+      \mathbf{S}_{rg} & \mathbf{0}_3    & \mathbf{0}_3     & \mathbf{0}_3     \\
+      \mathbf{0}_3    & \mathbf{S}_{ra} & \mathbf{0}_3     & \mathbf{0}_3     \\
+      \mathbf{0}_3    & \mathbf{0}_3    & \mathbf{S}_{bad} & \mathbf{0}_3     \\
+      \mathbf{0}_3    & \mathbf{0}_3    & \mathbf{0}_3     & \mathbf{S}_{bgd} \\
+    };
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[darkgray!20]{m-1-1}{m-1-1}
+      \fhighlight[brown!20]{m-2-2}{m-2-2}
+      \fhighlight[pink!20]{m-3-3}{m-3-3}
+      \fhighlight[lightgray!20]{m-4-4}{m-4-4}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+\f}
+
+\f$ \mathbf{S}_{rg}, \mathbf{S}_{ra}, \mathbf{S}_{bad}, \mathbf{S}_{bgd} \f$ are diagonal matrices which entries are filled with the PSDs from \eqref{eq-LCKF_e-random-walk-S-noise} and \eqref{eq-LCKF_e-random-walk-S-bias}.
+
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section LooselyCoupledKF_e-KF-Matrices Kalman-Filter Matrices
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-KF-Phi-Q State transition matrix 𝚽 & Process noise covariance matrix Q
+
+\subsubsection LooselyCoupledKF_e-KF-Phi State transition matrix 𝚽
+
+#### Exponential Matrix
+
+The state transition matrix is defined as
+
+\fl{equation,eq-LCKF_e-Phi-exp}
+  \boldsymbol{\Phi} = \exp{(\mathbf{F} \tau_s)}
+\f}
+
+see \cite Groves2013 Groves, ch. 3.2.3, eq. 3.33, p. 97
+
+#### Taylor series
+
+The exponential matrix cannot be calculated directly and numerical methods are computationally intensive. Therefore the transition matrix can be computed as a power-series expansion
+
+\fl{equation,eq-LCKF_e-Phi-Taylor}
+  \boldsymbol{\Phi} = \sum_{r=0}^{\infty} \frac{\mathbf{F}^r \tau_s^r}{r!} = \mathbf{I} + \mathbf{F} \tau_s + \frac{1}{2} \mathbf{F}^2 \tau^2 + \frac{1}{6} \mathbf{F}^3 \tau_s^3 + \dots
+\f}
+
+see \cite Groves2013 Groves, ch. 3.2.3, eq. 3.34, p. 98
+
+\subsubsection LooselyCoupledKF_e-KF-Q Process noise covariance matrix Q
+
+The process noise covariance matrix is defined as
+
+\fl{equation,eq-LCKF_e-Q-exact}
+  \mathbf{Q}_{k-1} = \int_{t_k - \tau_s}^{t_k} \exp{(\mathbf{F}_{k-1} (t_k-t'))} \mathbf{G}_{k-1} \mathbf{W}_{k-1} \mathbf{G}_{k-1}^T \exp{(\mathbf{F}_{k-1}^T (t_k-t'))} dt'
+\f}
+
+This matrix can be approximated and should be validated against the the exact version prior to use.
+
+\fl{equation,eq-LCKF_e-Q-approx}
+  \mathbf{Q}_{k-1} \approx \mathbf{G}_{k-1} \mathbf{W}_{k-1} \mathbf{G}_{k-1}^T \tau_s
+\f}
+
+see \cite Groves2013 Groves, ch. 3.2.3, eq. 3.43/3.45, p. 99
+
+Taking the noise input and scale matrices from \eqref{eq-LCKF_n-dynamicModel-short} and \eqref{eq-LCKF_n-random-walk-noise-scale-matrix-W} and putting it into the exact form \eqref{eq-LCKF_n-Q-exact}, it becomes
+
+//TODO: \f$ \text{\textcolor{red}{Add content here}} \f$
+
+\subsubsection LooselyCoupledKF_e-KF-Phi-Q-Van-Loan Van Loan method
+
+The state transition matrix and the system/process noise covariance matrix can be calculated with the van Loan method \cite Loan1978 . In short
+
+1. Form a \f$ 2n \times 2n \f$ matrix called \f$ \mathbf{A} \f$ (\f$ n \f$ is the dimension of \f$ \mathbf{x} \f$ and \f$ \mathbf{W} \f$ is the power spectral density of the noise \f$ W(t) \f$)
+\fl{equation,eq-LCKF_e-Loan-A}
+  \mathbf{A} = \begin{bmatrix} -\mathbf{F} & \mathbf{G} \mathbf{W} \mathbf{G}^T \\
+                                \mathbf{0} &            \mathbf{F}^T          \end{bmatrix} \Delta t
+\f}
+
+2. Calculate the exponential of \f$ \mathbf{A} \f$
+\fl{equation,eq-LCKF_e-Loan-B}
+  \mathbf{B} = \text{expm}(\mathbf{A}) = \left[ \begin{array}{c;{2pt/2pt}c}
+                                            \dots          & \mathbf{\Phi}^{-1} \mathbf{Q} \\[2mm]
+                                            \hdashline[2pt/2pt] &                                  \\[-2mm]
+                                            \mathbf{0}          & \mathbf{\Phi}^T                     \end{array} \right]
+                                       = \begin{bmatrix} \mathbf{B}_{11} & \mathbf{B}_{12} \\
+                                                         \mathbf{B}_{21} & \mathbf{B}_{22} \end{bmatrix}
+\f}
+
+3. Calculate the state transition matrix \f$ \mathbf{\Phi} \f$ as
+\fl{equation,eq-LCKF_e-Loan-Phi}
+  \mathbf{\Phi} = \mathbf{B}_{22}^T
+\f}
+
+4. Calculate the process noise covariance matrix \f$ \mathbf{Q} \f$ as
+\fl{equation,eq-LCKF_e-Loan-Q}
+  \mathbf{Q} = \mathbf{\Phi} \mathbf{B}_{12}
+\f}
+
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-KF-P Error covariance matrix P
+
+The error covariance matrix is initialized as a diagonal matrix with the variance of the initial state as diagonal elements.
+
+\fl{equation,eq-LCKF_e-P}
+  \mathbf{P}_0 =
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
+                nodes={rectangle,text width=2.5em,align=center,minimum height=2.3em,anchor=center},] {
+      \boldsymbol{\sigma}_{\boldsymbol{\delta \psi}}^2 &                                                 &                      \dots                      &                                                 &                        \mathbf{0}_3                       \\
+                                                       & \boldsymbol{\sigma}_{\boldsymbol{\delta v^e}}^2 &                                                 &                    \iddots                      &                                                           \\
+                           \vdots                      &                                                 & \boldsymbol{\sigma}_{\boldsymbol{\delta r^e}}^2 &                                                 &                          \vdots                           \\
+                                                       &                    \iddots                      &                                                 & \boldsymbol{\sigma}_{\boldsymbol{\delta f^b}}^2 &                                                           \\
+                        \mathbf{0}_3                   &                                                 &                      \dots                      &                                                 & \boldsymbol{\sigma}_{\boldsymbol{\delta \omega^b_{ib}}}^2 \\
+    };
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[green!20]{m-1-1}{m-1-1}
+      \fhighlight[blue!20]{m-2-2}{m-2-2}
+      \fhighlight[cyan!20]{m-3-3}{m-3-3}
+      \fhighlight[red!20]{m-4-4}{m-4-4}
+      \fhighlight[orange!20]{m-5-5}{m-5-5}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+\f}
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-deltaz Measurement innovation 𝛿z
+
+\fl{equation,eq-LCKF_e-deltaz}
+  \boldsymbol{\delta} \mathbf{z}^e = \begin{pmatrix} \tilde{\mathbf{r}}_{b,G}^e - \hat{\mathbf{r}}_{b}^e - \mathbf{C}_b^e \mathbf{l}_{ba}^b \\
+                                      \tilde{\mathbf{v}}^e_{G} - \hat{\mathbf{v}}^e - \mathbf{C}_b^e (\boldsymbol{\omega}_{ib}^b \times \mathbf{l}_{ba}^b) + \boldsymbol{\Omega}_{ie}^e \mathbf{C}_b^e \mathbf{l}_{ba}^b \end{pmatrix}
+\f}
+
+where
+- \f$ G \f$ denotes GNSS indicated measurements
+- \f$ \mathbf{l}_{ba}^b \f$ is the lever arm from the INS to the GNSS antenna in [m]
+
+This form corresponds to
+- \cite Groves2013 Groves, ch. 14.3.1, eq. 14.102, p. 598
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-KF-H Measurement sensitivity Matrix H
+
+\fl{equation,eq-LCKF_e-H-general}
+  \mathbf{H}_k = \left. \frac{\partial \mathbf{h} (\mathbf{x}, t_k)}{\partial \mathbf{x}} \right|_{x = \hat{x}_k^{-}}
+               = \left. \frac{\partial \mathbf{z} (\mathbf{x}, t_k)}{\partial \mathbf{x}} \right|_{x = \hat{x}_k^{-}}
+\f}
+
+see
+- \cite Groves2013 Groves, ch. 3.4.1, eq. 3.90, p. 119
+
+\fl{equation,eq-LCKF_e-H}
+  \mathbf{H}^e =
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
+                nodes={rectangle,text width=2.5em,align=center,minimum height=2.3em,anchor=center},] {
+      \mathbf{H}_{r,\delta \psi}^e &  \mathbf{0}_3 & -\mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3                          \\
+      \mathbf{H}_{v,\delta \psi}^e & -\mathbf{I}_3 &  \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{H}_{v,\omega_{ib}^b}^e \\
+    };
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[green!20]{m-1-1}{m-1-1}
+      \fhighlight[green!20]{m-2-1}{m-2-1}
+      \fhighlight[blue!20]{m-2-2}{m-2-2}
+      \fhighlight[cyan!20]{m-1-3}{m-1-3}
+      \fhighlight[orange!20]{m-2-5}{m-2-5}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+\f}
+
+where
+\fl{equation,eq-LCKF_e-H-sub}
+\begin{aligned}
+  \highlight[green!20]{\mathbf{H}_{r,\delta \psi}^e}    &\approx \left[ (\mathbf{C}_b^e \mathbf{l}_{ba}^b) \times \right] \\
+  \highlight[green!20]{\mathbf{H}_{v,\delta \psi}^e}    &\approx \left[ \left\{ \mathbf{C}_b^e (\boldsymbol{\omega}_{ib}^b \times \mathbf{l}_{ba}^b) - \boldsymbol{\Omega}_{ie}^e \mathbf{C}_b^e \mathbf{l}_{ba}^b \right\} \times \right] \\
+  \highlight[orange!20]{\mathbf{H}_{v,\omega_{ib}^b}^e} &\approx \mathbf{C}_b^e \left[ \mathbf{l}_{ba}^b \times \right] \\
+\end{aligned}
+\f}
+
+See
+- \cite Groves2013 Groves, ch. 14.3.1, eq. 14.111/14.112, p. 600
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-KF-R Measurement noise covariance matrix R
+
+The measurement noise covariance matrix is a diagonal matrix with the variances of the measurements as diagonal elements.
+
+\fl{equation,eq-LCKF_e-R}
+  \mathbf{R} = E \left( (\mathbf{z} - \mathbf{H} \mathbf{x})(\mathbf{z} - \mathbf{H} \mathbf{x})^T \right) =
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
+                nodes={rectangle,text width=2.2em,align=center,minimum height=2.3em,anchor=center},] {
+      \boldsymbol{\sigma}^2_{\mathbf{z}_{\boldsymbol{\delta r}^e}} &                         \mathbf{0}_3                         \\
+                              \mathbf{0}_3                         & \boldsymbol{\sigma}^2_{\mathbf{z}_{\boldsymbol{\delta v}^e}} \\
+    };
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[cyan!20]{m-1-1}{m-1-1}
+      \fhighlight[blue!20]{m-2-2}{m-2-2}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+\f}
+
+This variances can be set static or ideally come from the GNSS receiver.
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section LooselyCoupledKF_e-Corrections Corrections
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+This section describes how the errors are applied to the total state.
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-Corrections-State Position, Velocity, Attitude
+
+The position and velocity errors get applied by simply subtracting them from the previous total state (see \cite Groves2013 Groves, ch. 14.1.1, eq. 14.8, 14.9, p. 564)
+
+\fl{equation,eq-LCKF_e-correction-position-velocity}
+\begin{aligned}
+  \boldsymbol{r}^{e,+} &= \boldsymbol{r}^{e,-} - \boldsymbol{\delta r}^{e} \\
+  \boldsymbol{v}^{e,+} &= \boldsymbol{v}^{e,-} - \boldsymbol{\delta v}^{e}
+\end{aligned}
+\f}
+
+The attitude correction can be derived from equation \eqref{eq-LCKF_e-Derivation-Attitude-estimate-errors}  (see \cite Groves2013 Groves, ch. 14.1.1, eq. 14.7, p. 564)
+\fl{equation,eq-LCKF_e-correction-attitude}
+  \mathbf{C}_b^{e,+} = (\mathbf{I}_3 - [\boldsymbol{\delta \psi} \times]) \mathbf{C}_b^{e,-}
+\f}
+
+After applying the errors to the total state, the errors have to be reset to zero (closed-loop).
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-Corrections-Bias Biases
+
+To correct the accelerometer and gyroscope measurements, we need to accumulate the error states. This has to be done, because contrary to the normal state, the expected value of the biases is not zero.
+
+\fl{equation,eq-LCKF_e-correction-accel-gyro-accumulate}
+\begin{aligned}
+  \boldsymbol{\Delta f}^{b,+}           &= \boldsymbol{\Delta f}^{b,-}           + \boldsymbol{\delta f}^b \\
+  \boldsymbol{\Delta \omega}_{ib}^{b,+} &= \boldsymbol{\Delta \omega}_{ib}^{b,-} + \boldsymbol{\delta \omega}_{ib}^b
+\end{aligned}
+\f}
+
+Afterwards this accumulated value can be applied to the measurements by subtracting it
+
+\fl{equation,eq-LCKF_e-correction-accel-gyro}
+\begin{aligned}
+  \boldsymbol{f}^{p,+}           &= \boldsymbol{f}^{p,-}           - \mathbf{C}_b^p \boldsymbol{\Delta f}^{b,+} \\
+  \boldsymbol{\omega}_{ib}^{p,+} &= \boldsymbol{\omega}_{ib}^{p,-} - \mathbf{C}_b^p \boldsymbol{\Delta \omega}_{ib}^{b,+}
+\end{aligned}
+\f}
+
+Afterwards the bias in the error state gets reset to zero, as it is accounted for in the accumulated value.
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section LooselyCoupledKF_e-Appendix Appendix
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-ErrorStateEquations-Derivation Derivation
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsubsection LooselyCoupledKF_e-ErrorStateEquations-Derivation-Position Position Equations
+
+The time derivative of the position is simply a function of the Earth-referenced velocity in Earth frame axes
+
+\fl{equation,eq-LCKF_e-Derivation-Position-timeDerivative}
+  \mathbf{\dot{r}}_{eb}^e = \mathbf{v}_{eb}^e
+\f}
+
+see
+- \cite Groves2013 Groves, ch. 5.3.4, eq. 5.37, p. 175
+- \cite Jekeli2001 Jekeli, ch. 4.3.3, eq. 4.84, p. 126
+
+The time derivative of the position error thus is
+
+\fl{equation,eq-LCKF_e-Derivation-Position-differential}
+  \boldsymbol{\delta}\mathbf{\dot{r}}_{eb}^e = \highlight[cyan!20]{\mathbf{I}_3} \cdot \mathbf{v}_{eb}^e
+\f}
+
+see
+- \cite Groves2013 Groves, ch. 14.2.3, eq. 14.47, p. 583
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsubsection LooselyCoupledKF_e-ErrorStateEquations-Derivation-Attitude Attitude Equations
+
+The estimated attitude \f$ \mathbf{\hat{C}}_b^e \f$ can be written in terms of true direction cosine matrix \f$ \mathbf{C}_b^e \f$
+\fl{equation,eq-LCKF_e-Derivation-Attitude-estimate-true}
+  \mathbf{\hat{C}}_b^e = \mathbf{B} \mathbf{C}_b^e
+\f}
+where \f$ \mathbf{B} \f$ is the transformation from true reference axes to estimated reference axes and it can be approximated for small angle misalignments as
+\fl{equation,eq-LCKF_e-Derivation-Attitude-transformation}
+  \mathbf{B} = [\mathbf{I} - \mathbf{\Psi}], \quad \text{with}~ \mathbf{\Psi} = \begin{pmatrix} \delta\alpha \\ \delta\beta \\ \delta\gamma \end{pmatrix} \times
+\f}
+with \f$ \mathbf{\Psi} \f$ being a skew symmetric matrix and \f$ \delta\alpha, \delta\beta, \delta\gamma \f$ being the attitude errors.
+
+Substituting \eqref{eq-LCKF_e-Derivation-Attitude-transformation} into \eqref{eq-LCKF_e-Derivation-Attitude-estimate-true} gives
+\fl{equation,eq-LCKF_e-Derivation-Attitude-estimate-errors}
+  \mathbf{\hat{C}}_b^e \approx [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e
+\f}
+
+and solving for \f$ \mathbf{\Psi} \f$
+\fl{equation,eq-LCKF_e-Derivation-Attitude-skew-mat}
+  \mathbf{\Psi} = \mathbf{I} - \mathbf{\hat{C}}_b^e {\mathbf{C}_b^e}^T
+\f}
+
+Differentiating this equation yields:
+\fl{equation,eq-LCKF_e-Derivation-Attitude-skew-mat-dot}
+  \mathbf{\dot{\Psi}} = -\mathbf{\dot{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle e$}} {\mathbf{C}_b^e}^T - \mathbf{\hat{C}}_b^e {\mathbf{\dot{C}}_b^e}\raise1.25ex\hbox{$\scriptstyle T$}
+\f}
+
+Using the following equations for the transformation
+- Angular rate splitting \f$ \boldsymbol{\omega}_{\beta\alpha}^\gamma = \boldsymbol{\omega}_{\beta\delta}^\gamma + \boldsymbol{\omega}_{\delta\alpha}^\gamma \f$ &emsp;\cite Groves2013 Groves, ch. 2.3.1, eq. 2.48, p. 45
+- Skew-symmetric matrix transformation \f$ \mathbf{\Omega}_{\beta\alpha}^\delta = \mathbf{C}_\gamma^\delta \mathbf{\Omega}_{\beta\alpha}^\gamma \mathbf{C}_\delta^\gamma \f$ &emsp;\cite Groves2013 Groves, ch. 2.3.1, eq. 2.51, p. 45
+
+the time derivative of the DCM matrix is
+
+\fl{equation,eq-LCKF_e-Derivation-Attitude-DCM-dot}
+\begin{aligned}
+  \mathbf{\dot{C}}_b^e &= \mathbf{C}_b^e \boldsymbol{\Omega}_{eb}^b \\
+                       &= \mathbf{C}_b^e \boldsymbol{\Omega}_{ib}^b - \boldsymbol{\Omega}_{ie}^e \mathbf{C}_b^e
+\end{aligned}
+\f}
+
+see
+- \cite Groves2013 Groves, ch. 5.3.1, eq. 5.24, p. 173
+- \cite Jekeli2001 Jekeli, ch. 4.3.3, eq. 4.83, p. 126
+- \cite Titterton2004 Titterton, ch. 3.5.2, eq. 3.22, p. 29
+
+where
+- \f$ \mathbf{\Omega}_{ib}^b \f$ is the skew-symmetric matrix of the absolute body rate,
+- \f$ \mathbf{\Omega}_{ie}^e \f$ is the skew-symmetric matrix of the Earth rotation in Earth frame coordinates
+
+Similarly, the time time differential of the estimated matrix \f$ \mathbf{\dot{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle e$}} \f$ can be calculated:
+\fl{equation,eq-LCKF_e-Derivation-Attitude-DCM-dot-estimated}
+  \mathbf{\dot{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle e$}} = \mathbf{\hat{C}}_b^e \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\hat{C}}_b^e
+\f}
+
+Substituting \eqref{eq-LCKF_e-Derivation-Attitude-DCM-dot} and \eqref{eq-LCKF_e-Derivation-Attitude-DCM-dot-estimated} into \eqref{eq-LCKF_e-Derivation-Attitude-skew-mat-dot}
+\fl{equation,eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc1}
+\begin{aligned}
+  \mathbf{\dot{\Psi}} &= -(\mathbf{\hat{C}}_b^e \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\hat{C}}_b^e) {\mathbf{C}_b^e}^T
+                         - \mathbf{\hat{C}}_b^e (\mathbf{C}_b^e \mathbf{\Omega}_{ib}^b - \mathbf{\Omega}_{ie}^e \mathbf{C}_b^e)^T \\
+                      &= - \mathbf{\hat{C}}_b^e \mathbf{\hat{\Omega}}_{ib}^b {\mathbf{C}_b^e}^T
+                         + \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\hat{C}}_b^e {\mathbf{C}_b^e}^T
+                         + \mathbf{\hat{C}}_b^e \mathbf{\Omega}_{ib}^b {\mathbf{C}_b^e}^T
+                         - \mathbf{\hat{C}}_b^e {\mathbf{C}_b^e}^T \mathbf{\Omega}_{ie}^e \\
+                      &= - \mathbf{\hat{C}}_b^e \left[ \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b \right] {\mathbf{C}_b^e}^T
+                         + \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\hat{C}}_b^e {\mathbf{C}_b^e}^T
+                         - \mathbf{\hat{C}}_b^e {\mathbf{C}_b^e}^T \mathbf{\Omega}_{ie}^e
+\end{aligned}
+\f}
+
+Substituting \eqref{eq-LCKF_e-Derivation-Attitude-estimate-errors} into \eqref{eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc1} gives:
+\fl{equation,eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc2}
+\begin{aligned}
+  \mathbf{\dot{\Psi}} &= - [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e \left[ \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b \right] {\mathbf{C}_b^e}^T
+                         + \mathbf{\hat{\Omega}}_{ie}^e [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e {\mathbf{C}_b^e}^T
+                         - [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e {\mathbf{C}_b^e}^T \mathbf{\Omega}_{ie}^e \\
+                      &= - [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e \left[ \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b \right] {\mathbf{C}_b^e}^T
+                         + \mathbf{\hat{\Omega}}_{ie}^e - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\Psi}
+                         - \mathbf{\Omega}_{ie}^e + \mathbf{\Psi} \mathbf{\Omega}_{ie}^e \\
+                         &= - [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e \left[ \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b \right] {\mathbf{C}_b^e}^T
+                            + \left[ \mathbf{\hat{\Omega}}_{ie}^e - \mathbf{\Omega}_{ie}^e \right]
+                            - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\Psi} + \mathbf{\Psi} \mathbf{\Omega}_{ie}^e
+\end{aligned}
+\f}
+
+Now we make the following substitutions
+- \f$ \boldsymbol{\delta}\mathbf{\Omega}_{ie}^e = \mathbf{\hat{\Omega}}_{ie}^e - \mathbf{\Omega}_{ie}^e \f$
+- \f$ \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b = \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b \f$
+
+and neglect error product terms. This leads to
+\fl{equation,eq-LCKF_e-Derivation-Attitude-skew-mat-dot-final}
+  \mathbf{\dot{\Psi}} \approx \mathbf{\Psi} \mathbf{\Omega}_{ie}^e - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\Psi}
+                              + \boldsymbol{\delta}\mathbf{\Omega}_{ie}^e
+                              - \mathbf{C}_b^e \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b {\mathbf{C}_b^e}^T
+\f}
+
+Finally by performing an element by element comparison with
+\fl{equation,eq-LCKF_e-Derivation-Attitude-element-comp}
+  \boldsymbol{\psi} \times = \mathbf{\Psi} \qquad\quad
+  \boldsymbol{\omega}_{ie}^e \times = \mathbf{\Omega}_{ie}^e \qquad\quad
+  \boldsymbol{\delta \omega}_{ie}^e \times = \boldsymbol{\delta}\mathbf{\Omega}_{ie}^e \qquad\quad
+  \boldsymbol{\delta \omega}_{ib}^b \times = \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b
+\f}
+
+the equation can be expressed in vector form as:
+\fl{equation,eq-LCKF_e-Derivation-Attitude-differential}
+\begin{aligned}
+  \boldsymbol{\dot{\psi}} &\approx \highlight[green!20]{-\boldsymbol{\omega}_{ie}^e \times} \boldsymbol{\psi}
+                                   + \overbrace{\boldsymbol{\delta \omega}_{ie}^e}^{= 0}
+                                   \highlight[orange!20]{- \mathbf{C}_b^e} \boldsymbol{\delta \omega}_{ib}^b \\
+                          &= \highlight[green!20]{\begin{pmatrix} 0 & \omega_{ie} & 0 \\ -\omega_{ie} & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix}} \cdot \boldsymbol{\psi}
+                             \highlight[orange!20]{- \mathbf{C}_b^e} \boldsymbol{\delta \omega}_{ib}^b \\
+\end{aligned}
+\f}
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsubsection LooselyCoupledKF_e-ErrorStateEquations-Derivation-Velocity Velocity Equations
+
+The time derivative of the velocity in Earth frame coordinates is
+
+\fl{equation,eq-LCKF_e-Derivation-Velocity-timeDerivative}
+  \boldsymbol{\dot{v}}^e
+      = \overbrace{\boldsymbol{f}^e}^{\hidewidth\text{measured}\hidewidth}
+        -\ \underbrace{2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e}_{\hidewidth\text{coriolis acceleration}\hidewidth}
+        +\ \overbrace{\mathbf{g}^e}^{\hidewidth\text{gravity}\hidewidth}
+\f}
+see
+- \cite Groves2013 Groves, ch. 5.3.3, eq. 5.35, p. 175
+- \cite Jekeli2001 Jekeli, ch. 4.3.3, eq. 4.82, p. 126
+- \cite Titterton2004 Titterton, ch. 3.5.2, eq. 3.21, p. 29
+
+where
+- \f$ \boldsymbol{v}^e \f$ is the velocity with respect to the Earth in Earth frame coordinates,
+- \f$ \boldsymbol{f}^e \f$ is the specific force vector as measured by a triad of accelerometers and resolved into Earth frame coordinates
+- \f$ \boldsymbol{\omega}_{ie}^e \f$ is the turn rate of the Earth expressed in Earth frame coordinates
+- \f$ \mathbf{g}^e \f$ is the local gravity vector which is a combination of (see \cite Titterton2004 Titterton, ch. 3.5.1, eq. 3.14, p. 27)
+    - \f$ \boldsymbol{\gamma}_{ib}^e \f$ the gravitation vector (caused by effects of mass attraction)
+    - \f$ -\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{r}^e ] \f$ the centrifugal acceleration caused by the Earth's rotation
+
+The estimated velocity follows the same propagation
+\fl{equation,eq-LCKF_e-Derivation-Velocity-timeDerivative-estimate}
+  \boldsymbol{\dot{\hat{v}}}^{\raise-0.45ex\hbox{$\scriptstyle e$}}
+      = \boldsymbol{\hat{f}}^e
+      - 2 \boldsymbol{\hat{\omega}}_{ie}^e \times \boldsymbol{\hat{v}}_e^e
+      + \mathbf{\hat{g}}^e
+\f}
+
+Differencing equation \eqref{eq-LCKF_e-Derivation-Velocity-timeDerivative} and \eqref{eq-LCKF_e-Derivation-Velocity-timeDerivative-estimate} we get
+\fl{equation,eq-LCKF_e-Derivation-Velocity-timeDerivative-differential}
+\begin{aligned}
+  \boldsymbol{\delta} \boldsymbol{\dot{v}}^e &= \boldsymbol{\dot{\hat{v}}}^{\raise-0.45ex\hbox{$\scriptstyle e$}} - \boldsymbol{\dot{v}}^e \\
+                                &= \mathbf{\hat{C}}_b^e \boldsymbol{\hat{f}}^b
+                                       - \mathbf{C}_b^e \boldsymbol{f}^b
+                                   - 2 \boldsymbol{\hat{\omega}}_{ie}^e \times \boldsymbol{\hat{v}}^e
+                                       + 2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e
+                                   + \mathbf{\hat{g}}^e
+                                       - \mathbf{g}^e
+\end{aligned}
+\f}
+
+- Substituting equation \eqref{eq-LCKF_e-Derivation-Attitude-estimate-errors}: \f$ \mathbf{\hat{C}}_b^e \approx [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e \f$
+- and writing
+    - \f$ \boldsymbol{\delta} \boldsymbol{f}^b = \boldsymbol{\hat{f}}^b - \boldsymbol{f}^b \f$
+    - \f$ \boldsymbol{\delta} \boldsymbol{v}^e = \boldsymbol{\hat{v}}^e - \boldsymbol{v}^e \f$
+    - \f$ \boldsymbol{\delta} \boldsymbol{\omega}_{ie}^e = \boldsymbol{\hat{\omega}}_{ie}^e - \boldsymbol{\omega}_{ie}^e = 0 \f$
+    - \f$ \boldsymbol{\delta} \mathbf{g}^e = \mathbf{\hat{g}}^e - \mathbf{g}^e \f$
+
+we get
+\fl{equation,eq-LCKF_e-Derivation-Velocity-timeDerivative-differential-transformation}
+\begin{aligned}
+  \boldsymbol{\delta \dot{v}}^e &= [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e \boldsymbol{\hat{f}}^b
+                                       - \mathbf{C}_b^e \boldsymbol{f}^b
+                                   - 2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{\hat{v}}^e
+                                       + 2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e
+                                   + \boldsymbol{\delta} \mathbf{g}^e \\
+                                &= \mathbf{C}_b^e \boldsymbol{\hat{f}}^b - \mathbf{\Psi} \mathbf{C}_b^e \boldsymbol{\hat{f}}^b
+                                       - \mathbf{C}_b^e \boldsymbol{f}^b
+                                   - 2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{\hat{v}}^e
+                                   + 2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e
+                                   + \boldsymbol{\delta} \mathbf{g}^e \\
+                                &= - \boldsymbol{\psi} \times \mathbf{C}_b^e \boldsymbol{\hat{f}}^b
+                                   + \highlight[red!20]{\mathbf{C}_b^e} \boldsymbol{\delta f}^b
+                                   - 2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{\delta v}^e
+                                   + \boldsymbol{\delta} \mathbf{g}^e \\
+                                &= (\mathbf{C}_b^e \boldsymbol{\delta f}^b + \mathbf{C}_b^e \boldsymbol{f}^b) \times \boldsymbol{\psi}
+                                   + \highlight[red!20]{\mathbf{C}_b^e} \boldsymbol{\delta f}^b
+                                   - 2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{\delta v}^e
+                                   + \boldsymbol{\delta} \mathbf{g}^e \\
+\end{aligned}
+\f}
+Now neglecting error product terms (\f$ \boldsymbol{\delta f}^b \times \boldsymbol{\psi} \approx 0 \f$)
+\fl{equation,eq-LCKF_e-Derivation-Velocity-timeDerivative-differential-transformation-neglect}
+\renewcommand*{\arraystretch}{1.9}
+  \boldsymbol{\delta \dot{v}}^e \approx \highlight[purple!20]{\boldsymbol{f}^e \times} \boldsymbol{\psi}
+                                   + \highlight[red!20]{\mathbf{C}_b^e} \boldsymbol{\delta f}^b
+                                   \highlight[blue!20]{- 2 \boldsymbol{\omega}_{ie}^e \times} \boldsymbol{\delta v}^e
+                                   + \boldsymbol{\delta} \mathbf{g}^e
+\f}
+
+The gravity error can be expressed as (see \cite Groves2013 Groves, ch. 14.2.3, eq. 14.45, p. 583)
+\fl{equation,eq-LCKF_e-Derivation-Velocity-gravityError}
+\begin{aligned}
+  \boldsymbol{\delta} \mathbf{g}^e = \overbrace{\boldsymbol{\hat{\gamma}}_{ib}^e - \boldsymbol{\gamma}_{ib}^e}^{\hidewidth\text{gravitation error}\hidewidth}
+                                      - \underbrace{\boldsymbol{\Omega}_{ie}^e \boldsymbol{\Omega}_{ie}^e \boldsymbol{\delta} \mathbf{r}_{eb}^e}_{\hidewidth\text{centrifugal acceleration error}\hidewidth}
+                                   \approx - \frac{2 \boldsymbol{\gamma}_{ib}^e}{r_{eS}^e} \frac{{\mathbf{r}_{eb}^e}^T}{\left| \mathbf{r}_{eb}^e \right|} \boldsymbol{\delta} \mathbf{r}_{eb}^e
+                                           - \boldsymbol{\Omega}_{ie}^e \boldsymbol{\Omega}_{ie}^e \boldsymbol{\delta} \mathbf{r}_{eb}^e
+\end{aligned}
+\f}
+where
+- the assumption \f$ h << r_{eS}^e \f$ is made
+
+This leads to the final form
+\fl{equation,eq-LCKF_e-Derivation-Velocity-timeDerivative-final}
+\renewcommand*{\arraystretch}{1.9}
+  \boldsymbol{\delta \dot{v}}^e \approx \highlight[purple!20]{\boldsymbol{f}^e \times} \boldsymbol{\psi}
+                                   + \highlight[red!20]{\mathbf{C}_b^e} \boldsymbol{\delta f}^b
+                                   + \highlight[blue!20]{\begin{pmatrix} 0 & 2 \omega_{ie} & \\ -2 \omega_{ie} & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix}} \boldsymbol{\delta v}^e
+                                   \highlight[violet!20]{- \left(  \dfrac{2 \boldsymbol{\gamma}_{ib}^e}{r_{eS}^e} \dfrac{{\mathbf{r}_{eb}^e}^T}{\left| \mathbf{r}_{eb}^e \right|}
+                                                                 + \boldsymbol{\Omega}_{ie}^e \boldsymbol{\Omega}_{ie}^e \right)} \boldsymbol{\delta} \mathbf{r}_{eb}^e
+\f}
+
+
+*/
+
+}

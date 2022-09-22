@@ -1,0 +1,18 @@
+[submodule "lib/gcem"]
+	path = lib/gcem
+	url = https://github.com/kthohr/gcem.git
+[submodule "lib/navio2"]
+	path = lib/navio2
+	url = https://github.com/emlid/Navio2.git
+[submodule "lib/imgui-node-editor"]
+	path = lib/imgui-node-editor
+	url = https://github.com/UniStuttgart-INS/imgui-node-editor.git
+[submodule "lib/imgui"]
+	path = lib/imgui
+	url = https://github.com/thedmd/imgui.git
+[submodule "lib/ImGuiFileDialog"]
+	path = lib/ImGuiFileDialog
+	url = https://github.com/aiekick/ImGuiFileDialog.git
+[submodule "lib/implot"]
+	path = lib/implot
+	url = https://github.com/epezent/implot.git

@@ -1,0 +1,374 @@
+{
+    "links": {
+        "link-11": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 3,
+            "id": 11,
+            "startPinId": 1
+        },
+        "link-12": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 10,
+            "id": 12,
+            "startPinId": 1
+        },
+        "link-19": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 15,
+            "id": 19,
+            "startPinId": 7
+        },
+        "link-20": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 18,
+            "id": 20,
+            "startPinId": 7
+        }
+    },
+    "nodes": {
+        "node-14": {
+            "data": {
+                "FileWriter": {
+                    "fileType": 2,
+                    "path": "vn310-gnss.csv"
+                }
+            },
+            "enabled": true,
+            "id": 14,
+            "inputPins": [
+                {
+                    "id": 15,
+                    "name": "BinaryOutput"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "VectorNavDataLogger - vn310-gnss.csv",
+            "outputPins": [],
+            "pos": {
+                "x": 840.0,
+                "y": -98.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavDataLogger"
+        },
+        "node-17": {
+            "data": {
+                "FileWriter": {
+                    "fileType": 1,
+                    "path": "vn310-gnss.vnb"
+                }
+            },
+            "enabled": true,
+            "id": 17,
+            "inputPins": [
+                {
+                    "id": 18,
+                    "name": "BinaryOutput"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "VectorNavDataLogger - vn310-gnss.vnb",
+            "outputPins": [],
+            "pos": {
+                "x": 840.0,
+                "y": -2.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavDataLogger"
+        },
+        "node-2": {
+            "data": {
+                "FileReader": {
+                    "path": "VectorNav/StaticSize/vn310-imu.csv"
+                },
+                "Imu": {
+                    "imuPos": {
+                        "b_positionAccel": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_positionGyro": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_positionMag": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_quatAccel_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatGyro_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatMag_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        }
+                    }
+                }
+            },
+            "enabled": true,
+            "id": 2,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "VectorNavFile - vn310-imu.csv",
+            "outputPins": [
+                {
+                    "id": 1,
+                    "name": "Binary Output"
+                }
+            ],
+            "pos": {
+                "x": 342.0,
+                "y": -305.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavFile"
+        },
+        "node-4": {
+            "data": {
+                "FileWriter": {
+                    "fileType": 2,
+                    "path": "vn310-imu.csv"
+                }
+            },
+            "enabled": true,
+            "id": 4,
+            "inputPins": [
+                {
+                    "id": 3,
+                    "name": "BinaryOutput"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "VectorNavDataLogger - vn310-imu.csv",
+            "outputPins": [],
+            "pos": {
+                "x": 840.0,
+                "y": -322.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavDataLogger"
+        },
+        "node-6": {
+            "data": {
+                "FileReader": {
+                    "path": "VectorNav/StaticSize/vn310-gnss.csv"
+                },
+                "Imu": {
+                    "imuPos": {
+                        "b_positionAccel": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_positionGyro": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_positionMag": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_quatAccel_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatGyro_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatMag_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        }
+                    }
+                }
+            },
+            "enabled": true,
+            "id": 6,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "VectorNavFile - vn310-gnss.csv",
+            "outputPins": [
+                {
+                    "id": 7,
+                    "name": "Binary Output"
+                }
+            ],
+            "pos": {
+                "x": 326.0,
+                "y": -66.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavFile"
+        },
+        "node-9": {
+            "data": {
+                "FileWriter": {
+                    "fileType": 1,
+                    "path": "vn310-imu.vnb"
+                }
+            },
+            "enabled": true,
+            "id": 9,
+            "inputPins": [
+                {
+                    "id": 10,
+                    "name": "BinaryOutput"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "VectorNavDataLogger - vn310-imu.vnb",
+            "outputPins": [],
+            "pos": {
+                "x": 840.0,
+                "y": -226.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavDataLogger"
+        }
+    }
+}

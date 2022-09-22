@@ -1,0 +1,184 @@
+{
+    "[cpp]": {
+        "editor.defaultFormatter": "xaver.clang-format"
+    },
+    "[c]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools"
+    },
+    "[cmake]": {
+        "editor.formatOnSave": false
+    },
+    "[latex]": {
+        "editor.formatOnSave": false,
+        "editor.tabSize": 2,
+    },
+    "C_Cpp.autoAddFileAssociations": false, // Otherwise the "files.associations" list will be filled everytime opening a file without extension (e.g. <iostream>)
+    "C_Cpp.default.cppStandard": "c++20",
+    "cSpell.words": [
+        "cmake",
+        "coeffs",
+        "docopt",
+        "doppler",
+        "Doxygen",
+        "ECEF",
+        "firable",
+        "GNSS",
+        "gtest",
+        "hobiger",
+        "Kalman",
+        "Klobuchar",
+        "kutta",
+        "mathbf",
+        "nodiscard",
+        "pseudorange",
+        "Pseudorange",
+        "quaterniond",
+        "runge",
+        "Saastamoinen",
+        "Sagnac",
+        "ublox"
+    ],
+    "editor.formatOnSave": true,
+    "editor.rulers": [
+        150
+    ],
+    "doxdocgen.generic.paramTemplate": "@param[in, out] {param} ",
+    "doxdocgen.file.fileOrder": [
+        "custom",
+        "file",
+        "brief",
+        "author",
+        "date",
+    ],
+    "doxdocgen.file.customTag": [
+        "This file is part of INSTINCT, the INS Toolkit for Integrated",
+        "Navigation Concepts and Training by the Institute of Navigation of",
+        "the University of Stuttgart, Germany.",
+        "",
+        "This Source Code Form is subject to the terms of the Mozilla Public",
+        "License, v. 2.0. If a copy of the MPL was not distributed with this",
+        "file, You can obtain one at https://mozilla.org/MPL/2.0/.",
+        "",
+        "<-- KEEP ONE EMPTY LINE HERE AND MAKE LICENSE COMMENTS only 2 slashes '//'",
+        "",
+    ],
+    "doxdocgen.generic.order": [
+        "brief",
+        "tparam",
+        "param",
+        "return"
+    ],
+    "doxdocgen.c.commentPrefix": "/// ",
+    "doxdocgen.c.firstLine": "",
+    "doxdocgen.c.lastLine": "",
+    "doxdocgen.c.triggerSequence": "///",
+    "doxdocgen.generic.boolReturnsTrueFalse": false,
+    "doxdocgen.generic.returnTemplate": "@return ",
+    "doxdocgen.cpp.ctorText": "Constructor",
+    "doxdocgen.cpp.dtorText": "Destructor",
+    "files.associations": {
+        "**/C++/**": "cpp", // <-- stl libraries
+        "**/tbb/**": "cpp", // <-- intel libraries
+        "**/boost/**": "cpp", // <-- boost libraries
+        "*.tpp": "cpp", // <-- Template files
+        "*.log.*": "log", // <-- log files
+        "*.flow": "json", // <-- nodeeditor save files
+        "*.dox": "latex", // <-- Doxygen files
+    },
+    "logFileHighlighter.customPatterns": [
+        {
+            "pattern": "(\\[T\\]|\\[TRACE\\]|\\[Trace\\]|\\[trace\\])",
+            "foreground": "white",
+        },
+        {
+            "pattern": "(\\[D\\]|\\[DEBUG\\]|\\[Debug\\]|\\[debug\\])",
+            "foreground": "cyan",
+        },
+        {
+            "pattern": "(\\[I\\]|\\[INFO\\]|\\[Info\\]|\\[info\\])",
+            "foreground": "green",
+        },
+        {
+            "pattern": "(\\[W\\]|\\[WARN\\w*\\]|\\[Warn\\w*\\]|\\[warn\\w*\\])",
+            "foreground": "yellow",
+        },
+        {
+            "pattern": "(\\[E\\]|\\[ERROR\\]|\\[Error\\]|\\[error\\])",
+            "foreground": "red",
+        },
+        {
+            "pattern": "(\\[C\\]|\\[CRIT\\w*\\]|\\[Crit\\w*\\]|\\[crit\\w*\\])",
+            "foreground": "white",
+            "background": "red"
+        },
+    ],
+    "vsicons.associations.folders": [
+        {
+            "icon": "library",
+            "extensions": [
+                "lib",
+                ".lib",
+                "library",
+                "libraries"
+            ],
+            "format": "FileFormat.svg"
+        },
+        {
+            "icon": "blueprint",
+            "extensions": [
+                "gui"
+            ],
+            "format": "FileFormat.svg"
+        }
+    ],
+    "clang-tidy.compilerArgs": [
+        "-Wno-unknown-warning-option"
+    ],
+    "comment-divider.length": 110,
+    "comment-divider.lineFiller": "#",
+    "comment-divider.mainHeaderFiller": "#",
+    "comment-divider.subheaderFiller": "-",
+    "comment-divider.shouldLengthIncludeIndent": true,
+    "mathover.matchRegex": "\\/\\/\\sMath:\\s(.+)",
+    "mathover.forwardSkip": 9,
+    "search.exclude": {
+        "**/.git": true,
+        "**/.DS_Store": true,
+        ".vscode": true,
+        "bin": true,
+        "build": true,
+        "cmake": true,
+        "data": true,
+        "flow": true,
+        "logs": true,
+        "resources": true,
+        "tools": true,
+    },
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+    },
+    "files.exclude": {
+        "**/.git": true,
+        "**/.DS_Store": true,
+        "**/tools": true,
+        ".gitattributes": true,
+        ".gitlab": true,
+        ".clang-format": true,
+        ".clang-tidy": true,
+        ".cmake-format.yaml": true,
+        ".cppcheck-suppressions-list": true,
+        ".gitlab-ci.yml": true,
+        ".gitmodules": true,
+        "INSTINCT.ini": true,
+        "compile_commands.json": true,
+    },
+    "todo-tree.filtering.excludeGlobs": [
+        "**/lib"
+    ],
+    "matched-line-dimmer.enabled": true,
+    "matched-line-dimmer.patterns": [
+        "LOG_(DATA)",
+    ],
+    "matched-line-dimmer.opacity": 40,
+}

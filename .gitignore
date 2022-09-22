@@ -1,0 +1,35 @@
+# Ignore the build dir
+build/*
+
+# Ignore any executables
+bin/*
+
+# Ignore logs
+logs/*
+
+# Ignore coverage folder
+coverage/*
+
+# Ignore all .orig files
+*.orig
+
+# Ignore Mac specific files
+.DS_Store
+
+# Ignore clangd cache
+/.cache
+
+# Ignore root level compile_commands
+compile_commands.json
+
+# Coverage file
+junit.xml
+
+# Ignore config files
+/config.ini
+
+# Imgui files
+INSTINCT.ini
+
+# DrawIO temporary files
+.$*

@@ -1,0 +1,41 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// This file strutures pages and modules into a convenient hierarchical structure.
+
+namespace Instinct {
+
+/** \page util Core
+  The core category provides documentation for the internal processes of INSTINCT.
+  - \subpage Core_Node
+*/
+
+
+/** \defgroup DataProcessor_chapter DataProcessor
+ * @{
+ *      \defgroup DataProcessor_KalmanFilter_chapter KalmanFilter
+ *      \defgroup DataProcessor_Integrator_chapter Integrator
+ * @} */
+
+ /** \addtogroup LooselyCoupledKF_n
+     \ingroup DataProcessor_KalmanFilter_chapter */
+ /** \addtogroup LooselyCoupledKF_e
+     \ingroup DataProcessor_KalmanFilter_chapter */
+ /** \addtogroup ImuIntegrator_n
+     \ingroup DataProcessor_Integrator_chapter */
+ /** \addtogroup ImuIntegrator_e
+     \ingroup DataProcessor_Integrator_chapter */
+
+ /** \defgroup DataProvider_chapter DataProvider
+  * @{
+  *      \defgroup DataProvider_Imu_chapter Imu
+  * @} */
+
+  /** \addtogroup ImuSimulator
+      \ingroup DataProvider_Imu_chapter */
+}

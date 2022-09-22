@@ -1,0 +1,776 @@
+{
+    "links": {
+        "link-14": {
+            "endPinId": 8,
+            "id": 14,
+            "startPinId": 7
+        }
+    },
+    "nodes": {
+        "node-13": {
+            "data": {
+                "nInputPins": 1,
+                "nPlots": 0,
+                "overridePositionStartValues": false,
+                "pinData": [
+                    {
+                        "dataIdentifier": "VectorNavBinaryOutput",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "Time::TimeStartup [ns]"
+                            },
+                            {
+                                "displayName": "Time::TimeGps [ns]"
+                            },
+                            {
+                                "displayName": "Time::GpsTow [ns]"
+                            },
+                            {
+                                "displayName": "Time::GpsWeek"
+                            },
+                            {
+                                "displayName": "Time::TimeSyncIn [ns]"
+                            },
+                            {
+                                "displayName": "Time::TimeGpsPps [ns]"
+                            },
+                            {
+                                "displayName": "Time::TimeUTC::year"
+                            },
+                            {
+                                "displayName": "Time::TimeUTC::month"
+                            },
+                            {
+                                "displayName": "Time::TimeUTC::day"
+                            },
+                            {
+                                "displayName": "Time::TimeUTC::hour"
+                            },
+                            {
+                                "displayName": "Time::TimeUTC::min"
+                            },
+                            {
+                                "displayName": "Time::TimeUTC::sec"
+                            },
+                            {
+                                "displayName": "Time::TimeUTC::ms"
+                            },
+                            {
+                                "displayName": "Time::SyncInCnt"
+                            },
+                            {
+                                "displayName": "Time::SyncOutCnt"
+                            },
+                            {
+                                "displayName": "Time::TimeStatus::timeOk"
+                            },
+                            {
+                                "displayName": "Time::TimeStatus::dateOk"
+                            },
+                            {
+                                "displayName": "Time::TimeStatus::utcTimeValid"
+                            },
+                            {
+                                "displayName": "IMU::ImuStatus"
+                            },
+                            {
+                                "displayName": "IMU::UncompMag::X [Gauss]"
+                            },
+                            {
+                                "displayName": "IMU::UncompMag::Y [Gauss]"
+                            },
+                            {
+                                "displayName": "IMU::UncompMag::Z [Gauss]"
+                            },
+                            {
+                                "displayName": "IMU::UncompAccel::X [m/s^2]"
+                            },
+                            {
+                                "displayName": "IMU::UncompAccel::Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "IMU::UncompAccel::Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "IMU::UncompGyro::X [rad/s]"
+                            },
+                            {
+                                "displayName": "IMU::UncompGyro::Y [rad/s]"
+                            },
+                            {
+                                "displayName": "IMU::UncompGyro::Z [rad/s]"
+                            },
+                            {
+                                "displayName": "IMU::Temp [Celsius]"
+                            },
+                            {
+                                "displayName": "IMU::Pres [kPa]"
+                            },
+                            {
+                                "displayName": "IMU::DeltaTime [s]"
+                            },
+                            {
+                                "displayName": "IMU::DeltaTheta::X [deg]"
+                            },
+                            {
+                                "displayName": "IMU::DeltaTheta::Y [deg]"
+                            },
+                            {
+                                "displayName": "IMU::DeltaTheta::Z [deg]"
+                            },
+                            {
+                                "displayName": "IMU::DeltaVel::X [m/s]"
+                            },
+                            {
+                                "displayName": "IMU::DeltaVel::Y [m/s]"
+                            },
+                            {
+                                "displayName": "IMU::DeltaVel::Z [m/s]"
+                            },
+                            {
+                                "displayName": "IMU::Mag::X [Gauss]"
+                            },
+                            {
+                                "displayName": "IMU::Mag::Y [Gauss]"
+                            },
+                            {
+                                "displayName": "IMU::Mag::Z [Gauss]"
+                            },
+                            {
+                                "displayName": "IMU::Accel::X [m/s^2]"
+                            },
+                            {
+                                "displayName": "IMU::Accel::Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "IMU::Accel::Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "IMU::AngularRate::X [rad/s]"
+                            },
+                            {
+                                "displayName": "IMU::AngularRate::Y [rad/s]"
+                            },
+                            {
+                                "displayName": "IMU::AngularRate::Z [rad/s]"
+                            },
+                            {
+                                "displayName": "GNSS1::UTC::year"
+                            },
+                            {
+                                "displayName": "GNSS1::UTC::month"
+                            },
+                            {
+                                "displayName": "GNSS1::UTC::day"
+                            },
+                            {
+                                "displayName": "GNSS1::UTC::hour"
+                            },
+                            {
+                                "displayName": "GNSS1::UTC::min"
+                            },
+                            {
+                                "displayName": "GNSS1::UTC::sec"
+                            },
+                            {
+                                "displayName": "GNSS1::UTC::ms"
+                            },
+                            {
+                                "displayName": "GNSS1::Tow [ns]"
+                            },
+                            {
+                                "displayName": "GNSS1::Week"
+                            },
+                            {
+                                "displayName": "GNSS1::NumSats"
+                            },
+                            {
+                                "displayName": "GNSS1::Fix"
+                            },
+                            {
+                                "displayName": "GNSS1::PosLla::latitude [deg]"
+                            },
+                            {
+                                "displayName": "GNSS1::PosLla::longitude [deg]"
+                            },
+                            {
+                                "displayName": "GNSS1::PosLla::altitude [m]"
+                            },
+                            {
+                                "displayName": "GNSS1::PosEcef::X [m]"
+                            },
+                            {
+                                "displayName": "GNSS1::PosEcef::Y [m]"
+                            },
+                            {
+                                "displayName": "GNSS1::PosEcef::Z [m]"
+                            },
+                            {
+                                "displayName": "GNSS1::VelNed::N [m/s]"
+                            },
+                            {
+                                "displayName": "GNSS1::VelNed::E [m/s]"
+                            },
+                            {
+                                "displayName": "GNSS1::VelNed::D [m/s]"
+                            },
+                            {
+                                "displayName": "GNSS1::VelEcef::X [m/s]"
+                            },
+                            {
+                                "displayName": "GNSS1::VelEcef::Y [m/s]"
+                            },
+                            {
+                                "displayName": "GNSS1::VelEcef::Z [m/s]"
+                            },
+                            {
+                                "displayName": "GNSS1::PosU::N [m]"
+                            },
+                            {
+                                "displayName": "GNSS1::PosU::E [m]"
+                            },
+                            {
+                                "displayName": "GNSS1::PosU::D [m]"
+                            },
+                            {
+                                "displayName": "GNSS1::VelU [m/s]"
+                            },
+                            {
+                                "displayName": "GNSS1::TimeU [s]"
+                            },
+                            {
+                                "displayName": "GNSS1::TimeInfo::Status::timeOk"
+                            },
+                            {
+                                "displayName": "GNSS1::TimeInfo::Status::dateOk"
+                            },
+                            {
+                                "displayName": "GNSS1::TimeInfo::Status::utcTimeValid"
+                            },
+                            {
+                                "displayName": "GNSS1::TimeInfo::LeapSeconds"
+                            },
+                            {
+                                "displayName": "GNSS1::DOP::g"
+                            },
+                            {
+                                "displayName": "GNSS1::DOP::p"
+                            },
+                            {
+                                "displayName": "GNSS1::DOP::t"
+                            },
+                            {
+                                "displayName": "GNSS1::DOP::v"
+                            },
+                            {
+                                "displayName": "GNSS1::DOP::h"
+                            },
+                            {
+                                "displayName": "GNSS1::DOP::n"
+                            },
+                            {
+                                "displayName": "GNSS1::DOP::e"
+                            },
+                            {
+                                "displayName": "GNSS1::SatInfo::NumSats"
+                            },
+                            {
+                                "displayName": "GNSS1::RawMeas::Tow [s]"
+                            },
+                            {
+                                "displayName": "GNSS1::RawMeas::Week"
+                            },
+                            {
+                                "displayName": "GNSS1::RawMeas::NumSats"
+                            },
+                            {
+                                "displayName": "Att::VpeStatus::AttitudeQuality"
+                            },
+                            {
+                                "displayName": "Att::VpeStatus::GyroSaturation"
+                            },
+                            {
+                                "displayName": "Att::VpeStatus::GyroSaturationRecovery"
+                            },
+                            {
+                                "displayName": "Att::VpeStatus::MagDisturbance"
+                            },
+                            {
+                                "displayName": "Att::VpeStatus::MagSaturation"
+                            },
+                            {
+                                "displayName": "Att::VpeStatus::AccDisturbance"
+                            },
+                            {
+                                "displayName": "Att::VpeStatus::AccSaturation"
+                            },
+                            {
+                                "displayName": "Att::VpeStatus::KnownMagDisturbance"
+                            },
+                            {
+                                "displayName": "Att::VpeStatus::KnownAccelDisturbance"
+                            },
+                            {
+                                "displayName": "Att::YawPitchRoll::Y [deg]"
+                            },
+                            {
+                                "displayName": "Att::YawPitchRoll::P [deg]"
+                            },
+                            {
+                                "displayName": "Att::YawPitchRoll::R [deg]"
+                            },
+                            {
+                                "displayName": "Att::Quaternion::w"
+                            },
+                            {
+                                "displayName": "Att::Quaternion::x"
+                            },
+                            {
+                                "displayName": "Att::Quaternion::y"
+                            },
+                            {
+                                "displayName": "Att::Quaternion::z"
+                            },
+                            {
+                                "displayName": "Att::DCM::0-0"
+                            },
+                            {
+                                "displayName": "Att::DCM::0-1"
+                            },
+                            {
+                                "displayName": "Att::DCM::0-2"
+                            },
+                            {
+                                "displayName": "Att::DCM::1-0"
+                            },
+                            {
+                                "displayName": "Att::DCM::1-1"
+                            },
+                            {
+                                "displayName": "Att::DCM::1-2"
+                            },
+                            {
+                                "displayName": "Att::DCM::2-0"
+                            },
+                            {
+                                "displayName": "Att::DCM::2-1"
+                            },
+                            {
+                                "displayName": "Att::DCM::2-2"
+                            },
+                            {
+                                "displayName": "Att::MagNed::N [Gauss]"
+                            },
+                            {
+                                "displayName": "Att::MagNed::E [Gauss]"
+                            },
+                            {
+                                "displayName": "Att::MagNed::D [Gauss]"
+                            },
+                            {
+                                "displayName": "Att::AccelNed::N [m/s^2]"
+                            },
+                            {
+                                "displayName": "Att::AccelNed::E [m/s^2]"
+                            },
+                            {
+                                "displayName": "Att::AccelNed::D [m/s^2]"
+                            },
+                            {
+                                "displayName": "Att::LinearAccelBody::X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Att::LinearAccelBody::Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Att::LinearAccelBody::Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Att::LinearAccelNed::N [m/s^2]"
+                            },
+                            {
+                                "displayName": "Att::LinearAccelNed::E [m/s^2]"
+                            },
+                            {
+                                "displayName": "Att::LinearAccelNed::D [m/s^2]"
+                            },
+                            {
+                                "displayName": "Att::YprU::Y [deg]"
+                            },
+                            {
+                                "displayName": "Att::YprU::P [deg]"
+                            },
+                            {
+                                "displayName": "Att::YprU::R [deg]"
+                            },
+                            {
+                                "displayName": "INS::InsStatus::Mode"
+                            },
+                            {
+                                "displayName": "INS::InsStatus::GpsFix"
+                            },
+                            {
+                                "displayName": "INS::InsStatus::Error::IMU"
+                            },
+                            {
+                                "displayName": "INS::InsStatus::Error::MagPres"
+                            },
+                            {
+                                "displayName": "INS::InsStatus::Error::GNSS"
+                            },
+                            {
+                                "displayName": "INS::InsStatus::GpsHeadingIns"
+                            },
+                            {
+                                "displayName": "INS::InsStatus::GpsCompass"
+                            },
+                            {
+                                "displayName": "INS::PosLla::latitude [deg]"
+                            },
+                            {
+                                "displayName": "INS::PosLla::longitude [deg]"
+                            },
+                            {
+                                "displayName": "INS::PosLla::altitude [m]"
+                            },
+                            {
+                                "displayName": "INS::PosEcef::X [m]"
+                            },
+                            {
+                                "displayName": "INS::PosEcef::Y [m]"
+                            },
+                            {
+                                "displayName": "INS::PosEcef::Z [m]"
+                            },
+                            {
+                                "displayName": "INS::VelBody::X [m/s]"
+                            },
+                            {
+                                "displayName": "INS::VelBody::Y [m/s]"
+                            },
+                            {
+                                "displayName": "INS::VelBody::Z [m/s]"
+                            },
+                            {
+                                "displayName": "INS::VelNed::N [m/s]"
+                            },
+                            {
+                                "displayName": "INS::VelNed::E [m/s]"
+                            },
+                            {
+                                "displayName": "INS::VelNed::D [m/s]"
+                            },
+                            {
+                                "displayName": "INS::VelEcef::X [m/s]"
+                            },
+                            {
+                                "displayName": "INS::VelEcef::Y [m/s]"
+                            },
+                            {
+                                "displayName": "INS::VelEcef::Z [m/s]"
+                            },
+                            {
+                                "displayName": "INS::MagEcef::X [Gauss}"
+                            },
+                            {
+                                "displayName": "INS::MagEcef::Y [Gauss}"
+                            },
+                            {
+                                "displayName": "INS::MagEcef::Z [Gauss}"
+                            },
+                            {
+                                "displayName": "INS::AccelEcef::X [m/s^2]"
+                            },
+                            {
+                                "displayName": "INS::AccelEcef::Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "INS::AccelEcef::Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "INS::LinearAccelEcef::X [m/s^2]"
+                            },
+                            {
+                                "displayName": "INS::LinearAccelEcef::Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "INS::LinearAccelEcef::Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "INS::PosU [m]"
+                            },
+                            {
+                                "displayName": "INS::VelU [m/s]"
+                            },
+                            {
+                                "displayName": "GNSS2::UTC::year"
+                            },
+                            {
+                                "displayName": "GNSS2::UTC::month"
+                            },
+                            {
+                                "displayName": "GNSS2::UTC::day"
+                            },
+                            {
+                                "displayName": "GNSS2::UTC::hour"
+                            },
+                            {
+                                "displayName": "GNSS2::UTC::min"
+                            },
+                            {
+                                "displayName": "GNSS2::UTC::sec"
+                            },
+                            {
+                                "displayName": "GNSS2::UTC::ms"
+                            },
+                            {
+                                "displayName": "GNSS2::Tow [ns]"
+                            },
+                            {
+                                "displayName": "GNSS2::Week"
+                            },
+                            {
+                                "displayName": "GNSS2::NumSats"
+                            },
+                            {
+                                "displayName": "GNSS2::Fix"
+                            },
+                            {
+                                "displayName": "GNSS2::PosLla::latitude [deg]"
+                            },
+                            {
+                                "displayName": "GNSS2::PosLla::longitude [deg]"
+                            },
+                            {
+                                "displayName": "GNSS2::PosLla::altitude [m]"
+                            },
+                            {
+                                "displayName": "GNSS2::PosEcef::X [m]"
+                            },
+                            {
+                                "displayName": "GNSS2::PosEcef::Y [m]"
+                            },
+                            {
+                                "displayName": "GNSS2::PosEcef::Z [m]"
+                            },
+                            {
+                                "displayName": "GNSS2::VelNed::N [m/s]"
+                            },
+                            {
+                                "displayName": "GNSS2::VelNed::E [m/s]"
+                            },
+                            {
+                                "displayName": "GNSS2::VelNed::D [m/s]"
+                            },
+                            {
+                                "displayName": "GNSS2::VelEcef::X [m/s]"
+                            },
+                            {
+                                "displayName": "GNSS2::VelEcef::Y [m/s]"
+                            },
+                            {
+                                "displayName": "GNSS2::VelEcef::Z [m/s]"
+                            },
+                            {
+                                "displayName": "GNSS2::PosU::N [m]"
+                            },
+                            {
+                                "displayName": "GNSS2::PosU::E [m]"
+                            },
+                            {
+                                "displayName": "GNSS2::PosU::D [m]"
+                            },
+                            {
+                                "displayName": "GNSS2::VelU [m/s]"
+                            },
+                            {
+                                "displayName": "GNSS2::TimeU [s]"
+                            },
+                            {
+                                "displayName": "GNSS2::TimeInfo::Status::timeOk"
+                            },
+                            {
+                                "displayName": "GNSS2::TimeInfo::Status::dateOk"
+                            },
+                            {
+                                "displayName": "GNSS2::TimeInfo::Status::utcTimeValid"
+                            },
+                            {
+                                "displayName": "GNSS2::TimeInfo::LeapSeconds"
+                            },
+                            {
+                                "displayName": "GNSS2::DOP::g"
+                            },
+                            {
+                                "displayName": "GNSS2::DOP::p"
+                            },
+                            {
+                                "displayName": "GNSS2::DOP::t"
+                            },
+                            {
+                                "displayName": "GNSS2::DOP::v"
+                            },
+                            {
+                                "displayName": "GNSS2::DOP::h"
+                            },
+                            {
+                                "displayName": "GNSS2::DOP::n"
+                            },
+                            {
+                                "displayName": "GNSS2::DOP::e"
+                            },
+                            {
+                                "displayName": "GNSS2::SatInfo::NumSats"
+                            },
+                            {
+                                "displayName": "GNSS2::RawMeas::Tow [s]"
+                            },
+                            {
+                                "displayName": "GNSS2::RawMeas::Week"
+                            },
+                            {
+                                "displayName": "GNSS2::RawMeas::NumSats"
+                            }
+                        ],
+                        "size": 2000,
+                        "stride": 1
+                    }
+                ],
+                "plots": []
+            },
+            "enabled": true,
+            "id": 13,
+            "inputPins": [
+                {
+                    "id": 8,
+                    "name": "Pin 1"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "Plot",
+            "outputPins": [],
+            "pos": {
+                "x": 712.0,
+                "y": -66.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Plot"
+        },
+        "node-6": {
+            "data": {
+                "FileReader": {
+                    "path": "VectorNav/StaticSize/vn310-gnss.csv"
+                },
+                "Imu": {
+                    "imuPos": {
+                        "b_positionAccel": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_positionGyro": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_positionMag": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_quatAccel_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatGyro_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatMag_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        }
+                    }
+                }
+            },
+            "enabled": true,
+            "id": 6,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "VectorNavFile - data/vn310-gnss.csv",
+            "outputPins": [
+                {
+                    "id": 7,
+                    "name": "Binary Output"
+                }
+            ],
+            "pos": {
+                "x": 326.0,
+                "y": -66.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavFile"
+        }
+    }
+}
