@@ -13,7 +13,6 @@
 
     #include <string>
     #include <queue>
-    #include <string>
     #include <cstdio>
     #include <stdexcept>
     #include <array>
@@ -21,6 +20,8 @@
 
 namespace uart::sensors
 {
+
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 
 std::vector<uint32_t> UartSensor::supportedBaudrates()
 {
@@ -117,6 +118,8 @@ void UartSensor::unregisterErrorPacketReceivedHandler()
 void UartSensor::changeBaudRate(uint32_t /* baudrate */)
 {
 }
+
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 } // namespace uart::sensors
 

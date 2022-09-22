@@ -53,7 +53,7 @@ Packet& Packet::operator=(Packet const& from)
 
 std::string Packet::datastr() const
 {
-    return std::string(reinterpret_cast<const char*>(_data.data()), _data.size());
+    return { reinterpret_cast<const char*>(_data.data()), _data.size() };
 }
 
 Packet::Type Packet::type() const

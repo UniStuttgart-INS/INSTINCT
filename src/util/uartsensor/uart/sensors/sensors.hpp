@@ -233,9 +233,6 @@ class UartSensor
     void unregisterErrorPacketReceivedHandler();
 
   private:
-    struct Impl;
-    Impl* _pi;
-
     const Endianness _endianness;
     const PacketFinderFunction _packetFinderFunction;
     void* _packetFinderUserData;

@@ -44,7 +44,7 @@ TimeStamp TimeStamp::get()
 
     gettimeofday(&tv, nullptr);
 
-    return TimeStamp(tv.tv_sec, static_cast<uint64_t>(tv.tv_usec));
+    return { tv.tv_sec, static_cast<uint64_t>(tv.tv_usec) };
 
     #else
         #error "Unknown System"
