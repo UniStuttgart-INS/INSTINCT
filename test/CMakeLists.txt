@@ -56,12 +56,8 @@ target_link_libraries(
           ImGuiFileDialog
           implot
           application
-          libvncxx)
-
-if(ENABLE_UARTSENSORS)
-  target_compile_definitions(tests PUBLIC HAS_UARTSENSOR_LIBRARY=1)
-  target_link_libraries(tests PRIVATE libUartSensor)
-endif()
+          libvncxx
+          libUartSensor)
 
 if(NOT APPLE AND NOT WIN32)
   target_link_libraries(tests PRIVATE libnavio)

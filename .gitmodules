@@ -9,7 +9,7 @@
 	url = https://github.com/emlid/Navio2.git
 [submodule "lib/uartsensor"]
 	path = lib/uartsensor
-	url = ../uart-sensor.git
+	url = https://github.com/UniStuttgart-INS/uartsensor.git
 [submodule "lib/imgui-node-editor"]
 	path = lib/imgui-node-editor
 	url = https://github.com/UniStuttgart-INS/imgui-node-editor.git
