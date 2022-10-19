@@ -189,17 +189,10 @@ set_target_properties(application PROPERTIES CXX_CPPCHECK "")
 
 # ----------------------------------------------- VectorNav ---------------------------------------------- */
 
-# To enable this, you need a copy of the VectorNav library and some patch files from us.
-# The library or the patch files will be released later on, after communicating with the manufacturer.
-option(ENABLE_VECTORNAV "Enable VectorNav related Nodes" ON)
-if(ENABLE_VECTORNAV)
-  add_subdirectory(lib/vnproglib libvncxx)
-  include_directories(SYSTEM lib/vnproglib/include)
-  set_target_properties(libvncxx PROPERTIES CXX_CLANG_TIDY "")
-  set_target_properties(libvncxx PROPERTIES CXX_CPPCHECK "")
-else()
-  include_directories(src/util/vnproglib)
-endif()
+add_subdirectory(lib/vnproglib/cpp libvncxx)
+include_directories(SYSTEM lib/vnproglib/cpp/include)
+set_target_properties(libvncxx PROPERTIES CXX_CLANG_TIDY "")
+set_target_properties(libvncxx PROPERTIES CXX_CPPCHECK "")
 
 # ------------------------------------------------ Navio2 ------------------------------------------------ */
 
@@ -246,16 +239,10 @@ endif()
 
 # ------------------------------------------------- UART ------------------------------------------------- */
 
-# The Uart library is not open source, but will be exchanged for an open source alternative in the future.
-option(ENABLE_UARTSENSORS "Enable UART Sensor related nodes" ON)
-if(ENABLE_UARTSENSORS)
-  add_subdirectory(lib/uartsensor libUartSensor)
-  include_directories(SYSTEM lib/uartsensor/include)
-  set_target_properties(libUartSensor PROPERTIES CXX_CLANG_TIDY "")
-  set_target_properties(libUartSensor PROPERTIES CXX_CPPCHECK "")
-else()
-  include_directories(src/util/uartsensor)
-endif()
+add_subdirectory(lib/uartsensor libUartSensor)
+include_directories(SYSTEM lib/uartsensor/include)
+set_target_properties(libUartSensor PROPERTIES CXX_CLANG_TIDY "")
+set_target_properties(libUartSensor PROPERTIES CXX_CPPCHECK "")
 
 # ------------------------------------------------- gcem ------------------------------------------------- */
 

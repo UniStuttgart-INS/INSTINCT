@@ -101,11 +101,6 @@ bool NAV::EmlidSensor::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-#ifndef HAS_UARTSENSOR_LIBRARY
-    LOG_ERROR("{}: Can't initialize without the UART sensor library.", nameId());
-    return false;
-#endif
-
     // connect to the sensor
     try
     {
@@ -127,10 +122,6 @@ bool NAV::EmlidSensor::initialize()
 void NAV::EmlidSensor::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
-
-#ifndef HAS_UARTSENSOR_LIBRARY
-    return;
-#endif
 
     if (!isInitialized())
     {

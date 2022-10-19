@@ -55,17 +55,9 @@ target_link_libraries(
           imgui_node_editor
           ImGuiFileDialog
           implot
-          application)
-
-if(ENABLE_VECTORNAV)
-  target_compile_definitions(tests PUBLIC HAS_VECTORNAV_LIBRARY=1)
-  target_link_libraries(tests PRIVATE libvncxx)
-endif()
-
-if(ENABLE_UARTSENSORS)
-  target_compile_definitions(tests PUBLIC HAS_UARTSENSOR_LIBRARY=1)
-  target_link_libraries(tests PRIVATE libUartSensor)
-endif()
+          application
+          libvncxx
+          libUartSensor)
 
 if(NOT APPLE AND NOT WIN32)
   target_link_libraries(tests PRIVATE libnavio)
