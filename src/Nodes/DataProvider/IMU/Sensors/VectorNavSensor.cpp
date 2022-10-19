@@ -1523,7 +1523,6 @@ void NAV::VectorNavSensor::guiConfig()
                 { vn::protocol::uart::AsciiAsync::VNYPR, "Yaw, Pitch, Roll" },
                 { vn::protocol::uart::AsciiAsync::VNQTN, "Quaternion" },
                 { vn::protocol::uart::AsciiAsync::VNQMR, "Quaternion, Magnetic, Acceleration and Angular Rates" },
-                { vn::protocol::uart::AsciiAsync::VNDCM, "Directional Cosine Orientation Matrix" },
                 { vn::protocol::uart::AsciiAsync::VNMAG, "Magnetic Measurements" },
                 { vn::protocol::uart::AsciiAsync::VNACC, "Acceleration Measurements" },
                 { vn::protocol::uart::AsciiAsync::VNGYR, "Angular Rate Measurements" },
@@ -5344,11 +5343,6 @@ bool NAV::VectorNavSensor::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-#ifndef HAS_VECTORNAV_LIBRARY
-    LOG_ERROR("{}: Can't initialize without the vnproglib library.", nameId());
-    return false;
-#endif
-
     // Some settings need to be wrote to the device and reset afterwards
     bool deviceNeedsResetAfterInitialization = false;
 
@@ -5976,10 +5970,6 @@ bool NAV::VectorNavSensor::initialize()
 void NAV::VectorNavSensor::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
-
-#ifndef HAS_VECTORNAV_LIBRARY
-    return;
-#endif
 
     try
     {

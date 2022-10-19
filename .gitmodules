@@ -1,9 +1,15 @@
 [submodule "lib/gcem"]
 	path = lib/gcem
 	url = https://github.com/kthohr/gcem.git
+[submodule "lib/vnproglib"]
+	path = lib/vnproglib
+	url = https://github.com/UniStuttgart-INS/vnproglib.git
 [submodule "lib/navio2"]
 	path = lib/navio2
 	url = https://github.com/emlid/Navio2.git
+[submodule "lib/uartsensor"]
+	path = lib/uartsensor
+	url = https://github.com/UniStuttgart-INS/uartsensor.git
 [submodule "lib/imgui-node-editor"]
 	path = lib/imgui-node-editor
 	url = https://github.com/UniStuttgart-INS/imgui-node-editor.git
