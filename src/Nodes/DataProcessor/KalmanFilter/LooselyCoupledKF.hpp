@@ -344,8 +344,8 @@ class LooselyCoupledKF : public Node
     /// GUI option for the Phi calculation algorithm
     enum class PhiCalculationAlgorithm
     {
-        Exponential,
-        Taylor,
+        Exponential, ///< Van-Loan
+        Taylor,      ///< Taylor
     };
     /// GUI option for the Phi calculation algorithm
     PhiCalculationAlgorithm _phiCalculationAlgorithm = PhiCalculationAlgorithm::Taylor;
@@ -356,8 +356,8 @@ class LooselyCoupledKF : public Node
     /// GUI option for the Q calculation algorithm
     enum class QCalculationAlgorithm
     {
-        VanLoan,
-        Taylor1,
+        VanLoan, ///< Van-Loan
+        Taylor1, ///< Taylor
     };
     /// GUI option for the Q calculation algorithm
     QCalculationAlgorithm _qCalculationAlgorithm = QCalculationAlgorithm::Taylor1;
