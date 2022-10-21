@@ -111,22 +111,21 @@ void Application::RecreateFontAtlas()
 
     IM_DELETE(io.Fonts);
 
-    io.Fonts = IM_NEW(ImFontAtlas);
+    io.Fonts = IM_NEW(ImFontAtlas); // Atlas should not exceed size of 4096x8192 pixels -> does not run under Mac and Ubuntu
 
     ImFontConfig config;
     config.OversampleH = 4;
     config.OversampleV = 4;
     config.PixelSnapH = false;
-    static const ImWchar icons_ranges[] = { 0x2000, 0xFFFF, 0 };
-    static const ImWchar icons_ranges2[] = { 0x2500, 0x2E00, 0 };
+    static const ImWchar icons_ranges_NotoSans[] = { 0x0100, 0x04FF, 0 }; // Greek, ...
+    static const ImWchar icons_ranges_FreeMono[] = { 0x2000, 0xFFFF, 0 }; // Special symbols
 
     strcpy(config.Name, "Play Regular");
-    m_DefaultFont = io.Fonts->AddFontFromMemoryCompressedTTF(PlayRegular_compressed_data, PlayRegular_compressed_size, defaultFontSize[0], &config);
+    m_DefaultFont = io.Fonts->AddFontFromMemoryCompressedTTF(PlayRegular_compressed_data, PlayRegular_compressed_size, defaultFontSize[0], &config); // Basic Latin + Latin Supplement
     m_DefaultFontSmall = m_DefaultFont;
     config.MergeMode = true;
-    io.Fonts->AddFontFromMemoryCompressedTTF(InconsolataNerdFontComplete_compressed_data, InconsolataNerdFontComplete_compressed_size, defaultFontSize[0], &config, icons_ranges);
-    io.Fonts->AddFontFromMemoryCompressedTTF(NotoSansRegular_compressed_data, NotoSansRegular_compressed_size, defaultFontSize[0], &config, icons_ranges);
-    io.Fonts->AddFontFromMemoryCompressedTTF(FreeMono_compressed_data, FreeMono_compressed_size, defaultFontSize[0], &config, icons_ranges2);
+    io.Fonts->AddFontFromMemoryCompressedTTF(NotoSansRegular_compressed_data, NotoSansRegular_compressed_size, defaultFontSize[0], &config, icons_ranges_NotoSans);
+    io.Fonts->AddFontFromMemoryCompressedTTF(FreeMono_compressed_data, FreeMono_compressed_size, defaultFontSize[0], &config, icons_ranges_FreeMono);
 
     m_WindowFont = m_DefaultFont;
     m_WindowFontSmall = m_DefaultFontSmall;
@@ -144,9 +143,8 @@ void Application::RecreateFontAtlas()
     strcpy(config.Name, "Play Regular Big");
     m_DefaultFontBig = io.Fonts->AddFontFromMemoryCompressedTTF(PlayRegular_compressed_data, PlayRegular_compressed_size, defaultFontSize[1], &config);
     config.MergeMode = true;
-    // io.Fonts->AddFontFromMemoryCompressedTTF(InconsolataNerdFontComplete_compressed_data, InconsolataNerdFontComplete_compressed_size, defaultFontSize[1], &config, icons_ranges);
-    // io.Fonts->AddFontFromMemoryCompressedTTF(NotoSansRegular_compressed_data, NotoSansRegular_compressed_size, defaultFontSize[1], &config, icons_ranges);
-    io.Fonts->AddFontFromMemoryCompressedTTF(FreeMono_compressed_data, FreeMono_compressed_size, defaultFontSize[1], &config, icons_ranges2);
+    io.Fonts->AddFontFromMemoryCompressedTTF(NotoSansRegular_compressed_data, NotoSansRegular_compressed_size, defaultFontSize[1], &config, icons_ranges_NotoSans);
+    io.Fonts->AddFontFromMemoryCompressedTTF(FreeMono_compressed_data, FreeMono_compressed_size, defaultFontSize[1], &config, icons_ranges_FreeMono);
 
     m_WindowFontBig = m_DefaultFontBig;
 
@@ -210,6 +208,8 @@ void Application::Frame()
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, windowRounding);
 
     OnFrame(io.DeltaTime);
+
+    ImGui::ShowMetricsWindow();
 
     ImGui::PopStyleVar(2);
     ImGui::End();
