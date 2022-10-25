@@ -58,7 +58,7 @@ void NAV::ImuFile::guiConfig()
         flow::ApplyChanges();
         if (res == FileReader::PATH_CHANGED)
         {
-            doInitialize();
+            doReinitialize();
         }
         else
         {
