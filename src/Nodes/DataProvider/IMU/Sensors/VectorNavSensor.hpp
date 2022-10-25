@@ -125,6 +125,13 @@ class VectorNavSensor : public Imu, public UartSensor
     /// @brief Stores the time of the last received message
     std::array<InsTime, 3> _lastMessageTime{};
 
+    /// @brief Last received GNSS time
+    struct
+    {
+        InsTime lastGnssTime{};      ///< Last GNSS time received
+        uint64_t timeSinceStartup{}; ///< Time since startup when the GNSS time was received
+    } _gnssTimeCounter;
+
     // ###########################################################################################################
     //                                               SYSTEM MODULE
     // ###########################################################################################################
