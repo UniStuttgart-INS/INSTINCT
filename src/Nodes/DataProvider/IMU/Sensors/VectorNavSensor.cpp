@@ -645,7 +645,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 15> NAV::VectorNavSensor
 } };
 
 const std::array<NAV::VectorNavSensor::BinaryGroupData, 10> NAV::VectorNavSensor::_binaryGroupTime = { {
-    /*  0 */ { "TimeStartup", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP, []() { ImGui::TextUnformatted("Time since startup.\n\nThe system time since startup measured in nano seconds. The time since startup is based upon the internal\nTXCO oscillator for the MCU. The accuracy of the internal TXCO is +/- 20ppm (-40C to 85C)."); } },
+    /*  0 */ { "TimeStartup", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP, []() { ImGui::TextUnformatted("Time since startup.\n\nThe system time since startup measured in nano seconds. The time since startup is based upon the internal\nTXCO oscillator for the MCU. The accuracy of the internal TXCO is +/- 20ppm (-40C to 85C)."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& bor, uint32_t /* binaryField */) { return sensorModel != VectorNavModel::VN310 || !((bor.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW) || (bor.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) || (bor.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_TOW) || (bor.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)); } },
     /*  1 */ { "TimeGps", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS, []() { ImGui::TextUnformatted("Absolute GPS time.\n\nThe absolute GPS time since start of GPS epoch 1980 expressed in nano seconds."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
     /*  2 */ { "GpsTow", vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW, []() { ImGui::TextUnformatted("Time since start of GPS week.\n\nThe time since the start of the current GPS time week expressed in nano seconds."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
     /*  3 */ { "GpsWeek", vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK, []() { ImGui::TextUnformatted("GPS week.\n\nThe current GPS week."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
@@ -702,8 +702,8 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 11> NAV::VectorNavSensor
 
 const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor::_binaryGroupGNSS{ {
     /*  0 */ { "UTC", vn::protocol::uart::GpsGroup::GPSGROUP_UTC, []() { ImGui::TextUnformatted("GPS UTC Time\n\nThe current UTC time. The year is given as a signed byte year offset from the year 2000. For example the\nyear 2013 would be given as year 13."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_UTC) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
-    /*  1 */ { "Tow", vn::protocol::uart::GpsGroup::GPSGROUP_TOW, []() { ImGui::TextUnformatted("GPS time of week\n\nThe GPS time of week given in nano seconds."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_TOW) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
-    /*  2 */ { "Week", vn::protocol::uart::GpsGroup::GPSGROUP_WEEK, []() { ImGui::TextUnformatted("GPS week\n\nThe current GPS week."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
+    /*  1 */ { "Tow", vn::protocol::uart::GpsGroup::GPSGROUP_TOW, []() { ImGui::TextUnformatted("GPS time of week\n\nThe GPS time of week given in nano seconds."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_TOW) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO) && ((bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP) || (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP)); } },
+    /*  2 */ { "Week", vn::protocol::uart::GpsGroup::GPSGROUP_WEEK, []() { ImGui::TextUnformatted("GPS week\n\nThe current GPS week."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO) && ((bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP) || (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP)); } },
     /*  3 */ { "NumSats", vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS, []() { ImGui::TextUnformatted("Number of tracked satellites\n\nThe number of tracked GNSS satellites."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; } },
     /*  4 */ { "Fix", vn::protocol::uart::GpsGroup::GPSGROUP_FIX, []() { ImGui::TextUnformatted("GNSS fix\n\nThe current GNSS fix.");
                                                                          if (ImGui::BeginTable("VectorNavFixTooltip", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
@@ -5332,6 +5332,9 @@ void NAV::VectorNavSensor::restore(json const& j)
 
 bool NAV::VectorNavSensor::resetNode()
 {
+    std::for_each(_lastMessageTime.begin(), _lastMessageTime.end(), [](InsTime& insTime) { insTime.reset(); });
+    _gnssTimeCounter = {};
+
     _timeSyncOut.ppsTime.reset();
     _timeSyncOut.syncOutCnt = 0;
     _binaryOutputRegisterMergeObservation = nullptr;
@@ -6894,8 +6897,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                 };
 
                 // Group 2 (Time)
-                if (obs->timeOutputs
-                    && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS))
+                if (obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS))
                 {
                     if (obs->timeOutputs->timeStatus.dateOk())
                     {
@@ -6935,28 +6937,35 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     }
                 }
                 // Group 4 (GNSS1)
-                if ((obs->insTime.empty() || obs->insTime.empty())
-                    && obs->gnss1Outputs
-                    && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO))
+                if (obs->insTime.empty()
+                    && obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO))
                 {
-                    if (obs->gnss1Outputs->timeInfo.status.dateOk() && obs->gnss1Outputs->timeInfo.status.timeOk())
+                    if ((obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+                        && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
+                        && (obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP))
+                        && obs->gnss1Outputs->timeInfo.status.dateOk() && obs->gnss1Outputs->timeInfo.status.timeOk())
                     {
-                        if ((obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
-                            && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK))
+                        obs->insTime = InsTime(InsTime_GPSweekTow(0, obs->gnss1Outputs->week, obs->gnss1Outputs->tow * 1e-9L));
+
+                        long double dt = 0.0L;
+                        if (obs->insTime > vnSensor->_gnssTimeCounter.lastGnssTime) // First message of the current GNSS time, so dt = 0
                         {
-                            obs->insTime = InsTime(InsTime_GPSweekTow(0, obs->gnss1Outputs->week, obs->gnss1Outputs->tow * 1e-9L));
-                            updateSyncOut(InsTime(0, obs->gnss1Outputs->week, std::floor(obs->gnss1Outputs->tow * 1e-9L)));
+                            LOG_DATA("Setting GNSS time: {} - {}", obs->insTime, obs->insTime.toGPSweekTow());
+                            vnSensor->_gnssTimeCounter.lastGnssTime = obs->insTime;
+                            vnSensor->_gnssTimeCounter.timeSinceStartup = obs->timeOutputs->timeStartup;
                         }
-                        else if ((obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
-                                 && obs->gnss1Outputs->raw.numSats)
+                        else // Here we need to add the relative time difference
                         {
-                            obs->insTime = InsTime(InsTime_GPSweekTow(0, obs->gnss1Outputs->raw.week, obs->gnss1Outputs->raw.tow));
-                            updateSyncOut(InsTime(0, obs->gnss1Outputs->raw.week, std::floor(obs->gnss1Outputs->raw.tow)));
+                            dt = (obs->timeOutputs->timeStartup - vnSensor->_gnssTimeCounter.timeSinceStartup) * 1e-9L;
+
+                            obs->insTime += std::chrono::duration<long double>(dt);
+                            LOG_DATA("Setting GNSS time: {} - {} (dt = {}s)", obs->insTime, obs->insTime.toGPSweekTow(), dt);
                         }
+
+                        updateSyncOut(InsTime(0, obs->gnss1Outputs->week, std::floor(obs->gnss1Outputs->tow * 1e-9L + dt)));
                     }
-                    if (obs->insTime.empty()
-                        && obs->gnss1Outputs->timeInfo.status.utcTimeValid()
-                        && obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
+                    else if (obs->gnss1Outputs->timeInfo.status.utcTimeValid()
+                             && obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
                     {
                         obs->insTime = InsTime(InsTime_YMDHMS(2000 + obs->gnss1Outputs->timeUtc.year,
                                                               obs->gnss1Outputs->timeUtc.month,
@@ -6974,27 +6983,34 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                 }
                 // Group 7 (GNSS2)
                 if (obs->insTime.empty()
-                    && obs->gnss2Outputs
-                    && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO))
+                    && obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO))
                 {
-                    if (obs->gnss2Outputs->timeInfo.status.dateOk() && obs->gnss2Outputs->timeInfo.status.timeOk())
+                    if ((obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+                        && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
+                        && (obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP))
+                        && obs->gnss2Outputs->timeInfo.status.dateOk() && obs->gnss2Outputs->timeInfo.status.timeOk())
                     {
-                        if ((obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
-                            && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK))
+                        obs->insTime = InsTime(InsTime_GPSweekTow(0, obs->gnss2Outputs->week, obs->gnss2Outputs->tow * 1e-9L));
+
+                        long double dt = 0.0L;
+                        if (obs->insTime > vnSensor->_gnssTimeCounter.lastGnssTime) // First message of the current GNSS time, so dt = 0
                         {
-                            obs->insTime = InsTime(InsTime_GPSweekTow(0, obs->gnss2Outputs->week, obs->gnss2Outputs->tow * 1e-9L));
-                            updateSyncOut(InsTime(0, obs->gnss2Outputs->week, std::floor(obs->gnss2Outputs->tow * 1e-9L)));
+                            LOG_DATA("Setting GNSS time: {} - {}", obs->insTime, obs->insTime.toGPSweekTow());
+                            vnSensor->_gnssTimeCounter.lastGnssTime = obs->insTime;
+                            vnSensor->_gnssTimeCounter.timeSinceStartup = obs->timeOutputs->timeStartup;
                         }
-                        else if ((obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
-                                 && obs->gnss2Outputs->raw.numSats)
+                        else // Here we need to add the relative time difference
                         {
-                            obs->insTime = InsTime(InsTime_GPSweekTow(0, obs->gnss2Outputs->raw.week, obs->gnss2Outputs->raw.tow));
-                            updateSyncOut(InsTime(0, obs->gnss2Outputs->raw.week, std::floor(obs->gnss2Outputs->raw.tow)));
+                            dt = (obs->timeOutputs->timeStartup - vnSensor->_gnssTimeCounter.timeSinceStartup) * 1e-9L;
+
+                            obs->insTime += std::chrono::duration<long double>(dt);
+                            LOG_DATA("Setting GNSS time: {} - {} (dt = {}s)", obs->insTime, obs->insTime.toGPSweekTow(), dt);
                         }
+
+                        updateSyncOut(InsTime(0, obs->gnss2Outputs->week, std::floor(obs->gnss2Outputs->tow * 1e-9L + dt)));
                     }
-                    if (obs->insTime.empty()
-                        && obs->gnss2Outputs->timeInfo.status.utcTimeValid()
-                        && obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
+                    else if (obs->gnss2Outputs->timeInfo.status.utcTimeValid()
+                             && obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
                     {
                         obs->insTime = InsTime(InsTime_YMDHMS(2000 + obs->gnss2Outputs->timeUtc.year,
                                                               obs->gnss2Outputs->timeUtc.month,

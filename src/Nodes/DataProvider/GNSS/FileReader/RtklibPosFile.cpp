@@ -59,7 +59,7 @@ void NAV::RtklibPosFile::guiConfig()
         flow::ApplyChanges();
         if (res == FileReader::PATH_CHANGED)
         {
-            doInitialize();
+            doReinitialize();
         }
         else
         {
