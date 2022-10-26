@@ -579,7 +579,7 @@ void NAV::Node::workerThread(Node* node)
                                     earliestInputPinPriority = inputPin.priority;
                                 }
                             }
-                            if (earliestTime.empty()) { break; }
+                            if (earliestInputPinPriority == -1000) { break; }
 
                             auto& inputPin = node->inputPins[earliestInputPinIdx];
                             if (inputPin.firable && inputPin.firable(node, inputPin))
