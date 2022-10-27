@@ -8,8 +8,10 @@
 
 #include "FlowTester.hpp"
 
+#include <catch2/catch.hpp>
 #include <vector>
 
+#include "internal/Node/Node.hpp"
 #include "internal/AppLogic.hpp"
 #include "internal/ConfigManager.hpp"
 #include "internal/NodeManager.hpp"
@@ -36,4 +38,15 @@ bool testFlow(const char* path)
     NAV::ConfigManager::deinitialize();
 
     return !static_cast<bool>(executionFailure);
+}
+
+void runGeneralFlowCleanupChecks()
+{
+    for (const NAV::Node* node : nm::m_Nodes())
+    {
+        for (const auto& inputPin : node->inputPins)
+        {
+            REQUIRE(inputPin.queue.empty()); // No data left in the flow
+        }
+    }
 }
