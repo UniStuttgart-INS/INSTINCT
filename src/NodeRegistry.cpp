@@ -170,6 +170,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 // Utility
 #include "Nodes/util/Demo.hpp"
 #include "Nodes/util/GroupBox.hpp"
+#include "Nodes/util/TimeWindow.hpp"
 // Simple
 #include "Nodes/Simple/Combiner.hpp"
 #include "Nodes/Simple/Delay.hpp"
@@ -228,6 +229,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     // Utility
     registerNodeType<Demo>();
     registerNodeType<GroupBox>();
+    registerNodeType<TimeWindow>();
     // Simple
     registerNodeType<Combiner>();
     registerNodeType<Delay>();
