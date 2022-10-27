@@ -809,8 +809,8 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::ImuIntegrator::integrateObservationNE
     y.segment<3>(13) = b_omega_ip__t1;
 
     PosVelAttDerivativeConstants_n c;
-    c.b_omega_ib_dot = (b_omega_ip__t0 - b_omega_ip__t1) / static_cast<double>(timeDifferenceSec);
-    c.b_measuredForce_dot = (b_f__t0 - b_f__t1) / static_cast<double>(timeDifferenceSec);
+    c.b_omega_ib_dot = timeDifferenceSec > 1e-12 ? Eigen::Vector3d((b_omega_ip__t0 - b_omega_ip__t1) / static_cast<double>(timeDifferenceSec)) : Eigen::Vector3d::Zero();
+    c.b_measuredForce_dot = timeDifferenceSec > 1e-12 ? Eigen::Vector3d((b_f__t0 - b_f__t1) / static_cast<double>(timeDifferenceSec)) : Eigen::Vector3d::Zero();
     c.gravitationModel = _gravitationModel;
     c.coriolisAccelerationCompensationEnabled = _coriolisAccelerationCompensationEnabled;
     c.centrifgalAccelerationCompensationEnabled = _centrifgalAccelerationCompensationEnabled;

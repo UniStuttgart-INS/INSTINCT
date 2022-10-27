@@ -209,8 +209,6 @@ void Application::Frame()
 
     OnFrame(io.DeltaTime);
 
-    ImGui::ShowMetricsWindow();
-
     ImGui::PopStyleVar(2);
     ImGui::End();
     ImGui::PopStyleVar(2);
