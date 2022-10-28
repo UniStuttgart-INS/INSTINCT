@@ -726,7 +726,7 @@ void NAV::LooselyCoupledKF::deinitialize()
 void NAV::LooselyCoupledKF::recvInertialNavigationSolution(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */) // NOLINT(readability-convert-member-functions-to-static)
 {
     auto inertialNavSol = std::static_pointer_cast<const InertialNavSol>(queue.extract_front());
-    LOG_DATA("{}: recvInertialNavigationSolution at time [{}]", nameId(), inertialNavSol->insTime.toYMDHMS());
+    LOG_DATA("{}: recvInertialNavigationSolution at time [{} - {}]", nameId(), inertialNavSol->insTime.toYMDHMS(), inertialNavSol->insTime.toGPSweekTow());
 
     double tau_i = !_lastPredictTime.empty()
                        ? static_cast<double>((inertialNavSol->insTime - _lastPredictTime).count())
@@ -760,7 +760,7 @@ void NAV::LooselyCoupledKF::recvInertialNavigationSolution(NAV::InputPin::NodeDa
 void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     auto gnssMeasurement = queue.front();
-    LOG_DATA("{}: recvGNSSNavigationSolution at time [{}]", nameId(), gnssMeasurement->insTime.toYMDHMS());
+    LOG_DATA("{}: recvGNSSNavigationSolution at time [{} - {}]", nameId(), gnssMeasurement->insTime.toYMDHMS(), gnssMeasurement->insTime.toGPSweekTow());
 
     auto nodeData = std::make_shared<NodeData>();
     nodeData->insTime = gnssMeasurement->insTime;
@@ -779,8 +779,8 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     dt.erase(std::find_if(dt.rbegin(), dt.rend(), [](char ch) { return ch != '0'; }).base(), dt.end());
 
     InsTime predictTime = inertialNavSol->insTime + std::chrono::duration<double>(tau_i);
-    LOG_DATA("{}: Predicting (dt = {}s) from [{}] to [{}]", nameId(), dt,
-             inertialNavSol->insTime.toYMDHMS(), predictTime.toYMDHMS());
+    LOG_DATA("{}: Predicting (dt = {}s) from [{} - {}] to [{} - {}]", nameId(), dt,
+             inertialNavSol->insTime.toYMDHMS(), inertialNavSol->insTime.toGPSweekTow(), predictTime.toYMDHMS(), predictTime.toGPSweekTow());
 
     // ------------------------------------------- GUI Parameters ----------------------------------------------
 
@@ -1062,7 +1062,8 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
 
 void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const PosVel>& gnssMeasurement)
 {
-    LOG_DATA("{}: Updating to time {} (lastInertial at {})", nameId(), gnssMeasurement->insTime.toYMDHMS(), _latestInertialNavSol->insTime.toYMDHMS());
+    LOG_DATA("{}: Updating to time {} - {} (lastInertial at {} - {})", nameId(), gnssMeasurement->insTime.toYMDHMS(), gnssMeasurement->insTime.toGPSweekTow(),
+             _latestInertialNavSol->insTime.toYMDHMS(), _latestInertialNavSol->insTime.toGPSweekTow());
 
     // -------------------------------------------- GUI Parameters -----------------------------------------------
 
