@@ -731,7 +731,7 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::ImuIntegrator::integrateObservationNE
     }
     auto dt = fmt::format("{:0.5f}", timeDifferenceSec);
     dt.erase(std::find_if(dt.rbegin(), dt.rend(), [](char ch) { return ch != '0'; }).base(), dt.end());
-    LOG_WARN("{}: Integrating (dt = {}s) from [{} - {}] to [{} - {}] in NED frame", nameId(), dt,
+    LOG_DATA("{}: Integrating (dt = {}s) from [{} - {}] to [{} - {}] in NED frame", nameId(), dt,
              imuObs__t1->insTime.toYMDHMS(), imuObs__t1->insTime.toGPSweekTow(), imuObs__t0->insTime.toYMDHMS(), imuObs__t0->insTime.toGPSweekTow());
 
     // Position, Velocity and Attitude at the time tₖ₋₁
