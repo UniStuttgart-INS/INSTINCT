@@ -313,7 +313,7 @@ void NAV::ImuIntegrator::updateNumberOfInputPins()
 void NAV::ImuIntegrator::recvImuObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     auto imuObs = std::static_pointer_cast<const ImuObs>(queue.extract_front());
-    LOG_DATA("{}: recvImuObs at time [{}]", nameId(), imuObs->insTime.toYMDHMS());
+    LOG_DATA("{}: recvImuObs at time [{} - {}]", nameId(), imuObs->insTime.toYMDHMS(), imuObs->insTime.toGPSweekTow());
 
     if (imuObs->insTime.empty() && !imuObs->timeSinceStartup.has_value())
     {
@@ -340,11 +340,11 @@ void NAV::ImuIntegrator::recvPosVelAttInit(NAV::InputPin::NodeDataQueue& queue, 
 
     if (posVelAtt->insTime == InsTime(InsTime_GPSweekTow(0, 0, 0)))
     {
-        LOG_DATA("{}: recvPosVelAttInit at time [{}] (the time is intended for PosVelAttInitializer)", nameId(), posVelAtt->insTime.toYMDHMS());
+        LOG_DATA("{}: recvPosVelAttInit at time [{} - {}] (the time is intended for PosVelAttInitializer)", nameId(), posVelAtt->insTime.toYMDHMS(), posVelAtt->insTime.toGPSweekTow());
     }
     else
     {
-        LOG_DATA("{}: recvPosVelAttInit at time [{}]", nameId(), posVelAtt->insTime.toYMDHMS());
+        LOG_DATA("{}: recvPosVelAttInit at time [{} - {}]", nameId(), posVelAtt->insTime.toYMDHMS(), posVelAtt->insTime.toGPSweekTow());
     }
 
     inputPins[INPUT_PORT_INDEX_POS_VEL_ATT_INIT].queueBlocked = true;
@@ -381,7 +381,7 @@ void NAV::ImuIntegrator::recvPosVelAttInit(NAV::InputPin::NodeDataQueue& queue, 
 void NAV::ImuIntegrator::recvLcKfInsGnssErrors(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     auto lcKfInsGnssErrors = std::static_pointer_cast<const LcKfInsGnssErrors>(queue.extract_front());
-    LOG_DATA("{}: recvLcKfInsGnssErrors at time [{}]", nameId(), lcKfInsGnssErrors->insTime.toYMDHMS());
+    LOG_DATA("{}: recvLcKfInsGnssErrors at time [{} - {}]", nameId(), lcKfInsGnssErrors->insTime.toYMDHMS(), lcKfInsGnssErrors->insTime.toGPSweekTow());
 
     inputPins[INPUT_PORT_INDEX_PVA_ERROR].neededForTemporalQueueCheck = false;
 
@@ -444,7 +444,7 @@ void NAV::ImuIntegrator::recvLcKfInsGnssErrors(NAV::InputPin::NodeDataQueue& que
 void NAV::ImuIntegrator::recvSync(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     auto syncData = queue.extract_front();
-    LOG_DATA("{}: recvSync at time [{}]", nameId(), syncData->insTime.toYMDHMS());
+    LOG_DATA("{}: recvSync at time [{} - {}]", nameId(), syncData->insTime.toYMDHMS(), syncData->insTime.toGPSweekTow());
 
     inputPins[INPUT_PORT_INDEX_PVA_ERROR].neededForTemporalQueueCheck = true;
 
@@ -563,8 +563,8 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::ImuIntegrator::integrateObservationEC
     }
     auto dt = fmt::format("{:0.5f}", timeDifferenceSec);
     dt.erase(std::find_if(dt.rbegin(), dt.rend(), [](char ch) { return ch != '0'; }).base(), dt.end());
-    LOG_DATA("{}: Integrating (dt = {}s) from [{}] to [{}] in ECEF frame", nameId(), dt,
-             imuObs__t1->insTime.toYMDHMS(), imuObs__t0->insTime.toYMDHMS());
+    LOG_DATA("{}: Integrating (dt = {}s) from [{} - {}] to [{} - {}] in ECEF frame", nameId(), dt,
+             imuObs__t1->insTime.toYMDHMS(), imuObs__t1->insTime.toGPSweekTow(), imuObs__t0->insTime.toYMDHMS(), imuObs__t0->insTime.toGPSweekTow());
 
     // Position, Velocity and Attitude at the time tₖ₋₁
     const std::shared_ptr<const PosVelAtt>& posVelAtt__t1 = _posVelAttStates.at(0);
@@ -731,8 +731,8 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::ImuIntegrator::integrateObservationNE
     }
     auto dt = fmt::format("{:0.5f}", timeDifferenceSec);
     dt.erase(std::find_if(dt.rbegin(), dt.rend(), [](char ch) { return ch != '0'; }).base(), dt.end());
-    LOG_DATA("{}: Integrating (dt = {}s) from [{}] to [{}] in NED frame", nameId(), dt,
-             imuObs__t1->insTime.toYMDHMS(), imuObs__t0->insTime.toYMDHMS());
+    LOG_WARN("{}: Integrating (dt = {}s) from [{} - {}] to [{} - {}] in NED frame", nameId(), dt,
+             imuObs__t1->insTime.toYMDHMS(), imuObs__t1->insTime.toGPSweekTow(), imuObs__t0->insTime.toYMDHMS(), imuObs__t0->insTime.toGPSweekTow());
 
     // Position, Velocity and Attitude at the time tₖ₋₁
     const std::shared_ptr<const PosVelAtt>& posVelAtt__t1 = _posVelAttStates.at(0);
