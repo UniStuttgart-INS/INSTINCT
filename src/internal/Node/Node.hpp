@@ -260,9 +260,13 @@ class Node
     /* -------------------------------------------------------------------------------------------------------- */
 
     /// @brief Notifies connected nodes about the change
-    /// @param[in] portIndex Output Port index where to set the value
+    /// @param[in] pinIdx Output Port index where to set the value
     /// @param[in] insTime Time the value was generated
-    void notifyOutputValueChanged(size_t portIndex, const InsTime& insTime);
+    void notifyOutputValueChanged(size_t pinIdx, const InsTime& insTime);
+
+    /// @brief Blocks the thread till the output values was read by all connected nodes
+    /// @param[in] pinIdx Output Pin index where to request the lock
+    void requestOutputValueLock(size_t pinIdx);
 
     /// @brief Get Input Value connected on the pin. Only const data types.
     /// @tparam T Type of the connected object

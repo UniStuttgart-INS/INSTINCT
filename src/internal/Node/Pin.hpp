@@ -25,6 +25,7 @@ using json = nlohmann::json; ///< json namespace
 #include <tuple>
 #include <mutex>
 #include <atomic>
+#include <condition_variable>
 
 #include "util/Container/TsDeque.hpp"
 #include "Navigation/Time/InsTime.hpp"
@@ -448,6 +449,9 @@ class OutputPin : public Pin
 
     /// @brief Counter for data accessing
     std::atomic<size_t> dataAccessCounter = 0;
+
+    /// Condition variable to signal that the data was read by connected nodes (used for non-flow pins)
+    std::condition_variable dataAccessConditionVariable;
 
     /// Flag whether the node still has post-processing data left
     std::atomic<Mode> mode = Mode::REAL_TIME;
