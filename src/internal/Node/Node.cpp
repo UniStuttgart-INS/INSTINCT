@@ -85,26 +85,21 @@ void NAV::Node::afterCreateLink(OutputPin& /*startPin*/, InputPin& /*endPin*/) {
 
 void NAV::Node::afterDeleteLink(OutputPin& /*startPin*/, InputPin& /*endPin*/) {}
 
-void NAV::Node::notifyOutputValueChanged(size_t portIndex, const InsTime& insTime)
+void NAV::Node::notifyOutputValueChanged(size_t pinIdx, const InsTime& insTime)
 {
     if (callbacksEnabled && isInitialized())
     {
-        auto& outputPin = outputPins.at(portIndex);
+        auto& outputPin = outputPins.at(pinIdx);
 
         if (!outputPin.isPinLinked()) { return; }
 
-        bool mutexLocked = false;
         for (const auto& link : outputPin.links)
         {
             auto* targetPin = link.getConnectedPin();
             if (link.connectedNode->isInitialized() && !targetPin->queueBlocked)
             {
-                if (!mutexLocked)
-                {
-                    mutexLocked = true;
-                    outputPin.dataAccessMutex.lock();
-                }
                 outputPin.dataAccessCounter++;
+                LOG_DATA("{}: Increasing data access counter on output pin '{}'. Value now {}.", nameId(), outputPin.name, outputPin.dataAccessCounter);
 
                 if (nm::showFlowWhenNotifyingValueChange)
                 {
@@ -129,6 +124,17 @@ void NAV::Node::notifyOutputValueChanged(size_t portIndex, const InsTime& insTim
     }
 }
 
+void NAV::Node::requestOutputValueLock(size_t pinIdx)
+{
+    auto& outputPin = outputPins.at(pinIdx);
+    if (outputPin.dataAccessCounter > 0)
+    {
+        LOG_DATA("{}: Requesting lock on output pin '{}', {} threads accessing still.", nameId(), outputPin.name, outputPin.dataAccessCounter);
+        std::unique_lock<std::mutex> lk(outputPin.dataAccessMutex);
+        outputPin.dataAccessConditionVariable.wait(lk, [&outputPin]() { return outputPin.dataAccessCounter == 0; });
+    }
+}
+
 std::mutex* NAV::Node::getInputValueMutex(size_t portIndex)
 {
     if (OutputPin* outputPin = inputPins.at(portIndex).link.getConnectedPin())
@@ -146,8 +152,8 @@ void NAV::Node::releaseInputValue(size_t portIndex)
         outputPin->dataAccessCounter--;
         if (outputPin->dataAccessCounter == 0)
         {
-            LOG_DATA("{}: Unlocking dataAccessMutex of pin '{}'", nameId(), outputPin->name);
-            outputPin->dataAccessMutex.unlock();
+            LOG_DATA("{}: Notifying node '{}' at pinIdx {} that all data is read.", nameId(), outputPin->name, portIndex);
+            outputPin->dataAccessConditionVariable.notify_all();
         }
     }
 }

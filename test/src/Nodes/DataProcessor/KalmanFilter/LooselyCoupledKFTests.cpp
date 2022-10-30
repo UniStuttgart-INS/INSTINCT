@@ -34,7 +34,7 @@ size_t messageCounter_ImuIntegrator_Sync = 0;
 size_t messageCounter_LooselyCoupledKF_InertialNavSol = 0;
 size_t messageCounter_LooselyCoupledKF_GNSSNavigationSolution = 0;
 
-TEST_CASE("[LooselyCoupledKF][flow] Read and log files and compare content", "[LooselyCoupledKF][flow][debug]")
+TEST_CASE("[LooselyCoupledKF][flow] Test flow when IMU messages arrive after GNSS messages", "[LooselyCoupledKF][flow][debug]")
 {
     messageCounter_VectorNavBinaryConverterImu_BinaryOutput = 0;
     messageCounter_VectorNavBinaryConverterGnss_BinaryOutput = 0;
