@@ -20,6 +20,8 @@
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
 
+#include "Navigation/Time/InsTime.hpp"
+
 #include <Eigen/Core>
 
 namespace NAV
@@ -95,5 +97,37 @@ class TimeWindow : public Node
     /// @brief Callback when receiving an ImuObs
     /// @param[in] posVelAtt Copied data to modify and send out again
     void receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt);
+
+    /// @brief Beginning of time window
+    InsTime _startTime;
+
+    /// @brief End of time window
+    InsTime _endTime;
+
+    /// @brief Possible units to specify a time
+    enum class TimeFormats : int
+    {
+        MJD,  ///< full days, decimal fractions
+        JD,   ///< full days, decimal fractions
+        GPST, ///< gpsCycle, gpsWeek, tow
+        UTC,  ///< year, month, day, hour, min, sec
+    };
+
+    /// Selected unit for the accelerometer bias in the GUI
+    TimeFormats _timeFormat = TimeFormats::UTC;
+
+    double _days{};
+    double _decFrac{};
+
+    double _gpsCycle{};
+    double _gpsWeek{};
+    double _gpsTow{};
+
+    double _year{};
+    double _month{};
+    double _day{};
+    double _hour{};
+    double _min{};
+    double _sec{};
 };
 } // namespace NAV
