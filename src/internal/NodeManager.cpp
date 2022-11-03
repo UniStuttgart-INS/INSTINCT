@@ -355,6 +355,7 @@ void NAV::NodeManager::InitializeAllNodesAsync()
 std::vector<std::pair<ax::NodeEditor::PinId, NAV::InputPin::WatcherCallback>> watcherPinList;
 std::vector<std::pair<ax::NodeEditor::LinkId, NAV::InputPin::WatcherCallback>> watcherLinkList;
 
+void (*preInitCallback)() = nullptr;
 void (*cleanupCallback)() = nullptr;
 
 void NAV::NodeManager::RegisterWatcherCallbackToInputPin(ax::NodeEditor::PinId id, InputPin::WatcherCallback callback)
@@ -402,6 +403,19 @@ void NAV::NodeManager::ApplyWatcherCallbacks()
     }
 }
 
+void NAV::NodeManager::RegisterPreInitCallback(void (*callback)())
+{
+    preInitCallback = callback;
+}
+
+void NAV::NodeManager::CallPreInitCallback()
+{
+    if (preInitCallback)
+    {
+        preInitCallback();
+    }
+}
+
 void NAV::NodeManager::RegisterCleanupCallback(void (*callback)())
 {
     cleanupCallback = callback;
@@ -418,6 +432,7 @@ void NAV::NodeManager::ClearRegisteredCallbacks()
 {
     watcherPinList.clear();
     watcherLinkList.clear();
+    preInitCallback = nullptr;
     cleanupCallback = nullptr;
 }
 
