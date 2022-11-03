@@ -21,6 +21,17 @@ namespace nm = NAV::NodeManager;
 
 #include "util/Logger.hpp"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wkeyword-macro"
+#pragma GCC diagnostic ignored "-Wmacro-redefined"
+#define protected public
+#define private public
+#include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
+#include "Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.hpp"
+#define protected protected
+#define private private
+#pragma GCC diagnostic pop
+
 namespace NAV::TEST::LooselyCoupledKFTests
 {
 
@@ -48,8 +59,7 @@ TEST_CASE("[LooselyCoupledKF][flow] Test flow when IMU messages arrive after GNS
     Logger consoleSink;
 
     // ###########################################################################################################
-    //                                   LooselyCoupledKF-imu-after-gnss.flow
-    //                                   LooselyCoupledKF-imu-before-gnss.flow
+    //                                           LooselyCoupledKF.flow
     // ###########################################################################################################
     //
     //                                                                                                                                                                                                                                Plot (9)
@@ -127,7 +137,26 @@ TEST_CASE("[LooselyCoupledKF][flow] Test flow when IMU messages arrive after GNS
         messageCounter_LooselyCoupledKF_GNSSNavigationSolution++;
     });
 
-    REQUIRE(testFlow("test/flow/Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF-imu-after-gnss.flow"));
+    nm::RegisterPreInitCallback([]() {
+        // -------------------------------------- VectorNavFile (324) ----------------------------------------
+        auto* vnFileImu = dynamic_cast<VectorNavFile*>(nm::FindNode(324));
+        // vnFileImu->_path = "VectorNav/Static/vn310-imu.csv";
+        vnFileImu->_path = "VectorNav/Static/vn310-imu-after.csv";
+
+        // -------------------------------------- VectorNavFile (326) ----------------------------------------
+        auto* vnFileGnss = dynamic_cast<VectorNavFile*>(nm::FindNode(326));
+        vnFileGnss->_path = "VectorNav/Static/vn310-gnss.csv";
+
+        // ------------------------------------ LooselyCoupledKF (239) ---------------------------------------
+        auto* lckf = dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239));
+        lckf->_frame = LooselyCoupledKF::Frame::NED;
+        lckf->_phiCalculationAlgorithm = LooselyCoupledKF::PhiCalculationAlgorithm::Taylor;
+        lckf->_qCalculationAlgorithm = LooselyCoupledKF::QCalculationAlgorithm::Taylor1;
+        lckf->_randomProcessAccel = LooselyCoupledKF::RandomProcess::GaussMarkov1;
+        lckf->_randomProcessGyro = LooselyCoupledKF::RandomProcess::GaussMarkov1;
+    });
+
+    REQUIRE(testFlow("test/flow/Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.flow"));
     // GNSS: 176 messages, 162 messages with InsTime, 48 messages with fix (first 22.799717387000001s)
     // IMU:  167 messages, 167 messages after GNSS fix (first IMU message at 24.017697899000002s)
 
