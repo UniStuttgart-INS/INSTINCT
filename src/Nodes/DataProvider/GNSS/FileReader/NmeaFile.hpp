@@ -78,6 +78,18 @@ class NmeaFile : public Node, public FileReader
 
     /// @brief Read the Header of the file
     void readHeader() override;
+	
+	 /// @brief checks whether a ZDA time tag was read so that UTC can be reconstructed together with the GGA tag
+	bool haveValidDate = false ;
+	
+	double oldSOD = -1.0;
+	
+	/// @brief checks whether a ZDA time tag was read so that UTC can be reconstructed together with the GGA tag
+	std::vector<int> ddmmyyyy={0,0,0};
+	
+	void setdatefromzda(const std::string & line);
+	
+	
 };
 
 } // namespace NAV

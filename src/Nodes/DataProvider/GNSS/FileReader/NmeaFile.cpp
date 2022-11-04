@@ -110,6 +110,34 @@ bool NAV::NmeaFile::resetNode()
     return true;
 }
 
+void NAV::NmeaFile::setdatefromzda(const std::string & line)
+{
+	
+	std::vector<std::string> splittedString = str::split(line, ",");
+	if (splittedString.size()==7)
+	{
+        std::size_t pos_star = splittedString[6].find("*");
+        if (pos_star >=0)
+        {
+            long crc = std::strtol(splittedString[6].substr(pos_star+1).c_str(), NULL, 16);
+			long mycrc=0;
+			for (unsigned int i = 1; i< line.length() - 4; i ++) 
+			{
+				mycrc ^= line.at(i);
+			}
+			if (mycrc == crc)
+			{
+				ddmmyyyy[0] = std::stoi(splittedString[2]);
+				ddmmyyyy[1] = std::stoi(splittedString[3]);
+				ddmmyyyy[2] = std::stoi(splittedString[4]);
+				
+				haveValidDate = true;
+			}
+        }
+    }			
+}
+
+
 std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData(bool peek)
 {
 
@@ -121,8 +149,18 @@ std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData(bool peek)
     // Read line
     std::string line;
 	
+    std::vector<std::string> splittedData;
+	
+    TimeSystem timeSystem = UTC;
 
-
+    int  hour;
+    int  minute;
+    double second;
+	
+	double lat_rad = 0.0;
+    double lon_rad = 0.0;
+	double hgt = 0.0; 
+	
     while(true)
 	{
 		
@@ -137,35 +175,80 @@ std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData(bool peek)
         // Remove any starting non text characters
         line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
         
-        auto splittedData = str::split(line, ",");
+        splittedData = str::split(line, ",");
         
-        if (splittedData[0].substr(0,1)=="$" &&  splittedData[0].substr(3,3)=="RMC")
+        if (splittedData[0].substr(0,1)=="$")
         {
-            break;
+			
+			if (haveValidDate &&  splittedData[0].substr(3,3)=="GGA")
+			{
+				if (splittedData.size()!=15) continue;
+				std::size_t pos_star = splittedData[14].find("*");
+	            long crc = std::strtol(splittedData[14].substr(pos_star+1).c_str(), NULL, 16);
+				long mycrc=0;
+				for (unsigned int i = 1; i< line.length() - 4; i ++) 
+				{
+					mycrc ^= line.at(i);
+				}
+				if (mycrc == crc)
+				{
+				    hour = std::stoi(splittedData[1].substr(0,2));
+				    minute= std::stoi(splittedData[1].substr(2,2));
+				    second = std::stod(splittedData[1].substr(4));
+					double newSOD =hour*24*60.0+minute*60.0+second;
+					
+					//only contine if second of day > than previous one
+					if (newSOD<oldSOD)
+					{
+						oldSOD=newSOD;
+						haveValidDate = false; //force wait until next ZDA stream
+						continue;
+					}	
+					
+					
+					int lat1 = std::stoi(splittedData[2].substr(0,2));
+					double lat2 = std::stod(splittedData[2].substr(2));
+					
+					lat_rad = (lat1+lat2/60.0)/180*M_PI ;
+					
+					if (splittedData[3]=="S")
+					{
+						lat_rad *= -1.0;
+					}
+					
+					int lon1 = std::stoi(splittedData[4].substr(0,3));
+					double lon2 = std::stod(splittedData[4].substr(3));
+					
+					lon_rad = (lon1+lon2/60.0)/180*M_PI;
+					
+					if (splittedData[5]=="W")
+					{
+						lon_rad *= -1.0;
+					}
+					
+					hgt = std::stod(splittedData[9]) + std::stod(splittedData[11]);
+					
+				    break;	
+				}
+
+			}
+			else if (splittedData[0].substr(3,3)=="ZDA")
+		    {
+		    	setdatefromzda(line);
+			}
         }
-	}		
-	std::cout << line << std::endl;
+	}
+	
+	
     
 	
-	std::string cell;
-
-    TimeSystem timeSystem = UTC;
-    std::optional<uint16_t> year;
-    std::optional<uint16_t> month;
-    std::optional<uint16_t> day;
-    std::optional<uint16_t> hour;
-    std::optional<uint16_t> minute;
-    std::optional<long double> second = 0L;
-    std::optional<uint16_t> gpsWeek;
-    std::optional<long double> gpsToW;
-    //Eigen::Vector3d lla_pos{ std::nan(""), std::nan(""), std::nan("") };
+   
 	
-	Eigen::Vector3d lla_pos{ 0.5,0.05,200 };
+	Eigen::Vector3d lla_pos{ lat_rad,lon_rad,hgt };
     Eigen::Vector3d n_vel{ std::nan(""), std::nan(""), std::nan("") };
-	
-    static int i = 0;
-    obs->insTime = InsTime(2000, 1, 1,
-                               10, 20, 30+i++,
+
+    obs->insTime = InsTime(ddmmyyyy[0], ddmmyyyy[1], ddmmyyyy[2],
+                               hour, minute, second,
                                timeSystem);
 							   
 	obs->setPosition_lla(lla_pos);
