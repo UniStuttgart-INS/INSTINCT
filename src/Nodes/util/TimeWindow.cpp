@@ -33,7 +33,7 @@ NAV::TimeWindow::TimeWindow() : Node(typeStatic())
 {
     LOG_TRACE("{}: called", name);
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 858, 975 }; // FIXME: default window size
+    _guiConfigDefaultWindowSize = { 320, 450 }; // FIXME: default window size
 
     nm::CreateInputPin(this, "Input", Pin::Type::Flow, supportedDataIdentifier, &TimeWindow::receiveObs);
 
@@ -62,16 +62,10 @@ std::string NAV::TimeWindow::category()
 
 void NAV::TimeWindow::guiConfig()
 {
-    if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.size() != 1)
-    {
-        ImGui::TextUnformatted("Please connect the input pin to show the options");
-        return;
-    }
-
-    float configWidth = 75.0F;
+    float configWidth = 100.0F;
 
     ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-    if (ImGui::Combo(fmt::format("Time format##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_timeFormat), "MJD\0JD\0GPST\0UTC\0\0"))
+    if (ImGui::Combo(fmt::format("Time format##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_timeFormat), "MJD\0JD\0GPST\0YMDHMS\0\0"))
     {
         LOG_DEBUG("{}: Time format changed to {}", nameId(), _timeFormat);
         flow::ApplyChanges();
@@ -83,74 +77,90 @@ void NAV::TimeWindow::guiConfig()
 
     if (_timeFormat == TimeFormats::MJD || _timeFormat == TimeFormats::JD)
     {
-        if (ImGui::InputDoubleL(fmt::format("Full days of the Modified Julien Date [UTC]##{}", size_t(id)).c_str(), &_days, 1e-3, 1e4, 0.0, 0.0, "%.0f"))
+        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+        if (ImGui::InputInt(fmt::format("Days##{}", size_t(id)).c_str(), &_days, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
         {
-            LOG_DEBUG("{}: days changed to {}", nameId(), _days);
+            LOG_DEBUG("{}: days = {}", nameId(), _days);
             flow::ApplyChanges();
         }
-        ImGui::SameLine();
-        gui::widgets::HelpMarker("The inverse of this rate is used as the initial 'dt' for the Kalman Filter Prediction (Phi and Q).");
-
-        if (ImGui::InputDoubleL(fmt::format("Decimal fractions of a day of the Modified Julien Date [UTC]##{}", size_t(id)).c_str(), &_decFrac, 1e-3, 1e4, 0.0, 0.0, "%f"))
+        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+        if (ImGui::InputDoubleL(fmt::format("Decimal fraction of a day##{}", size_t(id)).c_str(), &_decFrac, 1e-3, 1e4, 0.0, 0.0, "%f"))
         {
-            LOG_DEBUG("{}: decimal fraction changed to {}", nameId(), _decFrac);
+            LOG_DEBUG("{}: decimal fraction = {}", nameId(), _decFrac);
             flow::ApplyChanges();
+        }
+        if (_timeFormat == TimeFormats::MJD)
+        {
+            _mjdStart = InsTime_MJD{ _days, _decFrac };
+        }
+        if (_timeFormat == TimeFormats::JD)
+        {
+            _jdStart = InsTime_JD{ _days, _decFrac };
         }
     }
     else if (_timeFormat == TimeFormats::GPST)
     {
-        if (ImGui::InputDoubleL(fmt::format("gpsCycle##{}", size_t(id)).c_str(), &_gpsCycle, 1e-3, 1e4, 0.0, 0.0, "%.0f"))
+        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+        if (ImGui::InputInt(fmt::format("GPS Cycle##{}", size_t(id)).c_str(), &_gpsCycle, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
         {
-            LOG_DEBUG("{}: days changed to {}", nameId(), _gpsCycle);
+            LOG_DEBUG("{}: GPS cycle = {}", nameId(), _gpsCycle);
             flow::ApplyChanges();
         }
-        ImGui::SameLine();
-        gui::widgets::HelpMarker("The inverse of this rate is used as the initial 'dt' for the Kalman Filter Prediction (Phi and Q).");
+        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+        if (ImGui::InputInt(fmt::format("GPS Week##{}", size_t(id)).c_str(), &_gpsWeek, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
+        {
+            LOG_DEBUG("{}: GPS week = {}", nameId(), _gpsWeek);
+            flow::ApplyChanges();
+        }
+        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+        if (ImGui::InputDoubleL(fmt::format("GPS ToW##{}", size_t(id)).c_str(), &_gpsTow, 1e-3, 1e4, 0.0, 0.0, "%f"))
+        {
+            LOG_DEBUG("{}: GPS ToW = {}", nameId(), _gpsTow);
+            flow::ApplyChanges();
+        }
 
-        if (ImGui::InputDoubleL(fmt::format("gpsWeek##{}", size_t(id)).c_str(), &_gpsWeek, 1e-3, 1e4, 0.0, 0.0, "%.0f"))
-        {
-            LOG_DEBUG("{}: decimal fraction changed to {}", nameId(), _gpsWeek);
-            flow::ApplyChanges();
-        }
-
-        if (ImGui::InputDoubleL(fmt::format("tow##{}", size_t(id)).c_str(), &_gpsTow, 1e-3, 1e4, 0.0, 0.0, "%f"))
-        {
-            LOG_DEBUG("{}: decimal fraction changed to {}", nameId(), _gpsTow);
-            flow::ApplyChanges();
-        }
+        _gpsWeekTowStart = InsTime_GPSweekTow{ _gpsCycle, _gpsWeek, _gpsTow };
     }
-    else if (_timeFormat == TimeFormats::UTC)
+    else if (_timeFormat == TimeFormats::YMDHMS)
     {
-        if (ImGui::InputDoubleL(fmt::format("year##{}", size_t(id)).c_str(), &_year, 1e-3, 1e4, 0.0, 0.0, "%f"))
+        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+        if (ImGui::InputInt(fmt::format("Year##{}", size_t(id)).c_str(), &_year, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
         {
-            LOG_DEBUG("{}: decimal fraction changed to {}", nameId(), _year);
+            LOG_DEBUG("{}: year = {}", nameId(), _year);
             flow::ApplyChanges();
         }
-        if (ImGui::InputDoubleL(fmt::format("month##{}", size_t(id)).c_str(), &_month, 1e-3, 1e4, 0.0, 0.0, "%f"))
+        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+        if (ImGui::InputInt(fmt::format("Month##{}", size_t(id)).c_str(), &_month, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
         {
-            LOG_DEBUG("{}: decimal fraction changed to {}", nameId(), _month);
+            LOG_DEBUG("{}: month = {}", nameId(), _month);
             flow::ApplyChanges();
         }
-        if (ImGui::InputDoubleL(fmt::format("day##{}", size_t(id)).c_str(), &_day, 1e-3, 1e4, 0.0, 0.0, "%f"))
+        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+        if (ImGui::InputInt(fmt::format("Day##{}", size_t(id)).c_str(), &_day, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
         {
-            LOG_DEBUG("{}: decimal fraction changed to {}", nameId(), _day);
+            LOG_DEBUG("{}: day = {}", nameId(), _day);
             flow::ApplyChanges();
         }
-        if (ImGui::InputDoubleL(fmt::format("hour##{}", size_t(id)).c_str(), &_hour, 1e-3, 1e4, 0.0, 0.0, "%f"))
+        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+        if (ImGui::InputInt(fmt::format("Hour##{}", size_t(id)).c_str(), &_hour, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
         {
-            LOG_DEBUG("{}: decimal fraction changed to {}", nameId(), _hour);
+            LOG_DEBUG("{}: hour = {}", nameId(), _hour);
             flow::ApplyChanges();
         }
-        if (ImGui::InputDoubleL(fmt::format("min##{}", size_t(id)).c_str(), &_min, 1e-3, 1e4, 0.0, 0.0, "%f"))
+        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+        if (ImGui::InputInt(fmt::format("Minute##{}", size_t(id)).c_str(), &_min, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
         {
-            LOG_DEBUG("{}: decimal fraction changed to {}", nameId(), _min);
+            LOG_DEBUG("{}: minute = {}", nameId(), _min);
             flow::ApplyChanges();
         }
-        if (ImGui::InputDoubleL(fmt::format("sec##{}", size_t(id)).c_str(), &_sec, 1e-3, 1e4, 0.0, 0.0, "%f"))
+        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+        if (ImGui::InputDoubleL(fmt::format("Second##{}", size_t(id)).c_str(), &_sec, 0, InsTimeUtil::SECONDS_PER_MINUTE - 1, 0, 0, "%.6f", ImGuiInputTextFlags_EnterReturnsTrue))
         {
-            LOG_DEBUG("{}: decimal fraction changed to {}", nameId(), _sec);
+            LOG_DEBUG("{}: second = {}", nameId(), _sec);
             flow::ApplyChanges();
         }
+
+        _ymdhmsStart = InsTime_YMDHMS{ _year, _month, _day, _hour, _min, _sec };
     }
     else
     {
