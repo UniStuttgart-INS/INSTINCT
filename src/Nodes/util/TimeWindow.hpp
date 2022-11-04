@@ -107,27 +107,36 @@ class TimeWindow : public Node
     /// @brief Possible units to specify a time
     enum class TimeFormats : int
     {
-        MJD,  ///< full days, decimal fractions
-        JD,   ///< full days, decimal fractions
-        GPST, ///< gpsCycle, gpsWeek, tow
-        UTC,  ///< year, month, day, hour, min, sec
+        MJD,    ///< full days, decimal fractions
+        JD,     ///< full days, decimal fractions
+        GPST,   ///< gpsCycle, gpsWeek, tow
+        YMDHMS, ///< year, month, day, hour, min, sec
     };
 
     /// Selected unit for the accelerometer bias in the GUI
-    TimeFormats _timeFormat = TimeFormats::UTC;
+    TimeFormats _timeFormat = TimeFormats::YMDHMS;
 
-    double _days{};
+    int32_t _days{};
     double _decFrac{};
 
-    double _gpsCycle{};
-    double _gpsWeek{};
+    int32_t _gpsCycle{};
+    int32_t _gpsWeek{};
     double _gpsTow{};
 
-    double _year{};
-    double _month{};
-    double _day{};
-    double _hour{};
-    double _min{};
+    int32_t _year{};
+    int32_t _month{};
+    int32_t _day{};
+    int32_t _hour{};
+    int32_t _min{};
     double _sec{};
+
+    InsTime_MJD _mjdStart{ 0, 0.0 };
+    InsTime_MJD _mjdEnd{ 0, 0.0 };
+    InsTime_JD _jdStart{ 0, 0.0 };
+    InsTime_JD _jdEnd{ 0, 0.0 };
+    InsTime_YMDHMS _ymdhmsStart{ 0, 0, 0, 0, 0, 0.0 };
+    InsTime_GPSweekTow _gpsWeekTowStart{ 0, 0, 0.0 };
+    InsTime_YMDHMS _ymdhmsEnd{ 0, 0, 0, 0, 0, 0.0 };
+    InsTime_GPSweekTow _gpsWeekTowEnd{ 0, 0, 0.0 };
 };
 } // namespace NAV
