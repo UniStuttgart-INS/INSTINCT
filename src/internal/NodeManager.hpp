@@ -21,6 +21,7 @@
 #include "NodeData/NodeData.hpp"
 
 #include <vector>
+#include <functional>
 
 namespace NAV::NodeManager
 {
@@ -205,14 +206,14 @@ void ApplyWatcherCallbacks();
 
 /// @brief Registers a callback function which gets called before the nodes are initialized. Used to change node settings.
 /// @param[in] callback Callback function
-void RegisterPreInitCallback(void (*callback)());
+void RegisterPreInitCallback(std::function<void()> callback);
 
 /// @brief Calls the pre-init callback
 void CallPreInitCallback();
 
 /// @brief Registers a callback which gets called after flow execution before cleanup
 /// @param[in] callback Callback function
-void RegisterCleanupCallback(void (*callback)());
+void RegisterCleanupCallback(std::function<void()> callback);
 
 /// @brief Calls the cleanup callback
 void CallCleanupCallback();

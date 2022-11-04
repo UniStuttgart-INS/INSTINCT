@@ -640,11 +640,11 @@ class InputPin : public Pin
     /// Flow data watcher callback function type to call when firable.
     /// - 1st Parameter: Queue with the received messages
     /// - 2nd Parameter: Pin index of the pin the data is received on
-    using FlowFirableWatcherCallbackFunc = void (*)(const Node*, const NodeDataQueue&, size_t);
+    using FlowFirableWatcherCallbackFunc = std::function<void(const Node*, const NodeDataQueue&, size_t)>;
     /// Notify watcher function type to call when the connected value changed
     /// - 1st Parameter: Time when the message was received
     /// - 2nd Parameter: Pin index of the pin the data is received on
-    using DataChangedWatcherNotifyFunc = void (*)(const Node*, const InsTime&, size_t);
+    using DataChangedWatcherNotifyFunc = std::function<void(const Node*, const InsTime&, size_t)>;
 
     /// Watcher callback function types
     using WatcherCallback = std::variant<FlowFirableWatcherCallbackFunc, // Flow:  Callback function type to call when firable

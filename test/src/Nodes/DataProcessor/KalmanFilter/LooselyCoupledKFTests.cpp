@@ -11,6 +11,7 @@
 #include <fstream>
 #include <sstream>
 #include <deque>
+#include <algorithm>
 #include <atomic>
 #include <mutex>
 
@@ -20,42 +21,29 @@
 namespace nm = NAV::NodeManager;
 
 #include "util/Logger.hpp"
+#include "util/Container/CartesianProduct.hpp"
 
+// This is a small hack, which lets us change private/protected parameters for
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wkeyword-macro"
-#pragma GCC diagnostic ignored "-Wmacro-redefined"
+// #pragma GCC diagnostic ignored "-w"
+#if defined(__clang__) && !(defined(__GNUC__) || defined(__GNUG__))
+    #pragma GCC diagnostic ignored "-Wkeyword-macro"
+    #pragma GCC diagnostic ignored "-Wmacro-redefined"
+#endif
 #define protected public
 #define private public
 #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
 #include "Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.hpp"
-#define protected protected
-#define private private
+#include "Nodes/DataProcessor/Integrator/ImuIntegrator.hpp"
+#undef protected
+#undef private
 #pragma GCC diagnostic pop
 
 namespace NAV::TEST::LooselyCoupledKFTests
 {
 
-size_t messageCounter_VectorNavBinaryConverterImu_BinaryOutput = 0;
-size_t messageCounter_VectorNavBinaryConverterGnss_BinaryOutput = 0;
-
-size_t messageCounter_ImuIntegrator_ImuObs = 0;
-size_t messageCounter_ImuIntegrator_PosVelAttInit = 0;
-size_t messageCounter_ImuIntegrator_PVAError = 0;
-size_t messageCounter_ImuIntegrator_Sync = 0;
-size_t messageCounter_LooselyCoupledKF_InertialNavSol = 0;
-size_t messageCounter_LooselyCoupledKF_GNSSNavigationSolution = 0;
-
 TEST_CASE("[LooselyCoupledKF][flow] Test flow when IMU messages arrive after GNSS messages", "[LooselyCoupledKF][flow][debug]")
 {
-    messageCounter_VectorNavBinaryConverterImu_BinaryOutput = 0;
-    messageCounter_VectorNavBinaryConverterGnss_BinaryOutput = 0;
-    messageCounter_ImuIntegrator_ImuObs = 0;
-    messageCounter_ImuIntegrator_PosVelAttInit = 0;
-    messageCounter_ImuIntegrator_PVAError = 0;
-    messageCounter_ImuIntegrator_Sync = 0;
-    messageCounter_LooselyCoupledKF_InertialNavSol = 0;
-    messageCounter_LooselyCoupledKF_GNSSNavigationSolution = 0;
-
     Logger consoleSink;
 
     // ###########################################################################################################
@@ -97,81 +85,144 @@ TEST_CASE("[LooselyCoupledKF][flow] Test flow when IMU messages arrive after GNS
     //
     // ###########################################################################################################
 
-    // VectorNavBinaryConverter (333) |> Binary Output (332)
-    nm::RegisterWatcherCallbackToInputPin(332, [](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
-        messageCounter_VectorNavBinaryConverterImu_BinaryOutput++;
-    });
+    std::array<std::vector<void (*)()>, 9> settings = { {
+        { []() { dynamic_cast<VectorNavFile*>(nm::FindNode(324))->_path = "VectorNav/Static/vn310-imu-after.csv"; },
+          []() { dynamic_cast<VectorNavFile*>(nm::FindNode(324))->_path = "VectorNav/Static/vn310-imu-after.csv"; } },
+        { []() { dynamic_cast<ImuIntegrator*>(nm::FindNode(163))->_integrationFrame = ImuIntegrator::IntegrationFrame::NED; },
+          []() { dynamic_cast<ImuIntegrator*>(nm::FindNode(163))->_integrationFrame = ImuIntegrator::IntegrationFrame::ECEF; } },
+        { []() { dynamic_cast<ImuIntegrator*>(nm::FindNode(163))->_integrationAlgorithm = IntegrationAlgorithm::Heun; },
+          []() { dynamic_cast<ImuIntegrator*>(nm::FindNode(163))->_integrationAlgorithm = IntegrationAlgorithm::RungeKutta1; },
+          []() { dynamic_cast<ImuIntegrator*>(nm::FindNode(163))->_integrationAlgorithm = IntegrationAlgorithm::RungeKutta2; },
+          []() { dynamic_cast<ImuIntegrator*>(nm::FindNode(163))->_integrationAlgorithm = IntegrationAlgorithm::RungeKutta3; },
+          []() { dynamic_cast<ImuIntegrator*>(nm::FindNode(163))->_integrationAlgorithm = IntegrationAlgorithm::RungeKutta4; } },
+        { []() { dynamic_cast<ImuIntegrator*>(nm::FindNode(163))->_gravitationModel = GravitationModel::Somigliana; },
+          []() { dynamic_cast<ImuIntegrator*>(nm::FindNode(163))->_gravitationModel = GravitationModel::EGM96; } },
+        { []() { dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_frame = LooselyCoupledKF::Frame::NED; },
+          []() { dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_frame = LooselyCoupledKF::Frame::ECEF; } },
+        { []() { dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_phiCalculationAlgorithm = LooselyCoupledKF::PhiCalculationAlgorithm::Taylor; },
+          []() { dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_phiCalculationAlgorithm = LooselyCoupledKF::PhiCalculationAlgorithm::Exponential; } },
+        { []() { dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_qCalculationAlgorithm = LooselyCoupledKF::QCalculationAlgorithm::Taylor1; },
+          []() { dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_qCalculationAlgorithm = LooselyCoupledKF::QCalculationAlgorithm::VanLoan; } },
+        { []() { dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_randomProcessAccel = LooselyCoupledKF::RandomProcess::GaussMarkov1; },
+          []() { dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_randomProcessAccel = LooselyCoupledKF::RandomProcess::RandomWalk; } },
+        { []() { dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_randomProcessGyro = LooselyCoupledKF::RandomProcess::GaussMarkov1; },
+          []() { dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_randomProcessGyro = LooselyCoupledKF::RandomProcess::RandomWalk; } },
+    } };
+    std::vector<size_t> indices(settings.size(), 0);
 
-    // VectorNavBinaryConverter (337) |> Binary Output (338)
-    nm::RegisterWatcherCallbackToInputPin(338, [](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
-        messageCounter_VectorNavBinaryConverterGnss_BinaryOutput++;
-    });
+    cartesian_product([&](void (*c1)(), void (*c2)(), void (*c3)(), void (*c4)(), void (*c5)(), void (*c6)(), void (*c7)(), void (*c8)(), void (*c9)()) {
+        size_t messageCounter_VectorNavBinaryConverterImu_BinaryOutput = 0;
+        size_t messageCounter_VectorNavBinaryConverterGnss_BinaryOutput = 0;
+        size_t messageCounter_ImuIntegrator_ImuObs = 0;
+        size_t messageCounter_ImuIntegrator_PosVelAttInit = 0;
+        size_t messageCounter_ImuIntegrator_PVAError = 0;
+        size_t messageCounter_ImuIntegrator_Sync = 0;
+        size_t messageCounter_LooselyCoupledKF_InertialNavSol = 0;
+        size_t messageCounter_LooselyCoupledKF_GNSSNavigationSolution = 0;
 
-    // ImuIntegrator (163) |> ImuObs (164)
-    nm::RegisterWatcherCallbackToInputPin(164, [](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
-        messageCounter_ImuIntegrator_ImuObs++;
-    });
+        // VectorNavBinaryConverter (333) |> Binary Output (332)
+        nm::RegisterWatcherCallbackToInputPin(332, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+            messageCounter_VectorNavBinaryConverterImu_BinaryOutput++;
+        });
 
-    // ImuIntegrator (163) |> PosVelAttInit (165)
-    nm::RegisterWatcherCallbackToInputPin(165, [](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
-        messageCounter_ImuIntegrator_PosVelAttInit++;
-    });
+        // VectorNavBinaryConverter (337) |> Binary Output (338)
+        nm::RegisterWatcherCallbackToInputPin(338, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+            messageCounter_VectorNavBinaryConverterGnss_BinaryOutput++;
+        });
 
-    // ImuIntegrator (163) |> PVAError (224)
-    nm::RegisterWatcherCallbackToInputPin(224, [](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
-        messageCounter_ImuIntegrator_PVAError++;
-    });
+        // ImuIntegrator (163) |> ImuObs (164)
+        nm::RegisterWatcherCallbackToInputPin(164, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+            messageCounter_ImuIntegrator_ImuObs++;
+        });
 
-    // ImuIntegrator (163) |> Sync (6)
-    nm::RegisterWatcherCallbackToInputPin(6, [](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
-        messageCounter_ImuIntegrator_Sync++;
-    });
+        // ImuIntegrator (163) |> PosVelAttInit (165)
+        nm::RegisterWatcherCallbackToInputPin(165, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+            messageCounter_ImuIntegrator_PosVelAttInit++;
+        });
 
-    // LooselyCoupledKF (239) |> InertialNavSol (226)
-    nm::RegisterWatcherCallbackToInputPin(226, [](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
-        messageCounter_LooselyCoupledKF_InertialNavSol++;
-    });
+        // ImuIntegrator (163) |> PVAError (224)
+        nm::RegisterWatcherCallbackToInputPin(224, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+            messageCounter_ImuIntegrator_PVAError++;
+        });
 
-    // LooselyCoupledKF (239) |> GNSSNavigationSolution (227)
-    nm::RegisterWatcherCallbackToInputPin(227, [](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
-        messageCounter_LooselyCoupledKF_GNSSNavigationSolution++;
-    });
+        // ImuIntegrator (163) |> Sync (6)
+        nm::RegisterWatcherCallbackToInputPin(6, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+            messageCounter_ImuIntegrator_Sync++;
+        });
 
-    nm::RegisterPreInitCallback([]() {
-        // -------------------------------------- VectorNavFile (324) ----------------------------------------
-        auto* vnFileImu = dynamic_cast<VectorNavFile*>(nm::FindNode(324));
-        // vnFileImu->_path = "VectorNav/Static/vn310-imu.csv";
-        vnFileImu->_path = "VectorNav/Static/vn310-imu-after.csv";
+        // LooselyCoupledKF (239) |> InertialNavSol (226)
+        nm::RegisterWatcherCallbackToInputPin(226, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+            messageCounter_LooselyCoupledKF_InertialNavSol++;
+        });
 
-        // -------------------------------------- VectorNavFile (326) ----------------------------------------
-        auto* vnFileGnss = dynamic_cast<VectorNavFile*>(nm::FindNode(326));
-        vnFileGnss->_path = "VectorNav/Static/vn310-gnss.csv";
+        // LooselyCoupledKF (239) |> GNSSNavigationSolution (227)
+        nm::RegisterWatcherCallbackToInputPin(227, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+            messageCounter_LooselyCoupledKF_GNSSNavigationSolution++;
+        });
 
-        // ------------------------------------ LooselyCoupledKF (239) ---------------------------------------
-        auto* lckf = dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239));
-        lckf->_frame = LooselyCoupledKF::Frame::NED;
-        lckf->_phiCalculationAlgorithm = LooselyCoupledKF::PhiCalculationAlgorithm::Taylor;
-        lckf->_qCalculationAlgorithm = LooselyCoupledKF::QCalculationAlgorithm::Taylor1;
-        lckf->_randomProcessAccel = LooselyCoupledKF::RandomProcess::GaussMarkov1;
-        lckf->_randomProcessGyro = LooselyCoupledKF::RandomProcess::GaussMarkov1;
-    });
+        nm::RegisterPreInitCallback([&]() {
+            c1();
+            c2();
+            c3();
+            c4();
+            c5();
+            c6();
+            c7();
+            c8();
+            c9();
+        });
 
-    REQUIRE(testFlow("test/flow/Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.flow"));
+        REQUIRE(testFlow("test/flow/Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.flow"));
+
+        // GNSS: 176 messages, 162 messages with InsTime, 48 messages with fix (first 22.799717387000001s)
+        // IMU:  167 messages, 167 messages after GNSS fix (first IMU message at 24.017697899000002s)
+        constexpr size_t MESSAGE_COUNT_GNSS = 162;
+        constexpr size_t MESSAGE_COUNT_GNSS_FIX = 48;
+        constexpr size_t MESSAGE_COUNT_IMU = 167;
+
+        REQUIRE(messageCounter_VectorNavBinaryConverterImu_BinaryOutput == MESSAGE_COUNT_IMU);
+        REQUIRE(messageCounter_VectorNavBinaryConverterGnss_BinaryOutput == MESSAGE_COUNT_GNSS);
+        REQUIRE(messageCounter_ImuIntegrator_ImuObs == MESSAGE_COUNT_IMU);
+        REQUIRE(messageCounter_ImuIntegrator_PosVelAttInit == 1);
+        REQUIRE(messageCounter_ImuIntegrator_PVAError == MESSAGE_COUNT_GNSS_FIX);
+        REQUIRE(messageCounter_ImuIntegrator_Sync == MESSAGE_COUNT_GNSS_FIX);
+        REQUIRE(messageCounter_LooselyCoupledKF_InertialNavSol == 214); // TODO: 214 - 167 = 47, so one GNSS message does not trigger? find out which
+        REQUIRE(messageCounter_LooselyCoupledKF_GNSSNavigationSolution == MESSAGE_COUNT_GNSS_FIX);
+    },
+                      settings);
+    // nm::RegisterPreInitCallback([&settings, &indices]() {
+    //     for (size_t i = 0; i < settings.size(); i++)
+    //     {
+    //         settings.at(i).at(indices.at(i))();
+    //     }
+    //     for (int i = static_cast<int>(indices.size()); i >= 0; i--)
+    //     {
+    //         if (indices[static_cast<size_t>(i)] < settings[static_cast<size_t>(i)].size() - 1)
+    //         {
+    //             indices[static_cast<size_t>(i)]++;
+    //             break;
+    //         }
+    //         // indices[static_cast<size_t>(i)] == settings[static_cast<size_t>(i)].size() - 1
+    //         indices[static_cast<size_t>(i)] = 0;
+    //     }
+    // });
+
+    // REQUIRE(testFlow("test/flow/Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.flow"));
     // GNSS: 176 messages, 162 messages with InsTime, 48 messages with fix (first 22.799717387000001s)
     // IMU:  167 messages, 167 messages after GNSS fix (first IMU message at 24.017697899000002s)
 
-    constexpr size_t MESSAGE_COUNT_GNSS = 162;
-    constexpr size_t MESSAGE_COUNT_GNSS_FIX = 48;
-    constexpr size_t MESSAGE_COUNT_IMU = 167;
+    // constexpr size_t MESSAGE_COUNT_GNSS = 162;
+    // constexpr size_t MESSAGE_COUNT_GNSS_FIX = 48;
+    // constexpr size_t MESSAGE_COUNT_IMU = 167;
 
-    CHECK(messageCounter_VectorNavBinaryConverterImu_BinaryOutput == MESSAGE_COUNT_IMU);
-    CHECK(messageCounter_VectorNavBinaryConverterGnss_BinaryOutput == MESSAGE_COUNT_GNSS);
-    CHECK(messageCounter_ImuIntegrator_ImuObs == MESSAGE_COUNT_IMU);
-    CHECK(messageCounter_ImuIntegrator_PosVelAttInit == 1);
-    CHECK(messageCounter_ImuIntegrator_PVAError == MESSAGE_COUNT_GNSS_FIX);
-    CHECK(messageCounter_ImuIntegrator_Sync == MESSAGE_COUNT_GNSS_FIX);
-    CHECK(messageCounter_LooselyCoupledKF_InertialNavSol == 214); // TODO: 214 - 167 = 47, so one GNSS message does not trigger? find out which
-    CHECK(messageCounter_LooselyCoupledKF_GNSSNavigationSolution == MESSAGE_COUNT_GNSS_FIX);
+    // CHECK(messageCounter_VectorNavBinaryConverterImu_BinaryOutput == MESSAGE_COUNT_IMU);
+    // CHECK(messageCounter_VectorNavBinaryConverterGnss_BinaryOutput == MESSAGE_COUNT_GNSS);
+    // CHECK(messageCounter_ImuIntegrator_ImuObs == MESSAGE_COUNT_IMU);
+    // CHECK(messageCounter_ImuIntegrator_PosVelAttInit == 1);
+    // CHECK(messageCounter_ImuIntegrator_PVAError == MESSAGE_COUNT_GNSS_FIX);
+    // CHECK(messageCounter_ImuIntegrator_Sync == MESSAGE_COUNT_GNSS_FIX);
+    // CHECK(messageCounter_LooselyCoupledKF_InertialNavSol == 214); // TODO: 214 - 167 = 47, so one GNSS message does not trigger? find out which
+    // CHECK(messageCounter_LooselyCoupledKF_GNSSNavigationSolution == MESSAGE_COUNT_GNSS_FIX);
 
     // TODO: REQUIRE(testFlow("test/flow/Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF-imu-before-gnss.flow"));
 }
