@@ -35,6 +35,7 @@ class FileReader
         NONE,   ///< Not specified
         BINARY, ///< Binary data
         CSV,    ///< Ascii text data
+		NMEA,   ///< NMEA data
     };
 
     /// @brief Destructor

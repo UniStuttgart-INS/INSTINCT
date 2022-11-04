@@ -105,7 +105,7 @@ bool NAV::FileReader::initialize()
 
     _fileType = determineFileType();
 
-    if (_fileType == FileType::CSV || _fileType == FileType::BINARY)
+    if (_fileType == FileType::CSV || _fileType == FileType::BINARY || _fileType == FileType::NMEA)
     {
         // Does not enable binary read/write, but disables OS dependant treatment of \n, \r
         _filestream = std::ifstream(filepath, std::ios_base::in | std::ios_base::binary);
