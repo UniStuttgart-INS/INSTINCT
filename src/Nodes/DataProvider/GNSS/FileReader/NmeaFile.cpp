@@ -116,11 +116,11 @@ void NAV::NmeaFile::setdatefromzda(const std::string & line)
 	std::vector<std::string> splittedString = str::split(line, ",");
 	if (splittedString.size()==7)
 	{
-        std::size_t pos_star = splittedString[6].find("*");
-        if (pos_star >=0)
+        std::size_t pos_star = splittedString[6].find('*');
+        if (pos_star != std::string::npos)
         {
-            long crc = std::strtol(splittedString[6].substr(pos_star+1).c_str(), NULL, 16);
-			long mycrc=0;
+            int64_t crc = std::strtol(splittedString[6].substr(pos_star+1).c_str(), nullptr, 16);
+			int64_t mycrc=0;
 			for (unsigned int i = 1; i< line.length() - 4; i ++) 
 			{
 				mycrc ^= line.at(i);
@@ -153,9 +153,9 @@ std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData(bool peek)
 	
     TimeSystem timeSystem = UTC;
 
-    int  hour;
-    int  minute;
-    double second;
+    int  hour = 0;
+    int  minute = 0;
+    double second = 0.0;
 	
 	double lat_rad = 0.0;
     double lon_rad = 0.0;
@@ -182,10 +182,13 @@ std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData(bool peek)
 			
 			if (haveValidDate &&  splittedData[0].substr(3,3)=="GGA")
 			{
-				if (splittedData.size()!=15) continue;
-				std::size_t pos_star = splittedData[14].find("*");
-	            long crc = std::strtol(splittedData[14].substr(pos_star+1).c_str(), NULL, 16);
-				long mycrc=0;
+				if (splittedData.size()!=15) 
+				{
+					continue;
+				}
+				std::size_t pos_star = splittedData[14].find('*');
+	            int64_t crc = std::strtol(splittedData[14].substr(pos_star+1).c_str(), nullptr, 16);
+				int64_t mycrc=0;
 				for (unsigned int i = 1; i< line.length() - 4; i ++) 
 				{
 					mycrc ^= line.at(i);
