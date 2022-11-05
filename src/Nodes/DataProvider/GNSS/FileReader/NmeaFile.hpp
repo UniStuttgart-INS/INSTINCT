@@ -18,7 +18,7 @@
 
 namespace NAV
 {
-/// File Reader for RTKLIB pos log files
+/// File Reader for NMEA log files
 class NmeaFile : public Node, public FileReader
 {
   public:
@@ -59,7 +59,7 @@ class NmeaFile : public Node, public FileReader
     bool resetNode() override;
 
   private:
-    constexpr static size_t OUTPUT_PORT_INDEX_RTKLIB_POS_OBS = 0; ///< @brief Flow (RtklibPosObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_NMEA_POS_OBS = 0; ///< @brief Flow (RtklibPosObs)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -82,11 +82,14 @@ class NmeaFile : public Node, public FileReader
 	 /// @brief checks whether a ZDA time tag was read so that UTC can be reconstructed together with the GGA tag
 	bool haveValidDate = false ;
 	
+	 /// @brief second of day (SOD) from last GGA stream. This variable is used to check if SOD is increasing, if not, wait for next ZDA stream to get date info
 	double oldSOD = -1.0;
 	
 	/// @brief checks whether a ZDA time tag was read so that UTC can be reconstructed together with the GGA tag
 	std::vector<int> ddmmyyyy={0,0,0};
 	
+    /// @brief Set date info from ZDA steam
+    /// @param[in] line Line that contains a potential $--ZDA stream
 	void setdatefromzda(const std::string & line);
 	
 	
