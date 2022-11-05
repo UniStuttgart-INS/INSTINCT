@@ -112,7 +112,7 @@ bool NAV::NmeaFile::resetNode()
 
 void NAV::NmeaFile::setdatefromzda(const std::string & line)
 {
-	
+	// decode ZDA string according to http://www.nmea.de/nmea0183datensaetze.html#zda
 	std::vector<std::string> splittedString = str::split(line, ",");
 	if (splittedString.size()==7)
 	{
@@ -120,6 +120,7 @@ void NAV::NmeaFile::setdatefromzda(const std::string & line)
         if (pos_star != std::string::npos)
         {
             int64_t crc = std::strtol(splittedString[6].substr(pos_star+1).c_str(), nullptr, 16);
+			// checksum calculation similar to https://gist.github.com/devendranaga/fce8e166f4335fa777650493cb9246db
 			int64_t mycrc=0;
 			for (unsigned int i = 1; i< line.length() - 4; i ++) 
 			{
@@ -151,7 +152,7 @@ std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData(bool peek)
 	
     std::vector<std::string> splittedData;
 	
-    TimeSystem timeSystem = UTC;
+    TimeSystem timeSystem = UTC; // per definition, time tags in GGA NMEA streams are in UTC
 
     int  hour = 0;
     int  minute = 0;
@@ -168,7 +169,7 @@ std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData(bool peek)
 	
 		if (_filestream.eof())
 		{
-			return nullptr;
+			return nullptr; // when done with file reading
 		}	
 	
 	
@@ -182,12 +183,14 @@ std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData(bool peek)
 			
 			if (haveValidDate &&  splittedData[0].substr(3,3)=="GGA")
 			{
+				// decode GGA stream according to http://www.nmea.de/nmea0183datensaetze.html#gga
 				if (splittedData.size()!=15) 
 				{
 					continue;
 				}
 				std::size_t pos_star = splittedData[14].find('*');
 	            int64_t crc = std::strtol(splittedData[14].substr(pos_star+1).c_str(), nullptr, 16);
+				// checksum calculation similar to https://gist.github.com/devendranaga/fce8e166f4335fa777650493cb9246db
 				int64_t mycrc=0;
 				for (unsigned int i = 1; i< line.length() - 4; i ++) 
 				{
@@ -203,7 +206,7 @@ std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData(bool peek)
 					//only contine if second of day > than previous one
 					if (newSOD<oldSOD)
 					{
-						oldSOD=newSOD;
+						oldSOD=newSOD; // store current second of day for next call of this routine
 						haveValidDate = false; //force wait until next ZDA stream
 						continue;
 					}	
@@ -212,9 +215,9 @@ std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData(bool peek)
 					int lat1 = std::stoi(splittedData[2].substr(0,2));
 					double lat2 = std::stod(splittedData[2].substr(2));
 					
-					lat_rad = (lat1+lat2/60.0)/180*M_PI ;
+					lat_rad = (lat1+lat2/60.0)/180*M_PI; // convert to radian 
 					
-					if (splittedData[3]=="S")
+					if (splittedData[3]=="S") // flip sign if south latitude
 					{
 						lat_rad *= -1.0;
 					}
@@ -222,14 +225,14 @@ std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData(bool peek)
 					int lon1 = std::stoi(splittedData[4].substr(0,3));
 					double lon2 = std::stod(splittedData[4].substr(3));
 					
-					lon_rad = (lon1+lon2/60.0)/180*M_PI;
+					lon_rad = (lon1+lon2/60.0)/180*M_PI; //convert to radian
 					
-					if (splittedData[5]=="W")
+					if (splittedData[5]=="W") // flip sign if west longitude
 					{
 						lon_rad *= -1.0;
 					}
 					
-					hgt = std::stod(splittedData[9]) + std::stod(splittedData[11]);
+					hgt = std::stod(splittedData[9]) + std::stod(splittedData[11]); // ellipsoidal height = height above geoid + geoid height
 					
 				    break;	
 				}
@@ -248,7 +251,7 @@ std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData(bool peek)
    
 	
 	Eigen::Vector3d lla_pos{ lat_rad,lon_rad,hgt };
-    Eigen::Vector3d n_vel{ std::nan(""), std::nan(""), std::nan("") };
+    Eigen::Vector3d n_vel{ std::nan(""), std::nan(""), std::nan("") }; // GGA streams don't contain velocity, thus set this one invalid
 
     obs->insTime = InsTime(ddmmyyyy[0], ddmmyyyy[1], ddmmyyyy[2],
                                hour, minute, second,
@@ -268,7 +271,7 @@ std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData(bool peek)
     // Calls all the callbacks
     if (!peek)
     {
-        invokeCallbacks(OUTPUT_PORT_INDEX_RTKLIB_POS_OBS, obs);
+        invokeCallbacks(OUTPUT_PORT_INDEX_NMEA_POS_OBS, obs);
     }
 	
     return obs;
