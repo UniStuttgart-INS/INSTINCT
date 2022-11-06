@@ -92,7 +92,9 @@ class NmeaFile : public Node, public FileReader
     /// @param[in] line Line that contains a potential $--ZDA stream
 	void setdatefromzda(const std::string & line);
 	
-	
+    /// @brief Set date info from RMC steam
+    /// @param[in] line Line that contains a potential $--RMC stream
+	void setdatefromrmc(const std::string & line);	
 };
 
 } // namespace NAV

@@ -122,7 +122,8 @@ void NAV::NmeaFile::setdatefromzda(const std::string & line)
             int64_t crc = std::strtol(splittedString[6].substr(pos_star+1).c_str(), nullptr, 16);
 			// checksum calculation similar to https://gist.github.com/devendranaga/fce8e166f4335fa777650493cb9246db
 			int64_t mycrc=0;
-			for (unsigned int i = 1; i< line.length() - 4; i ++) 
+			pos_star = line.find('*');
+			for (unsigned int i = 1; i< pos_star ; i ++) 
 			{
 				mycrc ^= line.at(i);
 			}
@@ -132,6 +133,44 @@ void NAV::NmeaFile::setdatefromzda(const std::string & line)
 				ddmmyyyy[1] = std::stoi(splittedString[3]);
 				ddmmyyyy[2] = std::stoi(splittedString[4]);
 				
+				haveValidDate = true;
+			}
+        }
+    }			
+}
+
+void NAV::NmeaFile::setdatefromrmc(const std::string & line)
+{
+	
+	// decode RMC string according to http://www.nmea.de/nmea0183datensaetze.html#rmc
+	std::vector<std::string> splittedString = str::split(line, ",");
+	if (splittedString.size()==12)
+	{
+        std::size_t pos_star = splittedString[11].find('*');
+        if (pos_star != std::string::npos)
+        {
+            int64_t crc = std::strtol(splittedString[11].substr(pos_star+1).c_str(), nullptr, 16);
+			// checksum calculation similar to https://gist.github.com/devendranaga/fce8e166f4335fa777650493cb9246db
+			int64_t mycrc=0;
+			pos_star = line.find('*');
+			for (unsigned int i = 1; i< pos_star ; i ++) 
+			{
+				mycrc ^= line.at(i);
+			}
+			if (mycrc == crc)
+			{
+				ddmmyyyy[0] = std::stoi(splittedString[9].substr(0,2));
+				ddmmyyyy[1] = std::stoi(splittedString[9].substr(2,2));
+				ddmmyyyy[2] = std::stoi(splittedString[9].substr(4,2));
+				if (ddmmyyyy[2]>60)
+				{
+				    ddmmyyyy[2]+=1900;	
+				}
+				else
+				{
+				    ddmmyyyy[2]+=2000;	
+				}	
+								
 				haveValidDate = true;
 			}
         }
@@ -192,7 +231,8 @@ std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData(bool peek)
 	            int64_t crc = std::strtol(splittedData[14].substr(pos_star+1).c_str(), nullptr, 16);
 				// checksum calculation similar to https://gist.github.com/devendranaga/fce8e166f4335fa777650493cb9246db
 				int64_t mycrc=0;
-				for (unsigned int i = 1; i< line.length() - 4; i ++) 
+				pos_star = line.find('*');
+				for (unsigned int i = 1; i< pos_star ; i ++) 
 				{
 					mycrc ^= line.at(i);
 				}
@@ -241,6 +281,12 @@ std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData(bool peek)
 			else if (splittedData[0].substr(3,3)=="ZDA")
 		    {
 		    	setdatefromzda(line);
+				continue;
+			}
+			else if (splittedData[0].substr(3,3)=="RMC")
+		    {
+		    	setdatefromrmc(line);
+				continue;
 			}
         }
 	}
