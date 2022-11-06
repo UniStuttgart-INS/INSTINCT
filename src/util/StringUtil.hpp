@@ -202,6 +202,35 @@ static inline std::vector<std::string> split(const std::string& str, const std::
 
     while ((pos_end = str.find(delimiter, pos_start)) != std::string::npos)
     {
+        res.push_back(str.substr(pos_start, pos_end - pos_start));
+        pos_start = pos_end + delim_len;
+    }
+    res.push_back(str.substr(pos_start));
+    return res;
+}
+
+/// @brief Splits a string into parts at a delimiter
+/// @param[in] str String to split
+/// @param[in] delimiter Character to split at
+/// @return List with splitted parts
+static inline std::vector<std::string> split(const std::string& str, char delimiter)
+{
+    return split(str, std::string(1, delimiter));
+}
+
+/// @brief Splits a string into parts at a delimiter and removes empty entries
+/// @param[in] str String to split
+/// @param[in] delimiter Sequence of characters to split at
+/// @return List with splitted parts
+static inline std::vector<std::string> split_wo_empty(const std::string& str, const std::string& delimiter)
+{
+    size_t pos_start = 0;
+    size_t pos_end = 0;
+    size_t delim_len = delimiter.length();
+    std::vector<std::string> res;
+
+    while ((pos_end = str.find(delimiter, pos_start)) != std::string::npos)
+    {
         if (pos_start != pos_end)
         {
             res.push_back(str.substr(pos_start, pos_end - pos_start));
@@ -219,13 +248,13 @@ static inline std::vector<std::string> split(const std::string& str, const std::
     return res;
 }
 
-/// @brief Splits a string into parts at a delimiter
+/// @brief Splits a string into parts at a delimiter and removes empty entries
 /// @param[in] str String to split
 /// @param[in] delimiter Character to split at
 /// @return List with splitted parts
-static inline std::vector<std::string> split(const std::string& str, char delimiter)
+static inline std::vector<std::string> split_wo_empty(const std::string& str, char delimiter)
 {
-    return split(str, std::string(1, delimiter));
+    return split_wo_empty(str, std::string(1, delimiter));
 }
 
 } // namespace NAV::str

@@ -232,7 +232,7 @@ void RinexNavFile::readHeader()
         else if (headerLabel == "IONOSPHERIC CORR")
         {
             auto correctionType = str::trim_copy(line.substr(0, 4)); // FORMAT: A4,1X,
-            auto valuesStr = str::split(str::replaceAll_copy(line.substr(4, 60 - 4), "d", "e", str::IgnoreCase), " ");
+            auto valuesStr = str::split_wo_empty(str::replaceAll_copy(line.substr(4, 60 - 4), "d", "e", str::IgnoreCase), " ");
             std::vector<double> values(valuesStr.size());
             for (size_t i = 0; i < valuesStr.size(); i++)
             {
@@ -329,7 +329,7 @@ void RinexNavFile::readOrbits()
 
         // Epoch: Toc - Time of Clock (GPS) year (4 digits) - 1X,I4,
         // month, day, hour, minute, second - 5(1X,I2.2),
-        auto timeSplit = str::split(line.substr(3, 20), " ");
+        auto timeSplit = str::split_wo_empty(line.substr(3, 20), " ");
         auto timeSystem = satSys.getTimeSystem();
         InsTime epoch{ static_cast<uint16_t>(std::stoi(timeSplit.at(0))),
                        static_cast<uint16_t>(std::stoi(timeSplit.at(1))),
