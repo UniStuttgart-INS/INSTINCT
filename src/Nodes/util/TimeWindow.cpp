@@ -539,6 +539,11 @@ void NAV::TimeWindow::afterDeleteLink(OutputPin& startPin, InputPin& endPin)
 
 void NAV::TimeWindow::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
+    if (_startTime >= _endTime)
+    {
+        LOG_WARN("{}: startTime >= endTime --> timeWindow blocks all packages", nameId());
+    }
+
     // Select the correct data type and make a copy of the node data to modify
     auto obs = queue.extract_front();
     if (obs->insTime >= _startTime && obs->insTime <= _endTime)
