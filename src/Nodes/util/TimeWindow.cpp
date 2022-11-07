@@ -33,7 +33,7 @@ NAV::TimeWindow::TimeWindow() : Node(typeStatic())
 {
     LOG_TRACE("{}: called", name);
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 300, 455 }; // FIXME: default window size
+    _guiConfigDefaultWindowSize = { 362, 263 };
 
     nm::CreateInputPin(this, "Input", Pin::Type::Flow, supportedDataIdentifier, &TimeWindow::receiveObs);
 
@@ -89,14 +89,14 @@ void NAV::TimeWindow::guiConfig()
             ImGui::TextUnformatted("Days");
 
             ImGui::TableSetColumnIndex(1);
-            // ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::InputInt(fmt::format("##Days_S{}", size_t(id)).c_str(), &_daysStart, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
             {
                 LOG_DEBUG("{}: beginning - days = {}", nameId(), _daysStart);
                 flow::ApplyChanges();
             }
             ImGui::TableSetColumnIndex(2);
-            // ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::InputInt(fmt::format("##Days_E{}", size_t(id)).c_str(), &_daysEnd, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
             {
                 LOG_DEBUG("{}: end - days = {}", nameId(), _daysEnd);
@@ -109,12 +109,14 @@ void NAV::TimeWindow::guiConfig()
             ImGui::TextUnformatted("Decimal Fraction");
 
             ImGui::TableSetColumnIndex(1);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::InputDoubleL(fmt::format("##DecFrac_S{}", size_t(id)).c_str(), &_decFracStart, 1e-3, 1e4, 0.0, 0.0, "%f"))
             {
                 LOG_DEBUG("{}: beginning - decimal fraction = {}", nameId(), _decFracStart);
                 flow::ApplyChanges();
             }
             ImGui::TableSetColumnIndex(2);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::InputDoubleL(fmt::format("##DecFrac_E{}", size_t(id)).c_str(), &_decFracEnd, 1e-3, 1e4, 0.0, 0.0, "%f"))
             {
                 LOG_DEBUG("{}: end - decimal fraction = {}", nameId(), _decFracEnd);
@@ -138,12 +140,14 @@ void NAV::TimeWindow::guiConfig()
             ImGui::TextUnformatted("GPS Cycle");
 
             ImGui::TableSetColumnIndex(1);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::InputInt(fmt::format("##GPScycle_S{}", size_t(id)).c_str(), &_gpsCycleStart, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
             {
                 LOG_DEBUG("{}: beginning - GPS Cycle = {}", nameId(), _gpsCycleStart);
                 flow::ApplyChanges();
             }
             ImGui::TableSetColumnIndex(2);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::InputInt(fmt::format("##GPScycle_E{}", size_t(id)).c_str(), &_gpsCycleEnd, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
             {
                 LOG_DEBUG("{}: end - GPS Cycle = {}", nameId(), _gpsCycleEnd);
@@ -156,12 +160,14 @@ void NAV::TimeWindow::guiConfig()
             ImGui::TextUnformatted("GPS Week");
 
             ImGui::TableSetColumnIndex(1);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::InputInt(fmt::format("##GPSweek_S{}", size_t(id)).c_str(), &_gpsWeekStart, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
             {
                 LOG_DEBUG("{}: beginning - GPS Week = {}", nameId(), _gpsWeekStart);
                 flow::ApplyChanges();
             }
             ImGui::TableSetColumnIndex(2);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::InputInt(fmt::format("##GPSweek_E{}", size_t(id)).c_str(), &_gpsWeekEnd, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
             {
                 LOG_DEBUG("{}: end - GPS Week = {}", nameId(), _gpsWeekEnd);
@@ -174,12 +180,14 @@ void NAV::TimeWindow::guiConfig()
             ImGui::TextUnformatted("GPS ToW");
 
             ImGui::TableSetColumnIndex(1);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::InputDouble(fmt::format("##GPStow_S{}", size_t(id)).c_str(), &_gpsTowStart, 0, 0, "%.6f", ImGuiInputTextFlags_EnterReturnsTrue))
             {
                 LOG_DEBUG("{}: beginning - GPS ToW = {}", nameId(), _gpsTowStart);
                 flow::ApplyChanges();
             }
             ImGui::TableSetColumnIndex(2);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::InputDouble(fmt::format("##GPStow_E{}", size_t(id)).c_str(), &_gpsTowEnd, 0, 0, "%.6f", ImGuiInputTextFlags_EnterReturnsTrue))
             {
                 LOG_DEBUG("{}: end - GPS ToW = {}", nameId(), _gpsTowEnd);
@@ -193,12 +201,14 @@ void NAV::TimeWindow::guiConfig()
             ImGui::TextUnformatted("Year");
 
             ImGui::TableSetColumnIndex(1);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::InputInt(fmt::format("##year_S{}", size_t(id)).c_str(), &_yearStart, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
             {
                 LOG_DEBUG("{}: beginning - Year = {}", nameId(), _yearStart);
                 flow::ApplyChanges();
             }
             ImGui::TableSetColumnIndex(2);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::InputInt(fmt::format("##year_E{}", size_t(id)).c_str(), &_yearEnd, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
             {
                 LOG_DEBUG("{}: end - Year = {}", nameId(), _yearEnd);
@@ -211,12 +221,14 @@ void NAV::TimeWindow::guiConfig()
             ImGui::TextUnformatted("Month");
 
             ImGui::TableSetColumnIndex(1);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::InputInt(fmt::format("##month_S{}", size_t(id)).c_str(), &_monthStart, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
             {
                 LOG_DEBUG("{}: beginning - Month = {}", nameId(), _monthStart);
                 flow::ApplyChanges();
             }
             ImGui::TableSetColumnIndex(2);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::InputInt(fmt::format("##month_E{}", size_t(id)).c_str(), &_monthEnd, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
             {
                 LOG_DEBUG("{}: end - Month = {}", nameId(), _monthEnd);
@@ -229,12 +241,14 @@ void NAV::TimeWindow::guiConfig()
             ImGui::TextUnformatted("Day");
 
             ImGui::TableSetColumnIndex(1);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::InputInt(fmt::format("##day_S{}", size_t(id)).c_str(), &_dayStart, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
             {
                 LOG_DEBUG("{}: beginning - Day = {}", nameId(), _dayStart);
                 flow::ApplyChanges();
             }
             ImGui::TableSetColumnIndex(2);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::InputInt(fmt::format("##day_E{}", size_t(id)).c_str(), &_dayEnd, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
             {
                 LOG_DEBUG("{}: end - Day = {}", nameId(), _dayEnd);
@@ -247,12 +261,14 @@ void NAV::TimeWindow::guiConfig()
             ImGui::TextUnformatted("Hour");
 
             ImGui::TableSetColumnIndex(1);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::InputInt(fmt::format("##hour_S{}", size_t(id)).c_str(), &_hourStart, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
             {
                 LOG_DEBUG("{}: beginning - Hour = {}", nameId(), _hourStart);
                 flow::ApplyChanges();
             }
             ImGui::TableSetColumnIndex(2);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::InputInt(fmt::format("##hour_E{}", size_t(id)).c_str(), &_hourEnd, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
             {
                 LOG_DEBUG("{}: end - Hour = {}", nameId(), _hourEnd);
@@ -265,12 +281,14 @@ void NAV::TimeWindow::guiConfig()
             ImGui::TextUnformatted("Minute");
 
             ImGui::TableSetColumnIndex(1);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::InputInt(fmt::format("##min_S{}", size_t(id)).c_str(), &_minStart, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
             {
                 LOG_DEBUG("{}: beginning - Minute = {}", nameId(), _minStart);
                 flow::ApplyChanges();
             }
             ImGui::TableSetColumnIndex(2);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::InputInt(fmt::format("##min_E{}", size_t(id)).c_str(), &_minEnd, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
             {
                 LOG_DEBUG("{}: end - Minute = {}", nameId(), _minEnd);
@@ -283,12 +301,14 @@ void NAV::TimeWindow::guiConfig()
             ImGui::TextUnformatted("Second");
 
             ImGui::TableSetColumnIndex(1);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::InputDouble(fmt::format("##sec_S{}", size_t(id)).c_str(), &_secStart, 0, 0, "%.6f", ImGuiInputTextFlags_EnterReturnsTrue))
             {
                 LOG_DEBUG("{}: beginning - Second = {}", nameId(), _secStart);
                 flow::ApplyChanges();
             }
             ImGui::TableSetColumnIndex(2);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::InputDouble(fmt::format("##sec_E{}", size_t(id)).c_str(), &_secEnd, 0, 0, "%.6f", ImGuiInputTextFlags_EnterReturnsTrue))
             {
                 LOG_DEBUG("{}: end - Second = {}", nameId(), _secEnd);
