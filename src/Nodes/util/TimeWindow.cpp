@@ -33,7 +33,7 @@ NAV::TimeWindow::TimeWindow() : Node(typeStatic())
 {
     LOG_TRACE("{}: called", name);
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 320, 450 }; // FIXME: default window size
+    _guiConfigDefaultWindowSize = { 300, 455 }; // FIXME: default window size
 
     nm::CreateInputPin(this, "Input", Pin::Type::Flow, supportedDataIdentifier, &TimeWindow::receiveObs);
 
@@ -73,103 +73,231 @@ void NAV::TimeWindow::guiConfig()
 
     ImGui::Separator();
 
-    ImGui::TextUnformatted("Beginning of time-window:");
-
-    if (_timeFormat == TimeFormats::MJD || _timeFormat == TimeFormats::JD)
+    if (ImGui::BeginTable(fmt::format("Time Window##{}", size_t(id)).c_str(), 3, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
     {
-        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::InputInt(fmt::format("Days##{}", size_t(id)).c_str(), &_days, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
+        ImGui::TableSetupColumn("Unit");
+        ImGui::TableSetupColumn("Beginning");
+        ImGui::TableSetupColumn("End");
+
+        ImGui::TableHeadersRow();
+
+        ImGui::TableNextRow();
+        if (_timeFormat == TimeFormats::MJD || _timeFormat == TimeFormats::JD)
         {
-            LOG_DEBUG("{}: days = {}", nameId(), _days);
-            flow::ApplyChanges();
+            // Days
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted("Days");
+
+            ImGui::TableSetColumnIndex(1);
+            // ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
+            if (ImGui::InputInt(fmt::format("##Days_S{}", size_t(id)).c_str(), &_daysStart, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                LOG_DEBUG("{}: beginning - days = {}", nameId(), _daysStart);
+                flow::ApplyChanges();
+            }
+            ImGui::TableSetColumnIndex(2);
+            // ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
+            if (ImGui::InputInt(fmt::format("##Days_E{}", size_t(id)).c_str(), &_daysEnd, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                LOG_DEBUG("{}: end - days = {}", nameId(), _daysEnd);
+                flow::ApplyChanges();
+            }
+
+            // Decimal Fraction of a day
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted("Decimal Fraction");
+
+            ImGui::TableSetColumnIndex(1);
+            if (ImGui::InputDoubleL(fmt::format("##DecFrac_S{}", size_t(id)).c_str(), &_decFracStart, 1e-3, 1e4, 0.0, 0.0, "%f"))
+            {
+                LOG_DEBUG("{}: beginning - decimal fraction = {}", nameId(), _decFracStart);
+                flow::ApplyChanges();
+            }
+            ImGui::TableSetColumnIndex(2);
+            if (ImGui::InputDoubleL(fmt::format("##DecFrac_E{}", size_t(id)).c_str(), &_decFracEnd, 1e-3, 1e4, 0.0, 0.0, "%f"))
+            {
+                LOG_DEBUG("{}: end - decimal fraction = {}", nameId(), _decFracEnd);
+                flow::ApplyChanges();
+            }
+
+            // store values
+            if (_timeFormat == TimeFormats::MJD)
+            {
+                _mjdStart = InsTime_MJD{ _daysStart, _decFracStart };
+            }
+            if (_timeFormat == TimeFormats::JD)
+            {
+                _jdStart = InsTime_JD{ _daysStart, _decFracStart };
+            }
         }
-        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::InputDoubleL(fmt::format("Decimal fraction of a day##{}", size_t(id)).c_str(), &_decFrac, 1e-3, 1e4, 0.0, 0.0, "%f"))
+        if (_timeFormat == TimeFormats::GPST)
         {
-            LOG_DEBUG("{}: decimal fraction = {}", nameId(), _decFrac);
-            flow::ApplyChanges();
+            // GPS Cycle
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted("GPS Cycle");
+
+            ImGui::TableSetColumnIndex(1);
+            if (ImGui::InputInt(fmt::format("##GPScycle_S{}", size_t(id)).c_str(), &_gpsCycleStart, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                LOG_DEBUG("{}: beginning - GPS Cycle = {}", nameId(), _gpsCycleStart);
+                flow::ApplyChanges();
+            }
+            ImGui::TableSetColumnIndex(2);
+            if (ImGui::InputInt(fmt::format("##GPScycle_E{}", size_t(id)).c_str(), &_gpsCycleEnd, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                LOG_DEBUG("{}: end - GPS Cycle = {}", nameId(), _gpsCycleEnd);
+                flow::ApplyChanges();
+            }
+
+            // GPS Week
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted("GPS Week");
+
+            ImGui::TableSetColumnIndex(1);
+            if (ImGui::InputInt(fmt::format("##GPSweek_S{}", size_t(id)).c_str(), &_gpsWeekStart, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                LOG_DEBUG("{}: beginning - GPS Week = {}", nameId(), _gpsWeekStart);
+                flow::ApplyChanges();
+            }
+            ImGui::TableSetColumnIndex(2);
+            if (ImGui::InputInt(fmt::format("##GPSweek_E{}", size_t(id)).c_str(), &_gpsWeekEnd, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                LOG_DEBUG("{}: end - GPS Week = {}", nameId(), _gpsWeekEnd);
+                flow::ApplyChanges();
+            }
+
+            // GPS ToW
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted("GPS ToW");
+
+            ImGui::TableSetColumnIndex(1);
+            if (ImGui::InputDouble(fmt::format("##GPStow_S{}", size_t(id)).c_str(), &_gpsTowStart, 0, 0, "%.6f", ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                LOG_DEBUG("{}: beginning - GPS ToW = {}", nameId(), _gpsTowStart);
+                flow::ApplyChanges();
+            }
+            ImGui::TableSetColumnIndex(2);
+            if (ImGui::InputDouble(fmt::format("##GPStow_E{}", size_t(id)).c_str(), &_gpsTowEnd, 0, 0, "%.6f", ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                LOG_DEBUG("{}: end - GPS ToW = {}", nameId(), _gpsTowEnd);
+                flow::ApplyChanges();
+            }
         }
-        if (_timeFormat == TimeFormats::MJD)
+        if (_timeFormat == TimeFormats::YMDHMS)
         {
-            _mjdStart = InsTime_MJD{ _days, _decFrac };
-        }
-        if (_timeFormat == TimeFormats::JD)
-        {
-            _jdStart = InsTime_JD{ _days, _decFrac };
-        }
-    }
-    else if (_timeFormat == TimeFormats::GPST)
-    {
-        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::InputInt(fmt::format("GPS Cycle##{}", size_t(id)).c_str(), &_gpsCycle, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
-        {
-            LOG_DEBUG("{}: GPS cycle = {}", nameId(), _gpsCycle);
-            flow::ApplyChanges();
-        }
-        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::InputInt(fmt::format("GPS Week##{}", size_t(id)).c_str(), &_gpsWeek, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
-        {
-            LOG_DEBUG("{}: GPS week = {}", nameId(), _gpsWeek);
-            flow::ApplyChanges();
-        }
-        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::InputDoubleL(fmt::format("GPS ToW##{}", size_t(id)).c_str(), &_gpsTow, 1e-3, 1e4, 0.0, 0.0, "%f"))
-        {
-            LOG_DEBUG("{}: GPS ToW = {}", nameId(), _gpsTow);
-            flow::ApplyChanges();
+            // Year
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted("Year");
+
+            ImGui::TableSetColumnIndex(1);
+            if (ImGui::InputInt(fmt::format("##year_S{}", size_t(id)).c_str(), &_yearStart, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                LOG_DEBUG("{}: beginning - Year = {}", nameId(), _yearStart);
+                flow::ApplyChanges();
+            }
+            ImGui::TableSetColumnIndex(2);
+            if (ImGui::InputInt(fmt::format("##year_E{}", size_t(id)).c_str(), &_yearEnd, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                LOG_DEBUG("{}: end - Year = {}", nameId(), _yearEnd);
+                flow::ApplyChanges();
+            }
+
+            // Month
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted("Month");
+
+            ImGui::TableSetColumnIndex(1);
+            if (ImGui::InputInt(fmt::format("##month_S{}", size_t(id)).c_str(), &_monthStart, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                LOG_DEBUG("{}: beginning - Month = {}", nameId(), _monthStart);
+                flow::ApplyChanges();
+            }
+            ImGui::TableSetColumnIndex(2);
+            if (ImGui::InputInt(fmt::format("##month_E{}", size_t(id)).c_str(), &_monthEnd, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                LOG_DEBUG("{}: end - Month = {}", nameId(), _monthEnd);
+                flow::ApplyChanges();
+            }
+
+            // Day
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted("Day");
+
+            ImGui::TableSetColumnIndex(1);
+            if (ImGui::InputInt(fmt::format("##day_S{}", size_t(id)).c_str(), &_dayStart, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                LOG_DEBUG("{}: beginning - Day = {}", nameId(), _dayStart);
+                flow::ApplyChanges();
+            }
+            ImGui::TableSetColumnIndex(2);
+            if (ImGui::InputInt(fmt::format("##day_E{}", size_t(id)).c_str(), &_dayEnd, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                LOG_DEBUG("{}: end - Day = {}", nameId(), _dayEnd);
+                flow::ApplyChanges();
+            }
+
+            // Hour
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted("Hour");
+
+            ImGui::TableSetColumnIndex(1);
+            if (ImGui::InputInt(fmt::format("##hour_S{}", size_t(id)).c_str(), &_hourStart, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                LOG_DEBUG("{}: beginning - Hour = {}", nameId(), _hourStart);
+                flow::ApplyChanges();
+            }
+            ImGui::TableSetColumnIndex(2);
+            if (ImGui::InputInt(fmt::format("##hour_E{}", size_t(id)).c_str(), &_hourEnd, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                LOG_DEBUG("{}: end - Hour = {}", nameId(), _hourEnd);
+                flow::ApplyChanges();
+            }
+
+            // Minute
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted("Minute");
+
+            ImGui::TableSetColumnIndex(1);
+            if (ImGui::InputInt(fmt::format("##min_S{}", size_t(id)).c_str(), &_minStart, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                LOG_DEBUG("{}: beginning - Minute = {}", nameId(), _minStart);
+                flow::ApplyChanges();
+            }
+            ImGui::TableSetColumnIndex(2);
+            if (ImGui::InputInt(fmt::format("##min_E{}", size_t(id)).c_str(), &_minEnd, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                LOG_DEBUG("{}: end - Minute = {}", nameId(), _minEnd);
+                flow::ApplyChanges();
+            }
+
+            // Second
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted("Second");
+
+            ImGui::TableSetColumnIndex(1);
+            if (ImGui::InputDouble(fmt::format("##sec_S{}", size_t(id)).c_str(), &_secStart, 0, 0, "%.6f", ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                LOG_DEBUG("{}: beginning - Second = {}", nameId(), _secStart);
+                flow::ApplyChanges();
+            }
+            ImGui::TableSetColumnIndex(2);
+            if (ImGui::InputDouble(fmt::format("##sec_E{}", size_t(id)).c_str(), &_secEnd, 0, 0, "%.6f", ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                LOG_DEBUG("{}: end - Second = {}", nameId(), _secEnd);
+                flow::ApplyChanges();
+            }
         }
 
-        _gpsWeekTowStart = InsTime_GPSweekTow{ _gpsCycle, _gpsWeek, _gpsTow };
+        ImGui::EndTable();
     }
-    else if (_timeFormat == TimeFormats::YMDHMS)
-    {
-        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::InputInt(fmt::format("Year##{}", size_t(id)).c_str(), &_year, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
-        {
-            LOG_DEBUG("{}: year = {}", nameId(), _year);
-            flow::ApplyChanges();
-        }
-        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::InputInt(fmt::format("Month##{}", size_t(id)).c_str(), &_month, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
-        {
-            LOG_DEBUG("{}: month = {}", nameId(), _month);
-            flow::ApplyChanges();
-        }
-        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::InputInt(fmt::format("Day##{}", size_t(id)).c_str(), &_day, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
-        {
-            LOG_DEBUG("{}: day = {}", nameId(), _day);
-            flow::ApplyChanges();
-        }
-        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::InputInt(fmt::format("Hour##{}", size_t(id)).c_str(), &_hour, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
-        {
-            LOG_DEBUG("{}: hour = {}", nameId(), _hour);
-            flow::ApplyChanges();
-        }
-        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::InputInt(fmt::format("Minute##{}", size_t(id)).c_str(), &_min, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
-        {
-            LOG_DEBUG("{}: minute = {}", nameId(), _min);
-            flow::ApplyChanges();
-        }
-        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::InputDoubleL(fmt::format("Second##{}", size_t(id)).c_str(), &_sec, 0, InsTimeUtil::SECONDS_PER_MINUTE - 1, 0, 0, "%.6f", ImGuiInputTextFlags_EnterReturnsTrue))
-        {
-            LOG_DEBUG("{}: second = {}", nameId(), _sec);
-            flow::ApplyChanges();
-        }
-
-        _ymdhmsStart = InsTime_YMDHMS{ _year, _month, _day, _hour, _min, _sec };
-    }
-    else
-    {
-        LOG_ERROR("{}: No time format specified", nameId());
-    }
-
-    ImGui::Separator();
-
-    ImGui::TextUnformatted("End of time-window:");
 }
 
 json NAV::TimeWindow::save() const
@@ -178,11 +306,15 @@ json NAV::TimeWindow::save() const
 
     json j;
 
+    // TODO: fill
+
     return j;
 }
 
 void NAV::TimeWindow::restore(json const& j)
 {
+    // TODO: fill
+
     if (j) // FIXME: dummy
     {}
     LOG_TRACE("{}: called", nameId());
@@ -254,25 +386,27 @@ void NAV::TimeWindow::afterDeleteLink(OutputPin& startPin, InputPin& endPin)
 
 void NAV::TimeWindow::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
+    [[maybe_unused]] auto bla = queue.at(0); // FIXME: dummy
+
     // Select the correct data type and make a copy of the node data to modify
     if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == ImuObs::type())
     {
-        receiveImuObs(std::make_shared<ImuObs>(*std::static_pointer_cast<const ImuObs>(queue.extract_front())));
+        // receiveImuObs(std::make_shared<ImuObs>(*std::static_pointer_cast<const ImuObs>(queue.extract_front()))); // TODO: enable
     }
     else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type())
     {
-        receivePosVelAtt(std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(queue.extract_front())));
+        // receivePosVelAtt(std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(queue.extract_front()))); // TODO: enable
     }
 }
 
-void NAV::TimeWindow::receiveImuObs(const std::shared_ptr<ImuObs>& imuObs)
-{
-    if (imuObs) // FIXME: dummy
-    {}
-}
+// void NAV::TimeWindow::receiveImuObs(const std::shared_ptr<ImuObs>& imuObs)
+// {
+//     if (imuObs) // FIXME: dummy
+//     {}
+// }
 
-void NAV::TimeWindow::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt)
-{
-    if (posVelAtt) // FIXME: dummy
-    {}
-}
+// void NAV::TimeWindow::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt)
+// {
+//     if (posVelAtt) // FIXME: dummy
+//     {}
+// }
