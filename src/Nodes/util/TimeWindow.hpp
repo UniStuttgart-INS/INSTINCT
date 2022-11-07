@@ -85,9 +85,9 @@ class TimeWindow : public Node
     /// @param[in] pinIdx Index of the pin the data is received on
     void receiveObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
-    /// @brief Callback when receiving an ImuObs
-    /// @param[in] imuObs Copied data to modify and send out again
-    void receiveImuObs(const std::shared_ptr<ImuObs>& imuObs);
+    // /// @brief Callback when receiving an ImuObs
+    // /// @param[in] imuObs Copied data to modify and send out again
+    // void receiveImuObs(const std::shared_ptr<ImuObs>& imuObs);
 
     // TODO: Add 'GnssObs'?
     //  /// @brief Callback when receiving an ImuObs
@@ -96,7 +96,7 @@ class TimeWindow : public Node
 
     /// @brief Callback when receiving an ImuObs
     /// @param[in] posVelAtt Copied data to modify and send out again
-    void receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt);
+    // void receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt);
 
     /// @brief Beginning of time window
     InsTime _startTime;
@@ -113,30 +113,79 @@ class TimeWindow : public Node
         YMDHMS, ///< year, month, day, hour, min, sec
     };
 
-    /// Selected unit for the accelerometer bias in the GUI
+    /// Selected time format in GUI
     TimeFormats _timeFormat = TimeFormats::YMDHMS;
 
-    int32_t _days{};
-    double _decFrac{};
+    // --------------------------------------- Beginning of time window ------------------------------------------
 
-    int32_t _gpsCycle{};
-    int32_t _gpsWeek{};
-    double _gpsTow{};
+    /// @brief Number of days at beginning of time window (Julien Date and Modified Julien Date)
+    int32_t _daysStart{};
+    /// @brief Decimal fraction of a day at beginning of time window (Julien Date and Modified Julien Date)
+    double _decFracStart{};
 
-    int32_t _year{};
-    int32_t _month{};
-    int32_t _day{};
-    int32_t _hour{};
-    int32_t _min{};
-    double _sec{};
+    /// @brief GPS cycle at beginning of time window
+    int32_t _gpsCycleStart{};
+    /// @brief GPS week at beginning of time window
+    int32_t _gpsWeekStart{};
+    /// @brief GPS Time of Week (in sec) at beginning of time window
+    double _gpsTowStart{};
 
+    /// @brief Year at beginning of time window
+    int32_t _yearStart{};
+    /// @brief Month at beginning of time window
+    int32_t _monthStart{};
+    /// @brief Day at beginning of time window
+    int32_t _dayStart{};
+    /// @brief Hour at beginning of time window
+    int32_t _hourStart{};
+    /// @brief Minute at beginning of time window
+    int32_t _minStart{};
+    /// @brief Second at beginning of time window
+    double _secStart{};
+
+    /// @brief Beginning of time window as a Modified Julien Date
     InsTime_MJD _mjdStart{ 0, 0.0 };
-    InsTime_MJD _mjdEnd{ 0, 0.0 };
+    /// @brief Beginning of time window as a Julien Date
     InsTime_JD _jdStart{ 0, 0.0 };
-    InsTime_JD _jdEnd{ 0, 0.0 };
+    /// @brief Beginning of time window as a YMDHMS date
     InsTime_YMDHMS _ymdhmsStart{ 0, 0, 0, 0, 0, 0.0 };
+    /// @brief Beginning of time window as a GPS time
     InsTime_GPSweekTow _gpsWeekTowStart{ 0, 0, 0.0 };
+
+    // ------------------------------------------ End of time window ---------------------------------------------
+
+    /// @brief Number of days at end of time window (Julien Date and Modified Julien Date)
+    int32_t _daysEnd{};
+    /// @brief Decimal fraction of a day at end of time window (Julien Date and Modified Julien Date)
+    double _decFracEnd{};
+
+    /// @brief GPS cycle at end of time window
+    int32_t _gpsCycleEnd{};
+    /// @brief GPS week at end of time window
+    int32_t _gpsWeekEnd{};
+    /// @brief GPS Time of Week (in sec) at end of time window
+    double _gpsTowEnd{};
+
+    /// @brief Year at end of time window
+    int32_t _yearEnd{};
+    /// @brief Month at end of time window
+    int32_t _monthEnd{};
+    /// @brief Day at end of time window
+    int32_t _dayEnd{};
+    /// @brief Hour at end of time window
+    int32_t _hourEnd{};
+    /// @brief Minute at end of time window
+    int32_t _minEnd{};
+    /// @brief Second at end of time window
+    double _secEnd{};
+
+    /// @brief End of time window as a Modified Julien Date
+    InsTime_MJD _mjdEnd{ 0, 0.0 };
+    /// @brief End of time window as a Julien Date
+    InsTime_JD _jdEnd{ 0, 0.0 };
+    /// @brief End of time window as a YMDHMS date
     InsTime_YMDHMS _ymdhmsEnd{ 0, 0, 0, 0, 0, 0.0 };
+    /// @brief End of time window as a GPS time
     InsTime_GPSweekTow _gpsWeekTowEnd{ 0, 0, 0.0 };
 };
 } // namespace NAV
