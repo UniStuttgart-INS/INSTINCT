@@ -537,27 +537,45 @@ void NAV::TimeWindow::afterDeleteLink(OutputPin& startPin, InputPin& endPin)
 
 void NAV::TimeWindow::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    [[maybe_unused]] auto bla = queue.at(0); // FIXME: dummy
-
     // Select the correct data type and make a copy of the node data to modify
     if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == ImuObs::type())
     {
-        // receiveImuObs(std::make_shared<ImuObs>(*std::static_pointer_cast<const ImuObs>(queue.extract_front()))); // TODO: enable
+        receiveImuObs(std::make_shared<ImuObs>(*std::static_pointer_cast<const ImuObs>(queue.extract_front())));
     }
     else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type())
     {
-        // receivePosVelAtt(std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(queue.extract_front()))); // TODO: enable
+        receivePosVelAtt(std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(queue.extract_front())));
     }
 }
 
-// void NAV::TimeWindow::receiveImuObs(const std::shared_ptr<ImuObs>& imuObs)
-// {
-//     if (imuObs) // FIXME: dummy
-//     {}
-// }
+void NAV::TimeWindow::receiveImuObs(const std::shared_ptr<ImuObs>& imuObs)
+{
+    if (imuObs->insTime >= _startTime && imuObs->insTime <= _endTime)
+    {
+        invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, imuObs);
+    }
+    if (imuObs->insTime < _startTime)
+    {
+        LOG_DEBUG("{}: insTime < startTime --> message skipped", nameId());
+    }
+    if (imuObs->insTime > _endTime)
+    {
+        LOG_DEBUG("{}: insTime > endTime --> message skipped", nameId());
+    }
+}
 
-// void NAV::TimeWindow::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt)
-// {
-//     if (posVelAtt) // FIXME: dummy
-//     {}
-// }
+void NAV::TimeWindow::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt)
+{
+    if (posVelAtt->insTime >= _startTime && posVelAtt->insTime <= _endTime)
+    {
+        invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, posVelAtt);
+    }
+    if (posVelAtt->insTime < _startTime)
+    {
+        LOG_DEBUG("{}: insTime < startTime --> message skipped", nameId());
+    }
+    if (posVelAtt->insTime > _endTime)
+    {
+        LOG_DEBUG("{}: insTime > endTime --> message skipped", nameId());
+    }
+}

@@ -85,9 +85,9 @@ class TimeWindow : public Node
     /// @param[in] pinIdx Index of the pin the data is received on
     void receiveObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
-    // /// @brief Callback when receiving an ImuObs
-    // /// @param[in] imuObs Copied data to modify and send out again
-    // void receiveImuObs(const std::shared_ptr<ImuObs>& imuObs);
+    /// @brief Callback when receiving an ImuObs
+    /// @param[in] imuObs Copied data to modify and send out again
+    void receiveImuObs(const std::shared_ptr<ImuObs>& imuObs);
 
     // TODO: Add 'GnssObs'?
     //  /// @brief Callback when receiving an ImuObs
@@ -96,7 +96,9 @@ class TimeWindow : public Node
 
     /// @brief Callback when receiving an ImuObs
     /// @param[in] posVelAtt Copied data to modify and send out again
-    // void receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt);
+    void receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt);
+
+    // TODO: 'PosVel' necessary?
 
     /// @brief Beginning of time window
     InsTime _startTime;
