@@ -326,18 +326,149 @@ json NAV::TimeWindow::save() const
 
     json j;
 
-    // TODO: fill
+    j["startTime"] = _startTime;
+    j["endTime"] = _endTime;
+    j["timeFormat"] = _timeFormat;
+    j["daysStart"] = _daysStart;
+    j["decFracStart"] = _decFracStart;
+    j["gpsCycleStart"] = _gpsCycleStart;
+    j["gpsWeekStart"] = _gpsWeekStart;
+    j["gpsTowStart"] = _gpsTowStart;
+    j["yearStart"] = _yearStart;
+    j["monthStart"] = _monthStart;
+    j["dayStart"] = _dayStart;
+    j["hourStart"] = _hourStart;
+    j["minStart"] = _minStart;
+    j["secStart"] = _secStart;
+    j["mjdStart"] = _mjdStart;
+    j["jdStart"] = _jdStart;
+    j["ymdhmsStart"] = _ymdhmsStart;
+    j["gpsWeekTowStart"] = _gpsWeekTowStart;
+    j["daysEnd"] = _daysEnd;
+    j["decFracEnd"] = _decFracEnd;
+    j["gpsCycleEnd"] = _gpsCycleEnd;
+    j["gpsWeekEnd"] = _gpsWeekEnd;
+    j["gpsTowEnd"] = _gpsTowEnd;
+    j["yearEnd"] = _yearEnd;
+    j["monthEnd"] = _monthEnd;
+    j["dayEnd"] = _dayEnd;
+    j["hourEnd"] = _hourEnd;
+    j["minEnd"] = _minEnd;
+    j["secEnd"] = _secEnd;
+    j["mjdEnd"] = _mjdEnd;
+    j["jdEnd"] = _jdEnd;
+    j["ymdhmsEnd"] = _ymdhmsEnd;
+    j["gpsWeekTowEnd"] = _gpsWeekTowEnd;
+    // TODO: extend?
 
     return j;
 }
 
 void NAV::TimeWindow::restore(json const& j)
 {
-    // TODO: fill
-
-    if (j) // FIXME: dummy
-    {}
     LOG_TRACE("{}: called", nameId());
+
+    if (j.contains("startTime"))
+    {
+        j.at("startTime").get_to(_startTime);
+    }
+    if (j.contains("endTime"))
+    {
+        j.at("endTime").get_to(_endTime);
+    }
+    if (j.contains("timeFormat"))
+    {
+        j.at("timeFormat").get_to(_timeFormat);
+    }
+    if (j.contains("daysStart"))
+    {
+        j.at("daysStart").get_to(_daysStart);
+    }
+    if (j.contains("decFracStart"))
+    {
+        j.at("decFracStart").get_to(_decFracStart);
+    }
+    if (j.contains("gpsCycleStart"))
+    {
+        j.at("gpsCycleStart").get_to(_gpsCycleStart);
+    }
+    if (j.contains("gpsWeekStart"))
+    {
+        j.at("gpsWeekStart").get_to(_gpsWeekStart);
+    }
+    if (j.contains("gpsTowStart"))
+    {
+        j.at("gpsTowStart").get_to(_gpsTowStart);
+    }
+    if (j.contains("yearStart"))
+    {
+        j.at("yearStart").get_to(_yearStart);
+    }
+    if (j.contains("monthStart"))
+    {
+        j.at("monthStart").get_to(_monthStart);
+    }
+    if (j.contains("dayStart"))
+    {
+        j.at("dayStart").get_to(_dayStart);
+    }
+    if (j.contains("hourStart"))
+    {
+        j.at("hourStart").get_to(_hourStart);
+    }
+    if (j.contains("minStart"))
+    {
+        j.at("minStart").get_to(_minStart);
+    }
+    if (j.contains("secStart"))
+    {
+        j.at("secStart").get_to(_secStart);
+    }
+    if (j.contains("daysEnd"))
+    {
+        j.at("daysEnd").get_to(_daysEnd);
+    }
+    if (j.contains("decFracEnd"))
+    {
+        j.at("decFracEnd").get_to(_decFracEnd);
+    }
+    if (j.contains("gpsCycleEnd"))
+    {
+        j.at("gpsCycleEnd").get_to(_gpsCycleEnd);
+    }
+    if (j.contains("gpsWeekEnd"))
+    {
+        j.at("gpsWeekEnd").get_to(_gpsWeekEnd);
+    }
+    if (j.contains("gpsTowEnd"))
+    {
+        j.at("gpsTowEnd").get_to(_gpsTowEnd);
+    }
+    if (j.contains("yearEnd"))
+    {
+        j.at("yearEnd").get_to(_yearEnd);
+    }
+    if (j.contains("monthEnd"))
+    {
+        j.at("monthEnd").get_to(_monthEnd);
+    }
+    if (j.contains("dayEnd"))
+    {
+        j.at("dayEnd").get_to(_dayEnd);
+    }
+    if (j.contains("hourEnd"))
+    {
+        j.at("hourEnd").get_to(_hourEnd);
+    }
+    if (j.contains("minEnd"))
+    {
+        j.at("minEnd").get_to(_minEnd);
+    }
+    if (j.contains("secEnd"))
+    {
+        j.at("secEnd").get_to(_secEnd);
+    }
+    // TODO: extend?
 }
 
 bool NAV::TimeWindow::resetNode()
