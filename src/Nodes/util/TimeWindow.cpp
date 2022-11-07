@@ -126,11 +126,13 @@ void NAV::TimeWindow::guiConfig()
             // store values
             if (_timeFormat == TimeFormats::MJD)
             {
-                _mjdStart = InsTime_MJD{ _daysStart, _decFracStart };
+                _startTime = InsTime(InsTime_MJD{ _daysStart, _decFracStart });
+                _endTime = InsTime(InsTime_MJD{ _dayEnd, _decFracEnd });
             }
             if (_timeFormat == TimeFormats::JD)
             {
-                _jdStart = InsTime_JD{ _daysStart, _decFracStart };
+                _startTime = InsTime(InsTime_JD{ _daysStart, _decFracStart });
+                _endTime = InsTime(InsTime_JD{ _daysEnd, _decFracEnd });
             }
         }
         if (_timeFormat == TimeFormats::GPST)
@@ -193,6 +195,10 @@ void NAV::TimeWindow::guiConfig()
                 LOG_DEBUG("{}: end - GPS ToW = {}", nameId(), _gpsTowEnd);
                 flow::ApplyChanges();
             }
+
+            // store values
+            _startTime = InsTime(InsTime_GPSweekTow{ _gpsCycleStart, _gpsWeekStart, _gpsTowStart });
+            _endTime = InsTime(InsTime_GPSweekTow{ _gpsCycleEnd, _gpsWeekEnd, _gpsTowEnd });
         }
         if (_timeFormat == TimeFormats::YMDHMS)
         {
@@ -314,6 +320,10 @@ void NAV::TimeWindow::guiConfig()
                 LOG_DEBUG("{}: end - Second = {}", nameId(), _secEnd);
                 flow::ApplyChanges();
             }
+
+            // store values
+            _startTime = InsTime(InsTime_YMDHMS{ _yearStart, _monthStart, _dayStart, _hourStart, _minStart, _secStart });
+            _endTime = InsTime(InsTime_YMDHMS{ _yearEnd, _monthEnd, _dayEnd, _hourEnd, _minEnd, _secEnd });
         }
 
         ImGui::EndTable();
@@ -340,10 +350,6 @@ json NAV::TimeWindow::save() const
     j["hourStart"] = _hourStart;
     j["minStart"] = _minStart;
     j["secStart"] = _secStart;
-    j["mjdStart"] = _mjdStart;
-    j["jdStart"] = _jdStart;
-    j["ymdhmsStart"] = _ymdhmsStart;
-    j["gpsWeekTowStart"] = _gpsWeekTowStart;
     j["daysEnd"] = _daysEnd;
     j["decFracEnd"] = _decFracEnd;
     j["gpsCycleEnd"] = _gpsCycleEnd;
@@ -355,10 +361,6 @@ json NAV::TimeWindow::save() const
     j["hourEnd"] = _hourEnd;
     j["minEnd"] = _minEnd;
     j["secEnd"] = _secEnd;
-    j["mjdEnd"] = _mjdEnd;
-    j["jdEnd"] = _jdEnd;
-    j["ymdhmsEnd"] = _ymdhmsEnd;
-    j["gpsWeekTowEnd"] = _gpsWeekTowEnd;
     // TODO: extend?
 
     return j;
@@ -538,44 +540,17 @@ void NAV::TimeWindow::afterDeleteLink(OutputPin& startPin, InputPin& endPin)
 void NAV::TimeWindow::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     // Select the correct data type and make a copy of the node data to modify
-    if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == ImuObs::type())
+    auto obs = queue.extract_front();
+    if (obs->insTime >= _startTime && obs->insTime <= _endTime)
     {
-        receiveImuObs(std::make_shared<ImuObs>(*std::static_pointer_cast<const ImuObs>(queue.extract_front())));
+        invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, obs);
     }
-    else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type())
+    else if (obs->insTime < _startTime)
     {
-        receivePosVelAtt(std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(queue.extract_front())));
+        LOG_DATA("{}: insTime < startTime --> message skipped", nameId());
     }
-}
-
-void NAV::TimeWindow::receiveImuObs(const std::shared_ptr<ImuObs>& imuObs)
-{
-    if (imuObs->insTime >= _startTime && imuObs->insTime <= _endTime)
+    else if (obs->insTime > _endTime)
     {
-        invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, imuObs);
-    }
-    if (imuObs->insTime < _startTime)
-    {
-        LOG_DEBUG("{}: insTime < startTime --> message skipped", nameId());
-    }
-    if (imuObs->insTime > _endTime)
-    {
-        LOG_DEBUG("{}: insTime > endTime --> message skipped", nameId());
-    }
-}
-
-void NAV::TimeWindow::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt)
-{
-    if (posVelAtt->insTime >= _startTime && posVelAtt->insTime <= _endTime)
-    {
-        invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, posVelAtt);
-    }
-    if (posVelAtt->insTime < _startTime)
-    {
-        LOG_DEBUG("{}: insTime < startTime --> message skipped", nameId());
-    }
-    if (posVelAtt->insTime > _endTime)
-    {
-        LOG_DEBUG("{}: insTime > endTime --> message skipped", nameId());
+        LOG_DATA("{}: insTime > endTime --> message skipped", nameId());
     }
 }

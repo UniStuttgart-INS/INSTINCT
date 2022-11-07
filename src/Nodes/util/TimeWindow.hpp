@@ -145,15 +145,6 @@ class TimeWindow : public Node
     /// @brief Second at beginning of time window
     double _secStart{};
 
-    /// @brief Beginning of time window as a Modified Julien Date
-    InsTime_MJD _mjdStart{ 0, 0.0 };
-    /// @brief Beginning of time window as a Julien Date
-    InsTime_JD _jdStart{ 0, 0.0 };
-    /// @brief Beginning of time window as a YMDHMS date
-    InsTime_YMDHMS _ymdhmsStart{ 0, 0, 0, 0, 0, 0.0 };
-    /// @brief Beginning of time window as a GPS time
-    InsTime_GPSweekTow _gpsWeekTowStart{ 0, 0, 0.0 };
-
     // ------------------------------------------ End of time window ---------------------------------------------
 
     /// @brief Number of days at end of time window (Julien Date and Modified Julien Date)
@@ -180,14 +171,5 @@ class TimeWindow : public Node
     int32_t _minEnd{};
     /// @brief Second at end of time window
     double _secEnd{};
-
-    /// @brief End of time window as a Modified Julien Date
-    InsTime_MJD _mjdEnd{ 0, 0.0 };
-    /// @brief End of time window as a Julien Date
-    InsTime_JD _jdEnd{ 0, 0.0 };
-    /// @brief End of time window as a YMDHMS date
-    InsTime_YMDHMS _ymdhmsEnd{ 0, 0, 0, 0, 0, 0.0 };
-    /// @brief End of time window as a GPS time
-    InsTime_GPSweekTow _gpsWeekTowEnd{ 0, 0, 0.0 };
 };
 } // namespace NAV
