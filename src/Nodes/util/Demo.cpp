@@ -116,7 +116,7 @@ std::string NAV::Demo::type() const
 
 std::string NAV::Demo::category()
 {
-    return "Demo";
+    return "Utility";
 }
 
 void NAV::Demo::guiConfig()
