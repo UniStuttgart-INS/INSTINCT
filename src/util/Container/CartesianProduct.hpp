@@ -159,4 +159,17 @@ void cartesian_product(Function function, std::array<SubList, N> list)
     std::apply([function](auto... xs) { cartesian_product(function, std::forward<decltype(xs)>(xs)...); }, list);
 }
 
+template<typename SubList, size_t N, typename Function>
+void cartesian_product_idx(Function function, std::array<SubList, N> list)
+{
+    std::array<std::vector<size_t>, N> indices;
+    for (size_t i = 0; i < list.size(); i++)
+    {
+        indices[i] = std::vector<size_t>(list[i].size());
+        std::iota(indices[i].begin(), indices[i].end(), 0);
+    }
+
+    std::apply([function](auto... xs) { cartesian_product(function, std::forward<decltype(xs)>(xs)...); }, indices);
+}
+
 } // namespace NAV
