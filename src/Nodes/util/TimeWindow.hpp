@@ -15,9 +15,6 @@
 
 #include "internal/Node/Node.hpp"
 
-#include "NodeData/IMU/ImuObs.hpp"
-#include "NodeData/State/PosVelAtt.hpp"
-
 #include "Navigation/Time/InsTime.hpp"
 
 #include <Eigen/Core>
@@ -64,6 +61,9 @@ class TimeWindow : public Node
   private:
     constexpr static size_t OUTPUT_PORT_INDEX_FLOW = 0; ///< @brief Flow
     constexpr static size_t INPUT_PORT_INDEX_FLOW = 0;  ///< @brief Flow
+
+    /// @brief Initialize the node
+    bool initialize() override;
 
     /// @brief Called when a new link was established
     /// @param[in] startPin Pin where the link starts
