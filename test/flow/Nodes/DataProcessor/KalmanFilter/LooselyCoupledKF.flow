@@ -85,11 +85,6 @@
             "id": 555,
             "startPinId": 339
         },
-        "link-556": {
-            "endPinId": 19,
-            "id": 556,
-            "startPinId": 339
-        },
         "link-557": {
             "endPinId": 227,
             "id": 557,
@@ -113,11 +108,6 @@
         "link-585": {
             "endPinId": 4,
             "id": 585,
-            "startPinId": 347
-        },
-        "link-586": {
-            "endPinId": 18,
-            "id": 586,
             "startPinId": 347
         }
     },
@@ -182,38 +172,29 @@
                     0.0,
                     0.0
                 ],
-                "overridePosition": false,
+                "overridePosition": true,
                 "overrideRollPitchYaw": [
-                    false,
-                    false,
-                    false
+                    true,
+                    true,
+                    true
                 ],
                 "overrideValuesPosition_lla": [
-                    0.0,
-                    0.0,
-                    0.0
+                    48.780704498291016,
+                    9.171577453613281,
+                    325.031005859375
                 ],
                 "overrideValuesRollPitchYaw": [
-                    0.0,
-                    0.0,
-                    0.0
+                    0.42855000495910645,
+                    -5.278240203857422,
+                    -61.86539840698242
                 ],
-                "overrideVelocity": false,
+                "overrideVelocity": true,
                 "positionAccuracyThreshold": 10.0,
                 "velocityAccuracyThreshold": 10.0
             },
             "enabled": true,
             "id": 21,
-            "inputPins": [
-                {
-                    "id": 18,
-                    "name": "ImuObs"
-                },
-                {
-                    "id": 19,
-                    "name": "PosVelAttInit"
-                }
-            ],
+            "inputPins": [],
             "kind": "Blueprint",
             "name": "PosVelAttInitializer",
             "outputPins": [
@@ -223,8 +204,8 @@
                 }
             ],
             "pos": {
-                "x": 731.0,
-                "y": -434.0
+                "x": 794.0,
+                "y": -418.0
             },
             "size": {
                 "x": 0.0,
@@ -5426,8 +5407,8 @@
                 }
             ],
             "pos": {
-                "x": 187.0,
-                "y": -626.0
+                "x": 219.0,
+                "y": -562.0
             },
             "size": {
                 "x": 0.0,
@@ -5532,8 +5513,8 @@
                 }
             ],
             "pos": {
-                "x": 228.0,
-                "y": -338.0
+                "x": 260.0,
+                "y": -274.0
             },
             "size": {
                 "x": 0.0,
@@ -5564,8 +5545,8 @@
                 }
             ],
             "pos": {
-                "x": 78.0,
-                "y": -530.0
+                "x": 110.0,
+                "y": -466.0
             },
             "size": {
                 "x": 0.0,
@@ -5596,8 +5577,8 @@
                 }
             ],
             "pos": {
-                "x": 114.0,
-                "y": -434.0
+                "x": 146.0,
+                "y": -370.0
             },
             "size": {
                 "x": 0.0,
@@ -5628,8 +5609,8 @@
                 }
             ],
             "pos": {
-                "x": 520.0,
-                "y": -528.0
+                "x": 552.0,
+                "y": -464.0
             },
             "size": {
                 "x": 0.0,
@@ -5794,8 +5775,8 @@
                 }
             ],
             "pos": {
-                "x": 224.0,
-                "y": -754.0
+                "x": 256.0,
+                "y": -690.0
             },
             "size": {
                 "x": 0.0,
