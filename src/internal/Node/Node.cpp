@@ -318,8 +318,9 @@ bool NAV::Node::doReinitialize(bool wait)
         break;
     case State::DoInitialize:
     case State::Initializing:
-    case State::Deinitialized:
         break;
+    case State::Deinitialized:
+        return doInitialize(wait);
     case State::Initialized:
         _state = State::DoDeinitialize;
         _reinitialize = true;
