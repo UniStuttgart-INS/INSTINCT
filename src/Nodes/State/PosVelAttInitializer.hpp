@@ -175,6 +175,8 @@ class PosVelAttInitializer : public Node
     /// Whether the states are initialized (pos, vel, att, messages send)
     std::array<bool, 4> _posVelAttInitialized = { false, false, false, false };
 
+    /// Initialization time
+    InsTime _initTime;
     /// Initialized Quaternion body to navigation frame (roll, pitch, yaw)
     Eigen::Quaterniond _n_Quat_b_init;
     /// Position in ECEF coordinates
