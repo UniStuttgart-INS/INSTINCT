@@ -13,19 +13,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "internal/gui/widgets/imgui_ex.hpp"
-#include "internal/gui/widgets/InputWithUnit.hpp"
-#include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
-
-#include <imgui_internal.h>
-
-// ---------------------------------------------------------- Private variabels ------------------------------------------------------------
-
-namespace NAV
-{
-/// List of supported data identifiers
-const std::vector<std::string> supportedDataIdentifier{ ImuObs::type(), PosVelAtt::type() };
-} // namespace NAV
 
 // ---------------------------------------------------------- Member functions -------------------------------------------------------------
 
@@ -35,9 +23,9 @@ NAV::TimeWindow::TimeWindow() : Node(typeStatic())
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 362, 263 };
 
-    nm::CreateInputPin(this, "Input", Pin::Type::Flow, supportedDataIdentifier, &TimeWindow::receiveObs);
+    nm::CreateInputPin(this, "Input", Pin::Type::Flow, { NodeData::type() }, &TimeWindow::receiveObs);
 
-    nm::CreateOutputPin(this, "Output", Pin::Type::Flow, supportedDataIdentifier);
+    nm::CreateOutputPin(this, "Output", Pin::Type::Flow, { NodeData::type() });
 }
 
 NAV::TimeWindow::~TimeWindow()
@@ -57,7 +45,7 @@ std::string NAV::TimeWindow::type() const
 
 std::string NAV::TimeWindow::category()
 {
-    return "DataProcessor";
+    return "Utility";
 }
 
 void NAV::TimeWindow::guiConfig()
@@ -69,6 +57,7 @@ void NAV::TimeWindow::guiConfig()
     {
         LOG_DEBUG("{}: Time format changed to {}", nameId(), _timeFormat);
         flow::ApplyChanges();
+        doReinitialize();
     }
 
     ImGui::Separator();
@@ -94,6 +83,7 @@ void NAV::TimeWindow::guiConfig()
             {
                 LOG_DEBUG("{}: beginning - days = {}", nameId(), _daysStart);
                 flow::ApplyChanges();
+                doReinitialize();
             }
             ImGui::TableSetColumnIndex(2);
             ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
@@ -101,6 +91,7 @@ void NAV::TimeWindow::guiConfig()
             {
                 LOG_DEBUG("{}: end - days = {}", nameId(), _daysEnd);
                 flow::ApplyChanges();
+                doReinitialize();
             }
 
             // Decimal Fraction of a day
@@ -114,6 +105,7 @@ void NAV::TimeWindow::guiConfig()
             {
                 LOG_DEBUG("{}: beginning - decimal fraction = {}", nameId(), _decFracStart);
                 flow::ApplyChanges();
+                doReinitialize();
             }
             ImGui::TableSetColumnIndex(2);
             ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
@@ -121,21 +113,10 @@ void NAV::TimeWindow::guiConfig()
             {
                 LOG_DEBUG("{}: end - decimal fraction = {}", nameId(), _decFracEnd);
                 flow::ApplyChanges();
-            }
-
-            // store values
-            if (_timeFormat == TimeFormats::MJD)
-            {
-                _startTime = InsTime(InsTime_MJD{ _daysStart, _decFracStart });
-                _endTime = InsTime(InsTime_MJD{ _dayEnd, _decFracEnd });
-            }
-            if (_timeFormat == TimeFormats::JD)
-            {
-                _startTime = InsTime(InsTime_JD{ _daysStart, _decFracStart });
-                _endTime = InsTime(InsTime_JD{ _daysEnd, _decFracEnd });
+                doReinitialize();
             }
         }
-        if (_timeFormat == TimeFormats::GPST)
+        else if (_timeFormat == TimeFormats::GPST)
         {
             // GPS Cycle
             ImGui::TableSetColumnIndex(0);
@@ -147,6 +128,7 @@ void NAV::TimeWindow::guiConfig()
             {
                 LOG_DEBUG("{}: beginning - GPS Cycle = {}", nameId(), _gpsCycleStart);
                 flow::ApplyChanges();
+                doReinitialize();
             }
             ImGui::TableSetColumnIndex(2);
             ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
@@ -154,6 +136,7 @@ void NAV::TimeWindow::guiConfig()
             {
                 LOG_DEBUG("{}: end - GPS Cycle = {}", nameId(), _gpsCycleEnd);
                 flow::ApplyChanges();
+                doReinitialize();
             }
 
             // GPS Week
@@ -167,6 +150,7 @@ void NAV::TimeWindow::guiConfig()
             {
                 LOG_DEBUG("{}: beginning - GPS Week = {}", nameId(), _gpsWeekStart);
                 flow::ApplyChanges();
+                doReinitialize();
             }
             ImGui::TableSetColumnIndex(2);
             ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
@@ -174,6 +158,7 @@ void NAV::TimeWindow::guiConfig()
             {
                 LOG_DEBUG("{}: end - GPS Week = {}", nameId(), _gpsWeekEnd);
                 flow::ApplyChanges();
+                doReinitialize();
             }
 
             // GPS ToW
@@ -187,6 +172,7 @@ void NAV::TimeWindow::guiConfig()
             {
                 LOG_DEBUG("{}: beginning - GPS ToW = {}", nameId(), _gpsTowStart);
                 flow::ApplyChanges();
+                doReinitialize();
             }
             ImGui::TableSetColumnIndex(2);
             ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
@@ -194,13 +180,10 @@ void NAV::TimeWindow::guiConfig()
             {
                 LOG_DEBUG("{}: end - GPS ToW = {}", nameId(), _gpsTowEnd);
                 flow::ApplyChanges();
+                doReinitialize();
             }
-
-            // store values
-            _startTime = InsTime(InsTime_GPSweekTow{ _gpsCycleStart, _gpsWeekStart, _gpsTowStart });
-            _endTime = InsTime(InsTime_GPSweekTow{ _gpsCycleEnd, _gpsWeekEnd, _gpsTowEnd });
         }
-        if (_timeFormat == TimeFormats::YMDHMS)
+        else if (_timeFormat == TimeFormats::YMDHMS)
         {
             // Year
             ImGui::TableSetColumnIndex(0);
@@ -212,6 +195,7 @@ void NAV::TimeWindow::guiConfig()
             {
                 LOG_DEBUG("{}: beginning - Year = {}", nameId(), _yearStart);
                 flow::ApplyChanges();
+                doReinitialize();
             }
             ImGui::TableSetColumnIndex(2);
             ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
@@ -219,6 +203,7 @@ void NAV::TimeWindow::guiConfig()
             {
                 LOG_DEBUG("{}: end - Year = {}", nameId(), _yearEnd);
                 flow::ApplyChanges();
+                doReinitialize();
             }
 
             // Month
@@ -232,6 +217,7 @@ void NAV::TimeWindow::guiConfig()
             {
                 LOG_DEBUG("{}: beginning - Month = {}", nameId(), _monthStart);
                 flow::ApplyChanges();
+                doReinitialize();
             }
             ImGui::TableSetColumnIndex(2);
             ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
@@ -239,6 +225,7 @@ void NAV::TimeWindow::guiConfig()
             {
                 LOG_DEBUG("{}: end - Month = {}", nameId(), _monthEnd);
                 flow::ApplyChanges();
+                doReinitialize();
             }
 
             // Day
@@ -252,6 +239,7 @@ void NAV::TimeWindow::guiConfig()
             {
                 LOG_DEBUG("{}: beginning - Day = {}", nameId(), _dayStart);
                 flow::ApplyChanges();
+                doReinitialize();
             }
             ImGui::TableSetColumnIndex(2);
             ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
@@ -259,6 +247,7 @@ void NAV::TimeWindow::guiConfig()
             {
                 LOG_DEBUG("{}: end - Day = {}", nameId(), _dayEnd);
                 flow::ApplyChanges();
+                doReinitialize();
             }
 
             // Hour
@@ -272,6 +261,7 @@ void NAV::TimeWindow::guiConfig()
             {
                 LOG_DEBUG("{}: beginning - Hour = {}", nameId(), _hourStart);
                 flow::ApplyChanges();
+                doReinitialize();
             }
             ImGui::TableSetColumnIndex(2);
             ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
@@ -279,6 +269,7 @@ void NAV::TimeWindow::guiConfig()
             {
                 LOG_DEBUG("{}: end - Hour = {}", nameId(), _hourEnd);
                 flow::ApplyChanges();
+                doReinitialize();
             }
 
             // Minute
@@ -292,6 +283,7 @@ void NAV::TimeWindow::guiConfig()
             {
                 LOG_DEBUG("{}: beginning - Minute = {}", nameId(), _minStart);
                 flow::ApplyChanges();
+                doReinitialize();
             }
             ImGui::TableSetColumnIndex(2);
             ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
@@ -299,6 +291,7 @@ void NAV::TimeWindow::guiConfig()
             {
                 LOG_DEBUG("{}: end - Minute = {}", nameId(), _minEnd);
                 flow::ApplyChanges();
+                doReinitialize();
             }
 
             // Second
@@ -312,6 +305,7 @@ void NAV::TimeWindow::guiConfig()
             {
                 LOG_DEBUG("{}: beginning - Second = {}", nameId(), _secStart);
                 flow::ApplyChanges();
+                doReinitialize();
             }
             ImGui::TableSetColumnIndex(2);
             ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
@@ -319,11 +313,8 @@ void NAV::TimeWindow::guiConfig()
             {
                 LOG_DEBUG("{}: end - Second = {}", nameId(), _secEnd);
                 flow::ApplyChanges();
+                doReinitialize();
             }
-
-            // store values
-            _startTime = InsTime(InsTime_YMDHMS{ _yearStart, _monthStart, _dayStart, _hourStart, _minStart, _secStart });
-            _endTime = InsTime(InsTime_YMDHMS{ _yearEnd, _monthEnd, _dayEnd, _hourEnd, _minEnd, _secEnd });
         }
 
         ImGui::EndTable();
@@ -336,8 +327,6 @@ json NAV::TimeWindow::save() const
 
     json j;
 
-    j["startTime"] = _startTime;
-    j["endTime"] = _endTime;
     j["timeFormat"] = _timeFormat;
     j["daysStart"] = _daysStart;
     j["decFracStart"] = _decFracStart;
@@ -369,14 +358,6 @@ void NAV::TimeWindow::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (j.contains("startTime"))
-    {
-        j.at("startTime").get_to(_startTime);
-    }
-    if (j.contains("endTime"))
-    {
-        j.at("endTime").get_to(_endTime);
-    }
     if (j.contains("timeFormat"))
     {
         j.at("timeFormat").get_to(_timeFormat);
@@ -471,6 +452,44 @@ void NAV::TimeWindow::restore(json const& j)
     }
 }
 
+bool NAV::TimeWindow::initialize()
+{
+    LOG_TRACE("{}: called", nameId());
+
+    InsTime startTime;
+    InsTime endTime;
+
+    switch (_timeFormat)
+    {
+    case TimeFormats::MJD:
+        startTime = InsTime(InsTime_MJD{ _daysStart, _decFracStart });
+        endTime = InsTime(InsTime_MJD{ _daysEnd, _decFracEnd });
+        break;
+    case TimeFormats::JD:
+        startTime = InsTime(InsTime_JD{ _daysStart, _decFracStart });
+        endTime = InsTime(InsTime_JD{ _daysEnd, _decFracEnd });
+        break;
+    case TimeFormats::GPST:
+        startTime = InsTime(InsTime_GPSweekTow{ _gpsCycleStart, _gpsWeekStart, _gpsTowStart });
+        endTime = InsTime(InsTime_GPSweekTow{ _gpsCycleEnd, _gpsWeekEnd, _gpsTowEnd });
+        break;
+    case TimeFormats::YMDHMS:
+        startTime = InsTime(InsTime_YMDHMS{ _yearStart, _monthStart, _dayStart, _hourStart, _minStart, _secStart });
+        endTime = InsTime(InsTime_YMDHMS{ _yearEnd, _monthEnd, _dayEnd, _hourEnd, _minEnd, _secEnd });
+        break;
+    }
+
+    if (startTime < endTime) // Everything is okay
+    {
+        _startTime = startTime;
+        _endTime = endTime;
+        return true;
+    }
+
+    LOG_ERROR("{}: startTime >= endTime --> TimeWindow blocks all packages. Please reconfigure the node.", nameId());
+    return false;
+}
+
 void NAV::TimeWindow::afterCreateLink(OutputPin& startPin, InputPin& endPin)
 {
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
@@ -523,17 +542,12 @@ void NAV::TimeWindow::afterDeleteLink(OutputPin& startPin, InputPin& endPin)
         || (startPin.parentNode->id != id                             // Link on Input port is removed
             && !outputPins.at(OUTPUT_PORT_INDEX_FLOW).isPinLinked())) //     and the Output port is not linked
     {
-        outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = supportedDataIdentifier;
+        outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = { NodeData::type() };
     }
 }
 
 void NAV::TimeWindow::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    if (_startTime >= _endTime)
-    {
-        LOG_WARN("{}: startTime >= endTime --> timeWindow blocks all packages", nameId());
-    }
-
     // Check whether timestamp is within the time window
     auto obs = queue.extract_front();
     if (obs->insTime >= _startTime && obs->insTime <= _endTime)

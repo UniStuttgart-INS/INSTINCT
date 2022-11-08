@@ -37,7 +37,9 @@ TEST_CASE("[TimeWindow][flow] Simulate IMU and cut off start and end time", "[Ti
     //                                              TimeWindow.flow
     // ###########################################################################################################
     //
-    // ImuSimulator (4) |>--->| (1) TimeWindow (2) |>--->| (8) Plot
+    //  ImuSimulator (6)             TimeWindow (3)                           Plot (13)
+    //     (4) ImuObs |>  ---(7)-->  |> Input (1)  (2) Output |>  ---(14)-->  |> Pin 1 (8)
+    //  (5) PosVelAtt |>
     //
     // ###########################################################################################################
 
