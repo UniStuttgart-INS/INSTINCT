@@ -1,13 +1,11 @@
-/// This file is part of INSTINCT, the INS Toolkit for Integrated
-/// Navigation Concepts and Training by the Institute of Navigation of
-/// the University of Stuttgart, Germany.
-///
-/// This Source Code Form is subject to the terms of the Mozilla Public
-/// License, v. 2.0. If a copy of the MPL was not distributed with this
-/// file, You can obtain one at https://mozilla.org/MPL/2.0/.
-///
-/// <-- KEEP ONE EMPTY LINE HERE AND MAKE LICENSE COMMENTS only 2 slashes '//'
-///
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file TimeWindow.hpp
 /// @brief Limits measurement data from any source to a user-defined timewindow
 /// @author M. Maier (marcel.maier@ins.uni-stuttgart.de)
@@ -67,9 +65,6 @@ class TimeWindow : public Node
     constexpr static size_t OUTPUT_PORT_INDEX_FLOW = 0; ///< @brief Flow
     constexpr static size_t INPUT_PORT_INDEX_FLOW = 0;  ///< @brief Flow
 
-    /// @brief Resets the node. It is guaranteed that the node is initialized when this is called.
-    bool resetNode() override;
-
     /// @brief Called when a new link was established
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
@@ -84,21 +79,6 @@ class TimeWindow : public Node
     /// @param[in] queue Queue with all the received data messages
     /// @param[in] pinIdx Index of the pin the data is received on
     void receiveObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
-
-    /// @brief Callback when receiving an ImuObs
-    /// @param[in] imuObs Copied data to modify and send out again
-    void receiveImuObs(const std::shared_ptr<ImuObs>& imuObs);
-
-    // TODO: Add 'GnssObs'?
-    //  /// @brief Callback when receiving an ImuObs
-    //  /// @param[in] gnssObs Copied data to modify and send out again
-    //  void receiveGnssObs(const std::shared_ptr<GnssObs>& gnssObs);
-
-    /// @brief Callback when receiving an ImuObs
-    /// @param[in] posVelAtt Copied data to modify and send out again
-    void receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt);
-
-    // TODO: 'PosVel' necessary?
 
     /// @brief Beginning of time window
     InsTime _startTime;

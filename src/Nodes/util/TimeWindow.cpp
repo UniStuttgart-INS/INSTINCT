@@ -361,7 +361,6 @@ json NAV::TimeWindow::save() const
     j["hourEnd"] = _hourEnd;
     j["minEnd"] = _minEnd;
     j["secEnd"] = _secEnd;
-    // TODO: extend?
 
     return j;
 }
@@ -470,15 +469,6 @@ void NAV::TimeWindow::restore(json const& j)
     {
         j.at("secEnd").get_to(_secEnd);
     }
-    // TODO: extend?
-}
-
-bool NAV::TimeWindow::resetNode()
-{
-    // TODO: reset
-    LOG_TRACE("{}: called", nameId());
-
-    return true;
 }
 
 void NAV::TimeWindow::afterCreateLink(OutputPin& startPin, InputPin& endPin)
@@ -544,7 +534,7 @@ void NAV::TimeWindow::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* 
         LOG_WARN("{}: startTime >= endTime --> timeWindow blocks all packages", nameId());
     }
 
-    // Select the correct data type and make a copy of the node data to modify
+    // Check whether timestamp is within the time window
     auto obs = queue.extract_front();
     if (obs->insTime >= _startTime && obs->insTime <= _endTime)
     {
