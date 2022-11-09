@@ -32,12 +32,19 @@ namespace CartesianProduct
 namespace tuple_algos
 {
 
+/// @brief For-each implementation for tuples
+/// @param[in] t The tuple
+/// @param[in] f Function to call
 template<class Tuple, class F, std::size_t... I>
-F for_each_impl(Tuple&& t, F&& f, std::index_sequence<I...>)
+F for_each_impl(Tuple&& t, F&& f, std::index_sequence<I...> /* seq */)
 {
     return (void)std::initializer_list<int>{ (std::forward<F>(f)(std::get<I>(std::forward<Tuple>(t))), 0)... }, f;
 }
 
+/// @brief For-each algorithm for tuples
+/// @param[in] t The tuple
+/// @param[in] f Function to call
+/// @return Function return value
 template<class F, class Tuple>
 constexpr decltype(auto) for_each(Tuple&& t, F&& f)
 {
@@ -45,25 +52,36 @@ constexpr decltype(auto) for_each(Tuple&& t, F&& f)
                          std::make_index_sequence<std::tuple_size<std::remove_reference_t<Tuple>>::value>{});
 }
 
+/// @brief Transform implementation for tuples
+/// @param[in] inputs Input tuple
+/// @param[in] function Function to call
+/// @return The transformed tuple
 template<typename... Ts, typename Function, size_t... Is>
-auto transform_impl(std::tuple<Ts...> const& inputs, Function function, std::index_sequence<Is...>)
+auto transform_impl(std::tuple<Ts...> const& inputs, Function function, std::index_sequence<Is...> /* seq */)
 {
     return std::tuple<std::result_of_t<Function(Ts)>...>{ function(std::get<Is>(inputs))... };
 }
 
+/// @brief Transform algorithm for tuples
+/// @param[in] inputs Input tuple
+/// @param[in] function Function to call
+/// @return The transformed tuple
 template<typename... Ts, typename Function>
 auto transform(std::tuple<Ts...> const& inputs, Function function)
 {
     return transform_impl(inputs, function, std::make_index_sequence<sizeof...(Ts)>{});
 }
 
+/// @brief Find_if for tuples
+/// @param[in] tuple The tuple to search
+/// @param[in] pred Predicate to use for finding
+/// @return Index of the found entry
 template<typename Tuple, typename Predicate>
 size_t find_if(Tuple&& tuple, Predicate pred)
 {
     size_t index = std::tuple_size<std::decay_t<Tuple>>::value;
     size_t currentIndex = 0;
     bool found = false;
-    // std::ranges::for_each(tuple, [&](auto& value)
     for_each(tuple, [&](auto&& value) {
         if (!found && pred(value))
         {
@@ -75,6 +93,10 @@ size_t find_if(Tuple&& tuple, Predicate pred)
     return index;
 }
 
+/// @brief Any_of algorithm for tuples
+/// @param[in] tuple The tuple to search
+/// @param[in] pred Predicate to check for
+/// @return True if any of the tuple entries fulfills the predicate
 template<typename Tuple, typename Predicate>
 bool any_of(Tuple&& tuple, Predicate pred)
 {
@@ -82,15 +104,23 @@ bool any_of(Tuple&& tuple, Predicate pred)
 }
 } // namespace tuple_algos
 
+/// @brief Dereference a tuple
+/// @param[in] tuple Tuple to dereference
+/// @return Dereferenced tuple values
 template<typename... Ts>
 auto dereference(std::tuple<Ts...> const& tuple)
 {
     return tuple_algos::transform(tuple, [](auto&& element) -> decltype(auto) { return *element; });
 }
 
+/// @brief Helper struct to increment an iterator
 template<size_t I>
 struct increment_iterator
 {
+    /// @brief Increments an iterator of tuples
+    /// @param[in] iterators The iterator to increment
+    /// @param[in] beginIterators Beginning of the Iterators
+    /// @param[in] endIterators End of the Iterators
     template<typename... Iterators>
     static void _(std::tuple<Iterators...>& iterators, std::tuple<Iterators...> const& beginIterators, std::tuple<Iterators...> const& endIterators)
     {
@@ -108,11 +138,14 @@ struct increment_iterator
     }
 };
 
+/// @brief Helper struct to increment an iterator
 template<>
 struct increment_iterator<0>
 {
+    /// @brief Increments an iterator of tuples
+    /// @param[in] iterators The iterator to increment
     template<typename... Iterators>
-    static void _(std::tuple<Iterators...>& iterators, std::tuple<Iterators...> const&, std::tuple<Iterators...> const&)
+    static void _(std::tuple<Iterators...>& iterators, std::tuple<Iterators...> const& /* beginIterators */, std::tuple<Iterators...> const& /* endIterators */)
     {
         auto& it = std::get<0>(iterators);
 
@@ -120,6 +153,10 @@ struct increment_iterator<0>
     }
 };
 
+/// @brief Gets the next combination of the tuples of iterators
+/// @param[in] iterators The iterator to get the next combination for
+/// @param[in] beginIterators Beginning of the Iterators
+/// @param[in] endIterators End of the Iterators
 template<typename... Iterators>
 void next_combination(std::tuple<Iterators...>& iterators, std::tuple<Iterators...> const& beginIterators, std::tuple<Iterators...> const& endIterators)
 {
@@ -127,14 +164,20 @@ void next_combination(std::tuple<Iterators...>& iterators, std::tuple<Iterators.
     increment_iterator<N - 1>::_(iterators, beginIterators, endIterators);
 }
 
+/// @brief Calls the function on the tuple
+/// @param[in] function Function to call
+/// @param[in] tuple Tuple to pass as argument
 template<typename Function, typename... Ts, size_t... Is>
-void callFunction(Function function, std::tuple<Ts...> const& tuple, std::index_sequence<Is...>)
+void callFunction(Function function, std::tuple<Ts...> const& tuple, std::index_sequence<Is...> /* seq */)
 {
     function(std::get<Is>(tuple)...);
 }
 
 } // namespace CartesianProduct
 
+/// @brief Calls a function on all combinations over ranges
+/// @param[in] function Function to call. Needs one parameter for each range given. Type of the parameter must be equal to the range type.
+/// @param[in] ranges Ranges to call the function on
 template<typename Function, typename... Ranges>
 void cartesian_product(Function function, Ranges const&... ranges)
 {
@@ -153,20 +196,27 @@ void cartesian_product(Function function, Ranges const&... ranges)
     }
 }
 
+/// @brief Calls a function on all combinations over ranges defined in an array, e.g. std::array<std::vector>
+/// @param[in] function Function to call. Needs one parameter for each element in the array. Type of the parameter must be equal to the range type.
+/// @param[in] list List of ranges to call the function on
 template<typename SubList, size_t N, typename Function>
 void cartesian_product(Function function, std::array<SubList, N> list)
 {
     std::apply([function](auto... xs) { cartesian_product(function, std::forward<decltype(xs)>(xs)...); }, list);
 }
 
+/// @brief Calls a function on all combinations over ranges defined in an array, e.g. std::array<std::vector>.
+///        Instead of providing the list entry to the function, provides the index of it in the sub list.
+/// @param[in] function Function to call. Needs one 'size_t' parameter for each element in the array
+/// @param[in] list List of ranges to call the function on
 template<typename SubList, size_t N, typename Function>
 void cartesian_product_idx(Function function, std::array<SubList, N> list)
 {
     std::array<std::vector<size_t>, N> indices;
     for (size_t i = 0; i < list.size(); i++)
     {
-        indices[i] = std::vector<size_t>(list[i].size());
-        std::iota(indices[i].begin(), indices[i].end(), 0);
+        indices.at(i) = std::vector<size_t>(list.at(i).size());
+        std::iota(indices.at(i).begin(), indices.at(i).end(), 0);
     }
 
     std::apply([function](auto... xs) { cartesian_product(function, std::forward<decltype(xs)>(xs)...); }, indices);
