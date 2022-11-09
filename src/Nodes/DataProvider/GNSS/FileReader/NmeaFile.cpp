@@ -110,7 +110,7 @@ bool NAV::NmeaFile::resetNode()
     return true;
 }
 
-void NAV::NmeaFile::setdatefromzda(const std::string & line)
+bool NAV::NmeaFile::setdatefromzda(const std::string & line)
 {
 	// decode ZDA string according to http://www.nmea.de/nmea0183datensaetze.html#zda
 	std::vector<std::string> splittedString = str::split(line, ",");
@@ -134,12 +134,14 @@ void NAV::NmeaFile::setdatefromzda(const std::string & line)
 				ddmmyyyy[2] = std::stoi(splittedString[4]);
 				
 				haveValidDate = true;
+				return true;
 			}
         }
-    }			
+    }
+	return false;			
 }
 
-void NAV::NmeaFile::setdatefromrmc(const std::string & line)
+bool NAV::NmeaFile::setdatefromrmc(const std::string & line)
 {
 	
 	// decode RMC string according to http://www.nmea.de/nmea0183datensaetze.html#rmc
@@ -172,9 +174,11 @@ void NAV::NmeaFile::setdatefromrmc(const std::string & line)
 				}	
 								
 				haveValidDate = true;
+				return true;
 			}
         }
-    }			
+    }
+	return false;			
 }
 
 
@@ -200,6 +204,8 @@ std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData(bool peek)
 	double lat_rad = 0.0;
     double lon_rad = 0.0;
 	double hgt = 0.0; 
+	
+	haveValidDate=false;
 	
     while(true)
 	{
@@ -252,20 +258,22 @@ std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData(bool peek)
 					}	
 					
 					
-					int lat1 = std::stoi(splittedData[2].substr(0,2));
+					double lat1 = std::stod(splittedData[2].substr(0,2));
 					double lat2 = std::stod(splittedData[2].substr(2));
 					
-					lat_rad = (lat1+lat2/60.0)/180*M_PI; // convert to radian 
+					
+					lat_rad = (lat1+lat2/60.0)/180.0*M_PI; // convert to radian 
 					
 					if (splittedData[3]=="S") // flip sign if south latitude
 					{
 						lat_rad *= -1.0;
 					}
 					
-					int lon1 = std::stoi(splittedData[4].substr(0,3));
+					
+					double lon1 = std::stoi(splittedData[4].substr(0,3));
 					double lon2 = std::stod(splittedData[4].substr(3));
 					
-					lon_rad = (lon1+lon2/60.0)/180*M_PI; //convert to radian
+					lon_rad = (lon1+lon2/60.0)/180.0*M_PI; //convert to radian
 					
 					if (splittedData[5]=="W") // flip sign if west longitude
 					{
@@ -280,26 +288,27 @@ std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData(bool peek)
 			}
 			else if (splittedData[0].substr(3,3)=="ZDA")
 		    {
-		    	setdatefromzda(line);
+		    	if (setdatefromzda(line))
+				{
+					oldSOD=-1;
+				}
 				continue;
 			}
 			else if (splittedData[0].substr(3,3)=="RMC")
 		    {
-		    	setdatefromrmc(line);
+		    	if(setdatefromrmc(line))
+				{
+				    oldSOD=-1;	
+				}
 				continue;
 			}
         }
 	}
 	
 	
-    
-	
-   
-	
 	Eigen::Vector3d lla_pos{ lat_rad,lon_rad,hgt };
     Eigen::Vector3d n_vel{ std::nan(""), std::nan(""), std::nan("") }; // GGA streams don't contain velocity, thus set this one invalid
-
-    obs->insTime = InsTime(ddmmyyyy[0], ddmmyyyy[1], ddmmyyyy[2],
+    obs->insTime = InsTime(ddmmyyyy[2], ddmmyyyy[1], ddmmyyyy[0],
                                hour, minute, second,
                                timeSystem);
 							   

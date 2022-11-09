@@ -79,7 +79,7 @@ class NmeaFile : public Node, public FileReader
     /// @brief Read the Header of the file
     void readHeader() override;
 	
-	 /// @brief checks whether a ZDA time tag was read so that UTC can be reconstructed together with the GGA tag
+	 /// @brief checks whether a ZDA or RMC time tag was read so that UTC can be reconstructed together with the GGA tag
 	bool haveValidDate = false ;
 	
 	 /// @brief second of day (SOD) from last GGA stream. This variable is used to check if SOD is increasing, if not, wait for next ZDA stream to get date info
@@ -90,11 +90,11 @@ class NmeaFile : public Node, public FileReader
 	
     /// @brief Set date info from ZDA steam
     /// @param[in] line Line that contains a potential $--ZDA stream
-	void setdatefromzda(const std::string & line);
+	bool setdatefromzda(const std::string & line);
 	
     /// @brief Set date info from RMC steam
     /// @param[in] line Line that contains a potential $--RMC stream
-	void setdatefromrmc(const std::string & line);	
+	bool setdatefromrmc(const std::string & line);	
 };
 
 } // namespace NAV
