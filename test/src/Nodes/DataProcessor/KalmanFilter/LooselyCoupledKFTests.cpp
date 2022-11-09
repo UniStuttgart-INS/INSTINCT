@@ -33,7 +33,7 @@ namespace nm = NAV::NodeManager;
 // This is a small hack, which lets us change private/protected parameters for
 #pragma GCC diagnostic push
 // #pragma GCC diagnostic ignored "-w"
-#if defined(__clang__) && !(defined(__GNUC__) || defined(__GNUG__))
+#if defined(__clang__)
     #pragma GCC diagnostic ignored "-Wkeyword-macro"
     #pragma GCC diagnostic ignored "-Wmacro-redefined"
 #endif
