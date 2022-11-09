@@ -53,14 +53,27 @@ constexpr decltype(auto) for_each(Tuple&& t, F&& f)
 }
 
 /// @brief Transform implementation for tuples
-/// @param[in] inputs Input tuple
-/// @param[in] function Function to call
+/// @param[in] t Tuple
+/// @param[in] f Function to call
 /// @return The transformed tuple
-template<typename... Ts, typename Function, size_t... Is>
-auto transform_impl(std::tuple<Ts...> const& inputs, Function function, std::index_sequence<Is...> /* seq */)
+template<class Tuple, class F, std::size_t... Is>
+auto transform_impl(Tuple&& t, F&& f, std::index_sequence<Is...> /* seq */)
+    -> decltype(std::make_tuple(std::forward<F>(f)(std::get<Is>(std::forward<Tuple>(t)))...))
 {
-    return std::tuple<std::result_of_t<Function(Ts)>...>{ function(std::get<Is>(inputs))... };
+    return std::make_tuple(std::forward<F>(f)(std::get<Is>(std::forward<Tuple>(t)))...);
 }
+
+// Alternative implementation, which however does not compile with msvc
+//
+// @brief Transform implementation for tuples
+// @param[in] inputs Input tuple
+// @param[in] function Function to call
+// @return The transformed tuple
+// template<typename... Ts, typename Function, size_t... Is>
+// auto transform_impl(std::tuple<Ts...> const& inputs, Function function, std::index_sequence<Is...> /* seq */)
+// {
+//     return std::tuple<std::result_of_t<Function(Ts)>...>{ function(std::get<Is>(inputs))... };
+// }
 
 /// @brief Transform algorithm for tuples
 /// @param[in] inputs Input tuple
