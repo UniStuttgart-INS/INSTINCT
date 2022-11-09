@@ -53,36 +53,15 @@ namespace nm = NAV::NodeManager;
 namespace NAV::TEST::LooselyCoupledKFTests
 {
 
-TEST_CASE("[LooselyCoupledKF][flow] Test flow with different GUI settings", "[LooselyCoupledKF][flow][debug]")
+void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, size_t MESSAGE_COUNT_GNSS_FIX, size_t MESSAGE_COUNT_IMU)
 {
     Logger consoleSink;
 
-    size_t MESSAGE_COUNT_GNSS = 0;
-    size_t MESSAGE_COUNT_GNSS_FIX = 0;
-    size_t MESSAGE_COUNT_IMU = 0;
+    bool imuAfter = std::string(imuFilePath) == "VectorNav/Static/vn310-imu-after.csv";
 
     std::array<std::vector<std::function<void()>>, 6> settings = { {
-        {
-            [&]() {
-                LOG_WARN("Setting ImuIntegrator - _path to: VectorNav/Static/vn310-imu.csv");
-                dynamic_cast<VectorNavFile*>(nm::FindNode(324))->_path = "VectorNav/Static/vn310-imu.csv";
-                // GNSS: 176 messages, 162 messages with InsTime, 48 messages with fix (first GNSS message at 22.799s)
-                MESSAGE_COUNT_GNSS = 162;
-                MESSAGE_COUNT_GNSS_FIX = 48;
-                // IMU:  690 messages, 466 messages with InsTime (first IMU message at 9.037s)
-                MESSAGE_COUNT_IMU = 466;
-            },
-            /* TODO
-          [&]() {
-              LOG_WARN("Setting ImuIntegrator - _path to: VectorNav/Static/vn310-imu-after.csv");
-              dynamic_cast<VectorNavFile*>(nm::FindNode(324))->_path = "VectorNav/Static/vn310-imu-after.csv";
-              // GNSS: 176 messages, 162 messages with InsTime, 48 messages with fix (first GNSS message at 22.799717387000001s)
-              MESSAGE_COUNT_GNSS = 162;
-              MESSAGE_COUNT_GNSS_FIX = 48;
-              // IMU:  167 messages (first IMU message at 24.017697899000002s)
-              MESSAGE_COUNT_IMU = 167;
-          } */
-        },
+        { [&]() { LOG_WARN("Setting ImuIntegrator - _path to: {}", imuFilePath);
+                  dynamic_cast<VectorNavFile*>(nm::FindNode(324))->_path = imuFilePath; } },
         { []() { LOG_WARN("Setting LooselyCoupledKF - _frame to: NED");
                  dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_frame = LooselyCoupledKF::Frame::NED; },
           []() { LOG_WARN("Setting LooselyCoupledKF - _frame to: ECEF");
@@ -115,7 +94,7 @@ TEST_CASE("[LooselyCoupledKF][flow] Test flow with different GUI settings", "[Lo
         size_t messageCounter_LooselyCoupledKF_InertialNavSol = 0;
         size_t messageCounter_LooselyCoupledKF_GNSSNavigationSolution = 0;
 
-        InsTime timeOfFirstGnssObs{ 2, 185, 281201.999719 };
+        auto timeOfFirstGnssObs = imuAfter ? InsTime() : InsTime(2, 185, 281201.999719);
 
         nm::RegisterPreInitCallback([&]() {
             settings[0][i0]();
@@ -164,7 +143,7 @@ TEST_CASE("[LooselyCoupledKF][flow] Test flow with different GUI settings", "[Lo
             messageCounter_LooselyCoupledKF_InertialNavSol++;
 
             auto obs = std::static_pointer_cast<const InertialNavSol>(queue.front());
-            LOG_TRACE("InertialNavSol time = [{} - {}]", obs->insTime.toYMDHMS(), obs->insTime.toGPSweekTow());
+            // LOG_TRACE("InertialNavSol time = [{} - {}]", obs->insTime.toYMDHMS(), obs->insTime.toGPSweekTow());
 
             Eigen::Vector3d refPos_lla(deg2rad(48.780704498291016), deg2rad(9.171577453613281), 325.1);
             Eigen::Vector3d refRollPitchYaw(0.428, -5.278, -61.865);
@@ -179,6 +158,13 @@ TEST_CASE("[LooselyCoupledKF][flow] Test flow with different GUI settings", "[Lo
             {
                 allowedRollPitchYawOffsetImuOnly = { 1.3, 2.8, 90.0 };
                 allowedRollPitchYawOffsetCombined = { 1.5, 3.2, 91.0 };
+            }
+
+            if (imuAfter)
+            {
+                allowedPositionOffsetCombined_n = { 0.13, 0.04, 0.07 };
+                allowedVelocityErrorCombined_e = { 0.05, 0.05, 0.08 };
+                allowedRollPitchYawOffsetCombined = { 2.9, 1.3, 103.0 };
             }
 
             // North/South deviation [m]
@@ -257,6 +243,28 @@ TEST_CASE("[LooselyCoupledKF][flow] Test flow with different GUI settings", "[Lo
         REQUIRE(messageCounter_LooselyCoupledKF_GNSSNavigationSolution == MESSAGE_COUNT_GNSS_FIX);
     },
                           settings);
+}
+
+TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving before GNSS data", "[LooselyCoupledKF][flow][debug]")
+{
+    // GNSS: 176 messages, 162 messages with InsTime, 48 messages with fix (first GNSS message at 22.799s)
+    size_t MESSAGE_COUNT_GNSS = 162;
+    size_t MESSAGE_COUNT_GNSS_FIX = 48;
+    // IMU:  690 messages, 466 messages with InsTime (first IMU message at 9.037s)
+    size_t MESSAGE_COUNT_IMU = 466;
+
+    testLCKFwithImuFile("VectorNav/Static/vn310-imu.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_GNSS_FIX, MESSAGE_COUNT_IMU);
+}
+
+TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving after GNSS data", "[LooselyCoupledKF][flow][debug]")
+{
+    // GNSS: 176 messages, 162 messages with InsTime, 48 messages with fix (first GNSS message at 22.799717387000001s)
+    size_t MESSAGE_COUNT_GNSS = 162;
+    size_t MESSAGE_COUNT_GNSS_FIX = 48;
+    // IMU:  167 messages (first IMU message at 24.017697899000002s)
+    size_t MESSAGE_COUNT_IMU = 167;
+
+    testLCKFwithImuFile("VectorNav/Static/vn310-imu-after.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_GNSS_FIX, MESSAGE_COUNT_IMU);
 }
 
 } // namespace NAV::TEST::LooselyCoupledKFTests
