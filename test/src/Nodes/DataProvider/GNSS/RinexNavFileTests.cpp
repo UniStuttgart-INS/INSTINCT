@@ -6,6 +6,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+/// @file RinexNavFileTests.cpp
+/// @brief Tests for the RinexNavFile node
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
+/// @date 2022-06-18
+
 #include <catch2/catch.hpp>
 
 #include "FlowTester.hpp"

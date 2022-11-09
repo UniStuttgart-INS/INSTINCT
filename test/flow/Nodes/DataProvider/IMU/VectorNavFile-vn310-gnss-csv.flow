@@ -669,7 +669,7 @@
         "node-6": {
             "data": {
                 "FileReader": {
-                    "path": "VectorNav/StaticSize/vn310-gnss.csv"
+                    "path": "VectorNav/FixedSize/vn310-gnss.csv"
                 },
                 "Imu": {
                     "imuPos": {

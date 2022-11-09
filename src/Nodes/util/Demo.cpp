@@ -241,6 +241,7 @@ void NAV::Demo::guiConfig()
         ImGui::Text("String: %s", _connectedString.c_str());
         ImGui::Text("The String was updated %lu time%s", _stringUpdateCounter, _stringUpdateCounter > 1 || _stringUpdateCounter == 0 ? "s" : "");
         ImGui::TableNextColumn();
+        requestOutputValueLock(OUTPUT_PORT_INDEX_STRING); // Before accessing and changing the value. A lock has to be requested to ensure it is not changed before all linked nodes received the value.
         if (ImGui::InputText("String", &_valueString))
         {
             flow::ApplyChanges();
