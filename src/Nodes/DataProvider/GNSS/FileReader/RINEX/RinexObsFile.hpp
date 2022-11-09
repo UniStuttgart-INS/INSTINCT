@@ -142,6 +142,9 @@ class RinexObsFile : public Node, public FileReader
 
     /// Time system of all observations in the file
     TimeSystem _timeSystem = TimeSys_None;
+
+    /// @brief Receiver clock offset app
+    bool _rcvClockOffsAppl = false;
 };
 
 } // namespace NAV

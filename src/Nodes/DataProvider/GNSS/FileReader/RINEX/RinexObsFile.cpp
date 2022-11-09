@@ -396,7 +396,11 @@ void RinexObsFile::readHeader()
         }
         else if (headerLabel == "RCV CLOCK OFFS APPL")
         {
-            LOG_TRACE("{}: '{}' not implemented yet", nameId(), "RCV CLOCK OFFS APPL");
+            if (std::stoi(line.substr(0, 5)))
+            {
+                _rcvClockOffsAppl = true;
+            }
+            LOG_TRACE("{}: Receiver clock offset applies: {}", nameId(), _rcvClockOffsAppl);
         }
         else if (headerLabel == "SYS / DCBS APPLIED")
         {
@@ -513,9 +517,12 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData(bool peek)
 
             epochFlag = std::stoi(line.substr(31, 1)); // Format: 2X,I1,
 
-            [[maybe_unused]] auto numSats = std::stoi(line.substr(32, 3));                                     // Format: I3,
-                                                                                                               // Reserved - Format 6X,
-            [[maybe_unused]] auto recClkOffset = line.size() >= 41 + 3 ? std::stod(line.substr(41, 15)) : 0.0; // Format: F15.12
+            [[maybe_unused]] auto numSats = std::stoi(line.substr(32, 3)); // Format: I3,
+                                                                           // Reserved - Format 6X,
+            if (_rcvClockOffsAppl)
+            {
+                [[maybe_unused]] auto recClkOffset = line.size() >= 41 + 3 ? std::stod(line.substr(41, 15)) : 0.0; // Format: F15.12 // FIXME: 'std::stod' fails for files where 'substr(41,15)' consists of only whitespaces
+            }
 
             LOG_DATA("{}: {}, epochFlag {}, numSats {}, recClkOffset {}", nameId(),
                      epochTime.toYMDHMS(), epochFlag, numSats, recClkOffset);
