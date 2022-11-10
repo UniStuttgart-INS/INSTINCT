@@ -471,6 +471,8 @@ bool NAV::PosVelAttInitializer::initialize()
 
     _posVelAttInitialized = { false, false, false, false };
 
+    _initTime = InsTime(InsTime_GPSweekTow(0, 0, 0));
+
     return true;
 }
 
@@ -543,7 +545,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
         }
 
         [[maybe_unused]] auto lla_position = trafo::ecef2lla_WGS84(_e_initPosition);
-        LOG_INFO("{}: Position initialized to Lat {:3.4f} [°], Lon {:3.4f} [°], Alt {:4.4f} [m]", nameId(),
+        LOG_INFO("{}: Position initialized to Lat {:3.12f} [°], Lon {:3.12f} [°], Alt {:4.3f} [m]", nameId(),
                  rad2deg(lla_position.x()),
                  rad2deg(lla_position.y()),
                  lla_position.z());
@@ -563,7 +565,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
                  rad2deg(rollPitchYaw.z()));
 
         auto posVelAtt = std::make_shared<PosVelAtt>();
-        posVelAtt->insTime = InsTime(InsTime_GPSweekTow(0, 0, 0));
+        posVelAtt->insTime = _initTime;
         posVelAtt->setPosition_e(_e_initPosition);
         posVelAtt->setVelocity_n(_n_initVelocity);
         posVelAtt->setAttitude_n_Quat_b(_n_Quat_b_init);
@@ -636,6 +638,7 @@ void NAV::PosVelAttInitializer::receiveImuObs(InputPin::NodeDataQueue& queue, si
                                          _overrideRollPitchYaw.at(1) ? deg2rad(_overrideValuesRollPitchYaw.at(1)) : _averagedAttitude.at(1),
                                          _overrideRollPitchYaw.at(2) ? deg2rad(_overrideValuesRollPitchYaw.at(2)) : _averagedAttitude.at(2));
 
+        _initTime = obs->insTime;
         _posVelAttInitialized.at(2) = true;
     }
 
@@ -701,6 +704,7 @@ void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<const Ublo
                 _e_initPosition = Eigen::Vector3d(std::get<vendor::ublox::UbxNavPosecef>(obs->data).ecefX * 1e-2,
                                                   std::get<vendor::ublox::UbxNavPosecef>(obs->data).ecefY * 1e-2,
                                                   std::get<vendor::ublox::UbxNavPosecef>(obs->data).ecefZ * 1e-2);
+                _initTime = obs->insTime;
 
                 _posVelAttInitialized.at(0) = true;
             }
@@ -720,6 +724,7 @@ void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<const Ublo
                                              std::get<vendor::ublox::UbxNavPosllh>(obs->data).height * 1e-3);
 
                 _e_initPosition = trafo::lla2ecef_WGS84(lla_position);
+                _initTime = obs->insTime;
 
                 _posVelAttInitialized.at(0) = true;
             }
@@ -737,6 +742,7 @@ void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<const Ublo
                 _n_initVelocity = Eigen::Vector3d(std::get<vendor::ublox::UbxNavVelned>(obs->data).velN * 1e-2,
                                                   std::get<vendor::ublox::UbxNavVelned>(obs->data).velE * 1e-2,
                                                   std::get<vendor::ublox::UbxNavVelned>(obs->data).velD * 1e-2);
+                _initTime = obs->insTime;
 
                 _posVelAttInitialized.at(1) = true;
             }
@@ -766,6 +772,7 @@ void NAV::PosVelAttInitializer::receiveRtklibPosObs(const std::shared_ptr<const 
             && _lastPositionAccuracy.at(2) <= _positionAccuracyThreshold)
         {
             _e_initPosition = obs->e_position();
+            _initTime = obs->insTime;
 
             _posVelAttInitialized.at(0) = true;
         }
@@ -775,6 +782,7 @@ void NAV::PosVelAttInitializer::receiveRtklibPosObs(const std::shared_ptr<const 
 void NAV::PosVelAttInitializer::receivePosObs(const std::shared_ptr<const Pos>& obs)
 {
     _e_initPosition = obs->e_position();
+    _initTime = obs->insTime;
     _posVelAttInitialized.at(0) = true;
 }
 
@@ -783,6 +791,7 @@ void NAV::PosVelAttInitializer::receivePosVelObs(const std::shared_ptr<const Pos
     receivePosObs(obs);
 
     _n_initVelocity = obs->n_velocity();
+    _initTime = obs->insTime;
     _posVelAttInitialized.at(1) = true;
 }
 
@@ -805,6 +814,7 @@ void NAV::PosVelAttInitializer::receivePosVelAttObs(const std::shared_ptr<const 
         {
             _n_Quat_b_init = obs->n_Quat_b();
         }
+        _initTime = obs->insTime;
 
         _posVelAttInitialized.at(2) = true;
     }
@@ -841,7 +851,7 @@ std::shared_ptr<const NAV::NodeData> NAV::PosVelAttInitializer::pollPVASolution(
     if (initCount == 3 && !_posVelAttInitialized.at(3))
     {
         auto posVelAtt = std::make_shared<PosVelAtt>();
-        posVelAtt->insTime = InsTime(InsTime_GPSweekTow(0, 0, 0));
+        posVelAtt->insTime = _initTime;
         if (!peek)
         {
             _posVelAttInitialized.at(3) = true;

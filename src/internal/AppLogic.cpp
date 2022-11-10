@@ -23,6 +23,10 @@ namespace nm = NAV::NodeManager;
 #include "util/Logger.hpp"
 #include "Sleep.hpp"
 
+#ifdef TESTING
+    #include "FlowTester.hpp"
+#endif
+
 #define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2 * !!(condition)]))
 
 int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-arrays,hicpp-avoid-c-arrays,modernize-avoid-c-arrays)
@@ -107,6 +111,7 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
                 }
 
 #ifdef TESTING
+                runGeneralFlowCleanupChecks();
                 nm::CallCleanupCallback();
 #endif
 

@@ -37,7 +37,7 @@ std::string NAV::GroupBox::type() const
 
 std::string NAV::GroupBox::category()
 {
-    return "GroupBox";
+    return "Utility";
 }
 
 [[nodiscard]] json NAV::GroupBox::save() const { return {}; }

@@ -118,6 +118,10 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
 
     LoadJson(j);
 
+#ifdef TESTING
+    nm::CallPreInitCallback();
+#endif
+
     if (!ConfigManager::Get<bool>("noinit"))
     {
         if (ConfigManager::Get<bool>("nogui"))
