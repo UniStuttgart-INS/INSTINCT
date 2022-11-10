@@ -6,6 +6,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+/// @file EigenApprox.hpp
+/// @brief Eigen Related Testing operations
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
+/// @date 2021-11-13
+
 #include "util/Eigen.hpp"
 
 #include <iomanip>
