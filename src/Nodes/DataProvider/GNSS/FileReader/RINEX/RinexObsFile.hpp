@@ -119,7 +119,7 @@ class RinexObsFile : public Node, public FileReader
     [[nodiscard]] std::shared_ptr<const NodeData> pollData(bool peek = false);
 
     /// @brief Supported RINEX versions
-    static inline const std::set<double> _supportedVersions = { 3.04 };
+    static inline const std::set<double> _supportedVersions = { 3.04, 3.03 };
 
     /// @brief Version of the RINEX file
     double _version = 0.0;

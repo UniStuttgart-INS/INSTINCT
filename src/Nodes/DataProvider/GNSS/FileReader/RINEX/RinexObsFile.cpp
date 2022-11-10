@@ -108,6 +108,7 @@ void RinexObsFile::deinitialize()
     _version = 0.0;
     _timeSystem = TimeSys_None;
     _obsDescription.clear();
+    _rcvClockOffsAppl = false;
 }
 
 bool RinexObsFile::resetNode()
@@ -399,6 +400,7 @@ void RinexObsFile::readHeader()
             if (std::stoi(line.substr(0, 5)))
             {
                 _rcvClockOffsAppl = true;
+                LOG_INFO("{}: Data (epoch, pseudorange, phase) corrected by the reported clock offset.", nameId());
             }
             LOG_TRACE("{}: Receiver clock offset applies: {}", nameId(), _rcvClockOffsAppl);
         }
@@ -519,9 +521,14 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData(bool peek)
 
             [[maybe_unused]] auto numSats = std::stoi(line.substr(32, 3)); // Format: I3,
                                                                            // Reserved - Format 6X,
-            if (_rcvClockOffsAppl)
+            [[maybe_unused]] double recClkOffset = 0.0;
+            try
             {
-                [[maybe_unused]] auto recClkOffset = line.size() >= 41 + 3 ? std::stod(line.substr(41, 15)) : 0.0; // Format: F15.12 // FIXME: 'std::stod' fails for files where 'substr(41,15)' consists of only whitespaces
+                recClkOffset = line.size() >= 41 + 3 ? std::stod(line.substr(41, 15)) : 0.0; // Format: F15.12
+            }
+            catch (const std::exception& /* exception */)
+            {
+                LOG_DATA("{}: 'recClkOffset' not mentioned in file --> recClkOffset = {}", nameId(), recClkOffset);
             }
 
             LOG_DATA("{}: {}, epochFlag {}, numSats {}, recClkOffset {}", nameId(),
