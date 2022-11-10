@@ -96,7 +96,7 @@
             "id": 2,
             "inputPins": [],
             "kind": "Blueprint",
-            "name": "VectorNavFile - data/vn310-imu.vnb",
+            "name": "VectorNavFile",
             "outputPins": [
                 {
                     "id": 1,
@@ -763,7 +763,7 @@
             "name": "Plot",
             "outputPins": [],
             "pos": {
-                "x": 728.0,
+                "x": 552.0,
                 "y": -434.0
             },
             "size": {

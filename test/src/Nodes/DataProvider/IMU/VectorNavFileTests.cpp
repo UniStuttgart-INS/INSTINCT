@@ -28,6 +28,19 @@ namespace nm = NAV::NodeManager;
 
 #include "VectorNavFileTestsData.hpp"
 
+// This is a small hack, which lets us change private/protected parameters
+#pragma GCC diagnostic push
+#if defined(__clang__)
+    #pragma GCC diagnostic ignored "-Wkeyword-macro"
+    #pragma GCC diagnostic ignored "-Wmacro-redefined"
+#endif
+#define protected public
+#define private public
+#include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
+#undef protected
+#undef private
+#pragma GCC diagnostic pop
+
 namespace NAV::TEST::VectorNavFileTests
 {
 auto extractBit(auto& group, auto value)
@@ -40,7 +53,7 @@ auto extractBit(auto& group, auto value)
 constexpr double EPSILON = 10.0 * std::numeric_limits<double>::epsilon();
 constexpr double EPSILON_FLOAT = 10.0 * std::numeric_limits<float>::epsilon();
 
-namespace StaticData
+namespace FixedSize
 {
 
 void compareImuObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutput>& obs, size_t messageCounterImuData)
@@ -168,63 +181,62 @@ void compareImuObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutpu
     REQUIRE(obs->gnss2Outputs == nullptr);
 }
 
-size_t messageCounterImuDataCsv = 0; ///< Message Counter for the Imu data csv file
-size_t messageCounterImuDataVnb = 0; ///< Message Counter for the Imu data vnb file
-
-TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/StaticSize/vn310-imu.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
+TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-imu.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
-    messageCounterImuDataCsv = 0;
-
     Logger logger;
 
-    // ###########################################################################################################
-    //                                     VectorNavFile-vn310-imu-csv.flow
-    // ###########################################################################################################
+    // ##########################################################################################################
+    //                                            VectorNavFile.flow
+    // ##########################################################################################################
     //
-    // VectorNavFile("data/VectorNav/StaticSize/vn310-imu.csv") (2)           Plot (8)
-    //                                         (1) Binary Output |>  --(9)->  |> Pin 1 (3)
+    //   VectorNavFile (2)                 Plot (8)
+    //      (1) Binary Output |>  --(9)->  |> Pin 1 (3)
     //
-    // ###########################################################################################################
+    // ##########################################################################################################
 
-    nm::RegisterWatcherCallbackToInputPin(3, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
-        LOG_TRACE("messageCounterImuDataCsv = {}", messageCounterImuDataCsv);
+    nm::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(nm::FindNode(2))->_path = "VectorNav/FixedSize/vn310-imu.csv"; });
 
-        compareImuObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounterImuDataCsv);
+    size_t messageCounter = 0;
+    nm::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+        LOG_TRACE("messageCounter = {}", messageCounter);
 
-        messageCounterImuDataCsv++;
+        compareImuObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounter);
+
+        messageCounter++;
     });
 
-    testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile-vn310-imu-csv.flow");
+    REQUIRE(testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile.flow"));
 
-    REQUIRE(messageCounterImuDataCsv == IMU_REFERENCE_DATA.size());
+    REQUIRE(messageCounter == IMU_REFERENCE_DATA.size());
 }
 
-TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/StaticSize/vn310-imu.vnb' and compare content with hardcoded values", "[VectorNavFile][flow]")
+TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-imu.vnb' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
-    messageCounterImuDataVnb = 0;
-
     Logger logger;
 
-    // ###########################################################################################################
-    //                                     VectorNavFile-vn310-imu-vnb.flow
-    // ###########################################################################################################
+    // ##########################################################################################################
+    //                                            VectorNavFile.flow
+    // ##########################################################################################################
     //
-    // VectorNavFile("data/VectorNav/StaticSize/vn310-imu.vnb") (2)           Plot (8)
-    //                                         (1) Binary Output |>  --(9)->  |> Pin 1 (3)
+    //   VectorNavFile (2)                 Plot (8)
+    //      (1) Binary Output |>  --(9)->  |> Pin 1 (3)
     //
-    // ###########################################################################################################
+    // ##########################################################################################################
 
-    nm::RegisterWatcherCallbackToInputPin(3, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
-        LOG_TRACE("messageCounterImuDataVnb = {}", messageCounterImuDataVnb);
+    nm::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(nm::FindNode(2))->_path = "VectorNav/FixedSize/vn310-imu.vnb"; });
 
-        compareImuObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounterImuDataVnb);
+    size_t messageCounter = 0;
+    nm::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+        LOG_TRACE("messageCounter = {}", messageCounter);
 
-        messageCounterImuDataVnb++;
+        compareImuObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounter);
+
+        messageCounter++;
     });
 
-    testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile-vn310-imu-vnb.flow");
+    REQUIRE(testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile.flow"));
 
-    REQUIRE(messageCounterImuDataVnb == IMU_REFERENCE_DATA.size());
+    REQUIRE(messageCounter == IMU_REFERENCE_DATA.size());
 }
 
 void compareGnssObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutput>& obs, size_t messageCounterGnssData)
@@ -493,68 +505,67 @@ void compareGnssObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutp
     REQUIRE(obs->gnss2Outputs->gnssField == vn::protocol::uart::GpsGroup::GPSGROUP_NONE);
 }
 
-size_t messageCounterGnssDataCsv = 0; ///< Message Counter for the Gnss data csv file
-size_t messageCounterGnssDataVnb = 0; ///< Message Counter for the Gnss data vnb file
-
-TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/StaticSize/vn310-gnss.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
+TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-gnss.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
-    messageCounterGnssDataCsv = 0;
-
     Logger logger;
 
-    // ###########################################################################################################
-    //                                     VectorNavFile-vn310-gnss-csv.flow
-    // ###########################################################################################################
+    // ##########################################################################################################
+    //                                            VectorNavFile.flow
+    // ##########################################################################################################
     //
-    // VectorNavFile("data/VectorNav/StaticSize/vn310-gnss.csv") (6)            Plot (13)
-    //                                          (7) Binary Output |>  --(14)->  |> Pin 1 (8)
+    //   VectorNavFile (2)                 Plot (8)
+    //      (1) Binary Output |>  --(9)->  |> Pin 1 (3)
     //
-    // ###########################################################################################################
+    // ##########################################################################################################
 
-    nm::RegisterWatcherCallbackToInputPin(8, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
-        LOG_TRACE("messageCounterGnssDataCsv = {}", messageCounterGnssDataCsv);
+    nm::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(nm::FindNode(2))->_path = "VectorNav/FixedSize/vn310-gnss.csv"; });
 
-        compareGnssObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounterGnssDataCsv);
+    size_t messageCounter = 0;
+    nm::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+        LOG_TRACE("messageCounter = {}", messageCounter);
 
-        messageCounterGnssDataCsv++;
+        compareGnssObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounter);
+
+        messageCounter++;
     });
 
-    testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile-vn310-gnss-csv.flow");
+    REQUIRE(testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile.flow"));
 
-    REQUIRE(messageCounterGnssDataCsv == GNSS_REFERENCE_DATA.size());
+    REQUIRE(messageCounter == GNSS_REFERENCE_DATA.size());
 }
 
-TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/StaticSize/vn310-gnss.vnb' and compare content with hardcoded values", "[VectorNavFile][flow]")
+TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-gnss.vnb' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
-    messageCounterGnssDataVnb = 0;
-
     Logger logger;
 
-    // ###########################################################################################################
-    //                                     VectorNavFile-vn310-gnss-vnb.flow
-    // ###########################################################################################################
+    // ##########################################################################################################
+    //                                            VectorNavFile.flow
+    // ##########################################################################################################
     //
-    // VectorNavFile("data/VectorNav/StaticSize/vn310-gnss.vnb") (6)            Plot (13)
-    //                                          (7) Binary Output |>  --(14)->  |> Pin 1 (8)
+    //   VectorNavFile (2)                 Plot (8)
+    //      (1) Binary Output |>  --(9)->  |> Pin 1 (3)
     //
-    // ###########################################################################################################
+    // ##########################################################################################################
 
-    nm::RegisterWatcherCallbackToInputPin(8, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
-        LOG_TRACE("messageCounterGnssDataVnb = {}", messageCounterGnssDataVnb);
+    nm::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(nm::FindNode(2))->_path = "VectorNav/FixedSize/vn310-gnss.vnb"; });
 
-        compareGnssObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounterGnssDataVnb);
+    size_t messageCounter = 0;
+    nm::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+        LOG_TRACE("messageCounter = {}", messageCounter);
 
-        messageCounterGnssDataVnb++;
+        compareGnssObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounter);
+
+        messageCounter++;
     });
 
-    testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile-vn310-gnss-vnb.flow");
+    REQUIRE(testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile.flow"));
 
-    REQUIRE(messageCounterGnssDataVnb == GNSS_REFERENCE_DATA.size());
+    REQUIRE(messageCounter == GNSS_REFERENCE_DATA.size());
 }
 
-} // namespace StaticData
+} // namespace FixedSize
 
-namespace DynamicData
+namespace DynamicSize
 {
 
 void compareDynamicSizeObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutput>& obs, size_t messageCounterData)
@@ -829,65 +840,64 @@ void compareDynamicSizeObservation(const std::shared_ptr<const NAV::VectorNavBin
     REQUIRE(obs->gnss2Outputs->gnssField == vn::protocol::uart::GpsGroup::GPSGROUP_NONE);
 }
 
-size_t messageCounterDataCsv = 0; ///< Message Counter for the Gnss data csv file
-size_t messageCounterDataVnb = 0; ///< Message Counter for the Gnss data vnb file
-
 TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/DynamicSize/vn310-gnss.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
-    messageCounterDataCsv = 0;
-
     Logger logger;
 
-    // ###########################################################################################################
-    //                                 VectorNavFile-vn310-gnss-dynamic-csv.flow
-    // ###########################################################################################################
+    // ##########################################################################################################
+    //                                            VectorNavFile.flow
+    // ##########################################################################################################
     //
-    // VectorNavFile("data/VectorNav/DynamicSize/vn310-gnss.csv") (6)            Plot (13)
-    //                                           (7) Binary Output |>  --(14)->  |> Pin 1 (8)
+    //   VectorNavFile (2)                 Plot (8)
+    //      (1) Binary Output |>  --(9)->  |> Pin 1 (3)
     //
-    // ###########################################################################################################
+    // ##########################################################################################################
 
-    nm::RegisterWatcherCallbackToInputPin(8, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
-        LOG_TRACE("messageCounterDataCsv = {}", messageCounterDataCsv);
+    nm::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(nm::FindNode(2))->_path = "VectorNav/DynamicSize/vn310-gnss.csv"; });
 
-        compareDynamicSizeObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounterDataCsv);
+    size_t messageCounter = 0;
+    nm::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+        LOG_TRACE("messageCounter = {}", messageCounter);
 
-        messageCounterDataCsv++;
+        compareDynamicSizeObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounter);
+
+        messageCounter++;
     });
 
-    testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile-vn310-gnss-dynamic-csv.flow");
+    REQUIRE(testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile.flow"));
 
-    REQUIRE(messageCounterDataCsv == REFERENCE_DATA.size());
+    REQUIRE(messageCounter == REFERENCE_DATA.size());
 }
 
 TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/DynamicSize/vn310-gnss.vnb' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
-    messageCounterDataVnb = 0;
-
     Logger logger;
 
-    // ###########################################################################################################
-    //                                 VectorNavFile-vn310-gnss-dynamic-vnb.flow
-    // ###########################################################################################################
+    // ##########################################################################################################
+    //                                            VectorNavFile.flow
+    // ##########################################################################################################
     //
-    // VectorNavFile("data/VectorNav/DynamicSize/vn310-gnss.vnb") (6)            Plot (13)
-    //                                           (7) Binary Output |>  --(14)->  |> Pin 1 (8)
+    //   VectorNavFile (2)                 Plot (8)
+    //      (1) Binary Output |>  --(9)->  |> Pin 1 (3)
     //
-    // ###########################################################################################################
+    // ##########################################################################################################
 
-    nm::RegisterWatcherCallbackToInputPin(8, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
-        LOG_TRACE("messageCounterDataVnb = {}", messageCounterDataVnb);
+    nm::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(nm::FindNode(2))->_path = "VectorNav/DynamicSize/vn310-gnss.vnb"; });
 
-        compareDynamicSizeObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounterDataVnb);
+    size_t messageCounter = 0;
+    nm::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+        LOG_TRACE("messageCounter = {}", messageCounter);
 
-        messageCounterDataVnb++;
+        compareDynamicSizeObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounter);
+
+        messageCounter++;
     });
 
-    testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile-vn310-gnss-dynamic-vnb.flow");
+    REQUIRE(testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile.flow"));
 
-    REQUIRE(messageCounterDataVnb == REFERENCE_DATA.size());
+    REQUIRE(messageCounter == REFERENCE_DATA.size());
 }
 
-} // namespace DynamicData
+} // namespace DynamicSize
 
 } // namespace NAV::TEST::VectorNavFileTests
