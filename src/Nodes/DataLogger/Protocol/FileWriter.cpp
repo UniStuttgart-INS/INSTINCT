@@ -92,7 +92,7 @@ bool NAV::FileWriter::initialize()
         LOG_ERROR("Could not create directory '{}' for file '{}'", filepath.parent_path(), filepath);
     }
 
-    if (_fileType == FileType::CSV || _fileType == FileType::BINARY)
+    if (_fileType == FileType::ASCII || _fileType == FileType::BINARY)
     {
         // Does not enable binary read/write, but disables OS dependant treatment of \n, \r
         _filestream.open(filepath, std::ios_base::trunc | std::ios_base::binary);
@@ -132,7 +132,7 @@ const char* NAV::FileWriter::to_string(NAV::FileWriter::FileType type)
     {
     case FileType::NONE:
         return "None";
-    case FileType::CSV:
+    case FileType::ASCII:
         return "CSV";
     case FileType::BINARY:
         return "Binary";

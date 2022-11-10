@@ -200,6 +200,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataProvider/GNSS/FileReader/RINEX/RinexObsFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/EmlidFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RtklibPosFile.hpp"
+#include "Nodes/DataProvider/GNSS/FileReader/NmeaFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/UbloxFile.hpp"
 #include "Nodes/DataProvider/GNSS/Sensors/EmlidSensor.hpp"
 #include "Nodes/DataProvider/GNSS/Sensors/UbloxSensor.hpp"
@@ -258,6 +259,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<RinexObsFile>();
     registerNodeType<EmlidFile>();
     registerNodeType<RtklibPosFile>();
+	registerNodeType<NmeaFile>();
     registerNodeType<UbloxFile>();
     registerNodeType<EmlidSensor>();
     registerNodeType<UbloxSensor>();
