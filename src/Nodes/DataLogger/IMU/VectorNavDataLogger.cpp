@@ -57,14 +57,14 @@ std::string NAV::VectorNavDataLogger::category()
 
 void NAV::VectorNavDataLogger::guiConfig()
 {
-    if (FileWriter::guiConfig(_fileType == FileType::CSV ? ".csv" : ".vnb", { _fileType == FileType::CSV ? ".csv" : ".vnb" }, size_t(id), nameId()))
+    if (FileWriter::guiConfig(_fileType == FileType::ASCII ? ".csv" : ".vnb", { _fileType == FileType::ASCII ? ".csv" : ".vnb" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
         doDeinitialize();
     }
 
     static constexpr std::array<FileType, 2> fileTypes = {
-        { FileType::CSV,
+        { FileType::ASCII,
           FileType::BINARY }
     };
     if (ImGui::BeginCombo(fmt::format("Mode##{}", size_t(id)).c_str(), FileWriter::to_string(_fileType)))
@@ -76,7 +76,7 @@ void NAV::VectorNavDataLogger::guiConfig()
             {
                 _fileType = type;
                 LOG_DEBUG("{}: _fileType changed to {}", nameId(), FileWriter::to_string(_fileType));
-                str::replace(_path, _fileType == FileType::CSV ? ".vnb" : ".csv", _fileType == FileType::CSV ? ".csv" : ".vnb");
+                str::replace(_path, _fileType == FileType::ASCII ? ".vnb" : ".csv", _fileType == FileType::ASCII ? ".csv" : ".vnb");
                 flow::ApplyChanges();
                 if (isInitialized())
                 {
@@ -160,7 +160,7 @@ void NAV::VectorNavDataLogger::writeObservation(NAV::InputPin::NodeDataQueue& qu
 {
     auto obs = std::static_pointer_cast<const VectorNavBinaryOutput>(queue.extract_front());
 
-    if (_fileType == FileType::CSV)
+    if (_fileType == FileType::ASCII)
     {
         if (!_headerWritten)
         {
