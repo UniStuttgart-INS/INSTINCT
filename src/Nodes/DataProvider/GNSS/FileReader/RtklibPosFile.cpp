@@ -436,7 +436,7 @@ std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData(bool peek)
 
 NAV::FileReader::FileType NAV::RtklibPosFile::determineFileType()
 {
-    return FileReader::FileType::CSV;
+    return FileReader::FileType::ASCII;
 }
 
 void NAV::RtklibPosFile::readHeader()

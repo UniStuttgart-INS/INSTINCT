@@ -59,7 +59,7 @@ class NmeaFile : public Node, public FileReader
     bool resetNode() override;
 
   private:
-    constexpr static size_t OUTPUT_PORT_INDEX_NMEA_POS_OBS = 0; ///< @brief Flow (RtklibPosObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_NMEA_POS_OBS = 0; ///< @brief Flow (PosVel)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -78,23 +78,30 @@ class NmeaFile : public Node, public FileReader
 
     /// @brief Read the Header of the file
     void readHeader() override;
-	
-	 /// @brief checks whether a ZDA or RMC time tag was read so that UTC can be reconstructed together with the GGA tag
-	bool haveValidDate = false ;
-	
-	 /// @brief second of day (SOD) from last GGA stream. This variable is used to check if SOD is increasing, if not, wait for next ZDA stream to get date info
-	double oldSOD = -1.0;
-	
-	/// @brief checks whether a ZDA time tag was read so that UTC can be reconstructed together with the GGA tag
-	std::vector<int> ddmmyyyy={0,0,0};
-	
+
+    /// @brief Checks whether a ZDA or RMC time tag was read so that UTC can be reconstructed together with the GGA tag
+    bool _hasValidDate = false;
+
+    /// @brief Second of day (SOD) from last GGA stream. This variable is used to check if SOD is increasing, if not, wait for next ZDA stream to get date info
+    double _oldSoD = -1.0;
+
+    /// @brief Current date
+    struct
+    {
+        int year = 0;  ///< Year
+        int month = 0; ///< Month 01 to 12
+        int day = 0;   ///< Day 01 to 31
+    } _currentDate;
+
     /// @brief Set date info from ZDA steam
     /// @param[in] line Line that contains a potential $--ZDA stream
-	bool setdatefromzda(const std::string & line);
-	
+    /// @return True if the $--ZDA stream was read successfully
+    bool setDateFromZDA(const std::string& line);
+
     /// @brief Set date info from RMC steam
     /// @param[in] line Line that contains a potential $--RMC stream
-	bool setdatefromrmc(const std::string & line);	
+    /// @return True if the $--RMC stream was read successfully
+    bool setDateFromRMC(const std::string& line);
 };
 
 } // namespace NAV

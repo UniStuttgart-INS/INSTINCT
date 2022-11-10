@@ -237,7 +237,7 @@ void NAV::CsvFile::deinitialize()
 
 NAV::FileReader::FileType NAV::CsvFile::determineFileType()
 {
-    return FileReader::FileType::CSV;
+    return FileReader::FileType::ASCII;
 }
 
 void NAV::CsvFile::readHeader()

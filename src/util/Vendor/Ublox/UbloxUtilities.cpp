@@ -445,6 +445,8 @@ std::pair<uint8_t, uint8_t> NAV::vendor::ublox::checksumUBX(const std::vector<ui
 uint8_t NAV::vendor::ublox::checksumNMEA(const std::vector<uint8_t>& data)
 {
     uint8_t calcChecksum = 0;
+    //  |->                          <-|            Checksum without first $ sign and till the *
+    // $--ZDA,hhmmss.ss,xx,xx,xxxx,xx,xx*hh<CR><LF>
     for (size_t i = 1; i < data.size() - 5; i++)
     {
         calcChecksum ^= data.at(i);

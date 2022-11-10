@@ -105,7 +105,7 @@ bool NAV::FileReader::initialize()
 
     _fileType = determineFileType();
 
-    if (_fileType == FileType::CSV || _fileType == FileType::BINARY || _fileType == FileType::NMEA)
+    if (_fileType == FileType::ASCII || _fileType == FileType::BINARY)
     {
         // Does not enable binary read/write, but disables OS dependant treatment of \n, \r
         _filestream = std::ifstream(filepath, std::ios_base::in | std::ios_base::binary);
@@ -125,9 +125,9 @@ bool NAV::FileReader::initialize()
 
     _dataStart = _filestream.tellg();
 
-    if (_fileType == FileType::CSV)
+    if (_fileType == FileType::ASCII)
     {
-        LOG_DEBUG("CSV-File successfully initialized");
+        LOG_DEBUG("ASCII-File successfully initialized");
     }
     else if (_fileType == FileType::BINARY)
     {
@@ -168,7 +168,7 @@ NAV::FileReader::FileType NAV::FileReader::determineFileType()
 
         if (n >= 3)
         {
-            return FileType::CSV;
+            return FileType::ASCII;
         }
 
         return FileType::BINARY;
@@ -182,7 +182,7 @@ void NAV::FileReader::readHeader()
 {
     LOG_TRACE("called");
 
-    if (_fileType == FileType::CSV)
+    if (_fileType == FileType::ASCII)
     {
         _headerColumns.clear();
 

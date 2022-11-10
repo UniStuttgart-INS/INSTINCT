@@ -31,7 +31,7 @@ class FileWriter
     {
         NONE,   ///< Not specified
         BINARY, ///< Binary data
-        CSV,    ///< Ascii text data
+        ASCII,  ///< Ascii text data
     };
 
     /// @brief Converts the provided type into string

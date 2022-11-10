@@ -237,12 +237,12 @@ NAV::FileReader::FileType NAV::VectorNavFile::determineFileType()
         if (std::string(buffer.data(), buffer.size()).starts_with("Time [s]"))
         {
             _hasTimeColumn = true;
-            return FileType::CSV;
+            return FileType::ASCII;
         }
         if (std::string(buffer.data(), buffer.size()).starts_with("GpsCycle,GpsWeek,GpsTow"))
         {
             _hasTimeColumn = false;
-            return FileType::CSV;
+            return FileType::ASCII;
         }
 
         return FileType::BINARY;
@@ -254,7 +254,7 @@ NAV::FileReader::FileType NAV::VectorNavFile::determineFileType()
 
 void NAV::VectorNavFile::readHeader()
 {
-    if (_fileType == FileType::CSV)
+    if (_fileType == FileType::ASCII)
     {
         _binaryOutputRegister.timeField = vn::protocol::uart::TimeGroup::TIMEGROUP_NONE;
         _binaryOutputRegister.imuField = vn::protocol::uart::ImuGroup::IMUGROUP_NONE;
@@ -406,7 +406,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
     // Get current position
     auto len = _filestream.tellg();
 
-    if (_fileType == FileType::CSV)
+    if (_fileType == FileType::ASCII)
     {
         // Read line
         std::string line;
