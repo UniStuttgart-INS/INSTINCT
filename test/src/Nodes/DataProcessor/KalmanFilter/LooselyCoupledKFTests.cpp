@@ -30,9 +30,8 @@ namespace nm = NAV::NodeManager;
 #include "util/Logger.hpp"
 #include "util/Container/CartesianProduct.hpp"
 
-// This is a small hack, which lets us change private/protected parameters for
+// This is a small hack, which lets us change private/protected parameters
 #pragma GCC diagnostic push
-// #pragma GCC diagnostic ignored "-w"
 #if defined(__clang__)
     #pragma GCC diagnostic ignored "-Wkeyword-macro"
     #pragma GCC diagnostic ignored "-Wmacro-redefined"
@@ -197,38 +196,38 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
         //                                           LooselyCoupledKF.flow
         // ###########################################################################################################
         //
-        //                                                                                                                                                                                                                                Plot (9)
-        //                                                                                                ImuSimulator (577) (disabled)                            (585)--------------------------------------------------------------->  |> ImuObs (4)
-        //                                                                                                   (575) ImuObs |>                       (555)----------/-------------------------------------------------------------------->  |> Nominal (5)
-        //                                                                                                (576) PosVelAtt |>                      /              /                                                                   -->  |> Filter (121)
-        //                                                                                                                    \                  /              /                                                                   /
-        //                                                                                                                     \         Combiner (344)        /            PosVelAttInitializer (21)                               |
-        // VectorNavFile("VectorNav/Static/vn310-imu.csv") (324)              VectorNavBinaryConverter (333)                   (581)-->  |> (345)    (347) |>                       (20) PosVelAtt |>                               |
-        //                                (323) Binary Output |>  --(334)-->  |> Binary Output (332)   (331) ImuObsWDelta |> --(561)-->  |> (346)              \                                       \                          (383)
-        //                                                                                                                                   /                  \                                      /                            |
-        // VectorNavFile("VectorNav/Static/vn310-gnss.csv") (326)              VectorNavBinaryConverter (337)                 /--------------                    \           --------(322)-------------                             |
-        //                                 (325) Binary Output |>  --(334)-->  |> Binary Output (338)   (339) ImuObsWDelta |>                                     \         /                                                       |
-        //                                                                                                                    \                                    \       |     ImuIntegrator (163)                               /
-        //                                                                                                                     \                                    (583)----->  |> ImuObs (164)          (166) InertialNavSol |> -
-        //                                                                                                                      \                                          \-->  |> PosVelAttInit (165)                            \
-        //                                                                                                                       \                                      ------>  |> PVAError (224)                                 |
-        //                                                                                                                        \                                    /    -->  |> Sync (6)                                       |
-        //                                                                                                                         \                                  |    /                                                       |
-        //                                                                                                                          \                                 |    \-------------------------------------------------------|---------------------------------------------------------------(504)
-        //                                                                                                                           \                                 \                                                           |                                                                    \
-        //                                                                                                                            \                                 (240)------------------------------------------------------|----------------------------------------------------------------    |
-        //                                                                                                                             \                                                                                           |                                                                \   |
-        //                                                                                                                              \                                                                                          \          LooselyCoupledKF (239)                                /   |
-        //                                                                                                                               \                                                                                          (242)-->  |> InertialNavSol (226)            (228) PVAError |> ----/---              Plot (250)
-        //                                                                                                                                (557)-------------------------------------------------------------------------------------------->  |> GNSSNavigationSolution (227)        (441) Sync |> ----    \-(266)---->  |> PVAError (245)
-        //                                                                                                                                                                                                                                                                              (496) x |> ----------(505)---->  |> KF.x (252)
-        //                                                                                                                                                                                                                                                                              (497) P |> ----------(506)---->  |> KF.P (253)
-        //                                                                                                                                                                                                                                                                            (498) Phi |> ----------(507)---->  |> KF.Phi (254)
-        //                                                                                                                                                                                                                                                                              (499) Q |> ----------(508)---->  |> KF.Q (255)
-        //                                                                                                                                                                                                                                                                              (500) z |> ----------(509)---->  |> KF.z (256)
-        //                                                                                                                                                                                                                                                                              (501) H |> ----------(510)---->  |> KF.H (263)
-        //                                                                                                                                                                                                                                                                              (502) R |> ----------(511)---->  |> KF.R (264)
-        //                                                                                                                                                                                                                                                                              (503) K |> ----------(512)---->  |> KF.K (456)
+        //                                                                                                                                                                                                    Plot (9)
+        //                                                                    ImuSimulator (577) (disabled)                            (585)--------------------------------------------------------------->  |> ImuObs (4)
+        //                                                                       (575) ImuObs |>                       (555)----------/-------------------------------------------------------------------->  |> Nominal (5)
+        //                                                                    (576) PosVelAtt |>                      /              /                                                                   -->  |> Filter (121)
+        //                                                                                       \                   /              /                                                                   /
+        //                                                                                        \          Combiner (344)        /            PosVelAttInitializer (21)                               |
+        // VectorNavFile - IMU (324)              VectorNavBinaryConverter (333)                   (581)-->  |> (345)    (347) |> -                      (20) PosVelAtt |>                              |
+        //    (323) Binary Output |>  --(334)-->  |> Binary Output (332)   (331) ImuObsWDelta |> --(561)-->  |> (346)              \                                       \                          (383)
+        //                                                                                                      /                   \                                      /                            |
+        // VectorNavFile - GNSS (326)              VectorNavBinaryConverter (337)               /---------------                     \           --------(322)-------------                             |
+        //     (325) Binary Output |>  --(334)-->  |> Binary Output (338)   (339) PosVelAtt |> -                                      \         /                                                       |
+        //                                                                                      \                                      \       |     ImuIntegrator (163)                               /
+        //                                                                                       \                                      (583)----->  |> ImuObs (164)          (166) InertialNavSol |> -
+        //                                                                                        \                                            \-->  |> PosVelAttInit (165)                            \
+        //                                                                                         \                                        ------>  |> PVAError (224)                                 |
+        //                                                                                          \                                      /    -->  |> Sync (6)                                       |
+        //                                                                                           \                                    |    /                                                       |
+        //                                                                                            \                                   |    \-------------------------------------------------------|---------------------------------------------------------------(504)
+        //                                                                                             \                                   \                                                           |                                                                    \
+        //                                                                                              \                                   (240)------------------------------------------------------|----------------------------------------------------------------    |
+        //                                                                                               \                                                                                             |                                                                \   |
+        //                                                                                                \                                                                                            \          LooselyCoupledKF (239)                                /   |
+        //                                                                                                 \                                                                                            (242)-->  |> InertialNavSol (226)            (228) PVAError |> ----/---              Plot (250)
+        //                                                                                                  (557)---------------------------------------------------------------------------------------------->  |> GNSSNavigationSolution (227)        (441) Sync |> ----    \-(266)---->  |> PVAError (245)
+        //                                                                                                                                                                                                                                                  (496) x |> ----------(505)---->  |> KF.x (252)
+        //                                                                                                                                                                                                                                                  (497) P |> ----------(506)---->  |> KF.P (253)
+        //                                                                                                                                                                                                                                                (498) Phi |> ----------(507)---->  |> KF.Phi (254)
+        //                                                                                                                                                                                                                                                  (499) Q |> ----------(508)---->  |> KF.Q (255)
+        //                                                                                                                                                                                                                                                  (500) z |> ----------(509)---->  |> KF.z (256)
+        //                                                                                                                                                                                                                                                  (501) H |> ----------(510)---->  |> KF.H (263)
+        //                                                                                                                                                                                                                                                  (502) R |> ----------(511)---->  |> KF.R (264)
+        //                                                                                                                                                                                                                                                  (503) K |> ----------(512)---->  |> KF.K (456)
         //
         // ###########################################################################################################
         REQUIRE(testFlow("test/flow/Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.flow"));
@@ -245,7 +244,7 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
                           settings);
 }
 
-TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving before GNSS data", "[LooselyCoupledKF][flow][debug]")
+TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving before GNSS data", "[LooselyCoupledKF][flow]")
 {
     // GNSS: 176 messages, 162 messages with InsTime, 48 messages with fix (first GNSS message at 22.799s)
     size_t MESSAGE_COUNT_GNSS = 162;
@@ -256,7 +255,7 @@ TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving before GNSS
     testLCKFwithImuFile("VectorNav/Static/vn310-imu.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_GNSS_FIX, MESSAGE_COUNT_IMU);
 }
 
-TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving after GNSS data", "[LooselyCoupledKF][flow][debug]")
+TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving after GNSS data", "[LooselyCoupledKF][flow]")
 {
     // GNSS: 176 messages, 162 messages with InsTime, 48 messages with fix (first GNSS message at 22.799717387000001s)
     size_t MESSAGE_COUNT_GNSS = 162;

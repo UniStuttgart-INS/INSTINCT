@@ -24,7 +24,7 @@ namespace nm = NAV::NodeManager;
 namespace NAV::TEST::RinexNavFileTests
 {
 
-TEST_CASE("[RinexNavFile] Read v3.03 Files and check correctness", "[RinexNavFile][flow][Debug]")
+TEST_CASE("[RinexNavFile] Read v3.03 Files and check correctness", "[RinexNavFile][flow]")
 {
     Logger logger;
 
@@ -58,7 +58,7 @@ TEST_CASE("[RinexNavFile] Read v3.03 Files and check correctness", "[RinexNavFil
         // TODO: Write the actual test here
     });
 
-    testFlow("test/flow/Nodes/DataProvider/GNSS/RinexNavFile.flow");
+    REQUIRE(testFlow("test/flow/Nodes/DataProvider/GNSS/RinexNavFile.flow"));
 }
 
 } // namespace NAV::TEST::RinexNavFileTests
