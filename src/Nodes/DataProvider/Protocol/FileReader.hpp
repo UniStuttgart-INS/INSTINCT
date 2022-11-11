@@ -34,7 +34,7 @@ class FileReader
     {
         NONE,   ///< Not specified
         BINARY, ///< Binary data
-        CSV,    ///< Ascii text data
+        ASCII,  ///< Ascii text data
     };
 
     /// @brief Destructor
@@ -92,6 +92,9 @@ class FileReader
     [[nodiscard]] virtual FileType determineFileType();
 
     /// @brief Virtual Function to read the Header of a file
+    ///
+    /// The base implementation reads a CSV file header
+    /// @attention If your file does not have a header, this functions needs to be overridden with an empty function
     virtual void readHeader();
 
     /// Path to the file

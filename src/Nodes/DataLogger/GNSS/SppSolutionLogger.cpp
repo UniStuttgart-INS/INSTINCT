@@ -25,7 +25,7 @@ NAV::SppSolutionLogger::SppSolutionLogger()
 {
     LOG_TRACE("{}: called", name);
 
-    _fileType = FileType::CSV;
+    _fileType = FileType::ASCII;
 
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 380, 70 };

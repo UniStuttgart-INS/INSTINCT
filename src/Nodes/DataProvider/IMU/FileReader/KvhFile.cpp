@@ -68,7 +68,7 @@ void NAV::KvhFile::guiConfig()
 
     Imu::guiConfig();
 
-    if (_fileType == FileType::CSV)
+    if (_fileType == FileType::ASCII)
     {
         // Header info
         if (ImGui::BeginTable(fmt::format("##VectorNavHeaders ({})", id.AsPointer()).c_str(), 2,
@@ -196,7 +196,7 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData(bool peek)
 
         vendor::kvh::decryptKvhObs(obs);
     }
-    else if (_fileType == FileType::CSV)
+    else if (_fileType == FileType::ASCII)
     {
         obs = std::make_shared<KvhObs>(_imuPos);
 
@@ -393,7 +393,7 @@ NAV::FileReader::FileType NAV::KvhFile::determineFileType()
 
         if (n >= 3)
         {
-            return FileType::CSV;
+            return FileType::ASCII;
         }
 
         LOG_ERROR("{} could not determine file type", name);

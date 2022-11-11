@@ -23,14 +23,8 @@ namespace nm = NAV::NodeManager;
 namespace NAV::TEST::TimeWindowTests
 {
 
-size_t messageCounterInput = 0;  ///< Message Counter for the incoming simulated Imu data
-size_t messageCounterOutput = 0; ///< Message Counter for the outgoing simulated Imu data
-
 TEST_CASE("[TimeWindow][flow] Simulate IMU and cut off start and end time", "[TimeWindow][flow]")
 {
-    messageCounterInput = 0;
-    messageCounterOutput = 0;
-
     Logger logger;
 
     // ###########################################################################################################
@@ -43,18 +37,20 @@ TEST_CASE("[TimeWindow][flow] Simulate IMU and cut off start and end time", "[Ti
     //
     // ###########################################################################################################
 
-    nm::RegisterWatcherCallbackToInputPin(1, [](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+    size_t messageCounterInput = 0;
+    nm::RegisterWatcherCallbackToInputPin(1, [&messageCounterInput](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
         messageCounterInput++;
     });
 
-    nm::RegisterWatcherCallbackToInputPin(8, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    size_t messageCounterOutput = 0;
+    nm::RegisterWatcherCallbackToInputPin(8, [&messageCounterOutput](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         REQUIRE(queue.front()->insTime >= InsTime(2000, 1, 1, 0, 0, 1.5)); // Start time
         REQUIRE(queue.front()->insTime <= InsTime(2000, 1, 1, 0, 0, 8.5)); // End time
 
         messageCounterOutput++;
     });
 
-    testFlow("test/flow/Nodes/util/TimeWindow.flow");
+    REQUIRE(testFlow("test/flow/Nodes/util/TimeWindow.flow"));
 
     REQUIRE(messageCounterInput == 101);
     REQUIRE(messageCounterOutput == 71);

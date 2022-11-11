@@ -182,7 +182,7 @@ FileReader::FileType RinexObsFile::determineFileType()
         {
             if (extHeaderLabel(line) == "END OF HEADER")
             {
-                return FileReader::FileType::CSV;
+                return FileReader::FileType::ASCII;
             }
         }
         LOG_ERROR("{}: Not a valid RINEX NAV file. Could not read 'END OF HEADER' line.", nameId());
