@@ -64,6 +64,8 @@ class SinglePointPositioning : public Node
     void restore(const json& j) override;
 
   private:
+    constexpr static size_t INPUT_PORT_INDEX_POSVEL_INIT = 0;   ///< @brief PosVel
+    constexpr static size_t INPUT_PORT_INDEX_GNSS_OBS = 1;      ///< @brief GnssObs
     constexpr static size_t INPUT_PORT_INDEX_GNSS_NAV_INFO = 2; ///< @brief GnssNavInfo
 
     constexpr static size_t OUTPUT_PORT_INDEX_SPPSOL = 0; ///< @brief Flow (PosVel)

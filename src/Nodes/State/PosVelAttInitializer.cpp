@@ -571,6 +571,16 @@ void NAV::PosVelAttInitializer::finalizeInit()
         posVelAtt->setAttitude_n_Quat_b(_n_Quat_b_init);
         invokeCallbacks(OUTPUT_PORT_INDEX_POS_VEL_ATT, posVelAtt);
     }
+    else if (std::all_of(inputPins.begin(), inputPins.end(), [](const InputPin& inputPin) {
+                 if (auto* connectedPin = inputPin.link.getConnectedPin())
+                 {
+                     return connectedPin->mode == OutputPin::Mode::REAL_TIME;
+                 }
+                 return !inputPin.isPinLinked();
+             }))
+    {
+        LOG_ERROR("{}: State Initialization failed. No more messages incoming to eventually receive a state. Please check which states got initialized and override the others.", nameId());
+    }
 }
 
 void NAV::PosVelAttInitializer::receiveImuObs(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)

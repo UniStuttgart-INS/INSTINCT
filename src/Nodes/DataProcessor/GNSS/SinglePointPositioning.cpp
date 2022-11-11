@@ -40,7 +40,11 @@ NAV::SinglePointPositioning::SinglePointPositioning()
     _guiConfigDefaultWindowSize = { 407, 506 };
 
     nm::CreateInputPin(this, "PosVelInit", Pin::Type::Flow, { NAV::PosVel::type() }, &SinglePointPositioning::recvPosVelInit);
-    nm::CreateInputPin(this, NAV::GnssObs::type().c_str(), Pin::Type::Flow, { NAV::GnssObs::type() }, &SinglePointPositioning::recvGnssObs);
+    nm::CreateInputPin(this, NAV::GnssObs::type().c_str(), Pin::Type::Flow, { NAV::GnssObs::type() }, &SinglePointPositioning::recvGnssObs,
+                       [](const Node* node, const InputPin& inputPin) {
+                           const auto* spp = static_cast<const SinglePointPositioning*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
+                           return !inputPin.queue.empty() && !spp->_e_position.isZero();
+                       });
     updateNumberOfInputPins();
 
     nm::CreateOutputPin(this, NAV::SppSolution::type().c_str(), Pin::Type::Flow, { NAV::SppSolution::type() });
@@ -387,7 +391,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
         gnssNavInfos[i] = getInputValue<const GnssNavInfo>(INPUT_PORT_INDEX_GNSS_NAV_INFO + i);
     }
 
-    if (_e_position.isZero() || std::all_of(gnssNavInfos.begin(), gnssNavInfos.end(), [](const GnssNavInfo* info) { return info == nullptr; }))
+    if (std::all_of(gnssNavInfos.begin(), gnssNavInfos.end(), [](const GnssNavInfo* info) { return info == nullptr; }))
     {
         return;
     }
@@ -916,11 +920,10 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
 
 void NAV::SinglePointPositioning::recvPosVelInit(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    if (_e_position.isZero())
-    {
-        auto posVel = std::static_pointer_cast<const PosVel>(queue.extract_front());
+    inputPins[INPUT_PORT_INDEX_POSVEL_INIT].queueBlocked = true;
 
-        _e_position = posVel->e_position();
-        _e_velocity = posVel->e_velocity();
-    }
+    auto posVel = std::static_pointer_cast<const PosVel>(queue.extract_front());
+
+    _e_position = posVel->e_position();
+    _e_velocity = posVel->e_velocity();
 }
