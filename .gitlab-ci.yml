@@ -120,14 +120,15 @@ clang-tidy:tests:
     - .linux
     - .clang
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug --target copy-compile-commands
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Release --target copy-compile-commands
     - python3 ./tools/run-clang-tidy.py $PWD/test
 
 documentation:
   stage: checks
   needs: ["check-image"]
-  extends: .linux
+  extends:
+    - .linux
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES
     - cmake --build build/Release --target doc
@@ -143,7 +144,8 @@ documentation:
 
 main:win:
   stage: build
-  extends: .windows
+  extends:
+    - .windows
   needs: ["check-windows"]
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
@@ -157,7 +159,8 @@ main:win:LOG_OFF:
     - cmake --build build/Release -- -maxCpuCount
 
 main:win:LOG_INFO:
-  extends: main:win
+  extends:
+    - main:win
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=INFO -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release -- -maxCpuCount
@@ -253,16 +256,16 @@ main:raspberry:gcc:
   extends: .linux
   needs: ["check-image"]
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug -- -j2
+    - cmake -Bbuild/$BUILD_TYPE -S. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/$BUILD_TYPE -- -j2
 
 .build:tests:LOG_DATA:
   stage: build
   extends: .linux
   needs: ["check-image"]
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug -- -j2
+    - cmake -Bbuild/$BUILD_TYPE -S. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/$BUILD_TYPE -- -j2
 
 .build:tests-win:
   stage: build
@@ -272,10 +275,10 @@ main:raspberry:gcc:
 .build:test-artifacts:
   artifacts:
     paths:
-      - build/Debug/CTestTestfile.cmake
-      - build/Debug/test/CTestTestfile.cmake
-      - build/Debug/test/tests_*.cmake
-      - bin/Debug/tests*
+      - build/$BUILD_TYPE/CTestTestfile.cmake
+      - build/$BUILD_TYPE/test/CTestTestfile.cmake
+      - build/$BUILD_TYPE/test/tests_*.cmake
+      - bin/$BUILD_TYPE/tests*
     expire_in: 2h
 
 tests:clang:
@@ -283,14 +286,25 @@ tests:clang:
     - .build:tests
     - .build:test-artifacts
     - .clang
+    - .release
 
 tests:gcc:
   extends:
     - .build:tests
+    - .build:test-artifacts
     - .gcc
+    - .release
+
+tests:gcc:debug:
+  extends:
+    - .build:tests
+    - .gcc
+    - .debug
   artifacts:
     untracked: true # For the coverage report
     expire_in: 2h
+  only:
+    - master
 
 tests:clang:LOG_DATA:
   extends:
@@ -306,53 +320,64 @@ tests:gcc:LOG_DATA:
   extends:
     - .build:tests
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug -- -j2
+    - cmake -Bbuild/$BUILD_TYPE -S. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/$BUILD_TYPE -- -j2
 
 tests:clang:LOG_OFF:
   extends:
     - .build:tests:LOG_OFF
     - .clang
+    - .release
 
 tests:gcc:LOG_OFF:
   extends:
     - .build:tests:LOG_OFF
     - .gcc
+    - .release
 
 tests:win:
   extends:
     - .build:tests-win
     - .build:test-artifacts
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug -- -maxCpuCount
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Release -- -maxCpuCount
+  artifacts:
+    paths:
+      - build/Release/CTestTestfile.cmake
+      - build/Release/test/CTestTestfile.cmake
+      - build/Release/test/tests_*.cmake
+      - bin/Release/tests*
+    expire_in: 2h
 
 tests:win:LOG_OFF:
   extends:
     - .build:tests-win
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug -- -maxCpuCount
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Release -- -maxCpuCount
 
 .build:raspberry:tests:
   stage: build
   extends: .raspberry
   needs: ["check-raspberry"]
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug -- -j2
+    - cmake -Bbuild/$BUILD_TYPE -S. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/$BUILD_TYPE -- -j2
 
 tests:raspberry:clang:
   extends:
     - .build:raspberry:tests
     - .build:test-artifacts
     - .clang
+    - .release
 
 tests:raspberry:gcc:
   extends:
     - .build:raspberry:tests
     - .build:test-artifacts
     - .gcc
+    - .release
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                               Test                                               ║
@@ -363,10 +388,10 @@ tests:raspberry:gcc:
   extends:
     - .retry
   script:
-    - cd build/Debug
+    - cd build/$BUILD_TYPE
     - ctest --output-on-failure # -j2
   after_script:
-    - cd build/Debug/test
+    - cd build/$BUILD_TYPE/test
     - xml_grep --pretty_print indented --wrap '' --descr '' --cond "testsuites" *.xml > ../../../junit.xml
     - sed -i ':begin;$!N;s/<\/testsuites>\n<testsuites>//;tbegin;P;D' ../../../junit.xml
   artifacts:
@@ -379,16 +404,27 @@ run-tests:clang:
   extends:
     - .linux
     - .run-tests
+    - .release
   needs: ["tests:clang"]
 
 run-tests:gcc:
   extends:
     - .linux
     - .run-tests
+    - .release
   needs: ["tests:gcc"]
+
+run-tests:gcc:debug:
+  extends:
+    - .linux
+    - .run-tests
+    - .debug
+  needs: ["tests:gcc:debug"]
   artifacts:
     untracked: true # For the coverage report
     expire_in: 2h
+  only:
+    - master
 
 run-tests:win:
   stage: test
@@ -397,19 +433,21 @@ run-tests:win:
     - .retry
   needs: ["tests:win"]
   script:
-    - cd build/Debug/test
+    - cd build/Release/test
     - ctest --output-on-failure
 
 run-tests:raspberry:clang:
   extends:
     - .raspberry
     - .run-tests
+    - .release
   needs: ["tests:raspberry:clang"]
 
 run-tests:raspberry:gcc:
   extends:
     - .raspberry
     - .run-tests
+    - .release
   needs: ["tests:raspberry:gcc"]
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
@@ -418,7 +456,8 @@ run-tests:raspberry:gcc:
 
 doxygen:
   stage: analyze
-  extends: .linux
+  extends:
+    - .linux
   needs: ["check-image"]
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
@@ -433,7 +472,7 @@ doxygen:
 coverage:
   stage: analyze
   extends: .linux
-  needs: ["run-tests:gcc"]
+  needs: ["run-tests:gcc:debug"]
   script:
     - mkdir -p coverage
     - lcov --gcov-tool gcov --capture --no-external --directory . --output-file coverage/coverage_all.info

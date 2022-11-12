@@ -132,6 +132,7 @@ void NAV::Node::requestOutputValueLock(size_t pinIdx)
         LOG_DATA("{}: Requesting lock on output pin '{}', {} threads accessing still.", nameId(), outputPin.name, outputPin.dataAccessCounter);
         std::unique_lock<std::mutex> lk(outputPin.dataAccessMutex);
         outputPin.dataAccessConditionVariable.wait(lk, [&outputPin]() { return outputPin.dataAccessCounter == 0; });
+        LOG_DATA("{}: Lock on output pin '{}' acquired.", nameId(), outputPin.name);
     }
 }
 
@@ -150,9 +151,10 @@ void NAV::Node::releaseInputValue(size_t portIndex)
     if (outputPin && outputPin->dataAccessCounter > 0)
     {
         outputPin->dataAccessCounter--;
+        std::lock_guard<std::mutex> lk(outputPin->dataAccessMutex);
         if (outputPin->dataAccessCounter == 0)
         {
-            LOG_DATA("{}: Notifying node '{}' at pinIdx {} that all data is read.", nameId(), outputPin->name, portIndex);
+            LOG_DATA("{}: Notifying node '{}' connected to pin {} that all data is read.", nameId(), outputPin->parentNode->nameId(), outputPin->name);
             outputPin->dataAccessConditionVariable.notify_all();
         }
     }
@@ -713,6 +715,7 @@ void NAV::Node::workerThread(Node* node)
                                || (inputPin.queue.empty() && inputPin.link.getConnectedPin()->mode == OutputPin::Mode::REAL_TIME);
                     }))
                 {
+                    LOG_TRACE("{}: Node finished", node->nameId());
                     node->callbacksEnabled = false;
                     for (auto& outputPin : node->outputPins)
                     {

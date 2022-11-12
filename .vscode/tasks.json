@@ -90,7 +90,7 @@
                 "command": "bash",
                 "args": [
                     "-c",
-                    "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Debug-${input:compiler} -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
+                    "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
                 ],
                 // "options": {
                 //     "env": {
@@ -102,9 +102,9 @@
             "windows": {
                 "command": "cmake",
                 "args": [
-                    "-Bbuild/Debug-msvc",
+                    "-Bbuild/${input:buildType}-msvc",
                     "-S.",
-                    "-DCMAKE_BUILD_TYPE=Debug",
+                    "-DCMAKE_BUILD_TYPE=${input:buildType}",
                     "-DENABLE_MAIN=OFF",
                     "-DENABLE_TESTING=ON",
                     "-DENABLE_DOXYGEN=OFF",
@@ -271,7 +271,7 @@
                 "command": "cmake",
                 "args": [
                     "--build",
-                    "build/Debug-${input:compiler}",
+                    "build/${input:buildType}-${input:compiler}",
                     "--",
                     "-j8",
                 ],
@@ -280,7 +280,7 @@
                 "command": "cmake",
                 "args": [
                     "--build",
-                    "build/Debug-msvc",
+                    "build/${input:buildType}-msvc",
                     "--",
                     "-maxCpuCount",
                 ],
@@ -399,12 +399,12 @@
             ],
             "linux": {
                 "options": {
-                    "cwd": "build/Debug-${input:compiler}",
+                    "cwd": "build/${input:buildType}-${input:compiler}",
                 },
             },
             "windows": {
                 "options": {
-                    "cwd": "build/Debug-msvc",
+                    "cwd": "build/${input:buildType}-msvc",
                 },
             },
             "dependsOn": [
@@ -427,7 +427,7 @@
                 // "--verbose",
             ],
             "options": {
-                "cwd": "build/Debug-${input:compiler}",
+                "cwd": "build/${input:buildType}-${input:compiler}",
             },
             "dependsOn": [
                 "TEST: Build project",
