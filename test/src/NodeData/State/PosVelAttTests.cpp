@@ -95,18 +95,18 @@ TEST_CASE("[PosVelAtt] Attitude Functions", "[PosVelAtt]")
     state.setState_e(trafo::lla2ecef_WGS84(lla_position), e_vel, trafo::e_Quat_n(lla_position(0), lla_position(1)) * trafo::n_Quat_b(roll, pitch, yaw));
 
     CHECK(state.lla_position() == EigApprox(lla_position));
-    CHECK(state.e_velocity() == e_vel);
+    CHECK(state.e_velocity() == EigApprox(e_vel));
     CHECK(state.n_Quat_b() == EigApproxQ(trafo::n_Quat_b(roll, pitch, yaw)));
     CHECK(state.b_Quat_n() == EigApproxQ(trafo::b_Quat_n(roll, pitch, yaw)));
-    CHECK(state.e_Quat_b() == trafo::e_Quat_n(lla_position(0), lla_position(1)) * trafo::n_Quat_b(roll, pitch, yaw));
-    CHECK(state.b_Quat_e() == trafo::b_Quat_n(roll, pitch, yaw) * trafo::n_Quat_e(lla_position(0), lla_position(1)));
+    CHECK(state.e_Quat_b() == EigApproxQ(trafo::e_Quat_n(lla_position(0), lla_position(1)) * trafo::n_Quat_b(roll, pitch, yaw)));
+    CHECK(state.b_Quat_e() == EigApproxQ(trafo::b_Quat_n(roll, pitch, yaw) * trafo::n_Quat_e(lla_position(0), lla_position(1))));
 
     state.setState_n(lla_position, n_vel, trafo::n_Quat_b(roll, pitch, yaw));
-    CHECK(state.n_velocity() == n_vel);
-    CHECK(state.n_Quat_b() == trafo::n_Quat_b(roll, pitch, yaw));
-    CHECK(state.b_Quat_n() == trafo::b_Quat_n(roll, pitch, yaw));
-    CHECK(state.e_Quat_b() == trafo::e_Quat_n(lla_position(0), lla_position(1)) * trafo::n_Quat_b(roll, pitch, yaw));
-    CHECK(state.b_Quat_e() == trafo::b_Quat_n(roll, pitch, yaw) * trafo::n_Quat_e(lla_position(0), lla_position(1)));
+    CHECK(state.n_velocity() == EigApprox(n_vel));
+    CHECK(state.n_Quat_b() == EigApproxQ(trafo::n_Quat_b(roll, pitch, yaw)));
+    CHECK(state.b_Quat_n() == EigApproxQ(trafo::b_Quat_n(roll, pitch, yaw)));
+    CHECK(state.e_Quat_b() == EigApproxQ(trafo::e_Quat_n(lla_position(0), lla_position(1)) * trafo::n_Quat_b(roll, pitch, yaw)));
+    CHECK(state.b_Quat_e() == EigApproxQ(trafo::b_Quat_n(roll, pitch, yaw) * trafo::n_Quat_e(lla_position(0), lla_position(1))));
 }
 
 TEST_CASE("[PosVelAtt] Attitude RollPitchYaw", "[PosVelAtt]")

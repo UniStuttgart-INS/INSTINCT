@@ -1400,8 +1400,17 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Text("Node: %s", pin->parentNode ? std::to_string(size_t(pin->parentNode->id)).c_str() : "<none>");
             ImGui::Text("Type: %s", std::string(pin->type).c_str());
             ImGui::Separator();
-            ImGui::Text("Queue: %lu", pin->queue.size());
-            ImGui::Text("Queue front: %s", !pin->queue.empty() ? std::string(pin->queue.front()->insTime.toYMDHMS()).c_str() : "N/A");
+            if (ImGui::TreeNode(fmt::format("Queue: {}", pin->queue.size()).c_str()))
+            {
+                ImGui::BeginChild("QueueItems", ImVec2(ImGui::GetContentRegionAvail().x, 150), false, ImGuiWindowFlags_None);
+                for (size_t i = 0; i < pin->queue.size(); i++) // NOLINT(modernize-loop-convert)
+                {
+                    ImGui::Text("%s", std::string(pin->queue.at(i)->insTime.toYMDHMS()).c_str());
+                }
+                ImGui::EndChild();
+                ImGui::TreePop();
+            }
+
             ImGui::Text("Queue blocked: %s", pin->queueBlocked ? "true" : "false");
             ImGui::Text("Temporal check: %s", pin->neededForTemporalQueueCheck ? "true" : "false");
             ImGui::Text("Drop queue: %s", pin->dropQueueIfNotFirable ? "true" : "false");
