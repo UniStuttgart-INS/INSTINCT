@@ -69,6 +69,15 @@ if(APPLE)
   target_compile_definitions(tests PUBLIC BOOST_ASIO_HAS_STD_INVOKE_RESULT=1)
 endif()
 
+# Because MSVC sucks and we need to tell the linker to link the release versions manually
+if(MSVC AND CMAKE_BUILD_TYPE STREQUAL "Release")
+  message(STATUS "Release mode on :D")
+  set_target_properties(tests
+                        catch_main
+                        PROPERTIES
+                        MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
+endif()
+
 target_compile_definitions(tests PUBLIC TESTING=1)
 
 # automatically discover tests that are defined in catch based test files you can modify the unittests. TEST_PREFIX to

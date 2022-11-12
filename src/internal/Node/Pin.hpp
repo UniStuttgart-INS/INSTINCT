@@ -444,7 +444,7 @@ class OutputPin : public Pin
     /// Pointer to data (owned by this node) which is transferred over this pin
     PinData data = static_cast<void*>(nullptr);
 
-    /// Mutex to interact with the data object
+    /// Mutex to interact with the data object and also the dataAccessCounter variable
     std::mutex dataAccessMutex;
 
     /// @brief Counter for data accessing

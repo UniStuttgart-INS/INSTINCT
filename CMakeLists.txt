@@ -286,7 +286,6 @@ endif()
 # Because MSVC sucks and we need to tell the linker to link the release versions manually
 if(MSVC AND CMAKE_BUILD_TYPE STREQUAL "Release")
   set_target_properties(
-    ${PROJECT_NAME_LOWERCASE}
     instinct-resources
     imgui
     imgui_node_editor
