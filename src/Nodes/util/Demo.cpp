@@ -474,7 +474,7 @@ void NAV::Demo::readSensorDataThread(void* userData)
     node->invokeCallbacks(OUTPUT_PORT_INDEX_FLOW_SENSOR, obs);
 }
 
-std::shared_ptr<const NAV::NodeData> NAV::Demo::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::Demo::peekPollData(bool peek)
 {
     if (_iPollData >= _nPollData)
     {
@@ -495,6 +495,22 @@ std::shared_ptr<const NAV::NodeData> NAV::Demo::pollData(bool peek)
     // Calls all the callbacks
     invokeCallbacks(OUTPUT_PORT_INDEX_FLOW_FILE, obs);
 
+    return obs;
+}
+
+std::shared_ptr<const NAV::NodeData> NAV::Demo::pollData()
+{
+    if (_iPollData >= _nPollData)
+    {
+        return nullptr; // Tells the node that the last message was read
+    }
+
+    auto obs = std::make_shared<NodeData>(); // Construct the real observation (here in example also from type NodeData)
+    obs->insTime = InsTime(2000, 1, 1, 0, 0, _iPollData);
+
+    _iPollData++;
+
+    invokeCallbacks(OUTPUT_PORT_INDEX_FLOW_FILE, obs); // Calls all the callbacks
     return obs;
 }
 

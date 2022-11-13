@@ -24,10 +24,9 @@ namespace NAV::vendor::emlid
 {
 /// @brief Decrypts the provided Emlid observation
 ///
-/// @param[in, out] obs Emlid Observation to decrypt
+/// @param[in] obs Emlid Observation to decrypt
 /// @param[in, out] packet Uart packet with the data (content gets changed because data gets extracted)
-/// @param[in] peek Specifies if the data should be peeked or read
-void decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& obs, uart::protocol::Packet& packet, bool peek = false);
+void decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& obs, uart::protocol::Packet& packet);
 
 /// @brief Calculates the two UBX checksums for the provided data vector
 ///

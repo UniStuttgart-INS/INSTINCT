@@ -114,10 +114,14 @@ class Demo : public Node
     /// @param[in] pinIdx Index of the pin the data is received on
     void receiveFileReaderData(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
-    /// @brief Polls data from the file
+    /// @brief Polls data from the file. This function is needed, if we have multiple output pins, polling data.
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
     /// @return The read observation
-    [[nodiscard]] std::shared_ptr<const NodeData> pollData(bool peek = false);
+    [[nodiscard]] std::shared_ptr<const NodeData> peekPollData(bool peek = false);
+
+    /// @brief Polls data from the file
+    /// @return The read observation
+    [[nodiscard]] std::shared_ptr<const NodeData> pollData();
 
     /// Timer object to handle async data requests
     CallbackTimer _timer;

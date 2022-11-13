@@ -160,12 +160,9 @@ bool NAV::KvhFile::resetNode()
     return true;
 }
 
-std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData()
 {
     std::shared_ptr<KvhObs> obs = nullptr;
-
-    // Get current position
-    auto pos = _filestream.tellg();
 
     if (_fileType == FileType::BINARY)
     {
@@ -330,7 +327,7 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData(bool peek)
              obs->accelUncompXYZ.value().x(), obs->accelUncompXYZ.value().y(), obs->accelUncompXYZ.value().z());
 
     // Check if a packet was skipped
-    if (!peek && callbacksEnabled)
+    if (callbacksEnabled)
     {
         if (_prevSequenceNumber == UINT8_MAX)
         {
@@ -343,18 +340,7 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData(bool peek)
         _prevSequenceNumber = obs->sequenceNumber;
     }
 
-    if (peek)
-    {
-        // Return to position before "Read line".
-        _filestream.seekg(pos, std::ios_base::beg);
-    }
-
-    // Calls all the callbacks
-    if (!peek)
-    {
-        invokeCallbacks(OUTPUT_PORT_INDEX_KVH_OBS, obs);
-    }
-
+    invokeCallbacks(OUTPUT_PORT_INDEX_KVH_OBS, obs);
     return obs;
 }
 

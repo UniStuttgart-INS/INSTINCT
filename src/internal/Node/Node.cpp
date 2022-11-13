@@ -634,55 +634,71 @@ void NAV::Node::workerThread(Node* node)
                     {
                         OutputPin* outputPin = it->second;
                         Node* node = outputPin->parentNode;
-                        auto* callback = std::get_if<OutputPin::PollDataFunc>(&outputPin->data);
-                        if (callback != nullptr && *callback != nullptr)
+
+                        if (std::holds_alternative<OutputPin::PollDataFunc>(outputPin->data))
                         {
-                            if (!it->first.empty())
+                            auto* callback = std::get_if<OutputPin::PollDataFunc>(&outputPin->data);
+                            if (callback != nullptr && *callback != nullptr)
                             {
                                 LOG_DATA("{}: Polling data from output pin '{}'", node->nameId(), str::replaceAll_copy(outputPin->name, "\n", ""));
-                                // Trigger the already peeked observation and invoke it's callbacks (peek = false)
-                                if ((node->**callback)(false) == nullptr)
+                                if ((node->**callback)() == nullptr)
                                 {
-                                    LOG_ERROR("{}: {} could not poll its observation despite being able to peek it.", node->nameId(), outputPin->name);
-                                }
-                            }
-
-                            // Add next data event from the node
-                            while (true)
-                            {
-                                // Check if data available (peek = true)
-                                if (auto obs = (node->**callback)(true))
-                                {
-                                    // Check if data has a time
-                                    if (!obs->insTime.empty())
-                                    {
-                                        node->pollEvents.insert(std::make_pair(obs->insTime, outputPin));
-                                        break;
-                                    }
-
-                                    // Remove data without calling the callback if no time stamp
-                                    // For post processing all data needs a time stamp
-                                    node->callbacksEnabled = false;
-                                    (node->**callback)(false);
-                                    node->callbacksEnabled = true;
-                                }
-                                else
-                                {
-                                    outputPin->mode = OutputPin::Mode::REAL_TIME;
-                                    for (auto& link : outputPin->links)
-                                    {
-                                        link.connectedNode->wakeWorker();
-                                    }
+                                    node->pollEvents.erase(it); // Delete the event if no more data on this pin
                                     break;
                                 }
                             }
                         }
-                        else
+                        else if (std::holds_alternative<OutputPin::PeekPollDataFunc>(outputPin->data))
                         {
-                            LOG_ERROR("{} - {}: Callback is not valid anymore", node->nameId(), size_t(outputPin->id));
-                        }
+                            auto* callback = std::get_if<OutputPin::PeekPollDataFunc>(&outputPin->data);
+                            if (callback != nullptr && *callback != nullptr)
+                            {
+                                if (!it->first.empty())
+                                {
+                                    LOG_DATA("{}: Polling data from output pin '{}'", node->nameId(), str::replaceAll_copy(outputPin->name, "\n", ""));
+                                    // Trigger the already peeked observation and invoke it's callbacks (peek = false)
+                                    if ((node->**callback)(false) == nullptr)
+                                    {
+                                        LOG_ERROR("{}: {} could not poll its observation despite being able to peek it.", node->nameId(), outputPin->name);
+                                    }
+                                }
 
-                        node->pollEvents.erase(it);
+                                // Add next data event from the node
+                                while (true)
+                                {
+                                    // Check if data available (peek = true)
+                                    if (auto obs = (node->**callback)(true))
+                                    {
+                                        // Check if data has a time
+                                        if (!obs->insTime.empty())
+                                        {
+                                            node->pollEvents.insert(std::make_pair(obs->insTime, outputPin));
+                                            break;
+                                        }
+
+                                        // Remove data without calling the callback if no time stamp
+                                        // For post processing all data needs a time stamp
+                                        node->callbacksEnabled = false;
+                                        (node->**callback)(false);
+                                        node->callbacksEnabled = true;
+                                    }
+                                    else
+                                    {
+                                        outputPin->mode = OutputPin::Mode::REAL_TIME;
+                                        for (auto& link : outputPin->links)
+                                        {
+                                            link.connectedNode->wakeWorker();
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                LOG_ERROR("{} - {}: Callback is not valid anymore", node->nameId(), size_t(outputPin->id));
+                            }
+                            node->pollEvents.erase(it);
+                        }
                     }
 
                     if (node->pollEvents.empty())

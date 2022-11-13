@@ -69,9 +69,8 @@ class ImuFile : public Imu, public FileReader
     void deinitialize() override;
 
     /// @brief Polls data from the file
-    /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
     /// @return The read observation
-    [[nodiscard]] std::shared_ptr<const NodeData> pollData(bool peek = false);
+    [[nodiscard]] std::shared_ptr<const NodeData> pollData();
 };
 
 } // namespace NAV
