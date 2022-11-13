@@ -21,6 +21,9 @@ namespace nm = NAV::NodeManager;
 
 #include <imgui_node_editor.h>
 namespace ed = ax::NodeEditor;
+#ifdef TESTING
+    #include <catch2/catch.hpp>
+#endif
 
 NAV::Node::Node(std::string name)
     : name(std::move(name))
@@ -883,6 +886,9 @@ bool NAV::Node::workerDeinitializeNode()
 void NAV::Node::workerTimeoutHandler()
 {
     LOG_TRACE("{}: called", nameId());
+#ifdef TESTING
+    REQUIRE(true == false); // This should not happen in testing, as the test got then stuck and the timeout is unhandled
+#endif
 }
 
 void NAV::to_json(json& j, const Node& node)
