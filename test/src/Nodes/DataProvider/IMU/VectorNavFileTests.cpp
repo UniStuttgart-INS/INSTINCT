@@ -571,11 +571,18 @@ namespace DynamicSize
 void compareDynamicSizeObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutput>& obs, size_t messageCounterData)
 {
     // ------------------------------------------------ InsTime --------------------------------------------------
-    REQUIRE(!obs->insTime.empty());
+    if (static_cast<int32_t>(REFERENCE_DATA.at(messageCounterData).at(Ref_GpsCycle)) == -1)
+    {
+        REQUIRE(obs->insTime.empty());
+    }
+    else
+    {
+        REQUIRE(!obs->insTime.empty());
 
-    REQUIRE(obs->insTime.toGPSweekTow().gpsCycle == static_cast<int32_t>(REFERENCE_DATA.at(messageCounterData).at(Ref_GpsCycle)));
-    REQUIRE(obs->insTime.toGPSweekTow().gpsWeek == static_cast<int32_t>(REFERENCE_DATA.at(messageCounterData).at(Ref_GpsWeek)));
-    REQUIRE(obs->insTime.toGPSweekTow().tow == Approx(REFERENCE_DATA.at(messageCounterData).at(Ref_GpsTow)).margin(EPSILON));
+        REQUIRE(obs->insTime.toGPSweekTow().gpsCycle == static_cast<int32_t>(REFERENCE_DATA.at(messageCounterData).at(Ref_GpsCycle)));
+        REQUIRE(obs->insTime.toGPSweekTow().gpsWeek == static_cast<int32_t>(REFERENCE_DATA.at(messageCounterData).at(Ref_GpsWeek)));
+        REQUIRE(obs->insTime.toGPSweekTow().tow == Approx(REFERENCE_DATA.at(messageCounterData).at(Ref_GpsTow)).margin(EPSILON));
+    }
 
     // ----------------------------------------------- TimeGroup -------------------------------------------------
     REQUIRE(obs->timeOutputs != nullptr);
