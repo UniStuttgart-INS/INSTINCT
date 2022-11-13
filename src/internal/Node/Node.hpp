@@ -424,11 +424,11 @@ class Node
     /// Flag which prevents the worker to be autostarted if false
     static inline bool _autostartWorker = true;
 
-    std::chrono::duration<int64_t> _workerTimeout = std::chrono::years(1); ///< Periodic timeout of the worker to check if new data available
-    std::thread _worker;                                                   ///< Worker handling initialization and processing of data
-    std::mutex _workerMutex;                                               ///< Mutex to interact with the worker condition variable
-    std::condition_variable _workerConditionVariable;                      ///< Condition variable to signal the worker thread to do something
-    bool _workerWakeup = false;                                            ///< Variable to prevent the worker from sleeping
+    std::chrono::duration<int64_t> _workerTimeout = std::chrono::minutes(1); ///< Periodic timeout of the worker to check if new data available
+    std::thread _worker;                                                     ///< Worker handling initialization and processing of data
+    std::mutex _workerMutex;                                                 ///< Mutex to interact with the worker condition variable
+    std::condition_variable _workerConditionVariable;                        ///< Condition variable to signal the worker thread to do something
+    bool _workerWakeup = false;                                              ///< Variable to prevent the worker from sleeping
 
     /// @brief Worker thread
     /// @param[in, out] node The node where the thread belongs to
