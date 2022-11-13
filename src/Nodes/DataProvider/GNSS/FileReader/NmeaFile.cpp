@@ -190,11 +190,9 @@ bool NAV::NmeaFile::setDateFromRMC(const std::string& line)
     return false;
 }
 
-std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData()
 {
     auto obs = std::make_shared<PosVel>();
-    // Get current position
-    auto pos = _filestream.tellg();
 
     // Read line
     std::string line;
@@ -208,8 +206,6 @@ std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData(bool peek)
     double lat_rad = 0.0;
     double lon_rad = 0.0;
     double hgt = 0.0;
-
-    bool oldHaveValidDate = _hasValidDate;
 
     while (true)
     {
@@ -314,19 +310,7 @@ std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData(bool peek)
 
     obs->setVelocity_n(n_vel);
 
-    if (peek)
-    {
-        // Return to position before "Read line".
-        _filestream.seekg(pos, std::ios_base::beg);
-        _hasValidDate = oldHaveValidDate;
-    }
-
-    // Calls all the callbacks
-    if (!peek)
-    {
-        invokeCallbacks(OUTPUT_PORT_INDEX_NMEA_POS_OBS, obs);
-    }
-
+    invokeCallbacks(OUTPUT_PORT_INDEX_NMEA_POS_OBS, obs);
     return obs;
 }
 

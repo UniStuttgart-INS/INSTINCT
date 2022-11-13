@@ -177,16 +177,24 @@ void NAV::FlowExecutor::execute()
                 LOG_TRACE("    Putting pin '{}' into post-processing mode", outputPin.name);
             }
 
-            if (auto* callback = std::get_if<OutputPin::PollDataFunc>(&outputPin.data);
-                outputPin.mode == OutputPin::Mode::POST_PROCESSING && callback != nullptr && *callback != nullptr
-                && std::any_of(outputPin.links.begin(), outputPin.links.end(), [](const OutputPin::OutgoingLink& link) {
-                       return link.connectedNode->isInitialized();
-                   }))
+            if (std::holds_alternative<OutputPin::PollDataFunc>(outputPin.data))
             {
-                if (auto obs = (node->**callback)(true)) // Peek the data
+                LOG_TRACE("    Adding pin '{}' to data poll event list.", outputPin.name);
+                node->pollEvents.insert(std::make_pair(InsTime(), &outputPin));
+            }
+            else if (std::holds_alternative<OutputPin::PeekPollDataFunc>(outputPin.data))
+            {
+                if (auto* callback = std::get_if<OutputPin::PeekPollDataFunc>(&outputPin.data);
+                    outputPin.mode == OutputPin::Mode::POST_PROCESSING && callback != nullptr && *callback != nullptr
+                    && std::any_of(outputPin.links.begin(), outputPin.links.end(), [](const OutputPin::OutgoingLink& link) {
+                           return link.connectedNode->isInitialized();
+                       }))
                 {
-                    LOG_TRACE("    Adding pin '{}' to data poll event list with time {}.", outputPin.name, obs->insTime);
-                    node->pollEvents.insert(std::make_pair(obs->insTime, &outputPin));
+                    if (auto obs = (node->**callback)(true)) // Peek the data
+                    {
+                        LOG_TRACE("    Adding pin '{}' to data poll event list with time {}.", outputPin.name, obs->insTime);
+                        node->pollEvents.insert(std::make_pair(obs->insTime, &outputPin));
+                    }
                 }
             }
         }

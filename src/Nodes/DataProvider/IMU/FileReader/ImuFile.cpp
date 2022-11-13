@@ -156,20 +156,13 @@ bool NAV::ImuFile::resetNode()
     return true;
 }
 
-std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData()
 {
     auto obs = std::make_shared<ImuObs>(_imuPos);
 
     // Read line
     std::string line;
-    // Get current position
-    auto len = _filestream.tellg();
     std::getline(_filestream, line);
-    if (peek)
-    {
-        // Return to position before "Read line".
-        _filestream.seekg(len, std::ios_base::beg);
-    }
     // Remove any starting non text characters
     line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
 
@@ -340,11 +333,6 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData(bool peek)
         obs->gyroCompXYZ.emplace(gyroCompX.value(), gyroCompY.value(), gyroCompZ.value());
     }
 
-    // Calls all the callbacks
-    if (!peek)
-    {
-        invokeCallbacks(OUTPUT_PORT_INDEX_IMU_OBS, obs);
-    }
-
+    invokeCallbacks(OUTPUT_PORT_INDEX_IMU_OBS, obs);
     return obs;
 }

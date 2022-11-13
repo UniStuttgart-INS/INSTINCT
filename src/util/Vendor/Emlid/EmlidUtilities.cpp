@@ -12,7 +12,7 @@
 #include "util/Logger.hpp"
 #include "util/Time/TimeBase.hpp"
 
-void NAV::vendor::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& obs, uart::protocol::Packet& packet, bool peek)
+void NAV::vendor::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& obs, uart::protocol::Packet& packet)
 {
     if (packet.type() == uart::protocol::Packet::Type::TYPE_BINARY)
     {
@@ -41,14 +41,11 @@ void NAV::vendor::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& o
                 obs->insTime = currentTime;
             }
 
-            if (!peek)
-            {
-                LOG_DATA("Erb: VER, iTOW {}, verH {}, verH {}, verH {}",
-                         std::get<ErbVer>(obs->data).iTOW,
-                         std::get<ErbVer>(obs->data).verH,
-                         std::get<ErbVer>(obs->data).verM,
-                         std::get<ErbVer>(obs->data).verL);
-            }
+            LOG_DATA("Erb: VER, iTOW {}, verH {}, verH {}, verH {}",
+                     std::get<ErbVer>(obs->data).iTOW,
+                     std::get<ErbVer>(obs->data).verH,
+                     std::get<ErbVer>(obs->data).verM,
+                     std::get<ErbVer>(obs->data).verL);
         }
         else if (msgId == ErbMessageID::ERB_MessageId_POS)
         {
@@ -73,12 +70,9 @@ void NAV::vendor::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& o
                 obs->insTime = currentTime;
             }
 
-            if (!peek)
-            {
-                LOG_DATA("Erb: POS, iTOW {}, lon {}, lat {}, height {}",
-                         std::get<ErbPos>(obs->data).iTOW, std::get<ErbPos>(obs->data).lon,
-                         std::get<ErbPos>(obs->data).lat, std::get<ErbPos>(obs->data).height);
-            }
+            LOG_DATA("Erb: POS, iTOW {}, lon {}, lat {}, height {}",
+                     std::get<ErbPos>(obs->data).iTOW, std::get<ErbPos>(obs->data).lon,
+                     std::get<ErbPos>(obs->data).lat, std::get<ErbPos>(obs->data).height);
         }
         else if (msgId == ErbMessageID::ERB_MessageId_STAT)
         {
@@ -101,13 +95,10 @@ void NAV::vendor::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& o
                 obs->insTime = currentTime;
             }
 
-            if (!peek)
-            {
-                LOG_DATA("Erb: STAT, iTOW {}, weekGPS {}, fixType {}, fixStatus {}, numSV {}",
-                         std::get<ErbStat>(obs->data).iTOW,
-                         std::get<ErbStat>(obs->data).weekGPS, std::get<ErbStat>(obs->data).fixType,
-                         std::get<ErbStat>(obs->data).fixStatus, std::get<ErbStat>(obs->data).numSV);
-            }
+            LOG_DATA("Erb: STAT, iTOW {}, weekGPS {}, fixType {}, fixStatus {}, numSV {}",
+                     std::get<ErbStat>(obs->data).iTOW,
+                     std::get<ErbStat>(obs->data).weekGPS, std::get<ErbStat>(obs->data).fixType,
+                     std::get<ErbStat>(obs->data).fixStatus, std::get<ErbStat>(obs->data).numSV);
         }
         else if (msgId == ErbMessageID::ERB_MessageId_DPOS)
         {
@@ -130,13 +121,10 @@ void NAV::vendor::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& o
                 obs->insTime = currentTime;
             }
 
-            if (!peek)
-            {
-                LOG_DATA("Erb: DOPS, iTOW {}, dopGeo {}, dopPos {}, dopVer {}, dopHor {}",
-                         std::get<ErbDops>(obs->data).iTOW,
-                         std::get<ErbDops>(obs->data).dopGeo, std::get<ErbDops>(obs->data).dopPos,
-                         std::get<ErbDops>(obs->data).dopVer, std::get<ErbDops>(obs->data).dopHor);
-            }
+            LOG_DATA("Erb: DOPS, iTOW {}, dopGeo {}, dopPos {}, dopVer {}, dopHor {}",
+                     std::get<ErbDops>(obs->data).iTOW,
+                     std::get<ErbDops>(obs->data).dopGeo, std::get<ErbDops>(obs->data).dopPos,
+                     std::get<ErbDops>(obs->data).dopVer, std::get<ErbDops>(obs->data).dopHor);
         }
         else if (msgId == ErbMessageID::ERB_MessageId_VEL)
         {
@@ -162,12 +150,9 @@ void NAV::vendor::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& o
                 obs->insTime = currentTime;
             }
 
-            if (!peek)
-            {
-                LOG_DATA("Erb: VEL, iTOW {}, gSpeed {} [cm/s], heading {} [deg*1e-5], velD {} [cm/s]",
-                         std::get<ErbVel>(obs->data).iTOW, std::get<ErbVel>(obs->data).gSpeed,
-                         std::get<ErbVel>(obs->data).heading, std::get<ErbVel>(obs->data).velD);
-            }
+            LOG_DATA("Erb: VEL, iTOW {}, gSpeed {} [cm/s], heading {} [deg*1e-5], velD {} [cm/s]",
+                     std::get<ErbVel>(obs->data).iTOW, std::get<ErbVel>(obs->data).gSpeed,
+                     std::get<ErbVel>(obs->data).heading, std::get<ErbVel>(obs->data).velD);
         }
         else if (msgId == ErbMessageID::ERB_MessageId_SVI)
         {
@@ -195,15 +180,12 @@ void NAV::vendor::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& o
                 obs->insTime = currentTime;
             }
 
-            if (!peek)
-            {
-                LOG_DATA("Erb: SVI, iTOW {}, nSV {} , idSV {} , typeSV {} , carPh {}, psRan {} , freqD {} , snr {}, , azim {} , elev {}",
-                         std::get<ErbSvi>(obs->data).iTOW, std::get<ErbSvi>(obs->data).nSV, std::get<ErbSvi>(obs->data).idSV,
-                         std::get<ErbSvi>(obs->data).typeSV, std::get<ErbSvi>(obs->data).carPh,
-                         std::get<ErbSvi>(obs->data).psRan, std::get<ErbSvi>(obs->data).freqD,
-                         std::get<ErbSvi>(obs->data).snr, std::get<ErbSvi>(obs->data).azim,
-                         std::get<ErbSvi>(obs->data).elev);
-            }
+            LOG_DATA("Erb: SVI, iTOW {}, nSV {} , idSV {} , typeSV {} , carPh {}, psRan {} , freqD {} , snr {}, , azim {} , elev {}",
+                     std::get<ErbSvi>(obs->data).iTOW, std::get<ErbSvi>(obs->data).nSV, std::get<ErbSvi>(obs->data).idSV,
+                     std::get<ErbSvi>(obs->data).typeSV, std::get<ErbSvi>(obs->data).carPh,
+                     std::get<ErbSvi>(obs->data).psRan, std::get<ErbSvi>(obs->data).freqD,
+                     std::get<ErbSvi>(obs->data).snr, std::get<ErbSvi>(obs->data).azim,
+                     std::get<ErbSvi>(obs->data).elev);
         }
         else if (msgId == ErbMessageID::ERB_MessageId_RTK)
         {
@@ -218,21 +200,15 @@ void NAV::vendor::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& o
             std::get<ErbRtk>(obs->data).weekGPS = packet.extractUint16();
             std::get<ErbRtk>(obs->data).timeGPS = packet.extractUint32();
 
-            if (!peek)
-            {
-                LOG_DATA("Erb: RTK, numSV {}, age {} [s * 1e-2] , baselineN {} , baselineE {} , baselineD {}, arRatio {} [*1e-1] , weekGPS {} , timeGPS {}",
-                         std::get<ErbRtk>(obs->data).numSV, std::get<ErbRtk>(obs->data).age, std::get<ErbRtk>(obs->data).baselineN,
-                         std::get<ErbRtk>(obs->data).baselineE, std::get<ErbRtk>(obs->data).baselineD,
-                         std::get<ErbRtk>(obs->data).arRatio, std::get<ErbRtk>(obs->data).weekGPS,
-                         std::get<ErbRtk>(obs->data).timeGPS);
-            }
+            LOG_DATA("Erb: RTK, numSV {}, age {} [s * 1e-2] , baselineN {} , baselineE {} , baselineD {}, arRatio {} [*1e-1] , weekGPS {} , timeGPS {}",
+                     std::get<ErbRtk>(obs->data).numSV, std::get<ErbRtk>(obs->data).age, std::get<ErbRtk>(obs->data).baselineN,
+                     std::get<ErbRtk>(obs->data).baselineE, std::get<ErbRtk>(obs->data).baselineD,
+                     std::get<ErbRtk>(obs->data).arRatio, std::get<ErbRtk>(obs->data).weekGPS,
+                     std::get<ErbRtk>(obs->data).timeGPS);
         }
         else
         {
-            if (!peek)
-            {
-                LOG_DATA("Erb: {:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
-            }
+            LOG_DATA("Erb: {:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
         }
     }
 }

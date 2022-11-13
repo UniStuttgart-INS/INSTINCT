@@ -820,7 +820,7 @@ void NAV::PosVelAttInitializer::receivePosVelAttObs(const std::shared_ptr<const 
     }
 }
 
-std::shared_ptr<const NAV::NodeData> NAV::PosVelAttInitializer::pollPVASolution(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::PosVelAttInitializer::pollPVASolution()
 {
     if (_inputPinIdxIMU >= 0 || _inputPinIdxGNSS >= 0)
     {
@@ -852,14 +852,13 @@ std::shared_ptr<const NAV::NodeData> NAV::PosVelAttInitializer::pollPVASolution(
     {
         auto posVelAtt = std::make_shared<PosVelAtt>();
         posVelAtt->insTime = _initTime;
-        if (!peek)
-        {
-            _posVelAttInitialized.at(3) = true;
-            posVelAtt->setPosition_e(_e_initPosition);
-            posVelAtt->setVelocity_n(_n_initVelocity);
-            posVelAtt->setAttitude_n_Quat_b(_n_Quat_b_init);
-            invokeCallbacks(OUTPUT_PORT_INDEX_POS_VEL_ATT, posVelAtt);
-        }
+
+        _posVelAttInitialized.at(3) = true;
+        posVelAtt->setPosition_e(_e_initPosition);
+        posVelAtt->setVelocity_n(_n_initVelocity);
+        posVelAtt->setAttitude_n_Quat_b(_n_Quat_b_init);
+
+        invokeCallbacks(OUTPUT_PORT_INDEX_POS_VEL_ATT, posVelAtt);
         return posVelAtt;
     }
     return nullptr;

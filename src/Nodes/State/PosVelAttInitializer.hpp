@@ -114,9 +114,8 @@ class PosVelAttInitializer : public Node
     void receivePosVelAttObs(const std::shared_ptr<const PosVelAtt>& obs);
 
     /// @brief Polls the PVA solution if all is set in the GUI
-    /// @param[in] peek Specifies if the data should be peeked
     /// @return The PVA solution
-    [[nodiscard]] std::shared_ptr<const NodeData> pollPVASolution(bool peek = false);
+    [[nodiscard]] std::shared_ptr<const NodeData> pollPVASolution();
 
     /// Time in [s] to initialize the state
     double _initDuration = 5.0;

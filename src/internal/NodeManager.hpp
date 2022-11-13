@@ -17,6 +17,7 @@
 
 #include "internal/Node/Node.hpp"
 #include "internal/Node/Pin.hpp"
+#include "util/Assert.h"
 
 #include "NodeData/NodeData.hpp"
 
@@ -127,15 +128,41 @@ OutputPin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, cons
 /// @param[in] name Display name of the Pin
 /// @param[in] pinType Type of the pin
 /// @param[in] dataIdentifier Identifier of the data which is represented by the pin
+/// @param[in] peekPollDataFunc Function to poll for data on this pin
+/// @param[in] idx Index where to put the new pin (-1 means at the end)
+/// @return Pointer to the created pin
+template<typename T,
+         typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
+OutputPin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier,
+                           std::shared_ptr<const NAV::NodeData> (T::*peekPollDataFunc)(bool) = nullptr, int idx = -1)
+{
+    assert(pinType == Pin::Type::Flow);
+    INS_ASSERT_USER_ERROR(std::none_of(node->outputPins.begin(), node->outputPins.end(),
+                                       [](const OutputPin& outputPin) { return std::holds_alternative<OutputPin::PollDataFunc>(outputPin.data); }),
+                          "You cannot mix PollDataFunc and PeekPollDataFunc output pins. Use only PeekPollDataFunc pins if multiple pins are needed.");
+
+    return CreateOutputPin(node, name, pinType, dataIdentifier, OutputPin::PinData(static_cast<OutputPin::PeekPollDataFunc>(peekPollDataFunc)), idx);
+}
+
+/// @brief Create an Output Pin object for Flow Pins
+/// @tparam T Class where the function is member of
+/// @param[in] node Node to register the Pin for
+/// @param[in] name Display name of the Pin
+/// @param[in] pinType Type of the pin
+/// @param[in] dataIdentifier Identifier of the data which is represented by the pin
 /// @param[in] pollDataFunc Function to poll for data on this pin
 /// @param[in] idx Index where to put the new pin (-1 means at the end)
 /// @return Pointer to the created pin
 template<typename T,
          typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
 OutputPin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier,
-                           std::shared_ptr<const NAV::NodeData> (T::*pollDataFunc)(bool) = nullptr, int idx = -1)
+                           std::shared_ptr<const NAV::NodeData> (T::*pollDataFunc)() = nullptr, int idx = -1)
 {
     assert(pinType == Pin::Type::Flow);
+    INS_ASSERT_USER_ERROR(std::none_of(node->outputPins.begin(), node->outputPins.end(),
+                                       [](const OutputPin& outputPin) { return std::holds_alternative<OutputPin::PeekPollDataFunc>(outputPin.data)
+                                                                               || std::holds_alternative<OutputPin::PollDataFunc>(outputPin.data); }),
+                          "There can only be one poll pin if the poll only data function is chosen. If multiple are needed, create PeekPollDataFunc pins.");
 
     return CreateOutputPin(node, name, pinType, dataIdentifier, OutputPin::PinData(static_cast<OutputPin::PollDataFunc>(pollDataFunc)), idx);
 }
@@ -193,13 +220,13 @@ ax::NodeEditor::PinId GetNextPinId();
 /// @param[in] id Output pin id to add the callback to
 /// @param[in] callback Callback function
 /// @attention ApplyWatcherCallbacks() needs to be called after loading the flow to apply the list to the pins.
-void RegisterWatcherCallbackToInputPin(ax::NodeEditor::PinId id, InputPin::WatcherCallback callback);
+void RegisterWatcherCallbackToInputPin(ax::NodeEditor::PinId id, const InputPin::WatcherCallback& callback);
 
 /// @brief Registers the callback function to the watcher list
 /// @param[in] id Link id to add the callback to
 /// @param[in] callback Callback function
 /// @attention ApplyWatcherCallbacks() needs to be called after loading the flow to apply the list to the pins.
-void RegisterWatcherCallbackToLink(ax::NodeEditor::LinkId id, InputPin::WatcherCallback callback);
+void RegisterWatcherCallbackToLink(ax::NodeEditor::LinkId id, const InputPin::WatcherCallback& callback);
 
 /// @brief Applies the watcher lists to the node pins
 void ApplyWatcherCallbacks();

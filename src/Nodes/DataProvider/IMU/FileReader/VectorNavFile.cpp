@@ -399,12 +399,9 @@ void NAV::VectorNavFile::readHeader()
     }
 }
 
-std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData()
 {
     auto obs = std::make_shared<VectorNavBinaryOutput>(_imuPos);
-
-    // Get current position
-    auto len = _filestream.tellg();
 
     if (_fileType == FileType::ASCII)
     {
@@ -1576,18 +1573,8 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
         }
     }
 
-    if (peek)
-    {
-        // Return to position before "Read line".
-        _filestream.seekg(len, std::ios_base::beg);
-        _messageCount++;
-    }
+    _messageCount++;
 
-    // Calls all the callbacks
-    if (!peek)
-    {
-        invokeCallbacks(OUTPUT_PORT_INDEX_VECTORNAV_BINARY_OUTPUT, obs);
-    }
-
+    invokeCallbacks(OUTPUT_PORT_INDEX_VECTORNAV_BINARY_OUTPUT, obs);
     return obs;
 }

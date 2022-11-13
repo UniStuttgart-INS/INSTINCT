@@ -178,11 +178,9 @@ bool NAV::RtklibPosFile::resetNode()
     return true;
 }
 
-std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData()
 {
     auto obs = std::make_shared<RtklibPosObs>();
-    // Get current position
-    auto pos = _filestream.tellg();
 
     // Read line
     std::string line;
@@ -419,18 +417,7 @@ std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData(bool peek)
         obs->insTime = currentTime;
     }
 
-    if (peek)
-    {
-        // Return to position before "Read line".
-        _filestream.seekg(pos, std::ios_base::beg);
-    }
-
-    // Calls all the callbacks
-    if (!peek)
-    {
-        invokeCallbacks(OUTPUT_PORT_INDEX_RTKLIB_POS_OBS, obs);
-    }
-
+    invokeCallbacks(OUTPUT_PORT_INDEX_RTKLIB_POS_OBS, obs);
     return obs;
 }
 
