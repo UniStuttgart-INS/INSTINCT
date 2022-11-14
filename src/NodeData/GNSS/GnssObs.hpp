@@ -36,6 +36,13 @@ class GnssObs : public NodeData
         return "GnssObs";
     }
 
+    /// @brief Returns the parent types of the data class
+    /// @return The parent data types
+    [[nodiscard]] static std::vector<std::string> parentTypes()
+    {
+        return { NodeData::type() };
+    }
+
     /// @brief Stores the satellites observations
     struct ObservationData
     {
