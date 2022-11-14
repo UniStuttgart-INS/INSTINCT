@@ -169,7 +169,12 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
     {
         if (data == nullptr)
         {
-            LOG_DEBUG("{}: Tried to invokeCallbacks on pin {} with a nullptr. This is a bug!!!", nameId(), portIndex);
+            LOG_DEBUG("{}: Tried to invokeCallbacks on pin {} with a nullptr, which is not allowed!!!", nameId(), portIndex);
+            return;
+        }
+        if (data->insTime.empty())
+        {
+            LOG_DATA("{}: Tried to invokeCallbacks on pin {} without a InsTime. The time is mandatory though!!! ", nameId());
             return;
         }
 
@@ -666,33 +671,26 @@ void NAV::Node::workerThread(Node* node)
                                     }
                                 }
 
-                                // Add next data event from the node
-                                while (true)
+                                // Check if data available (peek = true)
+                                if (auto obs = (node->**callback)(true))
                                 {
-                                    // Check if data available (peek = true)
-                                    if (auto obs = (node->**callback)(true))
+                                    // Check if data has a time
+                                    if (!obs->insTime.empty())
                                     {
-                                        // Check if data has a time
-                                        if (!obs->insTime.empty())
-                                        {
-                                            node->pollEvents.insert(std::make_pair(obs->insTime, outputPin));
-                                            break;
-                                        }
-
-                                        // Remove data without calling the callback if no time stamp
-                                        // For post processing all data needs a time stamp
-                                        node->callbacksEnabled = false;
-                                        (node->**callback)(false);
-                                        node->callbacksEnabled = true;
+                                        node->pollEvents.insert(std::make_pair(obs->insTime, outputPin));
                                     }
-                                    else
+                                    else // If no time, call the object and remove it
                                     {
-                                        outputPin->mode = OutputPin::Mode::REAL_TIME;
-                                        for (auto& link : outputPin->links)
-                                        {
-                                            link.connectedNode->wakeWorker();
-                                        }
-                                        break;
+                                        (node->**callback)(false);
+                                        continue; // Do not erase the iterator, because this pin needs to be called again
+                                    }
+                                }
+                                else // nullptr -> no more data incoming on this pin
+                                {
+                                    outputPin->mode = OutputPin::Mode::REAL_TIME;
+                                    for (auto& link : outputPin->links)
+                                    {
+                                        link.connectedNode->wakeWorker();
                                     }
                                 }
                             }
