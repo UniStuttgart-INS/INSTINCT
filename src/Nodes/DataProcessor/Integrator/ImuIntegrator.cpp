@@ -85,7 +85,7 @@ void NAV::ImuIntegrator::guiConfig()
             if (ImGui::Selectable(to_string(static_cast<IntegrationAlgorithm>(i)), is_selected))
             {
                 _integrationAlgorithm = static_cast<IntegrationAlgorithm>(i);
-                LOG_DEBUG("{}: Integration Algorithm Attitude changed to {}", nameId(), _integrationAlgorithm);
+                LOG_DEBUG("{}: Integration Algorithm Attitude changed to {}", nameId(), fmt::underlying(_integrationAlgorithm));
                 flow::ApplyChanges();
             }
 

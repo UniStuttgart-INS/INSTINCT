@@ -11,7 +11,7 @@
 #include "util/Logger.hpp"
 
 #include <iomanip> // std::setprecision
-#include <Eigen/Core>
+#include "util/Eigen.hpp"
 
 #include "util/Time/TimeBase.hpp"
 

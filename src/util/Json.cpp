@@ -299,15 +299,15 @@ void from_json(const json& j, ImPlotStyle& style)
     {
         if (j.at("Colormap").contains("maps"))
         {
-            for (size_t i = 0; i < j.at("Colormap").at("maps").size(); ++i)
+            for (const auto& map : j.at("Colormap").at("maps"))
             {
                 std::vector<ImVec4> custom;
-                for (size_t c = 0; c < j.at("Colormap").at("maps").at(i).at("keys").size(); ++c)
+                for (const auto& key : map.at("keys"))
                 {
-                    custom.push_back(j.at("Colormap").at("maps").at(i).at("keys").at(c).get<ImVec4>());
+                    custom.push_back(key.get<ImVec4>());
                 }
-                auto name = j.at("Colormap").at("maps").at(i).at("name").get<std::string>();
-                auto qual = j.at("Colormap").at("maps").at(i).at("qualitative").get<bool>();
+                auto name = map.at("name").get<std::string>();
+                auto qual = map.at("qualitative").get<bool>();
 
                 if (ImPlot::GetCurrentContext()->ColormapData.GetIndex(name.c_str()) == -1 && custom.size() > 1)
                 {

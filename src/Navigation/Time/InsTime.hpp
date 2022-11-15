@@ -23,6 +23,7 @@
 #include <iostream>
 #include <chrono>
 
+#include <fmt/ostream.h>
 #include "gcem.hpp"
 
 #include <nlohmann/json.hpp>
@@ -1160,3 +1161,26 @@ void to_json(json& j, const InsTime& insTime);
 void from_json(const json& j, InsTime& insTime);
 
 } // namespace NAV
+
+#ifndef DOXYGEN_IGNORE
+
+template<>
+struct fmt::formatter<NAV::InsTime_MJD> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::InsTime_JD> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::InsTime_GPSweekTow> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::InsTime_YMDHMS> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::InsTime_YDoySod> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::InsTime> : ostream_formatter
+{};
+
+#endif

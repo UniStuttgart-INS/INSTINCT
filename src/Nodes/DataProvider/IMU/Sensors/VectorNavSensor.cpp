@@ -11,6 +11,7 @@
 #include "util/Logger.hpp"
 #include "vn/searcher.h"
 #include "vn/util.h"
+#include "util/Vendor/VectorNav/VectorNavTypes.hpp"
 
 #include "internal/gui/widgets/HelpMarker.hpp"
 
@@ -1319,7 +1320,7 @@ void NAV::VectorNavSensor::guiConfig()
 {
     if (ImGui::Combo("Sensor", reinterpret_cast<int*>(&_sensorModel), "VN-100 / VN-110\0VN-310\0\0"))
     {
-        LOG_DEBUG("{}: Sensor changed to {}", nameId(), _sensorModel);
+        LOG_DEBUG("{}: Sensor changed to {}", nameId(), fmt::underlying(_sensorModel));
         flow::ApplyChanges();
         doDeinitialize();
 

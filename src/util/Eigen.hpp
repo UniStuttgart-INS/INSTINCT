@@ -19,6 +19,8 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json; ///< json namespace
 
+#include <fmt/ostream.h>
+
 namespace Eigen
 {
 using Array3ld = Array<long double, 3, 1>; ///< Long double 3x1 Eigen::Array
@@ -85,3 +87,12 @@ void from_json(const json& j, Matrix<_Scalar, _Rows, _Cols>& matrix)
 }
 
 } // namespace Eigen
+
+#ifndef DOXYGEN_IGNORE
+
+template<typename T>
+requires std::is_base_of_v<Eigen::DenseBase<T>, T>
+struct fmt::formatter<T> : ostream_formatter
+{};
+
+#endif

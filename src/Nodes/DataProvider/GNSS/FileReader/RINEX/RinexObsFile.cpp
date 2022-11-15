@@ -8,7 +8,7 @@
 
 #include "RinexObsFile.hpp"
 
-#include <Eigen/Core>
+#include "util/Eigen.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;

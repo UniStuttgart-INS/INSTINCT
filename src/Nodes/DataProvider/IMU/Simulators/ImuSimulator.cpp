@@ -71,7 +71,7 @@ void NAV::ImuSimulator::guiConfig()
     {
         if (ImGui::RadioButton(fmt::format("Current Computer Time##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_startTimeSource), static_cast<int>(StartTimeSource::CurrentComputerTime)))
         {
-            LOG_DEBUG("{}: startTimeSource changed to {}", nameId(), _startTimeSource);
+            LOG_DEBUG("{}: startTimeSource changed to {}", nameId(), fmt::underlying(_startTimeSource));
             flow::ApplyChanges();
         }
         if (_startTimeSource == StartTimeSource::CurrentComputerTime)
@@ -88,7 +88,7 @@ void NAV::ImuSimulator::guiConfig()
 
         if (ImGui::RadioButton(fmt::format("Custom Time##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_startTimeSource), static_cast<int>(StartTimeSource::CustomTime)))
         {
-            LOG_DEBUG("{}: startTimeSource changed to {}", nameId(), _startTimeSource);
+            LOG_DEBUG("{}: startTimeSource changed to {}", nameId(), fmt::underlying(_startTimeSource));
             flow::ApplyChanges();
         }
         if (_startTimeSource == StartTimeSource::CustomTime)
@@ -135,7 +135,7 @@ void NAV::ImuSimulator::guiConfig()
                 if (ImGui::Selectable(to_string(static_cast<TrajectoryType>(i)), is_selected))
                 {
                     _trajectoryType = static_cast<TrajectoryType>(i);
-                    LOG_DEBUG("{}: trajectoryType changed to {}", nameId(), _trajectoryType);
+                    LOG_DEBUG("{}: trajectoryType changed to {}", nameId(), fmt::underlying(_trajectoryType));
 
                     if (_trajectoryType == TrajectoryType::Csv && inputPins.empty())
                     {
@@ -390,7 +390,7 @@ void NAV::ImuSimulator::guiConfig()
                         if (ImGui::Selectable(to_string(static_cast<Direction>(i)), is_selected))
                         {
                             _circularTrajectoryDirection = static_cast<Direction>(i);
-                            LOG_DEBUG("{}: circularTrajectoryDirection changed to {}", nameId(), _circularTrajectoryDirection);
+                            LOG_DEBUG("{}: circularTrajectoryDirection changed to {}", nameId(), fmt::underlying(_circularTrajectoryDirection));
                             flow::ApplyChanges();
                             doDeinitialize();
                         }

@@ -112,7 +112,7 @@ void NAV::ErrorModel::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: _imuAccelerometerBias_p changed to {}", nameId(), _imuAccelerometerBias_p.transpose());
-            LOG_DEBUG("{}: _imuAccelerometerBiasUnit changed to {}", nameId(), _imuAccelerometerBiasUnit);
+            LOG_DEBUG("{}: _imuAccelerometerBiasUnit changed to {}", nameId(), fmt::underlying(_imuAccelerometerBiasUnit));
             flow::ApplyChanges();
         }
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Gyroscope Bias (platform)##{}", size_t(id)).c_str(), itemWidth, unitWidth,
@@ -120,7 +120,7 @@ void NAV::ErrorModel::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: _imuGyroscopeBias_p changed to {}", nameId(), _imuGyroscopeBias_p.transpose());
-            LOG_DEBUG("{}: _imuGyroscopeBiasUnit changed to {}", nameId(), _imuGyroscopeBiasUnit);
+            LOG_DEBUG("{}: _imuGyroscopeBiasUnit changed to {}", nameId(), fmt::underlying(_imuGyroscopeBiasUnit));
             flow::ApplyChanges();
         }
     }
@@ -135,7 +135,7 @@ void NAV::ErrorModel::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: _positionBias changed to {}", nameId(), _positionBias.transpose());
-            LOG_DEBUG("{}: _positionBiasUnit changed to {}", nameId(), _positionBiasUnit);
+            LOG_DEBUG("{}: _positionBiasUnit changed to {}", nameId(), fmt::underlying(_positionBiasUnit));
             flow::ApplyChanges();
         }
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Velocity Bias (NED)##{}", size_t(id)).c_str(), itemWidth, unitWidth,
@@ -143,7 +143,7 @@ void NAV::ErrorModel::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: _velocityBias changed to {}", nameId(), _velocityBias.transpose());
-            LOG_DEBUG("{}: _velocityBiasUnit changed to {}", nameId(), _velocityBiasUnit);
+            LOG_DEBUG("{}: _velocityBiasUnit changed to {}", nameId(), fmt::underlying(_velocityBiasUnit));
             flow::ApplyChanges();
         }
         if (gui::widgets::InputDouble3WithUnit(fmt::format("RollPitchYaw Bias##{}", size_t(id)).c_str(), itemWidth, unitWidth,
@@ -151,7 +151,7 @@ void NAV::ErrorModel::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: _attitudeBias changed to {}", nameId(), _attitudeBias.transpose());
-            LOG_DEBUG("{}: _attitudeBiasUnit changed to {}", nameId(), _attitudeBiasUnit);
+            LOG_DEBUG("{}: _attitudeBiasUnit changed to {}", nameId(), fmt::underlying(_attitudeBiasUnit));
             flow::ApplyChanges();
         }
     }
@@ -172,7 +172,7 @@ void NAV::ErrorModel::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: _imuAccelerometerNoise changed to {}", nameId(), _imuAccelerometerNoise.transpose());
-            LOG_DEBUG("{}: _imuAccelerometerNoiseUnit changed to {}", nameId(), _imuAccelerometerNoiseUnit);
+            LOG_DEBUG("{}: _imuAccelerometerNoiseUnit changed to {}", nameId(), fmt::underlying(_imuAccelerometerNoiseUnit));
             flow::ApplyChanges();
         }
         float currentCursorX = ImGui::GetCursorPosX();
@@ -211,7 +211,7 @@ void NAV::ErrorModel::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: _imuGyroscopeNoise changed to {}", nameId(), _imuGyroscopeNoise.transpose());
-            LOG_DEBUG("{}: _imuGyroscopeNoiseUnit changed to {}", nameId(), _imuGyroscopeNoiseUnit);
+            LOG_DEBUG("{}: _imuGyroscopeNoiseUnit changed to {}", nameId(), fmt::underlying(_imuGyroscopeNoiseUnit));
             flow::ApplyChanges();
         }
         currentCursorX = ImGui::GetCursorPosX();
@@ -253,7 +253,7 @@ void NAV::ErrorModel::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: _positionNoise changed to {}", nameId(), _positionNoise.transpose());
-            LOG_DEBUG("{}: _positionNoiseUnit changed to {}", nameId(), _positionNoiseUnit);
+            LOG_DEBUG("{}: _positionNoiseUnit changed to {}", nameId(), fmt::underlying(_positionNoiseUnit));
             flow::ApplyChanges();
         }
         float currentCursorX = ImGui::GetCursorPosX();
@@ -290,7 +290,7 @@ void NAV::ErrorModel::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: _velocityNoise changed to {}", nameId(), _velocityNoise.transpose());
-            LOG_DEBUG("{}: _velocityNoiseUnit changed to {}", nameId(), _velocityNoiseUnit);
+            LOG_DEBUG("{}: _velocityNoiseUnit changed to {}", nameId(), fmt::underlying(_velocityNoiseUnit));
             flow::ApplyChanges();
         }
         currentCursorX = ImGui::GetCursorPosX();
@@ -329,7 +329,7 @@ void NAV::ErrorModel::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: _attitudeNoise changed to {}", nameId(), _attitudeNoise.transpose());
-            LOG_DEBUG("{}: _attitudeNoiseUnit changed to {}", nameId(), _attitudeNoiseUnit);
+            LOG_DEBUG("{}: _attitudeNoiseUnit changed to {}", nameId(), fmt::underlying(_attitudeNoiseUnit));
             flow::ApplyChanges();
         }
         currentCursorX = ImGui::GetCursorPosX();
