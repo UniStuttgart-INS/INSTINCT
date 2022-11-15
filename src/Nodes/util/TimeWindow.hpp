@@ -17,7 +17,7 @@
 
 #include "Navigation/Time/InsTime.hpp"
 
-#include <Eigen/Core>
+#include "util/Eigen.hpp"
 
 namespace NAV
 {

@@ -13,7 +13,7 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
-#include <Eigen/Dense>
+#include "util/Eigen.hpp"
 #include <iterator>
 #include <boost/math/distributions/students_t.hpp>
 

@@ -18,7 +18,7 @@
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
 
-#include <Eigen/Core>
+#include "util/Eigen.hpp"
 #include <random>
 
 namespace NAV

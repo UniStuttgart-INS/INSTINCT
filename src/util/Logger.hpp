@@ -50,6 +50,7 @@
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/ostr.h"
 #include "spdlog/sinks/ringbuffer_sink.h"
+#include <fmt/std.h>
 
 #include <string>
 #include <stdexcept>
