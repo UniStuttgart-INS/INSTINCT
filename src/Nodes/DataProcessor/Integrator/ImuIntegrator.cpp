@@ -21,6 +21,8 @@
 #include "internal/gui/NodeEditorApplication.hpp"
 #include <imgui_internal.h>
 
+#include "util/Eigen.hpp"
+
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
@@ -354,7 +356,7 @@ void NAV::ImuIntegrator::recvPosVelAttInit(NAV::InputPin::NodeDataQueue& queue, 
     {
         while (_posVelAttStates.size() < _maxSizeStates)
         {
-            LOG_DATA("{}: Adding posVelAtt to the start of the list {}", nameId(), posVelAtt);
+            LOG_DATA("{}: Adding posVelAtt to the start of the list {}", nameId(), static_cast<const void*>(posVelAtt.get()));
             _posVelAttStates.push_front(posVelAtt);
         }
 

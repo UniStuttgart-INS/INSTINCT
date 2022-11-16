@@ -174,7 +174,7 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
         }
         if (data->insTime.empty())
         {
-            LOG_DATA("{}: Tried to invokeCallbacks on pin {} without a InsTime. The time is mandatory though!!! ", nameId());
+            LOG_DATA("{}: Tried to invokeCallbacks on pin {} without a InsTime. The time is mandatory though!!! ", nameId(), portIndex);
             return;
         }
 
