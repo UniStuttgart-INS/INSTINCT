@@ -159,7 +159,7 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::pro
         vendor::kvh::decryptKvhObs(obs);
 
         LOG_DATA("DATA({}): {}, {}, {}",
-                 kvhSensor->name, obs->sequenceNumber, obs->temperature.value(), obs->status);
+                 kvhSensor->name, obs->sequenceNumber, obs->temperature.value(), fmt::streamed(obs->status));
 
         // Check if a packet was skipped
         if (kvhSensor->_prevSequenceNumber == UINT8_MAX)
