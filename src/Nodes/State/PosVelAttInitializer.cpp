@@ -36,9 +36,9 @@ NAV::PosVelAttInitializer::PosVelAttInitializer()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 345, 342 };
 
-    updateInputPins();
+    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() });
 
-    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &PosVelAttInitializer::pollPVASolution);
+    updatePins();
 }
 
 NAV::PosVelAttInitializer::~PosVelAttInitializer()
@@ -275,7 +275,7 @@ void NAV::PosVelAttInitializer::guiConfig()
 
     if (ImGui::Checkbox(fmt::format("Override Position##{}", size_t(id)).c_str(), &_overridePosition))
     {
-        updateInputPins();
+        updatePins();
         flow::ApplyChanges();
     }
     if (_overridePosition)
@@ -303,7 +303,7 @@ void NAV::PosVelAttInitializer::guiConfig()
 
     if (ImGui::Checkbox(fmt::format("Override Velocity##{}", size_t(id)).c_str(), &_overrideVelocity))
     {
-        updateInputPins();
+        updatePins();
         flow::ApplyChanges();
     }
     if (_overrideVelocity)
@@ -335,7 +335,7 @@ void NAV::PosVelAttInitializer::guiConfig()
         ImGui::TableNextColumn();
         if (ImGui::Checkbox(("Override Roll##" + std::to_string(size_t(id))).c_str(), &_overrideRollPitchYaw.at(0)))
         {
-            updateInputPins();
+            updatePins();
             flow::ApplyChanges();
         }
         ImGui::TableNextColumn();
@@ -352,7 +352,7 @@ void NAV::PosVelAttInitializer::guiConfig()
         ImGui::TableNextColumn();
         if (ImGui::Checkbox(("Override Pitch##" + std::to_string(size_t(id))).c_str(), &_overrideRollPitchYaw.at(1)))
         {
-            updateInputPins();
+            updatePins();
             flow::ApplyChanges();
         }
         ImGui::TableNextColumn();
@@ -369,7 +369,7 @@ void NAV::PosVelAttInitializer::guiConfig()
         ImGui::TableNextColumn();
         if (ImGui::Checkbox(("Override Yaw##" + std::to_string(size_t(id))).c_str(), &_overrideRollPitchYaw.at(2)))
         {
-            updateInputPins();
+            updatePins();
             flow::ApplyChanges();
         }
         ImGui::TableNextColumn();
@@ -451,7 +451,7 @@ void NAV::PosVelAttInitializer::restore(json const& j)
     {
         j.at("overrideValuesRollPitchYaw").get_to(_overrideValuesRollPitchYaw);
     }
-    updateInputPins();
+    updatePins();
 }
 
 bool NAV::PosVelAttInitializer::initialize()
@@ -481,7 +481,7 @@ void NAV::PosVelAttInitializer::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-void NAV::PosVelAttInitializer::updateInputPins()
+void NAV::PosVelAttInitializer::updatePins()
 {
     if (_overrideRollPitchYaw[0] && _overrideRollPitchYaw[1] && _overrideRollPitchYaw[2] && _inputPinIdxIMU >= 0)
     {
@@ -510,6 +510,15 @@ void NAV::PosVelAttInitializer::updateInputPins()
                            { NAV::UbloxObs::type(), NAV::RtklibPosObs::type(), NAV::PosVelAtt::type(), NAV::PosVel::type(), NAV::Pos::type() },
                            &PosVelAttInitializer::receiveGnssObs, nullptr, 1);
         _inputPinIdxGNSS = static_cast<int>(inputPins.size()) - 1;
+    }
+
+    if (_inputPinIdxGNSS < 0 && _inputPinIdxIMU < 0)
+    {
+        outputPins[OUTPUT_PORT_INDEX_POS_VEL_ATT].data = static_cast<OutputPin::PollDataFunc>(&PosVelAttInitializer::pollPVASolution);
+    }
+    else
+    {
+        outputPins[OUTPUT_PORT_INDEX_POS_VEL_ATT].data = static_cast<void*>(nullptr);
     }
 }
 

@@ -77,8 +77,8 @@ class PosVelAttInitializer : public Node
     /// @brief Deinitialize the node
     void deinitialize() override;
 
-    /// Add or removes input pins depending on the settings
-    void updateInputPins();
+    /// Add or removes input pins depending on the settings and modifies the output pin
+    void updatePins();
 
     /// Checks whether all Flags are set and writes logs messages
     void finalizeInit();
