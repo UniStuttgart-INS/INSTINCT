@@ -95,9 +95,13 @@ requires std::is_base_of_v<Eigen::DenseBase<T>, T>
 struct fmt::formatter<T> : ostream_formatter
 {};
 
-template<typename T>
-requires std::is_base_of_v<Eigen::QuaternionBase<T>, T>
-struct fmt::formatter<T> : ostream_formatter
+// FIXME: This is not compiling with gcc 11.3 but with >12.1.
+// template<typename T>
+// requires std::is_base_of_v<Eigen::QuaternionBase<T>, T>
+// struct fmt::formatter<T> : ostream_formatter
+// {};
+template<>
+struct fmt::formatter<Eigen::Quaterniond> : ostream_formatter
 {};
 
 #endif
