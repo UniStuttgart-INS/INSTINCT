@@ -114,9 +114,8 @@ class RinexObsFile : public Node, public FileReader
     void readHeader() override;
 
     /// @brief Polls the data from the file
-    /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
     /// @return The read observation
-    [[nodiscard]] std::shared_ptr<const NodeData> pollData(bool peek = false);
+    [[nodiscard]] std::shared_ptr<const NodeData> pollData();
 
     /// @brief Supported RINEX versions
     static inline const std::set<double> _supportedVersions = { 3.04 };

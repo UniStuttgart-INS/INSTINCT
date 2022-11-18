@@ -21,6 +21,9 @@ namespace nm = NAV::NodeManager;
 
 #include <imgui_node_editor.h>
 namespace ed = ax::NodeEditor;
+#ifdef TESTING
+    #include <catch2/catch.hpp>
+#endif
 
 NAV::Node::Node(std::string name)
     : name(std::move(name))
@@ -166,7 +169,12 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
     {
         if (data == nullptr)
         {
-            LOG_DEBUG("{}: Tried to invokeCallbacks on pin {} with a nullptr. This is a bug!!!", nameId(), portIndex);
+            LOG_DEBUG("{}: Tried to invokeCallbacks on pin {} with a nullptr, which is not allowed!!!", nameId(), portIndex);
+            return;
+        }
+        if (data->insTime.empty())
+        {
+            LOG_DATA("{}: Tried to invokeCallbacks on pin {} without a InsTime. The time is mandatory though!!! ", nameId(), portIndex);
             return;
         }
 
@@ -634,22 +642,35 @@ void NAV::Node::workerThread(Node* node)
                     {
                         OutputPin* outputPin = it->second;
                         Node* node = outputPin->parentNode;
-                        auto* callback = std::get_if<OutputPin::PollDataFunc>(&outputPin->data);
-                        if (callback != nullptr && *callback != nullptr)
+
+                        if (std::holds_alternative<OutputPin::PollDataFunc>(outputPin->data))
                         {
-                            if (!it->first.empty())
+                            auto* callback = std::get_if<OutputPin::PollDataFunc>(&outputPin->data);
+                            if (callback != nullptr && *callback != nullptr)
                             {
                                 LOG_DATA("{}: Polling data from output pin '{}'", node->nameId(), str::replaceAll_copy(outputPin->name, "\n", ""));
-                                // Trigger the already peeked observation and invoke it's callbacks (peek = false)
-                                if ((node->**callback)(false) == nullptr)
+                                if ((node->**callback)() == nullptr)
                                 {
-                                    LOG_ERROR("{}: {} could not poll its observation despite being able to peek it.", node->nameId(), outputPin->name);
+                                    node->pollEvents.erase(it); // Delete the event if no more data on this pin
+                                    break;
                                 }
                             }
-
-                            // Add next data event from the node
-                            while (true)
+                        }
+                        else if (std::holds_alternative<OutputPin::PeekPollDataFunc>(outputPin->data))
+                        {
+                            auto* callback = std::get_if<OutputPin::PeekPollDataFunc>(&outputPin->data);
+                            if (callback != nullptr && *callback != nullptr)
                             {
+                                if (!it->first.empty())
+                                {
+                                    LOG_DATA("{}: Polling data from output pin '{}'", node->nameId(), str::replaceAll_copy(outputPin->name, "\n", ""));
+                                    // Trigger the already peeked observation and invoke it's callbacks (peek = false)
+                                    if ((node->**callback)(false) == nullptr)
+                                    {
+                                        LOG_ERROR("{}: {} could not poll its observation despite being able to peek it.", node->nameId(), outputPin->name);
+                                    }
+                                }
+
                                 // Check if data available (peek = true)
                                 if (auto obs = (node->**callback)(true))
                                 {
@@ -657,32 +678,28 @@ void NAV::Node::workerThread(Node* node)
                                     if (!obs->insTime.empty())
                                     {
                                         node->pollEvents.insert(std::make_pair(obs->insTime, outputPin));
-                                        break;
                                     }
-
-                                    // Remove data without calling the callback if no time stamp
-                                    // For post processing all data needs a time stamp
-                                    node->callbacksEnabled = false;
-                                    (node->**callback)(false);
-                                    node->callbacksEnabled = true;
+                                    else // If no time, call the object and remove it
+                                    {
+                                        (node->**callback)(false);
+                                        continue; // Do not erase the iterator, because this pin needs to be called again
+                                    }
                                 }
-                                else
+                                else // nullptr -> no more data incoming on this pin
                                 {
                                     outputPin->mode = OutputPin::Mode::REAL_TIME;
                                     for (auto& link : outputPin->links)
                                     {
                                         link.connectedNode->wakeWorker();
                                     }
-                                    break;
                                 }
                             }
+                            else
+                            {
+                                LOG_ERROR("{} - {}: Callback is not valid anymore", node->nameId(), size_t(outputPin->id));
+                            }
+                            node->pollEvents.erase(it);
                         }
-                        else
-                        {
-                            LOG_ERROR("{} - {}: Callback is not valid anymore", node->nameId(), size_t(outputPin->id));
-                        }
-
-                        node->pollEvents.erase(it);
                     }
 
                     if (node->pollEvents.empty())
@@ -867,6 +884,9 @@ bool NAV::Node::workerDeinitializeNode()
 void NAV::Node::workerTimeoutHandler()
 {
     LOG_TRACE("{}: called", nameId());
+#ifdef TESTING
+    REQUIRE(true == false); // This should not happen in testing, as the test got then stuck and the timeout is unhandled
+#endif
 }
 
 void NAV::to_json(json& j, const Node& node)

@@ -16,6 +16,9 @@
 #include <cstdint>
 #include <vector>
 #include <iostream>
+#include <fmt/ostream.h>
+#include <vn/vector.h>
+#include <vn/matrix.h>
 
 namespace NAV::vendor::vectornav
 {
@@ -134,6 +137,12 @@ enum class SatSys : uint8_t
     QZSS = 5,
     GLONASS = 6,
 };
+
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream where data gets printed to
+/// @param[in] satSys Satellite Constellation
+/// @return Output stream object
+std::ostream& operator<<(std::ostream& os, const SatSys& satSys);
 
 /// @brief Information and measurements pertaining to each GNSS satellite in view.
 ///
@@ -640,3 +649,25 @@ class InsStatus
 };
 
 } // namespace NAV::vendor::vectornav
+
+#ifndef DOXYGEN_IGNORE
+
+template<>
+struct fmt::formatter<NAV::vendor::vectornav::SatSys> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::vendor::vectornav::RawMeas::SatRawElement::Chan> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::vendor::vectornav::RawMeas::SatRawElement::Freq> : ostream_formatter
+{};
+
+template<size_t tdim, typename T>
+struct fmt::formatter<vn::math::vec<tdim, T>> : ostream_formatter
+{};
+
+template<size_t m, size_t n, typename T>
+struct fmt::formatter<vn::math::mat<m, n, T>> : ostream_formatter
+{};
+
+#endif

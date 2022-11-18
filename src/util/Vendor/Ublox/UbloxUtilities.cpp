@@ -15,7 +15,7 @@
 
 #include "util/Time/TimeBase.hpp"
 
-void NAV::vendor::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& obs, uart::protocol::Packet& packet, bool peek)
+void NAV::vendor::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& obs, uart::protocol::Packet& packet)
 {
     if (packet.type() == uart::protocol::Packet::Type::TYPE_BINARY)
     {
@@ -41,27 +41,18 @@ void NAV::vendor::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& o
                 std::get<UbxAckNak>(obs->data).clsID = packet.extractUint8();
                 std::get<UbxAckNak>(obs->data).msgID = packet.extractUint8();
 
-                if (!peek)
-                {
-                    LOG_DATA("UBX:  ACK-NAK, Size {}", packet.getRawDataLength());
-                }
+                LOG_DATA("UBX:  ACK-NAK, Size {}", packet.getRawDataLength());
             }
             else
             {
-                if (!peek)
-                {
-                    LOG_DATA("UBX:  ACK-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
-                }
+                LOG_DATA("UBX:  ACK-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
             }
         }
         // Configuration Input Messages: Configure the receiver
         else if (obs->msgClass == UbxClass::UBX_CLASS_CFG)
         {
             [[maybe_unused]] auto msgId = static_cast<UbxCfgMessages>(obs->msgId);
-            if (!peek)
-            {
-                LOG_DATA("UBX:  CFG-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
-            }
+            LOG_DATA("UBX:  CFG-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
         }
         // External Sensor Fusion Messages: External Sensor Measurements and Status Information
         else if (obs->msgClass == UbxClass::UBX_CLASS_ESF)
@@ -69,17 +60,11 @@ void NAV::vendor::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& o
             auto msgId = static_cast<UbxEsfMessages>(obs->msgId);
             if (msgId == UbxEsfMessages::UBX_ESF_INS)
             {
-                if (!peek)
-                {
-                    LOG_DATA("UBX:  ESF-INS, Size {}, not implemented yet!", packet.getRawDataLength());
-                }
+                LOG_DATA("UBX:  ESF-INS, Size {}, not implemented yet!", packet.getRawDataLength());
             }
             else if (msgId == UbxEsfMessages::UBX_ESF_MEAS)
             {
-                if (!peek)
-                {
-                    LOG_DATA("UBX:  ESF-MEAS, Size {}, not implemented yet!", packet.getRawDataLength());
-                }
+                LOG_DATA("UBX:  ESF-MEAS, Size {}, not implemented yet!", packet.getRawDataLength());
             }
             else if (msgId == UbxEsfMessages::UBX_ESF_RAW)
             {
@@ -98,70 +83,46 @@ void NAV::vendor::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& o
 
                 // TODO: - UBX_ESF_RAW: Calculate the insTime somehow from the sensor time tag (sTtag)
 
-                if (!peek)
-                {
-                    LOG_DATA("UBX:  ESF-RAW, {} measurements", (obs->payloadLength - 4) / 8);
-                }
+                LOG_DATA("UBX:  ESF-RAW, {} measurements", (obs->payloadLength - 4) / 8);
             }
             else if (msgId == UbxEsfMessages::UBX_ESF_STATUS)
             {
-                if (!peek)
-                {
-                    LOG_DATA("UBX:  ESF-STATUS, Size {}, not implemented yet!", packet.getRawDataLength());
-                }
+                LOG_DATA("UBX:  ESF-STATUS, Size {}, not implemented yet!", packet.getRawDataLength());
             }
             else
             {
-                if (!peek)
-                {
-                    LOG_DATA("UBX:  ESF-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
-                }
+                LOG_DATA("UBX:  ESF-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
             }
         }
         // High Rate Navigation Results Messages: High rate time, position, speed, heading
         else if (obs->msgClass == UbxClass::UBX_CLASS_HNR)
         {
             [[maybe_unused]] auto msgId = static_cast<UbxHnrMessages>(obs->msgId);
-            if (!peek)
-            {
-                LOG_DATA("UBX:  HNR-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
-            }
+            LOG_DATA("UBX:  HNR-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
         }
         // Information Messages: Printf-Style Messages, with IDs such as Error, Warning, Notice
         else if (obs->msgClass == UbxClass::UBX_CLASS_INF)
         {
             [[maybe_unused]] auto msgId = static_cast<UbxInfMessages>(obs->msgId);
-            if (!peek)
-            {
-                LOG_DATA("UBX:  INF-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
-            }
+            LOG_DATA("UBX:  INF-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
         }
         // Logging Messages: Log creation, deletion, info and retrieval
         else if (obs->msgClass == UbxClass::UBX_CLASS_LOG)
         {
             [[maybe_unused]] auto msgId = static_cast<UbxLogMessages>(obs->msgId);
-            if (!peek)
-            {
-                LOG_DATA("UBX:  LOG-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
-            }
+            LOG_DATA("UBX:  LOG-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
         }
         // Multiple GNSS Assistance Messages: Assistance data for various GNSS
         else if (obs->msgClass == UbxClass::UBX_CLASS_MGA)
         {
             [[maybe_unused]] auto msgId = static_cast<UbxMgaMessages>(obs->msgId);
-            if (!peek)
-            {
-                LOG_DATA("UBX:  MGA-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
-            }
+            LOG_DATA("UBX:  MGA-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
         }
         // Monitoring Messages: Communication Status, CPU Load, Stack Usage, Task Status
         else if (obs->msgClass == UbxClass::UBX_CLASS_MON)
         {
             [[maybe_unused]] auto msgId = static_cast<UbxMonMessages>(obs->msgId);
-            if (!peek)
-            {
-                LOG_DATA("UBX:  MON-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
-            }
+            LOG_DATA("UBX:  MON-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
         }
         // Navigation Results Messages: Position, Speed, Time, Acceleration, Heading, DOP, SVs used
         else if (obs->msgClass == UbxClass::UBX_CLASS_NAV)
@@ -195,10 +156,7 @@ void NAV::vendor::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& o
                     obs->insTime = currentTime;
                 }
 
-                if (!peek)
-                {
-                    LOG_DATA("UBX:  NAV-ATT, iTOW {}, roll {}, pitch {}, heading {}", std::get<UbxNavAtt>(obs->data).iTOW, std::get<UbxNavAtt>(obs->data).roll, std::get<UbxNavAtt>(obs->data).pitch, std::get<UbxNavAtt>(obs->data).heading);
-                }
+                LOG_DATA("UBX:  NAV-ATT, iTOW {}, roll {}, pitch {}, heading {}", std::get<UbxNavAtt>(obs->data).iTOW, std::get<UbxNavAtt>(obs->data).roll, std::get<UbxNavAtt>(obs->data).pitch, std::get<UbxNavAtt>(obs->data).heading);
             }
             else if (msgId == UbxNavMessages::UBX_NAV_POSECEF)
             {
@@ -221,10 +179,7 @@ void NAV::vendor::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& o
                     obs->insTime = currentTime;
                 }
 
-                if (!peek)
-                {
-                    LOG_DATA("UBX: NAV-POSECEF, iTOW {}, x {}, y {}, z {}", std::get<UbxNavPosecef>(obs->data).iTOW, std::get<UbxNavPosecef>(obs->data).ecefX, std::get<UbxNavPosecef>(obs->data).ecefY, std::get<UbxNavPosecef>(obs->data).ecefZ);
-                }
+                LOG_DATA("UBX: NAV-POSECEF, iTOW {}, x {}, y {}, z {}", std::get<UbxNavPosecef>(obs->data).iTOW, std::get<UbxNavPosecef>(obs->data).ecefX, std::get<UbxNavPosecef>(obs->data).ecefY, std::get<UbxNavPosecef>(obs->data).ecefZ);
             }
             else if (msgId == UbxNavMessages::UBX_NAV_POSLLH)
             {
@@ -249,10 +204,7 @@ void NAV::vendor::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& o
                     obs->insTime = currentTime;
                 }
 
-                if (!peek)
-                {
-                    LOG_DATA("UBX:  NAV-POSLLH, iTOW {}, lon {}, lat {}, height {}", std::get<UbxNavPosllh>(obs->data).iTOW, std::get<UbxNavPosllh>(obs->data).lon, std::get<UbxNavPosllh>(obs->data).lat, std::get<UbxNavPosllh>(obs->data).height);
-                }
+                LOG_DATA("UBX:  NAV-POSLLH, iTOW {}, lon {}, lat {}, height {}", std::get<UbxNavPosllh>(obs->data).iTOW, std::get<UbxNavPosllh>(obs->data).lon, std::get<UbxNavPosllh>(obs->data).lat, std::get<UbxNavPosllh>(obs->data).height);
             }
             else if (msgId == UbxNavMessages::UBX_NAV_VELNED)
             {
@@ -279,17 +231,11 @@ void NAV::vendor::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& o
                     obs->insTime = currentTime;
                 }
 
-                if (!peek)
-                {
-                    LOG_DATA("UBX:  NAV-VELNED, iTOW {}, gSpeed {} [cm/s], heading {} [deg*1e-5], velD {} [cm/s]", std::get<UbxNavVelned>(obs->data).iTOW, std::get<UbxNavVelned>(obs->data).gSpeed, std::get<UbxNavVelned>(obs->data).heading, std::get<UbxNavVelned>(obs->data).velD);
-                }
+                LOG_DATA("UBX:  NAV-VELNED, iTOW {}, gSpeed {} [cm/s], heading {} [deg*1e-5], velD {} [cm/s]", std::get<UbxNavVelned>(obs->data).iTOW, std::get<UbxNavVelned>(obs->data).gSpeed, std::get<UbxNavVelned>(obs->data).heading, std::get<UbxNavVelned>(obs->data).velD);
             }
             else
             {
-                if (!peek)
-                {
-                    LOG_DATA("UBX:  NAV-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
-                }
+                LOG_DATA("UBX:  NAV-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
             }
         }
         // Receiver Manager Messages: Satellite Status, RTC Status
@@ -334,19 +280,16 @@ void NAV::vendor::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& o
                                        std::get<UbxRxmRawx>(obs->data).week,
                                        static_cast<long double>(std::get<UbxRxmRawx>(obs->data).rcvTow));
 
-                if (!peek)
+                std::string satInfo;
+                for (const auto& sat : std::get<UbxRxmRawx>(obs->data).data)
                 {
-                    std::string satInfo;
-                    for (const auto& sat : std::get<UbxRxmRawx>(obs->data).data)
-                    {
-                        satInfo += "[" + std::to_string(sat.gnssId);
-                        satInfo += ", " + std::to_string(sat.svId);
-                        satInfo += ", " + std::to_string(sat.sigId) + "], ";
-                    }
-
-                    LOG_DATA("UBX:  RXM-RAWX, Size {}, rcvTow {}, numMeas {}, satInfo {}",
-                             packet.getRawDataLength(), std::get<UbxRxmRawx>(obs->data).rcvTow, std::get<UbxRxmRawx>(obs->data).numMeas, satInfo);
+                    satInfo += "[" + std::to_string(sat.gnssId);
+                    satInfo += ", " + std::to_string(sat.svId);
+                    satInfo += ", " + std::to_string(sat.sigId) + "], ";
                 }
+
+                LOG_DATA("UBX:  RXM-RAWX, Size {}, rcvTow {}, numMeas {}, satInfo {}",
+                         packet.getRawDataLength(), std::get<UbxRxmRawx>(obs->data).rcvTow, std::get<UbxRxmRawx>(obs->data).numMeas, satInfo);
             }
             else if (msgId == UbxRxmMessages::UBX_RXM_SFRBX)
             {
@@ -366,66 +309,45 @@ void NAV::vendor::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& o
                     std::get<UbxRxmSfrbx>(obs->data).dwrd.emplace_back(packet.extractUint32());
                 }
 
-                if (!peek)
-                {
-                    LOG_DATA("UBX:  RXM-SFRBX, gnssId {}, svId {}, freqId {}, numWords {}, chn {}, version {}",
-                             std::get<UbxRxmSfrbx>(obs->data).gnssId,
-                             std::get<UbxRxmSfrbx>(obs->data).svId,
-                             std::get<UbxRxmSfrbx>(obs->data).freqId,
-                             std::get<UbxRxmSfrbx>(obs->data).numWords,
-                             std::get<UbxRxmSfrbx>(obs->data).chn,
-                             std::get<UbxRxmSfrbx>(obs->data).version);
-                }
+                LOG_DATA("UBX:  RXM-SFRBX, gnssId {}, svId {}, freqId {}, numWords {}, chn {}, version {}",
+                         std::get<UbxRxmSfrbx>(obs->data).gnssId,
+                         std::get<UbxRxmSfrbx>(obs->data).svId,
+                         std::get<UbxRxmSfrbx>(obs->data).freqId,
+                         std::get<UbxRxmSfrbx>(obs->data).numWords,
+                         std::get<UbxRxmSfrbx>(obs->data).chn,
+                         std::get<UbxRxmSfrbx>(obs->data).version);
             }
             else
             {
-                if (!peek)
-                {
-                    LOG_DATA("UBX:  RXM-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
-                }
+                LOG_DATA("UBX:  RXM-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
             }
         }
         // Security Feature Messages
         else if (obs->msgClass == UbxClass::UBX_CLASS_SEC)
         {
             [[maybe_unused]] auto msgId = static_cast<UbxSecMessages>(obs->msgId);
-            if (!peek)
-            {
-                LOG_DATA("UBX:  SEC-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
-            }
+            LOG_DATA("UBX:  SEC-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
         }
         // Timing Messages: Time Pulse Output, Time Mark Results
         else if (obs->msgClass == UbxClass::UBX_CLASS_TIM)
         {
             [[maybe_unused]] auto msgId = static_cast<UbxTimMessages>(obs->msgId);
-            if (!peek)
-            {
-                LOG_DATA("UBX:  TIM-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
-            }
+            LOG_DATA("UBX:  TIM-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
         }
         // Firmware Update Messages: Memory/Flash erase/write, Reboot, Flash identification, etc.
         else if (obs->msgClass == UbxClass::UBX_CLASS_UPD)
         {
             [[maybe_unused]] auto msgId = static_cast<UbxUpdMessages>(obs->msgId);
-            if (!peek)
-            {
-                LOG_DATA("UBX:  UPD-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
-            }
+            LOG_DATA("UBX:  UPD-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
         }
         else
         {
-            if (!peek)
-            {
-                LOG_DATA("UBX:  {:x}-{:x}, Size {}, not implemented yet!", obs->msgClass, obs->msgId, packet.getRawDataLength());
-            }
+            LOG_DATA("UBX:  {:x}-{:x}, Size {}, not implemented yet!", obs->msgClass, obs->msgId, packet.getRawDataLength());
         }
     }
     else if (packet.type() == uart::protocol::Packet::Type::TYPE_ASCII)
     {
-        if (!peek)
-        {
-            LOG_DATA("NMEA: {}", packet.datastr().substr(0, packet.datastr().size() - 2));
-        }
+        LOG_DATA("NMEA: {}", packet.datastr().substr(0, packet.datastr().size() - 2));
     }
 }
 

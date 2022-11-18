@@ -124,8 +124,7 @@ struct fmt::formatter<NAV::SatId>
     /// @brief Parse function to make the struct formattable
     /// @param[in] ctx Parser context
     /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
+    static constexpr auto parse(format_parse_context& ctx) -> decltype(ctx.begin())
     {
         return ctx.begin();
     }
@@ -135,7 +134,7 @@ struct fmt::formatter<NAV::SatId>
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::SatId& satId, FormatContext& ctx)
+    auto format(const NAV::SatId& satId, FormatContext& ctx) const -> decltype(ctx.out())
     {
         return fmt::format_to(ctx.out(), "{0}{1:02d}", char(satId.satSys), satId.satNum);
     }
@@ -148,8 +147,7 @@ struct fmt::formatter<NAV::SatSigId>
     /// @brief Parse function to make the struct formattable
     /// @param[in] ctx Parser context
     /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
+    static constexpr auto parse(format_parse_context& ctx) -> decltype(ctx.begin())
     {
         return ctx.begin();
     }
@@ -159,7 +157,7 @@ struct fmt::formatter<NAV::SatSigId>
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::SatSigId& satSigId, FormatContext& ctx)
+    auto format(const NAV::SatSigId& satSigId, FormatContext& ctx) const -> decltype(ctx.out())
     {
         return fmt::format_to(ctx.out(), "{0}-{1:02d}", std::string(satSigId.freq), satSigId.satNum);
     }

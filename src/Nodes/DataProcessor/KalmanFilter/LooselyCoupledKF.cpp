@@ -8,8 +8,7 @@
 
 #include "LooselyCoupledKF.hpp"
 
-#include <Eigen/Core>
-#include <Eigen/Dense>
+#include "util/Eigen.hpp"
 #include <cmath>
 
 #include <imgui_internal.h>
@@ -153,7 +152,7 @@ void NAV::LooselyCoupledKF::guiConfig()
     }
     if (ImGui::Combo(fmt::format("##Phi calculation algorithm {}", size_t(id)).c_str(), reinterpret_cast<int*>(&_phiCalculationAlgorithm), "Van Loan\0Taylor\0\0"))
     {
-        LOG_DEBUG("{}: Phi calculation algorithm changed to {}", nameId(), _phiCalculationAlgorithm);
+        LOG_DEBUG("{}: Phi calculation algorithm changed to {}", nameId(), fmt::underlying(_phiCalculationAlgorithm));
         flow::ApplyChanges();
     }
 
@@ -173,7 +172,7 @@ void NAV::LooselyCoupledKF::guiConfig()
     ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
     if (ImGui::Combo(fmt::format("Q calculation algorithm##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_qCalculationAlgorithm), "Van Loan\0Taylor 1st Order\0\0"))
     {
-        LOG_DEBUG("{}: Q calculation algorithm changed to {}", nameId(), _qCalculationAlgorithm);
+        LOG_DEBUG("{}: Q calculation algorithm changed to {}", nameId(), fmt::underlying(_qCalculationAlgorithm));
         flow::ApplyChanges();
     }
 
@@ -192,7 +191,7 @@ void NAV::LooselyCoupledKF::guiConfig()
         if (ImGui::Combo(fmt::format("Random Process Accelerometer##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_randomProcessAccel), "Random Walk\0"
                                                                                                                                             "Gauss-Markov 1st Order\0\0"))
         {
-            LOG_DEBUG("{}: randomProcessAccel changed to {}", nameId(), _randomProcessAccel);
+            LOG_DEBUG("{}: randomProcessAccel changed to {}", nameId(), fmt::underlying(_randomProcessAccel));
             flow::ApplyChanges();
         }
 
@@ -201,7 +200,7 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: stdev_ra changed to {}", nameId(), _stdev_ra.transpose());
-            LOG_DEBUG("{}: stdevAccelNoiseUnits changed to {}", nameId(), _stdevAccelNoiseUnits);
+            LOG_DEBUG("{}: stdevAccelNoiseUnits changed to {}", nameId(), fmt::underlying(_stdevAccelNoiseUnits));
             flow::ApplyChanges();
         }
 
@@ -212,7 +211,7 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: stdev_bad changed to {}", nameId(), _stdev_bad.transpose());
-                LOG_DEBUG("{}: stdevAccelBiasUnits changed to {}", nameId(), _stdevAccelBiasUnits);
+                LOG_DEBUG("{}: stdevAccelBiasUnits changed to {}", nameId(), fmt::underlying(_stdevAccelBiasUnits));
                 flow::ApplyChanges();
             }
 
@@ -239,7 +238,7 @@ void NAV::LooselyCoupledKF::guiConfig()
         if (ImGui::Combo(fmt::format("Random Process Gyroscope##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_randomProcessGyro), "Random Walk\0"
                                                                                                                                        "Gauss-Markov 1st Order\0\0"))
         {
-            LOG_DEBUG("{}: randomProcessGyro changed to {}", nameId(), _randomProcessGyro);
+            LOG_DEBUG("{}: randomProcessGyro changed to {}", nameId(), fmt::underlying(_randomProcessGyro));
             flow::ApplyChanges();
         }
 
@@ -248,7 +247,7 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: stdev_rg changed to {}", nameId(), _stdev_rg.transpose());
-            LOG_DEBUG("{}: stdevGyroNoiseUnits changed to {}", nameId(), _stdevGyroNoiseUnits);
+            LOG_DEBUG("{}: stdevGyroNoiseUnits changed to {}", nameId(), fmt::underlying(_stdevGyroNoiseUnits));
             flow::ApplyChanges();
         }
 
@@ -259,7 +258,7 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: stdev_bgd changed to {}", nameId(), _stdev_bgd.transpose());
-                LOG_DEBUG("{}: stdevGyroBiasUnits changed to {}", nameId(), _stdevGyroBiasUnits);
+                LOG_DEBUG("{}: stdevGyroBiasUnits changed to {}", nameId(), fmt::underlying(_stdevGyroBiasUnits));
                 flow::ApplyChanges();
             }
 
@@ -302,7 +301,7 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: gnssMeasurementUncertaintyPosition changed to {}", nameId(), _gnssMeasurementUncertaintyPosition.transpose());
-            LOG_DEBUG("{}: gnssMeasurementUncertaintyPositionUnit changed to {}", nameId(), _gnssMeasurementUncertaintyPositionUnit);
+            LOG_DEBUG("{}: gnssMeasurementUncertaintyPositionUnit changed to {}", nameId(), fmt::underlying(_gnssMeasurementUncertaintyPositionUnit));
             flow::ApplyChanges();
         }
 
@@ -314,7 +313,7 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: gnssMeasurementUncertaintyVelocity changed to {}", nameId(), _gnssMeasurementUncertaintyVelocity);
-            LOG_DEBUG("{}: gnssMeasurementUncertaintyVelocityUnit changed to {}", nameId(), _gnssMeasurementUncertaintyVelocityUnit);
+            LOG_DEBUG("{}: gnssMeasurementUncertaintyVelocityUnit changed to {}", nameId(), fmt::underlying(_gnssMeasurementUncertaintyVelocityUnit));
             flow::ApplyChanges();
         }
 
@@ -342,7 +341,7 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: initCovariancePosition changed to {}", nameId(), _initCovariancePosition);
-            LOG_DEBUG("{}: initCovariancePositionUnit changed to {}", nameId(), _initCovariancePositionUnit);
+            LOG_DEBUG("{}: initCovariancePositionUnit changed to {}", nameId(), fmt::underlying(_initCovariancePositionUnit));
             flow::ApplyChanges();
         }
 
@@ -357,7 +356,7 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: initCovarianceVelocity changed to {}", nameId(), _initCovarianceVelocity);
-            LOG_DEBUG("{}: initCovarianceVelocityUnit changed to {}", nameId(), _initCovarianceVelocityUnit);
+            LOG_DEBUG("{}: initCovarianceVelocityUnit changed to {}", nameId(), fmt::underlying(_initCovarianceVelocityUnit));
             flow::ApplyChanges();
         }
 
@@ -375,7 +374,7 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: initCovarianceAttitudeAngles changed to {}", nameId(), _initCovarianceAttitudeAngles);
-            LOG_DEBUG("{}: initCovarianceAttitudeAnglesUnit changed to {}", nameId(), _initCovarianceAttitudeAnglesUnit);
+            LOG_DEBUG("{}: initCovarianceAttitudeAnglesUnit changed to {}", nameId(), fmt::underlying(_initCovarianceAttitudeAnglesUnit));
             flow::ApplyChanges();
         }
         ImGui::SameLine();
@@ -394,7 +393,7 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: initCovarianceBiasAccel changed to {}", nameId(), _initCovarianceBiasAccel);
-            LOG_DEBUG("{}: initCovarianceBiasAccelUnit changed to {}", nameId(), _initCovarianceBiasAccelUnit);
+            LOG_DEBUG("{}: initCovarianceBiasAccelUnit changed to {}", nameId(), fmt::underlying(_initCovarianceBiasAccelUnit));
             flow::ApplyChanges();
         }
 
@@ -412,7 +411,7 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: initCovarianceBiasGyro changed to {}", nameId(), _initCovarianceBiasGyro);
-            LOG_DEBUG("{}: initCovarianceBiasGyroUnit changed to {}", nameId(), _initCovarianceBiasGyroUnit);
+            LOG_DEBUG("{}: initCovarianceBiasGyroUnit changed to {}", nameId(), fmt::underlying(_initCovarianceBiasGyroUnit));
             flow::ApplyChanges();
         }
 
@@ -987,7 +986,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         }
         else
         {
-            LOG_CRITICAL("{}: Calculation algorithm '{}' for the system matrix Phi is not supported.", nameId(), _phiCalculationAlgorithm);
+            LOG_CRITICAL("{}: Calculation algorithm '{}' for the system matrix Phi is not supported.", nameId(), fmt::underlying(_phiCalculationAlgorithm));
         }
     }
 

@@ -109,10 +109,8 @@ bool NAV::EmlidFile::resetNode()
     return true;
 }
 
-std::shared_ptr<const NAV::NodeData> NAV::EmlidFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::EmlidFile::pollData()
 {
-    // Get current position
-    auto pos = _filestream.tellg();
     uint8_t i = 0;
     std::unique_ptr<uart::protocol::Packet> packet = nullptr;
     while (_filestream.readsome(reinterpret_cast<char*>(&i), 1))
@@ -137,7 +135,7 @@ std::shared_ptr<const NAV::NodeData> NAV::EmlidFile::pollData(bool peek)
     }
 
     auto obs = std::make_shared<EmlidObs>();
-    vendor::emlid::decryptEmlidObs(obs, *packet, peek);
+    vendor::emlid::decryptEmlidObs(obs, *packet);
 
     if (obs->insTime.empty())
     {
@@ -148,18 +146,7 @@ std::shared_ptr<const NAV::NodeData> NAV::EmlidFile::pollData(bool peek)
         }
     }
 
-    if (peek)
-    {
-        // Return to position before "Read line".
-        _filestream.seekg(pos, std::ios_base::beg);
-    }
-
-    // Calls all the callbacks
-    if (!peek)
-    {
-        invokeCallbacks(OUTPUT_PORT_INDEX_EMLID_OBS, obs);
-    }
-
+    invokeCallbacks(OUTPUT_PORT_INDEX_EMLID_OBS, obs);
     return obs;
 }
 

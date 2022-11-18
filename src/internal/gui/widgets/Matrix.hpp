@@ -11,8 +11,6 @@
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2021-10-04
 
-// Eigen::Matrix<double, 3, 3>
-
 #pragma once
 
 #include <Eigen/Core>

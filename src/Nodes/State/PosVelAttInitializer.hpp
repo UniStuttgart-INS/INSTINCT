@@ -77,8 +77,8 @@ class PosVelAttInitializer : public Node
     /// @brief Deinitialize the node
     void deinitialize() override;
 
-    /// Add or removes input pins depending on the settings
-    void updateInputPins();
+    /// Add or removes input pins depending on the settings and modifies the output pin
+    void updatePins();
 
     /// Checks whether all Flags are set and writes logs messages
     void finalizeInit();
@@ -114,9 +114,8 @@ class PosVelAttInitializer : public Node
     void receivePosVelAttObs(const std::shared_ptr<const PosVelAtt>& obs);
 
     /// @brief Polls the PVA solution if all is set in the GUI
-    /// @param[in] peek Specifies if the data should be peeked
     /// @return The PVA solution
-    [[nodiscard]] std::shared_ptr<const NodeData> pollPVASolution(bool peek = false);
+    [[nodiscard]] std::shared_ptr<const NodeData> pollPVASolution();
 
     /// Time in [s] to initialize the state
     double _initDuration = 5.0;

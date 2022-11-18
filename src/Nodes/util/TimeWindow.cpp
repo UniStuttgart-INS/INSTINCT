@@ -55,7 +55,7 @@ void NAV::TimeWindow::guiConfig()
     ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
     if (ImGui::Combo(fmt::format("Time format##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_timeFormat), "MJD\0JD\0GPST\0YMDHMS\0\0"))
     {
-        LOG_DEBUG("{}: Time format changed to {}", nameId(), _timeFormat);
+        LOG_DEBUG("{}: Time format changed to {}", nameId(), fmt::underlying(_timeFormat));
         flow::ApplyChanges();
         doReinitialize();
     }
