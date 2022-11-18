@@ -25,12 +25,25 @@ namespace nm = NAV::NodeManager;
 
 #include <thread>
 #include <atomic>
+#include <mutex>
+#include <condition_variable>
 
 /* -------------------------------------------------------------------------------------------------------- */
 /*                                              Private Members                                             */
 /* -------------------------------------------------------------------------------------------------------- */
 
-std::atomic<bool> _execute{ false };
+std::mutex _mutex;
+std::condition_variable _cv;
+
+enum class State
+{
+    Idle,
+    Starting,
+    Running,
+    Stopping,
+};
+State _state = State::Idle;
+
 std::thread _thd;
 std::atomic<size_t> _activeNodes{ 0 };
 std::chrono::time_point<std::chrono::steady_clock> _startTime;
@@ -41,9 +54,6 @@ std::chrono::time_point<std::chrono::steady_clock> _startTime;
 
 namespace NAV::FlowExecutor
 {
-
-/// @brief Deinitialize all Nodes
-void deinitialize();
 
 /// @brief Main task of the thread
 void execute();
@@ -56,16 +66,21 @@ void execute();
 
 bool NAV::FlowExecutor::isRunning() noexcept
 {
-    return _execute.load(std::memory_order_acquire);
+    std::lock_guard<std::mutex> lk(_mutex);
+    return _state != State::Idle;
 }
 
 void NAV::FlowExecutor::start()
 {
-    stop();
-
     LOG_TRACE("called");
 
-    _execute.store(true, std::memory_order_release);
+    stop();
+
+    {
+        std::lock_guard<std::mutex> lk(_mutex);
+        _state = State::Starting;
+    }
+
     _thd = std::thread(execute);
 }
 
@@ -73,27 +88,32 @@ void NAV::FlowExecutor::stop()
 {
     LOG_TRACE("called");
 
-    if (_thd.joinable())
-    {
-        _thd.join();
-    }
-
     if (isRunning())
     {
-        deinitialize();
+        {
+            std::lock_guard<std::mutex> lk(_mutex);
+            _state = State::Stopping;
+            _cv.notify_all();
+        }
 
         waitForFinish();
     }
+
+    if (_thd.joinable()) { _thd.join(); }
 }
 
 void NAV::FlowExecutor::waitForFinish()
 {
-    LOG_TRACE("called");
-
-    if (_thd.joinable()) { _thd.join(); }
-
     LOG_TRACE("Waiting for finish of FlowExecutor...");
-    _execute.wait(true);
+    {
+        std::unique_lock lk(_mutex);
+        _cv.wait(lk, [] { return _state == State::Idle; });
+    }
+
+    {
+        std::lock_guard<std::mutex> lk(_mutex);
+        if (_thd.joinable()) { _thd.join(); }
+    }
     LOG_TRACE("FlowExecutor finished.");
 }
 
@@ -104,41 +124,10 @@ void NAV::FlowExecutor::deregisterNode([[maybe_unused]] const Node* node)
 
     if (_activeNodes == 0)
     {
-        deinitialize();
+        std::lock_guard<std::mutex> lk(_mutex);
+        _state = State::Stopping;
+        _cv.notify_all();
     }
-}
-
-void NAV::FlowExecutor::deinitialize()
-{
-    LOG_TRACE("called");
-
-    nm::DisableAllCallbacks();
-
-    for (Node* node : nm::m_Nodes())
-    {
-        if (node == nullptr || !node->isInitialized()) { continue; }
-
-        node->_mode = Node::Mode::REAL_TIME;
-        for (auto& outputPin : node->outputPins)
-        {
-            outputPin.mode = OutputPin::Mode::REAL_TIME;
-        }
-        node->flush();
-    }
-
-    if (!ConfigManager::Get<bool>("nogui")
-        || (!ConfigManager::Get<bool>("sigterm") && !ConfigManager::Get<size_t>("duration")))
-    {
-        auto finish = std::chrono::steady_clock::now();
-        [[maybe_unused]] std::chrono::duration<double> elapsed = finish - _startTime;
-        LOG_INFO("Elapsed time: {} s", elapsed.count());
-    }
-
-    if (_thd.joinable()) { _thd.join(); }
-
-    _activeNodes = 0;
-    _execute.store(false, std::memory_order_release);
-    _execute.notify_all();
 }
 
 void NAV::FlowExecutor::execute()
@@ -157,7 +146,9 @@ void NAV::FlowExecutor::execute()
 
     if (!nm::InitializeAllNodes()) // This wakes the threads
     {
-        _execute.store(false, std::memory_order_release);
+        std::lock_guard<std::mutex> lk(_mutex);
+        _state = State::Idle;
+        _cv.notify_all();
         return;
     }
 
@@ -201,6 +192,10 @@ void NAV::FlowExecutor::execute()
     }
 
     nm::EnableAllCallbacks();
+    {
+        std::lock_guard<std::mutex> lk(_mutex);
+        if (_state == State::Starting) { _state = State::Running; }
+    }
 
     LOG_INFO("Post-processing started");
     _startTime = std::chrono::steady_clock::now();
@@ -213,4 +208,42 @@ void NAV::FlowExecutor::execute()
             node->wakeWorker();
         }
     }
+    {
+        std::unique_lock lk(_mutex);
+        _cv.wait(lk, [] { return _state == State::Stopping; });
+    }
+
+    // Deinitialize
+    LOG_DEBUG("Stopping FlowExecutor...");
+    nm::DisableAllCallbacks();
+
+    for (Node* node : nm::m_Nodes())
+    {
+        if (node == nullptr || !node->isInitialized()) { continue; }
+
+        node->_mode = Node::Mode::REAL_TIME;
+        for (auto& outputPin : node->outputPins)
+        {
+            outputPin.mode = OutputPin::Mode::REAL_TIME;
+        }
+        node->flush();
+    }
+
+    if (!ConfigManager::Get<bool>("nogui")
+        || (!ConfigManager::Get<bool>("sigterm") && !ConfigManager::Get<size_t>("duration")))
+    {
+        auto finish = std::chrono::steady_clock::now();
+        [[maybe_unused]] std::chrono::duration<double> elapsed = finish - _startTime;
+        LOG_INFO("Elapsed time: {} s", elapsed.count());
+    }
+
+    _activeNodes = 0;
+    LOG_TRACE("FlowExecutor deinitialized.");
+    {
+        std::lock_guard<std::mutex> lk(_mutex);
+        _state = State::Idle;
+        _cv.notify_all();
+    }
+
+    LOG_TRACE("Execute thread finished.");
 }
