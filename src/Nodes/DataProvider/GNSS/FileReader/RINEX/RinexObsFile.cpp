@@ -652,6 +652,22 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData(bool peek)
                      obsTypeToChar(obsDesc.type), obsDesc.frequency, obsDesc.code, satNum,
                      observation, LLI, SSI);
         }
+
+        if (!std::isnan(gnssObs->data.back().pseudorange))
+        {
+            if (std::isnan(gnssObs->data.back().carrierPhase))
+            {
+                LOG_WARN("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing carrier phase.", nameId(), epochTime.toYMDHMS());
+            }
+            if (std::isnan(gnssObs->data.back().doppler))
+            {
+                LOG_WARN("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing doppler.", nameId(), epochTime.toYMDHMS());
+            }
+            if (std::isnan(gnssObs->data.back().CN0))
+            {
+                LOG_WARN("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing raw signal strength(carrier to noise ratio).", nameId(), epochTime.toYMDHMS());
+            }
+        }
     }
 
     if (peek)
