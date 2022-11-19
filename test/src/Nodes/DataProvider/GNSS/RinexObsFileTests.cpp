@@ -25,7 +25,6 @@ namespace nm = NAV::NodeManager;
 #include "util/Logger.hpp"
 
 #include "NodeData/State/PosVel.hpp"
-#include "NodeData/GNSS/GnssObs.hpp"
 
 #include "RinexObsFileTestsData.hpp"
 
@@ -47,26 +46,37 @@ namespace NAV::TEST::RinexObsFileTests
 
 constexpr double EPSILON = 10.0 * std::numeric_limits<double>::epsilon();
 
-void compareObservation(const std::shared_ptr<const NAV::GnssObs>& obs, size_t messageCounter)
+void compareObservation(const std::shared_ptr<const NAV::GnssObs>& obs)
 {
     // ---------------------------------------------- InsTime ------------------------------------------------
-    if (messageCounter == 0) // check Epoch timestamp just once at the beginning
-    {
-        REQUIRE(!obs->insTime.empty());
+    REQUIRE(!obs->insTime.empty());
 
-        REQUIRE(obs->insTime.toYMDHMS().year == static_cast<int32_t>(RINEX_REFERENCE_EPOCH.at(RINEX_Year)));
-        REQUIRE(obs->insTime.toYMDHMS().month == static_cast<int32_t>(RINEX_REFERENCE_EPOCH.at(RINEX_Month)));
-        REQUIRE(obs->insTime.toYMDHMS().day == static_cast<int32_t>(RINEX_REFERENCE_EPOCH.at(RINEX_Day)));
-        REQUIRE(obs->insTime.toYMDHMS().hour == static_cast<int32_t>(RINEX_REFERENCE_EPOCH.at(RINEX_Hour)));
-        REQUIRE(obs->insTime.toYMDHMS().min == static_cast<int32_t>(RINEX_REFERENCE_EPOCH.at(RINEX_Minute)));
-        REQUIRE(obs->insTime.toYMDHMS().sec == Approx(RINEX_REFERENCE_EPOCH.at(RINEX_Second) - Gps_LeapSec).margin(EPSILON));
-    }
+    REQUIRE(obs->insTime.toYMDHMS().year == static_cast<int32_t>(RINEX_REFERENCE_EPOCH.at(RINEX_Year)));
+    REQUIRE(obs->insTime.toYMDHMS().month == static_cast<int32_t>(RINEX_REFERENCE_EPOCH.at(RINEX_Month)));
+    REQUIRE(obs->insTime.toYMDHMS().day == static_cast<int32_t>(RINEX_REFERENCE_EPOCH.at(RINEX_Day)));
+    REQUIRE(obs->insTime.toYMDHMS().hour == static_cast<int32_t>(RINEX_REFERENCE_EPOCH.at(RINEX_Hour)));
+    REQUIRE(obs->insTime.toYMDHMS().min == static_cast<int32_t>(RINEX_REFERENCE_EPOCH.at(RINEX_Minute)));
+    REQUIRE(obs->insTime.toYMDHMS().sec == Approx(RINEX_REFERENCE_EPOCH.at(RINEX_Second) - Gps_LeapSec).margin(EPSILON));
 
     // -------------------------------------------- Observation ----------------------------------------------
-    REQUIRE(obs->data.at(messageCounter).pseudorange == Approx(RINEX_REFERENCE_DATA.at(messageCounter).at(RINEX_Obs_Pseudorange)).margin(EPSILON));
-    REQUIRE(obs->data.at(messageCounter).carrierPhase == Approx(RINEX_REFERENCE_DATA.at(messageCounter).at(RINEX_Obs_CarrierPhase)).margin(EPSILON));
-    REQUIRE(obs->data.at(messageCounter).doppler == Approx(RINEX_REFERENCE_DATA.at(messageCounter).at(RINEX_Obs_Doppler)).margin(EPSILON));
-    REQUIRE(obs->data.at(messageCounter).CN0 == Approx(RINEX_REFERENCE_DATA.at(messageCounter).at(RINEX_Obs_SigStrength)).margin(EPSILON));
+    for (size_t obsCounter = 0; obsCounter < RINEX_REFDATA_SATSYS.size(); obsCounter++)
+    {
+        REQUIRE(obs->data.at(obsCounter).satSigId.freq == RINEX_REFDATA_SATSYS.at(obsCounter));
+        REQUIRE(obs->data.at(obsCounter).satSigId.satNum == static_cast<uint16_t>(RINEX_REFERENCE_DATA.at(obsCounter).at(RINEX_SatNum)));
+        REQUIRE(obs->data.at(obsCounter).pseudorange == Approx(RINEX_REFERENCE_DATA.at(obsCounter).at(RINEX_Obs_Pseudorange)).margin(EPSILON));
+        if (!std::isnan(obs->data.at(obsCounter).carrierPhase))
+        {
+            REQUIRE(obs->data.at(obsCounter).carrierPhase == Approx(RINEX_REFERENCE_DATA.at(obsCounter).at(RINEX_Obs_CarrierPhase)).margin(EPSILON));
+        }
+        if (!std::isnan(obs->data.at(obsCounter).doppler))
+        {
+            REQUIRE(obs->data.at(obsCounter).doppler == Approx(RINEX_REFERENCE_DATA.at(obsCounter).at(RINEX_Obs_Doppler)).margin(EPSILON));
+        }
+        if (!std::isnan(obs->data.at(obsCounter).CN0))
+        {
+            REQUIRE(obs->data.at(obsCounter).CN0 == Approx(RINEX_REFERENCE_DATA.at(obsCounter).at(RINEX_Obs_SigStrength)).margin(EPSILON));
+        }
+    }
 }
 
 TEST_CASE("[RinexObsFile][flow] Read RINEX file (v3.03) and compare content with hardcoded values", "[RinexObsFile][flow]")
@@ -86,15 +96,11 @@ TEST_CASE("[RinexObsFile][flow] Read RINEX file (v3.03) and compare content with
     // TODO: Add tests for more Rinex versions
     // nm::RegisterPreInitCallback([&]() { dynamic_cast<RinexObsFile*>(nm::FindNode(2))->_path = "Rinex/FixedSize/vn310-imu.csv"; });
 
-    size_t messageCounter = 0;
-
-    nm::RegisterWatcherCallbackToInputPin(25, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
-        LOG_TRACE("messageCounter = {}", messageCounter);
-
-        compareObservation(std::dynamic_pointer_cast<const NAV::GnssObs>(queue.front()), messageCounter);
-
-        messageCounter++;
+    nm::RegisterWatcherCallbackToInputPin(25, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+        compareObservation(std::dynamic_pointer_cast<const NAV::GnssObs>(queue.front()));
     });
+
+    // TODO: inlcude test for Rinex Obs Header?: 'RINEX_SYS_NUM_OBS_TYPES_TEST' -- not possible, since gnssObs doesn't contain that info
 
     REQUIRE(testFlow("test/flow/Nodes/DataProvider/GNSS/RinexObsFile.flow"));
 }
