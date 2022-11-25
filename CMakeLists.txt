@@ -91,6 +91,8 @@ set(LOG_LEVEL
     "INFO"
     CACHE STRING "DATA|TRACE|DEBUG|INFO|WARN|ERROR|CRITICAL|OFF")
 
+message(STATUS "Setting LOG_LEVEL to ${LOG_LEVEL}")
+
 # Include all project headers
 include_directories(src)
 
@@ -273,6 +275,7 @@ add_subdirectory(src)
 add_subdirectory(doc)
 
 if(ENABLE_TESTING)
+  message(STATUS "Building tests")
   enable_testing()
   add_subdirectory(test)
 endif()
