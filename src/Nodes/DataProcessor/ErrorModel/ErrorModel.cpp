@@ -187,7 +187,7 @@ void NAV::ErrorModel::guiConfig()
             ImGui::BeginDisabled();
         }
         ImGui::SetNextItemWidth(itemWidth - (ImGui::GetCursorPosX() - currentCursorX) + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::SliderULong(fmt::format("Accelerometer Noise Seed##{}", size_t(id)).c_str(), &_imuAccelerometerRandomNumberGenerator.seed, 0, std::numeric_limits<uint64_t>::max() / 2, "%lu", ImGuiSliderFlags_Logarithmic))
+        if (ImGui::SliderUInt(fmt::format("Accelerometer Noise Seed##{}", size_t(id)).c_str(), &_imuAccelerometerRandomNumberGenerator.seed, 0, std::numeric_limits<uint32_t>::max() / 2, "%lu", ImGuiSliderFlags_Logarithmic))
         {
             LOG_DEBUG("{}: _imuAccelerometerRandomNumberGenerator.seed changed to {}", nameId(), _imuAccelerometerRandomNumberGenerator.seed);
             flow::ApplyChanges();
@@ -226,7 +226,7 @@ void NAV::ErrorModel::guiConfig()
             ImGui::BeginDisabled();
         }
         ImGui::SetNextItemWidth(itemWidth - (ImGui::GetCursorPosX() - currentCursorX) + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::SliderULong(fmt::format("Gyroscope Noise Seed##{}", size_t(id)).c_str(), &(_imuGyroscopeRandomNumberGenerator.seed), 0, std::numeric_limits<uint64_t>::max() / 2UL, "%lu", ImGuiSliderFlags_Logarithmic))
+        if (ImGui::SliderUInt(fmt::format("Gyroscope Noise Seed##{}", size_t(id)).c_str(), &(_imuGyroscopeRandomNumberGenerator.seed), 0, std::numeric_limits<uint32_t>::max() / 2UL, "%lu", ImGuiSliderFlags_Logarithmic))
         {
             LOG_DEBUG("{}: _imuGyroscopeRandomNumberGenerator.seed changed to {}", nameId(), _imuGyroscopeRandomNumberGenerator.seed);
             flow::ApplyChanges();
@@ -268,7 +268,7 @@ void NAV::ErrorModel::guiConfig()
             ImGui::BeginDisabled();
         }
         ImGui::SetNextItemWidth(itemWidth - (ImGui::GetCursorPosX() - currentCursorX) + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::SliderULong(fmt::format("Position Noise Seed##{}", size_t(id)).c_str(), &_positionRandomNumberGenerator.seed, 0, std::numeric_limits<uint64_t>::max() / 2, "%lu", ImGuiSliderFlags_Logarithmic))
+        if (ImGui::SliderUInt(fmt::format("Position Noise Seed##{}", size_t(id)).c_str(), &_positionRandomNumberGenerator.seed, 0, std::numeric_limits<uint32_t>::max() / 2, "%lu", ImGuiSliderFlags_Logarithmic))
         {
             LOG_DEBUG("{}: _positionRandomNumberGenerator.seed changed to {}", nameId(), _positionRandomNumberGenerator.seed);
             flow::ApplyChanges();
@@ -305,7 +305,7 @@ void NAV::ErrorModel::guiConfig()
             ImGui::BeginDisabled();
         }
         ImGui::SetNextItemWidth(itemWidth - (ImGui::GetCursorPosX() - currentCursorX) + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::SliderULong(fmt::format("Velocity Noise Seed##{}", size_t(id)).c_str(), &_velocityRandomNumberGenerator.seed, 0, std::numeric_limits<uint64_t>::max() / 2, "%lu", ImGuiSliderFlags_Logarithmic))
+        if (ImGui::SliderUInt(fmt::format("Velocity Noise Seed##{}", size_t(id)).c_str(), &_velocityRandomNumberGenerator.seed, 0, std::numeric_limits<uint32_t>::max() / 2, "%lu", ImGuiSliderFlags_Logarithmic))
         {
             LOG_DEBUG("{}: _velocityRandomNumberGenerator.seed changed to {}", nameId(), _velocityRandomNumberGenerator.seed);
             flow::ApplyChanges();
@@ -344,7 +344,7 @@ void NAV::ErrorModel::guiConfig()
             ImGui::BeginDisabled();
         }
         ImGui::SetNextItemWidth(itemWidth - (ImGui::GetCursorPosX() - currentCursorX) + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::SliderULong(fmt::format("Attitude Noise Seed##{}", size_t(id)).c_str(), &_attitudeRandomNumberGenerator.seed, 0, std::numeric_limits<uint64_t>::max() / 2, "%lu", ImGuiSliderFlags_Logarithmic))
+        if (ImGui::SliderUInt(fmt::format("Attitude Noise Seed##{}", size_t(id)).c_str(), &_attitudeRandomNumberGenerator.seed, 0, std::numeric_limits<uint32_t>::max() / 2, "%lu", ImGuiSliderFlags_Logarithmic))
         {
             LOG_DEBUG("{}: _attitudeRandomNumberGenerator.seed changed to {}", nameId(), _attitudeRandomNumberGenerator.seed);
             flow::ApplyChanges();
@@ -513,22 +513,22 @@ bool NAV::ErrorModel::resetNode()
     {
         _imuAccelerometerRandomNumberGenerator.generator.seed(_imuAccelerometerRandomNumberGenerator.useSeedInsteadOfSystemTime
                                                                   ? _imuAccelerometerRandomNumberGenerator.seed
-                                                                  : static_cast<uint64_t>(std::chrono::system_clock::now().time_since_epoch().count()));
+                                                                  : static_cast<uint32_t>(std::chrono::system_clock::now().time_since_epoch().count()));
         _imuGyroscopeRandomNumberGenerator.generator.seed(_imuGyroscopeRandomNumberGenerator.useSeedInsteadOfSystemTime
                                                               ? _imuGyroscopeRandomNumberGenerator.seed
-                                                              : static_cast<uint64_t>(std::chrono::system_clock::now().time_since_epoch().count()));
+                                                              : static_cast<uint32_t>(std::chrono::system_clock::now().time_since_epoch().count()));
     }
     else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type())
     {
         _positionRandomNumberGenerator.generator.seed(_positionRandomNumberGenerator.useSeedInsteadOfSystemTime
                                                           ? _positionRandomNumberGenerator.seed
-                                                          : static_cast<uint64_t>(std::chrono::system_clock::now().time_since_epoch().count()));
+                                                          : static_cast<uint32_t>(std::chrono::system_clock::now().time_since_epoch().count()));
         _velocityRandomNumberGenerator.generator.seed(_velocityRandomNumberGenerator.useSeedInsteadOfSystemTime
                                                           ? _velocityRandomNumberGenerator.seed
-                                                          : static_cast<uint64_t>(std::chrono::system_clock::now().time_since_epoch().count()));
+                                                          : static_cast<uint32_t>(std::chrono::system_clock::now().time_since_epoch().count()));
         _attitudeRandomNumberGenerator.generator.seed(_attitudeRandomNumberGenerator.useSeedInsteadOfSystemTime
                                                           ? _attitudeRandomNumberGenerator.seed
-                                                          : static_cast<uint64_t>(std::chrono::system_clock::now().time_since_epoch().count()));
+                                                          : static_cast<uint32_t>(std::chrono::system_clock::now().time_since_epoch().count()));
     }
 
     return true;
