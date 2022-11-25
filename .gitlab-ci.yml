@@ -8,6 +8,10 @@ stages:
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
+  WARNINGS_AS_ERRORS: "ON"
+  ENABLE_MAIN: "OFF"
+  ENABLE_TESTING: "OFF"
+  EXECUTABLE: instinct
 
 image: ins-cpp:10
 
@@ -29,6 +33,26 @@ image: ins-cpp:10
   variables:
     BUILD_TYPE: Debug
 
+.log-data:
+  variables:
+    LOG_LEVEL_INSTINCT: DATA
+
+.log-trace:
+  variables:
+    LOG_LEVEL_INSTINCT: TRACE
+
+.log-debug:
+  variables:
+    LOG_LEVEL_INSTINCT: DEBUG
+
+.log-info:
+  variables:
+    LOG_LEVEL_INSTINCT: INFO
+
+.log-off:
+  variables:
+    LOG_LEVEL_INSTINCT: "OFF"
+
 .schedule:
   only:
     - schedules
@@ -44,7 +68,14 @@ image: ins-cpp:10
   tags:
     - windows
   before_script:
-    - 'call "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat"'
+    # - 'call "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat"'
+    # https://gist.github.com/FeodorFitsner/b34162690ae2838409b7459824d51ed7
+    - cmd.exe /c "call `"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat`" && set > %temp%\vcvars-$CI_CONCURRENT_ID.txt"
+    - Get-Content "$env:temp\vcvars-$CI_CONCURRENT_ID.txt" | Foreach-Object { if ($_ -match "^(.*?)=(.*)$") { Set-Content "env:\$($matches[1])" $matches[2] } }
+  variables:
+    GIT_CLONE_PATH: '$CI_BUILDS_DIR/$CI_PROJECT_NAME/$CI_COMMIT_SHA/$CI_JOB_ID'
+    EXECUTABLE: instinct.exe
+    WARNINGS_AS_ERRORS: "OFF"
 
 .linux:
   tags:
@@ -53,6 +84,12 @@ image: ins-cpp:10
 .raspberry:
   tags:
     - armv8
+
+.macOS:
+  tags:
+    - macOS
+  variables:
+    GIT_CLONE_PATH: '$CI_BUILDS_DIR/$CI_PROJECT_NAME/$CI_COMMIT_SHA/$CI_JOB_ID'
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                              Prepare                                             ║
@@ -89,6 +126,14 @@ check-raspberry:
     - cmake --version
     - conan --version
     - xml_grep --version
+
+check-macOS:
+  stage: prepare
+  extends: .macOS
+  script:
+    - clang++ --version
+    - cmake --version
+    - conan --version
 
 check-windows:
   stage: prepare
@@ -142,135 +187,49 @@ documentation:
 # ║                                         Build Main & GUI                                         ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-main:win:
+.build:
   stage: build
-  extends:
-    - .windows
-  needs: ["check-windows"]
   script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -maxCpuCount
+    - echo "$CC"
+    - echo "$CXX"
+    - echo "$BUILD_TYPE"
+    - echo "$ENABLE_MAIN"
+    - echo "$ENABLE_TESTING"
+    - echo "$LOG_LEVEL_INSTINCT"
+    - echo "$WARNINGS_AS_ERRORS"
+    - echo "$EXECUTABLE"
+    - cmake -B"build/$BUILD_TYPE" -S. -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DENABLE_MAIN="$ENABLE_MAIN" -DENABLE_TESTING="$ENABLE_TESTING" -DCATCH2_JUNIT_OUTPUT="$ENABLE_TESTING" -DENABLE_COVERAGE="$ENABLE_TESTING" -DENABLE_DOXYGEN=OFF -DLOG_LEVEL="$LOG_LEVEL_INSTINCT" -DWARNINGS_AS_ERRORS="$WARNINGS_AS_ERRORS" -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build "build/$BUILD_TYPE"
 
-main:win:LOG_OFF:
-  extends:
-    - main:win
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -maxCpuCount
-
-main:win:LOG_INFO:
-  extends:
-    - main:win
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=INFO -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -maxCpuCount
-    - move bin\Release\instinct.exe .
-  artifacts:
-    paths:
-      - instinct.exe
-    expire_in: 1 week
-  only:
-    - master
-
-.build:main:
-  stage: build
+.build:linux:
   extends: .linux
   needs: ["check-image"]
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -j2
 
-main:clang:
-  extends:
-    - .build:main
-    - .clang
-
-main:gcc:
-  extends:
-    - .build:main
-    - .gcc
-
-.build:main:LOG_OFF:
-  extends:
-    - .build:main
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -j2
-
-main:clang:LOG_OFF:
-  extends:
-    - .build:main:LOG_OFF
-    - .clang
-
-main:gcc:LOG_OFF:
-  extends:
-    - .build:main:LOG_OFF
-    - .gcc
-
-.build:main:LOG_DATA:
-  extends:
-    - .build:main
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -j2
-
-main:clang:LOG_DATA:
-  extends:
-    - .build:main:LOG_DATA
-    - .clang
-
-main:gcc:LOG_DATA:
-  extends:
-    - .build:main:LOG_DATA
-    - .gcc
-
-.build:main:raspberry:
-  stage: build
-  extends: .raspberry
-  needs: ["check-raspberry"]
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DEBUG -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -j2
-    - mv bin/Release/instinct .
-
-main:raspberry:clang:
-  extends:
-    - .build:main:raspberry
-    - .clang
-
-main:raspberry:gcc:
-  extends:
-    - .build:main:raspberry
-    - .gcc
-  artifacts:
-    paths:
-      - instinct
-    expire_in: 2h
-
-# ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
-# ║                                            Build Tests                                           ║
-# ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
-
-.build:tests:
-  stage: build
-  extends: .linux
-  needs: ["check-image"]
-  script:
-    - cmake -Bbuild/$BUILD_TYPE -S. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/$BUILD_TYPE -- -j2
-
-.build:tests:LOG_DATA:
-  stage: build
-  extends: .linux
-  needs: ["check-image"]
-  script:
-    - cmake -Bbuild/$BUILD_TYPE -S. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/$BUILD_TYPE -- -j2
-
-.build:tests-win:
-  stage: build
+.build:windows:
   extends: .windows
   needs: ["check-windows"]
+
+.build:raspberry:
+  extends: .raspberry
+  needs: ["check-raspberry"]
+
+.build:macOS:
+  extends: .macOS
+  needs: ["check-macOS"]
+
+.build:main:
+  variables:
+    ENABLE_MAIN: "ON"
+  after_script:
+    - mv bin/$BUILD_TYPE/$EXECUTABLE .
+  artifacts:
+    paths:
+      - $EXECUTABLE
+    expire_in: 2h
+
+.build:tests:
+  variables:
+    ENABLE_TESTING: "ON"
 
 .build:test-artifacts:
   artifacts:
@@ -281,25 +240,138 @@ main:raspberry:gcc:
       - bin/$BUILD_TYPE/tests*
     expire_in: 2h
 
-tests:clang:
+main:win:
   extends:
+    - .build
+    - .build:main
+    - .build:windows
+    - .release
+    - .log-debug
+
+main:win:LOG_OFF:
+  extends:
+    - .build
+    - .build:main
+    - .build:windows
+    - .release
+    - .log-off
+
+main:clang:
+  extends:
+    - .build
+    - .build:main
+    - .build:linux
+    - .clang
+    - .release
+    - .log-debug
+
+main:gcc:
+  extends:
+    - .build
+    - .build:main
+    - .build:linux
+    - .gcc
+    - .release
+    - .log-debug
+
+main:clang:LOG_OFF:
+  extends:
+    - .build
+    - .build:main
+    - .build:linux
+    - .clang
+    - .release
+    - .log-off
+
+main:gcc:LOG_OFF:
+  extends:
+    - .build
+    - .build:main
+    - .build:linux
+    - .gcc
+    - .release
+    - .log-off
+
+main:clang:LOG_DATA:
+  extends:
+    - .build
+    - .build:main
+    - .build:linux
+    - .clang
+    - .release
+    - .log-data
+
+main:gcc:LOG_DATA:
+  extends:
+    - .build
+    - .build:main
+    - .build:linux
+    - .gcc
+    - .release
+    - .log-data
+
+raspberry:clang:
+  extends:
+    - .build
+    - .build:main
     - .build:tests
+    - .build:raspberry
     - .build:test-artifacts
     - .clang
     - .release
+    - .log-trace
 
-tests:gcc:
+raspberry:gcc:
   extends:
+    - .build
+    - .build:main
     - .build:tests
+    - .build:raspberry
     - .build:test-artifacts
     - .gcc
     - .release
+    - .log-trace
+
+main:macOS:
+  extends:
+    - .build
+    - .build:main
+    - .build:macOS
+    - .release
+    - .log-debug
+
+# ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
+# ║                                            Build Tests                                           ║
+# ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+tests:clang:
+  extends:
+    - .build
+    - .build:tests
+    - .build:linux
+    - .build:test-artifacts
+    - .clang
+    - .release
+    - .log-trace
+
+tests:gcc:
+  extends:
+    - .build
+    - .build:tests
+    - .build:linux
+    - .build:test-artifacts
+    - .gcc
+    - .release
+    - .log-trace
 
 tests:gcc:debug:
   extends:
+    - .build
     - .build:tests
+    - .build:linux
     - .gcc
     - .debug
+    - .log-data
   artifacts:
     untracked: true # For the coverage report
     expire_in: 2h
@@ -308,76 +380,65 @@ tests:gcc:debug:
 
 tests:clang:LOG_DATA:
   extends:
-    - .build:tests:LOG_DATA
+    - .build
+    - .build:tests
+    - .build:linux
     - .clang
+    - .release
+    - .log-data
 
 tests:gcc:LOG_DATA:
   extends:
-    - .build:tests:LOG_DATA
-    - .gcc
-
-.build:tests:LOG_OFF:
-  extends:
+    - .build
     - .build:tests
-  script:
-    - cmake -Bbuild/$BUILD_TYPE -S. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/$BUILD_TYPE -- -j2
+    - .build:linux
+    - .gcc
+    - .release
+    - .log-data
 
 tests:clang:LOG_OFF:
   extends:
-    - .build:tests:LOG_OFF
+    - .build
+    - .build:tests
+    - .build:linux
     - .clang
     - .release
+    - .log-off
 
 tests:gcc:LOG_OFF:
   extends:
-    - .build:tests:LOG_OFF
+    - .build
+    - .build:tests
+    - .build:linux
     - .gcc
     - .release
+    - .log-off
 
 tests:win:
   extends:
-    - .build:tests-win
+    - .build
+    - .build:tests
+    - .build:windows
     - .build:test-artifacts
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -maxCpuCount
-  artifacts:
-    paths:
-      - build/Release/CTestTestfile.cmake
-      - build/Release/test/CTestTestfile.cmake
-      - build/Release/test/tests_*.cmake
-      - bin/Release/tests*
-    expire_in: 2h
+    - .release
+    - .log-trace
 
 tests:win:LOG_OFF:
   extends:
-    - .build:tests-win
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -maxCpuCount
-
-.build:raspberry:tests:
-  stage: build
-  extends: .raspberry
-  needs: ["check-raspberry"]
-  script:
-    - cmake -Bbuild/$BUILD_TYPE -S. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/$BUILD_TYPE -- -j2
-
-tests:raspberry:clang:
-  extends:
-    - .build:raspberry:tests
-    - .build:test-artifacts
-    - .clang
+    - .build
+    - .build:tests
+    - .build:windows
     - .release
+    - .log-off
 
-tests:raspberry:gcc:
+tests:macOS:
   extends:
-    - .build:raspberry:tests
+    - .build
+    - .build:tests
+    - .build:macOS
     - .build:test-artifacts
-    - .gcc
     - .release
+    - .log-trace
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                               Test                                               ║
@@ -390,6 +451,8 @@ tests:raspberry:gcc:
   script:
     - cd build/$BUILD_TYPE
     - ctest --output-on-failure # -j2
+
+.junit:
   after_script:
     - cd build/$BUILD_TYPE/test
     - xml_grep --pretty_print indented --wrap '' --descr '' --cond "testsuites" *.xml > ../../../junit.xml
@@ -400,26 +463,29 @@ tests:raspberry:gcc:
       junit: junit.xml
     expire_in: 2h
 
+
 run-tests:clang:
-  extends:
-    - .linux
-    - .run-tests
-    - .release
   needs: ["tests:clang"]
+  extends:
+    - .run-tests
+    - .linux
+    - .release
+    - .junit
 
 run-tests:gcc:
-  extends:
-    - .linux
-    - .run-tests
-    - .release
   needs: ["tests:gcc"]
+  extends:
+    - .run-tests
+    - .linux
+    - .release
+    - .junit
 
 run-tests:gcc:debug:
-  extends:
-    - .linux
-    - .run-tests
-    - .debug
   needs: ["tests:gcc:debug"]
+  extends:
+    - .run-tests
+    - .linux
+    - .debug
   artifacts:
     untracked: true # For the coverage report
     expire_in: 2h
@@ -427,28 +493,40 @@ run-tests:gcc:debug:
     - master
 
 run-tests:win:
-  stage: test
-  extends:
-    - .windows
-    - .retry
   needs: ["tests:win"]
+  extends:
+    - .run-tests
+    - .windows
+    - .release
   script:
-    - cd build/Release/test
+    - Get-ChildItem -Path .\build\ -Recurse -Filter *.cmake | ForEach-Object { (Get-Content $_.FullName) `
+          -replace "$CI_COMMIT_SHA/\d+", "$CI_COMMIT_SHA/$CI_JOB_ID" |
+          Out-File -encoding ASCII $_.FullName }
+    - cd build/$BUILD_TYPE
     - ctest --output-on-failure
 
 run-tests:raspberry:clang:
+  needs: ["raspberry:clang"]
   extends:
-    - .raspberry
     - .run-tests
+    - .raspberry
     - .release
-  needs: ["tests:raspberry:clang"]
 
 run-tests:raspberry:gcc:
+  needs: ["raspberry:gcc"]
   extends:
-    - .raspberry
     - .run-tests
+    - .raspberry
     - .release
-  needs: ["tests:raspberry:gcc"]
+
+run-tests:macOS:
+  needs: ["tests:macOS"]
+  extends:
+    - .run-tests
+    - .macOS
+    - .release
+  before_script:
+    - find ./build -name '*.cmake' -exec gsed -i -E "s,$CI_COMMIT_SHA/[0-9]+,$CI_COMMIT_SHA/$CI_JOB_ID,g" {} \;
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                             Analyze                                              ║
@@ -456,9 +534,9 @@ run-tests:raspberry:gcc:
 
 doxygen:
   stage: analyze
+  needs: ["check-image"]
   extends:
     - .linux
-  needs: ["check-image"]
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target doc
@@ -471,8 +549,8 @@ doxygen:
 
 coverage:
   stage: analyze
-  extends: .linux
   needs: ["run-tests:gcc:debug"]
+  extends: .linux
   script:
     - mkdir -p coverage
     - lcov --gcov-tool gcov --capture --no-external --directory . --output-file coverage/coverage_all.info
@@ -495,10 +573,9 @@ coverage:
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 pages:
-  # extends: .schedule
   stage: deploy
-  extends: .linux
   needs: ["doxygen", "coverage"]
+  extends: .linux
   script:
     - mv bin/doc/html/ public/
     - mv coverage/ public/coverage/
@@ -522,12 +599,17 @@ pages:
 
 .build:ubuntu:22.04:
   stage: build
+  needs: []
   extends:
+    - .build
+    - .build:main
+    - .build:tests
+    - .build:test-artifacts
     - .linux
     - .schedule
     - .retry
+    - .log-trace
   image: ubuntu:22.04
-  needs: []
   variables:
     DEBIAN_FRONTEND: noninteractive
     TZ: Europe/Berlin
@@ -542,16 +624,6 @@ pages:
     - cmake --version
     - conan --version
     - cppcheck --version
-  script:
-    - cmake -Bbuild/$BUILD_TYPE -S. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/$BUILD_TYPE -- -j2
-  artifacts:
-    paths:
-      - build/$BUILD_TYPE/CTestTestfile.cmake
-      - build/$BUILD_TYPE/test/CTestTestfile.cmake
-      - build/$BUILD_TYPE/test/tests_*.cmake
-      - bin/$BUILD_TYPE/tests
-    expire_in: 2h
 
 ubuntu:22.04:clang:release:
   extends:
@@ -580,9 +652,9 @@ ubuntu:22.04:gcc:debug:
 .run-tests:ubuntu:22.04:
   stage: test
   extends:
+    - .run-tests
     - .linux
     - .schedule
-    - .retry
   image: ubuntu:22.04
   variables:
     DEBIAN_FRONTEND: noninteractive
@@ -591,9 +663,6 @@ ubuntu:22.04:gcc:debug:
     - apt update
     - apt install -y cmake libglfw3
     - cmake --version
-  script:
-    - cd build/$BUILD_TYPE/test
-    - ctest --output-on-failure # -j2
 
 run-tests:ubuntu:22.04:clang:release:
   needs: ["ubuntu:22.04:clang:release"]
@@ -623,19 +692,19 @@ run-tests:ubuntu:22.04:gcc:debug:
 # ║                                        Arch Linux Latest                                         ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-# GitLab CI Fix for:
-# error: failed to initialize alpm library
-# (could not find or read directory: /var/lib/pacman/)
-# https://www.reddit.com/r/archlinux/comments/lek2ba/arch_linux_on_docker_ci_could_not_find_or_read/
-
 .build:archlinux:latest:
   stage: build
+  needs: []
   extends:
+    - .build
+    - .build:main
+    - .build:tests
+    - .build:test-artifacts
     - .linux
     - .schedule
     - .retry
+    - .log-trace
   image: archlinux:latest
-  needs: []
   before_script:
     - pacman -Sy archlinux-keyring --noconfirm && pacman -Syyu --noconfirm --needed
     - pacman -S --noconfirm --needed base-devel cmake clang ccache cppcheck python-pip glfw-x11
@@ -646,16 +715,6 @@ run-tests:ubuntu:22.04:gcc:debug:
     - cmake --version
     - conan --version
     - cppcheck --version
-  script:
-    - cmake -Bbuild/$BUILD_TYPE -S. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/$BUILD_TYPE -- -j2
-  artifacts:
-    paths:
-      - build/$BUILD_TYPE/CTestTestfile.cmake
-      - build/$BUILD_TYPE/test/CTestTestfile.cmake
-      - build/$BUILD_TYPE/test/tests_*.cmake
-      - bin/$BUILD_TYPE/tests
-    expire_in: 2h
 
 archlinux:latest:clang:release:
   extends:
@@ -684,17 +743,14 @@ archlinux:latest:gcc:debug:
 .run-tests:archlinux:latest:
   stage: test
   extends:
+    - .run-tests
     - .linux
     - .schedule
-    - .retry
   image: archlinux:latest
   before_script:
     - pacman -Sy archlinux-keyring --noconfirm && pacman -Syyu --noconfirm --needed
     - pacman -S --noconfirm --needed base-devel cmake glfw-x11
     - cmake --version
-  script:
-    - cd build/$BUILD_TYPE/test
-    - ctest --output-on-failure # -j2
 
 run-tests:archlinux:latest:clang:release:
   needs: ["archlinux:latest:clang:release"]
