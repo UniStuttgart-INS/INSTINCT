@@ -23,11 +23,11 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
-#include "util/Logger.hpp"
+#include "Logger.hpp"
 
 #include "NodeData/State/PosVel.hpp"
 
-namespace NAV::TEST::NMEAFileTests
+namespace NAV::TESTS::NMEAFileTests
 {
 
 constexpr double EPSILON = 10.0 * std::numeric_limits<double>::epsilon();
@@ -76,7 +76,7 @@ void compareNMEAData(const std::shared_ptr<const NAV::PosVel>& obs, size_t messa
 
 TEST_CASE("[NMEAFile][flow] Read 'data/NMEA/test.nmea' and compare content with hardcoded values", "[NMEAFile][flow]")
 {
-    Logger logger;
+    auto logger = initializeTestLogger();
 
     // ###########################################################################################################
     //                                                  NMEAFile.flow"
@@ -101,4 +101,4 @@ TEST_CASE("[NMEAFile][flow] Read 'data/NMEA/test.nmea' and compare content with 
     REQUIRE(messageCounter == NMEA_REFERENCE_DATA.size());
 }
 
-} // namespace NAV::TEST::NMEAFileTests
+} // namespace NAV::TESTS::NMEAFileTests

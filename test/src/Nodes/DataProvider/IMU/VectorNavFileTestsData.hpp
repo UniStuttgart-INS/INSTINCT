@@ -17,7 +17,7 @@
 
 #include "util/Vendor/VectorNav/VectorNavTypes.hpp"
 
-namespace NAV::TEST::VectorNavFileTests
+namespace NAV::TESTS::VectorNavFileTests
 {
 
 namespace FixedSize
@@ -545,4 +545,4 @@ static const std::array<std::vector<NAV::vendor::vectornav::RawMeas::SatRawEleme
 
 } // namespace DynamicSize
 
-} // namespace NAV::TEST::VectorNavFileTests
+} // namespace NAV::TESTS::VectorNavFileTests

@@ -8,7 +8,7 @@
 
 #include <catch2/catch.hpp>
 
-#include "util/Logger.hpp"
+#include "Logger.hpp"
 
 #include "NodeData/General/UartPacket.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
@@ -18,11 +18,11 @@ namespace ub = NAV::vendor::ublox;
 #include "uart/protocol/packet.hpp"
 #include "uart/sensors/sensors.hpp"
 
-namespace NAV::TEST
+namespace NAV::TESTS
 {
 TEST_CASE("[UbloxUtilities] decryptUbloxObs - NMEA", "[UbloxUtilities]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     uart::sensors::UartSensor sensor{ uart::Endianness::ENDIAN_LITTLE,
                                       // packetFinderFunction
@@ -47,7 +47,7 @@ TEST_CASE("[UbloxUtilities] decryptUbloxObs - NMEA", "[UbloxUtilities]")
 
 TEST_CASE("[UbloxUtilities] decryptUbloxObs - UBX", "[UbloxUtilities]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     auto sensorEndianess = uart::Endianness::ENDIAN_LITTLE;
     uart::sensors::UartSensor sensor{ sensorEndianess,
@@ -221,7 +221,7 @@ TEST_CASE("[UbloxUtilities] decryptUbloxObs - UBX", "[UbloxUtilities]")
 
 TEST_CASE("[UbloxUtilities] checksumUBX", "[UbloxUtilities]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     //                                                                 navBbrMask
     //                                                                 |           resetMode
@@ -301,7 +301,7 @@ TEST_CASE("[UbloxUtilities] checksumUBX", "[UbloxUtilities]")
 
 TEST_CASE("[UbloxUtilities] checksumNMEA", "[UbloxUtilities]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     std::string text = "$GPZDA,141644.00,22,03,2002,00,00*67\r\n";
     std::vector<uint8_t> data;
@@ -339,4 +339,4 @@ TEST_CASE("[UbloxUtilities] checksumNMEA", "[UbloxUtilities]")
     REQUIRE(ub::checksumNMEA(data) == 0x72);
 }
 
-} // namespace NAV::TEST
+} // namespace NAV::TESTS
