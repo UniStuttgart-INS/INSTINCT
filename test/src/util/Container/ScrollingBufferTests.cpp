@@ -8,19 +8,19 @@
 
 #include <catch2/catch.hpp>
 
-#include "util/Logger.hpp"
+#include "Logger.hpp"
 #include "util/Container/ScrollingBuffer.hpp"
 #include <iostream>
 #include <sstream>
 
-namespace NAV
+namespace NAV::TESTS
 {
 constexpr size_t PADDING = 2;
 std::stringstream sstream;
 
 TEST_CASE("[ScrollingBuffer] InitializerList", "[ScrollingBuffer]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     ScrollingBuffer<int> buffer1({});
     sstream.clear();
@@ -54,7 +54,7 @@ TEST_CASE("[ScrollingBuffer] InitializerList", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer] push_back", "[ScrollingBuffer]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     ScrollingBuffer<int> buffer1(5);
     sstream.clear();
@@ -114,7 +114,7 @@ TEST_CASE("[ScrollingBuffer] push_back", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer] push_back (padding)", "[ScrollingBuffer]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     ScrollingBuffer<int, PADDING> buffer1(5);
     sstream.clear();
@@ -174,7 +174,7 @@ TEST_CASE("[ScrollingBuffer] push_back (padding)", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer<double>] All Functions", "[ScrollingBuffer]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     ScrollingBuffer<double> buffer1(5);
     sstream.clear();
@@ -265,7 +265,7 @@ TEST_CASE("[ScrollingBuffer<double>] All Functions", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer<double>] All Functions (padding)", "[ScrollingBuffer]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     ScrollingBuffer<double, PADDING> buffer1(5);
     sstream.clear();
@@ -358,7 +358,7 @@ TEST_CASE("[ScrollingBuffer<double>] All Functions (padding)", "[ScrollingBuffer
 
 TEST_CASE("[ScrollingBuffer] Shrink unscrolled buffer", "[ScrollingBuffer]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     ScrollingBuffer<int> buffer1(6);
     for (int i = 0; i < 4; i++)
@@ -451,7 +451,7 @@ TEST_CASE("[ScrollingBuffer] Shrink unscrolled buffer", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer] Shrink unscrolled buffer (padding)", "[ScrollingBuffer]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     ScrollingBuffer<int, PADDING> buffer1(6);
     for (int i = 0; i < 4; i++)
@@ -544,7 +544,7 @@ TEST_CASE("[ScrollingBuffer] Shrink unscrolled buffer (padding)", "[ScrollingBuf
 
 TEST_CASE("[ScrollingBuffer] Grow unscrolled buffer", "[ScrollingBuffer]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     ScrollingBuffer<int> buffer1(5);
     for (int i = 0; i < 4; i++)
@@ -574,7 +574,7 @@ TEST_CASE("[ScrollingBuffer] Grow unscrolled buffer", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer] Grow unscrolled buffer (padding)", "[ScrollingBuffer]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     ScrollingBuffer<int, PADDING> buffer1(5);
     for (int i = 0; i < 4; i++)
@@ -607,7 +607,7 @@ TEST_CASE("[ScrollingBuffer] Grow unscrolled buffer (padding)", "[ScrollingBuffe
 
 TEST_CASE("[ScrollingBuffer] Shrink scrolled buffer", "[ScrollingBuffer]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     ScrollingBuffer<int> buffer1(5);
     for (int i = 0; i < 7; i++)
@@ -649,7 +649,7 @@ TEST_CASE("[ScrollingBuffer] Shrink scrolled buffer", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer] Shrink scrolled buffer (padding)", "[ScrollingBuffer]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     ScrollingBuffer<int, PADDING> buffer1(5);
     for (int i = 0; i < 7; i++)
@@ -794,7 +794,7 @@ TEST_CASE("[ScrollingBuffer] Shrink scrolled buffer (padding)", "[ScrollingBuffe
 
 TEST_CASE("[ScrollingBuffer] Grow scrolled buffer", "[ScrollingBuffer]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     ScrollingBuffer<int> buffer1(5);
     for (int i = 0; i < 7; i++)
@@ -860,7 +860,7 @@ TEST_CASE("[ScrollingBuffer] Grow scrolled buffer", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer] Grow scrolled buffer (padding)", "[ScrollingBuffer]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     ScrollingBuffer<int, PADDING> buffer1(5);
     for (int i = 0; i < 7; i++)
@@ -955,7 +955,7 @@ TEST_CASE("[ScrollingBuffer] Grow scrolled buffer (padding)", "[ScrollingBuffer]
 
 TEST_CASE("[ScrollingBuffer] Raw data", "[ScrollingBuffer]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     ScrollingBuffer<int> buffer1(5);
     for (int i = 0; i < 7; i++)
@@ -980,7 +980,7 @@ TEST_CASE("[ScrollingBuffer] Raw data", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer] Raw data (padding)", "[ScrollingBuffer]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     ScrollingBuffer<int, PADDING> buffer1(5);
     for (int i = 0; i < 7; i++)
@@ -1007,7 +1007,7 @@ TEST_CASE("[ScrollingBuffer] Raw data (padding)", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer] Infinite buffer", "[ScrollingBuffer]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     ScrollingBuffer<int> buffer1(5);
     for (int i = 0; i < 7; i++)
@@ -1130,7 +1130,7 @@ TEST_CASE("[ScrollingBuffer] Infinite buffer", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer] Infinite buffer (padding)", "[ScrollingBuffer]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     ScrollingBuffer<int, PADDING> buffer1(5);
     for (int i = 0; i < 7; i++)
@@ -1306,7 +1306,7 @@ TEST_CASE("[ScrollingBuffer] Infinite buffer (padding)", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer] Clear", "[ScrollingBuffer]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     ScrollingBuffer<int> buffer1(5);
     for (int i = 0; i < 7; i++)
@@ -1343,7 +1343,7 @@ TEST_CASE("[ScrollingBuffer] Clear", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer] Clear (padding)", "[ScrollingBuffer]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     ScrollingBuffer<int, PADDING> buffer1(5);
     for (int i = 0; i < 7; i++)
@@ -1378,4 +1378,4 @@ TEST_CASE("[ScrollingBuffer] Clear (padding)", "[ScrollingBuffer]")
     REQUIRE(buffer1.offset() == PADDING);
 }
 
-} // namespace NAV
+} // namespace NAV::TESTS

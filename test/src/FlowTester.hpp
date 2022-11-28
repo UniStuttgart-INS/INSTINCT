@@ -13,6 +13,9 @@
 
 #pragma once
 
+namespace NAV::TESTS
+{
+
 /// @brief Loads and executes the flow
 /// @param[in] path Path to the flow file
 /// @return true if the execution was successful
@@ -20,3 +23,5 @@ bool testFlow(const char* path);
 
 /// @brief Runs general purpose cleanup checks
 void runGeneralFlowCleanupChecks();
+
+} // namespace NAV::TESTS

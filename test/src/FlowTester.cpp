@@ -17,7 +17,7 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
-bool testFlow(const char* path)
+bool NAV::TESTS::testFlow(const char* path)
 {
     // Config Manager object
     NAV::ConfigManager::initialize();
@@ -40,7 +40,7 @@ bool testFlow(const char* path)
     return !static_cast<bool>(executionFailure);
 }
 
-void runGeneralFlowCleanupChecks()
+void NAV::TESTS::runGeneralFlowCleanupChecks()
 {
     for (const NAV::Node* node : nm::m_Nodes())
     {

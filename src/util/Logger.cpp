@@ -52,6 +52,8 @@ const char* logPatternInfo = "[%H:%M:%S.%e] [%^%L%$] %v";
 
 Logger::Logger(const std::string& logpath)
 {
+#ifndef TESTING
+
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
     // Only edit if console and file should log different levels
     console_sink->set_level(spdlog::level::from_str(NAV::ConfigManager::Get<std::string>("console-log-level", "trace")));
@@ -73,6 +75,8 @@ Logger::Logger(const std::string& logpath)
     case spdlog::level::n_levels:
         break;
     }
+
+#endif
 
     auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(logpath, true);
     // Only edit if console and file should log different levels
@@ -101,7 +105,11 @@ Logger::Logger(const std::string& logpath)
     ringbuffer_sink->set_pattern(logPatternInfo);
 
     // Set the logger as default logger
-    spdlog::set_default_logger(std::make_shared<spdlog::logger>("multi_sink", spdlog::sinks_init_list({ console_sink, file_sink, ringbuffer_sink })));
+    spdlog::set_default_logger(std::make_shared<spdlog::logger>("multi_sink", spdlog::sinks_init_list({
+#ifndef TESTING
+                                                                                  console_sink,
+#endif
+                                                                                  file_sink, ringbuffer_sink })));
 
     // Level should be smaller or equal to the level of the sinks
     spdlog::set_level(spdlog::level::level_enum::trace);

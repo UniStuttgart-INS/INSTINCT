@@ -11,13 +11,13 @@
 
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "Navigation/Transformations/Units.hpp"
-#include "util/Logger.hpp"
+#include "Logger.hpp"
 
 #include "util/Eigen.hpp"
 
 #include <limits>
 
-namespace NAV::TEST::CoordinateFramesTests
+namespace NAV::TESTS::CoordinateFramesTests
 {
 constexpr double EPSILON = 10.0 * std::numeric_limits<double>::epsilon();
 
@@ -134,7 +134,7 @@ Eigen::Vector3d ecef2lla_iter(const Eigen::Vector3d& e_position, double a = InsC
 
 TEST_CASE("[InsTransformations] Euler to Quaternion conversion", "[InsTransformations]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     double delta = deg2rad(5);
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
@@ -208,7 +208,7 @@ TEST_CASE("[InsTransformations] Euler to Quaternion conversion", "[InsTransforma
 
 TEST_CASE("[InsTransformations] Quaternion to Euler conversion", "[InsTransformations]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     auto quat = [](double alpha, double beta, double gamma) {
         Eigen::AngleAxisd xAngle(alpha, Eigen::Vector3d::UnitX());
@@ -236,7 +236,7 @@ TEST_CASE("[InsTransformations] Quaternion to Euler conversion", "[InsTransforma
 
 TEST_CASE("[InsTransformations] Negated Quaternion to Euler conversion", "[InsTransformations]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     auto quat = [](double alpha, double beta, double gamma) {
         Eigen::AngleAxisd xAngle(alpha, Eigen::Vector3d::UnitX());
@@ -269,7 +269,7 @@ TEST_CASE("[InsTransformations] Negated Quaternion to Euler conversion", "[InsTr
 
 TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[InsTransformations]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     double time = 86164.099 / 3.0;
     auto e_Quat_i = trafo::e_Quat_i(time, InsConst::omega_ie);
@@ -304,7 +304,7 @@ TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[In
 
 TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[InsTransformations]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     double latitude = deg2rad(88);
     double longitude = deg2rad(-40);
@@ -370,7 +370,7 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
 
 TEST_CASE("[InsTransformations] NED <=> Earth-centered-earth-fixed frame conversion", "[InsTransformations]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     double latitude_ref = deg2rad(88);
     double longitude_ref = deg2rad(-40);
@@ -411,7 +411,7 @@ TEST_CASE("[InsTransformations] NED <=> Earth-centered-earth-fixed frame convers
 
 TEST_CASE("[InsTransformations] Body <=> navigation DCM/Quaternion comparison", "[InsTransformations]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     double delta = deg2rad(5);
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
@@ -435,7 +435,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation DCM/Quaternion comparison", 
 
 TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTransformations]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     /* -------------------------------------------------------------------------------------------------------- */
 
@@ -518,7 +518,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
 
 TEST_CASE("[InsTransformations] Platform <=> body frame conversion", "[InsTransformations]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     double mountingAngleX = deg2rad(90);
     double mountingAngleY = 0.0;
@@ -535,7 +535,7 @@ TEST_CASE("[InsTransformations] Platform <=> body frame conversion", "[InsTransf
 
 TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     // Conversion with https://www.oc.nps.edu/oc2902w/coord/llhxyz.htm
 
@@ -625,7 +625,7 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
 
 TEST_CASE("[InsTransformations] LLA => ECEF => LLA conversion", "[InsTransformations]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     for (int lat = -89; lat < 90; lat += 1)
     {
@@ -651,7 +651,7 @@ TEST_CASE("[InsTransformations] LLA => ECEF => LLA conversion", "[InsTransformat
 
 TEST_CASE("[InsTransformations] LLA => ECEF => LLH-iterative conversion", "[InsTransformations]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     for (int lat = -89; lat < 90; lat += 1)
     {
@@ -701,7 +701,7 @@ TEST_CASE("[InsTransformations] LLA => ECEF => LLH-iterative conversion", "[InsT
 
 TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     double roll = deg2rad(20);
     double pitch = deg2rad(50);
@@ -758,4 +758,4 @@ TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
     CHECK(e_Dcm_b_ref == EigApprox(e_Dcm_b_quat).margin(1e-13).epsilon(0));
 }
 
-} // namespace NAV::TEST::CoordinateFramesTests
+} // namespace NAV::TESTS::CoordinateFramesTests

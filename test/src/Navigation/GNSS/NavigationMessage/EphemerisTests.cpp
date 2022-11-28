@@ -12,17 +12,17 @@
 #include "Navigation/Constants.hpp"
 #include "Navigation/GNSS/Functions.hpp"
 #include "Navigation/GNSS/NavigationMessage/Ephemeris.hpp"
-#include "util/Logger.hpp"
+#include "Logger.hpp"
 #include "util/StringUtil.hpp"
 
 #include <fstream>
 
-namespace NAV::TEST::EphemerisTests
+namespace NAV::TESTS::EphemerisTests
 {
 
 TEST_CASE("[Ephemeris] GPS Ephemeris calc orbit Skydel data", "[Ephemeris]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     // G01 2022 06 01 14 00 00 6.486773490906E-04-1.170974428533E-11 0.000000000000E+00
     //      2.000000000000E+00-1.421562500000E+02 3.988023260033E-09-4.307765361283E-01
@@ -140,7 +140,7 @@ TEST_CASE("[Ephemeris] GPS Ephemeris calc orbit Skydel data", "[Ephemeris]")
 
 TEST_CASE("[Ephemeris] GAL Ephemeris calc orbit Skydel data", "[Ephemeris]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     // E02 2022 06 01 14 00 00 2.283233505978E-04 2.629008122312E-12 0.000000000000E+00
     //      1.400000000000E+01 1.748750000000E+02 2.609037248302E-09 2.580226855533E+00
@@ -256,7 +256,7 @@ TEST_CASE("[Ephemeris] GAL Ephemeris calc orbit Skydel data", "[Ephemeris]")
 
 // TEST_CASE("[Ephemeris] GLO Ephemeris calc orbit Skydel data", "[Ephemeris]")
 // {
-//     Logger consoleSink;
+//     auto logger = initializeTestLogger();
 
 //     // R01 2022 06 01 13 45 00 8.010864260000E-05 0.000000000000E+00 3.078000000000E+05
 //     //     -7.702946198884E+02-3.037421299509E+00 0.000000000000E+00 0.000000000000E+00
@@ -357,4 +357,4 @@ TEST_CASE("[Ephemeris] GAL Ephemeris calc orbit Skydel data", "[Ephemeris]")
 //     }
 // }
 
-} // namespace NAV::TEST::EphemerisTests
+} // namespace NAV::TESTS::EphemerisTests
