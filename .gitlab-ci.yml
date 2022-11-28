@@ -451,6 +451,12 @@ tests:macOS:
   script:
     - cd build/$BUILD_TYPE
     - ctest --output-on-failure # -j2
+  artifacts:
+    when: on_failure
+    paths:
+      - test/logs/*.log
+    name: 'test-logs'
+
 
 .junit:
   after_script:

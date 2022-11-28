@@ -27,7 +27,7 @@
 namespace nm = NAV::NodeManager;
 
 #include "Navigation/Transformations/Units.hpp"
-#include "util/Logger.hpp"
+#include "Logger.hpp"
 #include "util/Container/CartesianProduct.hpp"
 
 // This is a small hack, which lets us change private/protected parameters
@@ -49,12 +49,12 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/State/LcKfInsGnssErrors.hpp"
 #include "Nodes/DataLogger/Protocol/CommonLog.hpp"
 
-namespace NAV::TEST::LooselyCoupledKFTests
+namespace NAV::TESTS::LooselyCoupledKFTests
 {
 
 void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, size_t MESSAGE_COUNT_GNSS_FIX, size_t MESSAGE_COUNT_IMU)
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     bool imuAfter = std::string(imuFilePath) == "VectorNav/Static/vn310-imu-after.csv";
 
@@ -266,4 +266,4 @@ TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving after GNSS 
     testLCKFwithImuFile("VectorNav/Static/vn310-imu-after.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_GNSS_FIX, MESSAGE_COUNT_IMU);
 }
 
-} // namespace NAV::TEST::LooselyCoupledKFTests
+} // namespace NAV::TESTS::LooselyCoupledKFTests

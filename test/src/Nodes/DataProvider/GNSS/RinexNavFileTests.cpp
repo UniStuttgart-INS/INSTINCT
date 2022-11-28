@@ -14,19 +14,19 @@
 #include <catch2/catch.hpp>
 
 #include "FlowTester.hpp"
-#include "util/Logger.hpp"
+#include "Logger.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
 #include "NodeData/GNSS/GnssNavInfo.hpp"
 
-namespace NAV::TEST::RinexNavFileTests
+namespace NAV::TESTS::RinexNavFileTests
 {
 
 TEST_CASE("[RinexNavFile] Read v3.03 Files and check correctness", "[RinexNavFile][flow]")
 {
-    Logger logger;
+    auto logger = initializeTestLogger();
 
     // ###########################################################################################################
     //                                             RinexNavFile.flow
@@ -61,4 +61,4 @@ TEST_CASE("[RinexNavFile] Read v3.03 Files and check correctness", "[RinexNavFil
     REQUIRE(testFlow("test/flow/Nodes/DataProvider/GNSS/RinexNavFile.flow"));
 }
 
-} // namespace NAV::TEST::RinexNavFileTests
+} // namespace NAV::TESTS::RinexNavFileTests

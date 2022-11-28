@@ -24,7 +24,7 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
-#include "util/Logger.hpp"
+#include "Logger.hpp"
 
 #include "VectorNavFileTestsData.hpp"
 
@@ -41,7 +41,7 @@ namespace nm = NAV::NodeManager;
 #undef private
 #pragma GCC diagnostic pop
 
-namespace NAV::TEST::VectorNavFileTests
+namespace NAV::TESTS::VectorNavFileTests
 {
 auto extractBit(auto& group, auto value)
 {
@@ -183,7 +183,7 @@ void compareImuObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutpu
 
 TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-imu.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
-    Logger logger;
+    auto logger = initializeTestLogger();
 
     // ##########################################################################################################
     //                                            VectorNavFile.flow
@@ -212,7 +212,7 @@ TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-imu.csv' a
 
 TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-imu.vnb' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
-    Logger logger;
+    auto logger = initializeTestLogger();
 
     // ##########################################################################################################
     //                                            VectorNavFile.flow
@@ -507,7 +507,7 @@ void compareGnssObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutp
 
 TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-gnss.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
-    Logger logger;
+    auto logger = initializeTestLogger();
 
     // ##########################################################################################################
     //                                            VectorNavFile.flow
@@ -536,7 +536,7 @@ TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-gnss.csv' 
 
 TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-gnss.vnb' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
-    Logger logger;
+    auto logger = initializeTestLogger();
 
     // ##########################################################################################################
     //                                            VectorNavFile.flow
@@ -842,7 +842,7 @@ void compareDynamicSizeObservation(const std::shared_ptr<const NAV::VectorNavBin
 
 TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/DynamicSize/vn310-gnss.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
-    Logger logger;
+    auto logger = initializeTestLogger();
 
     // ##########################################################################################################
     //                                            VectorNavFile.flow
@@ -871,7 +871,7 @@ TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/DynamicSize/vn310-gnss.csv
 
 TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/DynamicSize/vn310-gnss.vnb' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
-    Logger logger;
+    auto logger = initializeTestLogger();
 
     // ##########################################################################################################
     //                                            VectorNavFile.flow
@@ -900,4 +900,4 @@ TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/DynamicSize/vn310-gnss.vnb
 
 } // namespace DynamicSize
 
-} // namespace NAV::TEST::VectorNavFileTests
+} // namespace NAV::TESTS::VectorNavFileTests

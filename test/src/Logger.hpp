@@ -6,21 +6,19 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#include <catch2/catch.hpp>
+/// @file Logger.hpp
+/// @brief Logging utilities for testing
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
+/// @date 2022-11-28
 
-#include "Logger.hpp"
+#pragma once
+
+#include "util/Logger.hpp"
 
 namespace NAV::TESTS
 {
-TEST_CASE("[Logger] Initialization", "[Logger]")
-{
-    {
-        auto logger = initializeTestLogger();
-    }
-    {
-        Logger consoleAndFileSink("/tmp/LoggerTest.log");
-    }
-    auto logger = initializeTestLogger();
-}
+
+/// @brief Initializes the logger for testing
+[[nodiscard]] Logger initializeTestLogger();
 
 } // namespace NAV::TESTS

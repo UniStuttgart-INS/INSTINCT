@@ -40,8 +40,10 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
     // Sets the output path
     NAV::flow::SetOutputPath();
 
+#ifndef TESTING
     // Initialize the logger
     Logger logger((NAV::flow::GetOutputPath() / "instinct.log").string());
+#endif
 
     // Log all the options
     NAV::ConfigManager::CheckOptions(argc, argv);
@@ -111,7 +113,7 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
                 }
 
 #ifdef TESTING
-                runGeneralFlowCleanupChecks();
+                TESTS::runGeneralFlowCleanupChecks();
                 nm::CallCleanupCallback();
 #endif
 
