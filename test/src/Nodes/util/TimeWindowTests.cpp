@@ -18,14 +18,14 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
-#include "util/Logger.hpp"
+#include "Logger.hpp"
 
-namespace NAV::TEST::TimeWindowTests
+namespace NAV::TESTS::TimeWindowTests
 {
 
 TEST_CASE("[TimeWindow][flow] Simulate IMU and cut off start and end time", "[TimeWindow][flow]")
 {
-    Logger logger;
+    auto logger = initializeTestLogger();
 
     // ###########################################################################################################
     //                                              TimeWindow.flow
@@ -56,4 +56,4 @@ TEST_CASE("[TimeWindow][flow] Simulate IMU and cut off start and end time", "[Ti
     REQUIRE(messageCounterOutput == 71);
 }
 
-} // namespace NAV::TEST::TimeWindowTests
+} // namespace NAV::TESTS::TimeWindowTests

@@ -308,6 +308,48 @@ bool SliderULong4(const char* label, uint64_t v[4], uint64_t v_min, uint64_t v_m
 
 // #####################################################################################################################
 
+/// @brief Shows a Slider GUI element for 'uint32'
+/// @param[in] label Label to display beside the slider. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool SliderUInt(const char* label, uint32_t* v, uint32_t v_min, uint32_t v_max, const char* format = "%lu", ImGuiSliderFlags flags = 0);
+
+/// @brief Shows a Slider GUI element for an array of 'uint32[2]'
+/// @param[in] label Label to display beside the slider. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool SliderUInt2(const char* label, uint32_t v[2], uint32_t v_min, uint32_t v_max, const char* format = "%lu", ImGuiSliderFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+/// @brief Shows a Slider GUI element for an array of 'uint32[3]'
+/// @param[in] label Label to display beside the slider. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool SliderUInt3(const char* label, uint32_t v[3], uint32_t v_min, uint32_t v_max, const char* format = "%lu", ImGuiSliderFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+/// @brief Shows a Slider GUI element for an array of 'uint32[4]'
+/// @param[in] label Label to display beside the slider. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool SliderUInt4(const char* label, uint32_t v[4], uint32_t v_min, uint32_t v_max, const char* format = "%lu", ImGuiSliderFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+// #####################################################################################################################
+
 // Widgets: Input with Keyboard
 // - If you want to use InputText() with std::string or any custom dynamic string type, see misc/cpp/imgui_stdlib.h and comments in imgui_demo.cpp.
 // - Most of the ImGuiInputTextFlags flags are only useful for InputText() and not for InputFloatX, InputIntX, InputDouble etc.

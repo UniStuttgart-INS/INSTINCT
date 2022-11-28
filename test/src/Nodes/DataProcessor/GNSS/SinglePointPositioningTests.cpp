@@ -23,7 +23,7 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
-#include "util/Logger.hpp"
+#include "Logger.hpp"
 #include "util/StringUtil.hpp"
 
 #include "NodeData/GNSS/SppSolution.hpp"
@@ -31,7 +31,7 @@ namespace nm = NAV::NodeManager;
 #include "Navigation/GNSS/Core/Code.hpp"
 #include "Navigation/Transformations/Units.hpp"
 
-namespace NAV::TEST::SinglePointPositioningTests
+namespace NAV::TESTS::SinglePointPositioningTests
 {
 
 constexpr size_t MESSAGE_COUNT_EXPECTED = 240; ///< Amount of messages expected in the files
@@ -72,7 +72,7 @@ std::vector<SppReference> sppReference; ///< SppReference files
 
 TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - Klobuchar - Saastamoinen)", "[SinglePointPositioning][flow]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     // ###########################################################################################################
     //                                       SinglePointPositioningSkydel.flow
@@ -279,4 +279,4 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - Klo
     }
 }
 
-} // namespace NAV::TEST::SinglePointPositioningTests
+} // namespace NAV::TESTS::SinglePointPositioningTests

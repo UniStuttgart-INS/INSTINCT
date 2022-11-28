@@ -12,14 +12,14 @@
 
 #include "internal/ConfigManager.hpp"
 #include "internal/FlowManager.hpp"
-#include "util/Logger.hpp"
+#include "Logger.hpp"
 
 namespace NAV::TESTS
 {
 
 TEST_CASE("[ConfigManager] Fetch configs (long options)", "[ConfigManager]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     NAV::ConfigManager::initialize();
 
@@ -62,7 +62,7 @@ TEST_CASE("[ConfigManager] Fetch configs (long options)", "[ConfigManager]")
 
 TEST_CASE("[ConfigManager] Fetch configs (rotate outputs)", "[ConfigManager]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     NAV::ConfigManager::initialize();
 
@@ -90,7 +90,7 @@ TEST_CASE("[ConfigManager] Fetch configs (rotate outputs)", "[ConfigManager]")
 
 TEST_CASE("[ConfigManager] Fetch configs (short options)", "[ConfigManager]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     NAV::ConfigManager::initialize();
 
@@ -122,7 +122,7 @@ TEST_CASE("[ConfigManager] Fetch configs (short options)", "[ConfigManager]")
 
 TEST_CASE("[ConfigManager] Fetch configs (config file)", "[ConfigManager]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     NAV::ConfigManager::initialize();
 

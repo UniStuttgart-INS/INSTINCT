@@ -18,14 +18,14 @@
 #include "fmt/core.h"
 #include "Navigation/Transformations/Units.hpp"
 
-#include "util/Logger.hpp"
+#include "Logger.hpp"
 
-namespace NAV::TEST::PosVelAttTests
+namespace NAV::TESTS::PosVelAttTests
 {
 
 TEST_CASE("[PosVelAtt] Position Functions", "[PosVelAtt]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     // Stuttgart, Breitscheidstraße 2
     // https://www.koordinaten-umrechner.de/decimal/48.780810,9.172012?karte=OpenStreetMap&zoom=19
@@ -54,7 +54,7 @@ TEST_CASE("[PosVelAtt] Position Functions", "[PosVelAtt]")
 
 TEST_CASE("[PosVelAtt] Velocity Functions", "[PosVelAtt]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     // Stuttgart, Breitscheidstraße 2
     // https://www.koordinaten-umrechner.de/decimal/48.780810,9.172012?karte=OpenStreetMap&zoom=19
@@ -80,7 +80,7 @@ TEST_CASE("[PosVelAtt] Velocity Functions", "[PosVelAtt]")
 
 TEST_CASE("[PosVelAtt] Attitude Functions", "[PosVelAtt]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     // Stuttgart, Breitscheidstraße 2
     // https://www.koordinaten-umrechner.de/decimal/48.780810,9.172012?karte=OpenStreetMap&zoom=19
@@ -111,7 +111,7 @@ TEST_CASE("[PosVelAtt] Attitude Functions", "[PosVelAtt]")
 
 TEST_CASE("[PosVelAtt] Attitude RollPitchYaw", "[PosVelAtt]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     // Stuttgart, Breitscheidstraße 2
     // https://www.koordinaten-umrechner.de/decimal/48.780810,9.172012?karte=OpenStreetMap&zoom=19
@@ -134,4 +134,4 @@ TEST_CASE("[PosVelAtt] Attitude RollPitchYaw", "[PosVelAtt]")
     }
 }
 
-} // namespace NAV::TEST::PosVelAttTests
+} // namespace NAV::TESTS::PosVelAttTests
