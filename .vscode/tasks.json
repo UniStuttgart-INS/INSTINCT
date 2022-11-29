@@ -12,20 +12,14 @@
                 "command": "rm",
                 "args": [
                     "-rf",
-                    "bin",
                     "build",
-                    "coverage",
-                    "junit.xml",
                 ],
             },
             "windows": {
                 "command": "Remove-Item",
                 "args": [
                     "-Recurse",
-                    "bin,",
                     "build,",
-                    "coverage,",
-                    "junit.xml",
                 ]
             },
             "presentation": {
@@ -357,7 +351,7 @@
                 "kind": "test",
                 "isDefault": true
             },
-            "command": "./bin/${input:buildType}/instinct",
+            "command": "./build/bin/${input:buildType}/instinct",
             "args": [
                 "--config=config.ini",
                 "--load=\"flow/Default.flow\"",
@@ -483,7 +477,7 @@
             ],
             "options": {
                 "env": {
-                    "COVERAGE_PATH": "bin/doc/html/coverage",
+                    "COVERAGE_PATH": "build/doc/html/coverage",
                 },
             },
             "dependsOn": [
@@ -502,7 +496,7 @@
             ],
             "options": {
                 "env": {
-                    "COVERAGE_PATH": "bin/doc/html/coverage",
+                    "COVERAGE_PATH": "build/doc/html/coverage",
                 },
             },
             "dependsOn": [
@@ -516,7 +510,7 @@
             "group": "build",
             "command": "xdg-open",
             "args": [
-                "bin/doc/html/coverage/index.html",
+                "build/doc/html/coverage/index.html",
             ],
             "dependsOn": [
                 "COVERAGE: Create",
@@ -529,7 +523,7 @@
             "group": "build",
             "command": "xdg-open",
             "args": [
-                "bin/doc/html/coverage/index.html",
+                "build/doc/html/coverage/index.html",
             ],
             "dependsOn": [
                 "COVERAGE: Create w/o flow tests",
@@ -542,7 +536,7 @@
             "group": "build",
             "command": "xdg-open",
             "args": [
-                "bin/doc/html/index.html",
+                "build/doc/html/index.html",
             ],
             "dependsOn": [
                 "DOXYGEN: Build Documentation",
@@ -559,7 +553,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "valgrind --callgrind-out-file=bin/${input:buildType}/callgrind.out --tool=callgrind bin/${input:buildType}/instinct -f config.ini --nogui -l flow/Default.flow && kcachegrind bin/${input:buildType}/callgrind.out",
+                "valgrind --callgrind-out-file=build/bin/${input:buildType}/callgrind.out --tool=callgrind build/bin/${input:buildType}/instinct -f config.ini --nogui -l flow/Default.flow && kcachegrind build/bin/${input:buildType}/callgrind.out",
             ],
             "options": {
                 "cwd": "${workspaceFolder}",
@@ -576,7 +570,7 @@
             "command": "valgrind",
             "args": [
                 "--leak-check=yes",
-                "bin/${input:buildType}/instinct",
+                "build/bin/${input:buildType}/instinct",
                 "-f",
                 "config.ini",
                 "--nogui",
