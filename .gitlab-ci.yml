@@ -180,7 +180,7 @@ documentation:
   artifacts:
     when: on_failure
     paths:
-      - bin/doc/
+      - build/doc/
     expire_in: 1 week
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
@@ -221,7 +221,7 @@ documentation:
   variables:
     ENABLE_MAIN: "ON"
   after_script:
-    - mv bin/$BUILD_TYPE/$EXECUTABLE .
+    - mv build/bin/$BUILD_TYPE/$EXECUTABLE .
   artifacts:
     paths:
       - $EXECUTABLE
@@ -237,7 +237,7 @@ documentation:
       - build/$BUILD_TYPE/CTestTestfile.cmake
       - build/$BUILD_TYPE/test/CTestTestfile.cmake
       - build/$BUILD_TYPE/test/tests_*.cmake
-      - bin/$BUILD_TYPE/tests*
+      - build/bin/$BUILD_TYPE/tests*
     expire_in: 2h
 
 main:win:
@@ -528,7 +528,7 @@ doxygen:
     - cmake --build build/Release --target doc
   artifacts:
     paths:
-      - bin/doc/html/
+      - build/doc/html/
     expire_in: 2h
   only:
     - master
@@ -543,7 +543,7 @@ coverage:
     - lcov --remove coverage/coverage_all.info $(pwd)'/lib/*' $(pwd)'/test/*' $(pwd)'/build/*' --output-file coverage/coverage.info
     - genhtml coverage/coverage.info --output-directory coverage --config-file doc/coverage/lcovrc
     - lcov --list coverage/coverage.info
-    - python3 tools/lcov_cobertura.py coverage/coverage.info --output bin/cobertura-coverage.xml
+    - python3 tools/lcov_cobertura.py coverage/coverage.info --output build/cobertura-coverage.xml
     - rm -f coverage/coverage_all.info coverage/coverage.info
   coverage: '/Total:\| ?(\d+\.?\d+\%)/'
   artifacts:
@@ -552,7 +552,7 @@ coverage:
     reports:
       coverage_report:
         coverage_format: cobertura
-        path: bin/cobertura-coverage.xml
+        path: build/cobertura-coverage.xml
     expire_in: 2h
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
@@ -564,7 +564,7 @@ pages:
   needs: ["doxygen", "coverage"]
   extends: .linux
   script:
-    - mv bin/doc/html/ public/
+    - mv build/doc/html/ public/
     - mv coverage/ public/coverage/
   artifacts:
     name: "Documentation & Coverage Report"
