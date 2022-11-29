@@ -359,24 +359,12 @@ tests:gcc:
     - .build
     - .build:tests
     - .build:linux
-    - .build:test-artifacts
-    - .gcc
-    - .release
-    - .log-trace
-
-tests:gcc:debug:
-  extends:
-    - .build
-    - .build:tests
-    - .build:linux
     - .gcc
     - .debug
     - .log-data
   artifacts:
     untracked: true # For the coverage report
     expire_in: 2h
-  only:
-    - master
 
 tests:clang:LOG_DATA:
   extends:
@@ -483,20 +471,12 @@ run-tests:gcc:
   extends:
     - .run-tests
     - .linux
-    - .release
-    - .junit
-
-run-tests:gcc:debug:
-  needs: ["tests:gcc:debug"]
-  extends:
-    - .run-tests
-    - .linux
     - .debug
+    - .junit
   artifacts:
+    when: always
     untracked: true # For the coverage report
     expire_in: 2h
-  only:
-    - master
 
 run-tests:win:
   needs: ["tests:win"]
@@ -555,7 +535,7 @@ doxygen:
 
 coverage:
   stage: analyze
-  needs: ["run-tests:gcc:debug"]
+  needs: ["run-tests:gcc"]
   extends: .linux
   script:
     - mkdir -p coverage
@@ -569,10 +549,11 @@ coverage:
   artifacts:
     paths:
       - coverage
-      - bin/cobertura-coverage.xml
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: bin/cobertura-coverage.xml
     expire_in: 2h
-  only:
-    - master
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                              Deploy                                              ║
@@ -590,10 +571,6 @@ pages:
     paths:
       - public
     expire_in: 2h
-    reports:
-      coverage_report:
-        coverage_format: cobertura
-        path: bin/cobertura-coverage.xml
   only:
     - master
   # except:
