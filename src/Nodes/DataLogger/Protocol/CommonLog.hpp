@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <Eigen/Core>
+#include "util/Eigen.hpp"
 #include "Navigation/Time/InsTime.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 

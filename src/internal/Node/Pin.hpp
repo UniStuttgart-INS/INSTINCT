@@ -429,8 +429,15 @@ class OutputPin : public Pin
     /// Info to identify the linked pins
     std::vector<OutgoingLink> links;
 
-    /// FileReader/Simulator pollData function type
-    using PollDataFunc = std::shared_ptr<const NAV::NodeData> (Node::*)(bool);
+    /// @brief FileReader/Simulator peekPollData function type for nodes with more than one polling pin
+    ///
+    /// This function gets called twice.
+    /// - First with 'peek = true':   There an observation with a valid InsTime must be provided. `invokeCallbacks(...` should not be called.
+    /// - Second with 'peek = false': Here the message is read again and `invokeCallbacks(...)` should be called
+    using PeekPollDataFunc = std::shared_ptr<const NAV::NodeData> (Node::*)(bool);
+
+    /// FileReader/Simulator pollData function type for nodes with a single poll pin
+    using PollDataFunc = std::shared_ptr<const NAV::NodeData> (Node::*)();
 
     /// @brief Possible Types represented by an output pin
     using PinData = std::variant<const void*,        // Object/Matrix/Delegate
@@ -439,12 +446,13 @@ class OutputPin : public Pin
                                  const float*,       // Float
                                  const double*,      // Float
                                  const std::string*, // String
+                                 PeekPollDataFunc,   // Flow (FileReader poll data function with peeking)
                                  PollDataFunc>;      // Flow (FileReader poll data function)
 
     /// Pointer to data (owned by this node) which is transferred over this pin
     PinData data = static_cast<void*>(nullptr);
 
-    /// Mutex to interact with the data object
+    /// Mutex to interact with the data object and also the dataAccessCounter variable
     std::mutex dataAccessMutex;
 
     /// @brief Counter for data accessing

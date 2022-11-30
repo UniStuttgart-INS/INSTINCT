@@ -91,6 +91,8 @@ set(LOG_LEVEL
     "INFO"
     CACHE STRING "DATA|TRACE|DEBUG|INFO|WARN|ERROR|CRITICAL|OFF")
 
+message(STATUS "Setting LOG_LEVEL to ${LOG_LEVEL}")
+
 # Include all project headers
 include_directories(src)
 
@@ -258,21 +260,22 @@ find_package(Threads REQUIRED)
 
 # Specify output path for executable files
 if(NOT MSVC OR NOT CMAKE_BUILD_TYPE STREQUAL "Release")
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Debug)
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/build/bin/Debug)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/build/bin/Release)
 else()
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Release) # it always takes the DEBUG path (MSVC...)
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/build/bin/Release) # it always takes the DEBUG path (MSVC...)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/build/bin/Release)
 endif()
 
 set(INSTINCT_SOURCE_DIR ${CMAKE_SOURCE_DIR})
-set(INSTINCT_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
+set(INSTINCT_BINARY_DIR ${CMAKE_SOURCE_DIR}/build/bin)
 
 add_subdirectory(src)
 
 add_subdirectory(doc)
 
 if(ENABLE_TESTING)
+  message(STATUS "Building tests")
   enable_testing()
   add_subdirectory(test)
 endif()
@@ -286,7 +289,6 @@ endif()
 # Because MSVC sucks and we need to tell the linker to link the release versions manually
 if(MSVC AND CMAKE_BUILD_TYPE STREQUAL "Release")
   set_target_properties(
-    ${PROJECT_NAME_LOWERCASE}
     instinct-resources
     imgui
     imgui_node_editor

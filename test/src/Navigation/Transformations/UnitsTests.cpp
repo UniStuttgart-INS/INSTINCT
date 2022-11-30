@@ -9,14 +9,14 @@
 #include <catch2/catch.hpp>
 
 #include "Navigation/Transformations/Units.hpp"
-#include "util/Logger.hpp"
+#include "Logger.hpp"
 
-namespace NAV::TEST::CoordinateFramesTests
+namespace NAV::TESTS::CoordinateFramesTests
 {
 
 TEST_CASE("[Units] Degree to radian conversion", "[Units]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     double rad_90 = deg2rad(90);
     double rad_180 = deg2rad(180.0);
@@ -35,7 +35,7 @@ TEST_CASE("[Units] Degree to radian conversion", "[Units]")
 
 TEST_CASE("[Units] Degree to radian conversion constexpr", "[Units]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     constexpr double rad_90 = deg2rad(90);
     constexpr double rad_180 = deg2rad(180.0);
@@ -48,7 +48,7 @@ TEST_CASE("[Units] Degree to radian conversion constexpr", "[Units]")
 
 TEST_CASE("[Units] Radian to degree conversion", "[Units]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     double deg_90 = rad2deg(M_PI_2);
     double deg_180 = rad2deg(M_PI);
@@ -67,7 +67,7 @@ TEST_CASE("[Units] Radian to degree conversion", "[Units]")
 
 TEST_CASE("[Units] Radian to degree conversion constexpr", "[Units]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     constexpr double deg_90 = rad2deg(M_PI_2);
     constexpr double deg_180 = rad2deg(M_PI);
@@ -78,4 +78,4 @@ TEST_CASE("[Units] Radian to degree conversion constexpr", "[Units]")
     STATIC_REQUIRE(deg_360 == 360.0);
 }
 
-} // namespace NAV::TEST::CoordinateFramesTests
+} // namespace NAV::TESTS::CoordinateFramesTests

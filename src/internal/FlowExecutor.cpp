@@ -25,12 +25,25 @@ namespace nm = NAV::NodeManager;
 
 #include <thread>
 #include <atomic>
+#include <mutex>
+#include <condition_variable>
 
 /* -------------------------------------------------------------------------------------------------------- */
 /*                                              Private Members                                             */
 /* -------------------------------------------------------------------------------------------------------- */
 
-std::atomic<bool> _execute{ false };
+std::mutex _mutex;
+std::condition_variable _cv;
+
+enum class State
+{
+    Idle,
+    Starting,
+    Running,
+    Stopping,
+};
+State _state = State::Idle;
+
 std::thread _thd;
 std::atomic<size_t> _activeNodes{ 0 };
 std::chrono::time_point<std::chrono::steady_clock> _startTime;
@@ -41,9 +54,6 @@ std::chrono::time_point<std::chrono::steady_clock> _startTime;
 
 namespace NAV::FlowExecutor
 {
-
-/// @brief Deinitialize all Nodes
-void deinitialize();
 
 /// @brief Main task of the thread
 void execute();
@@ -56,16 +66,21 @@ void execute();
 
 bool NAV::FlowExecutor::isRunning() noexcept
 {
-    return _execute.load(std::memory_order_acquire);
+    std::lock_guard<std::mutex> lk(_mutex);
+    return _state != State::Idle;
 }
 
 void NAV::FlowExecutor::start()
 {
-    stop();
-
     LOG_TRACE("called");
 
-    _execute.store(true, std::memory_order_release);
+    stop();
+
+    {
+        std::lock_guard<std::mutex> lk(_mutex);
+        _state = State::Starting;
+    }
+
     _thd = std::thread(execute);
 }
 
@@ -73,27 +88,32 @@ void NAV::FlowExecutor::stop()
 {
     LOG_TRACE("called");
 
-    if (_thd.joinable())
-    {
-        _thd.join();
-    }
-
     if (isRunning())
     {
-        deinitialize();
+        {
+            std::lock_guard<std::mutex> lk(_mutex);
+            _state = State::Stopping;
+            _cv.notify_all();
+        }
 
         waitForFinish();
     }
+
+    if (_thd.joinable()) { _thd.join(); }
 }
 
 void NAV::FlowExecutor::waitForFinish()
 {
-    LOG_TRACE("called");
-
-    if (_thd.joinable()) { _thd.join(); }
-
     LOG_TRACE("Waiting for finish of FlowExecutor...");
-    _execute.wait(true);
+    {
+        std::unique_lock lk(_mutex);
+        _cv.wait(lk, [] { return _state == State::Idle; });
+    }
+
+    {
+        std::lock_guard<std::mutex> lk(_mutex);
+        if (_thd.joinable()) { _thd.join(); }
+    }
     LOG_TRACE("FlowExecutor finished.");
 }
 
@@ -104,14 +124,97 @@ void NAV::FlowExecutor::deregisterNode([[maybe_unused]] const Node* node)
 
     if (_activeNodes == 0)
     {
-        deinitialize();
+        std::lock_guard<std::mutex> lk(_mutex);
+        _state = State::Stopping;
+        _cv.notify_all();
     }
 }
 
-void NAV::FlowExecutor::deinitialize()
+void NAV::FlowExecutor::execute()
 {
     LOG_TRACE("called");
 
+    for (Node* node : nm::m_Nodes())
+    {
+        for (auto& inputPin : node->inputPins)
+        {
+            inputPin.queue.clear();
+            inputPin.queueBlocked = false;
+        }
+        node->pollEvents.clear();
+    }
+
+    if (!nm::InitializeAllNodes()) // This wakes the threads
+    {
+        std::lock_guard<std::mutex> lk(_mutex);
+        _state = State::Idle;
+        _cv.notify_all();
+        return;
+    }
+
+    for (Node* node : nm::m_Nodes())
+    {
+        if (node == nullptr || !node->isInitialized()) { continue; }
+
+        node->_mode = Node::Mode::POST_PROCESSING;
+        _activeNodes += 1;
+        node->resetNode();
+        LOG_TRACE("Putting node '{}' into post-processing mode and adding to active nodes.", node->nameId());
+        for (auto& outputPin : node->outputPins)
+        {
+            if (outputPin.type == Pin::Type::Flow && outputPin.isPinLinked())
+            {
+                outputPin.mode = OutputPin::Mode::POST_PROCESSING;
+                LOG_TRACE("    Putting pin '{}' into post-processing mode", outputPin.name);
+            }
+
+            if (std::holds_alternative<OutputPin::PollDataFunc>(outputPin.data))
+            {
+                LOG_TRACE("    Adding pin '{}' to data poll event list.", outputPin.name);
+                node->pollEvents.insert(std::make_pair(InsTime(), &outputPin));
+            }
+            else if (std::holds_alternative<OutputPin::PeekPollDataFunc>(outputPin.data))
+            {
+                if (auto* callback = std::get_if<OutputPin::PeekPollDataFunc>(&outputPin.data);
+                    outputPin.mode == OutputPin::Mode::POST_PROCESSING && callback != nullptr && *callback != nullptr
+                    && std::any_of(outputPin.links.begin(), outputPin.links.end(), [](const OutputPin::OutgoingLink& link) {
+                           return link.connectedNode->isInitialized();
+                       }))
+                {
+                    if (auto obs = (node->**callback)(true)) // Peek the data
+                    {
+                        LOG_TRACE("    Adding pin '{}' to data poll event list with time {}.", outputPin.name, obs->insTime);
+                        node->pollEvents.insert(std::make_pair(obs->insTime, &outputPin));
+                    }
+                }
+            }
+        }
+    }
+
+    nm::EnableAllCallbacks();
+    {
+        std::lock_guard<std::mutex> lk(_mutex);
+        if (_state == State::Starting) { _state = State::Running; }
+    }
+
+    LOG_INFO("Post-processing started");
+    _startTime = std::chrono::steady_clock::now();
+
+    for (Node* node : nm::m_Nodes()) // Search for node pins with data callbacks
+    {
+        if (node != nullptr && node->isInitialized())
+        {
+            LOG_DEBUG("Waking up node {}", node->nameId());
+            node->wakeWorker();
+        }
+    }
+    {
+        std::unique_lock lk(_mutex);
+        _cv.wait(lk, [] { return _state == State::Stopping; });
+    }
+
+    // Deinitialize
+    LOG_DEBUG("Stopping FlowExecutor...");
     nm::DisableAllCallbacks();
 
     for (Node* node : nm::m_Nodes())
@@ -134,75 +237,13 @@ void NAV::FlowExecutor::deinitialize()
         LOG_INFO("Elapsed time: {} s", elapsed.count());
     }
 
-    if (_thd.joinable()) { _thd.join(); }
-
     _activeNodes = 0;
-    _execute.store(false, std::memory_order_release);
-    _execute.notify_all();
-}
-
-void NAV::FlowExecutor::execute()
-{
-    LOG_TRACE("called");
-
-    for (Node* node : nm::m_Nodes())
+    LOG_TRACE("FlowExecutor deinitialized.");
     {
-        for (auto& inputPin : node->inputPins)
-        {
-            inputPin.queue.clear();
-            inputPin.queueBlocked = false;
-        }
-        node->pollEvents.clear();
+        std::lock_guard<std::mutex> lk(_mutex);
+        _state = State::Idle;
+        _cv.notify_all();
     }
 
-    if (!nm::InitializeAllNodes()) // This wakes the threads
-    {
-        _execute.store(false, std::memory_order_release);
-        return;
-    }
-
-    for (Node* node : nm::m_Nodes())
-    {
-        if (node == nullptr || !node->isInitialized()) { continue; }
-
-        node->_mode = Node::Mode::POST_PROCESSING;
-        _activeNodes += 1;
-        node->resetNode();
-        LOG_TRACE("Putting node '{}' into post-processing mode and adding to active nodes.", node->nameId());
-        for (auto& outputPin : node->outputPins)
-        {
-            if (outputPin.type == Pin::Type::Flow && outputPin.isPinLinked())
-            {
-                outputPin.mode = OutputPin::Mode::POST_PROCESSING;
-                LOG_TRACE("    Putting pin '{}' into post-processing mode", outputPin.name);
-            }
-
-            if (auto* callback = std::get_if<OutputPin::PollDataFunc>(&outputPin.data);
-                outputPin.mode == OutputPin::Mode::POST_PROCESSING && callback != nullptr && *callback != nullptr
-                && std::any_of(outputPin.links.begin(), outputPin.links.end(), [](const OutputPin::OutgoingLink& link) {
-                       return link.connectedNode->isInitialized();
-                   }))
-            {
-                if (auto obs = (node->**callback)(true)) // Peek the data
-                {
-                    LOG_TRACE("    Adding pin '{}' to data poll event list with time {}.", outputPin.name, obs->insTime);
-                    node->pollEvents.insert(std::make_pair(obs->insTime, &outputPin));
-                }
-            }
-        }
-    }
-
-    nm::EnableAllCallbacks();
-
-    LOG_INFO("Post-processing started");
-    _startTime = std::chrono::steady_clock::now();
-
-    for (Node* node : nm::m_Nodes()) // Search for node pins with data callbacks
-    {
-        if (node != nullptr && node->isInitialized())
-        {
-            LOG_DEBUG("Waking up node {}", node->nameId());
-            node->wakeWorker();
-        }
-    }
+    LOG_TRACE("Execute thread finished.");
 }

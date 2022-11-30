@@ -11,7 +11,7 @@
 #include "util/Vendor/Ublox/UbloxTypes.hpp"
 namespace ub = NAV::vendor::ublox;
 
-namespace NAV::TEST
+namespace NAV::TESTS
 {
 TEST_CASE("[UbloxTypes] getMsgClassFromString", "[UbloxTypes]")
 {
@@ -210,4 +210,4 @@ TEST_CASE("[UbloxTypes] getMsgIdFromString(std::string, std::string)", "[UbloxTy
     REQUIRE(ub::getMsgIdFromString("", "") == ub::getMsgIdFromString(ub::UbxClass::UBX_CLASS_NONE, ""));
 }
 
-} // namespace NAV::TEST
+} // namespace NAV::TESTS

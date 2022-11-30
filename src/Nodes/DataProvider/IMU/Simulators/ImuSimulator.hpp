@@ -24,8 +24,6 @@
 #include "NodeData/General/CsvData.hpp"
 
 #include <array>
-#include <Eigen/Core>
-#include <Eigen/Dense>
 
 namespace NAV
 {

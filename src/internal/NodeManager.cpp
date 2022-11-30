@@ -358,12 +358,12 @@ std::vector<std::pair<ax::NodeEditor::LinkId, NAV::InputPin::WatcherCallback>> w
 std::function<void()> preInitCallback = nullptr;
 std::function<void()> cleanupCallback = nullptr;
 
-void NAV::NodeManager::RegisterWatcherCallbackToInputPin(ax::NodeEditor::PinId id, InputPin::WatcherCallback callback)
+void NAV::NodeManager::RegisterWatcherCallbackToInputPin(ax::NodeEditor::PinId id, const InputPin::WatcherCallback& callback)
 {
     watcherPinList.emplace_back(id, callback);
 }
 
-void NAV::NodeManager::RegisterWatcherCallbackToLink(ax::NodeEditor::LinkId id, InputPin::WatcherCallback callback)
+void NAV::NodeManager::RegisterWatcherCallbackToLink(ax::NodeEditor::LinkId id, const InputPin::WatcherCallback& callback)
 {
     watcherLinkList.emplace_back(id, callback);
 }
@@ -405,7 +405,7 @@ void NAV::NodeManager::ApplyWatcherCallbacks()
 
 void NAV::NodeManager::RegisterPreInitCallback(std::function<void()> callback)
 {
-    preInitCallback = callback;
+    preInitCallback = std::move(callback);
 }
 
 void NAV::NodeManager::CallPreInitCallback()
@@ -418,7 +418,7 @@ void NAV::NodeManager::CallPreInitCallback()
 
 void NAV::NodeManager::RegisterCleanupCallback(std::function<void()> callback)
 {
-    cleanupCallback = callback;
+    cleanupCallback = std::move(callback);
 }
 void NAV::NodeManager::CallCleanupCallback()
 {

@@ -132,15 +132,15 @@ void NAV::UartPacketConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, s
     if (_outputType == OutputType_UbloxObs)
     {
         auto obs = std::make_shared<UbloxObs>();
-        auto packet = uartPacket->raw; // FIXME: We have to copy our data here because of the const qualifier
-        vendor::ublox::decryptUbloxObs(obs, packet, false);
+        auto packet = uartPacket->raw;
+        vendor::ublox::decryptUbloxObs(obs, packet);
         convertedData = obs;
     }
     else /* if (_outputType == OutputType_EmlidObs) */
     {
         auto obs = std::make_shared<EmlidObs>();
-        auto packet = uartPacket->raw; // FIXME: We have to copy our data here because of the const qualifier
-        vendor::emlid::decryptEmlidObs(obs, packet, false);
+        auto packet = uartPacket->raw;
+        vendor::emlid::decryptEmlidObs(obs, packet);
         convertedData = obs;
     }
 

@@ -8,7 +8,7 @@
 
 #include "RinexObsFile.hpp"
 
-#include <Eigen/Core>
+#include "util/Eigen.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -487,11 +487,8 @@ void RinexObsFile::readHeader()
     }
 }
 
-std::shared_ptr<const NodeData> RinexObsFile::pollData(bool peek)
+std::shared_ptr<const NodeData> RinexObsFile::pollData()
 {
-    //  Get current position
-    auto pos = _filestream.tellg();
-
     std::string line;
 
     InsTime epochTime;
@@ -533,14 +530,6 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData(bool peek)
 
             LOG_DATA("{}: {}, epochFlag {}, numSats {}, recClkOffset {}", nameId(),
                      epochTime.toYMDHMS(), epochFlag, numSats, recClkOffset);
-
-            if (peek)
-            {
-                auto obs = std::make_shared<NodeData>();
-                obs->insTime = epochTime;
-                _filestream.seekg(pos, std::ios_base::beg);
-                return obs;
-            }
         }
     }
     if (epochTime.empty())
@@ -670,15 +659,7 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData(bool peek)
         }
     }
 
-    if (peek)
-    {
-        _filestream.seekg(pos, std::ios_base::beg);
-    }
-    else
-    {
-        invokeCallbacks(OutputPortIndex_GnssObs, gnssObs);
-    }
-
+    invokeCallbacks(OutputPortIndex_GnssObs, gnssObs);
     return gnssObs;
 }
 

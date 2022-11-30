@@ -23,6 +23,7 @@
 #include <iostream>
 #include <chrono>
 
+#include <fmt/ostream.h>
 #include "gcem.hpp"
 
 #include <nlohmann/json.hpp>
@@ -925,48 +926,12 @@ class InsTime
         return leapGps2UTC(InsTime(jd).toMJD());
     }
 
-    // TODO: Remove with std::upper_bound, as soon as C++20 gets releases
-
-    /// @brief Returns an iterator pointing to the first element in the range [first, last) that is greater than value, or last if no such element is found.
-    /// @tparam ForwardIt Iterator of the type of the elements
-    /// @tparam T Type of the elements
-    /// @param[in] first Iterator to the first element to search
-    /// @param[in] last Iterator to the last element to search
-    /// @param[in] value Value to search for
-    /// @return Iterator pointing to the first element in the range [first, last) that is greater than value, or last if no such element is found.
-    template<class ForwardIt, class T>
-    static constexpr ForwardIt upper_bound(ForwardIt first, ForwardIt last, const T& value)
-    {
-        ForwardIt it;
-        typename std::iterator_traits<ForwardIt>::difference_type count;
-        typename std::iterator_traits<ForwardIt>::difference_type step;
-        count = std::distance(first, last);
-
-        while (count > 0)
-        {
-            it = first;
-            step = count / 2;
-            std::advance(it, step);
-            if (!(value < *it))
-            {
-                first = ++it;
-                count -= step + 1;
-            }
-            else
-            {
-                count = step;
-            }
-        }
-        return first;
-    }
-
     /// @brief Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_MJD object
     /// @param[in] mjd_in Time point
     /// @return Number of leap seconds
     static constexpr uint16_t leapGps2UTC(const InsTime_MJD& mjd_in)
     {
-        // TODO: Remove with std::upper_bound, as soon as C++20 gets releases
-        return static_cast<uint16_t>(upper_bound(InsTimeUtil::GPS_LEAP_SEC_MJD.begin(), InsTimeUtil::GPS_LEAP_SEC_MJD.end(), mjd_in.mjd_day) - InsTimeUtil::GPS_LEAP_SEC_MJD.begin() - 1);
+        return static_cast<uint16_t>(std::upper_bound(InsTimeUtil::GPS_LEAP_SEC_MJD.begin(), InsTimeUtil::GPS_LEAP_SEC_MJD.end(), mjd_in.mjd_day) - InsTimeUtil::GPS_LEAP_SEC_MJD.begin() - 1);
     }
 
     /// @brief Checks if the current time is a leap year
@@ -1160,3 +1125,26 @@ void to_json(json& j, const InsTime& insTime);
 void from_json(const json& j, InsTime& insTime);
 
 } // namespace NAV
+
+#ifndef DOXYGEN_IGNORE
+
+template<>
+struct fmt::formatter<NAV::InsTime_MJD> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::InsTime_JD> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::InsTime_GPSweekTow> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::InsTime_YMDHMS> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::InsTime_YDoySod> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::InsTime> : ostream_formatter
+{};
+
+#endif

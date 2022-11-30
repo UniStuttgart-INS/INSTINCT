@@ -18,7 +18,7 @@
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
 
-#include <Eigen/Core>
+#include "util/Eigen.hpp"
 #include <random>
 
 namespace NAV
@@ -64,8 +64,8 @@ class ErrorModel : public Node
     struct RandomNumberGenerator // NOLINT(cert-msc32-c,cert-msc51-cpp)
     {
         bool useSeedInsteadOfSystemTime = true; ///< Flag whether to use the seed instead of the system time
-        uint64_t seed = 0;                      ///< Seed for the random number generator
-        std::default_random_engine generator;   ///< Random number generator
+        uint32_t seed = 0;                      ///< Seed for the random number generator
+        std::minstd_rand generator;             ///< Random number generator
     };
 
   private:

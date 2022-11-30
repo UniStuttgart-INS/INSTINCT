@@ -29,18 +29,20 @@ If no GUI is required, the application can be run in ```--nogui``` mode and a `.
   git pull --recurse-submodules
   ```
 
-##### Cmake
+##### Build & run the main program
 ```shell
-export CC=clang && export CXX=clang++ && cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=INFO
-```
-##### Build
-```shell
+export CC=clang && export CXX=clang++
+cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=INFO
 cmake --build build/Release -- -j
+./bin/Release/instinct
 ```
 
-##### Run the executable
+##### Build & run the tests
 ```shell
-./bin/Release/instinct
+cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=TRACE
+cmake --build build/Release -- -j
+cd build/Release
+ctest --output-on-failure
 ```
 
 ##### Build the documentation
@@ -53,7 +55,7 @@ The doxygen main page can then be opened under `bin/doc/html/index.html` (GitHub
 ##### Help message
 
 ```
-INSTINCT 1.0.0 - INS Toolkit for Integrated Navigation Concepts and Training
+INSTINCT - INS Toolkit for Integrated Navigation Concepts and Training
 
 Allowed options:
   --config arg                          List of configuration files to read
@@ -134,7 +136,7 @@ xcode-select --install
 brew update
 
 # Needed
-brew install git-lfs cmake llvm conan glfw3
+brew install git-lfs cmake llvm conan glfw
 ln -s "$(brew --prefix llvm)/bin/clang-format" "/usr/local/bin/clang-format"
 ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy"
 

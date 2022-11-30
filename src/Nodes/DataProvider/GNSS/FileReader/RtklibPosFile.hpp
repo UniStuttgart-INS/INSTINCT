@@ -68,9 +68,8 @@ class RtklibPosFile : public Node, public FileReader
     void deinitialize() override;
 
     /// @brief Polls data from the file
-    /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
     /// @return The read observation
-    [[nodiscard]] std::shared_ptr<const NodeData> pollData(bool peek = false);
+    [[nodiscard]] std::shared_ptr<const NodeData> pollData();
 
     /// @brief Determines the type of the file
     /// @return The File Type

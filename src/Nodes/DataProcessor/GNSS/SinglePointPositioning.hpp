@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <Eigen/Core>
+#include "util/Eigen.hpp"
 #include <vector>
 
 #include "internal/Node/Node.hpp"
