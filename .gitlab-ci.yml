@@ -108,8 +108,7 @@ check-image:
     - conan --version
     - doxygen --version
     - cppcheck --version
-    - lcov --version
-    - genhtml --version
+    - gcovr --version
     - gcov --version
     - xml_grep --version
     - dvips --version
@@ -538,21 +537,17 @@ coverage:
   needs: ["run-tests:gcc"]
   extends: .linux
   script:
-    - mkdir -p coverage
-    - lcov --gcov-tool gcov --capture --no-external --directory . --output-file coverage/coverage_all.info
-    - lcov --remove coverage/coverage_all.info $(pwd)'/lib/*' $(pwd)'/test/*' $(pwd)'/build/*' --output-file coverage/coverage.info
-    - genhtml coverage/coverage.info --output-directory coverage --config-file doc/coverage/lcovrc
-    - lcov --list coverage/coverage.info
-    - python3 tools/lcov_cobertura.py coverage/coverage.info --output build/cobertura-coverage.xml
-    - rm -f coverage/coverage_all.info coverage/coverage.info
-  coverage: '/Total:\| ?(\d+\.?\d+\%)/'
+    - mkdir -p build/coverage
+    - gcovr --config doc/coverage/gcovr.cfg
+  # coverage: '/Total:\| ?(\d+\.?\d+\%)/'
+  coverage: /^\s*lines:\s*\d+.\d+\%/
   artifacts:
     paths:
       - coverage
     reports:
       coverage_report:
         coverage_format: cobertura
-        path: build/cobertura-coverage.xml
+        path: build/cobertura.xml
     expire_in: 2h
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
@@ -565,7 +560,7 @@ pages:
   extends: .linux
   script:
     - mv build/doc/html/ public/
-    - mv coverage/ public/coverage/
+    - mv build/coverage/ public/coverage/
   artifacts:
     name: "Documentation & Coverage Report"
     paths:
