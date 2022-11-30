@@ -543,7 +543,7 @@ coverage:
   coverage: /^\s*lines:\s*\d+.\d+\%/
   artifacts:
     paths:
-      - coverage
+      - build/coverage
     reports:
       coverage_report:
         coverage_format: cobertura
