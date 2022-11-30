@@ -220,6 +220,8 @@ documentation:
   artifacts:
     paths:
       - build/bin/$BUILD_TYPE/*
+    exclude:
+      - build/bin/$BUILD_TYPE/*.pdb
     expire_in: 2h
 
 .build:tests:
