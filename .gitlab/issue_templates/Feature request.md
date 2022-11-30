@@ -36,8 +36,6 @@ Use the following resources to find the appropriate labels:
 - https://git.ins.uni-stuttgart.de/instinct/instinct/-/labels
 -->
 
-<!-- `Type::` -->
-
 /label ~"Type::Bug"
 /label ~"Severity::3 - Major"
 

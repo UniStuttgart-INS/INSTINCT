@@ -11,7 +11,6 @@ variables:
   WARNINGS_AS_ERRORS: "ON"
   ENABLE_MAIN: "OFF"
   ENABLE_TESTING: "OFF"
-  EXECUTABLE: instinct
 
 image: ins-cpp:10
 
@@ -74,7 +73,6 @@ image: ins-cpp:10
     - Get-Content "$env:temp\vcvars-$CI_CONCURRENT_ID.txt" | Foreach-Object { if ($_ -match "^(.*?)=(.*)$") { Set-Content "env:\$($matches[1])" $matches[2] } }
   variables:
     GIT_CLONE_PATH: '$CI_BUILDS_DIR/$CI_PROJECT_NAME/$CI_COMMIT_SHA/$CI_JOB_ID'
-    EXECUTABLE: instinct.exe
     WARNINGS_AS_ERRORS: "OFF"
 
 .linux:
@@ -196,7 +194,7 @@ documentation:
     - echo "$ENABLE_TESTING"
     - echo "$LOG_LEVEL_INSTINCT"
     - echo "$WARNINGS_AS_ERRORS"
-    - echo "$EXECUTABLE"
+    - echo "$CMAKE_BUILD_PARALLEL_LEVEL"
     - cmake -B"build/$BUILD_TYPE" -S. -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DENABLE_MAIN="$ENABLE_MAIN" -DENABLE_TESTING="$ENABLE_TESTING" -DCATCH2_JUNIT_OUTPUT="$ENABLE_TESTING" -DENABLE_COVERAGE="$ENABLE_TESTING" -DENABLE_DOXYGEN=OFF -DLOG_LEVEL="$LOG_LEVEL_INSTINCT" -DWARNINGS_AS_ERRORS="$WARNINGS_AS_ERRORS" -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build "build/$BUILD_TYPE"
 
@@ -219,11 +217,9 @@ documentation:
 .build:main:
   variables:
     ENABLE_MAIN: "ON"
-  after_script:
-    - mv build/bin/$BUILD_TYPE/$EXECUTABLE .
   artifacts:
     paths:
-      - $EXECUTABLE
+      - build/bin/$BUILD_TYPE/*
     expire_in: 2h
 
 .build:tests:
@@ -236,7 +232,7 @@ documentation:
       - build/$BUILD_TYPE/CTestTestfile.cmake
       - build/$BUILD_TYPE/test/CTestTestfile.cmake
       - build/$BUILD_TYPE/test/tests_*.cmake
-      - build/bin/$BUILD_TYPE/tests*
+      - build/bin/$BUILD_TYPE/*
     expire_in: 2h
 
 main:win:
@@ -309,17 +305,6 @@ main:gcc:LOG_DATA:
     - .release
     - .log-data
 
-raspberry:clang:
-  extends:
-    - .build
-    - .build:main
-    - .build:tests
-    - .build:raspberry
-    - .build:test-artifacts
-    - .clang
-    - .release
-    - .log-trace
-
 raspberry:gcc:
   extends:
     - .build
@@ -330,6 +315,8 @@ raspberry:gcc:
     - .gcc
     - .release
     - .log-trace
+  variables:
+    CMAKE_BUILD_PARALLEL_LEVEL: 4
 
 main:macOS:
   extends:
@@ -489,13 +476,6 @@ run-tests:win:
           Out-File -encoding ASCII $_.FullName }
     - cd build/$BUILD_TYPE
     - ctest --output-on-failure
-
-run-tests:raspberry:clang:
-  needs: ["raspberry:clang"]
-  extends:
-    - .run-tests
-    - .raspberry
-    - .release
 
 run-tests:raspberry:gcc:
   needs: ["raspberry:gcc"]

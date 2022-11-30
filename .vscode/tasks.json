@@ -234,16 +234,14 @@
                 "args": [
                     "--build",
                     "build/${input:buildType}-${input:compiler}",
-                    "--",
-                    "-j8",
+                    "--parallel8",
                 ],
             },
             "windows": {
                 "args": [
                     "--build",
                     "build/${input:buildType}-msvc",
-                    "--",
-                    "-maxCpuCount",
+                    "--parallel8",
                 ],
                 "options": {
                     "env": {
@@ -266,8 +264,7 @@
                 "args": [
                     "--build",
                     "build/${input:buildType}-${input:compiler}",
-                    "--",
-                    "-j8",
+                    "--parallel8",
                 ],
             },
             "windows": {
@@ -298,8 +295,7 @@
             "args": [
                 "--build",
                 "build/Debug-cov",
-                "--",
-                "-j8",
+                "--parallel8",
             ],
             "dependsOn": [
                 "CMAKE: Coverage",
