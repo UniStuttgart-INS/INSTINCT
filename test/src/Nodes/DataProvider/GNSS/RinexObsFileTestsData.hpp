@@ -17,7 +17,7 @@
 
 #include "NodeData/GNSS/GnssObs.hpp"
 
-namespace NAV::TEST::RinexObsFileTests
+namespace NAV::TESTS::RinexObsFileTests
 {
 
 constexpr double Gps_LeapSec = 18;
@@ -119,4 +119,4 @@ constexpr std::array<std::array<long double, 7>, 64> RINEX_REFERENCE_DATA = { {
     { 36, 35983781.242, 1, 189096034.482, 1, -532.228, 44.000 },
 } };
 
-} // namespace NAV::TEST::RinexObsFileTests
+} // namespace NAV::TESTS::RinexObsFileTests

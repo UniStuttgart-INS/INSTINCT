@@ -41,7 +41,7 @@ namespace nm = NAV::NodeManager;
 #undef private
 #pragma GCC diagnostic pop
 
-namespace NAV::TEST::RinexObsFileTests
+namespace NAV::TESTS::RinexObsFileTests
 {
 
 constexpr double EPSILON = 10.0 * std::numeric_limits<double>::epsilon();
@@ -105,4 +105,4 @@ TEST_CASE("[RinexObsFile][flow] Read RINEX file (v3.03) and compare content with
     REQUIRE(testFlow("test/flow/Nodes/DataProvider/GNSS/RinexObsFile.flow"));
 }
 
-} // namespace NAV::TEST::RinexObsFileTests
+} // namespace NAV::TESTS::RinexObsFileTests
