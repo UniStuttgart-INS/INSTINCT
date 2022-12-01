@@ -13,12 +13,12 @@ namespace Instinct {
 ## Learning objectives
 
 - Get familiar with NMEA files as input and
-- understand the limitations of reading those files
-- You will learn how you can build a simple flow that converts geographic (lat, lon, height) coordinates  from NMEA into ECEF coordinates.
+- Understand the limitations of reading those files
+- You will learn how you can build a simple flow that converts geographic (lat, lon, height) coordinates from NMEA into ECEF coordinates.
 
-## Data-sets to reproduce the results from the video 
+## Data-sets to reproduce the results from the video
 
-- [NMEA file](./resources/sample_data/NMEA/putty_nmea_netr9.log) 
+- [NMEA file](./resources/sample_data/NMEA/putty_nmea_netr9.log)
 
 ## Video
 
@@ -27,7 +27,6 @@ namespace Instinct {
 <iframe width="800" height="450" src="https://www.youtube.com/embed/jdvsI_7R5q0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 \endhtmlonly
-
 
 */
 
