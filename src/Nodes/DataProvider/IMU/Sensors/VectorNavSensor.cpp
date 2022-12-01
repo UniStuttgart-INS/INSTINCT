@@ -6897,46 +6897,6 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     }
                 };
 
-                // Group 2 (Time)
-                if (obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS))
-                {
-                    if (obs->timeOutputs->timeStatus.dateOk())
-                    {
-                        if (obs->timeOutputs->timeStatus.timeOk()
-                            && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
-                            && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK))
-                        {
-                            obs->insTime = InsTime(InsTime_GPSweekTow(0, obs->timeOutputs->gpsWeek, obs->timeOutputs->gpsTow * 1e-9L));
-                            updateSyncOut(InsTime(0, obs->timeOutputs->gpsWeek, std::floor(obs->timeOutputs->gpsTow * 1e-9L)));
-                        }
-                        else if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS)
-                        {
-                            auto secondsSinceEpoche = static_cast<long double>(obs->timeOutputs->timeGps) * 1e-9L;
-                            auto week = static_cast<uint16_t>(secondsSinceEpoche / static_cast<long double>(InsTimeUtil::SECONDS_PER_DAY * InsTimeUtil::DAYS_PER_WEEK));
-                            auto tow = secondsSinceEpoche - week * InsTimeUtil::SECONDS_PER_DAY * InsTimeUtil::DAYS_PER_WEEK;
-
-                            obs->insTime = InsTime(InsTime_GPSweekTow(0, week, tow));
-                            updateSyncOut(InsTime(0, week, std::floor(tow)));
-                        }
-                    }
-                    if (obs->insTime.empty()
-                        && obs->timeOutputs->timeStatus.utcTimeValid()
-                        && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC))
-                    {
-                        obs->insTime = InsTime(InsTime_YMDHMS(2000 + obs->timeOutputs->timeUtc.year,
-                                                              obs->timeOutputs->timeUtc.month,
-                                                              obs->timeOutputs->timeUtc.day,
-                                                              obs->timeOutputs->timeUtc.hour,
-                                                              obs->timeOutputs->timeUtc.min,
-                                                              obs->timeOutputs->timeUtc.sec + static_cast<long double>(obs->timeOutputs->timeUtc.ms) * 1e-3L));
-                        updateSyncOut(InsTime(InsTime_YMDHMS(2000 + obs->timeOutputs->timeUtc.year,
-                                                             obs->timeOutputs->timeUtc.month,
-                                                             obs->timeOutputs->timeUtc.day,
-                                                             obs->timeOutputs->timeUtc.hour,
-                                                             obs->timeOutputs->timeUtc.min,
-                                                             obs->timeOutputs->timeUtc.sec)));
-                    }
-                }
                 // Group 4 (GNSS1)
                 if (obs->insTime.empty()
                     && obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO))
@@ -7025,6 +6985,46 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                                                              obs->gnss2Outputs->timeUtc.hour,
                                                              obs->gnss2Outputs->timeUtc.min,
                                                              obs->gnss2Outputs->timeUtc.sec)));
+                    }
+                }
+                // Group 2 (Time)
+                if (obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS))
+                {
+                    if (obs->timeOutputs->timeStatus.dateOk())
+                    {
+                        if (obs->timeOutputs->timeStatus.timeOk()
+                            && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
+                            && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK))
+                        {
+                            obs->insTime = InsTime(InsTime_GPSweekTow(0, obs->timeOutputs->gpsWeek, obs->timeOutputs->gpsTow * 1e-9L));
+                            updateSyncOut(InsTime(0, obs->timeOutputs->gpsWeek, std::floor(obs->timeOutputs->gpsTow * 1e-9L)));
+                        }
+                        else if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS)
+                        {
+                            auto secondsSinceEpoche = static_cast<long double>(obs->timeOutputs->timeGps) * 1e-9L;
+                            auto week = static_cast<uint16_t>(secondsSinceEpoche / static_cast<long double>(InsTimeUtil::SECONDS_PER_DAY * InsTimeUtil::DAYS_PER_WEEK));
+                            auto tow = secondsSinceEpoche - week * InsTimeUtil::SECONDS_PER_DAY * InsTimeUtil::DAYS_PER_WEEK;
+
+                            obs->insTime = InsTime(InsTime_GPSweekTow(0, week, tow));
+                            updateSyncOut(InsTime(0, week, std::floor(tow)));
+                        }
+                    }
+                    if (obs->insTime.empty()
+                        && obs->timeOutputs->timeStatus.utcTimeValid()
+                        && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC))
+                    {
+                        obs->insTime = InsTime(InsTime_YMDHMS(2000 + obs->timeOutputs->timeUtc.year,
+                                                              obs->timeOutputs->timeUtc.month,
+                                                              obs->timeOutputs->timeUtc.day,
+                                                              obs->timeOutputs->timeUtc.hour,
+                                                              obs->timeOutputs->timeUtc.min,
+                                                              obs->timeOutputs->timeUtc.sec + static_cast<long double>(obs->timeOutputs->timeUtc.ms) * 1e-3L));
+                        updateSyncOut(InsTime(InsTime_YMDHMS(2000 + obs->timeOutputs->timeUtc.year,
+                                                             obs->timeOutputs->timeUtc.month,
+                                                             obs->timeOutputs->timeUtc.day,
+                                                             obs->timeOutputs->timeUtc.hour,
+                                                             obs->timeOutputs->timeUtc.min,
+                                                             obs->timeOutputs->timeUtc.sec)));
                     }
                 }
 
