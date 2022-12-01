@@ -11,7 +11,6 @@ variables:
   WARNINGS_AS_ERRORS: "ON"
   ENABLE_MAIN: "OFF"
   ENABLE_TESTING: "OFF"
-  EXECUTABLE: instinct
 
 image: ins-cpp:10
 
@@ -74,7 +73,6 @@ image: ins-cpp:10
     - Get-Content "$env:temp\vcvars-$CI_CONCURRENT_ID.txt" | Foreach-Object { if ($_ -match "^(.*?)=(.*)$") { Set-Content "env:\$($matches[1])" $matches[2] } }
   variables:
     GIT_CLONE_PATH: '$CI_BUILDS_DIR/$CI_PROJECT_NAME/$CI_COMMIT_SHA/$CI_JOB_ID'
-    EXECUTABLE: instinct.exe
     WARNINGS_AS_ERRORS: "OFF"
 
 .linux:
@@ -108,8 +106,7 @@ check-image:
     - conan --version
     - doxygen --version
     - cppcheck --version
-    - lcov --version
-    - genhtml --version
+    - gcovr --version
     - gcov --version
     - xml_grep --version
     - dvips --version
@@ -180,7 +177,7 @@ documentation:
   artifacts:
     when: on_failure
     paths:
-      - bin/doc/
+      - build/doc/
     expire_in: 1 week
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
@@ -197,7 +194,7 @@ documentation:
     - echo "$ENABLE_TESTING"
     - echo "$LOG_LEVEL_INSTINCT"
     - echo "$WARNINGS_AS_ERRORS"
-    - echo "$EXECUTABLE"
+    - echo "$CMAKE_BUILD_PARALLEL_LEVEL"
     - cmake -B"build/$BUILD_TYPE" -S. -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DENABLE_MAIN="$ENABLE_MAIN" -DENABLE_TESTING="$ENABLE_TESTING" -DCATCH2_JUNIT_OUTPUT="$ENABLE_TESTING" -DENABLE_COVERAGE="$ENABLE_TESTING" -DENABLE_DOXYGEN=OFF -DLOG_LEVEL="$LOG_LEVEL_INSTINCT" -DWARNINGS_AS_ERRORS="$WARNINGS_AS_ERRORS" -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build "build/$BUILD_TYPE"
 
@@ -220,11 +217,11 @@ documentation:
 .build:main:
   variables:
     ENABLE_MAIN: "ON"
-  after_script:
-    - mv bin/$BUILD_TYPE/$EXECUTABLE .
   artifacts:
     paths:
-      - $EXECUTABLE
+      - build/bin/$BUILD_TYPE/*
+    exclude:
+      - build/bin/$BUILD_TYPE/*.pdb
     expire_in: 2h
 
 .build:tests:
@@ -237,7 +234,7 @@ documentation:
       - build/$BUILD_TYPE/CTestTestfile.cmake
       - build/$BUILD_TYPE/test/CTestTestfile.cmake
       - build/$BUILD_TYPE/test/tests_*.cmake
-      - bin/$BUILD_TYPE/tests*
+      - build/bin/$BUILD_TYPE/*
     expire_in: 2h
 
 main:win:
@@ -310,17 +307,6 @@ main:gcc:LOG_DATA:
     - .release
     - .log-data
 
-raspberry:clang:
-  extends:
-    - .build
-    - .build:main
-    - .build:tests
-    - .build:raspberry
-    - .build:test-artifacts
-    - .clang
-    - .release
-    - .log-trace
-
 raspberry:gcc:
   extends:
     - .build
@@ -331,6 +317,8 @@ raspberry:gcc:
     - .gcc
     - .release
     - .log-trace
+  variables:
+    CMAKE_BUILD_PARALLEL_LEVEL: 4
 
 main:macOS:
   extends:
@@ -359,24 +347,12 @@ tests:gcc:
     - .build
     - .build:tests
     - .build:linux
-    - .build:test-artifacts
-    - .gcc
-    - .release
-    - .log-trace
-
-tests:gcc:debug:
-  extends:
-    - .build
-    - .build:tests
-    - .build:linux
     - .gcc
     - .debug
     - .log-data
   artifacts:
     untracked: true # For the coverage report
     expire_in: 2h
-  only:
-    - master
 
 tests:clang:LOG_DATA:
   extends:
@@ -483,20 +459,12 @@ run-tests:gcc:
   extends:
     - .run-tests
     - .linux
-    - .release
-    - .junit
-
-run-tests:gcc:debug:
-  needs: ["tests:gcc:debug"]
-  extends:
-    - .run-tests
-    - .linux
     - .debug
+    - .junit
   artifacts:
+    when: always
     untracked: true # For the coverage report
     expire_in: 2h
-  only:
-    - master
 
 run-tests:win:
   needs: ["tests:win"]
@@ -510,13 +478,6 @@ run-tests:win:
           Out-File -encoding ASCII $_.FullName }
     - cd build/$BUILD_TYPE
     - ctest --output-on-failure
-
-run-tests:raspberry:clang:
-  needs: ["raspberry:clang"]
-  extends:
-    - .run-tests
-    - .raspberry
-    - .release
 
 run-tests:raspberry:gcc:
   needs: ["raspberry:gcc"]
@@ -548,31 +509,28 @@ doxygen:
     - cmake --build build/Release --target doc
   artifacts:
     paths:
-      - bin/doc/html/
+      - build/doc/html/
     expire_in: 2h
   only:
     - master
 
 coverage:
   stage: analyze
-  needs: ["run-tests:gcc:debug"]
+  needs: ["run-tests:gcc"]
   extends: .linux
   script:
-    - mkdir -p coverage
-    - lcov --gcov-tool gcov --capture --no-external --directory . --output-file coverage/coverage_all.info
-    - lcov --remove coverage/coverage_all.info $(pwd)'/lib/*' $(pwd)'/test/*' $(pwd)'/build/*' --output-file coverage/coverage.info
-    - genhtml coverage/coverage.info --output-directory coverage --config-file doc/coverage/lcovrc
-    - lcov --list coverage/coverage.info
-    - python3 tools/lcov_cobertura.py coverage/coverage.info --output bin/cobertura-coverage.xml
-    - rm -f coverage/coverage_all.info coverage/coverage.info
-  coverage: '/Total:\| ?(\d+\.?\d+\%)/'
+    - mkdir -p build/coverage
+    - gcovr --config doc/coverage/gcovr.cfg
+  # coverage: '/Total:\| ?(\d+\.?\d+\%)/'
+  coverage: /^\s*lines:\s*\d+.\d+\%/
   artifacts:
     paths:
-      - coverage
-      - bin/cobertura-coverage.xml
+      - build/coverage
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: build/cobertura.xml
     expire_in: 2h
-  only:
-    - master
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                              Deploy                                              ║
@@ -583,17 +541,13 @@ pages:
   needs: ["doxygen", "coverage"]
   extends: .linux
   script:
-    - mv bin/doc/html/ public/
-    - mv coverage/ public/coverage/
+    - mv build/doc/html/ public/
+    - mv build/coverage/ public/coverage/
   artifacts:
     name: "Documentation & Coverage Report"
     paths:
       - public
     expire_in: 2h
-    reports:
-      coverage_report:
-        coverage_format: cobertura
-        path: bin/cobertura-coverage.xml
   only:
     - master
   # except:

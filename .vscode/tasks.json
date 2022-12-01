@@ -12,20 +12,14 @@
                 "command": "rm",
                 "args": [
                     "-rf",
-                    "bin",
                     "build",
-                    "coverage",
-                    "junit.xml",
                 ],
             },
             "windows": {
                 "command": "Remove-Item",
                 "args": [
                     "-Recurse",
-                    "bin,",
                     "build,",
-                    "coverage,",
-                    "junit.xml",
                 ]
             },
             "presentation": {
@@ -240,16 +234,14 @@
                 "args": [
                     "--build",
                     "build/${input:buildType}-${input:compiler}",
-                    "--",
-                    "-j8",
+                    "--parallel8",
                 ],
             },
             "windows": {
                 "args": [
                     "--build",
                     "build/${input:buildType}-msvc",
-                    "--",
-                    "-maxCpuCount",
+                    "--parallel8",
                 ],
                 "options": {
                     "env": {
@@ -272,8 +264,7 @@
                 "args": [
                     "--build",
                     "build/${input:buildType}-${input:compiler}",
-                    "--",
-                    "-j8",
+                    "--parallel8",
                 ],
             },
             "windows": {
@@ -304,8 +295,7 @@
             "args": [
                 "--build",
                 "build/Debug-cov",
-                "--",
-                "-j8",
+                "--parallel8",
             ],
             "dependsOn": [
                 "CMAKE: Coverage",
@@ -357,7 +347,7 @@
                 "kind": "test",
                 "isDefault": true
             },
-            "command": "./bin/${input:buildType}/instinct",
+            "command": "./build/bin/${input:buildType}/instinct",
             "args": [
                 "--config=config.ini",
                 "--load=\"flow/Default.flow\"",
@@ -479,13 +469,8 @@
             "command": "bash",
             "args": [
                 "-c",
-                "mkdir -p $COVERAGE_PATH && lcov --gcov-tool gcov --capture --no-external --directory . --output-file $COVERAGE_PATH/coverage_all.info && lcov --remove $COVERAGE_PATH/coverage_all.info \"${workspaceFolder}/lib/*\" \"${workspaceFolder}/test/*\" \"${workspaceFolder}/build/*\" --output-file $COVERAGE_PATH/coverage.info && genhtml $COVERAGE_PATH/coverage.info --output-directory $COVERAGE_PATH --config-file doc/coverage/lcovrc && lcov --list $COVERAGE_PATH/coverage.info && python3 tools/lcov_cobertura.py $COVERAGE_PATH/coverage.info --output $COVERAGE_PATH/cobertura-coverage.xml",
+                "mkdir -p build/coverage && gcovr --config doc/coverage/gcovr.cfg",
             ],
-            "options": {
-                "env": {
-                    "COVERAGE_PATH": "bin/doc/html/coverage",
-                },
-            },
             "dependsOn": [
                 "COVERAGE: Run Coverage Tests",
             ],
@@ -498,13 +483,8 @@
             "command": "bash",
             "args": [
                 "-c",
-                "mkdir -p $COVERAGE_PATH && lcov --gcov-tool gcov --capture --no-external --directory . --output-file $COVERAGE_PATH/coverage_all.info && lcov --remove $COVERAGE_PATH/coverage_all.info \"${workspaceFolder}/lib/*\" \"${workspaceFolder}/test/*\" \"${workspaceFolder}/build/*\" --output-file $COVERAGE_PATH/coverage.info && genhtml $COVERAGE_PATH/coverage.info --output-directory $COVERAGE_PATH --config-file doc/coverage/lcovrc && lcov --list $COVERAGE_PATH/coverage.info && python3 tools/lcov_cobertura.py $COVERAGE_PATH/coverage.info --output $COVERAGE_PATH/cobertura-coverage.xml",
+                "mkdir -p build/coverage && gcovr --config doc/coverage/gcovr.cfg",
             ],
-            "options": {
-                "env": {
-                    "COVERAGE_PATH": "bin/doc/html/coverage",
-                },
-            },
             "dependsOn": [
                 "COVERAGE: Run Coverage Tests w/o flow tests",
             ],
@@ -516,7 +496,7 @@
             "group": "build",
             "command": "xdg-open",
             "args": [
-                "bin/doc/html/coverage/index.html",
+                "build/coverage/index.html",
             ],
             "dependsOn": [
                 "COVERAGE: Create",
@@ -529,7 +509,7 @@
             "group": "build",
             "command": "xdg-open",
             "args": [
-                "bin/doc/html/coverage/index.html",
+                "build/coverage/index.html",
             ],
             "dependsOn": [
                 "COVERAGE: Create w/o flow tests",
@@ -542,7 +522,7 @@
             "group": "build",
             "command": "xdg-open",
             "args": [
-                "bin/doc/html/index.html",
+                "build/doc/html/index.html",
             ],
             "dependsOn": [
                 "DOXYGEN: Build Documentation",
@@ -559,7 +539,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "valgrind --callgrind-out-file=bin/${input:buildType}/callgrind.out --tool=callgrind bin/${input:buildType}/instinct -f config.ini --nogui -l flow/Default.flow && kcachegrind bin/${input:buildType}/callgrind.out",
+                "valgrind --callgrind-out-file=build/bin/${input:buildType}/callgrind.out --tool=callgrind build/bin/${input:buildType}/instinct -f config.ini --nogui -l flow/Default.flow && kcachegrind build/bin/${input:buildType}/callgrind.out",
             ],
             "options": {
                 "cwd": "${workspaceFolder}",
@@ -576,7 +556,7 @@
             "command": "valgrind",
             "args": [
                 "--leak-check=yes",
-                "bin/${input:buildType}/instinct",
+                "build/bin/${input:buildType}/instinct",
                 "-f",
                 "config.ini",
                 "--nogui",

@@ -27,6 +27,9 @@ If no GUI is required, the application can be run in ```--nogui``` mode and a `.
 - Update the repository
   ```
   git pull --recurse-submodules
+  # If there where changes in the submodules
+  git submodule deinit -f .    # completely "unbinds" all submodules
+  git submodule update --init  # makes a fresh checkout of them
   ```
 
 ##### Build & run the main program
@@ -50,7 +53,7 @@ ctest --output-on-failure
 cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=NO
 cmake --build build/Release --target doc
 ```
-The doxygen main page can then be opened under `bin/doc/html/index.html` (GitHub Pages integration is planned)
+The doxygen main page can then be opened under `build/doc/html/index.html` (GitHub Pages integration is planned)
 
 ##### Help message
 
@@ -117,8 +120,8 @@ pip3 install conan --user
 # Documentation (Ubuntu 22.04 has too old doxygen version)
 sudo apt install -y pdf2svg texlive texlive-lang-german texlive-latex-extra ghostscript
 sudo apt install -y flex bison graphviz mscgen dia # Build dependencies
-wget -c https://www.doxygen.nl/files/doxygen-1.9.4.src.tar.gz -O - | tar -xz
-mkdir doxygen-1.9.4/build && cd doxygen-1.9.4/build
+wget -c https://www.doxygen.nl/files/doxygen-1.9.5.src.tar.gz -O - | tar -xz
+mkdir doxygen-1.9.5/build && cd doxygen-1.9.5/build
 cmake -G "Unix Makefiles" .. && make && sudo make install
 
 # Optional
@@ -157,12 +160,12 @@ brew install ccache cppcheck
 
 #### Task overview
 
-|  Hotkey  | Action                                    | Default       |
-| :------: | :---------------------------------------- | ------------- |
-| ```F5``` | Debug the project                         | Default debug |
-| ```F6``` | Run Task: ```MAIN: Build project```       | Default build |
-| ```F7``` | Run Task: ```MAIN: Build & run project``` | Default test  |
-| ```F8``` | Open Task List                            |               |
+|  Hotkey  | Action                                       | Default       |
+| :------: | :------------------------------------------- | ------------- |
+| ```F5``` | Debug the project                            | Default debug |
+| ```F6``` | Run Task: ```DOXYGEN: Build Documentation``` | Default build |
+| ```F7``` | Run Task: ```MAIN: Build & run project```    | Default test  |
+| ```F8``` | Open Task List                               |               |
 
 * To start the GUI, execute the Task ```MAIN: Build & run project```
 * If you have problems with the build, execute the Task ```CLEAN: Remove build files```
