@@ -8,10 +8,56 @@
 
 namespace Instinct {
 
-/** \page Tutorials Tutorials
+/** \page Tutorial Tutorials
 
-- Test
-- another
+
+# Preface
+
+Assuming that you have successfully compiled and built INSTINCT on your computer you should be ready to run your first flow. Then this page will guide you through different examples that develop flows for different purposes.
+
+Note:
+In case you did not succeed to build INSTINCT by yourself, please refer to our [installation instructions](https://github.com/UniStuttgart-INS/INSTINCT) on the GitHub repository. If you have troubles to compile or build INSTINCT, please get in touch with us, preferable by subscribing to our [mailing list](https://listserv.uni-stuttgart.de/mailman/listinfo/instinct) and then posting your question there.
+
+
+
+
+# The Tutorials
+
+In order to get you started with INSTINCT we have prepared here different videos tutorials, in which we guide you step-by-step through the process of building flows for particular solutions. We also explain the functionality of different nodes and discuss input data as well as output generated from INSTINCT. 
+
+<b>We hope you find our short videos useful!</b>
+
+<div align="center">
+| Currently the list of available tutorials here includes the following topics         |
+|:---------------------------|
+| - \subpage Tutorial_NMEA   |
+</div>
+
+Additionally we provide you with some general information about flow-based programming and the ideas and concepts behind INSTINCT in the following sections here.
+
+
+# What is flow-based programming 
+
+Flow-based programming (FBP), which was first discussed by \cite Morrison1971, was developed with the purpose to overcome limitations in "von Neumann" hardware \cite Silc1998 and with the goal of exploiting massive parallelism \cite Johnston2004. The main idea by Morrison was that data-processing tasks are separated into modules, which can communicate among each other with the help of data elements that are passed through queues. In the background, a scheduler is used to trigger the calculations in each module depending on the availability of data elements, service requests by modules and external events \cite Morrison1971. The flow of the data can be displayed as a directed graph and therefore is eponymous for the name of the approach "dataflow programming".
+
+The smaller the workload that each module has to handle, the better FPB benefits from parallel computing capabilities of the hardware. Originally, as described by \cite Silc1998, it was intended to have specialized dataflow hardware architecture. Consequently, dataflow programming languages were invented \cite Ackerman1982,\cite Whiting1994. However, with the progress of multiprocessing and multithreading capabilities in the last decades, FBP can also be applied to "von Neumann" architecture-based computer systems. Besides performance benefits from parallelism, FBP also has other advantages. Because each module acts as a black box, which resembles the way object-oriented programming abstracts its functionality, one does not have to know every detail of its implementation, but only needs to understand its input and output data elements. This leads to higher and low-latent productivity of new programmers \cite Morrison1971. Furthermore, \cite MorrisonFlowBasedProgramming1994 presented empirical evidence that FBP reduces development times and therefore reduces programming costs. These results are further confirmed by \cite Lobunets2014 who also claim that FBP increases code reuse and maintainability.
+
+Conventional software usually follows a hard-coded processing chain and has little adaptability when sensors change, algorithms are exchanged, or the software is needed to work in both real-time and post-processing environments. FBP, however, allows more flexibility because modules with the same inputs and outputs, like a sensor or a data file reader, can be exchanged with each other. This provides the possibility to develop the program logic and algorithms in post-processing and then exchange only the input modules in order to deploy the program onto a test device with sensors.
+
+More recent work from \cite Paleyes2021 states that FBP can also exceed service-oriented architectures (SOA) \cite SOA2009 in terms of code complexity and code size. The initial effort to write an application, which can define and manipulate the dataflow graph, is bigger, but the data discovery and processing tasks become simpler. Moreover, there are frameworks available that might serve this purpose, such as Google Dataflow \cite GoogleCloud2015, Kubeflow \cite Kubeflow2019, Apache NiFi \cite ApacheNifi, flowpipe \cite flowpipe or Simulink \cite Simulink. However, these existing frameworks introduce problems with licensing or are not suitable to be executed on low-cost hardware such as single-board computers, which are used on mobile PNT platforms.
+
+# Flow-based Programming and INSTINCT
+
+INSTINCT follows the flow-based programming paradigm but uses a different notation. Modules are called "nodes" but serve the same purpose on encapsuling functionality. A difference however is, that larger chunks of functionality are bundled in each node. For example, the single point positioning (SPP) algorithm that calculates positions and velocities from GNSS observations is represented by a single node despite consisting of multiple data processing steps. This obviously limits the possibility of parallelizing calculations but is a needed trade-off between simplicity of the dataflow and performance. Furthermore, on hardware architectures which are not designed for parallelism it does not make sense to split an application into thousands of threads as the overhead from passing the data and thread management becomes significant.
+
+
+Like the modules in FBP, nodes can pass data elements to each other via so-called input and output "pins". However, in INSTINCT, nodes can have multiple in- and output pins, whereas in the original concept by \cite Morrison1971 only one of each was foreseen. Data objects, which are supposed to flow between nodes, have to inherit from a common class that enables the required functionality. This makes it easy to define new custom node data classes tailored to the data that should be passed. Using specialized classes as node data does not create unnecessary overhead as it is done in other software implementing the FBP paradigm, e.g. Node-RED \cite NodeRED, where JSON objects are used. It also enables the program to check if connections between nodes, so-called "links", are valid or if the data types differ and the connection should be refused. Therefore, even users who do not know the software cannot configure invalid dataflows. The base node data class also provides a way to set a timestamp for each object that enables the scheduler to trigger nodes in correct order. To avoid unnecessary copies while passing data, the data is passed as a reference to the data object, or more specifically as a shared C++ pointer \cite Cpp20. Shared pointers have the advantage, that they automatically keep track of how often they are referenced. When no reference exists anymore, they release their reserved memory preventing any possible memory leaks that could occur with normal pointers. This makes it possible for nodes to keep the data as long as it is needed without the risk that it is set invalid. Moreover, references are passed as non-mutable variables because the same data can flow into multiple nodes. This could lead to data races and undefined behavior if nodes modify the objects.
+
+Beside data flowing between nodes, the FBP paradigm was extended in INSTINCT through object pins that provide access to C++ objects living inside the nodes. This can be used as an interface to provide access to data that either does not change or changes very slowly with time and whose ownership should stay within the source node. An example for such data would be navigation GNSS data which is read from a file at the start of the execution or is slowly collected inside a node from a GNSS receiver. 
+
+
+
+
 
 */
 
