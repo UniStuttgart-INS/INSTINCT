@@ -6,7 +6,7 @@
             "type": "cppdbg",
             "request": "launch",
             "preLaunchTask": "MAIN: Build project",
-            "program": "${workspaceFolder}/bin/Debug/instinct",
+            "program": "${workspaceFolder}/build/bin/Debug/instinct",
             "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
                 "--config=config.ini",
                 "--load=\"flow/Default.flow\"",
@@ -39,7 +39,7 @@
             "type": "cppdbg",
             "request": "launch",
             "preLaunchTask": "TEST: Build project",
-            "program": "${workspaceFolder}/bin/Debug/tests",
+            "program": "${workspaceFolder}/build/bin/Debug/tests",
             "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
                 "'[Debug]'",
             ],
@@ -62,7 +62,7 @@
             "type": "cppvsdbg",
             "request": "launch",
             "preLaunchTask": "MAIN: Build project",
-            "program": "${workspaceFolder}/bin/Debug/instinct",
+            "program": "${workspaceFolder}/build/bin/Debug/instinct",
             "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
                 "--config=config.ini",
                 "--load=\"flow/Default.flow\"",
@@ -81,7 +81,7 @@
             "type": "cppvsdbg",
             "request": "launch",
             "preLaunchTask": "TEST: Build project",
-            "program": "${workspaceFolder}/bin/Debug/tests",
+            "program": "${workspaceFolder}/build/bin/Debug/tests",
             "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
                 "[Debug]",
             ],
