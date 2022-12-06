@@ -28,6 +28,10 @@ namespace nm = NAV::NodeManager;
 #include <mutex>
 #include <condition_variable>
 
+#ifdef TESTING
+    #include <catch2/catch.hpp>
+#endif
+
 /* -------------------------------------------------------------------------------------------------------- */
 /*                                              Private Members                                             */
 /* -------------------------------------------------------------------------------------------------------- */
@@ -92,8 +96,11 @@ void NAV::FlowExecutor::stop()
     {
         {
             std::lock_guard<std::mutex> lk(_mutex);
-            _state = State::Stopping;
-            _cv.notify_all();
+            if (_state == State::Running || _state == State::Starting)
+            {
+                _state = State::Stopping;
+                _cv.notify_all();
+            }
         }
 
         waitForFinish();
@@ -156,6 +163,11 @@ void NAV::FlowExecutor::execute()
     {
         if (node == nullptr || !node->isInitialized()) { continue; }
 
+        {
+            std::lock_guard<std::mutex> lk(_mutex);
+            if (_state != State::Starting) { break; }
+        }
+
         node->_mode = Node::Mode::POST_PROCESSING;
         _activeNodes += 1;
         node->resetNode();
@@ -191,10 +203,13 @@ void NAV::FlowExecutor::execute()
         }
     }
 
-    nm::EnableAllCallbacks();
     {
         std::lock_guard<std::mutex> lk(_mutex);
-        if (_state == State::Starting) { _state = State::Running; }
+        if (_state == State::Starting)
+        {
+            nm::EnableAllCallbacks();
+            _state = State::Running;
+        }
     }
 
     LOG_INFO("Post-processing started");
@@ -209,8 +224,22 @@ void NAV::FlowExecutor::execute()
         }
     }
     {
-        std::unique_lock lk(_mutex);
-        _cv.wait(lk, [] { return _state == State::Stopping; });
+        // Wait for the nodes to finish
+        bool timeout = true;
+        auto timeoutDuration = std::chrono::minutes(1);
+        while (timeout)
+        {
+            std::unique_lock lk(_mutex);
+            timeout = !_cv.wait_for(lk, timeoutDuration, [] { return _state == State::Stopping; });
+            if (timeout && _activeNodes == 0)
+            {
+                LOG_ERROR("FlowExecutor had a timeout, but all nodes finished already.");
+#ifdef TESTING
+                FAIL("The FlowExecutor should not have a timeout when all nodes are finished already.");
+#endif
+                break;
+            }
+        }
     }
 
     // Deinitialize

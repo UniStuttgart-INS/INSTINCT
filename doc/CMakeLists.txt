@@ -90,11 +90,11 @@ if(ENABLE_DOXYGEN)
     add_custom_target(
         doc-prerequisites
         ALL
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTINCT_SOURCE_DIR}/build/doc/html/ ${INSTINCT_SOURCE_DIR}/build/doc/html/resources
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTINCT_SOURCE_DIR}/build/doc/html/
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/eigen_navtree_hacks.js           ${INSTINCT_SOURCE_DIR}/build/doc/html${INSTINCT_DOXY_OUTPUT_DIRECTORY_SUFFIX}/
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/ftv2pnode.png                    ${INSTINCT_SOURCE_DIR}/build/doc/html${INSTINCT_DOXY_OUTPUT_DIRECTORY_SUFFIX}/
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/resources/*                      ${INSTINCT_SOURCE_DIR}/build/doc/html${INSTINCT_DOXY_OUTPUT_DIRECTORY_SUFFIX}/resources/
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/resources              ${INSTINCT_SOURCE_DIR}/build/doc/html${INSTINCT_DOXY_OUTPUT_DIRECTORY_SUFFIX}/resources
+        WORKING_DIRECTORY ${INSTINCT_SOURCE_DIR}/build
       )
 
     add_custom_target(doc ALL

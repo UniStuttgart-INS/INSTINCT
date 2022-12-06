@@ -502,20 +502,21 @@ void NAV::Node::workerThread(Node* node)
         {
             // Wait for data or state change
             LOG_DATA("{}: Worker going to sleep", node->nameId());
-            std::unique_lock lk(node->_workerMutex);
-            bool result = node->_workerConditionVariable.wait_for(lk, node->_workerTimeout, [node] { return node->_workerWakeup; });
-            bool wakeup = node->_workerWakeup;
-            node->_workerWakeup = false;
-            lk.unlock();
-            LOG_DATA("{}: Worker woke up", node->nameId());
-
-            if (result != wakeup) // Timeout reached
+            bool timeout = false;
             {
-                node->workerTimeoutHandler();
+                std::unique_lock lk(node->_workerMutex);
+                timeout = !node->_workerConditionVariable.wait_for(lk, node->_workerTimeout, [node] { return node->_workerWakeup; });
+                node->_workerWakeup = false;
             }
+            LOG_DATA("{}: Worker woke up", node->nameId());
 
             if (node->isInitialized() && (node->callbacksEnabled || node->_mode == Node::Mode::REAL_TIME))
             {
+                if (timeout && node->callbacksEnabled) // Timeout reached
+                {
+                    node->workerTimeoutHandler();
+                }
+
                 // Check input pin for data and trigger callbacks
                 if (std::any_of(node->inputPins.begin(), node->inputPins.end(), [](const InputPin& inputPin) {
                         return inputPin.isPinLinked();
@@ -885,7 +886,7 @@ void NAV::Node::workerTimeoutHandler()
 {
     LOG_TRACE("{}: called", nameId());
 #ifdef TESTING
-    REQUIRE(true == false); // This should not happen in testing, as the test got then stuck and the timeout is unhandled
+    FAIL("In testing, nodes should not timeout, as the test got then stuck and the timeout is unhandled by the node itself.");
 #endif
 }
 

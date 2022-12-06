@@ -10,12 +10,6 @@
 
 namespace Instinct {
 
-/** \page util Core
-  The core category provides documentation for the internal processes of INSTINCT.
-  - \subpage Core_Node
-*/
-
-
 /** \defgroup DataProcessor_chapter DataProcessor
  * @{
  *      \defgroup DataProcessor_KalmanFilter_chapter KalmanFilter
