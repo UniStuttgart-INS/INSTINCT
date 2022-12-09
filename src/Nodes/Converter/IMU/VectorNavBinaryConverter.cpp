@@ -187,7 +187,7 @@ std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2
 {
     auto imuObs = std::make_shared<ImuObsWDelta>(vnObs->imuPos);
 
-    imuObs->insTime = vnObs->insTime;
+    imuObs->insTime = InsTime(InsTime_GPSweekTow(0, static_cast<int32_t>(vnObs->timeOutputs->gpsWeek), static_cast<double>(vnObs->timeOutputs->gpsTow) * 1e-9L));
 
     if (vnObs->timeOutputs)
     {
@@ -272,9 +272,13 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
         }
     }
 
+    auto posVelAttObs = std::make_shared<PosVelAtt>();
+
     if ((_posVelSource == PosVelSource_Best || _posVelSource == PosVelSource_Ins)
         && vnObs->insOutputs && (vnObs->insOutputs->insStatus.mode() == 1 || vnObs->insOutputs->insStatus.mode() == 2))
     {
+        posVelAttObs->insTime = InsTime(InsTime_GPSweekTow(0, static_cast<int32_t>(vnObs->timeOutputs->gpsWeek), static_cast<double>(vnObs->timeOutputs->gpsTow)));
+
         if (vnObs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA)
         {
             lla_position = { deg2rad(vnObs->insOutputs->posLla(0)),
@@ -306,6 +310,8 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
     if ((_posVelSource == PosVelSource_Best || _posVelSource == PosVelSource_Gnss1)
         && vnObs->gnss1Outputs && vnObs->gnss1Outputs->fix >= 2)
     {
+        posVelAttObs->insTime = InsTime(InsTime_GPSweekTow(0, static_cast<int32_t>(vnObs->gnss1Outputs->week), static_cast<double>(vnObs->gnss1Outputs->tow)));
+
         if (!e_position.has_value() && !lla_position.has_value())
         {
             if (vnObs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
@@ -337,6 +343,8 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
     if ((_posVelSource == PosVelSource_Best || _posVelSource == PosVelSource_Gnss2)
         && vnObs->gnss2Outputs && vnObs->gnss2Outputs->fix >= 2)
     {
+        posVelAttObs->insTime = InsTime(InsTime_GPSweekTow(0, static_cast<int32_t>(vnObs->gnss2Outputs->week), static_cast<double>(vnObs->gnss2Outputs->tow)));
+
         if (!e_position.has_value() && !lla_position.has_value())
         {
             if (vnObs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
@@ -365,10 +373,6 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
             }
         }
     }
-
-    auto posVelAttObs = std::make_shared<PosVelAtt>();
-
-    posVelAttObs->insTime = vnObs->insTime;
 
     if ((e_position.has_value() || lla_position.has_value()) && n_velocity.has_value())
     {
@@ -414,7 +418,7 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
 {
     auto gnssObs = std::make_shared<GnssObs>();
 
-    gnssObs->insTime = vnObs->insTime;
+    gnssObs->insTime = InsTime(InsTime_GPSweekTow(0, static_cast<int32_t>(vnObs->gnss1Outputs->raw.week), vnObs->gnss1Outputs->raw.tow));
 
     if (vnObs->gnss1Outputs)
     {
