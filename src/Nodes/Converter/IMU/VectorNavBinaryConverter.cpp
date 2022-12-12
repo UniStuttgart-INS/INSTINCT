@@ -277,7 +277,7 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
     if ((_posVelSource == PosVelSource_Best || _posVelSource == PosVelSource_Ins)
         && vnObs->insOutputs && (vnObs->insOutputs->insStatus.mode() == 1 || vnObs->insOutputs->insStatus.mode() == 2))
     {
-        posVelAttObs->insTime = InsTime(InsTime_GPSweekTow(0, static_cast<int32_t>(vnObs->timeOutputs->gpsWeek), static_cast<double>(vnObs->timeOutputs->gpsTow)));
+        posVelAttObs->insTime = InsTime(InsTime_GPSweekTow(0, static_cast<int32_t>(vnObs->timeOutputs->gpsWeek), static_cast<double>(vnObs->timeOutputs->gpsTow) * 1e-9L));
 
         if (vnObs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA)
         {
@@ -310,7 +310,7 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
     if ((_posVelSource == PosVelSource_Best || _posVelSource == PosVelSource_Gnss1)
         && vnObs->gnss1Outputs && vnObs->gnss1Outputs->fix >= 2)
     {
-        posVelAttObs->insTime = InsTime(InsTime_GPSweekTow(0, static_cast<int32_t>(vnObs->gnss1Outputs->week), static_cast<double>(vnObs->gnss1Outputs->tow)));
+        posVelAttObs->insTime = InsTime(InsTime_GPSweekTow(0, static_cast<int32_t>(vnObs->gnss1Outputs->week), static_cast<double>(vnObs->gnss1Outputs->tow) * 1e-9L));
 
         if (!e_position.has_value() && !lla_position.has_value())
         {
@@ -343,7 +343,7 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
     if ((_posVelSource == PosVelSource_Best || _posVelSource == PosVelSource_Gnss2)
         && vnObs->gnss2Outputs && vnObs->gnss2Outputs->fix >= 2)
     {
-        posVelAttObs->insTime = InsTime(InsTime_GPSweekTow(0, static_cast<int32_t>(vnObs->gnss2Outputs->week), static_cast<double>(vnObs->gnss2Outputs->tow)));
+        posVelAttObs->insTime = InsTime(InsTime_GPSweekTow(0, static_cast<int32_t>(vnObs->gnss2Outputs->week), static_cast<double>(vnObs->gnss2Outputs->tow) * 1e-9L));
 
         if (!e_position.has_value() && !lla_position.has_value())
         {
