@@ -625,25 +625,25 @@ void from_json(const json& j, VelocityCompensationControlRegister& velocityCompe
 } // namespace sensors
 } // namespace vn
 
-const std::array<NAV::VectorNavSensor::BinaryGroupData, 15> NAV::VectorNavSensor::_binaryGroupCommon = { {
-    /*  0 */ { "TimeStartup", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP, []() { ImGui::TextUnformatted("Time since startup.\n\nThe system time since startup measured in nano seconds. The time since startup is based upon the internal\nTXCO oscillator for the MCU. The accuracy of the internal TXCO is +/- 20ppm (-40C to 85C). This field is\nequivalent to the TimeStartup field in group 2."); } },
-    /*  1 */ { "TimeGps", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS, []() { ImGui::TextUnformatted("GPS time.\n\nThe absolute GPS time since start of GPS epoch 1980 expressed in nano seconds. This field is equivalent to\nthe TimeGps field in group 2."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
-    /*  2 */ { "TimeSyncIn", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESYNCIN, []() { ImGui::TextUnformatted("Time since last SyncIn trigger.\n\nThe time since the last SyncIn trigger event expressed in nano seconds. This field is equivalent to the\nTimeSyncIn field in group 2."); } },
-    /*  3 */ { "YawPitchRoll", vn::protocol::uart::CommonGroup::COMMONGROUP_YAWPITCHROLL, []() { ImGui::TextUnformatted("Estimated attitude as yaw pitch and roll angles.\n\nThe estimated attitude Yaw, Pitch, and Roll angles measured in degrees. The attitude is given as a 3,2,1 Euler\nangle sequence describing the body frame with respect to the local North East Down (NED) frame. This field\nis equivalent to the YawPitchRoll field in group 5.\n\nYaw [+/- 180°]\nPitch [+/- 90°]\nRoll [+/- 180°]"); } },
-    /*  4 */ { "Quaternion", vn::protocol::uart::CommonGroup::COMMONGROUP_QUATERNION, []() { ImGui::TextUnformatted("Estimated attitude as a quaternion.\n\nThe estimated attitude quaternion. The last term is the scalar value. The attitude is given as the body frame\nwith respect to the local North East Down (NED) frame. This field is equivalent to the Quaternion field in\ngroup 5."); } },
-    /*  5 */ { "AngularRate", vn::protocol::uart::CommonGroup::COMMONGROUP_ANGULARRATE, []() { ImGui::TextUnformatted("Compensated angular rate.\n\nThe estimated angular rate measured in rad/s. The angular rates are compensated by the onboard filter bias\nestimates. The angular rate is expressed in the body frame. This field is equivalent to the AngularRate field\nin group 3."); } },
-    /*  6 */ { "Position", vn::protocol::uart::CommonGroup::COMMONGROUP_POSITION, []() { ImGui::TextUnformatted("Estimated position. (LLA)\n\nThe estimated position given as latitude, longitude, and altitude given in [deg, deg, m] respectively. This field\nis equivalent to the PosLla field in group 6."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_POSITION) && (bor.commonField |= vn::protocol::uart::CommonGroup::COMMONGROUP_INSSTATUS); } },
-    /*  7 */ { "Velocity", vn::protocol::uart::CommonGroup::COMMONGROUP_VELOCITY, []() { ImGui::TextUnformatted("Estimated velocity. (NED)\n\nThe estimated velocity in the North East Down (NED) frame, given in m/s. This field is equivalent to the\nVelNed field in group 6."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_VELOCITY) && (bor.commonField |= vn::protocol::uart::CommonGroup::COMMONGROUP_INSSTATUS); } },
-    /*  8 */ { "Accel", vn::protocol::uart::CommonGroup::COMMONGROUP_ACCEL, []() { ImGui::TextUnformatted("Estimated acceleration (compensated). (Body)\n\nThe estimated acceleration in the body frame, given in m/s^2. This acceleration includes gravity and has\nbeen bias compensated by the onboard INS Kalman filter. This field is equivalent to the Accel field in group 3."); } },
-    /*  9 */ { "Imu", vn::protocol::uart::CommonGroup::COMMONGROUP_IMU, []() { ImGui::TextUnformatted("Calibrated uncompensated gyro and accelerometer measurements.\n\nThe uncompensated IMU acceleration and angular rate measurements. The acceleration is given in m/s^2,\nand the angular rate is given in rad/s. These measurements correspond to the calibrated angular rate and\nacceleration measurements straight from the IMU. The measurements have not been corrected for bias\noffset by the onboard Kalman filter. These are equivalent to the UncompAccel and UncompGyro fields in\ngroup 3."); } },
-    /* 10 */ { "MagPres", vn::protocol::uart::CommonGroup::COMMONGROUP_MAGPRES, []() { ImGui::TextUnformatted("Calibrated magnetic (compensated), temperature, and pressure measurements.\n\nThe compensated magnetic, temperature, and pressure measurements from the IMU. The magnetic\nmeasurement is given in Gauss, and has been corrected for hard/soft iron corrections (if enabled). The\ntemperature measurement is given in Celsius. The pressure measurement is given in kPa. This field is\nequivalent to the Mag, Temp, and Pres fields in group 3.\n\nThe IP-68 enclosure on the tactical series forms an airtight (hermetic) seal isolating the internal\nsensors from the external environment. The pressure sensor is internal to this seal, and as such\nwill not measure the outside environment atmospheric pressure. It will instead read the pressure\ninside the sealed enclosure. The purpose of this sensor is to provide a means of ensuring the\nseal integrity over the lifetime of the product. Based on the Ideal Gas Law the ratio of pressure\ndivided by temperature should remain constant over both time and environmental temperature.\nWhen this is no longer the case, it can be assumed that the seal integrity has been compromised."); } },
-    /* 11 */ { "DeltaTheta", vn::protocol::uart::CommonGroup::COMMONGROUP_DELTATHETA, []() { ImGui::TextUnformatted("Delta time, theta, and velocity.\n\nThe delta time, angle, and velocity measurements. The delta time (dtime) is the time interval that the delta\nangle and velocities are integrated over. The delta theta (dtheta) is the delta rotation angles incurred due to\nrotation, by the local body reference frame, since the last time the values were outputted by the device. The\ndelta velocity (dvel) is the delta velocity incurred due to motion, by the local body reference frame, since the\nlast time the values were outputted by the device. The frame of reference of these delta measurements are\ndetermined by the IntegrationFrame field in the Delta Theta and Delta Velocity Configuration Register\n(Register 82). These delta angles and delta velocities are calculated based upon the onboard coning and\nsculling integration performed onboard the sensor at the full IMU rate (default 800Hz). The integration for\nboth the delta angles and velocities are reset each time either of the values are either polled or sent out due\nto a scheduled asynchronous ASCII or binary output. Delta Theta and Delta Velocity values correctly capture\nthe nonlinearities involved in measuring motion from a rotating strapdown platform (as opposed to the older\nmechanically inertial navigation systems), thus providing you with the ability to integrate velocity and angular\nrate at much lower speeds (say for example 10 Hz, reducing bandwidth and computational complexity), while\nstill maintaining the same numeric precision as if you had performed the integration at the full IMU\nmeasurement rate of 800Hz. This field is equivalent to the DeltaTheta and DeltaVel fields in group 3 with the\ninclusion of the additional delta time parameter."); } },
-    /* 12 */ { "Ins/VpeStatus", vn::protocol::uart::CommonGroup::COMMONGROUP_INSSTATUS, []() { ImGui::TextUnformatted("INS status (VN310).\n\nThe INS status bitfield. This field is equivalent to the InsSatus field in group 6.\nSee INS Solution LLA Register for more information on the individual bits in this field.");
-                                                                                               ImGui::Separator();
-                                                                                               ImGui::TextUnformatted("VPE Status (VN100).\n\nThe VPE status bitfield. This field is equivalent to the VpeStatus field in group 5.\nSee Group 5 - VPE for more information on the individual bits in this field."); }, [](VectorNavModel /* sensorModel */, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t binaryField) { return !(static_cast<vn::protocol::uart::CommonGroup>(binaryField) & vn::protocol::uart::CommonGroup::COMMONGROUP_POSITION) && !(static_cast<vn::protocol::uart::CommonGroup>(binaryField) & vn::protocol::uart::CommonGroup::COMMONGROUP_VELOCITY); } },
-    /* 13 */ { "SyncInCnt", vn::protocol::uart::CommonGroup::COMMONGROUP_SYNCINCNT, []() { ImGui::TextUnformatted("SyncIn count.\n\nThe number of SyncIn trigger events that have occurred. This field is equivalent to the SyncInCnt field in\ngroup 2."); } },
-    /* 14 */ { "TimeGpsPps", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPSPPS, []() { ImGui::TextUnformatted("Time since last GNSS PPS trigger.\n\nThe time since the last GPS PPS trigger event expressed in nano seconds. This field is equivalent to the\nTimePPS field in group 2."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; } },
-} };
+// const std::array<NAV::VectorNavSensor::BinaryGroupData, 15> NAV::VectorNavSensor::_binaryGroupCommon = { {
+//     /*  0 */ { "TimeStartup", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP, []() { ImGui::TextUnformatted("Time since startup.\n\nThe system time since startup measured in nano seconds. The time since startup is based upon the internal\nTXCO oscillator for the MCU. The accuracy of the internal TXCO is +/- 20ppm (-40C to 85C). This field is\nequivalent to the TimeStartup field in group 2."); } },
+//     /*  1 */ { "TimeGps", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS, []() { ImGui::TextUnformatted("GPS time.\n\nThe absolute GPS time since start of GPS epoch 1980 expressed in nano seconds. This field is equivalent to\nthe TimeGps field in group 2."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
+//     /*  2 */ { "TimeSyncIn", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESYNCIN, []() { ImGui::TextUnformatted("Time since last SyncIn trigger.\n\nThe time since the last SyncIn trigger event expressed in nano seconds. This field is equivalent to the\nTimeSyncIn field in group 2."); } },
+//     /*  3 */ { "YawPitchRoll", vn::protocol::uart::CommonGroup::COMMONGROUP_YAWPITCHROLL, []() { ImGui::TextUnformatted("Estimated attitude as yaw pitch and roll angles.\n\nThe estimated attitude Yaw, Pitch, and Roll angles measured in degrees. The attitude is given as a 3,2,1 Euler\nangle sequence describing the body frame with respect to the local North East Down (NED) frame. This field\nis equivalent to the YawPitchRoll field in group 5.\n\nYaw [+/- 180°]\nPitch [+/- 90°]\nRoll [+/- 180°]"); } },
+//     /*  4 */ { "Quaternion", vn::protocol::uart::CommonGroup::COMMONGROUP_QUATERNION, []() { ImGui::TextUnformatted("Estimated attitude as a quaternion.\n\nThe estimated attitude quaternion. The last term is the scalar value. The attitude is given as the body frame\nwith respect to the local North East Down (NED) frame. This field is equivalent to the Quaternion field in\ngroup 5."); } },
+//     /*  5 */ { "AngularRate", vn::protocol::uart::CommonGroup::COMMONGROUP_ANGULARRATE, []() { ImGui::TextUnformatted("Compensated angular rate.\n\nThe estimated angular rate measured in rad/s. The angular rates are compensated by the onboard filter bias\nestimates. The angular rate is expressed in the body frame. This field is equivalent to the AngularRate field\nin group 3."); } },
+//     /*  6 */ { "Position", vn::protocol::uart::CommonGroup::COMMONGROUP_POSITION, []() { ImGui::TextUnformatted("Estimated position. (LLA)\n\nThe estimated position given as latitude, longitude, and altitude given in [deg, deg, m] respectively. This field\nis equivalent to the PosLla field in group 6."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_POSITION) && (bor.commonField |= vn::protocol::uart::CommonGroup::COMMONGROUP_INSSTATUS); } },
+//     /*  7 */ { "Velocity", vn::protocol::uart::CommonGroup::COMMONGROUP_VELOCITY, []() { ImGui::TextUnformatted("Estimated velocity. (NED)\n\nThe estimated velocity in the North East Down (NED) frame, given in m/s. This field is equivalent to the\nVelNed field in group 6."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_VELOCITY) && (bor.commonField |= vn::protocol::uart::CommonGroup::COMMONGROUP_INSSTATUS); } },
+//     /*  8 */ { "Accel", vn::protocol::uart::CommonGroup::COMMONGROUP_ACCEL, []() { ImGui::TextUnformatted("Estimated acceleration (compensated). (Body)\n\nThe estimated acceleration in the body frame, given in m/s^2. This acceleration includes gravity and has\nbeen bias compensated by the onboard INS Kalman filter. This field is equivalent to the Accel field in group 3."); } },
+//     /*  9 */ { "Imu", vn::protocol::uart::CommonGroup::COMMONGROUP_IMU, []() { ImGui::TextUnformatted("Calibrated uncompensated gyro and accelerometer measurements.\n\nThe uncompensated IMU acceleration and angular rate measurements. The acceleration is given in m/s^2,\nand the angular rate is given in rad/s. These measurements correspond to the calibrated angular rate and\nacceleration measurements straight from the IMU. The measurements have not been corrected for bias\noffset by the onboard Kalman filter. These are equivalent to the UncompAccel and UncompGyro fields in\ngroup 3."); } },
+//     /* 10 */ { "MagPres", vn::protocol::uart::CommonGroup::COMMONGROUP_MAGPRES, []() { ImGui::TextUnformatted("Calibrated magnetic (compensated), temperature, and pressure measurements.\n\nThe compensated magnetic, temperature, and pressure measurements from the IMU. The magnetic\nmeasurement is given in Gauss, and has been corrected for hard/soft iron corrections (if enabled). The\ntemperature measurement is given in Celsius. The pressure measurement is given in kPa. This field is\nequivalent to the Mag, Temp, and Pres fields in group 3.\n\nThe IP-68 enclosure on the tactical series forms an airtight (hermetic) seal isolating the internal\nsensors from the external environment. The pressure sensor is internal to this seal, and as such\nwill not measure the outside environment atmospheric pressure. It will instead read the pressure\ninside the sealed enclosure. The purpose of this sensor is to provide a means of ensuring the\nseal integrity over the lifetime of the product. Based on the Ideal Gas Law the ratio of pressure\ndivided by temperature should remain constant over both time and environmental temperature.\nWhen this is no longer the case, it can be assumed that the seal integrity has been compromised."); } },
+//     /* 11 */ { "DeltaTheta", vn::protocol::uart::CommonGroup::COMMONGROUP_DELTATHETA, []() { ImGui::TextUnformatted("Delta time, theta, and velocity.\n\nThe delta time, angle, and velocity measurements. The delta time (dtime) is the time interval that the delta\nangle and velocities are integrated over. The delta theta (dtheta) is the delta rotation angles incurred due to\nrotation, by the local body reference frame, since the last time the values were outputted by the device. The\ndelta velocity (dvel) is the delta velocity incurred due to motion, by the local body reference frame, since the\nlast time the values were outputted by the device. The frame of reference of these delta measurements are\ndetermined by the IntegrationFrame field in the Delta Theta and Delta Velocity Configuration Register\n(Register 82). These delta angles and delta velocities are calculated based upon the onboard coning and\nsculling integration performed onboard the sensor at the full IMU rate (default 800Hz). The integration for\nboth the delta angles and velocities are reset each time either of the values are either polled or sent out due\nto a scheduled asynchronous ASCII or binary output. Delta Theta and Delta Velocity values correctly capture\nthe nonlinearities involved in measuring motion from a rotating strapdown platform (as opposed to the older\nmechanically inertial navigation systems), thus providing you with the ability to integrate velocity and angular\nrate at much lower speeds (say for example 10 Hz, reducing bandwidth and computational complexity), while\nstill maintaining the same numeric precision as if you had performed the integration at the full IMU\nmeasurement rate of 800Hz. This field is equivalent to the DeltaTheta and DeltaVel fields in group 3 with the\ninclusion of the additional delta time parameter."); } },
+//     /* 12 */ { "Ins/VpeStatus", vn::protocol::uart::CommonGroup::COMMONGROUP_INSSTATUS, []() { ImGui::TextUnformatted("INS status (VN310).\n\nThe INS status bitfield. This field is equivalent to the InsSatus field in group 6.\nSee INS Solution LLA Register for more information on the individual bits in this field.");
+//                                                                                                ImGui::Separator();
+//                                                                                                ImGui::TextUnformatted("VPE Status (VN100).\n\nThe VPE status bitfield. This field is equivalent to the VpeStatus field in group 5.\nSee Group 5 - VPE for more information on the individual bits in this field."); }, [](VectorNavModel /* sensorModel */, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t binaryField) { return !(static_cast<vn::protocol::uart::CommonGroup>(binaryField) & vn::protocol::uart::CommonGroup::COMMONGROUP_POSITION) && !(static_cast<vn::protocol::uart::CommonGroup>(binaryField) & vn::protocol::uart::CommonGroup::COMMONGROUP_VELOCITY); } },
+//     /* 13 */ { "SyncInCnt", vn::protocol::uart::CommonGroup::COMMONGROUP_SYNCINCNT, []() { ImGui::TextUnformatted("SyncIn count.\n\nThe number of SyncIn trigger events that have occurred. This field is equivalent to the SyncInCnt field in\ngroup 2."); } },
+//     /* 14 */ { "TimeGpsPps", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPSPPS, []() { ImGui::TextUnformatted("Time since last GNSS PPS trigger.\n\nThe time since the last GPS PPS trigger event expressed in nano seconds. This field is equivalent to the\nTimePPS field in group 2."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; } },
+// } };
 
 const std::array<NAV::VectorNavSensor::BinaryGroupData, 10> NAV::VectorNavSensor::_binaryGroupTime = { {
     /*  0 */ { "TimeStartup", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP, []() { ImGui::TextUnformatted("Time since startup.\n\nThe system time since startup measured in nano seconds. The time since startup is based upon the internal\nTXCO oscillator for the MCU. The accuracy of the internal TXCO is +/- 20ppm (-40C to 85C)."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& bor, uint32_t /* binaryField */) { return sensorModel != VectorNavModel::VN310 || !((bor.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW) || (bor.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) || (bor.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_TOW) || (bor.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)); } },
@@ -1346,13 +1346,13 @@ void NAV::VectorNavSensor::guiConfig()
 
         for (auto& binaryOutput : _binaryOutputRegister)
         {
-            for (const auto& item : _binaryGroupCommon)
-            {
-                if (!item.isEnabled(_sensorModel, binaryOutput, static_cast<uint32_t>(binaryOutput.commonField)))
-                {
-                    binaryOutput.commonField &= ~vn::protocol::uart::CommonGroup(item.flagsValue);
-                }
-            }
+            // for (const auto& item : _binaryGroupCommon)
+            // {
+            //     if (!item.isEnabled(_sensorModel, binaryOutput, static_cast<uint32_t>(binaryOutput.commonField)))
+            //     {
+            //         binaryOutput.commonField &= ~vn::protocol::uart::CommonGroup(item.flagsValue);
+            //     }
+            // }
             for (const auto& item : _binaryGroupTime)
             {
                 if (!item.isEnabled(_sensorModel, binaryOutput, static_cast<uint32_t>(binaryOutput.timeField)))
@@ -2663,26 +2663,26 @@ void NAV::VectorNavSensor::guiConfig()
 
                     for (size_t i = 0; i < 16; i++)
                     {
-                        if (i < std::max({ _binaryGroupCommon.size(), _binaryGroupTime.size(), _binaryGroupIMU.size(),
+                        if (i < std::max({ /* _binaryGroupCommon.size(), */ _binaryGroupTime.size(), _binaryGroupIMU.size(),
                                            _binaryGroupGNSS.size(), _binaryGroupAttitude.size(), _binaryGroupINS.size() }))
                         {
                             ImGui::TableNextRow();
                         }
-                        if (i < _binaryGroupCommon.size())
-                        {
-                            const auto& binaryGroupItem = _binaryGroupCommon.at(i);
-                            CheckboxFlags(0, fmt::format("{}##Common {} {}", binaryGroupItem.name, size_t(id), b).c_str(),
-                                          reinterpret_cast<int*>(&_binaryOutputRegister.at(b).commonField),
-                                          binaryGroupItem.flagsValue,
-                                          binaryGroupItem.isEnabled(_sensorModel, _binaryOutputRegister.at(b), static_cast<uint32_t>(_binaryOutputRegister.at(b).commonField)),
-                                          binaryGroupItem.toggleFields);
-                            if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
-                            {
-                                ImGui::BeginTooltip();
-                                binaryGroupItem.tooltip();
-                                ImGui::EndTooltip();
-                            }
-                        }
+                        // if (i < _binaryGroupCommon.size())
+                        // {
+                        //     const auto& binaryGroupItem = _binaryGroupCommon.at(i);
+                        //     CheckboxFlags(0, fmt::format("{}##Common {} {}", binaryGroupItem.name, size_t(id), b).c_str(),
+                        //                   reinterpret_cast<int*>(&_binaryOutputRegister.at(b).commonField),
+                        //                   binaryGroupItem.flagsValue,
+                        //                   binaryGroupItem.isEnabled(_sensorModel, _binaryOutputRegister.at(b), static_cast<uint32_t>(_binaryOutputRegister.at(b).commonField)),
+                        //                   binaryGroupItem.toggleFields);
+                        //     if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                        //     {
+                        //         ImGui::BeginTooltip();
+                        //         binaryGroupItem.tooltip();
+                        //         ImGui::EndTooltip();
+                        //     }
+                        // }
                         if (i < _binaryGroupTime.size())
                         {
                             const auto& binaryGroupItem = _binaryGroupTime.at(i);
@@ -6897,46 +6897,6 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     }
                 };
 
-                // Group 2 (Time)
-                if (obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS))
-                {
-                    if (obs->timeOutputs->timeStatus.dateOk())
-                    {
-                        if (obs->timeOutputs->timeStatus.timeOk()
-                            && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
-                            && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK))
-                        {
-                            obs->insTime = InsTime(InsTime_GPSweekTow(0, obs->timeOutputs->gpsWeek, obs->timeOutputs->gpsTow * 1e-9L));
-                            updateSyncOut(InsTime(0, obs->timeOutputs->gpsWeek, std::floor(obs->timeOutputs->gpsTow * 1e-9L)));
-                        }
-                        else if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS)
-                        {
-                            auto secondsSinceEpoche = static_cast<long double>(obs->timeOutputs->timeGps) * 1e-9L;
-                            auto week = static_cast<uint16_t>(secondsSinceEpoche / static_cast<long double>(InsTimeUtil::SECONDS_PER_DAY * InsTimeUtil::DAYS_PER_WEEK));
-                            auto tow = secondsSinceEpoche - week * InsTimeUtil::SECONDS_PER_DAY * InsTimeUtil::DAYS_PER_WEEK;
-
-                            obs->insTime = InsTime(InsTime_GPSweekTow(0, week, tow));
-                            updateSyncOut(InsTime(0, week, std::floor(tow)));
-                        }
-                    }
-                    if (obs->insTime.empty()
-                        && obs->timeOutputs->timeStatus.utcTimeValid()
-                        && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC))
-                    {
-                        obs->insTime = InsTime(InsTime_YMDHMS(2000 + obs->timeOutputs->timeUtc.year,
-                                                              obs->timeOutputs->timeUtc.month,
-                                                              obs->timeOutputs->timeUtc.day,
-                                                              obs->timeOutputs->timeUtc.hour,
-                                                              obs->timeOutputs->timeUtc.min,
-                                                              obs->timeOutputs->timeUtc.sec + static_cast<long double>(obs->timeOutputs->timeUtc.ms) * 1e-3L));
-                        updateSyncOut(InsTime(InsTime_YMDHMS(2000 + obs->timeOutputs->timeUtc.year,
-                                                             obs->timeOutputs->timeUtc.month,
-                                                             obs->timeOutputs->timeUtc.day,
-                                                             obs->timeOutputs->timeUtc.hour,
-                                                             obs->timeOutputs->timeUtc.min,
-                                                             obs->timeOutputs->timeUtc.sec)));
-                    }
-                }
                 // Group 4 (GNSS1)
                 if (obs->insTime.empty()
                     && obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO))
@@ -7025,6 +6985,46 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                                                              obs->gnss2Outputs->timeUtc.hour,
                                                              obs->gnss2Outputs->timeUtc.min,
                                                              obs->gnss2Outputs->timeUtc.sec)));
+                    }
+                }
+                // Group 2 (Time)
+                if (obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS))
+                {
+                    if (obs->timeOutputs->timeStatus.dateOk())
+                    {
+                        if (obs->timeOutputs->timeStatus.timeOk()
+                            && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
+                            && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK))
+                        {
+                            obs->insTime = InsTime(InsTime_GPSweekTow(0, obs->timeOutputs->gpsWeek, obs->timeOutputs->gpsTow * 1e-9L));
+                            updateSyncOut(InsTime(0, obs->timeOutputs->gpsWeek, std::floor(obs->timeOutputs->gpsTow * 1e-9L)));
+                        }
+                        else if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS)
+                        {
+                            auto secondsSinceEpoche = static_cast<long double>(obs->timeOutputs->timeGps) * 1e-9L;
+                            auto week = static_cast<uint16_t>(secondsSinceEpoche / static_cast<long double>(InsTimeUtil::SECONDS_PER_DAY * InsTimeUtil::DAYS_PER_WEEK));
+                            auto tow = secondsSinceEpoche - week * InsTimeUtil::SECONDS_PER_DAY * InsTimeUtil::DAYS_PER_WEEK;
+
+                            obs->insTime = InsTime(InsTime_GPSweekTow(0, week, tow));
+                            updateSyncOut(InsTime(0, week, std::floor(tow)));
+                        }
+                    }
+                    if (obs->insTime.empty()
+                        && obs->timeOutputs->timeStatus.utcTimeValid()
+                        && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC))
+                    {
+                        obs->insTime = InsTime(InsTime_YMDHMS(2000 + obs->timeOutputs->timeUtc.year,
+                                                              obs->timeOutputs->timeUtc.month,
+                                                              obs->timeOutputs->timeUtc.day,
+                                                              obs->timeOutputs->timeUtc.hour,
+                                                              obs->timeOutputs->timeUtc.min,
+                                                              obs->timeOutputs->timeUtc.sec + static_cast<long double>(obs->timeOutputs->timeUtc.ms) * 1e-3L));
+                        updateSyncOut(InsTime(InsTime_YMDHMS(2000 + obs->timeOutputs->timeUtc.year,
+                                                             obs->timeOutputs->timeUtc.month,
+                                                             obs->timeOutputs->timeUtc.day,
+                                                             obs->timeOutputs->timeUtc.hour,
+                                                             obs->timeOutputs->timeUtc.min,
+                                                             obs->timeOutputs->timeUtc.sec)));
                     }
                 }
 
