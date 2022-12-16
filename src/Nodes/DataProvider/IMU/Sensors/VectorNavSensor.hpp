@@ -179,6 +179,10 @@ class VectorNavSensor : public Imu, public UartSensor
     /// Couple the ImuFilter's rate (window size of moving-average filter) to the output rate (rateDivisor)
     bool _coupleImuRateOutput = true;
 
+    /// @brief Updates the ImuFilter's rate when pressing the checkbox button
+    /// @param sensor VectorNav sensor (VN100, VN310E, etc.)
+    /// @param bor Binary Output Register
+    /// @param binaryField Binary Field
     static void coupleImuFilterRates(NAV::VectorNavSensor* sensor, vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField);
 
     /// @brief Communication Protocol Control.
