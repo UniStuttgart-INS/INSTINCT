@@ -176,6 +176,9 @@ class VectorNavSensor : public Imu, public UartSensor
     /// Show the SyncIn Pin
     bool _syncInPin = false;
 
+    /// Couple the ImuFilter's rate (window size of moving-average filter) to the output rate (rateDivisor)
+    bool _coupleImuRateOutput = true;
+
     /// @brief Communication Protocol Control.
     ///
     /// Contains parameters that controls the communication protocol used by the sensor.
@@ -265,11 +268,11 @@ class VectorNavSensor : public Imu, public UartSensor
     /// Controls the level of filtering performed on the raw IMU measurements.
     /// @note See User manual VN-310 - 9.2.5 (p 115) / VN-100 - 6.2.5 (p 86)
     vn::sensors::ImuFilteringConfigurationRegister _imuFilteringConfigurationRegister{
-        0,                                                      // MagWindowSize
+        4,                                                      // MagWindowSize
         4,                                                      // AccelWindowSize
         4,                                                      // GyroWindowSize
         4,                                                      // TempWindowSize
-        0,                                                      // PresWindowSize
+        4,                                                      // PresWindowSize
         vn::protocol::uart::FilterMode::FILTERMODE_NOFILTERING, // MagFilterMode
         vn::protocol::uart::FilterMode::FILTERMODE_BOTH,        // AccelFilterMode
         vn::protocol::uart::FilterMode::FILTERMODE_BOTH,        // GyroFilterMode

@@ -2530,6 +2530,15 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     _binaryOutputRegister.at(b).rateDivisor = _dividerFrequency.first.at(_binaryOutputSelectedFrequency.at(b));
                     LOG_DEBUG("{}: Frequency of Binary Group {} changed to {}", nameId(), b + 1, _dividerFrequency.second.at(_binaryOutputSelectedFrequency.at(b)));
+                    if (_coupleImuRateOutput && b == 0)
+                    {
+                        _imuFilteringConfigurationRegister.magWindowSize = _binaryOutputRegister.at(b).rateDivisor;
+                        _imuFilteringConfigurationRegister.accelWindowSize = _binaryOutputRegister.at(b).rateDivisor;
+                        _imuFilteringConfigurationRegister.gyroWindowSize = _binaryOutputRegister.at(b).rateDivisor;
+                        _imuFilteringConfigurationRegister.tempWindowSize = _binaryOutputRegister.at(b).rateDivisor;
+                        _imuFilteringConfigurationRegister.presWindowSize = _binaryOutputRegister.at(b).rateDivisor;
+                        LOG_DATA("{}: Frequency of ImuFilter matches output frequency (coupled 'rateDivisor' and 'windowSize' of moving average filter.)", nameId());
+                    }
 
                     std::vector<size_t> binaryOutputRegistersToUpdate;
                     binaryOutputRegistersToUpdate.push_back(b);
@@ -3018,11 +3027,26 @@ void NAV::VectorNavSensor::guiConfig()
 
         if (ImGui::TreeNode(fmt::format("IMU Filtering Configuration##{}", size_t(id)).c_str()))
         {
-            ImGui::TextUnformatted("This register allows the user to configure the FIR filtering what is applied to the IMU measurements. The\n"
-                                   "filter is a uniformly-weighted moving window (boxcar) filter of configurable size. The filtering does not affect\n"
-                                   "the values used by the internal filter, but only the output values.");
+            ImGui::TextUnformatted("This register allows the user to configure the FIR filtering which is applied to the IMU measurements.\n"
+                                   "The filter is a uniformly-weighted moving window (boxcar) filter, also known as a 'moving-average' filter.\n"
+                                   "Its window size can be adjusted with respect to the internal IMU frequency (800 Hz).");
+
+            if (ImGui::Checkbox(fmt::format("Couple the Imu-Filter's rate to the output rate##{}", size_t(id)).c_str(), &_coupleImuRateOutput))
+            {
+                LOG_DEBUG("{}: coupleImuRateOutput changed to {}", nameId(), _coupleImuRateOutput);
+                flow::ApplyChanges();
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("If the window-size of the IMU's moving-average filter is smaller than the output rate "
+                                     "divisor, some samples are lost. This results in a low output rate that still contains "
+                                     "noise due to high frequencies. Therefore, it is recommended to couple the ImuFilter's "
+                                     "rate to the output rate.");
 
             int magWindowSize = _imuFilteringConfigurationRegister.magWindowSize;
+            if (_coupleImuRateOutput)
+            {
+                ImGui::BeginDisabled();
+            }
             if (ImGui::InputInt(fmt::format("Mag Window Size##{}", size_t(id)).c_str(), &magWindowSize))
             {
                 if (magWindowSize < 0)
@@ -3196,6 +3220,10 @@ void NAV::VectorNavSensor::guiConfig()
             ImGui::SameLine();
             gui::widgets::HelpMarker("The WindowSize parameters for each sensor define the number of samples at the IMU rate (default 800Hz) "
                                      "which will be averaged for each output measurement.");
+            if (_coupleImuRateOutput)
+            {
+                ImGui::EndDisabled();
+            }
 
             static constexpr std::array<std::pair<vn::protocol::uart::FilterMode, const char*>, 4> imuFilteringConfigurationFilterModes = {
                 { { vn::protocol::uart::FilterMode::FILTERMODE_NOFILTERING, "No Filtering" },
@@ -5088,6 +5116,7 @@ void NAV::VectorNavSensor::guiConfig()
     j["referenceFrameRotationMatrix"] = _referenceFrameRotationMatrix;
     j["imuFilteringConfigurationRegister"] = _imuFilteringConfigurationRegister;
     j["deltaThetaAndDeltaVelocityConfigurationRegister"] = _deltaThetaAndDeltaVelocityConfigurationRegister;
+    j["coupleImuRateOutput"] = _coupleImuRateOutput;
 
     // ###########################################################################################################
     //                                              GNSS SUBSYSTEM
@@ -5242,6 +5271,10 @@ void NAV::VectorNavSensor::restore(json const& j)
     if (j.contains("deltaThetaAndDeltaVelocityConfigurationRegister"))
     {
         j.at("deltaThetaAndDeltaVelocityConfigurationRegister").get_to(_deltaThetaAndDeltaVelocityConfigurationRegister);
+    }
+    if (j.contains("coupleImuRateOutput"))
+    {
+        j.at("coupleImuRateOutput").get_to(_coupleImuRateOutput);
     }
 
     // ###########################################################################################################
