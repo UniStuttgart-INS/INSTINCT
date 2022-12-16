@@ -95,7 +95,7 @@ void NAV::VectorNavFile::guiConfig()
 
         for (size_t i = 0; i < 16; i++)
         {
-            if (i < std::max({ VectorNavSensor::_binaryGroupCommon.size(), VectorNavSensor::_binaryGroupTime.size(), VectorNavSensor::_binaryGroupIMU.size(),
+            if (i < std::max({ /* VectorNavSensor::_binaryGroupCommon.size(), */ VectorNavSensor::_binaryGroupTime.size(), VectorNavSensor::_binaryGroupIMU.size(),
                                VectorNavSensor::_binaryGroupGNSS.size(), VectorNavSensor::_binaryGroupAttitude.size(), VectorNavSensor::_binaryGroupINS.size() }))
             {
                 ImGui::TableNextRow();

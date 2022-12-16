@@ -478,7 +478,7 @@ class VectorNavSensor : public Imu, public UartSensor
     /// you can hard code the group field to 1, and not worry about implemented support for the other binary groups.
     /// Using group 1 for commonly used outputs also has the advantage of reducing the overall packet size, since
     /// the packet length is dependent upon the number of binary groups active.
-    static const std::array<BinaryGroupData, 15> _binaryGroupCommon;
+    // static const std::array<BinaryGroupData, 15> _binaryGroupCommon;
 
     /// @brief Binary group 2 provides all timing and event counter related outputs.
     ///
