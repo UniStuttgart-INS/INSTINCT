@@ -179,6 +179,8 @@ class VectorNavSensor : public Imu, public UartSensor
     /// Couple the ImuFilter's rate (window size of moving-average filter) to the output rate (rateDivisor)
     bool _coupleImuRateOutput = true;
 
+    static void coupleImuFilterRates(NAV::VectorNavSensor* sensor, vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField);
+
     /// @brief Communication Protocol Control.
     ///
     /// Contains parameters that controls the communication protocol used by the sensor.
@@ -467,7 +469,7 @@ class VectorNavSensor : public Imu, public UartSensor
         bool (*isEnabled)(VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& bor, uint32_t binaryField) =
             [](VectorNavModel /* sensorModel */, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return true; };
         /// Function to toggle other bits depending on the status
-        void (*toggleFields)(vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) = nullptr;
+        void (*toggleFields)(VectorNavSensor* sensor, vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) = nullptr;
     };
 
     /// @brief Binary group 1 contains a wide assortment of commonly used data required for most applications.

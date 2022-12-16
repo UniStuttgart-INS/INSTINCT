@@ -625,15 +625,64 @@ void from_json(const json& j, VelocityCompensationControlRegister& velocityCompe
 } // namespace sensors
 } // namespace vn
 
+void NAV::VectorNavSensor::coupleImuFilterRates(NAV::VectorNavSensor* sensor, vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */)
+{
+    if (sensor->_coupleImuRateOutput)
+    {
+        if (bor.imuField & (vn::protocol::uart::IMUGROUP_ACCEL | vn::protocol::uart::IMUGROUP_UNCOMPACCEL))
+        {
+            sensor->_imuFilteringConfigurationRegister.accelWindowSize = bor.rateDivisor;
+        }
+        if (bor.imuField & (vn::protocol::uart::IMUGROUP_ANGULARRATE | vn::protocol::uart::IMUGROUP_UNCOMPGYRO))
+        {
+            sensor->_imuFilteringConfigurationRegister.gyroWindowSize = bor.rateDivisor;
+        }
+        if (bor.imuField & (vn::protocol::uart::IMUGROUP_MAG | vn::protocol::uart::IMUGROUP_UNCOMPMAG))
+        {
+            sensor->_imuFilteringConfigurationRegister.magWindowSize = bor.rateDivisor;
+        }
+        if (bor.imuField & (vn::protocol::uart::IMUGROUP_MAG | vn::protocol::uart::IMUGROUP_UNCOMPMAG))
+        {
+            sensor->_imuFilteringConfigurationRegister.magWindowSize = bor.rateDivisor;
+        }
+        if (bor.imuField & vn::protocol::uart::IMUGROUP_TEMP)
+        {
+            sensor->_imuFilteringConfigurationRegister.tempWindowSize = bor.rateDivisor;
+        }
+        if (bor.imuField & vn::protocol::uart::IMUGROUP_PRES)
+        {
+            sensor->_imuFilteringConfigurationRegister.presWindowSize = bor.rateDivisor;
+        }
+        LOG_DATA("{}: Frequency of ImuFilter matches output frequency (coupled 'rateDivisor' and 'windowSize' of moving average filter.)", nameId());
+
+        if (sensor->isInitialized() && sensor->_vs.isConnected() && sensor->_vs.verifySensorConnectivity())
+        {
+            try
+            {
+                sensor->_vs.writeImuFilteringConfiguration(sensor->_imuFilteringConfigurationRegister);
+            }
+            catch (const std::exception& e)
+            {
+                LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
+                sensor->doDeinitialize();
+            }
+        }
+        else
+        {
+            sensor->doDeinitialize();
+        }
+    }
+};
+
 // const std::array<NAV::VectorNavSensor::BinaryGroupData, 15> NAV::VectorNavSensor::_binaryGroupCommon = { {
 //     /*  0 */ { "TimeStartup", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP, []() { ImGui::TextUnformatted("Time since startup.\n\nThe system time since startup measured in nano seconds. The time since startup is based upon the internal\nTXCO oscillator for the MCU. The accuracy of the internal TXCO is +/- 20ppm (-40C to 85C). This field is\nequivalent to the TimeStartup field in group 2."); } },
-//     /*  1 */ { "TimeGps", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS, []() { ImGui::TextUnformatted("GPS time.\n\nThe absolute GPS time since start of GPS epoch 1980 expressed in nano seconds. This field is equivalent to\nthe TimeGps field in group 2."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
+//     /*  1 */ { "TimeGps", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS, []() { ImGui::TextUnformatted("GPS time.\n\nThe absolute GPS time since start of GPS epoch 1980 expressed in nano seconds. This field is equivalent to\nthe TimeGps field in group 2."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
 //     /*  2 */ { "TimeSyncIn", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESYNCIN, []() { ImGui::TextUnformatted("Time since last SyncIn trigger.\n\nThe time since the last SyncIn trigger event expressed in nano seconds. This field is equivalent to the\nTimeSyncIn field in group 2."); } },
 //     /*  3 */ { "YawPitchRoll", vn::protocol::uart::CommonGroup::COMMONGROUP_YAWPITCHROLL, []() { ImGui::TextUnformatted("Estimated attitude as yaw pitch and roll angles.\n\nThe estimated attitude Yaw, Pitch, and Roll angles measured in degrees. The attitude is given as a 3,2,1 Euler\nangle sequence describing the body frame with respect to the local North East Down (NED) frame. This field\nis equivalent to the YawPitchRoll field in group 5.\n\nYaw [+/- 180°]\nPitch [+/- 90°]\nRoll [+/- 180°]"); } },
 //     /*  4 */ { "Quaternion", vn::protocol::uart::CommonGroup::COMMONGROUP_QUATERNION, []() { ImGui::TextUnformatted("Estimated attitude as a quaternion.\n\nThe estimated attitude quaternion. The last term is the scalar value. The attitude is given as the body frame\nwith respect to the local North East Down (NED) frame. This field is equivalent to the Quaternion field in\ngroup 5."); } },
 //     /*  5 */ { "AngularRate", vn::protocol::uart::CommonGroup::COMMONGROUP_ANGULARRATE, []() { ImGui::TextUnformatted("Compensated angular rate.\n\nThe estimated angular rate measured in rad/s. The angular rates are compensated by the onboard filter bias\nestimates. The angular rate is expressed in the body frame. This field is equivalent to the AngularRate field\nin group 3."); } },
-//     /*  6 */ { "Position", vn::protocol::uart::CommonGroup::COMMONGROUP_POSITION, []() { ImGui::TextUnformatted("Estimated position. (LLA)\n\nThe estimated position given as latitude, longitude, and altitude given in [deg, deg, m] respectively. This field\nis equivalent to the PosLla field in group 6."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_POSITION) && (bor.commonField |= vn::protocol::uart::CommonGroup::COMMONGROUP_INSSTATUS); } },
-//     /*  7 */ { "Velocity", vn::protocol::uart::CommonGroup::COMMONGROUP_VELOCITY, []() { ImGui::TextUnformatted("Estimated velocity. (NED)\n\nThe estimated velocity in the North East Down (NED) frame, given in m/s. This field is equivalent to the\nVelNed field in group 6."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_VELOCITY) && (bor.commonField |= vn::protocol::uart::CommonGroup::COMMONGROUP_INSSTATUS); } },
+//     /*  6 */ { "Position", vn::protocol::uart::CommonGroup::COMMONGROUP_POSITION, []() { ImGui::TextUnformatted("Estimated position. (LLA)\n\nThe estimated position given as latitude, longitude, and altitude given in [deg, deg, m] respectively. This field\nis equivalent to the PosLla field in group 6."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_POSITION) && (bor.commonField |= vn::protocol::uart::CommonGroup::COMMONGROUP_INSSTATUS); } },
+//     /*  7 */ { "Velocity", vn::protocol::uart::CommonGroup::COMMONGROUP_VELOCITY, []() { ImGui::TextUnformatted("Estimated velocity. (NED)\n\nThe estimated velocity in the North East Down (NED) frame, given in m/s. This field is equivalent to the\nVelNed field in group 6."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_VELOCITY) && (bor.commonField |= vn::protocol::uart::CommonGroup::COMMONGROUP_INSSTATUS); } },
 //     /*  8 */ { "Accel", vn::protocol::uart::CommonGroup::COMMONGROUP_ACCEL, []() { ImGui::TextUnformatted("Estimated acceleration (compensated). (Body)\n\nThe estimated acceleration in the body frame, given in m/s^2. This acceleration includes gravity and has\nbeen bias compensated by the onboard INS Kalman filter. This field is equivalent to the Accel field in group 3."); } },
 //     /*  9 */ { "Imu", vn::protocol::uart::CommonGroup::COMMONGROUP_IMU, []() { ImGui::TextUnformatted("Calibrated uncompensated gyro and accelerometer measurements.\n\nThe uncompensated IMU acceleration and angular rate measurements. The acceleration is given in m/s^2,\nand the angular rate is given in rad/s. These measurements correspond to the calibrated angular rate and\nacceleration measurements straight from the IMU. The measurements have not been corrected for bias\noffset by the onboard Kalman filter. These are equivalent to the UncompAccel and UncompGyro fields in\ngroup 3."); } },
 //     /* 10 */ { "MagPres", vn::protocol::uart::CommonGroup::COMMONGROUP_MAGPRES, []() { ImGui::TextUnformatted("Calibrated magnetic (compensated), temperature, and pressure measurements.\n\nThe compensated magnetic, temperature, and pressure measurements from the IMU. The magnetic\nmeasurement is given in Gauss, and has been corrected for hard/soft iron corrections (if enabled). The\ntemperature measurement is given in Celsius. The pressure measurement is given in kPa. This field is\nequivalent to the Mag, Temp, and Pres fields in group 3.\n\nThe IP-68 enclosure on the tactical series forms an airtight (hermetic) seal isolating the internal\nsensors from the external environment. The pressure sensor is internal to this seal, and as such\nwill not measure the outside environment atmospheric pressure. It will instead read the pressure\ninside the sealed enclosure. The purpose of this sensor is to provide a means of ensuring the\nseal integrity over the lifetime of the product. Based on the Ideal Gas Law the ratio of pressure\ndivided by temperature should remain constant over both time and environmental temperature.\nWhen this is no longer the case, it can be assumed that the seal integrity has been compromised."); } },
@@ -647,12 +696,12 @@ void from_json(const json& j, VelocityCompensationControlRegister& velocityCompe
 
 const std::array<NAV::VectorNavSensor::BinaryGroupData, 10> NAV::VectorNavSensor::_binaryGroupTime = { {
     /*  0 */ { "TimeStartup", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP, []() { ImGui::TextUnformatted("Time since startup.\n\nThe system time since startup measured in nano seconds. The time since startup is based upon the internal\nTXCO oscillator for the MCU. The accuracy of the internal TXCO is +/- 20ppm (-40C to 85C)."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& bor, uint32_t /* binaryField */) { return sensorModel != VectorNavModel::VN310 || !((bor.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW) || (bor.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) || (bor.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_TOW) || (bor.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)); } },
-    /*  1 */ { "TimeGps", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS, []() { ImGui::TextUnformatted("Absolute GPS time.\n\nThe absolute GPS time since start of GPS epoch 1980 expressed in nano seconds."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
-    /*  2 */ { "GpsTow", vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW, []() { ImGui::TextUnformatted("Time since start of GPS week.\n\nThe time since the start of the current GPS time week expressed in nano seconds."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
-    /*  3 */ { "GpsWeek", vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK, []() { ImGui::TextUnformatted("GPS week.\n\nThe current GPS week."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
+    /*  1 */ { "TimeGps", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS, []() { ImGui::TextUnformatted("Absolute GPS time.\n\nThe absolute GPS time since start of GPS epoch 1980 expressed in nano seconds."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
+    /*  2 */ { "GpsTow", vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW, []() { ImGui::TextUnformatted("Time since start of GPS week.\n\nThe time since the start of the current GPS time week expressed in nano seconds."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
+    /*  3 */ { "GpsWeek", vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK, []() { ImGui::TextUnformatted("GPS week.\n\nThe current GPS week."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
     /*  4 */ { "TimeSyncIn", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN, []() { ImGui::TextUnformatted("Time since last SyncIn trigger.\n\nThe time since the last SyncIn event trigger expressed in nano seconds."); } },
     /*  5 */ { "TimeGpsPps", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS, []() { ImGui::TextUnformatted("Time since last GPS PPS trigger.\n\nThe time since the last GPS PPS trigger event expressed in nano seconds."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; } },
-    /*  6 */ { "TimeUTC", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC, []() { ImGui::TextUnformatted("UTC time.\n\nThe current UTC time. The year is given as a signed byte year offset from the year 2000. For example the\nyear 2013 would be given as year 13."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
+    /*  6 */ { "TimeUTC", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC, []() { ImGui::TextUnformatted("UTC time.\n\nThe current UTC time. The year is given as a signed byte year offset from the year 2000. For example the\nyear 2013 would be given as year 13."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
     /*  7 */ { "SyncInCnt", vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT, []() { ImGui::TextUnformatted("SyncIn trigger count.\n\nThe number of SyncIn trigger events that have occurred."); } },
     /*  8 */ { "SyncOutCnt", vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT, []() { ImGui::TextUnformatted("SyncOut trigger count.\n\nThe number of SyncOut trigger events that have occurred."); } },
     /*  9 */ { "TimeStatus", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS, []() { ImGui::TextUnformatted("Time valid status flags.");
@@ -689,22 +738,22 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 10> NAV::VectorNavSensor
 
 const std::array<NAV::VectorNavSensor::BinaryGroupData, 11> NAV::VectorNavSensor::_binaryGroupIMU{ {
     /*  0 */ { "ImuStatus", vn::protocol::uart::ImuGroup::IMUGROUP_IMUSTATUS, []() { ImGui::TextUnformatted("Status is reserved for future use. Not currently used in the current code, as such will always report 0."); }, [](VectorNavModel /* sensorModel */, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return false; } },
-    /*  1 */ { "UncompMag", vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG, []() { ImGui::TextUnformatted("Uncompensated magnetic measurement.\n\nThe IMU magnetic field measured in units of Gauss, given in the body frame. This measurement is\ncompensated by the static calibration (individual factory calibration stored in flash), and the user\ncompensation, however it is not compensated by the onboard Hard/Soft Iron estimator."); } },
-    /*  2 */ { "UncompAccel", vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL, []() { ImGui::TextUnformatted("Uncompensated acceleration measurement.\n\nThe IMU acceleration measured in units of m/s^2, given in the body frame. This measurement is\ncompensated by the static calibration (individual factory calibration stored in flash), however it is not\ncompensated by any dynamic calibration such as bias compensation from the onboard INS Kalman filter."); } },
-    /*  3 */ { "UncompGyro", vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO, []() { ImGui::TextUnformatted("Uncompensated angular rate measurement.\n\nThe IMU angular rate measured in units of rad/s, given in the body frame. This measurement is compensated\nby the static calibration (individual factory calibration stored in flash), however it is not compensated by any\ndynamic calibration such as the bias compensation from the onboard AHRS/INS Kalman filters."); } },
-    /*  4 */ { "Temp", vn::protocol::uart::ImuGroup::IMUGROUP_TEMP, []() { ImGui::TextUnformatted("Temperature measurement.\n\nThe IMU temperature measured in units of Celsius."); } },
-    /*  5 */ { "Pres", vn::protocol::uart::ImuGroup::IMUGROUP_PRES, []() { ImGui::TextUnformatted("Pressure measurement.\n\nThe IMU pressure measured in kilopascals. This is an absolute pressure measurement. Typical pressure at sea level would be around 100 kPa."); } },
+    /*  1 */ { "UncompMag", vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG, []() { ImGui::TextUnformatted("Uncompensated magnetic measurement.\n\nThe IMU magnetic field measured in units of Gauss, given in the body frame. This measurement is\ncompensated by the static calibration (individual factory calibration stored in flash), and the user\ncompensation, however it is not compensated by the onboard Hard/Soft Iron estimator."); }, [](VectorNavModel /* sensorModel */, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return true; }, coupleImuFilterRates },
+    /*  2 */ { "UncompAccel", vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL, []() { ImGui::TextUnformatted("Uncompensated acceleration measurement.\n\nThe IMU acceleration measured in units of m/s^2, given in the body frame. This measurement is\ncompensated by the static calibration (individual factory calibration stored in flash), however it is not\ncompensated by any dynamic calibration such as bias compensation from the onboard INS Kalman filter."); }, [](VectorNavModel /* sensorModel */, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return true; }, coupleImuFilterRates },
+    /*  3 */ { "UncompGyro", vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO, []() { ImGui::TextUnformatted("Uncompensated angular rate measurement.\n\nThe IMU angular rate measured in units of rad/s, given in the body frame. This measurement is compensated\nby the static calibration (individual factory calibration stored in flash), however it is not compensated by any\ndynamic calibration such as the bias compensation from the onboard AHRS/INS Kalman filters."); }, [](VectorNavModel /* sensorModel */, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return true; }, coupleImuFilterRates },
+    /*  4 */ { "Temp", vn::protocol::uart::ImuGroup::IMUGROUP_TEMP, []() { ImGui::TextUnformatted("Temperature measurement.\n\nThe IMU temperature measured in units of Celsius."); }, [](VectorNavModel /* sensorModel */, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return true; }, coupleImuFilterRates },
+    /*  5 */ { "Pres", vn::protocol::uart::ImuGroup::IMUGROUP_PRES, []() { ImGui::TextUnformatted("Pressure measurement.\n\nThe IMU pressure measured in kilopascals. This is an absolute pressure measurement. Typical pressure at sea level would be around 100 kPa."); }, [](VectorNavModel /* sensorModel */, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return true; }, coupleImuFilterRates },
     /*  6 */ { "DeltaTheta", vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA, []() { ImGui::TextUnformatted("Delta theta angles.\n\nThe delta time (dtime) is the time interval that the delta angle and velocities are integrated over. The delta\ntheta (dtheta) is the delta rotation angles incurred due to rotation, by the local body reference frame, since\nthe last time the values were outputted by the device. The delta velocity (dvel) is the delta velocity incurred\ndue to motion, by the local body reference frame, since the last time the values were outputted by the device.\nThe frame of reference of these delta measurements are determined by the IntegrationFrame field in the\nDelta Theta and Delta Velocity Configuration Register (Register 82). These delta angles and delta velocities\nare calculated based upon the onboard coning and sculling integration performed onboard the sensor at the\nfull IMU rate (default 800Hz). The integration for both the delta angles and velocities are reset each time\neither of the values are either polled or sent out due to a scheduled asynchronous ASCII or binary output.\nDelta Theta and Delta Velocity values correctly capture the nonlinearities involved in measuring motion from\na rotating strapdown platform (as opposed to the older mechanically inertial navigation systems), thus\nproviding you with the ability to integrate velocity and angular rate at much lower speeds (say for example\n10 Hz, reducing bandwidth and computational complexity), while still maintaining the same numeric\nprecision as if you had performed the integration at the full IMU measurement rate of 800Hz. Time is given\nin seconds. Delta angles are given in degrees."); } },
     /*  7 */ { "DeltaVel", vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL, []() { ImGui::TextUnformatted("Delta velocity.\n\nThe delta velocity (dvel) is the delta velocity incurred due to motion, since the last time the values were output\nby the device. The delta velocities are calculated based upon the onboard conning and sculling integration\nperformed onboard the sensor at the IMU sampling rate (nominally 800Hz). The integration for the delta\nvelocities are reset each time the values are either polled or sent out due to a scheduled asynchronous ASCII\nor binary output. Delta velocity is given in meters per second."); } },
-    /*  8 */ { "Mag", vn::protocol::uart::ImuGroup::IMUGROUP_MAG, []() { ImGui::TextUnformatted("Compensated magnetic measurement.\n\nThe IMU compensated magnetic field measured units of Gauss, and given in the body frame. This\nmeasurement is compensated by the static calibration (individual factory calibration stored in flash), the user\ncompensation, and the dynamic calibration from the onboard Hard/Soft Iron estimator."); } },
-    /*  9 */ { "Accel", vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL, []() { ImGui::TextUnformatted("Compensated acceleration measurement.\n\nThe compensated acceleration measured in units of m/s^2, and given in the body frame. This measurement\nis compensated by the static calibration (individual factory calibration stored in flash), the user\ncompensation, and the dynamic bias compensation from the onboard INS Kalman filter."); } },
-    /* 10 */ { "AngularRate", vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE, []() { ImGui::TextUnformatted("Compensated angular rate measurement.\n\nThe compensated angular rate measured in units of rad/s, and given in the body frame. This measurement\nis compensated by the static calibration (individual factor calibration stored in flash), the user compensation,\nand the dynamic bias compensation from the onboard INS Kalman filter."); } },
+    /*  8 */ { "Mag", vn::protocol::uart::ImuGroup::IMUGROUP_MAG, []() { ImGui::TextUnformatted("Compensated magnetic measurement.\n\nThe IMU compensated magnetic field measured units of Gauss, and given in the body frame. This\nmeasurement is compensated by the static calibration (individual factory calibration stored in flash), the user\ncompensation, and the dynamic calibration from the onboard Hard/Soft Iron estimator."); }, [](VectorNavModel /* sensorModel */, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return true; }, coupleImuFilterRates },
+    /*  9 */ { "Accel", vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL, []() { ImGui::TextUnformatted("Compensated acceleration measurement.\n\nThe compensated acceleration measured in units of m/s^2, and given in the body frame. This measurement\nis compensated by the static calibration (individual factory calibration stored in flash), the user\ncompensation, and the dynamic bias compensation from the onboard INS Kalman filter."); }, [](VectorNavModel /* sensorModel */, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return true; }, coupleImuFilterRates },
+    /* 10 */ { "AngularRate", vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE, []() { ImGui::TextUnformatted("Compensated angular rate measurement.\n\nThe compensated angular rate measured in units of rad/s, and given in the body frame. This measurement\nis compensated by the static calibration (individual factor calibration stored in flash), the user compensation,\nand the dynamic bias compensation from the onboard INS Kalman filter."); }, [](VectorNavModel /* sensorModel */, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return true; }, coupleImuFilterRates },
 } };
 
 const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor::_binaryGroupGNSS{ {
-    /*  0 */ { "UTC", vn::protocol::uart::GpsGroup::GPSGROUP_UTC, []() { ImGui::TextUnformatted("GPS UTC Time\n\nThe current UTC time. The year is given as a signed byte year offset from the year 2000. For example the\nyear 2013 would be given as year 13."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_UTC) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
-    /*  1 */ { "Tow", vn::protocol::uart::GpsGroup::GPSGROUP_TOW, []() { ImGui::TextUnformatted("GPS time of week\n\nThe GPS time of week given in nano seconds."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_TOW) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO) && ((bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP) || (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP)); } },
-    /*  2 */ { "Week", vn::protocol::uart::GpsGroup::GPSGROUP_WEEK, []() { ImGui::TextUnformatted("GPS week\n\nThe current GPS week."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO) && ((bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP) || (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP)); } },
+    /*  0 */ { "UTC", vn::protocol::uart::GpsGroup::GPSGROUP_UTC, []() { ImGui::TextUnformatted("GPS UTC Time\n\nThe current UTC time. The year is given as a signed byte year offset from the year 2000. For example the\nyear 2013 would be given as year 13."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_UTC) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
+    /*  1 */ { "Tow", vn::protocol::uart::GpsGroup::GPSGROUP_TOW, []() { ImGui::TextUnformatted("GPS time of week\n\nThe GPS time of week given in nano seconds."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_TOW) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO) && ((bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP) || (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP)); } },
+    /*  2 */ { "Week", vn::protocol::uart::GpsGroup::GPSGROUP_WEEK, []() { ImGui::TextUnformatted("GPS week\n\nThe current GPS week."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO) && ((bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP) || (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP)); } },
     /*  3 */ { "NumSats", vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS, []() { ImGui::TextUnformatted("Number of tracked satellites\n\nThe number of tracked GNSS satellites."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; } },
     /*  4 */ { "Fix", vn::protocol::uart::GpsGroup::GPSGROUP_FIX, []() { ImGui::TextUnformatted("GNSS fix\n\nThe current GNSS fix.");
                                                                          if (ImGui::BeginTable("VectorNavFixTooltip", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
@@ -742,13 +791,13 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
                                                                                                                                                                                               && !(static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
                                                                                                                                                                                               && !(static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_POSU)
                                                                                                                                                                                               && !(static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_VELU); } },
-    /*  5 */ { "PosLla", vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA, []() { ImGui::TextUnformatted("GNSS position (latitude, longitude, altitude)\n\nThe current GNSS position measurement given as the geodetic latitude, longitude and altitude above the\nellipsoid. The units are in [deg, deg, m] respectively."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX); } },
-    /*  6 */ { "PosEcef", vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF, []() { ImGui::TextUnformatted("GNSS position (ECEF)\n\nThe current GNSS position given in the Earth centered Earth fixed (ECEF) coordinate frame, given in meters."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX); } },
-    /*  7 */ { "VelNed", vn::protocol::uart::GpsGroup::GPSGROUP_VELNED, []() { ImGui::TextUnformatted("GNSS velocity (NED)\n\nThe current GNSS velocity in the North East Down (NED) coordinate frame, given in m/s."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX); } },
-    /*  8 */ { "VelEcef", vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF, []() { ImGui::TextUnformatted("GNSS velocity (ECEF)\n\nThe current GNSS velocity in the Earth centered Earth fixed (ECEF) coordinate frame, given in m/s."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX); } },
-    /*  9 */ { "PosU", vn::protocol::uart::GpsGroup::GPSGROUP_POSU, []() { ImGui::TextUnformatted("GNSS position uncertainty (NED)\n\nThe current GNSS position uncertainty in the North East Down (NED) coordinate frame, given in meters (1 Sigma)."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_POSU) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX); } },
-    /* 10 */ { "VelU", vn::protocol::uart::GpsGroup::GPSGROUP_VELU, []() { ImGui::TextUnformatted("GNSS velocity uncertainty\n\nThe current GNSS velocity uncertainty, given in m/s (1 Sigma)."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_VELU) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX); } },
-    /* 11 */ { "TimeU", vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU, []() { ImGui::TextUnformatted("GNSS time uncertainty\n\nThe current GPS time uncertainty, given in seconds (1 Sigma)."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
+    /*  5 */ { "PosLla", vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA, []() { ImGui::TextUnformatted("GNSS position (latitude, longitude, altitude)\n\nThe current GNSS position measurement given as the geodetic latitude, longitude and altitude above the\nellipsoid. The units are in [deg, deg, m] respectively."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX); } },
+    /*  6 */ { "PosEcef", vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF, []() { ImGui::TextUnformatted("GNSS position (ECEF)\n\nThe current GNSS position given in the Earth centered Earth fixed (ECEF) coordinate frame, given in meters."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX); } },
+    /*  7 */ { "VelNed", vn::protocol::uart::GpsGroup::GPSGROUP_VELNED, []() { ImGui::TextUnformatted("GNSS velocity (NED)\n\nThe current GNSS velocity in the North East Down (NED) coordinate frame, given in m/s."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX); } },
+    /*  8 */ { "VelEcef", vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF, []() { ImGui::TextUnformatted("GNSS velocity (ECEF)\n\nThe current GNSS velocity in the Earth centered Earth fixed (ECEF) coordinate frame, given in m/s."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX); } },
+    /*  9 */ { "PosU", vn::protocol::uart::GpsGroup::GPSGROUP_POSU, []() { ImGui::TextUnformatted("GNSS position uncertainty (NED)\n\nThe current GNSS position uncertainty in the North East Down (NED) coordinate frame, given in meters (1 Sigma)."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_POSU) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX); } },
+    /* 10 */ { "VelU", vn::protocol::uart::GpsGroup::GPSGROUP_VELU, []() { ImGui::TextUnformatted("GNSS velocity uncertainty\n\nThe current GNSS velocity uncertainty, given in m/s (1 Sigma)."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_VELU) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX); } },
+    /* 11 */ { "TimeU", vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU, []() { ImGui::TextUnformatted("GNSS time uncertainty\n\nThe current GPS time uncertainty, given in seconds (1 Sigma)."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
     /* 12 */ { "TimeInfo", vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO, []() { ImGui::TextUnformatted("GNSS time status and leap seconds\n\nFlags for valid GPS TOW, week number and UTC and current leap seconds.");
                                                                                    if (ImGui::BeginTable("VectorNavTimeInfoTooltip", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
                                                                                    {
@@ -1099,7 +1148,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("A+B+C (GAL)");
 
                                                                                      ImGui::EndTable();
-                                                                                 } }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
+                                                                                 } }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
 } };
 
 const std::array<NAV::VectorNavSensor::BinaryGroupData, 9> NAV::VectorNavSensor::_binaryGroupAttitude{ {
@@ -2530,14 +2579,50 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     _binaryOutputRegister.at(b).rateDivisor = _dividerFrequency.first.at(_binaryOutputSelectedFrequency.at(b));
                     LOG_DEBUG("{}: Frequency of Binary Group {} changed to {}", nameId(), b + 1, _dividerFrequency.second.at(_binaryOutputSelectedFrequency.at(b)));
-                    if (_coupleImuRateOutput && b == 0)
+                    if (_coupleImuRateOutput)
                     {
-                        _imuFilteringConfigurationRegister.magWindowSize = _binaryOutputRegister.at(b).rateDivisor;
-                        _imuFilteringConfigurationRegister.accelWindowSize = _binaryOutputRegister.at(b).rateDivisor;
-                        _imuFilteringConfigurationRegister.gyroWindowSize = _binaryOutputRegister.at(b).rateDivisor;
-                        _imuFilteringConfigurationRegister.tempWindowSize = _binaryOutputRegister.at(b).rateDivisor;
-                        _imuFilteringConfigurationRegister.presWindowSize = _binaryOutputRegister.at(b).rateDivisor;
+                        if (_binaryOutputRegister.at(b).imuField & (vn::protocol::uart::IMUGROUP_ACCEL | vn::protocol::uart::IMUGROUP_UNCOMPACCEL))
+                        {
+                            _imuFilteringConfigurationRegister.accelWindowSize = _binaryOutputRegister.at(b).rateDivisor;
+                        }
+                        if (_binaryOutputRegister.at(b).imuField & (vn::protocol::uart::IMUGROUP_ANGULARRATE | vn::protocol::uart::IMUGROUP_UNCOMPGYRO))
+                        {
+                            _imuFilteringConfigurationRegister.gyroWindowSize = _binaryOutputRegister.at(b).rateDivisor;
+                        }
+                        if (_binaryOutputRegister.at(b).imuField & (vn::protocol::uart::IMUGROUP_MAG | vn::protocol::uart::IMUGROUP_UNCOMPMAG))
+                        {
+                            _imuFilteringConfigurationRegister.magWindowSize = _binaryOutputRegister.at(b).rateDivisor;
+                        }
+                        if (_binaryOutputRegister.at(b).imuField & (vn::protocol::uart::IMUGROUP_MAG | vn::protocol::uart::IMUGROUP_UNCOMPMAG))
+                        {
+                            _imuFilteringConfigurationRegister.magWindowSize = _binaryOutputRegister.at(b).rateDivisor;
+                        }
+                        if (_binaryOutputRegister.at(b).imuField & vn::protocol::uart::IMUGROUP_TEMP)
+                        {
+                            _imuFilteringConfigurationRegister.tempWindowSize = _binaryOutputRegister.at(b).rateDivisor;
+                        }
+                        if (_binaryOutputRegister.at(b).imuField & vn::protocol::uart::IMUGROUP_PRES)
+                        {
+                            _imuFilteringConfigurationRegister.presWindowSize = _binaryOutputRegister.at(b).rateDivisor;
+                        }
                         LOG_DATA("{}: Frequency of ImuFilter matches output frequency (coupled 'rateDivisor' and 'windowSize' of moving average filter.)", nameId());
+
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                _vs.writeImuFilteringConfiguration(_imuFilteringConfigurationRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
+                                doDeinitialize();
+                            }
+                        }
+                        else
+                        {
+                            doDeinitialize();
+                        }
                     }
 
                     std::vector<size_t> binaryOutputRegistersToUpdate;
@@ -2599,10 +2684,10 @@ void NAV::VectorNavSensor::guiConfig()
                     ImGui::EndDisabled();
                 }
 
-                if (ImGui::BeginTable(fmt::format("##VectorNavSensorConfig ({})", size_t(id)).c_str(), 7,
+                if (ImGui::BeginTable(fmt::format("##VectorNavSensorConfig ({})", size_t(id)).c_str(), 6,
                                       ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
                 {
-                    ImGui::TableSetupColumn("Common", ImGuiTableColumnFlags_WidthFixed);
+                    // ImGui::TableSetupColumn("Common", ImGuiTableColumnFlags_WidthFixed);
                     ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthFixed);
                     ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthFixed);
                     ImGui::TableSetupColumn("GNSS1", ImGuiTableColumnFlags_WidthFixed);
@@ -2611,7 +2696,7 @@ void NAV::VectorNavSensor::guiConfig()
                     ImGui::TableSetupColumn("GNSS2", ImGuiTableColumnFlags_WidthFixed);
                     ImGui::TableHeadersRow();
 
-                    auto CheckboxFlags = [&, this](int index, const char* label, int* flags, int flags_value, bool enabled, void (*toggleFields)(vn::sensors::BinaryOutputRegister & bor, uint32_t & binaryField)) {
+                    auto CheckboxFlags = [&, this](int index, const char* label, int* flags, int flags_value, bool enabled, void (*toggleFields)(VectorNavSensor*, vn::sensors::BinaryOutputRegister&, uint32_t&)) {
                         ImGui::TableSetColumnIndex(index);
 
                         if (!enabled)
@@ -2624,7 +2709,7 @@ void NAV::VectorNavSensor::guiConfig()
                             LOG_DEBUG("{}: Field '{}' of Binary Group {} is now {}", nameId(), std::string(label).substr(0, std::string(label).find('#')), b + 1, (*flags & flags_value) ? "checked" : "unchecked");
                             if (toggleFields)
                             {
-                                toggleFields(_binaryOutputRegister.at(b), *reinterpret_cast<uint32_t*>(flags));
+                                toggleFields(this, _binaryOutputRegister.at(b), *reinterpret_cast<uint32_t*>(flags));
                             }
                             flow::ApplyChanges();
                             if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
@@ -2695,7 +2780,7 @@ void NAV::VectorNavSensor::guiConfig()
                         if (i < _binaryGroupTime.size())
                         {
                             const auto& binaryGroupItem = _binaryGroupTime.at(i);
-                            CheckboxFlags(1, fmt::format("{}##Time {} {}", binaryGroupItem.name, size_t(id), b).c_str(),
+                            CheckboxFlags(0, fmt::format("{}##Time {} {}", binaryGroupItem.name, size_t(id), b).c_str(),
                                           reinterpret_cast<int*>(&_binaryOutputRegister.at(b).timeField),
                                           binaryGroupItem.flagsValue,
                                           binaryGroupItem.isEnabled(_sensorModel, _binaryOutputRegister.at(b), static_cast<uint32_t>(_binaryOutputRegister.at(b).timeField)),
@@ -2710,7 +2795,7 @@ void NAV::VectorNavSensor::guiConfig()
                         if (i < _binaryGroupIMU.size())
                         {
                             const auto& binaryGroupItem = _binaryGroupIMU.at(i);
-                            CheckboxFlags(2, fmt::format("{}##IMU {} {}", binaryGroupItem.name, size_t(id), b).c_str(),
+                            CheckboxFlags(1, fmt::format("{}##IMU {} {}", binaryGroupItem.name, size_t(id), b).c_str(),
                                           reinterpret_cast<int*>(&_binaryOutputRegister.at(b).imuField),
                                           binaryGroupItem.flagsValue,
                                           binaryGroupItem.isEnabled(_sensorModel, _binaryOutputRegister.at(b), static_cast<uint32_t>(_binaryOutputRegister.at(b).imuField)),
@@ -2725,7 +2810,7 @@ void NAV::VectorNavSensor::guiConfig()
                         if (i < _binaryGroupGNSS.size())
                         {
                             const auto& binaryGroupItem = _binaryGroupGNSS.at(i);
-                            CheckboxFlags(3, fmt::format("{}##GNSS1 {} {}", binaryGroupItem.name, size_t(id), b).c_str(),
+                            CheckboxFlags(2, fmt::format("{}##GNSS1 {} {}", binaryGroupItem.name, size_t(id), b).c_str(),
                                           reinterpret_cast<int*>(&_binaryOutputRegister.at(b).gpsField),
                                           binaryGroupItem.flagsValue,
                                           binaryGroupItem.isEnabled(_sensorModel, _binaryOutputRegister.at(b), static_cast<uint32_t>(_binaryOutputRegister.at(b).gpsField)),
@@ -2740,7 +2825,7 @@ void NAV::VectorNavSensor::guiConfig()
                         if (i < _binaryGroupAttitude.size())
                         {
                             const auto& binaryGroupItem = _binaryGroupAttitude.at(i);
-                            CheckboxFlags(4, fmt::format("{}##Attitude {} {}", binaryGroupItem.name, size_t(id), b).c_str(),
+                            CheckboxFlags(3, fmt::format("{}##Attitude {} {}", binaryGroupItem.name, size_t(id), b).c_str(),
                                           reinterpret_cast<int*>(&_binaryOutputRegister.at(b).attitudeField),
                                           binaryGroupItem.flagsValue,
                                           binaryGroupItem.isEnabled(_sensorModel, _binaryOutputRegister.at(b), static_cast<uint32_t>(_binaryOutputRegister.at(b).attitudeField)),
@@ -2755,7 +2840,7 @@ void NAV::VectorNavSensor::guiConfig()
                         if (i < _binaryGroupINS.size())
                         {
                             const auto& binaryGroupItem = _binaryGroupINS.at(i);
-                            CheckboxFlags(5, fmt::format("{}##INS {} {}", binaryGroupItem.name, size_t(id), b).c_str(),
+                            CheckboxFlags(4, fmt::format("{}##INS {} {}", binaryGroupItem.name, size_t(id), b).c_str(),
                                           reinterpret_cast<int*>(&_binaryOutputRegister.at(b).insField),
                                           binaryGroupItem.flagsValue,
                                           binaryGroupItem.isEnabled(_sensorModel, _binaryOutputRegister.at(b), static_cast<uint32_t>(_binaryOutputRegister.at(b).insField)),
@@ -2770,7 +2855,7 @@ void NAV::VectorNavSensor::guiConfig()
                         if (i < _binaryGroupGNSS.size())
                         {
                             const auto& binaryGroupItem = _binaryGroupGNSS.at(i);
-                            CheckboxFlags(6, fmt::format("{}##GNSS2 {} {}", binaryGroupItem.name, size_t(id), b).c_str(),
+                            CheckboxFlags(5, fmt::format("{}##GNSS2 {} {}", binaryGroupItem.name, size_t(id), b).c_str(),
                                           reinterpret_cast<int*>(&_binaryOutputRegister.at(b).gps2Field),
                                           binaryGroupItem.flagsValue,
                                           binaryGroupItem.isEnabled(_sensorModel, _binaryOutputRegister.at(b), static_cast<uint32_t>(_binaryOutputRegister.at(b).gps2Field)),
@@ -6239,180 +6324,180 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
             {
                 auto obs = std::make_shared<VectorNavBinaryOutput>(vnSensor->_imuPos);
 
-                // Group 1 (Common)
-                if (vnSensor->_binaryOutputRegister.at(b).commonField != vn::protocol::uart::CommonGroup::COMMONGROUP_NONE)
-                {
-                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP)
-                    {
-                        if (!obs->timeOutputs)
-                        {
-                            obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
-                            obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
-                        }
-                        obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP;
-                        obs->timeOutputs->timeStartup = p.extractUint64();
-                    }
-                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS)
-                    {
-                        if (!obs->timeOutputs)
-                        {
-                            obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
-                            obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
-                        }
-                        obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS;
-                        obs->timeOutputs->timeStartup = p.extractUint64();
-                    }
-                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESYNCIN)
-                    {
-                        if (!obs->timeOutputs)
-                        {
-                            obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
-                            obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
-                        }
-                        obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN;
-                        obs->timeOutputs->timeSyncIn = p.extractUint64();
-                    }
-                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_YAWPITCHROLL)
-                    {
-                        if (!obs->attitudeOutputs)
-                        {
-                            obs->attitudeOutputs = std::make_shared<NAV::vendor::vectornav::AttitudeOutputs>();
-                            obs->attitudeOutputs->attitudeField |= vnSensor->_binaryOutputRegister.at(b).attitudeField;
-                        }
-                        obs->attitudeOutputs->attitudeField |= vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL;
-                        auto vec = p.extractVec3f();
-                        obs->attitudeOutputs->ypr = { vec.x, vec.y, vec.z };
-                    }
-                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_QUATERNION)
-                    {
-                        if (!obs->attitudeOutputs)
-                        {
-                            obs->attitudeOutputs = std::make_shared<NAV::vendor::vectornav::AttitudeOutputs>();
-                            obs->attitudeOutputs->attitudeField |= vnSensor->_binaryOutputRegister.at(b).attitudeField;
-                        }
-                        obs->attitudeOutputs->attitudeField |= vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION;
-                        auto vec = p.extractVec4f();
-                        obs->attitudeOutputs->qtn = { vec.w, vec.x, vec.y, vec.z };
-                    }
-                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_ANGULARRATE)
-                    {
-                        if (!obs->imuOutputs)
-                        {
-                            obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
-                            obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
-                        }
-                        obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE;
-                        auto vec = p.extractVec3f();
-                        obs->imuOutputs->angularRate = { vec.x, vec.y, vec.z };
-                    }
-                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_POSITION)
-                    {
-                        if (!obs->insOutputs)
-                        {
-                            obs->insOutputs = std::make_shared<NAV::vendor::vectornav::InsOutputs>();
-                            obs->insOutputs->insField |= vnSensor->_binaryOutputRegister.at(b).insField;
-                        }
-                        obs->insOutputs->insField |= vn::protocol::uart::InsGroup::INSGROUP_POSLLA;
-                        auto vec = p.extractVec3d();
-                        obs->insOutputs->posLla = { vec.x, vec.y, vec.z };
-                    }
-                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_VELOCITY)
-                    {
-                        if (!obs->insOutputs)
-                        {
-                            obs->insOutputs = std::make_shared<NAV::vendor::vectornav::InsOutputs>();
-                            obs->insOutputs->insField |= vnSensor->_binaryOutputRegister.at(b).insField;
-                        }
-                        obs->insOutputs->insField |= vn::protocol::uart::InsGroup::INSGROUP_VELNED;
-                        auto vec = p.extractVec3f();
-                        obs->insOutputs->velNed = { vec.x, vec.y, vec.z };
-                    }
-                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_ACCEL)
-                    {
-                        if (!obs->imuOutputs)
-                        {
-                            obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
-                            obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
-                        }
-                        obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL;
-                        auto vec = p.extractVec3f();
-                        obs->imuOutputs->accel = { vec.x, vec.y, vec.z };
-                    }
-                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_IMU)
-                    {
-                        if (!obs->imuOutputs)
-                        {
-                            obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
-                            obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
-                        }
-                        obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL;
-                        auto vec = p.extractVec3f();
-                        obs->imuOutputs->uncompAccel = { vec.x, vec.y, vec.z };
-                        obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO;
-                        vec = p.extractVec3f();
-                        obs->imuOutputs->uncompGyro = { vec.x, vec.y, vec.z };
-                    }
-                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_MAGPRES)
-                    {
-                        if (!obs->imuOutputs)
-                        {
-                            obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
-                            obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
-                        }
-                        obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_MAG;
-                        auto vec = p.extractVec3f();
-                        obs->imuOutputs->mag = { vec.x, vec.y, vec.z };
-                        obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_TEMP;
-                        obs->imuOutputs->temp = p.extractFloat();
-                        obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_PRES;
-                        obs->imuOutputs->pres = p.extractFloat();
-                    }
-                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_DELTATHETA)
-                    {
-                        if (!obs->imuOutputs)
-                        {
-                            obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
-                            obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
-                        }
-                        obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA;
-                        obs->imuOutputs->deltaTime = p.extractFloat();
-                        auto vec = p.extractVec3f();
-                        obs->imuOutputs->deltaTheta = { vec.x, vec.y, vec.z };
-                        obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL;
-                        vec = p.extractVec3f();
-                        obs->imuOutputs->deltaV = { vec.x, vec.y, vec.z };
-                    }
-                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_INSSTATUS)
-                    {
-                        if (!obs->insOutputs)
-                        {
-                            obs->insOutputs = std::make_shared<NAV::vendor::vectornav::InsOutputs>();
-                            obs->insOutputs->insField |= vnSensor->_binaryOutputRegister.at(b).insField;
-                        }
-                        obs->insOutputs->insField |= vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS;
-                        obs->insOutputs->insStatus = p.extractUint16();
-                    }
-                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESYNCIN)
-                    {
-                        if (!obs->timeOutputs)
-                        {
-                            obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
-                            obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
-                        }
-                        obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT;
-                        obs->timeOutputs->syncInCnt = p.extractUint32();
-                    }
-                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPSPPS)
-                    {
-                        if (!obs->timeOutputs)
-                        {
-                            obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
-                            obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
-                        }
-                        obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS;
-                        obs->timeOutputs->timePPS = p.extractUint64();
-                    }
-                }
+                // // Group 1 (Common)
+                // if (vnSensor->_binaryOutputRegister.at(b).commonField != vn::protocol::uart::CommonGroup::COMMONGROUP_NONE)
+                // {
+                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP)
+                //     {
+                //         if (!obs->timeOutputs)
+                //         {
+                //             obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
+                //             obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
+                //         }
+                //         obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP;
+                //         obs->timeOutputs->timeStartup = p.extractUint64();
+                //     }
+                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS)
+                //     {
+                //         if (!obs->timeOutputs)
+                //         {
+                //             obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
+                //             obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
+                //         }
+                //         obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS;
+                //         obs->timeOutputs->timeStartup = p.extractUint64();
+                //     }
+                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESYNCIN)
+                //     {
+                //         if (!obs->timeOutputs)
+                //         {
+                //             obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
+                //             obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
+                //         }
+                //         obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN;
+                //         obs->timeOutputs->timeSyncIn = p.extractUint64();
+                //     }
+                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_YAWPITCHROLL)
+                //     {
+                //         if (!obs->attitudeOutputs)
+                //         {
+                //             obs->attitudeOutputs = std::make_shared<NAV::vendor::vectornav::AttitudeOutputs>();
+                //             obs->attitudeOutputs->attitudeField |= vnSensor->_binaryOutputRegister.at(b).attitudeField;
+                //         }
+                //         obs->attitudeOutputs->attitudeField |= vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL;
+                //         auto vec = p.extractVec3f();
+                //         obs->attitudeOutputs->ypr = { vec.x, vec.y, vec.z };
+                //     }
+                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_QUATERNION)
+                //     {
+                //         if (!obs->attitudeOutputs)
+                //         {
+                //             obs->attitudeOutputs = std::make_shared<NAV::vendor::vectornav::AttitudeOutputs>();
+                //             obs->attitudeOutputs->attitudeField |= vnSensor->_binaryOutputRegister.at(b).attitudeField;
+                //         }
+                //         obs->attitudeOutputs->attitudeField |= vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION;
+                //         auto vec = p.extractVec4f();
+                //         obs->attitudeOutputs->qtn = { vec.w, vec.x, vec.y, vec.z };
+                //     }
+                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_ANGULARRATE)
+                //     {
+                //         if (!obs->imuOutputs)
+                //         {
+                //             obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
+                //             obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
+                //         }
+                //         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE;
+                //         auto vec = p.extractVec3f();
+                //         obs->imuOutputs->angularRate = { vec.x, vec.y, vec.z };
+                //     }
+                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_POSITION)
+                //     {
+                //         if (!obs->insOutputs)
+                //         {
+                //             obs->insOutputs = std::make_shared<NAV::vendor::vectornav::InsOutputs>();
+                //             obs->insOutputs->insField |= vnSensor->_binaryOutputRegister.at(b).insField;
+                //         }
+                //         obs->insOutputs->insField |= vn::protocol::uart::InsGroup::INSGROUP_POSLLA;
+                //         auto vec = p.extractVec3d();
+                //         obs->insOutputs->posLla = { vec.x, vec.y, vec.z };
+                //     }
+                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_VELOCITY)
+                //     {
+                //         if (!obs->insOutputs)
+                //         {
+                //             obs->insOutputs = std::make_shared<NAV::vendor::vectornav::InsOutputs>();
+                //             obs->insOutputs->insField |= vnSensor->_binaryOutputRegister.at(b).insField;
+                //         }
+                //         obs->insOutputs->insField |= vn::protocol::uart::InsGroup::INSGROUP_VELNED;
+                //         auto vec = p.extractVec3f();
+                //         obs->insOutputs->velNed = { vec.x, vec.y, vec.z };
+                //     }
+                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_ACCEL)
+                //     {
+                //         if (!obs->imuOutputs)
+                //         {
+                //             obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
+                //             obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
+                //         }
+                //         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL;
+                //         auto vec = p.extractVec3f();
+                //         obs->imuOutputs->accel = { vec.x, vec.y, vec.z };
+                //     }
+                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_IMU)
+                //     {
+                //         if (!obs->imuOutputs)
+                //         {
+                //             obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
+                //             obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
+                //         }
+                //         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL;
+                //         auto vec = p.extractVec3f();
+                //         obs->imuOutputs->uncompAccel = { vec.x, vec.y, vec.z };
+                //         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO;
+                //         vec = p.extractVec3f();
+                //         obs->imuOutputs->uncompGyro = { vec.x, vec.y, vec.z };
+                //     }
+                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_MAGPRES)
+                //     {
+                //         if (!obs->imuOutputs)
+                //         {
+                //             obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
+                //             obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
+                //         }
+                //         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_MAG;
+                //         auto vec = p.extractVec3f();
+                //         obs->imuOutputs->mag = { vec.x, vec.y, vec.z };
+                //         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_TEMP;
+                //         obs->imuOutputs->temp = p.extractFloat();
+                //         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_PRES;
+                //         obs->imuOutputs->pres = p.extractFloat();
+                //     }
+                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_DELTATHETA)
+                //     {
+                //         if (!obs->imuOutputs)
+                //         {
+                //             obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
+                //             obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
+                //         }
+                //         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA;
+                //         obs->imuOutputs->deltaTime = p.extractFloat();
+                //         auto vec = p.extractVec3f();
+                //         obs->imuOutputs->deltaTheta = { vec.x, vec.y, vec.z };
+                //         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL;
+                //         vec = p.extractVec3f();
+                //         obs->imuOutputs->deltaV = { vec.x, vec.y, vec.z };
+                //     }
+                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_INSSTATUS)
+                //     {
+                //         if (!obs->insOutputs)
+                //         {
+                //             obs->insOutputs = std::make_shared<NAV::vendor::vectornav::InsOutputs>();
+                //             obs->insOutputs->insField |= vnSensor->_binaryOutputRegister.at(b).insField;
+                //         }
+                //         obs->insOutputs->insField |= vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS;
+                //         obs->insOutputs->insStatus = p.extractUint16();
+                //     }
+                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESYNCIN)
+                //     {
+                //         if (!obs->timeOutputs)
+                //         {
+                //             obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
+                //             obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
+                //         }
+                //         obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT;
+                //         obs->timeOutputs->syncInCnt = p.extractUint32();
+                //     }
+                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPSPPS)
+                //     {
+                //         if (!obs->timeOutputs)
+                //         {
+                //             obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
+                //             obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
+                //         }
+                //         obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS;
+                //         obs->timeOutputs->timePPS = p.extractUint64();
+                //     }
+                // }
                 // Group 2 (Time)
                 if (vnSensor->_binaryOutputRegister.at(b).timeField != vn::protocol::uart::TimeGroup::TIMEGROUP_NONE)
                 {
