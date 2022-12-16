@@ -653,7 +653,7 @@ void NAV::VectorNavSensor::coupleImuFilterRates(NAV::VectorNavSensor* sensor, vn
         {
             sensor->_imuFilteringConfigurationRegister.presWindowSize = bor.rateDivisor;
         }
-        LOG_DATA("{}: Frequency of ImuFilter matches output frequency (coupled 'rateDivisor' and 'windowSize' of moving average filter.)", nameId());
+        LOG_DATA("Frequency of ImuFilter matches output frequency (coupled 'rateDivisor' and 'windowSize' of moving average filter.)");
 
         if (sensor->isInitialized() && sensor->_vs.isConnected() && sensor->_vs.verifySensorConnectivity())
         {
@@ -663,7 +663,7 @@ void NAV::VectorNavSensor::coupleImuFilterRates(NAV::VectorNavSensor* sensor, vn
             }
             catch (const std::exception& e)
             {
-                LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
+                LOG_ERROR("Could not configure the imuFilteringConfigurationRegister: {}", e.what());
                 sensor->doDeinitialize();
             }
         }

@@ -178,7 +178,6 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
             REQUIRE(eastWest <= (obs->insTime < timeOfFirstGnssObs ? allowedPositionOffsetImuOnly_n(1) : allowedPositionOffsetCombined_n(1)));
             REQUIRE(std::abs(obs->altitude() - refPos_lla(2)) <= (obs->insTime < timeOfFirstGnssObs ? allowedPositionOffsetImuOnly_n(2) : allowedPositionOffsetCombined_n(2)));
 
-            LOG_WARN("obs->e_velocity()(0) = {}", obs->e_velocity()(0));
             REQUIRE(obs->e_velocity()(0) <= (obs->insTime < timeOfFirstGnssObs ? allowedVelocityErrorImuOnly_e(0) : allowedVelocityErrorCombined_e(0)));
             REQUIRE(obs->e_velocity()(1) <= (obs->insTime < timeOfFirstGnssObs ? allowedVelocityErrorImuOnly_e(1) : allowedVelocityErrorCombined_e(1)));
             REQUIRE(obs->e_velocity()(2) <= (obs->insTime < timeOfFirstGnssObs ? allowedVelocityErrorImuOnly_e(2) : allowedVelocityErrorCombined_e(2)));

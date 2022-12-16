@@ -187,7 +187,7 @@ std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2
 {
     auto imuObs = std::make_shared<ImuObsWDelta>(vnObs->imuPos);
 
-    if (vnObs->gnss1Outputs && vnObs->gnss2Outputs) // If there is no GNSS data selected in the vnSensor, Imu messages should still be sent out. The VN100 will not provide any data otherwise.
+    if (vnObs->gnss1Outputs || vnObs->gnss2Outputs) // If there is no GNSS data selected in the vnSensor, Imu messages should still be sent out. The VN100 will not provide any data otherwise.
     {
         if (!vnObs->timeOutputs
             || !(vnObs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS)
@@ -198,9 +198,12 @@ std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2
         {
             return nullptr;
         }
+        imuObs->insTime = InsTime(InsTime_GPSweekTow(0, static_cast<int32_t>(vnObs->timeOutputs->gpsWeek), static_cast<double>(vnObs->timeOutputs->gpsTow) * 1e-9L));
     }
-
-    imuObs->insTime = InsTime(InsTime_GPSweekTow(0, static_cast<int32_t>(vnObs->timeOutputs->gpsWeek), static_cast<double>(vnObs->timeOutputs->gpsTow) * 1e-9L));
+    else
+    {
+        imuObs->insTime = vnObs->insTime;
+    }
 
     if (vnObs->timeOutputs)
     {
