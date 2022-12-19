@@ -701,7 +701,8 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 10> NAV::VectorNavSensor
     /*  3 */ { "GpsWeek", vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK, []() { ImGui::TextUnformatted("GPS week.\n\nThe current GPS week."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
     /*  4 */ { "TimeSyncIn", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN, []() { ImGui::TextUnformatted("Time since last SyncIn trigger.\n\nThe time since the last SyncIn event trigger expressed in nano seconds."); } },
     /*  5 */ { "TimeGpsPps", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS, []() { ImGui::TextUnformatted("Time since last GPS PPS trigger.\n\nThe time since the last GPS PPS trigger event expressed in nano seconds."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; } },
-    /*  6 */ { "TimeUTC", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC, []() { ImGui::TextUnformatted("UTC time.\n\nThe current UTC time. The year is given as a signed byte year offset from the year 2000. For example the\nyear 2013 would be given as year 13."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
+    // TODO: Show tooltip for disabled checkbox (once ImGui allows it)
+    /*  6 */ { "TimeUTC", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC, []() { ImGui::TextUnformatted("UTC time.\n\nThe current UTC time. The year is given as a signed byte year offset from the year 2000. For example the\nyear 2013 would be given as year 13."); }, [](VectorNavModel /* sensorModel */, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return false; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
     /*  7 */ { "SyncInCnt", vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT, []() { ImGui::TextUnformatted("SyncIn trigger count.\n\nThe number of SyncIn trigger events that have occurred."); } },
     /*  8 */ { "SyncOutCnt", vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT, []() { ImGui::TextUnformatted("SyncOut trigger count.\n\nThe number of SyncOut trigger events that have occurred."); } },
     /*  9 */ { "TimeStatus", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS, []() { ImGui::TextUnformatted("Time valid status flags.");
@@ -751,7 +752,8 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 11> NAV::VectorNavSensor
 } };
 
 const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor::_binaryGroupGNSS{ {
-    /*  0 */ { "UTC", vn::protocol::uart::GpsGroup::GPSGROUP_UTC, []() { ImGui::TextUnformatted("GPS UTC Time\n\nThe current UTC time. The year is given as a signed byte year offset from the year 2000. For example the\nyear 2013 would be given as year 13."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_UTC) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
+    // TODO: Show tooltip for disabled checkbox (once ImGui allows it)
+    /*  0 */ { "UTC", vn::protocol::uart::GpsGroup::GPSGROUP_UTC, []() { ImGui::TextUnformatted("GPS UTC Time\n\nThe current UTC time. The year is given as a signed byte year offset from the year 2000. For example the\nyear 2013 would be given as year 13."); }, [](VectorNavModel /* sensorModel */, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return false; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_UTC) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
     /*  1 */ { "Tow", vn::protocol::uart::GpsGroup::GPSGROUP_TOW, []() { ImGui::TextUnformatted("GPS time of week\n\nThe GPS time of week given in nano seconds."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_TOW) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO) && ((bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP) || (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP)); } },
     /*  2 */ { "Week", vn::protocol::uart::GpsGroup::GPSGROUP_WEEK, []() { ImGui::TextUnformatted("GPS week\n\nThe current GPS week."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO) && ((bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP) || (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP)); } },
     /*  3 */ { "NumSats", vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS, []() { ImGui::TextUnformatted("Number of tracked satellites\n\nThe number of tracked GNSS satellites."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; } },
@@ -6166,7 +6168,7 @@ void NAV::VectorNavSensor::mergeVectorNavBinaryObservations(const std::shared_pt
         target->timeOutputs->gpsWeek = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK ? target->timeOutputs->gpsWeek : source->timeOutputs->gpsWeek;
         target->timeOutputs->timeSyncIn = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN ? target->timeOutputs->timeSyncIn : source->timeOutputs->timeSyncIn;
         target->timeOutputs->timePPS = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS ? target->timeOutputs->timePPS : source->timeOutputs->timePPS;
-        target->timeOutputs->timeUtc = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC ? target->timeOutputs->timeUtc : source->timeOutputs->timeUtc;
+        // target->timeOutputs->timeUtc = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC ? target->timeOutputs->timeUtc : source->timeOutputs->timeUtc;
         target->timeOutputs->syncInCnt = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT ? target->timeOutputs->syncInCnt : source->timeOutputs->syncInCnt;
         target->timeOutputs->syncOutCnt = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT ? target->timeOutputs->syncOutCnt : source->timeOutputs->syncOutCnt;
         target->timeOutputs->timeStatus = target->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS ? target->timeOutputs->timeStatus : source->timeOutputs->timeStatus;
@@ -6202,7 +6204,7 @@ void NAV::VectorNavSensor::mergeVectorNavBinaryObservations(const std::shared_pt
     }
     else if (target->gnss1Outputs && source->gnss1Outputs)
     {
-        target->gnss1Outputs->timeUtc = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC ? target->gnss1Outputs->timeUtc : source->gnss1Outputs->timeUtc;
+        // target->gnss1Outputs->timeUtc = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC ? target->gnss1Outputs->timeUtc : source->gnss1Outputs->timeUtc;
         target->gnss1Outputs->tow = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW ? target->gnss1Outputs->tow : source->gnss1Outputs->tow;
         target->gnss1Outputs->week = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK ? target->gnss1Outputs->week : source->gnss1Outputs->week;
         target->gnss1Outputs->numSats = target->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS ? target->gnss1Outputs->numSats : source->gnss1Outputs->numSats;
@@ -6268,7 +6270,7 @@ void NAV::VectorNavSensor::mergeVectorNavBinaryObservations(const std::shared_pt
     }
     else if (target->gnss2Outputs && source->gnss2Outputs)
     {
-        target->gnss2Outputs->timeUtc = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC ? target->gnss2Outputs->timeUtc : source->gnss2Outputs->timeUtc;
+        // target->gnss2Outputs->timeUtc = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC ? target->gnss2Outputs->timeUtc : source->gnss2Outputs->timeUtc;
         target->gnss2Outputs->tow = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW ? target->gnss2Outputs->tow : source->gnss2Outputs->tow;
         target->gnss2Outputs->week = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK ? target->gnss2Outputs->week : source->gnss2Outputs->week;
         target->gnss2Outputs->numSats = target->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS ? target->gnss2Outputs->numSats : source->gnss2Outputs->numSats;
@@ -6531,16 +6533,16 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     {
                         obs->timeOutputs->timePPS = p.extractUint64();
                     }
-                    if (vnSensor->_binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC)
-                    {
-                        obs->timeOutputs->timeUtc.year = p.extractInt8();
-                        obs->timeOutputs->timeUtc.month = p.extractUint8();
-                        obs->timeOutputs->timeUtc.day = p.extractUint8();
-                        obs->timeOutputs->timeUtc.hour = p.extractUint8();
-                        obs->timeOutputs->timeUtc.min = p.extractUint8();
-                        obs->timeOutputs->timeUtc.sec = p.extractUint8();
-                        obs->timeOutputs->timeUtc.ms = p.extractUint16();
-                    }
+                    // if (vnSensor->_binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC)
+                    // {
+                    //     obs->timeOutputs->timeUtc.year = p.extractInt8();
+                    //     obs->timeOutputs->timeUtc.month = p.extractUint8();
+                    //     obs->timeOutputs->timeUtc.day = p.extractUint8();
+                    //     obs->timeOutputs->timeUtc.hour = p.extractUint8();
+                    //     obs->timeOutputs->timeUtc.min = p.extractUint8();
+                    //     obs->timeOutputs->timeUtc.sec = p.extractUint8();
+                    //     obs->timeOutputs->timeUtc.ms = p.extractUint16();
+                    // }
                     if (vnSensor->_binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT)
                     {
                         obs->timeOutputs->syncInCnt = p.extractUint32();
@@ -6626,16 +6628,16 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         obs->gnss1Outputs->gnssField |= vnSensor->_binaryOutputRegister.at(b).gpsField;
                     }
 
-                    if (vnSensor->_binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
-                    {
-                        obs->gnss1Outputs->timeUtc.year = p.extractInt8();
-                        obs->gnss1Outputs->timeUtc.month = p.extractUint8();
-                        obs->gnss1Outputs->timeUtc.day = p.extractUint8();
-                        obs->gnss1Outputs->timeUtc.hour = p.extractUint8();
-                        obs->gnss1Outputs->timeUtc.min = p.extractUint8();
-                        obs->gnss1Outputs->timeUtc.sec = p.extractUint8();
-                        obs->gnss1Outputs->timeUtc.ms = p.extractUint16();
-                    }
+                    // if (vnSensor->_binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
+                    // {
+                    //     obs->gnss1Outputs->timeUtc.year = p.extractInt8();
+                    //     obs->gnss1Outputs->timeUtc.month = p.extractUint8();
+                    //     obs->gnss1Outputs->timeUtc.day = p.extractUint8();
+                    //     obs->gnss1Outputs->timeUtc.hour = p.extractUint8();
+                    //     obs->gnss1Outputs->timeUtc.min = p.extractUint8();
+                    //     obs->gnss1Outputs->timeUtc.sec = p.extractUint8();
+                    //     obs->gnss1Outputs->timeUtc.ms = p.extractUint16();
+                    // }
                     if (vnSensor->_binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
                     {
                         obs->gnss1Outputs->tow = p.extractUint64();
@@ -6877,16 +6879,16 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         obs->gnss2Outputs->gnssField |= vnSensor->_binaryOutputRegister.at(b).gps2Field;
                     }
 
-                    if (vnSensor->_binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
-                    {
-                        obs->gnss2Outputs->timeUtc.year = p.extractInt8();
-                        obs->gnss2Outputs->timeUtc.month = p.extractUint8();
-                        obs->gnss2Outputs->timeUtc.day = p.extractUint8();
-                        obs->gnss2Outputs->timeUtc.hour = p.extractUint8();
-                        obs->gnss2Outputs->timeUtc.min = p.extractUint8();
-                        obs->gnss2Outputs->timeUtc.sec = p.extractUint8();
-                        obs->gnss2Outputs->timeUtc.ms = p.extractUint16();
-                    }
+                    // if (vnSensor->_binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
+                    // {
+                    //     obs->gnss2Outputs->timeUtc.year = p.extractInt8();
+                    //     obs->gnss2Outputs->timeUtc.month = p.extractUint8();
+                    //     obs->gnss2Outputs->timeUtc.day = p.extractUint8();
+                    //     obs->gnss2Outputs->timeUtc.hour = p.extractUint8();
+                    //     obs->gnss2Outputs->timeUtc.min = p.extractUint8();
+                    //     obs->gnss2Outputs->timeUtc.sec = p.extractUint8();
+                    //     obs->gnss2Outputs->timeUtc.ms = p.extractUint16();
+                    // }
                     if (vnSensor->_binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
                     {
                         obs->gnss2Outputs->tow = p.extractUint64();
@@ -7043,22 +7045,22 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
 
                         updateSyncOut(InsTime(0, obs->gnss1Outputs->week, std::floor(obs->gnss1Outputs->tow * 1e-9L + dt)));
                     }
-                    else if (obs->gnss1Outputs->timeInfo.status.utcTimeValid()
-                             && obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
-                    {
-                        obs->insTime = InsTime(InsTime_YMDHMS(2000 + obs->gnss1Outputs->timeUtc.year,
-                                                              obs->gnss1Outputs->timeUtc.month,
-                                                              obs->gnss1Outputs->timeUtc.day,
-                                                              obs->gnss1Outputs->timeUtc.hour,
-                                                              obs->gnss1Outputs->timeUtc.min,
-                                                              obs->gnss1Outputs->timeUtc.sec + static_cast<long double>(obs->gnss1Outputs->timeUtc.ms) * 1e-3L));
-                        updateSyncOut(InsTime(InsTime_YMDHMS(2000 + obs->gnss1Outputs->timeUtc.year,
-                                                             obs->gnss1Outputs->timeUtc.month,
-                                                             obs->gnss1Outputs->timeUtc.day,
-                                                             obs->gnss1Outputs->timeUtc.hour,
-                                                             obs->gnss1Outputs->timeUtc.min,
-                                                             obs->gnss1Outputs->timeUtc.sec)));
-                    }
+                    // else if (obs->gnss1Outputs->timeInfo.status.utcTimeValid()
+                    //          && obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
+                    // {
+                    //     obs->insTime = InsTime(InsTime_YMDHMS(2000 + obs->gnss1Outputs->timeUtc.year,
+                    //                                           obs->gnss1Outputs->timeUtc.month,
+                    //                                           obs->gnss1Outputs->timeUtc.day,
+                    //                                           obs->gnss1Outputs->timeUtc.hour,
+                    //                                           obs->gnss1Outputs->timeUtc.min,
+                    //                                           obs->gnss1Outputs->timeUtc.sec + static_cast<long double>(obs->gnss1Outputs->timeUtc.ms) * 1e-3L));
+                    //     updateSyncOut(InsTime(InsTime_YMDHMS(2000 + obs->gnss1Outputs->timeUtc.year,
+                    //                                          obs->gnss1Outputs->timeUtc.month,
+                    //                                          obs->gnss1Outputs->timeUtc.day,
+                    //                                          obs->gnss1Outputs->timeUtc.hour,
+                    //                                          obs->gnss1Outputs->timeUtc.min,
+                    //                                          obs->gnss1Outputs->timeUtc.sec)));
+                    // }
                 }
                 // Group 7 (GNSS2)
                 if (obs->insTime.empty()
@@ -7088,22 +7090,22 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
 
                         updateSyncOut(InsTime(0, obs->gnss2Outputs->week, std::floor(obs->gnss2Outputs->tow * 1e-9L + dt)));
                     }
-                    else if (obs->gnss2Outputs->timeInfo.status.utcTimeValid()
-                             && obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
-                    {
-                        obs->insTime = InsTime(InsTime_YMDHMS(2000 + obs->gnss2Outputs->timeUtc.year,
-                                                              obs->gnss2Outputs->timeUtc.month,
-                                                              obs->gnss2Outputs->timeUtc.day,
-                                                              obs->gnss2Outputs->timeUtc.hour,
-                                                              obs->gnss2Outputs->timeUtc.min,
-                                                              obs->gnss2Outputs->timeUtc.sec + static_cast<long double>(obs->gnss2Outputs->timeUtc.ms) * 1e-3L));
-                        updateSyncOut(InsTime(InsTime_YMDHMS(2000 + obs->gnss2Outputs->timeUtc.year,
-                                                             obs->gnss2Outputs->timeUtc.month,
-                                                             obs->gnss2Outputs->timeUtc.day,
-                                                             obs->gnss2Outputs->timeUtc.hour,
-                                                             obs->gnss2Outputs->timeUtc.min,
-                                                             obs->gnss2Outputs->timeUtc.sec)));
-                    }
+                    // else if (obs->gnss2Outputs->timeInfo.status.utcTimeValid()
+                    //          && obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
+                    // {
+                    //     obs->insTime = InsTime(InsTime_YMDHMS(2000 + obs->gnss2Outputs->timeUtc.year,
+                    //                                           obs->gnss2Outputs->timeUtc.month,
+                    //                                           obs->gnss2Outputs->timeUtc.day,
+                    //                                           obs->gnss2Outputs->timeUtc.hour,
+                    //                                           obs->gnss2Outputs->timeUtc.min,
+                    //                                           obs->gnss2Outputs->timeUtc.sec + static_cast<long double>(obs->gnss2Outputs->timeUtc.ms) * 1e-3L));
+                    //     updateSyncOut(InsTime(InsTime_YMDHMS(2000 + obs->gnss2Outputs->timeUtc.year,
+                    //                                          obs->gnss2Outputs->timeUtc.month,
+                    //                                          obs->gnss2Outputs->timeUtc.day,
+                    //                                          obs->gnss2Outputs->timeUtc.hour,
+                    //                                          obs->gnss2Outputs->timeUtc.min,
+                    //                                          obs->gnss2Outputs->timeUtc.sec)));
+                    // }
                 }
                 // Group 2 (Time)
                 if (obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS))
@@ -7127,23 +7129,23 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                             updateSyncOut(InsTime(0, week, std::floor(tow)));
                         }
                     }
-                    if (obs->insTime.empty()
-                        && obs->timeOutputs->timeStatus.utcTimeValid()
-                        && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC))
-                    {
-                        obs->insTime = InsTime(InsTime_YMDHMS(2000 + obs->timeOutputs->timeUtc.year,
-                                                              obs->timeOutputs->timeUtc.month,
-                                                              obs->timeOutputs->timeUtc.day,
-                                                              obs->timeOutputs->timeUtc.hour,
-                                                              obs->timeOutputs->timeUtc.min,
-                                                              obs->timeOutputs->timeUtc.sec + static_cast<long double>(obs->timeOutputs->timeUtc.ms) * 1e-3L));
-                        updateSyncOut(InsTime(InsTime_YMDHMS(2000 + obs->timeOutputs->timeUtc.year,
-                                                             obs->timeOutputs->timeUtc.month,
-                                                             obs->timeOutputs->timeUtc.day,
-                                                             obs->timeOutputs->timeUtc.hour,
-                                                             obs->timeOutputs->timeUtc.min,
-                                                             obs->timeOutputs->timeUtc.sec)));
-                    }
+                    // if (obs->insTime.empty()
+                    //     && obs->timeOutputs->timeStatus.utcTimeValid()
+                    //     && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC))
+                    // {
+                    //     obs->insTime = InsTime(InsTime_YMDHMS(2000 + obs->timeOutputs->timeUtc.year,
+                    //                                           obs->timeOutputs->timeUtc.month,
+                    //                                           obs->timeOutputs->timeUtc.day,
+                    //                                           obs->timeOutputs->timeUtc.hour,
+                    //                                           obs->timeOutputs->timeUtc.min,
+                    //                                           obs->timeOutputs->timeUtc.sec + static_cast<long double>(obs->timeOutputs->timeUtc.ms) * 1e-3L));
+                    //     updateSyncOut(InsTime(InsTime_YMDHMS(2000 + obs->timeOutputs->timeUtc.year,
+                    //                                          obs->timeOutputs->timeUtc.month,
+                    //                                          obs->timeOutputs->timeUtc.day,
+                    //                                          obs->timeOutputs->timeUtc.hour,
+                    //                                          obs->timeOutputs->timeUtc.min,
+                    //                                          obs->timeOutputs->timeUtc.sec)));
+                    // }
                 }
 
                 if (obs->insTime.empty()                                                        // Look for master to give GNSS time
