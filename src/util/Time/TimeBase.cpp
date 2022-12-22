@@ -9,6 +9,7 @@
 #include "TimeBase.hpp"
 
 #include <chrono>
+#include <ctime>
 
 #include "util/Logger.hpp"
 
@@ -81,6 +82,16 @@ void NAV::util::time::SetCurrentTime(const NAV::InsTime& insTime)
         currentTime = insTime;
         LOG_DATA("Updating current Time [{}] to [{} ]", currentExactTime, insTime);
     }
+}
+
+void NAV::util::time::SetCurrentTimeToComputerTime()
+{
+    std::time_t t = std::time(nullptr);
+    std::tm* now = std::localtime(&t); // NOLINT(concurrency-mt-unsafe)
+
+    currentTimeComputer = std::chrono::steady_clock::now();
+    currentTime = InsTime{ static_cast<uint16_t>(now->tm_year + 1900), static_cast<uint16_t>(now->tm_mon), static_cast<uint16_t>(now->tm_mday),
+                           static_cast<uint16_t>(now->tm_hour), static_cast<uint16_t>(now->tm_min), static_cast<long double>(now->tm_sec) };
 }
 
 void NAV::util::time::ClearCurrentTime()

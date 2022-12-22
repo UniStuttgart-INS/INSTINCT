@@ -21,6 +21,7 @@
 namespace nm = NAV::NodeManager;
 
 #include "util/Logger.hpp"
+#include "util/Time/TimeBase.hpp"
 #include "Sleep.hpp"
 
 #ifdef TESTING
@@ -58,6 +59,8 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
 
     // Register all Node Data Types which are available to the program
     NAV::NodeRegistry::RegisterNodeDataTypes();
+
+    util::time::SetCurrentTimeToComputerTime();
 
     if (sizeof(long double) != 16)
     {
