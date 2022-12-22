@@ -376,7 +376,7 @@ void compareGnssObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutp
     REQUIRE(obs->insOutputs != nullptr);
 
     REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS));
-    REQUIRE(obs->insOutputs->insStatus.mode() == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssData).at(GnssRef_INS_InsStatus_Mode)));
+    REQUIRE(obs->insOutputs->insStatus.mode() == static_cast<NAV::vendor::vectornav::InsStatus::Mode>(GNSS_REFERENCE_DATA.at(messageCounterGnssData).at(GnssRef_INS_InsStatus_Mode)));
     REQUIRE(obs->insOutputs->insStatus.gpsFix() == static_cast<bool>(GNSS_REFERENCE_DATA.at(messageCounterGnssData).at(GnssRef_INS_InsStatus_GpsFix)));
     REQUIRE(obs->insOutputs->insStatus.errorIMU() == static_cast<bool>(GNSS_REFERENCE_DATA.at(messageCounterGnssData).at(GnssRef_INS_InsStatus_Error_IMU)));
     REQUIRE(obs->insOutputs->insStatus.errorMagPres() == static_cast<bool>(GNSS_REFERENCE_DATA.at(messageCounterGnssData).at(GnssRef_INS_InsStatus_Error_MagPres)));
@@ -731,7 +731,7 @@ void compareDynamicSizeObservation(const std::shared_ptr<const NAV::VectorNavBin
     REQUIRE(obs->insOutputs != nullptr);
 
     REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS));
-    REQUIRE(obs->insOutputs->insStatus.mode() == static_cast<uint8_t>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_InsStatus_Mode)));
+    REQUIRE(obs->insOutputs->insStatus.mode() == static_cast<NAV::vendor::vectornav::InsStatus::Mode>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_InsStatus_Mode)));
     REQUIRE(obs->insOutputs->insStatus.gpsFix() == static_cast<bool>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_InsStatus_GpsFix)));
     REQUIRE(obs->insOutputs->insStatus.errorIMU() == static_cast<bool>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_InsStatus_Error_IMU)));
     REQUIRE(obs->insOutputs->insStatus.errorMagPres() == static_cast<bool>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_InsStatus_Error_MagPres)));

@@ -39,6 +39,9 @@ InsTime GetCurrentInsTime();
 /// @param[in] insTime The new current time
 void SetCurrentTime(const InsTime& insTime);
 
+/// @brief Set the current time object to the computer time
+void SetCurrentTimeToComputerTime();
+
 /// @brief Clears the current time object
 void ClearCurrentTime();
 
