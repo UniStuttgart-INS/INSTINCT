@@ -7142,96 +7142,6 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     }
                 };
 
-                // Group 4 (GNSS1)
-                if (obs->insTime.empty()
-                    && obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO))
-                {
-                    if ((obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
-                        && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
-                        && (obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP))
-                        && obs->gnss1Outputs->timeInfo.status.dateOk() && obs->gnss1Outputs->timeInfo.status.timeOk())
-                    {
-                        obs->insTime = InsTime(InsTime_GPSweekTow(0, obs->gnss1Outputs->week, obs->gnss1Outputs->tow * 1e-9L));
-
-                        long double dt = 0.0L;
-                        if (obs->insTime > vnSensor->_gnssTimeCounter.lastGnssTime) // First message of the current GNSS time, so dt = 0
-                        {
-                            LOG_DATA("Setting GNSS time: {} - {}", obs->insTime, obs->insTime.toGPSweekTow());
-                            vnSensor->_gnssTimeCounter.lastGnssTime = obs->insTime;
-                            vnSensor->_gnssTimeCounter.timeSinceStartup = obs->timeOutputs->timeStartup;
-                        }
-                        else // Here we need to add the relative time difference
-                        {
-                            dt = (obs->timeOutputs->timeStartup - vnSensor->_gnssTimeCounter.timeSinceStartup) * 1e-9L;
-
-                            obs->insTime += std::chrono::duration<long double>(dt);
-                            LOG_DATA("Setting GNSS time: {} - {} (dt = {}s)", obs->insTime, obs->insTime.toGPSweekTow(), dt);
-                        }
-
-                        updateSyncOut(InsTime(0, obs->gnss1Outputs->week, std::floor(obs->gnss1Outputs->tow * 1e-9L + dt)));
-                    }
-                    // else if (obs->gnss1Outputs->timeInfo.status.utcTimeValid()
-                    //          && obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
-                    // {
-                    //     obs->insTime = InsTime(InsTime_YMDHMS(2000 + obs->gnss1Outputs->timeUtc.year,
-                    //                                           obs->gnss1Outputs->timeUtc.month,
-                    //                                           obs->gnss1Outputs->timeUtc.day,
-                    //                                           obs->gnss1Outputs->timeUtc.hour,
-                    //                                           obs->gnss1Outputs->timeUtc.min,
-                    //                                           obs->gnss1Outputs->timeUtc.sec + static_cast<long double>(obs->gnss1Outputs->timeUtc.ms) * 1e-3L));
-                    //     updateSyncOut(InsTime(InsTime_YMDHMS(2000 + obs->gnss1Outputs->timeUtc.year,
-                    //                                          obs->gnss1Outputs->timeUtc.month,
-                    //                                          obs->gnss1Outputs->timeUtc.day,
-                    //                                          obs->gnss1Outputs->timeUtc.hour,
-                    //                                          obs->gnss1Outputs->timeUtc.min,
-                    //                                          obs->gnss1Outputs->timeUtc.sec)));
-                    // }
-                }
-                // Group 7 (GNSS2)
-                if (obs->insTime.empty()
-                    && obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO))
-                {
-                    if ((obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
-                        && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
-                        && (obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP))
-                        && obs->gnss2Outputs->timeInfo.status.dateOk() && obs->gnss2Outputs->timeInfo.status.timeOk())
-                    {
-                        obs->insTime = InsTime(InsTime_GPSweekTow(0, obs->gnss2Outputs->week, obs->gnss2Outputs->tow * 1e-9L));
-
-                        long double dt = 0.0L;
-                        if (obs->insTime > vnSensor->_gnssTimeCounter.lastGnssTime) // First message of the current GNSS time, so dt = 0
-                        {
-                            LOG_DATA("Setting GNSS time: {} - {}", obs->insTime, obs->insTime.toGPSweekTow());
-                            vnSensor->_gnssTimeCounter.lastGnssTime = obs->insTime;
-                            vnSensor->_gnssTimeCounter.timeSinceStartup = obs->timeOutputs->timeStartup;
-                        }
-                        else // Here we need to add the relative time difference
-                        {
-                            dt = (obs->timeOutputs->timeStartup - vnSensor->_gnssTimeCounter.timeSinceStartup) * 1e-9L;
-
-                            obs->insTime += std::chrono::duration<long double>(dt);
-                            LOG_DATA("Setting GNSS time: {} - {} (dt = {}s)", obs->insTime, obs->insTime.toGPSweekTow(), dt);
-                        }
-
-                        updateSyncOut(InsTime(0, obs->gnss2Outputs->week, std::floor(obs->gnss2Outputs->tow * 1e-9L + dt)));
-                    }
-                    // else if (obs->gnss2Outputs->timeInfo.status.utcTimeValid()
-                    //          && obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
-                    // {
-                    //     obs->insTime = InsTime(InsTime_YMDHMS(2000 + obs->gnss2Outputs->timeUtc.year,
-                    //                                           obs->gnss2Outputs->timeUtc.month,
-                    //                                           obs->gnss2Outputs->timeUtc.day,
-                    //                                           obs->gnss2Outputs->timeUtc.hour,
-                    //                                           obs->gnss2Outputs->timeUtc.min,
-                    //                                           obs->gnss2Outputs->timeUtc.sec + static_cast<long double>(obs->gnss2Outputs->timeUtc.ms) * 1e-3L));
-                    //     updateSyncOut(InsTime(InsTime_YMDHMS(2000 + obs->gnss2Outputs->timeUtc.year,
-                    //                                          obs->gnss2Outputs->timeUtc.month,
-                    //                                          obs->gnss2Outputs->timeUtc.day,
-                    //                                          obs->gnss2Outputs->timeUtc.hour,
-                    //                                          obs->gnss2Outputs->timeUtc.min,
-                    //                                          obs->gnss2Outputs->timeUtc.sec)));
-                    // }
-                }
                 // Group 2 (Time)
                 if (obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS))
                 {
@@ -7254,23 +7164,6 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                             updateSyncOut(InsTime(0, week, std::floor(tow)));
                         }
                     }
-                    // if (obs->insTime.empty()
-                    //     && obs->timeOutputs->timeStatus.utcTimeValid()
-                    //     && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC))
-                    // {
-                    //     obs->insTime = InsTime(InsTime_YMDHMS(2000 + obs->timeOutputs->timeUtc.year,
-                    //                                           obs->timeOutputs->timeUtc.month,
-                    //                                           obs->timeOutputs->timeUtc.day,
-                    //                                           obs->timeOutputs->timeUtc.hour,
-                    //                                           obs->timeOutputs->timeUtc.min,
-                    //                                           obs->timeOutputs->timeUtc.sec + static_cast<long double>(obs->timeOutputs->timeUtc.ms) * 1e-3L));
-                    //     updateSyncOut(InsTime(InsTime_YMDHMS(2000 + obs->timeOutputs->timeUtc.year,
-                    //                                          obs->timeOutputs->timeUtc.month,
-                    //                                          obs->timeOutputs->timeUtc.day,
-                    //                                          obs->timeOutputs->timeUtc.hour,
-                    //                                          obs->timeOutputs->timeUtc.min,
-                    //                                          obs->timeOutputs->timeUtc.sec)));
-                    // }
                 }
 
                 if (obs->insTime.empty()                                                        // Look for master to give GNSS time
@@ -7296,7 +7189,11 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     if (mutex) { mutex->unlock(); }
                 }
 
-                if (obs->insTime.empty()) // Look if other sensors have set a global time
+                if (obs->insTime.empty()  // Look if other sensors have set a global time
+                    && !(obs->timeOutputs // but only if we did not request the time from the sensor via GNSS
+                         && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS)
+                         && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
+                         && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK)))
                 {
                     if (InsTime currentTime = util::time::GetCurrentInsTime();
                         !currentTime.empty())
