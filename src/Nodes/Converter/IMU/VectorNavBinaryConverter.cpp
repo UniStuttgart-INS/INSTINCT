@@ -187,7 +187,7 @@ std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2
 {
     auto imuObs = std::make_shared<ImuObsWDelta>(vnObs->imuPos);
 
-    if (vnObs->gnss1Outputs || vnObs->gnss2Outputs) // If there is no GNSS data selected in the vnSensor, Imu messages should still be sent out. The VN100 will not provide any data otherwise.
+    if (vnObs->gnss1Outputs || vnObs->gnss2Outputs) // If there is no GNSS data selected in the vnSensor, Imu messages should still be sent out. The VN-100 will not provide any data otherwise.
     {
         if (!vnObs->timeOutputs
             || !(vnObs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS)
@@ -202,6 +202,9 @@ std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2
     }
     else
     {
+        // VN-100 vnObs->insTime is set from
+        // - 'timeSyncMaster->ppsTime + timeSyncIn' when working together with the VN-310E or
+        // - the computer time
         imuObs->insTime = vnObs->insTime;
     }
 
@@ -291,7 +294,9 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
     auto posVelAttObs = std::make_shared<PosVelAtt>();
 
     if ((_posVelSource == PosVelSource_Best || _posVelSource == PosVelSource_Ins)
-        && vnObs->insOutputs && (vnObs->insOutputs->insStatus.mode() == 1 || vnObs->insOutputs->insStatus.mode() == 2))
+        && vnObs->insOutputs
+        && (vnObs->insOutputs->insStatus.mode() == NAV::vendor::vectornav::InsStatus::Mode::Aligning
+            || vnObs->insOutputs->insStatus.mode() == NAV::vendor::vectornav::InsStatus::Mode::Tracking))
     {
         if (!vnObs->timeOutputs
             || !(vnObs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS)

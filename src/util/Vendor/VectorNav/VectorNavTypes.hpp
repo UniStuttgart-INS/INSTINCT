@@ -586,6 +586,33 @@ class VpeStatus
 class InsStatus
 {
   public:
+    /// @brief Indicates the current mode of the INS filter.
+    enum class Mode
+    {
+        /// @brief Not tracking.
+        ///
+        /// GNSS Compass is initializing. Output heading is based on magnetometer measurements.
+        NotTracking = 0,
+        /// @brief INS Filter is dynamically aligning.
+        ///
+        /// For a stationary startup: GNSS Compass has initialized and INS Filter is
+        /// aligning from the magnetic heading to the GNSS Compass heading.
+        /// For a dynamic startup: INS Filter has initialized and is dynamically aligning to
+        /// True North heading.
+        /// In operation, if the INS Filter drops from INS Mode 2 back down to 1, the
+        /// attitude uncertainty has increased above 2 degrees.
+        Aligning = 1,
+        /// @brief Tracking.
+        ///
+        /// The INS Filter is tracking and operating within specification.
+        Tracking = 2,
+        /// @brief Loss of GNSS.
+        ///
+        /// A GNSS outage has lasted more than 45 seconds. The INS Filter will
+        /// no longer update the position and velocity outputs, but the attitude remains valid.
+        LossOfGNSS = 3,
+    };
+
     /// Constructor
     /// @param[in] status Status to set
     explicit InsStatus(uint16_t status) : _status(status) {}
@@ -608,9 +635,9 @@ class InsStatus
     }
 
     /// Extract the current mode of the INS filter from the ins status
-    [[nodiscard]] constexpr uint8_t mode() const
+    [[nodiscard]] constexpr Mode mode() const
     {
-        return ((_status & (1U << 0U | 1U << 1U)) >> 0U);
+        return static_cast<Mode>((_status & (1U << 0U | 1U << 1U)) >> 0U);
     }
     /// Extract the GPS Fix from the ins status
     [[nodiscard]] constexpr bool gpsFix() const
