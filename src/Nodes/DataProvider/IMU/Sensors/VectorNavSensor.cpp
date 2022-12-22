@@ -2897,7 +2897,7 @@ void NAV::VectorNavSensor::guiConfig()
                         //                   binaryGroupItem.flagsValue,
                         //                   binaryGroupItem.isEnabled(_sensorModel, _binaryOutputRegister.at(b), static_cast<uint32_t>(_binaryOutputRegister.at(b).commonField)),
                         //                   binaryGroupItem.toggleFields);
-                        //     if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                        //     if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled) && binaryGroupItem.tooltip != nullptr)
                         //     {
                         //         ImGui::BeginTooltip();
                         //         binaryGroupItem.tooltip();
@@ -2912,7 +2912,7 @@ void NAV::VectorNavSensor::guiConfig()
                                           binaryGroupItem.flagsValue,
                                           binaryGroupItem.isEnabled(_sensorModel, _binaryOutputRegister.at(b), static_cast<uint32_t>(_binaryOutputRegister.at(b).timeField)),
                                           binaryGroupItem.toggleFields);
-                            if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                            if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled) && binaryGroupItem.tooltip != nullptr)
                             {
                                 ImGui::BeginTooltip();
                                 binaryGroupItem.tooltip();
@@ -2927,7 +2927,7 @@ void NAV::VectorNavSensor::guiConfig()
                                           binaryGroupItem.flagsValue,
                                           binaryGroupItem.isEnabled(_sensorModel, _binaryOutputRegister.at(b), static_cast<uint32_t>(_binaryOutputRegister.at(b).imuField)),
                                           binaryGroupItem.toggleFields);
-                            if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                            if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled) && binaryGroupItem.tooltip != nullptr)
                             {
                                 ImGui::BeginTooltip();
                                 binaryGroupItem.tooltip();
@@ -2942,7 +2942,7 @@ void NAV::VectorNavSensor::guiConfig()
                                           binaryGroupItem.flagsValue,
                                           binaryGroupItem.isEnabled(_sensorModel, _binaryOutputRegister.at(b), static_cast<uint32_t>(_binaryOutputRegister.at(b).gpsField)),
                                           binaryGroupItem.toggleFields);
-                            if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                            if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled) && binaryGroupItem.tooltip != nullptr)
                             {
                                 ImGui::BeginTooltip();
                                 binaryGroupItem.tooltip();
@@ -2957,7 +2957,7 @@ void NAV::VectorNavSensor::guiConfig()
                                           binaryGroupItem.flagsValue,
                                           binaryGroupItem.isEnabled(_sensorModel, _binaryOutputRegister.at(b), static_cast<uint32_t>(_binaryOutputRegister.at(b).attitudeField)),
                                           binaryGroupItem.toggleFields);
-                            if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                            if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled) && binaryGroupItem.tooltip != nullptr)
                             {
                                 ImGui::BeginTooltip();
                                 binaryGroupItem.tooltip();
@@ -2972,7 +2972,7 @@ void NAV::VectorNavSensor::guiConfig()
                                           binaryGroupItem.flagsValue,
                                           binaryGroupItem.isEnabled(_sensorModel, _binaryOutputRegister.at(b), static_cast<uint32_t>(_binaryOutputRegister.at(b).insField)),
                                           binaryGroupItem.toggleFields);
-                            if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                            if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled) && binaryGroupItem.tooltip != nullptr)
                             {
                                 ImGui::BeginTooltip();
                                 binaryGroupItem.tooltip();
@@ -2987,7 +2987,7 @@ void NAV::VectorNavSensor::guiConfig()
                                           binaryGroupItem.flagsValue,
                                           binaryGroupItem.isEnabled(_sensorModel, _binaryOutputRegister.at(b), static_cast<uint32_t>(_binaryOutputRegister.at(b).gps2Field)),
                                           binaryGroupItem.toggleFields);
-                            if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                            if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled) && binaryGroupItem.tooltip != nullptr)
                             {
                                 ImGui::BeginTooltip();
                                 binaryGroupItem.tooltip();
