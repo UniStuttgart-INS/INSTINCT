@@ -272,8 +272,7 @@
                 "args": [
                     "--build",
                     "build/${input:buildType}-msvc",
-                    "--",
-                    "-maxCpuCount",
+                    "--parallel8",
                 ],
                 "options": {
                     "env": {
@@ -347,7 +346,7 @@
                 "kind": "test",
                 "isDefault": true
             },
-            "command": "./build/bin/${input:buildType}/instinct",
+            "command": "${workspaceFolder}/build/bin/${input:buildType}/instinct",
             "args": [
                 "--config=config.ini",
                 "--load=\"flow/Default.flow\"",
@@ -389,12 +388,12 @@
             ],
             "linux": {
                 "options": {
-                    "cwd": "build/${input:buildType}-${input:compiler}",
+                    "cwd": "${workspaceFolder}/build/${input:buildType}-${input:compiler}",
                 },
             },
             "windows": {
                 "options": {
-                    "cwd": "build/${input:buildType}-msvc",
+                    "cwd": "${workspaceFolder}/build/${input:buildType}-msvc",
                 },
             },
             "dependsOn": [
@@ -417,7 +416,7 @@
                 // "--verbose",
             ],
             "options": {
-                "cwd": "build/${input:buildType}-${input:compiler}",
+                "cwd": "${workspaceFolder}/build/${input:buildType}-${input:compiler}",
             },
             "dependsOn": [
                 "TEST: Build project",
@@ -435,7 +434,7 @@
                 // "--verbose",
             ],
             "options": {
-                "cwd": "build/Debug-cov",
+                "cwd": "${workspaceFolder}/build/Debug-cov",
             },
             "dependsOn": [
                 "COVERAGE: Build Coverage Report",
@@ -455,7 +454,7 @@
                 // "--verbose",
             ],
             "options": {
-                "cwd": "build/Debug-cov",
+                "cwd": "${workspaceFolder}/build/Debug-cov",
             },
             "dependsOn": [
                 "COVERAGE: Build Coverage Report",

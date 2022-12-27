@@ -115,11 +115,17 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 include(cmake/Conan.cmake)
-run_conan()
 
 # ######################################################################################################################
 # Libraries (inlcude as SYSTEM, to prevent Static Analazers to scan them)
 # ######################################################################################################################
+
+find_package(fmt REQUIRED)
+find_package(spdlog REQUIRED)
+find_package(Boost REQUIRED)
+find_package(Eigen3 REQUIRED)
+find_package(Catch2 3 REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
 # ------------------------------------------------- imgui ------------------------------------------------
 

@@ -36,9 +36,10 @@ namespace NAV
 /// @brief Utility Namespace for Time related tasks
 namespace InsTimeUtil
 {
-constexpr int32_t END_OF_THE_CENTURY_MJD = 400000; ///< Modified Julian Date of the end of the century (15.01.2954)
-constexpr int32_t WEEKS_PER_GPS_CYCLE = 1024;      ///< Weeks per GPS cycle
-constexpr int32_t DIFF_TO_6_1_1980_MJD = 44244;    ///< 06.01.1980 in Modified Julian Date
+constexpr int32_t END_OF_THE_CENTURY_MJD = 400000;   ///< Modified Julian Date of the end of the century (15.01.2954)
+constexpr int32_t WEEKS_PER_GPS_CYCLE = 1024;        ///< Weeks per GPS cycle
+constexpr int32_t DIFF_TO_6_1_1980_MJD = 44244;      ///< 06.01.1980 in Modified Julian Date
+constexpr int32_t DIFF_BDT_WEEK_TO_GPST_WEEK = 1356; ///< BeiDou starts zero at 1-Jan-2006 and GPS starts 6-Jan-1980
 
 constexpr int32_t DIFF_MJD_TO_JD_DAYS = 2400000;  ///< Difference of the days between MJD and JD
 constexpr long double DIFF_MJD_TO_JD_FRAC = 0.5L; ///< Difference of the fraction between MJD and JD
@@ -335,7 +336,7 @@ struct InsTime_GPSweekTow
         if (this->tow >= InsTimeUtil::SECONDS_PER_WEEK)
         {
             this->gpsWeek += static_cast<int32_t>(this->tow / InsTimeUtil::SECONDS_PER_WEEK);
-            this->tow = static_cast<int64_t>(this->tow) % InsTimeUtil::SECONDS_PER_WEEK + (this->tow - static_cast<int64_t>(this->tow));
+            this->tow = static_cast<int64_t>(this->tow) % InsTimeUtil::SECONDS_PER_WEEK + (this->tow - gcem::floor(this->tow));
         }
         while (this->tow < 0.0L)
         {
@@ -437,7 +438,7 @@ struct InsTime_YMDHMS
         if (this->sec >= InsTimeUtil::SECONDS_PER_MINUTE)
         {
             this->min += static_cast<int32_t>(this->sec / InsTimeUtil::SECONDS_PER_MINUTE);
-            this->sec = static_cast<int64_t>(this->sec) % InsTimeUtil::SECONDS_PER_MINUTE + (this->sec - static_cast<int64_t>(this->sec));
+            this->sec = static_cast<int64_t>(this->sec) % InsTimeUtil::SECONDS_PER_MINUTE + (this->sec - gcem::floor(this->sec));
         }
         while (this->sec < 0.0L)
         {
@@ -576,7 +577,7 @@ struct InsTime_YDoySod
         if (this->sod >= InsTimeUtil::SECONDS_PER_DAY)
         {
             this->doy += static_cast<int32_t>(this->sod / InsTimeUtil::SECONDS_PER_DAY);
-            this->sod = static_cast<int64_t>(this->sod) % InsTimeUtil::SECONDS_PER_DAY + (this->sod - static_cast<int64_t>(this->sod));
+            this->sod = static_cast<int64_t>(this->sod) % InsTimeUtil::SECONDS_PER_DAY + (this->sod - gcem::floor(this->sod));
         }
         while (this->sod < 0)
         {
@@ -1071,8 +1072,9 @@ class InsTime
             return 0; // TODO: Implement QZSST<->UTC time difference
         case IRNSST:
             return 0; // TODO: Implement IRNSST<->UTC time difference
+        case BDT:     // = BeiDou Time (UTC) is synchronized with UTC within 100 ns<
+            return this->leapGps2UTC() - 14;
         case UTC:
-        case BDT: // = BeiDou Time (UTC) is synchronized with UTC within 100 ns<
         case TimeSys_None:
             return 0;
         }

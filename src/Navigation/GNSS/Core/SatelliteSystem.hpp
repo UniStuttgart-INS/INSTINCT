@@ -96,20 +96,14 @@ struct SatelliteSystem
     static TimeSystem GetTimeSystemForSatelliteSystem(SatelliteSystem satSys);
 
     /// @brief Get the Time System of this Satellite System
-    [[nodiscard]] TimeSystem getTimeSystem() const
-    {
-        return GetTimeSystemForSatelliteSystem(value);
-    }
+    [[nodiscard]] TimeSystem getTimeSystem() const;
 
     /// @brief Get a list of satellites in the constellation
     /// @param[in] satSys Satellite System to get the list for
-    static std::vector<uint16_t> GetSatellites(SatelliteSystem satSys);
+    static std::vector<uint16_t> GetSatellitesForSatelliteSystem(SatelliteSystem satSys);
 
     /// @brief Get a list of satellites in the constellation
-    [[nodiscard]] std::vector<uint16_t> getSatellites() const
-    {
-        return GetSatellites(value);
-    }
+    [[nodiscard]] std::vector<uint16_t> getSatellites() const;
 
   private:
     /// @brief Internal value
@@ -318,6 +312,12 @@ constexpr bool operator!=(const SatelliteSystem& lhs, const SatelliteSystem_& rh
 /// @return Whether the comparison was successful
 constexpr bool operator!=(const SatelliteSystem_& lhs, const SatelliteSystem& rhs) { return !(lhs == rhs); }
 
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] satSys Object to print
+/// @return Returns the output stream object in order to chain stream insertions
+std::ostream& operator<<(std::ostream& os, const SatelliteSystem& satSys);
+
 } // namespace NAV
 
 namespace std
@@ -328,7 +328,6 @@ struct hash<NAV::SatelliteSystem>
 {
     /// @brief Hash function for SatelliteSystem
     /// @param[in] f Satellite system
-    /// @return Has value for the satellite identifier
     std::size_t operator()(const NAV::SatelliteSystem& f) const
     {
         return std::hash<NAV::SatelliteSystem_>{}(NAV::SatelliteSystem_(f));

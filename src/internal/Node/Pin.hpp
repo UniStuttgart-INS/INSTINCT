@@ -577,6 +577,8 @@ class InputPin : public Pin
         {
             if (const auto* connectedPin = getConnectedPin())
             {
+                // if (!connectedPin->parentNode->isInitialized()) { return nullptr; } // TODO: Check this here (Problem: member access into incomplete type 'NAV::Node')
+
                 // clang-format off
                 if constexpr (std::is_same_v<T, const bool>
                            || std::is_same_v<T, const int>

@@ -120,9 +120,11 @@ bool NAV::FileReader::initialize()
         LOG_ERROR("Could not open file {}", filepath);
         return false;
     }
+    _lineCnt = 0;
 
     readHeader();
 
+    _lineCntDataStart = _lineCnt;
     _dataStart = _filestream.tellg();
 
     if (_fileType == FileType::ASCII)
@@ -188,7 +190,7 @@ void NAV::FileReader::readHeader()
 
         // Read header line
         std::string line;
-        std::getline(_filestream, line);
+        getline(line);
         // Remove any starting non text characters
         line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isalnum(ch); }));
         // Convert line into stream
@@ -211,4 +213,5 @@ void NAV::FileReader::resetReader()
     // Return to position
     _filestream.clear();
     _filestream.seekg(_dataStart, std::ios_base::beg);
+    _lineCnt = _lineCntDataStart;
 }

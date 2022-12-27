@@ -11,8 +11,8 @@
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2022-03-13
 
-#include <catch2/catch.hpp>
-#include "EigenApprox.hpp"
+#include <catch2/catch_test_macros.hpp>
+#include "CatchMatchers.hpp"
 
 #include "NodeData/State/PosVelAtt.hpp"
 #include "fmt/core.h"
@@ -37,18 +37,18 @@ TEST_CASE("[PosVelAtt] Position Functions", "[PosVelAtt]")
 
     CHECK(state.e_position() == e_position);
     CHECK(state.lla_position() == Eigen::Vector3d{ state.latitude(), state.longitude(), state.altitude() });
-    CHECK(state.latitude() == Approx(lla_position(0)));
-    CHECK(state.longitude() == Approx(lla_position(1)));
-    CHECK(state.altitude() == Approx(lla_position(2)).margin(0.3));
+    CHECK_THAT(state.latitude() - lla_position(0), Catch::Matchers::WithinAbs(0, 9e-9));
+    CHECK_THAT(state.longitude() - lla_position(1), Catch::Matchers::WithinAbs(0, 6e-9));
+    CHECK_THAT(state.altitude() - lla_position(2), Catch::Matchers::WithinAbs(0, 0.3));
 
-    CHECK(state.e_Quat_n() == EigApproxQ(trafo::e_Quat_n(lla_position(0), lla_position(1))));
+    CHECK_THAT(state.e_Quat_n(), Catch::Matchers::WithinAbs(trafo::e_Quat_n(lla_position(0), lla_position(1)), 8e-9));
     CHECK(state.n_Quat_e() == state.e_Quat_n().conjugate());
 
     // ###########################################################################################################
 
     state.setPosition_lla(lla_position);
 
-    CHECK(state.e_position() == EigApprox(e_position));
+    CHECK_THAT(state.e_position() - e_position, Catch::Matchers::WithinAbs(Eigen::Vector3d::Zero(), 0.3));
     CHECK(state.lla_position() == lla_position);
 }
 
@@ -68,14 +68,15 @@ TEST_CASE("[PosVelAtt] Velocity Functions", "[PosVelAtt]")
 
     CHECK(state.lla_position() == lla_position);
     CHECK(state.e_velocity() == e_vel);
-    CHECK(state.n_velocity() == EigApprox(n_vel));
-    CHECK(state.e_velocity().norm() == Approx(state.n_velocity().norm()));
+    CHECK_THAT(state.n_velocity() - n_vel, Catch::Matchers::WithinAbs(Eigen::Vector3d::Zero(), EPSILON));
+    CHECK_THAT(state.e_velocity().norm() - state.n_velocity().norm(), Catch::Matchers::WithinAbs(0, EPSILON));
 
     state.setVelocity_n(n_vel);
     CHECK(state.lla_position() == lla_position);
-    CHECK(state.e_velocity() == EigApprox(e_vel));
+    CHECK_THAT(state.e_velocity() - e_vel, Catch::Matchers::WithinAbs(Eigen::Vector3d::Zero(), 4e-12));
     CHECK(state.n_velocity() == n_vel);
-    CHECK(state.e_velocity().norm() == Approx(state.n_velocity().norm()));
+    LOG_DATA("{}", state.e_velocity().norm() - state.n_velocity().norm());
+    CHECK_THAT(state.e_velocity().norm() - state.n_velocity().norm(), Catch::Matchers::WithinAbs(0, 3.7e-12));
 }
 
 TEST_CASE("[PosVelAtt] Attitude Functions", "[PosVelAtt]")
@@ -94,19 +95,20 @@ TEST_CASE("[PosVelAtt] Attitude Functions", "[PosVelAtt]")
     PosVelAtt state;
     state.setState_e(trafo::lla2ecef_WGS84(lla_position), e_vel, trafo::e_Quat_n(lla_position(0), lla_position(1)) * trafo::n_Quat_b(roll, pitch, yaw));
 
-    CHECK(state.lla_position() == EigApprox(lla_position));
-    CHECK(state.e_velocity() == EigApprox(e_vel));
-    CHECK(state.n_Quat_b() == EigApproxQ(trafo::n_Quat_b(roll, pitch, yaw)));
-    CHECK(state.b_Quat_n() == EigApproxQ(trafo::b_Quat_n(roll, pitch, yaw)));
-    CHECK(state.e_Quat_b() == EigApproxQ(trafo::e_Quat_n(lla_position(0), lla_position(1)) * trafo::n_Quat_b(roll, pitch, yaw)));
-    CHECK(state.b_Quat_e() == EigApproxQ(trafo::b_Quat_n(roll, pitch, yaw) * trafo::n_Quat_e(lla_position(0), lla_position(1))));
+    CHECK_THAT((state.lla_position() - lla_position).head<2>(), Catch::Matchers::WithinAbs(Eigen::Vector2d::Zero(), EPSILON));
+    CHECK_THAT((state.lla_position() - lla_position)(2), Catch::Matchers::WithinAbs(0, 1.3e-9));
+    CHECK_THAT(state.e_velocity(), Catch::Matchers::WithinAbs(e_vel, EPSILON));
+    CHECK_THAT(state.n_Quat_b(), Catch::Matchers::WithinAbs(trafo::n_Quat_b(roll, pitch, yaw), EPSILON));
+    CHECK_THAT(state.b_Quat_n(), Catch::Matchers::WithinAbs(trafo::b_Quat_n(roll, pitch, yaw), EPSILON));
+    CHECK_THAT(state.e_Quat_b(), Catch::Matchers::WithinAbs(trafo::e_Quat_n(lla_position(0), lla_position(1)) * trafo::n_Quat_b(roll, pitch, yaw), EPSILON));
+    CHECK_THAT(state.b_Quat_e(), Catch::Matchers::WithinAbs(trafo::b_Quat_n(roll, pitch, yaw) * trafo::n_Quat_e(lla_position(0), lla_position(1)), EPSILON));
 
     state.setState_n(lla_position, n_vel, trafo::n_Quat_b(roll, pitch, yaw));
-    CHECK(state.n_velocity() == EigApprox(n_vel));
-    CHECK(state.n_Quat_b() == EigApproxQ(trafo::n_Quat_b(roll, pitch, yaw)));
-    CHECK(state.b_Quat_n() == EigApproxQ(trafo::b_Quat_n(roll, pitch, yaw)));
-    CHECK(state.e_Quat_b() == EigApproxQ(trafo::e_Quat_n(lla_position(0), lla_position(1)) * trafo::n_Quat_b(roll, pitch, yaw)));
-    CHECK(state.b_Quat_e() == EigApproxQ(trafo::b_Quat_n(roll, pitch, yaw) * trafo::n_Quat_e(lla_position(0), lla_position(1))));
+    CHECK_THAT(state.n_velocity(), Catch::Matchers::WithinAbs(n_vel, EPSILON));
+    CHECK_THAT(state.n_Quat_b(), Catch::Matchers::WithinAbs(trafo::n_Quat_b(roll, pitch, yaw), EPSILON));
+    CHECK_THAT(state.b_Quat_n(), Catch::Matchers::WithinAbs(trafo::b_Quat_n(roll, pitch, yaw), EPSILON));
+    CHECK_THAT(state.e_Quat_b(), Catch::Matchers::WithinAbs(trafo::e_Quat_n(lla_position(0), lla_position(1)) * trafo::n_Quat_b(roll, pitch, yaw), EPSILON));
+    CHECK_THAT(state.b_Quat_e(), Catch::Matchers::WithinAbs(trafo::b_Quat_n(roll, pitch, yaw) * trafo::n_Quat_e(lla_position(0), lla_position(1)), EPSILON));
 }
 
 TEST_CASE("[PosVelAtt] Attitude RollPitchYaw", "[PosVelAtt]")
@@ -128,7 +130,7 @@ TEST_CASE("[PosVelAtt] Attitude RollPitchYaw", "[PosVelAtt]")
             {
                 state.setAttitude_n_Quat_b(trafo::n_Quat_b(expectedRoll, expectedPitch, expectedYaw));
                 auto actualRollPitchYaw = rad2deg(state.rollPitchYaw());
-                REQUIRE(rad2deg(Eigen::Vector3d{ expectedRoll, expectedPitch, expectedYaw }) == EigApprox(actualRollPitchYaw).margin(1e-8).epsilon(0));
+                REQUIRE_THAT(rad2deg(Eigen::Vector3d{ expectedRoll, expectedPitch, expectedYaw }), Catch::Matchers::WithinAbs(actualRollPitchYaw, 1e-8));
             }
         }
     }

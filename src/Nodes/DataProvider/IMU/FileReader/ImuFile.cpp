@@ -162,7 +162,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData()
 
     // Read line
     std::string line;
-    std::getline(_filestream, line);
+    getline(line);
     // Remove any starting non text characters
     line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
 

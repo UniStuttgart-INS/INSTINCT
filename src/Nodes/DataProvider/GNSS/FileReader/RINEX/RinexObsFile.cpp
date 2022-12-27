@@ -199,13 +199,13 @@ void RinexObsFile::readHeader()
     std::string line;
 
     // --------------------------------------- RINEX VERSION / TYPE ------------------------------------------
-    std::getline(_filestream, line);
+    getline(line);
     _version = std::stod(str::trim_copy(line.substr(0, 20)));
     LOG_DEBUG("{}: Version: {:3.2f}", nameId(), _version);                       // FORMAT: F9.2,11X
     LOG_DEBUG("{}: SatSys : {}", nameId(), str::trim_copy(line.substr(40, 20))); // FORMAT: A1,19X
 
     // #######################################################################################################
-    while (std::getline(_filestream, line) && !_filestream.eof())
+    while (getline(line) && !eof())
     {
         if (line.size() < 60)
         {
@@ -353,7 +353,7 @@ void RinexObsFile::readHeader()
 
                 if (nLine == 13)
                 {
-                    std::getline(_filestream, line);
+                    getline(line);
                     nLine = 0;
                     i = 3;
                 }
@@ -489,7 +489,7 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
 
     // 0: OK | 1: power failure between previous and current epoch | > 1 : Special event
     int epochFlag = -1;
-    while (epochFlag != 0 && !_filestream.eof() && std::getline(_filestream, line)) // Read lines till epoch record with valid epoch flag
+    while (epochFlag != 0 && !eof() && getline(line)) // Read lines till epoch record with valid epoch flag
     {
         if (line.empty())
         {
@@ -528,7 +528,7 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
 
     // TODO: while loop till eof() or epochFlag == 0 (in case some other flags in the file)
 
-    while (!_filestream.eof() && _filestream.peek() != '>' && std::getline(_filestream, line)) // Read observation records till line with '>'
+    while (!eof() && peek() != '>' && getline(line)) // Read observation records till line with '>'
     {
         if (line.empty())
         {

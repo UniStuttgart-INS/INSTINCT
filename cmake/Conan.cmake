@@ -1,34 +1,30 @@
-macro(run_conan)
-  # Download automatically, you can also just copy the conan.cmake file
-  if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
-    message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-    file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/0.18.1/conan.cmake" "${CMAKE_BINARY_DIR}/conan.cmake"
-         STATUS status)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
+list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
 
-    list(GET status 0 error_code)
+# Download automatically, you can also just copy the conan.cmake file
+if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
+message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
+file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/0.18.1/conan.cmake" "${CMAKE_BINARY_DIR}/conan.cmake"
+        TLS_VERIFY ON
+        STATUS status)
 
-    if(error_code)
-      message(STATUS "Could not download Conan Cmake file, using local backup")
-      file(COPY "cmake/Conan-0.18.1/conan.cmake" DESTINATION "${CMAKE_BINARY_DIR}")
-    endif()
-  endif()
+list(GET status 0 error_code)
 
-  set(CONAN_SYSTEM_INCLUDES ON)
+if(error_code)
+    message(STATUS "Could not download Conan Cmake file, using local backup")
+    file(COPY "cmake/Conan-0.18.1/conan.cmake" DESTINATION "${CMAKE_BINARY_DIR}")
+endif()
+endif()
 
-  include(${CMAKE_BINARY_DIR}/conan.cmake)
+set(CONAN_SYSTEM_INCLUDES ON)
 
-  conan_add_remote(NAME bincrafters URL https://api.bintray.com/conan/bincrafters/public-conan)
+include(${CMAKE_BINARY_DIR}/conan.cmake)
 
-  # See https://github.com/conan-io/cmake-conan/blob/release/0.18/README.md for settings
-  conan_cmake_run(
-    REQUIRES
-    ${CONAN_EXTRA_REQUIRES}
-    CONANFILE
-    conanfile.txt
-    OPTIONS
-    ${CONAN_EXTRA_OPTIONS}
-    BASIC_SETUP
-    CMAKE_TARGETS # individual targets to link to
-    BUILD
-    missing)
-endmacro()
+# See https://github.com/conan-io/cmake-conan/blob/release/0.18/README.md for settings
+
+conan_cmake_autodetect(settings)
+
+conan_cmake_install(PATH_OR_REFERENCE ${CMAKE_SOURCE_DIR}
+                    BUILD missing
+                    REMOTE conancenter
+                    SETTINGS ${settings})

@@ -209,9 +209,9 @@ std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData()
 
     while (true)
     {
-        std::getline(_filestream, line);
+        getline(line);
 
-        if (_filestream.eof())
+        if (eof())
         {
             return nullptr; // when done with file reading
         }
