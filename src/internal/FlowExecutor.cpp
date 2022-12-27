@@ -29,7 +29,7 @@ namespace nm = NAV::NodeManager;
 #include <condition_variable>
 
 #ifdef TESTING
-    #include <catch2/catch.hpp>
+    #include <catch2/catch_test_macros.hpp>
 #endif
 
 /* -------------------------------------------------------------------------------------------------------- */

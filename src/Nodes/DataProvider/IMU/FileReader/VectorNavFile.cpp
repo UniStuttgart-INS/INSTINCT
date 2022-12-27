@@ -228,7 +228,7 @@ NAV::FileReader::FileType NAV::VectorNavFile::determineFileType()
     std::filesystem::path filepath = getFilepath();
 
     auto filestreamHeader = std::ifstream(filepath);
-    if (_filestream.good())
+    if (good())
     {
         std::array<char, std::string_view("GpsCycle,GpsWeek,GpsTow").length()> buffer{};
         filestreamHeader.read(buffer.data(), buffer.size());
@@ -265,7 +265,7 @@ void NAV::VectorNavFile::readHeader()
 
         // Read header line
         std::string line;
-        std::getline(_filestream, line);
+        getline(line);
         // Remove any starting non text characters
         line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isalnum(ch); }));
         // Convert line into stream
@@ -390,12 +390,12 @@ void NAV::VectorNavFile::readHeader()
     }
     else // if (fileType == FileType::BINARY)
     {
-        _filestream.read(reinterpret_cast<char*>(&_binaryOutputRegister.timeField), sizeof(vn::protocol::uart::TimeGroup));
-        _filestream.read(reinterpret_cast<char*>(&_binaryOutputRegister.imuField), sizeof(vn::protocol::uart::ImuGroup));
-        _filestream.read(reinterpret_cast<char*>(&_binaryOutputRegister.gpsField), sizeof(vn::protocol::uart::GpsGroup));
-        _filestream.read(reinterpret_cast<char*>(&_binaryOutputRegister.attitudeField), sizeof(vn::protocol::uart::AttitudeGroup));
-        _filestream.read(reinterpret_cast<char*>(&_binaryOutputRegister.insField), sizeof(vn::protocol::uart::InsGroup));
-        _filestream.read(reinterpret_cast<char*>(&_binaryOutputRegister.gps2Field), sizeof(vn::protocol::uart::GpsGroup));
+        read(reinterpret_cast<char*>(&_binaryOutputRegister.timeField), sizeof(vn::protocol::uart::TimeGroup));
+        read(reinterpret_cast<char*>(&_binaryOutputRegister.imuField), sizeof(vn::protocol::uart::ImuGroup));
+        read(reinterpret_cast<char*>(&_binaryOutputRegister.gpsField), sizeof(vn::protocol::uart::GpsGroup));
+        read(reinterpret_cast<char*>(&_binaryOutputRegister.attitudeField), sizeof(vn::protocol::uart::AttitudeGroup));
+        read(reinterpret_cast<char*>(&_binaryOutputRegister.insField), sizeof(vn::protocol::uart::InsGroup));
+        read(reinterpret_cast<char*>(&_binaryOutputRegister.gps2Field), sizeof(vn::protocol::uart::GpsGroup));
     }
 }
 
@@ -407,7 +407,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData()
     {
         // Read line
         std::string line;
-        std::getline(_filestream, line);
+        getline(line);
         // Remove any starting non text characters
         line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
 
@@ -1102,8 +1102,8 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData()
     else // if (fileType == FileType::BINARY)
     {
         auto readFromFilestream = [&, this](char* __s, std::streamsize __n) {
-            _filestream.read(__s, __n);
-            if (!_filestream.good())
+            read(__s, __n);
+            if (!good())
             {
                 throw std::runtime_error("End of file reached");
             }
@@ -1133,49 +1133,49 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData()
 
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeStartup), sizeof(obs->timeOutputs->timeStartup));
+                    read(reinterpret_cast<char*>(&obs->timeOutputs->timeStartup), sizeof(obs->timeOutputs->timeStartup));
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeGps), sizeof(obs->timeOutputs->timeGps));
+                    read(reinterpret_cast<char*>(&obs->timeOutputs->timeGps), sizeof(obs->timeOutputs->timeGps));
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->gpsTow), sizeof(obs->timeOutputs->gpsTow));
+                    read(reinterpret_cast<char*>(&obs->timeOutputs->gpsTow), sizeof(obs->timeOutputs->gpsTow));
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->gpsWeek), sizeof(obs->timeOutputs->gpsWeek));
+                    read(reinterpret_cast<char*>(&obs->timeOutputs->gpsWeek), sizeof(obs->timeOutputs->gpsWeek));
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeSyncIn), sizeof(obs->timeOutputs->timeSyncIn));
+                    read(reinterpret_cast<char*>(&obs->timeOutputs->timeSyncIn), sizeof(obs->timeOutputs->timeSyncIn));
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timePPS), sizeof(obs->timeOutputs->timePPS));
+                    read(reinterpret_cast<char*>(&obs->timeOutputs->timePPS), sizeof(obs->timeOutputs->timePPS));
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.year), sizeof(obs->timeOutputs->timeUtc.year));
-                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.month), sizeof(obs->timeOutputs->timeUtc.month));
-                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.day), sizeof(obs->timeOutputs->timeUtc.day));
-                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.hour), sizeof(obs->timeOutputs->timeUtc.hour));
-                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.min), sizeof(obs->timeOutputs->timeUtc.min));
-                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.sec), sizeof(obs->timeOutputs->timeUtc.sec));
-                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.ms), sizeof(obs->timeOutputs->timeUtc.ms));
+                    read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.year), sizeof(obs->timeOutputs->timeUtc.year));
+                    read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.month), sizeof(obs->timeOutputs->timeUtc.month));
+                    read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.day), sizeof(obs->timeOutputs->timeUtc.day));
+                    read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.hour), sizeof(obs->timeOutputs->timeUtc.hour));
+                    read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.min), sizeof(obs->timeOutputs->timeUtc.min));
+                    read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.sec), sizeof(obs->timeOutputs->timeUtc.sec));
+                    read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.ms), sizeof(obs->timeOutputs->timeUtc.ms));
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->syncInCnt), sizeof(obs->timeOutputs->syncInCnt));
+                    read(reinterpret_cast<char*>(&obs->timeOutputs->syncInCnt), sizeof(obs->timeOutputs->syncInCnt));
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->syncOutCnt), sizeof(obs->timeOutputs->syncOutCnt));
+                    read(reinterpret_cast<char*>(&obs->timeOutputs->syncOutCnt), sizeof(obs->timeOutputs->syncOutCnt));
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeStatus.status()), sizeof(obs->timeOutputs->timeStatus.status()));
+                    read(reinterpret_cast<char*>(&obs->timeOutputs->timeStatus.status()), sizeof(obs->timeOutputs->timeStatus.status()));
                 }
             }
             // Group 3 (IMU)
@@ -1189,48 +1189,48 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData()
 
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_IMUSTATUS)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->imuOutputs->imuStatus), sizeof(obs->imuOutputs->imuStatus));
+                    read(reinterpret_cast<char*>(&obs->imuOutputs->imuStatus), sizeof(obs->imuOutputs->imuStatus));
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->imuOutputs->uncompMag.data()), sizeof(obs->imuOutputs->uncompMag));
+                    read(reinterpret_cast<char*>(obs->imuOutputs->uncompMag.data()), sizeof(obs->imuOutputs->uncompMag));
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->imuOutputs->uncompAccel.data()), sizeof(obs->imuOutputs->uncompAccel));
+                    read(reinterpret_cast<char*>(obs->imuOutputs->uncompAccel.data()), sizeof(obs->imuOutputs->uncompAccel));
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->imuOutputs->uncompGyro.data()), sizeof(obs->imuOutputs->uncompGyro));
+                    read(reinterpret_cast<char*>(obs->imuOutputs->uncompGyro.data()), sizeof(obs->imuOutputs->uncompGyro));
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_TEMP)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->imuOutputs->temp), sizeof(obs->imuOutputs->temp));
+                    read(reinterpret_cast<char*>(&obs->imuOutputs->temp), sizeof(obs->imuOutputs->temp));
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_PRES)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->imuOutputs->pres), sizeof(obs->imuOutputs->pres));
+                    read(reinterpret_cast<char*>(&obs->imuOutputs->pres), sizeof(obs->imuOutputs->pres));
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->imuOutputs->deltaTime), sizeof(obs->imuOutputs->deltaTime));
-                    _filestream.read(reinterpret_cast<char*>(obs->imuOutputs->deltaTheta.data()), sizeof(obs->imuOutputs->deltaTheta));
+                    read(reinterpret_cast<char*>(&obs->imuOutputs->deltaTime), sizeof(obs->imuOutputs->deltaTime));
+                    read(reinterpret_cast<char*>(obs->imuOutputs->deltaTheta.data()), sizeof(obs->imuOutputs->deltaTheta));
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->imuOutputs->deltaV.data()), sizeof(obs->imuOutputs->deltaV));
+                    read(reinterpret_cast<char*>(obs->imuOutputs->deltaV.data()), sizeof(obs->imuOutputs->deltaV));
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_MAG)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->imuOutputs->mag.data()), sizeof(obs->imuOutputs->mag));
+                    read(reinterpret_cast<char*>(obs->imuOutputs->mag.data()), sizeof(obs->imuOutputs->mag));
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->imuOutputs->accel.data()), sizeof(obs->imuOutputs->accel));
+                    read(reinterpret_cast<char*>(obs->imuOutputs->accel.data()), sizeof(obs->imuOutputs->accel));
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->imuOutputs->angularRate.data()), sizeof(obs->imuOutputs->angularRate));
+                    read(reinterpret_cast<char*>(obs->imuOutputs->angularRate.data()), sizeof(obs->imuOutputs->angularRate));
                 }
             }
             // Group 4 (GNSS1)
@@ -1244,108 +1244,108 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData()
 
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.year), sizeof(obs->gnss1Outputs->timeUtc.year));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.month), sizeof(obs->gnss1Outputs->timeUtc.month));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.day), sizeof(obs->gnss1Outputs->timeUtc.day));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.hour), sizeof(obs->gnss1Outputs->timeUtc.hour));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.min), sizeof(obs->gnss1Outputs->timeUtc.min));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.sec), sizeof(obs->gnss1Outputs->timeUtc.sec));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.ms), sizeof(obs->gnss1Outputs->timeUtc.ms));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.year), sizeof(obs->gnss1Outputs->timeUtc.year));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.month), sizeof(obs->gnss1Outputs->timeUtc.month));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.day), sizeof(obs->gnss1Outputs->timeUtc.day));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.hour), sizeof(obs->gnss1Outputs->timeUtc.hour));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.min), sizeof(obs->gnss1Outputs->timeUtc.min));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.sec), sizeof(obs->gnss1Outputs->timeUtc.sec));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.ms), sizeof(obs->gnss1Outputs->timeUtc.ms));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->tow), sizeof(obs->gnss1Outputs->tow));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->tow), sizeof(obs->gnss1Outputs->tow));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->week), sizeof(obs->gnss1Outputs->week));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->week), sizeof(obs->gnss1Outputs->week));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->numSats), sizeof(obs->gnss1Outputs->numSats));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->numSats), sizeof(obs->gnss1Outputs->numSats));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->fix), sizeof(obs->gnss1Outputs->fix));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->fix), sizeof(obs->gnss1Outputs->fix));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->gnss1Outputs->posLla.data()), sizeof(obs->gnss1Outputs->posLla));
+                    read(reinterpret_cast<char*>(obs->gnss1Outputs->posLla.data()), sizeof(obs->gnss1Outputs->posLla));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->gnss1Outputs->posEcef.data()), sizeof(obs->gnss1Outputs->posEcef));
+                    read(reinterpret_cast<char*>(obs->gnss1Outputs->posEcef.data()), sizeof(obs->gnss1Outputs->posEcef));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->gnss1Outputs->velNed.data()), sizeof(obs->gnss1Outputs->velNed));
+                    read(reinterpret_cast<char*>(obs->gnss1Outputs->velNed.data()), sizeof(obs->gnss1Outputs->velNed));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->gnss1Outputs->velEcef.data()), sizeof(obs->gnss1Outputs->velEcef));
+                    read(reinterpret_cast<char*>(obs->gnss1Outputs->velEcef.data()), sizeof(obs->gnss1Outputs->velEcef));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSU)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->gnss1Outputs->posU.data()), sizeof(obs->gnss1Outputs->posU));
+                    read(reinterpret_cast<char*>(obs->gnss1Outputs->posU.data()), sizeof(obs->gnss1Outputs->posU));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELU)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->velU), sizeof(obs->gnss1Outputs->velU));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->velU), sizeof(obs->gnss1Outputs->velU));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeU), sizeof(obs->gnss1Outputs->timeU));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeU), sizeof(obs->gnss1Outputs->timeU));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeInfo.status.status()), sizeof(obs->gnss1Outputs->timeInfo.status.status()));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeInfo.leapSeconds), sizeof(obs->gnss1Outputs->timeInfo.leapSeconds));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeInfo.status.status()), sizeof(obs->gnss1Outputs->timeInfo.status.status()));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeInfo.leapSeconds), sizeof(obs->gnss1Outputs->timeInfo.leapSeconds));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.gDop), sizeof(obs->gnss1Outputs->dop.gDop));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.pDop), sizeof(obs->gnss1Outputs->dop.pDop));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.tDop), sizeof(obs->gnss1Outputs->dop.tDop));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.vDop), sizeof(obs->gnss1Outputs->dop.vDop));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.hDop), sizeof(obs->gnss1Outputs->dop.hDop));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.nDop), sizeof(obs->gnss1Outputs->dop.nDop));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.eDop), sizeof(obs->gnss1Outputs->dop.eDop));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.gDop), sizeof(obs->gnss1Outputs->dop.gDop));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.pDop), sizeof(obs->gnss1Outputs->dop.pDop));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.tDop), sizeof(obs->gnss1Outputs->dop.tDop));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.vDop), sizeof(obs->gnss1Outputs->dop.vDop));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.hDop), sizeof(obs->gnss1Outputs->dop.hDop));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.nDop), sizeof(obs->gnss1Outputs->dop.nDop));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.eDop), sizeof(obs->gnss1Outputs->dop.eDop));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->satInfo.numSats), sizeof(obs->gnss1Outputs->satInfo.numSats));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->satInfo.numSats), sizeof(obs->gnss1Outputs->satInfo.numSats));
                     obs->gnss1Outputs->satInfo.satellites.resize(obs->gnss1Outputs->satInfo.numSats);
 
                     for (auto& satellite : obs->gnss1Outputs->satInfo.satellites)
                     {
-                        _filestream.read(reinterpret_cast<char*>(&satellite.sys), sizeof(satellite.sys));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.svId), sizeof(satellite.svId));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.flags), sizeof(satellite.flags));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.cno), sizeof(satellite.cno));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.qi), sizeof(satellite.qi));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.el), sizeof(satellite.el));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.az), sizeof(satellite.az));
+                        read(reinterpret_cast<char*>(&satellite.sys), sizeof(satellite.sys));
+                        read(reinterpret_cast<char*>(&satellite.svId), sizeof(satellite.svId));
+                        read(reinterpret_cast<char*>(&satellite.flags), sizeof(satellite.flags));
+                        read(reinterpret_cast<char*>(&satellite.cno), sizeof(satellite.cno));
+                        read(reinterpret_cast<char*>(&satellite.qi), sizeof(satellite.qi));
+                        read(reinterpret_cast<char*>(&satellite.el), sizeof(satellite.el));
+                        read(reinterpret_cast<char*>(&satellite.az), sizeof(satellite.az));
                     }
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->raw.tow), sizeof(obs->gnss1Outputs->raw.tow));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->raw.week), sizeof(obs->gnss1Outputs->raw.week));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->raw.numSats), sizeof(obs->gnss1Outputs->raw.numSats));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->raw.tow), sizeof(obs->gnss1Outputs->raw.tow));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->raw.week), sizeof(obs->gnss1Outputs->raw.week));
+                    read(reinterpret_cast<char*>(&obs->gnss1Outputs->raw.numSats), sizeof(obs->gnss1Outputs->raw.numSats));
                     obs->gnss1Outputs->raw.satellites.resize(obs->gnss1Outputs->raw.numSats);
 
                     for (auto& satellite : obs->gnss1Outputs->raw.satellites)
                     {
-                        _filestream.read(reinterpret_cast<char*>(&satellite.sys), sizeof(satellite.sys));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.svId), sizeof(satellite.svId));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.freq), sizeof(satellite.freq));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.chan), sizeof(satellite.chan));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.slot), sizeof(satellite.slot));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.cno), sizeof(satellite.cno));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.flags), sizeof(satellite.flags));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.pr), sizeof(satellite.pr));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.cp), sizeof(satellite.cp));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.dp), sizeof(satellite.dp));
+                        read(reinterpret_cast<char*>(&satellite.sys), sizeof(satellite.sys));
+                        read(reinterpret_cast<char*>(&satellite.svId), sizeof(satellite.svId));
+                        read(reinterpret_cast<char*>(&satellite.freq), sizeof(satellite.freq));
+                        read(reinterpret_cast<char*>(&satellite.chan), sizeof(satellite.chan));
+                        read(reinterpret_cast<char*>(&satellite.slot), sizeof(satellite.slot));
+                        read(reinterpret_cast<char*>(&satellite.cno), sizeof(satellite.cno));
+                        read(reinterpret_cast<char*>(&satellite.flags), sizeof(satellite.flags));
+                        read(reinterpret_cast<char*>(&satellite.pr), sizeof(satellite.pr));
+                        read(reinterpret_cast<char*>(&satellite.cp), sizeof(satellite.cp));
+                        read(reinterpret_cast<char*>(&satellite.dp), sizeof(satellite.dp));
                     }
                 }
             }
@@ -1360,39 +1360,39 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData()
 
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->attitudeOutputs->vpeStatus.status()), sizeof(obs->attitudeOutputs->vpeStatus.status()));
+                    read(reinterpret_cast<char*>(&obs->attitudeOutputs->vpeStatus.status()), sizeof(obs->attitudeOutputs->vpeStatus.status()));
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->ypr.data()), sizeof(obs->attitudeOutputs->ypr));
+                    read(reinterpret_cast<char*>(obs->attitudeOutputs->ypr.data()), sizeof(obs->attitudeOutputs->ypr));
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->qtn.coeffs().data()), sizeof(obs->attitudeOutputs->qtn));
+                    read(reinterpret_cast<char*>(obs->attitudeOutputs->qtn.coeffs().data()), sizeof(obs->attitudeOutputs->qtn));
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->dcm.data()), sizeof(obs->attitudeOutputs->dcm));
+                    read(reinterpret_cast<char*>(obs->attitudeOutputs->dcm.data()), sizeof(obs->attitudeOutputs->dcm));
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->magNed.data()), sizeof(obs->attitudeOutputs->magNed));
+                    read(reinterpret_cast<char*>(obs->attitudeOutputs->magNed.data()), sizeof(obs->attitudeOutputs->magNed));
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_ACCELNED)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->accelNed.data()), sizeof(obs->attitudeOutputs->accelNed));
+                    read(reinterpret_cast<char*>(obs->attitudeOutputs->accelNed.data()), sizeof(obs->attitudeOutputs->accelNed));
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELBODY)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->linearAccelBody.data()), sizeof(obs->attitudeOutputs->linearAccelBody));
+                    read(reinterpret_cast<char*>(obs->attitudeOutputs->linearAccelBody.data()), sizeof(obs->attitudeOutputs->linearAccelBody));
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELNED)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->linearAccelNed.data()), sizeof(obs->attitudeOutputs->linearAccelNed));
+                    read(reinterpret_cast<char*>(obs->attitudeOutputs->linearAccelNed.data()), sizeof(obs->attitudeOutputs->linearAccelNed));
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->yprU.data()), sizeof(obs->attitudeOutputs->yprU));
+                    read(reinterpret_cast<char*>(obs->attitudeOutputs->yprU.data()), sizeof(obs->attitudeOutputs->yprU));
                 }
             }
             // Group 6 (INS)
@@ -1406,47 +1406,47 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData()
 
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->insOutputs->insStatus.status()), sizeof(obs->insOutputs->insStatus.status()));
+                    read(reinterpret_cast<char*>(&obs->insOutputs->insStatus.status()), sizeof(obs->insOutputs->insStatus.status()));
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->insOutputs->posLla.data()), sizeof(obs->insOutputs->posLla));
+                    read(reinterpret_cast<char*>(obs->insOutputs->posLla.data()), sizeof(obs->insOutputs->posLla));
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSECEF)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->insOutputs->posEcef.data()), sizeof(obs->insOutputs->posEcef));
+                    read(reinterpret_cast<char*>(obs->insOutputs->posEcef.data()), sizeof(obs->insOutputs->posEcef));
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELBODY)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->insOutputs->velBody.data()), sizeof(obs->insOutputs->velBody));
+                    read(reinterpret_cast<char*>(obs->insOutputs->velBody.data()), sizeof(obs->insOutputs->velBody));
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELNED)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->insOutputs->velNed.data()), sizeof(obs->insOutputs->velNed));
+                    read(reinterpret_cast<char*>(obs->insOutputs->velNed.data()), sizeof(obs->insOutputs->velNed));
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELECEF)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->insOutputs->velEcef.data()), sizeof(obs->insOutputs->velEcef));
+                    read(reinterpret_cast<char*>(obs->insOutputs->velEcef.data()), sizeof(obs->insOutputs->velEcef));
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_MAGECEF)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->insOutputs->magEcef.data()), sizeof(obs->insOutputs->magEcef));
+                    read(reinterpret_cast<char*>(obs->insOutputs->magEcef.data()), sizeof(obs->insOutputs->magEcef));
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_ACCELECEF)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->insOutputs->accelEcef.data()), sizeof(obs->insOutputs->accelEcef));
+                    read(reinterpret_cast<char*>(obs->insOutputs->accelEcef.data()), sizeof(obs->insOutputs->accelEcef));
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_LINEARACCELECEF)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->insOutputs->linearAccelEcef.data()), sizeof(obs->insOutputs->linearAccelEcef));
+                    read(reinterpret_cast<char*>(obs->insOutputs->linearAccelEcef.data()), sizeof(obs->insOutputs->linearAccelEcef));
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSU)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->insOutputs->posU), sizeof(obs->insOutputs->posU));
+                    read(reinterpret_cast<char*>(&obs->insOutputs->posU), sizeof(obs->insOutputs->posU));
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELU)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->insOutputs->velU), sizeof(obs->insOutputs->velU));
+                    read(reinterpret_cast<char*>(&obs->insOutputs->velU), sizeof(obs->insOutputs->velU));
                 }
             }
             // Group 7 (GNSS2)
@@ -1460,108 +1460,108 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData()
 
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.year), sizeof(obs->gnss2Outputs->timeUtc.year));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.month), sizeof(obs->gnss2Outputs->timeUtc.month));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.day), sizeof(obs->gnss2Outputs->timeUtc.day));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.hour), sizeof(obs->gnss2Outputs->timeUtc.hour));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.min), sizeof(obs->gnss2Outputs->timeUtc.min));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.sec), sizeof(obs->gnss2Outputs->timeUtc.sec));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.ms), sizeof(obs->gnss2Outputs->timeUtc.ms));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.year), sizeof(obs->gnss2Outputs->timeUtc.year));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.month), sizeof(obs->gnss2Outputs->timeUtc.month));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.day), sizeof(obs->gnss2Outputs->timeUtc.day));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.hour), sizeof(obs->gnss2Outputs->timeUtc.hour));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.min), sizeof(obs->gnss2Outputs->timeUtc.min));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.sec), sizeof(obs->gnss2Outputs->timeUtc.sec));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.ms), sizeof(obs->gnss2Outputs->timeUtc.ms));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->tow), sizeof(obs->gnss2Outputs->tow));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->tow), sizeof(obs->gnss2Outputs->tow));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->week), sizeof(obs->gnss2Outputs->week));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->week), sizeof(obs->gnss2Outputs->week));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->numSats), sizeof(obs->gnss2Outputs->numSats));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->numSats), sizeof(obs->gnss2Outputs->numSats));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->fix), sizeof(obs->gnss2Outputs->fix));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->fix), sizeof(obs->gnss2Outputs->fix));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->gnss2Outputs->posLla.data()), sizeof(obs->gnss2Outputs->posLla));
+                    read(reinterpret_cast<char*>(obs->gnss2Outputs->posLla.data()), sizeof(obs->gnss2Outputs->posLla));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->gnss2Outputs->posEcef.data()), sizeof(obs->gnss2Outputs->posEcef));
+                    read(reinterpret_cast<char*>(obs->gnss2Outputs->posEcef.data()), sizeof(obs->gnss2Outputs->posEcef));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->gnss2Outputs->velNed.data()), sizeof(obs->gnss2Outputs->velNed));
+                    read(reinterpret_cast<char*>(obs->gnss2Outputs->velNed.data()), sizeof(obs->gnss2Outputs->velNed));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->gnss2Outputs->velEcef.data()), sizeof(obs->gnss2Outputs->velEcef));
+                    read(reinterpret_cast<char*>(obs->gnss2Outputs->velEcef.data()), sizeof(obs->gnss2Outputs->velEcef));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSU)
                 {
-                    _filestream.read(reinterpret_cast<char*>(obs->gnss2Outputs->posU.data()), sizeof(obs->gnss2Outputs->posU));
+                    read(reinterpret_cast<char*>(obs->gnss2Outputs->posU.data()), sizeof(obs->gnss2Outputs->posU));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELU)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->velU), sizeof(obs->gnss2Outputs->velU));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->velU), sizeof(obs->gnss2Outputs->velU));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeU), sizeof(obs->gnss2Outputs->timeU));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeU), sizeof(obs->gnss2Outputs->timeU));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeInfo.status.status()), sizeof(obs->gnss2Outputs->timeInfo.status.status()));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeInfo.leapSeconds), sizeof(obs->gnss2Outputs->timeInfo.leapSeconds));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeInfo.status.status()), sizeof(obs->gnss2Outputs->timeInfo.status.status()));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeInfo.leapSeconds), sizeof(obs->gnss2Outputs->timeInfo.leapSeconds));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.gDop), sizeof(obs->gnss2Outputs->dop.gDop));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.pDop), sizeof(obs->gnss2Outputs->dop.pDop));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.tDop), sizeof(obs->gnss2Outputs->dop.tDop));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.vDop), sizeof(obs->gnss2Outputs->dop.vDop));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.hDop), sizeof(obs->gnss2Outputs->dop.hDop));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.nDop), sizeof(obs->gnss2Outputs->dop.nDop));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.eDop), sizeof(obs->gnss2Outputs->dop.eDop));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.gDop), sizeof(obs->gnss2Outputs->dop.gDop));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.pDop), sizeof(obs->gnss2Outputs->dop.pDop));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.tDop), sizeof(obs->gnss2Outputs->dop.tDop));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.vDop), sizeof(obs->gnss2Outputs->dop.vDop));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.hDop), sizeof(obs->gnss2Outputs->dop.hDop));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.nDop), sizeof(obs->gnss2Outputs->dop.nDop));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.eDop), sizeof(obs->gnss2Outputs->dop.eDop));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->satInfo.numSats), sizeof(obs->gnss2Outputs->satInfo.numSats));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->satInfo.numSats), sizeof(obs->gnss2Outputs->satInfo.numSats));
                     obs->gnss2Outputs->satInfo.satellites.resize(obs->gnss2Outputs->satInfo.numSats);
 
                     for (auto& satellite : obs->gnss2Outputs->satInfo.satellites)
                     {
-                        _filestream.read(reinterpret_cast<char*>(&satellite.sys), sizeof(satellite.sys));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.svId), sizeof(satellite.svId));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.flags), sizeof(satellite.flags));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.cno), sizeof(satellite.cno));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.qi), sizeof(satellite.qi));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.el), sizeof(satellite.el));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.az), sizeof(satellite.az));
+                        read(reinterpret_cast<char*>(&satellite.sys), sizeof(satellite.sys));
+                        read(reinterpret_cast<char*>(&satellite.svId), sizeof(satellite.svId));
+                        read(reinterpret_cast<char*>(&satellite.flags), sizeof(satellite.flags));
+                        read(reinterpret_cast<char*>(&satellite.cno), sizeof(satellite.cno));
+                        read(reinterpret_cast<char*>(&satellite.qi), sizeof(satellite.qi));
+                        read(reinterpret_cast<char*>(&satellite.el), sizeof(satellite.el));
+                        read(reinterpret_cast<char*>(&satellite.az), sizeof(satellite.az));
                     }
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
                 {
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->raw.tow), sizeof(obs->gnss2Outputs->raw.tow));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->raw.week), sizeof(obs->gnss2Outputs->raw.week));
-                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->raw.numSats), sizeof(obs->gnss2Outputs->raw.numSats));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->raw.tow), sizeof(obs->gnss2Outputs->raw.tow));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->raw.week), sizeof(obs->gnss2Outputs->raw.week));
+                    read(reinterpret_cast<char*>(&obs->gnss2Outputs->raw.numSats), sizeof(obs->gnss2Outputs->raw.numSats));
                     obs->gnss2Outputs->raw.satellites.resize(obs->gnss2Outputs->raw.numSats);
 
                     for (auto& satellite : obs->gnss2Outputs->raw.satellites)
                     {
-                        _filestream.read(reinterpret_cast<char*>(&satellite.sys), sizeof(satellite.sys));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.svId), sizeof(satellite.svId));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.freq), sizeof(satellite.freq));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.chan), sizeof(satellite.chan));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.slot), sizeof(satellite.slot));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.cno), sizeof(satellite.cno));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.flags), sizeof(satellite.flags));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.pr), sizeof(satellite.pr));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.cp), sizeof(satellite.cp));
-                        _filestream.read(reinterpret_cast<char*>(&satellite.dp), sizeof(satellite.dp));
+                        read(reinterpret_cast<char*>(&satellite.sys), sizeof(satellite.sys));
+                        read(reinterpret_cast<char*>(&satellite.svId), sizeof(satellite.svId));
+                        read(reinterpret_cast<char*>(&satellite.freq), sizeof(satellite.freq));
+                        read(reinterpret_cast<char*>(&satellite.chan), sizeof(satellite.chan));
+                        read(reinterpret_cast<char*>(&satellite.slot), sizeof(satellite.slot));
+                        read(reinterpret_cast<char*>(&satellite.cno), sizeof(satellite.cno));
+                        read(reinterpret_cast<char*>(&satellite.flags), sizeof(satellite.flags));
+                        read(reinterpret_cast<char*>(&satellite.pr), sizeof(satellite.pr));
+                        read(reinterpret_cast<char*>(&satellite.cp), sizeof(satellite.cp));
+                        read(reinterpret_cast<char*>(&satellite.dp), sizeof(satellite.dp));
                     }
                 }
             }

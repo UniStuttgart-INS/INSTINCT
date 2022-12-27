@@ -11,8 +11,9 @@
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2022-06-18
 
-#include <catch2/catch.hpp>
-#include "EigenApprox.hpp"
+#include <catch2/catch_test_macros.hpp>
+#include "CatchMatchers.hpp"
+
 #include <string>
 #include <vector>
 #include <fstream>
@@ -197,7 +198,7 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - Klo
                 LOG_DEBUG("    calcData.e_satPos {} [m]", calcData.e_satPos.transpose());
                 LOG_DEBUG("    e_refSatPos       {} [m]", e_refSatPos.transpose());
                 LOG_DEBUG("    | calcData.pos - e_refPos | = {} [m]", (calcData.e_satPos - e_refSatPos).norm());
-                REQUIRE(calcData.e_satPos - e_refSatPos == EigApprox(Eigen::Vector3d{ 0.0, 0.0, 0.0 }).margin(3e-4).epsilon(0));
+                REQUIRE_THAT(calcData.e_satPos - e_refSatPos, Catch::Matchers::WithinAbs(Eigen::Vector3d{ 0.0, 0.0, 0.0 }, 3e-4));
 
                 // e_satVel
 
@@ -205,7 +206,7 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - Klo
                 LOG_DEBUG("    calcData.satClkBias {} [s]", calcData.satClkBias);
                 LOG_DEBUG("    refClkCorrection    {} [s]", refClkCorrection);
                 LOG_DEBUG("    clkBias - ref {} [s]", calcData.satClkBias - refClkCorrection);
-                REQUIRE(calcData.satClkBias - refClkCorrection == Approx(0.0).margin(4e-15).epsilon(0));
+                REQUIRE_THAT(calcData.satClkBias - refClkCorrection, Catch::Matchers::WithinAbs(0.0, 4e-15));
 
                 // satClkDrift
 
@@ -213,13 +214,13 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - Klo
                 LOG_DEBUG("    calcData.satElevation {} [deg]", rad2deg(calcData.satElevation));
                 LOG_DEBUG("    refSatElevation       {} [deg]", rad2deg(refSatElevation));
                 LOG_DEBUG("    calcData.satElevation - refSatElevation {} [°]", rad2deg(calcData.satElevation - refSatElevation));
-                REQUIRE(rad2deg(calcData.satElevation - refSatElevation) == Approx(0.0).margin(3e-3).epsilon(0));
+                REQUIRE_THAT(rad2deg(calcData.satElevation - refSatElevation), Catch::Matchers::WithinAbs(0.0, 3e-3));
 
                 double refSatAzimuth = std::stod(v[19]); // Satellite’s azimuth, in radians, from the receiver’s antenna position.
                 LOG_DEBUG("    calcData.satAzimuth {} [°]", rad2deg(calcData.satAzimuth));
                 LOG_DEBUG("    refSatAzimuth       {} [°]", rad2deg(refSatAzimuth));
                 LOG_DEBUG("    calcData.satAzimuth - refSatAzimuth {} [°]", rad2deg(calcData.satAzimuth - refSatAzimuth));
-                REQUIRE(rad2deg(calcData.satAzimuth - refSatAzimuth) == Approx(0.0).margin(3e-3).epsilon(0));
+                REQUIRE_THAT(rad2deg(calcData.satAzimuth - refSatAzimuth), Catch::Matchers::WithinAbs(0.0, 3e-3));
 
                 if (calcData.elevationMaskTriggered)
                 {
@@ -237,7 +238,8 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - Klo
                     LOG_DEBUG("    timeDiffRecvTrans {} [s]", timeDiffRecvTrans);
                     LOG_DEBUG("    timeDiffRange_ref {} [s]", timeDiffRange_ref);
                     LOG_DEBUG("    timeDiffRecvTrans - timeDiffRange_ref {} [s]", timeDiffRecvTrans - timeDiffRange_ref);
-                    REQUIRE(timeDiffRecvTrans - timeDiffRange_ref == Approx(0.0).margin(1e-3).epsilon(0)); // TODO: This is not sufficient yet
+                    // TODO: This is not sufficient yet
+                    REQUIRE_THAT(timeDiffRecvTrans - timeDiffRange_ref, Catch::Matchers::WithinAbs(0.0, 1e-3));
 
                     // pseudorangeRate
 
@@ -245,19 +247,20 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - Klo
                     LOG_DEBUG("    calcData.dpsr_I   {} [m]", calcData.dpsr_I);
                     LOG_DEBUG("    refIonoCorrection {} [m]", refIonoCorrection);
                     LOG_DEBUG("    calcData.dpsr_I - refIonoCorrection = {} [m]", calcData.dpsr_I - refIonoCorrection);
-                    REQUIRE(calcData.dpsr_I - refIonoCorrection == Approx(0.0).margin(4e-2).epsilon(0));
+                    REQUIRE_THAT(calcData.dpsr_I - refIonoCorrection, Catch::Matchers::WithinAbs(0.0, 4e-2));
 
                     double refTropoCorrection = std::stod(v[17]); // Tropospheric corrections [m]
                     LOG_DEBUG("    calcData.dpsr_T    {} [m]", calcData.dpsr_T);
                     LOG_DEBUG("    refTropoCorrection {} [m]", refTropoCorrection);
                     LOG_DEBUG("    calcData.dpsr_T - refTropoCorrection = {} [m]", calcData.dpsr_T - refTropoCorrection);
-                    REQUIRE(calcData.dpsr_T - refTropoCorrection == Approx(0.0).margin(5e-1).epsilon(0));
+                    REQUIRE_THAT(calcData.dpsr_T - refTropoCorrection, Catch::Matchers::WithinAbs(0.0, 5e-1));
 
                     double refGeometricDist = std::stod(v[9]); // Geometrical distance [m] between the satellite’s and receiver’s antennas.
                     LOG_DEBUG("    calcData.geometricDist {} [m]", calcData.geometricDist);
                     LOG_DEBUG("    refGeometricDist       {} [m]", refGeometricDist);
                     LOG_DEBUG("    calcData.geometricDist - refGeometricDist = {} [m]", calcData.geometricDist - refGeometricDist);
-                    REQUIRE(calcData.geometricDist - refGeometricDist == Approx(0.0).margin(180).epsilon(0)); // TODO: this is very high
+                    // TODO: this is very high
+                    REQUIRE_THAT(calcData.geometricDist - refGeometricDist, Catch::Matchers::WithinAbs(0.0, 180));
                 }
             }
             else // if (sppSol->insTime < refRecvTime)

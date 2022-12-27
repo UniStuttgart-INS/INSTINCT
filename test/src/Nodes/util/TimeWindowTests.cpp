@@ -11,7 +11,7 @@
 /// @author M. Maier (marcel.maier@ins.uni-stuttgart.de)
 /// @date 2022-11-07
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 #include "FlowTester.hpp"
 

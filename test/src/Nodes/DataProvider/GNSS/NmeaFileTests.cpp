@@ -11,7 +11,8 @@
 /// @author T. Hobiger (thomas.hobiger@ins.uni-stuttgart.de)
 /// @date 2022-11-08
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
+#include <CatchMatchers.hpp>
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -30,8 +31,6 @@ namespace nm = NAV::NodeManager;
 namespace NAV::TESTS::NMEAFileTests
 {
 
-constexpr double EPSILON = 10.0 * std::numeric_limits<double>::epsilon();
-
 enum NmeaRef : size_t
 {
     NMEA_Year,
@@ -45,7 +44,7 @@ enum NmeaRef : size_t
     NMEA_Height,
 };
 
-constexpr std::array<std::array<long double, 9>, 3> NMEA_REFERENCE_DATA = { {
+constexpr std::array<std::array<double, 9>, 3> NMEA_REFERENCE_DATA = { {
     { 2022, 11, 5, 16, 16, 0.756, 0.916818838078743, 0.233908153687654, 0.0 },
     { 2022, 11, 5, 16, 16, 1.756, 0.916802548339058, 0.234095485694035, 0.0 },
     { 2022, 11, 3, 14, 05, 18.000, 0.851383885268465, 0.160074500200709, 327.812 },
@@ -63,11 +62,12 @@ void compareNMEAData(const std::shared_ptr<const NAV::PosVel>& obs, size_t messa
 
     REQUIRE(obs->insTime.toYMDHMS().hour == static_cast<int32_t>(NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Hour)));
     REQUIRE(obs->insTime.toYMDHMS().min == static_cast<int32_t>(NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Minute)));
-    REQUIRE(obs->insTime.toYMDHMS().sec == Approx(NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Second)).margin(EPSILON));
+    LOG_DATA("{}", obs->insTime.toYMDHMS().sec - NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Second));
+    REQUIRE_THAT(obs->insTime.toYMDHMS().sec - NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Second), Catch::Matchers::WithinAbs(0.0, 9e-12));
 
-    REQUIRE(obs->latitude() == Approx(NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Latitude_rad)).margin(EPSILON));
-    REQUIRE(obs->longitude() == Approx(NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Longitude_rad)).margin(EPSILON));
-    REQUIRE(obs->altitude() == Approx(NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Height)).margin(EPSILON));
+    REQUIRE_THAT(obs->latitude(), Catch::Matchers::WithinAbs(NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Latitude_rad), EPSILON));
+    REQUIRE_THAT(obs->longitude(), Catch::Matchers::WithinAbs(NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Longitude_rad), EPSILON));
+    REQUIRE_THAT(obs->altitude(), Catch::Matchers::WithinAbs(NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Height), EPSILON));
 
     REQUIRE(std::isnan(obs->e_velocity()[0]));
     REQUIRE(std::isnan(obs->e_velocity()[1]));

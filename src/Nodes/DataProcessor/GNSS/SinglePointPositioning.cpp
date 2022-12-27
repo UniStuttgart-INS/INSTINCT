@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <unordered_set>
+#include <ranges>
 
 #include "util/Logger.hpp"
 #include "util/Container/Vector.hpp"
@@ -156,17 +157,17 @@ void NAV::SinglePointPositioning::guiConfig()
                 std::string allSats;
 
                 std::string filler = ", ";
-                for (const auto& eph : gnssNavInfo->broadcastEphemeris)
+                for (const auto& satellite : gnssNavInfo->satellites())
                 {
-                    if ((_filterFreq & eph.first.satSys)
-                        && std::find(_excludedSatellites.begin(), _excludedSatellites.end(), eph.first) == _excludedSatellites.end())
+                    if ((satellite.first.satSys & _filterFreq)
+                        && std::find(_excludedSatellites.begin(), _excludedSatellites.end(), satellite.first) == _excludedSatellites.end())
                     {
                         usedSatNum++;
-                        usedSats += (allSats.empty() ? "" : filler) + fmt::format("{}", eph.first);
+                        usedSats += (allSats.empty() ? "" : filler) + fmt::format("{}", satellite.first);
                     }
-                    allSats += (allSats.empty() ? "" : filler) + fmt::format("{}", eph.first);
+                    allSats += (allSats.empty() ? "" : filler) + fmt::format("{}", satellite.first);
                 }
-                ImGui::TextUnformatted(fmt::format("{} / {}", usedSatNum, gnssNavInfo->broadcastEphemeris.size()).c_str());
+                ImGui::TextUnformatted(fmt::format("{} / {}", usedSatNum, gnssNavInfo->nSatellites()).c_str());
                 if (ImGui::IsItemHovered())
                 {
                     ImGui::SetTooltip("Used satellites: %s\n"
@@ -396,6 +397,22 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
         return;
     }
 
+    // Collection of all connected Ionospheric Corrections
+    IonosphericCorrections ionosphericCorrections;
+    for (const auto* gnssNavInfo : gnssNavInfos)
+    {
+        if (gnssNavInfo)
+        {
+            for (const auto& correction : gnssNavInfo->ionosphericCorrections.data())
+            {
+                if (!ionosphericCorrections.contains(correction.satSys, correction.alphaBeta))
+                {
+                    ionosphericCorrections.insert(correction.satSys, correction.alphaBeta, correction.data);
+                }
+            }
+        }
+    }
+
     auto gnssObs = std::static_pointer_cast<const GnssObs>(queue.extract_front());
     LOG_DATA("{}: Calculating SPP for {}", nameId(), gnssObs->insTime.toYMDHMS());
 
@@ -428,7 +445,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
         {
             for (size_t navIdx = 0; navIdx < gnssNavInfos.size(); navIdx++)
             {
-                if (gnssNavInfos[navIdx]->broadcastEphemeris.contains(satId)) // can calculate satellite position
+                if (gnssNavInfos[navIdx]->contains(satId)) // can calculate satellite position
                 {
                     LOG_DATA("{}: Using observation from {} {}", nameId(), obsData.satSigId, obsData.code);
                     calcData.emplace_back(obsIdx, navIdx);
@@ -512,10 +529,11 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
         {
             nDopplerMeas++;
             int8_t num = -128;
-            if (obsData.satSigId.freq & (R01 | R02))
-            {
-                num = std::get<GLONASSEphemeris>(gnssNavInfos[calcData[i].navIdx]->getEphemeris(obsData.satSigId.toSatId(), gnssObs->insTime)).frequencyNumber;
-            }
+            // TODO: Find out what this is used for and find a way to use it, after the GLONASS orbit calculation is working
+            // if (obsData.satSigId.freq & (R01 | R02))
+            // {
+            //     num = std::get<GLONASSEphemeris>(gnssNavInfos[calcData[i].navIdx]->getEphemeris(obsData.satSigId.toSatId(), gnssObs->insTime)).frequencyNumber;
+            // }
 
             calcData[i].pseudorangeRate = doppler2psrRate(obsData.doppler, obsData.satSigId.freq, num);
         }
@@ -576,12 +594,14 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
 
         LOG_DATA("{}:     pseudorange  {}", nameId(), obsData.pseudorange);
 
-        auto satClk = navInfo->calcSatelliteClockCorrections(obsData.satSigId, gnssObs->insTime, obsData.pseudorange);
+        auto satClk = navInfo->calcSatelliteClockCorrections(obsData.satSigId.toSatId(), gnssObs->insTime, obsData.pseudorange, obsData.satSigId.freq);
         calcData[i].satClkBias = satClk.bias;
         calcData[i].satClkDrift = satClk.drift;
         LOG_DATA("{}:     satClkBias {}, satClkDrift {}", nameId(), calcData[i].satClkBias, calcData[i].satClkDrift);
 
-        navInfo->calcSatellitePosVelAccel(satId, satClk.transmitTime, &calcData[i].e_satPos, &calcData[i].e_satVel);
+        auto satPosVel = navInfo->calcSatellitePosVel(satId, satClk.transmitTime);
+        calcData[i].e_satPos = satPosVel.e_pos;
+        calcData[i].e_satVel = satPosVel.e_vel;
         LOG_DATA("{}:     e_satPos {}", nameId(), calcData[i].e_satPos.transpose());
         LOG_DATA("{}:     e_satVel {}", nameId(), calcData[i].e_satVel.transpose());
 
@@ -671,40 +691,11 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             //                                                    Position calculation
             // #############################################################################################################################
 
-            std::optional<std::reference_wrapper<const std::vector<double>>> alpha;
-            std::optional<std::reference_wrapper<const std::vector<double>>> beta;
-            auto ionoModel = _ionosphereModel;
-            if (_ionosphereModel == IonosphereModel::Klobuchar)
-            {
-                for (size_t j = 0; j < _nNavInfoPins; j++)
-                {
-                    if (gnssNavInfos[j])
-                    {
-                        auto a = gnssNavInfos[j]->ionosphericCorrections.get(GPS, IonosphericCorrections::A);
-                        auto b = gnssNavInfos[j]->ionosphericCorrections.get(GPS, IonosphericCorrections::B);
-                        if (a.has_value() && b.has_value())
-                        {
-                            alpha = a;
-                            beta = b;
-                            break;
-                        }
-                    }
-                }
-                if (!alpha.has_value() || !beta.has_value())
-                {
-                    LOG_ERROR("{}: Can't apply broadcast ionosphere model, because the navigation data did not include correction values alpha or beta for a GPS satellite system. Turning ionosphere model off.", nameId());
-                    ionoModel = IonosphereModel::None;
-                }
-            }
-
             // Pseudorange measurement [m] - Groves ch. 8.5.3, eq. 8.48, p. 342
             double psrMeas = obsData.pseudorange /* + (multipath and/or NLOS errors) + (tracking errors) */;
             // Estimated modulation ionosphere propagation error [m]
             double dpsr_I = calcIonosphericTimeDelay(static_cast<double>(gnssObs->insTime.toGPSweekTow().tow), obsData.satSigId.freq, lla_pos,
-                                                     satElevation, satAzimuth,
-                                                     ionoModel != IonosphereModel::None ? alpha.value() : std::vector<double>{},
-                                                     ionoModel != IonosphereModel::None ? beta.value() : std::vector<double>{},
-                                                     ionoModel)
+                                                     satElevation, satAzimuth, _ionosphereModel, &ionosphericCorrections)
                             * InsConst::C;
             LOG_DATA("{}:     [{}]     dpsr_I {} [m] (Estimated modulation ionosphere propagation error)", nameId(), o, dpsr_I);
 
@@ -756,20 +747,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                 double varPsrMeas = std::pow(satSysErrFactor, 2) * std::pow(opt_err[0], 2) * (std::pow(opt_err[1], 2) + std::pow(opt_err[2], 2) / std::sin(ele));
                 LOG_DATA("{}:     [{}]     varPsrMeas {}", nameId(), o, varPsrMeas);
 
-                const auto& ephemeris = gnssNavInfos[calcData[i].navIdx]->getEphemeris(satId, gnssObs->insTime);
-                double varEph = 0.0;
-                switch (SatelliteSystem_(satId.satSys))
-                {
-                case GPS: // Getting the index and value again will discretize the values the the URA values
-                    varEph = std::pow(GPSEphemeris::gpsUraIdx2Val(GPSEphemeris::gpsUraVal2Idx(std::get<GPSEphemeris>(ephemeris).signalAccuracy)), 2);
-                    break;
-                case GAL: // Getting the index and value again will discretize the values the the SISA values
-                    varEph = std::pow(GPSEphemeris::galSisaIdx2Val(GPSEphemeris::galSisaVal2Idx(std::get<GPSEphemeris>(ephemeris).signalAccuracy)), 2);
-                    break;
-                default:
-                    LOG_ERROR("Ephemeris Error calculation only supports GPS and GAL yet.");
-                    break;
-                }
+                double varEph = gnssNavInfos[calcData[i].navIdx]->calcSatellitePositionVariance(satId, gnssObs->insTime);
                 LOG_DATA("{}:     [{}]     varEph {}", nameId(), o, varEph);
                 double varIono = std::pow(dpsr_I * ERR_BRDCI, 2);
                 LOG_DATA("{}:     [{}]     varIono {}", nameId(), o, varIono);

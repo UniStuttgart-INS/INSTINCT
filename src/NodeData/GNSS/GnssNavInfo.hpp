@@ -13,19 +13,14 @@
 
 #pragma once
 
-#include <array>
-#include <vector>
 #include <unordered_map>
 #include <utility>
-#include <cmath>
 
-#include "util/Assert.h"
-
-#include "Navigation/Constants.hpp"
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "Navigation/GNSS/Core/SatelliteSystem.hpp"
-#include "Navigation/GNSS/NavigationMessage/IonosphericCorrections.hpp"
-#include "Navigation/GNSS/NavigationMessage/Ephemeris.hpp"
+#include "Navigation/Atmosphere/Ionosphere/IonosphericCorrections.hpp"
+#include "Navigation/GNSS/Satellite/Satellite.hpp"
+#include "util/Container/Pair.hpp"
 
 namespace NAV
 {
@@ -40,87 +35,89 @@ class GnssNavInfo
         return "GnssNavInfo";
     }
 
-    /// @brief Get the ephemeris for the satellite which is closest to the specified time
+    /// @brief Calculates position, velocity and acceleration of the satellite at transmission time
     /// @param[in] satId Satellite identifier
-    /// @param[in] recvTime Receiver time to get the ephemeris for
-    /// @return Reference to the closest ephemeris to the specified time
-    const std::variant<GPSEphemeris, GLONASSEphemeris>& getEphemeris(const SatId& satId, const InsTime& recvTime) const
+    /// @param[in] transTime Transmit time to calculate the satellite position for
+    [[nodiscard]] Orbit::Pos calcSatellitePos(const SatId& satId, const InsTime& transTime) const
     {
-        const auto& data = broadcastEphemeris.at(satId);
-        if (data.size() == 1)
-        {
-            return data.front().second;
-        }
+        return m_satellites.at(satId).calcSatellitePos(transTime);
+    }
+    /// @brief Calculates position, velocity and acceleration of the satellite at transmission time
+    /// @param[in] satId Satellite identifier
+    /// @param[in] transTime Transmit time to calculate the satellite position for
+    [[nodiscard]] Orbit::PosVel calcSatellitePosVel(const SatId& satId, const InsTime& transTime) const
+    {
+        return m_satellites.at(satId).calcSatellitePosVel(transTime);
+    }
+    /// @brief Calculates position, velocity and acceleration of the satellite at transmission time
+    /// @param[in] satId Satellite identifier
+    /// @param[in] transTime Transmit time to calculate the satellite position for
+    [[nodiscard]] Orbit::PosVelAccel calcSatellitePosVelAccel(const SatId& satId, const InsTime& transTime) const
+    {
+        return m_satellites.at(satId).calcSatellitePosVelAccel(transTime);
+    }
 
-        long double prevDiff = InsTimeUtil::SECONDS_PER_WEEK;
-        for (auto riter = data.rbegin(); riter != data.rend(); riter++)
-        {
-            long double diff = std::abs((riter->first - recvTime).count());
-            if (diff < prevDiff)
-            {
-                prevDiff = diff;
-            }
-            else
-            {
-                return (--riter)->second;
-            }
-        }
-        return data.front().second;
+    /// @brief Calculates clock bias and drift of the satellite
+    /// @param[in] satId Satellite identifier
+    /// @param[in] recvTime Receiver time to calculate the satellite position for
+    /// @param[in] dist Distance between receiver and satellite (normally the pseudorange) [m]
+    /// @param[in] freq Signal Frequency
+    [[nodiscard]] Clock::Corrections calcSatelliteClockCorrections(const SatId& satId, const InsTime& recvTime, double dist, const Frequency& freq) const
+    {
+        return m_satellites.at(satId).calcClockCorrections(recvTime, dist, freq);
+    }
+
+    /// @brief Calculates the Variance of the satellite position in [m]
+    /// @param[in] satId Satellite identifier
+    /// @param[in] recvTime Receiver time to calculate the satellite position for
+    [[nodiscard]] double calcSatellitePositionVariance(const SatId& satId, const InsTime& recvTime) const
+    {
+        return m_satellites.at(satId).calcSatellitePositionVariance(recvTime);
     }
 
     /// @brief Checks whether the signal is healthy
     /// @param[in] satId Satellite identifier
-    /// @param[in] recvTime Receive time for the broadcast data lookup
+    /// @param[in] recvTime Receive time for the data lookup
     [[nodiscard]] bool isHealthy(const SatId& satId, const InsTime& recvTime) const
     {
-        const auto& eph = getEphemeris(satId, recvTime);
-        if (std::holds_alternative<GPSEphemeris>(eph))
-        {
-            return std::get<GPSEphemeris>(eph).svHealth == 0;
-        }
-        // else
-        // {
-        //     return std::get<GLONASSEphemeris>(eph).calcSatelliteClockCorrections(recvTime, dist, satSigId.freq);
-        // }
-        return false;
+        return m_satellites.at(satId).isHealthy(recvTime);
     }
 
-    /// @brief Calculates position, velocity and acceleration of the satellite at transmission time
-    /// @param[in] satSigId Satellite signal identifier
-    /// @param[in] recvTime Receive time to calculate the satellite position for
-    /// @param[in] dist Distance between receiver and satellite (normally the pseudorange) [m]
-    [[nodiscard]] SatelliteClockCorrections calcSatelliteClockCorrections(const SatSigId& satSigId, const InsTime& recvTime, double dist) const
-    {
-        const auto& eph = getEphemeris(satSigId.toSatId(), recvTime);
-        if (std::holds_alternative<GPSEphemeris>(eph))
-        {
-            return std::get<GPSEphemeris>(eph).calcSatelliteClockCorrections(recvTime, dist, satSigId.freq);
-        }
-        // else
-        // {
-        //     return std::get<GLONASSEphemeris>(eph).calcSatelliteClockCorrections(recvTime, dist, satSigId.freq);
-        // }
-        return {};
-    }
-
-    /// @brief Calculates position, velocity and acceleration of the satellite at transmission time
+    /// @brief Adds the provided satellite navigation data to the satellite
     /// @param[in] satId Satellite identifier
-    /// @param[in] transTime Transmit time to calculate the satellite position for
-    /// @param[out] e_pos The Earth fixed coordinates in WGS84 frame of the satellite at the requested time [m] (nullptr disables calculation)
-    /// @param[out] e_vel The WGS84 frame velocity of the satellite at the requested time [m/s] (nullptr disables calculation)
-    /// @param[out] e_accel The WGS84 frame acceleration of the satellite at the requested time [m/s^2] (nullptr disables calculation)
-    void calcSatellitePosVelAccel(const SatId& satId, const InsTime& transTime,
-                                  Eigen::Vector3d* e_pos = nullptr, Eigen::Vector3d* e_vel = nullptr, Eigen::Vector3d* e_accel = nullptr) const
+    /// @param[in] satNavData Satellite Navigation Data to add
+    void addSatelliteNavData(const SatId& satId, const std::shared_ptr<SatNavData>& satNavData)
     {
-        const auto& eph = getEphemeris(satId, transTime);
-        if (std::holds_alternative<GPSEphemeris>(eph))
-        {
-            std::get<GPSEphemeris>(eph).calcSatellitePosVelAccel(transTime, satId.satSys, e_pos, e_vel, e_accel);
-        }
-        // else
-        // {
-        //     std::get<GLONASSEphemeris>(eph).calcSatellitePosVelAccelClk(transTime, dist, satId.satSys, clkBias, e_pos, e_vel, e_accel);
-        // }
+        m_satellites[satId].addSatNavData(satNavData);
+    }
+
+    /// @brief Checks whether the satellite is included in the internal data
+    /// @param satId Satellite identifier
+    [[nodiscard]] bool contains(const SatId& satId) const
+    {
+        return m_satellites.contains(satId);
+    }
+
+    /// @brief Returns the amount of satellites contained in this message
+    [[nodiscard]] size_t nSatellites() const
+    {
+        return m_satellites.size();
+    }
+
+    /// @brief Get the satellites
+    /// @return Reference to the internal satellites map
+    const auto& satellites() const
+    {
+        return m_satellites;
+    }
+
+    /// @brief Resets the data by clearing the member variables
+    void reset()
+    {
+        satelliteSystems = SatSys_None;
+        ionosphericCorrections.clear();
+        timeSysCorr.clear();
+        m_satellites.clear();
     }
 
     /// @brief Satellite Systems available
@@ -136,12 +133,12 @@ class GnssNavInfo
         double a1 = std::nan(""); ///< a1 Coefficient of linear polynomial [s/s]
     };
 
-    /// Time system correction parameters
-    std::unordered_map<SatelliteSystem, TimeSystemCorrections> timeSysCorr;
+    /// Time system correction parameters. Difference between GNSS system time and UTC or other time systems
+    std::unordered_map<std::pair<TimeSystem, TimeSystem>, TimeSystemCorrections> timeSysCorr;
 
-    /// Map of all data contained in the navigation message
-    /// Key {SatSys, SatNum}, InsTime e.g. [{GPS, 1}][time]
-    std::unordered_map<SatId, std::vector<std::pair<InsTime, std::variant<GPSEphemeris, GLONASSEphemeris>>>> broadcastEphemeris;
+  private:
+    /// Map of satellites containing the navigation message data
+    std::unordered_map<SatId, Satellite> m_satellites;
 };
 
 } // namespace NAV

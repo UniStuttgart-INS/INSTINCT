@@ -11,7 +11,7 @@
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2021-05-15
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <string>
 #include <fstream>
 #include <sstream>

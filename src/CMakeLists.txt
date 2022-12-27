@@ -23,11 +23,11 @@ if(ENABLE_MAIN)
     PRIVATE project_options
             project_warnings
             instinct::rc
-            CONAN_PKG::fmt
-            CONAN_PKG::spdlog
-            CONAN_PKG::boost
-            CONAN_PKG::eigen
-            CONAN_PKG::nlohmann_json
+            fmt::fmt
+            spdlog::spdlog
+            Boost::program_options
+            Eigen3::Eigen
+            nlohmann_json::nlohmann_json
             Threads::Threads
             imgui
             imgui_node_editor

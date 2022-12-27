@@ -319,3 +319,18 @@ constexpr bool operator!=(const TimeSystem& lhs, const TimeSystem_& rhs) { retur
 constexpr bool operator!=(const TimeSystem_& lhs, const TimeSystem& rhs) { return !(lhs == rhs); }
 
 } // namespace NAV
+
+namespace std
+{
+/// @brief Hash function for TimeSystem (needed for unordered_map)
+template<>
+struct hash<NAV::TimeSystem>
+{
+    /// @brief Hash function for TimeSystem
+    /// @param[in] f Time system
+    std::size_t operator()(const NAV::TimeSystem& f) const
+    {
+        return std::hash<NAV::TimeSystem_>{}(NAV::TimeSystem_(f));
+    }
+};
+} // namespace std

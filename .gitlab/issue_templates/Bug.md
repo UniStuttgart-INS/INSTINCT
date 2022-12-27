@@ -48,6 +48,12 @@ Collapsed text
 
 <!-- If you can, link to the line of code that might be responsible for the problem. -->
 
+### Merge to GitHub?
+
+<!-- Please state whether the issue should be merged to the public GitHub repository after it was merged to our GitLab master branch.
+     Additionally indicate this by removing or adding the label 'GitHub' -->
+/label ~"GitHub"
+
 ### Environment info
 
 <!--  Input any relevant environment information if needed. -->
