@@ -113,7 +113,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UbloxFile::pollData()
 {
     uint8_t i = 0;
     std::unique_ptr<uart::protocol::Packet> packet = nullptr;
-    while (_filestream.readsome(reinterpret_cast<char*>(&i), 1))
+    while (readsome(reinterpret_cast<char*>(&i), 1))
     {
         packet = _sensor.findPacket(i);
 

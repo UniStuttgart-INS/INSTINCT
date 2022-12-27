@@ -3,7 +3,7 @@ spdlog/1.11.0
 fmt/9.1.0
 boost/1.80.0
 eigen/3.4.0
-catch2/2.13.8
+catch2/3.2.1
 nlohmann_json/3.11.2
 
 [options]
@@ -38,3 +38,6 @@ boost:without_thread=True
 boost:without_timer=True
 boost:without_type_erasure=True
 boost:without_wave=True
+
+[generators]
+cmake_find_package

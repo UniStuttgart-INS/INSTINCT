@@ -6,7 +6,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
+#include "CatchMatchers.hpp"
 
 #include <iostream>
 #include <limits>
@@ -691,7 +692,7 @@ TEST_CASE("[InsTime] Adding values over leap second", "[InsTime]")
     CHECK(calDate_UTC.day == 1);
     CHECK(calDate_UTC.hour == 0);
     CHECK(calDate_UTC.min == 30);
-    CHECK(calDate_UTC.sec == Approx(18).margin(1.0e-14));
+    CHECK_THAT(calDate_UTC.sec - 18, Catch::Matchers::WithinAbs(0, 1.6e-11));
 
     InsTime recoveredTime = timeAfterLeap - std::chrono::seconds(dt);
 

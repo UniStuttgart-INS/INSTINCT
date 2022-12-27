@@ -184,7 +184,7 @@ std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData()
 
     // Read line
     std::string line;
-    std::getline(_filestream, line);
+    getline(line);
     // Remove any starting non text characters
     line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
 
@@ -432,7 +432,7 @@ void NAV::RtklibPosFile::readHeader()
     std::string line;
     do
     {
-        std::getline(_filestream, line);
+        getline(line);
         // Remove any starting non text characters
         line.erase(line.begin(), std::find_if(line.begin(), line.end(),
                                               [](int ch) { return std::isgraph(ch); }));
@@ -448,7 +448,7 @@ void NAV::RtklibPosFile::readHeader()
             if (cell == "GPST") // When RTKLIB selected 'ww ssss GPST' or 'hh:mm:ss GPST'
             {
                 auto pos = lineStream.tellg();
-                std::getline(_filestream, line);
+                getline(line);
                 lineStream.seekg(pos);
 
                 if (line.substr(0, 7).find('/') == std::string::npos)

@@ -36,14 +36,14 @@ If no GUI is required, the application can be run in ```--nogui``` mode and a `.
 ```shell
 export CC=clang && export CXX=clang++
 cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=INFO
-cmake --build build/Release -- -j
-./bin/Release/instinct
+cmake --build build/Release --parallel8
+./build/bin/Release/instinct
 ```
 
 ##### Build & run the tests
 ```shell
 cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=TRACE
-cmake --build build/Release -- -j
+cmake --build build/Release --parallel8
 cd build/Release
 ctest --output-on-failure
 ```

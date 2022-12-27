@@ -257,4 +257,125 @@ static inline std::vector<std::string> split_wo_empty(const std::string& str, ch
     return split_wo_empty(str, std::string(1, delimiter));
 }
 
+/// @brief Concept limiting the type to std::string and std::wstring, but also allowing convertible types like const char*
+template<typename T>
+concept StdString = std::convertible_to<T, std::string> || std::convertible_to<T, std::wstring>;
+
+/// @brief Interprets a value in the string str
+/// @tparam String std::string or std::wstring and also allowing convertible types like const char*
+/// @param str the string to convert
+/// @param default_value default value to take if an invalid argument is given
+/// @param pos address of an integer to store the number of characters processed
+/// @param base the number base
+/// @return Value corresponding to the content of str
+template<StdString String>
+int stoi(const String& str, int default_value, std::size_t* pos = nullptr, int base = 10) noexcept
+{
+    try
+    {
+        return std::stoi(str, pos, base);
+    }
+    catch (...)
+    {}
+
+    return default_value;
+}
+
+/// @brief Interprets a value in the string str
+/// @tparam String std::string or std::wstring and also allowing convertible types like const char*
+/// @param str the string to convert
+/// @param default_value default value to take if an invalid argument is given
+/// @param pos address of an integer to store the number of characters processed
+/// @param base the number base
+/// @return Value corresponding to the content of str
+template<StdString String>
+int64_t stol(const String& str, int64_t default_value, std::size_t* pos = nullptr, int base = 10) noexcept
+{
+    try
+    {
+        return std::stol(str, pos, base);
+    }
+    catch (...)
+    {}
+
+    return default_value;
+}
+
+/// @brief Interprets a value in the string str
+/// @tparam String std::string or std::wstring and also allowing convertible types like const char*
+/// @param str the string to convert
+/// @param default_value default value to take if an invalid argument is given
+/// @param pos address of an integer to store the number of characters processed
+/// @param base the number base
+/// @return Value corresponding to the content of str
+template<StdString String>
+int64_t stoll(const String& str, int64_t default_value, std::size_t* pos = nullptr, int base = 10) noexcept
+{
+    try
+    {
+        return std::stoll(str, pos, base);
+    }
+    catch (...)
+    {}
+
+    return default_value;
+}
+
+/// @brief Interprets a value in the string str
+/// @tparam String std::string or std::wstring and also allowing convertible types like const char*
+/// @param str the string to convert
+/// @param default_value default value to take if an invalid argument is given
+/// @param pos address of an integer to store the number of characters processed
+/// @return Value corresponding to the content of str
+template<StdString String>
+float stof(const String& str, float default_value, std::size_t* pos = nullptr) noexcept
+{
+    try
+    {
+        return std::stof(str, pos);
+    }
+    catch (...)
+    {}
+
+    return default_value;
+}
+
+/// @brief Interprets a value in the string str
+/// @tparam String std::string or std::wstring and also allowing convertible types like const char*
+/// @param str the string to convert
+/// @param default_value default value to take if an invalid argument is given
+/// @param pos address of an integer to store the number of characters processed
+/// @return Value corresponding to the content of str
+template<StdString String>
+double stod(const String& str, double default_value, std::size_t* pos = nullptr) noexcept
+{
+    try
+    {
+        return std::stod(str, pos);
+    }
+    catch (...)
+    {}
+
+    return default_value;
+}
+
+/// @brief Interprets a value in the string str
+/// @tparam String std::string or std::wstring and also allowing convertible types like const char*
+/// @param str the string to convert
+/// @param default_value default value to take if an invalid argument is given
+/// @param pos address of an integer to store the number of characters processed
+/// @return Value corresponding to the content of str
+template<StdString String>
+long double stold(const String& str, long double default_value, std::size_t* pos = nullptr) noexcept
+{
+    try
+    {
+        return std::stold(str, pos);
+    }
+    catch (...)
+    {}
+
+    return default_value;
+}
+
 } // namespace NAV::str
