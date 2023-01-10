@@ -11,7 +11,8 @@
 /// @author M. Maier (marcel.maier@ins.uni-stuttgart.de)
 /// @date 2022-11-11
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
+#include "CatchMatchers.hpp"
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -43,9 +44,6 @@ namespace nm = NAV::NodeManager;
 
 namespace NAV::TESTS::RinexObsFileTests
 {
-
-constexpr double EPSILON = 10.0 * std::numeric_limits<double>::epsilon();
-
 void compareObservation(const std::shared_ptr<const NAV::GnssObs>& obs)
 {
     // ---------------------------------------------- InsTime ------------------------------------------------
@@ -56,30 +54,30 @@ void compareObservation(const std::shared_ptr<const NAV::GnssObs>& obs)
     REQUIRE(obs->insTime.toYMDHMS().day == static_cast<int32_t>(RINEX_REFERENCE_EPOCH.at(RINEX_Day)));
     REQUIRE(obs->insTime.toYMDHMS().hour == static_cast<int32_t>(RINEX_REFERENCE_EPOCH.at(RINEX_Hour)));
     REQUIRE(obs->insTime.toYMDHMS().min == static_cast<int32_t>(RINEX_REFERENCE_EPOCH.at(RINEX_Minute)));
-    REQUIRE(obs->insTime.toYMDHMS().sec == Approx(RINEX_REFERENCE_EPOCH.at(RINEX_Second) - Gps_LeapSec).margin(EPSILON));
+    REQUIRE_THAT(obs->insTime.toYMDHMS().sec, Catch::Matchers::WithinAbs(RINEX_REFERENCE_EPOCH.at(RINEX_Second) - Gps_LeapSec, 9e-12));
 
     // -------------------------------------------- Observation ----------------------------------------------
     for (size_t obsCounter = 0; obsCounter < RINEX_REFDATA_SATSYS.size(); obsCounter++)
     {
         REQUIRE(obs->data.at(obsCounter).satSigId.freq == RINEX_REFDATA_SATSYS.at(obsCounter));
         REQUIRE(obs->data.at(obsCounter).satSigId.satNum == static_cast<uint16_t>(RINEX_REFERENCE_DATA.at(obsCounter).at(RINEX_SatNum)));
-        REQUIRE(obs->data.at(obsCounter).pseudorange == Approx(RINEX_REFERENCE_DATA.at(obsCounter).at(RINEX_Obs_Pseudorange)).margin(EPSILON));
+        REQUIRE_THAT(obs->data.at(obsCounter).pseudorange, Catch::Matchers::WithinAbs(RINEX_REFERENCE_DATA.at(obsCounter).at(RINEX_Obs_Pseudorange), EPSILON_LDOUBLE));
         if (!std::isnan(obs->data.at(obsCounter).carrierPhase))
         {
-            REQUIRE(obs->data.at(obsCounter).carrierPhase == Approx(RINEX_REFERENCE_DATA.at(obsCounter).at(RINEX_Obs_CarrierPhase)).margin(EPSILON));
+            REQUIRE_THAT(obs->data.at(obsCounter).carrierPhase, Catch::Matchers::WithinAbs(RINEX_REFERENCE_DATA.at(obsCounter).at(RINEX_Obs_CarrierPhase), EPSILON_LDOUBLE));
         }
         if (!std::isnan(obs->data.at(obsCounter).doppler))
         {
-            REQUIRE(obs->data.at(obsCounter).doppler == Approx(RINEX_REFERENCE_DATA.at(obsCounter).at(RINEX_Obs_Doppler)).margin(EPSILON));
+            REQUIRE_THAT(obs->data.at(obsCounter).doppler, Catch::Matchers::WithinAbs(RINEX_REFERENCE_DATA.at(obsCounter).at(RINEX_Obs_Doppler), EPSILON_LDOUBLE));
         }
         if (!std::isnan(obs->data.at(obsCounter).CN0))
         {
-            REQUIRE(obs->data.at(obsCounter).CN0 == Approx(RINEX_REFERENCE_DATA.at(obsCounter).at(RINEX_Obs_SigStrength)).margin(EPSILON));
+            REQUIRE_THAT(obs->data.at(obsCounter).CN0, Catch::Matchers::WithinAbs(RINEX_REFERENCE_DATA.at(obsCounter).at(RINEX_Obs_SigStrength), EPSILON_LDOUBLE));
         }
     }
 }
 
-TEST_CASE("[RinexObsFile][flow] Read RINEX file (v3.03) and compare content with hardcoded values", "[RinexObsFile][flow]")
+TEST_CASE("[RinexObsFile][flow] Read RINEX file (v3.03) and compare content with hardcoded values", "[RinexObsFile][flow][debug]")
 {
     Logger logger;
 
