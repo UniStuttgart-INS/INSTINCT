@@ -19,6 +19,7 @@
 #include <limits>
 
 #include "FlowTester.hpp"
+#include "Logger.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -44,6 +45,7 @@ namespace nm = NAV::NodeManager;
 
 namespace NAV::TESTS::RinexObsFileTests
 {
+
 void compareObservation(const std::shared_ptr<const NAV::GnssObs>& obs)
 {
     // ---------------------------------------------- InsTime ------------------------------------------------
@@ -77,9 +79,13 @@ void compareObservation(const std::shared_ptr<const NAV::GnssObs>& obs)
     }
 }
 
-TEST_CASE("[RinexObsFile][flow] Read RINEX file (v3.03) and compare content with hardcoded values", "[RinexObsFile][flow][debug]")
+void testRinexObsFileFlow(const std::string& path)
 {
-    Logger logger;
+    auto logger = initializeTestLogger();
+
+    nm::RegisterPreInitCallback([&]() {
+        dynamic_cast<RinexObsFile*>(nm::FindNode(2))->_path = path;
+    });
 
     // ###########################################################################################################
     //                                             RinexObsFile.flow
@@ -91,9 +97,6 @@ TEST_CASE("[RinexObsFile][flow] Read RINEX file (v3.03) and compare content with
     //
     // ###########################################################################################################
 
-    // TODO: Add tests for more Rinex versions
-    // nm::RegisterPreInitCallback([&]() { dynamic_cast<RinexObsFile*>(nm::FindNode(2))->_path = "Rinex/FixedSize/vn310-imu.csv"; });
-
     nm::RegisterWatcherCallbackToInputPin(25, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         compareObservation(std::dynamic_pointer_cast<const NAV::GnssObs>(queue.front()));
     });
@@ -101,6 +104,11 @@ TEST_CASE("[RinexObsFile][flow] Read RINEX file (v3.03) and compare content with
     // TODO: inlcude test for Rinex Obs Header?: 'RINEX_SYS_NUM_OBS_TYPES_TEST' -- not possible, since gnssObs doesn't contain that info
 
     REQUIRE(testFlow("test/flow/Nodes/DataProvider/GNSS/RinexObsFile.flow"));
+}
+
+TEST_CASE("[RinexObsFile][flow] Read RINEX file (v3.03) and compare content with hardcoded values", "[RinexObsFile][flow][debug]")
+{
+    testRinexObsFileFlow("RINEX/v3_03/reach-m2-01_raw_202211021639_test.22O");
 }
 
 } // namespace NAV::TESTS::RinexObsFileTests
