@@ -1348,8 +1348,15 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
 
     if (inputPins.at(pinIndex).type == Pin::Type::Flow)
     {
+        if (startPin.dataIdentifier.size() > 1)
+        {
+            // Happens if connected Node supports multiple output values which can be chosen, but the node did not load yet.
+            // But it will and then recreate the link
+            return;
+        }
         if (_pinData.at(pinIndex).dataIdentifier != startPin.dataIdentifier.front())
         {
+            _pinData.at(pinIndex).plotData.clear();
             for (auto& plot : _plots)
             {
                 while (true)
