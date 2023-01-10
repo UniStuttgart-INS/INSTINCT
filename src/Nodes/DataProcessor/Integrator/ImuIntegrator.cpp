@@ -307,7 +307,7 @@ void NAV::ImuIntegrator::updateNumberOfInputPins()
     {
         while (inputPins.size() >= 3)
         {
-            inputPins.pop_back();
+            nm::DeleteInputPin(inputPins.back());
         }
     }
 }

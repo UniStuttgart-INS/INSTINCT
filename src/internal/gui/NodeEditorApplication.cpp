@@ -1400,6 +1400,20 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Text("Node: %s", pin->parentNode ? std::to_string(size_t(pin->parentNode->id)).c_str() : "<none>");
             ImGui::Text("Type: %s", std::string(pin->type).c_str());
             ImGui::Separator();
+            if (pin->isPinLinked())
+            {
+                const auto& link = pin->link;
+                ImGui::SetNextItemOpen(true, ImGuiCond_Appearing);
+                if (ImGui::TreeNode(fmt::format("LinkId: {}", size_t(link.linkId)).c_str()))
+                {
+                    ImGui::BulletText("Connected Node: %s", link.connectedNode->nameId().c_str());
+                    ImGui::BulletText("Connected Pin:  %s (%zu)", link.getConnectedPin()->name.c_str(),
+                                      size_t(link.getConnectedPin()->id));
+                    ImGui::TreePop();
+                }
+            }
+            else { ImGui::TextUnformatted("Link: Not linked"); }
+            ImGui::Separator();
             if (ImGui::TreeNode(fmt::format("Queue: {}", pin->queue.size()).c_str()))
             {
                 ImGui::BeginChild("QueueItems", ImVec2(ImGui::GetContentRegionAvail().x, 150), false, ImGuiWindowFlags_None);
@@ -1423,6 +1437,27 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Text("Node: %s", pin->parentNode ? std::to_string(size_t(pin->parentNode->id)).c_str() : "<none>");
             ImGui::Text("Type: %s", std::string(pin->type).c_str());
             ImGui::Text("Mode: %s", pin->mode == OutputPin::Mode::REAL_TIME ? "Real-time" : "Post-processing");
+            ImGui::Separator();
+            if (pin->isPinLinked())
+            {
+                ImGui::SetNextItemOpen(true, ImGuiCond_Appearing);
+                if (ImGui::TreeNode(fmt::format("Links: {}", pin->links.size()).c_str()))
+                {
+                    for (const auto& link : pin->links)
+                    {
+                        ImGui::SetNextItemOpen(true, ImGuiCond_Appearing);
+                        if (ImGui::TreeNode(fmt::format("LinkId: {}", size_t(link.linkId)).c_str()))
+                        {
+                            ImGui::BulletText("Connected Node: %s", link.connectedNode->nameId().c_str());
+                            ImGui::BulletText("Connected Pin:  %s (%zu)", link.getConnectedPin()->name.c_str(),
+                                              size_t(link.getConnectedPin()->id));
+                            ImGui::TreePop();
+                        }
+                    }
+                    ImGui::TreePop();
+                }
+            }
+            else { ImGui::TextUnformatted("Link: Not linked"); }
             ImGui::Separator();
             if (ImGui::MenuItem("Rename"))
             {

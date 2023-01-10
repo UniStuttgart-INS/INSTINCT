@@ -239,11 +239,6 @@ void NAV::Pin::deleteLink(OutputPin& startPin, InputPin& endPin)
 //                                                 OutputPin
 // ###########################################################################################################
 
-NAV::OutputPin::~OutputPin()
-{
-    deleteLinks();
-}
-
 bool NAV::OutputPin::canCreateLink(const NAV::InputPin& other) const
 {
     return Pin::canCreateLink(*this, other);
@@ -354,11 +349,6 @@ NAV::InputPin* NAV::OutputPin::OutgoingLink::getConnectedPin() const
 // ###########################################################################################################
 //                                                 InputPin
 // ###########################################################################################################
-
-NAV::InputPin::~InputPin()
-{
-    deleteLink();
-}
 
 bool NAV::InputPin::canCreateLink(const OutputPin& other) const
 {
