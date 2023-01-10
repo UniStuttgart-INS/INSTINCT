@@ -347,7 +347,7 @@ class OutputPin : public Pin
     /// @brief Default constructor (for serialization)
     OutputPin() = default;
     /// @brief Destructor
-    ~OutputPin();
+    ~OutputPin() = default;
     /// @brief Copy constructor
     OutputPin(const OutputPin&) = delete;
     /// @brief Move constructor
@@ -493,7 +493,7 @@ class InputPin : public Pin
     /// @brief Default constructor (for serialization)
     InputPin() = default;
     /// @brief Destructor
-    ~InputPin();
+    ~InputPin() = default;
     /// @brief Copy constructor
     InputPin(const InputPin&) = delete;
     /// @brief Move constructor

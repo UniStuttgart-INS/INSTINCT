@@ -183,7 +183,7 @@ void NAV::VectorNavBinaryConverter::receiveObs(NAV::InputPin::NodeDataQueue& que
     }
 }
 
-std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2ImuObsWDelta(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs)
+std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2ImuObsWDelta(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs) // NOLINT(readability-convert-member-functions-to-static)
 {
     auto imuObs = std::make_shared<ImuObsWDelta>(vnObs->imuPos);
 
@@ -267,7 +267,7 @@ std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2
     return nullptr;
 }
 
-std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2PosVelAtt(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs)
+std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2PosVelAtt(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs) // NOLINT(readability-convert-member-functions-to-static)
 {
     std::optional<Eigen::Quaterniond> n_Quat_b;
     std::optional<Eigen::Vector3d> e_position;

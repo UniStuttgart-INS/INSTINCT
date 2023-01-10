@@ -212,9 +212,11 @@ NAV::OutputPin* NAV::NodeManager::CreateOutputPin(NAV::Node* node, const char* n
     return &node->outputPins.back();
 }
 
-bool NAV::NodeManager::DeleteOutputPin(const NAV::OutputPin& pin)
+bool NAV::NodeManager::DeleteOutputPin(NAV::OutputPin& pin)
 {
     LOG_TRACE("called for pin ({})", size_t(pin.id));
+
+    pin.deleteLinks();
 
     size_t pinIndex = pin.parentNode->outputPinIndexFromId(pin.id);
     pin.parentNode->outputPins.erase(pin.parentNode->outputPins.begin() + static_cast<int64_t>(pinIndex));
@@ -222,9 +224,11 @@ bool NAV::NodeManager::DeleteOutputPin(const NAV::OutputPin& pin)
     return true;
 }
 
-bool NAV::NodeManager::DeleteInputPin(const NAV::InputPin& pin)
+bool NAV::NodeManager::DeleteInputPin(NAV::InputPin& pin)
 {
     LOG_TRACE("called for pin ({})", size_t(pin.id));
+
+    pin.deleteLink();
 
     size_t pinIndex = pin.parentNode->inputPinIndexFromId(pin.id);
     pin.parentNode->inputPins.erase(pin.parentNode->inputPins.begin() + static_cast<int64_t>(pinIndex));

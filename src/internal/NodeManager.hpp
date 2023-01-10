@@ -167,15 +167,15 @@ OutputPin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, cons
     return CreateOutputPin(node, name, pinType, dataIdentifier, OutputPin::PinData(static_cast<OutputPin::PollDataFunc>(pollDataFunc)), idx);
 }
 
-/// @brief Deletes the output pin
-/// @param[in] pin Output Pin to delete
+/// @brief Deletes the output pin. Invalidates the pin reference given.
+/// @param[in, out] pin Output Pin to delete
 /// @return True if the pin was delete
-bool DeleteOutputPin(const OutputPin& pin);
+bool DeleteOutputPin(OutputPin& pin);
 
-/// @brief Deletes the input pin
-/// @param[in] pin Input Pin to delete
+/// @brief Deletes the input pin. Invalidates the pin reference given.
+/// @param[in, out] pin Input Pin to delete
 /// @return True if the pin was delete
-bool DeleteInputPin(const InputPin& pin);
+bool DeleteInputPin(InputPin& pin);
 
 /// @brief Finds the Node for the NodeId
 /// @param[in] id Unique Id of the Node to search for
