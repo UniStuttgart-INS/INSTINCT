@@ -6,10 +6,10 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-/// @file RinexObsFileTestsData.hpp
-/// @brief Data definitions for the RinexObsFileTests
+/// @file reach-m2-01_raw_202211021639_test_22O.hpp
+/// @brief Test data for the reach-m2-01_raw_202211021639_test.22O
 /// @author M. Maier (marcel.maier@ins.uni-stuttgart.de)
-/// @date 2022-11-15
+/// @date 2023-01-10
 
 #pragma once
 
@@ -19,39 +19,12 @@
 
 namespace NAV::TESTS::RinexObsFileTests
 {
-
-constexpr double Gps_LeapSec = 18;
-
-enum RinexTimeRef : size_t
-{
-    RINEX_Year,
-    RINEX_Month,
-    RINEX_Day,
-    RINEX_Hour,
-    RINEX_Minute,
-    RINEX_Second,
-    RINEX_EpochFlag,
-    RINEX_NumSats,
-    RINEX_reserved,     // a one-digit flag that is not specified in the standard
-    RINEX_RcvClkOffset, // optional
-};
-
-enum RinexRef : size_t
-{
-    RINEX_SatNum,
-    RINEX_Obs_Pseudorange,
-    RINEX_SSI_Pseudorange,
-    RINEX_Obs_CarrierPhase,
-    RINEX_SSI_CarrierPhase,
-    RINEX_Obs_Doppler,
-    RINEX_Obs_SigStrength,
-};
+/// @brief Test Data for the file reach-m2-01_raw_202211021639_test.22O
 
 constexpr std::array<double, 8> RINEX_REFERENCE_EPOCH = { 2022, 11, 2, 16, 39, 59.6920000, 0, 39 };
 
 constexpr std::array<NAV::Frequency_, 64> RINEX_REFDATA_SATSYS = { NAV::G01, NAV::G02, NAV::G01, NAV::G02, NAV::G01, NAV::G02, NAV::G01, NAV::G01, NAV::G02, NAV::G01, NAV::G02, NAV::G01, NAV::G02, NAV::G01, NAV::G01, NAV::G02, NAV::G01, NAV::G02, NAV::R01, NAV::R02, NAV::R01, NAV::R02, NAV::R01, NAV::R02, NAV::R01, NAV::R01, NAV::R02, NAV::R01, NAV::R02, NAV::R01, NAV::R02, NAV::R01, NAV::R02, NAV::R01, NAV::R02, NAV::E01, NAV::E07, NAV::E01, NAV::E01, NAV::E07, NAV::E01, NAV::E07, NAV::E01, NAV::E01, NAV::E07, NAV::E01, NAV::E07, NAV::E01, NAV::E07, NAV::B07, NAV::B02, NAV::B07, NAV::B02, NAV::B07, NAV::B02, NAV::B07, NAV::B02, NAV::B02, NAV::B02, NAV::B02, NAV::B02, NAV::S01, NAV::S01, NAV::S01 };
 
-// Data Record V3.03
 constexpr std::array<std::array<long double, 7>, 64> RINEX_REFERENCE_DATA = { {
     { 1, 22876259.395, 1, 120215551.306, 3, 562.461, 36.000 },
     { 1, 22876256.297, 2, 93674506.094, 4, 438.697, 34.000 },
