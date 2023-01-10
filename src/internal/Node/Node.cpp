@@ -22,7 +22,7 @@ namespace nm = NAV::NodeManager;
 #include <imgui_node_editor.h>
 namespace ed = ax::NodeEditor;
 #ifdef TESTING
-    #include <catch2/catch.hpp>
+    #include <catch2/catch_test_macros.hpp>
 #endif
 
 NAV::Node::Node(std::string name)

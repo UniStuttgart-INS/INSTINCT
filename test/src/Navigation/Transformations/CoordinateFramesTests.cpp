@@ -6,8 +6,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#include <catch2/catch.hpp>
-#include "EigenApprox.hpp"
+#include <catch2/catch_test_macros.hpp>
+#include "CatchMatchers.hpp"
 
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "Navigation/Transformations/Units.hpp"
@@ -19,7 +19,6 @@
 
 namespace NAV::TESTS::CoordinateFramesTests
 {
-constexpr double EPSILON = 10.0 * std::numeric_limits<double>::epsilon();
 
 namespace ref
 {
@@ -146,7 +145,7 @@ TEST_CASE("[InsTransformations] Euler to Quaternion conversion", "[InsTransforma
         Eigen::Matrix3d C = q.toRotationMatrix();
 
         fmt::print("Roll: {}\n", rad2deg(roll));
-        REQUIRE(ref::qCoeffsFromDcm(C) == EigApprox(q.coeffs()).margin(1e-12).epsilon(0));
+        REQUIRE_THAT(ref::qCoeffsFromDcm(C), Catch::Matchers::WithinAbs(q.coeffs(), 1e-12));
     }
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
     for (double roll = -M_PI + delta; roll < M_PI - std::numeric_limits<float>::epsilon(); roll += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
@@ -160,7 +159,7 @@ TEST_CASE("[InsTransformations] Euler to Quaternion conversion", "[InsTransforma
             Eigen::Matrix3d C = q.toRotationMatrix();
 
             fmt::print("Roll, Pitch: {}, {}\n", rad2deg(roll), rad2deg(pitch));
-            REQUIRE(ref::qCoeffsFromDcm(C) == EigApprox(q.coeffs()).margin(1e-12).epsilon(0));
+            REQUIRE_THAT(ref::qCoeffsFromDcm(C), Catch::Matchers::WithinAbs(q.coeffs(), 1e-12));
         }
     }
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
@@ -195,11 +194,11 @@ TEST_CASE("[InsTransformations] Euler to Quaternion conversion", "[InsTransforma
                 if (q.w() < 0)
                 {
                     Eigen::Vector4d qCoeffsNeg = -q.coeffs();
-                    REQUIRE(ref::qCoeffsFromDcm(C) == EigApprox(qCoeffsNeg).margin(1e-6).epsilon(0));
+                    REQUIRE_THAT(ref::qCoeffsFromDcm(C), Catch::Matchers::WithinAbs(qCoeffsNeg, 1e-6));
                 }
                 else
                 {
-                    REQUIRE(ref::qCoeffsFromDcm(C) == EigApprox(q.coeffs()).margin(1e-6).epsilon(0));
+                    REQUIRE_THAT(ref::qCoeffsFromDcm(C), Catch::Matchers::WithinAbs(q.coeffs(), 1e-6));
                 }
             }
         }
@@ -228,7 +227,7 @@ TEST_CASE("[InsTransformations] Quaternion to Euler conversion", "[InsTransforma
             {
                 auto q = quat(alpha, beta, gamma);
                 auto ZYX = rad2deg(trafo::quat2eulerZYX(q));
-                REQUIRE(ZYX == EigApprox(rad2deg(Eigen::Vector3d{ alpha, beta, gamma })).margin(1e-8).epsilon(0));
+                REQUIRE_THAT(ZYX, Catch::Matchers::WithinAbs(rad2deg(Eigen::Vector3d{ alpha, beta, gamma }), 1e-8));
             }
         }
     }
@@ -261,7 +260,7 @@ TEST_CASE("[InsTransformations] Negated Quaternion to Euler conversion", "[InsTr
                 }
 
                 auto ZYX = rad2deg(trafo::quat2eulerZYX(q));
-                REQUIRE(ZYX == EigApprox(rad2deg(Eigen::Vector3d{ alpha, beta, gamma })).margin(1e-8).epsilon(0));
+                REQUIRE_THAT(ZYX, Catch::Matchers::WithinAbs(rad2deg(Eigen::Vector3d{ alpha, beta, gamma }), 1e-8));
             }
         }
     }
@@ -273,19 +272,19 @@ TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[In
 
     double time = 86164.099 / 3.0;
     auto e_Quat_i = trafo::e_Quat_i(time, InsConst::omega_ie);
-    CHECK(e_Quat_i.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    CHECK_THAT(e_Quat_i.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
 
     auto C_ei = e_Quat_i.toRotationMatrix();
     auto C_ei_ref = ref::e_Dcm_i(time, InsConst::omega_ie);
 
-    CHECK(C_ei == EigApprox(C_ei_ref).margin(EPSILON).epsilon(0));
+    CHECK_THAT(C_ei, Catch::Matchers::WithinAbs(C_ei_ref, EPSILON));
 
     /* -------------------------------------------------------------------------------------------------------- */
 
     // Sidereal day: 23h 56min 4.099s
     auto siderialDay4 = 86164.099 / 4.0;
     e_Quat_i = trafo::e_Quat_i(siderialDay4, InsConst::omega_ie);
-    CHECK(e_Quat_i.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    CHECK_THAT(e_Quat_i.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
     // Star day: 23h 56min 4.0905s
     // auto starHalfDay = 86164.0905 / 2.0;
     // auto e_Quat_i = trafo::e_Quat_i(starHalfDay);
@@ -293,13 +292,13 @@ TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[In
     Eigen::Vector3d i_x{ 1, -2.5, 22 };
     Eigen::Vector3d e_x = e_Quat_i * i_x;
 
-    CHECK(e_x == EigApprox(Eigen::Vector3d{ -2.5, -1, 22 }).margin(1e-8).epsilon(0));
+    CHECK_THAT(e_x, Catch::Matchers::WithinAbs(Eigen::Vector3d{ -2.5, -1, 22 }, 1e-8));
 
     auto i_Quat_e = trafo::i_Quat_e(siderialDay4, InsConst::omega_ie);
-    CHECK(i_Quat_e.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    CHECK_THAT(i_Quat_e.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
 
     auto q_identity = i_Quat_e * e_Quat_i;
-    CHECK(q_identity == EigApproxQ(Eigen::Quaterniond::Identity()).margin(EPSILON).epsilon(0));
+    CHECK_THAT(q_identity, Catch::Matchers::WithinAbs(Eigen::Quaterniond::Identity(), EPSILON));
 }
 
 TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[InsTransformations]")
@@ -310,12 +309,12 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     double longitude = deg2rad(-40);
 
     auto e_Quat_n = trafo::e_Quat_n(latitude, longitude);
-    CHECK(e_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    CHECK_THAT(e_Quat_n.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
 
     auto C_en = e_Quat_n.toRotationMatrix();
     auto C_en_ref = ref::e_Dcm_n(latitude, longitude);
 
-    CHECK(C_en == EigApprox(C_en_ref).margin(EPSILON).epsilon(0));
+    CHECK_THAT(C_en, Catch::Matchers::WithinAbs(C_en_ref, EPSILON));
 
     /* -------------------------------------------------------------------------------------------------------- */
 
@@ -323,12 +322,12 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     longitude = 0.0;
 
     auto n_Quat_e = trafo::n_Quat_e(latitude, longitude);
-    CHECK(n_Quat_e.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    CHECK_THAT(n_Quat_e.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
 
     Eigen::Vector3d e_x{ 1, 2, 3 };
     auto n_x = n_Quat_e * e_x;
 
-    CHECK(n_x == EigApprox(Eigen::Vector3d{ -1, 2, -3 }));
+    CHECK_THAT(n_x, Catch::Matchers::WithinAbs(Eigen::Vector3d{ -1, 2, -3 }, EPSILON));
 
     /* -------------------------------------------------------------------------------------------------------- */
 
@@ -336,12 +335,12 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     longitude = deg2rad(0);
 
     n_Quat_e = trafo::n_Quat_e(latitude, longitude);
-    CHECK(n_Quat_e.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    CHECK_THAT(n_Quat_e.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
 
     e_x = { 1, 2, 3 };
     n_x = n_Quat_e * e_x;
 
-    CHECK(n_x == EigApprox(Eigen::Vector3d{ 3, 2, -1 }));
+    CHECK_THAT(n_x, Catch::Matchers::WithinAbs(Eigen::Vector3d{ 3, 2, -1 }, EPSILON));
 
     /* -------------------------------------------------------------------------------------------------------- */
 
@@ -349,11 +348,11 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     longitude = deg2rad(0);
 
     n_Quat_e = trafo::n_Quat_e(latitude, longitude);
-    CHECK(n_Quat_e.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    CHECK_THAT(n_Quat_e.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
     //                    (0, 0, 7.2921151467e-05)
     n_x = n_Quat_e * InsConst::e_omega_ie;
 
-    CHECK(n_x == EigApprox(Eigen::Vector3d{ InsConst::omega_ie, 0, 0 }).margin(EPSILON));
+    CHECK_THAT(n_x, Catch::Matchers::WithinAbs(Eigen::Vector3d{ InsConst::omega_ie, 0, 0 }, EPSILON));
 
     /* -------------------------------------------------------------------------------------------------------- */
 
@@ -361,11 +360,11 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     longitude = deg2rad(90);
 
     n_Quat_e = trafo::n_Quat_e(latitude, longitude);
-    CHECK(n_Quat_e.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    CHECK_THAT(n_Quat_e.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
     //                    (0, 0, 7.2921151467e-05)
     n_x = n_Quat_e * InsConst::e_omega_ie;
 
-    CHECK(n_x == EigApprox(Eigen::Vector3d{ InsConst::omega_ie / std::sqrt(2), 0, -InsConst::omega_ie / std::sqrt(2) }).margin(EPSILON));
+    CHECK_THAT(n_x, Catch::Matchers::WithinAbs(Eigen::Vector3d{ InsConst::omega_ie / std::sqrt(2), 0, -InsConst::omega_ie / std::sqrt(2) }, EPSILON));
 }
 
 TEST_CASE("[InsTransformations] NED <=> Earth-centered-earth-fixed frame conversion", "[InsTransformations]")
@@ -386,7 +385,8 @@ TEST_CASE("[InsTransformations] NED <=> Earth-centered-earth-fixed frame convers
     auto e_position = trafo::lla2ecef_WGS84({ latitude_ref, longitude_ref, altitude_ref + 200 });
     auto n_position = trafo::ecef2ned(e_position, { latitude_ref, longitude_ref, altitude_ref });
 
-    CHECK(n_position == EigApprox(Eigen::Vector3d{ 0, 0, -200 }).margin(1e-9).epsilon(0));
+    LOG_DEBUG("{}", (n_position - Eigen::Vector3d{ 0, 0, -200 }).transpose());
+    CHECK_THAT(n_position, Catch::Matchers::WithinAbs(Eigen::Vector3d{ 0, 0, -200 }, 1e-9));
 
     /* -------------------------------------------------------------------------------------------------------- */
 
@@ -404,7 +404,8 @@ TEST_CASE("[InsTransformations] NED <=> Earth-centered-earth-fixed frame convers
         e_position = trafo::ned2ecef(n_position, { latitude_ref, longitude_ref, altitude_ref });
     }
 
-    CHECK(e_position == EigApprox(e_position_ref));
+    LOG_DEBUG("{}", (e_position - e_position_ref).transpose());
+    CHECK_THAT(e_position, Catch::Matchers::WithinAbs(e_position_ref, 7e-8));
 
     /* -------------------------------------------------------------------------------------------------------- */
 }
@@ -422,12 +423,12 @@ TEST_CASE("[InsTransformations] Body <=> navigation DCM/Quaternion comparison", 
             for (double yaw = -M_PI + delta; yaw <= M_PI + std::numeric_limits<float>::epsilon(); yaw += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
             {
                 auto n_Quat_b = trafo::n_Quat_b(roll, pitch, yaw);
-                REQUIRE(n_Quat_b.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+                REQUIRE_THAT(n_Quat_b.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
 
                 auto C_nb = n_Quat_b.toRotationMatrix();
                 auto C_nb_ref = ref::n_Dcm_b(roll, pitch, yaw);
 
-                REQUIRE(C_nb == EigApprox(C_nb_ref).margin(1e-13).epsilon(0));
+                REQUIRE_THAT(C_nb, Catch::Matchers::WithinAbs(C_nb_ref, 1e-13));
             }
         }
     }
@@ -443,12 +444,12 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     double pitch = 0.0;
     double yaw = 0.0;
     auto b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
-    CHECK(b_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    CHECK_THAT(b_Quat_n.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
 
     Eigen::Vector3d n_x{ 1.0, 1.0, 1.0 };
     Eigen::Vector3d b_x = b_Quat_n * n_x;
 
-    CHECK(b_x == EigApprox(Eigen::Vector3d{ 1, std::sqrt(2), 0 }).margin(EPSILON).epsilon(0));
+    CHECK_THAT(b_x, Catch::Matchers::WithinAbs(Eigen::Vector3d{ 1, std::sqrt(2), 0 }, EPSILON));
 
     /* -------------------------------------------------------------------------------------------------------- */
 
@@ -456,12 +457,12 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     pitch = deg2rad(45);
     yaw = 0.0;
     b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
-    CHECK(b_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    CHECK_THAT(b_Quat_n.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
 
     n_x = { 1.0, 1.0, 1.0 };
     b_x = b_Quat_n * n_x;
 
-    CHECK(b_x == EigApprox(Eigen::Vector3d{ 0, 1, std::sqrt(2) }).margin(EPSILON).epsilon(0));
+    CHECK_THAT(b_x, Catch::Matchers::WithinAbs(Eigen::Vector3d{ 0, 1, std::sqrt(2) }, EPSILON));
 
     /* -------------------------------------------------------------------------------------------------------- */
 
@@ -469,12 +470,12 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     pitch = 0.0;
     yaw = deg2rad(-45);
     b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
-    CHECK(b_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    CHECK_THAT(b_Quat_n.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
 
     n_x = Eigen::Vector3d{ 1.0, 1.0, 0.0 };
     b_x = b_Quat_n * n_x;
 
-    CHECK(b_x == EigApprox(Eigen::Vector3d{ 0, std::sqrt(2), 0 }).margin(EPSILON).epsilon(0));
+    CHECK_THAT(b_x, Catch::Matchers::WithinAbs(Eigen::Vector3d{ 0, std::sqrt(2), 0 }, EPSILON));
 
     /* -------------------------------------------------------------------------------------------------------- */
 
@@ -482,12 +483,12 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     pitch = deg2rad(90);
     yaw = deg2rad(90);
     b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
-    CHECK(b_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    CHECK_THAT(b_Quat_n.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
 
     n_x = Eigen::Vector3d{ 1.0, 2.0, 3.0 };
     b_x = b_Quat_n * n_x;
 
-    CHECK(b_x == EigApprox(Eigen::Vector3d{ -3, -1, 2 }).margin(EPSILON).epsilon(0));
+    CHECK_THAT(b_x, Catch::Matchers::WithinAbs(Eigen::Vector3d{ -3, -1, 2 }, EPSILON));
 
     /* -------------------------------------------------------------------------------------------------------- */
 
@@ -495,12 +496,12 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     pitch = deg2rad(90);
     yaw = 0.0;
     b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
-    CHECK(b_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    CHECK_THAT(b_Quat_n.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
 
     n_x = Eigen::Vector3d{ 1.0, 2.0, 3.0 };
     b_x = b_Quat_n * n_x;
 
-    CHECK(b_x == EigApprox(Eigen::Vector3d{ -3, 1, -2 }).margin(EPSILON).epsilon(0));
+    CHECK_THAT(b_x, Catch::Matchers::WithinAbs(Eigen::Vector3d{ -3, 1, -2 }, EPSILON));
 
     /* -------------------------------------------------------------------------------------------------------- */
 
@@ -508,12 +509,12 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     pitch = deg2rad(180);
     yaw = deg2rad(90);
     b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
-    CHECK(b_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    CHECK_THAT(b_Quat_n.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
 
     n_x = { 1.0, 2.0, 3.0 };
     b_x = b_Quat_n * n_x;
 
-    CHECK(b_x == EigApprox(Eigen::Vector3d{ -2, -3, 1 }).margin(EPSILON).epsilon(0));
+    CHECK_THAT(b_x, Catch::Matchers::WithinAbs(Eigen::Vector3d{ -2, -3, 1 }, EPSILON));
 }
 
 TEST_CASE("[InsTransformations] Platform <=> body frame conversion", "[InsTransformations]")
@@ -525,12 +526,12 @@ TEST_CASE("[InsTransformations] Platform <=> body frame conversion", "[InsTransf
     double mountingAngleZ = deg2rad(-90);
 
     auto b_Quat_p = trafo::b_Quat_p(mountingAngleX, mountingAngleY, mountingAngleZ);
-    CHECK(b_Quat_p.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    CHECK_THAT(b_Quat_p.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
 
     Eigen::Vector3d p_x{ 2.0, 0.0, 9.81 };
     Eigen::Vector3d b_x = b_Quat_p * p_x;
 
-    CHECK(b_x == EigApprox(Eigen::Vector3d{ p_x(1), p_x(2), -p_x(0) }).margin(EPSILON).epsilon(0));
+    CHECK_THAT(b_x, Catch::Matchers::WithinAbs(Eigen::Vector3d{ p_x(1), p_x(2), -p_x(0) }, EPSILON));
 }
 
 TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]")
@@ -547,10 +548,10 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
     Eigen::Vector3d e_position_ref = Eigen::Vector3d(4157.128, 671.224, 4774.723) * 1000;
     Eigen::Vector3d e_position = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
     Eigen::Vector3d lla_position = trafo::ecef2lla_WGS84(e_position_ref);
-    CHECK(e_position == EigApprox(e_position_ref).margin(0.3).epsilon(0));
-    CHECK(lla_position.x() == Approx(latitude).margin(1e-7).epsilon(0));
-    CHECK(lla_position.y() == Approx(longitude).margin(1e-8).epsilon(0));
-    CHECK(lla_position.z() == Approx(altitude).margin(0.5).epsilon(0));
+    CHECK_THAT(e_position, Catch::Matchers::WithinAbs(e_position_ref, 0.3));
+    CHECK_THAT(lla_position.x(), Catch::Matchers::WithinAbs(latitude, 1e-7));
+    CHECK_THAT(lla_position.y(), Catch::Matchers::WithinAbs(longitude, 1e-8));
+    CHECK_THAT(lla_position.z(), Catch::Matchers::WithinAbs(altitude, 0.5));
 
     /* -------------------------------------------------------------------------- */
 
@@ -562,10 +563,10 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
     e_position_ref = Eigen::Vector3d(1334.001, -4654.06, 4138.303) * 1000;
     e_position = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
     lla_position = trafo::ecef2lla_WGS84(e_position_ref);
-    CHECK(e_position == EigApprox(e_position_ref).margin(0.5).epsilon(0));
-    CHECK(lla_position.x() == Approx(latitude).margin(1e-7).epsilon(0));
-    CHECK(lla_position.y() == Approx(longitude).margin(1e-7).epsilon(0));
-    CHECK(lla_position.z() == Approx(altitude).margin(0.5).epsilon(0));
+    CHECK_THAT(e_position, Catch::Matchers::WithinAbs(e_position_ref, 0.5));
+    CHECK_THAT(lla_position.x(), Catch::Matchers::WithinAbs(latitude, 1e-7));
+    CHECK_THAT(lla_position.y(), Catch::Matchers::WithinAbs(longitude, 1e-7));
+    CHECK_THAT(lla_position.z(), Catch::Matchers::WithinAbs(altitude, 0.5));
 
     /* -------------------------------------------------------------------------- */
 
@@ -575,10 +576,10 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
     e_position_ref = Eigen::Vector3d(6374.645, 0, 0) * 1000;
     e_position = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
     lla_position = trafo::ecef2lla_WGS84(e_position_ref);
-    CHECK(e_position == EigApprox(e_position_ref).margin(EPSILON).epsilon(0));
-    CHECK(lla_position.x() == Approx(latitude).margin(EPSILON).epsilon(0));
-    CHECK(lla_position.y() == Approx(longitude).margin(EPSILON).epsilon(0));
-    CHECK(lla_position.z() == Approx(altitude).margin(1e-9).epsilon(0));
+    CHECK_THAT(e_position, Catch::Matchers::WithinAbs(e_position_ref, EPSILON));
+    CHECK_THAT(lla_position.x(), Catch::Matchers::WithinAbs(latitude, EPSILON));
+    CHECK_THAT(lla_position.y(), Catch::Matchers::WithinAbs(longitude, EPSILON));
+    CHECK_THAT(lla_position.z(), Catch::Matchers::WithinAbs(altitude, 1e-9));
 
     /* -------------------------------------------------------------------------- */
 
@@ -588,10 +589,10 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
     e_position_ref = Eigen::Vector3d(0.011, 0, -6359.553) * 1000;
     e_position = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
     lla_position = trafo::ecef2lla_WGS84(e_position_ref);
-    CHECK(e_position == EigApprox(e_position_ref).margin(0.4).epsilon(0));
-    CHECK(lla_position.x() == Approx(latitude).margin(1e-6).epsilon(0));
-    CHECK(lla_position.y() == Approx(longitude).margin(EPSILON).epsilon(0));
-    CHECK(lla_position.z() == Approx(altitude).margin(0.5).epsilon(0));
+    CHECK_THAT(e_position, Catch::Matchers::WithinAbs(e_position_ref, 0.4));
+    CHECK_THAT(lla_position.x(), Catch::Matchers::WithinAbs(latitude, 1e-6));
+    CHECK_THAT(lla_position.y(), Catch::Matchers::WithinAbs(longitude, EPSILON));
+    CHECK_THAT(lla_position.z(), Catch::Matchers::WithinAbs(altitude, 0.5));
 
     /* -------------------------------------------------------------------------- */
 
@@ -601,12 +602,14 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
     e_position_ref = Eigen::Vector3d(-4888.803, 0, 4074.709) * 1000;
     e_position = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
     lla_position = trafo::ecef2lla_WGS84(e_position_ref);
-    CHECK(e_position.x() == Approx(e_position_ref.x()));
-    CHECK(e_position.y() == Approx(e_position_ref.y()).margin(1e-9).epsilon(0));
-    CHECK(e_position.z() == Approx(e_position_ref.z()));
-    CHECK(lla_position.x() == Approx(latitude).margin(1e-6).epsilon(0));
-    CHECK(lla_position.y() == Approx(longitude).margin(EPSILON).epsilon(0));
-    CHECK(lla_position.z() == Approx(altitude).margin(0.5).epsilon(0));
+    LOG_DATA("{}", (e_position - e_position_ref).transpose());
+    CHECK_THAT(e_position.x(), Catch::Matchers::WithinAbs(e_position_ref.x(), 0.072));
+    CHECK_THAT(e_position.y(), Catch::Matchers::WithinAbs(e_position_ref.y(), 1e-9));
+    CHECK_THAT(e_position.z(), Catch::Matchers::WithinAbs(e_position_ref.z(), 0.29));
+    LOG_DATA("{}", (lla_position - Eigen::Vector3d(latitude, longitude, altitude)).transpose());
+    CHECK_THAT(lla_position.x(), Catch::Matchers::WithinAbs(latitude, 2.7e-8));
+    CHECK_THAT(lla_position.y(), Catch::Matchers::WithinAbs(longitude, EPSILON));
+    CHECK_THAT(lla_position.z(), Catch::Matchers::WithinAbs(altitude, 0.24));
 
     /* -------------------------------------------------------------------------- */
 
@@ -618,9 +621,10 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
     {
         lla_position = trafo::ecef2lla_WGS84(trafo::lla2ecef_WGS84(lla_position));
     }
-    CHECK(lla_position.x() == Approx(latitude).margin(EPSILON).epsilon(0));
-    CHECK(lla_position.y() == Approx(longitude).margin(EPSILON).epsilon(0));
-    CHECK(lla_position.z() == Approx(altitude).margin(1e-8).epsilon(0));
+    CHECK_THAT(lla_position.x(), Catch::Matchers::WithinAbs(latitude, EPSILON));
+    CHECK_THAT(lla_position.y(), Catch::Matchers::WithinAbs(longitude, EPSILON));
+    CHECK_THAT(lla_position.z(), Catch::Matchers::WithinAbs(altitude, 1e-8));
+    LOG_DATA("{}", (lla_position - Eigen::Vector3d(latitude, longitude, altitude)).transpose());
 }
 
 TEST_CASE("[InsTransformations] LLA => ECEF => LLA conversion", "[InsTransformations]")
@@ -641,9 +645,9 @@ TEST_CASE("[InsTransformations] LLA => ECEF => LLA conversion", "[InsTransformat
                 {
                     lla = trafo::ecef2lla_WGS84(trafo::lla2ecef_WGS84(lla));
                 }
-                REQUIRE(lla.x() == Approx(latitude).margin(1e-14).epsilon(0));
-                REQUIRE(lla.y() == Approx(longitude).margin(1e-14).epsilon(0));
-                REQUIRE(lla.z() == Approx(altitude).margin(1e-7).epsilon(0));
+                REQUIRE_THAT(lla.x(), Catch::Matchers::WithinAbs(latitude, 1e-14));
+                REQUIRE_THAT(lla.y(), Catch::Matchers::WithinAbs(longitude, 1e-14));
+                REQUIRE_THAT(lla.z(), Catch::Matchers::WithinAbs(altitude, 1e-7));
             }
         }
     }
@@ -667,9 +671,9 @@ TEST_CASE("[InsTransformations] LLA => ECEF => LLH-iterative conversion", "[InsT
                 {
                     lla = ref::ecef2lla_iter(trafo::lla2ecef_WGS84(lla));
                 }
-                REQUIRE(lla.x() == Approx(latitude).margin(1e-14).epsilon(0));
-                REQUIRE(lla.y() == Approx(longitude).margin(1e-14).epsilon(0));
-                REQUIRE(lla.z() == Approx(altitude).margin(1e-7).epsilon(0));
+                REQUIRE_THAT(lla.x(), Catch::Matchers::WithinAbs(latitude, 1e-14));
+                REQUIRE_THAT(lla.y(), Catch::Matchers::WithinAbs(longitude, 1e-14));
+                REQUIRE_THAT(lla.z(), Catch::Matchers::WithinAbs(altitude, 1e-7));
             }
         }
     }
@@ -682,9 +686,9 @@ TEST_CASE("[InsTransformations] LLA => ECEF => LLH-iterative conversion", "[InsT
     auto e_position = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
     auto lla_position_iter = ref::ecef2lla_iter(e_position, InsConst::WGS84::a, InsConst::WGS84::e_squared);
 
-    CHECK(lla_position_iter.x() == Approx(latitude).margin(EPSILON).epsilon(0));
-    CHECK(lla_position_iter.y() == Approx(longitude).margin(EPSILON).epsilon(0));
-    CHECK(lla_position_iter.z() == Approx(altitude).margin(1e-9).epsilon(0));
+    CHECK_THAT(lla_position_iter.x(), Catch::Matchers::WithinAbs(latitude, EPSILON));
+    CHECK_THAT(lla_position_iter.y(), Catch::Matchers::WithinAbs(longitude, EPSILON));
+    CHECK_THAT(lla_position_iter.z(), Catch::Matchers::WithinAbs(altitude, 1e-9));
 
     /* -------------------------------------------------------------------------------------------------------- */
 
@@ -694,9 +698,9 @@ TEST_CASE("[InsTransformations] LLA => ECEF => LLH-iterative conversion", "[InsT
     e_position = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
     lla_position_iter = ref::ecef2lla_iter(e_position, InsConst::WGS84::a, InsConst::WGS84::e_squared);
 
-    CHECK(lla_position_iter.x() == Approx(latitude).margin(EPSILON).epsilon(0));
-    CHECK(lla_position_iter.y() == Approx(longitude).margin(EPSILON).epsilon(0));
-    CHECK(lla_position_iter.z() == Approx(altitude).margin(1e-9).epsilon(0));
+    CHECK_THAT(lla_position_iter.x(), Catch::Matchers::WithinAbs(latitude, EPSILON));
+    CHECK_THAT(lla_position_iter.y(), Catch::Matchers::WithinAbs(longitude, EPSILON));
+    CHECK_THAT(lla_position_iter.z(), Catch::Matchers::WithinAbs(altitude, 1e-9));
 }
 
 TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
@@ -714,9 +718,9 @@ TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
     Eigen::Quaterniond n_Quat_b = trafo::n_Quat_b(roll, pitch, yaw);
     Eigen::Quaterniond e_Quat_n = trafo::e_Quat_n(latitude, longitude);
 
-    CHECK(b_Quat_p.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
-    CHECK(n_Quat_b.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
-    CHECK(e_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    CHECK_THAT(b_Quat_p.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
+    CHECK_THAT(n_Quat_b.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
+    CHECK_THAT(e_Quat_n.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
 
     Eigen::Vector3d v_p{ 1, 3, 5 };
 
@@ -725,20 +729,16 @@ TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
     Eigen::Vector3d e_v = e_Quat_n * n_velocity;
 
     Eigen::Quaterniond n_Quat_p = n_Quat_b * b_Quat_p;
-    CHECK(n_Quat_p.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    CHECK_THAT(n_Quat_p.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
     Eigen::Vector3d n_velocity_direct = n_Quat_p * v_p;
 
     Eigen::Quaterniond e_Quat_p = e_Quat_n * n_Quat_b * b_Quat_p;
-    CHECK(e_Quat_p.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    CHECK_THAT(e_Quat_p.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
     Eigen::Vector3d v_e_direct = e_Quat_p * v_p;
 
-    CHECK(n_velocity.x() == Approx(n_velocity_direct.x()).margin(EPSILON).epsilon(0));
-    CHECK(n_velocity.y() == Approx(n_velocity_direct.y()).margin(EPSILON).epsilon(0));
-    CHECK(n_velocity.z() == Approx(n_velocity_direct.z()).margin(EPSILON).epsilon(0));
+    CHECK_THAT(n_velocity, Catch::Matchers::WithinAbs(n_velocity_direct, EPSILON));
 
-    CHECK(e_v.x() == Approx(v_e_direct.x()).margin(EPSILON).epsilon(0));
-    CHECK(e_v.y() == Approx(v_e_direct.y()).margin(EPSILON).epsilon(0));
-    CHECK(e_v.z() == Approx(v_e_direct.z()).margin(EPSILON).epsilon(0));
+    CHECK_THAT(e_v, Catch::Matchers::WithinAbs(v_e_direct, EPSILON));
 
     Eigen::Matrix3d e_Dcm_n = e_Quat_n.toRotationMatrix();
     Eigen::Matrix3d n_Dcm_b = n_Quat_b.toRotationMatrix();
@@ -746,16 +746,16 @@ TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
     Eigen::Matrix3d e_Dcm_n_ref = ref::e_Dcm_n(latitude, longitude);
     Eigen::Matrix3d n_Dcm_b_ref = ref::n_Dcm_b(roll, pitch, yaw);
 
-    CHECK(e_Dcm_n_ref == EigApprox(e_Dcm_n).margin(1e-13).epsilon(0));
-    CHECK(n_Dcm_b_ref == EigApprox(n_Dcm_b).margin(1e-13).epsilon(0));
+    CHECK_THAT(e_Dcm_n_ref, Catch::Matchers::WithinAbs(e_Dcm_n, 1e-13));
+    CHECK_THAT(n_Dcm_b_ref, Catch::Matchers::WithinAbs(n_Dcm_b, 1e-13));
 
     Eigen::Matrix3d e_Dcm_b_ref = e_Dcm_n_ref * n_Dcm_b_ref;
     Eigen::Matrix3d e_Dcm_b = e_Dcm_n * n_Dcm_b;
     Eigen::Matrix3d e_Dcm_b_quat = (e_Quat_n * n_Quat_b).toRotationMatrix();
 
-    CHECK(e_Dcm_b_quat == EigApprox(e_Dcm_b).margin(1e-13).epsilon(0));
-    CHECK(e_Dcm_b_ref == EigApprox(e_Dcm_b).margin(1e-13).epsilon(0));
-    CHECK(e_Dcm_b_ref == EigApprox(e_Dcm_b_quat).margin(1e-13).epsilon(0));
+    CHECK_THAT(e_Dcm_b_quat, Catch::Matchers::WithinAbs(e_Dcm_b, 1e-13));
+    CHECK_THAT(e_Dcm_b_ref, Catch::Matchers::WithinAbs(e_Dcm_b, 1e-13));
+    CHECK_THAT(e_Dcm_b_ref, Catch::Matchers::WithinAbs(e_Dcm_b_quat, 1e-13));
 }
 
 } // namespace NAV::TESTS::CoordinateFramesTests

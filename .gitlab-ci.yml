@@ -245,14 +245,6 @@ main:win:
     - .release
     - .log-debug
 
-main:win:LOG_OFF:
-  extends:
-    - .build
-    - .build:main
-    - .build:windows
-    - .release
-    - .log-off
-
 main:clang:
   extends:
     - .build
@@ -270,42 +262,6 @@ main:gcc:
     - .gcc
     - .release
     - .log-debug
-
-main:clang:LOG_OFF:
-  extends:
-    - .build
-    - .build:main
-    - .build:linux
-    - .clang
-    - .release
-    - .log-off
-
-main:gcc:LOG_OFF:
-  extends:
-    - .build
-    - .build:main
-    - .build:linux
-    - .gcc
-    - .release
-    - .log-off
-
-main:clang:LOG_DATA:
-  extends:
-    - .build
-    - .build:main
-    - .build:linux
-    - .clang
-    - .release
-    - .log-data
-
-main:gcc:LOG_DATA:
-  extends:
-    - .build
-    - .build:main
-    - .build:linux
-    - .gcc
-    - .release
-    - .log-data
 
 raspberry:gcc:
   extends:
@@ -372,15 +328,6 @@ tests:gcc:LOG_DATA:
     - .release
     - .log-data
 
-tests:clang:LOG_OFF:
-  extends:
-    - .build
-    - .build:tests
-    - .build:linux
-    - .clang
-    - .release
-    - .log-off
-
 tests:gcc:LOG_OFF:
   extends:
     - .build
@@ -398,14 +345,6 @@ tests:win:
     - .build:test-artifacts
     - .release
     - .log-trace
-
-tests:win:LOG_OFF:
-  extends:
-    - .build
-    - .build:tests
-    - .build:windows
-    - .release
-    - .log-off
 
 tests:macOS:
   extends:
@@ -518,6 +457,7 @@ coverage:
   stage: analyze
   needs: ["run-tests:gcc"]
   extends: .linux
+  when: always
   script:
     - mkdir -p build/coverage
     - gcovr --config doc/coverage/gcovr.cfg

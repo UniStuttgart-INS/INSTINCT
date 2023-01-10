@@ -191,9 +191,9 @@ bool NAV::CsvFile::initialize()
     }
 
     std::string line;
-    while (!_filestream.eof())
+    while (!eof())
     {
-        std::getline(_filestream, line);
+        getline(line);
         if (line.empty() || line.at(0) == _comment) { continue; } // Skip empty and comment lines
 
         auto splittedData = str::split(line, _delimiter);
@@ -242,12 +242,12 @@ NAV::FileReader::FileType NAV::CsvFile::determineFileType()
 
 void NAV::CsvFile::readHeader()
 {
-    for (int i = 0; i < _skipLines; i++) { _filestream.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); } // Skip lines at the start of the file
+    for (int i = 0; i < _skipLines; i++) { ignore(std::numeric_limits<std::streamsize>::max(), '\n'); } // Skip lines at the start of the file
 
     std::string line;
     if (_hasHeaderLine)
     {
-        std::getline(_filestream, line);
+        getline(line);
         _data.description = str::split(line, _delimiter);
         for (auto& desc : _data.description)
         {

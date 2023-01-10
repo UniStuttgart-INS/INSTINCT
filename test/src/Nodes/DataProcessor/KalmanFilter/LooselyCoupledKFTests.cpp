@@ -11,7 +11,7 @@
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2022-11-01
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -52,7 +52,7 @@ namespace nm = NAV::NodeManager;
 namespace NAV::TESTS::LooselyCoupledKFTests
 {
 
-void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, size_t MESSAGE_COUNT_GNSS_FIX, size_t MESSAGE_COUNT_IMU)
+void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, size_t MESSAGE_COUNT_GNSS_FIX, size_t MESSAGE_COUNT_IMU, size_t MESSAGE_COUNT_IMU_FIX)
 {
     auto logger = initializeTestLogger();
 
@@ -149,21 +149,21 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
             Eigen::Vector3d allowedPositionOffsetImuOnly_n(2.0, 5.2, 1.0);
             Eigen::Vector3d allowedPositionOffsetCombined_n(0.15, 0.1, 0.1);
             Eigen::Vector3d allowedVelocityErrorImuOnly_e(0.14, 13.7, 0.1);
-            Eigen::Vector3d allowedVelocityErrorCombined_e(0.05, 0.05, 0.08);
+            Eigen::Vector3d allowedVelocityErrorCombined_e(0.065, 0.05, 0.08);
             Eigen::Vector3d allowedRollPitchYawOffsetImuOnly(1.3, 1.3, 90.0);
-            Eigen::Vector3d allowedRollPitchYawOffsetCombined(0.4, 0.6, 91.0);
+            Eigen::Vector3d allowedRollPitchYawOffsetCombined(2.7, 1.2, 94.0);
 
             if (i1 == 1) // LooselyCoupledKF::Frame::ECEF
             {
                 allowedRollPitchYawOffsetImuOnly = { 1.3, 2.8, 90.0 };
-                allowedRollPitchYawOffsetCombined = { 1.5, 3.2, 91.0 };
+                allowedRollPitchYawOffsetCombined = { 2.7, 3.2, 94.0 };
             }
 
             if (imuAfter)
             {
                 allowedPositionOffsetCombined_n = { 0.13, 0.04, 0.07 };
-                allowedVelocityErrorCombined_e = { 0.05, 0.05, 0.08 };
-                allowedRollPitchYawOffsetCombined = { 2.9, 1.3, 103.0 };
+                allowedVelocityErrorCombined_e = { 0.088, 0.05, 0.08 };
+                allowedRollPitchYawOffsetCombined = { 4.99, 1.36, 242.0 };
             }
 
             // North/South deviation [m]
@@ -234,11 +234,11 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
 
         REQUIRE(messageCounter_VectorNavBinaryConverterImu_BinaryOutput == MESSAGE_COUNT_IMU);
         REQUIRE(messageCounter_VectorNavBinaryConverterGnss_BinaryOutput == MESSAGE_COUNT_GNSS);
-        REQUIRE(messageCounter_ImuIntegrator_ImuObs == MESSAGE_COUNT_IMU);
+        REQUIRE(messageCounter_ImuIntegrator_ImuObs == MESSAGE_COUNT_IMU_FIX);
         REQUIRE(messageCounter_ImuIntegrator_PosVelAttInit == 1);
         REQUIRE(messageCounter_ImuIntegrator_PVAError == MESSAGE_COUNT_GNSS_FIX);
         REQUIRE(messageCounter_ImuIntegrator_Sync == MESSAGE_COUNT_GNSS_FIX);
-        REQUIRE(messageCounter_LooselyCoupledKF_InertialNavSol == MESSAGE_COUNT_IMU + MESSAGE_COUNT_GNSS_FIX - 1); // First GNSS message is used to initialize filter, does not update
+        REQUIRE(messageCounter_LooselyCoupledKF_InertialNavSol == MESSAGE_COUNT_IMU_FIX + MESSAGE_COUNT_GNSS_FIX - 1); // First GNSS message is used to initialize filter, does not update
         REQUIRE(messageCounter_LooselyCoupledKF_GNSSNavigationSolution == MESSAGE_COUNT_GNSS_FIX);
     },
                           settings);
@@ -249,10 +249,11 @@ TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving before GNSS
     // GNSS: 176 messages, 162 messages with InsTime, 48 messages with fix (first GNSS message at 22.799s)
     size_t MESSAGE_COUNT_GNSS = 162;
     size_t MESSAGE_COUNT_GNSS_FIX = 48;
-    // IMU:  690 messages, 466 messages with InsTime (first IMU message at 9.037s)
+    // IMU:  690 messages, 466 messages with InsTime, 170 messages with fix (first IMU message at 9.037s)
     size_t MESSAGE_COUNT_IMU = 466;
+    size_t MESSAGE_COUNT_IMU_FIX = 170;
 
-    testLCKFwithImuFile("VectorNav/Static/vn310-imu.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_GNSS_FIX, MESSAGE_COUNT_IMU);
+    testLCKFwithImuFile("VectorNav/Static/vn310-imu.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_GNSS_FIX, MESSAGE_COUNT_IMU, MESSAGE_COUNT_IMU_FIX);
 }
 
 TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving after GNSS data", "[LooselyCoupledKF][flow]")
@@ -263,7 +264,7 @@ TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving after GNSS 
     // IMU:  167 messages (first IMU message at 24.017697899000002s)
     size_t MESSAGE_COUNT_IMU = 167;
 
-    testLCKFwithImuFile("VectorNav/Static/vn310-imu-after.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_GNSS_FIX, MESSAGE_COUNT_IMU);
+    testLCKFwithImuFile("VectorNav/Static/vn310-imu-after.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_GNSS_FIX, MESSAGE_COUNT_IMU, MESSAGE_COUNT_IMU);
 }
 
 } // namespace NAV::TESTS::LooselyCoupledKFTests

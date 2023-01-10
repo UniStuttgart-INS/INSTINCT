@@ -89,4 +89,10 @@ bool ShowSatelliteSelector(const char* label, std::vector<SatId>& satellites)
     return valueChanged;
 }
 
+std::ostream& operator<<(std::ostream& os, const NAV::SatId& satId)
+{
+    os << fmt::format("{}", satId);
+    return os;
+}
+
 } // namespace NAV

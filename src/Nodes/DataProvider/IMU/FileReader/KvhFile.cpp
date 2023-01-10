@@ -168,7 +168,7 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData()
     {
         uint8_t i = 0;
         std::unique_ptr<uart::protocol::Packet> packet = nullptr;
-        while (_filestream.readsome(reinterpret_cast<char*>(&i), 1))
+        while (readsome(reinterpret_cast<char*>(&i), 1))
         {
             packet = _sensor.findPacket(i);
 
@@ -199,7 +199,7 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData()
 
         // Read line
         std::string line;
-        std::getline(_filestream, line);
+        getline(line);
         // Remove any starting non text characters
         line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
 

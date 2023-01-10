@@ -115,6 +115,12 @@ bool ShowSatelliteSelector(const char* label, std::vector<SatId>& satellites);
 
 } // namespace NAV
 
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] satId Object to print
+/// @return Returns the output stream object in order to chain stream insertions
+std::ostream& operator<<(std::ostream& os, const NAV::SatId& satId);
+
 #ifndef DOXYGEN_IGNORE
 
 /// @brief Formatter for SatId
@@ -173,10 +179,18 @@ struct hash<NAV::SatId>
 {
     /// @brief Hash function for SatId
     /// @param[in] f Satellite identifier
-    /// @return Has value for the satellite identifier
     std::size_t operator()(const NAV::SatId& f) const
     {
-        return std::hash<NAV::SatelliteSystem_>{}(NAV::SatelliteSystem_(f.satSys)) ^ (std::hash<decltype(f.satNum)>()(f.satNum) << 1);
+        auto hash1 = std::hash<NAV::SatelliteSystem_>{}(NAV::SatelliteSystem_(f.satSys));
+        auto hash2 = std::hash<decltype(f.satNum)>()(f.satNum);
+
+        if (hash1 != hash2)
+        {
+            return hash1 ^ hash2 << 1;
+        }
+
+        // If hash1 == hash2, their XOR is zero.
+        return hash1;
     }
 };
 /// @brief Hash function for SatSigId (needed for unordered_map)
@@ -184,11 +198,19 @@ template<>
 struct hash<NAV::SatSigId>
 {
     /// @brief Hash function for SatSigId
-    /// @param[in] f Satellite identifier
-    /// @return Has value for the satellite identifier
+    /// @param[in] f Satellite signal identifier
     std::size_t operator()(const NAV::SatSigId& f) const
     {
-        return std::hash<NAV::Frequency_>{}(NAV::Frequency_(f.freq)) ^ (std::hash<decltype(f.satNum)>()(f.satNum) << 1);
+        auto hash1 = std::hash<NAV::Frequency_>{}(NAV::Frequency_(f.freq));
+        auto hash2 = std::hash<decltype(f.satNum)>()(f.satNum);
+
+        if (hash1 != hash2)
+        {
+            return hash1 ^ hash2 << 1;
+        }
+
+        // If hash1 == hash2, their XOR is zero.
+        return hash1;
     }
 };
 } // namespace std

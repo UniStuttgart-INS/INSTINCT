@@ -72,26 +72,16 @@ SatelliteSystem SatelliteSystem::fromChar(char typeChar)
 
 SatelliteSystem::operator std::string() const
 {
-    switch (value)
-    {
-    case GPS:
-        return "GPS";
-    case GLO:
-        return "GLONASS";
-    case GAL:
-        return "GALILEO";
-    case QZSS:
-        return "QZSS";
-    case BDS:
-        return "BDS";
-    case IRNSS:
-        return "IRNSS";
-    case SBAS:
-        return "SBAS";
-    case SatSys_None:
-        break;
-    }
-    return "None";
+    std::string str;
+    if (value & GPS) { str += ((!str.empty() ? " | " : "") + std::string("GPS")); }
+    if (value & GLO) { str += ((!str.empty() ? " | " : "") + std::string("GLO")); }
+    if (value & GAL) { str += ((!str.empty() ? " | " : "") + std::string("GAL")); }
+    if (value & QZSS) { str += ((!str.empty() ? " | " : "") + std::string("QZSS")); }
+    if (value & BDS) { str += ((!str.empty() ? " | " : "") + std::string("BDS")); }
+    if (value & IRNSS) { str += ((!str.empty() ? " | " : "") + std::string("IRNSS")); }
+    if (value & SBAS) { str += ((!str.empty() ? " | " : "") + std::string("SBAS")); }
+
+    return str.empty() ? "None" : str;
 }
 
 SatelliteSystem::operator char() const
@@ -141,7 +131,12 @@ TimeSystem SatelliteSystem::GetTimeSystemForSatelliteSystem(SatelliteSystem satS
     return TimeSys_None;
 }
 
-std::vector<uint16_t> SatelliteSystem::GetSatellites(SatelliteSystem satSys)
+TimeSystem SatelliteSystem::getTimeSystem() const
+{
+    return GetTimeSystemForSatelliteSystem(value);
+}
+
+std::vector<uint16_t> SatelliteSystem::GetSatellitesForSatelliteSystem(SatelliteSystem satSys)
 {
     switch (SatelliteSystem_(satSys))
     {
@@ -172,6 +167,11 @@ std::vector<uint16_t> SatelliteSystem::GetSatellites(SatelliteSystem satSys)
     return {};
 }
 
+std::vector<uint16_t> SatelliteSystem::getSatellites() const
+{
+    return GetSatellitesForSatelliteSystem(value);
+}
+
 void to_json(json& j, const SatelliteSystem& data)
 {
     j = std::string(data);
@@ -179,6 +179,12 @@ void to_json(json& j, const SatelliteSystem& data)
 void from_json(const json& j, SatelliteSystem& data)
 {
     data = SatelliteSystem::fromString(j.get<std::string>());
+}
+
+std::ostream& operator<<(std::ostream& os, const SatelliteSystem& satSys)
+{
+    os << fmt::format("{}", satSys);
+    return os;
 }
 
 } // namespace NAV

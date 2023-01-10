@@ -7,15 +7,3 @@
 #     include <windows.h>
 #     include <stdlib.h> // __argc, argv
 # endif
-
-# if defined(_WIN32) && !defined(_CONSOLE)
-int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
-{
-    return Main(__argc, const_cast<const char**>(__argv));
-}
-# else
-int main(int argc, const char* argv[])
-{
-    return Main(argc, argv);
-}
-# endif

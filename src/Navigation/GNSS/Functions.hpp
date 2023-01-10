@@ -63,4 +63,32 @@ namespace NAV
 /// @note See \cite IS-GPS-200M IS-GPS-200 ch. 20.3.3.3.3.2 p.99
 [[nodiscard]] double ratioFreqSquared(Frequency f1, Frequency f2);
 
+/// @brief Converts a GALILEO SISA (Signal in space accuracy) value to it's index
+/// @param[in] val SISA value in [m]
+/// @return The SISA index
+///
+/// @note See \cite GAL-ICD-2.0 GAL ICD ch. 5.1.12, p.58
+[[nodiscard]] uint8_t galSisaVal2Idx(double val);
+
+/// @brief Converts a GALILEO SISA (Signal in space accuracy) index to it's value
+/// @param[in] idx The SISA index
+/// @return SISA value in [m]
+///
+/// @note See \cite GAL-ICD-2.0 GAL ICD ch. 5.1.12, p.58
+[[nodiscard]] double galSisaIdx2Val(uint8_t idx);
+
+/// @brief Converts a GPS URA (user range accuracy) value to it's index
+/// @param[in] val URA value in [m]
+/// @return The URA index
+///
+/// @note See \cite IS-GPS-200M GPS ICD ch. 20.3.3.3.1.3, p.92ff
+[[nodiscard]] uint8_t gpsUraVal2Idx(double val);
+
+/// @brief Converts a GPS URA (user range accuracy) index to it's value
+/// @param[in] idx The URA index
+/// @return URA value in [m]
+///
+/// @note See \cite IS-GPS-200M GPS ICD ch. 20.3.3.3.1.3, p.92ff
+[[nodiscard]] double gpsUraIdx2Val(uint8_t idx);
+
 } // namespace NAV

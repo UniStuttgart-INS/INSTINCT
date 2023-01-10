@@ -8,7 +8,7 @@
 
 #include "FlowTester.hpp"
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <vector>
 
 #include "internal/Node/Node.hpp"

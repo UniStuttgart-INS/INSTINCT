@@ -61,23 +61,25 @@ bool ComboIonosphereModel(const char* label, IonosphereModel& ionosphereModel)
 double calcIonosphericTimeDelay(double tow, Frequency freq,
                                 const Eigen::Vector3d& lla_pos,
                                 double elevation, double azimuth,
-                                const std::vector<double>& alpha, const std::vector<double>& beta,
-                                IonosphereModel ionosphereModel)
+                                IonosphereModel ionosphereModel,
+                                const IonosphericCorrections* corrections)
 {
     switch (ionosphereModel)
     {
     case IonosphereModel::Klobuchar:
     {
-        if (alpha.size() != 4 || beta.size() != 4)
+        if (corrections)
         {
-            LOG_ERROR("Ionosphere model Broadcast needs 4 parameters for alpha and beta. Can't calculate ionosphere model.");
-            break;
+            const auto* alpha = corrections->get(GPS, IonosphericCorrections::Alpha);
+            const auto* beta = corrections->get(GPS, IonosphericCorrections::Beta);
+            if (alpha && beta)
+            {
+                return calcIonosphericTimeDelay_Klobuchar(tow, freq, lla_pos(0), lla_pos(1), elevation, azimuth, *alpha, *beta);
+            }
         }
-        std::array<double, 4> a{};
-        std::copy(alpha.begin(), alpha.end(), a.begin());
-        std::array<double, 4> b{};
-        std::copy(beta.begin(), beta.end(), b.begin());
-        return calcIonosphericTimeDelay_Klobuchar(tow, freq, lla_pos(0), lla_pos(1), elevation, azimuth, a, b);
+
+        LOG_ERROR("Ionosphere model Klobuchar/Broadcast needs correction parameters. Ionospheric time delay will be 0.");
+        break;
     }
     case IonosphereModel::None:
     case IonosphereModel::COUNT:
