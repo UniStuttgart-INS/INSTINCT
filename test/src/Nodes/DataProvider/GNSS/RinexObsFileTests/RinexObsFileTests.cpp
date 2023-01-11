@@ -24,12 +24,8 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
-#include "util/Logger.hpp"
-
-#include "NodeData/State/PosVel.hpp"
-
-#include "RinexObsFileTests.hpp"
-#include "v3_03/reach-m2-01_raw_202211021639_test_22O.hpp"
+#include "GnssObsComparisons.hpp"
+#include "v3_03/reach-m2-01_22O.hpp"
 
 // This is a small hack, which lets us change private/protected parameters
 #pragma GCC diagnostic push
@@ -47,40 +43,7 @@ namespace nm = NAV::NodeManager;
 namespace NAV::TESTS::RinexObsFileTests
 {
 
-void compareObservation(const std::shared_ptr<const NAV::GnssObs>& obs)
-{
-    // ---------------------------------------------- InsTime ------------------------------------------------
-    REQUIRE(!obs->insTime.empty());
-
-    REQUIRE(obs->insTime.toYMDHMS().year == static_cast<int32_t>(RINEX_REFERENCE_EPOCH.at(RINEX_Year)));
-    REQUIRE(obs->insTime.toYMDHMS().month == static_cast<int32_t>(RINEX_REFERENCE_EPOCH.at(RINEX_Month)));
-    REQUIRE(obs->insTime.toYMDHMS().day == static_cast<int32_t>(RINEX_REFERENCE_EPOCH.at(RINEX_Day)));
-    REQUIRE(obs->insTime.toYMDHMS().hour == static_cast<int32_t>(RINEX_REFERENCE_EPOCH.at(RINEX_Hour)));
-    REQUIRE(obs->insTime.toYMDHMS().min == static_cast<int32_t>(RINEX_REFERENCE_EPOCH.at(RINEX_Minute)));
-    REQUIRE_THAT(obs->insTime.toYMDHMS().sec, Catch::Matchers::WithinAbs(RINEX_REFERENCE_EPOCH.at(RINEX_Second) - Gps_LeapSec, 9e-12));
-
-    // -------------------------------------------- Observation ----------------------------------------------
-    for (size_t obsCounter = 0; obsCounter < RINEX_REFDATA_SATSYS.size(); obsCounter++)
-    {
-        REQUIRE(obs->data.at(obsCounter).satSigId.freq == RINEX_REFDATA_SATSYS.at(obsCounter));
-        REQUIRE(obs->data.at(obsCounter).satSigId.satNum == static_cast<uint16_t>(RINEX_REFERENCE_DATA.at(obsCounter).at(RINEX_SatNum)));
-        REQUIRE_THAT(obs->data.at(obsCounter).pseudorange, Catch::Matchers::WithinAbs(RINEX_REFERENCE_DATA.at(obsCounter).at(RINEX_Obs_Pseudorange), EPSILON_LDOUBLE));
-        if (!std::isnan(obs->data.at(obsCounter).carrierPhase))
-        {
-            REQUIRE_THAT(obs->data.at(obsCounter).carrierPhase, Catch::Matchers::WithinAbs(RINEX_REFERENCE_DATA.at(obsCounter).at(RINEX_Obs_CarrierPhase), EPSILON_LDOUBLE));
-        }
-        if (!std::isnan(obs->data.at(obsCounter).doppler))
-        {
-            REQUIRE_THAT(obs->data.at(obsCounter).doppler, Catch::Matchers::WithinAbs(RINEX_REFERENCE_DATA.at(obsCounter).at(RINEX_Obs_Doppler), EPSILON_LDOUBLE));
-        }
-        if (!std::isnan(obs->data.at(obsCounter).CN0))
-        {
-            REQUIRE_THAT(obs->data.at(obsCounter).CN0, Catch::Matchers::WithinAbs(RINEX_REFERENCE_DATA.at(obsCounter).at(RINEX_Obs_SigStrength), EPSILON_LDOUBLE));
-        }
-    }
-}
-
-void testRinexObsFileFlow(const std::string& path)
+void testRinexObsFileFlow(const std::string& path, const std::vector<GnssObs>& gnssObsRef)
 {
     auto logger = initializeTestLogger();
 
@@ -98,11 +61,17 @@ void testRinexObsFileFlow(const std::string& path)
     //
     // ###########################################################################################################
 
-    nm::RegisterWatcherCallbackToInputPin(25, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
-        compareObservation(std::dynamic_pointer_cast<const NAV::GnssObs>(queue.front()));
-    });
+    size_t msgCounter = 0;
 
-    // TODO: inlcude test for Rinex Obs Header?: 'RINEX_SYS_NUM_OBS_TYPES_TEST' -- not possible, since gnssObs (the only output) doesn't contain that info
+    nm::RegisterWatcherCallbackToInputPin(25, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+        auto gnssObs = std::dynamic_pointer_cast<const NAV::GnssObs>(queue.front());
+        REQUIRE(gnssObs != nullptr);
+
+        CAPTURE(msgCounter);
+        REQUIRE(*gnssObs == gnssObsRef[msgCounter]);
+
+        msgCounter++;
+    });
 
     REQUIRE(testFlow("test/flow/Nodes/DataProvider/GNSS/RinexObsFile.flow"));
 }
@@ -141,9 +110,9 @@ void testRinexObsFileFlow(const std::string& path)
 //                                                   v3.03
 // ###########################################################################################################
 
-TEST_CASE("[RinexObsFile][flow] Read v3_03/reach-m2-01_raw_202211021639_test.22O", "[RinexObsFile][flow][debug]")
+TEST_CASE("[RinexObsFile][flow] Read v3_03/reach-m2-01_raw.22O", "[RinexObsFile][flow]")
 {
-    testRinexObsFileFlow("DataProvider/GNSS/RinexObsFile/v3_03/reach-m2-01_raw_202211021639_test.22O");
+    testRinexObsFileFlow("DataProvider/GNSS/RinexObsFile/v3_03/reach-m2-01_raw.22O", v3_03::gnssObs_reach_m2_01_22O);
 }
 
 // ###########################################################################################################

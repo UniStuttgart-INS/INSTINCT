@@ -440,7 +440,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
 
         if ((obsData.satSigId.freq & _filterFreq)                                                                     // frequency is selected in GUI
             && (obsData.code & _filterCode)                                                                           // code is selected in GUI
-            && !std::isnan(obsData.pseudorange)                                                                       // has a valid pseudorange
+            && !std::isnan(obsData.pseudorange.value)                                                                 // has a valid pseudorange
             && std::find(_excludedSatellites.begin(), _excludedSatellites.end(), satId) == _excludedSatellites.end()) // is not excluded
         {
             for (size_t navIdx = 0; navIdx < gnssNavInfos.size(); navIdx++)
@@ -592,9 +592,9 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             continue;
         }
 
-        LOG_DATA("{}:     pseudorange  {}", nameId(), obsData.pseudorange);
+        LOG_DATA("{}:     pseudorange  {}", nameId(), obsData.pseudorange.value);
 
-        auto satClk = navInfo->calcSatelliteClockCorrections(obsData.satSigId.toSatId(), gnssObs->insTime, obsData.pseudorange, obsData.satSigId.freq);
+        auto satClk = navInfo->calcSatelliteClockCorrections(obsData.satSigId.toSatId(), gnssObs->insTime, obsData.pseudorange.value, obsData.satSigId.freq);
         calcData[i].satClkBias = satClk.bias;
         calcData[i].satClkDrift = satClk.drift;
         LOG_DATA("{}:     satClkBias {}, satClkDrift {}", nameId(), calcData[i].satClkBias, calcData[i].satClkDrift);
@@ -692,7 +692,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             // #############################################################################################################################
 
             // Pseudorange measurement [m] - Groves ch. 8.5.3, eq. 8.48, p. 342
-            double psrMeas = obsData.pseudorange /* + (multipath and/or NLOS errors) + (tracking errors) */;
+            double psrMeas = obsData.pseudorange.value /* + (multipath and/or NLOS errors) + (tracking errors) */;
             // Estimated modulation ionosphere propagation error [m]
             double dpsr_I = calcIonosphericTimeDelay(static_cast<double>(gnssObs->insTime.toGPSweekTow().tow), obsData.satSigId.freq, lla_pos,
                                                      satElevation, satAzimuth, _ionosphereModel, &ionosphericCorrections)

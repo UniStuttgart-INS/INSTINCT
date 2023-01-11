@@ -6,10 +6,10 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-/// @file reach-m2-01_raw_202211021639_test_22O.hpp
-/// @brief Test data for the reach-m2-01_raw_202211021639_test.22O
+/// @file INSA11DEU_R_20220602300_01H_01S_MO_rnx.hpp
+/// @brief Test data for the INSA11DEU_R_20220602300_01H_01S_MO.rnx
 /// @author M. Maier (marcel.maier@ins.uni-stuttgart.de)
-/// @date 2023-01-10
+/// @date 2023-01-11
 
 #pragma once
 
@@ -21,7 +21,51 @@ namespace NAV::TESTS::RinexObsFileTests
 {
 /// @brief Test Data for the file reach-m2-01_raw_202211021639_test.22O
 
-constexpr std::array<double, 8> RINEX_REFERENCE_EPOCH = { 2022, 11, 2, 16, 39, 59.6920000, 0, 39 };
+constexpr std::array<double, 10> RINEX_REFERENCE_EPOCH = { 2022, 3, 1, 23, 0, 0.0000000, 0, 43, 0, 0.000415417000 }; // 9th element is a dummy for 'RINEX_reserved', see RinexObsFileTests.hpp
+
+// NAV::C43
+// NAV::C09
+// NAV::C06
+// NAV::R05
+// NAV::C21
+// NAV::G01
+// NAV::G31
+// NAV::G14
+// NAV::G19
+// NAV::G04
+// NAV::G22
+// NAV::R14
+// NAV::C39
+// NAV::G17
+// NAV::C11
+// NAV::C14
+// NAV::G03
+// NAV::C28
+// NAV::C42
+// NAV::G08
+// NAV::R22
+// NAV::R20
+// NAV::C12
+// NAV::R06
+// NAV::C05
+// NAV::R21
+// NAV::R13
+// NAV::C36
+// NAV::C34
+// NAV::C33
+// NAV::G21
+// NAV::G32
+// NAV::C16
+// NAV::R07
+// NAV::E33
+// NAV::E19
+// NAV::E07
+// NAV::E25
+// NAV::E12
+// NAV::E26
+// NAV::S23
+// NAV::S36
+// NAV::S25
 
 constexpr std::array<NAV::Frequency_, 64> RINEX_REFDATA_SATSYS = { NAV::G01, NAV::G02, NAV::G01, NAV::G02, NAV::G01, NAV::G02, NAV::G01, NAV::G01, NAV::G02, NAV::G01, NAV::G02, NAV::G01, NAV::G02, NAV::G01, NAV::G01, NAV::G02, NAV::G01, NAV::G02, NAV::R01, NAV::R02, NAV::R01, NAV::R02, NAV::R01, NAV::R02, NAV::R01, NAV::R01, NAV::R02, NAV::R01, NAV::R02, NAV::R01, NAV::R02, NAV::R01, NAV::R02, NAV::R01, NAV::R02, NAV::E01, NAV::E07, NAV::E01, NAV::E01, NAV::E07, NAV::E01, NAV::E07, NAV::E01, NAV::E01, NAV::E07, NAV::E01, NAV::E07, NAV::E01, NAV::E07, NAV::B07, NAV::B02, NAV::B07, NAV::B02, NAV::B07, NAV::B02, NAV::B07, NAV::B02, NAV::B02, NAV::B02, NAV::B02, NAV::B02, NAV::S01, NAV::S01, NAV::S01 };
 

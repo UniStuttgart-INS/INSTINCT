@@ -579,7 +579,7 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
             // Bit 1 set: Half-cycle ambiguity/slip possible. Software not capable of handling half
             //            cycles should skip this observation. Valid for the current epoch only.
             // Bit 2 set: Galileo BOC-tracking of an MBOC-modulated signal (may suffer from increased noise).
-            int8_t LLI = 0;
+            uint8_t LLI = 0;
             if (line.size() > curExtractLoc)
             {
                 char LLIc = line.at(curExtractLoc);
@@ -587,7 +587,7 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
                 {
                     LLIc = '0';
                 }
-                LLI = static_cast<int8_t>(LLIc - '0');
+                LLI = static_cast<uint8_t>(LLIc - '0');
             }
             curExtractLoc++; // Go over Loss of lock indicator (LLI)
 
@@ -604,7 +604,7 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
             //                  8                   |             48-53
             // 9 (maximum possible signal strength) |             ≥ 54
             // 0 or blank: not known, don't care    |               -
-            [[maybe_unused]] uint8_t SSI = 0;
+            uint8_t SSI = 0;
             if (line.size() > curExtractLoc)
             {
                 char SSIc = line.at(curExtractLoc);
@@ -618,15 +618,14 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
 
             if (obsDesc.type == ObsType::C) // Code / Pseudorange
             {
-                (*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).pseudorange = observation;
+                (*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).pseudorange = { .value = observation,
+                                                                                    .SSI = SSI };
             }
             else if (obsDesc.type == ObsType::L) // Phase
             {
-                (*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).carrierPhase = observation;
-                if (LLI != 0)
-                {
-                    (*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).LLI = LLI;
-                }
+                (*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).carrierPhase = { .value = observation,
+                                                                                     .SSI = SSI,
+                                                                                     .LLI = LLI };
             }
             else if (obsDesc.type == ObsType::D) // Doppler
             {
@@ -642,9 +641,9 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
                      observation, LLI, SSI);
         }
 
-        if (!std::isnan(gnssObs->data.back().pseudorange))
+        if (!std::isnan(gnssObs->data.back().pseudorange.value))
         {
-            if (std::isnan(gnssObs->data.back().carrierPhase))
+            if (std::isnan(gnssObs->data.back().carrierPhase.value))
             {
                 LOG_WARN("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing carrier phase.", nameId(), epochTime.toYMDHMS());
             }
