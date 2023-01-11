@@ -1573,14 +1573,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData()
         }
     }
 
-    if (_binaryOutputRegister.gpsField != vn::protocol::uart::GpsGroup::GPSGROUP_NONE)
-    {
-        if (_binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW
-            && _binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
-        {
-            obs->insTime = InsTime(0, obs->gnss1Outputs->week, obs->gnss1Outputs->tow);
-        }
-    }
+    _messageCount++;
 
     invokeCallbacks(OUTPUT_PORT_INDEX_VECTORNAV_BINARY_OUTPUT, obs);
     return obs;
