@@ -623,6 +623,10 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
             }
             else if (obsDesc.type == ObsType::L) // Phase
             {
+                if (!std::isnan((*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).pseudorange.value) && std::isnan(observation))
+                {
+                    LOG_INFO("{}: observation of satSys = {} contains no carrier phase (set to NaN). This happens if the CN0 is so small that the PLL could not lock, even if the DLL has locked (= pseudorange available). The observation is still valid.", nameId(), char(satSys));
+                }
                 (*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).carrierPhase = { .value = observation,
                                                                                      .SSI = SSI,
                                                                                      .LLI = LLI };

@@ -50,7 +50,10 @@ inline bool operator==(const GnssObs::ObservationData& lhs, const GnssObs::Obser
     REQUIRE(lhs.satSigId == rhs.satSigId);
     REQUIRE(lhs.code == rhs.code);
     REQUIRE(lhs.pseudorange == rhs.pseudorange);
-    REQUIRE(lhs.carrierPhase == rhs.carrierPhase);
+    if (!(std::isnan(lhs.carrierPhase.value) && rhs.carrierPhase.value == 0.0)) // 'rhs.value == 0.0' since 'carrierPhase = NaN', but pseudorange exists. This happens if the CN0 is so small that the PLL could not lock, even if the DLL has locked (= pseudorange available). The observation is still valid.
+    {
+        REQUIRE(lhs.carrierPhase == rhs.carrierPhase);
+    }
     REQUIRE(lhs.doppler == rhs.doppler);
     REQUIRE(lhs.CN0 == rhs.CN0);
     return true;

@@ -66,7 +66,7 @@ const std::vector<GnssObs> gnssObs_reach_m2_01_22O = {
           GnssObs::ObservationData{ /* .satSigId =     */ { R02, 13 },
                                     /* .code =         */ Code::R2C,
                                     /* .pseudorange =  */ { .value = 21689421.083, .SSI = 4 },
-                                    /* .carrierPhase = */ { .value = 0, .SSI = 0, .LLI = 0 }, // FIXME: value and ssi are whitespaces --> is the 0 valid here?
+                                    /* .carrierPhase = */ { .value = 0, .SSI = 0, .LLI = 0 }, // '.value = 0' since 'carrierPhase = NaN', but pseudorange exists. This happens if the CN0 is so small that the PLL could not lock, even if the DLL has locked (= pseudorange available). The observation is still valid.
                                     /* .doppler =      */ 2349.882,
                                     /* .CN0 =          */ 26.000 },
           GnssObs::ObservationData{ /* .satSigId =     */ { E01, 3 },
