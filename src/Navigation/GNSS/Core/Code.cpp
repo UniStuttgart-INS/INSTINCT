@@ -206,8 +206,8 @@ Code Code::fromFreqAttr(Frequency freq, char attribute)
         if (attribute == 'P') { return R1P; }
         break;
     case R02: // GLONASS, "G2" (1246 MHz).
-        if (attribute == 'C') { return R1C; }
-        if (attribute == 'P') { return R1P; }
+        if (attribute == 'C') { return R2C; }
+        if (attribute == 'P') { return R2P; }
         break;
     case R03: // GLONASS, "G3" (1202.025 MHz).
         if (attribute == 'I') { return R3I; }
