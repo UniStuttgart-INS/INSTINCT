@@ -510,14 +510,6 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
             auto min = std::stoi(line.substr(16, 2));   // Format: 1X,I2.2,
             auto sec = std::stold(line.substr(18, 11)); // Format: F11.7,
 
-            epochTime = InsTime{ static_cast<uint16_t>(year), static_cast<uint16_t>(month), static_cast<uint16_t>(day),
-                                 static_cast<uint16_t>(hour), static_cast<uint16_t>(min), sec,
-                                 _timeSystem };
-
-            epochFlag = std::stoi(line.substr(31, 1)); // Format: 2X,I1,
-
-            [[maybe_unused]] auto numSats = std::stoi(line.substr(32, 3)); // Format: I3,
-                                                                           // Reserved - Format 6X,
             [[maybe_unused]] double recClkOffset = 0.0;
             try
             {
@@ -527,6 +519,19 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
             {
                 LOG_DATA("{}: 'recClkOffset' not mentioned in file --> recClkOffset = {}", nameId(), recClkOffset);
             }
+            if (_rcvClockOffsAppl)
+            {
+                sec -= recClkOffset;
+            }
+
+            epochTime = InsTime{ static_cast<uint16_t>(year), static_cast<uint16_t>(month), static_cast<uint16_t>(day),
+                                 static_cast<uint16_t>(hour), static_cast<uint16_t>(min), sec,
+                                 _timeSystem };
+
+            epochFlag = std::stoi(line.substr(31, 1)); // Format: 2X,I1,
+
+            [[maybe_unused]] auto numSats = std::stoi(line.substr(32, 3)); // Format: I3,
+                                                                           // Reserved - Format 6X,
 
             LOG_DATA("{}: {}, epochFlag {}, numSats {}, recClkOffset {}", nameId(),
                      epochTime.toYMDHMS(), epochFlag, numSats, recClkOffset);
