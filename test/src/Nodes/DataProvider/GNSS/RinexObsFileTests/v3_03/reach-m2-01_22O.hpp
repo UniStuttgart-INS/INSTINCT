@@ -7,7 +7,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 /// @file reach-m2-01_22O.hpp
-/// @brief Test data for the reach-m2-01_raw_202211021639_test.22O
+/// @brief Test data for the reach-m2-01_raw.22O
 /// @author M. Maier (marcel.maier@ins.uni-stuttgart.de)
 /// @date 2023-01-11
 
@@ -17,7 +17,7 @@
 
 namespace NAV::TESTS::RinexObsFileTests::v3_03
 {
-/// @brief Test Data for the file reach-m2-01_raw_202211021639_test.22O
+/// @brief Test Data for the file reach-m2-01_raw.22O
 const std::vector<GnssObs> gnssObs_reach_m2_01_22O = {
     { /* .insTime = */ InsTime{ 2022, 11, 2, 16, 39, 59.6920000, GPST },
       /* .data = */ std::vector<GnssObs::ObservationData>{

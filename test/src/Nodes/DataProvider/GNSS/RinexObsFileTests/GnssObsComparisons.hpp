@@ -54,7 +54,10 @@ inline bool operator==(const GnssObs::ObservationData& lhs, const GnssObs::Obser
     {
         REQUIRE(lhs.carrierPhase == rhs.carrierPhase);
     }
-    REQUIRE(lhs.doppler == rhs.doppler);
+    if (!(std::isnan(lhs.doppler) && rhs.doppler == 0.0)) // 'rhs.value == 0.0' since 'doppler = NaN', but pseudorange exists.
+    {
+        REQUIRE(lhs.doppler == rhs.doppler);
+    }
     REQUIRE(lhs.CN0 == rhs.CN0);
     return true;
 }

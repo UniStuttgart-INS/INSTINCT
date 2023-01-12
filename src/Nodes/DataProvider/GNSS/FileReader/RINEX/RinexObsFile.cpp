@@ -638,6 +638,10 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
             }
             else if (obsDesc.type == ObsType::D) // Doppler
             {
+                if (!std::isnan((*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).doppler) && std::isnan(observation))
+                {
+                    LOG_INFO("{}: observation of satSys = {} contains no doppler (set to NaN).", nameId(), char(satSys));
+                }
                 (*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).doppler = observation;
             }
             else if (obsDesc.type == ObsType::S) // Raw signal strength(carrier to noise ratio)
