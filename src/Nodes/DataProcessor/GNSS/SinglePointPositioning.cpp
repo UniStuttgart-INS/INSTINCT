@@ -592,7 +592,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             continue;
         }
 
-        LOG_DATA("{}:     pseudorange  {}", nameId(), obsData.pseudorange.value);
+        LOG_DATA("{}:     pseudorange  {}", nameId(), obsData.pseudorange.value().value);
 
         auto satClk = navInfo->calcSatelliteClockCorrections(obsData.satSigId.toSatId(), gnssObs->insTime, obsData.pseudorange.value().value, obsData.satSigId.freq);
         calcData[i].satClkBias = satClk.bias;

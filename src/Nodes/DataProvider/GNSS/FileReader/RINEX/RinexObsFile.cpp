@@ -574,7 +574,7 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
                 continue;
             }
             // Observation value depending on definition type
-            double observation;
+            double observation{};
             try
             {
                 observation = std::stod(strObs);

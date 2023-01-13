@@ -297,7 +297,7 @@ class Code
     Code(Enum e) { value.set(e, true); } // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
 
     /// Implicit bool conversion operator. Allows if(...)
-    explicit operator bool() { return value.any(); }
+    explicit operator bool() const { return value.any(); }
 
     /// @brief std::bitset conversion operator
     /// @return The bitset representation of the type
