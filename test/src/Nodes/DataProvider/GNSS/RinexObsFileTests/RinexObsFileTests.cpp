@@ -27,6 +27,7 @@ namespace nm = NAV::NodeManager;
 #include "GnssObsComparisons.hpp"
 #include "v3_02/INSA11DEU_R_MO_rnx.hpp"
 #include "v3_03/reach-m2-01_22O.hpp"
+#include "v3_04/INS_1581_19O.hpp"
 
 // This is a small hack, which lets us change private/protected parameters
 #pragma GCC diagnostic push
@@ -99,7 +100,7 @@ void testRinexObsFileFlow(const std::string& path, const std::vector<GnssObs>& g
 //                                                   v3.02
 // ###########################################################################################################
 
-TEST_CASE("[RinexObsFile][flow] Read v3_02/INSA11DEU_R_MO.rnx", "[RinexObsFile][flow][debug]")
+TEST_CASE("[RinexObsFile][flow] Read v3_02/INSA11DEU_R_MO.rnx", "[RinexObsFile][flow]")
 {
     testRinexObsFileFlow("DataProvider/GNSS/RinexObsFile/v3_02/INSA11DEU_R_MO.rnx", v3_02::gnssObs_INSA11DEU_R_MO_rnx);
 }
@@ -117,7 +118,10 @@ TEST_CASE("[RinexObsFile][flow] Read v3_03/reach-m2-01_raw.22O", "[RinexObsFile]
 //                                                   v3.04
 // ###########################################################################################################
 
-// TODO: find data
+TEST_CASE("[RinexObsFile][flow] Read v3_04/INS_1581.19O", "[RinexObsFile][flow][debug]")
+{
+    testRinexObsFileFlow("DataProvider/GNSS/RinexObsFile/v3_04/INS_1581.19O", v3_04::gnssObs_INS_1581_19O);
+}
 
 // ###########################################################################################################
 //                                                   v4.00
