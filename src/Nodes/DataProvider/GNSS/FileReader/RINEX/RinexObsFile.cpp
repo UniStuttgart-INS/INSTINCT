@@ -574,7 +574,26 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
                 continue;
             }
             // Observation value depending on definition type
-            double observation = std::stod(strObs);
+            double observation;
+            try
+            {
+                observation = std::stod(strObs);
+            }
+            catch (const std::exception& e)
+            {
+                if ((*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).pseudorange)
+                {
+                    if (obsDesc.type == ObsType::L) // Phase
+                    {
+                        LOG_WARN("{}: observation of satSys = {} contains no carrier phase. This happens if the CN0 is so small that the PLL could not lock, even if the DLL has locked (= pseudorange available). The observation is still valid.", nameId(), char(satSys));
+                    }
+                    else if (obsDesc.type == ObsType::D) // Doppler
+                    {
+                        LOG_WARN("{}: observation of satSys = {} contains no doppler.", nameId(), char(satSys));
+                    }
+                }
+                continue;
+            }
 
             // TODO: Springer Handbook of Global Navigation, p. 1211 prefer attributes over others and let user decide also which ones to take into the calculation
 
@@ -621,32 +640,28 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
             }
             curExtractLoc++; // Go over Signal Strength Indicator (SSI)
 
-            if (obsDesc.type == ObsType::C) // Code / Pseudorange
+            switch (obsDesc.type)
             {
+            case ObsType::C: // Code / Pseudorange
                 (*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).pseudorange = { .value = observation,
                                                                                     .SSI = SSI };
-            }
-            else if (obsDesc.type == ObsType::L) // Phase
-            {
-                if (!std::isnan((*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).pseudorange.value) && std::isnan(observation))
-                {
-                    LOG_INFO("{}: observation of satSys = {} contains no carrier phase (set to NaN). This happens if the CN0 is so small that the PLL could not lock, even if the DLL has locked (= pseudorange available). The observation is still valid.", nameId(), char(satSys));
-                }
+                break;
+            case ObsType::L: // Phase
                 (*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).carrierPhase = { .value = observation,
                                                                                      .SSI = SSI,
                                                                                      .LLI = LLI };
-            }
-            else if (obsDesc.type == ObsType::D) // Doppler
-            {
-                if (!std::isnan((*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).doppler) && std::isnan(observation))
-                {
-                    LOG_INFO("{}: observation of satSys = {} contains no doppler (set to NaN).", nameId(), char(satSys));
-                }
+                break;
+            case ObsType::D: // Doppler
                 (*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).doppler = observation;
-            }
-            else if (obsDesc.type == ObsType::S) // Raw signal strength(carrier to noise ratio)
-            {
+                break;
+            case ObsType::S: // Raw signal strength(carrier to noise ratio)
                 (*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).CN0 = observation;
+                break;
+            case ObsType::I:
+            case ObsType::X:
+            case ObsType::Error:
+                LOG_WARN("{}: ObsType {} not supported", nameId(), size_t(obsDesc.type));
+                break;
             }
 
             LOG_DATA("{}:     {}-{}-{}-{}: {}, LLI {}, SSI {}", nameId(),
@@ -654,17 +669,17 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
                      observation, LLI, SSI);
         }
 
-        if (!std::isnan(gnssObs->data.back().pseudorange.value))
+        if (gnssObs->data.back().pseudorange)
         {
-            if (std::isnan(gnssObs->data.back().carrierPhase.value))
+            if (!gnssObs->data.back().carrierPhase)
             {
                 LOG_WARN("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing carrier phase.", nameId(), epochTime.toYMDHMS());
             }
-            if (std::isnan(gnssObs->data.back().doppler))
+            if (!gnssObs->data.back().doppler)
             {
                 LOG_WARN("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing doppler.", nameId(), epochTime.toYMDHMS());
             }
-            if (std::isnan(gnssObs->data.back().CN0))
+            if (!gnssObs->data.back().CN0)
             {
                 LOG_WARN("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing raw signal strength(carrier to noise ratio).", nameId(), epochTime.toYMDHMS());
             }

@@ -14,6 +14,7 @@
 #pragma once
 
 #include <limits>
+#include <optional>
 #include <vector>
 #include <algorithm>
 
@@ -36,7 +37,7 @@ class GnssObs : public NodeData
         struct Pseudorange
         {
             /// Pseudorange measurement [m]
-            double value = std::numeric_limits<double>::quiet_NaN();
+            double value = 0.0;
 
             /// @brief Signal Strength Indicator (SSI) projected into interval 1-9
             ///
@@ -58,7 +59,7 @@ class GnssObs : public NodeData
         struct CarrierPhase
         {
             /// Carrier phase measurement [cycles]
-            double value = std::numeric_limits<double>::quiet_NaN();
+            double value = 0.0;
 
             /// @brief Signal Strength Indicator (SSI) projected into interval 1-9
             ///
@@ -94,10 +95,10 @@ class GnssObs : public NodeData
         /// @param[in] CN0 Carrier-to-Noise density [dBHz]
         ObservationData(const SatSigId& satSigId,
                         const Code code,
-                        Pseudorange pseudorange,
-                        CarrierPhase carrierPhase,
-                        double doppler,
-                        double CN0)
+                        std::optional<Pseudorange> pseudorange,
+                        std::optional<CarrierPhase> carrierPhase,
+                        std::optional<double> doppler,
+                        std::optional<double> CN0)
             : satSigId(satSigId),
               code(code),
               pseudorange(pseudorange),
@@ -107,12 +108,12 @@ class GnssObs : public NodeData
         {}
 #endif
 
-        SatSigId satSigId = { Freq_None, 0 };                      ///< Frequency and satellite number
-        Code code;                                                 ///< GNSS Code
-        Pseudorange pseudorange;                                   ///< Pseudorange measurement
-        CarrierPhase carrierPhase;                                 ///< Carrier phase measurement
-        double doppler = std::numeric_limits<double>::quiet_NaN(); ///< Doppler measurement [Hz]
-        double CN0 = std::numeric_limits<double>::quiet_NaN();     ///< Carrier-to-Noise density [dBHz]
+        SatSigId satSigId = { Freq_None, 0 };     ///< Frequency and satellite number
+        Code code;                                ///< GNSS Code
+        std::optional<Pseudorange> pseudorange;   ///< Pseudorange measurement
+        std::optional<CarrierPhase> carrierPhase; ///< Carrier phase measurement
+        std::optional<double> doppler;            ///< Doppler measurement [Hz]
+        std::optional<double> CN0;                ///< Carrier-to-Noise density [dBHz]
     };
 
 #ifdef TESTING
@@ -122,8 +123,8 @@ class GnssObs : public NodeData
     /// @brief Constructor
     /// @param[in] insTime Epoch time
     /// @param[in] data Observation data
-    GnssObs(const InsTime& insTime, const std::vector<ObservationData>& data)
-        : data(data)
+    GnssObs(const InsTime& insTime, std::vector<ObservationData> data)
+        : data(std::move(data))
     {
         this->insTime = insTime;
     }
