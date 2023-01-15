@@ -120,7 +120,7 @@ jobs:
       - name: Test
         working-directory: ./build
         run: |
-          ctest -C ${{matrix.build_type}} --output-on-failure
+          ctest -C ${{matrix.build_type}} --output-on-failure --timeout 180
       - name: Coverage
         if: runner.os != 'Windows' && matrix.build_type == 'Debug'
         run: |
