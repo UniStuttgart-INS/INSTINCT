@@ -36,8 +36,6 @@ jobs:
           - Release
           - Debug
         log-level:
-          - "DATA"
-          - "TRACE"
           - "DEBUG"
           - "OFF"
 
@@ -69,6 +67,8 @@ jobs:
           script: |
             core.setFailed('There is a mismatch between configured llvm compiler and clang-tidy version chosen')
       - uses: actions/checkout@v2
+        with:
+          submodules: recursive
 
       - name: Setup Cache
         uses: ./.github/actions/setup_cache
@@ -114,7 +114,7 @@ jobs:
           gcovr --config doc/coverage/gcovr.cfg --gcov-executable '${{ matrix.gcov_executable }}'
 
       - name: Publish to codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           flags: ${{ runner.os }}
           name: ${{ runner.os }}-coverage
