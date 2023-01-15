@@ -15,7 +15,6 @@ env:
   CONAN_SYSREQUIRES_MODE: enabled
   CONAN_USER_HOME: "${{ github.workspace }}/conan-cache"
   CONAN_USER_HOME_SHORT: "${{ github.workspace }}/conan-cache/short"
-  CLANG_TIDY_VERSION: "14.0.0"
 
 jobs:
   Test:
@@ -29,35 +28,39 @@ jobs:
           - windows-2022
         compiler:
           # you can specify the version after `-` like "llvm-13.0.0".
-          - llvm-14.0.0
-          - gcc-11
+          - llvm
+          - gcc
           - msvc
         build_type:
           - Release
           - Debug
         log-level:
           - "DEBUG"
-          - "OFF"
 
         exclude:
           - os: ubuntu-22.04
             compiler: msvc
           - os: macos-12
-            compiler: gcc-11
+            compiler: gcc
           - os: macos-12
             compiler: msvc
           - os: windows-2022
-            compiler: gcc-11
+            compiler: gcc
           - os: windows-2022
-            compiler: llvm-14.0.0
+            compiler: llvm
 
         include:
           # Add appropriate variables for gcov version required. This will intentionally break
           # if you try to use a compiler that does not have gcov set
-          - compiler: gcc-11
+          - compiler: gcc
             gcov_executable: gcov
-          - compiler: llvm-14.0.0
+          - compiler: llvm
             gcov_executable: "llvm-cov gcov"
+
+          - os: ubuntu-22.04
+            compiler: gcc
+            build_type: Release
+            log-level: "OFF"
 
     steps:
       - name: Check for llvm version mismatches
@@ -66,7 +69,7 @@ jobs:
         with:
           script: |
             core.setFailed('There is a mismatch between configured llvm compiler and clang-tidy version chosen')
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
 
@@ -83,13 +86,23 @@ jobs:
           vcvarsall: ${{ contains(matrix.os, 'windows' )}}
 
           cmake: true
+          brew: true
           conan: true
           ccache: true
-          clangtidy: ${{ env.CLANG_TIDY_VERSION }}
+          clangtidy: true
 
           doxygen: true
 
           gcovr: true
+
+      - name: Setup MacOS
+        if: runner.os == 'macOS'
+        run: |
+          brew install glfw
+      - name: Setup Linux
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt install -y libglfw3-dev libglfw3
 
       - name: Cleanup Conan system packages (they are not properly cached)
         run: |
@@ -108,7 +121,7 @@ jobs:
         run: |
           ctest -C ${{matrix.build_type}} --output-on-failure
       - name: Coverage
-        if: runner.os != 'Windows'
+        if: runner.os != 'Windows' && matrix.build_type == 'Debug'
         run: |
           mkdir -p build/coverage
           gcovr --config doc/coverage/gcovr.cfg --gcov-executable '${{ matrix.gcov_executable }}'
