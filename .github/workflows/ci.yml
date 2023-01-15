@@ -71,6 +71,7 @@ jobs:
             core.setFailed('There is a mismatch between configured llvm compiler and clang-tidy version chosen')
       - uses: actions/checkout@v3
         with:
+          lfs: 'true'
           submodules: recursive
 
       - name: Setup Cache
