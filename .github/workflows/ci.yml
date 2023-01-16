@@ -15,7 +15,6 @@ env:
   CONAN_SYSREQUIRES_MODE: enabled
   CONAN_USER_HOME: "${{ github.workspace }}/conan-cache"
   CONAN_USER_HOME_SHORT: "${{ github.workspace }}/conan-cache/short"
-  CLANG_TIDY_VERSION: "14"
 
 jobs:
   Clang-tidy:
@@ -36,7 +35,7 @@ jobs:
           compiler: gcc
           cmake: true
           conan: true
-          clangtidy: ${{ env.CLANG_TIDY_VERSION }}
+          clangtidy: "14.0.6"
       - name: Setup Linux
         run: |
           sudo apt install -y libglfw3-dev libglfw3
@@ -98,7 +97,7 @@ jobs:
           - windows-2022
         compiler:
           # you can specify the version after `-` like "llvm-13.0.0".
-          - llvm-14
+          - llvm
           - gcc
           - msvc
         build_type:
@@ -117,14 +116,14 @@ jobs:
           - os: windows-2022
             compiler: gcc
           - os: windows-2022
-            compiler: llvm-14
+            compiler: llvm
 
         include:
           # Add appropriate variables for gcov version required. This will intentionally break
           # if you try to use a compiler that does not have gcov set
           - compiler: gcc
             gcov_executable: gcov
-          - compiler: llvm-14
+          - compiler: llvm
             gcov_executable: "llvm-cov gcov"
 
           - os: ubuntu-22.04
@@ -133,12 +132,6 @@ jobs:
             log-level: "OFF"
 
     steps:
-      - name: Check for llvm version mismatches
-        if: ${{ contains(matrix.compiler, 'llvm') && !contains(matrix.compiler, env.CLANG_TIDY_VERSION) }}
-        uses: actions/github-script@v3
-        with:
-          script: |
-            core.setFailed('There is a mismatch between configured llvm compiler and clang-tidy version chosen')
       - uses: actions/checkout@v3
         with:
           lfs: 'true'
