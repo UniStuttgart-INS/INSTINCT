@@ -8,6 +8,9 @@ inputs:
   build_type:
     required: true
     type: string
+  doxygen:
+    required: true
+    type: string
 
 
 runs:
@@ -20,6 +23,6 @@ runs:
         path: |
           ${{ env.CONAN_USER_HOME }}
           ~/.cache/pip
-        key: ${{ runner.os }}-${{ inputs.compiler }}-${{ inputs.build_type }}-${{ hashFiles('./conanfile.txt')}}-${{ hashFiles('**/CMakeLists.txt') }}
+        key: ${{ runner.os }}-${{ inputs.compiler }}-${{ inputs.build_type }}-${{ inputs.doxygen }}-${{ hashFiles('./conanfile.txt')}}-${{ hashFiles('**/CMakeLists.txt') }}
         restore-keys: |
-          ${{ runner.os }}-${{ inputs.compiler }}-${{ inputs.build_type }}-${{ hashFiles('./conanfile.txt') }}
+          ${{ runner.os }}-${{ inputs.compiler }}-${{ inputs.build_type }}-${{ inputs.doxygen }}-${{ hashFiles('./conanfile.txt') }}
