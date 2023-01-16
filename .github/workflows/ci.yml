@@ -27,13 +27,13 @@ jobs:
       - name: Setup Cache
         uses: ./.github/actions/setup_cache
         with:
-          compiler: gcc
+          compiler: llvm
           build_type: Release
           doxygen: "OFF"
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
         with:
-          compiler: gcc
+          compiler: llvm
           cmake: true
           conan: true
           clangtidy: true
@@ -84,7 +84,7 @@ jobs:
       - name: Configure CMake
         run: |
           cmake -B ./build -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES
-      - name: Build
+      - name: Check documentation
         run: |
           cmake --build ./build --target doc --config Release
 

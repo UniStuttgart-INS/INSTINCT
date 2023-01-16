@@ -3,7 +3,6 @@
 [![ci](https://github.com/UniStuttgart-INS/INSTINCT/actions/workflows/ci.yml/badge.svg)](https://github.com/UniStuttgart-INS/INSTINCT/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/UniStuttgart-INS/INSTINCT/branch/main/graph/badge.svg)](https://codecov.io/gh/UniStuttgart-INS/INSTINCT)
 [![CodeQL](https://github.com/UniStuttgart-INS/INSTINCT/actions/workflows/codeql.yml/badge.svg)](https://github.com/UniStuttgart-INS/INSTINCT/actions/workflows/codeql.yml)
-
 [![Documentation](https://img.shields.io/badge/view-Documentation-blue)](https://unistuttgart-ins.github.io/INSTINCT/ "Go to project documentation")
 
 Flow-Based Navigation Software of the Institut of Navigation (INS) of the University of Stuttgart, Germany.
