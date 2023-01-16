@@ -137,7 +137,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          lfs: 'true'
           submodules: recursive
 
       - name: Setup Cache
