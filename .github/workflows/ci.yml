@@ -35,7 +35,7 @@ jobs:
           compiler: gcc
           cmake: true
           conan: true
-          clangtidy: "14.0.6"
+          clangtidy: "14.0.0"
       - name: Setup Linux
         run: |
           sudo apt install -y libglfw3-dev libglfw3
