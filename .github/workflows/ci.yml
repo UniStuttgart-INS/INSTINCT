@@ -1,4 +1,4 @@
-name: cimacos
+name: ci
 on:
   pull_request:
   release:
@@ -17,6 +17,67 @@ env:
   CONAN_USER_HOME_SHORT: "${{ github.workspace }}/conan-cache/short"
 
 jobs:
+  Clang-tidy:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Cache
+        uses: ./.github/actions/setup_cache
+        with:
+          compiler: gcc
+          build_type: Release
+      - name: Setup Cpp
+        uses: aminya/setup-cpp@v1
+        with:
+          compiler: gcc
+          cmake: true
+          conan: true
+          clangtidy: true
+      - name: Setup Linux
+        run: |
+          sudo apt install -y libglfw3-dev libglfw3
+      - name: Configure CMake
+        run: |
+          cmake -B ./build -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+      - name: Copy compile commands
+        run: |
+          cmake --build ./build --target copy-compile-commands --config Release
+      - name: Run clang-tidy on ./src
+        run: |
+          python3 ./tools/run-clang-tidy.py $PWD/src
+      - name: Run clang-tidy on ./test
+        run: |
+          python3 ./tools/run-clang-tidy.py $PWD/test
+
+  Documentation:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Cache
+        uses: ./.github/actions/setup_cache
+        with:
+          compiler: gcc
+          build_type: Release
+      - name: Setup Cpp
+        uses: aminya/setup-cpp@v1
+        with:
+          compiler: gcc
+          cmake: true
+          conan: true
+          doxygen: true
+      - name: Setup Linux
+        run: |
+          sudo apt install -y libglfw3-dev libglfw3
+      - name: Cleanup Conan system packages (they are not properly cached)
+        run: |
+          conan remove -f '*/system'
+      - name: Configure CMake
+        run: |
+          cmake -B ./build -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES
+      - name: Build
+        run: |
+          cmake --build ./build --target doc --config Release
+
   Test:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -85,36 +146,28 @@ jobs:
         with:
           compiler: ${{ matrix.compiler }}
           vcvarsall: ${{ contains(matrix.os, 'windows' )}}
-
           cmake: true
           brew: true
           conan: true
           ccache: true
-          clangtidy: true
-
-          doxygen: true
-
           gcovr: true
 
       - name: Setup MacOS
-        if: runner.os == 'macOS'
+        if: ${{ runner.os == 'macOS' }}
         run: |
           brew install glfw
       - name: Setup Linux
-        if: runner.os == 'Linux'
+        if: ${{ runner.os == 'Linux' }}
         run: |
           sudo apt install -y libglfw3-dev libglfw3
 
       - name: Cleanup Conan system packages (they are not properly cached)
         run: |
           conan remove -f '*/system'
-        # make sure coverage is only enabled for Debug builds, since it sets -O0 to make sure coverage
-        # has meaningful results
       - name: Configure CMake
         run: |
           cmake -S . -B ./build -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -DENABLE_MAIN=TRUE -DENABLE_TESTING=TRUE -DENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DENABLE_DOXYGEN=OFF -DLOG_LEVEL:STRING=${{matrix.log-level}} -DWARNINGS_AS_ERRORS:BOOL=${{ !contains(matrix.os, 'windows' )}} -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
       - name: Build
-        # Execute the build.  You can specify a specific target with "--target <NAME>"
         run: |
           cmake --build ./build --config ${{matrix.build_type}}
       - name: Test
@@ -122,7 +175,7 @@ jobs:
         run: |
           ctest -C ${{matrix.build_type}} --output-on-failure --timeout 180
       - name: Coverage
-        if: runner.os != 'Windows' && matrix.build_type == 'Debug'
+        if: ${{ runner.os != 'Windows' && matrix.build_type == 'Debug' }}
         run: |
           mkdir -p build/coverage
           gcovr --config doc/coverage/gcovr.cfg --gcov-executable '${{ matrix.gcov_executable }}'

@@ -1,5 +1,8 @@
 # INSTINCT - INS Toolkit for Integrated Navigation Concepts and Training
 
+[![ci](https://github.com/UniStuttgart-INS/INSTINCT/actions/workflows/ci.yml/badge.svg)](https://github.com/UniStuttgart-INS/INSTINCT/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/UniStuttgart-INS/INSTINCT/branch/main/graph/badge.svg)](https://codecov.io/gh/UniStuttgart-INS/INSTINCT)
+
 Flow-Based Navigation Software of the Institut of Navigation (INS) of the University of Stuttgart, Germany.
 
 ![overview](resources/images/titleimage.png)
