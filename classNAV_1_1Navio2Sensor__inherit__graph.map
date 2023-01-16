@@ -1,0 +1,5 @@
+<map id="NAV::Navio2Sensor" name="NAV::Navio2Sensor">
+<area shape="rect" id="node1" title="Navio2Sensor Sensor Class." alt="" coords="44,665,199,896"/>
+<area shape="rect" id="node2" href="$classNAV_1_1Imu.html" title="Abstract IMU Class." alt="" coords="59,416,183,617"/>
+<area shape="rect" id="node3" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,368"/>
+</map>

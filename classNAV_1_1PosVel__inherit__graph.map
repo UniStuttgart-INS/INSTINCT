@@ -1,0 +1,9 @@
+<map id="NAV::PosVel" name="NAV::PosVel">
+<area shape="rect" id="node1" title="Position, Velocity and Attitude Storage Class." alt="" coords="225,475,359,603"/>
+<area shape="rect" id="node4" href="$classNAV_1_1PosVelAtt.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="5,673,192,874"/>
+<area shape="rect" id="node6" href="$classNAV_1_1RtklibPosObs.html" title="RTKLIB Observation Class." alt="" coords="217,658,367,889"/>
+<area shape="rect" id="node7" href="$classNAV_1_1SppSolution.html" title="SPP Algorithm output." alt="" coords="391,651,598,896"/>
+<area shape="rect" id="node2" href="$classNAV_1_1Pos.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="221,225,363,427"/>
+<area shape="rect" id="node3" href="$classNAV_1_1NodeData.html" title="Parent class for all data transmitted over Flow pins." alt="" coords="227,5,357,177"/>
+<area shape="rect" id="node5" href="$classNAV_1_1InertialNavSol.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="21,944,177,1028"/>
+</map>

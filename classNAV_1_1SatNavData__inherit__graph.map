@@ -1,0 +1,9 @@
+<map id="NAV::SatNavData" name="NAV::SatNavData">
+<area shape="rect" id="node1" title="Satellite Navigation data (to calculate SatNavData and clock)" alt="" coords="439,240,582,412"/>
+<area shape="rect" id="node4" href="$classNAV_1_1BDSEphemeris.html" title="Broadcasted ephemeris message data." alt="" coords="5,460,240,837"/>
+<area shape="rect" id="node5" href="$classNAV_1_1GLONASSEphemeris.html" title="Broadcasted ephemeris message data." alt="" coords="264,460,499,837"/>
+<area shape="rect" id="node6" href="$classNAV_1_1GPSEphemeris.html" title="Broadcasted ephemeris message data." alt="" coords="523,460,757,837"/>
+<area shape="rect" id="node7" href="$classNAV_1_1GalileoEphemeris.html" title="Broadcasted ephemeris message data." alt="" coords="781,460,1016,837"/>
+<area shape="rect" id="node2" href="$classNAV_1_1Orbit.html" title="Abstract satellite orbit information." alt="" coords="275,5,509,192"/>
+<area shape="rect" id="node3" href="$classNAV_1_1Clock.html" title="Abstract satellite clock information." alt="" coords="534,27,725,170"/>
+</map>

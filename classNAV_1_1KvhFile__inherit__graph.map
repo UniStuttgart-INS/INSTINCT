@@ -1,0 +1,6 @@
+<map id="NAV::KvhFile" name="NAV::KvhFile">
+<area shape="rect" id="node1" title="File Reader for Kvh log files." alt="" coords="155,783,271,1013"/>
+<area shape="rect" id="node2" href="$classNAV_1_1Imu.html" title="Abstract IMU Class." alt="" coords="59,475,183,676"/>
+<area shape="rect" id="node3" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,368"/>
+<area shape="rect" id="node4" href="$classNAV_1_1FileReader.html" title="Abstract File Reader class." alt="" coords="208,416,403,735"/>
+</map>

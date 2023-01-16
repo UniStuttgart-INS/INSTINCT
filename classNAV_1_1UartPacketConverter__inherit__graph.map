@@ -1,0 +1,4 @@
+<map id="NAV::UartPacketConverter" name="NAV::UartPacketConverter">
+<area shape="rect" id="node1" title="Decrypts Uart packets." alt="" coords="22,416,221,632"/>
+<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,368"/>
+</map>

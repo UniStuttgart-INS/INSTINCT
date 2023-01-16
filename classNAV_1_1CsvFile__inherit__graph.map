@@ -1,0 +1,5 @@
+<map id="NAV::CsvFile" name="NAV::CsvFile">
+<area shape="rect" id="node1" title="CSV File reader." alt="" coords="183,416,297,632"/>
+<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,368"/>
+<area shape="rect" id="node3" href="$classNAV_1_1FileReader.html" title="Abstract File Reader class." alt="" coords="261,27,456,346"/>
+</map>

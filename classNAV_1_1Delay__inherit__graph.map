@@ -1,0 +1,4 @@
+<map id="NAV::Delay" name="NAV::Delay">
+<area shape="rect" id="node1" title="Delays messages by buffering them." alt="" coords="55,416,188,647"/>
+<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,368"/>
+</map>

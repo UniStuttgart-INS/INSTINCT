@@ -1,0 +1,10 @@
+<map id="NAV::CommonLog" name="NAV::CommonLog">
+<area shape="rect" id="node1" title="Common logging variables like time into run and local positions." alt="" coords="619,5,782,148"/>
+<area shape="rect" id="node2" href="$classNAV_1_1ImuDataLogger.html" title="Data Logger for IMU observations." alt="" coords="5,203,169,434"/>
+<area shape="rect" id="node3" href="$classNAV_1_1KvhDataLogger.html" title="Data Logger for KVH observations." alt="" coords="193,203,357,434"/>
+<area shape="rect" id="node4" href="$classNAV_1_1LcKfInsGnssErrorLogger.html" title="Data Logger for INS/GNSS LCKF Errors." alt="" coords="382,203,601,434"/>
+<area shape="rect" id="node5" href="$classNAV_1_1MatrixLogger.html" title="Data Logger for PosVelAtt observations." alt="" coords="625,203,776,434"/>
+<area shape="rect" id="node6" href="$classNAV_1_1PosVelAttLogger.html" title="Data Logger for PosVelAtt observations." alt="" coords="801,203,971,434"/>
+<area shape="rect" id="node7" href="$classNAV_1_1SppSolutionLogger.html" title="Data Logger for SppSolution observations." alt="" coords="996,203,1181,434"/>
+<area shape="rect" id="node8" href="$classNAV_1_1VectorNavDataLogger.html" title="Data Logger for VectorNav observations." alt="" coords="1205,196,1412,441"/>
+</map>

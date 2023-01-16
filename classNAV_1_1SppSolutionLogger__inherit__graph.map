@@ -1,0 +1,6 @@
+<map id="NAV::SppSolutionLogger" name="NAV::SppSolutionLogger">
+<area shape="rect" id="node1" title="Data Logger for SppSolution observations." alt="" coords="233,416,418,647"/>
+<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,368"/>
+<area shape="rect" id="node3" href="$classNAV_1_1FileWriter.html" title="Parent class for other data loggers which manages the output filestream." alt="" coords="262,49,389,324"/>
+<area shape="rect" id="node4" href="$classNAV_1_1CommonLog.html" title="Common logging variables like time into run and local positions." alt="" coords="413,115,576,258"/>
+</map>

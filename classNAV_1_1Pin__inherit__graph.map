@@ -1,0 +1,5 @@
+<map id="NAV::Pin" name="NAV::Pin">
+<area shape="rect" id="node1" title="Pins in the GUI for information exchange." alt="" coords="146,5,373,265"/>
+<area shape="rect" id="node2" href="$classNAV_1_1InputPin.html" title="Input pins of nodes." alt="" coords="5,313,252,647"/>
+<area shape="rect" id="node3" href="$classNAV_1_1OutputPin.html" title="Output pins of nodes." alt="" coords="277,313,503,647"/>
+</map>

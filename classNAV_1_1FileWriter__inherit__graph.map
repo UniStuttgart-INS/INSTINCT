@@ -1,0 +1,11 @@
+<map id="NAV::FileWriter" name="NAV::FileWriter">
+<area shape="rect" id="node1" title="Parent class for other data loggers which manages the output filestream." alt="" coords="729,5,856,280"/>
+<area shape="rect" id="node2" href="$classNAV_1_1ImuDataLogger.html" title="Data Logger for IMU observations." alt="" coords="5,335,169,566"/>
+<area shape="rect" id="node3" href="$classNAV_1_1KvhDataLogger.html" title="Data Logger for KVH observations." alt="" coords="193,335,357,566"/>
+<area shape="rect" id="node4" href="$classNAV_1_1LcKfInsGnssErrorLogger.html" title="Data Logger for INS/GNSS LCKF Errors." alt="" coords="382,335,601,566"/>
+<area shape="rect" id="node5" href="$classNAV_1_1MatrixLogger.html" title="Data Logger for PosVelAtt observations." alt="" coords="625,335,776,566"/>
+<area shape="rect" id="node6" href="$classNAV_1_1PosVelAttLogger.html" title="Data Logger for PosVelAtt observations." alt="" coords="801,335,971,566"/>
+<area shape="rect" id="node7" href="$classNAV_1_1SppSolutionLogger.html" title="Data Logger for SppSolution observations." alt="" coords="996,335,1181,566"/>
+<area shape="rect" id="node8" href="$classNAV_1_1UartDataLogger.html" title="Data Logger for Ublox observations." alt="" coords="1205,335,1372,566"/>
+<area shape="rect" id="node9" href="$classNAV_1_1VectorNavDataLogger.html" title="Data Logger for VectorNav observations." alt="" coords="1396,328,1603,573"/>
+</map>

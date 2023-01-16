@@ -1,0 +1,4 @@
+<map id="NAV::UartPacket" name="NAV::UartPacket">
+<area shape="rect" id="node1" title="UART Packet storage class." alt="" coords="5,225,140,324"/>
+<area shape="rect" id="node2" href="$classNAV_1_1NodeData.html" title="Parent class for all data transmitted over Flow pins." alt="" coords="8,5,137,177"/>
+</map>

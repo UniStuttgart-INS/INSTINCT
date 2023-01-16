@@ -1,0 +1,4 @@
+<map id="NAV::PosVelAttInitializer" name="NAV::PosVelAttInitializer">
+<area shape="rect" id="node1" title="Position, Velocity, Attitude Initializer from GPS and IMU data." alt="" coords="28,416,215,632"/>
+<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,368"/>
+</map>

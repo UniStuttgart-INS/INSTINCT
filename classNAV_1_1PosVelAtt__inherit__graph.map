@@ -1,0 +1,7 @@
+<map id="NAV::PosVelAtt" name="NAV::PosVelAtt">
+<area shape="rect" id="node1" title="Position, Velocity and Attitude Storage Class." alt="" coords="5,651,192,852"/>
+<area shape="rect" id="node5" href="$classNAV_1_1InertialNavSol.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="21,900,177,984"/>
+<area shape="rect" id="node2" href="$classNAV_1_1PosVel.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="31,475,166,603"/>
+<area shape="rect" id="node3" href="$classNAV_1_1Pos.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="27,225,170,427"/>
+<area shape="rect" id="node4" href="$classNAV_1_1NodeData.html" title="Parent class for all data transmitted over Flow pins." alt="" coords="34,5,163,177"/>
+</map>

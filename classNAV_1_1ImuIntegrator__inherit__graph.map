@@ -1,0 +1,4 @@
+<map id="NAV::ImuIntegrator" name="NAV::ImuIntegrator">
+<area shape="rect" id="node1" title="Numerically integrates Imu data." alt="" coords="45,416,198,632"/>
+<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,368"/>
+</map>

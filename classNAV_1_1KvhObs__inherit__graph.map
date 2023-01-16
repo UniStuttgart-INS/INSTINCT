@@ -1,0 +1,5 @@
+<map id="NAV::KvhObs" name="NAV::KvhObs">
+<area shape="rect" id="node1" title="Kvh Observation storage Class." alt="" coords="5,489,156,632"/>
+<area shape="rect" id="node2" href="$classNAV_1_1ImuObs.html" title="IMU Observation storage class." alt="" coords="5,225,156,441"/>
+<area shape="rect" id="node3" href="$classNAV_1_1NodeData.html" title="Parent class for all data transmitted over Flow pins." alt="" coords="16,5,145,177"/>
+</map>

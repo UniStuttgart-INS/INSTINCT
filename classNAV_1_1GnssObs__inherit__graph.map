@@ -1,0 +1,4 @@
+<map id="NAV::GnssObs" name="NAV::GnssObs">
+<area shape="rect" id="node1" title="GNSS Observation message information." alt="" coords="9,225,131,324"/>
+<area shape="rect" id="node2" href="$classNAV_1_1NodeData.html" title="Parent class for all data transmitted over Flow pins." alt="" coords="5,5,135,177"/>
+</map>

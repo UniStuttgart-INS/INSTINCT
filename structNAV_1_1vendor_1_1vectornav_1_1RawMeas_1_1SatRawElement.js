@@ -1,0 +1,57 @@
+var structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement =
+[
+    [ "Chan", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ae50a0a89ae7ab6d97a7c9b54771205bb", [
+      [ "P_Code", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ae50a0a89ae7ab6d97a7c9b54771205bba569d44c0aada921ed55c7248b6c7d76d", null ],
+      [ "CA_Code", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ae50a0a89ae7ab6d97a7c9b54771205bba93ba7c7ccf778d3cb68da948e6d8a660", null ],
+      [ "SemiCodeless", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ae50a0a89ae7ab6d97a7c9b54771205bba49191b26f41c0e96aad1b8f972fdf944", null ],
+      [ "Y_Code", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ae50a0a89ae7ab6d97a7c9b54771205bba836c40d5bce99248353ca37f065fffb0", null ],
+      [ "M_Code", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ae50a0a89ae7ab6d97a7c9b54771205bbaefa40d29b71be05a0d6a5492113f86bb", null ],
+      [ "Codeless", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ae50a0a89ae7ab6d97a7c9b54771205bba21f759d43ad670141fe720f4585f5363", null ],
+      [ "A_Chan", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ae50a0a89ae7ab6d97a7c9b54771205bba7c742165b296b17e1b166b43f0271d5f", null ],
+      [ "B_Chan", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ae50a0a89ae7ab6d97a7c9b54771205bbab5279d6d55dc2cd495884496750012ff", null ],
+      [ "I_Chan", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ae50a0a89ae7ab6d97a7c9b54771205bba58fcd7d3f128e5136cf13a2772dccbd2", null ],
+      [ "Q_Chan", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ae50a0a89ae7ab6d97a7c9b54771205bba2d109fa102918dc862d1fb2047f44a4f", null ],
+      [ "M_Chan", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ae50a0a89ae7ab6d97a7c9b54771205bbac23cd57363e342c7a309c7d2cb485b82", null ],
+      [ "L_Chan", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ae50a0a89ae7ab6d97a7c9b54771205bba842223a7ef45cafd8712123ac116b778", null ],
+      [ "BC_Chan", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ae50a0a89ae7ab6d97a7c9b54771205bba8c6903fd6cba80340cb3f82a3c02585f", null ],
+      [ "Z_Tracking", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ae50a0a89ae7ab6d97a7c9b54771205bbad0d923e5d70960a3eb010b5ef60a66f0", null ],
+      [ "ABC", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ae50a0a89ae7ab6d97a7c9b54771205bba902fbdd2b1df0c4f70b4a5d23525e932", null ]
+    ] ],
+    [ "Flags", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a481070839e78dd120f89b5cc8963b3bd", [
+      [ "None", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a481070839e78dd120f89b5cc8963b3bda6adf97f83acf6453d4a6a4b1070f3754", null ],
+      [ "Searching", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a481070839e78dd120f89b5cc8963b3bda843627586c62e389041a4d8800143974", null ],
+      [ "Tracking", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a481070839e78dd120f89b5cc8963b3bda2205dc082ba550b67ad71e3e2241d9a6", null ],
+      [ "TimeValid", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a481070839e78dd120f89b5cc8963b3bda2a0a9eacd010b59f1a44928e5198a303", null ],
+      [ "CodeLock", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a481070839e78dd120f89b5cc8963b3bdaa2b03073322e0514b4dfde1b84f37561", null ],
+      [ "PhaseLock", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a481070839e78dd120f89b5cc8963b3bda4b1565cd06e26394995eae886bae21a9", null ],
+      [ "PhaseHalfAmbiguity", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a481070839e78dd120f89b5cc8963b3bda30d8e2996648cb3f13ed5ef8cfe6d314", null ],
+      [ "PhaseHalfSub", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a481070839e78dd120f89b5cc8963b3bda977372e807934ae0e00a0832bdba4830", null ],
+      [ "PhaseSlip", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a481070839e78dd120f89b5cc8963b3bdaba9b8c1fa8b6d41a4c54af7dfc7f9d51", null ],
+      [ "PseudorangeSmoothed", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a481070839e78dd120f89b5cc8963b3bda0aa0fa76c6a9355404692765d50bc50a", null ]
+    ] ],
+    [ "Freq", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a247c769adc4c27fc42453348df186a57", [
+      [ "RxChannel", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a247c769adc4c27fc42453348df186a57a181440b45b22da791a9bf5e6c7fb96e7", null ],
+      [ "L1", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a247c769adc4c27fc42453348df186a57a9ec4c0afd450ceac7adb81c3bcfc9732", null ],
+      [ "L2", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a247c769adc4c27fc42453348df186a57a7e6aa2d53f6ee2b1a34b017fa403cb76", null ],
+      [ "L5", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a247c769adc4c27fc42453348df186a57a25d6c78aa672ad5603fb0b7da416f90a", null ],
+      [ "E6", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a247c769adc4c27fc42453348df186a57a247116319466c7be96c6ac3ab87984cb", null ],
+      [ "E5b", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a247c769adc4c27fc42453348df186a57abb9d322599f413de454e014eefedf17a", null ],
+      [ "E5a", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a247c769adc4c27fc42453348df186a57acf59042036b1d202a2d6165677780899", null ]
+    ] ],
+    [ "SatRawElement", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a44ae43dd2da499089d879ed6ad1ce7c8", null ],
+    [ "SatRawElement", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a1e08c6168ae826fca880b2de2a45af9d", null ],
+    [ "SatRawElement", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a42c1b7596c74cf9cd0a49cf9f6ec9dab", null ],
+    [ "operator<<", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a30a52755968695340596de31f0c8477a", null ],
+    [ "operator<<", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a3f51e50fccebe2f1a92d37aafd797e08", null ],
+    [ "operator|", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a7c9533031ba00e09392ba6b1d4b41078", null ],
+    [ "chan", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a580b6201106af78bc45e78108bbf3e4f", null ],
+    [ "cno", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a7ba8c62091261b13aa6ce7edc0531ec3", null ],
+    [ "cp", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ab248203d530fd2228e3952b15b8c76f6", null ],
+    [ "dp", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a09679419434df020aebd0fdb2486b177", null ],
+    [ "flags", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a15ad08934d4fc24537a0f7d90770c42d", null ],
+    [ "freq", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#aa07fec349ea5532ea0420dac504cc86b", null ],
+    [ "pr", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ac4974726ee12fee48ccd044a7938401d", null ],
+    [ "slot", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a482506b41deabc91fe59943a06ce4ef4", null ],
+    [ "svId", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#afba7cbf4cd12f8f8804bfea0d2e0a588", null ],
+    [ "sys", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a7689aa7c827bbbfcc49b818d62ddfcc9", null ]
+];
