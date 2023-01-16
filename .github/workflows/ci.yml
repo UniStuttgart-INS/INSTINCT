@@ -21,6 +21,8 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - name: Setup Cache
         uses: ./.github/actions/setup_cache
         with:
@@ -53,6 +55,8 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - name: Setup Cache
         uses: ./.github/actions/setup_cache
         with:
