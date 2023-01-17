@@ -29,7 +29,7 @@ RinexObsFile::RinexObsFile()
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 517, 67 };
+    _guiConfigDefaultWindowSize = { 517, 87 };
 
     nm::CreateOutputPin(this, "GnssObs", Pin::Type::Flow, { NAV::GnssObs::type() }, &RinexObsFile::pollData);
 }
@@ -69,6 +69,11 @@ void RinexObsFile::guiConfig()
             doDeinitialize();
         }
     }
+    ImGui::Text("Supported versions: ");
+    std::for_each(_supportedVersions.cbegin(), _supportedVersions.cend(), [](double x) {
+        ImGui::SameLine();
+        ImGui::Text("%0.2f", x);
+    });
 }
 
 [[nodiscard]] json RinexObsFile::save() const

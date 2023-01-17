@@ -31,7 +31,7 @@ RinexNavFile::RinexNavFile()
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 517, 67 };
+    _guiConfigDefaultWindowSize = { 517, 87 };
 
     nm::CreateOutputPin(this, GnssNavInfo::type().c_str(), Pin::Type::Object, { GnssNavInfo::type() }, &_gnssNavInfo);
 }
@@ -71,6 +71,11 @@ void RinexNavFile::guiConfig()
             doDeinitialize();
         }
     }
+    ImGui::Text("Supported versions: ");
+    std::for_each(_supportedVersions.cbegin(), _supportedVersions.cend(), [](double x) {
+        ImGui::SameLine();
+        ImGui::Text("%0.2f", x);
+    });
 }
 
 [[nodiscard]] json RinexNavFile::save() const
