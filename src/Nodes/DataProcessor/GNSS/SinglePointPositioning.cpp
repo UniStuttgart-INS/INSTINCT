@@ -440,7 +440,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
 
         if ((obsData.satSigId.freq & _filterFreq)                                                                     // frequency is selected in GUI
             && (obsData.code & _filterCode)                                                                           // code is selected in GUI
-            && !std::isnan(obsData.pseudorange)                                                                       // has a valid pseudorange
+            && obsData.pseudorange                                                                                    // has a valid pseudorange
             && std::find(_excludedSatellites.begin(), _excludedSatellites.end(), satId) == _excludedSatellites.end()) // is not excluded
         {
             for (size_t navIdx = 0; navIdx < gnssNavInfos.size(); navIdx++)
@@ -525,7 +525,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     for (size_t i = 0; i < nMeas; i++)
     {
         const auto& obsData = gnssObs->data[calcData[i].obsIdx];
-        if (!std::isnan(obsData.doppler))
+        if (obsData.doppler)
         {
             nDopplerMeas++;
             int8_t num = -128;
@@ -535,7 +535,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             //     num = std::get<GLONASSEphemeris>(gnssNavInfos[calcData[i].navIdx]->getEphemeris(obsData.satSigId.toSatId(), gnssObs->insTime)).frequencyNumber;
             // }
 
-            calcData[i].pseudorangeRate = doppler2psrRate(obsData.doppler, obsData.satSigId.freq, num);
+            calcData[i].pseudorangeRate = doppler2psrRate(obsData.doppler.value(), obsData.satSigId.freq, num);
         }
     }
 
@@ -592,9 +592,9 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             continue;
         }
 
-        LOG_DATA("{}:     pseudorange  {}", nameId(), obsData.pseudorange);
+        LOG_DATA("{}:     pseudorange  {}", nameId(), obsData.pseudorange.value().value);
 
-        auto satClk = navInfo->calcSatelliteClockCorrections(obsData.satSigId.toSatId(), gnssObs->insTime, obsData.pseudorange, obsData.satSigId.freq);
+        auto satClk = navInfo->calcSatelliteClockCorrections(obsData.satSigId.toSatId(), gnssObs->insTime, obsData.pseudorange.value().value, obsData.satSigId.freq);
         calcData[i].satClkBias = satClk.bias;
         calcData[i].satClkDrift = satClk.drift;
         LOG_DATA("{}:     satClkBias {}, satClkDrift {}", nameId(), calcData[i].satClkBias, calcData[i].satClkDrift);
@@ -692,7 +692,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             // #############################################################################################################################
 
             // Pseudorange measurement [m] - Groves ch. 8.5.3, eq. 8.48, p. 342
-            double psrMeas = obsData.pseudorange /* + (multipath and/or NLOS errors) + (tracking errors) */;
+            double psrMeas = obsData.pseudorange.value().value /* + (multipath and/or NLOS errors) + (tracking errors) */;
             // Estimated modulation ionosphere propagation error [m]
             double dpsr_I = calcIonosphericTimeDelay(static_cast<double>(gnssObs->insTime.toGPSweekTow().tow), obsData.satSigId.freq, lla_pos,
                                                      satElevation, satAzimuth, _ionosphereModel, &ionosphericCorrections)

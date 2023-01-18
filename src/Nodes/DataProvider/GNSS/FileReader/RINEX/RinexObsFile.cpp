@@ -29,7 +29,7 @@ RinexObsFile::RinexObsFile()
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 517, 67 };
+    _guiConfigDefaultWindowSize = { 517, 87 };
 
     nm::CreateOutputPin(this, "GnssObs", Pin::Type::Flow, { NAV::GnssObs::type() }, &RinexObsFile::pollData);
 }
@@ -69,6 +69,11 @@ void RinexObsFile::guiConfig()
             doDeinitialize();
         }
     }
+    ImGui::Text("Supported versions: ");
+    std::for_each(_supportedVersions.cbegin(), _supportedVersions.cend(), [](double x) {
+        ImGui::SameLine();
+        ImGui::Text("%0.2f", x);
+    });
 }
 
 [[nodiscard]] json RinexObsFile::save() const
@@ -108,6 +113,7 @@ void RinexObsFile::deinitialize()
     _version = 0.0;
     _timeSystem = TimeSys_None;
     _obsDescription.clear();
+    _rcvClockOffsAppl = false;
 }
 
 bool RinexObsFile::resetNode()
@@ -396,7 +402,12 @@ void RinexObsFile::readHeader()
         }
         else if (headerLabel == "RCV CLOCK OFFS APPL")
         {
-            LOG_TRACE("{}: '{}' not implemented yet", nameId(), "RCV CLOCK OFFS APPL");
+            if (std::stoi(line.substr(0, 5)))
+            {
+                _rcvClockOffsAppl = true;
+                LOG_INFO("{}: Data (epoch, pseudorange, phase) corrected by the reported clock offset.", nameId());
+            }
+            LOG_TRACE("{}: Receiver clock offset applies: {}", nameId(), _rcvClockOffsAppl);
         }
         else if (headerLabel == "SYS / DCBS APPLIED")
         {
@@ -504,15 +515,28 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
             auto min = std::stoi(line.substr(16, 2));   // Format: 1X,I2.2,
             auto sec = std::stold(line.substr(18, 11)); // Format: F11.7,
 
+            [[maybe_unused]] double recClkOffset = 0.0;
+            try
+            {
+                recClkOffset = line.size() >= 41 + 3 ? std::stod(line.substr(41, 15)) : 0.0; // Format: F15.12
+            }
+            catch (const std::exception& /* exception */)
+            {
+                LOG_DATA("{}: 'recClkOffset' not mentioned in file --> recClkOffset = {}", nameId(), recClkOffset);
+            }
+            if (_rcvClockOffsAppl)
+            {
+                sec -= recClkOffset;
+            }
+
             epochTime = InsTime{ static_cast<uint16_t>(year), static_cast<uint16_t>(month), static_cast<uint16_t>(day),
                                  static_cast<uint16_t>(hour), static_cast<uint16_t>(min), sec,
                                  _timeSystem };
 
             epochFlag = std::stoi(line.substr(31, 1)); // Format: 2X,I1,
 
-            [[maybe_unused]] auto numSats = std::stoi(line.substr(32, 3));                                     // Format: I3,
-                                                                                                               // Reserved - Format 6X,
-            [[maybe_unused]] auto recClkOffset = line.size() >= 41 + 3 ? std::stod(line.substr(41, 15)) : 0.0; // Format: F15.12
+            [[maybe_unused]] auto numSats = std::stoi(line.substr(32, 3)); // Format: I3,
+                                                                           // Reserved - Format 6X,
 
             LOG_DATA("{}: {}, epochFlag {}, numSats {}, recClkOffset {}", nameId(),
                      epochTime.toYMDHMS(), epochFlag, numSats, recClkOffset);
@@ -555,7 +579,26 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
                 continue;
             }
             // Observation value depending on definition type
-            double observation = std::stod(strObs);
+            double observation{};
+            try
+            {
+                observation = std::stod(strObs);
+            }
+            catch (const std::exception& e)
+            {
+                if ((*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).pseudorange)
+                {
+                    if (obsDesc.type == ObsType::L) // Phase
+                    {
+                        LOG_WARN("{}: observation of satSys = {} contains no carrier phase. This happens if the CN0 is so small that the PLL could not lock, even if the DLL has locked (= pseudorange available). The observation is still valid.", nameId(), char(satSys));
+                    }
+                    else if (obsDesc.type == ObsType::D) // Doppler
+                    {
+                        LOG_WARN("{}: observation of satSys = {} contains no doppler.", nameId(), char(satSys));
+                    }
+                }
+                continue;
+            }
 
             // TODO: Springer Handbook of Global Navigation, p. 1211 prefer attributes over others and let user decide also which ones to take into the calculation
 
@@ -565,7 +608,7 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
             // Bit 1 set: Half-cycle ambiguity/slip possible. Software not capable of handling half
             //            cycles should skip this observation. Valid for the current epoch only.
             // Bit 2 set: Galileo BOC-tracking of an MBOC-modulated signal (may suffer from increased noise).
-            int8_t LLI = 0;
+            uint8_t LLI = 0;
             if (line.size() > curExtractLoc)
             {
                 char LLIc = line.at(curExtractLoc);
@@ -573,7 +616,7 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
                 {
                     LLIc = '0';
                 }
-                LLI = static_cast<int8_t>(LLIc - '0');
+                LLI = static_cast<uint8_t>(LLIc - '0');
             }
             curExtractLoc++; // Go over Loss of lock indicator (LLI)
 
@@ -590,7 +633,7 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
             //                  8                   |             48-53
             // 9 (maximum possible signal strength) |             ≥ 54
             // 0 or blank: not known, don't care    |               -
-            [[maybe_unused]] uint8_t SSI = 0;
+            uint8_t SSI = 0;
             if (line.size() > curExtractLoc)
             {
                 char SSIc = line.at(curExtractLoc);
@@ -602,30 +645,49 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
             }
             curExtractLoc++; // Go over Signal Strength Indicator (SSI)
 
-            if (obsDesc.type == ObsType::C) // Code / Pseudorange
+            switch (obsDesc.type)
             {
-                (*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).pseudorange = observation;
-            }
-            else if (obsDesc.type == ObsType::L) // Phase
-            {
-                (*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).carrierPhase = observation;
-                if (LLI != 0)
-                {
-                    (*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).LLI = LLI;
-                }
-            }
-            else if (obsDesc.type == ObsType::D) // Doppler
-            {
+            case ObsType::C: // Code / Pseudorange
+                (*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).pseudorange = { .value = observation,
+                                                                                    .SSI = SSI };
+                break;
+            case ObsType::L: // Phase
+                (*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).carrierPhase = { .value = observation,
+                                                                                     .SSI = SSI,
+                                                                                     .LLI = LLI };
+                break;
+            case ObsType::D: // Doppler
                 (*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).doppler = observation;
-            }
-            else if (obsDesc.type == ObsType::S) // Raw signal strength(carrier to noise ratio)
-            {
+                break;
+            case ObsType::S: // Raw signal strength(carrier to noise ratio)
                 (*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).CN0 = observation;
+                break;
+            case ObsType::I:
+            case ObsType::X:
+            case ObsType::Error:
+                LOG_WARN("{}: ObsType {} not supported", nameId(), size_t(obsDesc.type));
+                break;
             }
 
             LOG_DATA("{}:     {}-{}-{}-{}: {}, LLI {}, SSI {}", nameId(),
                      obsTypeToChar(obsDesc.type), obsDesc.frequency, obsDesc.code, satNum,
                      observation, LLI, SSI);
+        }
+
+        if (gnssObs->data.back().pseudorange)
+        {
+            if (!gnssObs->data.back().carrierPhase)
+            {
+                LOG_WARN("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing carrier phase.", nameId(), epochTime.toYMDHMS());
+            }
+            if (!gnssObs->data.back().doppler)
+            {
+                LOG_WARN("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing doppler.", nameId(), epochTime.toYMDHMS());
+            }
+            if (!gnssObs->data.back().CN0)
+            {
+                LOG_WARN("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing raw signal strength(carrier to noise ratio).", nameId(), epochTime.toYMDHMS());
+            }
         }
     }
 

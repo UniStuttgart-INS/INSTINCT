@@ -979,8 +979,8 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
                     continue;
                 }
 
-                (*gnssObs)(frequency, satRaw.svId, code).pseudorange = satRaw.pr;
-                (*gnssObs)(frequency, satRaw.svId, code).carrierPhase = satRaw.cp;
+                (*gnssObs)(frequency, satRaw.svId, code).pseudorange = { .value = satRaw.pr };
+                (*gnssObs)(frequency, satRaw.svId, code).carrierPhase = { .value = satRaw.cp };
                 (*gnssObs)(frequency, satRaw.svId, code).doppler = satRaw.dp;
                 (*gnssObs)(frequency, satRaw.svId, code).CN0 = satRaw.cno;
 
