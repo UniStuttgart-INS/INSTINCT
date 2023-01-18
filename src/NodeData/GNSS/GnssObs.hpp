@@ -42,6 +42,7 @@ class GnssObs : public NodeData
             /// @brief Signal Strength Indicator (SSI) projected into interval 1-9
             ///
             /// Carrier to Noise ratio(dbHz) | Carrier to Noise ratio(RINEX)
+            /// :-:   | ---
             ///   -   | 0 or blank: not known, don't care
             /// < 12  | 1 (minimum possible signal strength)
             /// 12-17 | 2
@@ -64,6 +65,7 @@ class GnssObs : public NodeData
             /// @brief Signal Strength Indicator (SSI) projected into interval 1-9
             ///
             /// Carrier to Noise ratio(dbHz) | Carrier to Noise ratio(RINEX)
+            /// :-:   | ---
             ///   -   | 0 or blank: not known, don't care
             /// < 12  | 1 (minimum possible signal strength)
             /// 12-17 | 2
