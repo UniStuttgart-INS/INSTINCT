@@ -162,6 +162,7 @@
         "**/.git": true,
         "**/.DS_Store": true,
         "**/tools": true,
+        ".cache": true,
         ".gitattributes": true,
         ".github": true,
         ".gitlab": true,

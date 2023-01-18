@@ -4,10 +4,10 @@ on:
   release:
     types: [published]
   push:
-    # tags:
-    # branches:
-    #   - main
-    #   - develop
+    tags:
+    branches:
+      - main
+      - develop
 
 
 env:
