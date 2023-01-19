@@ -53,7 +53,7 @@ ctest --output-on-failure
 cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=NO
 cmake --build build/Release --target doc
 ```
-The doxygen main page can then be opened under `build/doc/html/index.html` (GitHub Pages integration is planned)
+The doxygen main page can then be opened under `build/doc/html/index.html` (an online documentation is available on [GitHub pages](https://unistuttgart-ins.github.io/INSTINCT/))
 
 ##### Help message
 
