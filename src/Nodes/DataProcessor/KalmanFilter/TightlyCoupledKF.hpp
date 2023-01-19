@@ -15,6 +15,7 @@
 
 #include "internal/Node/Node.hpp"
 #include "Navigation/Time/InsTime.hpp"
+#include "NodeData/State/InertialNavSol.hpp"
 
 #include "Navigation/Math/KalmanFilter.hpp"
 
@@ -60,6 +61,11 @@ class TightlyCoupledKF : public Node
 
     /// @brief Deinitialize the node
     void deinitialize() override;
+
+    /// @brief Receive Function for the inertial navigation solution
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void recvInertialNavigationSolution(InputPin::NodeDataQueue& queue, size_t pinIdx);
 };
 
 } // namespace NAV

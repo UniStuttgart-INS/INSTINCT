@@ -40,6 +40,8 @@ NAV::TightlyCoupledKF::TightlyCoupledKF()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 800, 700 }; // TODO: Adapt, once config options are implemented
 
+    nm::CreateInputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() }, &TightlyCoupledKF::recvInertialNavigationSolution, nullptr, 1);
+    inputPins.back().neededForTemporalQueueCheck = false;
     // TODO: Create Input and Output pins
 }
 
@@ -95,4 +97,10 @@ bool NAV::TightlyCoupledKF::initialize()
 void NAV::TightlyCoupledKF::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
+}
+
+void NAV::TightlyCoupledKF::recvInertialNavigationSolution(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */) // NOLINT(readability-convert-member-functions-to-static)
+{
+    auto inertialNavSol = std::static_pointer_cast<const InertialNavSol>(queue.extract_front());
+    LOG_DATA("{}: recvInertialNavigationSolution at time [{} - {}]", nameId(), inertialNavSol->insTime.toYMDHMS(), inertialNavSol->insTime.toGPSweekTow());
 }
