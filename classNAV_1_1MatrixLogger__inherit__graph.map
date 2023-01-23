@@ -1,6 +1,6 @@
 <map id="NAV::MatrixLogger" name="NAV::MatrixLogger">
-<area shape="rect" id="node1" title="Data Logger for PosVelAtt observations." alt="" coords="250,416,401,647"/>
-<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,368"/>
-<area shape="rect" id="node3" href="$classNAV_1_1FileWriter.html" title="Parent class for other data loggers which manages the output filestream." alt="" coords="262,49,389,324"/>
-<area shape="rect" id="node4" href="$classNAV_1_1CommonLog.html" title="Common logging variables like time into run and local positions." alt="" coords="413,115,576,258"/>
+<area shape="rect" id="node1" title="Data Logger for PosVelAtt observations." alt="" coords="251,424,395,677"/>
+<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,376"/>
+<area shape="rect" id="node3" href="$classNAV_1_1FileWriter.html" title="Parent class for other data loggers which manages the output filestream." alt="" coords="262,49,383,332"/>
+<area shape="rect" id="node4" href="$classNAV_1_1CommonLog.html" title="Common logging variables like time into run and local positions." alt="" coords="407,115,566,266"/>
 </map>

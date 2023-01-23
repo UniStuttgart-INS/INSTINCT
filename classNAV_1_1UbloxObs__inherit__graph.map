@@ -1,4 +1,4 @@
 <map id="NAV::UbloxObs" name="NAV::UbloxObs">
-<area shape="rect" id="node1" title="ublox Observation Class" alt="" coords="5,225,139,353"/>
-<area shape="rect" id="node2" href="$classNAV_1_1NodeData.html" title="Parent class for all data transmitted over Flow pins." alt="" coords="7,5,137,177"/>
+<area shape="rect" id="node1" title="ublox Observation Class" alt="" coords="5,233,139,369"/>
+<area shape="rect" id="node2" href="$classNAV_1_1NodeData.html" title="Parent class for all data transmitted over Flow pins." alt="" coords="9,5,135,185"/>
 </map>

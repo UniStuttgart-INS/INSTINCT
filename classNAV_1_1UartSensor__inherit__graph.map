@@ -1,7 +1,7 @@
 <map id="NAV::UartSensor" name="NAV::UartSensor">
-<area shape="rect" id="node1" title="Abstract Uart Sensor Class." alt="" coords="237,5,410,221"/>
-<area shape="rect" id="node2" href="$classNAV_1_1EmlidSensor.html" title="Emlid Sensor Class." alt="" coords="5,284,151,515"/>
-<area shape="rect" id="node3" href="$classNAV_1_1KvhSensor.html" title="KVH Sensor Class." alt="" coords="175,284,309,515"/>
-<area shape="rect" id="node4" href="$classNAV_1_1UbloxSensor.html" title="Ublox Sensor Class." alt="" coords="333,284,479,515"/>
-<area shape="rect" id="node5" href="$classNAV_1_1VectorNavSensor.html" title="Vector Nav Sensor Class." alt="" coords="504,269,679,529"/>
+<area shape="rect" id="node1" title="Abstract Uart Sensor Class." alt="" coords="224,5,397,229"/>
+<area shape="rect" id="node2" href="$classNAV_1_1EmlidSensor.html" title="Emlid Sensor Class." alt="" coords="5,285,144,538"/>
+<area shape="rect" id="node3" href="$classNAV_1_1KvhSensor.html" title="KVH Sensor Class." alt="" coords="169,285,295,538"/>
+<area shape="rect" id="node4" href="$classNAV_1_1UbloxSensor.html" title="Ublox Sensor Class." alt="" coords="319,285,459,538"/>
+<area shape="rect" id="node5" href="$classNAV_1_1VectorNavSensor.html" title="Vector Nav Sensor Class." alt="" coords="483,277,653,545"/>
 </map>

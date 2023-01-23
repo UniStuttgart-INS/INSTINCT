@@ -1,6 +1,6 @@
 <map id="NAV::RtklibPosObs" name="NAV::RtklibPosObs">
-<area shape="rect" id="node1" title="RTKLIB Observation Class." alt="" coords="5,651,156,881"/>
-<area shape="rect" id="node2" href="$classNAV_1_1PosVel.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="13,475,148,603"/>
-<area shape="rect" id="node3" href="$classNAV_1_1Pos.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="9,225,152,427"/>
-<area shape="rect" id="node4" href="$classNAV_1_1NodeData.html" title="Parent class for all data transmitted over Flow pins." alt="" coords="16,5,145,177"/>
+<area shape="rect" id="node1" title="RTKLIB Observation Class." alt="" coords="5,704,148,943"/>
+<area shape="rect" id="node2" href="$classNAV_1_1PosVel.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="9,505,144,656"/>
+<area shape="rect" id="node3" href="$classNAV_1_1Pos.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="5,233,148,457"/>
+<area shape="rect" id="node4" href="$classNAV_1_1NodeData.html" title="Parent class for all data transmitted over Flow pins." alt="" coords="13,5,140,185"/>
 </map>

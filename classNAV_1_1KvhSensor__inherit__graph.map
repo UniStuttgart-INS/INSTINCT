@@ -1,6 +1,6 @@
 <map id="NAV::KvhSensor" name="NAV::KvhSensor">
-<area shape="rect" id="node1" title="KVH Sensor Class." alt="" coords="141,680,275,911"/>
-<area shape="rect" id="node2" href="$classNAV_1_1Imu.html" title="Abstract IMU Class." alt="" coords="59,423,183,625"/>
-<area shape="rect" id="node3" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,368"/>
-<area shape="rect" id="node4" href="$classNAV_1_1UartSensor.html" title="Abstract Uart Sensor Class." alt="" coords="208,416,381,632"/>
+<area shape="rect" id="node1" title="KVH Sensor Class." alt="" coords="145,696,271,949"/>
+<area shape="rect" id="node2" href="$classNAV_1_1Imu.html" title="Abstract IMU Class." alt="" coords="59,431,183,641"/>
+<area shape="rect" id="node3" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,376"/>
+<area shape="rect" id="node4" href="$classNAV_1_1UartSensor.html" title="Abstract Uart Sensor Class." alt="" coords="208,424,381,648"/>
 </map>

@@ -1,4 +1,4 @@
 <map id="NAV::SinglePointPositioning" name="NAV::SinglePointPositioning">
-<area shape="rect" id="node1" title="Numerically integrates Imu data." alt="" coords="17,416,226,632"/>
-<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,368"/>
+<area shape="rect" id="node1" title="Numerically integrates Imu data." alt="" coords="20,424,223,663"/>
+<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,376"/>
 </map>

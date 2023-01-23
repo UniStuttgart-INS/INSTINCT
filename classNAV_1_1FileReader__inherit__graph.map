@@ -1,14 +1,14 @@
 <map id="NAV::FileReader" name="NAV::FileReader">
-<area shape="rect" id="node1" title="Abstract File Reader class." alt="" coords="699,5,894,324"/>
-<area shape="rect" id="node2" href="$classNAV_1_1CsvFile.html" title="CSV File reader." alt="" coords="5,401,119,617"/>
-<area shape="rect" id="node3" href="$classNAV_1_1EmlidFile.html" title="File Reader for Emlid log files." alt="" coords="143,394,267,625"/>
-<area shape="rect" id="node4" href="$classNAV_1_1ImuFile.html" title="File Reader for Imu log files." alt="" coords="291,394,407,625"/>
-<area shape="rect" id="node5" href="$classNAV_1_1KvhFile.html" title="File Reader for Kvh log files." alt="" coords="431,394,547,625"/>
-<area shape="rect" id="node6" href="$classNAV_1_1NmeaFile.html" title="File Reader for NMEA log files." alt="" coords="571,372,697,647"/>
-<area shape="rect" id="node7" href="$classNAV_1_1RinexNavFile.html" title="File reader Node for RINEX Navigation messages." alt="" coords="721,394,872,625"/>
-<area shape="rect" id="node8" href="$classNAV_1_1RinexObsFile.html" title="File reader Node for RINEX Observation messages." alt="" coords="897,394,1046,625"/>
-<area shape="rect" id="node9" href="$classNAV_1_1RtklibPosFile.html" title="File Reader for RTKLIB pos log files." alt="" coords="1071,394,1219,625"/>
-<area shape="rect" id="node10" href="$classNAV_1_1UbloxFile.html" title="File Reader for Ublox log files." alt="" coords="1243,394,1369,625"/>
-<area shape="rect" id="node11" href="$classNAV_1_1UlogFile.html" title="File Reader for ULog files (&#39;.ulg&#39;)" alt="" coords="1393,379,1542,639"/>
-<area shape="rect" id="node12" href="$classNAV_1_1VectorNavFile.html" title="File Reader for Vector Nav log files." alt="" coords="1566,394,1721,625"/>
+<area shape="rect" id="node1" title="Abstract File Reader class." alt="" coords="682,5,877,332"/>
+<area shape="rect" id="node2" href="$classNAV_1_1CsvFile.html" title="CSV File reader." alt="" coords="5,402,119,641"/>
+<area shape="rect" id="node3" href="$classNAV_1_1EmlidFile.html" title="File Reader for Emlid log files." alt="" coords="143,395,261,648"/>
+<area shape="rect" id="node4" href="$classNAV_1_1ImuFile.html" title="File Reader for Imu log files." alt="" coords="286,395,401,648"/>
+<area shape="rect" id="node5" href="$classNAV_1_1KvhFile.html" title="File Reader for Kvh log files." alt="" coords="425,395,539,648"/>
+<area shape="rect" id="node6" href="$classNAV_1_1NmeaFile.html" title="File Reader for NMEA log files." alt="" coords="563,380,683,663"/>
+<area shape="rect" id="node7" href="$classNAV_1_1RinexNavFile.html" title="File reader Node for RINEX Navigation messages." alt="" coords="707,395,851,648"/>
+<area shape="rect" id="node8" href="$classNAV_1_1RinexObsFile.html" title="File reader Node for RINEX Observation messages." alt="" coords="876,395,1019,648"/>
+<area shape="rect" id="node9" href="$classNAV_1_1RtklibPosFile.html" title="File Reader for RTKLIB pos log files." alt="" coords="1043,395,1185,648"/>
+<area shape="rect" id="node10" href="$classNAV_1_1UbloxFile.html" title="File Reader for Ublox log files." alt="" coords="1209,395,1328,648"/>
+<area shape="rect" id="node11" href="$classNAV_1_1UlogFile.html" title="File Reader for ULog files (&#39;.ulg&#39;)" alt="" coords="1351,387,1501,655"/>
+<area shape="rect" id="node12" href="$classNAV_1_1VectorNavFile.html" title="File Reader for Vector Nav log files." alt="" coords="1525,395,1673,648"/>
 </map>

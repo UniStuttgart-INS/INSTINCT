@@ -1,5 +1,5 @@
 <map id="NAV::RinexObsFile" name="NAV::RinexObsFile">
-<area shape="rect" id="node1" title="File reader Node for RINEX Observation messages." alt="" coords="165,416,315,647"/>
-<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,368"/>
-<area shape="rect" id="node3" href="$classNAV_1_1FileReader.html" title="Abstract File Reader class." alt="" coords="261,27,456,346"/>
+<area shape="rect" id="node1" title="File reader Node for RINEX Observation messages." alt="" coords="169,424,311,677"/>
+<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,376"/>
+<area shape="rect" id="node3" href="$classNAV_1_1FileReader.html" title="Abstract File Reader class." alt="" coords="261,27,456,354"/>
 </map>

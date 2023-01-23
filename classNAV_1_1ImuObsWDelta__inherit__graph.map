@@ -1,5 +1,5 @@
 <map id="NAV::ImuObsWDelta" name="NAV::ImuObsWDelta">
-<area shape="rect" id="node1" title="VectorNav Observation storage Class." alt="" coords="5,489,168,617"/>
-<area shape="rect" id="node2" href="$classNAV_1_1ImuObs.html" title="IMU Observation storage class." alt="" coords="11,225,162,441"/>
-<area shape="rect" id="node3" href="$classNAV_1_1NodeData.html" title="Parent class for all data transmitted over Flow pins." alt="" coords="22,5,151,177"/>
+<area shape="rect" id="node1" title="VectorNav Observation storage Class." alt="" coords="5,505,160,641"/>
+<area shape="rect" id="node2" href="$classNAV_1_1ImuObs.html" title="IMU Observation storage class." alt="" coords="7,233,158,457"/>
+<area shape="rect" id="node3" href="$classNAV_1_1NodeData.html" title="Parent class for all data transmitted over Flow pins." alt="" coords="19,5,146,185"/>
 </map>

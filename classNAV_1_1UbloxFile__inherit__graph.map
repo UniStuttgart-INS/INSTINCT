@@ -1,5 +1,5 @@
 <map id="NAV::UbloxFile" name="NAV::UbloxFile">
-<area shape="rect" id="node1" title="File Reader for Ublox log files." alt="" coords="177,416,303,647"/>
-<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,368"/>
-<area shape="rect" id="node3" href="$classNAV_1_1FileReader.html" title="Abstract File Reader class." alt="" coords="261,27,456,346"/>
+<area shape="rect" id="node1" title="File Reader for Ublox log files." alt="" coords="181,424,299,677"/>
+<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,376"/>
+<area shape="rect" id="node3" href="$classNAV_1_1FileReader.html" title="Abstract File Reader class." alt="" coords="261,27,456,354"/>
 </map>

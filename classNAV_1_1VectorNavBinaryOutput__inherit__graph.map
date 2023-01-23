@@ -1,4 +1,4 @@
 <map id="NAV::VectorNavBinaryOutput" name="NAV::VectorNavBinaryOutput">
-<area shape="rect" id="node1" title="IMU Observation storage class." alt="" coords="5,225,223,412"/>
-<area shape="rect" id="node2" href="$classNAV_1_1NodeData.html" title="Parent class for all data transmitted over Flow pins." alt="" coords="49,5,179,177"/>
+<area shape="rect" id="node1" title="IMU Observation storage class." alt="" coords="5,233,215,428"/>
+<area shape="rect" id="node2" href="$classNAV_1_1NodeData.html" title="Parent class for all data transmitted over Flow pins." alt="" coords="47,5,173,185"/>
 </map>

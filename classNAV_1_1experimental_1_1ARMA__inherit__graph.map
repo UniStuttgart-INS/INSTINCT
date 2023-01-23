@@ -1,4 +1,4 @@
 <map id="NAV::experimental::ARMA" name="NAV::experimental::ARMA">
-<area shape="rect" id="node1" title="Node performing an ARMA filtering of incoming data." alt="" coords="22,416,221,632"/>
-<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,368"/>
+<area shape="rect" id="node1" title="Node performing an ARMA filtering of incoming data." alt="" coords="26,424,217,663"/>
+<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,376"/>
 </map>

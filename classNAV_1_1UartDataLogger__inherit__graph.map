@@ -1,5 +1,5 @@
 <map id="NAV::UartDataLogger" name="NAV::UartDataLogger">
-<area shape="rect" id="node1" title="Data Logger for Ublox observations." alt="" coords="139,416,306,647"/>
-<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,368"/>
-<area shape="rect" id="node3" href="$classNAV_1_1FileWriter.html" title="Parent class for other data loggers which manages the output filestream." alt="" coords="262,49,389,324"/>
+<area shape="rect" id="node1" title="Data Logger for Ublox observations." alt="" coords="141,424,302,677"/>
+<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,376"/>
+<area shape="rect" id="node3" href="$classNAV_1_1FileWriter.html" title="Parent class for other data loggers which manages the output filestream." alt="" coords="262,49,383,332"/>
 </map>

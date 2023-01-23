@@ -1,4 +1,4 @@
 <map id="NAV::Combiner" name="NAV::Combiner">
-<area shape="rect" id="node1" title="Combines two input ports into a single output port." alt="" coords="44,416,199,617"/>
-<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,368"/>
+<area shape="rect" id="node1" title="Combines two input ports into a single output port." alt="" coords="48,424,195,648"/>
+<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,376"/>
 </map>

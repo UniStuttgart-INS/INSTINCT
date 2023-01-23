@@ -1,4 +1,4 @@
 <map id="NAV::LooselyCoupledKF" name="NAV::LooselyCoupledKF">
-<area shape="rect" id="node1" title="Loosely&#45;coupled Kalman Filter for INS/GNSS integration." alt="" coords="29,416,213,632"/>
-<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,368"/>
+<area shape="rect" id="node1" title="Loosely&#45;coupled Kalman Filter for INS/GNSS integration." alt="" coords="32,424,211,663"/>
+<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,376"/>
 </map>

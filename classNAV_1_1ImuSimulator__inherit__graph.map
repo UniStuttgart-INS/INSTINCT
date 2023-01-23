@@ -1,5 +1,5 @@
 <map id="NAV::ImuSimulator" name="NAV::ImuSimulator">
-<area shape="rect" id="node1" title="Imu Observation Simulator." alt="" coords="45,665,197,999"/>
-<area shape="rect" id="node2" href="$classNAV_1_1Imu.html" title="Abstract IMU Class." alt="" coords="59,416,183,617"/>
-<area shape="rect" id="node3" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,368"/>
+<area shape="rect" id="node1" title="Imu Observation Simulator." alt="" coords="48,681,195,1023"/>
+<area shape="rect" id="node2" href="$classNAV_1_1Imu.html" title="Abstract IMU Class." alt="" coords="59,424,183,633"/>
+<area shape="rect" id="node3" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,376"/>
 </map>

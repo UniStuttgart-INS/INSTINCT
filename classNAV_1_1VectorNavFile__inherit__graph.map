@@ -1,6 +1,6 @@
 <map id="NAV::VectorNavFile" name="NAV::VectorNavFile">
-<area shape="rect" id="node1" title="File Reader for Vector Nav log files." alt="" coords="136,783,291,1013"/>
-<area shape="rect" id="node2" href="$classNAV_1_1Imu.html" title="Abstract IMU Class." alt="" coords="59,475,183,676"/>
-<area shape="rect" id="node3" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,368"/>
-<area shape="rect" id="node4" href="$classNAV_1_1FileReader.html" title="Abstract File Reader class." alt="" coords="208,416,403,735"/>
+<area shape="rect" id="node1" title="File Reader for Vector Nav log files." alt="" coords="139,799,287,1052"/>
+<area shape="rect" id="node2" href="$classNAV_1_1Imu.html" title="Abstract IMU Class." alt="" coords="59,483,183,692"/>
+<area shape="rect" id="node3" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,376"/>
+<area shape="rect" id="node4" href="$classNAV_1_1FileReader.html" title="Abstract File Reader class." alt="" coords="208,424,403,751"/>
 </map>
