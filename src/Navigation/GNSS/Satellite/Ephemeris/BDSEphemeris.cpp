@@ -88,25 +88,13 @@ BDSEphemeris::BDSEphemeris(int32_t year, int32_t month, int32_t day, int32_t hou
 
 #endif
 
-Orbit::Pos BDSEphemeris::calcSatellitePos(const InsTime& /* transTime */) const
-{
-    throw std::runtime_error("Not implemented yet!");
-    return {};
-}
-
-Orbit::PosVel BDSEphemeris::calcSatellitePosVel(const InsTime& /* transTime */) const
-{
-    throw std::runtime_error("Not implemented yet!");
-    return {};
-}
-
-Orbit::PosVelAccel BDSEphemeris::calcSatellitePosVelAccel(const InsTime& /* transTime */) const
-{
-    throw std::runtime_error("Not implemented yet!");
-    return {};
-}
-
 Clock::Corrections BDSEphemeris::calcClockCorrections(const InsTime& /* recvTime */, double /* dist */, const Frequency& /* freq */) const
+{
+    throw std::runtime_error("Not implemented yet!");
+    return {};
+}
+
+Orbit::PosVelAccel BDSEphemeris::calcSatelliteData(const InsTime& /*transTime */, Orbit::Calc /* calc */) const
 {
     throw std::runtime_error("Not implemented yet!");
     return {};

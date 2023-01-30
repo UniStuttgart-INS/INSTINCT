@@ -127,9 +127,9 @@ inline bool operator==(const GLONASSEphemeris& lhs, const GLONASSEphemeris& rhs)
     REQUIRE(lhs.tau_n == rhs.tau_n);
     REQUIRE(lhs.gamma_n == rhs.gamma_n);
     REQUIRE(lhs.health == rhs.health);
-    REQUIRE(lhs.pos == rhs.pos);
-    REQUIRE(lhs.vel == rhs.vel);
-    REQUIRE(lhs.accelLuniSolar == rhs.accelLuniSolar);
+    REQUIRE(lhs.PZ90_pos == rhs.PZ90_pos);
+    REQUIRE(lhs.PZ90_vel == rhs.PZ90_vel);
+    REQUIRE(lhs.PZ90_accelLuniSolar == rhs.PZ90_accelLuniSolar);
     REQUIRE(lhs.frequencyNumber == rhs.frequencyNumber);
     return true;
 }

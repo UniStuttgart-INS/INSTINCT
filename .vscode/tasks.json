@@ -304,10 +304,7 @@
         { // DOXYGEN: Build Documentation
             "label": "DOXYGEN: Build Documentation",
             "type": "shell",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
+            "group": "build",
             "command": "cmake",
             "args": [
                 "--build",
@@ -350,7 +347,7 @@
             "args": [
                 "--config=config.ini",
                 "--load=\"flow/Default.flow\"",
-                // "--load=\"test/flow/Nodes/DataProcessor/GNSS/SPP-Skydel.flow\"",
+                // "--load=\"test/flow/Nodes/DataProcessor/GNSS/SinglePointPositioning.flow\"",
                 // "--sigterm",
                 // "--duration=60",
                 // "--nogui",
@@ -377,7 +374,10 @@
         { // TEST: Build & run
             "label": "TEST: Build & run",
             "type": "shell",
-            "group": "test",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "command": "ctest",
             "args": [
                 // "-j4",

@@ -118,7 +118,7 @@ TEST_CASE("[RinexObsFile][flow] Read v3_03/reach-m2-01_raw.22O", "[RinexObsFile]
 //                                                   v3.04
 // ###########################################################################################################
 
-TEST_CASE("[RinexObsFile][flow] Read v3_04/INS_1581.19O", "[RinexObsFile][flow][debug]")
+TEST_CASE("[RinexObsFile][flow] Read v3_04/INS_1581.19O", "[RinexObsFile][flow]")
 {
     testRinexObsFileFlow("DataProvider/GNSS/RinexObsFile/v3_04/INS_1581.19O", v3_04::gnssObs_INS_1581_19O);
 }

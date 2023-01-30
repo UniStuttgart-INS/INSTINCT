@@ -74,7 +74,7 @@ void compareNMEAData(const std::shared_ptr<const NAV::PosVel>& obs, size_t messa
     REQUIRE(std::isnan(obs->e_velocity()[2]));
 }
 
-TEST_CASE("[NMEAFile][flow] Read 'data/NMEA/test.nmea' and compare content with hardcoded values", "[NMEAFile][flow]")
+TEST_CASE("[NMEAFile][flow] Read 'test.nmea'", "[NMEAFile][flow]")
 {
     auto logger = initializeTestLogger();
 
@@ -96,7 +96,7 @@ TEST_CASE("[NMEAFile][flow] Read 'data/NMEA/test.nmea' and compare content with 
         messageCounter++;
     });
 
-    REQUIRE(testFlow("test/flow/Nodes/DataProvider/GNSS/NMEAFile.flow"));
+    REQUIRE(testFlow("test/flow/Nodes/DataProvider/GNSS/NmeaFile.flow"));
 
     REQUIRE(messageCounter == NMEA_REFERENCE_DATA.size());
 }

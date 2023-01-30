@@ -871,8 +871,8 @@ class InsTime
         return { year, doy, sod };
     }
 
-    /// @brief Returns the current time rounded to a full day (changes time to 0:0:0h UTC of current day)
-    /// @return The rounded time object
+    /// @brief Returns the current time rounded/cutted to a full day (changes time to 0:0:0h UTC of current day)
+    /// @return The rounded/cutted time object
     [[nodiscard]] constexpr InsTime toFullDay() const
     {
         return InsTime(InsTime_MJD(_mjd.mjd_day, 0.0L));
