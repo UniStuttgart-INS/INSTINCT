@@ -30,15 +30,15 @@
         "node-50": {
             "data": {
                 "codes": "111100010001001110001111110000111100011101111111111111111111110101111111111111011101110000000001000000001",
-                "elevationMask": 14.999999999999998,
+                "elevationMask": 0.0,
                 "excludedSatellites": [],
                 "frequencies": 1,
-                "ionosphereModel": 1,
+                "ionosphereModel": 0,
                 "nNavInfoPins": 1,
-                "troposphereModel": 1,
+                "troposphereModel": 0,
                 "useWeightedLeastSquares": true,
-                "zhdMappingFunction": 1,
-                "zwdMappingFunction": 1
+                "zhdMappingFunction": 0,
+                "zwdMappingFunction": 0
             },
             "enabled": true,
             "id": 50,
@@ -57,7 +57,7 @@
                 }
             ],
             "kind": "Blueprint",
-            "name": "SinglePointPositioning - SPP",
+            "name": "SinglePointPositioning",
             "outputPins": [
                 {
                     "id": 49,
@@ -77,14 +77,14 @@
         "node-54": {
             "data": {
                 "FileReader": {
-                    "path": "Skydel-static_4h_1min-rate/SkydelRINEX_S_2022152120_7200S_GN.rnx"
+                    "path": "GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20238959_7200S_GN.rnx"
                 }
             },
             "enabled": true,
             "id": 54,
             "inputPins": [],
             "kind": "Blueprint",
-            "name": "RinexNavFile - GPS",
+            "name": "RinexNavFile",
             "outputPins": [
                 {
                     "id": 53,
@@ -104,7 +104,7 @@
         "node-65": {
             "data": {
                 "FileReader": {
-                    "path": "Skydel-static_4h_1min-rate/SkydelRINEX_S_20221521201_03H_01Z_MO.rnx"
+                    "path": "GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_MO.rnx"
                 }
             },
             "enabled": true,
@@ -1274,8 +1274,8 @@
                         "yAxisFlags": 2048
                     }
                 ],
-                "startValue_East": 0.16008293923125252,
-                "startValue_North": 0.8513856721132819
+                "startValue_East": 1.6580627893946132,
+                "startValue_North": 0.5235987755982988
             },
             "enabled": true,
             "id": 77,
@@ -1305,7 +1305,7 @@
         "node-80": {
             "data": {
                 "FileReader": {
-                    "path": "Skydel-static_4h_1min-rate/SkydelRINEX_S_20221521201_03H_01Z_MO_SPP.pos"
+                    "path": "GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_GO.pos"
                 }
             },
             "enabled": true,

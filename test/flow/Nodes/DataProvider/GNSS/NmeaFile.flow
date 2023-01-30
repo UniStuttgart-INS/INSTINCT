@@ -187,7 +187,7 @@
         "node-95": {
             "data": {
                 "FileReader": {
-                    "path": "NMEA/test.nmea"
+                    "path": "DataProvider/GNSS/NmeaFile/test.nmea"
                 }
             },
             "enabled": true,

@@ -29,10 +29,10 @@ namespace NAV
 class Satellite
 {
   public:
-    /// @brief Calculates position, velocity and acceleration of the satellite at transmission time
+    /// @brief Calculates position of the satellite at transmission time
     /// @param[in] transTime Transmit time to calculate the satellite position for
     [[nodiscard]] Orbit::Pos calcSatellitePos(const InsTime& transTime) const;
-    /// @brief Calculates position, velocity and acceleration of the satellite at transmission time
+    /// @brief Calculates position and velocity of the satellite at transmission time
     /// @param[in] transTime Transmit time to calculate the satellite position for
     [[nodiscard]] Orbit::PosVel calcSatellitePosVel(const InsTime& transTime) const;
     /// @brief Calculates position, velocity and acceleration of the satellite at transmission time

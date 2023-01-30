@@ -174,7 +174,7 @@ void NAV::UlogFile::readHeader()
         read(ulogHeader.data.data(), ulogHeader.data.size());
 
         // Check "ULog" at beginning of file
-        if (!((ulogHeader.header.fileMagic[0] == 'U') && (ulogHeader.header.fileMagic[1] == 'L') && (ulogHeader.header.fileMagic[2] == 'o') && (ulogHeader.header.fileMagic[3] == 'g')))
+        if ((ulogHeader.header.fileMagic[0] != 'U') || (ulogHeader.header.fileMagic[1] != 'L') || (ulogHeader.header.fileMagic[2] != 'o') || (ulogHeader.header.fileMagic[3] != 'g'))
         {
             LOG_WARN("{}: FileType is binary, but not ULog", nameId());
         }
@@ -190,7 +190,7 @@ void NAV::UlogFile::readHeader()
             vendor::pixhawk::message_header_s msgHeader;
         } ulogMsgHeader{};
 
-        while (!((ulogMsgHeader.msgHeader.msg_type == 'A') || (ulogMsgHeader.msgHeader.msg_type == 'L')))
+        while ((ulogMsgHeader.msgHeader.msg_type != 'A') && (ulogMsgHeader.msgHeader.msg_type != 'L'))
         {
             read(ulogMsgHeader.data.data(), ulogMsgHeader.data.size());
 
@@ -1275,9 +1275,8 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData()
         {
             vendor::pixhawk::message_sync_s messageSync;
             messageSync.header = ulogMsgHeader.msgHeader;
-            std::array<uint8_t, 8> sync_magic{};
-            read(reinterpret_cast<char*>(messageSync.snyc_magic.data()), sizeof(sync_magic));
-            LOG_DATA("{}: messageSync.snyc_magic[0]: {}", nameId(), messageSync.snyc_magic[0]);
+            read(reinterpret_cast<char*>(messageSync.syncMsg.data()), sizeof(messageSync.syncMsg));
+            LOG_DATA("{}: messageSync.syncMsg[0]: {}", nameId(), messageSync.syncMsg[0]);
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'O')
         {

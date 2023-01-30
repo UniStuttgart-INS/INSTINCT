@@ -145,8 +145,8 @@ enum class ulog_tag : uint16_t
 /// @brief synchronization message so that a reader can recover from a corrupt message by searching for the next sync message
 struct message_sync_s
 {
-    message_header_s header;             ///< msg header
-    std::array<uint8_t, 8> snyc_magic{}; ///< synchronization message
+    message_header_s header;          ///< msg header
+    std::array<uint8_t, 8> syncMsg{}; ///< synchronization message
 };
 
 /// @brief dropout (lost logging messages) of a given duration in ms. Dropouts can occur e.g. if the device is not fast enough

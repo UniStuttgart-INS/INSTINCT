@@ -606,7 +606,8 @@ run-tests:ubuntu:22.04:gcc:debug:
     - .log-trace
   image: archlinux:latest
   before_script:
-    - pacman -Sy archlinux-keyring --noconfirm && pacman -Syyu --noconfirm --needed
+    - pacman -Sy archlinux-keyring --noconfirm
+    - pacman -Syyu --noconfirm --needed
     - pacman -S --noconfirm --needed base-devel cmake clang ccache cppcheck python-pip glfw-x11
     - pip install conan
     - g++ --version

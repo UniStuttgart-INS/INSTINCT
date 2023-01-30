@@ -63,7 +63,7 @@ InsTime_YDoySod::operator std::string() const
 
 std::ostream& operator<<(std::ostream& os, const InsTime& insTime)
 {
-    return os << insTime.toYMDHMS() << " (" << insTime.toMJD() << ")";
+    return os << insTime.toYMDHMS() << " (" << insTime.toGPSweekTow() << ")";
 }
 
 std::ostream& operator<<(std::ostream& os, const InsTime_MJD& mjd)
