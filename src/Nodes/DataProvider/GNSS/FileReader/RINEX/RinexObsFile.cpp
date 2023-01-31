@@ -402,7 +402,7 @@ void RinexObsFile::readHeader()
         }
         else if (headerLabel == "RCV CLOCK OFFS APPL")
         {
-            if (std::stoi(line.substr(0, 5)))
+            if (str::stoi(line.substr(0, 6), 0))
             {
                 _rcvClockOffsAppl = true;
                 LOG_INFO("{}: Data (epoch, pseudorange, phase) corrected by the reported clock offset.", nameId());
