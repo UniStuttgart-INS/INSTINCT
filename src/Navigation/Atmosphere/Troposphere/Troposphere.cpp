@@ -271,7 +271,7 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& /* insTime */, const 
             }
         }
         if (!alreadyCalculated) { pressure.at(i) = calcTotalPressure(lla_pos(2), atmosphereModels.at(i).get().pressureModel); }
-        LOG_DATA("  []: {}: p {} [millibar] (Total barometric pressure) - value {}", i, to_string(atmosphereModels.at(i).pressureModel),
+        LOG_DATA("  []: {}: p {} [millibar] (Total barometric pressure) - value {}", i, to_string(atmosphereModels.at(i).get().pressureModel),
                  pressure.at(i), alreadyCalculated ? "reused" : "calculated");
 
         alreadyCalculated = false;
@@ -285,7 +285,7 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& /* insTime */, const 
             }
         }
         if (!alreadyCalculated) { temperature.at(i) = calcAbsoluteTemperature(lla_pos(2), atmosphereModels.at(i).get().temperatureModel); }
-        LOG_DATA("  []: {}: T {} [K] (Absolute temperature) - value {}", i, to_string(atmosphereModels.at(i).temperatureModel),
+        LOG_DATA("  []: {}: T {} [K] (Absolute temperature) - value {}", i, to_string(atmosphereModels.at(i).get().temperatureModel),
                  temperature.at(i), alreadyCalculated ? "reused" : "calculated");
 
         alreadyCalculated = false;
@@ -300,7 +300,7 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& /* insTime */, const 
         }
         // Partial pressure of water vapour in [millibar] - RTKLIB ch. E.5, p. 149 specifies 70%
         if (!alreadyCalculated) { waterVapor.at(i) = calcWaterVaporPartialPressure(temperature.at(i), 0.7, atmosphereModels.at(i).get().waterVaporModel); }
-        LOG_DATA("  []: {}: e {} [millibar] (Partial pressure of water vapour) - value {}", i, to_string(atmosphereModels.at(i).waterVaporModel),
+        LOG_DATA("  []: {}: e {} [millibar] (Partial pressure of water vapour) - value {}", i, to_string(atmosphereModels.at(i).get().waterVaporModel),
                  waterVapor.at(i), alreadyCalculated ? "reused" : "calculated");
     }
 

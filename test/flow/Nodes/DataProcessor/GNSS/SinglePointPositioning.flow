@@ -35,10 +35,41 @@
                 "frequencies": 1,
                 "ionosphereModel": 0,
                 "nNavInfoPins": 1,
-                "troposphereModel": 0,
-                "useWeightedLeastSquares": true,
-                "zhdMappingFunction": 0,
-                "zwdMappingFunction": 0
+                "troposphereModels": {
+                    "zhdMappingFunction": [
+                        0,
+                        {
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
+                        }
+                    ],
+                    "zhdModel": [
+                        0,
+                        {
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
+                        }
+                    ],
+                    "zwdMappingFunction": [
+                        0,
+                        {
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
+                        }
+                    ],
+                    "zwdModel": [
+                        0,
+                        {
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
+                        }
+                    ]
+                },
+                "useWeightedLeastSquares": true
             },
             "enabled": true,
             "id": 50,
