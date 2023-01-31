@@ -103,12 +103,8 @@ class SinglePointPositioning : public Node
     /// Ionosphere Model used for the calculation
     IonosphereModel _ionosphereModel = IonosphereModel::Klobuchar;
 
-    /// Troposphere Model used for the calculation
-    TroposphereModel _troposphereModel = TroposphereModel::Saastamoinen;
-    /// Mapping function for the zenith hydrostatic delay
-    MappingFunction _zhdMappingFunction = MappingFunction::Cosecant;
-    /// Mapping function for the zenith wet delay
-    MappingFunction _zwdMappingFunction = MappingFunction::Cosecant;
+    /// Troposphere Models used for the calculation
+    TroposphereModelSelection _troposphereModels;
 
     /// Use the weighted least squares algorithm
     bool _useWeightedLeastSquares = true;

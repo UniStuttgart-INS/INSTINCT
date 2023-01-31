@@ -6,26 +6,25 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#include "Functions.hpp"
+/// @file StandardAtmosphere.hpp
+/// @brief Standard Atmosphere pressure model
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
+/// @date 2023-01-31
+
+#pragma once
 
 #include <cmath>
 
 namespace NAV
 {
 
-double calcTotalPressure(double altitudeMSL)
+/// @brief Calculates the standard atmosphere total pressure
+/// @param[in] altitudeMSL Geodetic height above MSL (mean sea level) [m]
+/// @return The total pressure in [hPa] = [mbar]
+/// @note See \cite RTKLIB RTKLIB ch. E.5, eq. E.5.1, p. 149
+[[nodiscard]] constexpr double calcTotalPressureStAtm(double altitudeMSL)
 {
     return 1013.25 * std::pow(1 - 2.2557e-5 * altitudeMSL, 5.2568);
-}
-
-double calcAbsoluteTemperature(double altitudeMSL)
-{
-    return 15.0 - 6.5e-3 * altitudeMSL + 273.15;
-}
-
-double calcWaterVaporPartialPressure(double temp, double humidity_rel)
-{
-    return 6.108 * std::exp((17.15 * temp - 4684.0) / (temp - 38.45)) * humidity_rel;
 }
 
 } // namespace NAV

@@ -211,7 +211,7 @@ void NAV::SinglePointPositioning::guiConfig()
         ImGui::EndTable();
     }
 
-    float itemWidth = 220.0F * gui::NodeEditorApplication::windowFontRatio();
+    const float itemWidth = 250.0F * gui::NodeEditorApplication::windowFontRatio();
 
     ImGui::SetNextItemWidth(itemWidth);
     if (ShowFrequencySelector(fmt::format("Satellite Frequencies##{}", size_t(id)).c_str(), _filterFreq))
@@ -256,22 +256,8 @@ void NAV::SinglePointPositioning::guiConfig()
             LOG_DEBUG("{}: Ionosphere Model changed to {}", nameId(), NAV::to_string(_ionosphereModel));
             flow::ApplyChanges();
         }
-        ImGui::SetNextItemWidth(itemWidth - ImGui::GetStyle().IndentSpacing);
-        if (ComboTroposphereModel(fmt::format("Troposphere Model##{}", size_t(id)).c_str(), _troposphereModel))
+        if (ComboTroposphereModel(fmt::format("Troposphere Model##{}", size_t(id)).c_str(), _troposphereModels, itemWidth - ImGui::GetStyle().IndentSpacing))
         {
-            LOG_DEBUG("{}: Troposphere Model changed to {}", nameId(), NAV::to_string(_troposphereModel));
-            flow::ApplyChanges();
-        }
-        ImGui::SetNextItemWidth(itemWidth - ImGui::GetStyle().IndentSpacing);
-        if (ComboMappingFunction(fmt::format("Mapping function ZHD##{}", size_t(id)).c_str(), _zhdMappingFunction))
-        {
-            LOG_DEBUG("{}: ZHD mapping function changed to {}", nameId(), NAV::to_string(_zhdMappingFunction));
-            flow::ApplyChanges();
-        }
-        ImGui::SetNextItemWidth(itemWidth - ImGui::GetStyle().IndentSpacing);
-        if (ComboMappingFunction(fmt::format("Mapping function ZWD##{}", size_t(id)).c_str(), _zwdMappingFunction))
-        {
-            LOG_DEBUG("{}: ZWD mapping function changed to {}", nameId(), NAV::to_string(_zwdMappingFunction));
             flow::ApplyChanges();
         }
         ImGui::TreePop();
@@ -291,9 +277,7 @@ void NAV::SinglePointPositioning::guiConfig()
     j["elevationMask"] = rad2deg(_elevationMask);
     j["useWeightedLeastSquares"] = _useWeightedLeastSquares;
     j["ionosphereModel"] = _ionosphereModel;
-    j["troposphereModel"] = _troposphereModel;
-    j["zhdMappingFunction"] = _zhdMappingFunction;
-    j["zwdMappingFunction"] = _zwdMappingFunction;
+    j["troposphereModels"] = _troposphereModels;
 
     return j;
 }
@@ -334,17 +318,9 @@ void NAV::SinglePointPositioning::restore(json const& j)
     {
         j.at("ionosphereModel").get_to(_ionosphereModel);
     }
-    if (j.contains("troposphereModel"))
+    if (j.contains("troposphereModels"))
     {
-        j.at("troposphereModel").get_to(_troposphereModel);
-    }
-    if (j.contains("zhdMappingFunction"))
-    {
-        j.at("zhdMappingFunction").get_to(_zhdMappingFunction);
-    }
-    if (j.contains("zwdMappingFunction"))
-    {
-        j.at("zwdMappingFunction").get_to(_zwdMappingFunction);
+        j.at("troposphereModels").get_to(_troposphereModels);
     }
 }
 
@@ -693,16 +669,14 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                             * InsConst::C;
             LOG_DATA("{}:     [{}]     dpsr_I {} [m] (Estimated modulation ionosphere propagation error)", nameId(), o, dpsr_I);
 
-            auto zenithDelay = calcTroposphericRangeDelay(lla_pos, _troposphereModel);
-            LOG_DATA("{}:     [{}]     ZHD {}", nameId(), o, zenithDelay.ZHD);
-            LOG_DATA("{}:     [{}]     ZWD {}", nameId(), o, zenithDelay.ZWD);
-            double zhdMappingFactor = calcTropoMapFunc(satElevation, _zhdMappingFunction);
-            LOG_DATA("{}:     [{}]     zhdMappingFactor {}", nameId(), o, zhdMappingFactor);
-            double zwdMappingFactor = calcTropoMapFunc(satElevation, _zwdMappingFunction);
-            LOG_DATA("{}:     [{}]     zwdMappingFactor {}", nameId(), o, zwdMappingFactor);
+            auto tropo = calcTroposphericDelayAndMapping(gnssObs->insTime, lla_pos, satElevation, satAzimuth, _troposphereModels);
+            LOG_DATA("{}:     [{}]     ZHD {}", nameId(), o, tropo.ZHD);
+            LOG_DATA("{}:     [{}]     ZWD {}", nameId(), o, tropo.ZWD);
+            LOG_DATA("{}:     [{}]     zhdMappingFactor {}", nameId(), o, tropo.zhdMappingFactor);
+            LOG_DATA("{}:     [{}]     zwdMappingFactor {}", nameId(), o, tropo.zwdMappingFactor);
 
             // Estimated modulation troposphere propagation error [m]
-            double dpsr_T = zenithDelay.ZHD * zhdMappingFactor + zenithDelay.ZWD * zwdMappingFactor;
+            double dpsr_T = tropo.ZHD * tropo.zhdMappingFactor + tropo.ZWD * tropo.zwdMappingFactor;
             LOG_DATA("{}:     [{}]     dpsr_T {} [m] (Estimated modulation troposphere propagation error)", nameId(), o, dpsr_T);
 
             // Corrected pseudorange measurements [m] - Groves ch. 8.5.3, eq. 8.49, p. 342
