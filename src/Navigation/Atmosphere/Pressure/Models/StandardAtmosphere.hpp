@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <cmath>
+#include <gcem.hpp>
 
 namespace NAV
 {
@@ -24,7 +24,7 @@ namespace NAV
 /// @note See \cite RTKLIB RTKLIB ch. E.5, eq. E.5.1, p. 149
 [[nodiscard]] constexpr double calcTotalPressureStAtm(double altitudeMSL)
 {
-    return 1013.25 * std::pow(1 - 2.2557e-5 * altitudeMSL, 5.2568);
+    return 1013.25 * gcem::pow(1 - 2.2557e-5 * altitudeMSL, 5.2568);
 }
 
 } // namespace NAV

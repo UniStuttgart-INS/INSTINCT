@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <cmath>
+#include <gcem.hpp>
 
 namespace NAV
 {
@@ -25,7 +25,7 @@ namespace NAV
 /// @note See \cite RTKLIB RTKLIB ch. E.5, eq. E.5.3, p. 149
 [[nodiscard]] constexpr double calcWaterVaporPartialPressureStAtm(double temp, double humidity_rel)
 {
-    return 6.108 * std::exp((17.15 * temp - 4684.0) / (temp - 38.45)) * humidity_rel;
+    return 6.108 * gcem::exp((17.15 * temp - 4684.0) / (temp - 38.45)) * humidity_rel;
 }
 
 } // namespace NAV
