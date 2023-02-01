@@ -17,6 +17,7 @@
 #include "Navigation/Time/InsTime.hpp"
 #include "NodeData/State/InertialNavSol.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
+// TODO: Include 'InsGnssErrors', which is tbd
 
 #include "Navigation/Math/KalmanFilter.hpp"
 
@@ -95,9 +96,225 @@ class TightlyCoupledKF : public Node
     /// Time when the last GNSS message came and a prediction was requested
     InsTime _lastPredictRequestedTime;
 
+    /// Accumulated Accelerometer biases
+    Eigen::Vector3d _accumulatedAccelBiases;
+    /// Accumulated Gyroscope biases
+    Eigen::Vector3d _accumulatedGyroBiases;
+
+    /// Kalman Filter representation
+    KalmanFilter _kalmanFilter{ 15, 6 };
+
     // ###########################################################################################################
     //                                               GUI Settings
     // ###########################################################################################################
+
+    /// @brief Available Frames
+    enum class Frame : int
+    {
+        ECEF, ///< Earth-Centered Earth-Fixed frame
+        NED,  ///< Local North-East-Down frame
+    };
+    /// Frame to calculate the Kalman filter in
+    Frame _frame = Frame::NED;
+
+    /// @brief Check the rank of the Kalman matrices every iteration (computational expensive)
+    bool _checkKalmanMatricesRanks = true;
+
+    // ###########################################################################################################
+    //                                                Parameters
+    // ###########################################################################################################
+
+    /// Lever arm between INS and GNSS in [m, m, m]
+    Eigen::Vector3d _b_leverArm_InsGnss{ 0.0, 0.0, 0.0 };
+
+    // ###########################################################################################################
+
+    /// Possible Units for the Standard deviation of the noise on the accelerometer specific-force measurements
+    enum class StdevAccelNoiseUnits
+    {
+        mg_sqrtHz,   ///< [mg / √(Hz)]
+        m_s2_sqrtHz, ///< [m / s^2 / √(Hz)]
+    };
+    /// Gui selection for the Unit of the input stdev_ra parameter
+    StdevAccelNoiseUnits _stdevAccelNoiseUnits = StdevAccelNoiseUnits::mg_sqrtHz;
+
+    /// @brief 𝜎_ra Standard deviation of the noise on the accelerometer specific-force measurements
+    /// @note Value from VN-310 Datasheet but verify with values from Brown (2012) table 9.3 for 'High quality'
+    Eigen::Vector3d _stdev_ra = 0.04 /* [mg/√(Hz)] */ * Eigen::Vector3d::Ones();
+
+    // ###########################################################################################################
+
+    /// Possible Units for the Standard deviation of the noise on the gyro angular-rate measurements
+    enum class StdevGyroNoiseUnits
+    {
+        deg_hr_sqrtHz, ///< [deg / hr /√(Hz)]
+        rad_s_sqrtHz,  ///< [rad / s /√(Hz)]
+    };
+    /// Gui selection for the Unit of the input stdev_rg parameter
+    StdevGyroNoiseUnits _stdevGyroNoiseUnits = StdevGyroNoiseUnits::deg_hr_sqrtHz;
+
+    /// @brief 𝜎_rg Standard deviation of the noise on the gyro angular-rate measurements
+    /// @note Value from VN-310 Datasheet but verify with values from Brown (2012) table 9.3 for 'High quality'
+    Eigen::Vector3d _stdev_rg = 5 /* [deg/hr/√(Hz)]^2 */ * Eigen::Vector3d::Ones();
+
+    // ###########################################################################################################
+
+    /// Possible Units for the Variance of the accelerometer dynamic bias
+    enum class StdevAccelBiasUnits
+    {
+        microg, ///< [µg]
+        m_s2,   ///< [m / s^2]
+    };
+    /// Gui selection for the Unit of the input variance_bad parameter
+    StdevAccelBiasUnits _stdevAccelBiasUnits = StdevAccelBiasUnits::microg;
+
+    /// @brief 𝜎²_bad Variance of the accelerometer dynamic bias
+    /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
+    Eigen::Vector3d _stdev_bad = 10 /* [µg] */ * Eigen::Vector3d::Ones();
+
+    /// @brief Correlation length of the accelerometer dynamic bias in [s]
+    Eigen::Vector3d _tau_bad = 0.1 * Eigen::Vector3d::Ones();
+
+    // ###########################################################################################################
+
+    /// Possible Units for the Variance of the accelerometer dynamic bias
+    enum class StdevGyroBiasUnits
+    {
+        deg_h, ///< [°/h]
+        rad_s, ///< [1/s]
+    };
+    /// Gui selection for the Unit of the input variance_bad parameter
+    StdevGyroBiasUnits _stdevGyroBiasUnits = StdevGyroBiasUnits::deg_h;
+
+    /// @brief 𝜎²_bgd Variance of the gyro dynamic bias
+    /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
+    Eigen::Vector3d _stdev_bgd = 1 /* [°/h] */ * Eigen::Vector3d::Ones();
+
+    /// @brief Correlation length of the gyro dynamic bias in [s]
+    Eigen::Vector3d _tau_bgd = 0.1 * Eigen::Vector3d::Ones();
+
+    // ###########################################################################################################
+
+    /// @brief Available Random processes
+    enum class RandomProcess
+    {
+        // WhiteNoise,     ///< White noise
+        // RandomConstant, ///< Random constant
+
+        RandomWalk,   ///< Random Walk
+        GaussMarkov1, ///< Gauss-Markov 1st Order
+
+        // GaussMarkov2,   ///< Gauss-Markov 2nd Order
+        // GaussMarkov3,   ///< Gauss-Markov 3rd Order
+    };
+
+    /// @brief Random Process used to estimate the accelerometer biases
+    RandomProcess _randomProcessAccel = RandomProcess::RandomWalk;
+    /// @brief Random Process used to estimate the gyroscope biases
+    RandomProcess _randomProcessGyro = RandomProcess::RandomWalk;
+
+    // ###########################################################################################################
+
+    // TODO: GnssObsUncertainty... Units, etc.
+
+    // ###########################################################################################################
+
+    /// Possible Units for the initial covariance for the position (standard deviation σ or Variance σ²)
+    enum class InitCovariancePositionUnit
+    {
+        rad2_rad2_m2, ///< Variance LatLonAlt^2 [rad^2, rad^2, m^2]
+        rad_rad_m,    ///< Standard deviation LatLonAlt [rad, rad, m]
+        meter2,       ///< Variance NED [m^2, m^2, m^2]
+        meter,        ///< Standard deviation NED [m, m, m]
+    };
+    /// Gui selection for the Unit of the initial covariance for the position
+    InitCovariancePositionUnit _initCovariancePositionUnit = InitCovariancePositionUnit::meter;
+
+    /// GUI selection of the initial covariance diagonal values for position (standard deviation σ or Variance σ²)
+    Eigen::Vector3d _initCovariancePosition{ 100, 100, 100 };
+
+    // ###########################################################################################################
+
+    /// Possible Units for the initial covariance for the velocity (standard deviation σ or Variance σ²)
+    enum class InitCovarianceVelocityUnit
+    {
+        m2_s2, ///< Variance [m^2/s^2]
+        m_s,   ///< Standard deviation [m/s]
+    };
+    /// Gui selection for the Unit of the initial covariance for the velocity
+    InitCovarianceVelocityUnit _initCovarianceVelocityUnit = InitCovarianceVelocityUnit::m_s;
+
+    /// GUI selection of the initial covariance diagonal values for velocity (standard deviation σ or Variance σ²)
+    Eigen::Vector3d _initCovarianceVelocity{ 10, 10, 10 };
+
+    // ###########################################################################################################
+
+    /// Possible Units for the initial covariance for the attitude angles (standard deviation σ or Variance σ²)
+    enum class InitCovarianceAttitudeAnglesUnit
+    {
+        rad2, ///< Variance [rad^2]
+        deg2, ///< Variance [deg^2]
+        rad,  ///< Standard deviation [rad]
+        deg,  ///< Standard deviation [deg]
+    };
+    /// Gui selection for the Unit of the initial covariance for the attitude angles
+    InitCovarianceAttitudeAnglesUnit _initCovarianceAttitudeAnglesUnit = InitCovarianceAttitudeAnglesUnit::deg;
+
+    /// GUI selection of the initial covariance diagonal values for attitude angles (standard deviation σ or Variance σ²)
+    Eigen::Vector3d _initCovarianceAttitudeAngles{ 10, 10, 10 };
+
+    // ###########################################################################################################
+
+    /// Possible Units for the initial covariance for the accelerometer biases (standard deviation σ or Variance σ²)
+    enum class InitCovarianceBiasAccelUnit
+    {
+        m2_s4, ///< Variance [m^2/s^4]
+        m_s2,  ///< Standard deviation [m/s^2]
+    };
+    /// Gui selection for the Unit of the initial covariance for the accelerometer biases
+    InitCovarianceBiasAccelUnit _initCovarianceBiasAccelUnit = InitCovarianceBiasAccelUnit::m_s2;
+
+    /// GUI selection of the initial covariance diagonal values for accelerometer biases (standard deviation σ or Variance σ²)
+    Eigen::Vector3d _initCovarianceBiasAccel{ 1, 1, 1 };
+
+    // ###########################################################################################################
+
+    /// Possible Units for the initial covariance for the gyroscope biases (standard deviation σ or Variance σ²)
+    enum class InitCovarianceBiasGyroUnit
+    {
+        rad2_s2, ///< Variance [rad²/s²]
+        deg2_s2, ///< Variance [deg²/s²]
+        rad_s,   ///< Standard deviation [rad/s]
+        deg_s,   ///< Standard deviation [deg/s]
+    };
+    /// Gui selection for the Unit of the initial covariance for the gyroscope biases
+    InitCovarianceBiasGyroUnit _initCovarianceBiasGyroUnit = InitCovarianceBiasGyroUnit::deg_s;
+
+    /// GUI selection of the initial covariance diagonal values for gyroscope biases (standard deviation σ or Variance σ²)
+    Eigen::Vector3d _initCovarianceBiasGyro{ 0.5, 0.5, 0.5 };
+
+    // ###########################################################################################################
+
+    /// GUI option for the Phi calculation algorithm
+    enum class PhiCalculationAlgorithm
+    {
+        Exponential, ///< Van-Loan
+        Taylor,      ///< Taylor
+    };
+    /// GUI option for the Phi calculation algorithm
+    PhiCalculationAlgorithm _phiCalculationAlgorithm = PhiCalculationAlgorithm::Taylor;
+
+    /// GUI option for the order of the Taylor polynom to calculate the Phi matrix
+    int _phiCalculationTaylorOrder = 2;
+
+    /// GUI option for the Q calculation algorithm
+    enum class QCalculationAlgorithm
+    {
+        VanLoan, ///< Van-Loan
+        Taylor1, ///< Taylor
+    };
+    /// GUI option for the Q calculation algorithm
+    QCalculationAlgorithm _qCalculationAlgorithm = QCalculationAlgorithm::Taylor1;
 
     // ###########################################################################################################
     //                                                Prediction
@@ -148,14 +365,84 @@ class TightlyCoupledKF : public Node
                                                                  const Eigen::Vector3d& e_omega_ie,
                                                                  const Eigen::Vector3d& tau_bad,
                                                                  const Eigen::Vector3d& tau_bgd) const;
+
     // ----------------------------- Noise input matrix 𝐆 & Noise scale matrix 𝐖 -------------------------------
     // ----------------------------------- System noise covariance matrix 𝐐 -------------------------------------
 
+    /// @brief Calculates the noise input matrix 𝐆
+    /// @param[in] ien_Quat_b Quaternion from body frame to {i,e,n} frame
+    /// @note See \cite Groves2013 Groves, ch. 14.2.6, eq. 14.79, p. 590
+    [[nodiscard]] static Eigen::Matrix<double, 15, 12> noiseInputMatrix_G(const Eigen::Quaterniond& ien_Quat_b);
+
+    /// @brief Calculates the noise scale matrix 𝐖
+    /// @param[in] sigma2_ra Variance of the noise on the accelerometer specific-force measurements
+    /// @param[in] sigma2_rg Variance of the noise on the gyro angular-rate measurements
+    /// @param[in] sigma2_bad Variance of the accelerometer dynamic bias
+    /// @param[in] sigma2_bgd Variance of the gyro dynamic bias
+    /// @param[in] tau_bad Correleation length for the accelerometer in [s]
+    /// @param[in] tau_bgd Correleation length for the gyroscope in [s]
+    /// @param[in] tau_i Time interval between the input of successive accelerometer and gyro outputs to the inertial navigation equations in [s]
+    /// @note See \cite Groves2013 Groves, ch. 14.2.6, eq. 14.79, p. 590
+    [[nodiscard]] static Eigen::Matrix<double, 12, 12> noiseScaleMatrix_W(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+                                                                          const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
+                                                                          const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
+                                                                          const double& tau_i);
+
+    /// @brief System noise covariance matrix 𝐐_{k-1}
+    /// @param[in] sigma2_ra Variance of the noise on the accelerometer specific-force measurements
+    /// @param[in] sigma2_rg Variance of the noise on the gyro angular-rate measurements
+    /// @param[in] sigma2_bad Variance of the accelerometer dynamic bias
+    /// @param[in] sigma2_bgd Variance of the gyro dynamic bias
+    /// @param[in] tau_bad Correleation length for the accelerometer in [s]
+    /// @param[in] tau_bgd Correleation length for the gyroscope in [s]
+    /// @param[in] n_F_21 Submatrix 𝐅_21 of the system matrix 𝐅
+    /// @param[in] T_rn_p Conversion matrix between cartesian and curvilinear perturbations to the position
+    /// @param[in] n_Dcm_b Direction Cosine Matrix from body to navigation coordinates
+    /// @param[in] tau_s Time interval in [s]
+    /// @return The 15x15 matrix of system noise covariances
+    [[nodiscard]] static Eigen::Matrix<double, 15, 15> n_systemNoiseCovarianceMatrix_Q(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+                                                                                       const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
+                                                                                       const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
+                                                                                       const Eigen::Matrix3d& n_F_21, const Eigen::Matrix3d& T_rn_p,
+                                                                                       const Eigen::Matrix3d& n_Dcm_b, const double& tau_s);
+
+    /// @brief System noise covariance matrix 𝐐_{k-1}
+    /// @param[in] sigma2_ra Variance of the noise on the accelerometer specific-force measurements
+    /// @param[in] sigma2_rg Variance of the noise on the gyro angular-rate measurements
+    /// @param[in] sigma2_bad Variance of the accelerometer dynamic bias
+    /// @param[in] sigma2_bgd Variance of the gyro dynamic bias
+    /// @param[in] tau_bad Correleation length for the accelerometer in [s]
+    /// @param[in] tau_bgd Correleation length for the gyroscope in [s]
+    /// @param[in] e_F_21 Submatrix 𝐅_21 of the system matrix 𝐅
+    /// @param[in] e_Dcm_b Direction Cosine Matrix from body to Earth coordinates
+    /// @param[in] tau_s Time interval in [s]
+    /// @return The 15x15 matrix of system noise covariances
+    [[nodiscard]] static Eigen::Matrix<double, 15, 15> e_systemNoiseCovarianceMatrix_Q(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+                                                                                       const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
+                                                                                       const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
+                                                                                       const Eigen::Matrix3d& e_F_21,
+                                                                                       const Eigen::Matrix3d& e_Dcm_b, const double& tau_s);
+
     // --------------------------------------- Error covariance matrix P -----------------------------------------
+
+    /// @brief Initial error covariance matrix P_0
+    /// @param[in] variance_angles Initial Covariance of the attitude angles in [rad²]
+    /// @param[in] variance_vel Initial Covariance of the velocity in [m²/s²]
+    /// @param[in] variance_pos Initial Covariance of the position in [rad² rad² m²] n-frame / [m²] i,e-frame
+    /// @param[in] variance_accelBias Initial Covariance of the accelerometer biases in [m^2/s^4]
+    /// @param[in] variance_gyroBias Initial Covariance of the gyroscope biases in [rad^2/s^2]
+    /// @return The 15x15 matrix of initial state variances
+    [[nodiscard]] Eigen::Matrix<double, 15, 15> initialErrorCovarianceMatrix_P0(const Eigen::Vector3d& variance_angles,
+                                                                                const Eigen::Vector3d& variance_vel,
+                                                                                const Eigen::Vector3d& variance_pos,
+                                                                                const Eigen::Vector3d& variance_accelBias,
+                                                                                const Eigen::Vector3d& variance_gyroBias) const;
 
     // ###########################################################################################################
     //                                                  Update
     // ###########################################################################################################
+
+    // TODO: Add new TCKF functions
 };
 
 } // namespace NAV
