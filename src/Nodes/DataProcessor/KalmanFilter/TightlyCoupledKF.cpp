@@ -42,7 +42,14 @@ NAV::TightlyCoupledKF::TightlyCoupledKF()
 
     nm::CreateInputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() }, &TightlyCoupledKF::recvInertialNavigationSolution, nullptr, 1);
     inputPins.back().neededForTemporalQueueCheck = false;
-    // TODO: Create Input and Output pins
+    nm::CreateInputPin(this, "GNSSobs", Pin::Type::Flow, { NAV::GnssObs::type() }, &TightlyCoupledKF::recvGnssObs,
+                       [](const Node* node, const InputPin& inputPin) {
+                           const auto* tckf = static_cast<const TightlyCoupledKF*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
+                           return !inputPin.queue.empty() && tckf->_lastPredictRequestedTime < inputPin.queue.front()->insTime;
+                       });
+    inputPins.back().dropQueueIfNotFirable = false;
+    // nm::CreateOutputPin(this, "Errors", Pin::Type::Flow, { NAV::LcKfInsGnssErrors::type() }); // TODO: Enable, once output is provided
+    nm::CreateOutputPin(this, "Sync", Pin::Type::Flow, { NAV::NodeData::type() });
 }
 
 NAV::TightlyCoupledKF::~TightlyCoupledKF()
@@ -103,4 +110,82 @@ void NAV::TightlyCoupledKF::recvInertialNavigationSolution(NAV::InputPin::NodeDa
 {
     auto inertialNavSol = std::static_pointer_cast<const InertialNavSol>(queue.extract_front());
     LOG_DATA("{}: recvInertialNavigationSolution at time [{} - {}]", nameId(), inertialNavSol->insTime.toYMDHMS(), inertialNavSol->insTime.toGPSweekTow());
+
+    double tau_i = !_lastPredictTime.empty()
+                       ? static_cast<double>((inertialNavSol->insTime - _lastPredictTime).count())
+                       : 0.0;
+
+    if (tau_i > 0)
+    {
+        _lastPredictTime = _latestInertialNavSol->insTime + std::chrono::duration<double>(tau_i);
+        tightlyCoupledPrediction(_latestInertialNavSol, tau_i);
+    }
+    else
+    {
+        _lastPredictTime = inertialNavSol->insTime;
+    }
+    _latestInertialNavSol = inertialNavSol;
+
+    if (!inputPins[INPUT_PORT_INDEX_GNSS].queue.empty() && inputPins[INPUT_PORT_INDEX_GNSS].queue.front()->insTime == _lastPredictTime)
+    {
+        tightlyCoupledUpdate(std::static_pointer_cast<const GnssObs>(inputPins[INPUT_PORT_INDEX_GNSS].queue.extract_front()));
+        if (inputPins[INPUT_PORT_INDEX_GNSS].queue.empty() && inputPins[INPUT_PORT_INDEX_GNSS].link.getConnectedPin()->mode == OutputPin::Mode::REAL_TIME)
+        {
+            outputPins[OUTPUT_PORT_INDEX_SYNC].mode = OutputPin::Mode::REAL_TIME;
+            for (auto& link : outputPins[OUTPUT_PORT_INDEX_SYNC].links)
+            {
+                link.connectedNode->wakeWorker();
+            }
+        }
+    }
 }
+
+void NAV::TightlyCoupledKF::recvGnssObs(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
+{
+    auto gnssObservation = queue.front();
+    LOG_DATA("{}: recvGNSSNavigationSolution at time [{} - {}]", nameId(), gnssObservation->insTime.toYMDHMS(), gnssObservation->insTime.toGPSweekTow());
+
+    auto nodeData = std::make_shared<NodeData>();
+    nodeData->insTime = gnssObservation->insTime;
+    _lastPredictRequestedTime = gnssObservation->insTime;
+
+    invokeCallbacks(OUTPUT_PORT_INDEX_SYNC, nodeData); // Prediction consists out of ImuIntegration and prediction (gets triggered from it)
+}
+
+// ###########################################################################################################
+//                                               Kalman Filter
+// ###########################################################################################################
+
+void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const InertialNavSol>& inertialNavSol, double tau_i)
+{
+    auto dt = fmt::format("{:0.5f}", tau_i);
+    dt.erase(std::find_if(dt.rbegin(), dt.rend(), [](char ch) { return ch != '0'; }).base(), dt.end());
+
+    InsTime predictTime = inertialNavSol->insTime + std::chrono::duration<double>(tau_i);
+    LOG_DATA("{}: Predicting (dt = {}s) from [{} - {}] to [{} - {}]", nameId(), dt,
+             inertialNavSol->insTime.toYMDHMS(), inertialNavSol->insTime.toGPSweekTow(), predictTime.toYMDHMS(), predictTime.toGPSweekTow());
+
+    // ------------------------------------------- GUI Parameters ----------------------------------------------
+
+    // ---------------------------------------------- Prediction -----------------------------------------------
+}
+
+void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const GnssObs>& gnssObservation)
+{
+    LOG_DATA("{}: Updating to time {} - {} (lastInertial at {} - {})", nameId(), gnssObservation->insTime.toYMDHMS(), gnssObservation->insTime.toGPSweekTow(),
+             _latestInertialNavSol->insTime.toYMDHMS(), _latestInertialNavSol->insTime.toGPSweekTow());
+
+    [[maybe_unused]] auto bla = gnssObservation;
+
+    // -------------------------------------------- GUI Parameters -----------------------------------------------
+
+    // ---------------------------------------------- Update -----------------------------------------------------
+}
+
+// ###########################################################################################################
+//                                                Prediction
+// ###########################################################################################################
+
+// ###########################################################################################################
+//                                                  Update
+// ###########################################################################################################
