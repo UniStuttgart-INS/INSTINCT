@@ -461,7 +461,7 @@ void RinexNavFile::readOrbits()
             // Epoch: Toc - Time of Clock (GPS) year (4 digits) - 1X,I4,
             // month, day, hour, minute, second - 5(1X,I2.2),
             auto timeSplit = str::split_wo_empty(line.substr(3 - offset, 20), " ");
-            auto timeSystem = satSys.getTimeSystem();
+            auto timeSystem = satSys == GLO ? UTC : satSys.getTimeSystem();
 
             int year = std::stoi(timeSplit.at(0));
             if (_version < 3.0) { year += (year >= 80 ? 1900 : 2000); } // RINEX 2.xx has 2-Digit Years
@@ -719,14 +719,14 @@ void RinexNavFile::readOrbits()
 
                 // GLO:  SV clock bias (sec) (-TauN)
                 // SBAS: SV clock bias (sec) (aGf0)
-                double tau_n = std::stod(str::replaceAll_copy(line.substr(23 - offset, 19), "d", "e", str::IgnoreCase));
+                double m_tau_n = std::stod(str::replaceAll_copy(line.substr(23 - offset, 19), "d", "e", str::IgnoreCase));
                 // GLO:  SV relative frequency bias (+GammaN)
                 // SBAS: SV relative frequency bias (aGf1)
                 double gamma_n = std::stod(str::replaceAll_copy(line.substr(42 - offset, 19), "d", "e", str::IgnoreCase));
                 // GLO:  Message frame time (tk+nd*86400) in seconds of the UTC week
                 // SBAS: Transmission time of message (start of the message) in GPS seconds of the week
                 [[maybe_unused]] auto msgFrameTime = std::stod(str::replaceAll_copy(line.substr(61 - offset, 19), "d", "e", str::IgnoreCase));
-                LOG_DATA("{}:    clkBias {}, relFreqBias {}, msgFrameTime {}", nameId(), tau_n, gamma_n, msgFrameTime);
+                LOG_DATA("{}:    clkBias {}, relFreqBias {}, msgFrameTime {}", nameId(), m_tau_n, gamma_n, msgFrameTime);
 
                 // ------------------------------------ BROADCAST ORBIT - 1 --------------------------------------
                 getline(line);
@@ -807,7 +807,7 @@ void RinexNavFile::readOrbits()
                 if (satSys == GLO)
                 {
                     _gnssNavInfo.addSatelliteNavData({ satSys, satNum }, std::make_shared<GLONASSEphemeris>(epoch, tau_c,
-                                                                                                            tau_n, gamma_n, static_cast<bool>(health),
+                                                                                                            -m_tau_n, gamma_n, static_cast<bool>(health),
                                                                                                             pos, vel, accelLuniSolar,
                                                                                                             frequencyNumber_accuracyCode));
                 }

@@ -110,7 +110,7 @@ constexpr double a = PZ90::a;
 /// Gravitational constant GLONASS [m³/s²]
 constexpr double MU = PZ90::MU;
 /// Earth angular velocity GLONASS [rad/s]
-constexpr double omega_ie = PZ90::omega_ie;
+constexpr double omega_ie = 7.2921151467e-05;
 /// Second degree zonal coefficient of normal potential [-]
 constexpr double J2 = PZ90::J2;
 /// Normalized harmonic of the normal geopotential [-]

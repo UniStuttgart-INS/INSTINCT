@@ -70,7 +70,7 @@ void NAV::gui::windows::ShowNodeEditorStyleEditor(bool* show /* = nullptr*/)
     ImGui::EndHorizontal();
 
     static ImGuiTextFilter filter;
-    filter.Draw("", paneWidth);
+    filter.Draw("##NodeEditorStyleEditor", paneWidth);
 
     ImGui::Spacing();
 

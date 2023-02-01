@@ -16,7 +16,9 @@
 #include <catch2/matchers/catch_matchers_templated.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 #include "util/Eigen.hpp"
+#include "Navigation/Time/InsTime.hpp"
 
+#include <fmt/ostream.h>
 #include <iomanip>
 #include <limits>
 
@@ -149,6 +151,41 @@ template<size_t N>
 auto WithinAbs(const std::array<double, N>& target, double margin) -> WithinAbsMatcherArray<N>
 {
     return WithinAbsMatcherArray<N>{ target, margin };
+}
+
+template<class Rep,
+         class Period = std::ratio<1>>
+struct WithinAbsMatcherInsTime : Catch::Matchers::MatcherGenericBase
+{
+    WithinAbsMatcherInsTime(const NAV::InsTime& target, const std::chrono::duration<Rep, Period>& margin)
+        : m_target(target), m_margin(margin) {}
+
+    bool match(const NAV::InsTime& matchee) const
+    {
+        return matchee + m_margin > m_target
+               && m_target + m_margin > matchee;
+    }
+
+    std::string describe() const override
+    {
+        return "\n    is within " + fmt::format("{}", fmt::streamed(m_margin)) + " of \n" + Catch::Detail::stringify(m_target);
+    }
+
+  private:
+    const NAV::InsTime& m_target;
+    const std::chrono::duration<Rep, Period> m_margin;
+};
+
+/// @brief Creates a matcher that accepts Ranges within certain range of target
+/// @tparam Rep An arithmetic type representing the number of ticks
+/// @tparam Period A std::ratio representing the tick period (i.e. the number of second's fractions per tick)
+/// @param[in] target Target values
+/// @param[in] margin Accepted range around target
+template<class Rep,
+         class Period = std::ratio<1>>
+auto WithinAbs(const NAV::InsTime& target, const std::chrono::duration<Rep, Period>& margin) -> WithinAbsMatcherInsTime<Rep, Period>
+{
+    return WithinAbsMatcherInsTime<Rep, Period>{ target, margin };
 }
 
 } // namespace Catch::Matchers

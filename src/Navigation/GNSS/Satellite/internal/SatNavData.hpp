@@ -20,7 +20,7 @@ namespace NAV
 {
 
 /// Satellite Navigation data (to calculate SatNavData and clock)
-class SatNavData : public Orbit, public Clock
+class SatNavData : public Clock, public Orbit
 {
   public:
     /// @brief Child type

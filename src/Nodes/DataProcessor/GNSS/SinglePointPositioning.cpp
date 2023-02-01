@@ -30,6 +30,7 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/GNSS/SppSolution.hpp"
 
 #include "Navigation/GNSS/Functions.hpp"
+#include "Navigation/GNSS/Satellite/Ephemeris/GLONASSEphemeris.hpp"
 #include "Navigation/Math/LeastSquares.hpp"
 
 NAV::SinglePointPositioning::SinglePointPositioning()
@@ -416,6 +417,14 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     auto gnssObs = std::static_pointer_cast<const GnssObs>(queue.extract_front());
     LOG_DATA("{}: Calculating SPP for {}", nameId(), gnssObs->insTime.toYMDHMS());
 
+    auto sppSol
+#ifdef TESTING
+        = std::make_shared<SppSolutionExtended>();
+#else
+        = std::make_shared<SppSolution>();
+#endif
+    sppSol->insTime = gnssObs->insTime;
+
     // Data calculated for each observation
     struct CalcData
     {
@@ -447,6 +456,16 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             {
                 if (gnssNavInfos[navIdx]->contains(satId)) // can calculate satellite position
                 {
+                    if (!gnssNavInfos[navIdx]->isHealthy(satId, gnssObs->insTime))
+                    {
+                        LOG_DATA("{}: Satellite {} is skipped because the signal is not healthy.", nameId(), satId);
+
+#ifdef TESTING
+                        auto& sppExtendedData = (*sppSol)(obsData.satSigId.freq, obsData.satSigId.satNum, obsData.code);
+                        sppExtendedData.skipped = true;
+#endif
+                        continue;
+                    }
                     LOG_DATA("{}: Using observation from {} {}", nameId(), obsData.satSigId, obsData.code);
                     calcData.emplace_back(obsIdx, navIdx);
                     break;
@@ -530,10 +549,14 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             nDopplerMeas++;
             int8_t num = -128;
             // TODO: Find out what this is used for and find a way to use it, after the GLONASS orbit calculation is working
-            // if (obsData.satSigId.freq & (R01 | R02))
-            // {
-            //     num = std::get<GLONASSEphemeris>(gnssNavInfos[calcData[i].navIdx]->getEphemeris(obsData.satSigId.toSatId(), gnssObs->insTime)).frequencyNumber;
-            // }
+            if (obsData.satSigId.freq & (R01 | R02))
+            {
+                if (auto satNavData = std::dynamic_pointer_cast<GLONASSEphemeris>(
+                        gnssNavInfos[calcData[i].navIdx]->satellites().at({ GLO, obsData.satSigId.satNum }).searchNavigationData(gnssObs->insTime)))
+                {
+                    num = satNavData->frequencyNumber;
+                }
+            }
 
             calcData[i].pseudorangeRate = doppler2psrRate(obsData.doppler.value(), obsData.satSigId.freq, num);
         }
@@ -559,18 +582,6 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     // Corrected pseudorange-rate measurements [m/s]
     Eigen::VectorXd psrRateMeas_c = Eigen::VectorXd(static_cast<int>(nDopplerMeas));
 
-    // Keeps track of skipped meausrements (because of elevation mask, ...)
-    std::unordered_set<size_t> skipMeas;
-
-    auto sppSol
-#ifdef TESTING
-        = std::make_shared<SppSolutionExtended>();
-#else
-        = std::make_shared<SppSolution>();
-#endif
-
-    sppSol->insTime = gnssObs->insTime;
-
     for (size_t i = 0; i < nMeas; i++) // Calculate satellite clock, position and velocity
     {
         const auto& obsData = gnssObs->data[calcData[i].obsIdx];
@@ -578,20 +589,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
         auto satId = obsData.satSigId.toSatId();
         const auto* navInfo = gnssNavInfos[calcData[i].navIdx];
 
-        LOG_DATA("{}: satellite {} {} [{}]", nameId(), obsData.satSigId.freq, obsData.satSigId.satNum, gnssObs->insTime.toGPSweekTow());
-
-        if (!navInfo->isHealthy(satId, gnssObs->insTime))
-        {
-            LOG_DATA("{}:     Measurement is skipped because the signal is not healthy.", nameId());
-            skipMeas.insert(i);
-
-#ifdef TESTING
-            auto& sppExtendedData = (*sppSol)(obsData.satSigId.freq, obsData.satSigId.satNum, obsData.code);
-            sppExtendedData.skipped = true;
-#endif
-            continue;
-        }
-
+        LOG_DATA("{}: satellite {} {} [{}]", nameId(), obsData.satSigId.freq, obsData.satSigId.satNum, gnssObs->insTime);
         LOG_DATA("{}:     pseudorange  {}", nameId(), obsData.pseudorange.value().value);
 
         auto satClk = navInfo->calcSatelliteClockCorrections(obsData.satSigId.toSatId(), gnssObs->insTime, obsData.pseudorange.value().value, obsData.satSigId.freq);
@@ -615,19 +613,13 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
 #endif
     }
 
-    LOG_DATA("{}: nMeas {}, skipCount {}", nameId(), nMeas, skipMeas.size());
-    if (nMeas - skipMeas.size() < 4)
-    {
-        LOG_ERROR("{}: [{} GPST] Cannot calculate position because only {} valid measurements. Try changing filter settings or reposition your antenna.",
-                  nameId(), (gnssObs->insTime + std::chrono::seconds(gnssObs->insTime.leapGps2UTC())).toYMDHMS(), nMeas - skipMeas.size());
-        sppSol->nSatellitesPosition = nMeas - skipMeas.size();
-        sppSol->nSatellitesVelocity = nDopplerMeas - skipMeas.size();
-        invokeCallbacks(OUTPUT_PORT_INDEX_SPPSOL, sppSol);
-        return;
-    }
+    LOG_DATA("{}: nMeas {}", nameId(), nMeas);
 
     for (size_t o = 0; o < 10; o++)
     {
+        // Keeps track of skipped meausrements (because of elevation mask, ...)
+        size_t cntSkippedMeas = 0;
+
         LOG_DATA("{}: Iteration {}", nameId(), o);
         // Latitude, Longitude, Altitude of the receiver [rad, rad, m]
         Eigen::Vector3d lla_pos = trafo::ecef2lla_WGS84(_e_position);
@@ -643,11 +635,6 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             const auto& obsData = gnssObs->data[calcData[i].obsIdx];
             LOG_DATA("{}:     [{}] satellite {} {} [{}]", nameId(), o, obsData.satSigId.freq, obsData.satSigId.satNum, gnssObs->insTime.toGPSweekTow());
 
-            if (skipMeas.contains(i))
-            {
-                LOG_DATA("{}:     [{}]     Measurement is skipped.", nameId(), o);
-                continue;
-            }
             auto satId = obsData.satSigId.toSatId();
 
             // Line-of-sight unit vector in ECEF frame coordinates - Groves ch. 8.5.3, eq. 8.41, p. 341
@@ -671,21 +658,28 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
 
             if (satElevation < _elevationMask)
             {
-                LOG_DATA("{}:     [{}]     Measurement is skipped because of elevation mask of {}°", nameId(), o, rad2deg(_elevationMask));
-                skipMeas.insert(i);
-
-                if (nMeas - skipMeas.size() < 4)
-                {
-                    LOG_ERROR("{}: [{} GPST] Cannot calculate position because only {} valid measurements. Try changing filter settings or reposition your antenna.",
-                              nameId(), (gnssObs->insTime + std::chrono::seconds(gnssObs->insTime.leapGps2UTC())).toYMDHMS(), nMeas - skipMeas.size());
-                    return;
-                }
+                cntSkippedMeas++;
+                LOG_DATA("{}:     [{}]     Measurement is skipped because of elevation mask of {}° ({} valid measurements remaining)",
+                         nameId(), o, rad2deg(_elevationMask), nMeas - cntSkippedMeas);
 
 #ifdef TESTING
                 sppExtendedData.elevationMaskTriggered = true;
 #endif
+
+                if (nMeas - cntSkippedMeas < 4)
+                {
+                    LOG_ERROR("{}: [{}] Cannot calculate position because only {} valid measurements. Try changing filter settings or reposition your antenna.",
+                              nameId(), (gnssObs->insTime + std::chrono::seconds(gnssObs->insTime.leapGps2UTC())), nMeas - cntSkippedMeas);
+                    sppSol->nSatellitesPosition = nMeas - cntSkippedMeas;
+                    sppSol->nSatellitesVelocity = nDopplerMeas - cntSkippedMeas;
+                    invokeCallbacks(OUTPUT_PORT_INDEX_SPPSOL, sppSol);
+                    return;
+                }
                 continue;
             }
+#ifdef TESTING
+            sppExtendedData.elevationMaskTriggered = false;
+#endif
 
             // #############################################################################################################################
             //                                                    Position calculation
