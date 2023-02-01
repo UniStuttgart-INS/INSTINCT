@@ -75,9 +75,7 @@ std::tuple<AtmosphereModels, MappingFunction, AtmosphereModels> ModelDefaults(Tr
                                    .temperatureModel = TemperatureModel::ISA,
                                    .waterVaporModel = WaterVaporModel::ISA },
                  MappingFunction::Cosecant,
-                 AtmosphereModels{ .pressureModel = PressureModel::ISA,
-                                   .temperatureModel = TemperatureModel::ISA,
-                                   .waterVaporModel = WaterVaporModel::ISA } };
+                 MappingFunctionDefaults(MappingFunction::Cosecant) };
     case TroposphereModel::None:
     case TroposphereModel::COUNT:
         break;
@@ -87,9 +85,7 @@ std::tuple<AtmosphereModels, MappingFunction, AtmosphereModels> ModelDefaults(Tr
                                .temperatureModel = TemperatureModel::None,
                                .waterVaporModel = WaterVaporModel::None },
              MappingFunction::None,
-             AtmosphereModels{ .pressureModel = PressureModel::None,
-                               .temperatureModel = TemperatureModel::None,
-                               .waterVaporModel = WaterVaporModel::None } };
+             MappingFunctionDefaults(MappingFunction::None) };
 }
 
 bool ComboTroposphereModel(const char* label, TroposphereModelSelection& troposphereModelSelection, float width)
