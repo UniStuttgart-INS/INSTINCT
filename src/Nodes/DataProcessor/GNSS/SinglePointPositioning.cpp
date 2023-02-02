@@ -557,6 +557,8 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     Eigen::VectorXd psrRateEst_c = Eigen::VectorXd(static_cast<int>(nDopplerMeas));
     // Corrected pseudorange-rate measurements [m/s]
     Eigen::VectorXd psrRateMeas_c = Eigen::VectorXd(static_cast<int>(nDopplerMeas));
+    // Pseudorange rate (doppler) measurement error weight matrix
+    Eigen::MatrixXd W_psrRate = Eigen::MatrixXd::Zero(static_cast<int>(nDopplerMeas), static_cast<int>(nDopplerMeas));
 
     for (size_t i = 0; i < nMeas; i++) // Calculate satellite clock, position and velocity
     {
@@ -705,19 +707,31 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                 constexpr double ERR_BRDCI = 0.5;  // Broadcast iono model error factor (See GPS ICD ch. 20.3.3.5.2.5, p. 130: 50% reduction on RMS error)
                 constexpr double ERR_SAAS = 0.3;   // Saastamoinen model error std [m] (maximum zenith wet delay - formulas with worst possible values)
                 constexpr double ERR_CBIAS = 0.3;  // Code bias error Std (m)
-                constexpr double EFACT_GPS = 1.0;  // Satellite system error factor GPS/GAL/QZS/CMP
-                constexpr double EFACT_GLO = 1.5;  // Satellite system error factor GLONASS
+                constexpr double EFACT_GPS = 1.0;  // Satellite system error factor GPS/GAL/QZS/BeiDou
+                constexpr double EFACT_GLO = 1.5;  // Satellite system error factor GLONASS/IRNSS
                 constexpr double EFACT_SBAS = 3.0; // Satellite system error factor SBAS
 
-                double satSysErrFactor = satId.satSys == GLO ? EFACT_GLO : (satId.satSys == SBAS ? EFACT_SBAS : EFACT_GPS);
+                double satSysErrFactor = satId.satSys == GLO || satId.satSys == IRNSS
+                                             ? EFACT_GLO
+                                             : (satId.satSys == SBAS
+                                                    ? EFACT_SBAS
+                                                    : EFACT_GPS);
                 double ele = std::max(satElevation, deg2rad(5));
-                std::array<double, 3> opt_err = { 100.0, 0.003, 0.003 };
-                double varPsrMeas = std::pow(satSysErrFactor, 2) * std::pow(opt_err[0], 2) * (std::pow(opt_err[1], 2) + std::pow(opt_err[2], 2) / std::sin(ele));
+
+                // Code/Carrier-Phase Error Ratio - Measurement error standard deviation
+                std::unordered_map<Frequency, double> codeCarrierPhaseErrorRatio = { { G01, 300.0 },
+                                                                                     { G02, 300.0 },
+                                                                                     { G05, 300.0 } };
+                double carrierPhaseErrorA = 0.003; // Carrier-Phase Error Factor a [m] - Measurement error standard deviation
+                double carrierPhaseErrorB = 0.003; // Carrier-Phase Error Factor b [m] - Measurement error standard deviation
+
+                double varPsrMeas = std::pow(satSysErrFactor, 2) * std::pow(codeCarrierPhaseErrorRatio.at(G01), 2)
+                                    * (std::pow(carrierPhaseErrorA, 2) + std::pow(carrierPhaseErrorB, 2) / std::sin(ele));
                 LOG_DATA("{}:     [{}]     varPsrMeas {}", nameId(), o, varPsrMeas);
 
                 double varEph = gnssNavInfos[calcData[i].navIdx]->calcSatellitePositionVariance(satId, gnssObs->insTime);
                 LOG_DATA("{}:     [{}]     varEph {}", nameId(), o, varEph);
-                double varIono = std::pow(dpsr_I * ERR_BRDCI, 2);
+                double varIono = ratioFreqSquared(G01, obsData.satSigId.freq) * std::pow(dpsr_I * ERR_BRDCI, 2);
                 LOG_DATA("{}:     [{}]     varIono {}", nameId(), o, varIono);
                 double varTrop = dpsr_T == 0.0 ? 0.0 : std::pow(ERR_SAAS / (std::sin(satElevation) + 0.1), 2);
                 LOG_DATA("{}:     [{}]     varTrop {}", nameId(), o, varTrop);
@@ -757,6 +771,25 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                 psrRateEst_c(static_cast<int>(iv)) = e_lineOfSightUnitVector.transpose() * (calcData[i].e_satVel - _e_velocity) + _clkDrift * InsConst::C - dpsr_dot_ie;
                 LOG_DATA("{}:     [{}]     psrRateEst_c({}) {}", nameId(), o, iv, psrRateEst_c(static_cast<int>(iv)));
 
+                if (_useWeightedLeastSquares)
+                {
+                    // Weight matrix
+
+                    double dopplerFrequency = 1; // Doppler Frequency error factor [m] - Measurement error standard deviation
+
+                    double varDopMeas = std::pow(dopplerFrequency, 2);
+                    LOG_DATA("{}:     [{}]     varPsrMeas {}", nameId(), o, varPsrMeas);
+
+                    double varEph = gnssNavInfos[calcData[i].navIdx]->calcSatellitePositionVariance(satId, gnssObs->insTime);
+                    LOG_DATA("{}:     [{}]     varEph {}", nameId(), o, varEph);
+
+                    double varErrors = varDopMeas + varEph;
+                    LOG_DATA("{}:     [{}]     varErrors {}", nameId(), o, varErrors);
+
+                    W_psrRate(static_cast<int>(iv), static_cast<int>(iv)) = 1.0 / varErrors;
+                    LOG_DATA("{}:     [{}]     W_psrRate({},{}) {}", nameId(), o, iv, iv, W_psrRate(static_cast<int>(iv), static_cast<int>(iv)));
+                }
+
                 iv++;
             }
 #ifdef TESTING
@@ -779,6 +812,10 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
         if (nDopplerMeas >= 4)
         {
             LOG_DATA("{}:     [{}] e_H_r \n{}", nameId(), o, e_H_r.topRows(iv));
+            if (_useWeightedLeastSquares)
+            {
+                LOG_DATA("{}:     [{}] W_psrRate \n{}", nameId(), o, W_psrRate.topLeftCorner(iv, iv));
+            }
             LOG_DATA("{}:     [{}] psrRateMeas_c {}", nameId(), o, psrRateMeas_c.topRows(iv).transpose());
             LOG_DATA("{}:     [{}] psrRateEst_c {}", nameId(), o, psrRateEst_c.topRows(iv).transpose());
         }
@@ -835,9 +872,18 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
         LOG_DATA("{}:     [{}] dpsr_dot {}", nameId(), o, dpsr_dot.transpose());
 
         // [vx, vy, vz, clkDrift] - Groves ch. 9.4.1, eq. 9.141, p. 412
-        lsq = solveLinearLeastSquaresUncertainties(e_H_r.topLeftCorner(iv, 4), dpsr_dot);
-        LOG_DATA("{}:     [{}] dv (lsq) {}", nameId(), o, lsq.solution.transpose());
-        LOG_DATA("{}:     [{}] stdev_dv (lsq)\n{}", nameId(), o, lsq.variance.cwiseSqrt());
+        if (_useWeightedLeastSquares)
+        {
+            lsq = solveWeightedLinearLeastSquaresUncertainties(e_H_r.topRows(iv), W_psrRate.topLeftCorner(iv, iv), dpsr_dot);
+            LOG_DATA("{}:     [{}] dv (wlsq) {}", nameId(), o, lsq.solution.transpose());
+            LOG_DATA("{}:     [{}] stdev_dv (wlsq)\n{}", nameId(), o, lsq.variance.cwiseSqrt());
+        }
+        else
+        {
+            lsq = solveLinearLeastSquaresUncertainties(e_H_r.topRows(iv), dpsr_dot);
+            LOG_DATA("{}:     [{}] dv (lsq) {}", nameId(), o, lsq.solution.transpose());
+            LOG_DATA("{}:     [{}] stdev_dv (lsq)\n{}", nameId(), o, lsq.variance.cwiseSqrt());
+        }
 
         _e_velocity += lsq.solution.head<3>();
         _clkDrift += lsq.solution(3) / InsConst::C;
