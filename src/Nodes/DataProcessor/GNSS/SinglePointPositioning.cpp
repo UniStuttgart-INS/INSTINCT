@@ -41,12 +41,7 @@ NAV::SinglePointPositioning::SinglePointPositioning()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 407, 506 };
 
-    nm::CreateInputPin(this, "PosVelInit", Pin::Type::Flow, { NAV::PosVel::type() }, &SinglePointPositioning::recvPosVelInit);
-    nm::CreateInputPin(this, NAV::GnssObs::type().c_str(), Pin::Type::Flow, { NAV::GnssObs::type() }, &SinglePointPositioning::recvGnssObs,
-                       [](const Node* node, const InputPin& inputPin) {
-                           const auto* spp = static_cast<const SinglePointPositioning*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
-                           return !inputPin.queue.empty() && !spp->_e_position.isZero();
-                       });
+    nm::CreateInputPin(this, NAV::GnssObs::type().c_str(), Pin::Type::Flow, { NAV::GnssObs::type() }, &SinglePointPositioning::recvGnssObs);
     updateNumberOfInputPins();
 
     nm::CreateOutputPin(this, NAV::SppSolution::type().c_str(), Pin::Type::Flow, { NAV::SppSolution::type() });
@@ -601,8 +596,8 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
         LOG_DATA("{}: Iteration {}", nameId(), o);
         // Latitude, Longitude, Altitude of the receiver [rad, rad, m]
         Eigen::Vector3d lla_pos = trafo::ecef2lla_WGS84(_e_position);
-        LOG_DATA("{}:     [{}] _e_position {}, {}, {}", nameId(), o, _e_position.x(), _e_position.y(), _e_position.z());
-        LOG_DATA("{}:     [{}] lla_pos {}°, {}°, {}m", nameId(), o, rad2deg(lla_pos.x()), rad2deg(lla_pos.y()), lla_pos.z());
+        LOG_TRACE("{}:     [{}] _e_position {}, {}, {}", nameId(), o, _e_position.x(), _e_position.y(), _e_position.z());
+        LOG_TRACE("{}:     [{}] lla_pos {}°, {}°, {}m", nameId(), o, rad2deg(lla_pos.x()), rad2deg(lla_pos.y()), lla_pos.z());
         LOG_DATA("{}:     [{}] _clkBias {}", nameId(), o, _clkBias);
         LOG_DATA("{}:     [{}] _clkDrift {}", nameId(), o, _clkDrift);
 
@@ -908,14 +903,4 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     }
 
     invokeCallbacks(OUTPUT_PORT_INDEX_SPPSOL, sppSol);
-}
-
-void NAV::SinglePointPositioning::recvPosVelInit(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
-{
-    inputPins[INPUT_PORT_INDEX_POSVEL_INIT].queueBlocked = true;
-
-    auto posVel = std::static_pointer_cast<const PosVel>(queue.extract_front());
-
-    _e_position = posVel->e_position();
-    _e_velocity = posVel->e_velocity();
 }

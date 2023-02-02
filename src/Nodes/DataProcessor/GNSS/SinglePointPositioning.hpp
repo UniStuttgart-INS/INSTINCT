@@ -64,9 +64,8 @@ class SinglePointPositioning : public Node
     void restore(const json& j) override;
 
   private:
-    constexpr static size_t INPUT_PORT_INDEX_POSVEL_INIT = 0;   ///< @brief PosVel
-    constexpr static size_t INPUT_PORT_INDEX_GNSS_OBS = 1;      ///< @brief GnssObs
-    constexpr static size_t INPUT_PORT_INDEX_GNSS_NAV_INFO = 2; ///< @brief GnssNavInfo
+    constexpr static size_t INPUT_PORT_INDEX_GNSS_OBS = 0;      ///< @brief GnssObs
+    constexpr static size_t INPUT_PORT_INDEX_GNSS_NAV_INFO = 1; ///< @brief GnssNavInfo
 
     constexpr static size_t OUTPUT_PORT_INDEX_SPPSOL = 0; ///< @brief Flow (PosVel)
 
@@ -124,11 +123,6 @@ class SinglePointPositioning : public Node
     /// @param[in] queue Queue with all the received data messages
     /// @param[in] pinIdx Index of the pin the data is received on
     void recvGnssObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
-
-    /// @brief Receive Function for the Initial PosVel Observation
-    /// @param[in] queue Queue with all the received data messages
-    /// @param[in] pinIdx Index of the pin the data is received on
-    void recvPosVelInit(InputPin::NodeDataQueue& queue, size_t pinIdx);
 };
 
 } // namespace NAV

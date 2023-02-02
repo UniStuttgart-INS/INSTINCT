@@ -188,6 +188,8 @@ Eigen::Vector3d lla2ecef_GRS80(const Eigen::Vector3d& lla_position)
 
 Eigen::Vector3d ecef2lla(const Eigen::Vector3d& e_position, double a, double b, double e_squared)
 {
+    if (e_position.isZero()) { return { 0, 0, -a }; }
+
     auto x = e_position(0);
     auto y = e_position(1);
     auto z = e_position(2);

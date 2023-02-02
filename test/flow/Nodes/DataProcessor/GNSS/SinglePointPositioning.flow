@@ -1,20 +1,5 @@
 {
     "links": {
-        "link-55": {
-            "endPinId": 48,
-            "id": 55,
-            "startPinId": 53
-        },
-        "link-66": {
-            "endPinId": 47,
-            "id": 66,
-            "startPinId": 64
-        },
-        "link-71": {
-            "endPinId": 46,
-            "id": 71,
-            "startPinId": 69
-        },
         "link-78": {
             "endPinId": 72,
             "id": 78,
@@ -24,6 +9,16 @@
             "endPinId": 76,
             "id": 81,
             "startPinId": 79
+        },
+        "link-82": {
+            "endPinId": 46,
+            "id": 82,
+            "startPinId": 64
+        },
+        "link-83": {
+            "endPinId": 47,
+            "id": 83,
+            "startPinId": 53
         }
     },
     "nodes": {
@@ -76,15 +71,11 @@
             "inputPins": [
                 {
                     "id": 46,
-                    "name": "PosVelInit"
+                    "name": "GnssObs"
                 },
                 {
                     "id": 47,
                     "name": "GnssObs"
-                },
-                {
-                    "id": 48,
-                    "name": "GnssNavInfo"
                 }
             ],
             "kind": "Blueprint",
@@ -158,56 +149,6 @@
                 "y": 0.0
             },
             "type": "RinexObsFile"
-        },
-        "node-70": {
-            "data": {
-                "attitudeMode": 0,
-                "initDuration": 5.0,
-                "n_overrideValuesVelocity": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "overridePosition": true,
-                "overrideRollPitchYaw": [
-                    true,
-                    true,
-                    true
-                ],
-                "overrideValuesPosition_lla": [
-                    48.052040100097656,
-                    9.361396789550781,
-                    604.2813720703125
-                ],
-                "overrideValuesRollPitchYaw": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "overrideVelocity": true,
-                "positionAccuracyThreshold": 10.0,
-                "velocityAccuracyThreshold": 10.0
-            },
-            "enabled": true,
-            "id": 70,
-            "inputPins": [],
-            "kind": "Blueprint",
-            "name": "PosVelAttInitializer",
-            "outputPins": [
-                {
-                    "id": 69,
-                    "name": "PosVelAtt"
-                }
-            ],
-            "pos": {
-                "x": -118.0,
-                "y": 142.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "PosVelAttInitializer"
         },
         "node-77": {
             "data": {
