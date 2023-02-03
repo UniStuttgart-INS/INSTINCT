@@ -770,10 +770,10 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                 {
                     // Weight matrix
 
-                    double dopplerFrequency = 1; // Doppler Frequency error factor [m] - Measurement error standard deviation
+                    double dopplerFrequency = 1; // Doppler Frequency error factor [Hz] - Measurement error standard deviation
 
                     double varDopMeas = std::pow(dopplerFrequency, 2);
-                    LOG_DATA("{}:     [{}]     varPsrMeas {}", nameId(), o, varPsrMeas);
+                    LOG_DATA("{}:     [{}]     varDopMeas {}", nameId(), o, varDopMeas);
 
                     double varEph = gnssNavInfos[calcData[i].navIdx]->calcSatellitePositionVariance(satId, gnssObs->insTime);
                     LOG_DATA("{}:     [{}]     varEph {}", nameId(), o, varEph);
