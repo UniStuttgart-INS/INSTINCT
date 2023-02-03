@@ -41,6 +41,18 @@ Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vecto
 /// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 14.2.6)
 [[nodiscard]] Eigen::Vector3d psdBiasVariation(const Eigen::Vector3d& sigma2_bd, const Eigen::Vector3d& tau_bd);
 
+/// @brief S_cPhi Power Spectral Density of the receiver clock phase drift
+/// @param[in] sigma2_cPhi 𝜎²_bd standard deviation of the receiver clock phase drift in [m]
+/// @param[in] tau_i 𝜏ᵢ interval between the input of successive outputs to the inertial navigation equations in [s]
+/// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 9.4.2, eq. 9.157)
+double psdClockPhaseDrift(const double& sigma2_cPhi, const double& tau_i); // TODO: are these two params enough? Maybe requires pr and delta-pr
+
+/// @brief S_cf Power Spectral Density of the receiver clock frequency-drift
+/// @param sigma2_cf 𝜎²_bd standard deviation of the receiver clock frequency-drift in [m/s]
+/// @param tau_i 𝜏ᵢ interval between the input of successive outputs to the inertial navigation equations in [s]
+/// @return See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 9.4.2, eq. 9.157)
+double psdClockFreqDrift(const double& sigma2_cf, const double& tau_i); // TODO: are these two params enough? Maybe requires pr and delta-pr
+
 /// @brief Submatrix 𝐐_11 of the system noise covariance matrix 𝐐
 /// @param[in] S_rg Power Spectral Density of the gyroscope random noise
 /// @param[in] S_bgd Power Spectral Density of the gyroscope bias variation
@@ -208,5 +220,12 @@ Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vecto
 /// @return The 3x3 matrix 𝐐_55
 /// @note See Groves (2013) equation (14.80)
 [[nodiscard]] Eigen::Matrix3d Q_domega_domega(const Eigen::Vector3d& S_bgd, const double& tau_s);
+
+/// @brief Submatrix 𝐐_66 of the system noise covariance matrix 𝐐
+/// @param[in] S_cPhi Power Spectral Density of the receiver clock phase drift in [m^2 s^-1]
+/// @param[in] S_cf Power Spectral Density of the receiver clock frequency-drift [m^2 s^-3]
+/// @param[in] tau_s Time interval in [s]
+/// @return See Groves (2013) equation (9.152)
+[[nodiscard]] Eigen::Matrix2d Q_gnss(const double& S_cPhi, const double& S_cf, const double& tau_s);
 
 } // namespace NAV

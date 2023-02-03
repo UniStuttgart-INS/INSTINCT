@@ -102,7 +102,7 @@ class TightlyCoupledKF : public Node
     Eigen::Vector3d _accumulatedGyroBiases;
 
     /// Kalman Filter representation
-    KalmanFilter _kalmanFilter{ 15, 6 };
+    KalmanFilter _kalmanFilter{ 17, 8 };
 
     // ###########################################################################################################
     //                                               GUI Settings
@@ -334,8 +334,8 @@ class TightlyCoupledKF : public Node
     /// @param[in] r_eS_e Geocentric radius. The distance of a point on the Earth's surface from the center of the Earth in [m]
     /// @param[in] tau_bad Correleation length for the accelerometer in [s]
     /// @param[in] tau_bgd Correleation length for the gyroscope in [s]
-    /// @note See Groves (2013) chapter 14.2.4, equation (14.63)
-    [[nodiscard]] Eigen::Matrix<double, 15, 15> n_systemMatrix_F(const Eigen::Quaterniond& n_Quat_b,
+    /// @note See Groves (2013) chapter 14.2.4, equation (14.63) and chapter 9.4.2, equation (9.149)
+    [[nodiscard]] Eigen::Matrix<double, 17, 17> n_systemMatrix_F(const Eigen::Quaterniond& n_Quat_b,
                                                                  const Eigen::Vector3d& b_specForce_ib,
                                                                  const Eigen::Vector3d& n_omega_in,
                                                                  const Eigen::Vector3d& n_velocity,
@@ -356,8 +356,8 @@ class TightlyCoupledKF : public Node
     /// @param[in] e_omega_ie Angular velocity of Earth with respect to inertial system, represented in e-sys in [rad/s]
     /// @param[in] tau_bad Correleation length for the accelerometer in [s]
     /// @param[in] tau_bgd Correleation length for the gyroscope in [s]
-    /// @note See Groves (2013) chapter 14.2.3, equation (14.48)
-    [[nodiscard]] Eigen::Matrix<double, 15, 15> e_systemMatrix_F(const Eigen::Quaterniond& e_Quat_b,
+    /// @note See Groves (2013) chapter 14.2.3, equation (14.48) and chapter 9.4.2, equation (9.148)
+    [[nodiscard]] Eigen::Matrix<double, 17, 17> e_systemMatrix_F(const Eigen::Quaterniond& e_Quat_b,
                                                                  const Eigen::Vector3d& b_specForce_ib,
                                                                  const Eigen::Vector3d& e_position,
                                                                  const Eigen::Vector3d& e_gravitation,
@@ -371,8 +371,8 @@ class TightlyCoupledKF : public Node
 
     /// @brief Calculates the noise input matrix 𝐆
     /// @param[in] ien_Quat_b Quaternion from body frame to {i,e,n} frame
-    /// @note See \cite Groves2013 Groves, ch. 14.2.6, eq. 14.79, p. 590
-    [[nodiscard]] static Eigen::Matrix<double, 15, 12> noiseInputMatrix_G(const Eigen::Quaterniond& ien_Quat_b);
+    /// @note See \cite Groves2013 Groves, ch. 14.2.6, eq. 14.79, p. 590 (INS part) and ch. 9.4.2, eq. 9.151, p. 416 (GNSS part)
+    [[nodiscard]] static Eigen::Matrix<double, 17, 14> noiseInputMatrix_G(const Eigen::Quaterniond& ien_Quat_b);
 
     /// @brief Calculates the noise scale matrix 𝐖
     /// @param[in] sigma2_ra Variance of the noise on the accelerometer specific-force measurements
@@ -381,11 +381,14 @@ class TightlyCoupledKF : public Node
     /// @param[in] sigma2_bgd Variance of the gyro dynamic bias
     /// @param[in] tau_bad Correleation length for the accelerometer in [s]
     /// @param[in] tau_bgd Correleation length for the gyroscope in [s]
+    /// @param[in] sigma2_cPhi Variance of the noise on the clock offset in [m]
+    /// @param[in] sigma2_cf Variance of the noise on the clock frequency in [m/s]
     /// @param[in] tau_i Time interval between the input of successive accelerometer and gyro outputs to the inertial navigation equations in [s]
-    /// @note See \cite Groves2013 Groves, ch. 14.2.6, eq. 14.79, p. 590
-    [[nodiscard]] static Eigen::Matrix<double, 12, 12> noiseScaleMatrix_W(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+    /// @note See \cite Groves2013 Groves, ch. 14.2.6, eq. 14.79, p. 590 (INS part) and ch. 9.4.2, eq. 9.151, p. 416 (GNSS part)
+    [[nodiscard]] static Eigen::Matrix<double, 14, 14> noiseScaleMatrix_W(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
                                                                           const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
                                                                           const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
+                                                                          const double& sigma2_cPhi, const double& sigma2_cf,
                                                                           const double& tau_i);
 
     /// @brief System noise covariance matrix 𝐐_{k-1}
@@ -395,14 +398,17 @@ class TightlyCoupledKF : public Node
     /// @param[in] sigma2_bgd Variance of the gyro dynamic bias
     /// @param[in] tau_bad Correleation length for the accelerometer in [s]
     /// @param[in] tau_bgd Correleation length for the gyroscope in [s]
+    /// @param[in] sigma2_cPhi Variance of the noise on the clock offset in [m]
+    /// @param[in] sigma2_cf Variance of the noise on the clock frequency in [m/s]
     /// @param[in] n_F_21 Submatrix 𝐅_21 of the system matrix 𝐅
     /// @param[in] T_rn_p Conversion matrix between cartesian and curvilinear perturbations to the position
     /// @param[in] n_Dcm_b Direction Cosine Matrix from body to navigation coordinates
     /// @param[in] tau_s Time interval in [s]
     /// @return The 15x15 matrix of system noise covariances
-    [[nodiscard]] static Eigen::Matrix<double, 15, 15> n_systemNoiseCovarianceMatrix_Q(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+    [[nodiscard]] static Eigen::Matrix<double, 17, 17> n_systemNoiseCovarianceMatrix_Q(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
                                                                                        const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
                                                                                        const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
+                                                                                       const double& sigma2_cPhi, const double& sigma2_cf,
                                                                                        const Eigen::Matrix3d& n_F_21, const Eigen::Matrix3d& T_rn_p,
                                                                                        const Eigen::Matrix3d& n_Dcm_b, const double& tau_s);
 
@@ -413,13 +419,16 @@ class TightlyCoupledKF : public Node
     /// @param[in] sigma2_bgd Variance of the gyro dynamic bias
     /// @param[in] tau_bad Correleation length for the accelerometer in [s]
     /// @param[in] tau_bgd Correleation length for the gyroscope in [s]
+    /// @param[in] sigma2_cPhi Variance of the noise on the clock offset in [m]
+    /// @param[in] sigma2_cf Variance of the noise on the clock frequency in [m/s]
     /// @param[in] e_F_21 Submatrix 𝐅_21 of the system matrix 𝐅
     /// @param[in] e_Dcm_b Direction Cosine Matrix from body to Earth coordinates
     /// @param[in] tau_s Time interval in [s]
     /// @return The 15x15 matrix of system noise covariances
-    [[nodiscard]] static Eigen::Matrix<double, 15, 15> e_systemNoiseCovarianceMatrix_Q(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+    [[nodiscard]] static Eigen::Matrix<double, 17, 17> e_systemNoiseCovarianceMatrix_Q(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
                                                                                        const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
                                                                                        const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
+                                                                                       const double& sigma2_cPhi, const double& sigma2_cf,
                                                                                        const Eigen::Matrix3d& e_F_21,
                                                                                        const Eigen::Matrix3d& e_Dcm_b, const double& tau_s);
 
@@ -431,18 +440,31 @@ class TightlyCoupledKF : public Node
     /// @param[in] variance_pos Initial Covariance of the position in [rad² rad² m²] n-frame / [m²] i,e-frame
     /// @param[in] variance_accelBias Initial Covariance of the accelerometer biases in [m^2/s^4]
     /// @param[in] variance_gyroBias Initial Covariance of the gyroscope biases in [rad^2/s^2]
-    /// @return The 15x15 matrix of initial state variances
-    [[nodiscard]] Eigen::Matrix<double, 15, 15> initialErrorCovarianceMatrix_P0(const Eigen::Vector3d& variance_angles,
+    /// @param[in] variance_clkPhase Initial Covariance of the receiver clock phase drift in [// TODO: unit]
+    /// @param[in] variance_clkFreq Initial Covariance of the receiver clock frequency-drift in [// TODO: unit]
+    /// @return The 17x17 matrix of initial state variances
+    [[nodiscard]] Eigen::Matrix<double, 17, 17> initialErrorCovarianceMatrix_P0(const Eigen::Vector3d& variance_angles,
                                                                                 const Eigen::Vector3d& variance_vel,
                                                                                 const Eigen::Vector3d& variance_pos,
                                                                                 const Eigen::Vector3d& variance_accelBias,
-                                                                                const Eigen::Vector3d& variance_gyroBias) const;
+                                                                                const Eigen::Vector3d& variance_gyroBias,
+                                                                                const double& variance_clkPhase,
+                                                                                const double& variance_clkFreq) const;
 
     // ###########################################################################################################
     //                                                  Update
     // ###########################################################################################################
 
-    // TODO: Add new TCKF functions
+    // [[nodiscard]] static Eigen::MatrixXd measurementMatrix_H();
+
+    // /// @brief Measurement innovation vector 𝜹𝐳
+    // /// @param[in] pseudoRangeObservations Vector of Pseudorange observations from all available satellites in [m]
+    // /// @param[in] pseudoRangeEstimates  Vector of Pseudorange estimates from all available satellites in [m/s]
+    // /// @param[in] pseudoRangeRateObservations  Vector of Pseudorange-Rate observations from all available satellites in [m]
+    // /// @param[in] pseudoRangeRateEstimates  Vector of Pseudorange-Rate estimates from all available satellites in [m/s]
+    // /// @return The mx1 measurement innovation vector 𝜹𝐳
+    // [[nodiscard]] static Eigen::MatrixXd measurementInnovation_dz(const std::vector<Eigen::Vector3d>& pseudoRangeObservations, const std::vector<Eigen::Vector3d>& pseudoRangeEstimates,
+    //                                                               const std::vector<Eigen::Vector3d>& pseudoRangeRateObservations, const std::vector<Eigen::Vector3d>& pseudoRangeRateEstimates);
 };
 
 } // namespace NAV
