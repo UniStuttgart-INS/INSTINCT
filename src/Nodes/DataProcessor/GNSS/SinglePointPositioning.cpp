@@ -706,7 +706,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                 constexpr double EFACT_GLO = 1.5;  // Satellite system error factor GLONASS/IRNSS
                 constexpr double EFACT_SBAS = 3.0; // Satellite system error factor SBAS
 
-                double satSysErrFactor = satId.satSys == GLO || satId.satSys == IRNSS
+                double satSysErrFactor = satId.satSys & (GLO | IRNSS)
                                              ? EFACT_GLO
                                              : (satId.satSys == SBAS
                                                     ? EFACT_SBAS
