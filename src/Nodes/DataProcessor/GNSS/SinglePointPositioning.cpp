@@ -41,12 +41,7 @@ NAV::SinglePointPositioning::SinglePointPositioning()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 407, 506 };
 
-    nm::CreateInputPin(this, "PosVelInit", Pin::Type::Flow, { NAV::PosVel::type() }, &SinglePointPositioning::recvPosVelInit);
-    nm::CreateInputPin(this, NAV::GnssObs::type().c_str(), Pin::Type::Flow, { NAV::GnssObs::type() }, &SinglePointPositioning::recvGnssObs,
-                       [](const Node* node, const InputPin& inputPin) {
-                           const auto* spp = static_cast<const SinglePointPositioning*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
-                           return !inputPin.queue.empty() && !spp->_e_position.isZero();
-                       });
+    nm::CreateInputPin(this, NAV::GnssObs::type().c_str(), Pin::Type::Flow, { NAV::GnssObs::type() }, &SinglePointPositioning::recvGnssObs);
     updateNumberOfInputPins();
 
     nm::CreateOutputPin(this, NAV::SppSolution::type().c_str(), Pin::Type::Flow, { NAV::SppSolution::type() });
@@ -211,7 +206,7 @@ void NAV::SinglePointPositioning::guiConfig()
         ImGui::EndTable();
     }
 
-    float itemWidth = 220.0F * gui::NodeEditorApplication::windowFontRatio();
+    const float itemWidth = 250.0F * gui::NodeEditorApplication::windowFontRatio();
 
     ImGui::SetNextItemWidth(itemWidth);
     if (ShowFrequencySelector(fmt::format("Satellite Frequencies##{}", size_t(id)).c_str(), _filterFreq))
@@ -256,22 +251,8 @@ void NAV::SinglePointPositioning::guiConfig()
             LOG_DEBUG("{}: Ionosphere Model changed to {}", nameId(), NAV::to_string(_ionosphereModel));
             flow::ApplyChanges();
         }
-        ImGui::SetNextItemWidth(itemWidth - ImGui::GetStyle().IndentSpacing);
-        if (ComboTroposphereModel(fmt::format("Troposphere Model##{}", size_t(id)).c_str(), _troposphereModel))
+        if (ComboTroposphereModel(fmt::format("Troposphere Model##{}", size_t(id)).c_str(), _troposphereModels, itemWidth - ImGui::GetStyle().IndentSpacing))
         {
-            LOG_DEBUG("{}: Troposphere Model changed to {}", nameId(), NAV::to_string(_troposphereModel));
-            flow::ApplyChanges();
-        }
-        ImGui::SetNextItemWidth(itemWidth - ImGui::GetStyle().IndentSpacing);
-        if (ComboMappingFunction(fmt::format("Mapping function ZHD##{}", size_t(id)).c_str(), _zhdMappingFunction))
-        {
-            LOG_DEBUG("{}: ZHD mapping function changed to {}", nameId(), NAV::to_string(_zhdMappingFunction));
-            flow::ApplyChanges();
-        }
-        ImGui::SetNextItemWidth(itemWidth - ImGui::GetStyle().IndentSpacing);
-        if (ComboMappingFunction(fmt::format("Mapping function ZWD##{}", size_t(id)).c_str(), _zwdMappingFunction))
-        {
-            LOG_DEBUG("{}: ZWD mapping function changed to {}", nameId(), NAV::to_string(_zwdMappingFunction));
             flow::ApplyChanges();
         }
         ImGui::TreePop();
@@ -291,9 +272,7 @@ void NAV::SinglePointPositioning::guiConfig()
     j["elevationMask"] = rad2deg(_elevationMask);
     j["useWeightedLeastSquares"] = _useWeightedLeastSquares;
     j["ionosphereModel"] = _ionosphereModel;
-    j["troposphereModel"] = _troposphereModel;
-    j["zhdMappingFunction"] = _zhdMappingFunction;
-    j["zwdMappingFunction"] = _zwdMappingFunction;
+    j["troposphereModels"] = _troposphereModels;
 
     return j;
 }
@@ -334,17 +313,9 @@ void NAV::SinglePointPositioning::restore(json const& j)
     {
         j.at("ionosphereModel").get_to(_ionosphereModel);
     }
-    if (j.contains("troposphereModel"))
+    if (j.contains("troposphereModels"))
     {
-        j.at("troposphereModel").get_to(_troposphereModel);
-    }
-    if (j.contains("zhdMappingFunction"))
-    {
-        j.at("zhdMappingFunction").get_to(_zhdMappingFunction);
-    }
-    if (j.contains("zwdMappingFunction"))
-    {
-        j.at("zwdMappingFunction").get_to(_zwdMappingFunction);
+        j.at("troposphereModels").get_to(_troposphereModels);
     }
 }
 
@@ -581,6 +552,8 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     Eigen::VectorXd psrRateEst_c = Eigen::VectorXd(static_cast<int>(nDopplerMeas));
     // Corrected pseudorange-rate measurements [m/s]
     Eigen::VectorXd psrRateMeas_c = Eigen::VectorXd(static_cast<int>(nDopplerMeas));
+    // Pseudorange rate (doppler) measurement error weight matrix
+    Eigen::MatrixXd W_psrRate = Eigen::MatrixXd::Zero(static_cast<int>(nDopplerMeas), static_cast<int>(nDopplerMeas));
 
     for (size_t i = 0; i < nMeas; i++) // Calculate satellite clock, position and velocity
     {
@@ -623,8 +596,8 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
         LOG_DATA("{}: Iteration {}", nameId(), o);
         // Latitude, Longitude, Altitude of the receiver [rad, rad, m]
         Eigen::Vector3d lla_pos = trafo::ecef2lla_WGS84(_e_position);
-        LOG_DATA("{}:     [{}] _e_position {}, {}, {}", nameId(), o, _e_position.x(), _e_position.y(), _e_position.z());
-        LOG_DATA("{}:     [{}] lla_pos {}°, {}°, {}m", nameId(), o, rad2deg(lla_pos.x()), rad2deg(lla_pos.y()), lla_pos.z());
+        LOG_TRACE("{}:     [{}] _e_position {}, {}, {}", nameId(), o, _e_position.x(), _e_position.y(), _e_position.z());
+        LOG_TRACE("{}:     [{}] lla_pos {}°, {}°, {}m", nameId(), o, rad2deg(lla_pos.x()), rad2deg(lla_pos.y()), lla_pos.z());
         LOG_DATA("{}:     [{}] _clkBias {}", nameId(), o, _clkBias);
         LOG_DATA("{}:     [{}] _clkDrift {}", nameId(), o, _clkDrift);
 
@@ -693,16 +666,14 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                             * InsConst::C;
             LOG_DATA("{}:     [{}]     dpsr_I {} [m] (Estimated modulation ionosphere propagation error)", nameId(), o, dpsr_I);
 
-            auto zenithDelay = calcTroposphericRangeDelay(lla_pos, _troposphereModel);
-            LOG_DATA("{}:     [{}]     ZHD {}", nameId(), o, zenithDelay.ZHD);
-            LOG_DATA("{}:     [{}]     ZWD {}", nameId(), o, zenithDelay.ZWD);
-            double zhdMappingFactor = calcTropoMapFunc(satElevation, _zhdMappingFunction);
-            LOG_DATA("{}:     [{}]     zhdMappingFactor {}", nameId(), o, zhdMappingFactor);
-            double zwdMappingFactor = calcTropoMapFunc(satElevation, _zwdMappingFunction);
-            LOG_DATA("{}:     [{}]     zwdMappingFactor {}", nameId(), o, zwdMappingFactor);
+            auto tropo = calcTroposphericDelayAndMapping(gnssObs->insTime, lla_pos, satElevation, satAzimuth, _troposphereModels);
+            LOG_DATA("{}:     [{}]     ZHD {}", nameId(), o, tropo.ZHD);
+            LOG_DATA("{}:     [{}]     ZWD {}", nameId(), o, tropo.ZWD);
+            LOG_DATA("{}:     [{}]     zhdMappingFactor {}", nameId(), o, tropo.zhdMappingFactor);
+            LOG_DATA("{}:     [{}]     zwdMappingFactor {}", nameId(), o, tropo.zwdMappingFactor);
 
             // Estimated modulation troposphere propagation error [m]
-            double dpsr_T = zenithDelay.ZHD * zhdMappingFactor + zenithDelay.ZWD * zwdMappingFactor;
+            double dpsr_T = tropo.ZHD * tropo.zhdMappingFactor + tropo.ZWD * tropo.zwdMappingFactor;
             LOG_DATA("{}:     [{}]     dpsr_T {} [m] (Estimated modulation troposphere propagation error)", nameId(), o, dpsr_T);
 
             // Corrected pseudorange measurements [m] - Groves ch. 8.5.3, eq. 8.49, p. 342
@@ -731,19 +702,31 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                 constexpr double ERR_BRDCI = 0.5;  // Broadcast iono model error factor (See GPS ICD ch. 20.3.3.5.2.5, p. 130: 50% reduction on RMS error)
                 constexpr double ERR_SAAS = 0.3;   // Saastamoinen model error std [m] (maximum zenith wet delay - formulas with worst possible values)
                 constexpr double ERR_CBIAS = 0.3;  // Code bias error Std (m)
-                constexpr double EFACT_GPS = 1.0;  // Satellite system error factor GPS/GAL/QZS/CMP
-                constexpr double EFACT_GLO = 1.5;  // Satellite system error factor GLONASS
+                constexpr double EFACT_GPS = 1.0;  // Satellite system error factor GPS/GAL/QZS/BeiDou
+                constexpr double EFACT_GLO = 1.5;  // Satellite system error factor GLONASS/IRNSS
                 constexpr double EFACT_SBAS = 3.0; // Satellite system error factor SBAS
 
-                double satSysErrFactor = satId.satSys == GLO ? EFACT_GLO : (satId.satSys == SBAS ? EFACT_SBAS : EFACT_GPS);
+                double satSysErrFactor = satId.satSys & (GLO | IRNSS)
+                                             ? EFACT_GLO
+                                             : (satId.satSys == SBAS
+                                                    ? EFACT_SBAS
+                                                    : EFACT_GPS);
                 double ele = std::max(satElevation, deg2rad(5));
-                std::array<double, 3> opt_err = { 100.0, 0.003, 0.003 };
-                double varPsrMeas = std::pow(satSysErrFactor, 2) * std::pow(opt_err[0], 2) * (std::pow(opt_err[1], 2) + std::pow(opt_err[2], 2) / std::sin(ele));
+
+                // Code/Carrier-Phase Error Ratio - Measurement error standard deviation
+                std::unordered_map<Frequency, double> codeCarrierPhaseErrorRatio = { { G01, 300.0 },
+                                                                                     { G02, 300.0 },
+                                                                                     { G05, 300.0 } };
+                double carrierPhaseErrorA = 0.003; // Carrier-Phase Error Factor a [m] - Measurement error standard deviation
+                double carrierPhaseErrorB = 0.003; // Carrier-Phase Error Factor b [m] - Measurement error standard deviation
+
+                double varPsrMeas = std::pow(satSysErrFactor, 2) * std::pow(codeCarrierPhaseErrorRatio.at(G01), 2)
+                                    * (std::pow(carrierPhaseErrorA, 2) + std::pow(carrierPhaseErrorB, 2) / std::sin(ele));
                 LOG_DATA("{}:     [{}]     varPsrMeas {}", nameId(), o, varPsrMeas);
 
                 double varEph = gnssNavInfos[calcData[i].navIdx]->calcSatellitePositionVariance(satId, gnssObs->insTime);
                 LOG_DATA("{}:     [{}]     varEph {}", nameId(), o, varEph);
-                double varIono = std::pow(dpsr_I * ERR_BRDCI, 2);
+                double varIono = ratioFreqSquared(G01, obsData.satSigId.freq) * std::pow(dpsr_I * ERR_BRDCI, 2);
                 LOG_DATA("{}:     [{}]     varIono {}", nameId(), o, varIono);
                 double varTrop = dpsr_T == 0.0 ? 0.0 : std::pow(ERR_SAAS / (std::sin(satElevation) + 0.1), 2);
                 LOG_DATA("{}:     [{}]     varTrop {}", nameId(), o, varTrop);
@@ -783,6 +766,25 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                 psrRateEst_c(static_cast<int>(iv)) = e_lineOfSightUnitVector.transpose() * (calcData[i].e_satVel - _e_velocity) + _clkDrift * InsConst::C - dpsr_dot_ie;
                 LOG_DATA("{}:     [{}]     psrRateEst_c({}) {}", nameId(), o, iv, psrRateEst_c(static_cast<int>(iv)));
 
+                if (_useWeightedLeastSquares)
+                {
+                    // Weight matrix
+
+                    double dopplerFrequency = 1; // Doppler Frequency error factor [Hz] - Measurement error standard deviation
+
+                    double varDopMeas = std::pow(dopplerFrequency, 2);
+                    LOG_DATA("{}:     [{}]     varDopMeas {}", nameId(), o, varDopMeas);
+
+                    double varEph = gnssNavInfos[calcData[i].navIdx]->calcSatellitePositionVariance(satId, gnssObs->insTime);
+                    LOG_DATA("{}:     [{}]     varEph {}", nameId(), o, varEph);
+
+                    double varErrors = varDopMeas + varEph;
+                    LOG_DATA("{}:     [{}]     varErrors {}", nameId(), o, varErrors);
+
+                    W_psrRate(static_cast<int>(iv), static_cast<int>(iv)) = 1.0 / varErrors;
+                    LOG_DATA("{}:     [{}]     W_psrRate({},{}) {}", nameId(), o, iv, iv, W_psrRate(static_cast<int>(iv), static_cast<int>(iv)));
+                }
+
                 iv++;
             }
 #ifdef TESTING
@@ -805,6 +807,10 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
         if (nDopplerMeas >= 4)
         {
             LOG_DATA("{}:     [{}] e_H_r \n{}", nameId(), o, e_H_r.topRows(iv));
+            if (_useWeightedLeastSquares)
+            {
+                LOG_DATA("{}:     [{}] W_psrRate \n{}", nameId(), o, W_psrRate.topLeftCorner(iv, iv));
+            }
             LOG_DATA("{}:     [{}] psrRateMeas_c {}", nameId(), o, psrRateMeas_c.topRows(iv).transpose());
             LOG_DATA("{}:     [{}] psrRateEst_c {}", nameId(), o, psrRateEst_c.topRows(iv).transpose());
         }
@@ -861,9 +867,18 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
         LOG_DATA("{}:     [{}] dpsr_dot {}", nameId(), o, dpsr_dot.transpose());
 
         // [vx, vy, vz, clkDrift] - Groves ch. 9.4.1, eq. 9.141, p. 412
-        lsq = solveLinearLeastSquaresUncertainties(e_H_r.topLeftCorner(iv, 4), dpsr_dot);
-        LOG_DATA("{}:     [{}] dv (lsq) {}", nameId(), o, lsq.solution.transpose());
-        LOG_DATA("{}:     [{}] stdev_dv (lsq)\n{}", nameId(), o, lsq.variance.cwiseSqrt());
+        if (_useWeightedLeastSquares)
+        {
+            lsq = solveWeightedLinearLeastSquaresUncertainties(e_H_r.topRows(iv), W_psrRate.topLeftCorner(iv, iv), dpsr_dot);
+            LOG_DATA("{}:     [{}] dv (wlsq) {}", nameId(), o, lsq.solution.transpose());
+            LOG_DATA("{}:     [{}] stdev_dv (wlsq)\n{}", nameId(), o, lsq.variance.cwiseSqrt());
+        }
+        else
+        {
+            lsq = solveLinearLeastSquaresUncertainties(e_H_r.topRows(iv), dpsr_dot);
+            LOG_DATA("{}:     [{}] dv (lsq) {}", nameId(), o, lsq.solution.transpose());
+            LOG_DATA("{}:     [{}] stdev_dv (lsq)\n{}", nameId(), o, lsq.variance.cwiseSqrt());
+        }
 
         _e_velocity += lsq.solution.head<3>();
         _clkDrift += lsq.solution(3) / InsConst::C;
@@ -888,14 +903,4 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     }
 
     invokeCallbacks(OUTPUT_PORT_INDEX_SPPSOL, sppSol);
-}
-
-void NAV::SinglePointPositioning::recvPosVelInit(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
-{
-    inputPins[INPUT_PORT_INDEX_POSVEL_INIT].queueBlocked = true;
-
-    auto posVel = std::static_pointer_cast<const PosVel>(queue.extract_front());
-
-    _e_position = posVel->e_position();
-    _e_velocity = posVel->e_velocity();
 }

@@ -10,7 +10,7 @@
 
 #include <vector>
 #include <array>
-#include <imgui.h>
+#include "internal/gui/widgets/EnumCombo.hpp"
 #include "util/Logger.hpp"
 
 #include "Models/Klobuchar.hpp"
@@ -34,28 +34,7 @@ const char* to_string(IonosphereModel ionosphereModel)
 
 bool ComboIonosphereModel(const char* label, IonosphereModel& ionosphereModel)
 {
-    bool clicked = false;
-    if (ImGui::BeginCombo(label, NAV::to_string(ionosphereModel)))
-    {
-        for (size_t i = 0; i < static_cast<size_t>(IonosphereModel::COUNT); i++)
-        {
-            const bool is_selected = (static_cast<size_t>(ionosphereModel) == i);
-            if (ImGui::Selectable(NAV::to_string(static_cast<IonosphereModel>(i)), is_selected))
-            {
-                ionosphereModel = static_cast<IonosphereModel>(i);
-                clicked = true;
-            }
-
-            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-            if (is_selected)
-            {
-                ImGui::SetItemDefaultFocus();
-            }
-        }
-
-        ImGui::EndCombo();
-    }
-    return clicked;
+    return gui::widgets::EnumCombo(label, ionosphereModel);
 }
 
 double calcIonosphericTimeDelay(double tow, Frequency freq,

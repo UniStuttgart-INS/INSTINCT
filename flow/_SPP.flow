@@ -1,89 +1,41 @@
 {
     "links": {
         "link-159": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 158,
             "id": 159,
             "startPinId": 156
         },
         "link-186": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 72,
             "id": 186,
             "startPinId": 49
         },
         "link-55": {
-            "color": {
-                "a": 255,
-                "b": 215,
-                "g": 150,
-                "r": 51
-            },
             "endPinId": 48,
             "id": 55,
             "startPinId": 53
         },
         "link-62": {
-            "color": {
-                "a": 255,
-                "b": 215,
-                "g": 150,
-                "r": 51
-            },
             "endPinId": 90,
             "id": 62,
             "startPinId": 61
         },
         "link-63": {
-            "color": {
-                "a": 255,
-                "b": 215,
-                "g": 150,
-                "r": 51
-            },
             "endPinId": 51,
             "id": 63,
             "startPinId": 58
         },
         "link-66": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 47,
             "id": 66,
             "startPinId": 64
         },
         "link-71": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 46,
             "id": 71,
             "startPinId": 69
         },
         "link-83": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 82,
             "id": 83,
             "startPinId": 79
@@ -125,10 +77,41 @@
                 "frequencies": 1,
                 "ionosphereModel": 1,
                 "nNavInfoPins": 3,
-                "troposphereModel": 1,
-                "useWeightedLeastSquares": true,
-                "zhdMappingFunction": 1,
-                "zwdMappingFunction": 1
+                "troposphereModels": {
+                    "zhdMappingFunction": [
+                        1,
+                        {
+                            "pressureModel": 2,
+                            "temperatureModel": 2,
+                            "waterVaporModel": 1
+                        }
+                    ],
+                    "zhdModel": [
+                        1,
+                        {
+                            "pressureModel": 2,
+                            "temperatureModel": 2,
+                            "waterVaporModel": 1
+                        }
+                    ],
+                    "zwdMappingFunction": [
+                        1,
+                        {
+                            "pressureModel": 2,
+                            "temperatureModel": 2,
+                            "waterVaporModel": 1
+                        }
+                    ],
+                    "zwdModel": [
+                        1,
+                        {
+                            "pressureModel": 2,
+                            "temperatureModel": 2,
+                            "waterVaporModel": 1
+                        }
+                    ]
+                },
+                "useWeightedLeastSquares": true
             },
             "enabled": true,
             "id": 50,
