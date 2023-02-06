@@ -13,6 +13,7 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
+#include "internal/gui/widgets/HelpMarker.hpp"
 
 #include "util/StringUtil.hpp"
 
@@ -29,7 +30,7 @@ RinexObsFile::RinexObsFile()
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 517, 87 };
+    _guiConfigDefaultWindowSize = { 517, 118 };
 
     nm::CreateOutputPin(this, "GnssObs", Pin::Type::Flow, { NAV::GnssObs::type() }, &RinexObsFile::pollData);
 }
@@ -74,6 +75,10 @@ void RinexObsFile::guiConfig()
         ImGui::SameLine();
         ImGui::Text("%0.2f", x);
     });
+
+    ImGui::Checkbox("Erase less precise codes", &_eraseLessPreciseCodes);
+    ImGui::SameLine();
+    gui::widgets::HelpMarker("Whether to remove less precise codes (e.g. if G1X (L1C combined) is present, don't use G1L (L1C pilot) and G1S (L1C data))");
 }
 
 [[nodiscard]] json RinexObsFile::save() const
@@ -83,6 +88,7 @@ void RinexObsFile::guiConfig()
     json j;
 
     j["FileReader"] = FileReader::save();
+    j["eraseLessPreciseCodes"] = _eraseLessPreciseCodes;
 
     return j;
 }
@@ -94,6 +100,10 @@ void RinexObsFile::restore(json const& j)
     if (j.contains("FileReader"))
     {
         FileReader::restore(j.at("FileReader"));
+    }
+    if (j.contains("eraseLessPreciseCodes"))
+    {
+        j.at("eraseLessPreciseCodes").get_to(_eraseLessPreciseCodes);
     }
 }
 
@@ -672,6 +682,8 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
             LOG_DATA("{}:     {}-{}-{}-{}: {}, LLI {}, SSI {}", nameId(),
                      obsTypeToChar(obsDesc.type), obsDesc.frequency, obsDesc.code, satNum,
                      observation, LLI, SSI);
+
+            if (_eraseLessPreciseCodes) { eraseLessPreciseCodes(gnssObs, obsDesc.frequency, satNum); }
         }
 
         if (gnssObs->data.back().pseudorange)
@@ -897,6 +909,79 @@ Frequency RinexObsFile::getFrequencyFromBand(SatelliteSystem satSys, int band)
 
     LOG_ERROR("Cannot find frequency for satellite system '{}' and band '{}'", satSys, band);
     return Freq_None;
+}
+
+void RinexObsFile::eraseLessPreciseCodes(const std::shared_ptr<NAV::GnssObs>& gnssObs, const Frequency& freq, uint16_t satNum)
+{
+    auto eraseLessPrecise = [&](const Code& third, const Code& second, const Code& prime) {
+        auto eraseSatDataWithCode = [&](const Code& code) {
+            LOG_DATA("{}: Searching for {}-{}-{}", nameId(), freq, satNum, code);
+            auto iter = std::find_if(gnssObs->data.begin(), gnssObs->data.end(), [freq, satNum, code](const GnssObs::ObservationData& idData) {
+                return idData.satSigId.freq == freq && idData.satSigId.satNum == satNum && idData.code == code;
+            });
+            if (iter != gnssObs->data.end())
+            {
+                LOG_WARN("{}: Erasing {}-{}-{}", nameId(), freq, satNum, code);
+                gnssObs->data.erase(iter);
+            }
+        };
+
+        if (gnssObs->contains(freq, satNum, prime))
+        {
+            eraseSatDataWithCode(second);
+            eraseSatDataWithCode(third);
+        }
+        else if (gnssObs->contains(freq, satNum, second))
+        {
+            eraseSatDataWithCode(third);
+        }
+    };
+
+    switch (SatelliteSystem_(freq.getSatSys()))
+    {
+    case GPS:
+        eraseLessPrecise(Code::G1S, Code::G1L, Code::G1X); ///< L1C (data, pilot, combined)
+        eraseLessPrecise(Code::G2S, Code::G2L, Code::G2X); ///< L2C-code (medium, long, combined)
+        eraseLessPrecise(Code::G5I, Code::G5Q, Code::G5X); ///< L5 (data, pilot, combined)
+        break;
+    case GAL:
+        eraseLessPrecise(Code::E1B, Code::E1C, Code::E1X); ///< OS (data, pilot, combined)
+        eraseLessPrecise(Code::E5I, Code::E5Q, Code::E5X); ///< E5a (data, pilot, combined)
+        eraseLessPrecise(Code::E6B, Code::E6C, Code::E6X); ///< E6 (data, pilot, combined)
+        eraseLessPrecise(Code::E7I, Code::E7Q, Code::E7X); ///< E5b (data, pilot, combined)
+        eraseLessPrecise(Code::E8I, Code::E8Q, Code::E8X); ///< E5 AltBOC (data, pilot, combined)
+        break;
+    case GLO:
+        eraseLessPrecise(Code::R3I, Code::R3Q, Code::R3X); ///< L3 (data, pilot, combined)
+        eraseLessPrecise(Code::R4A, Code::R4B, Code::R4X); ///< G1a (data, pilot, combined)
+        eraseLessPrecise(Code::R6A, Code::R6B, Code::R6X); ///< G2a (data, pilot, combined)
+        break;
+    case BDS:
+        eraseLessPrecise(Code::B1D, Code::B1P, Code::B1X); ///< B1 (data, pilot, combined)
+        eraseLessPrecise(Code::B2I, Code::B2Q, Code::B2X); ///< B1I(OS), B1Q, combined
+        eraseLessPrecise(Code::B5D, Code::B5P, Code::B5X); ///< B2a (data, pilot, combined)
+        eraseLessPrecise(Code::B6I, Code::B6Q, Code::B6X); ///< B3I, B3Q, combined
+        eraseLessPrecise(Code::B7I, Code::B7Q, Code::B7X); ///< B2I(OS), B2Q, combined
+        eraseLessPrecise(Code::B7D, Code::B7P, Code::B7Z); ///< B2b (data, pilot, combined)
+        eraseLessPrecise(Code::B8D, Code::B8P, Code::B8X); ///< B2 (B2a+B2b) (data, pilot, combined)
+        break;
+    case QZSS:
+        eraseLessPrecise(Code::J1S, Code::J1L, Code::J1X); ///< L1C (data, pilot, combined)
+        eraseLessPrecise(Code::J2S, Code::J2L, Code::J2X); ///< L2C-code (medium, long, combined)
+        eraseLessPrecise(Code::J5I, Code::J5Q, Code::J5X); ///< L5 (data, pilot, combined)
+        eraseLessPrecise(Code::J5D, Code::J5P, Code::J5Z); ///< L5 (data, pilot, combined)
+        eraseLessPrecise(Code::J6S, Code::J6L, Code::J6X); ///< LEX signal (short, long, combined)
+        break;
+    case IRNSS:
+        eraseLessPrecise(Code::I5B, Code::I5C, Code::I5X); ///< RS (data, pilot, combined)
+        eraseLessPrecise(Code::I9B, Code::I9C, Code::I9X); ///< RS (data, pilot, combined)
+        break;
+    case SBAS:
+        eraseLessPrecise(Code::S5I, Code::S5Q, Code::S5X); ///< L5 (data, pilot, combined)
+        break;
+    case SatSys_None:
+        break;
+    }
 }
 
 } // namespace NAV

@@ -445,69 +445,6 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
         }
     }
 
-    for (size_t i = 0; i < calcData.size(); i++) // Remove less precise codes (e.g. if G1X (L1C combined) is present, don't use G1L (L1C pilot) and G1S (L1C data))
-    {
-        const auto& obsData = gnssObs->data[calcData.at(i).obsIdx];
-        LOG_DATA("Code[{}] {}-{}, obsIdx {}", i, obsData.satSigId, obsData.code, calcData.at(i).obsIdx);
-
-        auto eraseLessPreciseCodes = [&calcData, &i, &gnssObs, &obsData](const Code& third, const Code& second, const Code& prime) {
-            auto eraseSatDataWithCode = [&calcData, &i, &gnssObs, &obsData](const Code& code) {
-                LOG_DATA("    Searching for {}-{}", obsData.satSigId, code);
-                auto iter = std::find_if(calcData.begin(), calcData.end(), [&gnssObs, &code, &obsData](const CalcData& sData) {
-                    return obsData.satSigId == gnssObs->data[sData.obsIdx].satSigId && gnssObs->data[sData.obsIdx].code == code;
-                });
-                if (iter != calcData.end())
-                {
-                    if (iter < calcData.begin() + static_cast<int64_t>(i)) { i--; } // NOLINT(hicpp-use-nullptr,modernize-use-nullptr)
-                    LOG_DATA("    Erasing {}-{}", obsData.satSigId, code);
-                    calcData.erase(iter);
-                }
-            };
-            if (obsData.code == prime)
-            {
-                eraseSatDataWithCode(second);
-                eraseSatDataWithCode(third);
-            }
-            if (obsData.code == second)
-            {
-                eraseSatDataWithCode(third);
-            }
-        };
-
-        eraseLessPreciseCodes(Code::G1S, Code::G1L, Code::G1X); ///< L1C (data, pilot, combined)
-        eraseLessPreciseCodes(Code::G2S, Code::G2L, Code::G2X); ///< L2C-code (medium, long, combined)
-        eraseLessPreciseCodes(Code::G5I, Code::G5Q, Code::G5X); ///< L5 (data, pilot, combined)
-
-        eraseLessPreciseCodes(Code::E1B, Code::E1C, Code::E1X); ///< OS (data, pilot, combined)
-        eraseLessPreciseCodes(Code::E5I, Code::E5Q, Code::E5X); ///< E5a (data, pilot, combined)
-        eraseLessPreciseCodes(Code::E6B, Code::E6C, Code::E6X); ///< E6 (data, pilot, combined)
-        eraseLessPreciseCodes(Code::E7I, Code::E7Q, Code::E7X); ///< E5b (data, pilot, combined)
-        eraseLessPreciseCodes(Code::E8I, Code::E8Q, Code::E8X); ///< E5 AltBOC (data, pilot, combined)
-
-        eraseLessPreciseCodes(Code::R3I, Code::R3Q, Code::R3X); ///< L3 (data, pilot, combined)
-        eraseLessPreciseCodes(Code::R4A, Code::R4B, Code::R4X); ///< G1a (data, pilot, combined)
-        eraseLessPreciseCodes(Code::R6A, Code::R6B, Code::R6X); ///< G2a (data, pilot, combined)
-
-        eraseLessPreciseCodes(Code::B1D, Code::B1P, Code::B1X); ///< B1 (data, pilot, combined)
-        eraseLessPreciseCodes(Code::B2I, Code::B2Q, Code::B2X); ///< B1I(OS), B1Q, combined
-        eraseLessPreciseCodes(Code::B5D, Code::B5P, Code::B5X); ///< B2a (data, pilot, combined)
-        eraseLessPreciseCodes(Code::B6I, Code::B6Q, Code::B6X); ///< B3I, B3Q, combined
-        eraseLessPreciseCodes(Code::B7I, Code::B7Q, Code::B7X); ///< B2I(OS), B2Q, combined
-        eraseLessPreciseCodes(Code::B7D, Code::B7P, Code::B7Z); ///< B2b (data, pilot, combined)
-        eraseLessPreciseCodes(Code::B8D, Code::B8P, Code::B8X); ///< B2 (B2a+B2b) (data, pilot, combined)
-
-        eraseLessPreciseCodes(Code::J1S, Code::J1L, Code::J1X); ///< L1C (data, pilot, combined)
-        eraseLessPreciseCodes(Code::J2S, Code::J2L, Code::J2X); ///< L2C-code (medium, long, combined)
-        eraseLessPreciseCodes(Code::J5I, Code::J5Q, Code::J5X); ///< L5 (data, pilot, combined)
-        eraseLessPreciseCodes(Code::J5D, Code::J5P, Code::J5Z); ///< L5 (data, pilot, combined)
-        eraseLessPreciseCodes(Code::J6S, Code::J6L, Code::J6X); ///< LEX signal (short, long, combined)
-
-        eraseLessPreciseCodes(Code::I5B, Code::I5C, Code::I5X); ///< RS (data, pilot, combined)
-        eraseLessPreciseCodes(Code::I9B, Code::I9C, Code::I9X); ///< RS (data, pilot, combined)
-
-        eraseLessPreciseCodes(Code::S5I, Code::S5Q, Code::S5X); ///< L5 (data, pilot, combined)
-    }
-
     size_t nMeas = calcData.size();
 
     // Find all observations providing a doppler measurement (for velocity calculation)
@@ -596,8 +533,8 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
         LOG_DATA("{}: Iteration {}", nameId(), o);
         // Latitude, Longitude, Altitude of the receiver [rad, rad, m]
         Eigen::Vector3d lla_pos = trafo::ecef2lla_WGS84(_e_position);
-        LOG_TRACE("{}:     [{}] _e_position {}, {}, {}", nameId(), o, _e_position.x(), _e_position.y(), _e_position.z());
-        LOG_TRACE("{}:     [{}] lla_pos {}°, {}°, {}m", nameId(), o, rad2deg(lla_pos.x()), rad2deg(lla_pos.y()), lla_pos.z());
+        LOG_DATA("{}:     [{}] _e_position {}, {}, {}", nameId(), o, _e_position.x(), _e_position.y(), _e_position.z());
+        LOG_DATA("{}:     [{}] lla_pos {}°, {}°, {}m", nameId(), o, rad2deg(lla_pos.x()), rad2deg(lla_pos.y()), lla_pos.z());
         LOG_DATA("{}:     [{}] _clkBias {}", nameId(), o, _clkBias);
         LOG_DATA("{}:     [{}] _clkDrift {}", nameId(), o, _clkDrift);
 

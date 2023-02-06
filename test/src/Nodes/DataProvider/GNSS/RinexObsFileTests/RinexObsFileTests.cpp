@@ -37,7 +37,7 @@ namespace nm = NAV::NodeManager;
 #endif
 #define protected public
 #define private public
-#include "Nodes/DataProvider/GNSS/FileReader/RINEX/RinexObsFile.hpp"
+#include "Nodes/DataProvider/GNSS/FileReader/RinexObsFile.hpp"
 #undef protected
 #undef private
 #pragma GCC diagnostic pop
