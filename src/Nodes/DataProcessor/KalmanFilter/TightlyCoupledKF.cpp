@@ -238,6 +238,18 @@ void NAV::TightlyCoupledKF::guiConfig()
             ImGui::TextUnformatted("Correlation length of the gyro dynamic bias");
         }
 
+        // --------------------------------------------- Clock -----------------------------------------------
+
+        auto* _stdev_cfPointer = &_stdev_cf;
+        if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the receiver\nclock frequency drift (IRW)##{}", size_t(id)).c_str(),
+                                              configWidth, unitWidth, _stdev_cfPointer, reinterpret_cast<int*>(&_stdevClockFreqUnits), "m/s^2/√(Hz)\0\0",
+                                              0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: stdev_cf changed to {}", nameId(), _stdev_cf);
+            LOG_DEBUG("{}: stdevClockFreqUnits changed to {}", nameId(), fmt::underlying(_stdevClockFreqUnits));
+            flow::ApplyChanges();
+        }
+
         ImGui::TreePop();
     }
 
@@ -370,6 +382,7 @@ void NAV::TightlyCoupledKF::guiConfig()
     j["stdev_bgd"] = _stdev_bgd;
     j["tau_bgd"] = _tau_bgd;
     j["stdevGyroBiasUnits"] = _stdevGyroBiasUnits;
+    j["stdev_cf"] = _stdev_cf;
 
     // TODO: Add gnssObsUncertainty... Unit, etc.
 
@@ -460,6 +473,15 @@ void NAV::TightlyCoupledKF::restore(json const& j)
     {
         j.at("stdevGyroBiasUnits").get_to(_stdevGyroBiasUnits);
     }
+    if (j.contains("stdevClockFreqUnits"))
+    {
+        j.at("stdevClockFreqUnits").get_to(_stdevClockFreqUnits);
+    }
+    if (j.contains("stdev_cf"))
+    {
+        _stdev_cf = j.at("stdev_cf");
+    }
+
     // -------------------------------- 𝐑 Measurement noise covariance matrix -----------------------------------
     // TODO: Add gnssObsUncertainty... Unit, etc.
 
@@ -757,10 +779,16 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
     }
     LOG_DATA("{}:     sigma_bgd = {} [rad / s]", nameId(), sigma_bgd.transpose());
 
+    // 𝜎_cf Standard deviation of the receiver clock frequency drift state [m / s^2 / √(Hz)]
+    double sigma2_cf{};
+    switch (_stdevClockFreqUnits)
+    {
+    case StdevClockFreqUnits::m_s2_sqrtHz: // [m / s^2 / √(Hz)]
+        sigma2_cf = _stdev_cf;
+        break;
+    }
     // 𝜎_cPhi standard deviation of the receiver clock phase-drift in [m]
     double sigma2_cPhi{}; // TODO: make GUI options
-    // 𝜎_cf standard deviation of the receiver clock frequency-drift in [m/s]
-    double sigma2_cf{}; // TODO: make GUI options
     LOG_DATA("{}:     sigma2_cPhi = {} [m]", nameId(), sigma2_cPhi);
     LOG_DATA("{}:     sigma2_cf = {} [m/s]", nameId(), sigma2_cf);
 
@@ -1083,7 +1111,7 @@ Eigen::Matrix<double, 17, 14> NAV::TightlyCoupledKF::noiseInputMatrix_G(const Ei
 Eigen::Matrix<double, 14, 14> NAV::TightlyCoupledKF::noiseScaleMatrix_W(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
                                                                         const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
                                                                         const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
-                                                                        const double& sigma2_cPhi, const double& sigma2_f,
+                                                                        const double& sigma2_cPhi, const double& sigma2_cf,
                                                                         const double& tau_i)
 {
     // Math: \mathbf{W} = \begin{bmatrix} \mathbf{W}_{INS} & 0 \\ 0 & \mathbf{W}_{GNSS} \end{bmatrix}
@@ -1096,8 +1124,8 @@ Eigen::Matrix<double, 14, 14> NAV::TightlyCoupledKF::noiseScaleMatrix_W(const Ei
     W.block<3, 3>(9, 9).diagonal() = psdBiasVariation(sigma2_bgd, tau_bgd); // S_bgd
 
     // W_GNSS
-    W(12, 12) = psdClockPhaseDrift(sigma2_cPhi, tau_i); // S_cPhi
-    W(13, 13) = psdClockFreqDrift(sigma2_f, tau_i);     // S_cf
+    W(12, 12) = sigma2_cPhi; // S_cPhi
+    W(13, 13) = sigma2_cf;   // S_cf
 
     return W;
 }
@@ -1109,14 +1137,14 @@ Eigen::Matrix<double, 17, 17> NAV::TightlyCoupledKF::n_systemNoiseCovarianceMatr
                                                                                      const Eigen::Matrix3d& n_F_21, const Eigen::Matrix3d& T_rn_p,
                                                                                      const Eigen::Matrix3d& n_Dcm_b, const double& tau_s)
 {
-    // Math: \mathbf{Q}^n = \begin{pmatrix} \mathbf{Q}_{INS}^n & 0 \\ 0 & \mathbf{Q}_{GNSS} \end{pmatrix} \ \mathrm{with} \ \mathbf{Q}_{INS}^n = \begin{pmatrix} \mathbf{Q}_{11} & {\mathbf{Q}_{21}^n}^T & {\mathbf{Q}_{31}^n}^T & \mathbf{0}_3 & {\mathbf{Q}_{51}^n}^T \\ \mathbf{Q}_{21}^n & \mathbf{Q}_{22}^n & {\mathbf{Q}_{32}^n}^T & {\mathbf{Q}_{42}^n}^T & \mathbf{Q}_{25}^n \\ \mathbf{Q}_{31}^n & \mathbf{Q}_{32}^n & \mathbf{Q}_{33}^n & \mathbf{Q}_{34}^n & \mathbf{Q}_{35}^n \\ \mathbf{0}_3 & \mathbf{Q}_{42}^n & {\mathbf{Q}_{34}^n}^T & S_{bad}\tau_s\mathbf{I}_3 & \mathbf{0}_3 \\ \mathbf{Q}_{51}^n & \mathbf{Q}_{52}^n & {\mathbf{Q}_{35}^n}^T & \mathbf{0}_3 & S_{bgd}\tau_s\mathbf{I}_3 \end{pmatrix} \ \text{P. Groves}\,(14.80) \ \mathrm{and} \ \mathbf{Q}_{GNSS} = \begin{pmatrix} S_{c\phi}\tau_s + \frac{1}{3}S_{cf}\tau_s^3 & \frac{1}{2}S_{cf}\tau_s^2 \\ \frac{1}{2}S_{cf}\tau_s^2 & S_{cf}\tau_s \end{pmatrix} \ \text{P. Groves}\,(9.153)
+    // Math: \mathbf{Q}^n = \begin{pmatrix} \mathbf{Q}_{INS}^n & 0 \\ 0 & \mathbf{Q}_{GNSS} \end{pmatrix} \ \mathrm{with} \ \mathbf{Q}_{INS}^n = \begin{pmatrix} \mathbf{Q}_{11} & {\mathbf{Q}_{21}^n}^T & {\mathbf{Q}_{31}^n}^T & \mathbf{0}_3 & {\mathbf{Q}_{51}^n}^T \\ \mathbf{Q}_{21}^n & \mathbf{Q}_{22}^n & {\mathbf{Q}_{32}^n}^T & {\mathbf{Q}_{42}^n}^T & \mathbf{Q}_{25}^n \\ \mathbf{Q}_{31}^n & \mathbf{Q}_{32}^n & \mathbf{Q}_{33}^n & \mathbf{Q}_{34}^n & \mathbf{Q}_{35}^n \\ \mathbf{0}_3 & \mathbf{Q}_{42}^n & {\mathbf{Q}_{34}^n}^T & S_{bad}\tau_s\mathbf{I}_3 & \mathbf{0}_3 \\ \mathbf{Q}_{51}^n & \mathbf{Q}_{52}^n & {\mathbf{Q}_{35}^n}^T & \mathbf{0}_3 & S_{bgd}\tau_s\mathbf{I}_3 \end{pmatrix} \ \text{P. Groves}\,(14.80) \ \mathrm{and} \ \mathbf{Q}_{GNSS} = \begin{pmatrix} S_{c\phi}\tau_s + \frac{1}{3}S_{cf}\tau_s^3 & \frac{1}{2}S_{cf}\tau_s^2 \\ \frac{1}{2}S_{cf}\tau_s^2 & S_{cf}\tau_s \end{pmatrix} \ \text{P. Groves}\,(14.88)
     Eigen::Vector3d S_ra = psdNoise(sigma2_ra, tau_s);
     Eigen::Vector3d S_rg = psdNoise(sigma2_rg, tau_s);
     Eigen::Vector3d S_bad = psdBiasVariation(sigma2_bad, tau_bad);
     Eigen::Vector3d S_bgd = psdBiasVariation(sigma2_bgd, tau_bgd);
 
-    double S_cPhi = psdClockPhaseDrift(sigma2_cPhi, tau_s);
-    double S_cf = psdClockFreqDrift(sigma2_cf, tau_s);
+    // double S_cPhi = psdClockPhaseDrift(sigma2_cPhi, tau_s);
+    // double S_cf = psdClockFreqDrift(sigma2_cf, tau_s);
 
     Eigen::Matrix3d b_Dcm_n = n_Dcm_b.transpose();
 
@@ -1154,7 +1182,7 @@ Eigen::Matrix<double, 17, 17> NAV::TightlyCoupledKF::n_systemNoiseCovarianceMatr
     Q.middleCols<3>(9) *= SCALE_FACTOR_ACCELERATION;
     Q.middleCols<3>(12) *= SCALE_FACTOR_ANGULAR_RATE;
 
-    Q.block<2, 2>(15, 15) = Q_gnss(S_cPhi, S_cf, tau_s);
+    Q.block<2, 2>(15, 15) = Q_gnss(sigma2_cPhi, sigma2_cf, tau_s);
 
     return Q;
 }
@@ -1166,14 +1194,14 @@ Eigen::Matrix<double, 17, 17> NAV::TightlyCoupledKF::e_systemNoiseCovarianceMatr
                                                                                      const Eigen::Matrix3d& e_F_21,
                                                                                      const Eigen::Matrix3d& e_Dcm_b, const double& tau_s)
 {
-    // Math: \mathbf{Q}^e = \begin{pmatrix} \mathbf{Q}_{INS}^e & 0 \\ 0 & \mathbf{Q}_{GNSS} \end{pmatrix} \ \mathrm{with} \ \mathbf{Q}_{INS}^e = \begin{pmatrix} \mathbf{Q}_{11} & {\mathbf{Q}_{21}^e}^T & {\mathbf{Q}_{31}^e}^T & \mathbf{0}_3 & {\mathbf{Q}_{51}^e}^T \\ \mathbf{Q}_{21}^e & \mathbf{Q}_{22}^e & {\mathbf{Q}_{32}^e}^T & {\mathbf{Q}_{42}^e}^T & \mathbf{Q}_{25}^e \\ \mathbf{Q}_{31}^e & \mathbf{Q}_{32}^e & \mathbf{Q}_{33}^e & \mathbf{Q}_{34}^e & \mathbf{Q}_{35}^e \\ \mathbf{0}_3 & \mathbf{Q}_{42}^e & {\mathbf{Q}_{34}^e}^T & S_{bad}\tau_s\mathbf{I}_3 & \mathbf{0}_3 \\ \mathbf{Q}_{51}^e & \mathbf{Q}_{52}^e & {\mathbf{Q}_{35}^e}^T & \mathbf{0}_3 & S_{bgd}\tau_s\mathbf{I}_3 \end{pmatrix} \ \text{P. Groves}\,(14.80) \ \mathrm{and} \ \mathbf{Q}_{GNSS} = \begin{pmatrix} S_{c\phi}\tau_s + \frac{1}{3}S_{cf}\tau_s^3 & \frac{1}{2}S_{cf}\tau_s^2 \\ \frac{1}{2}S_{cf}\tau_s^2 & S_{cf}\tau_s \end{pmatrix} \ \text{P. Groves}\,(9.152)
+    // Math: \mathbf{Q}^e = \begin{pmatrix} \mathbf{Q}_{INS}^e & 0 \\ 0 & \mathbf{Q}_{GNSS} \end{pmatrix} \ \mathrm{with} \ \mathbf{Q}_{INS}^e = \begin{pmatrix} \mathbf{Q}_{11} & {\mathbf{Q}_{21}^e}^T & {\mathbf{Q}_{31}^e}^T & \mathbf{0}_3 & {\mathbf{Q}_{51}^e}^T \\ \mathbf{Q}_{21}^e & \mathbf{Q}_{22}^e & {\mathbf{Q}_{32}^e}^T & {\mathbf{Q}_{42}^e}^T & \mathbf{Q}_{25}^e \\ \mathbf{Q}_{31}^e & \mathbf{Q}_{32}^e & \mathbf{Q}_{33}^e & \mathbf{Q}_{34}^e & \mathbf{Q}_{35}^e \\ \mathbf{0}_3 & \mathbf{Q}_{42}^e & {\mathbf{Q}_{34}^e}^T & S_{bad}\tau_s\mathbf{I}_3 & \mathbf{0}_3 \\ \mathbf{Q}_{51}^e & \mathbf{Q}_{52}^e & {\mathbf{Q}_{35}^e}^T & \mathbf{0}_3 & S_{bgd}\tau_s\mathbf{I}_3 \end{pmatrix} \ \text{P. Groves}\,(14.80) \ \mathrm{and} \ \mathbf{Q}_{GNSS} = \begin{pmatrix} S_{c\phi}\tau_s + \frac{1}{3}S_{cf}\tau_s^3 & \frac{1}{2}S_{cf}\tau_s^2 \\ \frac{1}{2}S_{cf}\tau_s^2 & S_{cf}\tau_s \end{pmatrix} \ \text{P. Groves}\,(14.88)
     Eigen::Vector3d S_ra = psdNoise(sigma2_ra, tau_s);
     Eigen::Vector3d S_rg = psdNoise(sigma2_rg, tau_s);
     Eigen::Vector3d S_bad = psdBiasVariation(sigma2_bad, tau_bad);
     Eigen::Vector3d S_bgd = psdBiasVariation(sigma2_bgd, tau_bgd);
 
-    double S_cPhi = psdClockPhaseDrift(sigma2_cPhi, tau_s);
-    double S_cf = psdClockFreqDrift(sigma2_cf, tau_s);
+    // double S_cPhi = psdClockPhaseDrift(sigma2_cPhi, tau_s);
+    // double S_cf = psdClockFreqDrift(sigma2_cf, tau_s);
 
     Eigen::Matrix3d b_Dcm_e = e_Dcm_b.transpose();
 
@@ -1209,7 +1237,7 @@ Eigen::Matrix<double, 17, 17> NAV::TightlyCoupledKF::e_systemNoiseCovarianceMatr
     Q.middleCols<3>(9) *= SCALE_FACTOR_ACCELERATION;
     Q.middleCols<3>(12) *= SCALE_FACTOR_ANGULAR_RATE;
 
-    Q.block<2, 2>(15, 15) = Q_gnss(S_cPhi, S_cf, tau_s);
+    Q.block<2, 2>(15, 15) = Q_gnss(sigma2_cPhi, sigma2_cf, tau_s);
 
     return Q;
 }

@@ -38,15 +38,15 @@ Eigen::Vector3d psdBiasVariation(const Eigen::Vector3d& sigma2_bd, const Eigen::
     return sigma2_bd.array() / tau_bd.array();
 }
 
-double psdClockPhaseDrift(const double& sigma2_cPhi, const double& tau_i)
-{
-    return sigma2_cPhi / tau_i;
-}
+// double psdClockPhaseDrift(const double& sigma2_cPhi, const double& tau_i)
+// {
+//     return sigma2_cPhi / tau_i;
+// }
 
-double psdClockFreqDrift(const double& sigma2_cf, const double& tau_i)
-{
-    return sigma2_cf / tau_i;
-}
+// double psdClockFreqDrift(const double& sigma2_cf, const double& tau_i)
+// {
+//     return sigma2_cf / tau_i;
+// }
 
 Eigen::Matrix3d Q_psi_psi(const Eigen::Vector3d& S_rg, const Eigen::Vector3d& S_bgd, const double& tau_s)
 {
