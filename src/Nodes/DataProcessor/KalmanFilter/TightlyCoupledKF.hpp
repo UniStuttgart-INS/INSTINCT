@@ -495,16 +495,64 @@ class TightlyCoupledKF : public Node
     //                                                  Update
     // ###########################################################################################################
 
-    // [[nodiscard]] static Eigen::MatrixXd measurementMatrix_H();
+    /// @brief Measurement matrix for GNSS observations at timestep k, represented in navigation coordinates
+    /// @param[in] T_rn_p Conversion matrix between cartesian and curvilinear perturbations to the position
+    /// @param[in] n_Dcm_b Direction Cosine Matrix from body to navigation coordinates
+    /// @param[in] b_omega_ib Angular rate of body with respect to inertial system in body-frame coordinates in [rad/s]
+    /// @param[in] b_leverArm_InsGnss l_{ba}^b lever arm from the INS to the GNSS antenna in body-frame coordinates [m]
+    /// @param[in] n_Omega_ie Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
+    /// @return The 6x15 measurement matrix 𝐇
+    [[nodiscard]] static Eigen::Matrix<double, 6, 15> n_measurementMatrix_H(const Eigen::Matrix3d& T_rn_p,
+                                                                            const Eigen::Matrix3d& n_Dcm_b,
+                                                                            const Eigen::Vector3d& b_omega_ib,
+                                                                            const Eigen::Vector3d& b_leverArm_InsGnss,
+                                                                            const Eigen::Matrix3d& n_Omega_ie);
 
-    // /// @brief Measurement innovation vector 𝜹𝐳
-    // /// @param[in] pseudoRangeObservations Vector of Pseudorange observations from all available satellites in [m]
-    // /// @param[in] pseudoRangeEstimates  Vector of Pseudorange estimates from all available satellites in [m/s]
-    // /// @param[in] pseudoRangeRateObservations  Vector of Pseudorange-Rate observations from all available satellites in [m]
-    // /// @param[in] pseudoRangeRateEstimates  Vector of Pseudorange-Rate estimates from all available satellites in [m/s]
-    // /// @return The mx1 measurement innovation vector 𝜹𝐳
-    // [[nodiscard]] static Eigen::MatrixXd measurementInnovation_dz(const std::vector<Eigen::Vector3d>& pseudoRangeObservations, const std::vector<Eigen::Vector3d>& pseudoRangeEstimates,
-    //                                                               const std::vector<Eigen::Vector3d>& pseudoRangeRateObservations, const std::vector<Eigen::Vector3d>& pseudoRangeRateEstimates);
+    /// @brief Measurement innovation vector 𝜹𝐳
+    /// @param[in] pseudoRangeObservations Vector of Pseudorange observations from all available satellites in [m]
+    /// @param[in] pseudoRangeEstimates  Vector of Pseudorange estimates from all available satellites in [m/s]
+    /// @param[in] pseudoRangeRateObservations  Vector of Pseudorange-Rate observations from all available satellites in [m]
+    /// @param[in] pseudoRangeRateEstimates  Vector of Pseudorange-Rate estimates from all available satellites in [m/s]
+    /// @return The mx1 measurement innovation vector 𝜹𝐳
+    [[nodiscard]] static Eigen::MatrixXd measurementInnovation_dz(const std::vector<Eigen::Vector3d>& pseudoRangeObservations, const std::vector<Eigen::Vector3d>& pseudoRangeEstimates,
+                                                                  const std::vector<Eigen::Vector3d>& pseudoRangeRateObservations, const std::vector<Eigen::Vector3d>& pseudoRangeRateEstimates);
+
+    // /// @brief Measurement noise covariance matrix 𝐑
+    // /// @param[in] gnssVarianceLatLonAlt Variances of the position LLA in [rad² rad² m²]
+    // /// @param[in] gnssVarianceVelocity Variances of the velocity in [m²/s²]
+    // /// @return The 6x6 measurement covariance matrix 𝐑
+    // [[nodiscard]] static Eigen::Matrix<double, 6, 6> n_measurementNoiseCovariance_R(const Eigen::Vector3d& gnssVarianceLatLonAlt,
+    //                                                                                 const Eigen::Vector3d& gnssVarianceVelocity);
+
+    /// @brief Pseudo-range estimate δϱ
+    /// @param[in] e_satPosEst Satellite position estimate in ECEF coordinates in [m, m, m]
+    /// @param[in] e_recvPosEst Receiver (i.e. user) position estimate in ECEF coordinates in [m, m, m]
+    /// @param[in] recvClkOffset Receiver clock offset estimate in [s]
+    /// @param[in] transTime Transmission time in [s]
+    /// @param[in] i_Dcm_e Direction Cosine Matrix from ECEF to interial coordinates
+    /// @return PseudoRange-Estimate of the j-th satellite
+    /// @note See Groves (2013), equation 9.165 and page 603
+    [[nodiscard]] static double pseudoRangeEstimate(Eigen::Vector3d& e_satPosEst, Eigen::Vector3d& e_recvPosEst, double& recvClkOffset, double& transTime, Eigen::Matrix3d& i_Dcm_e);
+
+    /// @brief Pseudo-range-rate estimate δϱ_dot
+    /// @param[in] e_satPosEst Satellite position estimate in ECEF coordinates in [m, m, m]
+    /// @param[in] e_satVelEst Satellite velocity estimate in ECEF coordinates in [m/s, m/s, m/s]
+    /// @param[in] e_recvPosEst Receiver (i.e. user) position estimate in ECEF coordinates in [m, m, m]
+    /// @param[in] e_recvVelEst Receiver (i.e. user) velocity estimate in ECEF coordinates in [m/s, m/s, m/s]
+    /// @param[in] e_lineOfSight Line of Sight from receiver antenna to satellite in ECEF coordinates [-]
+    /// @param[in] recvClkDrift Receiver clock drift estimate in [-]
+    /// @param[in] transTime Transmission time in [s]
+    /// @param[in] i_Dcm_e Direction Cosine Matrix from ECEF to interial coordinates
+    /// @return PseudoRange-Rate-Estimate of the j-th satellite
+    /// @note See Groves (2013), equation 9.165 and page 603
+    [[nodiscard]] static double pseudoRangeRateEstimate(Eigen::Vector3d& e_satPosEst, Eigen::Vector3d& e_satVelEst, Eigen::Vector3d& e_recvPosEst, Eigen::Vector3d& e_recvVelEst, Eigen::Vector3d& e_lineOfSight, double& recvClkDrift, double& transTime, Eigen::Matrix3d& i_Dcm_e);
+
+    /// @brief Transmission time
+    /// @param[in] recvTimestamp Receiver time of signal arrival [s]
+    /// @param[in] pseudoRange Pseudorange to the j-th satellite [m]
+    /// @param[in] pseudoRangeError Receiver clock offset [m]
+    /// @return Transmission time of signal between receiver and j-th satellite
+    [[nodiscard]] static double transmissionTime(double& recvTimestamp, double& pseudoRange, double& pseudoRangeError);
 };
 
 } // namespace NAV
