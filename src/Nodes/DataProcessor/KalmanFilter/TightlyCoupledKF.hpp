@@ -229,7 +229,33 @@ class TightlyCoupledKF : public Node
 
     // ###########################################################################################################
 
-    // TODO: GnssObsUncertainty... Units, etc.
+    /// Possible Units for the initial covariance for the receiver clock phase drift (standard deviation σ or Variance σ²)
+    enum class InitCovarianceClockPhaseUnit
+    {
+        m2, ///< Variance [m²]
+        s2, ///< Variance [s²]
+        m,  ///< Standard deviation [m]
+        s   ///< Standard deviation [s]
+    };
+    /// Gui selection for the Unit of the initial covariance of the receiver clock phase drift
+    InitCovarianceClockPhaseUnit _initCovariancePhaseUnit = InitCovarianceClockPhaseUnit::m;
+
+    /// GUI selection of the initial covariance of the receiver clock phase drift (standard deviation σ or Variance σ²)
+    double _initCovariancePhase{ 5 };
+
+    // ###########################################################################################################
+
+    /// Possible Units for the initial covariance for the receiver clock frequency drift (standard deviation σ or Variance σ²)
+    enum class InitCovarianceClockFreqUnit
+    {
+        m2_s2, ///< Variance [m²/s²]
+        m_s,   ///< Standard deviation [m/s]
+    };
+    /// Gui selection for the Unit of the initial covariance of the receiver clock frequency drift
+    InitCovarianceClockFreqUnit _initCovarianceFreqUnit = InitCovarianceClockFreqUnit::m_s;
+
+    /// GUI selection of the initial covariance of the receiver clock frequency drift (standard deviation σ or Variance σ²)
+    double _initCovarianceFreq{ 5 };
 
     // ###########################################################################################################
 

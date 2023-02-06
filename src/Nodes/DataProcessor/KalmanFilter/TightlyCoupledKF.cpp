@@ -354,6 +354,41 @@ void NAV::TightlyCoupledKF::guiConfig()
             flow::ApplyChanges();
         }
 
+        auto* initCovariancePhasePointer = &_initCovariancePhase;
+        if (gui::widgets::InputDoubleWithUnit(fmt::format("Receiver clock phase drift covariance ({})##{}",
+                                                          _initCovariancePhaseUnit == InitCovarianceClockPhaseUnit::m2
+                                                                  || _initCovariancePhaseUnit == InitCovarianceClockPhaseUnit::s2
+                                                              ? "Variance σ²"
+                                                              : "Standard deviation σ",
+                                                          size_t(id))
+                                                  .c_str(),
+                                              configWidth, unitWidth, initCovariancePhasePointer, reinterpret_cast<int*>(&_initCovariancePhaseUnit), "m^2\0"
+                                                                                                                                                     "s^2\0"
+                                                                                                                                                     "m\0"
+                                                                                                                                                     "s\0\0",
+                                              0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: initCovariancePhase changed to {}", nameId(), _initCovariancePhase);
+            LOG_DEBUG("{}: InitCovarianceClockPhaseUnit changed to {}", nameId(), fmt::underlying(_initCovariancePhaseUnit));
+            flow::ApplyChanges();
+        }
+
+        auto* initCovarianceFreqPointer = &_initCovarianceFreq;
+        if (gui::widgets::InputDoubleWithUnit(fmt::format("Receiver clock frequency drift covariance ({})##{}",
+                                                          _initCovarianceFreqUnit == InitCovarianceClockFreqUnit::m2_s2
+                                                              ? "Variance σ²"
+                                                              : "Standard deviation σ",
+                                                          size_t(id))
+                                                  .c_str(),
+                                              configWidth, unitWidth, initCovarianceFreqPointer, reinterpret_cast<int*>(&_initCovarianceFreqUnit), "m^2/s^2\0"
+                                                                                                                                                   "m/s\0\0",
+                                              0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: initCovarianceFreq changed to {}", nameId(), _initCovarianceFreq);
+            LOG_DEBUG("{}: initCovarianceFreqUnit changed to {}", nameId(), fmt::underlying(_initCovarianceFreqUnit));
+            flow::ApplyChanges();
+        }
+
         ImGui::TreePop();
     }
 }
@@ -382,6 +417,7 @@ void NAV::TightlyCoupledKF::guiConfig()
     j["stdev_bgd"] = _stdev_bgd;
     j["tau_bgd"] = _tau_bgd;
     j["stdevGyroBiasUnits"] = _stdevGyroBiasUnits;
+    j["stdevClockFreqUnits"] = _stdevClockFreqUnits;
     j["stdev_cf"] = _stdev_cf;
 
     // TODO: Add gnssObsUncertainty... Unit, etc.
@@ -396,6 +432,10 @@ void NAV::TightlyCoupledKF::guiConfig()
     j["initCovarianceBiasAccel"] = _initCovarianceBiasAccel;
     j["initCovarianceBiasGyroUnit"] = _initCovarianceBiasGyroUnit;
     j["initCovarianceBiasGyro"] = _initCovarianceBiasGyro;
+    j["initCovariancePhaseUnit"] = _initCovariancePhaseUnit;
+    j["initCovariancePhase"] = _initCovariancePhase;
+    j["initCovarianceFreqUnit"] = _initCovarianceFreqUnit;
+    j["initCovarianceFreq"] = _initCovarianceFreq;
 
     return j;
 }
@@ -526,6 +566,22 @@ void NAV::TightlyCoupledKF::restore(json const& j)
     {
         _initCovarianceBiasGyro = j.at("initCovarianceBiasGyro");
     }
+    if (j.contains("initCovariancePhaseUnit"))
+    {
+        j.at("initCovariancePhaseUnit").get_to(_initCovariancePhaseUnit);
+    }
+    if (j.contains("initCovariancePhase"))
+    {
+        _initCovariancePhase = j.at("initCovariancePhase");
+    }
+    if (j.contains("initCovarianceFreqUnit"))
+    {
+        j.at("initCovarianceFreqUnit").get_to(_initCovarianceFreqUnit);
+    }
+    if (j.contains("initCovarianceFreq"))
+    {
+        _initCovarianceFreq = j.at("initCovarianceFreq");
+    }
 }
 
 bool NAV::TightlyCoupledKF::initialize()
@@ -626,10 +682,34 @@ bool NAV::TightlyCoupledKF::initialize()
     }
 
     // Initial Covariance of the receiver clock phase drift
-    double variance_clkPhase{}; // TODO: make GUI options
+    double variance_clkPhase{};
+    if (_initCovariancePhaseUnit == InitCovarianceClockPhaseUnit::m2)
+    {
+        variance_clkPhase = _initCovariancePhase;
+    }
+    if (_initCovariancePhaseUnit == InitCovarianceClockPhaseUnit::s2)
+    {
+        variance_clkPhase = std::pow(InsConst::C, 2) * _initCovariancePhase;
+    }
+    if (_initCovariancePhaseUnit == InitCovarianceClockPhaseUnit::m)
+    {
+        variance_clkPhase = std::pow(_initCovariancePhase, 2);
+    }
+    if (_initCovariancePhaseUnit == InitCovarianceClockPhaseUnit::s)
+    {
+        variance_clkPhase = std::pow(InsConst::C * _initCovariancePhase, 2);
+    }
 
     // Initial Covariance of the receiver clock frequency drift
-    double variance_clkFreq{}; // TODO: make GUI options
+    double variance_clkFreq{};
+    if (_initCovarianceFreqUnit == InitCovarianceClockFreqUnit::m2_s2)
+    {
+        variance_clkFreq = _initCovarianceFreq;
+    }
+    if (_initCovarianceFreqUnit == InitCovarianceClockFreqUnit::m_s)
+    {
+        variance_clkFreq = std::pow(_initCovarianceFreq, 2);
+    }
 
     // 𝐏 Error covariance matrix
     _kalmanFilter.P = initialErrorCovarianceMatrix_P0(variance_angles,                                  // Flight Angles covariance
