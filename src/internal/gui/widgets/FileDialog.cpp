@@ -47,9 +47,9 @@ bool NAV::gui::widgets::FileDialogSave(std::string& path, const char* vName,
         if (ImGuiFileDialog::Instance()->IsOk())
         {
             path = ImGuiFileDialog::Instance()->GetFilePathName();
-            if (path.find(flow::GetProgramRootPath().string()) != std::string::npos)
+            if (path.find(startPath.string()) != std::string::npos)
             {
-                path = path.substr(flow::GetProgramRootPath().string().size() + 1);
+                path = path.substr(startPath.string().size() + 1);
             }
             LOG_DEBUG("{}: Selected file: {}", nameId, path);
             changed = true;
@@ -94,9 +94,9 @@ bool NAV::gui::widgets::FileDialogLoad(std::string& path, const char* vName,
                 if (std::filesystem::exists(ImGuiFileDialog::Instance()->GetSelection().begin()->second))
                 {
                     path = ImGuiFileDialog::Instance()->GetSelection().begin()->second;
-                    if (path.find(flow::GetProgramRootPath().string()) != std::string::npos)
+                    if (path.find(startPath.string()) != std::string::npos)
                     {
-                        path = path.substr(flow::GetProgramRootPath().string().size() + 1);
+                        path = path.substr(startPath.string().size() + 1);
                     }
                     LOG_DEBUG("{}: Selected file: {}", nameId, path);
                     changed = true;

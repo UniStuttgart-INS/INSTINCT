@@ -106,7 +106,7 @@ void NAV::gui::NodeEditorApplication::OnStart()
     ImPlot::CreateContext();
     imPlotReferenceStyle = ImPlot::GetStyle();
 
-    std::filesystem::path imPlotConfigFilepath = flow::GetProgramRootPath();
+    std::filesystem::path imPlotConfigFilepath = flow::GetConfigPath();
     if (std::filesystem::path inputPath{ ConfigManager::Get<std::string>("implot-config") };
         inputPath.is_relative())
     {

@@ -460,3 +460,8 @@ std::filesystem::path NAV::flow::GetFlowPath()
 
     return filepath;
 }
+
+std::filesystem::path NAV::flow::GetConfigPath()
+{
+    return flow::GetProgramRootPath() / "config";
+}

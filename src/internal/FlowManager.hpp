@@ -79,6 +79,9 @@ std::filesystem::path GetInputPath();
 /// @brief Get the path where flow files are searched
 std::filesystem::path GetFlowPath();
 
+/// @brief Get the path where config files are searched
+std::filesystem::path GetConfigPath();
+
 /// @brief Whether actions should be saved to the last actions list
 extern bool saveLastActions;
 
