@@ -362,7 +362,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     std::vector<const GnssNavInfo*> gnssNavInfos;
     for (size_t i = 0; i < _nNavInfoPins; i++)
     {
-        if (auto gnssNavInfo = getInputValue<const GnssNavInfo>(INPUT_PORT_INDEX_GNSS_NAV_INFO + i))
+        if (const auto* gnssNavInfo = getInputValue<const GnssNavInfo>(INPUT_PORT_INDEX_GNSS_NAV_INFO + i))
         {
             gnssNavInfos.push_back(gnssNavInfo);
         }
