@@ -20,6 +20,7 @@
 #include "Navigation/GNSS/Core/Frequency.hpp"
 #include "Navigation/GNSS/Core/Code.hpp"
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
+#include "Navigation/GNSS/Core/ReceiverClock.hpp"
 #include "Navigation/Atmosphere/Ionosphere/Ionosphere.hpp"
 #include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
 #include "Navigation/Transformations/Units.hpp"
@@ -112,12 +113,11 @@ class SinglePointPositioning : public Node
 
     /// Estimated position in ECEF frame [m]
     Eigen::Vector3d _e_position = Eigen::Vector3d::Zero();
-    /// Estimated receiver clock bias [s]
-    double _clkBias{ 0.0 };
     /// Estimated velocity in ECEF frame [m/s]
     Eigen::Vector3d _e_velocity = Eigen::Vector3d::Zero();
-    /// Estimated receiver clock drift [s/s]
-    double _clkDrift{ 0.0 };
+
+    /// Estimated receiver clock parameters
+    ReceiverClock _recvClk;
 
     /// @brief Receive Function for the Gnss Observations
     /// @param[in] queue Queue with all the received data messages
