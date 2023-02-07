@@ -480,8 +480,8 @@ class TightlyCoupledKF : public Node
     /// @param[in] variance_pos Initial Covariance of the position in [rad² rad² m²] n-frame / [m²] i,e-frame
     /// @param[in] variance_accelBias Initial Covariance of the accelerometer biases in [m^2/s^4]
     /// @param[in] variance_gyroBias Initial Covariance of the gyroscope biases in [rad^2/s^2]
-    /// @param[in] variance_clkPhase Initial Covariance of the receiver clock phase drift in [// TODO: unit]
-    /// @param[in] variance_clkFreq Initial Covariance of the receiver clock frequency-drift in [// TODO: unit]
+    /// @param[in] variance_clkPhase Initial Covariance of the receiver clock phase drift in [m²]
+    /// @param[in] variance_clkFreq Initial Covariance of the receiver clock frequency-drift in [m²/s²]
     /// @return The 17x17 matrix of initial state variances
     [[nodiscard]] Eigen::Matrix<double, 17, 17> initialErrorCovarianceMatrix_P0(const Eigen::Vector3d& variance_angles,
                                                                                 const Eigen::Vector3d& variance_vel,
@@ -502,11 +502,11 @@ class TightlyCoupledKF : public Node
     /// @param[in] b_leverArm_InsGnss l_{ba}^b lever arm from the INS to the GNSS antenna in body-frame coordinates [m]
     /// @param[in] n_Omega_ie Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
     /// @return The 6x15 measurement matrix 𝐇
-    [[nodiscard]] static Eigen::Matrix<double, 6, 15> n_measurementMatrix_H(const Eigen::Matrix3d& T_rn_p,
-                                                                            const Eigen::Matrix3d& n_Dcm_b,
-                                                                            const Eigen::Vector3d& b_omega_ib,
-                                                                            const Eigen::Vector3d& b_leverArm_InsGnss,
-                                                                            const Eigen::Matrix3d& n_Omega_ie);
+    [[nodiscard]] static Eigen::MatrixXd n_measurementMatrix_H(const Eigen::Matrix3d& T_rn_p,
+                                                               const Eigen::Matrix3d& n_Dcm_b,
+                                                               const Eigen::Vector3d& b_omega_ib,
+                                                               const Eigen::Vector3d& b_leverArm_InsGnss,
+                                                               const Eigen::Matrix3d& n_Omega_ie);
 
     /// @brief Measurement innovation vector 𝜹𝐳
     /// @param[in] pseudoRangeObservations Vector of Pseudorange observations from all available satellites in [m]
@@ -517,12 +517,19 @@ class TightlyCoupledKF : public Node
     [[nodiscard]] static Eigen::MatrixXd measurementInnovation_dz(const std::vector<Eigen::Vector3d>& pseudoRangeObservations, const std::vector<Eigen::Vector3d>& pseudoRangeEstimates,
                                                                   const std::vector<Eigen::Vector3d>& pseudoRangeRateObservations, const std::vector<Eigen::Vector3d>& pseudoRangeRateEstimates);
 
-    // /// @brief Measurement noise covariance matrix 𝐑
-    // /// @param[in] gnssVarianceLatLonAlt Variances of the position LLA in [rad² rad² m²]
-    // /// @param[in] gnssVarianceVelocity Variances of the velocity in [m²/s²]
-    // /// @return The 6x6 measurement covariance matrix 𝐑
-    // [[nodiscard]] static Eigen::Matrix<double, 6, 6> n_measurementNoiseCovariance_R(const Eigen::Vector3d& gnssVarianceLatLonAlt,
-    //                                                                                 const Eigen::Vector3d& gnssVarianceVelocity);
+    /// @brief Measurement noise covariance matrix 𝐑
+    /// @param[in] satElevation Elevation angles of all m satellites in [rad]
+    /// @param[in] sigma_rhoZ Standard deviation of the zenith pseudo-range error in [m]
+    /// @param[in] sigma_rhoC Standard deviation of the clock pseudo-range error in [m]
+    /// @param[in] sigma_rhoA Standard deviation of the antenna pseudo-range error in [m]
+    /// @param[in] sigma_rZ Standard deviation of the zenith pseudo-range-rate error in [m/s]
+    /// @param[in] sigma_rC Standard deviation of the clock pseudo-range-rate error in [m/s]
+    /// @param[in] sigma_rA Standard deviation of the antenna pseudo-range-rate error in [m/s]
+    /// @param[in] CN0 Carrier-to-Noise density of all m satellites in [dBHz]
+    /// @param[in] rangeAccel Range acceleration of all m satellites in [m / s^2]
+    /// @return The mxm measurement covariance matrix 𝐑
+    /// @note See Groves (2013), equations 9.168 and 9.137
+    [[nodiscard]] static Eigen::MatrixXd n_measurementNoiseCovariance_R(const std::vector<double>& satElevation, const double& sigma_rhoZ, const double& sigma_rhoC, const double& sigma_rhoA, const double& sigma_rZ, const double& sigma_rC, const double& sigma_rA, const std::vector<double>& CN0, const std::vector<double>& rangeAccel);
 
     /// @brief Pseudo-range estimate δϱ
     /// @param[in] e_satPosEst Satellite position estimate in ECEF coordinates in [m, m, m]
