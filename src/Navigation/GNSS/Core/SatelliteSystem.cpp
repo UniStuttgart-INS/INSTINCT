@@ -218,6 +218,7 @@ size_t SatelliteSystem::ToEnumeration(SatelliteSystem satSys)
     case SBAS:
         return 7;
     }
+    return 0;
 }
 
 size_t SatelliteSystem::toEnumeration() const

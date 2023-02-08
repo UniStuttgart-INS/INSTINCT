@@ -229,15 +229,15 @@
             "label": "MAIN: Build project",
             "type": "shell",
             "group": "build",
-            "command": "cmake",
             "linux": {
+                "command": "bash",
                 "args": [
-                    "--build",
-                    "build/${input:buildType}-${input:compiler}",
-                    "--parallel8",
+                    "-c",
+                    "cmake --build build/${input:buildType}-${input:compiler} --parallel$(nproc)",
                 ],
             },
             "windows": {
+                "command": "cmake",
                 "args": [
                     "--build",
                     "build/${input:buildType}-msvc",
@@ -260,11 +260,10 @@
             "type": "shell",
             "group": "build",
             "linux": {
-                "command": "cmake",
+                "command": "bash",
                 "args": [
-                    "--build",
-                    "build/${input:buildType}-${input:compiler}",
-                    "--parallel8",
+                    "-c",
+                    "cmake --build build/${input:buildType}-${input:compiler} --parallel$(nproc)",
                 ],
             },
             "windows": {
@@ -290,11 +289,10 @@
             "label": "COVERAGE: Build Coverage Report",
             "type": "shell",
             "group": "build",
-            "command": "cmake",
+            "command": "bash",
             "args": [
-                "--build",
-                "build/Debug-cov",
-                "--parallel8",
+                "-c",
+                "cmake --build build/Debug-cov --parallel$(nproc)",
             ],
             "dependsOn": [
                 "CMAKE: Coverage",
