@@ -362,6 +362,51 @@ double Frequency::GetFrequency(Frequency freq, int8_t num)
     return std::nan("");
 }
 
+Frequency Frequency::GetL1(Frequency freq)
+{
+    switch (Frequency_(freq))
+    {
+    case B01: // Beidou B1 (1575.42 MHz)
+    case B02: // Beidou B1-2 (1561.098 MHz)
+    case B05: // Beidou B2a (1176.45 MHz)
+    case B06: // Beidou B3 (1268.52 MHz)
+    case B07: // Beidou B2b (1207.14 MHz)
+    case B08: // Beidou B2 (B2a + B2b) (1191.795 MHz)
+        return B01;
+    case E01: // Galileo, "E1" (1575.42 MHz)
+    case E05: // Galileo E5a (1176.45 MHz)
+    case E06: // Galileo E6 (1278.75 MHz)
+    case E07: // Galileo E5b (1207.14 MHz)
+    case E08: // Galileo E5 (E5a + E5b) (1191.795 MHz)
+        return E01;
+    case G01: // GPS L1 (1575.42 MHz)
+    case G02: // GPS L2 (1227.6 MHz)
+    case G05: // GPS L5 (1176.45 MHz)
+        return G01;
+    case I05: // IRNSS L5 (1176.45 MHz)
+    case I09: // IRNSS S (2492.028 MHz)
+        return I05;
+    case J01: // QZSS L1 (1575.42 MHz)
+    case J02: // QZSS L2 (1227.6 MHz)
+    case J05: // QZSS L5 (1176.45 MHz)
+    case J06: // QZSS L6 / LEX (1278.75 MHz)
+        return J01;
+    case R01: // GLONASS, "G1" (1602 MHZ)
+    case R02: // GLONASS, "G2" (1246 MHz)
+    case R03: // GLONASS, "G3" (1202.025 MHz)
+    case R04: // GLONASS, "G1a" (1600.995 MHZ)
+    case R06: // GLONASS, "G2a" (1248.06 MHz)
+        return R01;
+    case S01: // SBAS L1 (1575.42 MHz)
+    case S05: // SBAS L5 (1176.45 MHz)
+        return S01;
+    case Freq_None:
+        return Freq_None;
+    }
+
+    return Freq_None;
+}
+
 void to_json(json& j, const Frequency& data)
 {
     j = std::string(data);

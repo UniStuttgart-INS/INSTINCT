@@ -127,7 +127,8 @@
             "data": {
                 "FileReader": {
                     "path": "GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_MO.rnx"
-                }
+                },
+                "eraseLessPreciseCodes": true
             },
             "enabled": true,
             "id": 65,
@@ -297,6 +298,93 @@
                             },
                             {
                                 "displayName": "Receiver clock drift StDev [s/s]"
+                            },
+                            {
+                                "displayName": "System time reference system"
+                            },
+                            {
+                                "displayName": "GPS system time difference [s]"
+                            },
+                            {
+                                "displayName": "GAL system time difference [s]"
+                            },
+                            {
+                                "displayName": "GLO system time difference [s]"
+                            },
+                            {
+                                "displayName": "BDS system time difference [s]"
+                            },
+                            {
+                                "displayName": "QZSS system time difference [s]"
+                            },
+                            {
+                                "displayName": "IRNSS system time difference [s]"
+                            },
+                            {
+                                "displayName": "SBAS system time difference [s]"
+                            },
+                            {
+                                "displayName": "GPS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "GAL system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "GLO system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "BDS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "QZSS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "IRNSS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "SBAS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "GPS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "GAL system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "GLO system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "BDS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "QZSS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "IRNSS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "SBAS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "GPS system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "GAL system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "GLO system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "BDS system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "QZSS system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "IRNSS system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "SBAS system time drift difference StDev [s/s]"
                             }
                         ],
                         "size": 0,
@@ -1277,7 +1365,7 @@
         "node-80": {
             "data": {
                 "FileReader": {
-                    "path": "GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_GO.pos"
+                    "path": "GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_G.pos"
                 }
             },
             "enabled": true,

@@ -458,6 +458,9 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     LOG_DATA("{}: nMeas {}", nameId(), nMeas);
     size_t nParam = 4 + availSatelliteSystems.size() - 1; // 3x pos, 1x clk, (N-1)x clkDiff
 
+    // Frequency number (GLONASS only)
+    int8_t freqNum = -128;
+
     // Find all observations providing a doppler measurement (for velocity calculation)
     size_t nDopplerMeas = 0;
     for (size_t i = 0; i < nMeas; i++)
@@ -466,18 +469,17 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
         if (obsData.doppler)
         {
             nDopplerMeas++;
-            int8_t num = -128;
             // TODO: Find out what this is used for and find a way to use it, after the GLONASS orbit calculation is working
             if (obsData.satSigId.freq & (R01 | R02))
             {
                 if (auto satNavData = std::dynamic_pointer_cast<GLONASSEphemeris>(
                         gnssNavInfos[calcData[i].navIdx]->satellites().at({ GLO, obsData.satSigId.satNum }).searchNavigationData(gnssObs->insTime)))
                 {
-                    num = satNavData->frequencyNumber;
+                    freqNum = satNavData->frequencyNumber;
                 }
             }
 
-            calcData[i].pseudorangeRate = doppler2psrRate(obsData.doppler.value(), obsData.satSigId.freq, num);
+            calcData[i].pseudorangeRate = doppler2psrRate(obsData.doppler.value(), obsData.satSigId.freq, freqNum);
         }
     }
 
@@ -585,7 +587,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             sppExtendedData.satAzimuth = calcData[i].satAzimuth;
 #endif
 
-            if (calcData[i].satElevation < _elevationMask)
+            if (!_e_position.isZero() && calcData[i].satElevation < _elevationMask) // Do not check elevation mask when not having a valid position
             {
                 cntSkippedMeas++;
                 calcData[i].skipped = true;
@@ -734,8 +736,8 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
 
                 double varEph = gnssNavInfos[calcData[i].navIdx]->calcSatellitePositionVariance(satId, gnssObs->insTime);
                 LOG_DATA("{}:     [{}]     varEph {}", nameId(), o, varEph);
-                double varIono = ratioFreqSquared(G01, obsData.satSigId.freq) * std::pow(dpsr_I * ERR_BRDCI, 2); // TODO: Here we need to take G01/E01/R01/... and for Glonass we need to pass the frequency number
-                INS_ASSERT_USER_ERROR(false, "FIX THIS TODO");
+                double varIono = ratioFreqSquared(obsData.satSigId.freq.getL1(), obsData.satSigId.freq, freqNum, freqNum)
+                                 * std::pow(dpsr_I * ERR_BRDCI, 2);
                 LOG_DATA("{}:     [{}]     varIono {}", nameId(), o, varIono);
                 double varTrop = dpsr_T == 0.0 ? 0.0 : std::pow(ERR_SAAS / (std::sin(calcData[i].satElevation) + 0.1), 2);
                 LOG_DATA("{}:     [{}]     varTrop {}", nameId(), o, varTrop);
