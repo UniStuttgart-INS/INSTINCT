@@ -114,7 +114,7 @@ struct SatelliteSystem
     static size_t ToEnumeration(SatelliteSystem satSys);
 
     /// @brief Returns a continuous enumeration of the object
-    size_t toEnumeration() const;
+    [[nodiscard]] size_t toEnumeration() const;
 
   private:
     /// @brief Internal value
