@@ -496,17 +496,12 @@ class TightlyCoupledKF : public Node
     // ###########################################################################################################
 
     /// @brief Measurement matrix for GNSS observations at timestep k, represented in navigation coordinates
-    /// @param[in] T_rn_p Conversion matrix between cartesian and curvilinear perturbations to the position
-    /// @param[in] n_Dcm_b Direction Cosine Matrix from body to navigation coordinates
-    /// @param[in] b_omega_ib Angular rate of body with respect to inertial system in body-frame coordinates in [rad/s]
-    /// @param[in] b_leverArm_InsGnss l_{ba}^b lever arm from the INS to the GNSS antenna in body-frame coordinates [m]
-    /// @param[in] n_Omega_ie Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
-    /// @return The 6x15 measurement matrix 𝐇
-    [[nodiscard]] static Eigen::MatrixXd n_measurementMatrix_H(const Eigen::Matrix3d& T_rn_p,
-                                                               const Eigen::Matrix3d& n_Dcm_b,
-                                                               const Eigen::Vector3d& b_omega_ib,
-                                                               const Eigen::Vector3d& b_leverArm_InsGnss,
-                                                               const Eigen::Matrix3d& n_Omega_ie);
+    /// @param[in] R_N Meridian radius of curvature in [m]
+    /// @param[in] R_E Prime vertical radius of curvature (East/West) [m]
+    /// @param[in] lla_position Position as Lat Lon Alt in [rad rad m]
+    /// @param[in] n_lineOfSightUnitVector Vector of line-of-sight unit vectors to each satellite in NED frame coordinates (Groves ch. 8.5.3, eq. 8.41, p. 341)
+    /// @return The mx17 measurement matrix 𝐇
+    [[nodiscard]] static Eigen::MatrixXd n_measurementMatrix_H(const double& R_N, const double& R_E, const Eigen::Vector3d& lla_position, const std::vector<Eigen::Vector3d>& n_lineOfSightUnitVector);
 
     /// @brief Measurement innovation vector 𝜹𝐳
     /// @param[in] pseudoRangeObservations Vector of Pseudorange observations from all available satellites in [m]
@@ -529,7 +524,7 @@ class TightlyCoupledKF : public Node
     /// @param[in] rangeAccel Range acceleration of all m satellites in [m / s^2]
     /// @return The mxm measurement covariance matrix 𝐑
     /// @note See Groves (2013), equations 9.168 and 9.137
-    [[nodiscard]] static Eigen::MatrixXd n_measurementNoiseCovariance_R(const std::vector<double>& satElevation, const double& sigma_rhoZ, const double& sigma_rhoC, const double& sigma_rhoA, const double& sigma_rZ, const double& sigma_rC, const double& sigma_rA, const std::vector<double>& CN0, const std::vector<double>& rangeAccel);
+    [[nodiscard]] static Eigen::MatrixXd measurementNoiseCovariance_R(const std::vector<double>& satElevation, const double& sigma_rhoZ, const double& sigma_rhoC, const double& sigma_rhoA, const double& sigma_rZ, const double& sigma_rC, const double& sigma_rA, const std::vector<double>& CN0, const std::vector<double>& rangeAccel);
 
     /// @brief Pseudo-range estimate δϱ
     /// @param[in] e_satPosEst Satellite position estimate in ECEF coordinates in [m, m, m]
