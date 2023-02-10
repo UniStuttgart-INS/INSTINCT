@@ -1275,6 +1275,7 @@ Eigen::Matrix<double, 17, 17> NAV::TightlyCoupledKF::e_systemNoiseCovarianceMatr
                                                                                      const Eigen::Matrix3d& e_Dcm_b, const double& tau_s)
 {
     // Math: \mathbf{Q}^e = \begin{pmatrix} \mathbf{Q}_{INS}^e & 0 \\ 0 & \mathbf{Q}_{GNSS} \end{pmatrix} \ \mathrm{with} \ \mathbf{Q}_{INS}^e = \begin{pmatrix} \mathbf{Q}_{11} & {\mathbf{Q}_{21}^e}^T & {\mathbf{Q}_{31}^e}^T & \mathbf{0}_3 & {\mathbf{Q}_{51}^e}^T \\ \mathbf{Q}_{21}^e & \mathbf{Q}_{22}^e & {\mathbf{Q}_{32}^e}^T & {\mathbf{Q}_{42}^e}^T & \mathbf{Q}_{25}^e \\ \mathbf{Q}_{31}^e & \mathbf{Q}_{32}^e & \mathbf{Q}_{33}^e & \mathbf{Q}_{34}^e & \mathbf{Q}_{35}^e \\ \mathbf{0}_3 & \mathbf{Q}_{42}^e & {\mathbf{Q}_{34}^e}^T & S_{bad}\tau_s\mathbf{I}_3 & \mathbf{0}_3 \\ \mathbf{Q}_{51}^e & \mathbf{Q}_{52}^e & {\mathbf{Q}_{35}^e}^T & \mathbf{0}_3 & S_{bgd}\tau_s\mathbf{I}_3 \end{pmatrix} \ \text{P. Groves}\,(14.80) \ \mathrm{and} \ \mathbf{Q}_{GNSS} = \begin{pmatrix} S_{c\phi}\tau_s + \frac{1}{3}S_{cf}\tau_s^3 & \frac{1}{2}S_{cf}\tau_s^2 \\ \frac{1}{2}S_{cf}\tau_s^2 & S_{cf}\tau_s \end{pmatrix} \ \text{P. Groves}\,(14.88)
+
     Eigen::Vector3d S_ra = psdNoise(sigma2_ra, tau_s);
     Eigen::Vector3d S_rg = psdNoise(sigma2_rg, tau_s);
     Eigen::Vector3d S_bad = psdBiasVariation(sigma2_bad, tau_bad);
@@ -1356,9 +1357,98 @@ Eigen::Matrix<double, 17, 17> NAV::TightlyCoupledKF::initialErrorCovarianceMatri
 //                                                  Update
 // ###########################################################################################################
 
-// TODO: Implement new TCKF functions
+Eigen::MatrixXd NAV::TightlyCoupledKF::n_measurementMatrix_H(const double& R_N, const double& R_E, const Eigen::Vector3d& lla_position, const std::vector<Eigen::Vector3d>& n_lineOfSightUnitVector)
+{
+    // Math: \mathbf{H}_{G,k}^n \approx \begin{pmatrix} 0_{1,3} & 0_{1,3} & {\mathbf{h}_{\rho p}^1}^\text{T} & 0_{1,3} & 0_{1,3} & 1 & 0 \\ 0_{1,3} & 0_{1,3} & {\mathbf{h}_{\rho p}^2}^\text{T} & 0_{1,3} & 0_{1,3} & 1 & 0 \\ \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\ 0_{1,3} & 0_{1,3} & {\mathbf{h}_{\rho p}^m}^\text{T} & 0_{1,3} & 0_{1,3} & 1 & 0 \\ - & - & - & - & - & - & - \\ 0_{1,3} & {\mathbf{u}_{a1}^n}^\text{T} & 0_{1,3} & 0_{1,3} & 0_{1,3} & 0 & 1 \\ 0_{1,3} & {\mathbf{u}_{a2}^n}^\text{T} & 0_{1,3} & 0_{1,3} & 0_{1,3} & 0 & 1 \\ \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\ 0_{1,3} & {\mathbf{u}_{am}^n}^\text{T} & 0_{1,3} & 0_{1,3} & 0_{1,3} & 0 & 1 \end{pmatrix}_{\mathbf{x} = \hat{\mathbf{x}}_k^-} \qquad \text{P. Groves}\,(14.127)
 
-// Eigen::MatrixXd NAV::TightlyCoupledKF::measurementInnovation_dz(const std::vector<Eigen::Vector3d>& pseudoRangeObservations, const std::vector<Eigen::Vector3d>& pseudoRangeEstimates, const std::vector<Eigen::Vector3d>& pseudoRangeRateObservations, const std::vector<Eigen::Vector3d>& pseudoRangeRateEstimates)
-// {
-//     // Math: \delta \mathbf{z}^-_{\mathbf{G},k} = \begin{pmatrix} \delta \mathbf{z}^-_{\rho,k} \\ \delta \mathbf{z}^-_{r,k} \end{pmatrix} = \begin{pmatrix} \rho^1_{a,C} - \hat{\rho}^{1-}_{a,C}, \rho^2_{a,C} - \hat{\rho}^{2-}_{a,C}, \cdots, \rho^m_{a,C} - \hat{\rho}^{m-}_{a,C} \\ \dot{\rho}^1_{a,C} - \hat{\dot{\rho}}^{1-}_{a,C}, \dot{\rho}^2_{a,C} - \hat{\dot{\rho}}^{2-}_{a,C}, \cdots, \dot{\rho}^m_{a,C} - \hat{\dot{\rho}}^{m-}_{a,C} \end{pmatrix}_k \qquad \text{P. Groves}\,(14.119)
-// }
+    auto numMeasurements = static_cast<uint8_t>(n_lineOfSightUnitVector.size());
+
+    Eigen::MatrixXd H = Eigen::MatrixXd::Zero(2 * numMeasurements, 17); // Factor "2" accounts for range and range-rate measurement
+
+    Eigen::Vector3d h_rhoP;
+
+    for (size_t j = 0; j < numMeasurements; j++)
+    {
+        h_rhoP << (R_N + lla_position(2)) * n_lineOfSightUnitVector[j](0),
+            (R_E + lla_position(2)) * std::cos(lla_position(0)) * n_lineOfSightUnitVector[j](1),
+            -n_lineOfSightUnitVector[j](2);
+
+        auto i = static_cast<uint8_t>(j);
+
+        H.block<1, 3>(i, 6) = h_rhoP.transpose();
+        H(i, 15) = 1;
+
+        H.block<1, 3>(numMeasurements + i, 3) = n_lineOfSightUnitVector[j].transpose();
+        H(numMeasurements + i, 16) = 1;
+    }
+
+    return H;
+}
+
+Eigen::MatrixXd NAV::TightlyCoupledKF::measurementNoiseCovariance_R(const std::vector<double>& satElevation, const double& sigma_rhoZ, const double& sigma_rhoC, const double& sigma_rhoA, const double& sigma_rZ, const double& sigma_rC, const double& sigma_rA, const std::vector<double>& CN0, const std::vector<double>& rangeAccel)
+{
+    // Math: \mathbf{R}_G = \begin{pmatrix} \sigma_{\rho1}^2 & 0 & \dots & 0 & | & 0 & 0 & \dots & 0 \\ 0 & \sigma_{\rho2}^2 & \dots & 0 & | & 0 & 0 & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots & | & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \dots & \sigma_{\rho m}^2 & | & 0 & 0 & \dots & 0 \\ - & - & - & - & - & - & - & - & - \\ 0 & 0 & \dots & 0 & | & \sigma_{r1}^2 & 0 & \dots & 0 \\ 0 & 0 & \dots & 0 & | & 0 & \sigma_{r 2}^2 & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots & | & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \dots & 0 & | & 0 & 0 & \dots & \sigma_{rm}^2 \end{pmatrix} \qquad \text{P. Groves}\,(9.168)
+
+    auto numMeasurements = static_cast<uint8_t>(satElevation.size());
+
+    Eigen::MatrixXd R = Eigen::MatrixXd::Zero(2 * numMeasurements, 2 * numMeasurements); // Factor "2" accounts for range and range-rate measurement
+
+    for (size_t j = 0; j < numMeasurements; j++)
+    {
+        auto sigma_rho2 = sigma2(satElevation[j], sigma_rhoZ, sigma_rhoC, sigma_rhoA, CN0[j], rangeAccel[j]);
+        auto sigma_r2 = sigma2(satElevation[j], sigma_rZ, sigma_rC, sigma_rA, CN0[j], rangeAccel[j]);
+
+        auto i = static_cast<uint8_t>(j);
+
+        R(i, i) = sigma_rho2;
+        R(numMeasurements + i, numMeasurements + i) = sigma_r2;
+    }
+
+    return R;
+}
+
+double NAV::TightlyCoupledKF::sigma2(const double& satElevation, const double& sigma_Z, const double& sigma_C, const double& sigma_A, const double& CN0, const double& rangeAccel)
+{
+    // Math: \sigma_\rho(\theta_{nu}^{aj}) = \frac{\sigma_{\rho z}}{\sin{\theta_{nu}^{aj}}} \qquad \text{P. Groves}\,(9.137)
+
+    return 1. / std::pow(std::sin(satElevation), 2) * (std::pow(sigma_Z, 2) + std::pow(sigma_C, 2) / CN0 + std::pow(sigma_A, 2) * std::pow(rangeAccel, 2));
+}
+
+Eigen::MatrixXd NAV::TightlyCoupledKF::measurementInnovation_dz(const std::vector<Eigen::Vector3d>& pseudoRangeObservations, const std::vector<Eigen::Vector3d>& pseudoRangeEstimates, const std::vector<Eigen::Vector3d>& pseudoRangeRateObservations, const std::vector<Eigen::Vector3d>& pseudoRangeRateEstimates)
+{
+    // Math: \delta \mathbf{z}^-_{\mathbf{G},k} = \begin{pmatrix} \delta \mathbf{z}^-_{\rho,k} \\ \delta \mathbf{z}^-_{r,k} \end{pmatrix} = \begin{pmatrix} \rho^1_{a,C} - \hat{\rho}^{1-}_{a,C}, \rho^2_{a,C} - \hat{\rho}^{2-}_{a,C}, \cdots, \rho^m_{a,C} - \hat{\rho}^{m-}_{a,C} \\ \dot{\rho}^1_{a,C} - \hat{\dot{\rho}}^{1-}_{a,C}, \dot{\rho}^2_{a,C} - \hat{\dot{\rho}}^{2-}_{a,C}, \cdots, \dot{\rho}^m_{a,C} - \hat{\dot{\rho}}^{m-}_{a,C} \end{pmatrix}_k \qquad \text{P. Groves}\,(14.119)
+
+    auto numMeasurements = static_cast<uint8_t>(pseudoRangeObservations.size());
+
+    Eigen::MatrixXd deltaZ = Eigen::MatrixXd::Zero(2 * numMeasurements, 1);
+
+    for (size_t j = 0; j < numMeasurements; j++)
+    {
+        auto i = static_cast<uint8_t>(3 * j);
+        deltaZ.block<3, 1>(i, 1) = pseudoRangeObservations[j] - pseudoRangeEstimates[j]; // TODO: Verify Eigen::Vector3d subtraction
+        deltaZ.block<3, 1>(numMeasurements + i, 1) = pseudoRangeRateObservations[j] - pseudoRangeRateEstimates[j];
+    }
+
+    return deltaZ;
+}
+
+double NAV::TightlyCoupledKF::pseudoRangeEstimate(Eigen::Vector3d& e_satPosEst, Eigen::Vector3d& e_recvPosEst, double& recvClkOffset, Eigen::Matrix3d& i_Dcm_e)
+{
+    // Math: \hat{\rho}_{a,C,k}^{j-} = \sqrt{\begin{bmatrix} \mathbf{C}_e^I(\tilde{t}_{st,a,k}^j) \hat{\mathbf{r}}_{ej}^e(\tilde{t}_{st,a,k}^j) - \hat{\mathbf{r}}_{ea,k}^{e-} \end{bmatrix}^\text{T} \begin{bmatrix} \mathbf{C}_e^I(\tilde{t}_{st,a,k}^j) \hat{\mathbf{r}}_{ej}^e(\tilde{t}_{st,a,k}^j) - \hat{\mathbf{r}}_{ea,k}^{e-} \end{bmatrix}} + \delta\hat{\rho}_{c,k}^{a-} \qquad \text{P. Groves}\,(9.165)
+
+    return std::sqrt((i_Dcm_e * e_satPosEst - e_recvPosEst).transpose() * (i_Dcm_e * e_satPosEst - e_recvPosEst)) + recvClkOffset;
+}
+
+double NAV::TightlyCoupledKF::pseudoRangeRateEstimate(Eigen::Vector3d& e_satPosEst, Eigen::Vector3d& e_satVelEst, Eigen::Vector3d& e_recvPosEst, Eigen::Vector3d& e_recvVelEst, Eigen::Vector3d& e_lineOfSight, double& recvClkDrift, Eigen::Matrix3d& i_Dcm_e, const Eigen::Matrix3d& e_Omega_ie)
+{
+    // Math: \hat{\dot{\rho}}_{a,C,k}^{j-} = {\hat{\mathbf{u}}_{as,j}^{e-}}^{\text{T}} \begin{bmatrix} \mathbf{C}_e^I(\tilde{t}_{st,a,k}^j) \begin{pmatrix} \hat{\mathbf{v}}_{ej}^e (\tilde{t}_{st,a,k}^j) + \mathbf{\Omega}_{ie}^e \hat{\mathbf{r}}_{ej}^e (\tilde{t}_{st,a,k}^j) \end{pmatrix} - \begin{pmatrix} \hat{\mathbf{v}}_{ea,k}^{e-} + \mathbf{\Omega}_{ie}^e \hat{\mathbf{r}}_{ea,k}^{e-} \end{pmatrix} \end{bmatrix} + \delta \hat{\dot{\rho}}_{c,k}^{a-} \qquad \text{P. Groves}\,(9.165)
+
+    return e_lineOfSight.transpose() * (i_Dcm_e * (e_satVelEst + e_Omega_ie * e_satPosEst) - (e_recvVelEst + e_Omega_ie * e_recvPosEst)) + recvClkDrift;
+}
+
+double NAV::TightlyCoupledKF::transmissionTime(double& recvTimestamp, double& pseudoRange, double& pseudoRangeError)
+{
+    // Math: \tilde{t}_{st,a}^j = \tilde{t}_{sa,a}^j - (\tilde{\rho}_{a,R}^j + \delta\hat{\rho}_c^j) / c \qquad \text{P. Groves}\,(9.125)
+
+    return recvTimestamp - (pseudoRange + pseudoRangeError) / InsConst::C;
+}
