@@ -70,7 +70,7 @@
         "node-119": {
             "data": {
                 "FileReader": {
-                    "path": "../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_E.pos"
+                    "path": "../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/RTKLIB/Septentrio-PolaRx5T_E.pos"
                 }
             },
             "enabled": true,
@@ -97,7 +97,7 @@
         "node-122": {
             "data": {
                 "FileReader": {
-                    "path": "../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_R.pos"
+                    "path": "../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/RTKLIB/Septentrio-PolaRx5T_R.pos"
                 }
             },
             "enabled": true,
@@ -124,7 +124,7 @@
         "node-125": {
             "data": {
                 "FileReader": {
-                    "path": "../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_GE.pos"
+                    "path": "../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/RTKLIB/Septentrio-PolaRx5T_GE.pos"
                 }
             },
             "enabled": true,
@@ -151,7 +151,7 @@
         "node-128": {
             "data": {
                 "FileReader": {
-                    "path": "../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_GR.pos"
+                    "path": "../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/RTKLIB/Septentrio-PolaRx5T_GR.pos"
                 }
             },
             "enabled": true,
@@ -178,7 +178,7 @@
         "node-131": {
             "data": {
                 "FileReader": {
-                    "path": "../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_GER.pos"
+                    "path": "../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/RTKLIB/Septentrio-PolaRx5T_GER.pos"
                 }
             },
             "enabled": true,
@@ -233,7 +233,7 @@
         "node-183": {
             "data": {
                 "FileReader": {
-                    "path": "../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_ER.pos"
+                    "path": "../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/RTKLIB/Septentrio-PolaRx5T_ER.pos"
                 }
             },
             "enabled": true,
@@ -262,7 +262,7 @@
                 "codes": "111100010001001110001111110000111100011101111111111111111111110101111111111111011101110000000001000000001",
                 "elevationMask": 0.0,
                 "excludedSatellites": [],
-                "frequencies": 65793,
+                "frequencies": 1,
                 "ionosphereModel": 0,
                 "nNavInfoPins": 3,
                 "troposphereModels": {
@@ -342,7 +342,7 @@
         "node-54": {
             "data": {
                 "FileReader": {
-                    "path": "../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20238959_7200S_GN.rnx"
+                    "path": "../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/Septentrio-PolaRx5TR_G.nav"
                 }
             },
             "enabled": true,
@@ -369,7 +369,7 @@
         "node-65": {
             "data": {
                 "FileReader": {
-                    "path": "../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_MO.rnx"
+                    "path": "../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/Septentrio-PolaRx5TR.obs"
                 },
                 "eraseLessPreciseCodes": true
             },
@@ -3538,7 +3538,7 @@
         "node-80": {
             "data": {
                 "FileReader": {
-                    "path": "../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_G.pos"
+                    "path": "../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/RTKLIB/Septentrio-PolaRx5T_G.pos"
                 }
             },
             "enabled": true,
@@ -3565,7 +3565,7 @@
         "node-86": {
             "data": {
                 "FileReader": {
-                    "path": "../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20238959_1800S_RN.rnx"
+                    "path": "../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/Septentrio-PolaRx5TR_R.nav"
                 }
             },
             "enabled": true,
@@ -3592,7 +3592,7 @@
         "node-93": {
             "data": {
                 "FileReader": {
-                    "path": "../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20238959_600S_EN.rnx"
+                    "path": "../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/Septentrio-PolaRx5TR_E.nav"
                 }
             },
             "enabled": true,
