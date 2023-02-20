@@ -58,6 +58,7 @@ SatelliteSystem SatelliteSystem::fromChar(char typeChar)
     case 'E':
         return GAL;
     case 'J':
+    case 'Q':
         return QZSS;
     case 'C':
         return BDS;

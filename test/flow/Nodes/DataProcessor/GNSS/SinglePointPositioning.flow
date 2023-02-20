@@ -1,101 +1,27 @@
 {
     "links": {
-        "link-78": {
-            "endPinId": 72,
-            "id": 78,
-            "startPinId": 49
-        },
         "link-81": {
             "endPinId": 76,
             "id": 81,
             "startPinId": 79
         },
-        "link-82": {
-            "endPinId": 46,
-            "id": 82,
+        "link-92": {
+            "endPinId": 88,
+            "id": 92,
             "startPinId": 64
         },
-        "link-83": {
-            "endPinId": 47,
-            "id": 83,
+        "link-93": {
+            "endPinId": 89,
+            "id": 93,
             "startPinId": 53
+        },
+        "link-94": {
+            "endPinId": 72,
+            "id": 94,
+            "startPinId": 90
         }
     },
     "nodes": {
-        "node-50": {
-            "data": {
-                "codes": "111100010001001110001111110000111100011101111111111111111111110101111111111111011101110000000001000000001",
-                "elevationMask": 0.0,
-                "excludedSatellites": [],
-                "frequencies": 1,
-                "ionosphereModel": 0,
-                "nNavInfoPins": 1,
-                "troposphereModels": {
-                    "zhdMappingFunction": [
-                        0,
-                        {
-                            "pressureModel": 0,
-                            "temperatureModel": 0,
-                            "waterVaporModel": 0
-                        }
-                    ],
-                    "zhdModel": [
-                        0,
-                        {
-                            "pressureModel": 0,
-                            "temperatureModel": 0,
-                            "waterVaporModel": 0
-                        }
-                    ],
-                    "zwdMappingFunction": [
-                        0,
-                        {
-                            "pressureModel": 0,
-                            "temperatureModel": 0,
-                            "waterVaporModel": 0
-                        }
-                    ],
-                    "zwdModel": [
-                        0,
-                        {
-                            "pressureModel": 0,
-                            "temperatureModel": 0,
-                            "waterVaporModel": 0
-                        }
-                    ]
-                },
-                "useWeightedLeastSquares": true
-            },
-            "enabled": true,
-            "id": 50,
-            "inputPins": [
-                {
-                    "id": 46,
-                    "name": "GnssObs"
-                },
-                {
-                    "id": 47,
-                    "name": "GnssObs"
-                }
-            ],
-            "kind": "Blueprint",
-            "name": "SinglePointPositioning",
-            "outputPins": [
-                {
-                    "id": 49,
-                    "name": "SppSolution"
-                }
-            ],
-            "pos": {
-                "x": 189.0,
-                "y": 214.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "SinglePointPositioning - SPP"
-        },
         "node-54": {
             "data": {
                 "FileReader": {
@@ -114,8 +40,8 @@
                 }
             ],
             "pos": {
-                "x": -83.0,
-                "y": 318.0
+                "x": -41.0,
+                "y": 286.0
             },
             "size": {
                 "x": 0.0,
@@ -142,8 +68,8 @@
                 }
             ],
             "pos": {
-                "x": -75.0,
-                "y": 222.0
+                "x": -62.0,
+                "y": 210.0
             },
             "size": {
                 "x": 0.0,
@@ -1365,7 +1291,7 @@
         "node-80": {
             "data": {
                 "FileReader": {
-                    "path": "GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_G.pos"
+                    "path": "GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/RTKLIB/SkydelRINEX_S_20230080000_04H_G.pos"
                 }
             },
             "enabled": true,
@@ -1381,13 +1307,87 @@
             ],
             "pos": {
                 "x": 309.0,
-                "y": 350.0
+                "y": 318.0
             },
             "size": {
                 "x": 0.0,
                 "y": 0.0
             },
             "type": "RtklibPosFile"
+        },
+        "node-91": {
+            "data": {
+                "codes": "11110001000100111000111111000011110001110111111111111111111111010111111101110111011101110000000001000000001",
+                "elevationMask": 0.0,
+                "excludedSatellites": [],
+                "frequencies": 1,
+                "ionosphereModel": 0,
+                "nNavInfoPins": 1,
+                "troposphereModels": {
+                    "zhdMappingFunction": [
+                        0,
+                        {
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
+                        }
+                    ],
+                    "zhdModel": [
+                        0,
+                        {
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
+                        }
+                    ],
+                    "zwdMappingFunction": [
+                        0,
+                        {
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
+                        }
+                    ],
+                    "zwdModel": [
+                        0,
+                        {
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
+                        }
+                    ]
+                },
+                "useWeightedLeastSquares": true
+            },
+            "enabled": true,
+            "id": 91,
+            "inputPins": [
+                {
+                    "id": 88,
+                    "name": "GnssObs"
+                },
+                {
+                    "id": 89,
+                    "name": "GnssNavInfo"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "SinglePointPositioning",
+            "outputPins": [
+                {
+                    "id": 90,
+                    "name": "SppSolution"
+                }
+            ],
+            "pos": {
+                "x": 193.0,
+                "y": 210.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "SinglePointPositioning - SPP"
         }
     }
 }

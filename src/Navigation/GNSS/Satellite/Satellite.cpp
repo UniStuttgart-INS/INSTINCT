@@ -95,11 +95,17 @@ std::shared_ptr<SatNavData> Satellite::searchNavigationData(const InsTime& time)
     case NAV::SatNavData::Type::BeiDouEphemeris:
     case NAV::SatNavData::Type::IRNSSEphemeris:
     case NAV::SatNavData::Type::QZSSEphemeris:
-        if (diff > InsTimeUtil::SECONDS_PER_HOUR) { return nullptr; }
+        if (diff > InsTimeUtil::SECONDS_PER_HOUR * 2 + 1e-6)
+        {
+            return nullptr;
+        }
         break;
     case NAV::SatNavData::Type::GLONASSEphemeris:
     case NAV::SatNavData::Type::SBASEphemeris:
-        if (diff > InsTimeUtil::SECONDS_PER_MINUTE * 15) { return nullptr; }
+        if (diff > InsTimeUtil::SECONDS_PER_MINUTE * 15 + 1e-6)
+        {
+            return nullptr;
+        }
         break;
     }
 

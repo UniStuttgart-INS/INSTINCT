@@ -136,7 +136,7 @@ class RinexObsFile : public Node, public FileReader
     /// @brief Get the Frequency from the provided satellite system and band in the 'SYS / # / OBS TYPES' header
     /// @param[in] satSys Satellite System
     /// @param[in] band Band (1...9, 0)
-    static Frequency getFrequencyFromBand(SatelliteSystem satSys, int band);
+    [[nodiscard]] Frequency getFrequencyFromBand(SatelliteSystem satSys, int band) const;
 
     /// Observation description. [Key]: Satellite System, [Value]: List with descriptions
     std::unordered_map<SatelliteSystem, std::vector<ObservationDescription>> _obsDescription;

@@ -749,7 +749,7 @@ char RinexObsFile::obsTypeToChar(ObsType type)
     }
 }
 
-Frequency RinexObsFile::getFrequencyFromBand(SatelliteSystem satSys, int band)
+Frequency RinexObsFile::getFrequencyFromBand(SatelliteSystem satSys, int band) const
 {
     switch (band)
     {
@@ -907,7 +907,7 @@ Frequency RinexObsFile::getFrequencyFromBand(SatelliteSystem satSys, int band)
         break;
     }
 
-    LOG_ERROR("Cannot find frequency for satellite system '{}' and band '{}'", satSys, band);
+    LOG_ERROR("{}: Cannot find frequency for satellite system '{}' and band '{}'", nameId(), satSys, band);
     return Freq_None;
 }
 
@@ -921,7 +921,7 @@ void RinexObsFile::eraseLessPreciseCodes(const std::shared_ptr<NAV::GnssObs>& gn
             });
             if (iter != gnssObs->data.end())
             {
-                LOG_WARN("{}: Erasing {}-{}-{}", nameId(), freq, satNum, code);
+                LOG_DATA("{}: Erasing {}-{}-{}", nameId(), freq, satNum, code);
                 gnssObs->data.erase(iter);
             }
         };

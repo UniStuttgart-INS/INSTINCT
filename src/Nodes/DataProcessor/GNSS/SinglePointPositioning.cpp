@@ -396,10 +396,12 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     struct CalcData
     {
         // Constructor
-        explicit CalcData(size_t obsIdx, size_t navIdx) : obsIdx(obsIdx), navIdx(navIdx) {}
+        explicit CalcData(size_t obsIdx, const std::shared_ptr<NAV::SatNavData>& satNavData)
+            : obsIdx(obsIdx), satNavData(satNavData) {}
 
-        size_t obsIdx = 0;                      // Index in the provided GNSS Observation data
-        size_t navIdx = 0;                      // Index in the provided GNSS Navigation data
+        size_t obsIdx = 0;                                     // Index in the provided GNSS Observation data
+        std::shared_ptr<NAV::SatNavData> satNavData = nullptr; // Satellite Navigation data
+
         double satClkBias{};                    // Satellite clock bias [s]
         double satClkDrift{};                   // Satellite clock drift [s/s]
         Eigen::Vector3d e_satPos;               // Satellite position in ECEF frame coordinates [m]
@@ -428,11 +430,11 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             && obsData.pseudorange                                                                                    // has a valid pseudorange
             && std::find(_excludedSatellites.begin(), _excludedSatellites.end(), satId) == _excludedSatellites.end()) // is not excluded
         {
-            for (size_t navIdx = 0; navIdx < gnssNavInfos.size(); navIdx++)
+            for (const auto& gnssNavInfo : gnssNavInfos)
             {
-                if (gnssNavInfos[navIdx]->contains(satId, gnssObs->insTime)) // can calculate satellite position
+                if (auto satNavData = gnssNavInfo->searchNavigationData(satId, gnssObs->insTime)) // can calculate satellite position
                 {
-                    if (!gnssNavInfos[navIdx]->isHealthy(satId, gnssObs->insTime))
+                    if (!satNavData->isHealthy())
                     {
                         LOG_DATA("{}: Satellite {} is skipped because the signal is not healthy.", nameId(), satId);
 
@@ -443,7 +445,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                         continue;
                     }
                     LOG_DATA("{}: Using observation from {} {}", nameId(), obsData.satSigId, obsData.code);
-                    calcData.emplace_back(obsIdx, navIdx);
+                    calcData.emplace_back(obsIdx, satNavData);
                     if (std::find(availSatelliteSystems.begin(), availSatelliteSystems.end(), satId.satSys) == availSatelliteSystems.end())
                     {
                         availSatelliteSystems.push_back(satId.satSys);
@@ -472,8 +474,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             // TODO: Find out what this is used for and find a way to use it, after the GLONASS orbit calculation is working
             if (obsData.satSigId.freq & (R01 | R02))
             {
-                if (auto satNavData = std::dynamic_pointer_cast<GLONASSEphemeris>(
-                        gnssNavInfos[calcData[i].navIdx]->satellites().at({ GLO, obsData.satSigId.satNum }).searchNavigationData(gnssObs->insTime)))
+                if (auto satNavData = std::dynamic_pointer_cast<GLONASSEphemeris>(calcData[i].satNavData))
                 {
                     freqNum = satNavData->frequencyNumber;
                 }
@@ -491,18 +492,15 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     {
         const auto& obsData = gnssObs->data[calcData[i].obsIdx];
 
-        auto satId = obsData.satSigId.toSatId();
-        const auto* navInfo = gnssNavInfos[calcData[i].navIdx];
-
         LOG_DATA("{}: satellite {}", nameId(), obsData.satSigId);
         LOG_DATA("{}:     pseudorange  {}", nameId(), obsData.pseudorange.value().value);
 
-        auto satClk = navInfo->calcSatelliteClockCorrections(satId, gnssObs->insTime, obsData.pseudorange.value().value, obsData.satSigId.freq);
+        auto satClk = calcData[i].satNavData->calcClockCorrections(gnssObs->insTime, obsData.pseudorange.value().value, obsData.satSigId.freq);
         calcData[i].satClkBias = satClk.bias;
         calcData[i].satClkDrift = satClk.drift;
         LOG_DATA("{}:     satClkBias {}, satClkDrift {}", nameId(), calcData[i].satClkBias, calcData[i].satClkDrift);
 
-        auto satPosVel = navInfo->calcSatellitePosVel(satId, satClk.transmitTime);
+        auto satPosVel = calcData[i].satNavData->calcSatellitePosVel(satClk.transmitTime);
         calcData[i].e_satPos = satPosVel.e_pos;
         calcData[i].e_satVel = satPosVel.e_vel;
         LOG_DATA("{}:     e_satPos {}", nameId(), calcData[i].e_satPos.transpose());
@@ -734,7 +732,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                                     * (std::pow(carrierPhaseErrorA, 2) + std::pow(carrierPhaseErrorB, 2) / std::sin(ele));
                 LOG_DATA("{}:     [{}]     varPsrMeas {}", nameId(), o, varPsrMeas);
 
-                double varEph = gnssNavInfos[calcData[i].navIdx]->calcSatellitePositionVariance(satId, gnssObs->insTime);
+                double varEph = calcData[i].satNavData->calcSatellitePositionVariance();
                 LOG_DATA("{}:     [{}]     varEph {}", nameId(), o, varEph);
                 double varIono = ratioFreqSquared(obsData.satSigId.freq.getL1(), obsData.satSigId.freq, freqNum, freqNum)
                                  * std::pow(dpsr_I * ERR_BRDCI, 2);
@@ -793,7 +791,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                     double varDopMeas = std::pow(dopplerFrequency, 2);
                     LOG_DATA("{}:     [{}]     varDopMeas {}", nameId(), o, varDopMeas);
 
-                    double varEph = gnssNavInfos[calcData[i].navIdx]->calcSatellitePositionVariance(satId, gnssObs->insTime);
+                    double varEph = calcData[i].satNavData->calcSatellitePositionVariance();
                     LOG_DATA("{}:     [{}]     varEph {}", nameId(), o, varEph);
 
                     double varErrors = varDopMeas + varEph;

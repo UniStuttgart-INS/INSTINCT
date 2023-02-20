@@ -6322,7 +6322,7 @@ bool NAV::VectorNavSensor::initialize()
         }
     }
 
-    size_t binaryOutputRegisterCounter = 1; // To give a proper error message
+    [[maybe_unused]] size_t binaryOutputRegisterCounter = 1; // To give a proper error message
     try
     {
         // The sensor does somehow report wrong flags here, so we can't check if it actually worked
