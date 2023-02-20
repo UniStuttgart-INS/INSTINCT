@@ -396,8 +396,8 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     struct CalcData
     {
         // Constructor
-        explicit CalcData(size_t obsIdx, const std::shared_ptr<NAV::SatNavData>& satNavData)
-            : obsIdx(obsIdx), satNavData(satNavData) {}
+        explicit CalcData(size_t obsIdx, std::shared_ptr<NAV::SatNavData> satNavData)
+            : obsIdx(obsIdx), satNavData(std::move(satNavData)) {}
 
         size_t obsIdx = 0;                                     // Index in the provided GNSS Observation data
         std::shared_ptr<NAV::SatNavData> satNavData = nullptr; // Satellite Navigation data
