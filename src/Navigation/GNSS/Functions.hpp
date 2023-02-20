@@ -59,9 +59,11 @@ namespace NAV
 ///
 /// @param[in] f1 First frequency (usually L1)
 /// @param[in] f2 Second frequency (usually L2)
+/// @param[in] num1 First frequency number. Only used for GLONASS G1 and G2
+/// @param[in] num2 Second frequency number. Only used for GLONASS G1 and G2
 /// @return The ratio (f1/f2)^2 [-]
 /// @note See \cite IS-GPS-200M IS-GPS-200 ch. 20.3.3.3.3.2 p.99
-[[nodiscard]] double ratioFreqSquared(Frequency f1, Frequency f2);
+[[nodiscard]] double ratioFreqSquared(Frequency f1, Frequency f2, int8_t num1 = -128, int8_t num2 = -128);
 
 /// @brief Converts a GALILEO SISA (Signal in space accuracy) value to it's index
 /// @param[in] val SISA value in [m]

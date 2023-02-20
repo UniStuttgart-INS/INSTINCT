@@ -24,14 +24,8 @@ NAV::FileReader::GuiResult NAV::FileReader::guiConfig(const char* vFilters, cons
 {
     GuiResult result = PATH_UNCHANGED;
 
-    if (gui::widgets::FileDialogLoad(_path, "Select File", vFilters, extensions,
-                                     flow::GetProgramRootPath() / ConfigManager::Get<std::string>("input-path"), id, nameId))
+    if (gui::widgets::FileDialogLoad(_path, "Select File", vFilters, extensions, flow::GetInputPath(), id, nameId))
     {
-        if (_path.starts_with(ConfigManager::Get<std::string>("input-path")))
-        {
-            _path = _path.substr(ConfigManager::Get<std::string>("input-path").size() + 1);
-        }
-
         if (!std::filesystem::exists(getFilepath()))
         {
             result = PATH_CHANGED_INVALID;

@@ -197,7 +197,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 // Data Provider
 #include "Nodes/DataProvider/CSV/CsvFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RinexNavFile.hpp"
-#include "Nodes/DataProvider/GNSS/FileReader/RINEX/RinexObsFile.hpp"
+#include "Nodes/DataProvider/GNSS/FileReader/RinexObsFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/EmlidFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RtklibPosFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/NmeaFile.hpp"

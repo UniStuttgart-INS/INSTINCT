@@ -658,8 +658,8 @@ void RinexNavFile::readOrbits()
                     // The same satellite can appear multiple times with different dataSource bits
                     // We want to prefer 'I/NAV E1-B' (Bit 0 set) over 'F/NAV E5a-I' (Bit 1 set) or 'I/NAV E5b-I' (Bit 2 set)
 
-                    if (_gnssNavInfo.contains({ satSys, satNum })             // We have this satellite already
-                        && !std::bitset<10>(codesOnL2Channel_dataSources)[0]) // This message is not 'I/NAV E1-B'
+                    if (_gnssNavInfo.satellites().contains({ satSys, satNum }) // We have this satellite already
+                        && !std::bitset<10>(codesOnL2Channel_dataSources)[0])  // This message is not 'I/NAV E1-B'
                     {
                         const auto& navData = _gnssNavInfo.satellites().at({ satSys, satNum }).getNavigationData();
                         auto existingEph = std::find_if(navData.begin(), navData.end(),

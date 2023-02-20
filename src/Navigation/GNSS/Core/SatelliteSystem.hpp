@@ -58,6 +58,10 @@ struct SatelliteSystem
     /// @param[in] typeChar Character representation of the satellite system
     static SatelliteSystem fromChar(char typeChar);
 
+    /// @brief Constructs a new object from continuous enumeration
+    /// @param[in] enumeration Continuous enumeration of the satellite system
+    static SatelliteSystem fromEnum(size_t enumeration);
+
     /// @brief Assignment operator from Value type
     /// @param[in] v Value type to construct from
     /// @return The Type type from the value type
@@ -104,6 +108,13 @@ struct SatelliteSystem
 
     /// @brief Get a list of satellites in the constellation
     [[nodiscard]] std::vector<uint16_t> getSatellites() const;
+
+    /// @brief Get the continuous enumeration of the specified Satellite System
+    /// @param[in] satSys Satellite System to get the continuous enumeration for
+    static size_t ToEnumeration(SatelliteSystem satSys);
+
+    /// @brief Returns a continuous enumeration of the object
+    [[nodiscard]] size_t toEnumeration() const;
 
   private:
     /// @brief Internal value
