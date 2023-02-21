@@ -1525,6 +1525,35 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "ED velocity StDev [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock bias StDev [s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock drift StDev [s/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "System time reference system");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "GPS system time difference [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "GAL system time difference [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "GLO system time difference [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "BDS system time difference [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "QZSS system time difference [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "IRNSS system time difference [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "SBAS system time difference [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "GPS system time drift difference [s/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "GAL system time drift difference [s/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "GLO system time drift difference [s/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "BDS system time drift difference [s/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "QZSS system time drift difference [s/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "IRNSS system time drift difference [s/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "SBAS system time drift difference [s/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "GPS system time difference StDev [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "GAL system time difference StDev [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "GLO system time difference StDev [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "BDS system time difference StDev [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "QZSS system time difference StDev [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "IRNSS system time difference StDev [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "SBAS system time difference StDev [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "GPS system time drift difference StDev [s/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "GAL system time drift difference StDev [s/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "GLO system time drift difference StDev [s/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "BDS system time drift difference StDev [s/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "QZSS system time drift difference StDev [s/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "IRNSS system time drift difference StDev [s/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "SBAS system time drift difference StDev [s/s]");
         }
         else if (startPin.dataIdentifier.front() == RtklibPosObs::type())
         {
@@ -2459,8 +2488,8 @@ void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, s
     // SppSolution
     addData(pinIndex, i++, static_cast<double>(obs->nSatellitesPosition));
     addData(pinIndex, i++, static_cast<double>(obs->nSatellitesVelocity));
-    addData(pinIndex, i++, obs->clkBias);                 // Receiver clock bias [s]
-    addData(pinIndex, i++, obs->clkDrift);                // Receiver clock drift [s/s]
+    addData(pinIndex, i++, obs->recvClk.bias.value);      // Receiver clock bias [s]
+    addData(pinIndex, i++, obs->recvClk.drift.value);     // Receiver clock drift [s/s]
     addData(pinIndex, i++, obs->e_positionStdev()(0, 0)); // X-ECEF StDev [m]
     addData(pinIndex, i++, obs->e_positionStdev()(1, 1)); // Y-ECEF StDev [m]
     addData(pinIndex, i++, obs->e_positionStdev()(2, 2)); // Z-ECEF StDev [m]
@@ -2485,8 +2514,42 @@ void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, s
     addData(pinIndex, i++, obs->n_velocityStdev()(0, 1)); // NE velocity StDev [m]
     addData(pinIndex, i++, obs->n_velocityStdev()(0, 2)); // ND velocity StDev [m]
     addData(pinIndex, i++, obs->n_velocityStdev()(1, 2)); // ED velocity StDev [m]
-    addData(pinIndex, i++, obs->clkBiasStdev);            // Receiver clock bias StDev [s]
-    addData(pinIndex, i++, obs->clkDriftStdev);           // Receiver clock drift StDev [s/s]
+    addData(pinIndex, i++, obs->recvClk.bias.stdDev);     // Receiver clock bias StDev [s]
+    addData(pinIndex, i++, obs->recvClk.drift.stdDev);    // Receiver clock drift StDev [s/s]
+
+    addData(pinIndex, i++, static_cast<double>(obs->recvClk.referenceTimeSatelliteSystem.toEnumeration())); // System time reference system
+
+    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(GPS) ? obs->recvClk.sysTimeDiff.at(GPS).value : std::nan(""));     // GPS system time difference [s]
+    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(GAL) ? obs->recvClk.sysTimeDiff.at(GAL).value : std::nan(""));     // GAL system time difference [s]
+    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(GLO) ? obs->recvClk.sysTimeDiff.at(GLO).value : std::nan(""));     // GLO system time difference [s]
+    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(BDS) ? obs->recvClk.sysTimeDiff.at(BDS).value : std::nan(""));     // BDS system time difference [s]
+    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(QZSS) ? obs->recvClk.sysTimeDiff.at(QZSS).value : std::nan(""));   // QZSS system time difference [s]
+    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(IRNSS) ? obs->recvClk.sysTimeDiff.at(IRNSS).value : std::nan("")); // IRNSS system time difference [s]
+    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(SBAS) ? obs->recvClk.sysTimeDiff.at(SBAS).value : std::nan(""));   // SBAS system time difference [s]
+
+    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(GPS) ? obs->recvClk.sysDriftDiff.at(GPS).value : std::nan(""));     // GPS system time drift difference [s/s]
+    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(GAL) ? obs->recvClk.sysDriftDiff.at(GAL).value : std::nan(""));     // GAL system time drift difference [s/s]
+    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(GLO) ? obs->recvClk.sysDriftDiff.at(GLO).value : std::nan(""));     // GLO system time drift difference [s/s]
+    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(BDS) ? obs->recvClk.sysDriftDiff.at(BDS).value : std::nan(""));     // BDS system time drift difference [s/s]
+    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(QZSS) ? obs->recvClk.sysDriftDiff.at(QZSS).value : std::nan(""));   // QZSS system time drift difference [s/s]
+    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(IRNSS) ? obs->recvClk.sysDriftDiff.at(IRNSS).value : std::nan("")); // IRNSS system time drift difference [s/s]
+    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(SBAS) ? obs->recvClk.sysDriftDiff.at(SBAS).value : std::nan(""));   // SBAS system time drift difference [s/s]
+
+    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(GPS) ? obs->recvClk.sysTimeDiff.at(GPS).stdDev : std::nan(""));     // GPS system time difference StDev [s]
+    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(GAL) ? obs->recvClk.sysTimeDiff.at(GAL).stdDev : std::nan(""));     // GAL system time difference StDev [s]
+    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(GLO) ? obs->recvClk.sysTimeDiff.at(GLO).stdDev : std::nan(""));     // GLO system time difference StDev [s]
+    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(BDS) ? obs->recvClk.sysTimeDiff.at(BDS).stdDev : std::nan(""));     // BDS system time difference StDev [s]
+    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(QZSS) ? obs->recvClk.sysTimeDiff.at(QZSS).stdDev : std::nan(""));   // QZSS system time difference StDev [s]
+    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(IRNSS) ? obs->recvClk.sysTimeDiff.at(IRNSS).stdDev : std::nan("")); // IRNSS system time difference StDev [s]
+    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(SBAS) ? obs->recvClk.sysTimeDiff.at(SBAS).stdDev : std::nan(""));   // SBAS system time difference StDev [s]
+
+    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(GPS) ? obs->recvClk.sysDriftDiff.at(GPS).stdDev : std::nan(""));     // GPS system time drift difference StDev [s/s]
+    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(GAL) ? obs->recvClk.sysDriftDiff.at(GAL).stdDev : std::nan(""));     // GAL system time drift difference StDev [s/s]
+    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(GLO) ? obs->recvClk.sysDriftDiff.at(GLO).stdDev : std::nan(""));     // GLO system time drift difference StDev [s/s]
+    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(BDS) ? obs->recvClk.sysDriftDiff.at(BDS).stdDev : std::nan(""));     // BDS system time drift difference StDev [s/s]
+    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(QZSS) ? obs->recvClk.sysDriftDiff.at(QZSS).stdDev : std::nan(""));   // QZSS system time drift difference StDev [s/s]
+    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(IRNSS) ? obs->recvClk.sysDriftDiff.at(IRNSS).stdDev : std::nan("")); // IRNSS system time drift difference StDev [s/s]
+    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(SBAS) ? obs->recvClk.sysDriftDiff.at(SBAS).stdDev : std::nan(""));   // SBAS system time drift difference StDev [s/s]
 }
 
 void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs, size_t pinIndex)

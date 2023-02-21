@@ -148,6 +148,19 @@ class GnssObs : public NodeData
     /// @brief Satellite observations
     std::vector<ObservationData> data;
 
+    /// @brief Checks if an element with the identifier exists
+    /// @param[in] freq Signal frequency (also identifies the satellite system)
+    /// @param[in] satNum Number of the satellite
+    /// @param[in] code Signal code
+    /// @return True if the element exists
+    [[nodiscard]] bool contains(const Frequency& freq, uint16_t satNum, Code code) const
+    {
+        auto iter = std::find_if(data.begin(), data.end(), [freq, satNum, code](const ObservationData& idData) {
+            return idData.satSigId.freq == freq && idData.satSigId.satNum == satNum && idData.code == code;
+        });
+        return iter != data.end();
+    }
+
     /// @brief Return the element with the identifier or a newly constructed one if it did not exist
     /// @param[in] freq Signal frequency (also identifies the satellite system)
     /// @param[in] satNum Number of the satellite

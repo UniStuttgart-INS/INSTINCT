@@ -48,7 +48,7 @@ void NAV::ConfigManager::initialize()
             ("output-path,o",     bpo::value<std::string>()->default_value("logs"),                 "Directory path for logs and output files"                                                )
             ("input-path,i",      bpo::value<std::string>()->default_value("data"),                 "Directory path for searching input files"                                                )
             ("flow-path,f",       bpo::value<std::string>()->default_value("flow"),                 "Directory path for searching flow files"                                                 )
-            ("implot-config",     bpo::value<std::string>()->default_value("config/implot.json"),   "Config file to read implot settings from"                                                )
+            ("implot-config",     bpo::value<std::string>()->default_value("implot.json"),          "Config file to read implot settings from"                                                )
             ("console-log-level", bpo::value<std::string>()->default_value("off"),                  "Log level on the console  (possible values: trace/debug/info/warning/error/critical/off" )
             ("file-log-level",    bpo::value<std::string>()->default_value("debug"),                "Log level to the log file (possible values: trace/debug/info/warning/error/critical/off" )
         ;

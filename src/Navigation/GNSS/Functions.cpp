@@ -35,9 +35,9 @@ double doppler2psrRate(double doppler, Frequency freq, int8_t num)
     return -InsConst::C / freq.getFrequency(num) * doppler;
 }
 
-double ratioFreqSquared(Frequency f1, Frequency f2)
+double ratioFreqSquared(Frequency f1, Frequency f2, int8_t num1, int8_t num2)
 {
-    return std::pow(f1.getFrequency() / f2.getFrequency(), 2);
+    return std::pow(f1.getFrequency(num1) / f2.getFrequency(num2), 2);
 }
 
 uint8_t galSisaVal2Idx(double val)

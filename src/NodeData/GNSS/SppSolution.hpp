@@ -20,6 +20,7 @@
 
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "Navigation/GNSS/Core/Code.hpp"
+#include "Navigation/GNSS/Core/ReceiverClock.hpp"
 
 namespace NAV
 {
@@ -50,15 +51,11 @@ class SppSolution : public PosVel
     /// Amount of satellites used for the velocity calculation
     size_t nSatellitesVelocity = 0;
 
-    /// Estimated receiver clock bias [s]
-    double clkBias = std::nan("");
-    /// Estimated receiver clock drift [s/s]
-    double clkDrift = std::nan("");
-
-    /// Standard deviation of the estimated receiver clock bias [s]
-    double clkBiasStdev = std::nan("");
-    /// Standard deviation of the estimated receiver clock drift [s/s]
-    double clkDriftStdev = std::nan("");
+    /// Estimated receiver clock parameter
+    ReceiverClock recvClk = { .bias = { std::nan(""), std::nan("") },
+                              .drift = { std::nan(""), std::nan("") },
+                              .sysTimeDiff = {},
+                              .sysDriftDiff = {} };
 
     // ------------------------------------------------------------- Getter ----------------------------------------------------------------
 

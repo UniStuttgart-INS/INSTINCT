@@ -122,6 +122,16 @@ class Frequency
         return GetFrequency(value, num);
     }
 
+    /// @brief Returns the L1 Frequency for each constellation
+    /// @param[in] freq Frequency to get the value for
+    static Frequency GetL1(Frequency freq);
+
+    /// @brief Returns the L1 Frequency for each constellation
+    [[nodiscard]] Frequency getL1() const
+    {
+        return GetL1(value);
+    }
+
   private:
     /// @brief Internal value
     Frequency_ value = Frequency_::Freq_None;

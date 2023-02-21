@@ -8,6 +8,8 @@
 
 #include "Satellite.hpp"
 
+#include <limits>
+
 namespace NAV
 {
 
@@ -66,25 +68,48 @@ const std::vector<std::shared_ptr<SatNavData>>& Satellite::getNavigationData() c
 
 std::shared_ptr<SatNavData> Satellite::searchNavigationData(const InsTime& time) const
 {
-    if (m_navigationData.size() == 1)
-    {
-        return m_navigationData.front();
-    }
+    if (m_navigationData.empty()) { return nullptr; }
 
-    long double prevDiff = InsTimeUtil::SECONDS_PER_WEEK;
-    for (auto riter = m_navigationData.rbegin(); riter != m_navigationData.rend(); riter++)
+    auto prevDiff = std::numeric_limits<long double>::max();
+    auto diff = prevDiff;
+
+    auto riter = m_navigationData.rbegin();
+    for (; riter != m_navigationData.rend(); riter++)
     {
-        long double diff = std::abs(((*riter)->refTime - time).count());
+        diff = std::abs(((*riter)->refTime - time).count());
         if (diff < prevDiff)
         {
             prevDiff = diff;
         }
         else
         {
-            return *(--riter);
+            diff = prevDiff;
+            break;
         }
     }
-    return m_navigationData.front();
+
+    switch (m_navigationData.front()->type)
+    {
+    case NAV::SatNavData::Type::GPSEphemeris:
+    case NAV::SatNavData::Type::GalileoEphemeris:
+    case NAV::SatNavData::Type::BeiDouEphemeris:
+    case NAV::SatNavData::Type::IRNSSEphemeris:
+    case NAV::SatNavData::Type::QZSSEphemeris:
+        if (diff > InsTimeUtil::SECONDS_PER_HOUR * 2 + 1e-6)
+        {
+            return nullptr;
+        }
+        break;
+    case NAV::SatNavData::Type::GLONASSEphemeris:
+    case NAV::SatNavData::Type::SBASEphemeris:
+        if (diff > InsTimeUtil::SECONDS_PER_MINUTE * 15 + 1e-6)
+        {
+            return nullptr;
+        }
+        break;
+    }
+
+    return *(--riter);
 }
 
 } // namespace NAV

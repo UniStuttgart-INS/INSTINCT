@@ -58,12 +58,38 @@ SatelliteSystem SatelliteSystem::fromChar(char typeChar)
     case 'E':
         return GAL;
     case 'J':
+    case 'Q':
         return QZSS;
     case 'C':
         return BDS;
     case 'I':
         return IRNSS;
     case 'S':
+        return SBAS;
+    default:
+        return SatSys_None;
+    }
+}
+
+SatelliteSystem SatelliteSystem::fromEnum(size_t enumeration)
+{
+    switch (enumeration)
+    {
+    case 0:
+        return SatSys_None;
+    case 1:
+        return GPS;
+    case 2:
+        return GAL;
+    case 3:
+        return GLO;
+    case 4:
+        return BDS;
+    case 5:
+        return QZSS;
+    case 6:
+        return IRNSS;
+    case 7:
         return SBAS;
     default:
         return SatSys_None;
@@ -170,6 +196,35 @@ std::vector<uint16_t> SatelliteSystem::GetSatellitesForSatelliteSystem(Satellite
 std::vector<uint16_t> SatelliteSystem::getSatellites() const
 {
     return GetSatellitesForSatelliteSystem(value);
+}
+
+size_t SatelliteSystem::ToEnumeration(SatelliteSystem satSys)
+{
+    switch (SatelliteSystem_(satSys))
+    {
+    case SatSys_None:
+        return 0;
+    case GPS:
+        return 1;
+    case GAL:
+        return 2;
+    case GLO:
+        return 3;
+    case BDS:
+        return 4;
+    case QZSS:
+        return 5;
+    case IRNSS:
+        return 6;
+    case SBAS:
+        return 7;
+    }
+    return 0;
+}
+
+size_t SatelliteSystem::toEnumeration() const
+{
+    return ToEnumeration(value);
 }
 
 void to_json(json& j, const SatelliteSystem& data)

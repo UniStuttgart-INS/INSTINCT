@@ -1,0 +1,44 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+/// @file Temperature.hpp
+/// @brief Temperature calculation formulas
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
+/// @date 2023-01-31
+
+#pragma once
+
+namespace NAV
+{
+
+/// Available temperature Models
+enum class TemperatureModel : int
+{
+    None,    ///< No temperature model
+    ConstNN, ///< Constant value at zero altitude
+    ISA,     ///< ICAO Standard Atmosphere
+    COUNT,   ///< Amount of items in the enum
+};
+
+/// @brief Converts the enum to a string
+/// @param[in] temperatureModel Enum value to convert into text
+/// @return String representation of the enum
+const char* to_string(TemperatureModel temperatureModel);
+
+/// @brief Shows a ComboBox to select the temperature model
+/// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
+/// @param[in] temperatureModel Reference to the temperature model to select
+bool ComboTemperatureModel(const char* label, TemperatureModel& temperatureModel);
+
+/// @brief Calculates the absolute temperature
+/// @param[in] altitudeMSL Geodetic height above MSL (mean sea level) [m]
+/// @param[in] temperatureModel Temperature model to use
+/// @return The absolute temperature in [K]
+[[nodiscard]] double calcAbsoluteTemperature(double altitudeMSL, TemperatureModel temperatureModel);
+
+} // namespace NAV

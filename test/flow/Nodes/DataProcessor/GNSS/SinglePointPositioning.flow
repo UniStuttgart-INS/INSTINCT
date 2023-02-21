@@ -1,79 +1,27 @@
 {
     "links": {
-        "link-55": {
-            "endPinId": 48,
-            "id": 55,
-            "startPinId": 53
-        },
-        "link-66": {
-            "endPinId": 47,
-            "id": 66,
-            "startPinId": 64
-        },
-        "link-71": {
-            "endPinId": 46,
-            "id": 71,
-            "startPinId": 69
-        },
-        "link-78": {
-            "endPinId": 72,
-            "id": 78,
-            "startPinId": 49
-        },
         "link-81": {
             "endPinId": 76,
             "id": 81,
             "startPinId": 79
+        },
+        "link-92": {
+            "endPinId": 88,
+            "id": 92,
+            "startPinId": 64
+        },
+        "link-93": {
+            "endPinId": 89,
+            "id": 93,
+            "startPinId": 53
+        },
+        "link-94": {
+            "endPinId": 72,
+            "id": 94,
+            "startPinId": 90
         }
     },
     "nodes": {
-        "node-50": {
-            "data": {
-                "codes": "111100010001001110001111110000111100011101111111111111111111110101111111111111011101110000000001000000001",
-                "elevationMask": 0.0,
-                "excludedSatellites": [],
-                "frequencies": 1,
-                "ionosphereModel": 0,
-                "nNavInfoPins": 1,
-                "troposphereModel": 0,
-                "useWeightedLeastSquares": true,
-                "zhdMappingFunction": 0,
-                "zwdMappingFunction": 0
-            },
-            "enabled": true,
-            "id": 50,
-            "inputPins": [
-                {
-                    "id": 46,
-                    "name": "PosVelInit"
-                },
-                {
-                    "id": 47,
-                    "name": "GnssObs"
-                },
-                {
-                    "id": 48,
-                    "name": "GnssNavInfo"
-                }
-            ],
-            "kind": "Blueprint",
-            "name": "SinglePointPositioning",
-            "outputPins": [
-                {
-                    "id": 49,
-                    "name": "SppSolution"
-                }
-            ],
-            "pos": {
-                "x": 189.0,
-                "y": 214.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "SinglePointPositioning - SPP"
-        },
         "node-54": {
             "data": {
                 "FileReader": {
@@ -92,8 +40,8 @@
                 }
             ],
             "pos": {
-                "x": -83.0,
-                "y": 318.0
+                "x": -41.0,
+                "y": 286.0
             },
             "size": {
                 "x": 0.0,
@@ -105,7 +53,8 @@
             "data": {
                 "FileReader": {
                     "path": "GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_MO.rnx"
-                }
+                },
+                "eraseLessPreciseCodes": true
             },
             "enabled": true,
             "id": 65,
@@ -119,64 +68,14 @@
                 }
             ],
             "pos": {
-                "x": -75.0,
-                "y": 222.0
+                "x": -62.0,
+                "y": 210.0
             },
             "size": {
                 "x": 0.0,
                 "y": 0.0
             },
             "type": "RinexObsFile"
-        },
-        "node-70": {
-            "data": {
-                "attitudeMode": 0,
-                "initDuration": 5.0,
-                "n_overrideValuesVelocity": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "overridePosition": true,
-                "overrideRollPitchYaw": [
-                    true,
-                    true,
-                    true
-                ],
-                "overrideValuesPosition_lla": [
-                    48.052040100097656,
-                    9.361396789550781,
-                    604.2813720703125
-                ],
-                "overrideValuesRollPitchYaw": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "overrideVelocity": true,
-                "positionAccuracyThreshold": 10.0,
-                "velocityAccuracyThreshold": 10.0
-            },
-            "enabled": true,
-            "id": 70,
-            "inputPins": [],
-            "kind": "Blueprint",
-            "name": "PosVelAttInitializer",
-            "outputPins": [
-                {
-                    "id": 69,
-                    "name": "PosVelAtt"
-                }
-            ],
-            "pos": {
-                "x": -118.0,
-                "y": 142.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "PosVelAttInitializer"
         },
         "node-77": {
             "data": {
@@ -325,6 +224,93 @@
                             },
                             {
                                 "displayName": "Receiver clock drift StDev [s/s]"
+                            },
+                            {
+                                "displayName": "System time reference system"
+                            },
+                            {
+                                "displayName": "GPS system time difference [s]"
+                            },
+                            {
+                                "displayName": "GAL system time difference [s]"
+                            },
+                            {
+                                "displayName": "GLO system time difference [s]"
+                            },
+                            {
+                                "displayName": "BDS system time difference [s]"
+                            },
+                            {
+                                "displayName": "QZSS system time difference [s]"
+                            },
+                            {
+                                "displayName": "IRNSS system time difference [s]"
+                            },
+                            {
+                                "displayName": "SBAS system time difference [s]"
+                            },
+                            {
+                                "displayName": "GPS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "GAL system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "GLO system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "BDS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "QZSS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "IRNSS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "SBAS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "GPS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "GAL system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "GLO system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "BDS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "QZSS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "IRNSS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "SBAS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "GPS system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "GAL system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "GLO system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "BDS system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "QZSS system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "IRNSS system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "SBAS system time drift difference StDev [s/s]"
                             }
                         ],
                         "size": 0,
@@ -1305,7 +1291,7 @@
         "node-80": {
             "data": {
                 "FileReader": {
-                    "path": "GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_GO.pos"
+                    "path": "GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/RTKLIB/SkydelRINEX_S_20230080000_04H_G.pos"
                 }
             },
             "enabled": true,
@@ -1321,13 +1307,87 @@
             ],
             "pos": {
                 "x": 309.0,
-                "y": 350.0
+                "y": 318.0
             },
             "size": {
                 "x": 0.0,
                 "y": 0.0
             },
             "type": "RtklibPosFile"
+        },
+        "node-91": {
+            "data": {
+                "codes": "11110001000100111000111111000011110001110111111111111111111111010111111101110111011101110000000001000000001",
+                "elevationMask": 0.0,
+                "excludedSatellites": [],
+                "frequencies": 1,
+                "ionosphereModel": 0,
+                "nNavInfoPins": 1,
+                "troposphereModels": {
+                    "zhdMappingFunction": [
+                        0,
+                        {
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
+                        }
+                    ],
+                    "zhdModel": [
+                        0,
+                        {
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
+                        }
+                    ],
+                    "zwdMappingFunction": [
+                        0,
+                        {
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
+                        }
+                    ],
+                    "zwdModel": [
+                        0,
+                        {
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
+                        }
+                    ]
+                },
+                "useWeightedLeastSquares": true
+            },
+            "enabled": true,
+            "id": 91,
+            "inputPins": [
+                {
+                    "id": 88,
+                    "name": "GnssObs"
+                },
+                {
+                    "id": 89,
+                    "name": "GnssNavInfo"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "SinglePointPositioning",
+            "outputPins": [
+                {
+                    "id": 90,
+                    "name": "SppSolution"
+                }
+            ],
+            "pos": {
+                "x": 193.0,
+                "y": 210.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "SinglePointPositioning - SPP"
         }
     }
 }

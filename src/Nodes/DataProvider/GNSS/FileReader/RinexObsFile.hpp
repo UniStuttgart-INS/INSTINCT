@@ -23,6 +23,8 @@
 #include "Navigation/GNSS/Core/Frequency.hpp"
 #include "Navigation/GNSS/Core/Code.hpp"
 
+#include "NodeData/GNSS/GnssObs.hpp"
+
 namespace NAV
 {
 /// File reader Node for RINEX Observation messages
@@ -134,7 +136,7 @@ class RinexObsFile : public Node, public FileReader
     /// @brief Get the Frequency from the provided satellite system and band in the 'SYS / # / OBS TYPES' header
     /// @param[in] satSys Satellite System
     /// @param[in] band Band (1...9, 0)
-    static Frequency getFrequencyFromBand(SatelliteSystem satSys, int band);
+    [[nodiscard]] Frequency getFrequencyFromBand(SatelliteSystem satSys, int band) const;
 
     /// Observation description. [Key]: Satellite System, [Value]: List with descriptions
     std::unordered_map<SatelliteSystem, std::vector<ObservationDescription>> _obsDescription;
@@ -144,6 +146,15 @@ class RinexObsFile : public Node, public FileReader
 
     /// @brief Receiver clock offset app
     bool _rcvClockOffsAppl = false;
+
+    /// @brief Whether to remove less precise codes (e.g. if G1X (L1C combined) is present, don't use G1L (L1C pilot) and G1S (L1C data))
+    bool _eraseLessPreciseCodes = true;
+
+    /// @brief Removes less precise codes (e.g. if G1X (L1C combined) is present, don't use G1L (L1C pilot) and G1S (L1C data))
+    /// @param[in] gnssObs GnssObs to search for less precise codes
+    /// @param[in] freq Signal frequency (also identifies the satellite system)
+    /// @param[in] satNum Number of the satellite
+    void eraseLessPreciseCodes(const std::shared_ptr<GnssObs>& gnssObs, const Frequency& freq, uint16_t satNum);
 };
 
 } // namespace NAV

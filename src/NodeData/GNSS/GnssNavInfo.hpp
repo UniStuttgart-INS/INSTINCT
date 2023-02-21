@@ -92,10 +92,28 @@ class GnssNavInfo
     }
 
     /// @brief Checks whether the satellite is included in the internal data
-    /// @param satId Satellite identifier
-    [[nodiscard]] bool contains(const SatId& satId) const
+    /// @param[in] satId Satellite identifier
+    /// @param[in] recvTime Receive time for the data lookup
+    [[nodiscard]] std::shared_ptr<NAV::SatNavData> searchNavigationData(const SatId& satId, const InsTime& recvTime) const
     {
-        return m_satellites.contains(satId);
+        if (!m_satellites.contains(satId)) { return nullptr; }
+
+        auto satNavData = m_satellites.at(satId).searchNavigationData(recvTime);
+        if (satNavData == nullptr)
+        {
+            [[maybe_unused]] auto printNavData = [&]() {
+                std::string ret;
+                for (const auto& navData : m_satellites.at(satId).getNavigationData())
+                {
+                    ret += fmt::format("[{} - diff {:.0f}s], ", navData->refTime, std::abs((navData->refTime - recvTime).count()));
+                }
+                return ret.substr(0, ret.length() - 2);
+            };
+
+            LOG_TRACE("[{}][{}]: No navigation data found. Available data are at time: {}", satId, recvTime, printNavData());
+        }
+
+        return satNavData;
     }
 
     /// @brief Returns the amount of satellites contained in this message
