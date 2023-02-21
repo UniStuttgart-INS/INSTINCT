@@ -499,12 +499,12 @@ class TightlyCoupledKF : public Node
     /// @param[in] R_N Meridian radius of curvature in [m]
     /// @param[in] R_E Prime vertical radius of curvature (East/West) [m]
     /// @param[in] lla_position Position as Lat Lon Alt in [rad rad m]
-    /// @param[in] n_lineOfSightUnitVector Vector of line-of-sight unit vectors to each satellite in NED frame coordinates (Groves ch. 8.5.3, eq. 8.41, p. 341)
+    /// @param[in] n_lineOfSightUnitVectors Vector of line-of-sight unit vectors to each satellite in NED frame coordinates (Groves ch. 8.5.3, eq. 8.41, p. 341)
     /// @return The 2*m x 17 measurement matrix 𝐇 (m: number of satellites)
     [[nodiscard]] static Eigen::MatrixXd n_measurementMatrix_H(const double& R_N,
                                                                const double& R_E,
                                                                const Eigen::Vector3d& lla_position,
-                                                               const std::vector<Eigen::Vector3d>& n_lineOfSightUnitVector);
+                                                               const std::vector<Eigen::Vector3d>& n_lineOfSightUnitVectors);
 
     /// @brief Measurement noise covariance matrix 𝐑
     /// @param[in] satElevation Elevation angles of all m satellites in [rad]
@@ -548,10 +548,10 @@ class TightlyCoupledKF : public Node
     /// @param[in] pseudoRangeRateObservations  Vector of Pseudorange-Rate observations from all available satellites in [m]
     /// @param[in] pseudoRangeRateEstimates  Vector of Pseudorange-Rate estimates from all available satellites in [m/s]
     /// @return The 2*m x1 measurement innovation vector 𝜹𝐳 (m: number of satellites)
-    [[nodiscard]] static Eigen::MatrixXd measurementInnovation_dz(const std::vector<Eigen::Vector3d>& pseudoRangeObservations,
-                                                                  const std::vector<Eigen::Vector3d>& pseudoRangeEstimates,
-                                                                  const std::vector<Eigen::Vector3d>& pseudoRangeRateObservations,
-                                                                  const std::vector<Eigen::Vector3d>& pseudoRangeRateEstimates);
+    [[nodiscard]] static Eigen::MatrixXd measurementInnovation_dz(const std::vector<double>& pseudoRangeObservations,
+                                                                  const std::vector<double>& pseudoRangeEstimates,
+                                                                  const std::vector<double>& pseudoRangeRateObservations,
+                                                                  const std::vector<double>& pseudoRangeRateEstimates);
 
     /// @brief Pseudo-range estimate δϱ
     /// @param[in] e_satPosEst Satellite position estimate at transmission time in ECEF coordinates in [m, m, m]

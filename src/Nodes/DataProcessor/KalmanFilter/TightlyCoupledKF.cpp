@@ -1046,13 +1046,93 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     LOG_DATA("{}: Updating to time {} - {} (lastInertial at {} - {})", nameId(), gnssObservation->insTime.toYMDHMS(), gnssObservation->insTime.toGPSweekTow(),
              _latestInertialNavSol->insTime.toYMDHMS(), _latestInertialNavSol->insTime.toGPSweekTow());
 
-    [[maybe_unused]] auto bla = gnssObservation;
-
-    // TODO: to be implemented
-
     // -------------------------------------------- GUI Parameters -----------------------------------------------
 
+    // Latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m] at the time tₖ₋₁
+    const Eigen::Vector3d& lla_position = _latestInertialNavSol->lla_position();
+    LOG_DATA("{}:     lla_position = {} [rad, rad, m]", nameId(), lla_position.transpose());
+
+    // TODO: read params as in LCKF
+    double sigma_rhoZ{};
+    double sigma_rhoC{};
+    double sigma_rhoA{};
+    double sigma_rZ{};
+    double sigma_rC{};
+    double sigma_rA{};
+
     // ---------------------------------------------- Update -----------------------------------------------------
+
+    if (_frame == Frame::NED)
+    {
+        // Prime vertical radius of curvature (East/West) [m]
+        double R_E = calcEarthRadius_E(lla_position(0));
+        LOG_DATA("{}:     R_E = {} [m]", nameId(), R_E);
+        // Meridian radius of curvature in [m]
+        double R_N = calcEarthRadius_N(lla_position(0));
+        LOG_DATA("{}:     R_N = {} [m]", nameId(), R_N);
+
+        // TODO: necessary?
+        // Direction Cosine Matrix from body to navigation coordinates, at the time tₖ₋₁
+        // Eigen::Matrix3d n_Dcm_b = _latestInertialNavSol->n_Quat_b().toRotationMatrix();
+        // LOG_DATA("{}:     n_Dcm_b =\n{}", nameId(), n_Dcm_b);
+
+        // Conversion matrix between cartesian and curvilinear perturbations to the position
+        // Eigen::Matrix3d T_rn_p = conversionMatrixCartesianCurvilinear(lla_position, R_N, R_E);
+        // LOG_DATA("{}:     T_rn_p =\n{}", nameId(), T_rn_p);
+
+        // TODO: necessary?
+        // Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
+        // Eigen::Matrix3d n_Omega_ie = math::skewSymmetricMatrix(_latestInertialNavSol->n_Quat_e() * InsConst::e_omega_ie);
+        // LOG_DATA("{}:     n_Omega_ie =\n{}", nameId(), n_Omega_ie);
+
+        std::vector<Eigen::Vector3d> n_lineOfSightUnitVectors;
+        n_lineOfSightUnitVectors.resize(gnssObservation->data.size());
+
+        // TODO: calc 'n_lineOfSightUnitVectors', maybe in a separate function. Check 'struct CalcData' in SPP
+        // for (size_t obsIdx = 0; obsIdx < gnssObservation->data.size(); obsIdx++)
+        // {
+        //     n_lineOfSightUnitVectors[obsIdx] =
+        // }
+
+        // 5. Calculate the measurement matrix H_k
+        _kalmanFilter.H = n_measurementMatrix_H(R_N, R_E, lla_position, n_lineOfSightUnitVectors);
+
+        // TODO: Check 'struct CalcData' in SPP
+        std::vector<double> satElevation;
+        satElevation.resize(gnssObservation->data.size());
+
+        // TODO: Check 'struct CalcData' in SPP
+        std::vector<double> CN0;
+        CN0.resize(gnssObservation->data.size());
+
+        // TODO: Check 'struct CalcData' in SPP
+        std::vector<double> rangeAccel;
+        rangeAccel.resize(gnssObservation->data.size());
+
+        // 6. Calculate the measurement noise covariance matrix R_k
+        _kalmanFilter.R = measurementNoiseCovariance_R(satElevation, sigma_rhoZ, sigma_rhoC, sigma_rhoA, sigma_rZ, sigma_rC, sigma_rA, CN0, rangeAccel);
+
+        // TODO: get observations
+        std::vector<double> pseudoRangeObservations;
+        std::vector<double> pseudoRangeRateObservations;
+
+        // TODO: get estimates
+        std::vector<double> pseudoRangeEstimates;
+        pseudoRangeEstimates.resize(gnssObservation->data.size());
+        // for (size_t obsIdx = 0; obsIdx < gnssObservation->data.size(); obsIdx++)
+        // {
+        // pseudoRangeEstimates[obsIdx] = pseudoRangeEstimate(e_satPosEst, e_recvPosEst, recvClkOffset, i_Dcm_e);
+        // }
+
+        std::vector<double> pseudoRangeRateEstimates;
+        // for (size_t obsIdx = 0; obsIdx < gnssObservation->data.size(); obsIdx++)
+        // {
+        // pseudoRangeRateEstimates[obsIdx] = pseudoRangeRateEstimate(e_satPosEst, e_satVelEst, e_recvPosEst, e_recvVelEst, e_lineOfSight, recvClkDrift, i_Dcm_e, e_Omega_ie);
+        // }
+
+        // 8. Formulate the measurement z_k
+        _kalmanFilter.z = measurementInnovation_dz(pseudoRangeObservations, pseudoRangeEstimates, pseudoRangeRateObservations, pseudoRangeRateEstimates);
+    }
 }
 
 // ###########################################################################################################
@@ -1357,28 +1437,28 @@ Eigen::Matrix<double, 17, 17> NAV::TightlyCoupledKF::initialErrorCovarianceMatri
 //                                                  Update
 // ###########################################################################################################
 
-Eigen::MatrixXd NAV::TightlyCoupledKF::n_measurementMatrix_H(const double& R_N, const double& R_E, const Eigen::Vector3d& lla_position, const std::vector<Eigen::Vector3d>& n_lineOfSightUnitVector)
+Eigen::MatrixXd NAV::TightlyCoupledKF::n_measurementMatrix_H(const double& R_N, const double& R_E, const Eigen::Vector3d& lla_position, const std::vector<Eigen::Vector3d>& n_lineOfSightUnitVectors)
 {
     // Math: \mathbf{H}_{G,k}^n \approx \begin{pmatrix} 0_{1,3} & 0_{1,3} & {\mathbf{h}_{\rho p}^1}^\text{T} & 0_{1,3} & 0_{1,3} & 1 & 0 \\ 0_{1,3} & 0_{1,3} & {\mathbf{h}_{\rho p}^2}^\text{T} & 0_{1,3} & 0_{1,3} & 1 & 0 \\ \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\ 0_{1,3} & 0_{1,3} & {\mathbf{h}_{\rho p}^m}^\text{T} & 0_{1,3} & 0_{1,3} & 1 & 0 \\ - & - & - & - & - & - & - \\ 0_{1,3} & {\mathbf{u}_{a1}^n}^\text{T} & 0_{1,3} & 0_{1,3} & 0_{1,3} & 0 & 1 \\ 0_{1,3} & {\mathbf{u}_{a2}^n}^\text{T} & 0_{1,3} & 0_{1,3} & 0_{1,3} & 0 & 1 \\ \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\ 0_{1,3} & {\mathbf{u}_{am}^n}^\text{T} & 0_{1,3} & 0_{1,3} & 0_{1,3} & 0 & 1 \end{pmatrix}_{\mathbf{x} = \hat{\mathbf{x}}_k^-} \qquad \text{P. Groves}\,(14.127)
 
-    auto numMeasurements = static_cast<uint8_t>(n_lineOfSightUnitVector.size());
+    auto numMeasurements = static_cast<uint8_t>(n_lineOfSightUnitVectors.size());
 
-    Eigen::MatrixXd H = Eigen::MatrixXd::Zero(2 * numMeasurements, 17); // Factor "2" accounts for range and range-rate measurement
+    Eigen::MatrixXd H = Eigen::MatrixXd::Zero(2U * numMeasurements, 17); // Factor "2" accounts for range and range-rate measurement
 
     Eigen::Vector3d h_rhoP;
 
     for (size_t j = 0; j < numMeasurements; j++)
     {
-        h_rhoP << (R_N + lla_position(2)) * n_lineOfSightUnitVector[j](0),
-            (R_E + lla_position(2)) * std::cos(lla_position(0)) * n_lineOfSightUnitVector[j](1),
-            -n_lineOfSightUnitVector[j](2);
+        h_rhoP << (R_N + lla_position(2)) * n_lineOfSightUnitVectors[j](0),
+            (R_E + lla_position(2)) * std::cos(lla_position(0)) * n_lineOfSightUnitVectors[j](1),
+            -n_lineOfSightUnitVectors[j](2);
 
         auto i = static_cast<uint8_t>(j);
 
         H.block<1, 3>(i, 6) = h_rhoP.transpose();
         H(i, 15) = 1;
 
-        H.block<1, 3>(numMeasurements + i, 3) = n_lineOfSightUnitVector[j].transpose();
+        H.block<1, 3>(numMeasurements + i, 3) = n_lineOfSightUnitVectors[j].transpose();
         H(numMeasurements + i, 16) = 1;
     }
 
@@ -1391,7 +1471,7 @@ Eigen::MatrixXd NAV::TightlyCoupledKF::measurementNoiseCovariance_R(const std::v
 
     auto numMeasurements = static_cast<uint8_t>(satElevation.size());
 
-    Eigen::MatrixXd R = Eigen::MatrixXd::Zero(2 * numMeasurements, 2 * numMeasurements); // Factor "2" accounts for range and range-rate measurement
+    Eigen::MatrixXd R = Eigen::MatrixXd::Zero(2U * numMeasurements, 2 * numMeasurements); // Factor "2" accounts for range and range-rate measurement
 
     for (size_t j = 0; j < numMeasurements; j++)
     {
@@ -1414,19 +1494,19 @@ double NAV::TightlyCoupledKF::sigma2(const double& satElevation, const double& s
     return 1. / std::pow(std::sin(satElevation), 2) * (std::pow(sigma_Z, 2) + std::pow(sigma_C, 2) / CN0 + std::pow(sigma_A, 2) * std::pow(rangeAccel, 2));
 }
 
-Eigen::MatrixXd NAV::TightlyCoupledKF::measurementInnovation_dz(const std::vector<Eigen::Vector3d>& pseudoRangeObservations, const std::vector<Eigen::Vector3d>& pseudoRangeEstimates, const std::vector<Eigen::Vector3d>& pseudoRangeRateObservations, const std::vector<Eigen::Vector3d>& pseudoRangeRateEstimates)
+Eigen::MatrixXd NAV::TightlyCoupledKF::measurementInnovation_dz(const std::vector<double>& pseudoRangeObservations, const std::vector<double>& pseudoRangeEstimates, const std::vector<double>& pseudoRangeRateObservations, const std::vector<double>& pseudoRangeRateEstimates)
 {
     // Math: \delta \mathbf{z}^-_{\mathbf{G},k} = \begin{pmatrix} \delta \mathbf{z}^-_{\rho,k} \\ \delta \mathbf{z}^-_{r,k} \end{pmatrix} = \begin{pmatrix} \rho^1_{a,C} - \hat{\rho}^{1-}_{a,C}, \rho^2_{a,C} - \hat{\rho}^{2-}_{a,C}, \cdots, \rho^m_{a,C} - \hat{\rho}^{m-}_{a,C} \\ \dot{\rho}^1_{a,C} - \hat{\dot{\rho}}^{1-}_{a,C}, \dot{\rho}^2_{a,C} - \hat{\dot{\rho}}^{2-}_{a,C}, \cdots, \dot{\rho}^m_{a,C} - \hat{\dot{\rho}}^{m-}_{a,C} \end{pmatrix}_k \qquad \text{P. Groves}\,(14.119)
 
     auto numMeasurements = static_cast<uint8_t>(pseudoRangeObservations.size());
 
-    Eigen::MatrixXd deltaZ = Eigen::MatrixXd::Zero(2 * numMeasurements, 1);
+    Eigen::MatrixXd deltaZ = Eigen::MatrixXd::Zero(2U * numMeasurements, 1);
 
     for (size_t j = 0; j < numMeasurements; j++)
     {
         auto i = static_cast<uint8_t>(3 * j);
-        deltaZ.block<3, 1>(i, 1) = pseudoRangeObservations[j] - pseudoRangeEstimates[j]; // TODO: Verify Eigen::Vector3d subtraction
-        deltaZ.block<3, 1>(numMeasurements + i, 1) = pseudoRangeRateObservations[j] - pseudoRangeRateEstimates[j];
+        deltaZ(i, 1) = pseudoRangeObservations[j] - pseudoRangeEstimates[j];
+        deltaZ(numMeasurements + i, 1) = pseudoRangeRateObservations[j] - pseudoRangeRateEstimates[j];
     }
 
     return deltaZ;
