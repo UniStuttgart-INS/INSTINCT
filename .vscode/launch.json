@@ -2,6 +2,27 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "LLDB Debug",
+            "type": "lldb",
+            "request": "launch",
+            "preLaunchTask": "MAIN: Build project",
+            "program": "${workspaceFolder}/build/bin/Debug/instinct",
+            "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
+                "--config=config.ini",
+                "--load=\"flow/Default.flow\"",
+                // "--load=\"test/flow/Nodes/DataProcessor/GNSS/SinglePointPositioning.flow\"",
+                // "--nogui",
+                // "--noinit",
+                "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
+                "--file-log-level=trace", // trace/debug/info/warning/error/critical/off
+                // ================ To debug flow tests ================
+                // "--flow-path=test/flow",
+                // "--input-path=test/data",
+                // "--output-path=test/logs",
+            ],
+            "cwd": "${workspaceFolder}"
+        },
+        {
             "name": "Linux Debug",
             "type": "cppdbg",
             "request": "launch",
@@ -25,7 +46,7 @@
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
-            "miDebuggerPath": "/usr/bin/gdb",
+            // "miDebuggerPath": "/usr/bin/gdb",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",

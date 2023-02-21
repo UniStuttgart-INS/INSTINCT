@@ -8,13 +8,11 @@
             "label": "CLEAN: Remove Build Files",
             "type": "shell",
             "group": "build",
-            "linux": {
-                "command": "rm",
-                "args": [
-                    "-rf",
-                    "build",
-                ],
-            },
+            "command": "rm",
+            "args": [
+                "-rf",
+                "build",
+            ],
             "windows": {
                 "command": "Remove-Item",
                 "args": [
@@ -36,19 +34,17 @@
             "label": "CMAKE: Main",
             "type": "shell",
             "group": "build",
-            "linux": {
-                "command": "bash",
-                "args": [
-                    "-c",
-                    "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
-                ],
-                // "options": {
-                //     "env": {
-                //         "CC": "/usr/bin/clang",
-                //         "CXX": "/usr/bin/clang++",
-                //     },
-                // },
-            },
+            "command": "bash",
+            "args": [
+                "-c",
+                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
+            ],
+            // "options": {
+            //     "env": {
+            //         "CC": "/usr/bin/clang",
+            //         "CXX": "/usr/bin/clang++",
+            //     },
+            // },
             "windows": {
                 "command": "cmake",
                 "args": [
@@ -80,19 +76,17 @@
             "label": "CMAKE: Testing",
             "type": "shell",
             "group": "build",
-            "linux": {
-                "command": "bash",
-                "args": [
-                    "-c",
-                    "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
-                ],
-                // "options": {
-                //     "env": {
-                //         "CC": "/usr/bin/clang",
-                //         "CXX": "/usr/bin/clang++",
-                //     }
-                // },
-            },
+            "command": "bash",
+            "args": [
+                "-c",
+                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
+            ],
+            // "options": {
+            //     "env": {
+            //         "CC": "/usr/bin/clang",
+            //         "CXX": "/usr/bin/clang++",
+            //     }
+            // },
             "windows": {
                 "command": "cmake",
                 "args": [
@@ -229,11 +223,18 @@
             "label": "MAIN: Build project",
             "type": "shell",
             "group": "build",
+            "command": "bash",
             "linux": {
-                "command": "bash",
                 "args": [
                     "-c",
                     "cmake --build build/${input:buildType}-${input:compiler} --parallel$(nproc)",
+                ],
+            },
+            "osx": {
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "cmake --build build/${input:buildType}-${input:compiler} --parallel$(sysctl -n hw.physicalcpu)",
                 ],
             },
             "windows": {
@@ -266,6 +267,13 @@
                     "cmake --build build/${input:buildType}-${input:compiler} --parallel$(nproc)",
                 ],
             },
+            "osx": {
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "cmake --build build/${input:buildType}-${input:compiler} --parallel$(sysctl -n hw.physicalcpu)",
+                ],
+            },
             "windows": {
                 "command": "cmake",
                 "args": [
@@ -289,11 +297,20 @@
             "label": "COVERAGE: Build Coverage Report",
             "type": "shell",
             "group": "build",
-            "command": "bash",
-            "args": [
-                "-c",
-                "cmake --build build/Debug-cov --parallel$(nproc)",
-            ],
+            "linux": {
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "cmake --build build/Debug-cov --parallel$(nproc)",
+                ],
+            },
+            "osx": {
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "cmake --build build/Debug-cov --parallel$(sysctl -n hw.physicalcpu)",
+                ],
+            },
             "dependsOn": [
                 "CMAKE: Coverage",
             ],
@@ -384,10 +401,8 @@
                 // "'PVAError|PosVelAtt'",
                 // "--verbose",
             ],
-            "linux": {
-                "options": {
-                    "cwd": "${workspaceFolder}/build/${input:buildType}-${input:compiler}",
-                },
+            "options": {
+                "cwd": "${workspaceFolder}/build/${input:buildType}-${input:compiler}",
             },
             "windows": {
                 "options": {
