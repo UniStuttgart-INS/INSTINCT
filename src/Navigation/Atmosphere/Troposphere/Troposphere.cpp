@@ -234,6 +234,12 @@ bool ComboTroposphereModel(const char* label, TroposphereModelSelection& troposp
 ZenithDelay calcTroposphericDelayAndMapping(const InsTime& /* insTime */, const Eigen::Vector3d& lla_pos, double elevation, double /* azimuth */,
                                             const TroposphereModelSelection& troposphereModels)
 {
+    if (lla_pos(2) < -1000 || lla_pos(2) > 1e4)
+    {
+        LOG_WARN("Not calculating tropospheric delay, due to altitude being invalid: {}m", lla_pos(2));
+        return {};
+    }
+
     enum
     {
         ZHD,
