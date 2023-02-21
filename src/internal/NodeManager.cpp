@@ -133,6 +133,21 @@ bool NAV::NodeManager::DeleteNode(ax::NodeEditor::NodeId nodeId)
         {
             node->doDeinitialize(true);
         }
+        for (auto& inputPin : node->inputPins)
+        {
+            if (inputPin.isPinLinked())
+            {
+                inputPin.deleteLink();
+            }
+        }
+        for (auto& outputPin : node->outputPins)
+        {
+            if (outputPin.isPinLinked())
+            {
+                outputPin.deleteLinks();
+            }
+        }
+
         delete node; // NOLINT(cppcoreguidelines-owning-memory)
 
         flow::ApplyChanges();
