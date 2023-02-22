@@ -126,6 +126,10 @@ constexpr&#160;</td><td class="memItemRight" valign="bottom"><b>Frequency</b> ()
 <tr class="memitem:a6ddbac22d7dff02b977df4027828bd3e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Frequency.html#a6ddbac22d7dff02b977df4027828bd3e">getFrequency</a> (int8_t num=-128) const</td></tr>
 <tr class="memdesc:a6ddbac22d7dff02b977df4027828bd3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the frequency in [Hz].  <br /></td></tr>
 <tr class="separator:a6ddbac22d7dff02b977df4027828bd3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f42374bb6fff361f958f644d83b33c1"><td class="memItemLeft" align="right" valign="top"><a id="a2f42374bb6fff361f958f644d83b33c1" name="a2f42374bb6fff361f958f644d83b33c1"></a>
+<a class="el" href="classNAV_1_1Frequency.html">Frequency</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getL1</b> () const</td></tr>
+<tr class="memdesc:a2f42374bb6fff361f958f644d83b33c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the L1 <a class="el" href="classNAV_1_1Frequency.html" title="Frequency definition for different satellite systems.">Frequency</a> for each constellation. <br /></td></tr>
+<tr class="separator:a2f42374bb6fff361f958f644d83b33c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e96d620a91a23119348e49878f0b935"><td class="memItemLeft" align="right" valign="top"><a id="a1e96d620a91a23119348e49878f0b935" name="a1e96d620a91a23119348e49878f0b935"></a>
 <a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getSatSys</b> () const</td></tr>
 <tr class="memdesc:a1e96d620a91a23119348e49878f0b935"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the satellite system for which this frequency is defined. <br /></td></tr>
@@ -159,6 +163,9 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:aea6fae75773564cd399efeaa3b2104cb"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Frequency.html#aea6fae75773564cd399efeaa3b2104cb">GetFrequency</a> (<a class="el" href="classNAV_1_1Frequency.html">Frequency</a> freq, int8_t num=-128)</td></tr>
 <tr class="memdesc:aea6fae75773564cd399efeaa3b2104cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the frequency in [Hz].  <br /></td></tr>
 <tr class="separator:aea6fae75773564cd399efeaa3b2104cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a460e5b8ff14002c77d528a428cc62cb9"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classNAV_1_1Frequency.html">Frequency</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Frequency.html#a460e5b8ff14002c77d528a428cc62cb9">GetL1</a> (<a class="el" href="classNAV_1_1Frequency.html">Frequency</a> freq)</td></tr>
+<tr class="memdesc:a460e5b8ff14002c77d528a428cc62cb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the L1 <a class="el" href="classNAV_1_1Frequency.html" title="Frequency definition for different satellite systems.">Frequency</a> for each constellation.  <br /></td></tr>
+<tr class="separator:a460e5b8ff14002c77d528a428cc62cb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a84e65fcaebdd9913056720d7bdaf2832"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Frequency.html#a84e65fcaebdd9913056720d7bdaf2832">GetSatelliteSystemForFrequency</a> (<a class="el" href="classNAV_1_1Frequency.html">Frequency</a> freq)</td></tr>
 <tr class="memdesc:a84e65fcaebdd9913056720d7bdaf2832"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the Time System of the specified <a class="el" href="classNAV_1_1Frequency.html" title="Frequency definition for different satellite systems.">Frequency</a>.  <br /></td></tr>
 <tr class="separator:a84e65fcaebdd9913056720d7bdaf2832"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -308,6 +315,40 @@ Static Public Member Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">num</td><td><a class="el" href="classNAV_1_1Frequency.html" title="Frequency definition for different satellite systems.">Frequency</a> number. Only used for GLONASS G1 and G2 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a460e5b8ff14002c77d528a428cc62cb9" name="a460e5b8ff14002c77d528a428cc62cb9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a460e5b8ff14002c77d528a428cc62cb9">&#9670;&#160;</a></span>GetL1()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> NAV::Frequency::GetL1 </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classNAV_1_1Frequency.html">Frequency</a>&#160;</td>
+          <td class="paramname"><em>freq</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the L1 <a class="el" href="classNAV_1_1Frequency.html" title="Frequency definition for different satellite systems.">Frequency</a> for each constellation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">freq</td><td><a class="el" href="classNAV_1_1Frequency.html" title="Frequency definition for different satellite systems.">Frequency</a> to get the value for </td></tr>
   </table>
   </dd>
 </dl>
@@ -485,7 +526,7 @@ Static Public Member Functions</h2></td></tr>
     <!-- id is needed for treeview function! -->
     <ul>
         <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1Frequency.html">Frequency</a></li>
-        <li class="footer">Generated on Mon Jan 23 2023 09:56:09 for INSTINCT by <a href="https://www.doxygen.org/index.html"><img class="footer"
+        <li class="footer">Generated on Wed Feb 22 2023 20:53:20 for INSTINCT by <a href="https://www.doxygen.org/index.html"><img class="footer"
                     src="doxygen.svg" width="104" height="31" alt="doxygen" /></a> 1.9.6 </li>
     </ul>
 </div>

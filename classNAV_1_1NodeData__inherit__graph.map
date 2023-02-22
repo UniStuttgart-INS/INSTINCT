@@ -1,19 +1,19 @@
 <map id="NAV::NodeData" name="NAV::NodeData">
-<area shape="rect" id="node1" title="Parent class for all data transmitted over Flow pins." alt="" coords="682,5,809,185"/>
+<area shape="rect" id="node1" title="Parent class for all data transmitted over Flow pins." alt="" coords="695,5,822,185"/>
 <area shape="rect" id="node2" href="$classNAV_1_1EmlidObs.html" title="Emlid Observation Class." alt="" coords="5,285,139,406"/>
-<area shape="rect" id="node3" href="$classNAV_1_1GnssObs.html" title="GNSS Observation message information." alt="" coords="163,292,277,399"/>
-<area shape="rect" id="node4" href="$classNAV_1_1ImuObs.html" title="IMU Observation storage class." alt="" coords="301,233,451,457"/>
-<area shape="rect" id="node7" href="$classNAV_1_1LcKfInsGnssErrors.html" title="Loosely&#45;coupled Kalman Filter INS/GNSS errors." alt="" coords="476,263,649,428"/>
-<area shape="rect" id="node8" href="$classNAV_1_1Pos.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="674,233,817,457"/>
-<area shape="rect" id="node14" href="$classNAV_1_1StringObs.html" title="IMU Observation storage class." alt="" coords="841,292,967,399"/>
-<area shape="rect" id="node15" href="$classNAV_1_1UartPacket.html" title="UART Packet storage class." alt="" coords="991,292,1118,399"/>
-<area shape="rect" id="node16" href="$classNAV_1_1UbloxObs.html" title="ublox Observation Class" alt="" coords="1143,277,1276,413"/>
-<area shape="rect" id="node17" href="$classNAV_1_1VectorNavBinaryOutput.html" title="IMU Observation storage class." alt="" coords="1301,248,1510,443"/>
-<area shape="rect" id="node5" href="$classNAV_1_1ImuObsWDelta.html" title="VectorNav Observation storage Class." alt="" coords="211,513,365,649"/>
-<area shape="rect" id="node6" href="$classNAV_1_1KvhObs.html" title="Kvh Observation storage Class." alt="" coords="390,505,541,656"/>
-<area shape="rect" id="node9" href="$classNAV_1_1PosVel.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="678,505,813,656"/>
-<area shape="rect" id="node10" href="$classNAV_1_1PosVelAtt.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="463,719,649,943"/>
-<area shape="rect" id="node12" href="$classNAV_1_1RtklibPosObs.html" title="RTKLIB Observation Class." alt="" coords="674,711,817,950"/>
-<area shape="rect" id="node13" href="$classNAV_1_1SppSolution.html" title="SPP Algorithm output." alt="" coords="841,704,1047,957"/>
-<area shape="rect" id="node11" href="$classNAV_1_1InertialNavSol.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="482,1005,630,1097"/>
+<area shape="rect" id="node3" href="$classNAV_1_1GnssObs.html" title="GNSS Observation message information." alt="" coords="163,277,290,413"/>
+<area shape="rect" id="node4" href="$classNAV_1_1ImuObs.html" title="IMU Observation storage class." alt="" coords="314,233,465,457"/>
+<area shape="rect" id="node7" href="$classNAV_1_1LcKfInsGnssErrors.html" title="Loosely&#45;coupled Kalman Filter INS/GNSS errors." alt="" coords="489,263,663,428"/>
+<area shape="rect" id="node8" href="$classNAV_1_1Pos.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="687,233,830,457"/>
+<area shape="rect" id="node14" href="$classNAV_1_1StringObs.html" title="IMU Observation storage class." alt="" coords="854,292,981,399"/>
+<area shape="rect" id="node15" href="$classNAV_1_1UartPacket.html" title="UART Packet storage class." alt="" coords="1005,292,1131,399"/>
+<area shape="rect" id="node16" href="$classNAV_1_1UbloxObs.html" title="ublox Observation Class" alt="" coords="1156,277,1289,413"/>
+<area shape="rect" id="node17" href="$classNAV_1_1VectorNavBinaryOutput.html" title="IMU Observation storage class." alt="" coords="1314,248,1523,443"/>
+<area shape="rect" id="node5" href="$classNAV_1_1ImuObsWDelta.html" title="VectorNav Observation storage Class." alt="" coords="224,513,379,649"/>
+<area shape="rect" id="node6" href="$classNAV_1_1KvhObs.html" title="Kvh Observation storage Class." alt="" coords="403,505,554,656"/>
+<area shape="rect" id="node9" href="$classNAV_1_1PosVel.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="691,505,826,656"/>
+<area shape="rect" id="node10" href="$classNAV_1_1PosVelAtt.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="476,711,663,935"/>
+<area shape="rect" id="node12" href="$classNAV_1_1RtklibPosObs.html" title="RTKLIB Observation Class." alt="" coords="687,704,830,943"/>
+<area shape="rect" id="node13" href="$classNAV_1_1SppSolution.html" title="SPP Algorithm output." alt="" coords="854,719,1061,928"/>
+<area shape="rect" id="node11" href="$classNAV_1_1InertialNavSol.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="495,991,643,1083"/>
 </map>

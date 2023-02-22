@@ -1,8 +1,8 @@
 var LeastSquares_8hpp =
 [
     [ "NAV::LeastSquaresResult< SolutionVector, VarianceMatrix >", "structNAV_1_1LeastSquaresResult.html", "structNAV_1_1LeastSquaresResult" ],
-    [ "solveLinearLeastSquares", "LeastSquares_8hpp.html#a875678916f78e571a957b8785ff66110", null ],
-    [ "solveLinearLeastSquaresUncertainties", "LeastSquares_8hpp.html#ac25281ba02625c89612a7df68ac1452c", null ],
-    [ "solveWeightedLinearLeastSquares", "LeastSquares_8hpp.html#a260abacbec3feb451d3e8d18ed85a44e", null ],
-    [ "solveWeightedLinearLeastSquaresUncertainties", "LeastSquares_8hpp.html#a4f508b444da908b0050194e38e97e835", null ]
+    [ "solveLinearLeastSquares", "LeastSquares_8hpp.html#a48124cf7355bfe5c20a80aa130bcc134", null ],
+    [ "solveLinearLeastSquaresUncertainties", "LeastSquares_8hpp.html#abca5ae0d654ddf38f9186647d0e110f0", null ],
+    [ "solveWeightedLinearLeastSquares", "LeastSquares_8hpp.html#a623ee6697ed42ca4b02d5f75bdc787b0", null ],
+    [ "solveWeightedLinearLeastSquaresUncertainties", "LeastSquares_8hpp.html#a57bb8edfe0152e9ad63fac0d54eab7d3", null ]
 ];

@@ -140,9 +140,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ac6385e3fa379958be1ffb275122cba39"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="GNSS_2Functions_8hpp.html#ac6385e3fa379958be1ffb275122cba39">NAV::gpsUraVal2Idx</a> (double val)</td></tr>
 <tr class="memdesc:ac6385e3fa379958be1ffb275122cba39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a GPS URA (user range accuracy) value to it's index.  <br /></td></tr>
 <tr class="separator:ac6385e3fa379958be1ffb275122cba39"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa9c6192965b50d9548314809ef808cf"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="GNSS_2Functions_8hpp.html#aaa9c6192965b50d9548314809ef808cf">NAV::ratioFreqSquared</a> (Frequency f1, Frequency f2)</td></tr>
-<tr class="memdesc:aaa9c6192965b50d9548314809ef808cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the ration of the frequencies squared γ  <br /></td></tr>
-<tr class="separator:aaa9c6192965b50d9548314809ef808cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f347fd642592b00645a7121b1a2c860"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="GNSS_2Functions_8hpp.html#a8f347fd642592b00645a7121b1a2c860">NAV::ratioFreqSquared</a> (Frequency f1, Frequency f2, int8_t num1=-128, int8_t num2=-128)</td></tr>
+<tr class="memdesc:a8f347fd642592b00645a7121b1a2c860"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the ration of the frequencies squared γ  <br /></td></tr>
+<tr class="separator:a8f347fd642592b00645a7121b1a2c860"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>GNSS helper functions. </p>
@@ -173,7 +173,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Azimuth [rad]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[10]</a> Groves, ch. 8.5.4, eq. 8.57, p. 344 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[11]</a> Groves, ch. 8.5.4, eq. 8.57, p. 344 </dd></dl>
 
 </div>
 </div>
@@ -201,7 +201,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Elevation [rad]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[10]</a> Groves, ch. 8.5.4, eq. 8.57, p. 344 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[11]</a> Groves, ch. 8.5.4, eq. 8.57, p. 344 </dd></dl>
 
 </div>
 </div>
@@ -247,7 +247,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The corresponding pseudorange-rate measurement [s/s]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[10]</a> Groves, ch. 9.2.7, eq. 9.70, p. 388 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[11]</a> Groves, ch. 9.2.7, eq. 9.70, p. 388 </dd></dl>
 
 </div>
 </div>
@@ -286,7 +286,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The line-of-sight unit vector in ECEF frame coordinates</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[10]</a> Groves, ch. 8.5.3, eq. 8.41, p. 341 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[11]</a> Groves, ch. 8.5.3, eq. 8.41, p. 341 </dd></dl>
 
 </div>
 </div>
@@ -370,7 +370,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>URA value in [m]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[11]</a> GPS ICD ch. 20.3.3.3.1.3, p.92ff </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[12]</a> GPS ICD ch. 20.3.3.3.1.3, p.92ff </dd></dl>
 
 </div>
 </div>
@@ -398,12 +398,12 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The URA index</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[11]</a> GPS ICD ch. 20.3.3.3.1.3, p.92ff </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[12]</a> GPS ICD ch. 20.3.3.3.1.3, p.92ff </dd></dl>
 
 </div>
 </div>
-<a id="aaa9c6192965b50d9548314809ef808cf" name="aaa9c6192965b50d9548314809ef808cf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaa9c6192965b50d9548314809ef808cf">&#9670;&#160;</a></span>ratioFreqSquared()</h2>
+<a id="a8f347fd642592b00645a7121b1a2c860" name="a8f347fd642592b00645a7121b1a2c860"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f347fd642592b00645a7121b1a2c860">&#9670;&#160;</a></span>ratioFreqSquared()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -418,7 +418,19 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="classNAV_1_1Frequency.html">Frequency</a>&#160;</td>
-          <td class="paramname"><em>f2</em>&#160;</td>
+          <td class="paramname"><em>f2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int8_t&#160;</td>
+          <td class="paramname"><em>num1</em> = <code>-128</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int8_t&#160;</td>
+          <td class="paramname"><em>num2</em> = <code>-128</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -438,11 +450,13 @@ Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">f1</td><td>First frequency (usually L1) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">f2</td><td>Second frequency (usually L2) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">num1</td><td>First frequency number. Only used for GLONASS G1 and G2 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">num2</td><td>Second frequency number. Only used for GLONASS G1 and G2 </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The ratio (f1/f2)^2 [-] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[11]</a> IS-GPS-200 ch. 20.3.3.3.3.2 p.99 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[12]</a> IS-GPS-200 ch. 20.3.3.3.3.2 p.99 </dd></dl>
 
 </div>
 </div>
@@ -454,7 +468,7 @@ Functions</h2></td></tr>
     <!-- id is needed for treeview function! -->
     <ul>
         <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d02623c45f6ab1c9bbaef247468873ab.html">Navigation</a></li><li class="navelem"><a class="el" href="dir_5565a495a275b80727f59d1f67761ca7.html">GNSS</a></li><li class="navelem"><a class="el" href="GNSS_2Functions_8hpp.html">Functions.hpp</a></li>
-        <li class="footer">Generated on Mon Jan 23 2023 09:56:09 for INSTINCT by <a href="https://www.doxygen.org/index.html"><img class="footer"
+        <li class="footer">Generated on Wed Feb 22 2023 20:53:20 for INSTINCT by <a href="https://www.doxygen.org/index.html"><img class="footer"
                     src="doxygen.svg" width="104" height="31" alt="doxygen" /></a> 1.9.6 </li>
     </ul>
 </div>

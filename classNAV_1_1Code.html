@@ -320,11 +320,15 @@ Public Types</h2></td></tr>
 , <br />
 &#160;&#160;<a class="el" href="classNAV_1_1Code.html#af180d7a6aba068a798f8efc3799f8a6caf55751cb71d94fedfca17d3dac31fbe7">E5X</a>
 , <br />
+&#160;&#160;<a class="el" href="classNAV_1_1Code.html#af180d7a6aba068a798f8efc3799f8a6cad0397525e3224afa1a388d78befc0a90">E6A</a>
+, <br />
 &#160;&#160;<a class="el" href="classNAV_1_1Code.html#af180d7a6aba068a798f8efc3799f8a6ca0086667edf60c5285c0caaf255c0daee">E6B</a>
 , <br />
 &#160;&#160;<a class="el" href="classNAV_1_1Code.html#af180d7a6aba068a798f8efc3799f8a6cad5e76b83602eb6f081257d9d01c8a12a">E6C</a>
 , <br />
 &#160;&#160;<a class="el" href="classNAV_1_1Code.html#af180d7a6aba068a798f8efc3799f8a6ca54fdbbc32cd03ec0a73867008d9c69ce">E6X</a>
+, <br />
+&#160;&#160;<a class="el" href="classNAV_1_1Code.html#af180d7a6aba068a798f8efc3799f8a6ca79016e6bda1783ba858b572864ccc0b7">E6Z</a>
 , <br />
 &#160;&#160;<a class="el" href="classNAV_1_1Code.html#af180d7a6aba068a798f8efc3799f8a6ca1c93bbd48b7033b2fb5eb108f56054e5">E7I</a>
 , <br />
@@ -498,10 +502,10 @@ const char *&#160;</td><td class="memItemRight" valign="bottom"><b>getDescriptio
 <a class="el" href="classNAV_1_1Frequency.html">Frequency</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getFrequency</b> () const</td></tr>
 <tr class="memdesc:a4b1175d5c621fa2344255c6def3f906c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the frequency for the code. <br /></td></tr>
 <tr class="separator:a4b1175d5c621fa2344255c6def3f906c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac12ad1916e503462bf815a19d144f3b5"><td class="memItemLeft" align="right" valign="top"><a id="ac12ad1916e503462bf815a19d144f3b5" name="ac12ad1916e503462bf815a19d144f3b5"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>operator bool</b> ()</td></tr>
-<tr class="memdesc:ac12ad1916e503462bf815a19d144f3b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implicit bool conversion operator. Allows if(...) <br /></td></tr>
-<tr class="separator:ac12ad1916e503462bf815a19d144f3b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aab34dd198bd9ccc387befd94b010619f"><td class="memItemLeft" align="right" valign="top"><a id="aab34dd198bd9ccc387befd94b010619f" name="aab34dd198bd9ccc387befd94b010619f"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>operator bool</b> () const</td></tr>
+<tr class="memdesc:aab34dd198bd9ccc387befd94b010619f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implicit bool conversion operator. Allows if(...) <br /></td></tr>
+<tr class="separator:aab34dd198bd9ccc387befd94b010619f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5cbc9775cbc8c496109c86d7401fe9fa"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Code.html#a5cbc9775cbc8c496109c86d7401fe9fa">operator Set</a> () const</td></tr>
 <tr class="memdesc:a5cbc9775cbc8c496109c86d7401fe9fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">std::bitset conversion operator  <br /></td></tr>
 <tr class="separator:a5cbc9775cbc8c496109c86d7401fe9fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -610,7 +614,11 @@ Static Public Member Functions</h2></td></tr>
 <tr>
 <td>E5a </td><td>L5I, L5Q, L5X </td><td>E5a (data, pilot, combined) </td></tr>
 <tr>
-<td>E6 </td><td>L6B, L6C, L6X </td><td>E6 (data, pilot, combined) </td></tr>
+<td rowspan="3" valign="top">E6 </td><td>L6A </td><td>E6 PRS signal </td></tr>
+<tr>
+<td>L6B, L6C, L6X </td><td>E6 (data, pilot, combined) </td></tr>
+<tr>
+<td>L6Z </td><td>E6 PRS + OS(data+pilot) </td></tr>
 <tr>
 <td>E5b </td><td>L7I, L7Q, L7X </td><td>E5b (data, pilot, combined) </td></tr>
 <tr>
@@ -676,9 +684,9 @@ Static Public Member Functions</h2></td></tr>
 <tr>
 <td>L5 </td><td>L5I, L5Q, L5X </td><td>L5 (data, pilot, combined) </td></tr>
 </table>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_SpringerHandbookGNSS2017">[30]</a> Springer Handbook GNSS Annex A, Table A.5, p. 1211 </dd>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_SpringerHandbookGNSS2017">[31]</a> Springer Handbook GNSS Annex A, Table A.5, p. 1211 </dd>
 <dd>
-See <a class="el" href="citelist.html#CITEREF_RINEX-3.04">[25]</a> RINEX 3.04 Appendix A23, p. A43-A46 (97-100) </dd></dl>
+See <a class="el" href="citelist.html#CITEREF_RINEX-3.04">[26]</a> RINEX 3.04 Appendix A23, p. A43-A46 (97-100) </dd></dl>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="af0f6f26fbe52aeb6292d3cffb899422a" name="af0f6f26fbe52aeb6292d3cffb899422a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af0f6f26fbe52aeb6292d3cffb899422a">&#9670;&#160;</a></span>anonymous enum</h2>
@@ -910,11 +918,15 @@ See <a class="el" href="citelist.html#CITEREF_RINEX-3.04">[25]</a> RINEX 3.04 Ap
 </td></tr>
 <tr><td class="fieldname"><a id="af180d7a6aba068a798f8efc3799f8a6caf55751cb71d94fedfca17d3dac31fbe7" name="af180d7a6aba068a798f8efc3799f8a6caf55751cb71d94fedfca17d3dac31fbe7"></a>E5X&#160;</td><td class="fielddoc"><p>GAL E5a - Combined. </p>
 </td></tr>
+<tr><td class="fieldname"><a id="af180d7a6aba068a798f8efc3799f8a6cad0397525e3224afa1a388d78befc0a90" name="af180d7a6aba068a798f8efc3799f8a6cad0397525e3224afa1a388d78befc0a90"></a>E6A&#160;</td><td class="fielddoc"><p>GAL E6 - PRS signal. </p>
+</td></tr>
 <tr><td class="fieldname"><a id="af180d7a6aba068a798f8efc3799f8a6ca0086667edf60c5285c0caaf255c0daee" name="af180d7a6aba068a798f8efc3799f8a6ca0086667edf60c5285c0caaf255c0daee"></a>E6B&#160;</td><td class="fielddoc"><p>GAL E6 - Data. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="af180d7a6aba068a798f8efc3799f8a6cad5e76b83602eb6f081257d9d01c8a12a" name="af180d7a6aba068a798f8efc3799f8a6cad5e76b83602eb6f081257d9d01c8a12a"></a>E6C&#160;</td><td class="fielddoc"><p>GAL E6 - Pilot. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="af180d7a6aba068a798f8efc3799f8a6ca54fdbbc32cd03ec0a73867008d9c69ce" name="af180d7a6aba068a798f8efc3799f8a6ca54fdbbc32cd03ec0a73867008d9c69ce"></a>E6X&#160;</td><td class="fielddoc"><p>GAL E6 - Combined. </p>
+<tr><td class="fieldname"><a id="af180d7a6aba068a798f8efc3799f8a6ca54fdbbc32cd03ec0a73867008d9c69ce" name="af180d7a6aba068a798f8efc3799f8a6ca54fdbbc32cd03ec0a73867008d9c69ce"></a>E6X&#160;</td><td class="fielddoc"><p>GAL E6 - Combined (B+C) </p>
+</td></tr>
+<tr><td class="fieldname"><a id="af180d7a6aba068a798f8efc3799f8a6ca79016e6bda1783ba858b572864ccc0b7" name="af180d7a6aba068a798f8efc3799f8a6ca79016e6bda1783ba858b572864ccc0b7"></a>E6Z&#160;</td><td class="fielddoc"><p>GAL E6 - PRS + OS (A+B+C) </p>
 </td></tr>
 <tr><td class="fieldname"><a id="af180d7a6aba068a798f8efc3799f8a6ca1c93bbd48b7033b2fb5eb108f56054e5" name="af180d7a6aba068a798f8efc3799f8a6ca1c93bbd48b7033b2fb5eb108f56054e5"></a>E7I&#160;</td><td class="fielddoc"><p>GAL E5b - Data. </p>
 </td></tr>
@@ -1684,7 +1696,7 @@ See <a class="el" href="citelist.html#CITEREF_RINEX-3.04">[25]</a> RINEX 3.04 Ap
     <!-- id is needed for treeview function! -->
     <ul>
         <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1Code.html">Code</a></li>
-        <li class="footer">Generated on Mon Jan 23 2023 09:56:09 for INSTINCT by <a href="https://www.doxygen.org/index.html"><img class="footer"
+        <li class="footer">Generated on Wed Feb 22 2023 20:53:20 for INSTINCT by <a href="https://www.doxygen.org/index.html"><img class="footer"
                     src="doxygen.svg" width="104" height="31" alt="doxygen" /></a> 1.9.6 </li>
     </ul>
 </div>

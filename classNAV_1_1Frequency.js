@@ -5,6 +5,8 @@ var classNAV_1_1Frequency =
     [ "fromString", "classNAV_1_1Frequency.html#a23f527e5062e09acf41b5fee8e31e59d", null ],
     [ "GetFrequency", "classNAV_1_1Frequency.html#aea6fae75773564cd399efeaa3b2104cb", null ],
     [ "getFrequency", "classNAV_1_1Frequency.html#a6ddbac22d7dff02b977df4027828bd3e", null ],
+    [ "getL1", "classNAV_1_1Frequency.html#a2f42374bb6fff361f958f644d83b33c1", null ],
+    [ "GetL1", "classNAV_1_1Frequency.html#a460e5b8ff14002c77d528a428cc62cb9", null ],
     [ "GetSatelliteSystemForFrequency", "classNAV_1_1Frequency.html#a84e65fcaebdd9913056720d7bdaf2832", null ],
     [ "getSatSys", "classNAV_1_1Frequency.html#a1e96d620a91a23119348e49878f0b935", null ],
     [ "operator bool", "classNAV_1_1Frequency.html#ad26ebd11ba7c340cf387fb530989f24f", null ],

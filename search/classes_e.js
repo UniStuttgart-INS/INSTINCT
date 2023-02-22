@@ -14,5 +14,6 @@ var searchData=
   ['posvelattderivativeconstants_5fe_11',['PosVelAttDerivativeConstants_e',['../structNAV_1_1PosVelAttDerivativeConstants__e.html',1,'NAV']]],
   ['posvelattderivativeconstants_5fn_12',['PosVelAttDerivativeConstants_n',['../structNAV_1_1PosVelAttDerivativeConstants__n.html',1,'NAV']]],
   ['posvelattinitializer_13',['PosVelAttInitializer',['../classNAV_1_1PosVelAttInitializer.html',1,'NAV']]],
-  ['posvelattlogger_14',['PosVelAttLogger',['../classNAV_1_1PosVelAttLogger.html',1,'NAV']]]
+  ['posvelattlogger_14',['PosVelAttLogger',['../classNAV_1_1PosVelAttLogger.html',1,'NAV']]],
+  ['pseudorange_15',['Pseudorange',['../structNAV_1_1GnssObs_1_1ObservationData_1_1Pseudorange.html',1,'NAV::GnssObs::ObservationData']]]
 ];

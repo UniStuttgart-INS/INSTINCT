@@ -1,9 +1,9 @@
 <map id="NAV::PosVel" name="NAV::PosVel">
 <area shape="rect" id="node1" title="Position, Velocity and Attitude Storage Class." alt="" coords="221,505,355,656"/>
-<area shape="rect" id="node4" href="$classNAV_1_1PosVelAtt.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="5,719,192,943"/>
-<area shape="rect" id="node6" href="$classNAV_1_1RtklibPosObs.html" title="RTKLIB Observation Class." alt="" coords="217,711,359,950"/>
-<area shape="rect" id="node7" href="$classNAV_1_1SppSolution.html" title="SPP Algorithm output." alt="" coords="383,704,590,957"/>
+<area shape="rect" id="node4" href="$classNAV_1_1PosVelAtt.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="5,711,192,935"/>
+<area shape="rect" id="node6" href="$classNAV_1_1RtklibPosObs.html" title="RTKLIB Observation Class." alt="" coords="217,704,359,943"/>
+<area shape="rect" id="node7" href="$classNAV_1_1SppSolution.html" title="SPP Algorithm output." alt="" coords="383,719,590,928"/>
 <area shape="rect" id="node2" href="$classNAV_1_1Pos.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="217,233,359,457"/>
 <area shape="rect" id="node3" href="$classNAV_1_1NodeData.html" title="Parent class for all data transmitted over Flow pins." alt="" coords="225,5,351,185"/>
-<area shape="rect" id="node5" href="$classNAV_1_1InertialNavSol.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="25,1005,173,1097"/>
+<area shape="rect" id="node5" href="$classNAV_1_1InertialNavSol.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="25,991,173,1083"/>
 </map>

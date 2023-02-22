@@ -7,5 +7,11 @@ var searchData=
   ['zenithdelay_4',['ZenithDelay',['../structNAV_1_1ZenithDelay.html',1,'NAV']]],
   ['zenithdelay_2ehpp_5',['ZenithDelay.hpp',['../ZenithDelay_8hpp.html',1,'']]],
   ['zhd_6',['ZHD',['../structNAV_1_1ZenithDelay.html#a19bbb15af336f80f00f40ed3b337159d',1,'NAV::ZenithDelay']]],
-  ['zwd_7',['ZWD',['../structNAV_1_1ZenithDelay.html#af866c4c5f69dae1f704abea9ee99aad4',1,'NAV::ZenithDelay']]]
+  ['zhdmappingfactor_7',['zhdMappingFactor',['../structNAV_1_1ZenithDelay.html#ac3b8fd005444ef02f1613521dea85e29',1,'NAV::ZenithDelay']]],
+  ['zhdmappingfunction_8',['zhdMappingFunction',['../structNAV_1_1TroposphereModelSelection.html#af666ea547b63a1e8a505ae01fd4bce79',1,'NAV::TroposphereModelSelection']]],
+  ['zhdmodel_9',['zhdModel',['../structNAV_1_1TroposphereModelSelection.html#ad1c95978c386c3698cc6df112593ee26',1,'NAV::TroposphereModelSelection']]],
+  ['zwd_10',['ZWD',['../structNAV_1_1ZenithDelay.html#af866c4c5f69dae1f704abea9ee99aad4',1,'NAV::ZenithDelay']]],
+  ['zwdmappingfactor_11',['zwdMappingFactor',['../structNAV_1_1ZenithDelay.html#a0436b19e7767a511082e7a7ce1195b34',1,'NAV::ZenithDelay']]],
+  ['zwdmappingfunction_12',['zwdMappingFunction',['../structNAV_1_1TroposphereModelSelection.html#a36fadbc5e1193a671e1eda6dd58afc74',1,'NAV::TroposphereModelSelection']]],
+  ['zwdmodel_13',['zwdModel',['../structNAV_1_1TroposphereModelSelection.html#ac4ee7a87c62f085318dd05d54504c0a0',1,'NAV::TroposphereModelSelection']]]
 ];

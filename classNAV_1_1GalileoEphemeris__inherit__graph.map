@@ -1,6 +1,6 @@
 <map id="NAV::GalileoEphemeris" name="NAV::GalileoEphemeris">
-<area shape="rect" id="node1" title="Broadcasted ephemeris message data." alt="" coords="121,491,356,876"/>
-<area shape="rect" id="node2" href="$classNAV_1_1SatNavData.html" title="Satellite Navigation data (to calculate SatNavData and clock)" alt="" coords="171,263,307,443"/>
-<area shape="rect" id="node3" href="$classNAV_1_1Orbit.html" title="Abstract satellite orbit information." alt="" coords="5,5,240,215"/>
-<area shape="rect" id="node4" href="$classNAV_1_1Clock.html" title="Abstract satellite clock information." alt="" coords="265,27,447,193"/>
+<area shape="rect" id="node1" title="Broadcasted ephemeris message data." alt="" coords="95,505,330,847"/>
+<area shape="rect" id="node2" href="$classNAV_1_1SatNavData.html" title="Satellite Navigation data (to calculate SatNavData and clock)" alt="" coords="145,277,281,457"/>
+<area shape="rect" id="node3" href="$classNAV_1_1Clock.html" title="Abstract satellite clock information." alt="" coords="5,35,188,200"/>
+<area shape="rect" id="node4" href="$classNAV_1_1Orbit.html" title="Abstract satellite orbit information." alt="" coords="213,5,447,229"/>
 </map>

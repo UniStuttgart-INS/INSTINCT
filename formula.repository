@@ -145,16 +145,16 @@
 \end{aligned}
 \end{equation}
 \_form#59=33x19:\eqref{eq:eq-ImuIntegrator-Mechanization-n-Position}
-\_form#60=93x14:$ \mathbf{v} = \mathbf{b} - \mathbf{A} \mathbf{x} $
-\_form#61=1640x51:\begin{equation} \label{eq:eq-LinearLeastSquares-functional}
-  J(\mathbf{x}) \equiv \sum_{i=1}^m v_i^2 = \mathbf{v}^T \mathbf{v} = (\mathbf{b} - \mathbf{A} \mathbf{x})^T (\mathbf{b} - \mathbf{A} \mathbf{x})
+\_form#60=102x14:$ \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} $
+\_form#61=1650x51:\begin{equation} \label{eq:eq-LinearLeastSquares-functional}
+  J(\mathbf{x}) \equiv \sum_{i=1}^m v_i^2 = \mathbf{v}^T \mathbf{v} = (\mathbf{dz} - \mathbf{H} \mathbf{x})^T (\mathbf{dz} - \mathbf{H} \mathbf{x})
 \end{equation}
-\_form#62=42x18:$ \mathbf{A}^T \mathbf{A} $
-\_form#63=1547x28:\begin{equation} \label{eq:eq-LinearLeastSquares-solution}
-  \mathbf{x} = \left(\mathbf{A}^T \mathbf{A} \right)^{-1} \mathbf{A}^T \mathbf{b}
+\_form#62=42x18:$ \mathbf{H}^T \mathbf{H} $
+\_form#63=1552x28:\begin{equation} \label{eq:eq-LinearLeastSquares-solution}
+  \mathbf{x} = \left(\mathbf{H}^T \mathbf{H} \right)^{-1} \mathbf{H}^T \mathbf{dz}
 \end{equation}
-\_form#64=1568x28:\begin{equation} \label{eq:eq-WeightedLinearLeastSquares}
-  \mathbf{x} = \left(\mathbf{A}^T \mathbf{W} \mathbf{A} \right)^{-1} \mathbf{A}^T \mathbf{W} \mathbf{b}
+\_form#64=1573x28:\begin{equation} \label{eq:eq-WeightedLinearLeastSquares}
+  \mathbf{x} = \left(\mathbf{H}^T \mathbf{W} \mathbf{H} \right)^{-1} \mathbf{H}^T \mathbf{W} \mathbf{dz}
 \end{equation}
 \_form#65=60x14:$ 2n \times 2n $
 \_form#66=16x14:$ \mathbf{A} $

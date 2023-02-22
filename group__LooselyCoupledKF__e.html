@@ -273,7 +273,7 @@ Detailed form</h2>
 \end{equation}" src="form_148.svg" width="1990" height="728"/></picture>
 </p>
 <p>This form corresponds to</p><ul>
-<li><a class="el" href="citelist.html#CITEREF_Groves2013">[10]</a> Groves, ch. 14.2.3, eq. 14.48, p. 583</li>
+<li><a class="el" href="citelist.html#CITEREF_Groves2013">[11]</a> Groves, ch. 14.2.3, eq. 14.48, p. 583</li>
 </ul>
 <h1><a class="anchor" id="LooselyCoupledKF_e-Noise"></a>
 Augmented State with Noise</h1>
@@ -393,7 +393,7 @@ Random Walk</h2>
 <li><picture><source srcset="form_157_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \sigma_{rg} $" src="form_157.svg" width="25" height="14"/></picture> is the standard deviation of the noise on the gyro angular-rate measurements</li>
 <li><picture><source srcset="form_158_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \tau_i $" src="form_158.svg" width="12" height="12"/></picture> is the interval between the input of successive accelerometer and gyro outputs to the inertial navigation equations</li>
 </ul>
-<p>see <a class="el" href="citelist.html#CITEREF_Groves2013">[10]</a> Groves, ch. 14.2.6, eq. 14.83, p. 592</p>
+<p>see <a class="el" href="citelist.html#CITEREF_Groves2013">[11]</a> Groves, ch. 14.2.6, eq. 14.83, p. 592</p>
 <h2><a class="anchor" id="LooselyCoupledKF_e-Noise-GM1"></a>
 Gauss-Markov 1. Order</h2>
 <p>On the other hand, the dynamic bias of the accelerometer and gyro can be estimated with a Gauss-Markov 1. Order.</p>
@@ -427,7 +427,7 @@ Gauss-Markov 1. Order</h2>
 <li><picture><source srcset="form_164_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \sigma_{bad} $" src="form_164.svg" width="32" height="12"/></picture> and <picture><source srcset="form_165_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \sigma_{bgd} $" src="form_165.svg" width="32" height="14"/></picture> are the standard deviations of the accelerometer and gyro dynamic biases</li>
 <li><picture><source srcset="form_166_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \tau_{bad} $" src="form_166.svg" width="30" height="12"/></picture> and <picture><source srcset="form_167_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \tau_{bgd} $" src="form_167.svg" width="28" height="14"/></picture> are the correlation times of the dynamic accelerometer and gyro biases</li>
 </ul>
-<p>see <a class="el" href="citelist.html#CITEREF_Groves2013">[10]</a> Groves, ch. 14.2.6, eq. 14.84, p. 592</p>
+<p>see <a class="el" href="citelist.html#CITEREF_Groves2013">[11]</a> Groves, ch. 14.2.6, eq. 14.84, p. 592</p>
 <h2><a class="anchor" id="LooselyCoupledKF_e-Noise-Scale-matrix"></a>
 Noise scale matrix W</h2>
 <p><a class="anchor" id="eq-LCKF_e-random-walk-noise-scale-matrix-W"></a> </p><p class="formulaDsp">
@@ -459,7 +459,7 @@ Kalman-Filter Matrices</h1>
 State transition matrix 𝚽 &amp; Process noise covariance matrix Q</h2>
 <h3><a class="anchor" id="LooselyCoupledKF_e-KF-Phi"></a>
 State transition matrix 𝚽</h3>
-<h4><a class="anchor" id="autotoc_md5"></a>
+<h4><a class="anchor" id="autotoc_md4"></a>
 Exponential Matrix</h4>
 <p>The state transition matrix is defined as</p>
 <p><a class="anchor" id="eq-LCKF_e-Phi-exp"></a> </p><p class="formulaDsp">
@@ -467,8 +467,8 @@ Exponential Matrix</h4>
   \boldsymbol{\Phi} = \exp{(\mathbf{F} \tau_s)}
 \end{equation}" src="form_172.svg" width="1526" height="19"/></picture>
 </p>
-<p>see <a class="el" href="citelist.html#CITEREF_Groves2013">[10]</a> Groves, ch. 3.2.3, eq. 3.33, p. 97</p>
-<h4><a class="anchor" id="autotoc_md6"></a>
+<p>see <a class="el" href="citelist.html#CITEREF_Groves2013">[11]</a> Groves, ch. 3.2.3, eq. 3.33, p. 97</p>
+<h4><a class="anchor" id="autotoc_md5"></a>
 Taylor series</h4>
 <p>The exponential matrix cannot be calculated directly and numerical methods are computationally intensive. Therefore the transition matrix can be computed as a power-series expansion</p>
 <p><a class="anchor" id="eq-LCKF_e-Phi-Taylor"></a> </p><p class="formulaDsp">
@@ -476,7 +476,7 @@ Taylor series</h4>
   \boldsymbol{\Phi} = \sum_{r=0}^{\infty} \frac{\mathbf{F}^r \tau_s^r}{r!} = \mathbf{I} + \mathbf{F} \tau_s + \frac{1}{2} \mathbf{F}^2 \tau^2 + \frac{1}{6} \mathbf{F}^3 \tau_s^3 + \dots
 \end{equation}" src="form_173.svg" width="1659" height="51"/></picture>
 </p>
-<p>see <a class="el" href="citelist.html#CITEREF_Groves2013">[10]</a> Groves, ch. 3.2.3, eq. 3.34, p. 98</p>
+<p>see <a class="el" href="citelist.html#CITEREF_Groves2013">[11]</a> Groves, ch. 3.2.3, eq. 3.34, p. 98</p>
 <h3><a class="anchor" id="LooselyCoupledKF_e-KF-Q"></a>
 Process noise covariance matrix Q</h3>
 <p>The process noise covariance matrix is defined as</p>
@@ -491,12 +491,12 @@ Process noise covariance matrix Q</h3>
   \mathbf{Q}_{k-1} \approx \mathbf{G}_{k-1} \mathbf{W}_{k-1} \mathbf{G}_{k-1}^T \tau_s
 \end{equation}" src="form_175.svg" width="1577" height="21"/></picture>
 </p>
-<p>see <a class="el" href="citelist.html#CITEREF_Groves2013">[10]</a> Groves, ch. 3.2.3, eq. 3.43/3.45, p. 99</p>
+<p>see <a class="el" href="citelist.html#CITEREF_Groves2013">[11]</a> Groves, ch. 3.2.3, eq. 3.43/3.45, p. 99</p>
 <p>Taking the noise input and scale matrices from <a class="el" href="group__LooselyCoupledKF__n.html#eq-LCKF_n-dynamicModel-short"><picture><source srcset="form_176_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="\eqref{eq:eq-LCKF_n-dynamicModel-short}" src="form_176.svg" width="44" height="19"/></picture> </a> and <a class="el" href="group__LooselyCoupledKF__n.html#eq-LCKF_n-random-walk-noise-scale-matrix-W"><picture><source srcset="form_177_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="\eqref{eq:eq-LCKF_n-random-walk-noise-scale-matrix-W}" src="form_177.svg" width="44" height="19"/></picture> </a> and putting it into the exact form <a class="el" href="group__LooselyCoupledKF__n.html#eq-LCKF_n-Q-exact"><picture><source srcset="form_178_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="\eqref{eq:eq-LCKF_n-Q-exact}" src="form_178.svg" width="44" height="19"/></picture> </a>, it becomes</p>
 <p>TODO: <picture><source srcset="form_179_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \text{\textcolor{red}{Add content here}} $" src="form_179.svg" width="133" height="16"/></picture></p>
 <h3><a class="anchor" id="LooselyCoupledKF_e-KF-Phi-Q-Van-Loan"></a>
 Van Loan method</h3>
-<p>The state transition matrix and the system/process noise covariance matrix can be calculated with the van Loan method <a class="el" href="citelist.html#CITEREF_Loan1978">[33]</a> . In short</p>
+<p>The state transition matrix and the system/process noise covariance matrix can be calculated with the van Loan method <a class="el" href="citelist.html#CITEREF_Loan1978">[34]</a> . In short</p>
 <ol type="1">
 <li>Form a <picture><source srcset="form_65_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ 2n \times 2n $" src="form_65.svg" width="60" height="14"/></picture> matrix called <picture><source srcset="form_66_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \mathbf{A} $" src="form_66.svg" width="16" height="14"/></picture> ( <picture><source srcset="form_67_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ n $" src="form_67.svg" width="11" height="11"/></picture> is the dimension of <picture><source srcset="form_68_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \mathbf{x} $" src="form_68.svg" width="11" height="11"/></picture> and <picture><source srcset="form_69_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \mathbf{W} $" src="form_69.svg" width="21" height="14"/></picture> is the power spectral density of the noise <picture><source srcset="form_70_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ W(t) $" src="form_70.svg" width="39" height="19"/></picture>) <a class="anchor" id="eq-LCKF_e-Loan-A"></a> <p class="formulaDsp">
 <picture><source srcset="form_180_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Loan-A}
@@ -568,7 +568,7 @@ Measurement innovation 𝛿z</h2>
 <li><picture><source srcset="form_187_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \mathbf{l}_{ba}^b $" src="form_187.svg" width="19" height="21"/></picture> is the lever arm from the INS to the GNSS antenna in [m]</li>
 </ul>
 <p>This form corresponds to</p><ul>
-<li><a class="el" href="citelist.html#CITEREF_Groves2013">[10]</a> Groves, ch. 14.3.1, eq. 14.102, p. 598</li>
+<li><a class="el" href="citelist.html#CITEREF_Groves2013">[11]</a> Groves, ch. 14.3.1, eq. 14.102, p. 598</li>
 </ul>
 <h2><a class="anchor" id="LooselyCoupledKF_e-KF-H"></a>
 Measurement sensitivity Matrix H</h2>
@@ -579,7 +579,7 @@ Measurement sensitivity Matrix H</h2>
 \end{equation}" src="form_188.svg" width="1624" height="49"/></picture>
 </p>
 <p>see</p><ul>
-<li><a class="el" href="citelist.html#CITEREF_Groves2013">[10]</a> Groves, ch. 3.4.1, eq. 3.90, p. 119</li>
+<li><a class="el" href="citelist.html#CITEREF_Groves2013">[11]</a> Groves, ch. 3.4.1, eq. 3.90, p. 119</li>
 </ul>
 <p><a class="anchor" id="eq-LCKF_e-H"></a> </p><p class="formulaDsp">
 <picture><source srcset="form_189_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-H}
@@ -611,7 +611,7 @@ Measurement sensitivity Matrix H</h2>
 \end{equation}" src="form_190.svg" width="1636" height="110"/></picture>
 </p>
 <p>See</p><ul>
-<li><a class="el" href="citelist.html#CITEREF_Groves2013">[10]</a> Groves, ch. 14.3.1, eq. 14.111/14.112, p. 600</li>
+<li><a class="el" href="citelist.html#CITEREF_Groves2013">[11]</a> Groves, ch. 14.3.1, eq. 14.111/14.112, p. 600</li>
 </ul>
 <h2><a class="anchor" id="LooselyCoupledKF_e-KF-R"></a>
 Measurement noise covariance matrix R</h2>
@@ -639,7 +639,7 @@ Corrections</h1>
 <p>This section describes how the errors are applied to the total state.</p>
 <h2><a class="anchor" id="LooselyCoupledKF_e-Corrections-State"></a>
 Position, Velocity, Attitude</h2>
-<p>The position and velocity errors get applied by simply subtracting them from the previous total state (see <a class="el" href="citelist.html#CITEREF_Groves2013">[10]</a> Groves, ch. 14.1.1, eq. 14.8, 14.9, p. 564)</p>
+<p>The position and velocity errors get applied by simply subtracting them from the previous total state (see <a class="el" href="citelist.html#CITEREF_Groves2013">[11]</a> Groves, ch. 14.1.1, eq. 14.8, 14.9, p. 564)</p>
 <p><a class="anchor" id="eq-LCKF_e-correction-position-velocity"></a> </p><p class="formulaDsp">
 <picture><source srcset="form_192_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-correction-position-velocity}
 \begin{aligned}
@@ -648,7 +648,7 @@ Position, Velocity, Attitude</h2>
 \end{aligned}
 \end{equation}" src="form_192.svg" width="1542" height="44"/></picture>
 </p>
-<p>The attitude correction can be derived from equation <a class="el" href="group__LooselyCoupledKF__e.html#eq-LCKF_e-Derivation-Attitude-estimate-errors"><picture><source srcset="form_193_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Attitude-estimate-errors}" src="form_193.svg" width="44" height="19"/></picture> </a> (see <a class="el" href="citelist.html#CITEREF_Groves2013">[10]</a> Groves, ch. 14.1.1, eq. 14.7, p. 564) <a class="anchor" id="eq-LCKF_e-correction-attitude"></a> </p><p class="formulaDsp">
+<p>The attitude correction can be derived from equation <a class="el" href="group__LooselyCoupledKF__e.html#eq-LCKF_e-Derivation-Attitude-estimate-errors"><picture><source srcset="form_193_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Attitude-estimate-errors}" src="form_193.svg" width="44" height="19"/></picture> </a> (see <a class="el" href="citelist.html#CITEREF_Groves2013">[11]</a> Groves, ch. 14.1.1, eq. 14.7, p. 564) <a class="anchor" id="eq-LCKF_e-correction-attitude"></a> </p><p class="formulaDsp">
 <picture><source srcset="form_194_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-correction-attitude}
   \mathbf{C}_b^{e,+} = (\mathbf{I}_3 - [\boldsymbol{\delta \psi} \times]) \mathbf{C}_b^{e,-}
 \end{equation}" src="form_194.svg" width="1570" height="25"/></picture>
@@ -688,8 +688,8 @@ Position Equations</h3>
 \end{equation}" src="form_197.svg" width="1507" height="19"/></picture>
 </p>
 <p>see</p><ul>
-<li><a class="el" href="citelist.html#CITEREF_Groves2013">[10]</a> Groves, ch. 5.3.4, eq. 5.37, p. 175</li>
-<li><a class="el" href="citelist.html#CITEREF_Jekeli2001">[13]</a> Jekeli, ch. 4.3.3, eq. 4.84, p. 126</li>
+<li><a class="el" href="citelist.html#CITEREF_Groves2013">[11]</a> Groves, ch. 5.3.4, eq. 5.37, p. 175</li>
+<li><a class="el" href="citelist.html#CITEREF_Jekeli2001">[14]</a> Jekeli, ch. 4.3.3, eq. 4.84, p. 126</li>
 </ul>
 <p>The time derivative of the position error thus is</p>
 <p><a class="anchor" id="eq-LCKF_e-Derivation-Position-differential"></a> </p><p class="formulaDsp">
@@ -698,7 +698,7 @@ Position Equations</h3>
 \end{equation}" src="form_198.svg" width="1531" height="26"/></picture>
 </p>
 <p>see</p><ul>
-<li><a class="el" href="citelist.html#CITEREF_Groves2013">[10]</a> Groves, ch. 14.2.3, eq. 14.47, p. 583</li>
+<li><a class="el" href="citelist.html#CITEREF_Groves2013">[11]</a> Groves, ch. 14.2.3, eq. 14.47, p. 583</li>
 </ul>
 <h3><a class="anchor" id="LooselyCoupledKF_e-ErrorStateEquations-Derivation-Attitude"></a>
 Attitude Equations</h3>
@@ -729,8 +729,8 @@ Attitude Equations</h3>
 \end{equation}" src="form_210.svg" width="1563" height="26"/></picture>
 </p>
 <p>Using the following equations for the transformation</p><ul>
-<li>Angular rate splitting <picture><source srcset="form_211_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \boldsymbol{\omega}_{\beta\alpha}^\gamma = \boldsymbol{\omega}_{\beta\delta}^\gamma + \boldsymbol{\omega}_{\delta\alpha}^\gamma $" src="form_211.svg" width="135" height="23"/></picture> &emsp;<a class="el" href="citelist.html#CITEREF_Groves2013">[10]</a> Groves, ch. 2.3.1, eq. 2.48, p. 45</li>
-<li>Skew-symmetric matrix transformation <picture><source srcset="form_212_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \mathbf{\Omega}_{\beta\alpha}^\delta = \mathbf{C}_\gamma^\delta \mathbf{\Omega}_{\beta\alpha}^\gamma \mathbf{C}_\delta^\gamma $" src="form_212.svg" width="135" height="25"/></picture> &emsp;<a class="el" href="citelist.html#CITEREF_Groves2013">[10]</a> Groves, ch. 2.3.1, eq. 2.51, p. 45</li>
+<li>Angular rate splitting <picture><source srcset="form_211_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \boldsymbol{\omega}_{\beta\alpha}^\gamma = \boldsymbol{\omega}_{\beta\delta}^\gamma + \boldsymbol{\omega}_{\delta\alpha}^\gamma $" src="form_211.svg" width="135" height="23"/></picture> &emsp;<a class="el" href="citelist.html#CITEREF_Groves2013">[11]</a> Groves, ch. 2.3.1, eq. 2.48, p. 45</li>
+<li>Skew-symmetric matrix transformation <picture><source srcset="form_212_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \mathbf{\Omega}_{\beta\alpha}^\delta = \mathbf{C}_\gamma^\delta \mathbf{\Omega}_{\beta\alpha}^\gamma \mathbf{C}_\delta^\gamma $" src="form_212.svg" width="135" height="25"/></picture> &emsp;<a class="el" href="citelist.html#CITEREF_Groves2013">[11]</a> Groves, ch. 2.3.1, eq. 2.51, p. 45</li>
 </ul>
 <p>the time derivative of the DCM matrix is</p>
 <p><a class="anchor" id="eq-LCKF_e-Derivation-Attitude-DCM-dot"></a> </p><p class="formulaDsp">
@@ -742,9 +742,9 @@ Attitude Equations</h3>
 \end{equation}" src="form_213.svg" width="1554" height="51"/></picture>
 </p>
 <p>see</p><ul>
-<li><a class="el" href="citelist.html#CITEREF_Groves2013">[10]</a> Groves, ch. 5.3.1, eq. 5.24, p. 173</li>
-<li><a class="el" href="citelist.html#CITEREF_Jekeli2001">[13]</a> Jekeli, ch. 4.3.3, eq. 4.83, p. 126</li>
-<li><a class="el" href="citelist.html#CITEREF_Titterton2004">[32]</a> Titterton, ch. 3.5.2, eq. 3.22, p. 29</li>
+<li><a class="el" href="citelist.html#CITEREF_Groves2013">[11]</a> Groves, ch. 5.3.1, eq. 5.24, p. 173</li>
+<li><a class="el" href="citelist.html#CITEREF_Jekeli2001">[14]</a> Jekeli, ch. 4.3.3, eq. 4.83, p. 126</li>
+<li><a class="el" href="citelist.html#CITEREF_Titterton2004">[33]</a> Titterton, ch. 3.5.2, eq. 3.22, p. 29</li>
 </ul>
 <p>where</p><ul>
 <li><picture><source srcset="form_214_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \mathbf{\Omega}_{ib}^b $" src="form_214.svg" width="26" height="21"/></picture> is the skew-symmetric matrix of the absolute body rate,</li>
@@ -827,15 +827,15 @@ Velocity Equations</h3>
 \end{equation}" src="form_229.svg" width="1586" height="67"/></picture>
 </p>
 <p> see</p><ul>
-<li><a class="el" href="citelist.html#CITEREF_Groves2013">[10]</a> Groves, ch. 5.3.3, eq. 5.35, p. 175</li>
-<li><a class="el" href="citelist.html#CITEREF_Jekeli2001">[13]</a> Jekeli, ch. 4.3.3, eq. 4.82, p. 126</li>
-<li><a class="el" href="citelist.html#CITEREF_Titterton2004">[32]</a> Titterton, ch. 3.5.2, eq. 3.21, p. 29</li>
+<li><a class="el" href="citelist.html#CITEREF_Groves2013">[11]</a> Groves, ch. 5.3.3, eq. 5.35, p. 175</li>
+<li><a class="el" href="citelist.html#CITEREF_Jekeli2001">[14]</a> Jekeli, ch. 4.3.3, eq. 4.82, p. 126</li>
+<li><a class="el" href="citelist.html#CITEREF_Titterton2004">[33]</a> Titterton, ch. 3.5.2, eq. 3.21, p. 29</li>
 </ul>
 <p>where</p><ul>
 <li><picture><source srcset="form_92_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \boldsymbol{v}^e $" src="form_92.svg" width="18" height="14"/></picture> is the velocity with respect to the Earth in Earth frame coordinates,</li>
 <li><picture><source srcset="form_230_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \boldsymbol{f}^e $" src="form_230.svg" width="19" height="19"/></picture> is the specific force vector as measured by a triad of accelerometers and resolved into Earth frame coordinates</li>
 <li><picture><source srcset="form_231_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \boldsymbol{\omega}_{ie}^e $" src="form_231.svg" width="25" height="18"/></picture> is the turn rate of the Earth expressed in Earth frame coordinates</li>
-<li><picture><source srcset="form_232_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \mathbf{g}^e $" src="form_232.svg" width="18" height="18"/></picture> is the local gravity vector which is a combination of (see <a class="el" href="citelist.html#CITEREF_Titterton2004">[32]</a> Titterton, ch. 3.5.1, eq. 3.14, p. 27)<ul>
+<li><picture><source srcset="form_232_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \mathbf{g}^e $" src="form_232.svg" width="18" height="18"/></picture> is the local gravity vector which is a combination of (see <a class="el" href="citelist.html#CITEREF_Titterton2004">[33]</a> Titterton, ch. 3.5.1, eq. 3.14, p. 27)<ul>
 <li><picture><source srcset="form_233_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \boldsymbol{\gamma}_{ib}^e $" src="form_233.svg" width="23" height="18"/></picture> the gravitation vector (caused by effects of mass attraction)</li>
 <li><picture><source srcset="form_234_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ -\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{r}^e ] $" src="form_234.svg" width="131" height="19"/></picture> the centrifugal acceleration caused by the Earth's rotation</li>
 </ul>
@@ -905,7 +905,7 @@ Velocity Equations</h3>
                                    + \boldsymbol{\delta} \mathbf{g}^e
 \end{equation}" src="form_246.svg" width="1642" height="30"/></picture>
 </p>
-<p>The gravity error can be expressed as (see <a class="el" href="citelist.html#CITEREF_Groves2013">[10]</a> Groves, ch. 14.2.3, eq. 14.45, p. 583) <a class="anchor" id="eq-LCKF_e-Derivation-Velocity-gravityError"></a> </p><p class="formulaDsp">
+<p>The gravity error can be expressed as (see <a class="el" href="citelist.html#CITEREF_Groves2013">[11]</a> Groves, ch. 14.2.3, eq. 14.45, p. 583) <a class="anchor" id="eq-LCKF_e-Derivation-Velocity-gravityError"></a> </p><p class="formulaDsp">
 <picture><source srcset="form_247_dark.svg" media="(prefers-color-scheme: dark)"/><img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-gravityError}
 \begin{aligned}
   \boldsymbol{\delta} \mathbf{g}^e = \overbrace{\boldsymbol{\hat{\gamma}}_{ib}^e - \boldsymbol{\gamma}_{ib}^e}^{\hidewidth\text{gravitation error}\hidewidth}
@@ -935,7 +935,7 @@ Velocity Equations</h3>
 <div id="nav-path" class="navpath">
     <!-- id is needed for treeview function! -->
     <ul>
-        <li class="footer">Generated on Mon Jan 23 2023 09:56:09 for INSTINCT by <a href="https://www.doxygen.org/index.html"><img class="footer"
+        <li class="footer">Generated on Wed Feb 22 2023 20:53:20 for INSTINCT by <a href="https://www.doxygen.org/index.html"><img class="footer"
                     src="doxygen.svg" width="104" height="31" alt="doxygen" /></a> 1.9.6 </li>
     </ul>
 </div>

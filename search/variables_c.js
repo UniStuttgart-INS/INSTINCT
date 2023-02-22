@@ -17,7 +17,7 @@ var searchData=
   ['link_14',['link',['../classNAV_1_1InputPin.html#a1850f533f04ad6af6a22254e58d78895',1,'NAV::InputPin']]],
   ['linkid_15',['linkId',['../structNAV_1_1Pin_1_1Link.html#a4cef346967b7b3306d27100280014f60',1,'NAV::Pin::Link']]],
   ['links_16',['links',['../classNAV_1_1OutputPin.html#ab1e7b109f0d4c7ea9660a76079ef4700',1,'NAV::OutputPin']]],
-  ['lli_17',['LLI',['../structNAV_1_1GnssObs_1_1ObservationData.html#a8bd5ddd52a7f8b8d081d3546be003550',1,'NAV::GnssObs::ObservationData']]],
+  ['lli_17',['LLI',['../structNAV_1_1GnssObs_1_1ObservationData_1_1CarrierPhase.html#a32cd42b80132b27f22d64746cd04897d',1,'NAV::GnssObs::ObservationData::CarrierPhase']]],
   ['loadingframecount_18',['loadingFrameCount',['../FlowManager_8hpp.html#a6174b23a7870ff16cf7718bfbc973494',1,'NAV::flow']]],
   ['locktime_19',['locktime',['../structNAV_1_1vendor_1_1ublox_1_1UbxRxmRawx_1_1UbxRxmRawxData.html#a3b3685872a2d2b002fe34a6833e8d86e',1,'NAV::vendor::ublox::UbxRxmRawx::UbxRxmRawxData']]],
   ['log_5flevel_20',['log_level',['../structNAV_1_1vendor_1_1pixhawk_1_1message__logging__s.html#a2771234e60c52e8bffbfd44ad5d29877',1,'NAV::vendor::pixhawk::message_logging_s::log_level()'],['../structNAV_1_1vendor_1_1pixhawk_1_1message__logging__tagged__s.html#aa39758ecd17a96882e43b1e84e85cee2',1,'NAV::vendor::pixhawk::message_logging_tagged_s::log_level()']]],

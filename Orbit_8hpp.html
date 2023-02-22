@@ -104,7 +104,8 @@ $(document).ready(function(){initNavTree('Orbit_8hpp.html',''); initResizable();
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">Orbit.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -128,12 +129,114 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1Orbit_1_1PosVelAccel.html">NAV::Orbit::PosVelAccel</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classNAV_1_1Satellite.html" title="Satellite class.">Satellite</a> Position, Velocity and Acceleration.  <a href="structNAV_1_1Orbit_1_1PosVelAccel.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a469d5122ddf5f30e8cf91c04d12579ab"><td class="memItemLeft" align="right" valign="top">Orbit::Calc&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Orbit_8hpp.html#a469d5122ddf5f30e8cf91c04d12579ab">NAV::operator&amp;</a> (Orbit::Calc lhs, Orbit::Calc rhs)</td></tr>
+<tr class="memdesc:a469d5122ddf5f30e8cf91c04d12579ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows construction of Calc objects.  <br /></td></tr>
+<tr class="separator:a469d5122ddf5f30e8cf91c04d12579ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d32b409576aaca751d01ec2754fb697"><td class="memItemLeft" align="right" valign="top">Orbit::Calc&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Orbit_8hpp.html#a7d32b409576aaca751d01ec2754fb697">NAV::operator|</a> (Orbit::Calc lhs, Orbit::Calc rhs)</td></tr>
+<tr class="memdesc:a7d32b409576aaca751d01ec2754fb697"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows construction of Calc objects.  <br /></td></tr>
+<tr class="separator:a7d32b409576aaca751d01ec2754fb697"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Abstract satellite orbit information. </p>
 <dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2022-12-02 </dd></dl>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Function Documentation</h2>
+<a id="a469d5122ddf5f30e8cf91c04d12579ab" name="a469d5122ddf5f30e8cf91c04d12579ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a469d5122ddf5f30e8cf91c04d12579ab">&#9670;&#160;</a></span>operator&amp;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Orbit::Calc NAV::operator&amp; </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classNAV_1_1Orbit.html#a65836420203346ce754e2ff2dfce70bc">Orbit::Calc</a>&#160;</td>
+          <td class="paramname"><em>lhs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classNAV_1_1Orbit.html#a65836420203346ce754e2ff2dfce70bc">Orbit::Calc</a>&#160;</td>
+          <td class="paramname"><em>rhs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Allows construction of Calc objects. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>Left-hand side enum value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>Right-hand side enum value. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The binary ANDed value. </dd></dl>
+
+</div>
+</div>
+<a id="a7d32b409576aaca751d01ec2754fb697" name="a7d32b409576aaca751d01ec2754fb697"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7d32b409576aaca751d01ec2754fb697">&#9670;&#160;</a></span>operator|()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Orbit::Calc NAV::operator| </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classNAV_1_1Orbit.html#a65836420203346ce754e2ff2dfce70bc">Orbit::Calc</a>&#160;</td>
+          <td class="paramname"><em>lhs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classNAV_1_1Orbit.html#a65836420203346ce754e2ff2dfce70bc">Orbit::Calc</a>&#160;</td>
+          <td class="paramname"><em>rhs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Allows construction of Calc objects. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>Left-hand side enum value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>Right-hand side enum value. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The binary ORed value. </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.9.2-->
 <!-- start footer part -->
@@ -141,7 +244,7 @@ Classes</h2></td></tr>
     <!-- id is needed for treeview function! -->
     <ul>
         <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d02623c45f6ab1c9bbaef247468873ab.html">Navigation</a></li><li class="navelem"><a class="el" href="dir_5565a495a275b80727f59d1f67761ca7.html">GNSS</a></li><li class="navelem"><a class="el" href="dir_e186ee0255a4beb78770d8741210fa3b.html">Satellite</a></li><li class="navelem"><a class="el" href="dir_b739122b853c210b39b43f74b2d6eb1a.html">internal</a></li><li class="navelem"><a class="el" href="Orbit_8hpp.html">Orbit.hpp</a></li>
-        <li class="footer">Generated on Mon Jan 23 2023 09:56:09 for INSTINCT by <a href="https://www.doxygen.org/index.html"><img class="footer"
+        <li class="footer">Generated on Wed Feb 22 2023 20:53:20 for INSTINCT by <a href="https://www.doxygen.org/index.html"><img class="footer"
                     src="doxygen.svg" width="104" height="31" alt="doxygen" /></a> 1.9.6 </li>
     </ul>
 </div>

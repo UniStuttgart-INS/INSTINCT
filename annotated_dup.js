@@ -87,6 +87,7 @@ var annotated_dup =
           [ "VpeStatus", "classNAV_1_1vendor_1_1vectornav_1_1VpeStatus.html", "classNAV_1_1vendor_1_1vectornav_1_1VpeStatus" ]
         ] ]
       ] ],
+      [ "AtmosphereModels", "structNAV_1_1AtmosphereModels.html", "structNAV_1_1AtmosphereModels" ],
       [ "BDSEphemeris", "classNAV_1_1BDSEphemeris.html", "classNAV_1_1BDSEphemeris" ],
       [ "Clock", "classNAV_1_1Clock.html", "classNAV_1_1Clock" ],
       [ "Code", "classNAV_1_1Code.html", "classNAV_1_1Code" ],
@@ -152,6 +153,7 @@ var annotated_dup =
       [ "PosVelAttDerivativeConstants_n", "structNAV_1_1PosVelAttDerivativeConstants__n.html", "structNAV_1_1PosVelAttDerivativeConstants__n" ],
       [ "PosVelAttInitializer", "classNAV_1_1PosVelAttInitializer.html", "classNAV_1_1PosVelAttInitializer" ],
       [ "PosVelAttLogger", "classNAV_1_1PosVelAttLogger.html", "classNAV_1_1PosVelAttLogger" ],
+      [ "ReceiverClock", "structNAV_1_1ReceiverClock.html", "structNAV_1_1ReceiverClock" ],
       [ "RinexNavFile", "classNAV_1_1RinexNavFile.html", "classNAV_1_1RinexNavFile" ],
       [ "RinexObsFile", "classNAV_1_1RinexObsFile.html", "classNAV_1_1RinexObsFile" ],
       [ "RtklibPosConverter", "classNAV_1_1RtklibPosConverter.html", "classNAV_1_1RtklibPosConverter" ],
@@ -170,6 +172,7 @@ var annotated_dup =
       [ "StringObs", "classNAV_1_1StringObs.html", "classNAV_1_1StringObs" ],
       [ "TimeSystem", "classNAV_1_1TimeSystem.html", "classNAV_1_1TimeSystem" ],
       [ "TimeWindow", "classNAV_1_1TimeWindow.html", "classNAV_1_1TimeWindow" ],
+      [ "TroposphereModelSelection", "structNAV_1_1TroposphereModelSelection.html", "structNAV_1_1TroposphereModelSelection" ],
       [ "TsDeque", "classNAV_1_1TsDeque.html", "classNAV_1_1TsDeque" ],
       [ "UartDataLogger", "classNAV_1_1UartDataLogger.html", "classNAV_1_1UartDataLogger" ],
       [ "UartPacket", "classNAV_1_1UartPacket.html", "classNAV_1_1UartPacket" ],
@@ -179,6 +182,7 @@ var annotated_dup =
       [ "UbloxObs", "classNAV_1_1UbloxObs.html", "classNAV_1_1UbloxObs" ],
       [ "UbloxSensor", "classNAV_1_1UbloxSensor.html", "classNAV_1_1UbloxSensor" ],
       [ "UlogFile", "classNAV_1_1UlogFile.html", "classNAV_1_1UlogFile" ],
+      [ "ValueStdDev", "structNAV_1_1ValueStdDev.html", "structNAV_1_1ValueStdDev" ],
       [ "VectorNavBinaryConverter", "classNAV_1_1VectorNavBinaryConverter.html", "classNAV_1_1VectorNavBinaryConverter" ],
       [ "VectorNavBinaryOutput", "classNAV_1_1VectorNavBinaryOutput.html", "classNAV_1_1VectorNavBinaryOutput" ],
       [ "VectorNavDataLogger", "classNAV_1_1VectorNavDataLogger.html", "classNAV_1_1VectorNavDataLogger" ],

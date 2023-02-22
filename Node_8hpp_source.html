@@ -382,7 +382,8 @@ $(document).ready(function(){initNavTree('Node_8hpp_source.html',''); initResiza
 <div class="line"><a id="l00400" name="l00400"></a><span class="lineno"><a class="line" href="classNAV_1_1Node.html#a8ae6927dfe76c01cb9dbe7f65066188c">  400</a></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="classNAV_1_1Node.html#a8ae6927dfe76c01cb9dbe7f65066188c">_lockConfigDuringRun</a> = <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span> </div>
 <div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>  <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>    std::atomic&lt;State&gt; _state = <a class="code hl_enumvalue" href="classNAV_1_1Node.html#a04c7d8fd52bb21f40d924a0b9a950534afd7c1706ced8bc5a714ced665d951265">State::Deinitialized</a>;</div>
+<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>    <a class="code hl_enumeration" href="classNAV_1_1Node.html#a04c7d8fd52bb21f40d924a0b9a950534">State</a> _state = <a class="code hl_enumvalue" href="classNAV_1_1Node.html#a04c7d8fd52bb21f40d924a0b9a950534afd7c1706ced8bc5a714ced665d951265">State::Deinitialized</a>; </div>
+<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>    <span class="keyword">mutable</span> std::mutex _stateMutex;      </div>
 <div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span> </div>
 <div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>    std::atomic&lt;Mode&gt; _mode = <a class="code hl_enumvalue" href="classNAV_1_1Node.html#a3bf21eafea4312a9a11558c2180d31a6aa211f45bf313bdaed8cb10ddb5fe42f6">Mode::REAL_TIME</a>;</div>
 <div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span> </div>
@@ -535,7 +536,7 @@ $(document).ready(function(){initNavTree('Node_8hpp_source.html',''); initResiza
     <!-- id is needed for treeview function! -->
     <ul>
         <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_3756d50f4003bc63fa3fe49460f9c79d.html">internal</a></li><li class="navelem"><a class="el" href="dir_39e000c4c96c3e4950851d6be0205be9.html">Node</a></li><li class="navelem"><a class="el" href="Node_8hpp.html">Node.hpp</a></li>
-        <li class="footer">Generated on Mon Jan 23 2023 09:56:09 for INSTINCT by <a href="https://www.doxygen.org/index.html"><img class="footer"
+        <li class="footer">Generated on Wed Feb 22 2023 20:53:20 for INSTINCT by <a href="https://www.doxygen.org/index.html"><img class="footer"
                     src="doxygen.svg" width="104" height="31" alt="doxygen" /></a> 1.9.6 </li>
     </ul>
 </div>

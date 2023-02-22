@@ -1,9 +1,11 @@
 var hierarchy =
 [
+    [ "NAV::AtmosphereModels", "structNAV_1_1AtmosphereModels.html", null ],
     [ "NAV::vendor::vectornav::AttitudeOutputs", "structNAV_1_1vendor_1_1vectornav_1_1AttitudeOutputs.html", null ],
     [ "ax::NodeEditor::Utilities::BlueprintNodeBuilder", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html", null ],
     [ "NAV::CubicSpline::BoundaryCondition", "structNAV_1_1CubicSpline_1_1BoundaryCondition.html", null ],
     [ "CallbackTimer", "classCallbackTimer.html", null ],
+    [ "NAV::GnssObs::ObservationData::CarrierPhase", "structNAV_1_1GnssObs_1_1ObservationData_1_1CarrierPhase.html", null ],
     [ "NAV::Clock", "classNAV_1_1Clock.html", [
       [ "NAV::SatNavData", "classNAV_1_1SatNavData.html", [
         [ "NAV::BDSEphemeris", "classNAV_1_1BDSEphemeris.html", null ],
@@ -192,8 +194,10 @@ var hierarchy =
     [ "NAV::Orbit::PosVelAccel", "structNAV_1_1Orbit_1_1PosVelAccel.html", null ],
     [ "NAV::PosVelAttDerivativeConstants_e", "structNAV_1_1PosVelAttDerivativeConstants__e.html", null ],
     [ "NAV::PosVelAttDerivativeConstants_n", "structNAV_1_1PosVelAttDerivativeConstants__n.html", null ],
+    [ "NAV::GnssObs::ObservationData::Pseudorange", "structNAV_1_1GnssObs_1_1ObservationData_1_1Pseudorange.html", null ],
     [ "NAV::ErrorModel::RandomNumberGenerator", "structNAV_1_1ErrorModel_1_1RandomNumberGenerator.html", null ],
     [ "NAV::vendor::vectornav::RawMeas", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas.html", null ],
+    [ "NAV::ReceiverClock", "structNAV_1_1ReceiverClock.html", null ],
     [ "NAV::Satellite", "classNAV_1_1Satellite.html", null ],
     [ "NAV::SatelliteSystem", "structNAV_1_1SatelliteSystem.html", null ],
     [ "NAV::SatId", "structNAV_1_1SatId.html", null ],
@@ -213,6 +217,7 @@ var hierarchy =
     [ "NAV::VectorNavSensor::TimeSync", "structNAV_1_1VectorNavSensor_1_1TimeSync.html", null ],
     [ "NAV::TimeSystem", "classNAV_1_1TimeSystem.html", null ],
     [ "NAV::GnssNavInfo::TimeSystemCorrections", "structNAV_1_1GnssNavInfo_1_1TimeSystemCorrections.html", null ],
+    [ "NAV::TroposphereModelSelection", "structNAV_1_1TroposphereModelSelection.html", null ],
     [ "NAV::TsDeque< T, Alloc >", "classNAV_1_1TsDeque.html", null ],
     [ "NAV::TsDeque< std::shared_ptr< const NAV::NodeData > >", "classNAV_1_1TsDeque.html", null ],
     [ "NAV::Pin::Type", "structNAV_1_1Pin_1_1Type.html", null ],
@@ -243,6 +248,8 @@ var hierarchy =
     [ "NAV::vendor::pixhawk::ulog_message_info_multiple_header_s", "structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__info__multiple__header__s.html", null ],
     [ "NAV::vendor::pixhawk::ulog_message_parameter_default_header_s", "structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__parameter__default__header__s.html", null ],
     [ "NAV::vendor::vectornav::UTC", "structNAV_1_1vendor_1_1vectornav_1_1UTC.html", null ],
+    [ "NAV::ValueStdDev< T >", "structNAV_1_1ValueStdDev.html", null ],
+    [ "NAV::ValueStdDev< double >", "structNAV_1_1ValueStdDev.html", null ],
     [ "NAV::vendor::vectornav::VpeStatus", "classNAV_1_1vendor_1_1vectornav_1_1VpeStatus.html", null ],
     [ "NAV::ZenithDelay", "structNAV_1_1ZenithDelay.html", null ]
 ];

@@ -1,4 +1,5 @@
 var Saastamoinen_8hpp =
 [
-    [ "calcTroposphericRangeDelay_Saastamoinen", "Saastamoinen_8hpp.html#ad2fc9ec5f05a304299f8fdb1a40f1a0f", null ]
+    [ "calcZHD_Saastamoinen", "Saastamoinen_8hpp.html#a5e58c2d235c8d57e3b15b8b6d7a36308", null ],
+    [ "calcZWD_Saastamoinen", "Saastamoinen_8hpp.html#a5b5b2a361bbce3b81dfa45a559122955", null ]
 ];

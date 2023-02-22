@@ -1,8 +1,8 @@
 <map id="NAV::Orbit" name="NAV::Orbit">
-<area shape="rect" id="node1" title="Abstract satellite orbit information." alt="" coords="393,5,628,215"/>
-<area shape="rect" id="node2" href="$classNAV_1_1SatNavData.html" title="Satellite Navigation data (to calculate SatNavData and clock)" alt="" coords="443,263,579,443"/>
-<area shape="rect" id="node3" href="$classNAV_1_1BDSEphemeris.html" title="Broadcasted ephemeris message data." alt="" coords="5,491,240,876"/>
-<area shape="rect" id="node4" href="$classNAV_1_1GLONASSEphemeris.html" title="Broadcasted ephemeris message data." alt="" coords="264,491,499,876"/>
-<area shape="rect" id="node5" href="$classNAV_1_1GPSEphemeris.html" title="Broadcasted ephemeris message data." alt="" coords="523,491,757,876"/>
-<area shape="rect" id="node6" href="$classNAV_1_1GalileoEphemeris.html" title="Broadcasted ephemeris message data." alt="" coords="781,491,1016,876"/>
+<area shape="rect" id="node1" title="Abstract satellite orbit information." alt="" coords="393,5,628,229"/>
+<area shape="rect" id="node2" href="$classNAV_1_1SatNavData.html" title="Satellite Navigation data (to calculate SatNavData and clock)" alt="" coords="443,277,579,457"/>
+<area shape="rect" id="node3" href="$classNAV_1_1BDSEphemeris.html" title="Broadcasted ephemeris message data." alt="" coords="5,505,240,847"/>
+<area shape="rect" id="node4" href="$classNAV_1_1GLONASSEphemeris.html" title="Broadcasted ephemeris message data." alt="" coords="264,520,499,832"/>
+<area shape="rect" id="node5" href="$classNAV_1_1GPSEphemeris.html" title="Broadcasted ephemeris message data." alt="" coords="523,505,757,847"/>
+<area shape="rect" id="node6" href="$classNAV_1_1GalileoEphemeris.html" title="Broadcasted ephemeris message data." alt="" coords="781,505,1016,847"/>
 </map>

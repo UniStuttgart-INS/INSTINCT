@@ -10,7 +10,7 @@ var searchData=
   ['baselinen_7',['baselineN',['../structNAV_1_1vendor_1_1emlid_1_1ErbRtk.html#a077a4d985c0e5cbbf5f9747732fb8880',1,'NAV::vendor::emlid::ErbRtk']]],
   ['bgd_5fe1_5fe5a_8',['BGD_E1_E5a',['../classNAV_1_1GalileoEphemeris.html#afda7e46a58182af8e52f850d985be956',1,'NAV::GalileoEphemeris']]],
   ['bgd_5fe1_5fe5b_9',['BGD_E1_E5b',['../classNAV_1_1GalileoEphemeris.html#a87778d9c3f307533858ddf3b94bec6ed',1,'NAV::GalileoEphemeris']]],
-  ['bias_10',['bias',['../structNAV_1_1Clock_1_1Corrections.html#ac584986be67f9d7e02b1eb78a5f88349',1,'NAV::Clock::Corrections']]],
+  ['bias_10',['bias',['../structNAV_1_1ReceiverClock.html#abbdfabfa00c00a8ce45cbd4bf980f036',1,'NAV::ReceiverClock::bias()'],['../structNAV_1_1Clock_1_1Corrections.html#ac584986be67f9d7e02b1eb78a5f88349',1,'NAV::Clock::Corrections::bias()']]],
   ['binary_5fsync_5fchar_5f1_11',['BINARY_SYNC_CHAR_1',['../classNAV_1_1vendor_1_1emlid_1_1EmlidUartSensor.html#af40f54005cb90ba7bf3c134ec11c4ff1',1,'NAV::vendor::emlid::EmlidUartSensor::BINARY_SYNC_CHAR_1()'],['../classNAV_1_1vendor_1_1ublox_1_1UbloxUartSensor.html#ab9acf5db99405c95cac73700df72d041',1,'NAV::vendor::ublox::UbloxUartSensor::BINARY_SYNC_CHAR_1()']]],
   ['binary_5fsync_5fchar_5f2_12',['BINARY_SYNC_CHAR_2',['../classNAV_1_1vendor_1_1emlid_1_1EmlidUartSensor.html#a762dfc40867a6abea8de7c86fb79ec97',1,'NAV::vendor::emlid::EmlidUartSensor::BINARY_SYNC_CHAR_2()'],['../classNAV_1_1vendor_1_1ublox_1_1UbloxUartSensor.html#a00f6ff0ac3a8e6da2d6f0f7721bfa0bd',1,'NAV::vendor::ublox::UbloxUartSensor::BINARY_SYNC_CHAR_2()']]],
   ['bitfield0_13',['bitfield0',['../structNAV_1_1vendor_1_1ublox_1_1UbxEsfIns.html#a512d70cdc90c75a7da9bd2a5f2cd0070',1,'NAV::vendor::ublox::UbxEsfIns']]],

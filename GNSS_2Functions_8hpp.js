@@ -8,5 +8,5 @@ var GNSS_2Functions_8hpp =
     [ "galSisaVal2Idx", "GNSS_2Functions_8hpp.html#a76f2418126f43272f93590cee31a9cc1", null ],
     [ "gpsUraIdx2Val", "GNSS_2Functions_8hpp.html#a2ba9ce832bb774ccdb7bf5b0ce666c05", null ],
     [ "gpsUraVal2Idx", "GNSS_2Functions_8hpp.html#ac6385e3fa379958be1ffb275122cba39", null ],
-    [ "ratioFreqSquared", "GNSS_2Functions_8hpp.html#aaa9c6192965b50d9548314809ef808cf", null ]
+    [ "ratioFreqSquared", "GNSS_2Functions_8hpp.html#a8f347fd642592b00645a7121b1a2c860", null ]
 ];

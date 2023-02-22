@@ -114,21 +114,21 @@ $(document).ready(function(){initNavTree('Saastamoinen_8hpp_source.html',''); in
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#pragma once</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &lt;Eigen/Core&gt;</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &quot;<a class="code" href="ZenithDelay_8hpp.html">Navigation/Atmosphere/Troposphere/ZenithDelay.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">namespace </span>NAV</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>{</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno"><a class="line" href="Saastamoinen_8hpp.html#ad2fc9ec5f05a304299f8fdb1a40f1a0f">   79</a></span><a class="code hl_struct" href="structNAV_1_1ZenithDelay.html">ZenithDelay</a> <a class="code hl_function" href="Saastamoinen_8hpp.html#ad2fc9ec5f05a304299f8fdb1a40f1a0f">calcTroposphericRangeDelay_Saastamoinen</a>(<span class="keyword">const</span> Eigen::Vector3d&amp; lla_pos);</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>} <span class="comment">// namespace NAV</span></div>
-<div class="ttc" id="aSaastamoinen_8hpp_html_ad2fc9ec5f05a304299f8fdb1a40f1a0f"><div class="ttname"><a href="Saastamoinen_8hpp.html#ad2fc9ec5f05a304299f8fdb1a40f1a0f">NAV::calcTroposphericRangeDelay_Saastamoinen</a></div><div class="ttdeci">ZenithDelay calcTroposphericRangeDelay_Saastamoinen(const Eigen::Vector3d &amp;lla_pos)</div><div class="ttdoc">Calculates the tropospheric zenith hydrostatic and wet delays with the Saastamoinen model.</div></div>
-<div class="ttc" id="aZenithDelay_8hpp_html"><div class="ttname"><a href="ZenithDelay_8hpp.html">ZenithDelay.hpp</a></div><div class="ttdoc">Zenith hydrostatic and wet delay.</div></div>
-<div class="ttc" id="astructNAV_1_1ZenithDelay_html"><div class="ttname"><a href="structNAV_1_1ZenithDelay.html">NAV::ZenithDelay</a></div><div class="ttdoc">Zenith delays.</div><div class="ttdef"><b>Definition:</b> ZenithDelay.hpp:20</div></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="preprocessor">#pragma once</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="preprocessor">#include &lt;Eigen/Core&gt;</span></div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="keyword">namespace </span>NAV</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>{</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno"><a class="line" href="Saastamoinen_8hpp.html#a5e58c2d235c8d57e3b15b8b6d7a36308">   77</a></span><span class="keywordtype">double</span> <a class="code hl_function" href="Saastamoinen_8hpp.html#a5e58c2d235c8d57e3b15b8b6d7a36308">calcZHD_Saastamoinen</a>(<span class="keyword">const</span> Eigen::Vector3d&amp; lla_pos, <span class="keywordtype">double</span> p);</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno"><a class="line" href="Saastamoinen_8hpp.html#a5b5b2a361bbce3b81dfa45a559122955">   87</a></span><span class="keywordtype">double</span> <a class="code hl_function" href="Saastamoinen_8hpp.html#a5b5b2a361bbce3b81dfa45a559122955">calcZWD_Saastamoinen</a>(<span class="keywordtype">double</span> T, <span class="keywordtype">double</span> e);</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>} <span class="comment">// namespace NAV</span></div>
+<div class="ttc" id="aSaastamoinen_8hpp_html_a5b5b2a361bbce3b81dfa45a559122955"><div class="ttname"><a href="Saastamoinen_8hpp.html#a5b5b2a361bbce3b81dfa45a559122955">NAV::calcZWD_Saastamoinen</a></div><div class="ttdeci">double calcZWD_Saastamoinen(double T, double e)</div><div class="ttdoc">Calculates the tropospheric zenith wet delay with the Saastamoinen model.</div></div>
+<div class="ttc" id="aSaastamoinen_8hpp_html_a5e58c2d235c8d57e3b15b8b6d7a36308"><div class="ttname"><a href="Saastamoinen_8hpp.html#a5e58c2d235c8d57e3b15b8b6d7a36308">NAV::calcZHD_Saastamoinen</a></div><div class="ttdeci">double calcZHD_Saastamoinen(const Eigen::Vector3d &amp;lla_pos, double p)</div><div class="ttdoc">Calculates the tropospheric zenith hydrostatic delay with the Saastamoinen model.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.9.2-->
@@ -137,7 +137,7 @@ $(document).ready(function(){initNavTree('Saastamoinen_8hpp_source.html',''); in
     <!-- id is needed for treeview function! -->
     <ul>
         <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d02623c45f6ab1c9bbaef247468873ab.html">Navigation</a></li><li class="navelem"><a class="el" href="dir_a8bbf563d2b9999aedbf0b42f70d9b8d.html">Atmosphere</a></li><li class="navelem"><a class="el" href="dir_7ea53c840173041d1e4067344bd072ee.html">Troposphere</a></li><li class="navelem"><a class="el" href="dir_9919c8ccab90eaaf04d8343e3fbede76.html">Models</a></li><li class="navelem"><a class="el" href="Saastamoinen_8hpp.html">Saastamoinen.hpp</a></li>
-        <li class="footer">Generated on Mon Jan 23 2023 09:56:09 for INSTINCT by <a href="https://www.doxygen.org/index.html"><img class="footer"
+        <li class="footer">Generated on Wed Feb 22 2023 20:53:20 for INSTINCT by <a href="https://www.doxygen.org/index.html"><img class="footer"
                     src="doxygen.svg" width="104" height="31" alt="doxygen" /></a> 1.9.6 </li>
     </ul>
 </div>

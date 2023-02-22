@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=11" />
     <meta name="generator" content="Doxygen 1.9.6" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>INSTINCT: /home/runner/work/INSTINCT/INSTINCT/src/Navigation/Atmosphere/Functions.hpp File Reference</title>
+    <title>INSTINCT: /home/runner/work/INSTINCT/INSTINCT/src/Navigation/Atmosphere/Temperature/Models/StandardAtmosphere.hpp File Reference</title>
     <link href="tabs.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript" src="jquery.js"></script>
     <script type="text/javascript" src="dynsections.js"></script>
@@ -77,7 +77,7 @@ var searchBox = new SearchBox("searchBox", "search/",'.html');
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(document).ready(function(){initNavTree('Atmosphere_2Functions_8hpp.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('Temperature_2Models_2StandardAtmosphere_8hpp.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -105,46 +105,48 @@ $(document).ready(function(){initNavTree('Atmosphere_2Functions_8hpp.html',''); 
 <div class="header">
   <div class="summary">
 <a href="#func-members">Functions</a>  </div>
-  <div class="headertitle"><div class="title">Functions.hpp File Reference</div></div>
+  <div class="headertitle"><div class="title">StandardAtmosphere.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Atmosphere helper functions.  
+<p>Standard Atmosphere temperature model.  
 <a href="#details">More...</a></p>
 
-<p><a href="Atmosphere_2Functions_8hpp_source.html">Go to the source code of this file.</a></p>
+<p><a href="Temperature_2Models_2StandardAtmosphere_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a6a7f5da6666b0af1bfe9312cd1ee033d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Atmosphere_2Functions_8hpp.html#a6a7f5da6666b0af1bfe9312cd1ee033d">NAV::calcAbsoluteTemperature</a> (double altitudeMSL)</td></tr>
-<tr class="memdesc:a6a7f5da6666b0af1bfe9312cd1ee033d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the standard atmosphere absolute temperature.  <br /></td></tr>
-<tr class="separator:a6a7f5da6666b0af1bfe9312cd1ee033d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a857ddbb6e97ee2cdb49caf9d178e3821"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Atmosphere_2Functions_8hpp.html#a857ddbb6e97ee2cdb49caf9d178e3821">NAV::calcTotalPressure</a> (double altitudeMSL)</td></tr>
-<tr class="memdesc:a857ddbb6e97ee2cdb49caf9d178e3821"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the standard atmosphere total pressure.  <br /></td></tr>
-<tr class="separator:a857ddbb6e97ee2cdb49caf9d178e3821"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7579fa9f3ba4f88603d02162f384c151"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Atmosphere_2Functions_8hpp.html#a7579fa9f3ba4f88603d02162f384c151">NAV::calcWaterVaporPartialPressure</a> (double temp, double humidity_rel)</td></tr>
-<tr class="memdesc:a7579fa9f3ba4f88603d02162f384c151"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the standard atmosphere partial pressure of water vapor.  <br /></td></tr>
-<tr class="separator:a7579fa9f3ba4f88603d02162f384c151"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab10531011635582890712e9e921d8fb1"><td class="memItemLeft" align="right" valign="top">constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Temperature_2Models_2StandardAtmosphere_8hpp.html#ab10531011635582890712e9e921d8fb1">NAV::calcAbsoluteTemperatureStAtm</a> (double altitudeMSL)</td></tr>
+<tr class="memdesc:ab10531011635582890712e9e921d8fb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the standard atmosphere absolute temperature.  <br /></td></tr>
+<tr class="separator:ab10531011635582890712e9e921d8fb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Atmosphere helper functions. </p>
+<div class="textblock"><p>Standard Atmosphere temperature model. </p>
 <dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>2022-05-26 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2023-01-31 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a6a7f5da6666b0af1bfe9312cd1ee033d" name="a6a7f5da6666b0af1bfe9312cd1ee033d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6a7f5da6666b0af1bfe9312cd1ee033d">&#9670;&#160;</a></span>calcAbsoluteTemperature()</h2>
+<a id="ab10531011635582890712e9e921d8fb1" name="ab10531011635582890712e9e921d8fb1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab10531011635582890712e9e921d8fb1">&#9670;&#160;</a></span>calcAbsoluteTemperatureStAtm()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double NAV::calcAbsoluteTemperature </td>
+          <td class="memname">constexpr double NAV::calcAbsoluteTemperatureStAtm </td>
           <td>(</td>
           <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>altitudeMSL</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Calculates the standard atmosphere absolute temperature. </p>
@@ -155,74 +157,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The absolute temperature in [K] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_RTKLIB">[29]</a> RTKLIB ch. E.5, eq. E.5.2, p. 149 </dd></dl>
-
-</div>
-</div>
-<a id="a857ddbb6e97ee2cdb49caf9d178e3821" name="a857ddbb6e97ee2cdb49caf9d178e3821"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a857ddbb6e97ee2cdb49caf9d178e3821">&#9670;&#160;</a></span>calcTotalPressure()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double NAV::calcTotalPressure </td>
-          <td>(</td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>altitudeMSL</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Calculates the standard atmosphere total pressure. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">altitudeMSL</td><td>Geodetic height above MSL (mean sea level) </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The total pressure in [hPa] = [mbar] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_RTKLIB">[29]</a> RTKLIB ch. E.5, eq. E.5.1, p. 149 </dd></dl>
-
-</div>
-</div>
-<a id="a7579fa9f3ba4f88603d02162f384c151" name="a7579fa9f3ba4f88603d02162f384c151"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7579fa9f3ba4f88603d02162f384c151">&#9670;&#160;</a></span>calcWaterVaporPartialPressure()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double NAV::calcWaterVaporPartialPressure </td>
-          <td>(</td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>temp</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>humidity_rel</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Calculates the standard atmosphere partial pressure of water vapor. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">temp</td><td>The absolute temperature in [K] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">humidity_rel</td><td>The relative humidity </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The partial pressure [hPa] of water vapor </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_RTKLIB">[29]</a> RTKLIB ch. E.5, eq. E.5.3, p. 149 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_RTKLIB">[30]</a> RTKLIB ch. E.5, eq. E.5.2, p. 149 </dd></dl>
 
 </div>
 </div>
@@ -233,8 +168,8 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath">
     <!-- id is needed for treeview function! -->
     <ul>
-        <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d02623c45f6ab1c9bbaef247468873ab.html">Navigation</a></li><li class="navelem"><a class="el" href="dir_a8bbf563d2b9999aedbf0b42f70d9b8d.html">Atmosphere</a></li><li class="navelem"><a class="el" href="Atmosphere_2Functions_8hpp.html">Functions.hpp</a></li>
-        <li class="footer">Generated on Mon Jan 23 2023 09:56:09 for INSTINCT by <a href="https://www.doxygen.org/index.html"><img class="footer"
+        <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d02623c45f6ab1c9bbaef247468873ab.html">Navigation</a></li><li class="navelem"><a class="el" href="dir_a8bbf563d2b9999aedbf0b42f70d9b8d.html">Atmosphere</a></li><li class="navelem"><a class="el" href="dir_71adbf8af9210826d306ad41f67ee5ab.html">Temperature</a></li><li class="navelem"><a class="el" href="dir_9013042541918e7b6265536ef7a804a1.html">Models</a></li><li class="navelem"><a class="el" href="Temperature_2Models_2StandardAtmosphere_8hpp.html">StandardAtmosphere.hpp</a></li>
+        <li class="footer">Generated on Wed Feb 22 2023 20:53:20 for INSTINCT by <a href="https://www.doxygen.org/index.html"><img class="footer"
                     src="doxygen.svg" width="104" height="31" alt="doxygen" /></a> 1.9.6 </li>
     </ul>
 </div>

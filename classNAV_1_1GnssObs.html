@@ -120,7 +120,7 @@ $(document).ready(function(){initNavTree('classNAV_1_1GnssObs.html',''); initRes
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
 </div>
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classNAV_1_1GnssObs__inherit__graph.svg" width="138" height="346"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classNAV_1_1GnssObs__inherit__graph.svg" width="138" height="375"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 <table class="memberdecls">
@@ -132,6 +132,9 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a702cdb0f0cfd0b3ea96e421421a77ffb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1GnssObs.html#a702cdb0f0cfd0b3ea96e421421a77ffb">contains</a> (const <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> &amp;freq, uint16_t satNum, <a class="el" href="classNAV_1_1Code.html">Code</a> code) const</td></tr>
+<tr class="memdesc:a702cdb0f0cfd0b3ea96e421421a77ffb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if an element with the identifier exists.  <br /></td></tr>
+<tr class="separator:a702cdb0f0cfd0b3ea96e421421a77ffb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2297790aa9d983bd8f2b1a55e130639b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1GnssObs_1_1ObservationData.html">ObservationData</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1GnssObs.html#a2297790aa9d983bd8f2b1a55e130639b">operator()</a> (const <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> &amp;freq, uint16_t satNum, <a class="el" href="classNAV_1_1Code.html">Code</a> code)</td></tr>
 <tr class="memdesc:a2297790aa9d983bd8f2b1a55e130639b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the element with the identifier or a newly constructed one if it did not exist.  <br /></td></tr>
 <tr class="separator:a2297790aa9d983bd8f2b1a55e130639b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -166,6 +169,9 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~NodeData</b> ()=d
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a6ed969bee2ebae53b573dccdc2569ad0"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1GnssObs.html#a6ed969bee2ebae53b573dccdc2569ad0">parentTypes</a> ()</td></tr>
+<tr class="memdesc:a6ed969bee2ebae53b573dccdc2569ad0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the parent types of the data class.  <br /></td></tr>
+<tr class="separator:a6ed969bee2ebae53b573dccdc2569ad0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a623202dc3f5f2114e6e5d7f6080321bd"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1GnssObs.html#a623202dc3f5f2114e6e5d7f6080321bd">type</a> ()</td></tr>
 <tr class="memdesc:a623202dc3f5f2114e6e5d7f6080321bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the type of the data class.  <br /></td></tr>
 <tr class="separator:a623202dc3f5f2114e6e5d7f6080321bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -192,6 +198,59 @@ std::vector&lt; <a class="el" href="structNAV_1_1GnssObs_1_1ObservationData.html
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>GNSS Observation message information. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a702cdb0f0cfd0b3ea96e421421a77ffb" name="a702cdb0f0cfd0b3ea96e421421a77ffb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a702cdb0f0cfd0b3ea96e421421a77ffb">&#9670;&#160;</a></span>contains()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool NAV::GnssObs::contains </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> &amp;&#160;</td>
+          <td class="paramname"><em>freq</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t&#160;</td>
+          <td class="paramname"><em>satNum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classNAV_1_1Code.html">Code</a>&#160;</td>
+          <td class="paramname"><em>code</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Checks if an element with the identifier exists. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">freq</td><td>Signal frequency (also identifies the satellite system) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">satNum</td><td>Number of the satellite </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">code</td><td>Signal code </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if the element exists </dd></dl>
+
+</div>
+</div>
 <a id="a2297790aa9d983bd8f2b1a55e130639b" name="a2297790aa9d983bd8f2b1a55e130639b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2297790aa9d983bd8f2b1a55e130639b">&#9670;&#160;</a></span>operator()() <span class="overload">[1/2]</span></h2>
 
@@ -298,6 +357,34 @@ std::vector&lt; <a class="el" href="structNAV_1_1GnssObs_1_1ObservationData.html
 
 </div>
 </div>
+<a id="a6ed969bee2ebae53b573dccdc2569ad0" name="a6ed969bee2ebae53b573dccdc2569ad0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ed969bee2ebae53b573dccdc2569ad0">&#9670;&#160;</a></span>parentTypes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static std::vector&lt; std::string &gt; NAV::GnssObs::parentTypes </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the parent types of the data class. </p>
+<dl class="section return"><dt>Returns</dt><dd>The parent data types </dd></dl>
+
+</div>
+</div>
 <a id="a623202dc3f5f2114e6e5d7f6080321bd" name="a623202dc3f5f2114e6e5d7f6080321bd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a623202dc3f5f2114e6e5d7f6080321bd">&#9670;&#160;</a></span>type()</h2>
 
@@ -337,7 +424,7 @@ std::vector&lt; <a class="el" href="structNAV_1_1GnssObs_1_1ObservationData.html
     <!-- id is needed for treeview function! -->
     <ul>
         <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1GnssObs.html">GnssObs</a></li>
-        <li class="footer">Generated on Mon Jan 23 2023 09:56:09 for INSTINCT by <a href="https://www.doxygen.org/index.html"><img class="footer"
+        <li class="footer">Generated on Wed Feb 22 2023 20:53:20 for INSTINCT by <a href="https://www.doxygen.org/index.html"><img class="footer"
                     src="doxygen.svg" width="104" height="31" alt="doxygen" /></a> 1.9.6 </li>
     </ul>
 </div>

@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=11" />
     <meta name="generator" content="Doxygen 1.9.6" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>INSTINCT: /home/runner/work/INSTINCT/INSTINCT/src/Navigation/Atmosphere/Functions.hpp Source File</title>
+    <title>INSTINCT: /home/runner/work/INSTINCT/INSTINCT/src/Navigation/Atmosphere/Temperature/Models/StandardAtmosphere.hpp Source File</title>
     <link href="tabs.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript" src="jquery.js"></script>
     <script type="text/javascript" src="dynsections.js"></script>
@@ -77,7 +77,7 @@ var searchBox = new SearchBox("searchBox", "search/",'.html');
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(document).ready(function(){initNavTree('Atmosphere_2Functions_8hpp_source.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('Temperature_2Models_2StandardAtmosphere_8hpp_source.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -103,10 +103,10 @@ $(document).ready(function(){initNavTree('Atmosphere_2Functions_8hpp_source.html
 </div>
 
 <div class="header">
-  <div class="headertitle"><div class="title">Functions.hpp</div></div>
+  <div class="headertitle"><div class="title">StandardAtmosphere.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="Atmosphere_2Functions_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// This file is part of INSTINCT, the INS Toolkit for Integrated</span></div>
+<a href="Temperature_2Models_2StandardAtmosphere_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// This file is part of INSTINCT, the INS Toolkit for Integrated</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// Navigation Concepts and Training by the Institute of Navigation of</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="comment">// the University of Stuttgart, Germany.</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment">//</span></div>
@@ -120,16 +120,13 @@ $(document).ready(function(){initNavTree('Atmosphere_2Functions_8hpp_source.html
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span>NAV</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>{</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="Atmosphere_2Functions_8hpp.html#a857ddbb6e97ee2cdb49caf9d178e3821">   23</a></span>[[nodiscard]] <span class="keywordtype">double</span> <a class="code hl_function" href="Atmosphere_2Functions_8hpp.html#a857ddbb6e97ee2cdb49caf9d178e3821">calcTotalPressure</a>(<span class="keywordtype">double</span> altitudeMSL);</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="Atmosphere_2Functions_8hpp.html#a6a7f5da6666b0af1bfe9312cd1ee033d">   29</a></span>[[nodiscard]] <span class="keywordtype">double</span> <a class="code hl_function" href="Atmosphere_2Functions_8hpp.html#a6a7f5da6666b0af1bfe9312cd1ee033d">calcAbsoluteTemperature</a>(<span class="keywordtype">double</span> altitudeMSL);</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno"><a class="line" href="Atmosphere_2Functions_8hpp.html#a7579fa9f3ba4f88603d02162f384c151">   36</a></span>[[nodiscard]] <span class="keywordtype">double</span> <a class="code hl_function" href="Atmosphere_2Functions_8hpp.html#a7579fa9f3ba4f88603d02162f384c151">calcWaterVaporPartialPressure</a>(<span class="keywordtype">double</span> temp, <span class="keywordtype">double</span> humidity_rel);</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>} <span class="comment">// namespace NAV</span></div>
-<div class="ttc" id="aAtmosphere_2Functions_8hpp_html_a6a7f5da6666b0af1bfe9312cd1ee033d"><div class="ttname"><a href="Atmosphere_2Functions_8hpp.html#a6a7f5da6666b0af1bfe9312cd1ee033d">NAV::calcAbsoluteTemperature</a></div><div class="ttdeci">double calcAbsoluteTemperature(double altitudeMSL)</div><div class="ttdoc">Calculates the standard atmosphere absolute temperature.</div></div>
-<div class="ttc" id="aAtmosphere_2Functions_8hpp_html_a7579fa9f3ba4f88603d02162f384c151"><div class="ttname"><a href="Atmosphere_2Functions_8hpp.html#a7579fa9f3ba4f88603d02162f384c151">NAV::calcWaterVaporPartialPressure</a></div><div class="ttdeci">double calcWaterVaporPartialPressure(double temp, double humidity_rel)</div><div class="ttdoc">Calculates the standard atmosphere partial pressure of water vapor.</div></div>
-<div class="ttc" id="aAtmosphere_2Functions_8hpp_html_a857ddbb6e97ee2cdb49caf9d178e3821"><div class="ttname"><a href="Atmosphere_2Functions_8hpp.html#a857ddbb6e97ee2cdb49caf9d178e3821">NAV::calcTotalPressure</a></div><div class="ttdeci">double calcTotalPressure(double altitudeMSL)</div><div class="ttdoc">Calculates the standard atmosphere total pressure.</div></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="Temperature_2Models_2StandardAtmosphere_8hpp.html#ab10531011635582890712e9e921d8fb1">   23</a></span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keywordtype">double</span> <a class="code hl_function" href="Temperature_2Models_2StandardAtmosphere_8hpp.html#ab10531011635582890712e9e921d8fb1">calcAbsoluteTemperatureStAtm</a>(<span class="keywordtype">double</span> altitudeMSL)</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>{</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="keywordflow">return</span> 15.0 - 6.5e-3 * altitudeMSL + 273.15;</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>}</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>} <span class="comment">// namespace NAV</span></div>
+<div class="ttc" id="aTemperature_2Models_2StandardAtmosphere_8hpp_html_ab10531011635582890712e9e921d8fb1"><div class="ttname"><a href="Temperature_2Models_2StandardAtmosphere_8hpp.html#ab10531011635582890712e9e921d8fb1">NAV::calcAbsoluteTemperatureStAtm</a></div><div class="ttdeci">constexpr double calcAbsoluteTemperatureStAtm(double altitudeMSL)</div><div class="ttdoc">Calculates the standard atmosphere absolute temperature.</div><div class="ttdef"><b>Definition:</b> StandardAtmosphere.hpp:23</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.9.2-->
@@ -137,8 +134,8 @@ $(document).ready(function(){initNavTree('Atmosphere_2Functions_8hpp_source.html
 <div id="nav-path" class="navpath">
     <!-- id is needed for treeview function! -->
     <ul>
-        <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d02623c45f6ab1c9bbaef247468873ab.html">Navigation</a></li><li class="navelem"><a class="el" href="dir_a8bbf563d2b9999aedbf0b42f70d9b8d.html">Atmosphere</a></li><li class="navelem"><a class="el" href="Atmosphere_2Functions_8hpp.html">Functions.hpp</a></li>
-        <li class="footer">Generated on Mon Jan 23 2023 09:56:09 for INSTINCT by <a href="https://www.doxygen.org/index.html"><img class="footer"
+        <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d02623c45f6ab1c9bbaef247468873ab.html">Navigation</a></li><li class="navelem"><a class="el" href="dir_a8bbf563d2b9999aedbf0b42f70d9b8d.html">Atmosphere</a></li><li class="navelem"><a class="el" href="dir_71adbf8af9210826d306ad41f67ee5ab.html">Temperature</a></li><li class="navelem"><a class="el" href="dir_9013042541918e7b6265536ef7a804a1.html">Models</a></li><li class="navelem"><a class="el" href="Temperature_2Models_2StandardAtmosphere_8hpp.html">StandardAtmosphere.hpp</a></li>
+        <li class="footer">Generated on Wed Feb 22 2023 20:53:20 for INSTINCT by <a href="https://www.doxygen.org/index.html"><img class="footer"
                     src="doxygen.svg" width="104" height="31" alt="doxygen" /></a> 1.9.6 </li>
     </ul>
 </div>
