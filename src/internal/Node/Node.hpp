@@ -400,8 +400,8 @@ class Node
     bool _lockConfigDuringRun = true;
 
   private:
-    /// Current state of the node
-    std::atomic<State> _state = State::Deinitialized;
+    State _state = State::Deinitialized; ///< Current state of the node
+    mutable std::mutex _stateMutex;      ///< Mutex to interact with the worker state variable
 
     /// Mode the node is currently running in
     std::atomic<Mode> _mode = Mode::REAL_TIME;
