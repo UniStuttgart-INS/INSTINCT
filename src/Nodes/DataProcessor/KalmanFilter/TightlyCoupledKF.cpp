@@ -30,7 +30,14 @@ namespace nm = NAV::NodeManager;
 #include "Navigation/Math/VanLoan.hpp"
 #include "Navigation/Gravity/Gravity.hpp"
 #include "Navigation/Transformations/Units.hpp"
+
+#include "Navigation/GNSS/Satellite/internal/SatNavData.hpp"
+#include "Navigation/GNSS/Functions.hpp"
+#include "NodeData/GNSS/GnssNavInfo.hpp"
+#include "Navigation/GNSS/Satellite/Ephemeris/GLONASSEphemeris.hpp"
+
 #include "util/Logger.hpp"
+#include "util/Container/Vector.hpp"
 
 /// @brief Scale factor to convert the attitude error
 constexpr double SCALE_FACTOR_ATTITUDE = 180. / M_PI;
@@ -51,12 +58,13 @@ NAV::TightlyCoupledKF::TightlyCoupledKF()
 
     nm::CreateInputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() }, &TightlyCoupledKF::recvInertialNavigationSolution, nullptr, 1);
     inputPins.back().neededForTemporalQueueCheck = false;
-    nm::CreateInputPin(this, "GNSSobs", Pin::Type::Flow, { NAV::GnssObs::type() }, &TightlyCoupledKF::recvGnssObs,
+    nm::CreateInputPin(this, "GnssObs", Pin::Type::Flow, { NAV::GnssObs::type() }, &TightlyCoupledKF::recvGnssObs,
                        [](const Node* node, const InputPin& inputPin) {
                            const auto* tckf = static_cast<const TightlyCoupledKF*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
                            return !inputPin.queue.empty() && tckf->_lastPredictRequestedTime < inputPin.queue.front()->insTime;
                        });
     inputPins.back().dropQueueIfNotFirable = false;
+    updateNumberOfInputPins();
     // nm::CreateOutputPin(this, "Errors", Pin::Type::Flow, { NAV::LcKfInsGnssErrors::type() }); // TODO: Enable, once output is provided
     nm::CreateOutputPin(this, "Sync", Pin::Type::Flow, { NAV::NodeData::type() });
 }
@@ -87,6 +95,145 @@ void NAV::TightlyCoupledKF::guiConfig()
     float unitWidth = 150.0F * gui::NodeEditorApplication::windowFontRatio();
 
     float taylorOrderWidth = 75.0F * gui::NodeEditorApplication::windowFontRatio();
+
+    if (ImGui::BeginTable(fmt::format("Pin Settings##{}", size_t(id)).c_str(), inputPins.size() > 1 ? 3 : 2,
+                          ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
+    {
+        ImGui::TableSetupColumn("Pin");
+        ImGui::TableSetupColumn("# Sat");
+        if (inputPins.size() > 3)
+        {
+            ImGui::TableSetupColumn("");
+        }
+        ImGui::TableHeadersRow();
+
+        // Used to reset the member variabel _dragAndDropPinIndex in case no plot does a drag and drop action
+        bool dragAndDropPinStillInProgress = false;
+
+        auto showDragDropTargetPin = [this](size_t pinIdxTarget) {
+            ImGui::Dummy(ImVec2(-1.F, 2.F));
+
+            bool selectableDummy = true;
+            ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5F, 0.5F));
+            ImGui::PushStyleColor(ImGuiCol_Header, IM_COL32(16, 173, 44, 79));
+            ImGui::Selectable(fmt::format("[drop here]").c_str(), &selectableDummy, ImGuiSelectableFlags_None,
+                              ImVec2(std::max(ImGui::GetColumnWidth(0), ImGui::CalcTextSize("[drop here]").x), 20.F));
+            ImGui::PopStyleColor();
+            ImGui::PopStyleVar();
+
+            if (ImGui::BeginDragDropTarget())
+            {
+                if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND Pin {}", size_t(id)).c_str()))
+                {
+                    auto pinIdxSource = *static_cast<size_t*>(payloadData->Data);
+
+                    if (pinIdxSource < pinIdxTarget)
+                    {
+                        --pinIdxTarget;
+                    }
+
+                    move(inputPins, pinIdxSource, pinIdxTarget);
+                    flow::ApplyChanges();
+                }
+                ImGui::EndDragDropTarget();
+            }
+            ImGui::Dummy(ImVec2(-1.F, 2.F));
+        };
+
+        for (size_t pinIndex = 0; pinIndex < inputPins.size(); pinIndex++)
+        {
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn(); // Pin
+
+            if (pinIndex == INPUT_PORT_INDEX_GNSS_NAV_INFO && _dragAndDropPinIndex > static_cast<int>(INPUT_PORT_INDEX_GNSS_NAV_INFO))
+            {
+                showDragDropTargetPin(INPUT_PORT_INDEX_GNSS_NAV_INFO);
+            }
+
+            bool selectablePinDummy = false;
+            ImGui::Selectable(fmt::format("{}##{}", inputPins.at(pinIndex).name, size_t(id)).c_str(), &selectablePinDummy);
+            if (pinIndex >= INPUT_PORT_INDEX_GNSS_NAV_INFO && ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+            {
+                dragAndDropPinStillInProgress = true;
+                _dragAndDropPinIndex = static_cast<int>(pinIndex);
+                // Data is copied into heap inside the drag and drop
+                ImGui::SetDragDropPayload(fmt::format("DND Pin {}", size_t(id)).c_str(), &pinIndex, sizeof(pinIndex));
+                ImGui::TextUnformatted(inputPins.at(pinIndex).name.c_str());
+                ImGui::EndDragDropSource();
+            }
+            if (_dragAndDropPinIndex > 0 && pinIndex >= INPUT_PORT_INDEX_GNSS_NAV_INFO
+                && pinIndex != static_cast<size_t>(_dragAndDropPinIndex - 1)
+                && pinIndex != static_cast<size_t>(_dragAndDropPinIndex))
+            {
+                showDragDropTargetPin(pinIndex + 1);
+            }
+            if (pinIndex >= INPUT_PORT_INDEX_GNSS_NAV_INFO && ImGui::IsItemHovered())
+            {
+                ImGui::SetTooltip("This item can be dragged to reorder the pins");
+            }
+
+            ImGui::TableNextColumn(); // # Sat
+            if (const auto* gnssNavInfo = getInputValue<const GnssNavInfo>(pinIndex))
+            {
+                size_t usedSatNum = 0;
+                std::string usedSats;
+                std::string allSats;
+
+                std::string filler = ", ";
+                for (const auto& satellite : gnssNavInfo->satellites())
+                {
+                    if ((satellite.first.satSys & _filterFreq)
+                        && std::find(_excludedSatellites.begin(), _excludedSatellites.end(), satellite.first) == _excludedSatellites.end())
+                    {
+                        usedSatNum++;
+                        usedSats += (allSats.empty() ? "" : filler) + fmt::format("{}", satellite.first);
+                    }
+                    allSats += (allSats.empty() ? "" : filler) + fmt::format("{}", satellite.first);
+                }
+                ImGui::TextUnformatted(fmt::format("{} / {}", usedSatNum, gnssNavInfo->nSatellites()).c_str());
+                if (ImGui::IsItemHovered())
+                {
+                    ImGui::SetTooltip("Used satellites: %s\n"
+                                      "All  satellites: %s",
+                                      usedSats.c_str(), allSats.c_str());
+                }
+            }
+
+            if (inputPins.size() > 2)
+            {
+                ImGui::TableNextColumn(); // Delete
+                if (ImGui::Button(fmt::format("x##{} - {}", size_t(id), pinIndex).c_str()))
+                {
+                    _nNavInfoPins--;
+                    nm::DeleteInputPin(inputPins.at(pinIndex));
+                    flow::ApplyChanges();
+                }
+                if (ImGui::IsItemHovered())
+                {
+                    ImGui::SetTooltip("Delete the pin");
+                }
+            }
+        }
+
+        if (!dragAndDropPinStillInProgress)
+        {
+            _dragAndDropPinIndex = -1;
+        }
+
+        ImGui::TableNextRow();
+        ImGui::TableNextColumn(); // Pin
+        if (ImGui::Button(fmt::format("Add Pin##{}", size_t(id)).c_str()))
+        {
+            _nNavInfoPins++;
+            LOG_DEBUG("{}: # Input Pins changed to {}", nameId(), _nNavInfoPins);
+            flow::ApplyChanges();
+            updateNumberOfInputPins();
+        }
+
+        ImGui::EndTable();
+    }
+
+    ImGui::Separator();
 
     if (ImGui::Checkbox(fmt::format("Rank check for Kalman filter matrices##{}", size_t(id)).c_str(), &_checkKalmanMatricesRanks))
     {
@@ -399,6 +546,12 @@ void NAV::TightlyCoupledKF::guiConfig()
 
     json j;
 
+    j["nNavInfoPins"] = _nNavInfoPins;
+    j["frequencies"] = Frequency_(_filterFreq);
+    j["codes"] = _filterCode;
+    j["excludedSatellites"] = _excludedSatellites;
+    j["elevationMask"] = rad2deg(_elevationMask);
+
     j["checkKalmanMatricesRanks"] = _checkKalmanMatricesRanks;
     j["frame"] = _frame;
     j["phiCalculationAlgorithm"] = _phiCalculationAlgorithm;
@@ -443,6 +596,31 @@ void NAV::TightlyCoupledKF::guiConfig()
 void NAV::TightlyCoupledKF::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
+
+    if (j.contains("nNavInfoPins"))
+    {
+        j.at("nNavInfoPins").get_to(_nNavInfoPins);
+        updateNumberOfInputPins();
+    }
+    if (j.contains("frequencies"))
+    {
+        uint64_t value = 0;
+        j.at("frequencies").get_to(value);
+        _filterFreq = Frequency_(value);
+    }
+    if (j.contains("codes"))
+    {
+        j.at("codes").get_to(_filterCode);
+    }
+    if (j.contains("excludedSatellites"))
+    {
+        j.at("excludedSatellites").get_to(_excludedSatellites);
+    }
+    if (j.contains("elevationMask"))
+    {
+        j.at("elevationMask").get_to(_elevationMask);
+        _elevationMask = deg2rad(_elevationMask);
+    }
 
     if (j.contains("checkKalmanMatricesRanks"))
     {
@@ -588,6 +766,16 @@ bool NAV::TightlyCoupledKF::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+    if (std::all_of(inputPins.begin() + INPUT_PORT_INDEX_GNSS_NAV_INFO, inputPins.end(), [](const InputPin& inputPin) { return !inputPin.isPinLinked(); }))
+    {
+        LOG_ERROR("{}: You need to connect a GNSS NavigationInfo provider", nameId());
+        return false;
+    }
+
+    _e_position = Eigen::Vector3d::Zero();
+    _e_velocity = Eigen::Vector3d::Zero();
+    _recvClk = {};
+
     _kalmanFilter.setZero();
 
     _latestInertialNavSol = nullptr;
@@ -731,6 +919,18 @@ void NAV::TightlyCoupledKF::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
+void NAV::TightlyCoupledKF::updateNumberOfInputPins()
+{
+    while (inputPins.size() - INPUT_PORT_INDEX_GNSS_NAV_INFO < _nNavInfoPins)
+    {
+        nm::CreateInputPin(this, NAV::GnssNavInfo::type().c_str(), Pin::Type::Object, { NAV::GnssNavInfo::type() });
+    }
+    while (inputPins.size() - INPUT_PORT_INDEX_GNSS_NAV_INFO > _nNavInfoPins)
+    {
+        nm::DeleteInputPin(inputPins.back());
+    }
+}
+
 void NAV::TightlyCoupledKF::recvInertialNavigationSolution(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */) // NOLINT(readability-convert-member-functions-to-static)
 {
     auto inertialNavSol = std::static_pointer_cast<const InertialNavSol>(queue.extract_front());
@@ -751,10 +951,10 @@ void NAV::TightlyCoupledKF::recvInertialNavigationSolution(NAV::InputPin::NodeDa
     }
     _latestInertialNavSol = inertialNavSol;
 
-    if (!inputPins[INPUT_PORT_INDEX_GNSS].queue.empty() && inputPins[INPUT_PORT_INDEX_GNSS].queue.front()->insTime == _lastPredictTime)
+    if (!inputPins[INPUT_PORT_INDEX_GNSS_OBS].queue.empty() && inputPins[INPUT_PORT_INDEX_GNSS_OBS].queue.front()->insTime == _lastPredictTime)
     {
-        tightlyCoupledUpdate(std::static_pointer_cast<const GnssObs>(inputPins[INPUT_PORT_INDEX_GNSS].queue.extract_front()));
-        if (inputPins[INPUT_PORT_INDEX_GNSS].queue.empty() && inputPins[INPUT_PORT_INDEX_GNSS].link.getConnectedPin()->mode == OutputPin::Mode::REAL_TIME)
+        tightlyCoupledUpdate(std::static_pointer_cast<const GnssObs>(inputPins[INPUT_PORT_INDEX_GNSS_OBS].queue.extract_front()));
+        if (inputPins[INPUT_PORT_INDEX_GNSS_OBS].queue.empty() && inputPins[INPUT_PORT_INDEX_GNSS_OBS].link.getConnectedPin()->mode == OutputPin::Mode::REAL_TIME)
         {
             outputPins[OUTPUT_PORT_INDEX_SYNC].mode = OutputPin::Mode::REAL_TIME;
             for (auto& link : outputPins[OUTPUT_PORT_INDEX_SYNC].links)
@@ -767,12 +967,128 @@ void NAV::TightlyCoupledKF::recvInertialNavigationSolution(NAV::InputPin::NodeDa
 
 void NAV::TightlyCoupledKF::recvGnssObs(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto gnssObservation = queue.front();
-    LOG_DATA("{}: recvGNSSNavigationSolution at time [{} - {}]", nameId(), gnssObservation->insTime.toYMDHMS(), gnssObservation->insTime.toGPSweekTow());
+    // Collection of all connected navigation data providers
+    std::vector<const GnssNavInfo*> gnssNavInfos;
+    for (size_t i = 0; i < _nNavInfoPins; i++)
+    {
+        if (const auto* gnssNavInfo = getInputValue<const GnssNavInfo>(INPUT_PORT_INDEX_GNSS_NAV_INFO + i))
+        {
+            gnssNavInfos.push_back(gnssNavInfo);
+        }
+    }
+    if (gnssNavInfos.empty()) { return; }
+
+    // Collection of all connected Ionospheric Corrections
+    IonosphericCorrections ionosphericCorrections;
+    for (const auto* gnssNavInfo : gnssNavInfos)
+    {
+        for (const auto& correction : gnssNavInfo->ionosphericCorrections.data())
+        {
+            if (!ionosphericCorrections.contains(correction.satSys, correction.alphaBeta))
+            {
+                ionosphericCorrections.insert(correction.satSys, correction.alphaBeta, correction.data);
+            }
+        }
+    }
+
+    auto gnssObs = std::static_pointer_cast<const GnssObs>(queue.extract_front());
+    LOG_DATA("{}: recvGnssObs at time [{}]", nameId(), gnssObs->insTime.toYMDHMS());
 
     auto nodeData = std::make_shared<NodeData>();
-    nodeData->insTime = gnssObservation->insTime;
-    _lastPredictRequestedTime = gnssObservation->insTime;
+    nodeData->insTime = gnssObs->insTime;
+    _lastPredictRequestedTime = gnssObs->insTime;
+
+    // Data calculated for each observation
+    struct CalcData
+    {
+        // Constructor
+        explicit CalcData(size_t obsIdx, std::shared_ptr<NAV::SatNavData> satNavData)
+            : obsIdx(obsIdx), satNavData(std::move(satNavData)) {}
+
+        size_t obsIdx = 0;                                     // Index in the provided GNSS Observation data
+        std::shared_ptr<NAV::SatNavData> satNavData = nullptr; // Satellite Navigation data
+
+        double satClkBias{};                    // Satellite clock bias [s]
+        double satClkDrift{};                   // Satellite clock drift [s/s]
+        Eigen::Vector3d e_satPos;               // Satellite position in ECEF frame coordinates [m]
+        Eigen::Vector3d e_satVel;               // Satellite velocity in ECEF frame coordinates [m/s]
+        double pseudorangeRate{ std::nan("") }; // Pseudorange rate [m/s]
+
+        // Data recalculated each iteration
+
+        bool skipped = false;                                            // Whether to skip the measurement
+        Eigen::Vector3d e_lineOfSightUnitVector;                         // Line-of-sight unit vector in ECEF frame coordinates
+        Eigen::Vector3d n_lineOfSightUnitVector;                         // Line-of-sight unit vector in NED frame coordinates
+        double satElevation = calcSatElevation(n_lineOfSightUnitVector); // Elevation [rad]
+        double satAzimuth = calcSatAzimuth(n_lineOfSightUnitVector);     // Azimuth [rad]
+    };
+
+    // Data calculated for each satellite (only satellites filtered by GUI filter & NAV data available)
+    std::vector<CalcData> calcData;
+    std::vector<SatelliteSystem> availSatelliteSystems; // List of satellite systems
+    for (size_t obsIdx = 0; obsIdx < gnssObs->data.size(); obsIdx++)
+    {
+        const auto& obsData = gnssObs->data[obsIdx];
+        auto satId = obsData.satSigId.toSatId();
+
+        if ((obsData.satSigId.freq & _filterFreq)                                                                     // frequency is selected in GUI
+            && (obsData.code & _filterCode)                                                                           // code is selected in GUI
+            && obsData.pseudorange                                                                                    // has a valid pseudorange
+            && std::find(_excludedSatellites.begin(), _excludedSatellites.end(), satId) == _excludedSatellites.end()) // is not excluded
+        {
+            for (const auto& gnssNavInfo : gnssNavInfos)
+            {
+                if (auto satNavData = gnssNavInfo->searchNavigationData(satId, gnssObs->insTime)) // can calculate satellite position
+                {
+                    if (!satNavData->isHealthy())
+                    {
+                        LOG_DATA("{}: Satellite {} is skipped because the signal is not healthy.", nameId(), satId);
+
+#ifdef TESTING
+                        auto& sppExtendedData = (*sppSol)(obsData.satSigId.freq, obsData.satSigId.satNum, obsData.code);
+                        sppExtendedData.skipped = true;
+#endif
+                        continue;
+                    }
+                    LOG_DATA("{}: Using observation from {} {}", nameId(), obsData.satSigId, obsData.code);
+                    calcData.emplace_back(obsIdx, satNavData);
+                    if (std::find(availSatelliteSystems.begin(), availSatelliteSystems.end(), satId.satSys) == availSatelliteSystems.end())
+                    {
+                        availSatelliteSystems.push_back(satId.satSys);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    size_t nMeas = calcData.size();
+    LOG_DATA("{}: nMeas {}", nameId(), nMeas);
+    // size_t nParam = 4 + availSatelliteSystems.size() - 1; // 3x pos, 1x clk, (N-1)x clkDiff // TODO: enable once necessary
+
+    // Frequency number (GLONASS only)
+    int8_t freqNum = -128;
+
+    // Find all observations providing a doppler measurement (for velocity calculation)
+    size_t nDopplerMeas = 0;
+    for (size_t i = 0; i < nMeas; i++)
+    {
+        const auto& obsData = gnssObs->data[calcData[i].obsIdx];
+        if (obsData.doppler)
+        {
+            nDopplerMeas++;
+            // TODO: Find out what this is used for and find a way to use it, after the GLONASS orbit calculation is working
+            if (obsData.satSigId.freq & (R01 | R02))
+            {
+                if (auto satNavData = std::dynamic_pointer_cast<GLONASSEphemeris>(calcData[i].satNavData))
+                {
+                    freqNum = satNavData->frequencyNumber;
+                }
+            }
+
+            calcData[i].pseudorangeRate = doppler2psrRate(obsData.doppler.value(), obsData.satSigId.freq, freqNum);
+        }
+    }
 
     invokeCallbacks(OUTPUT_PORT_INDEX_SYNC, nodeData); // Prediction consists out of ImuIntegration and prediction (gets triggered from it)
 }
@@ -1041,9 +1357,9 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
     }
 }
 
-void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const GnssObs>& gnssObservation)
+void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const GnssObs>& gnssObs)
 {
-    LOG_DATA("{}: Updating to time {} - {} (lastInertial at {} - {})", nameId(), gnssObservation->insTime.toYMDHMS(), gnssObservation->insTime.toGPSweekTow(),
+    LOG_DATA("{}: Updating to time {} - {} (lastInertial at {} - {})", nameId(), gnssObs->insTime.toYMDHMS(), gnssObs->insTime.toGPSweekTow(),
              _latestInertialNavSol->insTime.toYMDHMS(), _latestInertialNavSol->insTime.toGPSweekTow());
 
     // -------------------------------------------- GUI Parameters -----------------------------------------------
@@ -1053,12 +1369,12 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     LOG_DATA("{}:     lla_position = {} [rad, rad, m]", nameId(), lla_position.transpose());
 
     // TODO: read params as in LCKF
-    double sigma_rhoZ{};
-    double sigma_rhoC{};
-    double sigma_rhoA{};
-    double sigma_rZ{};
-    double sigma_rC{};
-    double sigma_rA{};
+    double sigma_rhoZ{ 1 };
+    double sigma_rhoC{ 1 };
+    double sigma_rhoA{ 1 };
+    double sigma_rZ{ 1 };
+    double sigma_rC{ 1 };
+    double sigma_rA{ 1 };
 
     // ---------------------------------------------- Update -----------------------------------------------------
 
@@ -1086,10 +1402,10 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         // LOG_DATA("{}:     n_Omega_ie =\n{}", nameId(), n_Omega_ie);
 
         std::vector<Eigen::Vector3d> n_lineOfSightUnitVectors;
-        n_lineOfSightUnitVectors.resize(gnssObservation->data.size());
+        n_lineOfSightUnitVectors.resize(gnssObs->data.size());
 
         // TODO: calc 'n_lineOfSightUnitVectors', maybe in a separate function. Check 'struct CalcData' in SPP
-        // for (size_t obsIdx = 0; obsIdx < gnssObservation->data.size(); obsIdx++)
+        // for (size_t obsIdx = 0; obsIdx < gnssObs->data.size(); obsIdx++)
         // {
         //     n_lineOfSightUnitVectors[obsIdx] =
         // }
@@ -1099,15 +1415,15 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
 
         // TODO: Check 'struct CalcData' in SPP
         std::vector<double> satElevation;
-        satElevation.resize(gnssObservation->data.size());
+        satElevation.resize(gnssObs->data.size());
 
         // TODO: Check 'struct CalcData' in SPP
         std::vector<double> CN0;
-        CN0.resize(gnssObservation->data.size());
+        CN0.resize(gnssObs->data.size());
 
         // TODO: Check 'struct CalcData' in SPP
         std::vector<double> rangeAccel;
-        rangeAccel.resize(gnssObservation->data.size());
+        rangeAccel.resize(gnssObs->data.size());
 
         // 6. Calculate the measurement noise covariance matrix R_k
         _kalmanFilter.R = measurementNoiseCovariance_R(satElevation, sigma_rhoZ, sigma_rhoC, sigma_rhoA, sigma_rZ, sigma_rC, sigma_rA, CN0, rangeAccel);
@@ -1118,14 +1434,14 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
 
         // TODO: get estimates
         std::vector<double> pseudoRangeEstimates;
-        pseudoRangeEstimates.resize(gnssObservation->data.size());
-        // for (size_t obsIdx = 0; obsIdx < gnssObservation->data.size(); obsIdx++)
+        pseudoRangeEstimates.resize(gnssObs->data.size());
+        // for (size_t obsIdx = 0; obsIdx < gnssObs->data.size(); obsIdx++)
         // {
         // pseudoRangeEstimates[obsIdx] = pseudoRangeEstimate(e_satPosEst, e_recvPosEst, recvClkOffset, i_Dcm_e);
         // }
 
         std::vector<double> pseudoRangeRateEstimates;
-        // for (size_t obsIdx = 0; obsIdx < gnssObservation->data.size(); obsIdx++)
+        // for (size_t obsIdx = 0; obsIdx < gnssObs->data.size(); obsIdx++)
         // {
         // pseudoRangeRateEstimates[obsIdx] = pseudoRangeRateEstimate(e_satPosEst, e_satVelEst, e_recvPosEst, e_recvVelEst, e_lineOfSight, recvClkDrift, i_Dcm_e, e_Omega_ie);
         // }
@@ -1441,13 +1757,14 @@ Eigen::MatrixXd NAV::TightlyCoupledKF::n_measurementMatrix_H(const double& R_N, 
 {
     // Math: \mathbf{H}_{G,k}^n \approx \begin{pmatrix} 0_{1,3} & 0_{1,3} & {\mathbf{h}_{\rho p}^1}^\text{T} & 0_{1,3} & 0_{1,3} & 1 & 0 \\ 0_{1,3} & 0_{1,3} & {\mathbf{h}_{\rho p}^2}^\text{T} & 0_{1,3} & 0_{1,3} & 1 & 0 \\ \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\ 0_{1,3} & 0_{1,3} & {\mathbf{h}_{\rho p}^m}^\text{T} & 0_{1,3} & 0_{1,3} & 1 & 0 \\ - & - & - & - & - & - & - \\ 0_{1,3} & {\mathbf{u}_{a1}^n}^\text{T} & 0_{1,3} & 0_{1,3} & 0_{1,3} & 0 & 1 \\ 0_{1,3} & {\mathbf{u}_{a2}^n}^\text{T} & 0_{1,3} & 0_{1,3} & 0_{1,3} & 0 & 1 \\ \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\ 0_{1,3} & {\mathbf{u}_{am}^n}^\text{T} & 0_{1,3} & 0_{1,3} & 0_{1,3} & 0 & 1 \end{pmatrix}_{\mathbf{x} = \hat{\mathbf{x}}_k^-} \qquad \text{P. Groves}\,(14.127)
 
-    auto numMeasurements = static_cast<uint8_t>(n_lineOfSightUnitVectors.size());
+    auto numSats = static_cast<uint8_t>(n_lineOfSightUnitVectors.size());
 
-    Eigen::MatrixXd H = Eigen::MatrixXd::Zero(2U * numMeasurements, 17); // Factor "2" accounts for range and range-rate measurement
+    auto numMeasurements = static_cast<Eigen::Index>(2 * numSats);
+    Eigen::MatrixXd H = Eigen::MatrixXd::Zero(numMeasurements, 17);
 
     Eigen::Vector3d h_rhoP;
 
-    for (size_t j = 0; j < numMeasurements; j++)
+    for (size_t j = 0; j < numSats; j++)
     {
         h_rhoP << (R_N + lla_position(2)) * n_lineOfSightUnitVectors[j](0),
             (R_E + lla_position(2)) * std::cos(lla_position(0)) * n_lineOfSightUnitVectors[j](1),
@@ -1458,8 +1775,8 @@ Eigen::MatrixXd NAV::TightlyCoupledKF::n_measurementMatrix_H(const double& R_N, 
         H.block<1, 3>(i, 6) = h_rhoP.transpose();
         H(i, 15) = 1;
 
-        H.block<1, 3>(numMeasurements + i, 3) = n_lineOfSightUnitVectors[j].transpose();
-        H(numMeasurements + i, 16) = 1;
+        H.block<1, 3>(numSats + i, 3) = n_lineOfSightUnitVectors[j].transpose();
+        H(numSats + i, 16) = 1;
     }
 
     return H;
@@ -1469,11 +1786,12 @@ Eigen::MatrixXd NAV::TightlyCoupledKF::measurementNoiseCovariance_R(const std::v
 {
     // Math: \mathbf{R}_G = \begin{pmatrix} \sigma_{\rho1}^2 & 0 & \dots & 0 & | & 0 & 0 & \dots & 0 \\ 0 & \sigma_{\rho2}^2 & \dots & 0 & | & 0 & 0 & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots & | & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \dots & \sigma_{\rho m}^2 & | & 0 & 0 & \dots & 0 \\ - & - & - & - & - & - & - & - & - \\ 0 & 0 & \dots & 0 & | & \sigma_{r1}^2 & 0 & \dots & 0 \\ 0 & 0 & \dots & 0 & | & 0 & \sigma_{r 2}^2 & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots & | & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \dots & 0 & | & 0 & 0 & \dots & \sigma_{rm}^2 \end{pmatrix} \qquad \text{P. Groves}\,(9.168)
 
-    auto numMeasurements = static_cast<uint8_t>(satElevation.size());
+    auto numSats = static_cast<uint8_t>(satElevation.size());
 
-    Eigen::MatrixXd R = Eigen::MatrixXd::Zero(2U * numMeasurements, 2 * numMeasurements); // Factor "2" accounts for range and range-rate measurement
+    auto numMeasurements = static_cast<Eigen::Index>(2 * numSats);
+    Eigen::MatrixXd R = Eigen::MatrixXd::Zero(numMeasurements, numMeasurements);
 
-    for (size_t j = 0; j < numMeasurements; j++)
+    for (size_t j = 0; j < numSats; j++)
     {
         auto sigma_rho2 = sigma2(satElevation[j], sigma_rhoZ, sigma_rhoC, sigma_rhoA, CN0[j], rangeAccel[j]);
         auto sigma_r2 = sigma2(satElevation[j], sigma_rZ, sigma_rC, sigma_rA, CN0[j], rangeAccel[j]);
@@ -1481,7 +1799,7 @@ Eigen::MatrixXd NAV::TightlyCoupledKF::measurementNoiseCovariance_R(const std::v
         auto i = static_cast<uint8_t>(j);
 
         R(i, i) = sigma_rho2;
-        R(numMeasurements + i, numMeasurements + i) = sigma_r2;
+        R(numSats + i, numSats + i) = sigma_r2;
     }
 
     return R;
@@ -1498,15 +1816,16 @@ Eigen::MatrixXd NAV::TightlyCoupledKF::measurementInnovation_dz(const std::vecto
 {
     // Math: \delta \mathbf{z}^-_{\mathbf{G},k} = \begin{pmatrix} \delta \mathbf{z}^-_{\rho,k} \\ \delta \mathbf{z}^-_{r,k} \end{pmatrix} = \begin{pmatrix} \rho^1_{a,C} - \hat{\rho}^{1-}_{a,C}, \rho^2_{a,C} - \hat{\rho}^{2-}_{a,C}, \cdots, \rho^m_{a,C} - \hat{\rho}^{m-}_{a,C} \\ \dot{\rho}^1_{a,C} - \hat{\dot{\rho}}^{1-}_{a,C}, \dot{\rho}^2_{a,C} - \hat{\dot{\rho}}^{2-}_{a,C}, \cdots, \dot{\rho}^m_{a,C} - \hat{\dot{\rho}}^{m-}_{a,C} \end{pmatrix}_k \qquad \text{P. Groves}\,(14.119)
 
-    auto numMeasurements = static_cast<uint8_t>(pseudoRangeObservations.size());
+    auto numSats = static_cast<uint8_t>(pseudoRangeObservations.size());
 
-    Eigen::MatrixXd deltaZ = Eigen::MatrixXd::Zero(2U * numMeasurements, 1);
+    auto numMeasurements = static_cast<Eigen::Index>(2 * numSats);
+    Eigen::MatrixXd deltaZ = Eigen::MatrixXd::Zero(numMeasurements, 1);
 
-    for (size_t j = 0; j < numMeasurements; j++)
+    for (size_t j = 0; j < numSats; j++)
     {
         auto i = static_cast<uint8_t>(3 * j);
         deltaZ(i, 1) = pseudoRangeObservations[j] - pseudoRangeEstimates[j];
-        deltaZ(numMeasurements + i, 1) = pseudoRangeRateObservations[j] - pseudoRangeRateEstimates[j];
+        deltaZ(numSats + i, 1) = pseudoRangeRateObservations[j] - pseudoRangeRateEstimates[j];
     }
 
     return deltaZ;
