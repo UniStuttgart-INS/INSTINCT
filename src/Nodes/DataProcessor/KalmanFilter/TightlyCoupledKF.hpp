@@ -94,6 +94,7 @@ class TightlyCoupledKF : public Node
 
     /// Index of the Pin currently being dragged
     int _dragAndDropPinIndex = -1;
+    /// Number of NavInfo input pins
     size_t _nNavInfoPins = 1;
     /// @brief Adds/Deletes Input Pins depending on the variable _nNavInfoPins
     void updateNumberOfInputPins();

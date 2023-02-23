@@ -1043,11 +1043,6 @@ void NAV::TightlyCoupledKF::recvGnssObs(InputPin::NodeDataQueue& queue, size_t /
                     if (!satNavData->isHealthy())
                     {
                         LOG_DATA("{}: Satellite {} is skipped because the signal is not healthy.", nameId(), satId);
-
-#ifdef TESTING
-                        auto& sppExtendedData = (*sppSol)(obsData.satSigId.freq, obsData.satSigId.satNum, obsData.code);
-                        sppExtendedData.skipped = true;
-#endif
                         continue;
                     }
                     LOG_DATA("{}: Using observation from {} {}", nameId(), obsData.satSigId, obsData.code);
