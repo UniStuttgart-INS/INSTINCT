@@ -404,14 +404,50 @@ void NAV::TightlyCoupledKF::guiConfig()
     //                                        Measurement Uncertainties 𝐑
     // ###########################################################################################################
 
-    // TODO: Implement config options
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+    if (ImGui::TreeNode(fmt::format("R - Measurement noise covariance matrix##{}", size_t(id)).c_str()))
+    {
+        auto* _gnssMeasurementUncertaintyPseudorangePointer = &_gnssMeasurementUncertaintyPseudorange;
+        if (gui::widgets::InputDoubleWithUnit(fmt::format("Pseudorange covariance ({})##{}",
+                                                          _gnssMeasurementUncertaintyPseudorangeUnit == GnssMeasurementUncertaintyPseudorangeUnit::meter2
+                                                              ? "Variance σ²"
+                                                              : "Standard deviation σ",
+                                                          size_t(id))
+                                                  .c_str(),
+                                              configWidth, unitWidth, _gnssMeasurementUncertaintyPseudorangePointer, reinterpret_cast<int*>(&_gnssMeasurementUncertaintyPseudorangeUnit), "m^2\0"
+                                                                                                                                                                                          "m\0",
+                                              0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: gnssMeasurementUncertaintyPseudorange changed to {}", nameId(), _gnssMeasurementUncertaintyPseudorange);
+            LOG_DEBUG("{}: gnssMeasurementUncertaintyPseudorangeUnit changed to {}", nameId(), fmt::underlying(_gnssMeasurementUncertaintyPseudorangeUnit));
+            flow::ApplyChanges();
+        }
+
+        auto* _gnssMeasurementUncertaintyPseudorangeRatePointer = &_gnssMeasurementUncertaintyPseudorangeRate;
+        if (gui::widgets::InputDoubleWithUnit(fmt::format("Pseudorange-rate covariance ({})##{}",
+                                                          _gnssMeasurementUncertaintyPseudorangeRateUnit == GnssMeasurementUncertaintyPseudorangeRateUnit::m2_s2
+                                                              ? "Variance σ²"
+                                                              : "Standard deviation σ",
+                                                          size_t(id))
+                                                  .c_str(),
+                                              configWidth, unitWidth, _gnssMeasurementUncertaintyPseudorangeRatePointer, reinterpret_cast<int*>(&_gnssMeasurementUncertaintyPseudorangeRateUnit), "m^2/s^2\0"
+                                                                                                                                                                                                  "m/s\0",
+                                              0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: gnssMeasurementUncertaintyPseudorangeRate changed to {}", nameId(), _gnssMeasurementUncertaintyPseudorangeRate);
+            LOG_DEBUG("{}: gnssMeasurementUncertaintyPseudorangeRateUnit changed to {}", nameId(), fmt::underlying(_gnssMeasurementUncertaintyPseudorangeRateUnit));
+            flow::ApplyChanges();
+        }
+
+        ImGui::TreePop();
+    }
 
     // ###########################################################################################################
     //                                        𝐏 Error covariance matrix
     // ###########################################################################################################
 
     ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-    if (ImGui::TreeNode(fmt::format("P Error covariance matrix (init)##{}", size_t(id)).c_str()))
+    if (ImGui::TreeNode(fmt::format("P - Error covariance matrix (init)##{}", size_t(id)).c_str()))
     {
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Position covariance ({})##{}",
                                                            _initCovariancePositionUnit == InitCovariancePositionUnit::rad2_rad2_m2
@@ -589,6 +625,10 @@ void NAV::TightlyCoupledKF::guiConfig()
     j["initCovariancePhase"] = _initCovariancePhase;
     j["initCovarianceFreqUnit"] = _initCovarianceFreqUnit;
     j["initCovarianceFreq"] = _initCovarianceFreq;
+    j["gnssMeasurementUncertaintyPseudorangeUnit"] = _gnssMeasurementUncertaintyPseudorangeUnit;
+    j["gnssMeasurementUncertaintyPseudorange"] = _gnssMeasurementUncertaintyPseudorange;
+    j["gnssMeasurementUncertaintyPseudorangeRateUnit"] = _gnssMeasurementUncertaintyPseudorangeRateUnit;
+    j["gnssMeasurementUncertaintyPseudorangeRate"] = _gnssMeasurementUncertaintyPseudorangeRate;
 
     return j;
 }
@@ -701,7 +741,22 @@ void NAV::TightlyCoupledKF::restore(json const& j)
     }
 
     // -------------------------------- 𝐑 Measurement noise covariance matrix -----------------------------------
-    // TODO: Add gnssObsUncertainty... Unit, etc.
+    if (j.contains("gnssMeasurementUncertaintyPseudorangeUnit"))
+    {
+        _gnssMeasurementUncertaintyPseudorangeUnit = j.at("gnssMeasurementUncertaintyPseudorangeUnit");
+    }
+    if (j.contains("gnssMeasurementUncertaintyPseudorange"))
+    {
+        _gnssMeasurementUncertaintyPseudorange = j.at("gnssMeasurementUncertaintyPseudorange");
+    }
+    if (j.contains("gnssMeasurementUncertaintyPseudorangeRateUnit"))
+    {
+        _gnssMeasurementUncertaintyPseudorangeRateUnit = j.at("gnssMeasurementUncertaintyPseudorangeRateUnit");
+    }
+    if (j.contains("gnssMeasurementUncertaintyPseudorangeRate"))
+    {
+        _gnssMeasurementUncertaintyPseudorangeRate = j.at("gnssMeasurementUncertaintyPseudorangeRate");
+    }
 
     // -------------------------------------- 𝐏 Error covariance matrix -----------------------------------------
     if (j.contains("initCovariancePositionUnit"))
@@ -1363,13 +1418,39 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     const Eigen::Vector3d& lla_position = _latestInertialNavSol->lla_position();
     LOG_DATA("{}:     lla_position = {} [rad, rad, m]", nameId(), lla_position.transpose());
 
-    // TODO: read params as in LCKF
-    double sigma_rhoZ{ 1 };
-    double sigma_rhoC{ 1 };
-    double sigma_rhoA{ 1 };
-    double sigma_rZ{ 1 };
-    double sigma_rC{ 1 };
-    double sigma_rA{ 1 };
+    // GNSS measurement uncertainty for the pseudorange (Variance σ²) in [m^2]
+    double gnssSigmaSquaredPseudorange{};
+    switch (_gnssMeasurementUncertaintyPseudorangeUnit)
+    {
+    case GnssMeasurementUncertaintyPseudorangeUnit::meter:
+        gnssSigmaSquaredPseudorange = std::pow(_gnssMeasurementUncertaintyPseudorange, 2);
+        break;
+    case GnssMeasurementUncertaintyPseudorangeUnit::meter2:
+        gnssSigmaSquaredPseudorange = _gnssMeasurementUncertaintyPseudorange;
+        break;
+    }
+    LOG_DATA("{}:     gnssSigmaSquaredPseudorange = {} [m^2]", nameId(), gnssSigmaSquaredPseudorange);
+
+    // GNSS measurement uncertainty for the pseudorange-rate (Variance σ²) in [m^2/s^2]
+    double gnssSigmaSquaredPseudorangeRate{};
+    switch (_gnssMeasurementUncertaintyPseudorangeRateUnit)
+    {
+    case GnssMeasurementUncertaintyPseudorangeRateUnit::m_s:
+        gnssSigmaSquaredPseudorangeRate = std::pow(_gnssMeasurementUncertaintyPseudorangeRate, 2);
+        break;
+    case GnssMeasurementUncertaintyPseudorangeRateUnit::m2_s2:
+        gnssSigmaSquaredPseudorangeRate = _gnssMeasurementUncertaintyPseudorangeRate;
+        break;
+    }
+    LOG_DATA("{}:     gnssSigmaSquaredPseudorangeRate = {} [m^2/s^2]", nameId(), gnssSigmaSquaredPseudorangeRate);
+
+    // TODO: Check whether it is necessary to distinguish the following three types (see Groves eq. 9.168)
+    double sigma_rhoZ = std::sqrt(gnssSigmaSquaredPseudorange);
+    double sigma_rhoC{};
+    double sigma_rhoA{};
+    double sigma_rZ = std::sqrt(gnssSigmaSquaredPseudorangeRate);
+    double sigma_rC{};
+    double sigma_rA{};
 
     // ---------------------------------------------- Update -----------------------------------------------------
 

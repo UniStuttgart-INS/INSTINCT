@@ -244,6 +244,34 @@ class TightlyCoupledKF : public Node
 
     // ###########################################################################################################
 
+    /// Possible Units for the Standard deviation of the pseudorange measurement
+    enum class GnssMeasurementUncertaintyPseudorangeUnit
+    {
+        meter2, ///< Variance [m²]
+        meter,  ///< Standard deviation [m]
+    };
+    /// Gui selection for the Unit of the input gnssMeasurementUncertaintyPseudorangeUnit parameter
+    GnssMeasurementUncertaintyPseudorangeUnit _gnssMeasurementUncertaintyPseudorangeUnit = GnssMeasurementUncertaintyPseudorangeUnit::meter;
+
+    /// @brief GUI selection of the GNSS pseudorange measurement uncertainty (standard deviation σ or Variance σ²).
+    double _gnssMeasurementUncertaintyPseudorange = 5 /* [m] */;
+
+    // ###########################################################################################################
+
+    /// Possible Units for the Standard deviation of the pseudorange-rate measurement
+    enum class GnssMeasurementUncertaintyPseudorangeRateUnit
+    {
+        m2_s2, ///< Variance [m²/s²]
+        m_s,   ///< Standard deviation [m/s]
+    };
+    /// Gui selection for the Unit of the input gnssMeasurementUncertaintyPseudorangeRateUnit parameter
+    GnssMeasurementUncertaintyPseudorangeRateUnit _gnssMeasurementUncertaintyPseudorangeRateUnit = GnssMeasurementUncertaintyPseudorangeRateUnit::m_s;
+
+    /// @brief GUI selection of the GNSS pseudorange-rate measurement uncertainty (standard deviation σ or Variance σ²).
+    double _gnssMeasurementUncertaintyPseudorangeRate = 5 /* [m/s] */;
+
+    // ###########################################################################################################
+
     /// @brief Available Random processes
     enum class RandomProcess
     {
