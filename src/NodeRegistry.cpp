@@ -297,6 +297,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
 #include "NodeData/State/InertialNavSol.hpp"
 #include "NodeData/State/LcKfInsGnssErrors.hpp"
+#include "NodeData/State/TcKfInsGnssErrors.hpp"
 #include "NodeData/State/Pos.hpp"
 #include "NodeData/State/PosVel.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
@@ -320,6 +321,7 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     // State
     registerNodeDataType<InertialNavSol>();
     registerNodeDataType<LcKfInsGnssErrors>();
+    registerNodeDataType<TcKfInsGnssErrors>();
     registerNodeDataType<Pos>();
     registerNodeDataType<PosVel>();
     registerNodeDataType<PosVelAtt>();

@@ -65,7 +65,7 @@ NAV::TightlyCoupledKF::TightlyCoupledKF()
                        });
     inputPins.back().dropQueueIfNotFirable = false;
     updateNumberOfInputPins();
-    // nm::CreateOutputPin(this, "Errors", Pin::Type::Flow, { NAV::LcKfInsGnssErrors::type() }); // TODO: Enable, once output is provided
+    nm::CreateOutputPin(this, "Errors", Pin::Type::Flow, { NAV::TcKfInsGnssErrors::type() });
     nm::CreateOutputPin(this, "Sync", Pin::Type::Flow, { NAV::NodeData::type() });
 }
 
@@ -1463,28 +1463,9 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         double R_N = calcEarthRadius_N(lla_position(0));
         LOG_DATA("{}:     R_N = {} [m]", nameId(), R_N);
 
-        // TODO: necessary?
-        // Direction Cosine Matrix from body to navigation coordinates, at the time tₖ₋₁
-        // Eigen::Matrix3d n_Dcm_b = _latestInertialNavSol->n_Quat_b().toRotationMatrix();
-        // LOG_DATA("{}:     n_Dcm_b =\n{}", nameId(), n_Dcm_b);
-
-        // Conversion matrix between cartesian and curvilinear perturbations to the position
-        // Eigen::Matrix3d T_rn_p = conversionMatrixCartesianCurvilinear(lla_position, R_N, R_E);
-        // LOG_DATA("{}:     T_rn_p =\n{}", nameId(), T_rn_p);
-
-        // TODO: necessary?
-        // Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
-        // Eigen::Matrix3d n_Omega_ie = math::skewSymmetricMatrix(_latestInertialNavSol->n_Quat_e() * InsConst::e_omega_ie);
-        // LOG_DATA("{}:     n_Omega_ie =\n{}", nameId(), n_Omega_ie);
-
+        // TODO: get this from 'recvGnssObs'
         std::vector<Eigen::Vector3d> n_lineOfSightUnitVectors;
         n_lineOfSightUnitVectors.resize(gnssObs->data.size());
-
-        // TODO: calc 'n_lineOfSightUnitVectors', maybe in a separate function. Check 'struct CalcData' in SPP
-        // for (size_t obsIdx = 0; obsIdx < gnssObs->data.size(); obsIdx++)
-        // {
-        //     n_lineOfSightUnitVectors[obsIdx] =
-        // }
 
         // 5. Calculate the measurement matrix H_k
         _kalmanFilter.H = n_measurementMatrix_H(R_N, R_E, lla_position, n_lineOfSightUnitVectors);
@@ -1525,6 +1506,72 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         // 8. Formulate the measurement z_k
         _kalmanFilter.z = measurementInnovation_dz(pseudoRangeObservations, pseudoRangeEstimates, pseudoRangeRateObservations, pseudoRangeRateEstimates);
     }
+
+    if (_checkKalmanMatricesRanks)
+    {
+        Eigen::FullPivLU<Eigen::MatrixXd> lu(_kalmanFilter.H * _kalmanFilter.P * _kalmanFilter.H.transpose() + _kalmanFilter.R);
+        auto rank = lu.rank();
+        if (rank != _kalmanFilter.H.rows())
+        {
+            LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank);
+        }
+    }
+
+    // 7. Calculate the Kalman gain matrix K_k
+    // 9. Update the state vector estimate from x(-) to x(+)
+    // 10. Update the error covariance matrix from P(-) to P(+)
+
+    _kalmanFilter.correctWithMeasurementInnovation();
+
+    if (_checkKalmanMatricesRanks)
+    {
+        Eigen::FullPivLU<Eigen::MatrixXd> lu(_kalmanFilter.H * _kalmanFilter.P * _kalmanFilter.H.transpose() + _kalmanFilter.R);
+        auto rank = lu.rank();
+        if (rank != _kalmanFilter.H.rows())
+        {
+            LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank);
+        }
+
+        Eigen::FullPivLU<Eigen::MatrixXd> luK(_kalmanFilter.K);
+        rank = luK.rank();
+        if (rank != _kalmanFilter.K.cols())
+        {
+            LOG_WARN("{}: K.rank = {}", nameId(), rank);
+        }
+
+        Eigen::FullPivLU<Eigen::MatrixXd> luP(_kalmanFilter.P);
+        rank = luP.rank();
+        if (rank != _kalmanFilter.P.rows())
+        {
+            LOG_WARN("{}: P.rank = {}", nameId(), rank);
+        }
+    }
+
+    _accumulatedAccelBiases += _kalmanFilter.x.block<3, 1>(9, 0) * (1. / SCALE_FACTOR_ACCELERATION);
+    _accumulatedGyroBiases += _kalmanFilter.x.block<3, 1>(12, 0) * (1. / SCALE_FACTOR_ANGULAR_RATE);
+
+    // Push out the new data
+    auto tcKfInsGnssErrors = std::make_shared<TcKfInsGnssErrors>();
+    tcKfInsGnssErrors->insTime = gnssObs->insTime;
+    tcKfInsGnssErrors->positionError = _kalmanFilter.x.block<3, 1>(6, 0);
+    tcKfInsGnssErrors->velocityError = _kalmanFilter.x.block<3, 1>(3, 0);
+    tcKfInsGnssErrors->attitudeError = _kalmanFilter.x.block<3, 1>(0, 0) * (1. / SCALE_FACTOR_ATTITUDE);
+    tcKfInsGnssErrors->b_biasAccel = _accumulatedAccelBiases;
+    tcKfInsGnssErrors->b_biasGyro = _accumulatedGyroBiases;
+    tcKfInsGnssErrors->recvClkOffset = _kalmanFilter.x(15, 0);
+    tcKfInsGnssErrors->recvClkDrift = _kalmanFilter.x(16, 0);
+
+    if (_frame == Frame::NED)
+    {
+        tcKfInsGnssErrors->positionError = tcKfInsGnssErrors->positionError.array() * Eigen::Array3d(1. / SCALE_FACTOR_LAT_LON, 1. / SCALE_FACTOR_LAT_LON, 1);
+        tcKfInsGnssErrors->frame = TcKfInsGnssErrors::Frame::NED;
+    }
+
+    // Closed loop
+
+    _kalmanFilter.x.setZero();
+
+    invokeCallbacks(OUTPUT_PORT_INDEX_ERROR, tcKfInsGnssErrors);
 }
 
 // ###########################################################################################################

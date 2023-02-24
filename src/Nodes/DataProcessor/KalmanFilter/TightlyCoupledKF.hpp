@@ -20,7 +20,7 @@
 #include "NodeData/State/InertialNavSol.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
 #include "Navigation/GNSS/Core/ReceiverClock.hpp"
-// TODO: Include 'InsGnssErrors', which is tbd
+#include "NodeData/State/TcKfInsGnssErrors.hpp"
 
 #include "Navigation/Math/KalmanFilter.hpp"
 #include "Navigation/Transformations/Units.hpp"
