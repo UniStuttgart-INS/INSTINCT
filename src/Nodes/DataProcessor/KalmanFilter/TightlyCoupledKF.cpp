@@ -54,7 +54,7 @@ NAV::TightlyCoupledKF::TightlyCoupledKF()
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 800, 700 }; // TODO: Adapt, once config options are implemented
+    _guiConfigDefaultWindowSize = { 866, 679 }; // TODO: Adapt, once config options are implemented
 
     nm::CreateInputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() }, &TightlyCoupledKF::recvInertialNavigationSolution, nullptr, 1);
     inputPins.back().neededForTemporalQueueCheck = false;
@@ -96,483 +96,530 @@ void NAV::TightlyCoupledKF::guiConfig()
 
     float taylorOrderWidth = 75.0F * gui::NodeEditorApplication::windowFontRatio();
 
-    if (ImGui::BeginTable(fmt::format("Pin Settings##{}", size_t(id)).c_str(), inputPins.size() > 1 ? 3 : 2,
-                          ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+    if (ImGui::CollapsingHeader(fmt::format("Input settings##{}", size_t(id)).c_str()))
     {
-        ImGui::TableSetupColumn("Pin");
-        ImGui::TableSetupColumn("# Sat");
-        if (inputPins.size() > 3)
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::TreeNode(fmt::format("Pin settings##{}", size_t(id)).c_str()))
         {
-            ImGui::TableSetupColumn("");
-        }
-        ImGui::TableHeadersRow();
-
-        // Used to reset the member variabel _dragAndDropPinIndex in case no plot does a drag and drop action
-        bool dragAndDropPinStillInProgress = false;
-
-        auto showDragDropTargetPin = [this](size_t pinIdxTarget) {
-            ImGui::Dummy(ImVec2(-1.F, 2.F));
-
-            bool selectableDummy = true;
-            ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5F, 0.5F));
-            ImGui::PushStyleColor(ImGuiCol_Header, IM_COL32(16, 173, 44, 79));
-            ImGui::Selectable(fmt::format("[drop here]").c_str(), &selectableDummy, ImGuiSelectableFlags_None,
-                              ImVec2(std::max(ImGui::GetColumnWidth(0), ImGui::CalcTextSize("[drop here]").x), 20.F));
-            ImGui::PopStyleColor();
-            ImGui::PopStyleVar();
-
-            if (ImGui::BeginDragDropTarget())
+            if (ImGui::BeginTable(fmt::format("Pin Settings##{}", size_t(id)).c_str(), inputPins.size() > 1 ? 3 : 2,
+                                  ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
             {
-                if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND Pin {}", size_t(id)).c_str()))
+                ImGui::TableSetupColumn("Pin");
+                ImGui::TableSetupColumn("# Sat");
+                if (inputPins.size() > 3)
                 {
-                    auto pinIdxSource = *static_cast<size_t*>(payloadData->Data);
+                    ImGui::TableSetupColumn("");
+                }
+                ImGui::TableHeadersRow();
 
-                    if (pinIdxSource < pinIdxTarget)
+                // Used to reset the member variabel _dragAndDropPinIndex in case no plot does a drag and drop action
+                bool dragAndDropPinStillInProgress = false;
+
+                auto showDragDropTargetPin = [this](size_t pinIdxTarget) {
+                    ImGui::Dummy(ImVec2(-1.F, 2.F));
+
+                    bool selectableDummy = true;
+                    ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5F, 0.5F));
+                    ImGui::PushStyleColor(ImGuiCol_Header, IM_COL32(16, 173, 44, 79));
+                    ImGui::Selectable(fmt::format("[drop here]").c_str(), &selectableDummy, ImGuiSelectableFlags_None,
+                                      ImVec2(std::max(ImGui::GetColumnWidth(0), ImGui::CalcTextSize("[drop here]").x), 20.F));
+                    ImGui::PopStyleColor();
+                    ImGui::PopStyleVar();
+
+                    if (ImGui::BeginDragDropTarget())
                     {
-                        --pinIdxTarget;
+                        if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND Pin {}", size_t(id)).c_str()))
+                        {
+                            auto pinIdxSource = *static_cast<size_t*>(payloadData->Data);
+
+                            if (pinIdxSource < pinIdxTarget)
+                            {
+                                --pinIdxTarget;
+                            }
+
+                            move(inputPins, pinIdxSource, pinIdxTarget);
+                            flow::ApplyChanges();
+                        }
+                        ImGui::EndDragDropTarget();
+                    }
+                    ImGui::Dummy(ImVec2(-1.F, 2.F));
+                };
+
+                for (size_t pinIndex = 0; pinIndex < inputPins.size(); pinIndex++)
+                {
+                    ImGui::TableNextRow();
+                    ImGui::TableNextColumn(); // Pin
+
+                    if (pinIndex == INPUT_PORT_INDEX_GNSS_NAV_INFO && _dragAndDropPinIndex > static_cast<int>(INPUT_PORT_INDEX_GNSS_NAV_INFO))
+                    {
+                        showDragDropTargetPin(INPUT_PORT_INDEX_GNSS_NAV_INFO);
                     }
 
-                    move(inputPins, pinIdxSource, pinIdxTarget);
-                    flow::ApplyChanges();
-                }
-                ImGui::EndDragDropTarget();
-            }
-            ImGui::Dummy(ImVec2(-1.F, 2.F));
-        };
-
-        for (size_t pinIndex = 0; pinIndex < inputPins.size(); pinIndex++)
-        {
-            ImGui::TableNextRow();
-            ImGui::TableNextColumn(); // Pin
-
-            if (pinIndex == INPUT_PORT_INDEX_GNSS_NAV_INFO && _dragAndDropPinIndex > static_cast<int>(INPUT_PORT_INDEX_GNSS_NAV_INFO))
-            {
-                showDragDropTargetPin(INPUT_PORT_INDEX_GNSS_NAV_INFO);
-            }
-
-            bool selectablePinDummy = false;
-            ImGui::Selectable(fmt::format("{}##{}", inputPins.at(pinIndex).name, size_t(id)).c_str(), &selectablePinDummy);
-            if (pinIndex >= INPUT_PORT_INDEX_GNSS_NAV_INFO && ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
-            {
-                dragAndDropPinStillInProgress = true;
-                _dragAndDropPinIndex = static_cast<int>(pinIndex);
-                // Data is copied into heap inside the drag and drop
-                ImGui::SetDragDropPayload(fmt::format("DND Pin {}", size_t(id)).c_str(), &pinIndex, sizeof(pinIndex));
-                ImGui::TextUnformatted(inputPins.at(pinIndex).name.c_str());
-                ImGui::EndDragDropSource();
-            }
-            if (_dragAndDropPinIndex > 0 && pinIndex >= INPUT_PORT_INDEX_GNSS_NAV_INFO
-                && pinIndex != static_cast<size_t>(_dragAndDropPinIndex - 1)
-                && pinIndex != static_cast<size_t>(_dragAndDropPinIndex))
-            {
-                showDragDropTargetPin(pinIndex + 1);
-            }
-            if (pinIndex >= INPUT_PORT_INDEX_GNSS_NAV_INFO && ImGui::IsItemHovered())
-            {
-                ImGui::SetTooltip("This item can be dragged to reorder the pins");
-            }
-
-            ImGui::TableNextColumn(); // # Sat
-            if (const auto* gnssNavInfo = getInputValue<const GnssNavInfo>(pinIndex))
-            {
-                size_t usedSatNum = 0;
-                std::string usedSats;
-                std::string allSats;
-
-                std::string filler = ", ";
-                for (const auto& satellite : gnssNavInfo->satellites())
-                {
-                    if ((satellite.first.satSys & _filterFreq)
-                        && std::find(_excludedSatellites.begin(), _excludedSatellites.end(), satellite.first) == _excludedSatellites.end())
+                    bool selectablePinDummy = false;
+                    ImGui::Selectable(fmt::format("{}##{}", inputPins.at(pinIndex).name, size_t(id)).c_str(), &selectablePinDummy);
+                    if (pinIndex >= INPUT_PORT_INDEX_GNSS_NAV_INFO && ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
                     {
-                        usedSatNum++;
-                        usedSats += (allSats.empty() ? "" : filler) + fmt::format("{}", satellite.first);
+                        dragAndDropPinStillInProgress = true;
+                        _dragAndDropPinIndex = static_cast<int>(pinIndex);
+                        // Data is copied into heap inside the drag and drop
+                        ImGui::SetDragDropPayload(fmt::format("DND Pin {}", size_t(id)).c_str(), &pinIndex, sizeof(pinIndex));
+                        ImGui::TextUnformatted(inputPins.at(pinIndex).name.c_str());
+                        ImGui::EndDragDropSource();
                     }
-                    allSats += (allSats.empty() ? "" : filler) + fmt::format("{}", satellite.first);
+                    if (_dragAndDropPinIndex > 0 && pinIndex >= INPUT_PORT_INDEX_GNSS_NAV_INFO
+                        && pinIndex != static_cast<size_t>(_dragAndDropPinIndex - 1)
+                        && pinIndex != static_cast<size_t>(_dragAndDropPinIndex))
+                    {
+                        showDragDropTargetPin(pinIndex + 1);
+                    }
+                    if (pinIndex >= INPUT_PORT_INDEX_GNSS_NAV_INFO && ImGui::IsItemHovered())
+                    {
+                        ImGui::SetTooltip("This item can be dragged to reorder the pins");
+                    }
+
+                    ImGui::TableNextColumn(); // # Sat
+                    if (const auto* gnssNavInfo = getInputValue<const GnssNavInfo>(pinIndex))
+                    {
+                        size_t usedSatNum = 0;
+                        std::string usedSats;
+                        std::string allSats;
+
+                        std::string filler = ", ";
+                        for (const auto& satellite : gnssNavInfo->satellites())
+                        {
+                            if ((satellite.first.satSys & _filterFreq)
+                                && std::find(_excludedSatellites.begin(), _excludedSatellites.end(), satellite.first) == _excludedSatellites.end())
+                            {
+                                usedSatNum++;
+                                usedSats += (allSats.empty() ? "" : filler) + fmt::format("{}", satellite.first);
+                            }
+                            allSats += (allSats.empty() ? "" : filler) + fmt::format("{}", satellite.first);
+                        }
+                        ImGui::TextUnformatted(fmt::format("{} / {}", usedSatNum, gnssNavInfo->nSatellites()).c_str());
+                        if (ImGui::IsItemHovered())
+                        {
+                            ImGui::SetTooltip("Used satellites: %s\n"
+                                              "All  satellites: %s",
+                                              usedSats.c_str(), allSats.c_str());
+                        }
+                    }
+
+                    if (inputPins.size() > 2)
+                    {
+                        ImGui::TableNextColumn(); // Delete
+                        if (ImGui::Button(fmt::format("x##{} - {}", size_t(id), pinIndex).c_str()))
+                        {
+                            _nNavInfoPins--;
+                            nm::DeleteInputPin(inputPins.at(pinIndex));
+                            flow::ApplyChanges();
+                        }
+                        if (ImGui::IsItemHovered())
+                        {
+                            ImGui::SetTooltip("Delete the pin");
+                        }
+                    }
                 }
-                ImGui::TextUnformatted(fmt::format("{} / {}", usedSatNum, gnssNavInfo->nSatellites()).c_str());
-                if (ImGui::IsItemHovered())
+
+                if (!dragAndDropPinStillInProgress)
                 {
-                    ImGui::SetTooltip("Used satellites: %s\n"
-                                      "All  satellites: %s",
-                                      usedSats.c_str(), allSats.c_str());
+                    _dragAndDropPinIndex = -1;
                 }
+
+                ImGui::TableNextRow();
+                ImGui::TableNextColumn(); // Pin
+                if (ImGui::Button(fmt::format("Add Pin##{}", size_t(id)).c_str()))
+                {
+                    _nNavInfoPins++;
+                    LOG_DEBUG("{}: # Input Pins changed to {}", nameId(), _nNavInfoPins);
+                    flow::ApplyChanges();
+                    updateNumberOfInputPins();
+                }
+
+                ImGui::EndTable();
             }
 
-            if (inputPins.size() > 2)
+            ImGui::TreePop();
+        }
+
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::TreeNode(fmt::format("GNSS input settings##{}", size_t(id)).c_str()))
+        {
+            ImGui::SetNextItemWidth(configWidth);
+            if (ShowFrequencySelector(fmt::format("Satellite Frequencies##{}", size_t(id)).c_str(), _filterFreq))
             {
-                ImGui::TableNextColumn(); // Delete
-                if (ImGui::Button(fmt::format("x##{} - {}", size_t(id), pinIndex).c_str()))
+                flow::ApplyChanges();
+            }
+
+            ImGui::SetNextItemWidth(configWidth);
+            if (ShowCodeSelector(fmt::format("Signal Codes##{}", size_t(id)).c_str(), _filterCode, _filterFreq))
+            {
+                flow::ApplyChanges();
+            }
+
+            ImGui::SetNextItemWidth(configWidth);
+            if (ShowSatelliteSelector(fmt::format("Excluded satellites##{}", size_t(id)).c_str(), _excludedSatellites))
+            {
+                flow::ApplyChanges();
+            }
+
+            double elevationMaskDeg = rad2deg(_elevationMask);
+            ImGui::SetNextItemWidth(configWidth);
+            if (ImGui::InputDoubleL(fmt::format("Elevation mask##{}", size_t(id)).c_str(), &elevationMaskDeg, 0.0, 90.0, 5.0, 5.0, "%.1f°", ImGuiInputTextFlags_AllowTabInput))
+            {
+                _elevationMask = deg2rad(elevationMaskDeg);
+                LOG_DEBUG("{}: Elevation mask changed to {}°", nameId(), elevationMaskDeg);
+                flow::ApplyChanges();
+            }
+
+            ImGui::TreePop();
+        }
+    }
+
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+    if (ImGui::CollapsingHeader(fmt::format("Kalman filter settings##{}", size_t(id)).c_str()))
+    {
+        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+        if (ImGui::Combo(fmt::format("Frame##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_frame), "ECEF\0NED\0\0"))
+        {
+            LOG_DEBUG("{}: Frame changed to {}", nameId(), _frame == Frame::NED ? "NED" : "ECEF");
+            flow::ApplyChanges();
+        }
+
+        if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor)
+        {
+            ImGui::SetNextItemWidth(configWidth - taylorOrderWidth);
+        }
+        else
+        {
+            ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+        }
+        if (ImGui::Combo(fmt::format("##Phi calculation algorithm {}", size_t(id)).c_str(), reinterpret_cast<int*>(&_phiCalculationAlgorithm), "Van Loan\0Taylor\0\0"))
+        {
+            LOG_DEBUG("{}: Phi calculation algorithm changed to {}", nameId(), fmt::underlying(_phiCalculationAlgorithm));
+            flow::ApplyChanges();
+        }
+
+        if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor)
+        {
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(taylorOrderWidth);
+            if (ImGui::InputIntL(fmt::format("##Phi calculation Taylor Order {}", size_t(id)).c_str(), &_phiCalculationTaylorOrder, 1, 9))
+            {
+                LOG_DEBUG("{}: Phi calculation  Taylor Order changed to {}", nameId(), _phiCalculationTaylorOrder);
+                flow::ApplyChanges();
+            }
+        }
+        ImGui::SameLine();
+        ImGui::Text("Phi calculation algorithm%s", _phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor ? " (up to order)" : "");
+
+        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+        if (ImGui::Combo(fmt::format("Q calculation algorithm##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_qCalculationAlgorithm), "Van Loan\0Taylor 1st Order\0\0"))
+        {
+            LOG_DEBUG("{}: Q calculation algorithm changed to {}", nameId(), fmt::underlying(_qCalculationAlgorithm));
+            flow::ApplyChanges();
+        }
+    }
+
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+    if (ImGui::CollapsingHeader(fmt::format("Kalman filter parameters##{}", size_t(id)).c_str()))
+    {
+        // ###########################################################################################################
+        //                                Q - System/Process noise covariance matrix
+        // ###########################################################################################################
+
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::TreeNode(fmt::format("Q - System/Process noise covariance matrix##{}", size_t(id)).c_str()))
+        {
+            // --------------------------------------------- Accelerometer -----------------------------------------------
+
+            ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+            if (ImGui::Combo(fmt::format("Random Process Accelerometer##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_randomProcessAccel), "Random Walk\0"
+                                                                                                                                                "Gauss-Markov 1st Order\0\0"))
+            {
+                LOG_DEBUG("{}: randomProcessAccel changed to {}", nameId(), fmt::underlying(_randomProcessAccel));
+                flow::ApplyChanges();
+            }
+
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the noise on the\naccelerometer specific-force measurements##{}", size_t(id)).c_str(),
+                                                   configWidth, unitWidth, _stdev_ra.data(), reinterpret_cast<int*>(&_stdevAccelNoiseUnits), "mg/√(Hz)\0m/s^2/√(Hz)\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: stdev_ra changed to {}", nameId(), _stdev_ra.transpose());
+                LOG_DEBUG("{}: stdevAccelNoiseUnits changed to {}", nameId(), fmt::underlying(_stdevAccelNoiseUnits));
+                flow::ApplyChanges();
+            }
+
+            if (_randomProcessAccel == RandomProcess::GaussMarkov1)
+            {
+                if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the accel dynamic bias##{}", size_t(id)).c_str(),
+                                                       configWidth, unitWidth, _stdev_bad.data(), reinterpret_cast<int*>(&_stdevAccelBiasUnits), "µg\0m/s^2\0\0",
+                                                       "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
-                    _nNavInfoPins--;
-                    nm::DeleteInputPin(inputPins.at(pinIndex));
+                    LOG_DEBUG("{}: stdev_bad changed to {}", nameId(), _stdev_bad.transpose());
+                    LOG_DEBUG("{}: stdevAccelBiasUnits changed to {}", nameId(), fmt::underlying(_stdevAccelBiasUnits));
                     flow::ApplyChanges();
                 }
-                if (ImGui::IsItemHovered())
+
+                ImGui::SetNextItemWidth(configWidth - unitWidth);
+                if (ImGui::InputDouble3L(fmt::format("##Correlation length of the accel dynamic bias {}", size_t(id)).c_str(), _tau_bad.data(), 0., std::numeric_limits<double>::max(), "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
-                    ImGui::SetTooltip("Delete the pin");
+                    LOG_DEBUG("{}: tau_bad changed to {}", nameId(), _tau_bad);
+                    flow::ApplyChanges();
                 }
+                ImGui::SameLine();
+                int unitCorrelationLength = 0;
+                ImGui::SetNextItemWidth(unitWidth);
+                ImGui::Combo(fmt::format("##Correlation length of the accel dynamic bias unit {}", size_t(id)).c_str(), &unitCorrelationLength, "s\0\0");
+                ImGui::SameLine();
+                ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
+                ImGui::TextUnformatted("Correlation length of the accel dynamic bias");
             }
-        }
 
-        if (!dragAndDropPinStillInProgress)
-        {
-            _dragAndDropPinIndex = -1;
-        }
+            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20.F);
 
-        ImGui::TableNextRow();
-        ImGui::TableNextColumn(); // Pin
-        if (ImGui::Button(fmt::format("Add Pin##{}", size_t(id)).c_str()))
-        {
-            _nNavInfoPins++;
-            LOG_DEBUG("{}: # Input Pins changed to {}", nameId(), _nNavInfoPins);
-            flow::ApplyChanges();
-            updateNumberOfInputPins();
-        }
+            // ----------------------------------------------- Gyroscope -------------------------------------------------
 
-        ImGui::EndTable();
-    }
+            ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+            if (ImGui::Combo(fmt::format("Random Process Gyroscope##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_randomProcessGyro), "Random Walk\0"
+                                                                                                                                           "Gauss-Markov 1st Order\0\0"))
+            {
+                LOG_DEBUG("{}: randomProcessGyro changed to {}", nameId(), fmt::underlying(_randomProcessGyro));
+                flow::ApplyChanges();
+            }
 
-    ImGui::Separator();
-
-    if (ImGui::Checkbox(fmt::format("Rank check for Kalman filter matrices##{}", size_t(id)).c_str(), &_checkKalmanMatricesRanks))
-    {
-        LOG_DEBUG("{}: checkKalmanMatricesRanks {}", nameId(), _checkKalmanMatricesRanks);
-        flow::ApplyChanges();
-    }
-
-    ImGui::Separator();
-
-    ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-    if (ImGui::Combo(fmt::format("Frame##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_frame), "ECEF\0NED\0\0"))
-    {
-        LOG_DEBUG("{}: Frame changed to {}", nameId(), _frame == Frame::NED ? "NED" : "ECEF");
-        flow::ApplyChanges();
-    }
-
-    if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor)
-    {
-        ImGui::SetNextItemWidth(configWidth - taylorOrderWidth);
-    }
-    else
-    {
-        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-    }
-    if (ImGui::Combo(fmt::format("##Phi calculation algorithm {}", size_t(id)).c_str(), reinterpret_cast<int*>(&_phiCalculationAlgorithm), "Van Loan\0Taylor\0\0"))
-    {
-        LOG_DEBUG("{}: Phi calculation algorithm changed to {}", nameId(), fmt::underlying(_phiCalculationAlgorithm));
-        flow::ApplyChanges();
-    }
-
-    if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor)
-    {
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(taylorOrderWidth);
-        if (ImGui::InputIntL(fmt::format("##Phi calculation Taylor Order {}", size_t(id)).c_str(), &_phiCalculationTaylorOrder, 1, 9))
-        {
-            LOG_DEBUG("{}: Phi calculation  Taylor Order changed to {}", nameId(), _phiCalculationTaylorOrder);
-            flow::ApplyChanges();
-        }
-    }
-    ImGui::SameLine();
-    ImGui::Text("Phi calculation algorithm%s", _phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor ? " (up to order)" : "");
-
-    ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-    if (ImGui::Combo(fmt::format("Q calculation algorithm##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_qCalculationAlgorithm), "Van Loan\0Taylor 1st Order\0\0"))
-    {
-        LOG_DEBUG("{}: Q calculation algorithm changed to {}", nameId(), fmt::underlying(_qCalculationAlgorithm));
-        flow::ApplyChanges();
-    }
-
-    ImGui::Separator();
-
-    // ###########################################################################################################
-    //                                Q - System/Process noise covariance matrix
-    // ###########################################################################################################
-
-    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-    if (ImGui::TreeNode(fmt::format("Q - System/Process noise covariance matrix##{}", size_t(id)).c_str()))
-    {
-        // --------------------------------------------- Accelerometer -----------------------------------------------
-
-        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::Combo(fmt::format("Random Process Accelerometer##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_randomProcessAccel), "Random Walk\0"
-                                                                                                                                            "Gauss-Markov 1st Order\0\0"))
-        {
-            LOG_DEBUG("{}: randomProcessAccel changed to {}", nameId(), fmt::underlying(_randomProcessAccel));
-            flow::ApplyChanges();
-        }
-
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the noise on the\naccelerometer specific-force measurements##{}", size_t(id)).c_str(),
-                                               configWidth, unitWidth, _stdev_ra.data(), reinterpret_cast<int*>(&_stdevAccelNoiseUnits), "mg/√(Hz)\0m/s^2/√(Hz)\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: stdev_ra changed to {}", nameId(), _stdev_ra.transpose());
-            LOG_DEBUG("{}: stdevAccelNoiseUnits changed to {}", nameId(), fmt::underlying(_stdevAccelNoiseUnits));
-            flow::ApplyChanges();
-        }
-
-        if (_randomProcessAccel == RandomProcess::GaussMarkov1)
-        {
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the accel dynamic bias##{}", size_t(id)).c_str(),
-                                                   configWidth, unitWidth, _stdev_bad.data(), reinterpret_cast<int*>(&_stdevAccelBiasUnits), "µg\0m/s^2\0\0",
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the noise on\nthe gyro angular-rate measurements##{}", size_t(id)).c_str(),
+                                                   configWidth, unitWidth, _stdev_rg.data(), reinterpret_cast<int*>(&_stdevGyroNoiseUnits), "deg/hr/√(Hz)\0rad/s/√(Hz)\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
-                LOG_DEBUG("{}: stdev_bad changed to {}", nameId(), _stdev_bad.transpose());
-                LOG_DEBUG("{}: stdevAccelBiasUnits changed to {}", nameId(), fmt::underlying(_stdevAccelBiasUnits));
+                LOG_DEBUG("{}: stdev_rg changed to {}", nameId(), _stdev_rg.transpose());
+                LOG_DEBUG("{}: stdevGyroNoiseUnits changed to {}", nameId(), fmt::underlying(_stdevGyroNoiseUnits));
                 flow::ApplyChanges();
             }
 
-            ImGui::SetNextItemWidth(configWidth - unitWidth);
-            if (ImGui::InputDouble3L(fmt::format("##Correlation length of the accel dynamic bias {}", size_t(id)).c_str(), _tau_bad.data(), 0., std::numeric_limits<double>::max(), "%.2e", ImGuiInputTextFlags_CharsScientific))
+            if (_randomProcessGyro == RandomProcess::GaussMarkov1)
             {
-                LOG_DEBUG("{}: tau_bad changed to {}", nameId(), _tau_bad);
+                if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the gyro dynamic bias##{}", size_t(id)).c_str(),
+                                                       configWidth, unitWidth, _stdev_bgd.data(), reinterpret_cast<int*>(&_stdevGyroBiasUnits), "°/h\0rad/s\0\0",
+                                                       "%.2e", ImGuiInputTextFlags_CharsScientific))
+                {
+                    LOG_DEBUG("{}: stdev_bgd changed to {}", nameId(), _stdev_bgd.transpose());
+                    LOG_DEBUG("{}: stdevGyroBiasUnits changed to {}", nameId(), fmt::underlying(_stdevGyroBiasUnits));
+                    flow::ApplyChanges();
+                }
+
+                ImGui::SetNextItemWidth(configWidth - unitWidth);
+                if (ImGui::InputDouble3L(fmt::format("##Correlation length of the gyro dynamic bias {}", size_t(id)).c_str(), _tau_bgd.data(), 0., std::numeric_limits<double>::max(), "%.2e", ImGuiInputTextFlags_CharsScientific))
+                {
+                    LOG_DEBUG("{}: tau_bgd changed to {}", nameId(), _tau_bgd);
+                    flow::ApplyChanges();
+                }
+                ImGui::SameLine();
+                int unitCorrelationLength = 0;
+                ImGui::SetNextItemWidth(unitWidth);
+                ImGui::Combo(fmt::format("##Correlation length of the gyro dynamic bias unit {}", size_t(id)).c_str(), &unitCorrelationLength, "s\0\0");
+                ImGui::SameLine();
+                ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
+                ImGui::TextUnformatted("Correlation length of the gyro dynamic bias");
+            }
+
+            // --------------------------------------------- Clock -----------------------------------------------
+
+            auto* _stdev_cfPointer = &_stdev_cf;
+            if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the receiver\nclock frequency drift (IRW)##{}", size_t(id)).c_str(),
+                                                  configWidth, unitWidth, _stdev_cfPointer, reinterpret_cast<int*>(&_stdevClockFreqUnits), "m/s^2/√(Hz)\0\0",
+                                                  0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: stdev_cf changed to {}", nameId(), _stdev_cf);
+                LOG_DEBUG("{}: stdevClockFreqUnits changed to {}", nameId(), fmt::underlying(_stdevClockFreqUnits));
                 flow::ApplyChanges();
             }
-            ImGui::SameLine();
-            int unitCorrelationLength = 0;
-            ImGui::SetNextItemWidth(unitWidth);
-            ImGui::Combo(fmt::format("##Correlation length of the accel dynamic bias unit {}", size_t(id)).c_str(), &unitCorrelationLength, "s\0\0");
-            ImGui::SameLine();
-            ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
-            ImGui::TextUnformatted("Correlation length of the accel dynamic bias");
+
+            ImGui::TreePop();
         }
 
-        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20.F);
+        // ###########################################################################################################
+        //                                        Measurement Uncertainties 𝐑
+        // ###########################################################################################################
 
-        // ----------------------------------------------- Gyroscope -------------------------------------------------
-
-        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::Combo(fmt::format("Random Process Gyroscope##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_randomProcessGyro), "Random Walk\0"
-                                                                                                                                       "Gauss-Markov 1st Order\0\0"))
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::TreeNode(fmt::format("R - Measurement noise covariance matrix##{}", size_t(id)).c_str()))
         {
-            LOG_DEBUG("{}: randomProcessGyro changed to {}", nameId(), fmt::underlying(_randomProcessGyro));
-            flow::ApplyChanges();
+            auto* _gnssMeasurementUncertaintyPseudorangePointer = &_gnssMeasurementUncertaintyPseudorange;
+            if (gui::widgets::InputDoubleWithUnit(fmt::format("Pseudorange covariance ({})##{}",
+                                                              _gnssMeasurementUncertaintyPseudorangeUnit == GnssMeasurementUncertaintyPseudorangeUnit::meter2
+                                                                  ? "Variance σ²"
+                                                                  : "Standard deviation σ",
+                                                              size_t(id))
+                                                      .c_str(),
+                                                  configWidth, unitWidth, _gnssMeasurementUncertaintyPseudorangePointer, reinterpret_cast<int*>(&_gnssMeasurementUncertaintyPseudorangeUnit), "m^2\0"
+                                                                                                                                                                                              "m\0",
+                                                  0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: gnssMeasurementUncertaintyPseudorange changed to {}", nameId(), _gnssMeasurementUncertaintyPseudorange);
+                LOG_DEBUG("{}: gnssMeasurementUncertaintyPseudorangeUnit changed to {}", nameId(), fmt::underlying(_gnssMeasurementUncertaintyPseudorangeUnit));
+                flow::ApplyChanges();
+            }
+
+            auto* _gnssMeasurementUncertaintyPseudorangeRatePointer = &_gnssMeasurementUncertaintyPseudorangeRate;
+            if (gui::widgets::InputDoubleWithUnit(fmt::format("Pseudorange-rate covariance ({})##{}",
+                                                              _gnssMeasurementUncertaintyPseudorangeRateUnit == GnssMeasurementUncertaintyPseudorangeRateUnit::m2_s2
+                                                                  ? "Variance σ²"
+                                                                  : "Standard deviation σ",
+                                                              size_t(id))
+                                                      .c_str(),
+                                                  configWidth, unitWidth, _gnssMeasurementUncertaintyPseudorangeRatePointer, reinterpret_cast<int*>(&_gnssMeasurementUncertaintyPseudorangeRateUnit), "m^2/s^2\0"
+                                                                                                                                                                                                      "m/s\0",
+                                                  0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: gnssMeasurementUncertaintyPseudorangeRate changed to {}", nameId(), _gnssMeasurementUncertaintyPseudorangeRate);
+                LOG_DEBUG("{}: gnssMeasurementUncertaintyPseudorangeRateUnit changed to {}", nameId(), fmt::underlying(_gnssMeasurementUncertaintyPseudorangeRateUnit));
+                flow::ApplyChanges();
+            }
+
+            ImGui::TreePop();
         }
 
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the noise on\nthe gyro angular-rate measurements##{}", size_t(id)).c_str(),
-                                               configWidth, unitWidth, _stdev_rg.data(), reinterpret_cast<int*>(&_stdevGyroNoiseUnits), "deg/hr/√(Hz)\0rad/s/√(Hz)\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: stdev_rg changed to {}", nameId(), _stdev_rg.transpose());
-            LOG_DEBUG("{}: stdevGyroNoiseUnits changed to {}", nameId(), fmt::underlying(_stdevGyroNoiseUnits));
-            flow::ApplyChanges();
-        }
+        // ###########################################################################################################
+        //                                        𝐏 Error covariance matrix
+        // ###########################################################################################################
 
-        if (_randomProcessGyro == RandomProcess::GaussMarkov1)
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::TreeNode(fmt::format("P - Error covariance matrix (init)##{}", size_t(id)).c_str()))
         {
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the gyro dynamic bias##{}", size_t(id)).c_str(),
-                                                   configWidth, unitWidth, _stdev_bgd.data(), reinterpret_cast<int*>(&_stdevGyroBiasUnits), "°/h\0rad/s\0\0",
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Position covariance ({})##{}",
+                                                               _initCovariancePositionUnit == InitCovariancePositionUnit::rad2_rad2_m2
+                                                                       || _initCovariancePositionUnit == InitCovariancePositionUnit::meter2
+                                                                   ? "Variance σ²"
+                                                                   : "Standard deviation σ",
+                                                               size_t(id))
+                                                       .c_str(),
+                                                   configWidth, unitWidth, _initCovariancePosition.data(), reinterpret_cast<int*>(&_initCovariancePositionUnit), "rad^2, rad^2, m^2\0"
+                                                                                                                                                                 "rad, rad, m\0"
+                                                                                                                                                                 "m^2, m^2, m^2\0"
+                                                                                                                                                                 "m, m, m\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
-                LOG_DEBUG("{}: stdev_bgd changed to {}", nameId(), _stdev_bgd.transpose());
-                LOG_DEBUG("{}: stdevGyroBiasUnits changed to {}", nameId(), fmt::underlying(_stdevGyroBiasUnits));
+                LOG_DEBUG("{}: initCovariancePosition changed to {}", nameId(), _initCovariancePosition);
+                LOG_DEBUG("{}: initCovariancePositionUnit changed to {}", nameId(), fmt::underlying(_initCovariancePositionUnit));
                 flow::ApplyChanges();
             }
 
-            ImGui::SetNextItemWidth(configWidth - unitWidth);
-            if (ImGui::InputDouble3L(fmt::format("##Correlation length of the gyro dynamic bias {}", size_t(id)).c_str(), _tau_bgd.data(), 0., std::numeric_limits<double>::max(), "%.2e", ImGuiInputTextFlags_CharsScientific))
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Velocity covariance ({})##{}",
+                                                               _initCovarianceVelocityUnit == InitCovarianceVelocityUnit::m2_s2
+                                                                   ? "Variance σ²"
+                                                                   : "Standard deviation σ",
+                                                               size_t(id))
+                                                       .c_str(),
+                                                   configWidth, unitWidth, _initCovarianceVelocity.data(), reinterpret_cast<int*>(&_initCovarianceVelocityUnit), "m^2/s^2\0"
+                                                                                                                                                                 "m/s\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
-                LOG_DEBUG("{}: tau_bgd changed to {}", nameId(), _tau_bgd);
+                LOG_DEBUG("{}: initCovarianceVelocity changed to {}", nameId(), _initCovarianceVelocity);
+                LOG_DEBUG("{}: initCovarianceVelocityUnit changed to {}", nameId(), fmt::underlying(_initCovarianceVelocityUnit));
+                flow::ApplyChanges();
+            }
+
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Flight Angles covariance ({})##{}",
+                                                               _initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::rad2
+                                                                       || _initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::deg2
+                                                                   ? "Variance σ²"
+                                                                   : "Standard deviation σ",
+                                                               size_t(id))
+                                                       .c_str(),
+                                                   configWidth, unitWidth, _initCovarianceAttitudeAngles.data(), reinterpret_cast<int*>(&_initCovarianceAttitudeAnglesUnit), "rad^2\0"
+                                                                                                                                                                             "deg^2\0"
+                                                                                                                                                                             "rad\0"
+                                                                                                                                                                             "deg\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: initCovarianceAttitudeAngles changed to {}", nameId(), _initCovarianceAttitudeAngles);
+                LOG_DEBUG("{}: initCovarianceAttitudeAnglesUnit changed to {}", nameId(), fmt::underlying(_initCovarianceAttitudeAnglesUnit));
                 flow::ApplyChanges();
             }
             ImGui::SameLine();
-            int unitCorrelationLength = 0;
-            ImGui::SetNextItemWidth(unitWidth);
-            ImGui::Combo(fmt::format("##Correlation length of the gyro dynamic bias unit {}", size_t(id)).c_str(), &unitCorrelationLength, "s\0\0");
-            ImGui::SameLine();
-            ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
-            ImGui::TextUnformatted("Correlation length of the gyro dynamic bias");
+            gui::widgets::HelpMarker(_frame == Frame::ECEF
+                                         ? "Angles rotating the ECEF frame into the body frame."
+                                         : "Angles rotating the local navigation frame into the body frame (Roll, Pitch, Yaw)");
+
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Accelerometer Bias covariance ({})##{}",
+                                                               _initCovarianceBiasAccelUnit == InitCovarianceBiasAccelUnit::m2_s4
+                                                                   ? "Variance σ²"
+                                                                   : "Standard deviation σ",
+                                                               size_t(id))
+                                                       .c_str(),
+                                                   configWidth, unitWidth, _initCovarianceBiasAccel.data(), reinterpret_cast<int*>(&_initCovarianceBiasAccelUnit), "m^2/s^4\0"
+                                                                                                                                                                   "m/s^2\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: initCovarianceBiasAccel changed to {}", nameId(), _initCovarianceBiasAccel);
+                LOG_DEBUG("{}: initCovarianceBiasAccelUnit changed to {}", nameId(), fmt::underlying(_initCovarianceBiasAccelUnit));
+                flow::ApplyChanges();
+            }
+
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Gyroscope Bias covariance ({})##{}",
+                                                               _initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::rad2_s2
+                                                                       || _initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::deg2_s2
+                                                                   ? "Variance σ²"
+                                                                   : "Standard deviation σ",
+                                                               size_t(id))
+                                                       .c_str(),
+                                                   configWidth, unitWidth, _initCovarianceBiasGyro.data(), reinterpret_cast<int*>(&_initCovarianceBiasGyroUnit), "rad^2/s^2\0"
+                                                                                                                                                                 "deg^2/s^2\0"
+                                                                                                                                                                 "rad/s\0"
+                                                                                                                                                                 "deg/s\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: initCovarianceBiasGyro changed to {}", nameId(), _initCovarianceBiasGyro);
+                LOG_DEBUG("{}: initCovarianceBiasGyroUnit changed to {}", nameId(), fmt::underlying(_initCovarianceBiasGyroUnit));
+                flow::ApplyChanges();
+            }
+
+            auto* initCovariancePhasePointer = &_initCovariancePhase;
+            if (gui::widgets::InputDoubleWithUnit(fmt::format("Receiver clock phase drift covariance ({})##{}",
+                                                              _initCovariancePhaseUnit == InitCovarianceClockPhaseUnit::m2
+                                                                      || _initCovariancePhaseUnit == InitCovarianceClockPhaseUnit::s2
+                                                                  ? "Variance σ²"
+                                                                  : "Standard deviation σ",
+                                                              size_t(id))
+                                                      .c_str(),
+                                                  configWidth, unitWidth, initCovariancePhasePointer, reinterpret_cast<int*>(&_initCovariancePhaseUnit), "m^2\0"
+                                                                                                                                                         "s^2\0"
+                                                                                                                                                         "m\0"
+                                                                                                                                                         "s\0\0",
+                                                  0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: initCovariancePhase changed to {}", nameId(), _initCovariancePhase);
+                LOG_DEBUG("{}: InitCovarianceClockPhaseUnit changed to {}", nameId(), fmt::underlying(_initCovariancePhaseUnit));
+                flow::ApplyChanges();
+            }
+
+            auto* initCovarianceFreqPointer = &_initCovarianceFreq;
+            if (gui::widgets::InputDoubleWithUnit(fmt::format("Receiver clock frequency drift covariance ({})##{}",
+                                                              _initCovarianceFreqUnit == InitCovarianceClockFreqUnit::m2_s2
+                                                                  ? "Variance σ²"
+                                                                  : "Standard deviation σ",
+                                                              size_t(id))
+                                                      .c_str(),
+                                                  configWidth, unitWidth, initCovarianceFreqPointer, reinterpret_cast<int*>(&_initCovarianceFreqUnit), "m^2/s^2\0"
+                                                                                                                                                       "m/s\0\0",
+                                                  0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: initCovarianceFreq changed to {}", nameId(), _initCovarianceFreq);
+                LOG_DEBUG("{}: initCovarianceFreqUnit changed to {}", nameId(), fmt::underlying(_initCovarianceFreqUnit));
+                flow::ApplyChanges();
+            }
+
+            ImGui::TreePop();
         }
 
-        // --------------------------------------------- Clock -----------------------------------------------
+        ImGui::Separator();
 
-        auto* _stdev_cfPointer = &_stdev_cf;
-        if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the receiver\nclock frequency drift (IRW)##{}", size_t(id)).c_str(),
-                                              configWidth, unitWidth, _stdev_cfPointer, reinterpret_cast<int*>(&_stdevClockFreqUnits), "m/s^2/√(Hz)\0\0",
-                                              0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+        if (ImGui::Checkbox(fmt::format("Rank check for Kalman filter matrices##{}", size_t(id)).c_str(), &_checkKalmanMatricesRanks))
         {
-            LOG_DEBUG("{}: stdev_cf changed to {}", nameId(), _stdev_cf);
-            LOG_DEBUG("{}: stdevClockFreqUnits changed to {}", nameId(), fmt::underlying(_stdevClockFreqUnits));
+            LOG_DEBUG("{}: checkKalmanMatricesRanks {}", nameId(), _checkKalmanMatricesRanks);
             flow::ApplyChanges();
         }
-
-        ImGui::TreePop();
-    }
-
-    // ###########################################################################################################
-    //                                        Measurement Uncertainties 𝐑
-    // ###########################################################################################################
-
-    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-    if (ImGui::TreeNode(fmt::format("R - Measurement noise covariance matrix##{}", size_t(id)).c_str()))
-    {
-        auto* _gnssMeasurementUncertaintyPseudorangePointer = &_gnssMeasurementUncertaintyPseudorange;
-        if (gui::widgets::InputDoubleWithUnit(fmt::format("Pseudorange covariance ({})##{}",
-                                                          _gnssMeasurementUncertaintyPseudorangeUnit == GnssMeasurementUncertaintyPseudorangeUnit::meter2
-                                                              ? "Variance σ²"
-                                                              : "Standard deviation σ",
-                                                          size_t(id))
-                                                  .c_str(),
-                                              configWidth, unitWidth, _gnssMeasurementUncertaintyPseudorangePointer, reinterpret_cast<int*>(&_gnssMeasurementUncertaintyPseudorangeUnit), "m^2\0"
-                                                                                                                                                                                          "m\0",
-                                              0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: gnssMeasurementUncertaintyPseudorange changed to {}", nameId(), _gnssMeasurementUncertaintyPseudorange);
-            LOG_DEBUG("{}: gnssMeasurementUncertaintyPseudorangeUnit changed to {}", nameId(), fmt::underlying(_gnssMeasurementUncertaintyPseudorangeUnit));
-            flow::ApplyChanges();
-        }
-
-        auto* _gnssMeasurementUncertaintyPseudorangeRatePointer = &_gnssMeasurementUncertaintyPseudorangeRate;
-        if (gui::widgets::InputDoubleWithUnit(fmt::format("Pseudorange-rate covariance ({})##{}",
-                                                          _gnssMeasurementUncertaintyPseudorangeRateUnit == GnssMeasurementUncertaintyPseudorangeRateUnit::m2_s2
-                                                              ? "Variance σ²"
-                                                              : "Standard deviation σ",
-                                                          size_t(id))
-                                                  .c_str(),
-                                              configWidth, unitWidth, _gnssMeasurementUncertaintyPseudorangeRatePointer, reinterpret_cast<int*>(&_gnssMeasurementUncertaintyPseudorangeRateUnit), "m^2/s^2\0"
-                                                                                                                                                                                                  "m/s\0",
-                                              0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: gnssMeasurementUncertaintyPseudorangeRate changed to {}", nameId(), _gnssMeasurementUncertaintyPseudorangeRate);
-            LOG_DEBUG("{}: gnssMeasurementUncertaintyPseudorangeRateUnit changed to {}", nameId(), fmt::underlying(_gnssMeasurementUncertaintyPseudorangeRateUnit));
-            flow::ApplyChanges();
-        }
-
-        ImGui::TreePop();
-    }
-
-    // ###########################################################################################################
-    //                                        𝐏 Error covariance matrix
-    // ###########################################################################################################
-
-    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-    if (ImGui::TreeNode(fmt::format("P - Error covariance matrix (init)##{}", size_t(id)).c_str()))
-    {
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Position covariance ({})##{}",
-                                                           _initCovariancePositionUnit == InitCovariancePositionUnit::rad2_rad2_m2
-                                                                   || _initCovariancePositionUnit == InitCovariancePositionUnit::meter2
-                                                               ? "Variance σ²"
-                                                               : "Standard deviation σ",
-                                                           size_t(id))
-                                                   .c_str(),
-                                               configWidth, unitWidth, _initCovariancePosition.data(), reinterpret_cast<int*>(&_initCovariancePositionUnit), "rad^2, rad^2, m^2\0"
-                                                                                                                                                             "rad, rad, m\0"
-                                                                                                                                                             "m^2, m^2, m^2\0"
-                                                                                                                                                             "m, m, m\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: initCovariancePosition changed to {}", nameId(), _initCovariancePosition);
-            LOG_DEBUG("{}: initCovariancePositionUnit changed to {}", nameId(), fmt::underlying(_initCovariancePositionUnit));
-            flow::ApplyChanges();
-        }
-
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Velocity covariance ({})##{}",
-                                                           _initCovarianceVelocityUnit == InitCovarianceVelocityUnit::m2_s2
-                                                               ? "Variance σ²"
-                                                               : "Standard deviation σ",
-                                                           size_t(id))
-                                                   .c_str(),
-                                               configWidth, unitWidth, _initCovarianceVelocity.data(), reinterpret_cast<int*>(&_initCovarianceVelocityUnit), "m^2/s^2\0"
-                                                                                                                                                             "m/s\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: initCovarianceVelocity changed to {}", nameId(), _initCovarianceVelocity);
-            LOG_DEBUG("{}: initCovarianceVelocityUnit changed to {}", nameId(), fmt::underlying(_initCovarianceVelocityUnit));
-            flow::ApplyChanges();
-        }
-
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Flight Angles covariance ({})##{}",
-                                                           _initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::rad2
-                                                                   || _initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::deg2
-                                                               ? "Variance σ²"
-                                                               : "Standard deviation σ",
-                                                           size_t(id))
-                                                   .c_str(),
-                                               configWidth, unitWidth, _initCovarianceAttitudeAngles.data(), reinterpret_cast<int*>(&_initCovarianceAttitudeAnglesUnit), "rad^2\0"
-                                                                                                                                                                         "deg^2\0"
-                                                                                                                                                                         "rad\0"
-                                                                                                                                                                         "deg\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: initCovarianceAttitudeAngles changed to {}", nameId(), _initCovarianceAttitudeAngles);
-            LOG_DEBUG("{}: initCovarianceAttitudeAnglesUnit changed to {}", nameId(), fmt::underlying(_initCovarianceAttitudeAnglesUnit));
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        gui::widgets::HelpMarker(_frame == Frame::ECEF
-                                     ? "Angles rotating the ECEF frame into the body frame."
-                                     : "Angles rotating the local navigation frame into the body frame (Roll, Pitch, Yaw)");
-
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Accelerometer Bias covariance ({})##{}",
-                                                           _initCovarianceBiasAccelUnit == InitCovarianceBiasAccelUnit::m2_s4
-                                                               ? "Variance σ²"
-                                                               : "Standard deviation σ",
-                                                           size_t(id))
-                                                   .c_str(),
-                                               configWidth, unitWidth, _initCovarianceBiasAccel.data(), reinterpret_cast<int*>(&_initCovarianceBiasAccelUnit), "m^2/s^4\0"
-                                                                                                                                                               "m/s^2\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: initCovarianceBiasAccel changed to {}", nameId(), _initCovarianceBiasAccel);
-            LOG_DEBUG("{}: initCovarianceBiasAccelUnit changed to {}", nameId(), fmt::underlying(_initCovarianceBiasAccelUnit));
-            flow::ApplyChanges();
-        }
-
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Gyroscope Bias covariance ({})##{}",
-                                                           _initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::rad2_s2
-                                                                   || _initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::deg2_s2
-                                                               ? "Variance σ²"
-                                                               : "Standard deviation σ",
-                                                           size_t(id))
-                                                   .c_str(),
-                                               configWidth, unitWidth, _initCovarianceBiasGyro.data(), reinterpret_cast<int*>(&_initCovarianceBiasGyroUnit), "rad^2/s^2\0"
-                                                                                                                                                             "deg^2/s^2\0"
-                                                                                                                                                             "rad/s\0"
-                                                                                                                                                             "deg/s\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: initCovarianceBiasGyro changed to {}", nameId(), _initCovarianceBiasGyro);
-            LOG_DEBUG("{}: initCovarianceBiasGyroUnit changed to {}", nameId(), fmt::underlying(_initCovarianceBiasGyroUnit));
-            flow::ApplyChanges();
-        }
-
-        auto* initCovariancePhasePointer = &_initCovariancePhase;
-        if (gui::widgets::InputDoubleWithUnit(fmt::format("Receiver clock phase drift covariance ({})##{}",
-                                                          _initCovariancePhaseUnit == InitCovarianceClockPhaseUnit::m2
-                                                                  || _initCovariancePhaseUnit == InitCovarianceClockPhaseUnit::s2
-                                                              ? "Variance σ²"
-                                                              : "Standard deviation σ",
-                                                          size_t(id))
-                                                  .c_str(),
-                                              configWidth, unitWidth, initCovariancePhasePointer, reinterpret_cast<int*>(&_initCovariancePhaseUnit), "m^2\0"
-                                                                                                                                                     "s^2\0"
-                                                                                                                                                     "m\0"
-                                                                                                                                                     "s\0\0",
-                                              0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: initCovariancePhase changed to {}", nameId(), _initCovariancePhase);
-            LOG_DEBUG("{}: InitCovarianceClockPhaseUnit changed to {}", nameId(), fmt::underlying(_initCovariancePhaseUnit));
-            flow::ApplyChanges();
-        }
-
-        auto* initCovarianceFreqPointer = &_initCovarianceFreq;
-        if (gui::widgets::InputDoubleWithUnit(fmt::format("Receiver clock frequency drift covariance ({})##{}",
-                                                          _initCovarianceFreqUnit == InitCovarianceClockFreqUnit::m2_s2
-                                                              ? "Variance σ²"
-                                                              : "Standard deviation σ",
-                                                          size_t(id))
-                                                  .c_str(),
-                                              configWidth, unitWidth, initCovarianceFreqPointer, reinterpret_cast<int*>(&_initCovarianceFreqUnit), "m^2/s^2\0"
-                                                                                                                                                   "m/s\0\0",
-                                              0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: initCovarianceFreq changed to {}", nameId(), _initCovarianceFreq);
-            LOG_DEBUG("{}: initCovarianceFreqUnit changed to {}", nameId(), fmt::underlying(_initCovarianceFreqUnit));
-            flow::ApplyChanges();
-        }
-
-        ImGui::TreePop();
     }
 }
 
@@ -1139,6 +1186,8 @@ void NAV::TightlyCoupledKF::recvGnssObs(InputPin::NodeDataQueue& queue, size_t /
             calcData[i].pseudorangeRate = doppler2psrRate(obsData.doppler.value(), obsData.satSigId.freq, freqNum);
         }
     }
+
+    // TODO: calculation of Satellite clk, pos, vel
 
     invokeCallbacks(OUTPUT_PORT_INDEX_SYNC, nodeData); // Prediction consists out of ImuIntegration and prediction (gets triggered from it)
 }
