@@ -1096,10 +1096,6 @@ void NAV::TightlyCoupledKF::recvGnssObs(InputPin::NodeDataQueue& queue, size_t /
     auto gnssObs = std::static_pointer_cast<const GnssObs>(queue.extract_front());
     LOG_DATA("{}: recvGnssObs at time [{}]", nameId(), gnssObs->insTime.toYMDHMS());
 
-    auto nodeData = std::make_shared<NodeData>();
-    nodeData->insTime = gnssObs->insTime;
-    _lastPredictRequestedTime = gnssObs->insTime;
-
     // Data calculated for each observation
     struct CalcData
     {
@@ -1161,7 +1157,7 @@ void NAV::TightlyCoupledKF::recvGnssObs(InputPin::NodeDataQueue& queue, size_t /
 
     size_t nMeas = calcData.size();
     LOG_DATA("{}: nMeas {}", nameId(), nMeas);
-    // size_t nParam = 4 + availSatelliteSystems.size() - 1; // 3x pos, 1x clk, (N-1)x clkDiff // TODO: enable once necessary
+    size_t nParam = 4 + availSatelliteSystems.size() - 1; // 3x pos, 1x clk, (N-1)x clkDiff
 
     // Frequency number (GLONASS only)
     int8_t freqNum = -128;
@@ -1187,7 +1183,124 @@ void NAV::TightlyCoupledKF::recvGnssObs(InputPin::NodeDataQueue& queue, size_t /
         }
     }
 
-    // TODO: calculation of Satellite clk, pos, vel
+    // ----------------------------------------------- Satellite -------------------------------------------------
+
+    for (size_t i = 0; i < nMeas; i++) // Calculate satellite clock, position and velocity
+    {
+        const auto& obsData = gnssObs->data[calcData[i].obsIdx];
+
+        LOG_DATA("{}: satellite {}", nameId(), obsData.satSigId);
+        LOG_DATA("{}:     pseudorange  {}", nameId(), obsData.pseudorange.value().value);
+
+        auto satClk = calcData[i].satNavData->calcClockCorrections(gnssObs->insTime, obsData.pseudorange.value().value, obsData.satSigId.freq);
+        calcData[i].satClkBias = satClk.bias;
+        calcData[i].satClkDrift = satClk.drift;
+        LOG_DATA("{}:     satClkBias {}, satClkDrift {}", nameId(), calcData[i].satClkBias, calcData[i].satClkDrift);
+
+        auto satPosVel = calcData[i].satNavData->calcSatellitePosVel(satClk.transmitTime);
+        calcData[i].e_satPos = satPosVel.e_pos;
+        calcData[i].e_satVel = satPosVel.e_vel;
+        LOG_DATA("{}:     e_satPos {}", nameId(), calcData[i].e_satPos.transpose());
+        LOG_DATA("{}:     e_satVel {}", nameId(), calcData[i].e_satVel.transpose());
+    }
+
+    if (nMeas < nParam)
+    {
+        LOG_WARN("{}: [{}] GNSS solution degraded because only {} valid measurements ({} needed). Try changing filter settings or reposition your antenna.",
+                 nameId(), (gnssObs->insTime + std::chrono::seconds(gnssObs->insTime.leapGps2UTC())), nMeas, nParam);
+        // sppSol->nSatellitesPosition = nMeas;
+        // sppSol->nSatellitesVelocity = nDopplerMeas;
+        // invokeCallbacks(OUTPUT_PORT_INDEX_SPPSOL, sppSol);
+        // return;
+    }
+
+    // Measurement/Geometry matrix for the pseudorange
+    Eigen::MatrixXd e_H_psr = Eigen::MatrixXd::Zero(static_cast<int>(nMeas), static_cast<int>(nParam));
+    // Pseudorange estimates [m]
+    Eigen::VectorXd psrEst = Eigen::VectorXd::Zero(static_cast<int>(nMeas));
+    // Pseudorange measurements [m]
+    Eigen::VectorXd psrMeas = Eigen::VectorXd::Zero(static_cast<int>(nMeas));
+    // Pseudorange measurement error weight matrix
+    Eigen::MatrixXd W_psr = Eigen::MatrixXd::Zero(static_cast<int>(nMeas), static_cast<int>(nMeas));
+
+    // Measurement/Geometry matrix for the pseudorange-rate
+    Eigen::MatrixXd e_H_r = Eigen::MatrixXd::Zero(static_cast<int>(nDopplerMeas), static_cast<int>(nParam));
+    // Corrected pseudorange-rate estimates [m/s]
+    Eigen::VectorXd psrRateEst = Eigen::VectorXd::Zero(static_cast<int>(nDopplerMeas));
+    // Corrected pseudorange-rate measurements [m/s]
+    Eigen::VectorXd psrRateMeas = Eigen::VectorXd::Zero(static_cast<int>(nDopplerMeas));
+    // Pseudorange rate (doppler) measurement error weight matrix
+    Eigen::MatrixXd W_psrRate = Eigen::MatrixXd::Zero(static_cast<int>(nDopplerMeas), static_cast<int>(nDopplerMeas));
+
+    for (size_t o = 0; o < 10; o++)
+    {
+        // Keeps track of skipped meausrements (because of elevation mask, ...)
+        size_t cntSkippedMeas = 0;
+
+        LOG_DATA("{}: Iteration {}", nameId(), o);
+        // Latitude, Longitude, Altitude of the receiver [rad, rad, m]
+        Eigen::Vector3d lla_pos = trafo::ecef2lla_WGS84(_e_position);
+        LOG_DATA("{}:     [{}] _e_position {}, {}, {}", nameId(), o, _e_position.x(), _e_position.y(), _e_position.z());
+        LOG_DATA("{}:     [{}] lla_pos {}°, {}°, {}m", nameId(), o, rad2deg(lla_pos.x()), rad2deg(lla_pos.y()), lla_pos.z());
+        LOG_DATA("{}:     [{}] _recvClk.bias {}", nameId(), o, _recvClk.bias.value);
+        LOG_DATA("{}:     [{}] _recvClk.drift {}", nameId(), o, _recvClk.drift.value);
+
+        std::vector<SatelliteSystem> satelliteSystems = availSatelliteSystems; // List of satellite systems
+
+        SatelliteSystem_ usedSatelliteSystems = SatSys_None;
+        for (size_t i = 0; i < nMeas; i++)
+        {
+            const auto& obsData = gnssObs->data[calcData[i].obsIdx];
+            LOG_DATA("{}:     [{}] satellite {}", nameId(), o, obsData.satSigId);
+            auto satId = obsData.satSigId.toSatId();
+
+            // Line-of-sight unit vector in ECEF frame coordinates - Groves ch. 8.5.3, eq. 8.41, p. 341
+            calcData[i].e_lineOfSightUnitVector = e_calcLineOfSightUnitVector(_e_position, calcData[i].e_satPos);
+            LOG_DATA("{}:     [{}]     e_lineOfSightUnitVector {}", nameId(), o, calcData[i].e_lineOfSightUnitVector.transpose());
+            // Line-of-sight unit vector in NED frame coordinates - Groves ch. 8.5.3, eq. 8.41, p. 341
+            calcData[i].n_lineOfSightUnitVector = trafo::n_Quat_e(lla_pos(0), lla_pos(1)) * calcData[i].e_lineOfSightUnitVector;
+            LOG_DATA("{}:     [{}]     n_lineOfSightUnitVector {}", nameId(), o, calcData[i].n_lineOfSightUnitVector.transpose());
+            // Elevation [rad] - Groves ch. 8.5.4, eq. 8.57, p. 344
+            calcData[i].satElevation = calcSatElevation(calcData[i].n_lineOfSightUnitVector);
+            LOG_DATA("{}:     [{}]     satElevation {}°", nameId(), o, rad2deg(calcData[i].satElevation));
+            // Azimuth [rad] - Groves ch. 8.5.4, eq. 8.57, p. 344
+            calcData[i].satAzimuth = calcSatAzimuth(calcData[i].n_lineOfSightUnitVector);
+            LOG_DATA("{}:     [{}]     satAzimuth {}°", nameId(), o, rad2deg(calcData[i].satAzimuth));
+
+            if (!_e_position.isZero() && calcData[i].satElevation < _elevationMask) // Do not check elevation mask when not having a valid position
+            {
+                cntSkippedMeas++;
+                calcData[i].skipped = true;
+                LOG_DATA("{}:     [{}]     [{}] Measurement is skipped because of elevation {:.1f}° and mask of {}° ({} valid measurements remaining)",
+                         nameId(), o, obsData.satSigId, rad2deg(calcData[i].satElevation), rad2deg(_elevationMask), nMeas - cntSkippedMeas);
+
+                if (!(usedSatelliteSystems & satId.satSys)
+                    && calcData.begin() + static_cast<int64_t>(i + 1) != calcData.end()                                         // This is the last satellite and the system did not appear before
+                    && std::none_of(calcData.begin() + static_cast<int64_t>(i + 1), calcData.end(), [&](const CalcData& data) { // The satellite system has no satellites available anymore
+                           return gnssObs->data[data.obsIdx].satSigId.toSatId().satSys == satId.satSys;
+                       }))
+                {
+                    LOG_DEBUG("{}: The satellite system {} won't be used this iteration because no satellite complies with the elevation mask.",
+                              nameId(), satId.satSys);
+                    nParam--;
+                    satelliteSystems.erase(std::find(satelliteSystems.begin(), satelliteSystems.end(), satId.satSys));
+                }
+
+                if (nMeas - cntSkippedMeas < nParam)
+                {
+                    LOG_WARN("{}: [{}] Cannot calculate position because only {} valid measurements ({} needed). Try changing filter settings or reposition your antenna.",
+                             nameId(), gnssObs->insTime, nMeas - cntSkippedMeas, nParam);
+                }
+                continue;
+            }
+
+            usedSatelliteSystems |= satId.satSys;
+        }
+    }
+
+    auto nodeData = std::make_shared<NodeData>();
+    nodeData->insTime = gnssObs->insTime;
+    _lastPredictRequestedTime = gnssObs->insTime;
 
     invokeCallbacks(OUTPUT_PORT_INDEX_SYNC, nodeData); // Prediction consists out of ImuIntegration and prediction (gets triggered from it)
 }
@@ -1647,7 +1760,7 @@ Eigen::Matrix<double, 17, 17> NAV::TightlyCoupledKF::n_systemMatrix_F(const Eige
 
     // System matrix 𝐅
     // Math: \mathbf{F}^n = \begin{pmatrix} \mathbf{F}_{\dot{\psi},\psi}^n & \mathbf{F}_{\dot{\psi},\delta v}^n & \mathbf{F}_{\dot{\psi},\delta r}^n & \mathbf{0}_3 & \mathbf{C}_b^n & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} \\ \mathbf{F}_{\delta \dot{v},\psi}^n & \mathbf{F}_{\delta \dot{v},\delta v}^n & \mathbf{F}_{\delta \dot{v},\delta r}^n & \mathbf{C}_b^n & \mathbf{0}_3 & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} \\ \mathbf{0}_3 & \mathbf{F}_{\delta \dot{r},\delta v}^n & \mathbf{F}_{\delta \dot{r},\delta r}^n & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} \\ \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} \\ \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} \\ \mathbf{0}_{1,3} & \mathbf{0}_{1,3} & \mathbf{0}_{1,3} & \mathbf{0}_{1,3} & \mathbf{0}_{1,3} & 0 & 1 \\ \mathbf{0}_{1,3} & \mathbf{0}_{1,3} & \mathbf{0}_{1,3} & \mathbf{0}_{1,3} & \mathbf{0}_{1,3} & 0 & 0 \end{pmatrix}
-    Eigen::MatrixXd F = Eigen::MatrixXd::Zero(15, 15);
+    Eigen::MatrixXd F = Eigen::MatrixXd::Zero(17, 17);
 
     F.block<3, 3>(0, 0) = n_F_dpsi_dpsi(n_omega_in);
     F.block<3, 3>(0, 3) = n_F_dpsi_dv(latitude, altitude, R_N, R_E);
