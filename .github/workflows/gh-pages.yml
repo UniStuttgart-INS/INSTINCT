@@ -39,9 +39,12 @@ jobs:
         run: |
           conan remove -f '*/system'
 
+      - name: Installing conan dependencies
+        run: |
+          conan install . --build=missing -s build_type=Release
       - name: Configure CMake
         run: |
-          cmake -B ./build -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+          cmake -B ./build -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
       - name: Build
         run: |
           cmake --build ./build --target doc --config Release

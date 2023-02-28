@@ -17,13 +17,67 @@
                 "command": "Remove-Item",
                 "args": [
                     "-Recurse",
-                    "build,",
+                    "build",
                 ]
             },
             "presentation": {
                 "reveal": "never",
                 "echo": false,
                 "showReuseMessage": false,
+            },
+            "problemMatcher": [],
+        },
+        // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
+        // ║                                       Conan Tasks                                        ║
+        // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
+        { // Conan
+            "label": "Conan",
+            "type": "shell",
+            "group": "build",
+            "command": "conan",
+            "args": [
+                "install",
+                ".",
+                "--build=missing",
+                "-s",
+                "build_type=${input:buildType}",
+            ],
+            "presentation": {
+                "clear": true,
+            },
+            "problemMatcher": [],
+        },
+        { // Conan: Debug
+            "label": "Conan: Debug",
+            "type": "shell",
+            "group": "build",
+            "command": "conan",
+            "args": [
+                "install",
+                ".",
+                "--build=missing",
+                "-s",
+                "build_type=Debug",
+            ],
+            "presentation": {
+                "clear": true,
+            },
+            "problemMatcher": [],
+        },
+        { // Conan: Release
+            "label": "Conan: Release",
+            "type": "shell",
+            "group": "build",
+            "command": "conan",
+            "args": [
+                "install",
+                ".",
+                "--build=missing",
+                "-s",
+                "build_type=Release",
+            ],
+            "presentation": {
+                "clear": true,
             },
             "problemMatcher": [],
         },
@@ -37,7 +91,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
+                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DCMAKE_TOOLCHAIN_FILE=build/${input:buildType}/generators/conan_toolchain.cmake -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
             ],
             // "options": {
             //     "env": {
@@ -51,6 +105,7 @@
                     "-Bbuild/${input:buildType}-msvc",
                     "-S.",
                     "-DCMAKE_BUILD_TYPE=${input:buildType}",
+                    "-DCMAKE_TOOLCHAIN_FILE=${workspaceFolder}/build/generators/conan_toolchain.cmake",
                     "-DENABLE_MAIN=ON",
                     "-DENABLE_TESTING=OFF",
                     "-DENABLE_DOXYGEN=OFF",
@@ -67,9 +122,9 @@
                     }
                 },
             },
-            "presentation": {
-                "clear": true,
-            },
+            "dependsOn": [
+                "Conan",
+            ],
             "problemMatcher": [],
         },
         { // CMAKE: Testing
@@ -79,7 +134,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
+                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DCMAKE_TOOLCHAIN_FILE=build/${input:buildType}/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
             ],
             // "options": {
             //     "env": {
@@ -93,6 +148,7 @@
                     "-Bbuild/${input:buildType}-msvc",
                     "-S.",
                     "-DCMAKE_BUILD_TYPE=${input:buildType}",
+                    "-DCMAKE_TOOLCHAIN_FILE=${workspaceFolder}/build/generators/conan_toolchain.cmake",
                     "-DENABLE_MAIN=OFF",
                     "-DENABLE_TESTING=ON",
                     "-DENABLE_DOXYGEN=OFF",
@@ -109,9 +165,9 @@
                     }
                 },
             },
-            "presentation": {
-                "clear": true
-            },
+            "dependsOn": [
+                "Conan",
+            ],
             "problemMatcher": [],
         },
         { // CMAKE: Coverage
@@ -123,6 +179,7 @@
                 "-Bbuild/Debug-cov",
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=Debug",
+                "-DCMAKE_TOOLCHAIN_FILE=build/Debug/generators/conan_toolchain.cmake",
                 "-DENABLE_MAIN=OFF",
                 "-DENABLE_TESTING=ON",
                 "-DENABLE_DOXYGEN=OFF",
@@ -138,9 +195,9 @@
                     "CXX": "/usr/bin/g++",
                 }
             },
-            "presentation": {
-                "clear": true
-            },
+            "dependsOn": [
+                "Conan: Debug",
+            ],
             "problemMatcher": [],
         },
         { // CMAKE: Documentation
@@ -152,6 +209,7 @@
                 "-Bbuild/Release-doc",
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake",
                 "-DENABLE_MAIN=OFF",
                 "-DENABLE_TESTING=OFF",
                 "-DENABLE_DOXYGEN=ON",
@@ -161,9 +219,9 @@
                 "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
                 "-DDOC_CHECK_CODE_DOCUMENTATION=NO",
             ],
-            "presentation": {
-                "clear": true
-            },
+            "dependsOn": [
+                "Conan: Release",
+            ],
             "problemMatcher": [],
         },
         { // CMAKE: Documentation Check
@@ -175,6 +233,7 @@
                 "-Bbuild/Release-doc",
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake",
                 "-DENABLE_MAIN=OFF",
                 "-DENABLE_TESTING=OFF",
                 "-DENABLE_DOXYGEN=ON",
@@ -184,9 +243,9 @@
                 "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
                 "-DDOC_CHECK_CODE_DOCUMENTATION=YES",
             ],
-            "presentation": {
-                "clear": true
-            },
+            "dependsOn": [
+                "Conan: Release",
+            ],
             "problemMatcher": [],
         },
         // ╔══════════════════════════════════════════════════════════════════════════════════════════╗

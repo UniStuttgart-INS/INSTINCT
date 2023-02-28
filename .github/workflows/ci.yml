@@ -40,9 +40,12 @@ jobs:
       - name: Setup Linux
         run: |
           sudo apt install -y libglfw3-dev libglfw3
+      - name: Installing conan dependencies
+        run: |
+          conan install . --build=missing -s build_type=Release
       - name: Configure CMake
         run: |
-          cmake -B ./build -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+          cmake -B ./build -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
       - name: Copy compile commands
         run: |
           cmake --build ./build --target copy-compile-commands --config Release
@@ -80,10 +83,12 @@ jobs:
       - name: Cleanup Conan system packages (they are not properly cached)
         run: |
           conan remove -f '*/system'
-
+      - name: Installing conan dependencies
+        run: |
+          conan install . --build=missing -s build_type=Release
       - name: Configure CMake
         run: |
-          cmake -B ./build -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES
+          cmake -B ./build -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES
       - name: Check documentation
         run: |
           cmake --build ./build --target doc --config Release
@@ -169,9 +174,12 @@ jobs:
       - name: Cleanup Conan system packages (they are not properly cached)
         run: |
           conan remove -f '*/system'
+      - name: Installing conan dependencies
+        run: |
+          conan install . --build=missing -s build_type=${{matrix.build_type}}
       - name: Configure CMake
         run: |
-          cmake -S . -B ./build -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -DENABLE_MAIN=TRUE -DENABLE_TESTING=TRUE -DENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DENABLE_DOXYGEN=OFF -DLOG_LEVEL:STRING=${{matrix.log-level}} -DWARNINGS_AS_ERRORS:BOOL=${{ !contains(matrix.os, 'windows' )}} -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+          cmake -S . -B ./build -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -DCMAKE_TOOLCHAIN_FILE="build/${{matrix.build_type}}/generators/conan_toolchain.cmake" -DENABLE_MAIN=TRUE -DENABLE_TESTING=TRUE -DENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DENABLE_DOXYGEN=OFF -DLOG_LEVEL:STRING=${{matrix.log-level}} -DWARNINGS_AS_ERRORS:BOOL=${{ !contains(matrix.os, 'windows' )}} -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
       - name: Build
         run: |
           cmake --build ./build --config ${{matrix.build_type}}
