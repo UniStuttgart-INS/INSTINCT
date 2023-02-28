@@ -130,8 +130,8 @@ void testBrdcEphemerisData(const SatId& satId, const Ephemeris& eph, const std::
 
                 auto e_refPos = Eigen::Vector3d(std::stod(line.substr(5, 13)),
                                                 std::stod(line.substr(19, 13)),
-                                                std::stod(line.substr(33, 13)))
-                                * 1e3;
+                                                std::stod(line.substr(33, 13)));
+                e_refPos *= 1e3;
                 LOG_TRACE("    e_refPos {}", e_refPos.transpose());
                 LOG_TRACE("    pos      {}", pos.e_pos.transpose());
                 LOG_TRACE("      pos - e_refPos   = {}", (pos.e_pos - e_refPos).transpose());

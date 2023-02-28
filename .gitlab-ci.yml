@@ -11,6 +11,7 @@ variables:
   WARNINGS_AS_ERRORS: "ON"
   ENABLE_MAIN: "OFF"
   ENABLE_TESTING: "OFF"
+  TOOLCHAIN_PATH: "build/$BUILD_TYPE"
 
 image: ins-cpp:10
 
@@ -71,9 +72,14 @@ image: ins-cpp:10
     # https://gist.github.com/FeodorFitsner/b34162690ae2838409b7459824d51ed7
     - cmd.exe /c "call `"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat`" && set > %temp%\vcvars-$CI_CONCURRENT_ID.txt"
     - Get-Content "$env:temp\vcvars-$CI_CONCURRENT_ID.txt" | Foreach-Object { if ($_ -match "^(.*?)=(.*)$") { Set-Content "env:\$($matches[1])" $matches[2] } }
+    - python -m pip install colorama
+    - python -m pip install conan
+    - conan profile detect --force
   variables:
     GIT_CLONE_PATH: '$CI_BUILDS_DIR/$CI_PROJECT_NAME/$CI_COMMIT_SHA/$CI_JOB_ID'
     WARNINGS_AS_ERRORS: "OFF"
+    TOOLCHAIN_PATH: "build"
+  allow_failure: true
 
 .linux:
   tags:
@@ -105,6 +111,7 @@ check-image:
     - clang-format --version
     - cmake --version
     - conan --version
+    - conan profile show
     - doxygen --version
     - cppcheck --version
     - gcovr --version
@@ -152,7 +159,8 @@ clang-tidy:
     - .linux
     - .clang
   script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - conan install . --build=missing -s build_type=Release
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target copy-compile-commands
     - python3 ./tools/run-clang-tidy.py $PWD/src
 
@@ -163,7 +171,8 @@ clang-tidy:tests:
     - .linux
     - .clang
   script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - conan install . --build=missing -s build_type=Release
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target copy-compile-commands
     - python3 ./tools/run-clang-tidy.py $PWD/test
 
@@ -182,7 +191,8 @@ documentation:
   extends:
     - .linux
   script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES
+    - conan install . --build=missing -s build_type=Release
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES
     - cmake --build build/Release --target doc
   artifacts:
     when: on_failure
@@ -205,7 +215,8 @@ documentation:
     - echo "$LOG_LEVEL_INSTINCT"
     - echo "$WARNINGS_AS_ERRORS"
     - echo "$CMAKE_BUILD_PARALLEL_LEVEL"
-    - cmake -B"build/$BUILD_TYPE" -S. -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DENABLE_MAIN="$ENABLE_MAIN" -DENABLE_TESTING="$ENABLE_TESTING" -DCATCH2_JUNIT_OUTPUT="$ENABLE_TESTING" -DENABLE_COVERAGE="$ENABLE_TESTING" -DENABLE_DOXYGEN=OFF -DLOG_LEVEL="$LOG_LEVEL_INSTINCT" -DWARNINGS_AS_ERRORS="$WARNINGS_AS_ERRORS" -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - conan install . --build=missing -s build_type="$BUILD_TYPE"
+    - cmake -B"build/$BUILD_TYPE" -S. -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_PATH/generators/conan_toolchain.cmake" -DENABLE_MAIN="$ENABLE_MAIN" -DENABLE_TESTING="$ENABLE_TESTING" -DCATCH2_JUNIT_OUTPUT="$ENABLE_TESTING" -DENABLE_COVERAGE="$ENABLE_TESTING" -DENABLE_DOXYGEN=OFF -DLOG_LEVEL="$LOG_LEVEL_INSTINCT" -DWARNINGS_AS_ERRORS="$WARNINGS_AS_ERRORS" -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build "build/$BUILD_TYPE"
 
 .build:linux:
@@ -454,7 +465,8 @@ doxygen:
   extends:
     - .linux
   script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - conan install . --build=missing -s build_type=Release
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target doc
   artifacts:
     paths:
@@ -528,11 +540,13 @@ pages:
     - apt upgrade -y
     - apt install -y build-essential clang clang-tidy cmake python3-pip ccache cppcheck libglfw3-dev libglfw3
     - pip3 install conan
+    - conan profile detect --force
     - g++ --version
     - clang++ --version
     - clang-tidy --version
     - cmake --version
     - conan --version
+    - conan profile show
     - cppcheck --version
 
 ubuntu:22.04:clang:release:
@@ -620,11 +634,13 @@ run-tests:ubuntu:22.04:gcc:debug:
     - pacman -Syyu --noconfirm --needed
     - pacman -S --noconfirm --needed base-devel cmake clang ccache cppcheck python-pip glfw-x11
     - pip install conan
+    - conan profile detect --force
     - g++ --version
     - clang++ --version
     - clang-tidy --version
     - cmake --version
     - conan --version
+    - conan profile show
     - cppcheck --version
 
 archlinux:latest:clang:release:
