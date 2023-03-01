@@ -20,6 +20,8 @@
 #include "NodeData/State/InertialNavSol.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
 #include "Navigation/GNSS/Core/ReceiverClock.hpp"
+#include "Navigation/Atmosphere/Ionosphere/Ionosphere.hpp"
+#include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
 #include "NodeData/State/TcKfInsGnssErrors.hpp"
 
 #include "Navigation/Math/KalmanFilter.hpp"
@@ -121,6 +123,12 @@ class TightlyCoupledKF : public Node
     std::vector<SatId> _excludedSatellites;
     /// Elevation cut-off angle for satellites in [rad]
     double _elevationMask = static_cast<double>(15.0_deg);
+
+    /// Ionosphere Model used for the calculation
+    IonosphereModel _ionosphereModel = IonosphereModel::Klobuchar;
+
+    /// Troposphere Models used for the calculation
+    TroposphereModelSelection _troposphereModels;
 
     /// Latest observation from the Inertial Integrator (Position, Velocity, Attitude and IMU measurements)
     std::shared_ptr<const InertialNavSol> _latestInertialNavSol = nullptr;
@@ -651,7 +659,7 @@ class TightlyCoupledKF : public Node
     /// @param[in] pseudoRange Pseudorange to the j-th satellite [m]
     /// @param[in] pseudoRangeError Receiver clock offset [m]
     /// @return Transmission time of signal between receiver and j-th satellite in [s]
-    [[nodiscard]] static double transmissionTime(double& recvTimestamp,
+    [[nodiscard]] static double transmissionTime(NAV::InsTime& recvTimestamp,
                                                  double& pseudoRange,
                                                  double& pseudoRangeError);
 };
