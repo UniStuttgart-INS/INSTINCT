@@ -8,18 +8,16 @@
             "label": "CLEAN: Remove Build Files",
             "type": "shell",
             "group": "build",
-            "linux": {
-                "command": "rm",
-                "args": [
-                    "-rf",
-                    "build",
-                ],
-            },
+            "command": "rm",
+            "args": [
+                "-rf",
+                "build",
+            ],
             "windows": {
                 "command": "Remove-Item",
                 "args": [
                     "-Recurse",
-                    "build,",
+                    "build",
                 ]
             },
             "presentation": {
@@ -30,31 +28,84 @@
             "problemMatcher": [],
         },
         // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
+        // ║                                       Conan Tasks                                        ║
+        // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
+        { // Conan
+            "label": "Conan",
+            "type": "shell",
+            "group": "build",
+            "command": "conan",
+            "args": [
+                "install",
+                ".",
+                "--build=missing",
+                "-s",
+                "build_type=${input:buildType}",
+            ],
+            "presentation": {
+                "clear": true,
+            },
+            "problemMatcher": [],
+        },
+        { // Conan: Debug
+            "label": "Conan: Debug",
+            "type": "shell",
+            "group": "build",
+            "command": "conan",
+            "args": [
+                "install",
+                ".",
+                "--build=missing",
+                "-s",
+                "build_type=Debug",
+            ],
+            "presentation": {
+                "clear": true,
+            },
+            "problemMatcher": [],
+        },
+        { // Conan: Release
+            "label": "Conan: Release",
+            "type": "shell",
+            "group": "build",
+            "command": "conan",
+            "args": [
+                "install",
+                ".",
+                "--build=missing",
+                "-s",
+                "build_type=Release",
+            ],
+            "presentation": {
+                "clear": true,
+            },
+            "problemMatcher": [],
+        },
+        // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
         // ║                                       CMAKE Tasks                                        ║
         // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
         { // CMAKE: Main
             "label": "CMAKE: Main",
             "type": "shell",
             "group": "build",
-            "linux": {
-                "command": "bash",
-                "args": [
-                    "-c",
-                    "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
-                ],
-                // "options": {
-                //     "env": {
-                //         "CC": "/usr/bin/clang",
-                //         "CXX": "/usr/bin/clang++",
-                //     },
-                // },
-            },
+            "command": "bash",
+            "args": [
+                "-c",
+                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DCMAKE_TOOLCHAIN_FILE=build/${input:buildType}/generators/conan_toolchain.cmake -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
+            ],
+            // "options": {
+            //     "env": {
+            //         "CC": "/usr/bin/clang",
+            //         "CXX": "/usr/bin/clang++",
+            //     },
+            // },
             "windows": {
                 "command": "cmake",
                 "args": [
                     "-Bbuild/${input:buildType}-msvc",
                     "-S.",
                     "-DCMAKE_BUILD_TYPE=${input:buildType}",
+                    "-DCMAKE_TOOLCHAIN_FILE=${workspaceFolder}/build/generators/conan_toolchain.cmake",
                     "-DENABLE_MAIN=ON",
                     "-DENABLE_TESTING=OFF",
                     "-DENABLE_DOXYGEN=OFF",
@@ -71,34 +122,33 @@
                     }
                 },
             },
-            "presentation": {
-                "clear": true,
-            },
+            "dependsOn": [
+                "Conan",
+            ],
             "problemMatcher": [],
         },
         { // CMAKE: Testing
             "label": "CMAKE: Testing",
             "type": "shell",
             "group": "build",
-            "linux": {
-                "command": "bash",
-                "args": [
-                    "-c",
-                    "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
-                ],
-                // "options": {
-                //     "env": {
-                //         "CC": "/usr/bin/clang",
-                //         "CXX": "/usr/bin/clang++",
-                //     }
-                // },
-            },
+            "command": "bash",
+            "args": [
+                "-c",
+                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DCMAKE_TOOLCHAIN_FILE=build/${input:buildType}/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
+            ],
+            // "options": {
+            //     "env": {
+            //         "CC": "/usr/bin/clang",
+            //         "CXX": "/usr/bin/clang++",
+            //     }
+            // },
             "windows": {
                 "command": "cmake",
                 "args": [
                     "-Bbuild/${input:buildType}-msvc",
                     "-S.",
                     "-DCMAKE_BUILD_TYPE=${input:buildType}",
+                    "-DCMAKE_TOOLCHAIN_FILE=${workspaceFolder}/build/generators/conan_toolchain.cmake",
                     "-DENABLE_MAIN=OFF",
                     "-DENABLE_TESTING=ON",
                     "-DENABLE_DOXYGEN=OFF",
@@ -115,9 +165,9 @@
                     }
                 },
             },
-            "presentation": {
-                "clear": true
-            },
+            "dependsOn": [
+                "Conan",
+            ],
             "problemMatcher": [],
         },
         { // CMAKE: Coverage
@@ -129,6 +179,7 @@
                 "-Bbuild/Debug-cov",
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=Debug",
+                "-DCMAKE_TOOLCHAIN_FILE=build/Debug/generators/conan_toolchain.cmake",
                 "-DENABLE_MAIN=OFF",
                 "-DENABLE_TESTING=ON",
                 "-DENABLE_DOXYGEN=OFF",
@@ -144,9 +195,9 @@
                     "CXX": "/usr/bin/g++",
                 }
             },
-            "presentation": {
-                "clear": true
-            },
+            "dependsOn": [
+                "Conan: Debug",
+            ],
             "problemMatcher": [],
         },
         { // CMAKE: Documentation
@@ -158,6 +209,7 @@
                 "-Bbuild/Release-doc",
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake",
                 "-DENABLE_MAIN=OFF",
                 "-DENABLE_TESTING=OFF",
                 "-DENABLE_DOXYGEN=ON",
@@ -167,9 +219,9 @@
                 "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
                 "-DDOC_CHECK_CODE_DOCUMENTATION=NO",
             ],
-            "presentation": {
-                "clear": true
-            },
+            "dependsOn": [
+                "Conan: Release",
+            ],
             "problemMatcher": [],
         },
         { // CMAKE: Documentation Check
@@ -181,6 +233,7 @@
                 "-Bbuild/Release-doc",
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake",
                 "-DENABLE_MAIN=OFF",
                 "-DENABLE_TESTING=OFF",
                 "-DENABLE_DOXYGEN=ON",
@@ -190,9 +243,9 @@
                 "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
                 "-DDOC_CHECK_CODE_DOCUMENTATION=YES",
             ],
-            "presentation": {
-                "clear": true
-            },
+            "dependsOn": [
+                "Conan: Release",
+            ],
             "problemMatcher": [],
         },
         // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
@@ -229,11 +282,18 @@
             "label": "MAIN: Build project",
             "type": "shell",
             "group": "build",
+            "command": "bash",
             "linux": {
-                "command": "bash",
                 "args": [
                     "-c",
                     "cmake --build build/${input:buildType}-${input:compiler} --parallel$(nproc)",
+                ],
+            },
+            "osx": {
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "cmake --build build/${input:buildType}-${input:compiler} --parallel$(sysctl -n hw.physicalcpu)",
                 ],
             },
             "windows": {
@@ -266,6 +326,13 @@
                     "cmake --build build/${input:buildType}-${input:compiler} --parallel$(nproc)",
                 ],
             },
+            "osx": {
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "cmake --build build/${input:buildType}-${input:compiler} --parallel$(sysctl -n hw.physicalcpu)",
+                ],
+            },
             "windows": {
                 "command": "cmake",
                 "args": [
@@ -289,11 +356,20 @@
             "label": "COVERAGE: Build Coverage Report",
             "type": "shell",
             "group": "build",
-            "command": "bash",
-            "args": [
-                "-c",
-                "cmake --build build/Debug-cov --parallel$(nproc)",
-            ],
+            "linux": {
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "cmake --build build/Debug-cov --parallel$(nproc)",
+                ],
+            },
+            "osx": {
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "cmake --build build/Debug-cov --parallel$(sysctl -n hw.physicalcpu)",
+                ],
+            },
             "dependsOn": [
                 "CMAKE: Coverage",
             ],
@@ -384,10 +460,8 @@
                 // "'PVAError|PosVelAtt'",
                 // "--verbose",
             ],
-            "linux": {
-                "options": {
-                    "cwd": "${workspaceFolder}/build/${input:buildType}-${input:compiler}",
-                },
+            "options": {
+                "cwd": "${workspaceFolder}/build/${input:buildType}-${input:compiler}",
             },
             "windows": {
                 "options": {

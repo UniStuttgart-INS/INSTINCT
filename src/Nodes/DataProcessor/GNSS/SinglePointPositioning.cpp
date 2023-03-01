@@ -396,10 +396,10 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     struct CalcData
     {
         // Constructor
-        explicit CalcData(size_t obsIdx, std::shared_ptr<NAV::SatNavData> satNavData)
-            : obsIdx(obsIdx), satNavData(std::move(satNavData)) {}
+        explicit CalcData(const NAV::GnssObs::ObservationData& obsData, std::shared_ptr<NAV::SatNavData> satNavData)
+            : obsData(obsData), satNavData(std::move(satNavData)) {}
 
-        size_t obsIdx = 0;                                     // Index in the provided GNSS Observation data
+        const NAV::GnssObs::ObservationData& obsData;          // GNSS Observation data
         std::shared_ptr<NAV::SatNavData> satNavData = nullptr; // Satellite Navigation data
 
         double satClkBias{};                    // Satellite clock bias [s]
@@ -420,9 +420,8 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     // Data calculated for each satellite (only satellites filtered by GUI filter & NAV data available)
     std::vector<CalcData> calcData;
     std::vector<SatelliteSystem> availSatelliteSystems; // List of satellite systems
-    for (size_t obsIdx = 0; obsIdx < gnssObs->data.size(); obsIdx++)
+    for (const auto& obsData : gnssObs->data)
     {
-        const auto& obsData = gnssObs->data[obsIdx];
         auto satId = obsData.satSigId.toSatId();
 
         if ((obsData.satSigId.freq & _filterFreq)                                                                     // frequency is selected in GUI
@@ -445,7 +444,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                         continue;
                     }
                     LOG_DATA("{}: Using observation from {} {}", nameId(), obsData.satSigId, obsData.code);
-                    calcData.emplace_back(obsIdx, satNavData);
+                    calcData.emplace_back(obsData, satNavData);
                     if (std::find(availSatelliteSystems.begin(), availSatelliteSystems.end(), satId.satSys) == availSatelliteSystems.end())
                     {
                         availSatelliteSystems.push_back(satId.satSys);
@@ -465,22 +464,22 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
 
     // Find all observations providing a doppler measurement (for velocity calculation)
     size_t nDopplerMeas = 0;
-    for (size_t i = 0; i < nMeas; i++)
+    for (auto& calc : calcData)
     {
-        const auto& obsData = gnssObs->data[calcData[i].obsIdx];
+        const auto& obsData = calc.obsData;
         if (obsData.doppler)
         {
             nDopplerMeas++;
             // TODO: Find out what this is used for and find a way to use it, after the GLONASS orbit calculation is working
             if (obsData.satSigId.freq & (R01 | R02))
             {
-                if (auto satNavData = std::dynamic_pointer_cast<GLONASSEphemeris>(calcData[i].satNavData))
+                if (auto satNavData = std::dynamic_pointer_cast<GLONASSEphemeris>(calc.satNavData))
                 {
                     freqNum = satNavData->frequencyNumber;
                 }
             }
 
-            calcData[i].pseudorangeRate = doppler2psrRate(obsData.doppler.value(), obsData.satSigId.freq, freqNum);
+            calc.pseudorangeRate = doppler2psrRate(obsData.doppler.value(), obsData.satSigId.freq, freqNum);
         }
     }
 
@@ -488,31 +487,31 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     //                                                          Calculation
     // #####################################################################################################################################
 
-    for (size_t i = 0; i < nMeas; i++) // Calculate satellite clock, position and velocity
+    for (auto& calc : calcData) // Calculate satellite clock, position and velocity
     {
-        const auto& obsData = gnssObs->data[calcData[i].obsIdx];
+        const auto& obsData = calc.obsData;
 
         LOG_DATA("{}: satellite {}", nameId(), obsData.satSigId);
         LOG_DATA("{}:     pseudorange  {}", nameId(), obsData.pseudorange.value().value);
 
-        auto satClk = calcData[i].satNavData->calcClockCorrections(gnssObs->insTime, obsData.pseudorange.value().value, obsData.satSigId.freq);
-        calcData[i].satClkBias = satClk.bias;
-        calcData[i].satClkDrift = satClk.drift;
-        LOG_DATA("{}:     satClkBias {}, satClkDrift {}", nameId(), calcData[i].satClkBias, calcData[i].satClkDrift);
+        auto satClk = calc.satNavData->calcClockCorrections(gnssObs->insTime, obsData.pseudorange.value().value, obsData.satSigId.freq);
+        calc.satClkBias = satClk.bias;
+        calc.satClkDrift = satClk.drift;
+        LOG_DATA("{}:     satClkBias {}, satClkDrift {}", nameId(), calc.satClkBias, calc.satClkDrift);
 
-        auto satPosVel = calcData[i].satNavData->calcSatellitePosVel(satClk.transmitTime);
-        calcData[i].e_satPos = satPosVel.e_pos;
-        calcData[i].e_satVel = satPosVel.e_vel;
-        LOG_DATA("{}:     e_satPos {}", nameId(), calcData[i].e_satPos.transpose());
-        LOG_DATA("{}:     e_satVel {}", nameId(), calcData[i].e_satVel.transpose());
+        auto satPosVel = calc.satNavData->calcSatellitePosVel(satClk.transmitTime);
+        calc.e_satPos = satPosVel.e_pos;
+        calc.e_satVel = satPosVel.e_vel;
+        LOG_DATA("{}:     e_satPos {}", nameId(), calc.e_satPos.transpose());
+        LOG_DATA("{}:     e_satVel {}", nameId(), calc.e_satVel.transpose());
 
 #ifdef TESTING
         auto& sppExtendedData = (*sppSol)(obsData.satSigId.freq, obsData.satSigId.satNum, obsData.code);
         sppExtendedData.transmitTime = satClk.transmitTime;
         sppExtendedData.satClkBias = satClk.bias;
         sppExtendedData.satClkDrift = satClk.drift;
-        sppExtendedData.e_satPos = calcData[i].e_satPos;
-        sppExtendedData.e_satVel = calcData[i].e_satVel;
+        sppExtendedData.e_satPos = calc.e_satPos;
+        sppExtendedData.e_satVel = calc.e_satVel;
 #endif
     }
 
@@ -562,7 +561,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
         SatelliteSystem_ usedSatelliteSystems = SatSys_None;
         for (size_t i = 0; i < nMeas; i++)
         {
-            const auto& obsData = gnssObs->data[calcData[i].obsIdx];
+            const auto& obsData = calcData[i].obsData;
             LOG_DATA("{}:     [{}] satellite {}", nameId(), o, obsData.satSigId);
             auto satId = obsData.satSigId.toSatId();
 
@@ -595,7 +594,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                 if (!(usedSatelliteSystems & satId.satSys)
                     && calcData.begin() + static_cast<int64_t>(i + 1) != calcData.end()                                         // This is the last satellite and the system did not appear before
                     && std::none_of(calcData.begin() + static_cast<int64_t>(i + 1), calcData.end(), [&](const CalcData& data) { // The satellite system has no satellites available anymore
-                           return gnssObs->data[data.obsIdx].satSigId.toSatId().satSys == satId.satSys;
+                           return data.obsData.satSigId.toSatId().satSys == satId.satSys;
                        }))
                 {
                     LOG_DEBUG("{}: The satellite system {} won't be used this iteration because no satellite complies with the elevation mask.",
@@ -638,11 +637,11 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
         satelliteSystems.erase(std::find(satelliteSystems.begin(), satelliteSystems.end(), _recvClk.referenceTimeSatelliteSystem));
         LOG_DATA("{}:     [{}] _recvClk.referenceTimeSatelliteSystem {} ({} other time systems)", nameId(), o, _recvClk.referenceTimeSatelliteSystem, satelliteSystems.size());
 
-        for (size_t i = 0; i < nMeas; i++)
+        for (auto& calc : calcData)
         {
-            if (calcData[i].skipped) { continue; }
+            if (calc.skipped) { continue; }
 
-            const auto& obsData = gnssObs->data[calcData[i].obsIdx];
+            const auto& obsData = calc.obsData;
             LOG_DATA("{}:     [{}] satellite {}", nameId(), o, obsData.satSigId);
             auto satId = obsData.satSigId.toSatId();
 
@@ -655,11 +654,11 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             LOG_DATA("{}:     [{}]     psrMeas({}) {}", nameId(), o, ix, psrMeas(static_cast<int>(ix)));
             // Estimated modulation ionosphere propagation error [m]
             double dpsr_I = calcIonosphericTimeDelay(static_cast<double>(gnssObs->insTime.toGPSweekTow().tow), obsData.satSigId.freq, lla_pos,
-                                                     calcData[i].satElevation, calcData[i].satAzimuth, _ionosphereModel, &ionosphericCorrections)
+                                                     calc.satElevation, calc.satAzimuth, _ionosphereModel, &ionosphericCorrections)
                             * InsConst::C;
             LOG_DATA("{}:     [{}]     dpsr_I {} [m] (Estimated modulation ionosphere propagation error)", nameId(), o, dpsr_I);
 
-            auto tropo = calcTroposphericDelayAndMapping(gnssObs->insTime, lla_pos, calcData[i].satElevation, calcData[i].satAzimuth, _troposphereModels);
+            auto tropo = calcTroposphericDelayAndMapping(gnssObs->insTime, lla_pos, calc.satElevation, calc.satAzimuth, _troposphereModels);
             LOG_DATA("{}:     [{}]     ZHD {}", nameId(), o, tropo.ZHD);
             LOG_DATA("{}:     [{}]     ZWD {}", nameId(), o, tropo.ZWD);
             LOG_DATA("{}:     [{}]     zhdMappingFactor {}", nameId(), o, tropo.zhdMappingFactor);
@@ -670,7 +669,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             LOG_DATA("{}:     [{}]     dpsr_T {} [m] (Estimated modulation troposphere propagation error)", nameId(), o, dpsr_T);
 
             // Measurement/Geometry matrix - Groves ch. 9.4.1, eq. 9.144, p. 412
-            e_H_psr.block<1, 3>(static_cast<int>(ix), 0) = -calcData[i].e_lineOfSightUnitVector;
+            e_H_psr.block<1, 3>(static_cast<int>(ix), 0) = -calc.e_lineOfSightUnitVector;
             e_H_psr(static_cast<int>(ix), 3) = 1;
             for (size_t s = 0; s < satelliteSystems.size(); s++)
             {
@@ -683,10 +682,10 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             LOG_DATA("{}:     [{}]     e_H_psr.row({}) {}", nameId(), o, ix, e_H_psr.row(static_cast<int>(ix)));
 
             // Sagnac correction - Springer Handbook ch. 19.1.1, eq. 19.7, p. 562
-            double dpsr_ie = 1.0 / InsConst::C * (_e_position - calcData[i].e_satPos).dot(InsConst::e_omega_ie.cross(_e_position));
+            double dpsr_ie = 1.0 / InsConst::C * (_e_position - calc.e_satPos).dot(InsConst::e_omega_ie.cross(_e_position));
             LOG_DATA("{}:     [{}]     dpsr_ie {}", nameId(), o, dpsr_ie);
             // Geometric distance [m]
-            double geometricDist = (calcData[i].e_satPos - _e_position).norm();
+            double geometricDist = (calc.e_satPos - _e_position).norm();
             LOG_DATA("{}:     [{}]     geometricDist {}", nameId(), o, geometricDist);
             // System time difference to GPS [s]
             double sysTimeDiff = satId.satSys != _recvClk.referenceTimeSatelliteSystem
@@ -697,7 +696,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             psrEst(static_cast<int>(ix)) = geometricDist
                                            + _recvClk.bias.value * InsConst::C
                                            + sysTimeDiff * InsConst::C
-                                           - calcData[i].satClkBias * InsConst::C
+                                           - calc.satClkBias * InsConst::C
                                            + dpsr_I
                                            + dpsr_T
                                            + dpsr_ie;
@@ -719,7 +718,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                                              : (satId.satSys == SBAS
                                                     ? EFACT_SBAS
                                                     : EFACT_GPS);
-                double ele = std::max(calcData[i].satElevation, deg2rad(5));
+                double ele = std::max(calc.satElevation, deg2rad(5));
 
                 // Code/Carrier-Phase Error Ratio - Measurement error standard deviation
                 std::unordered_map<Frequency, double> codeCarrierPhaseErrorRatio = { { G01, 300.0 },
@@ -732,12 +731,12 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                                     * (std::pow(carrierPhaseErrorA, 2) + std::pow(carrierPhaseErrorB, 2) / std::sin(ele));
                 LOG_DATA("{}:     [{}]     varPsrMeas {}", nameId(), o, varPsrMeas);
 
-                double varEph = calcData[i].satNavData->calcSatellitePositionVariance();
+                double varEph = calc.satNavData->calcSatellitePositionVariance();
                 LOG_DATA("{}:     [{}]     varEph {}", nameId(), o, varEph);
                 double varIono = ratioFreqSquared(obsData.satSigId.freq.getL1(), obsData.satSigId.freq, freqNum, freqNum)
                                  * std::pow(dpsr_I * ERR_BRDCI, 2);
                 LOG_DATA("{}:     [{}]     varIono {}", nameId(), o, varIono);
-                double varTrop = dpsr_T == 0.0 ? 0.0 : std::pow(ERR_SAAS / (std::sin(calcData[i].satElevation) + 0.1), 2);
+                double varTrop = dpsr_T == 0.0 ? 0.0 : std::pow(ERR_SAAS / (std::sin(calc.satElevation) + 0.1), 2);
                 LOG_DATA("{}:     [{}]     varTrop {}", nameId(), o, varTrop);
                 double varBias = std::pow(ERR_CBIAS, 2);
                 LOG_DATA("{}:     [{}]     varBias {}", nameId(), o, varBias);
@@ -755,19 +754,19 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             //                                                    Velocity calculation
             // #############################################################################################################################
 
-            if (nDopplerMeas - cntSkippedMeas >= nParam && !std::isnan(calcData[i].pseudorangeRate))
+            if (nDopplerMeas - cntSkippedMeas >= nParam && !std::isnan(calc.pseudorangeRate))
             {
                 // Measurement/Geometry matrix - Groves ch. 9.4.1, eq. 9.144, p. 412
                 e_H_r.row(static_cast<int>(iv)) = e_H_psr.row(static_cast<int>(ix));
 
                 // Pseudorange-rate measurement [m/s] - Groves ch. 8.5.3, eq. 8.48, p. 342
-                psrRateMeas(static_cast<int>(iv)) = calcData[i].pseudorangeRate /* + (multipath and/or NLOS errors) + (tracking errors) */;
+                psrRateMeas(static_cast<int>(iv)) = calc.pseudorangeRate /* + (multipath and/or NLOS errors) + (tracking errors) */;
                 LOG_DATA("{}:     [{}]     psrRateMeas({}) {}", nameId(), o, iv, psrRateMeas(static_cast<int>(iv)));
 
                 // Range-rate Sagnac correction - Groves ch. 8.5.3, eq. 8.46, p. 342
                 double dpsr_dot_ie = InsConst::omega_ie / InsConst::C
-                                     * (calcData[i].e_satVel.y() * _e_position.x() + calcData[i].e_satPos.y() * _e_velocity.x()
-                                        - calcData[i].e_satVel.x() * _e_position.y() - calcData[i].e_satPos.x() * _e_velocity.y());
+                                     * (calc.e_satVel.y() * _e_position.x() + calc.e_satPos.y() * _e_velocity.x()
+                                        - calc.e_satVel.x() * _e_position.y() - calc.e_satPos.x() * _e_velocity.y());
                 LOG_DATA("{}:     [{}]     dpsr_dot_ie {}", nameId(), o, dpsr_dot_ie);
                 // System time drift difference to GPS [s/s]
                 double sysDriftDiff = satId.satSys != _recvClk.referenceTimeSatelliteSystem
@@ -775,10 +774,10 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                                           : 0.0;
 
                 // Pseudorange-rate estimate [m/s] - Groves ch. 9.4.1, eq. 9.142, p. 412 (Sagnac correction different sign)
-                psrRateEst(static_cast<int>(iv)) = calcData[i].e_lineOfSightUnitVector.transpose() * (calcData[i].e_satVel - _e_velocity)
+                psrRateEst(static_cast<int>(iv)) = calc.e_lineOfSightUnitVector.transpose() * (calc.e_satVel - _e_velocity)
                                                    + _recvClk.drift.value * InsConst::C
                                                    + sysDriftDiff * InsConst::C
-                                                   - calcData[i].satClkDrift * InsConst::C
+                                                   - calc.satClkDrift * InsConst::C
                                                    - dpsr_dot_ie;
                 LOG_DATA("{}:     [{}]     psrRateEst({}) {}", nameId(), o, iv, psrRateEst(static_cast<int>(iv)));
 
@@ -791,7 +790,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                     double varDopMeas = std::pow(dopplerFrequency, 2);
                     LOG_DATA("{}:     [{}]     varDopMeas {}", nameId(), o, varDopMeas);
 
-                    double varEph = calcData[i].satNavData->calcSatellitePositionVariance();
+                    double varEph = calc.satNavData->calcSatellitePositionVariance();
                     LOG_DATA("{}:     [{}]     varEph {}", nameId(), o, varEph);
 
                     double varErrors = varDopMeas + varEph;
@@ -805,7 +804,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             }
 #ifdef TESTING
             auto& sppExtendedData = (*sppSol)(obsData.satSigId.freq, obsData.satSigId.satNum, obsData.code);
-            sppExtendedData.pseudorangeRate = calcData[i].pseudorangeRate;
+            sppExtendedData.pseudorangeRate = calc.pseudorangeRate;
             sppExtendedData.dpsr_I = dpsr_I;
             sppExtendedData.dpsr_T = dpsr_T;
             sppExtendedData.geometricDist = geometricDist;

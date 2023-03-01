@@ -22,6 +22,9 @@ coverage/*
 # Ignore root level compile_commands
 compile_commands.json
 
+# Conan files
+CMakeUserPresets.json
+
 # Coverage file
 junit.xml
 
