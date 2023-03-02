@@ -2210,16 +2210,16 @@ Eigen::MatrixXd NAV::TightlyCoupledKF::measurementNoiseCovariance_R(const std::v
     return R;
 }
 
-double NAV::TightlyCoupledKF::sigma2(const double& satElevation, const double& sigma_Z, const double& sigma_C, const double& sigma_A, const double& CN0, const double& rangeAccel)
+double NAV::TightlyCoupledKF::sigma2(const double& satElevation, const double& sigma_Z, const double& sigma_C = 0., const double& sigma_A = 0., const double& CN0 = 0., const double& rangeAccel = 0.)
 {
-    // Math: \sigma_\rho(\theta_{nu}^{aj}) = \frac{\sigma_{\rho z}}{\sin{\theta_{nu}^{aj}}} \qquad \text{P. Groves}\,(9.137)
+    // Math: \sigma_{\rho j}^2 = \frac{1}{\sin^2{\theta_{nu}^{aj}}}\left(\sigma_{\rho Z}^2 + \frac{\sigma_{\rho c}^2}{(c/n_0)_j} + \sigma_{\rho a}^2 \ddot{r}_{aj}^2 \right) \qquad \text{P. Groves}\,(9.168)\,\left(\text{extension of}\,(9.137)\right)
 
     auto sigma2 = 1. / std::pow(std::sin(satElevation), 2) * std::pow(sigma_Z, 2);
-    if (CN0)
+    if (CN0 != 0.)
     {
         sigma2 += 1. / std::pow(std::sin(satElevation), 2) * std::pow(sigma_C, 2) / CN0;
     }
-    if (rangeAccel)
+    if (rangeAccel != 0.)
     {
         sigma2 += 1. / std::pow(std::sin(satElevation), 2) * std::pow(sigma_A, 2) * std::pow(rangeAccel, 2);
     }
