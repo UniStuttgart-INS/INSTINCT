@@ -1772,7 +1772,22 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         _kalmanFilter.H = n_measurementMatrix_H(R_N, R_E, lla_position, n_lineOfSightUnitVectors);
 
         // 6. Calculate the measurement noise covariance matrix R_k
-        _kalmanFilter.R = measurementNoiseCovariance_R(satElevation, sigma_rhoZ, sigma_rhoC, sigma_rhoA, sigma_rZ, sigma_rC, sigma_rA, CN0, rangeAccel);
+        if (CN0.empty() && rangeAccel.empty())
+        {
+            _kalmanFilter.R = measurementNoiseCovariance_R(sigma_rhoZ, sigma_rZ, satElevation);
+        }
+        else if (CN0.empty() && !rangeAccel.empty())
+        {
+            _kalmanFilter.R = measurementNoiseCovariance_RwithRangeAccelOnly(sigma_rhoZ, sigma_rZ, satElevation, sigma_rhoA, sigma_rA, rangeAccel);
+        }
+        else if (!CN0.empty() && rangeAccel.empty())
+        {
+            _kalmanFilter.R = measurementNoiseCovariance_RwithCN0only(sigma_rhoZ, sigma_rZ, satElevation, sigma_rhoC, sigma_rC, CN0);
+        }
+        else
+        {
+            _kalmanFilter.R = measurementNoiseCovariance_R(sigma_rhoZ, sigma_rZ, satElevation, sigma_rhoC, sigma_rC, CN0, sigma_rhoA, sigma_rA, rangeAccel);
+        }
 
         // TODO: get estimates
         std::vector<double> pseudoRangeEstimates;
@@ -2187,7 +2202,7 @@ Eigen::MatrixXd NAV::TightlyCoupledKF::n_measurementMatrix_H(const double& R_N, 
     return H;
 }
 
-Eigen::MatrixXd NAV::TightlyCoupledKF::measurementNoiseCovariance_R(const std::vector<double>& satElevation, const double& sigma_rhoZ, const double& sigma_rhoC, const double& sigma_rhoA, const double& sigma_rZ, const double& sigma_rC, const double& sigma_rA, const std::vector<double>& CN0, const std::vector<double>& rangeAccel)
+Eigen::MatrixXd NAV::TightlyCoupledKF::measurementNoiseCovariance_R(const double& sigma_rhoZ, const double& sigma_rZ, const std::vector<double>& satElevation, const double& sigma_rhoC, const double& sigma_rC, const std::vector<double>& CN0, const double& sigma_rhoA, const double& sigma_rA, const std::vector<double>& rangeAccel)
 {
     // Math: \mathbf{R}_G = \begin{pmatrix} \sigma_{\rho1}^2 & 0 & \dots & 0 & | & 0 & 0 & \dots & 0 \\ 0 & \sigma_{\rho2}^2 & \dots & 0 & | & 0 & 0 & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots & | & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \dots & \sigma_{\rho m}^2 & | & 0 & 0 & \dots & 0 \\ - & - & - & - & - & - & - & - & - \\ 0 & 0 & \dots & 0 & | & \sigma_{r1}^2 & 0 & \dots & 0 \\ 0 & 0 & \dots & 0 & | & 0 & \sigma_{r 2}^2 & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots & | & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \dots & 0 & | & 0 & 0 & \dots & \sigma_{rm}^2 \end{pmatrix} \qquad \text{P. Groves}\,(9.168)
 
@@ -2210,7 +2225,76 @@ Eigen::MatrixXd NAV::TightlyCoupledKF::measurementNoiseCovariance_R(const std::v
     return R;
 }
 
-double NAV::TightlyCoupledKF::sigma2(const double& satElevation, const double& sigma_Z, const double& sigma_C = 0., const double& sigma_A = 0., const double& CN0 = 0., const double& rangeAccel = 0.)
+Eigen::MatrixXd NAV::TightlyCoupledKF::measurementNoiseCovariance_R(const double& sigma_rhoZ, const double& sigma_rZ, const std::vector<double>& satElevation)
+{
+    // Math: \mathbf{R}_G = \begin{pmatrix} \sigma_{\rho1}^2 & 0 & \dots & 0 & | & 0 & 0 & \dots & 0 \\ 0 & \sigma_{\rho2}^2 & \dots & 0 & | & 0 & 0 & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots & | & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \dots & \sigma_{\rho m}^2 & | & 0 & 0 & \dots & 0 \\ - & - & - & - & - & - & - & - & - \\ 0 & 0 & \dots & 0 & | & \sigma_{r1}^2 & 0 & \dots & 0 \\ 0 & 0 & \dots & 0 & | & 0 & \sigma_{r 2}^2 & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots & | & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \dots & 0 & | & 0 & 0 & \dots & \sigma_{rm}^2 \end{pmatrix} \qquad \text{P. Groves}\,(9.168)
+
+    auto numSats = static_cast<uint8_t>(satElevation.size());
+
+    auto numMeasurements = static_cast<Eigen::Index>(2 * numSats);
+    Eigen::MatrixXd R = Eigen::MatrixXd::Zero(numMeasurements, numMeasurements);
+
+    for (size_t j = 0; j < numSats; j++)
+    {
+        auto sigma_rho2 = sigma2(satElevation[j], sigma_rhoZ, 0., 0., 0., 0.);
+        auto sigma_r2 = sigma2(satElevation[j], sigma_rZ, 0., 0., 0., 0.);
+
+        auto i = static_cast<uint8_t>(j);
+
+        R(i, i) = sigma_rho2;
+        R(numSats + i, numSats + i) = sigma_r2;
+    }
+
+    return R;
+}
+
+Eigen::MatrixXd NAV::TightlyCoupledKF::measurementNoiseCovariance_RwithCN0only(const double& sigma_rhoZ, const double& sigma_rZ, const std::vector<double>& satElevation, const double& sigma_rhoC, const double& sigma_rC, const std::vector<double>& CN0)
+{
+    // Math: \mathbf{R}_G = \begin{pmatrix} \sigma_{\rho1}^2 & 0 & \dots & 0 & | & 0 & 0 & \dots & 0 \\ 0 & \sigma_{\rho2}^2 & \dots & 0 & | & 0 & 0 & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots & | & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \dots & \sigma_{\rho m}^2 & | & 0 & 0 & \dots & 0 \\ - & - & - & - & - & - & - & - & - \\ 0 & 0 & \dots & 0 & | & \sigma_{r1}^2 & 0 & \dots & 0 \\ 0 & 0 & \dots & 0 & | & 0 & \sigma_{r 2}^2 & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots & | & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \dots & 0 & | & 0 & 0 & \dots & \sigma_{rm}^2 \end{pmatrix} \qquad \text{P. Groves}\,(9.168)
+
+    auto numSats = static_cast<uint8_t>(satElevation.size());
+
+    auto numMeasurements = static_cast<Eigen::Index>(2 * numSats);
+    Eigen::MatrixXd R = Eigen::MatrixXd::Zero(numMeasurements, numMeasurements);
+
+    for (size_t j = 0; j < numSats; j++)
+    {
+        auto sigma_rho2 = sigma2(satElevation[j], sigma_rhoZ, sigma_rhoC, 0., CN0[j], 0.);
+        auto sigma_r2 = sigma2(satElevation[j], sigma_rZ, sigma_rC, 0., CN0[j], 0.);
+
+        auto i = static_cast<uint8_t>(j);
+
+        R(i, i) = sigma_rho2;
+        R(numSats + i, numSats + i) = sigma_r2;
+    }
+
+    return R;
+}
+
+Eigen::MatrixXd NAV::TightlyCoupledKF::measurementNoiseCovariance_RwithRangeAccelOnly(const double& sigma_rhoZ, const double& sigma_rZ, const std::vector<double>& satElevation, const double& sigma_rhoA, const double& sigma_rA, const std::vector<double>& rangeAccel)
+{
+    // Math: \mathbf{R}_G = \begin{pmatrix} \sigma_{\rho1}^2 & 0 & \dots & 0 & | & 0 & 0 & \dots & 0 \\ 0 & \sigma_{\rho2}^2 & \dots & 0 & | & 0 & 0 & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots & | & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \dots & \sigma_{\rho m}^2 & | & 0 & 0 & \dots & 0 \\ - & - & - & - & - & - & - & - & - \\ 0 & 0 & \dots & 0 & | & \sigma_{r1}^2 & 0 & \dots & 0 \\ 0 & 0 & \dots & 0 & | & 0 & \sigma_{r 2}^2 & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots & | & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \dots & 0 & | & 0 & 0 & \dots & \sigma_{rm}^2 \end{pmatrix} \qquad \text{P. Groves}\,(9.168)
+
+    auto numSats = static_cast<uint8_t>(satElevation.size());
+
+    auto numMeasurements = static_cast<Eigen::Index>(2 * numSats);
+    Eigen::MatrixXd R = Eigen::MatrixXd::Zero(numMeasurements, numMeasurements);
+
+    for (size_t j = 0; j < numSats; j++)
+    {
+        auto sigma_rho2 = sigma2(satElevation[j], sigma_rhoZ, 0., sigma_rhoA, 0., rangeAccel[j]);
+        auto sigma_r2 = sigma2(satElevation[j], sigma_rZ, 0., sigma_rA, 0., rangeAccel[j]);
+
+        auto i = static_cast<uint8_t>(j);
+
+        R(i, i) = sigma_rho2;
+        R(numSats + i, numSats + i) = sigma_r2;
+    }
+
+    return R;
+}
+
+double NAV::TightlyCoupledKF::sigma2(const double& satElevation, const double& sigma_Z, const double& sigma_C, const double& sigma_A, const double& CN0, const double& rangeAccel)
 {
     // Math: \sigma_{\rho j}^2 = \frac{1}{\sin^2{\theta_{nu}^{aj}}}\left(\sigma_{\rho Z}^2 + \frac{\sigma_{\rho c}^2}{(c/n_0)_j} + \sigma_{\rho a}^2 \ddot{r}_{aj}^2 \right) \qquad \text{P. Groves}\,(9.168)\,\left(\text{extension of}\,(9.137)\right)
 

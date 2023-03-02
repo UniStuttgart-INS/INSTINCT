@@ -577,26 +577,65 @@ class TightlyCoupledKF : public Node
                                                                const Eigen::Vector3d& lla_position,
                                                                const std::vector<Eigen::Vector3d>& n_lineOfSightUnitVectors);
 
-    /// @brief Measurement noise covariance matrix 𝐑
-    /// @param[in] satElevation Elevation angles of all m satellites in [rad]
+    /// @brief Measurement noise covariance matrix 𝐑 with CN0 and range accel
     /// @param[in] sigma_rhoZ Standard deviation of the zenith pseudo-range error in [m]
-    /// @param[in] sigma_rhoC Standard deviation of the clock pseudo-range error in [m]
-    /// @param[in] sigma_rhoA Standard deviation of the antenna pseudo-range error in [m]
     /// @param[in] sigma_rZ Standard deviation of the zenith pseudo-range-rate error in [m/s]
+    /// @param[in] satElevation Elevation angles of all m satellites in [rad]
+    /// @param[in] sigma_rhoC Standard deviation of the clock pseudo-range error in [m]
     /// @param[in] sigma_rC Standard deviation of the clock pseudo-range-rate error in [m/s]
-    /// @param[in] sigma_rA Standard deviation of the antenna pseudo-range-rate error in [m/s]
     /// @param[in] CN0 Carrier-to-Noise density of all m satellites in [dBHz]
+    /// @param[in] sigma_rhoA Standard deviation of the antenna pseudo-range error in [m]
+    /// @param[in] sigma_rA Standard deviation of the antenna pseudo-range-rate error in [m/s]
     /// @param[in] rangeAccel Range acceleration of all m satellites in [m / s^2]
     /// @return The 2*m x 2*m measurement covariance matrix 𝐑 (m: number of satellites)
-    [[nodiscard]] static Eigen::MatrixXd measurementNoiseCovariance_R(const std::vector<double>& satElevation,
-                                                                      const double& sigma_rhoZ,
-                                                                      const double& sigma_rhoC,
-                                                                      const double& sigma_rhoA,
+    [[nodiscard]] static Eigen::MatrixXd measurementNoiseCovariance_R(const double& sigma_rhoZ,
                                                                       const double& sigma_rZ,
+                                                                      const std::vector<double>& satElevation,
+                                                                      const double& sigma_rhoC,
                                                                       const double& sigma_rC,
-                                                                      const double& sigma_rA,
                                                                       const std::vector<double>& CN0,
+                                                                      const double& sigma_rhoA,
+                                                                      const double& sigma_rA,
                                                                       const std::vector<double>& rangeAccel);
+
+    /// @brief Measurement noise covariance matrix 𝐑
+    /// @param[in] sigma_rhoZ Standard deviation of the zenith pseudo-range error in [m]
+    /// @param[in] sigma_rZ Standard deviation of the zenith pseudo-range-rate error in [m/s]
+    /// @param[in] satElevation Elevation angles of all m satellites in [rad]
+    /// @return The 2*m x 2*m measurement covariance matrix 𝐑 (m: number of satellites)
+    [[nodiscard]] static Eigen::MatrixXd measurementNoiseCovariance_R(const double& sigma_rhoZ,
+                                                                      const double& sigma_rZ,
+                                                                      const std::vector<double>& satElevation);
+
+    /// @brief Measurement noise covariance matrix 𝐑 with only CN0 (no range accel)
+    /// @param[in] sigma_rhoZ Standard deviation of the zenith pseudo-range error in [m]
+    /// @param[in] sigma_rZ Standard deviation of the zenith pseudo-range-rate error in [m/s]
+    /// @param[in] satElevation Elevation angles of all m satellites in [rad]
+    /// @param[in] sigma_rhoC Standard deviation of the clock pseudo-range error in [m]
+    /// @param[in] sigma_rC Standard deviation of the clock pseudo-range-rate error in [m/s]
+    /// @param[in] CN0 Carrier-to-Noise density of all m satellites in [dBHz]
+    /// @return The 2*m x 2*m measurement covariance matrix 𝐑 (m: number of satellites)
+    [[nodiscard]] static Eigen::MatrixXd measurementNoiseCovariance_RwithCN0only(const double& sigma_rhoZ,
+                                                                                 const double& sigma_rZ,
+                                                                                 const std::vector<double>& satElevation,
+                                                                                 const double& sigma_rhoC,
+                                                                                 const double& sigma_rC,
+                                                                                 const std::vector<double>& CN0);
+
+    /// @brief Measurement noise covariance matrix 𝐑 with only range accel (no CN0)
+    /// @param[in] sigma_rhoZ Standard deviation of the zenith pseudo-range error in [m]
+    /// @param[in] sigma_rZ Standard deviation of the zenith pseudo-range-rate error in [m/s]
+    /// @param[in] satElevation Elevation angles of all m satellites in [rad]
+    /// @param[in] sigma_rhoA Standard deviation of the antenna pseudo-range error in [m]
+    /// @param[in] sigma_rA Standard deviation of the antenna pseudo-range-rate error in [m/s]
+    /// @param[in] rangeAccel Range acceleration of all m satellites in [m / s^2]
+    /// @return The 2*m x 2*m measurement covariance matrix 𝐑 (m: number of satellites)
+    [[nodiscard]] static Eigen::MatrixXd measurementNoiseCovariance_RwithRangeAccelOnly(const double& sigma_rhoZ,
+                                                                                        const double& sigma_rZ,
+                                                                                        const std::vector<double>& satElevation,
+                                                                                        const double& sigma_rhoA,
+                                                                                        const double& sigma_rA,
+                                                                                        const std::vector<double>& rangeAccel);
 
     /// @brief Calculates the elements for the measurement noise covariance matrix 𝐑
     /// @param[in] satElevation Elevation angles of all m satellites in [rad]
