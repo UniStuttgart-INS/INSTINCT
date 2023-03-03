@@ -274,6 +274,22 @@ void NAV::TightlyCoupledKF::guiConfig()
 
             ImGui::TreePop();
         }
+
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::TreeNode(fmt::format("Compensation models##{}", size_t(id)).c_str()))
+        {
+            ImGui::SetNextItemWidth(configWidth - ImGui::GetStyle().IndentSpacing);
+            if (ComboIonosphereModel(fmt::format("Ionosphere Model##{}", size_t(id)).c_str(), _ionosphereModel))
+            {
+                LOG_DEBUG("{}: Ionosphere Model changed to {}", nameId(), NAV::to_string(_ionosphereModel));
+                flow::ApplyChanges();
+            }
+            if (ComboTroposphereModel(fmt::format("Troposphere Model##{}", size_t(id)).c_str(), _troposphereModels, configWidth - ImGui::GetStyle().IndentSpacing))
+            {
+                flow::ApplyChanges();
+            }
+            ImGui::TreePop();
+        }
     }
 
     ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
