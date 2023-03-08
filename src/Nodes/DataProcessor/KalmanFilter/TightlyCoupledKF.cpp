@@ -1430,11 +1430,11 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
 
     // TODO: Check whether it is necessary to distinguish the following three types (see Groves eq. 9.168)
     double sigma_rhoZ = std::sqrt(gnssSigmaSquaredPseudorange);
-    double sigma_rhoC{};
-    double sigma_rhoA{};
+    // double sigma_rhoC{};
+    // double sigma_rhoA{};
     double sigma_rZ = std::sqrt(gnssSigmaSquaredPseudorangeRate);
-    double sigma_rC{};
-    double sigma_rA{};
+    // double sigma_rC{};
+    // double sigma_rA{};
 
     // ----------------------------------------- Read observation data -------------------------------------------
 
@@ -1784,10 +1784,8 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         n_lineOfSightUnitVectors.resize(ix);
         std::vector<double> satElevation;
         satElevation.resize(ix);
-        std::vector<double> CN0;
-        CN0.resize(ix);
-        std::vector<double> rangeAccel;
-        rangeAccel.resize(ix);
+        // std::vector<double> CN0; // TODO: get this from GnssObs
+        // std::vector<double> rangeAccel; // TODO: get this from GnssObs
 
         std::vector<double> pseudoRangeObservations;
         pseudoRangeObservations.resize(ix);
@@ -1798,8 +1796,10 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
 
         for (auto& calc : calcData)
         {
+            LOG_DEBUG("calc.n_lineOfSightUnitVector.transpose() = {}, calc.skipped = {}", calc.n_lineOfSightUnitVector.transpose(), calc.skipped);
             if (calc.skipped) { continue; }
             n_lineOfSightUnitVectors[ix] = calc.n_lineOfSightUnitVector;
+            LOG_DEBUG("n_lineOfSightUnitVectors[{}] = {}", ix, n_lineOfSightUnitVectors[ix].transpose());
             satElevation[ix] = calc.satElevation;
             // CN0[i] = calc // TODO: get CN0 from data
             // rangeAccel[i] = calc // TODO: get rangeAccel from data
@@ -1811,26 +1811,11 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
 
         // 5. Calculate the measurement matrix H_k
         _kalmanFilter.H = n_measurementMatrix_H(R_N, R_E, lla_position, n_lineOfSightUnitVectors);
-        // LOG_ERROR("{}: kalmanFilter.H =\n{}", _kalmanFilter.H);
+        LOG_DEBUG("{}: kalmanFilter.H =\n{}", nameId(), _kalmanFilter.H);
 
         // 6. Calculate the measurement noise covariance matrix R_k
-        if (CN0.empty() && rangeAccel.empty())
-        {
-            _kalmanFilter.R = measurementNoiseCovariance_R(sigma_rhoZ, sigma_rZ, satElevation);
-        }
-        else if (CN0.empty() && !rangeAccel.empty())
-        {
-            _kalmanFilter.R = measurementNoiseCovariance_RwithRangeAccelOnly(sigma_rhoZ, sigma_rZ, satElevation, sigma_rhoA, sigma_rA, rangeAccel);
-        }
-        else if (!CN0.empty() && rangeAccel.empty())
-        {
-            _kalmanFilter.R = measurementNoiseCovariance_RwithCN0only(sigma_rhoZ, sigma_rZ, satElevation, sigma_rhoC, sigma_rC, CN0);
-        }
-        else
-        {
-            _kalmanFilter.R = measurementNoiseCovariance_R(sigma_rhoZ, sigma_rZ, satElevation, sigma_rhoC, sigma_rC, CN0, sigma_rhoA, sigma_rA, rangeAccel);
-        }
-        // LOG_ERROR("{}: kalmanFilter.R =\n{}", _kalmanFilter.R);
+        _kalmanFilter.R = measurementNoiseCovariance_R(sigma_rhoZ, sigma_rZ, satElevation);
+        LOG_DEBUG("{}: kalmanFilter.R =\n{}", nameId(), _kalmanFilter.R);
 
         std::vector<double> pseudoRangeEstimates;
         pseudoRangeEstimates.resize(ix);
@@ -1844,7 +1829,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
 
         // 8. Formulate the measurement z_k
         _kalmanFilter.z = measurementInnovation_dz(pseudoRangeObservations, pseudoRangeEstimates, pseudoRangeRateObservations, pseudoRangeRateEstimates);
-        LOG_ERROR("_kalmanFilter.z =\n{}", _kalmanFilter.z);
+        LOG_DEBUG("{}: _kalmanFilter.z =\n{}", nameId(), _kalmanFilter.z);
     }
 
     if (_checkKalmanMatricesRanks)
@@ -1861,7 +1846,11 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     // 9. Update the state vector estimate from x(-) to x(+)
     // 10. Update the error covariance matrix from P(-) to P(+)
 
+    LOG_DEBUG("{}: _kalmanFilter.P before update =\n{}", nameId(), _kalmanFilter.P);
+
     _kalmanFilter.correctWithMeasurementInnovation();
+
+    LOG_DEBUG("{}: _kalmanFilter.P after update =\n{}", nameId(), _kalmanFilter.P);
 
     if (_checkKalmanMatricesRanks)
     {
