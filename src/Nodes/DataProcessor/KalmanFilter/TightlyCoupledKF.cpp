@@ -915,7 +915,8 @@ bool NAV::TightlyCoupledKF::initialize()
         return false;
     }
 
-    _e_position = Eigen::Vector3d::Zero();
+    // _e_position = Eigen::Vector3d::Zero();
+    _e_position = { -481819.3135, 5507219.9538, 3170373.7354 }; // FIXME: remove after debugging
     _e_velocity = Eigen::Vector3d::Zero();
     _recvClk = {};
 
@@ -1593,8 +1594,6 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     // Keeps track of skipped meausrements (because of elevation mask, ...)
     size_t cntSkippedMeas = 0;
 
-    _e_position = { -481819.3135, 5507219.9538, 3170373.7354 }; // FIXME: remove after debugging
-
     // Latitude, Longitude, Altitude of the receiver [rad, rad, m]
     Eigen::Vector3d lla_pos = trafo::ecef2lla_WGS84(_e_position);
     LOG_DATA("{}: _e_position {}, {}, {}", nameId(), _e_position.x(), _e_position.y(), _e_position.z());
@@ -1628,7 +1627,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         {
             cntSkippedMeas++;
             calcData[i].skipped = true;
-            LOG_DATA("{}: Measurement is skipped because of elevation {:.1f}° and mask of {}° ({} valid measurements remaining)",
+            LOG_DATA("{}: [{}] Measurement is skipped because of elevation {:.1f}° and mask of {}° ({} valid measurements remaining)",
                      nameId(), obsData.satSigId, rad2deg(calcData[i].satElevation), rad2deg(_elevationMask), nMeas - cntSkippedMeas);
 
             if (!(usedSatelliteSystems & satId.satSys)
@@ -1796,11 +1795,12 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
 
         for (auto& calc : calcData)
         {
-            LOG_DEBUG("calc.n_lineOfSightUnitVector.transpose() = {}, calc.skipped = {}", calc.n_lineOfSightUnitVector.transpose(), calc.skipped);
+            LOG_DATA("calc.n_lineOfSightUnitVector.transpose() = {}, calc.skipped = {}", calc.n_lineOfSightUnitVector.transpose(), calc.skipped);
             if (calc.skipped) { continue; }
             n_lineOfSightUnitVectors[ix] = calc.n_lineOfSightUnitVector;
-            LOG_DEBUG("n_lineOfSightUnitVectors[{}] = {}", ix, n_lineOfSightUnitVectors[ix].transpose());
+            LOG_DATA("n_lineOfSightUnitVectors[{}] = {}", ix, n_lineOfSightUnitVectors[ix].transpose());
             satElevation[ix] = calc.satElevation;
+            LOG_DATA("satElevation[{}] = {}", ix, satElevation[ix]);
             // CN0[i] = calc // TODO: get CN0 from data
             // rangeAccel[i] = calc // TODO: get rangeAccel from data
             pseudoRangeObservations[ix] = psrMeas(static_cast<Eigen::Index>(ix));
@@ -1811,11 +1811,11 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
 
         // 5. Calculate the measurement matrix H_k
         _kalmanFilter.H = n_measurementMatrix_H(R_N, R_E, lla_position, n_lineOfSightUnitVectors);
-        LOG_DEBUG("{}: kalmanFilter.H =\n{}", nameId(), _kalmanFilter.H);
+        LOG_DATA("{}: kalmanFilter.H =\n{}", nameId(), _kalmanFilter.H);
 
         // 6. Calculate the measurement noise covariance matrix R_k
         _kalmanFilter.R = measurementNoiseCovariance_R(sigma_rhoZ, sigma_rZ, satElevation);
-        LOG_DEBUG("{}: kalmanFilter.R =\n{}", nameId(), _kalmanFilter.R);
+        LOG_DATA("{}: kalmanFilter.R =\n{}", nameId(), _kalmanFilter.R);
 
         std::vector<double> pseudoRangeEstimates;
         pseudoRangeEstimates.resize(ix);
