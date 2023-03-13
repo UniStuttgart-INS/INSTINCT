@@ -915,9 +915,6 @@ bool NAV::TightlyCoupledKF::initialize()
         return false;
     }
 
-    // _e_position = Eigen::Vector3d::Zero();
-    _e_position = { -481819.3135, 5507219.9538, 3170373.7354 }; // FIXME: remove after debugging
-    _e_velocity = Eigen::Vector3d::Zero();
     _recvClk = {};
 
     _kalmanFilter.setZero();
@@ -1523,7 +1520,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     }
 
     size_t nMeas = calcData.size();
-    LOG_ERROR("{}: nMeas {}", nameId(), nMeas);
+    LOG_DEBUG("{}: nMeas {}", nameId(), nMeas);
     size_t nParam = 4 + availSatelliteSystems.size() - 1; // 3x pos, 1x clk, (N-1)x clkDiff
 
     // Frequency number (GLONASS only)
@@ -1594,10 +1591,9 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     // Keeps track of skipped meausrements (because of elevation mask, ...)
     size_t cntSkippedMeas = 0;
 
-    // Latitude, Longitude, Altitude of the receiver [rad, rad, m]
-    Eigen::Vector3d lla_pos = trafo::ecef2lla_WGS84(_e_position);
-    LOG_DATA("{}: _e_position {}, {}, {}", nameId(), _e_position.x(), _e_position.y(), _e_position.z());
-    LOG_DATA("{}: lla_pos {}°, {}°, {}m", nameId(), rad2deg(lla_pos.x()), rad2deg(lla_pos.y()), lla_pos.z());
+    const Eigen::Vector3d& e_position = _latestInertialNavSol->e_position();
+    const Eigen::Vector3d& e_velocity = _latestInertialNavSol->e_velocity();
+
     LOG_DATA("{}: _recvClk.bias {}", nameId(), _recvClk.bias.value);
     LOG_DATA("{}: _recvClk.drift {}", nameId(), _recvClk.drift.value);
 
@@ -1611,10 +1607,10 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         auto satId = obsData.satSigId.toSatId();
 
         // Line-of-sight unit vector in ECEF frame coordinates - Groves ch. 8.5.3, eq. 8.41, p. 341
-        calcData[i].e_lineOfSightUnitVector = e_calcLineOfSightUnitVector(_e_position, calcData[i].e_satPos);
+        calcData[i].e_lineOfSightUnitVector = e_calcLineOfSightUnitVector(e_position, calcData[i].e_satPos);
         LOG_DATA("{}:     e_lineOfSightUnitVector {}", nameId(), calcData[i].e_lineOfSightUnitVector.transpose());
         // Line-of-sight unit vector in NED frame coordinates - Groves ch. 8.5.3, eq. 8.41, p. 341
-        calcData[i].n_lineOfSightUnitVector = trafo::n_Quat_e(lla_pos(0), lla_pos(1)) * calcData[i].e_lineOfSightUnitVector;
+        calcData[i].n_lineOfSightUnitVector = trafo::n_Quat_e(lla_position(0), lla_position(1)) * calcData[i].e_lineOfSightUnitVector;
         LOG_DATA("{}:     n_lineOfSightUnitVector {}", nameId(), calcData[i].n_lineOfSightUnitVector.transpose());
         // Elevation [rad] - Groves ch. 8.5.4, eq. 8.57, p. 344
         calcData[i].satElevation = calcSatElevation(calcData[i].n_lineOfSightUnitVector);
@@ -1623,7 +1619,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         calcData[i].satAzimuth = calcSatAzimuth(calcData[i].n_lineOfSightUnitVector);
         LOG_DATA("{}:     satAzimuth {}°", nameId(), rad2deg(calcData[i].satAzimuth));
 
-        if (!_e_position.isZero() && calcData[i].satElevation < _elevationMask) // Do not check elevation mask when not having a valid position
+        if (!e_position.isZero() && calcData[i].satElevation < _elevationMask) // Do not check elevation mask when not having a valid position
         {
             cntSkippedMeas++;
             calcData[i].skipped = true;
@@ -1682,12 +1678,12 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         psrMeas(static_cast<int>(ix)) = obsData.pseudorange.value().value /* + (multipath and/or NLOS errors) + (tracking errors) */;
         LOG_DATA("{}:     psrMeas({}) {}", nameId(), ix, psrMeas(static_cast<int>(ix)));
         // Estimated modulation ionosphere propagation error [m]
-        // double dpsr_I = calcIonosphericTimeDelay(static_cast<double>(gnssObs->insTime.toGPSweekTow().tow), obsData.satSigId.freq, lla_pos,
+        // double dpsr_I = calcIonosphericTimeDelay(static_cast<double>(gnssObs->insTime.toGPSweekTow().tow), obsData.satSigId.freq, lla_position,
         //                                          calc.satElevation, calc.satAzimuth, _ionosphereModel, &ionosphericCorrections)
         //                 * InsConst::C;
         // LOG_DATA("{}:     dpsr_I {} [m] (Estimated modulation ionosphere propagation error)", nameId(),dpsr_I);
 
-        // auto tropo = calcTroposphericDelayAndMapping(gnssObs->insTime, lla_pos, calc.satElevation, calc.satAzimuth, _troposphereModels);
+        // auto tropo = calcTroposphericDelayAndMapping(gnssObs->insTime, lla_position, calc.satElevation, calc.satAzimuth, _troposphereModels);
         // LOG_DATA("{}:     ZHD {}", nameId(),tropo.ZHD);
         // LOG_DATA("{}:     ZWD {}", nameId(),tropo.ZWD);
         // LOG_DATA("{}:     zhdMappingFactor {}", nameId(),tropo.zhdMappingFactor);
@@ -1698,10 +1694,10 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         // LOG_DATA("{}:     dpsr_T {} [m] (Estimated modulation troposphere propagation error)", nameId(),dpsr_T);
 
         // Sagnac correction - Springer Handbook ch. 19.1.1, eq. 19.7, p. 562
-        double dpsr_ie = 1.0 / InsConst::C * (_e_position - calc.e_satPos).dot(InsConst::e_omega_ie.cross(_e_position));
+        double dpsr_ie = 1.0 / InsConst::C * (e_position - calc.e_satPos).dot(InsConst::e_omega_ie.cross(e_position));
         LOG_DATA("{}:     dpsr_ie {}", nameId(), dpsr_ie);
         // Geometric distance [m]
-        double geometricDist = (calc.e_satPos - _e_position).norm();
+        double geometricDist = (calc.e_satPos - e_position).norm();
         LOG_DATA("{}:     geometricDist {}", nameId(), geometricDist);
         // System time difference to GPS [s]
         // double sysTimeDiff = satId.satSys != _recvClk.referenceTimeSatelliteSystem
@@ -1737,8 +1733,8 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
 
             // Range-rate Sagnac correction - Groves ch. 8.5.3, eq. 8.46, p. 342
             double dpsr_dot_ie = InsConst::omega_ie / InsConst::C
-                                 * (calc.e_satVel.y() * _e_position.x() + calc.e_satPos.y() * _e_velocity.x()
-                                    - calc.e_satVel.x() * _e_position.y() - calc.e_satPos.x() * _e_velocity.y());
+                                 * (calc.e_satVel.y() * e_position.x() + calc.e_satPos.y() * e_velocity.x()
+                                    - calc.e_satVel.x() * e_position.y() - calc.e_satPos.x() * e_velocity.y());
             LOG_DATA("{}:     dpsr_dot_ie {}", nameId(), dpsr_dot_ie);
             // System time drift difference to GPS [s/s]
             // double sysDriftDiff = satId.satSys != _recvClk.referenceTimeSatelliteSystem
@@ -1751,7 +1747,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
             // _recvClk.drift.value += _kalmanFilter.x(16, 0) / InsConst::C;
 
             // Pseudorange-rate estimate [m/s] - Groves ch. 9.4.1, eq. 9.142, p. 412 (Sagnac correction different sign)
-            psrRateEst(static_cast<int>(iv)) = calc.e_lineOfSightUnitVector.transpose() * (calc.e_satVel - _e_velocity)
+            psrRateEst(static_cast<int>(iv)) = calc.e_lineOfSightUnitVector.transpose() * (calc.e_satVel - e_velocity)
                                                // +_recvClk.drift.value* InsConst::C;
                                                //    + sysDriftDiff * InsConst::C
                                                - calc.satClkDrift * InsConst::C
@@ -1846,11 +1842,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     // 9. Update the state vector estimate from x(-) to x(+)
     // 10. Update the error covariance matrix from P(-) to P(+)
 
-    LOG_DEBUG("{}: _kalmanFilter.P before update =\n{}", nameId(), _kalmanFilter.P);
-
     _kalmanFilter.correctWithMeasurementInnovation();
-
-    LOG_DEBUG("{}: _kalmanFilter.P after update =\n{}", nameId(), _kalmanFilter.P);
 
     if (_checkKalmanMatricesRanks)
     {
@@ -1895,8 +1887,14 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         tcKfInsGnssErrors->positionError = tcKfInsGnssErrors->positionError.array() * Eigen::Array3d(1. / SCALE_FACTOR_LAT_LON, 1. / SCALE_FACTOR_LAT_LON, 1);
         tcKfInsGnssErrors->frame = TcKfInsGnssErrors::Frame::NED;
     }
+    LOG_DATA("tcKfInsGnssErrors->positionError = {}", tcKfInsGnssErrors->positionError.transpose());
+    LOG_DATA("tcKfInsGnssErrors->velocityError = {}", tcKfInsGnssErrors->velocityError.transpose());
+    LOG_DATA("tcKfInsGnssErrors->attitudeError = {}", tcKfInsGnssErrors->attitudeError.transpose());
+    LOG_DATA("tcKfInsGnssErrors->b_biasAccel = {}", tcKfInsGnssErrors->b_biasAccel.transpose());
+    LOG_DATA("tcKfInsGnssErrors->b_biasGyro = {}", tcKfInsGnssErrors->b_biasGyro.transpose());
+    LOG_DATA("tcKfInsGnssErrors->recvClkOffset = {}", tcKfInsGnssErrors->recvClkOffset);
+    LOG_DATA("tcKfInsGnssErrors->recvClkDrift = {}", tcKfInsGnssErrors->recvClkDrift);
 
-    // Closed loop
     _kalmanFilter.x.setZero();
 
     invokeCallbacks(OUTPUT_PORT_INDEX_ERROR, tcKfInsGnssErrors);

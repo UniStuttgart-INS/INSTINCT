@@ -101,11 +101,6 @@ class TightlyCoupledKF : public Node
     /// @brief Adds/Deletes Input Pins depending on the variable _nNavInfoPins
     void updateNumberOfInputPins();
 
-    /// Estimated position in ECEF frame [m]
-    Eigen::Vector3d _e_position = Eigen::Vector3d::Zero();
-    /// Estimated velocity in ECEF frame [m/s]
-    Eigen::Vector3d _e_velocity = Eigen::Vector3d::Zero();
-
     /// Estimated receiver clock parameters
     ReceiverClock _recvClk;
 
