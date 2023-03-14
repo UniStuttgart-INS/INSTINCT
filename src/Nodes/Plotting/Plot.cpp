@@ -2256,7 +2256,7 @@ void NAV::Plot::plotData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
         }
         else if (sourcePin->dataIdentifier.front() == TcKfInsGnssErrors::type())
         {
-            plotLcKfInsGnssErrors(std::static_pointer_cast<const TcKfInsGnssErrors>(nodeData), pinIdx);
+            plotTcKfInsGnssErrors(std::static_pointer_cast<const TcKfInsGnssErrors>(nodeData), pinIdx);
         }
         else if (sourcePin->dataIdentifier.front() == SppSolution::type())
         {
