@@ -1719,7 +1719,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
                                        + dpsr_ie;
         LOG_DATA("{}:     psrEst({}) {}", nameId(), ix, psrEst(static_cast<int>(ix)));
 
-        // LOG_DATA("{}:     dpsr({}) {}", nameId(), ix, psrMeas(static_cast<int>(ix)) - psrEst(static_cast<int>(ix)));
+        LOG_DATA("{}:     dpsr({}) {}", nameId(), ix, psrMeas(static_cast<int>(ix)) - psrEst(static_cast<int>(ix)));
 
         // #############################################################################################################################
         //                                                    Velocity calculation
@@ -2227,6 +2227,11 @@ Eigen::MatrixXd NAV::TightlyCoupledKF::n_measurementMatrix_H(const double& R_N, 
         H.block<1, 3>(numSats + i, 3) = n_lineOfSightUnitVectors[j].transpose();
         H(numSats + i, 16) = 1;
     }
+
+    // H.middleCols<3>(0) *= 1. / SCALE_FACTOR_ATTITUDE; // Only zero elements
+    H.middleCols<2>(6) *= 1. / SCALE_FACTOR_LAT_LON;
+    // H.middleCols<3>(9) *= 1. / SCALE_FACTOR_ACCELERATION; // Only zero elements
+    // H.middleCols<3>(12) *= 1. / SCALE_FACTOR_ANGULAR_RATE; // Only zero elements
 
     return H;
 }
