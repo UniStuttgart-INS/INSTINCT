@@ -134,6 +134,9 @@ class TightlyCoupledKF : public Node
     /// Time when the last GNSS message came and a prediction was requested
     InsTime _lastPredictRequestedTime;
 
+    /// Time of last epoch
+    InsTime _lastEpochTime;
+
     /// Accumulated Accelerometer biases
     Eigen::Vector3d _accumulatedAccelBiases;
     /// Accumulated Gyroscope biases

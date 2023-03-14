@@ -1662,6 +1662,14 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     satelliteSystems.erase(std::find(satelliteSystems.begin(), satelliteSystems.end(), _recvClk.referenceTimeSatelliteSystem));
     LOG_DATA("{}: _recvClk.referenceTimeSatelliteSystem {} ({} other time systems)", nameId(), _recvClk.referenceTimeSatelliteSystem, satelliteSystems.size());
 
+    double tau_epoch = !_lastEpochTime.empty()
+                           ? static_cast<double>((gnssObs->insTime - _lastEpochTime).count())
+                           : 0.0;
+
+    LOG_DATA("{}: tau_epoch = {}", nameId(), tau_epoch);
+
+    _lastEpochTime = gnssObs->insTime;
+
     for (auto& calc : calcData)
     {
         if (calc.skipped) { continue; }
@@ -1704,14 +1712,14 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         //                          ? _recvClk.sysTimeDiff[satId.satSys].value
         //                          : 0.0;
 
-        // LOG_DATA("{}: _kalmanFilter.x(15, 0) = {} m", nameId(), _kalmanFilter.x(15, 0));
-        // LOG_DATA("{}: _recvClk.bias {} s", nameId(), _recvClk.bias.value);
-
         // _recvClk.bias.value += _kalmanFilter.x(15, 0) / InsConst::C;
+
+        // LOG_ERROR("{}: _recvClk.bias {} s", nameId(), _recvClk.bias.value);
 
         // Pseudorange estimate [m]
         psrEst(static_cast<int>(ix)) = geometricDist
-                                       //    + _recvClk.bias.value * InsConst::C;
+                                       + _recvClk.bias.value * InsConst::C
+                                       + _recvClk.drift.value * InsConst::C * tau_epoch
                                        //    + sysTimeDiff * InsConst::C
                                        - calc.satClkBias * InsConst::C
                                        //    + dpsr_I
@@ -1746,9 +1754,11 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
 
             // _recvClk.drift.value += _kalmanFilter.x(16, 0) / InsConst::C;
 
+            // LOG_ERROR("{}: _recvClk.drift {} s/s", nameId(), _recvClk.drift.value);
+
             // Pseudorange-rate estimate [m/s] - Groves ch. 9.4.1, eq. 9.142, p. 412 (Sagnac correction different sign)
             psrRateEst(static_cast<int>(iv)) = calc.e_lineOfSightUnitVector.transpose() * (calc.e_satVel - e_velocity)
-                                               // +_recvClk.drift.value* InsConst::C;
+                                               + _recvClk.drift.value * InsConst::C
                                                //    + sysDriftDiff * InsConst::C
                                                - calc.satClkDrift * InsConst::C
                                                - dpsr_dot_ie;
@@ -1870,6 +1880,8 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
 
     _accumulatedAccelBiases += _kalmanFilter.x.block<3, 1>(9, 0) * (1. / SCALE_FACTOR_ACCELERATION);
     _accumulatedGyroBiases += _kalmanFilter.x.block<3, 1>(12, 0) * (1. / SCALE_FACTOR_ANGULAR_RATE);
+    _recvClk.bias.value += _kalmanFilter.x(15, 0) / InsConst::C;
+    _recvClk.drift.value += _kalmanFilter.x(16, 0) / InsConst::C;
 
     // Push out the new data
     auto tcKfInsGnssErrors = std::make_shared<TcKfInsGnssErrors>();
@@ -1879,8 +1891,8 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     tcKfInsGnssErrors->attitudeError = _kalmanFilter.x.block<3, 1>(0, 0) * (1. / SCALE_FACTOR_ATTITUDE);
     tcKfInsGnssErrors->b_biasAccel = _accumulatedAccelBiases;
     tcKfInsGnssErrors->b_biasGyro = _accumulatedGyroBiases;
-    tcKfInsGnssErrors->recvClkOffset = _kalmanFilter.x(15, 0);
-    tcKfInsGnssErrors->recvClkDrift = _kalmanFilter.x(16, 0);
+    tcKfInsGnssErrors->recvClkOffset = _recvClk.bias.value * InsConst::C;
+    tcKfInsGnssErrors->recvClkDrift = _recvClk.drift.value * InsConst::C;
 
     if (_frame == Frame::NED)
     {
