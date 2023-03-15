@@ -68,6 +68,14 @@ class TightlyCoupledKF : public Node
     constexpr static size_t INPUT_PORT_INDEX_GNSS_NAV_INFO = 2; ///< @brief GnssNavInfo
     constexpr static size_t OUTPUT_PORT_INDEX_ERROR = 0;        ///< @brief Flow (TcKfInsGnssErrors)
     constexpr static size_t OUTPUT_PORT_INDEX_SYNC = 1;         ///< @brief Flow (ImuObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_x = 2;            ///< @brief x̂ State vector
+    constexpr static size_t OUTPUT_PORT_INDEX_P = 3;            ///< @brief 𝐏 Error covariance matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_Phi = 4;          ///< @brief 𝚽 State transition matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_Q = 5;            ///< @brief 𝐐 System/Process noise covariance matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_z = 6;            ///< @brief 𝐳 Measurement vector
+    constexpr static size_t OUTPUT_PORT_INDEX_H = 7;            ///< @brief 𝐇 Measurement sensitivity Matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_R = 8;            ///< @brief 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_K = 9;            ///< @brief 𝐊 Kalman gain matrix
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -93,6 +101,12 @@ class TightlyCoupledKF : public Node
     /// @brief Updates the predicted state from the InertialNavSol with the GNSS observation
     /// @param[in] gnssObservation Gnss observation triggering the update
     void tightlyCoupledUpdate(const std::shared_ptr<const GnssObs>& gnssObservation);
+
+    /// @brief Add the output pins for the Kalman matrices
+    void addKalmanMatricesPins();
+
+    /// @brief Removes the output pins for the Kalman matrices
+    void removeKalmanMatricesPins();
 
     /// Index of the Pin currently being dragged
     int _dragAndDropPinIndex = -1;
@@ -157,6 +171,9 @@ class TightlyCoupledKF : public Node
     };
     /// Frame to calculate the Kalman filter in
     Frame _frame = Frame::NED;
+
+    /// @brief Show output pins for the Kalman matrices
+    bool _showKalmanFilterOutputPins = false;
 
     /// @brief Check the rank of the Kalman matrices every iteration (computational expensive)
     bool _checkKalmanMatricesRanks = true;

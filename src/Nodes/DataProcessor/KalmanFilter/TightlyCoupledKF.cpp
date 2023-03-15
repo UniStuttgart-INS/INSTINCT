@@ -89,6 +89,32 @@ std::string NAV::TightlyCoupledKF::category()
     return "Data Processor";
 }
 
+void NAV::TightlyCoupledKF::addKalmanMatricesPins()
+{
+    LOG_TRACE("{}: called", nameId());
+
+    if (outputPins.size() == 2)
+    {
+        nm::CreateOutputPin(this, "x", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.x);
+        nm::CreateOutputPin(this, "P", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.P);
+        nm::CreateOutputPin(this, "Phi", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.Phi);
+        nm::CreateOutputPin(this, "Q", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.Q);
+        nm::CreateOutputPin(this, "z", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.z);
+        nm::CreateOutputPin(this, "H", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.H);
+        nm::CreateOutputPin(this, "R", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.R);
+        nm::CreateOutputPin(this, "K", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.K);
+    }
+}
+
+void NAV::TightlyCoupledKF::removeKalmanMatricesPins()
+{
+    LOG_TRACE("{}: called", nameId());
+    while (outputPins.size() > 2)
+    {
+        nm::DeleteOutputPin(outputPins.back());
+    }
+}
+
 void NAV::TightlyCoupledKF::guiConfig()
 {
     float configWidth = 380.0F * gui::NodeEditorApplication::windowFontRatio();
@@ -646,6 +672,20 @@ void NAV::TightlyCoupledKF::guiConfig()
             LOG_DEBUG("{}: checkKalmanMatricesRanks {}", nameId(), _checkKalmanMatricesRanks);
             flow::ApplyChanges();
         }
+
+        if (ImGui::Checkbox(fmt::format("Show Kalman Filter matrices as output pins##{}", size_t(id)).c_str(), &_showKalmanFilterOutputPins))
+        {
+            LOG_DEBUG("{}: showKalmanFilterOutputPins {}", nameId(), _showKalmanFilterOutputPins);
+            if (_showKalmanFilterOutputPins)
+            {
+                addKalmanMatricesPins();
+            }
+            else
+            {
+                removeKalmanMatricesPins();
+            }
+            flow::ApplyChanges();
+        }
     }
 }
 
@@ -655,6 +695,7 @@ void NAV::TightlyCoupledKF::guiConfig()
 
     json j;
 
+    j["showKalmanFilterOutputPins"] = _showKalmanFilterOutputPins;
     j["nNavInfoPins"] = _nNavInfoPins;
     j["frequencies"] = Frequency_(_filterFreq);
     j["codes"] = _filterCode;
@@ -713,6 +754,14 @@ void NAV::TightlyCoupledKF::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
 
+    if (j.contains("showKalmanFilterOutputPins"))
+    {
+        j.at("showKalmanFilterOutputPins").get_to(_showKalmanFilterOutputPins);
+        if (_showKalmanFilterOutputPins)
+        {
+            addKalmanMatricesPins();
+        }
+    }
     if (j.contains("nNavInfoPins"))
     {
         j.at("nNavInfoPins").get_to(_nNavInfoPins);
@@ -1274,6 +1323,8 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
         if (_qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
         {
             // 2. Calculate the system noise covariance matrix Q_{k-1}
+            if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_Q); }
+
             _kalmanFilter.Q = n_systemNoiseCovarianceMatrix_Q(sigma_ra.array().square(), sigma_rg.array().square(),
                                                               sigma_bad.array().square(), sigma_bgd.array().square(),
                                                               _tau_bad, _tau_bgd,
@@ -1301,6 +1352,8 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
         if (_qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
         {
             // 2. Calculate the system noise covariance matrix Q_{k-1}
+            if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_Q); }
+
             _kalmanFilter.Q = e_systemNoiseCovarianceMatrix_Q(sigma_ra.array().square(), sigma_rg.array().square(),
                                                               sigma_bad.array().square(), sigma_bgd.array().square(),
                                                               _tau_bad, _tau_bgd,
@@ -1328,15 +1381,21 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
         auto [Phi, Q] = calcPhiAndQWithVanLoanMethod(F, G, W, tau_i);
 
         // 1. Calculate the transition matrix 𝚽_{k-1}
+        if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_Phi); }
+
         _kalmanFilter.Phi = Phi;
 
         // 2. Calculate the system noise covariance matrix Q_{k-1}
+        if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_Q); }
+
         _kalmanFilter.Q = Q;
     }
 
     // If Q was calculated over Van Loan, then the Phi matrix was automatically calculated with the exponential matrix
     if (_phiCalculationAlgorithm != PhiCalculationAlgorithm::Exponential || _qCalculationAlgorithm != QCalculationAlgorithm::VanLoan)
     {
+        if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_Phi); }
+
         if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Exponential)
         {
             // 1. Calculate the transition matrix 𝚽_{k-1}
@@ -1355,12 +1414,28 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
 
     LOG_DATA("{}:     KF.Phi =\n{}", nameId(), _kalmanFilter.Phi);
     LOG_DATA("{}:     KF.Q =\n{}", nameId(), _kalmanFilter.Q);
+    if (_showKalmanFilterOutputPins)
+    {
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi, predictTime);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q, predictTime);
+    }
     LOG_DATA("{}:     Q - Q^T =\n{}", nameId(), _kalmanFilter.Q - _kalmanFilter.Q.transpose());
     LOG_DATA("{}:     KF.P (before prediction) =\n{}", nameId(), _kalmanFilter.P);
 
     // 3. Propagate the state vector estimate from x(+) and x(-)
     // 4. Propagate the error covariance matrix from P(+) and P(-)
+    if (_showKalmanFilterOutputPins)
+    {
+        requestOutputValueLock(OUTPUT_PORT_INDEX_x);
+        requestOutputValueLock(OUTPUT_PORT_INDEX_P);
+    }
     _kalmanFilter.predict();
+
+    if (_showKalmanFilterOutputPins)
+    {
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, predictTime);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P, predictTime);
+    }
     LOG_DATA("{}:     KF.x = {}", nameId(), _kalmanFilter.x.transpose());
     LOG_DATA("{}:     KF.P (after prediction) =\n{}", nameId(), _kalmanFilter.P);
 
@@ -1566,16 +1641,6 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         calcData[i].e_satVel = satPosVel.e_vel;
         LOG_DATA("{}:     e_satPos {}", nameId(), calcData[i].e_satPos.transpose());
         LOG_DATA("{}:     e_satVel {}", nameId(), calcData[i].e_satVel.transpose());
-    }
-
-    if (nMeas < nParam)
-    {
-        LOG_WARN("{}: [{}] GNSS solution degraded because only {} valid measurements ({} needed). Try changing filter settings or reposition your antenna.",
-                 nameId(), (gnssObs->insTime + std::chrono::seconds(gnssObs->insTime.leapGps2UTC())), nMeas, nParam);
-        // sppSol->nSatellitesPosition = nMeas;
-        // sppSol->nSatellitesVelocity = nDopplerMeas;
-        // invokeCallbacks(OUTPUT_PORT_INDEX_SPPSOL, sppSol);
-        // return;
     }
 
     // Pseudorange estimates [m]
@@ -1816,10 +1881,14 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         }
 
         // 5. Calculate the measurement matrix H_k
+        if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_H); }
+
         _kalmanFilter.H = n_measurementMatrix_H(R_N, R_E, lla_position, n_lineOfSightUnitVectors);
         LOG_DATA("{}: kalmanFilter.H =\n{}", nameId(), _kalmanFilter.H);
 
         // 6. Calculate the measurement noise covariance matrix R_k
+        if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_R); }
+
         _kalmanFilter.R = measurementNoiseCovariance_R(sigma_rhoZ, sigma_rZ, satElevation);
         LOG_DATA("{}: kalmanFilter.R =\n{}", nameId(), _kalmanFilter.R);
 
@@ -1834,9 +1903,25 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         }
 
         // 8. Formulate the measurement z_k
+        if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_z); }
+
         _kalmanFilter.z = measurementInnovation_dz(pseudoRangeObservations, pseudoRangeEstimates, pseudoRangeRateObservations, pseudoRangeRateEstimates);
         LOG_DEBUG("{}: _kalmanFilter.z =\n{}", nameId(), _kalmanFilter.z);
     }
+    else // if (_frame == Frame::ECEF)
+    {
+        LOG_ERROR("{}: Update in ECEF-frame not implemented, yet.", nameId()); // TODO: implement update in e-Sys.
+    }
+
+    if (_showKalmanFilterOutputPins)
+    {
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_H, gnssObs->insTime);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_R, gnssObs->insTime);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_z, gnssObs->insTime);
+    }
+    LOG_DATA("{}:     KF.H =\n{}", nameId(), _kalmanFilter.H);
+    LOG_DATA("{}:     KF.R =\n{}", nameId(), _kalmanFilter.R);
+    LOG_DATA("{}:     KF.z =\n{}", nameId(), _kalmanFilter.z);
 
     if (_checkKalmanMatricesRanks)
     {
@@ -1851,8 +1936,24 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     // 7. Calculate the Kalman gain matrix K_k
     // 9. Update the state vector estimate from x(-) to x(+)
     // 10. Update the error covariance matrix from P(-) to P(+)
+    if (_showKalmanFilterOutputPins)
+    {
+        requestOutputValueLock(OUTPUT_PORT_INDEX_K);
+        requestOutputValueLock(OUTPUT_PORT_INDEX_x);
+        requestOutputValueLock(OUTPUT_PORT_INDEX_P);
+    }
 
     _kalmanFilter.correctWithMeasurementInnovation();
+
+    if (_showKalmanFilterOutputPins)
+    {
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_K, gnssObs->insTime);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, gnssObs->insTime);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P, gnssObs->insTime);
+    }
+    LOG_DATA("{}:     KF.K =\n{}", nameId(), _kalmanFilter.K);
+    LOG_DATA("{}:     KF.x =\n{}", nameId(), _kalmanFilter.x);
+    LOG_DATA("{}:     KF.P =\n{}", nameId(), _kalmanFilter.P);
 
     if (_checkKalmanMatricesRanks)
     {
@@ -1906,6 +2007,9 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     LOG_DATA("tcKfInsGnssErrors->b_biasGyro = {}", tcKfInsGnssErrors->b_biasGyro.transpose());
     LOG_DATA("tcKfInsGnssErrors->recvClkOffset = {}", tcKfInsGnssErrors->recvClkOffset);
     LOG_DATA("tcKfInsGnssErrors->recvClkDrift = {}", tcKfInsGnssErrors->recvClkDrift);
+
+    // Closed loop
+    if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_x); }
 
     _kalmanFilter.x.setZero();
 
