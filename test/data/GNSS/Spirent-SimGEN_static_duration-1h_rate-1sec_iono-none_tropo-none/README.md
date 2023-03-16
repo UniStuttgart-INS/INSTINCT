@@ -8,3 +8,5 @@ Satellite System: GPS
 Atmosphere:
     Troposphere: None
     Ionosphere: None
+    
+2nd run: identical configuration to validate spirent output with INSTINCT
