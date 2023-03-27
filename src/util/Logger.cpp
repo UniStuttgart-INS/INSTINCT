@@ -10,6 +10,7 @@
 
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
+#include "Logger/dist_filter_sink.hpp"
 
 #include "internal/ConfigManager.hpp"
 
@@ -100,16 +101,27 @@ Logger::Logger(const std::string& logpath)
         break;
     }
 
-    auto ringbuffer_sink = std::make_shared<spdlog::sinks::ringbuffer_sink_mt>(1024);
-    ringbuffer_sink->set_level(spdlog::level::trace);
-    ringbuffer_sink->set_pattern(logPatternInfo);
+    _ringBufferSink = std::make_shared<spdlog::sinks::ringbuffer_sink_mt>(1024);
+    _ringBufferSink->set_level(spdlog::level::trace);
+    _ringBufferSink->set_pattern(logPatternInfo);
+
+    std::shared_ptr<spdlog::sinks::dist_sink_mt> dist_filter_sink;
+    if (NAV::ConfigManager::HasKey("log-filter"))
+    {
+        dist_filter_sink = std::make_shared<spdlog::sinks::dist_filter_sink_mt>(NAV::ConfigManager::Get<std::string>("log-filter"));
+    }
+    else
+    {
+        dist_filter_sink = std::make_shared<spdlog::sinks::dist_sink_mt>();
+    }
+#ifndef TESTING
+    dist_filter_sink->add_sink(console_sink);
+#endif
+    dist_filter_sink->add_sink(file_sink);
+    dist_filter_sink->add_sink(_ringBufferSink);
 
     // Set the logger as default logger
-    spdlog::set_default_logger(std::make_shared<spdlog::logger>("multi_sink", spdlog::sinks_init_list({
-#ifndef TESTING
-                                                                                  console_sink,
-#endif
-                                                                                  file_sink, ringbuffer_sink })));
+    spdlog::set_default_logger(std::make_shared<spdlog::logger>("multi_sink", dist_filter_sink));
 
     // Level should be smaller or equal to the level of the sinks
     spdlog::set_level(spdlog::level::level_enum::trace);
@@ -151,9 +163,9 @@ Logger::~Logger()
     spdlog::default_logger()->flush();
 }
 
-std::shared_ptr<spdlog::sinks::ringbuffer_sink_mt> Logger::GetRingBufferSink()
+const std::shared_ptr<spdlog::sinks::ringbuffer_sink_mt>& Logger::GetRingBufferSink()
 {
-    return std::static_pointer_cast<spdlog::sinks::ringbuffer_sink_mt>(spdlog::get("multi_sink")->sinks().back());
+    return _ringBufferSink;
 }
 
 void Logger::writeSeparator() noexcept
