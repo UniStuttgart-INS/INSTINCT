@@ -20,7 +20,7 @@ namespace spdlog::sinks
 
 /// Distribution sink (mux) with filter option
 template<typename Mutex>
-class dist_filter_sink : public spdlog::sinks::dist_sink<Mutex>
+class dist_filter_sink : public spdlog::sinks::dist_sink<Mutex> // NOLINT(cppcoreguidelines-virtual-class-destructor)
 {
   public:
     /// @brief Default constructor
