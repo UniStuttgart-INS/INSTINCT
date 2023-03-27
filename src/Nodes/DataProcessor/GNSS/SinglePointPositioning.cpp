@@ -402,11 +402,12 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
         const NAV::GnssObs::ObservationData& obsData;          // GNSS Observation data
         std::shared_ptr<NAV::SatNavData> satNavData = nullptr; // Satellite Navigation data
 
-        double satClkBias{};                    // Satellite clock bias [s]
-        double satClkDrift{};                   // Satellite clock drift [s/s]
-        Eigen::Vector3d e_satPos;               // Satellite position in ECEF frame coordinates [m]
-        Eigen::Vector3d e_satVel;               // Satellite velocity in ECEF frame coordinates [m/s]
-        double pseudorangeRate{ std::nan("") }; // Pseudorange rate [m/s]
+        double satClkBias{};                        // Satellite clock bias [s]
+        double satClkDrift{};                       // Satellite clock drift [s/s]
+        Eigen::Vector3d e_satPos;                   // Satellite position in ECEF frame coordinates [m]
+        Eigen::Vector3d e_satVel;                   // Satellite velocity in ECEF frame coordinates [m/s]
+        double pseudorangeEst{ std::nan("") };      // Estimated Pseudorange [m]
+        double pseudorangeRateMeas{ std::nan("") }; // Measured Pseudorange rate [m/s]
 
         // Data recalculated each iteration
 
@@ -445,6 +446,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                     }
                     LOG_DATA("{}: Using observation from {} {}", nameId(), obsData.satSigId, obsData.code);
                     calcData.emplace_back(obsData, satNavData);
+                    calcData.back().pseudorangeEst = obsData.pseudorange.value().value;
                     if (std::find(availSatelliteSystems.begin(), availSatelliteSystems.end(), satId.satSys) == availSatelliteSystems.end())
                     {
                         availSatelliteSystems.push_back(satId.satSys);
@@ -479,41 +481,13 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                 }
             }
 
-            calc.pseudorangeRate = doppler2psrRate(obsData.doppler.value(), obsData.satSigId.freq, freqNum);
+            calc.pseudorangeRateMeas = doppler2psrRate(obsData.doppler.value(), obsData.satSigId.freq, freqNum);
         }
     }
 
     // #####################################################################################################################################
     //                                                          Calculation
     // #####################################################################################################################################
-
-    for (auto& calc : calcData) // Calculate satellite clock, position and velocity
-    {
-        const auto& obsData = calc.obsData;
-
-        LOG_DATA("{}: satellite {}", nameId(), obsData.satSigId);
-        LOG_DATA("{}:     pseudorange  {}", nameId(), obsData.pseudorange.value().value);
-
-        auto satClk = calc.satNavData->calcClockCorrections(gnssObs->insTime, obsData.pseudorange.value().value, obsData.satSigId.freq);
-        calc.satClkBias = satClk.bias;
-        calc.satClkDrift = satClk.drift;
-        LOG_DATA("{}:     satClkBias {}, satClkDrift {}", nameId(), calc.satClkBias, calc.satClkDrift);
-
-        auto satPosVel = calc.satNavData->calcSatellitePosVel(satClk.transmitTime);
-        calc.e_satPos = satPosVel.e_pos;
-        calc.e_satVel = satPosVel.e_vel;
-        LOG_DATA("{}:     e_satPos {}", nameId(), calc.e_satPos.transpose());
-        LOG_DATA("{}:     e_satVel {}", nameId(), calc.e_satVel.transpose());
-
-#ifdef TESTING
-        auto& sppExtendedData = (*sppSol)(obsData.satSigId.freq, obsData.satSigId.satNum, obsData.code);
-        sppExtendedData.transmitTime = satClk.transmitTime;
-        sppExtendedData.satClkBias = satClk.bias;
-        sppExtendedData.satClkDrift = satClk.drift;
-        sppExtendedData.e_satPos = calc.e_satPos;
-        sppExtendedData.e_satVel = calc.e_satVel;
-#endif
-    }
 
     if (nMeas < nParam)
     {
@@ -565,6 +539,20 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             LOG_DATA("{}:     [{}] satellite {}", nameId(), o, obsData.satSigId);
             auto satId = obsData.satSigId.toSatId();
 
+            // Calculate satellite clock, position and velocity
+            LOG_DATA("{}:     [{}]     pseudorangeEst {}", nameId(), o, calcData[i].pseudorangeEst);
+
+            auto satClk = calcData[i].satNavData->calcClockCorrections(gnssObs->insTime, calcData[i].pseudorangeEst, obsData.satSigId.freq);
+            calcData[i].satClkBias = satClk.bias;
+            calcData[i].satClkDrift = satClk.drift;
+            LOG_DATA("{}:     [{}]     satClkBias {}, satClkDrift {}", nameId(), o, calcData[i].satClkBias, calcData[i].satClkDrift);
+
+            auto satPosVel = calcData[i].satNavData->calcSatellitePosVel(satClk.transmitTime);
+            calcData[i].e_satPos = satPosVel.e_pos;
+            calcData[i].e_satVel = satPosVel.e_vel;
+            LOG_DATA("{}:     [{}]     e_satPos {}", nameId(), o, calcData[i].e_satPos.transpose());
+            LOG_DATA("{}:     [{}]     e_satVel {}", nameId(), o, calcData[i].e_satVel.transpose());
+
             // Line-of-sight unit vector in ECEF frame coordinates - Groves ch. 8.5.3, eq. 8.41, p. 341
             calcData[i].e_lineOfSightUnitVector = e_calcLineOfSightUnitVector(_e_position, calcData[i].e_satPos);
             LOG_DATA("{}:     [{}]     e_lineOfSightUnitVector {}", nameId(), o, calcData[i].e_lineOfSightUnitVector.transpose());
@@ -580,6 +568,11 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
 
 #ifdef TESTING
             auto& sppExtendedData = (*sppSol)(obsData.satSigId.freq, obsData.satSigId.satNum, obsData.code);
+            sppExtendedData.transmitTime = satClk.transmitTime;
+            sppExtendedData.satClkBias = satClk.bias;
+            sppExtendedData.satClkDrift = satClk.drift;
+            sppExtendedData.e_satPos = calcData[i].e_satPos;
+            sppExtendedData.e_satVel = calcData[i].e_satVel;
             sppExtendedData.satElevation = calcData[i].satElevation;
             sppExtendedData.satAzimuth = calcData[i].satAzimuth;
 #endif
@@ -701,6 +694,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                                            + dpsr_T
                                            + dpsr_ie;
             LOG_DATA("{}:     [{}]     psrEst({}) {}", nameId(), o, ix, psrEst(static_cast<int>(ix)));
+            calc.pseudorangeEst = psrEst(static_cast<int>(ix));
 
             if (_useWeightedLeastSquares)
             {
@@ -754,13 +748,13 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             //                                                    Velocity calculation
             // #############################################################################################################################
 
-            if (nDopplerMeas - cntSkippedMeas >= nParam && !std::isnan(calc.pseudorangeRate))
+            if (nDopplerMeas - cntSkippedMeas >= nParam && !std::isnan(calc.pseudorangeRateMeas))
             {
                 // Measurement/Geometry matrix - Groves ch. 9.4.1, eq. 9.144, p. 412
                 e_H_r.row(static_cast<int>(iv)) = e_H_psr.row(static_cast<int>(ix));
 
                 // Pseudorange-rate measurement [m/s] - Groves ch. 8.5.3, eq. 8.48, p. 342
-                psrRateMeas(static_cast<int>(iv)) = calc.pseudorangeRate /* + (multipath and/or NLOS errors) + (tracking errors) */;
+                psrRateMeas(static_cast<int>(iv)) = calc.pseudorangeRateMeas /* + (multipath and/or NLOS errors) + (tracking errors) */;
                 LOG_DATA("{}:     [{}]     psrRateMeas({}) {}", nameId(), o, iv, psrRateMeas(static_cast<int>(iv)));
 
                 // Range-rate Sagnac correction - Groves ch. 8.5.3, eq. 8.46, p. 342
@@ -804,7 +798,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             }
 #ifdef TESTING
             auto& sppExtendedData = (*sppSol)(obsData.satSigId.freq, obsData.satSigId.satNum, obsData.code);
-            sppExtendedData.pseudorangeRate = calc.pseudorangeRate;
+            sppExtendedData.pseudorangeRate = calc.pseudorangeRateMeas;
             sppExtendedData.dpsr_I = dpsr_I;
             sppExtendedData.dpsr_T = dpsr_T;
             sppExtendedData.geometricDist = geometricDist;
