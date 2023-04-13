@@ -425,18 +425,16 @@ class LooselyCoupledKF : public Node
     [[nodiscard]] static Eigen::Matrix<double, 15, 12> noiseInputMatrix_G(const Eigen::Quaterniond& ien_Quat_b);
 
     /// @brief Calculates the noise scale matrix 𝐖
-    /// @param[in] sigma2_ra Variance of the noise on the accelerometer specific-force measurements
-    /// @param[in] sigma2_rg Variance of the noise on the gyro angular-rate measurements
-    /// @param[in] sigma2_bad Variance of the accelerometer dynamic bias
-    /// @param[in] sigma2_bgd Variance of the gyro dynamic bias
+    /// @param[in] sigma_ra Standard deviation of the noise on the accelerometer specific-force measurements
+    /// @param[in] sigma_rg Standard deviation of the noise on the gyro angular-rate measurements
+    /// @param[in] sigma_bad Standard deviation of the accelerometer dynamic bias
+    /// @param[in] sigma_bgd Standard deviation of the gyro dynamic bias
     /// @param[in] tau_bad Correleation length for the accelerometer in [s]
     /// @param[in] tau_bgd Correleation length for the gyroscope in [s]
-    /// @param[in] tau_i Time interval between the input of successive accelerometer and gyro outputs to the inertial navigation equations in [s]
     /// @note See \cite Groves2013 Groves, ch. 14.2.6, eq. 14.79, p. 590
-    [[nodiscard]] Eigen::Matrix<double, 12, 12> noiseScaleMatrix_W(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
-                                                                   const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
-                                                                   const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
-                                                                   const double& tau_i);
+    [[nodiscard]] Eigen::Matrix<double, 12, 12> noiseScaleMatrix_W(const Eigen::Vector3d& sigma_ra, const Eigen::Vector3d& sigma_rg,
+                                                                   const Eigen::Vector3d& sigma_bad, const Eigen::Vector3d& sigma_bgd,
+                                                                   const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd);
 
     /// @brief System noise covariance matrix 𝐐_{k-1}
     /// @param[in] sigma2_ra Variance of the noise on the accelerometer specific-force measurements

@@ -949,10 +949,9 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         Eigen::Matrix<double, 15, 12> G = noiseInputMatrix_G(_frame == Frame::NED ? inertialNavSol->n_Quat_b() : inertialNavSol->e_Quat_b());
         LOG_DATA("{}:     G =\n{}", nameId(), G);
 
-        Eigen::Matrix<double, 12, 12> W = noiseScaleMatrix_W(sigma_ra.array().square(), sigma_rg.array().square(),
-                                                             sigma_bad.array().square(), sigma_bgd.array().square(),
-                                                             _tau_bad, _tau_bgd,
-                                                             tau_i);
+        Eigen::Matrix<double, 12, 12> W = noiseScaleMatrix_W(sigma_ra, sigma_rg,
+                                                             sigma_bad, sigma_bgd,
+                                                             _tau_bad, _tau_bgd);
         LOG_DATA("{}:     W =\n{}", nameId(), W);
 
         LOG_DATA("{}:     G*W*G^T =\n{}", nameId(), G * W * G.transpose());
@@ -992,7 +991,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     }
 
     LOG_DATA("{}:     KF.Phi =\n{}", nameId(), _kalmanFilter.Phi);
-    LOG_ERROR("{}:     KF.Q =\n{}", nameId(), _kalmanFilter.Q);
+    LOG_DATA("{}:     KF.Q =\n{}", nameId(), _kalmanFilter.Q);
     if (_showKalmanFilterOutputPins)
     {
         notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi, predictTime);
@@ -1403,17 +1402,16 @@ Eigen::Matrix<double, 15, 12> NAV::LooselyCoupledKF::noiseInputMatrix_G(const Ei
 
     return G;
 }
-Eigen::Matrix<double, 12, 12> NAV::LooselyCoupledKF::noiseScaleMatrix_W(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
-                                                                        const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
-                                                                        const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
-                                                                        const double& tau_i)
+Eigen::Matrix<double, 12, 12> NAV::LooselyCoupledKF::noiseScaleMatrix_W(const Eigen::Vector3d& sigma_ra, const Eigen::Vector3d& sigma_rg,
+                                                                        const Eigen::Vector3d& sigma_bad, const Eigen::Vector3d& sigma_bgd,
+                                                                        const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd)
 {
     Eigen::Matrix<double, 12, 12> W = Eigen::Matrix<double, 12, 12>::Zero();
 
-    W.block<3, 3>(0, 0).diagonal() = psdNoise(sigma2_rg, tau_i);                                                                                             // S_rg
-    W.block<3, 3>(3, 3).diagonal() = psdNoise(sigma2_ra, tau_i);                                                                                             // S_ra
-    W.block<3, 3>(6, 6).diagonal() = _randomProcessAccel == RandomProcess::RandomWalk ? psdNoise(sigma2_bad, tau_i) : psdBiasVariation(sigma2_bad, tau_bad); // S_bad
-    W.block<3, 3>(9, 9).diagonal() = _randomProcessGyro == RandomProcess::RandomWalk ? psdNoise(sigma2_bgd, tau_i) : psdBiasVariation(sigma2_bgd, tau_bgd);  // S_bgd
+    W.block<3, 3>(0, 0).diagonal() = sigma_rg;                                                                                                               // S_rg
+    W.block<3, 3>(3, 3).diagonal() = sigma_ra;                                                                                                               // S_ra
+    W.block<3, 3>(6, 6).diagonal() = _randomProcessAccel == RandomProcess::RandomWalk ? sigma_bad : psdBiasGaussMarkov(sigma_bad.array().square(), tau_bad); // S_bad
+    W.block<3, 3>(9, 9).diagonal() = _randomProcessGyro == RandomProcess::RandomWalk ? sigma_bgd : psdBiasGaussMarkov(sigma_bgd.array().square(), tau_bgd);  // S_bgd
 
     return W;
 }
@@ -1425,10 +1423,10 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::n_systemNoiseCovarianceMatr
                                                                                      const Eigen::Matrix3d& n_Dcm_b, const double& tau_s)
 {
     // Math: \mathbf{Q}_{INS}^n = \begin{pmatrix} \mathbf{Q}_{11} & {\mathbf{Q}_{21}^n}^T & {\mathbf{Q}_{31}^n}^T & \mathbf{0}_3 & {\mathbf{Q}_{51}^n}^T \\ \mathbf{Q}_{21}^n & \mathbf{Q}_{22}^n & {\mathbf{Q}_{32}^n}^T & {\mathbf{Q}_{42}^n}^T & \mathbf{Q}_{25}^n \\ \mathbf{Q}_{31}^n & \mathbf{Q}_{32}^n & \mathbf{Q}_{33}^n & \mathbf{Q}_{34}^n & \mathbf{Q}_{35}^n \\ \mathbf{0}_3 & \mathbf{Q}_{42}^n & {\mathbf{Q}_{34}^n}^T & S_{bad}\tau_s\mathbf{I}_3 & \mathbf{0}_3 \\ \mathbf{Q}_{51}^n & \mathbf{Q}_{52}^n & {\mathbf{Q}_{35}^n}^T & \mathbf{0}_3 & S_{bgd}\tau_s\mathbf{I}_3 \end{pmatrix} \qquad \text{P. Groves}\,(14.80)
-    Eigen::Vector3d S_ra = psdNoise(sigma2_ra, tau_s);
-    Eigen::Vector3d S_rg = psdNoise(sigma2_rg, tau_s);
-    Eigen::Vector3d S_bad = _randomProcessAccel == RandomProcess::RandomWalk ? psdNoise(sigma2_bad, tau_s) : psdBiasVariation(sigma2_bad, tau_bad);
-    Eigen::Vector3d S_bgd = _randomProcessGyro == RandomProcess::RandomWalk ? psdNoise(sigma2_bgd, tau_s) : psdBiasVariation(sigma2_bgd, tau_bgd);
+    Eigen::Vector3d S_ra = sigma2_ra * tau_s;
+    Eigen::Vector3d S_rg = sigma2_rg * tau_s;
+    Eigen::Vector3d S_bad = _randomProcessAccel == RandomProcess::RandomWalk ? sigma2_bad * tau_s : psdBiasGaussMarkov(sigma2_bad, tau_bad) * tau_s;
+    Eigen::Vector3d S_bgd = _randomProcessGyro == RandomProcess::RandomWalk ? sigma2_bgd * tau_s : psdBiasGaussMarkov(sigma2_bgd, tau_bgd) * tau_s;
 
     Eigen::Matrix3d b_Dcm_n = n_Dcm_b.transpose();
 
@@ -1476,10 +1474,10 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::e_systemNoiseCovarianceMatr
                                                                                      const Eigen::Matrix3d& e_Dcm_b, const double& tau_s)
 {
     // Math: \mathbf{Q}_{INS}^e = \begin{pmatrix} \mathbf{Q}_{11} & {\mathbf{Q}_{21}^e}^T & {\mathbf{Q}_{31}^e}^T & \mathbf{0}_3 & {\mathbf{Q}_{51}^e}^T \\ \mathbf{Q}_{21}^e & \mathbf{Q}_{22}^e & {\mathbf{Q}_{32}^e}^T & {\mathbf{Q}_{42}^e}^T & \mathbf{Q}_{25}^e \\ \mathbf{Q}_{31}^e & \mathbf{Q}_{32}^e & \mathbf{Q}_{33}^e & \mathbf{Q}_{34}^e & \mathbf{Q}_{35}^e \\ \mathbf{0}_3 & \mathbf{Q}_{42}^e & {\mathbf{Q}_{34}^e}^T & S_{bad}\tau_s\mathbf{I}_3 & \mathbf{0}_3 \\ \mathbf{Q}_{51}^e & \mathbf{Q}_{52}^e & {\mathbf{Q}_{35}^e}^T & \mathbf{0}_3 & S_{bgd}\tau_s\mathbf{I}_3 \end{pmatrix} \qquad \text{P. Groves}\,(14.80)
-    Eigen::Vector3d S_ra = psdNoise(sigma2_ra, tau_s);
-    Eigen::Vector3d S_rg = psdNoise(sigma2_rg, tau_s);
-    Eigen::Vector3d S_bad = _randomProcessAccel == RandomProcess::RandomWalk ? psdNoise(sigma2_bad, tau_s) : psdBiasVariation(sigma2_bad, tau_bad);
-    Eigen::Vector3d S_bgd = _randomProcessGyro == RandomProcess::RandomWalk ? psdNoise(sigma2_bgd, tau_s) : psdBiasVariation(sigma2_bgd, tau_bgd);
+    Eigen::Vector3d S_ra = sigma2_ra * tau_s;
+    Eigen::Vector3d S_rg = sigma2_rg * tau_s;
+    Eigen::Vector3d S_bad = _randomProcessAccel == RandomProcess::RandomWalk ? sigma2_bad * tau_s : psdBiasGaussMarkov(sigma2_bad, tau_bad) * tau_s;
+    Eigen::Vector3d S_bgd = _randomProcessGyro == RandomProcess::RandomWalk ? sigma2_bgd * tau_s : psdBiasGaussMarkov(sigma2_bgd, tau_bgd) * tau_s;
 
     Eigen::Matrix3d b_Dcm_e = e_Dcm_b.transpose();
 
