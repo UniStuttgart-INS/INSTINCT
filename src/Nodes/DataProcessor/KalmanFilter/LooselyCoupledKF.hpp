@@ -448,11 +448,11 @@ class LooselyCoupledKF : public Node
     /// @param[in] n_Dcm_b Direction Cosine Matrix from body to navigation coordinates
     /// @param[in] tau_s Time interval in [s]
     /// @return The 15x15 matrix of system noise covariances
-    [[nodiscard]] Eigen::Matrix<double, 15, 15> n_systemNoiseCovarianceMatrix_Q(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
-                                                                                const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
-                                                                                const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
-                                                                                const Eigen::Matrix3d& n_F_21, const Eigen::Matrix3d& T_rn_p,
-                                                                                const Eigen::Matrix3d& n_Dcm_b, const double& tau_s);
+    [[nodiscard]] static Eigen::Matrix<double, 15, 15> n_systemNoiseCovarianceMatrix_Q(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+                                                                                       const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
+                                                                                       const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
+                                                                                       const Eigen::Matrix3d& n_F_21, const Eigen::Matrix3d& T_rn_p,
+                                                                                       const Eigen::Matrix3d& n_Dcm_b, const double& tau_s);
 
     /// @brief System noise covariance matrix 𝐐_{k-1}
     /// @param[in] sigma2_ra Variance of the noise on the accelerometer specific-force measurements
@@ -465,11 +465,11 @@ class LooselyCoupledKF : public Node
     /// @param[in] e_Dcm_b Direction Cosine Matrix from body to Earth coordinates
     /// @param[in] tau_s Time interval in [s]
     /// @return The 15x15 matrix of system noise covariances
-    [[nodiscard]] Eigen::Matrix<double, 15, 15> e_systemNoiseCovarianceMatrix_Q(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
-                                                                                const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
-                                                                                const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
-                                                                                const Eigen::Matrix3d& e_F_21,
-                                                                                const Eigen::Matrix3d& e_Dcm_b, const double& tau_s);
+    [[nodiscard]] static Eigen::Matrix<double, 15, 15> e_systemNoiseCovarianceMatrix_Q(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+                                                                                       const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
+                                                                                       const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
+                                                                                       const Eigen::Matrix3d& e_F_21,
+                                                                                       const Eigen::Matrix3d& e_Dcm_b, const double& tau_s);
 
     // ###########################################################################################################
     //                                         Error covariance matrix P
