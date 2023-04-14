@@ -29,7 +29,7 @@ Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vecto
 Eigen::Vector3d psdBiasGaussMarkov(const Eigen::Vector3d& sigma2_bd, const Eigen::Vector3d& tau_bd)
 {
     // Math: u_{bias} = \sqrt{\frac{2\sigma_{bd}^2}{\tau_{bd}}} \qquad \text{Brown & Hwang, example 9.6}
-    return (2 * sigma2_bd.array() / tau_bd.array()).sqrt();
+    return (2 * sigma2_bd.array() / tau_bd.array()).cwiseSqrt();
 }
 
 Eigen::Matrix3d Q_psi_psi(const Eigen::Vector3d& S_rg, const Eigen::Vector3d& S_bgd, const double& tau_s)
