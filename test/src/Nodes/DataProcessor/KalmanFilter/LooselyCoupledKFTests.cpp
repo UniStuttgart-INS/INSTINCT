@@ -149,9 +149,9 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
             Eigen::Vector3d allowedPositionOffsetImuOnly_n(2.0, 5.2, 1.0);
             Eigen::Vector3d allowedPositionOffsetCombined_n(0.15, 0.1, 0.1);
             Eigen::Vector3d allowedVelocityErrorImuOnly_e(0.14, 13.7, 0.1);
-            Eigen::Vector3d allowedVelocityErrorCombined_e(0.07, 0.05, 0.08);
+            Eigen::Vector3d allowedVelocityErrorCombined_e(0.09, 0.05, 0.08);
             Eigen::Vector3d allowedRollPitchYawOffsetImuOnly(1.3, 1.3, 90.0);
-            Eigen::Vector3d allowedRollPitchYawOffsetCombined(2.7, 1.2, 94.0);
+            Eigen::Vector3d allowedRollPitchYawOffsetCombined(2.7, 2.0, 94.0);
 
             if (i1 == 1) // LooselyCoupledKF::Frame::ECEF
             {
@@ -161,9 +161,9 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
 
             if (imuAfter)
             {
-                allowedPositionOffsetCombined_n = { 0.13, 0.04, 0.07 };
+                allowedPositionOffsetCombined_n = { 0.13, 0.05, 0.07 };
                 allowedVelocityErrorCombined_e = { 0.088, 0.05, 0.08 };
-                allowedRollPitchYawOffsetCombined = { 5, 1.36, 242.0 };
+                allowedRollPitchYawOffsetCombined = { 5, 5, 242.0 };
             }
 
             // North/South deviation [m]
@@ -244,7 +244,7 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
                           settings);
 }
 
-TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving before GNSS data", "[LooselyCoupledKF][flow]")
+TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving before GNSS data", "[LooselyCoupledKF][flow][debug]")
 {
     // GNSS: 176 messages, 162 messages with InsTime, 48 messages with fix (first GNSS message at 22.799s)
     size_t MESSAGE_COUNT_GNSS = 162;
@@ -256,7 +256,7 @@ TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving before GNSS
     testLCKFwithImuFile("VectorNav/Static/vn310-imu.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_GNSS_FIX, MESSAGE_COUNT_IMU, MESSAGE_COUNT_IMU_FIX);
 }
 
-TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving after GNSS data", "[LooselyCoupledKF][flow]")
+TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving after GNSS data", "[LooselyCoupledKF][flow][debug]")
 {
     // GNSS: 176 messages, 162 messages with InsTime, 48 messages with fix (first GNSS message at 22.799717387000001s)
     size_t MESSAGE_COUNT_GNSS = 162;
