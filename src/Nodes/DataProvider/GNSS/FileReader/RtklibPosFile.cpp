@@ -244,13 +244,10 @@ std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData()
                     year = static_cast<uint16_t>(std::stoi(ymd.at(0)));
                     month = static_cast<uint16_t>(std::stoi(ymd.at(1)));
                     day = static_cast<uint16_t>(std::stoi(ymd.at(2)));
-                    timeSystem = GPST;
                 }
             }
             else if (column.starts_with("Time"))
             {
-                timeSystem = column.ends_with("-GPST") ? GPST : UTC;
-
                 auto hms = str::split(cell, ":");
                 if (hms.size() == 3)
                 {
@@ -447,9 +444,9 @@ void NAV::RtklibPosFile::readHeader()
         {
             if (cell == "GPST") // When RTKLIB selected 'ww ssss GPST' or 'hh:mm:ss GPST'
             {
-                auto pos = lineStream.tellg();
+                auto pos = tellg();
                 getline(line);
-                lineStream.seekg(pos);
+                seekg(pos, std::ios::beg);
 
                 if (line.substr(0, 7).find('/') == std::string::npos)
                 {
