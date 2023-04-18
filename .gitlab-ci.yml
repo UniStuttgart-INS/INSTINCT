@@ -72,8 +72,6 @@ image: ins-cpp:10
     # https://gist.github.com/FeodorFitsner/b34162690ae2838409b7459824d51ed7
     - cmd.exe /c "call `"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat`" && set > %temp%\vcvars-$CI_CONCURRENT_ID.txt"
     - Get-Content "$env:temp\vcvars-$CI_CONCURRENT_ID.txt" | Foreach-Object { if ($_ -match "^(.*?)=(.*)$") { Set-Content "env:\$($matches[1])" $matches[2] } }
-    - python -m pip install colorama
-    - python -m pip install conan
     - conan profile detect --force
   variables:
     GIT_CLONE_PATH: '$CI_BUILDS_DIR/$CI_PROJECT_NAME/$CI_COMMIT_SHA/$CI_JOB_ID'
