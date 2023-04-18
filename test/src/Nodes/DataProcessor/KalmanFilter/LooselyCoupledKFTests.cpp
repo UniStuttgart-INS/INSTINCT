@@ -256,7 +256,7 @@ TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving before GNSS
     testLCKFwithImuFile("VectorNav/Static/vn310-imu.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_GNSS_FIX, MESSAGE_COUNT_IMU, MESSAGE_COUNT_IMU_FIX);
 }
 
-TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving after GNSS data", "[LooselyCoupledKF][flow][debug]")
+TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving after GNSS data", "[LooselyCoupledKF][flow]")
 {
     // GNSS: 176 messages, 162 messages with InsTime, 48 messages with fix (first GNSS message at 22.799717387000001s)
     size_t MESSAGE_COUNT_GNSS = 162;
