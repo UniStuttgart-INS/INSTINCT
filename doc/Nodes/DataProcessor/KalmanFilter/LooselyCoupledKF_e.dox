@@ -220,8 +220,8 @@ Process noise is introduced into the \f$ \mathbf{F} \f$ and \f$ \mathbf{G} \f$ m
       \mathbf{F}_{\dotup{\psi},\psi}^e     & \mathbf{0}_3                             & \mathbf{0}_3                             &    \mathbf{0}_3      &       \mathbf{C}_b^e       \\
       \mathbf{F}_{\delta \dotup{v},\psi}^e & \mathbf{F}_{\delta \dotup{v},\delta v}^e & \mathbf{F}_{\delta \dotup{v},\delta r}^e &    \mathbf{C}_b^e    &       \mathbf{0}_3         \\
       \mathbf{0}_3                         & \mathbf{I}_3                             & \mathbf{0}_3                             &    \mathbf{0}_3      &       \mathbf{0}_3         \\
-      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             & \boldsymbol{\beta}_f &       \mathbf{0}_3         \\
-      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             &    \mathbf{0}_3      &  \boldsymbol{\beta}_\omega \\
+      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             & -\boldsymbol{\beta}_f &       \mathbf{0}_3         \\
+      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             &    \mathbf{0}_3      &  -\boldsymbol{\beta}_\omega \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{F}$} (m-1-5.north east);
 
@@ -318,12 +318,12 @@ Another option to model the bias states is given by the Gauss-Markov 1. Order pr
 This introduces a deterministic part into the equation, namely the correlation coefficient \f$\beta\f$. This parameter defines, how much a current state is correlated with past states.
 The elements of the  \f$ \mathbf{F} \f$ matrix are then
 \fl{equation,eq-LCKF_e-random-walk-beta}
-  \highlight[magenta!20]{\boldsymbol{\beta}_f} = \begin{pmatrix} -\beta_{f} &      0     &      0     \\
-                                                                    0       & -\beta_{f} &      0     \\
-                                                                    0       &      0     & -\beta_{f} \end{pmatrix}, \qquad
-  \highlight[olive!20]{\boldsymbol{\beta}_\omega} = \begin{pmatrix} -\beta_{\omega} &        0        &        0        \\
-                                                                           0        & -\beta_{\omega} &        0        \\
-                                                                           0        &        0        & -\beta_{\omega} \end{pmatrix}
+  \highlight[magenta!20]{\boldsymbol{\beta}_f} = \begin{pmatrix} \beta_{f} &      0     &      0     \\
+                                                                    0       & \beta_{f} &      0     \\
+                                                                    0       &      0     & \beta_{f} \end{pmatrix}, \qquad
+  \highlight[olive!20]{\boldsymbol{\beta}_\omega} = \begin{pmatrix} \beta_{\omega} &        0        &        0        \\
+                                                                           0        & \beta_{\omega} &        0        \\
+                                                                           0        &        0        & \beta_{\omega} \end{pmatrix}
 \f}
 where
 - \f$ \beta_{f} \f$ is the Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
