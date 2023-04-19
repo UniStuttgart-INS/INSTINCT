@@ -1964,13 +1964,6 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
             LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank);
         }
 
-        Eigen::FullPivLU<Eigen::MatrixXd> luK(_kalmanFilter.K);
-        rank = luK.rank();
-        if (rank != _kalmanFilter.K.cols())
-        {
-            LOG_WARN("{}: K.rank = {}", nameId(), rank);
-        }
-
         Eigen::FullPivLU<Eigen::MatrixXd> luP(_kalmanFilter.P);
         rank = luP.rank();
         if (rank != _kalmanFilter.P.rows())
