@@ -6,10 +6,10 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-/// @file SinglePointPositioning.hpp
-/// @brief Single Point Positioning (SPP) / Code Phase Positioning
+/// @file RealTimeKinematic.hpp
+/// @brief Real-Time Kinematic (RTK) carrier-phase DGNSS
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2022-04-29
+/// @date 2023-04-13
 
 #pragma once
 
@@ -28,21 +28,21 @@
 namespace NAV
 {
 /// @brief Numerically integrates Imu data
-class SinglePointPositioning : public Node
+class RealTimeKinematic : public Node
 {
   public:
     /// @brief Default constructor
-    SinglePointPositioning();
+    RealTimeKinematic();
     /// @brief Destructor
-    ~SinglePointPositioning() override;
+    ~RealTimeKinematic() override;
     /// @brief Copy constructor
-    SinglePointPositioning(const SinglePointPositioning&) = delete;
+    RealTimeKinematic(const RealTimeKinematic&) = delete;
     /// @brief Move constructor
-    SinglePointPositioning(SinglePointPositioning&&) = delete;
+    RealTimeKinematic(RealTimeKinematic&&) = delete;
     /// @brief Copy assignment operator
-    SinglePointPositioning& operator=(const SinglePointPositioning&) = delete;
+    RealTimeKinematic& operator=(const RealTimeKinematic&) = delete;
     /// @brief Move assignment operator
-    SinglePointPositioning& operator=(SinglePointPositioning&&) = delete;
+    RealTimeKinematic& operator=(RealTimeKinematic&&) = delete;
 
     /// @brief String representation of the Class Type
     [[nodiscard]] static std::string typeStatic();
@@ -65,10 +65,12 @@ class SinglePointPositioning : public Node
     void restore(const json& j) override;
 
   private:
-    constexpr static size_t INPUT_PORT_INDEX_GNSS_OBS = 0;      ///< @brief GnssObs
-    constexpr static size_t INPUT_PORT_INDEX_GNSS_NAV_INFO = 1; ///< @brief GnssNavInfo
+    constexpr static size_t INPUT_PORT_INDEX_BASE_PVA = 0;       ///< @brief PosVel
+    constexpr static size_t INPUT_PORT_INDEX_BASE_GNSS_OBS = 1;  ///< @brief GnssObs
+    constexpr static size_t INPUT_PORT_INDEX_ROVER_GNSS_OBS = 2; ///< @brief GnssObs
+    constexpr static size_t INPUT_PORT_INDEX_GNSS_NAV_INFO = 3;  ///< @brief GnssNavInfo
 
-    constexpr static size_t OUTPUT_PORT_INDEX_SPPSOL = 0; ///< @brief Flow (SppSol)
+    constexpr static size_t OUTPUT_PORT_INDEX_RTKSOL = 0; ///< @brief Flow (RtkSol)
 
     // --------------------------------------------------------------- Gui -----------------------------------------------------------------
 
@@ -106,9 +108,6 @@ class SinglePointPositioning : public Node
     /// Troposphere Models used for the calculation
     TroposphereModelSelection _troposphereModels;
 
-    /// Use the weighted least squares algorithm
-    bool _useWeightedLeastSquares = true;
-
     // ------------------------------------------------------------ Algorithm --------------------------------------------------------------
 
     /// Estimated position in ECEF frame [m]
@@ -119,10 +118,20 @@ class SinglePointPositioning : public Node
     /// Estimated receiver clock parameters
     ReceiverClock _recvClk;
 
-    /// @brief Receive Function for the Gnss Observations
+    /// @brief Receive Function for the Base Position
     /// @param[in] queue Queue with all the received data messages
     /// @param[in] pinIdx Index of the pin the data is received on
-    void recvGnssObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
+    void recvBasePos(InputPin::NodeDataQueue& queue, size_t pinIdx);
+
+    /// @brief Receive Function for the Base GNSS Observations
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void recvBaseGnssObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
+
+    /// @brief Receive Function for the RoverGNSS Observations
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void recvRoverGnssObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
 };
 
 } // namespace NAV

@@ -1,0 +1,1053 @@
+{
+    "links": {
+        "link-114": {
+            "endPinId": 100,
+            "id": 114,
+            "startPinId": 110
+        },
+        "link-117": {
+            "endPinId": 106,
+            "id": 117,
+            "startPinId": 110
+        },
+        "link-119": {
+            "endPinId": 101,
+            "id": 119,
+            "startPinId": 115
+        },
+        "link-120": {
+            "endPinId": 105,
+            "id": 120,
+            "startPinId": 112
+        },
+        "link-125": {
+            "endPinId": 104,
+            "id": 125,
+            "startPinId": 121
+        },
+        "link-130": {
+            "endPinId": 129,
+            "id": 130,
+            "startPinId": 115
+        },
+        "link-139": {
+            "endPinId": 132,
+            "id": 139,
+            "startPinId": 102
+        },
+        "link-154": {
+            "endPinId": 138,
+            "id": 154,
+            "startPinId": 148
+        },
+        "link-158": {
+            "endPinId": 151,
+            "id": 158,
+            "startPinId": 156
+        }
+    },
+    "nodes": {
+        "node-103": {
+            "data": {
+                "codes": "11110001000100111000111111000011110001110111111111111111111111010111111101110111011101110000000001000000001",
+                "elevationMask": 14.999999999999998,
+                "excludedSatellites": [],
+                "frequencies": 1,
+                "ionosphereModel": 1,
+                "nNavInfoPins": 1,
+                "troposphereModels": {
+                    "zhdMappingFunction": [
+                        1,
+                        {
+                            "pressureModel": 2,
+                            "temperatureModel": 2,
+                            "waterVaporModel": 1
+                        }
+                    ],
+                    "zhdModel": [
+                        1,
+                        {
+                            "pressureModel": 2,
+                            "temperatureModel": 2,
+                            "waterVaporModel": 1
+                        }
+                    ],
+                    "zwdMappingFunction": [
+                        1,
+                        {
+                            "pressureModel": 2,
+                            "temperatureModel": 2,
+                            "waterVaporModel": 1
+                        }
+                    ],
+                    "zwdModel": [
+                        1,
+                        {
+                            "pressureModel": 2,
+                            "temperatureModel": 2,
+                            "waterVaporModel": 1
+                        }
+                    ]
+                },
+                "useWeightedLeastSquares": true
+            },
+            "enabled": true,
+            "id": 103,
+            "inputPins": [
+                {
+                    "id": 100,
+                    "name": "GnssObs"
+                },
+                {
+                    "id": 101,
+                    "name": "GnssNavInfo"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "SinglePointPositioning - SPP",
+            "outputPins": [
+                {
+                    "id": 102,
+                    "name": "SppSolution"
+                }
+            ],
+            "pos": {
+                "x": 353.0,
+                "y": 94.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "SinglePointPositioning - SPP"
+        },
+        "node-109": {
+            "data": {
+                "codes": "11110001000100111000111111000011110001110111111111111111111111010111111101110111011101110000000001000000001",
+                "elevationMask": 14.999999999999998,
+                "excludedSatellites": [],
+                "frequencies": 1,
+                "ionosphereModel": 1,
+                "nNavInfoPins": 1,
+                "troposphereModels": {
+                    "zhdMappingFunction": [
+                        1,
+                        {
+                            "pressureModel": 2,
+                            "temperatureModel": 2,
+                            "waterVaporModel": 1
+                        }
+                    ],
+                    "zhdModel": [
+                        1,
+                        {
+                            "pressureModel": 2,
+                            "temperatureModel": 2,
+                            "waterVaporModel": 1
+                        }
+                    ],
+                    "zwdMappingFunction": [
+                        1,
+                        {
+                            "pressureModel": 2,
+                            "temperatureModel": 2,
+                            "waterVaporModel": 1
+                        }
+                    ],
+                    "zwdModel": [
+                        1,
+                        {
+                            "pressureModel": 2,
+                            "temperatureModel": 2,
+                            "waterVaporModel": 1
+                        }
+                    ]
+                }
+            },
+            "enabled": true,
+            "id": 109,
+            "inputPins": [
+                {
+                    "id": 104,
+                    "name": "Base Position"
+                },
+                {
+                    "id": 105,
+                    "name": "GnssObs (Base)"
+                },
+                {
+                    "id": 106,
+                    "name": "GnssObs (Rover)"
+                },
+                {
+                    "id": 129,
+                    "name": "GnssNavInfo"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "RealTimeKinematic - RTK",
+            "outputPins": [
+                {
+                    "id": 108,
+                    "name": "RtkSolution"
+                }
+            ],
+            "pos": {
+                "x": 346.0,
+                "y": 358.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "RealTimeKinematic - RTK"
+        },
+        "node-111": {
+            "data": {
+                "FileReader": {
+                    "path": "2020-08-25_Testflug_Mengen_Icare_KVH/Flight-2/Icare_NetR9_1Hz.obs"
+                },
+                "eraseLessPreciseCodes": true
+            },
+            "enabled": true,
+            "id": 111,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "RinexObsFile - Rover",
+            "outputPins": [
+                {
+                    "id": 110,
+                    "name": "GnssObs"
+                }
+            ],
+            "pos": {
+                "x": 17.0,
+                "y": 366.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "RinexObsFile"
+        },
+        "node-113": {
+            "data": {
+                "FileReader": {
+                    "path": "2020-08-25_Testflug_Mengen_Icare_KVH/Flight-2/Base_Alloy_1Hz.obs"
+                },
+                "eraseLessPreciseCodes": true
+            },
+            "enabled": true,
+            "id": 113,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "RinexObsFile - Base",
+            "outputPins": [
+                {
+                    "id": 112,
+                    "name": "GnssObs"
+                }
+            ],
+            "pos": {
+                "x": 23.0,
+                "y": 206.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "RinexObsFile"
+        },
+        "node-116": {
+            "data": {
+                "FileReader": {
+                    "path": "2020-08-25_Testflug_Mengen_Icare_KVH/Flight-2/Allo202008251200C.nav"
+                }
+            },
+            "enabled": true,
+            "id": 116,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "RinexNavFile",
+            "outputPins": [
+                {
+                    "id": 115,
+                    "name": "GnssNavInfo"
+                }
+            ],
+            "pos": {
+                "x": 87.0,
+                "y": 446.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "RinexNavFile"
+        },
+        "node-124": {
+            "data": {
+                "attitudeMode": 0,
+                "initDuration": 5.0,
+                "n_overrideValuesVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "overridePosition": true,
+                "overrideRollPitchYaw": [
+                    true,
+                    true,
+                    true
+                ],
+                "overrideValuesPosition_lla": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "overrideValuesRollPitchYaw": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "overrideVelocity": true,
+                "positionAccuracyThreshold": 10.0,
+                "velocityAccuracyThreshold": 10.0
+            },
+            "enabled": true,
+            "id": 124,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "PosVelAttInitializer",
+            "outputPins": [
+                {
+                    "id": 121,
+                    "name": "PosVelAtt"
+                }
+            ],
+            "pos": {
+                "x": 26.0,
+                "y": 126.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "PosVelAttInitializer"
+        },
+        "node-126": {
+            "data": null,
+            "enabled": true,
+            "id": 126,
+            "inputPins": [],
+            "kind": "GroupBox",
+            "name": "Base Station",
+            "outputPins": [],
+            "pos": {
+                "x": 0.0,
+                "y": 80.0
+            },
+            "size": {
+                "x": 240.0,
+                "y": 186.0
+            },
+            "type": "GroupBox"
+        },
+        "node-127": {
+            "data": null,
+            "enabled": true,
+            "id": 127,
+            "inputPins": [],
+            "kind": "GroupBox",
+            "name": "Rover",
+            "outputPins": [],
+            "pos": {
+                "x": 0.0,
+                "y": 320.0
+            },
+            "size": {
+                "x": 240.0,
+                "y": 186.0
+            },
+            "type": "GroupBox"
+        },
+        "node-137": {
+            "data": {
+                "nInputPins": 4,
+                "nPlots": 1,
+                "overridePositionStartValues": false,
+                "pinData": [
+                    {
+                        "dataIdentifier": "SppSolution",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "Latitude [deg]"
+                            },
+                            {
+                                "displayName": "Longitude [deg]"
+                            },
+                            {
+                                "displayName": "Altitude [m]"
+                            },
+                            {
+                                "displayName": "North/South [m]"
+                            },
+                            {
+                                "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Number satellites (pos)"
+                            },
+                            {
+                                "displayName": "Number satellites (vel)"
+                            },
+                            {
+                                "displayName": "Receiver clock bias [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "X-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XY-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "North StDev [m]"
+                            },
+                            {
+                                "displayName": "East StDev [m]"
+                            },
+                            {
+                                "displayName": "Down StDev [m]"
+                            },
+                            {
+                                "displayName": "NE-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "ND-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "ED-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "XY velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "North velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "NE velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ND velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ED velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift StDev [s/s]"
+                            },
+                            {
+                                "displayName": "System time reference system"
+                            },
+                            {
+                                "displayName": "GPS system time difference [s]"
+                            },
+                            {
+                                "displayName": "GAL system time difference [s]"
+                            },
+                            {
+                                "displayName": "GLO system time difference [s]"
+                            },
+                            {
+                                "displayName": "BDS system time difference [s]"
+                            },
+                            {
+                                "displayName": "QZSS system time difference [s]"
+                            },
+                            {
+                                "displayName": "IRNSS system time difference [s]"
+                            },
+                            {
+                                "displayName": "SBAS system time difference [s]"
+                            },
+                            {
+                                "displayName": "GPS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "GAL system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "GLO system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "BDS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "QZSS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "IRNSS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "SBAS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "GPS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "GAL system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "GLO system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "BDS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "QZSS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "IRNSS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "SBAS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "GPS system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "GAL system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "GLO system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "BDS system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "QZSS system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "IRNSS system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "SBAS system time drift difference StDev [s/s]"
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "RtklibPosObs",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Latitude [deg]"
+                            },
+                            {
+                                "displayName": "Longitude [deg]"
+                            },
+                            {
+                                "displayName": "Altitude [m]"
+                            },
+                            {
+                                "displayName": "North/South [m]"
+                            },
+                            {
+                                "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "Q [-]"
+                            },
+                            {
+                                "displayName": "ns [-]"
+                            },
+                            {
+                                "displayName": "sdx [m]"
+                            },
+                            {
+                                "displayName": "sdy [m]"
+                            },
+                            {
+                                "displayName": "sdz [m]"
+                            },
+                            {
+                                "displayName": "sdn [m]"
+                            },
+                            {
+                                "displayName": "sde [m]"
+                            },
+                            {
+                                "displayName": "sdd [m]"
+                            },
+                            {
+                                "displayName": "sdxy [m]"
+                            },
+                            {
+                                "displayName": "sdyz [m]"
+                            },
+                            {
+                                "displayName": "sdzx [m]"
+                            },
+                            {
+                                "displayName": "sdne [m]"
+                            },
+                            {
+                                "displayName": "sded [m]"
+                            },
+                            {
+                                "displayName": "sddn [m]"
+                            },
+                            {
+                                "displayName": "age [s]"
+                            },
+                            {
+                                "displayName": "ratio [-]"
+                            },
+                            {
+                                "displayName": "Velocity ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity North [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity East [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity Down [m/s]"
+                            },
+                            {
+                                "displayName": "sdvn [m/s]"
+                            },
+                            {
+                                "displayName": "sdve [m/s]"
+                            },
+                            {
+                                "displayName": "sdvd [m/s]"
+                            },
+                            {
+                                "displayName": "sdvne [m/s]"
+                            },
+                            {
+                                "displayName": "sdved [m/s]"
+                            },
+                            {
+                                "displayName": "sdvdn [m/s]"
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "",
+                        "pinType": 0,
+                        "plotData": [],
+                        "size": 0,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "RtklibPosObs",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Latitude [deg]"
+                            },
+                            {
+                                "displayName": "Longitude [deg]"
+                            },
+                            {
+                                "displayName": "Altitude [m]"
+                            },
+                            {
+                                "displayName": "North/South [m]"
+                            },
+                            {
+                                "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "Q [-]"
+                            },
+                            {
+                                "displayName": "ns [-]"
+                            },
+                            {
+                                "displayName": "sdx [m]"
+                            },
+                            {
+                                "displayName": "sdy [m]"
+                            },
+                            {
+                                "displayName": "sdz [m]"
+                            },
+                            {
+                                "displayName": "sdn [m]"
+                            },
+                            {
+                                "displayName": "sde [m]"
+                            },
+                            {
+                                "displayName": "sdd [m]"
+                            },
+                            {
+                                "displayName": "sdxy [m]"
+                            },
+                            {
+                                "displayName": "sdyz [m]"
+                            },
+                            {
+                                "displayName": "sdzx [m]"
+                            },
+                            {
+                                "displayName": "sdne [m]"
+                            },
+                            {
+                                "displayName": "sded [m]"
+                            },
+                            {
+                                "displayName": "sddn [m]"
+                            },
+                            {
+                                "displayName": "age [s]"
+                            },
+                            {
+                                "displayName": "ratio [-]"
+                            },
+                            {
+                                "displayName": "Velocity ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity North [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity East [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity Down [m/s]"
+                            },
+                            {
+                                "displayName": "sdvn [m/s]"
+                            },
+                            {
+                                "displayName": "sdve [m/s]"
+                            },
+                            {
+                                "displayName": "sdvd [m/s]"
+                            },
+                            {
+                                "displayName": "sdvne [m/s]"
+                            },
+                            {
+                                "displayName": "sdved [m/s]"
+                            },
+                            {
+                                "displayName": "sdvdn [m/s]"
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 1
+                    }
+                ],
+                "plots": [
+                    {
+                        "headerText": "Horizontal Position",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": true,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 5,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "SPP",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            6,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 450.0
+                        },
+                        "title": "Horizontal Position",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "West / East [m]",
+                        "y1AxisLabel": "South / North [m]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 2048
+                    }
+                ]
+            },
+            "enabled": true,
+            "id": 137,
+            "inputPins": [
+                {
+                    "id": 132,
+                    "name": "SPP (INSTINCT)"
+                },
+                {
+                    "id": 138,
+                    "name": "SPP (RTKLib)"
+                },
+                {
+                    "id": 150,
+                    "name": "RTK (INSTINCT)"
+                },
+                {
+                    "id": 151,
+                    "name": "RTK (RTKLib)"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "Plot",
+            "outputPins": [],
+            "pos": {
+                "x": 760.0,
+                "y": 222.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Plot"
+        },
+        "node-149": {
+            "data": {
+                "FileReader": {
+                    "path": "2020-08-25_Testflug_Mengen_Icare_KVH/Flight-2/Icare_NetR9_1Hz_SPP.pos"
+                }
+            },
+            "enabled": true,
+            "id": 149,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "RtklibPosFile - SPP",
+            "outputPins": [
+                {
+                    "id": 148,
+                    "name": "RtklibPosObs"
+                }
+            ],
+            "pos": {
+                "x": 430.0,
+                "y": 206.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "RtklibPosFile"
+        },
+        "node-153": {
+            "data": null,
+            "enabled": true,
+            "id": 153,
+            "inputPins": [],
+            "kind": "GroupBox",
+            "name": "SPP",
+            "outputPins": [],
+            "pos": {
+                "x": 320.0,
+                "y": 48.0
+            },
+            "size": {
+                "x": 336.0,
+                "y": 218.0
+            },
+            "type": "GroupBox"
+        },
+        "node-155": {
+            "data": null,
+            "enabled": true,
+            "id": 155,
+            "inputPins": [],
+            "kind": "GroupBox",
+            "name": "RTK",
+            "outputPins": [],
+            "pos": {
+                "x": 320.0,
+                "y": 320.0
+            },
+            "size": {
+                "x": 336.0,
+                "y": 266.0
+            },
+            "type": "GroupBox"
+        },
+        "node-157": {
+            "data": {
+                "FileReader": {
+                    "path": "2020-08-25_Testflug_Mengen_Icare_KVH/Flight-2/Icare_NetR9_1Hz_RTK.pos"
+                }
+            },
+            "enabled": true,
+            "id": 157,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "RtklibPosFile",
+            "outputPins": [
+                {
+                    "id": 156,
+                    "name": "RtklibPosObs"
+                }
+            ],
+            "pos": {
+                "x": 485.0,
+                "y": 526.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "RtklibPosFile"
+        }
+    }
+}

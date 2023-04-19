@@ -15,34 +15,26 @@
 
 #include <unordered_map>
 
+#include "util/Container/UncertainValue.hpp"
 #include "Navigation/GNSS/Core/SatelliteSystem.hpp"
 
 namespace NAV
 {
 
-/// @brief Value with standard deviation
-/// @tparam T Type of the value and standard deviation
-template<typename T>
-struct ValueStdDev
-{
-    T value;  ///< Value
-    T stdDev; ///< Standard deviation
-};
-
 /// Receiver Clock information
 struct ReceiverClock
 {
     /// Estimated receiver clock bias [s]
-    ValueStdDev<double> bias{ 0.0, 0.0 };
+    UncertainValue<double> bias{ 0.0, 0.0 };
     /// Estimated receiver clock drift [s/s]
-    ValueStdDev<double> drift{ 0.0, 0.0 };
+    UncertainValue<double> drift{ 0.0, 0.0 };
 
     /// System time reference system
     SatelliteSystem referenceTimeSatelliteSystem = SatSys_None;
     /// System time differences [s]
-    std::unordered_map<SatelliteSystem, ValueStdDev<double>> sysTimeDiff;
+    std::unordered_map<SatelliteSystem, UncertainValue<double>> sysTimeDiff;
     /// System time drift difference [s/s]
-    std::unordered_map<SatelliteSystem, ValueStdDev<double>> sysDriftDiff;
+    std::unordered_map<SatelliteSystem, UncertainValue<double>> sysDriftDiff;
 };
 
 } // namespace NAV

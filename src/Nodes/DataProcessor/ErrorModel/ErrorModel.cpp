@@ -89,7 +89,7 @@ std::string NAV::ErrorModel::type() const
 
 std::string NAV::ErrorModel::category()
 {
-    return "DataProcessor";
+    return "Data Processor";
 }
 
 void NAV::ErrorModel::guiConfig()

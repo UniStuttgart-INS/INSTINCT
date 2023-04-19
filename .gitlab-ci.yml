@@ -293,7 +293,7 @@ raspberry:gcc:
     - .release
     - .log-trace
   variables:
-    CMAKE_BUILD_PARALLEL_LEVEL: 4
+    CMAKE_BUILD_PARALLEL_LEVEL: 2
 
 main:macOS:
   extends:

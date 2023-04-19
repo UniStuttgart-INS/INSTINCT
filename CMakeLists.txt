@@ -273,6 +273,14 @@ if(ENABLE_TESTING)
   add_subdirectory(test)
 endif()
 
+message(STATUS ${fmt_INCLUDE_DIRS_RELEASE})
+get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+foreach(dir ${dirs})
+  message(STATUS "dir='${dir}'")
+endforeach()
+
+message(STATUS "conan='${CMAKE_INCLUDE_PATH}'")
+
 option(ENABLE_UNITY "Enable Unity builds of projects" OFF)
 if(ENABLE_UNITY)
   # Add for any project you want to apply unity builds for

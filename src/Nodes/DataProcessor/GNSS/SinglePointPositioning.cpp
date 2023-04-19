@@ -172,7 +172,7 @@ void NAV::SinglePointPositioning::guiConfig()
                 }
             }
 
-            if (inputPins.size() > 1)
+            if (pinIndex >= INPUT_PORT_INDEX_GNSS_NAV_INFO && inputPins.size() > INPUT_PORT_INDEX_GNSS_NAV_INFO + 1)
             {
                 ImGui::TableNextColumn(); // Delete
                 if (ImGui::Button(fmt::format("x##{} - {}", size_t(id), pinIndex).c_str()))
