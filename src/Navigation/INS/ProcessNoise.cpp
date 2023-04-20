@@ -26,16 +26,10 @@ Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vecto
     return Eigen::DiagonalMatrix<double, 3>{ (2.0 * beta.cwiseProduct(sigma2)).cwiseSqrt() };
 }
 
-Eigen::Vector3d psdNoise(const Eigen::Vector3d& sigma2_r, const double& tau_i)
+Eigen::Vector3d psdBiasGaussMarkov(const Eigen::Vector3d& sigma2_bd, const Eigen::Vector3d& tau_bd)
 {
-    // Math: S_{r} = \sigma_{r}^2\tau_i \qquad \text{P. Groves}\,(14.83)
-    return sigma2_r * tau_i;
-}
-
-Eigen::Vector3d psdBiasVariation(const Eigen::Vector3d& sigma2_bd, const Eigen::Vector3d& tau_bd)
-{
-    // Math: S_{bd} = \frac{\sigma_{bd}^2}{\tau_{bd}} \qquad \text{P. Groves}\,(14.84)
-    return sigma2_bd.array() / tau_bd.array();
+    // Math: u_{bias} = \sqrt{\frac{2\sigma_{bd}^2}{\tau_{bd}}} \qquad \text{Brown & Hwang, example 9.6}
+    return (2 * sigma2_bd.array() / tau_bd.array()).cwiseSqrt();
 }
 
 // double psdClockPhaseDrift(const double& sigma2_cPhi, const double& tau_i)

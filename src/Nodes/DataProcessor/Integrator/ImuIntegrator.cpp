@@ -565,8 +565,7 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::ImuIntegrator::integrateObservationEC
     }
     auto dt = fmt::format("{:0.5f}", timeDifferenceSec);
     dt.erase(std::find_if(dt.rbegin(), dt.rend(), [](char ch) { return ch != '0'; }).base(), dt.end());
-    LOG_DATA("{}: Integrating (dt = {}s) from [{} - {}] to [{} - {}] in ECEF frame", nameId(), dt,
-             imuObs__t1->insTime.toYMDHMS(), imuObs__t1->insTime.toGPSweekTow(), imuObs__t0->insTime.toYMDHMS(), imuObs__t0->insTime.toGPSweekTow());
+    LOG_DATA("{}: Integrating to [{}] (dt = {}s) in ECEF frame", nameId(), imuObs__t0->insTime, dt);
 
     // Position, Velocity and Attitude at the time tₖ₋₁
     const std::shared_ptr<const PosVelAtt>& posVelAtt__t1 = _posVelAttStates.at(0);
@@ -733,8 +732,7 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::ImuIntegrator::integrateObservationNE
     }
     auto dt = fmt::format("{:0.5f}", timeDifferenceSec);
     dt.erase(std::find_if(dt.rbegin(), dt.rend(), [](char ch) { return ch != '0'; }).base(), dt.end());
-    LOG_DATA("{}: Integrating (dt = {}s) from [{} - {}] to [{} - {}] in NED frame", nameId(), dt,
-             imuObs__t1->insTime.toYMDHMS(), imuObs__t1->insTime.toGPSweekTow(), imuObs__t0->insTime.toYMDHMS(), imuObs__t0->insTime.toGPSweekTow());
+    LOG_DATA("{}: Integrating to [{}] (dt = {}s) in NED frame", nameId(), imuObs__t0->insTime, dt);
 
     // Position, Velocity and Attitude at the time tₖ₋₁
     const std::shared_ptr<const PosVelAtt>& posVelAtt__t1 = _posVelAttStates.at(0);

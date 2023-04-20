@@ -105,9 +105,12 @@ class Logger
     Logger& operator=(Logger&&) = delete;
 
     /// @brief Returns the ring buffer sink
-    static std::shared_ptr<spdlog::sinks::ringbuffer_sink_mt> GetRingBufferSink();
+    static const std::shared_ptr<spdlog::sinks::ringbuffer_sink_mt>& GetRingBufferSink();
 
   private:
+    /// @brief Ring buffer sink
+    static inline std::shared_ptr<spdlog::sinks::ringbuffer_sink_mt> _ringBufferSink = nullptr;
+
     /// @brief Writes a separation line to the console only
     static void writeSeparator() noexcept;
 

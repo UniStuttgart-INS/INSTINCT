@@ -63,32 +63,28 @@ The doxygen main page can then be opened under `build/doc/html/index.html` (an o
 INSTINCT - INS Toolkit for Integrated Navigation Concepts and Training
 
 Allowed options:
-  --config arg                          List of configuration files to read
-                                        parameters from
-  -v [ --version ]                      Display the version number
-  -h [ --help ]                         Display this help message
-  --sigterm                             Programm waits for -SIGUSR1 / -SIGINT /
-                                        -SIGTERM
-  --duration arg (=0)                   Program execution duration [sec]
-  --nogui                               Launch without the gui
-  --noinit                              Do not initialize flows after loading
-                                        them
-  -l [ --load ] arg                     Flow file to load
-  --rotate-output                       Create new folders for output files
-  -o [ --output-path ] arg (=logs)      Directory path for logs and output
-                                        files
-  -i [ --input-path ] arg (=data)       Directory path for searching input
-                                        files
-  -f [ --flow-path ] arg (=flow)        Directory path for searching flow files
-  --implot-config arg (=config/implot.json)
-                                        Config file to read implot settings
-                                        from
-  --console-log-level arg (=off)        Log level on the console  (possible
-                                        values: trace/debug/info/warning/error/
-                                        critical/off
-  --file-log-level arg (=debug)         Log level to the log file (possible
-                                        values: trace/debug/info/warning/error/
-                                        critical/off
+  --config arg                       List of configuration files to read
+                                     parameters from
+  -v [ --version ]                   Display the version number
+  -h [ --help ]                      Display this help message
+  --sigterm                          Programm waits for -SIGUSR1 / -SIGINT /
+                                     -SIGTERM
+  --duration arg (=0)                Program execution duration [sec]
+  --nogui                            Launch without the gui
+  --noinit                           Do not initialize flows after loading them
+  -l [ --load ] arg                  Flow file to load
+  --rotate-output                    Create new folders for output files
+  -o [ --output-path ] arg (=logs)   Directory path for logs and output files
+  -i [ --input-path ] arg (=data)    Directory path for searching input files
+  -f [ --flow-path ] arg (=flow)     Directory path for searching flow files
+  --implot-config arg (=implot.json) Config file to read implot settings from
+  --console-log-level arg (=off)     Log level on the console  (possible
+                                     values: trace/debug/info/warning/error/cri
+                                     tical/off
+  --file-log-level arg (=debug)      Log level to the log file (possible
+                                     values: trace/debug/info/warning/error/cri
+                                     tical/off
+  --log-filter arg                   Filter for log messages
 ```
 
 ### Development Environment Setup
