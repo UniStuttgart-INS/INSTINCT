@@ -19,7 +19,7 @@
 
 #include <deque>
 
-namespace NAV
+namespace NAV::experimental
 {
 /// @brief Delays messages by buffering them
 class Delay : public Node
@@ -86,4 +86,4 @@ class Delay : public Node
     std::deque<std::shared_ptr<const NodeData>> _buffer;
 };
 
-} // namespace NAV
+} // namespace NAV::experimental

@@ -173,7 +173,6 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/util/TimeWindow.hpp"
 // Simple
 #include "Nodes/Simple/Combiner.hpp"
-#include "Nodes/Simple/Delay.hpp"
 // Converter
 #include "Nodes/Converter/GNSS/RtklibPosConverter.hpp"
 #include "Nodes/Converter/GNSS/UartPacketConverter.hpp"
@@ -207,7 +206,6 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataProvider/IMU/FileReader/ImuFile.hpp"
 #include "Nodes/DataProvider/IMU/FileReader/KvhFile.hpp"
 #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
-#include "Nodes/DataProvider/IMU/NetworkStream/SkydelNetworkStream.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/KvhSensor.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/Navio2Sensor.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
@@ -220,6 +218,8 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/State/PosVelAttInitializer.hpp"
 // Experimental
 #include "Nodes/Experimental/DataProcessor/ARMA.hpp"
+#include "Nodes/Experimental/DataProvider/IMU/NetworkStream/SkydelNetworkStream.hpp"
+#include "Nodes/Experimental/Simple/Delay.hpp"
 
 void NAV::NodeRegistry::RegisterNodeTypes()
 {
@@ -233,7 +233,6 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<TimeWindow>();
     // Simple
     registerNodeType<Combiner>();
-    registerNodeType<Delay>();
     // Converter
     registerNodeType<RtklibPosConverter>();
     registerNodeType<UartPacketConverter>();
@@ -264,7 +263,6 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<EmlidSensor>();
     registerNodeType<UbloxSensor>();
     registerNodeType<ImuFile>();
-    registerNodeType<SkydelNetworkStream>();
     registerNodeType<KvhFile>();
     registerNodeType<VectorNavFile>();
     registerNodeType<KvhSensor>();
@@ -274,7 +272,9 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     // Data Simulator
     registerNodeType<ImuSimulator>();
     // Experimental
-    registerNodeType<NAV::experimental::ARMA>();
+    // registerNodeType<NAV::experimental::ARMA>();
+    // registerNodeType<NAV::experimental::SkydelNetworkStream>();
+    // registerNodeType<NAV::experimental::Delay>();
     // Plotting
     registerNodeType<Plot>();
     // State
