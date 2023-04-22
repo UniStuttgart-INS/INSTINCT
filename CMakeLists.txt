@@ -279,20 +279,6 @@ if(ENABLE_UNITY)
   set_target_properties(${PROJECT_NAME_LOWERCASE} PROPERTIES UNITY_BUILD ON)
 endif()
 
-# Because MSVC sucks and we need to tell the linker to link the release versions manually
-if(MSVC AND CMAKE_BUILD_TYPE STREQUAL "Release")
-  set_target_properties(
-    instinct-resources
-    imgui
-    imgui_node_editor
-    ImGuiFileDialog
-    implot
-    application
-    libvncxx
-    libUartSensor
-    PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
-endif()
-
 # ######################################################################################################################
 # Copy compile_commands.json to root directory
 # ######################################################################################################################
