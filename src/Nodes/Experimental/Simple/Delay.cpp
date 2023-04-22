@@ -14,7 +14,10 @@ namespace nm = NAV::NodeManager;
 
 #include "NodeData/NodeData.hpp"
 
-NAV::Delay::Delay()
+namespace NAV::experimental
+{
+
+Delay::Delay()
     : Node(fmt::format("z^-{}", _delayLength))
 {
     LOG_TRACE("{}: called", name);
@@ -27,27 +30,27 @@ NAV::Delay::Delay()
     nm::CreateOutputPin(this, "", Pin::Type::Flow, { NodeData::type() });
 }
 
-NAV::Delay::~Delay()
+Delay::~Delay()
 {
     LOG_TRACE("{}: called", nameId());
 }
 
-std::string NAV::Delay::typeStatic()
+std::string Delay::typeStatic()
 {
     return "Delay";
 }
 
-std::string NAV::Delay::type() const
+std::string Delay::type() const
 {
     return typeStatic();
 }
 
-std::string NAV::Delay::category()
+std::string Delay::category()
 {
-    return "Simple";
+    return "Experimental/Simple";
 }
 
-void NAV::Delay::guiConfig()
+void Delay::guiConfig()
 {
     if (ImGui::InputInt(fmt::format("Delay length##{}", size_t(id)).c_str(), &_delayLength))
     {
@@ -68,7 +71,7 @@ void NAV::Delay::guiConfig()
     }
 }
 
-[[nodiscard]] json NAV::Delay::save() const
+[[nodiscard]] json Delay::save() const
 {
     LOG_TRACE("{}: called", nameId());
 
@@ -79,7 +82,7 @@ void NAV::Delay::guiConfig()
     return j;
 }
 
-void NAV::Delay::restore(json const& j)
+void Delay::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
 
@@ -89,7 +92,7 @@ void NAV::Delay::restore(json const& j)
     }
 }
 
-bool NAV::Delay::initialize()
+bool Delay::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
@@ -98,12 +101,12 @@ bool NAV::Delay::initialize()
     return true;
 }
 
-void NAV::Delay::deinitialize()
+void Delay::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
 }
 
-bool NAV::Delay::onCreateLink(OutputPin& startPin, InputPin& endPin)
+bool Delay::onCreateLink(OutputPin& startPin, InputPin& endPin)
 {
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
 
@@ -134,7 +137,7 @@ bool NAV::Delay::onCreateLink(OutputPin& startPin, InputPin& endPin)
     return true;
 }
 
-void NAV::Delay::delayObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
+void Delay::delayObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     if (_buffer.size() == static_cast<size_t>(_delayLength))
     {
@@ -156,3 +159,5 @@ void NAV::Delay::delayObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx 
         _buffer.push_back(queue.extract_front());
     }
 }
+
+} // namespace NAV::experimental

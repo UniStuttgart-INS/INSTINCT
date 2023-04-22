@@ -27,6 +27,7 @@ namespace ed = ax::NodeEditor;
 #include "internal/gui/windows/ImPlotStyleEditor.hpp"
 
 #include <fstream>
+#include <set>
 #include <iomanip>
 #include <string>
 #include <memory>
