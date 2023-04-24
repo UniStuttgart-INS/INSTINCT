@@ -28,7 +28,10 @@
 namespace nm = NAV::NodeManager;
 using boost::asio::ip::udp;
 
-NAV::SkydelNetworkStream::SkydelNetworkStream()
+namespace NAV::experimental
+{
+
+SkydelNetworkStream::SkydelNetworkStream()
     : Imu(typeStatic()), _senderEndpoint(udp::v4(), 4444), _socket(_ioservice, _senderEndpoint)
 {
     _hasConfig = true;
@@ -38,27 +41,27 @@ NAV::SkydelNetworkStream::SkydelNetworkStream()
     nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() });
 }
 
-NAV::SkydelNetworkStream::~SkydelNetworkStream()
+SkydelNetworkStream::~SkydelNetworkStream()
 {
     LOG_TRACE("{}: called", nameId());
 }
 
-std::string NAV::SkydelNetworkStream::typeStatic()
+std::string SkydelNetworkStream::typeStatic()
 {
     return "SkydelNetworkStream";
 }
 
-std::string NAV::SkydelNetworkStream::type() const
+std::string SkydelNetworkStream::type() const
 {
     return typeStatic();
 }
 
-std::string NAV::SkydelNetworkStream::category()
+std::string SkydelNetworkStream::category()
 {
     return "Data Provider";
 }
 
-void NAV::SkydelNetworkStream::guiConfig()
+void SkydelNetworkStream::guiConfig()
 {
     std::string str;
 
@@ -78,12 +81,12 @@ void NAV::SkydelNetworkStream::guiConfig()
     gui::widgets::HelpMarker("The data rate can be adjusted in Skydel: Settings/Plug-ins/<Plug-in-name>/Plug-in UI. Make sure to enable either WiFi or a LAN connection. Enabling both can lead to loss of data, because Skydel only knows one ip address.");
 }
 
-bool NAV::SkydelNetworkStream::resetNode()
+bool SkydelNetworkStream::resetNode()
 {
     return true;
 }
 
-void NAV::SkydelNetworkStream::do_receive()
+void SkydelNetworkStream::do_receive()
 {
     _socket.async_receive_from(
         boost::asio::buffer(_data, _maxLength), _senderEndpoint,
@@ -260,7 +263,7 @@ void NAV::SkydelNetworkStream::do_receive()
         });
 }
 
-bool NAV::SkydelNetworkStream::initialize()
+bool SkydelNetworkStream::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
@@ -292,7 +295,7 @@ bool NAV::SkydelNetworkStream::initialize()
     return true;
 }
 
-void NAV::SkydelNetworkStream::deinitialize()
+void SkydelNetworkStream::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
 
@@ -300,3 +303,5 @@ void NAV::SkydelNetworkStream::deinitialize()
     _ioservice.stop();
     _testThread.join();
 }
+
+} // namespace NAV::experimental

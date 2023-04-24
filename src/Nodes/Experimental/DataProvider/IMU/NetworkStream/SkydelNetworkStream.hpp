@@ -23,7 +23,7 @@
 
 #include "Navigation/Time/InsTime.hpp"
 
-namespace NAV
+namespace NAV::experimental
 {
 /// SkydelNetworkStream Sensor Class
 class SkydelNetworkStream : public Imu
@@ -115,4 +115,4 @@ class SkydelNetworkStream : public Imu
     int _startNow = 20;
 };
 
-} // namespace NAV
+} // namespace NAV::experimental
