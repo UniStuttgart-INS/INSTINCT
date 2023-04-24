@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file UlogFileFormat.hpp
 /// @brief List of all ulog message types
 /// @author M. Maier (marcel.maier@ins.uni-stuttgart.de)
@@ -137,8 +145,8 @@ enum class ulog_tag : uint16_t
 /// @brief synchronization message so that a reader can recover from a corrupt message by searching for the next sync message
 struct message_sync_s
 {
-    message_header_s header;             ///< msg header
-    std::array<uint8_t, 8> snyc_magic{}; ///< synchronization message
+    message_header_s header;          ///< msg header
+    std::array<uint8_t, 8> syncMsg{}; ///< synchronization message
 };
 
 /// @brief dropout (lost logging messages) of a given duration in ms. Dropouts can occur e.g. if the device is not fast enough

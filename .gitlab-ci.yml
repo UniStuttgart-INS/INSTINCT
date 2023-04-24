@@ -8,6 +8,10 @@ stages:
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
+  WARNINGS_AS_ERRORS: "ON"
+  ENABLE_MAIN: "OFF"
+  ENABLE_TESTING: "OFF"
+  TOOLCHAIN_PATH: "build/$BUILD_TYPE"
 
 image: ins-cpp:10
 
@@ -29,15 +33,51 @@ image: ins-cpp:10
   variables:
     BUILD_TYPE: Debug
 
+.log-data:
+  variables:
+    LOG_LEVEL_INSTINCT: DATA
+
+.log-trace:
+  variables:
+    LOG_LEVEL_INSTINCT: TRACE
+
+.log-debug:
+  variables:
+    LOG_LEVEL_INSTINCT: DEBUG
+
+.log-info:
+  variables:
+    LOG_LEVEL_INSTINCT: INFO
+
+.log-off:
+  variables:
+    LOG_LEVEL_INSTINCT: "OFF"
+
 .schedule:
   only:
     - schedules
+
+.retry:
+  retry:
+    max: 2
+    when:
+      - stuck_or_timeout_failure
+      - job_execution_timeout
 
 .windows:
   tags:
     - windows
   before_script:
-    - 'call "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat"'
+    # - 'call "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat"'
+    # https://gist.github.com/FeodorFitsner/b34162690ae2838409b7459824d51ed7
+    - cmd.exe /c "call `"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat`" && set > %temp%\vcvars-$CI_CONCURRENT_ID.txt"
+    - Get-Content "$env:temp\vcvars-$CI_CONCURRENT_ID.txt" | Foreach-Object { if ($_ -match "^(.*?)=(.*)$") { Set-Content "env:\$($matches[1])" $matches[2] } }
+    - conan profile detect --force
+  variables:
+    GIT_CLONE_PATH: '$CI_BUILDS_DIR/$CI_PROJECT_NAME/$CI_COMMIT_SHA/$CI_JOB_ID'
+    WARNINGS_AS_ERRORS: "OFF"
+    TOOLCHAIN_PATH: "build"
+  allow_failure: true
 
 .linux:
   tags:
@@ -47,6 +87,12 @@ image: ins-cpp:10
   tags:
     - armv8
 
+.macOS:
+  tags:
+    - macOS
+  variables:
+    GIT_CLONE_PATH: '$CI_BUILDS_DIR/$CI_PROJECT_NAME/$CI_COMMIT_SHA/$CI_JOB_ID'
+
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                              Prepare                                             ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
@@ -55,15 +101,18 @@ check-image:
   stage: prepare
   extends: .linux
   script:
+    - uname -a
+    - cat /etc/issue
     - g++ --version
     - clang++ --version
     - clang-tidy --version
+    - clang-format --version
     - cmake --version
     - conan --version
+    - conan profile show
     - doxygen --version
     - cppcheck --version
-    - lcov --version
-    - genhtml --version
+    - gcovr --version
     - gcov --version
     - xml_grep --version
     - dvips --version
@@ -81,6 +130,14 @@ check-raspberry:
     - conan --version
     - xml_grep --version
 
+check-macOS:
+  stage: prepare
+  extends: .macOS
+  script:
+    - clang++ --version
+    - cmake --version
+    - conan --version
+
 check-windows:
   stage: prepare
   extends: .windows
@@ -95,217 +152,227 @@ check-windows:
 
 clang-tidy:
   stage: checks
+  needs: ["check-image"]
   extends:
     - .linux
     - .clang
   script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - conan install . --build=missing -s build_type=Release
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target copy-compile-commands
     - python3 ./tools/run-clang-tidy.py $PWD/src
 
 clang-tidy:tests:
   stage: checks
+  needs: ["check-image"]
   extends:
     - .linux
     - .clang
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug --target copy-compile-commands
+    - conan install . --build=missing -s build_type=Release
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Release --target copy-compile-commands
     - python3 ./tools/run-clang-tidy.py $PWD/test
+
+clang-format:
+  stage: checks
+  needs: ["check-image"]
+  extends:
+    - .linux
+    - .clang
+  script:
+    - find src test -regex '.*\.[ch]pp$' -exec sh -c 'for n; do clang-format --Werror --dry-run "$n" || retVal=1; done; exit $retVal' sh {} +
 
 documentation:
   stage: checks
-  extends: .linux
+  needs: ["check-image"]
+  extends:
+    - .linux
   script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES
+    - conan install . --build=missing -s build_type=Release
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES
     - cmake --build build/Release --target doc
   artifacts:
     when: on_failure
     paths:
-      - bin/doc/
+      - build/doc/
     expire_in: 1 week
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                         Build Main & GUI                                         ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-.build:main:
+.build:
   stage: build
+  script:
+    - echo "$CC"
+    - echo "$CXX"
+    - echo "$BUILD_TYPE"
+    - echo "$ENABLE_MAIN"
+    - echo "$ENABLE_TESTING"
+    - echo "$LOG_LEVEL_INSTINCT"
+    - echo "$WARNINGS_AS_ERRORS"
+    - echo "$CMAKE_BUILD_PARALLEL_LEVEL"
+    - conan install . --build=missing -s build_type="$BUILD_TYPE"
+    - cmake -B"build/$BUILD_TYPE" -S. -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_PATH/generators/conan_toolchain.cmake" -DENABLE_MAIN="$ENABLE_MAIN" -DENABLE_TESTING="$ENABLE_TESTING" -DCATCH2_JUNIT_OUTPUT="$ENABLE_TESTING" -DENABLE_COVERAGE="$ENABLE_TESTING" -DENABLE_DOXYGEN=OFF -DLOG_LEVEL="$LOG_LEVEL_INSTINCT" -DWARNINGS_AS_ERRORS="$WARNINGS_AS_ERRORS" -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build "build/$BUILD_TYPE" --config $BUILD_TYPE
+
+.build:linux:
   extends: .linux
   needs: ["check-image"]
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -j2
+
+.build:windows:
+  extends: .windows
+  needs: ["check-windows"]
+
+.build:raspberry:
+  extends: .raspberry
+  needs: ["check-raspberry"]
+
+.build:macOS:
+  extends: .macOS
+  needs: ["check-macOS"]
+
+.build:main:
+  variables:
+    ENABLE_MAIN: "ON"
+  artifacts:
+    paths:
+      - build/bin/$BUILD_TYPE/*
+    exclude:
+      - build/bin/$BUILD_TYPE/*.pdb
+    expire_in: 2h
+
+.build:tests:
+  variables:
+    ENABLE_TESTING: "ON"
+
+.build:test-artifacts:
+  artifacts:
+    paths:
+      - build/$BUILD_TYPE/CTestTestfile.cmake
+      - build/$BUILD_TYPE/test/CTestTestfile.cmake
+      - build/$BUILD_TYPE/test/tests_*.cmake
+      - build/bin/$BUILD_TYPE/*
+    expire_in: 2h
+
+main:win:
+  extends:
+    - .build
+    - .build:main
+    - .build:windows
+    - .release
+    - .log-debug
 
 main:clang:
   extends:
+    - .build
     - .build:main
+    - .build:linux
     - .clang
+    - .release
+    - .log-debug
 
 main:gcc:
   extends:
+    - .build
     - .build:main
+    - .build:linux
     - .gcc
+    - .release
+    - .log-debug
 
-main:win:
-  stage: build
-  extends: .windows
-  needs: ["check-windows"]
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -maxCpuCount
-
-main:win:LOG_INFO:
-  extends: main:win
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=INFO -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -maxCpuCount
-    - move bin\Release\instinct.exe .
-  artifacts:
-    paths:
-      - instinct.exe
-    expire_in: 1 week
-  only:
-    - master
-
-.build:main:LOG_OFF:
+raspberry:gcc:
   extends:
+    - .build
     - .build:main
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -j2
-
-main:clang:LOG_OFF:
-  extends:
-    - .build:main:LOG_OFF
-    - .clang
-
-main:gcc:LOG_OFF:
-  extends:
-    - .build:main:LOG_OFF
+    - .build:tests
+    - .build:raspberry
+    - .build:test-artifacts
     - .gcc
+    - .release
+    - .log-trace
+  variables:
+    CMAKE_BUILD_PARALLEL_LEVEL: 2
 
-main:win:LOG_OFF:
+main:macOS:
   extends:
-    - main:win
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -maxCpuCount
-
-.build:main:raspberry:
-  stage: build
-  extends: .raspberry
-  needs: ["check-raspberry"]
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DEBUG -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -j2
-    - mv bin/Release/instinct .
-
-main:raspberry:clang:
-  extends:
-    - .build:main:raspberry
-    - .clang
-
-main:raspberry:gcc:
-  extends:
-    - .build:main:raspberry
-    - .gcc
-  artifacts:
-    paths:
-      - instinct
-    expire_in: 2h
+    - .build
+    - .build:main
+    - .build:macOS
+    - .release
+    - .log-debug
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                            Build Tests                                           ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-.build:tests:
-  stage: build
-  extends: .linux
-  needs: ["check-image"]
-  script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug -- -j2
-
-.build:tests-win:
-  stage: build
-  extends: .windows
-  needs: ["check-windows"]
-
-.build:test-artifacts:
-  artifacts:
-    paths:
-      - build/Debug/CTestTestfile.cmake
-      - build/Debug/test/CTestTestfile.cmake
-      - build/Debug/test/tests_*.cmake
-      - bin/Debug/tests*
-    expire_in: 2h
-
 tests:clang:
   extends:
+    - .build
     - .build:tests
+    - .build:linux
     - .build:test-artifacts
     - .clang
+    - .release
+    - .log-trace
 
 tests:gcc:
   extends:
+    - .build
     - .build:tests
+    - .build:linux
     - .gcc
+    - .debug
+    - .log-data
   artifacts:
     untracked: true # For the coverage report
     expire_in: 2h
 
-tests:win:
+tests:clang:LOG_DATA:
   extends:
-    - .build:tests-win
-    - .build:test-artifacts
-  script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug -- -maxCpuCount
-
-.build:tests:LOG_OFF:
-  extends:
+    - .build
     - .build:tests
-  script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug -- -j2
-
-tests:clang:LOG_OFF:
-  extends:
-    - .build:tests:LOG_OFF
+    - .build:linux
     - .clang
+    - .release
+    - .log-data
+
+tests:gcc:LOG_DATA:
+  extends:
+    - .build
+    - .build:tests
+    - .build:linux
+    - .gcc
+    - .release
+    - .log-data
 
 tests:gcc:LOG_OFF:
   extends:
-    - .build:tests:LOG_OFF
+    - .build
+    - .build:tests
+    - .build:linux
     - .gcc
+    - .release
+    - .log-off
 
-tests:win:LOG_OFF:
+tests:win:
   extends:
-    - .build:tests-win
-  script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug -- -maxCpuCount
-
-.build:raspberry:tests:
-  stage: build
-  extends: .raspberry
-  needs: ["check-image"]
-  script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug -- -j2
-
-tests:raspberry:clang:
-  extends:
-    - .build:raspberry:tests
+    - .build
+    - .build:tests
+    - .build:windows
     - .build:test-artifacts
-    - .clang
+    - .release
+    - .log-trace
 
-tests:raspberry:gcc:
+tests:macOS:
   extends:
-    - .build:raspberry:tests
+    - .build
+    - .build:tests
+    - .build:macOS
     - .build:test-artifacts
-    - .gcc
+    - .release
+    - .log-trace
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                               Test                                               ║
@@ -313,11 +380,21 @@ tests:raspberry:gcc:
 
 .run-tests:
   stage: test
+  extends:
+    - .retry
   script:
-    - cd build/Debug
-    - ctest -j2 --output-on-failure
+    - cd build/$BUILD_TYPE
+    - ctest --output-on-failure # -j2
+  artifacts:
+    when: on_failure
+    paths:
+      - test/logs/*.log
+    name: 'test-logs'
+
+
+.junit:
   after_script:
-    - cd build/Debug/test
+    - cd build/$BUILD_TYPE/test
     - xml_grep --pretty_print indented --wrap '' --descr '' --cond "testsuites" *.xml > ../../../junit.xml
     - sed -i ':begin;$!N;s/<\/testsuites>\n<testsuites>//;tbegin;P;D' ../../../junit.xml
   artifacts:
@@ -326,40 +403,55 @@ tests:raspberry:gcc:
       junit: junit.xml
     expire_in: 2h
 
+
 run-tests:clang:
-  extends:
-    - .linux
-    - .run-tests
   needs: ["tests:clang"]
+  extends:
+    - .run-tests
+    - .linux
+    - .release
+    - .junit
 
 run-tests:gcc:
-  extends:
-    - .linux
-    - .run-tests
   needs: ["tests:gcc"]
+  extends:
+    - .run-tests
+    - .linux
+    - .debug
+    - .junit
   artifacts:
+    when: always
     untracked: true # For the coverage report
     expire_in: 2h
 
 run-tests:win:
-  stage: test
-  extends: .windows
   needs: ["tests:win"]
+  extends:
+    - .run-tests
+    - .windows
+    - .release
   script:
-    - cd build/Debug/test
+    - Get-ChildItem -Path .\build\ -Recurse -Filter *.cmake | ForEach-Object { (Get-Content $_.FullName) `
+          -replace "$CI_COMMIT_SHA/\d+", "$CI_COMMIT_SHA/$CI_JOB_ID" |
+          Out-File -encoding ASCII $_.FullName }
+    - cd build/$BUILD_TYPE
     - ctest --output-on-failure
 
-run-tests:raspberry:clang:
-  extends:
-    - .raspberry
-    - .run-tests
-  needs: ["tests:raspberry:clang"]
-
 run-tests:raspberry:gcc:
+  needs: ["raspberry:gcc"]
   extends:
-    - .raspberry
     - .run-tests
-  needs: ["tests:raspberry:gcc"]
+    - .raspberry
+    - .release
+
+run-tests:macOS:
+  needs: ["tests:macOS"]
+  extends:
+    - .run-tests
+    - .macOS
+    - .release
+  before_script:
+    - find ./build -name '*.cmake' -exec gsed -i -E "s,$CI_COMMIT_SHA/[0-9]+,$CI_COMMIT_SHA/$CI_JOB_ID,g" {} \;
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                             Analyze                                              ║
@@ -367,60 +459,55 @@ run-tests:raspberry:gcc:
 
 doxygen:
   stage: analyze
-  extends: .linux
   needs: ["check-image"]
+  extends:
+    - .linux
   script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - conan install . --build=missing -s build_type=Release
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target doc
   artifacts:
     paths:
-      - bin/doc/html/
+      - build/doc/html/
     expire_in: 2h
   only:
     - master
 
 coverage:
   stage: analyze
-  extends: .linux
   needs: ["run-tests:gcc"]
+  extends: .linux
+  when: always
   script:
-    - mkdir -p coverage
-    - lcov --gcov-tool gcov --capture --no-external --directory . --output-file coverage/coverage_all.info
-    - lcov --remove coverage/coverage_all.info $(pwd)'/lib/*' $(pwd)'/test/*' $(pwd)'/build/*' --output-file coverage/coverage.info
-    - genhtml coverage/coverage.info --output-directory coverage --config-file doc/coverage/lcovrc
-    - lcov --list coverage/coverage.info
-    - python3 tools/lcov_cobertura.py coverage/coverage.info --output bin/cobertura-coverage.xml
-    - rm -f coverage/coverage_all.info coverage/coverage.info
-  coverage: '/Total:\| ?(\d+\.?\d+\%)/'
+    - mkdir -p build/coverage
+    - gcovr --config doc/coverage/gcovr.cfg
+  # coverage: '/Total:\| ?(\d+\.?\d+\%)/'
+  coverage: /^\s*lines:\s*\d+.\d+\%/
   artifacts:
     paths:
-      - coverage
-      - bin/cobertura-coverage.xml
+      - build/coverage
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: build/cobertura.xml
     expire_in: 2h
-  only:
-    - master
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                              Deploy                                              ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 pages:
-  # extends: .schedule
   stage: deploy
-  extends: .linux
   needs: ["doxygen", "coverage"]
+  extends: .linux
   script:
-    - mv bin/doc/html/ public/
-    - mv coverage/ public/coverage/
+    - mv build/doc/html/ public/
+    - mv build/coverage/ public/coverage/
   artifacts:
     name: "Documentation & Coverage Report"
     paths:
       - public
     expire_in: 2h
-    reports:
-      coverage_report:
-        coverage_format: cobertura
-        path: bin/cobertura-coverage.xml
   only:
     - master
   # except:
@@ -432,11 +519,17 @@ pages:
 
 .build:ubuntu:22.04:
   stage: build
+  needs: []
   extends:
+    - .build
+    - .build:main
+    - .build:tests
+    - .build:test-artifacts
     - .linux
     - .schedule
+    - .retry
+    - .log-trace
   image: ubuntu:22.04
-  needs: []
   variables:
     DEBIAN_FRONTEND: noninteractive
     TZ: Europe/Berlin
@@ -445,22 +538,14 @@ pages:
     - apt upgrade -y
     - apt install -y build-essential clang clang-tidy cmake python3-pip ccache cppcheck libglfw3-dev libglfw3
     - pip3 install conan
+    - conan profile detect --force
     - g++ --version
     - clang++ --version
     - clang-tidy --version
     - cmake --version
     - conan --version
+    - conan profile show
     - cppcheck --version
-  script:
-    - cmake -Bbuild/$BUILD_TYPE -S. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/$BUILD_TYPE -- -j2
-  artifacts:
-    paths:
-      - build/$BUILD_TYPE/CTestTestfile.cmake
-      - build/$BUILD_TYPE/test/CTestTestfile.cmake
-      - build/$BUILD_TYPE/test/tests_*.cmake
-      - bin/$BUILD_TYPE/tests
-    expire_in: 2h
 
 ubuntu:22.04:clang:release:
   extends:
@@ -489,6 +574,7 @@ ubuntu:22.04:gcc:debug:
 .run-tests:ubuntu:22.04:
   stage: test
   extends:
+    - .run-tests
     - .linux
     - .schedule
   image: ubuntu:22.04
@@ -499,9 +585,6 @@ ubuntu:22.04:gcc:debug:
     - apt update
     - apt install -y cmake libglfw3
     - cmake --version
-  script:
-    - cd build/$BUILD_TYPE/test
-    - ctest --output-on-failure # -j2
 
 run-tests:ubuntu:22.04:clang:release:
   needs: ["ubuntu:22.04:clang:release"]
@@ -531,38 +614,32 @@ run-tests:ubuntu:22.04:gcc:debug:
 # ║                                        Arch Linux Latest                                         ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-# GitLab CI Fix for:
-# error: failed to initialize alpm library
-# (could not find or read directory: /var/lib/pacman/)
-# https://www.reddit.com/r/archlinux/comments/lek2ba/arch_linux_on_docker_ci_could_not_find_or_read/
-
 .build:archlinux:latest:
   stage: build
+  needs: []
   extends:
+    - .build
+    - .build:main
+    - .build:tests
+    - .build:test-artifacts
     - .linux
     - .schedule
+    - .retry
+    - .log-trace
   image: archlinux:latest
-  needs: []
   before_script:
-    - pacman -Sy archlinux-keyring --noconfirm && pacman -Syyu --noconfirm --needed
+    - pacman -Sy archlinux-keyring --noconfirm
+    - pacman -Syyu --noconfirm --needed
     - pacman -S --noconfirm --needed base-devel cmake clang ccache cppcheck python-pip glfw-x11
     - pip install conan
+    - conan profile detect --force
     - g++ --version
     - clang++ --version
     - clang-tidy --version
     - cmake --version
     - conan --version
+    - conan profile show
     - cppcheck --version
-  script:
-    - cmake -Bbuild/$BUILD_TYPE -S. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/$BUILD_TYPE -- -j2
-  artifacts:
-    paths:
-      - build/$BUILD_TYPE/CTestTestfile.cmake
-      - build/$BUILD_TYPE/test/CTestTestfile.cmake
-      - build/$BUILD_TYPE/test/tests_*.cmake
-      - bin/$BUILD_TYPE/tests
-    expire_in: 2h
 
 archlinux:latest:clang:release:
   extends:
@@ -591,6 +668,7 @@ archlinux:latest:gcc:debug:
 .run-tests:archlinux:latest:
   stage: test
   extends:
+    - .run-tests
     - .linux
     - .schedule
   image: archlinux:latest
@@ -598,9 +676,6 @@ archlinux:latest:gcc:debug:
     - pacman -Sy archlinux-keyring --noconfirm && pacman -Syyu --noconfirm --needed
     - pacman -S --noconfirm --needed base-devel cmake glfw-x11
     - cmake --version
-  script:
-    - cd build/$BUILD_TYPE/test
-    - ctest --output-on-failure # -j2
 
 run-tests:archlinux:latest:clang:release:
   needs: ["archlinux:latest:clang:release"]

@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include <iostream>
 
 #include "internal/Version.hpp"
@@ -38,3 +46,21 @@ int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-array
         return EXIT_FAILURE;
     }
 }
+
+#if defined(_WIN32) && !defined(_CONSOLE)
+    #include <windows.h>
+    #include <stdlib.h> // __argc, argv
+
+int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
+{
+    return Main(__argc, const_cast<const char**>(__argv));
+}
+
+#else
+
+int main(int argc, const char* argv[])
+{
+    return Main(argc, argv);
+}
+
+#endif

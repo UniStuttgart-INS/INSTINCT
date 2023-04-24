@@ -1,3 +1,11 @@
+# This file is part of INSTINCT, the INS Toolkit for Integrated
+# Navigation Concepts and Training by the Institute of Navigation of
+# the University of Stuttgart, Germany.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 # Search all .cpp files
 file(GLOB_RECURSE SOURCE_FILES "*.cpp")
 
@@ -15,11 +23,11 @@ if(ENABLE_MAIN)
     PRIVATE project_options
             project_warnings
             instinct::rc
-            CONAN_PKG::fmt
-            CONAN_PKG::spdlog
-            CONAN_PKG::boost
-            CONAN_PKG::eigen
-            CONAN_PKG::nlohmann_json
+            fmt::fmt
+            spdlog::spdlog
+            Boost::program_options
+            Eigen3::Eigen
+            nlohmann_json::nlohmann_json
             Threads::Threads
             imgui
             imgui_node_editor

@@ -1,9 +1,17 @@
-#include <catch2/catch.hpp>
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+#include <catch2/catch_test_macros.hpp>
 
 #include "util/Vendor/Ublox/UbloxTypes.hpp"
 namespace ub = NAV::vendor::ublox;
 
-namespace NAV::TEST
+namespace NAV::TESTS
 {
 TEST_CASE("[UbloxTypes] getMsgClassFromString", "[UbloxTypes]")
 {
@@ -202,4 +210,4 @@ TEST_CASE("[UbloxTypes] getMsgIdFromString(std::string, std::string)", "[UbloxTy
     REQUIRE(ub::getMsgIdFromString("", "") == ub::getMsgIdFromString(ub::UbxClass::UBX_CLASS_NONE, ""));
 }
 
-} // namespace NAV::TEST
+} // namespace NAV::TESTS

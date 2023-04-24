@@ -1,334 +1,154 @@
 {
     "links": {
         "link-240": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 224,
             "id": 240,
             "startPinId": 228
         },
         "link-242": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 226,
             "id": 242,
             "startPinId": 166
         },
         "link-266": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 245,
             "id": 266,
             "startPinId": 228
         },
         "link-322": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 165,
             "id": 322,
             "startPinId": 20
         },
         "link-334": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 332,
             "id": 334,
             "startPinId": 323
         },
         "link-340": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 338,
             "id": 340,
             "startPinId": 325
         },
         "link-349": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 345,
             "id": 349,
             "startPinId": 331
         },
-        "link-374": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 18,
-            "id": 374,
-            "startPinId": 347
-        },
         "link-378": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 19,
             "id": 378,
             "startPinId": 329
         },
         "link-379": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 164,
             "id": 379,
             "startPinId": 347
         },
         "link-380": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 227,
             "id": 380,
             "startPinId": 329
         },
         "link-381": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 328,
             "id": 381,
             "startPinId": 339
         },
         "link-383": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 121,
             "id": 383,
             "startPinId": 166
         },
         "link-387": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 385,
             "id": 387,
             "startPinId": 1
         },
         "link-388": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 346,
             "id": 388,
             "startPinId": 384
         },
         "link-404": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 401,
             "id": 404,
             "startPinId": 2
         },
         "link-405": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 327,
             "id": 405,
             "startPinId": 402
         },
         "link-427": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 4,
             "id": 427,
             "startPinId": 347
         },
         "link-434": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 430,
             "id": 434,
             "startPinId": 2
         },
         "link-435": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 5,
             "id": 435,
             "startPinId": 432
         },
         "link-440": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 431,
             "id": 440,
             "startPinId": 339
         },
         "link-504": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 6,
             "id": 504,
             "startPinId": 441
         },
         "link-505": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
             "endPinId": 252,
             "id": 505,
             "startPinId": 496
         },
         "link-506": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
             "endPinId": 253,
             "id": 506,
             "startPinId": 497
         },
         "link-507": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
             "endPinId": 254,
             "id": 507,
             "startPinId": 498
         },
         "link-508": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
             "endPinId": 255,
             "id": 508,
             "startPinId": 499
         },
         "link-509": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
             "endPinId": 256,
             "id": 509,
             "startPinId": 500
         },
         "link-510": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
             "endPinId": 263,
             "id": 510,
             "startPinId": 501
         },
         "link-511": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
             "endPinId": 264,
             "id": 511,
             "startPinId": 502
         },
         "link-512": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
             "endPinId": 456,
             "id": 512,
             "startPinId": 503
+        },
+        "link-552": {
+            "endPinId": 18,
+            "id": 552,
+            "startPinId": 347
         }
     },
     "nodes": {
@@ -343,8 +163,7 @@
                 "integrationFrame": 1,
                 "prefereTimeSinceStartupOverInsTime": false,
                 "prefereUncompensatedData": true,
-                "showCorrectionsInputPin": true,
-                "velocityUpdateRotationCorrectionEnabled": false
+                "showCorrectionsInputPin": true
             },
             "enabled": true,
             "id": 163,
@@ -363,7 +182,7 @@
                 },
                 {
                     "id": 6,
-                    "name": "Predict"
+                    "name": "Sync"
                 }
             ],
             "kind": "Blueprint",
@@ -629,7 +448,7 @@
                 },
                 {
                     "id": 441,
-                    "name": "Predict"
+                    "name": "Sync"
                 },
                 {
                     "id": 496,
@@ -761,9 +580,6 @@
                             },
                             {
                                 "displayName": "Gyroscope bias b_Z accumulated [rad/s]"
-                            },
-                            {
-                                "displayName": "Altitude error [deg]"
                             }
                         ],
                         "size": 0,
@@ -5664,6 +5480,7 @@
                 },
                 "simulationDuration": 3000.0,
                 "simulationStopCondition": 1,
+                "splineSampleInterval": 0.1,
                 "startPosition_lla": {
                     "0": {
                         "0": 0.0

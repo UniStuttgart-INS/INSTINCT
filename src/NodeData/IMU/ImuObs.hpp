@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file ImuObs.hpp
 /// @brief Parent Class for all IMU Observations
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -5,7 +13,7 @@
 
 #pragma once
 
-#include "NodeData/InsObs.hpp"
+#include "NodeData/NodeData.hpp"
 
 #include "ImuPos.hpp"
 #include "util/Eigen.hpp"
@@ -13,7 +21,7 @@
 namespace NAV
 {
 /// IMU Observation storage class
-class ImuObs : public InsObs
+class ImuObs : public NodeData
 {
   public:
     /// @brief Constructor
@@ -32,7 +40,7 @@ class ImuObs : public InsObs
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
     {
-        return { InsObs::type() };
+        return { NodeData::type() };
     }
 
     /// Position and rotation information for conversion from platform to body frame

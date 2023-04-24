@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "ErrorModel.hpp"
 
 #include "internal/NodeManager.hpp"
@@ -104,7 +112,7 @@ void NAV::ErrorModel::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: _imuAccelerometerBias_p changed to {}", nameId(), _imuAccelerometerBias_p.transpose());
-            LOG_DEBUG("{}: _imuAccelerometerBiasUnit changed to {}", nameId(), _imuAccelerometerBiasUnit);
+            LOG_DEBUG("{}: _imuAccelerometerBiasUnit changed to {}", nameId(), fmt::underlying(_imuAccelerometerBiasUnit));
             flow::ApplyChanges();
         }
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Gyroscope Bias (platform)##{}", size_t(id)).c_str(), itemWidth, unitWidth,
@@ -112,7 +120,7 @@ void NAV::ErrorModel::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: _imuGyroscopeBias_p changed to {}", nameId(), _imuGyroscopeBias_p.transpose());
-            LOG_DEBUG("{}: _imuGyroscopeBiasUnit changed to {}", nameId(), _imuGyroscopeBiasUnit);
+            LOG_DEBUG("{}: _imuGyroscopeBiasUnit changed to {}", nameId(), fmt::underlying(_imuGyroscopeBiasUnit));
             flow::ApplyChanges();
         }
     }
@@ -127,7 +135,7 @@ void NAV::ErrorModel::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: _positionBias changed to {}", nameId(), _positionBias.transpose());
-            LOG_DEBUG("{}: _positionBiasUnit changed to {}", nameId(), _positionBiasUnit);
+            LOG_DEBUG("{}: _positionBiasUnit changed to {}", nameId(), fmt::underlying(_positionBiasUnit));
             flow::ApplyChanges();
         }
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Velocity Bias (NED)##{}", size_t(id)).c_str(), itemWidth, unitWidth,
@@ -135,7 +143,7 @@ void NAV::ErrorModel::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: _velocityBias changed to {}", nameId(), _velocityBias.transpose());
-            LOG_DEBUG("{}: _velocityBiasUnit changed to {}", nameId(), _velocityBiasUnit);
+            LOG_DEBUG("{}: _velocityBiasUnit changed to {}", nameId(), fmt::underlying(_velocityBiasUnit));
             flow::ApplyChanges();
         }
         if (gui::widgets::InputDouble3WithUnit(fmt::format("RollPitchYaw Bias##{}", size_t(id)).c_str(), itemWidth, unitWidth,
@@ -143,7 +151,7 @@ void NAV::ErrorModel::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: _attitudeBias changed to {}", nameId(), _attitudeBias.transpose());
-            LOG_DEBUG("{}: _attitudeBiasUnit changed to {}", nameId(), _attitudeBiasUnit);
+            LOG_DEBUG("{}: _attitudeBiasUnit changed to {}", nameId(), fmt::underlying(_attitudeBiasUnit));
             flow::ApplyChanges();
         }
     }
@@ -164,7 +172,7 @@ void NAV::ErrorModel::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: _imuAccelerometerNoise changed to {}", nameId(), _imuAccelerometerNoise.transpose());
-            LOG_DEBUG("{}: _imuAccelerometerNoiseUnit changed to {}", nameId(), _imuAccelerometerNoiseUnit);
+            LOG_DEBUG("{}: _imuAccelerometerNoiseUnit changed to {}", nameId(), fmt::underlying(_imuAccelerometerNoiseUnit));
             flow::ApplyChanges();
         }
         float currentCursorX = ImGui::GetCursorPosX();
@@ -176,17 +184,17 @@ void NAV::ErrorModel::guiConfig()
         ImGui::SameLine();
         if (!_imuAccelerometerRandomNumberGenerator.useSeedInsteadOfSystemTime)
         {
-            ImGui::PushDisabled();
+            ImGui::BeginDisabled();
         }
         ImGui::SetNextItemWidth(itemWidth - (ImGui::GetCursorPosX() - currentCursorX) + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::SliderULong(fmt::format("Accelerometer Noise Seed##{}", size_t(id)).c_str(), &_imuAccelerometerRandomNumberGenerator.seed, 0, std::numeric_limits<uint64_t>::max() / 2, "%lu", ImGuiSliderFlags_Logarithmic))
+        if (ImGui::SliderUInt(fmt::format("Accelerometer Noise Seed##{}", size_t(id)).c_str(), &_imuAccelerometerRandomNumberGenerator.seed, 0, std::numeric_limits<uint32_t>::max() / 2, "%lu", ImGuiSliderFlags_Logarithmic))
         {
             LOG_DEBUG("{}: _imuAccelerometerRandomNumberGenerator.seed changed to {}", nameId(), _imuAccelerometerRandomNumberGenerator.seed);
             flow::ApplyChanges();
         }
         if (!_imuAccelerometerRandomNumberGenerator.useSeedInsteadOfSystemTime)
         {
-            ImGui::PopDisabled();
+            ImGui::EndDisabled();
         }
 
         // #########################################################################################################################################
@@ -203,7 +211,7 @@ void NAV::ErrorModel::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: _imuGyroscopeNoise changed to {}", nameId(), _imuGyroscopeNoise.transpose());
-            LOG_DEBUG("{}: _imuGyroscopeNoiseUnit changed to {}", nameId(), _imuGyroscopeNoiseUnit);
+            LOG_DEBUG("{}: _imuGyroscopeNoiseUnit changed to {}", nameId(), fmt::underlying(_imuGyroscopeNoiseUnit));
             flow::ApplyChanges();
         }
         currentCursorX = ImGui::GetCursorPosX();
@@ -215,17 +223,17 @@ void NAV::ErrorModel::guiConfig()
         ImGui::SameLine();
         if (!_imuGyroscopeRandomNumberGenerator.useSeedInsteadOfSystemTime)
         {
-            ImGui::PushDisabled();
+            ImGui::BeginDisabled();
         }
         ImGui::SetNextItemWidth(itemWidth - (ImGui::GetCursorPosX() - currentCursorX) + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::SliderULong(fmt::format("Gyroscope Noise Seed##{}", size_t(id)).c_str(), &(_imuGyroscopeRandomNumberGenerator.seed), 0, std::numeric_limits<uint64_t>::max() / 2UL, "%lu", ImGuiSliderFlags_Logarithmic))
+        if (ImGui::SliderUInt(fmt::format("Gyroscope Noise Seed##{}", size_t(id)).c_str(), &(_imuGyroscopeRandomNumberGenerator.seed), 0, std::numeric_limits<uint32_t>::max() / 2UL, "%lu", ImGuiSliderFlags_Logarithmic))
         {
             LOG_DEBUG("{}: _imuGyroscopeRandomNumberGenerator.seed changed to {}", nameId(), _imuGyroscopeRandomNumberGenerator.seed);
             flow::ApplyChanges();
         }
         if (!_imuGyroscopeRandomNumberGenerator.useSeedInsteadOfSystemTime)
         {
-            ImGui::PopDisabled();
+            ImGui::EndDisabled();
         }
         // #########################################################################################################################################
     }
@@ -245,7 +253,7 @@ void NAV::ErrorModel::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: _positionNoise changed to {}", nameId(), _positionNoise.transpose());
-            LOG_DEBUG("{}: _positionNoiseUnit changed to {}", nameId(), _positionNoiseUnit);
+            LOG_DEBUG("{}: _positionNoiseUnit changed to {}", nameId(), fmt::underlying(_positionNoiseUnit));
             flow::ApplyChanges();
         }
         float currentCursorX = ImGui::GetCursorPosX();
@@ -257,17 +265,17 @@ void NAV::ErrorModel::guiConfig()
         ImGui::SameLine();
         if (!_positionRandomNumberGenerator.useSeedInsteadOfSystemTime)
         {
-            ImGui::PushDisabled();
+            ImGui::BeginDisabled();
         }
         ImGui::SetNextItemWidth(itemWidth - (ImGui::GetCursorPosX() - currentCursorX) + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::SliderULong(fmt::format("Position Noise Seed##{}", size_t(id)).c_str(), &_positionRandomNumberGenerator.seed, 0, std::numeric_limits<uint64_t>::max() / 2, "%lu", ImGuiSliderFlags_Logarithmic))
+        if (ImGui::SliderUInt(fmt::format("Position Noise Seed##{}", size_t(id)).c_str(), &_positionRandomNumberGenerator.seed, 0, std::numeric_limits<uint32_t>::max() / 2, "%lu", ImGuiSliderFlags_Logarithmic))
         {
             LOG_DEBUG("{}: _positionRandomNumberGenerator.seed changed to {}", nameId(), _positionRandomNumberGenerator.seed);
             flow::ApplyChanges();
         }
         if (!_positionRandomNumberGenerator.useSeedInsteadOfSystemTime)
         {
-            ImGui::PopDisabled();
+            ImGui::EndDisabled();
         }
 
         // #########################################################################################################################################
@@ -282,7 +290,7 @@ void NAV::ErrorModel::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: _velocityNoise changed to {}", nameId(), _velocityNoise.transpose());
-            LOG_DEBUG("{}: _velocityNoiseUnit changed to {}", nameId(), _velocityNoiseUnit);
+            LOG_DEBUG("{}: _velocityNoiseUnit changed to {}", nameId(), fmt::underlying(_velocityNoiseUnit));
             flow::ApplyChanges();
         }
         currentCursorX = ImGui::GetCursorPosX();
@@ -294,17 +302,17 @@ void NAV::ErrorModel::guiConfig()
         ImGui::SameLine();
         if (!_velocityRandomNumberGenerator.useSeedInsteadOfSystemTime)
         {
-            ImGui::PushDisabled();
+            ImGui::BeginDisabled();
         }
         ImGui::SetNextItemWidth(itemWidth - (ImGui::GetCursorPosX() - currentCursorX) + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::SliderULong(fmt::format("Velocity Noise Seed##{}", size_t(id)).c_str(), &_velocityRandomNumberGenerator.seed, 0, std::numeric_limits<uint64_t>::max() / 2, "%lu", ImGuiSliderFlags_Logarithmic))
+        if (ImGui::SliderUInt(fmt::format("Velocity Noise Seed##{}", size_t(id)).c_str(), &_velocityRandomNumberGenerator.seed, 0, std::numeric_limits<uint32_t>::max() / 2, "%lu", ImGuiSliderFlags_Logarithmic))
         {
             LOG_DEBUG("{}: _velocityRandomNumberGenerator.seed changed to {}", nameId(), _velocityRandomNumberGenerator.seed);
             flow::ApplyChanges();
         }
         if (!_velocityRandomNumberGenerator.useSeedInsteadOfSystemTime)
         {
-            ImGui::PopDisabled();
+            ImGui::EndDisabled();
         }
 
         // #########################################################################################################################################
@@ -321,7 +329,7 @@ void NAV::ErrorModel::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: _attitudeNoise changed to {}", nameId(), _attitudeNoise.transpose());
-            LOG_DEBUG("{}: _attitudeNoiseUnit changed to {}", nameId(), _attitudeNoiseUnit);
+            LOG_DEBUG("{}: _attitudeNoiseUnit changed to {}", nameId(), fmt::underlying(_attitudeNoiseUnit));
             flow::ApplyChanges();
         }
         currentCursorX = ImGui::GetCursorPosX();
@@ -333,17 +341,17 @@ void NAV::ErrorModel::guiConfig()
         ImGui::SameLine();
         if (!_attitudeRandomNumberGenerator.useSeedInsteadOfSystemTime)
         {
-            ImGui::PushDisabled();
+            ImGui::BeginDisabled();
         }
         ImGui::SetNextItemWidth(itemWidth - (ImGui::GetCursorPosX() - currentCursorX) + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::SliderULong(fmt::format("Attitude Noise Seed##{}", size_t(id)).c_str(), &_attitudeRandomNumberGenerator.seed, 0, std::numeric_limits<uint64_t>::max() / 2, "%lu", ImGuiSliderFlags_Logarithmic))
+        if (ImGui::SliderUInt(fmt::format("Attitude Noise Seed##{}", size_t(id)).c_str(), &_attitudeRandomNumberGenerator.seed, 0, std::numeric_limits<uint32_t>::max() / 2, "%lu", ImGuiSliderFlags_Logarithmic))
         {
             LOG_DEBUG("{}: _attitudeRandomNumberGenerator.seed changed to {}", nameId(), _attitudeRandomNumberGenerator.seed);
             flow::ApplyChanges();
         }
         if (!_attitudeRandomNumberGenerator.useSeedInsteadOfSystemTime)
         {
-            ImGui::PopDisabled();
+            ImGui::EndDisabled();
         }
         // #########################################################################################################################################
     }
@@ -505,99 +513,93 @@ bool NAV::ErrorModel::resetNode()
     {
         _imuAccelerometerRandomNumberGenerator.generator.seed(_imuAccelerometerRandomNumberGenerator.useSeedInsteadOfSystemTime
                                                                   ? _imuAccelerometerRandomNumberGenerator.seed
-                                                                  : static_cast<uint64_t>(std::chrono::system_clock::now().time_since_epoch().count()));
+                                                                  : static_cast<uint32_t>(std::chrono::system_clock::now().time_since_epoch().count()));
         _imuGyroscopeRandomNumberGenerator.generator.seed(_imuGyroscopeRandomNumberGenerator.useSeedInsteadOfSystemTime
                                                               ? _imuGyroscopeRandomNumberGenerator.seed
-                                                              : static_cast<uint64_t>(std::chrono::system_clock::now().time_since_epoch().count()));
+                                                              : static_cast<uint32_t>(std::chrono::system_clock::now().time_since_epoch().count()));
     }
     else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type())
     {
         _positionRandomNumberGenerator.generator.seed(_positionRandomNumberGenerator.useSeedInsteadOfSystemTime
                                                           ? _positionRandomNumberGenerator.seed
-                                                          : static_cast<uint64_t>(std::chrono::system_clock::now().time_since_epoch().count()));
+                                                          : static_cast<uint32_t>(std::chrono::system_clock::now().time_since_epoch().count()));
         _velocityRandomNumberGenerator.generator.seed(_velocityRandomNumberGenerator.useSeedInsteadOfSystemTime
                                                           ? _velocityRandomNumberGenerator.seed
-                                                          : static_cast<uint64_t>(std::chrono::system_clock::now().time_since_epoch().count()));
+                                                          : static_cast<uint32_t>(std::chrono::system_clock::now().time_since_epoch().count()));
         _attitudeRandomNumberGenerator.generator.seed(_attitudeRandomNumberGenerator.useSeedInsteadOfSystemTime
                                                           ? _attitudeRandomNumberGenerator.seed
-                                                          : static_cast<uint64_t>(std::chrono::system_clock::now().time_since_epoch().count()));
+                                                          : static_cast<uint32_t>(std::chrono::system_clock::now().time_since_epoch().count()));
     }
 
     return true;
 }
 
-void NAV::ErrorModel::afterCreateLink(Pin* startPin, Pin* endPin)
+void NAV::ErrorModel::afterCreateLink(OutputPin& startPin, InputPin& endPin)
 {
-    if (startPin && endPin)
-    {
-        LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
+    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
 
-        if (endPin->parentNode->id != id)
+    if (endPin.parentNode->id != id)
+    {
+        return; // Link on Output Port
+    }
+
+    // Store previous output pin identifier
+    auto previousOutputPinDataIdentifier = outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier;
+    // Overwrite output pin identifier with input pin identifier
+    outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = startPin.dataIdentifier;
+
+    if (previousOutputPinDataIdentifier != outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier) // If the identifier changed
+    {
+        // Check if connected links on output port are still valid
+        for (auto& link : outputPins.at(OUTPUT_PORT_INDEX_FLOW).links)
         {
-            return; // Link on Output Port
+            if (auto* endPin = link.getConnectedPin())
+            {
+                if (!outputPins.at(OUTPUT_PORT_INDEX_FLOW).canCreateLink(*endPin))
+                {
+                    // If the link is not valid anymore, delete it
+                    outputPins.at(OUTPUT_PORT_INDEX_FLOW).deleteLink(*endPin);
+                }
+            }
         }
 
-        // Store previous output pin identifier
-        auto previousOutputPinDataIdentifier = outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier;
-        // Overwrite output pin identifier with input pin identifier
-        outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = startPin->dataIdentifier;
-
-        if (previousOutputPinDataIdentifier != outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier) // If the identifier changed
+        // Refresh all links connected to the output pin if the type changed
+        if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier != previousOutputPinDataIdentifier)
         {
-            // Check if connected links on output port are still valid
-            for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))
+            for (auto& link : outputPins.at(OUTPUT_PORT_INDEX_FLOW).links)
             {
-                auto* startPin = nm::FindPin(link->startPinId);
-                auto* endPin = nm::FindPin(link->endPinId);
-                if (startPin && endPin)
+                if (auto* connectedPin = link.getConnectedPin())
                 {
-                    if (startPin->canCreateLink(*endPin))
-                    {
-                        continue;
-                    }
-                }
-                // If the link is not valid anymore, delete it
-                nm::DeleteLink(link->id);
-            }
-
-            // Refresh all links connected to the output pin if the type changed
-            if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier != previousOutputPinDataIdentifier)
-            {
-                for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))
-                {
-                    nm::RefreshLink(link->id);
+                    outputPins.at(OUTPUT_PORT_INDEX_FLOW).recreateLink(*connectedPin);
                 }
             }
         }
     }
 }
 
-void NAV::ErrorModel::afterDeleteLink(Pin* startPin, Pin* endPin)
+void NAV::ErrorModel::afterDeleteLink(OutputPin& startPin, InputPin& endPin)
 {
-    if (startPin && endPin)
-    {
-        LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
+    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
 
-        if ((endPin->parentNode->id != id                                       // Link on Output port is removed
-             && !nm::IsPinLinked(inputPins.at(INPUT_PORT_INDEX_FLOW).id))       //     and the Input port is not linked
-            || (startPin->parentNode->id != id                                  // Link on Input port is removed
-                && !nm::IsPinLinked(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))) //     and the Output port is not linked
-        {
-            outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = supportedDataIdentifier;
-        }
+    if ((endPin.parentNode->id != id                                  // Link on Output port is removed
+         && !inputPins.at(INPUT_PORT_INDEX_FLOW).isPinLinked())       //     and the Input port is not linked
+        || (startPin.parentNode->id != id                             // Link on Input port is removed
+            && !outputPins.at(OUTPUT_PORT_INDEX_FLOW).isPinLinked())) //     and the Output port is not linked
+    {
+        outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = supportedDataIdentifier;
     }
 }
 
-void NAV::ErrorModel::receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::ErrorModel::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     // Select the correct data type and make a copy of the node data to modify
     if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == ImuObs::type())
     {
-        receiveImuObs(std::make_shared<ImuObs>(*std::static_pointer_cast<const ImuObs>(nodeData)));
+        receiveImuObs(std::make_shared<ImuObs>(*std::static_pointer_cast<const ImuObs>(queue.extract_front())));
     }
     else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type())
     {
-        receivePosVelAtt(std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(nodeData)));
+        receivePosVelAtt(std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(queue.extract_front())));
     }
 }
 

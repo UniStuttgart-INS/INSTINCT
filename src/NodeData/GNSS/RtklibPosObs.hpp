@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file RtklibPosObs.hpp
 /// @brief RTKLIB Pos Observation Class
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -25,7 +33,7 @@ class RtklibPosObs : public PosVel
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
     {
-        return { InsObs::type() };
+        return { NodeData::type() };
     }
 
     /// 1:fix, 2:float, 3:sbas, 4:dgps, 5:single, 6:ppp

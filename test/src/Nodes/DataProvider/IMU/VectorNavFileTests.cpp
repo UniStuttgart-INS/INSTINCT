@@ -1,4 +1,19 @@
-#include <catch2/catch.hpp>
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+/// @file VectorNavFileTests.cpp
+/// @brief Tests for the VectorNavFile node
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
+/// @date 2022-03-21
+
+#include <catch2/catch_test_macros.hpp>
+#include "CatchMatchers.hpp"
+
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -11,11 +26,24 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
-#include "util/Logger.hpp"
+#include "Logger.hpp"
 
 #include "VectorNavFileTestsData.hpp"
 
-namespace NAV::TEST::VectorNavFileTests
+// This is a small hack, which lets us change private/protected parameters
+#pragma GCC diagnostic push
+#if defined(__clang__)
+    #pragma GCC diagnostic ignored "-Wkeyword-macro"
+    #pragma GCC diagnostic ignored "-Wmacro-redefined"
+#endif
+#define protected public
+#define private public
+#include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
+#undef protected
+#undef private
+#pragma GCC diagnostic pop
+
+namespace NAV::TESTS::VectorNavFileTests
 {
 auto extractBit(auto& group, auto value)
 {
@@ -24,20 +52,18 @@ auto extractBit(auto& group, auto value)
     return ret;
 }
 
-constexpr double EPSILON = 10.0 * std::numeric_limits<double>::epsilon();
-constexpr double EPSILON_FLOAT = 10.0 * std::numeric_limits<float>::epsilon();
-
-namespace StaticData
+namespace FixedSize
 {
 
 void compareImuObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutput>& obs, size_t messageCounterImuData)
 {
     // ------------------------------------------------ InsTime --------------------------------------------------
-    REQUIRE(obs->insTime.has_value());
+    REQUIRE(!obs->insTime.empty());
 
-    REQUIRE(obs->insTime->toGPSweekTow().gpsCycle == static_cast<int32_t>(IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsCycle)));
-    REQUIRE(obs->insTime->toGPSweekTow().gpsWeek == static_cast<int32_t>(IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsWeek)));
-    REQUIRE(obs->insTime->toGPSweekTow().tow == Approx(IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsTow)).margin(EPSILON));
+    REQUIRE(obs->insTime.toGPSweekTow().gpsCycle == static_cast<int32_t>(IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsCycle)));
+    REQUIRE(obs->insTime.toGPSweekTow().gpsWeek == static_cast<int32_t>(IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsWeek)));
+    LOG_DATA("{}", obs->insTime.toGPSweekTow().tow - IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsTow));
+    REQUIRE_THAT(obs->insTime.toGPSweekTow().tow - IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsTow), Catch::Matchers::WithinAbs(0.0L, 5e-7L));
 
     // ----------------------------------------------- TimeGroup -------------------------------------------------
     REQUIRE(obs->timeOutputs != nullptr);
@@ -155,71 +181,72 @@ void compareImuObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutpu
     REQUIRE(obs->gnss2Outputs == nullptr);
 }
 
-size_t messageCounterImuDataCsv = 0; ///< Message Counter for the Imu data csv file
-size_t messageCounterImuDataVnb = 0; ///< Message Counter for the Imu data vnb file
-
-TEST_CASE("[VectorNavFile] Read 'data/VectorNav/StaticSize/vn310-imu.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
+TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-imu.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
-    messageCounterImuDataCsv = 0;
+    auto logger = initializeTestLogger();
 
-    Logger logger;
-
-    // ###########################################################################################################
-    //                                     VectorNavFile-vn310-imu-csv.flow
-    // ###########################################################################################################
+    // ##########################################################################################################
+    //                                            VectorNavFile.flow
+    // ##########################################################################################################
     //
-    // VectorNavFile("data/VectorNav/StaticSize/vn310-imu.csv")
+    //   VectorNavFile (2)                 Plot (8)
+    //      (1) Binary Output |>  --(9)->  |> Pin 1 (3)
     //
-    // ###########################################################################################################
+    // ##########################################################################################################
 
-    nm::RegisterWatcherCallbackToOutputPin(1, [](const std::shared_ptr<const NAV::NodeData>& data) {
-        LOG_TRACE("messageCounterImuDataCsv = {}", messageCounterImuDataCsv);
+    nm::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(nm::FindNode(2))->_path = "VectorNav/FixedSize/vn310-imu.csv"; });
 
-        compareImuObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data), messageCounterImuDataCsv);
+    size_t messageCounter = 0;
+    nm::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+        LOG_TRACE("messageCounter = {}", messageCounter);
 
-        messageCounterImuDataCsv++;
+        compareImuObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounter);
+
+        messageCounter++;
     });
 
-    testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile-vn310-imu-csv.flow");
+    REQUIRE(testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile.flow"));
 
-    REQUIRE(messageCounterImuDataCsv == IMU_REFERENCE_DATA.size());
+    REQUIRE(messageCounter == IMU_REFERENCE_DATA.size());
 }
 
-TEST_CASE("[VectorNavFile] Read 'data/VectorNav/StaticSize/vn310-imu.vnb' and compare content with hardcoded values", "[VectorNavFile][flow]")
+TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-imu.vnb' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
-    messageCounterImuDataVnb = 0;
+    auto logger = initializeTestLogger();
 
-    Logger logger;
-
-    // ###########################################################################################################
-    //                                     VectorNavFile-vn310-imu-vnb.flow
-    // ###########################################################################################################
+    // ##########################################################################################################
+    //                                            VectorNavFile.flow
+    // ##########################################################################################################
     //
-    // VectorNavFile("data/VectorNav/StaticSize/vn310-imu.vnb")
+    //   VectorNavFile (2)                 Plot (8)
+    //      (1) Binary Output |>  --(9)->  |> Pin 1 (3)
     //
-    // ###########################################################################################################
+    // ##########################################################################################################
 
-    nm::RegisterWatcherCallbackToOutputPin(1, [](const std::shared_ptr<const NAV::NodeData>& data) {
-        LOG_TRACE("messageCounterImuDataVnb = {}", messageCounterImuDataVnb);
+    nm::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(nm::FindNode(2))->_path = "VectorNav/FixedSize/vn310-imu.vnb"; });
 
-        compareImuObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data), messageCounterImuDataVnb);
+    size_t messageCounter = 0;
+    nm::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+        LOG_TRACE("messageCounter = {}", messageCounter);
 
-        messageCounterImuDataVnb++;
+        compareImuObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounter);
+
+        messageCounter++;
     });
 
-    testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile-vn310-imu-vnb.flow");
+    REQUIRE(testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile.flow"));
 
-    REQUIRE(messageCounterImuDataVnb == IMU_REFERENCE_DATA.size());
+    REQUIRE(messageCounter == IMU_REFERENCE_DATA.size());
 }
 
 void compareGnssObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutput>& obs, size_t messageCounterGnssData)
 {
     // ------------------------------------------------ InsTime --------------------------------------------------
-    REQUIRE(obs->insTime.has_value());
+    REQUIRE(!obs->insTime.empty());
 
-    REQUIRE(obs->insTime->toGPSweekTow().gpsCycle == static_cast<int32_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssData).at(GnssRef_GpsCycle)));
-    REQUIRE(obs->insTime->toGPSweekTow().gpsWeek == static_cast<int32_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssData).at(GnssRef_GpsWeek)));
-    REQUIRE(obs->insTime->toGPSweekTow().tow == Approx(GNSS_REFERENCE_DATA.at(messageCounterGnssData).at(GnssRef_GpsTow)).margin(EPSILON));
+    REQUIRE(obs->insTime.toGPSweekTow().gpsCycle == static_cast<int32_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssData).at(GnssRef_GpsCycle)));
+    REQUIRE(obs->insTime.toGPSweekTow().gpsWeek == static_cast<int32_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssData).at(GnssRef_GpsWeek)));
+    REQUIRE_THAT(obs->insTime.toGPSweekTow().tow - GNSS_REFERENCE_DATA.at(messageCounterGnssData).at(GnssRef_GpsTow), Catch::Matchers::WithinAbs(0.0L, 5e-7L));
 
     // ----------------------------------------------- TimeGroup -------------------------------------------------
     REQUIRE(obs->timeOutputs != nullptr);
@@ -349,7 +376,7 @@ void compareGnssObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutp
     REQUIRE(obs->insOutputs != nullptr);
 
     REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS));
-    REQUIRE(obs->insOutputs->insStatus.mode() == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssData).at(GnssRef_INS_InsStatus_Mode)));
+    REQUIRE(obs->insOutputs->insStatus.mode() == static_cast<NAV::vendor::vectornav::InsStatus::Mode>(GNSS_REFERENCE_DATA.at(messageCounterGnssData).at(GnssRef_INS_InsStatus_Mode)));
     REQUIRE(obs->insOutputs->insStatus.gpsFix() == static_cast<bool>(GNSS_REFERENCE_DATA.at(messageCounterGnssData).at(GnssRef_INS_InsStatus_GpsFix)));
     REQUIRE(obs->insOutputs->insStatus.errorIMU() == static_cast<bool>(GNSS_REFERENCE_DATA.at(messageCounterGnssData).at(GnssRef_INS_InsStatus_Error_IMU)));
     REQUIRE(obs->insOutputs->insStatus.errorMagPres() == static_cast<bool>(GNSS_REFERENCE_DATA.at(messageCounterGnssData).at(GnssRef_INS_InsStatus_Error_MagPres)));
@@ -478,76 +505,79 @@ void compareGnssObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutp
     REQUIRE(obs->gnss2Outputs->gnssField == vn::protocol::uart::GpsGroup::GPSGROUP_NONE);
 }
 
-size_t messageCounterGnssDataCsv = 0; ///< Message Counter for the Gnss data csv file
-size_t messageCounterGnssDataVnb = 0; ///< Message Counter for the Gnss data vnb file
-
-TEST_CASE("[VectorNavFile] Read 'data/VectorNav/StaticSize/vn310-gnss.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
+TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-gnss.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
-    messageCounterGnssDataCsv = 0;
+    auto logger = initializeTestLogger();
 
-    Logger logger;
-
-    // ###########################################################################################################
-    //                                     VectorNavFile-vn310-gnss-csv.flow
-    // ###########################################################################################################
+    // ##########################################################################################################
+    //                                            VectorNavFile.flow
+    // ##########################################################################################################
     //
-    // VectorNavFile("data/VectorNav/StaticSize/vn310-gnss.csv")
+    //   VectorNavFile (2)                 Plot (8)
+    //      (1) Binary Output |>  --(9)->  |> Pin 1 (3)
     //
-    // ###########################################################################################################
+    // ##########################################################################################################
 
-    nm::RegisterWatcherCallbackToOutputPin(7, [](const std::shared_ptr<const NAV::NodeData>& data) {
-        LOG_TRACE("messageCounterGnssDataCsv = {}", messageCounterGnssDataCsv);
+    nm::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(nm::FindNode(2))->_path = "VectorNav/FixedSize/vn310-gnss.csv"; });
 
-        compareGnssObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data), messageCounterGnssDataCsv);
+    size_t messageCounter = 0;
+    nm::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+        LOG_TRACE("messageCounter = {}", messageCounter);
 
-        messageCounterGnssDataCsv++;
+        compareGnssObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounter);
+
+        messageCounter++;
     });
 
-    testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile-vn310-gnss-csv.flow");
+    REQUIRE(testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile.flow"));
 
-    REQUIRE(messageCounterGnssDataCsv == GNSS_REFERENCE_DATA.size());
+    REQUIRE(messageCounter == GNSS_REFERENCE_DATA.size());
 }
 
-TEST_CASE("[VectorNavFile] Read 'data/VectorNav/StaticSize/vn310-gnss.vnb' and compare content with hardcoded values", "[VectorNavFile][flow]")
+TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-gnss.vnb' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
-    messageCounterGnssDataVnb = 0;
+    auto logger = initializeTestLogger();
 
-    Logger logger;
-
-    // ###########################################################################################################
-    //                                     VectorNavFile-vn310-gnss-vnb.flow
-    // ###########################################################################################################
+    // ##########################################################################################################
+    //                                            VectorNavFile.flow
+    // ##########################################################################################################
     //
-    // VectorNavFile("data/VectorNav/StaticSize/vn310-gnss.vnb")
+    //   VectorNavFile (2)                 Plot (8)
+    //      (1) Binary Output |>  --(9)->  |> Pin 1 (3)
     //
-    // ###########################################################################################################
+    // ##########################################################################################################
 
-    nm::RegisterWatcherCallbackToOutputPin(7, [](const std::shared_ptr<const NAV::NodeData>& data) {
-        LOG_TRACE("messageCounterGnssDataVnb = {}", messageCounterGnssDataVnb);
+    nm::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(nm::FindNode(2))->_path = "VectorNav/FixedSize/vn310-gnss.vnb"; });
 
-        compareGnssObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data), messageCounterGnssDataVnb);
+    size_t messageCounter = 0;
+    nm::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+        LOG_TRACE("messageCounter = {}", messageCounter);
 
-        messageCounterGnssDataVnb++;
+        compareGnssObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounter);
+
+        messageCounter++;
     });
 
-    testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile-vn310-gnss-vnb.flow");
+    REQUIRE(testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile.flow"));
 
-    REQUIRE(messageCounterGnssDataVnb == GNSS_REFERENCE_DATA.size());
+    REQUIRE(messageCounter == GNSS_REFERENCE_DATA.size());
 }
 
-} // namespace StaticData
+} // namespace FixedSize
 
-namespace DynamicData
+namespace DynamicSize
 {
 
 void compareDynamicSizeObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutput>& obs, size_t messageCounterData)
 {
     // ------------------------------------------------ InsTime --------------------------------------------------
-    REQUIRE(obs->insTime.has_value());
+    REQUIRE(!obs->insTime.empty());
 
-    REQUIRE(obs->insTime->toGPSweekTow().gpsCycle == static_cast<int32_t>(REFERENCE_DATA.at(messageCounterData).at(Ref_GpsCycle)));
-    REQUIRE(obs->insTime->toGPSweekTow().gpsWeek == static_cast<int32_t>(REFERENCE_DATA.at(messageCounterData).at(Ref_GpsWeek)));
-    REQUIRE(obs->insTime->toGPSweekTow().tow == Approx(REFERENCE_DATA.at(messageCounterData).at(Ref_GpsTow)).margin(EPSILON));
+    REQUIRE(obs->insTime.toGPSweekTow().gpsCycle == static_cast<int32_t>(REFERENCE_DATA.at(messageCounterData).at(Ref_GpsCycle)));
+    REQUIRE(obs->insTime.toGPSweekTow().gpsWeek == static_cast<int32_t>(REFERENCE_DATA.at(messageCounterData).at(Ref_GpsWeek)));
+
+    LOG_DATA("{}", obs->insTime.toGPSweekTow().tow - REFERENCE_DATA.at(messageCounterData).at(Ref_GpsTow));
+    REQUIRE_THAT(obs->insTime.toGPSweekTow().tow - REFERENCE_DATA.at(messageCounterData).at(Ref_GpsTow), Catch::Matchers::WithinAbs(0.0L, 9e-7L));
 
     // ----------------------------------------------- TimeGroup -------------------------------------------------
     REQUIRE(obs->timeOutputs != nullptr);
@@ -640,9 +670,9 @@ void compareDynamicSizeObservation(const std::shared_ptr<const NAV::VectorNavBin
         REQUIRE(obs->gnss1Outputs->raw.satellites.at(i).slot == REFERENCE_DATA_RAW_MEAS_1.at(messageCounterData).at(i).slot);
         REQUIRE(obs->gnss1Outputs->raw.satellites.at(i).cno == REFERENCE_DATA_RAW_MEAS_1.at(messageCounterData).at(i).cno);
         REQUIRE(obs->gnss1Outputs->raw.satellites.at(i).flags == REFERENCE_DATA_RAW_MEAS_1.at(messageCounterData).at(i).flags);
-        REQUIRE(obs->gnss1Outputs->raw.satellites.at(i).pr == Approx(REFERENCE_DATA_RAW_MEAS_1.at(messageCounterData).at(i).pr).margin(EPSILON));
-        REQUIRE(obs->gnss1Outputs->raw.satellites.at(i).cp == Approx(REFERENCE_DATA_RAW_MEAS_1.at(messageCounterData).at(i).cp).margin(EPSILON));
-        REQUIRE(obs->gnss1Outputs->raw.satellites.at(i).dp == Approx(REFERENCE_DATA_RAW_MEAS_1.at(messageCounterData).at(i).dp).margin(EPSILON_FLOAT));
+        REQUIRE_THAT(obs->gnss1Outputs->raw.satellites.at(i).pr - REFERENCE_DATA_RAW_MEAS_1.at(messageCounterData).at(i).pr, Catch::Matchers::WithinAbs(0, EPSILON));
+        REQUIRE_THAT(obs->gnss1Outputs->raw.satellites.at(i).cp - REFERENCE_DATA_RAW_MEAS_1.at(messageCounterData).at(i).cp, Catch::Matchers::WithinAbs(0, EPSILON));
+        REQUIRE_THAT(obs->gnss1Outputs->raw.satellites.at(i).dp - REFERENCE_DATA_RAW_MEAS_1.at(messageCounterData).at(i).dp, Catch::Matchers::WithinAbs(0, 2e-5));
     }
 
     REQUIRE(obs->gnss1Outputs->gnssField == vn::protocol::uart::GpsGroup::GPSGROUP_NONE);
@@ -651,51 +681,51 @@ void compareDynamicSizeObservation(const std::shared_ptr<const NAV::VectorNavBin
     REQUIRE(obs->attitudeOutputs != nullptr);
 
     REQUIRE(extractBit(obs->attitudeOutputs->attitudeField, vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL));
-    REQUIRE(obs->attitudeOutputs->ypr(0) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_YawPitchRoll_Y))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->ypr(1) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_YawPitchRoll_P))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->ypr(2) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_YawPitchRoll_R))).margin(EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->ypr(0), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_YawPitchRoll_Y)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->ypr(1), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_YawPitchRoll_P)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->ypr(2), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_YawPitchRoll_R)), EPSILON_FLOAT));
 
     REQUIRE(extractBit(obs->attitudeOutputs->attitudeField, vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION));
-    REQUIRE(obs->attitudeOutputs->qtn.w() == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Quaternion_w))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->qtn.x() == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Quaternion_x))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->qtn.y() == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Quaternion_y))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->qtn.z() == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Quaternion_z))).margin(EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->qtn.w(), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Quaternion_w)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->qtn.x(), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Quaternion_x)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->qtn.y(), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Quaternion_y)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->qtn.z(), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Quaternion_z)), EPSILON_FLOAT));
 
     REQUIRE(extractBit(obs->attitudeOutputs->attitudeField, vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM));
-    REQUIRE(obs->attitudeOutputs->dcm(0, 0) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Dcm_00))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->dcm(0, 1) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Dcm_01))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->dcm(0, 2) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Dcm_02))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->dcm(1, 0) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Dcm_10))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->dcm(1, 1) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Dcm_11))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->dcm(1, 2) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Dcm_12))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->dcm(2, 0) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Dcm_20))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->dcm(2, 1) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Dcm_21))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->dcm(2, 2) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Dcm_22))).margin(EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->dcm(0, 0), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Dcm_00)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->dcm(0, 1), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Dcm_01)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->dcm(0, 2), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Dcm_02)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->dcm(1, 0), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Dcm_10)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->dcm(1, 1), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Dcm_11)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->dcm(1, 2), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Dcm_12)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->dcm(2, 0), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Dcm_20)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->dcm(2, 1), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Dcm_21)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->dcm(2, 2), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Dcm_22)), EPSILON_FLOAT));
 
     REQUIRE(extractBit(obs->attitudeOutputs->attitudeField, vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED));
-    REQUIRE(obs->attitudeOutputs->magNed(0) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Mag_N))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->magNed(1) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Mag_E))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->magNed(2) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Mag_D))).margin(EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->magNed(0), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Mag_N)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->magNed(1), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Mag_E)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->magNed(2), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Mag_D)), EPSILON_FLOAT));
 
     REQUIRE(extractBit(obs->attitudeOutputs->attitudeField, vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_ACCELNED));
-    REQUIRE(obs->attitudeOutputs->accelNed(0) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Accel_N))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->accelNed(1) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Accel_E))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->accelNed(2) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Accel_D))).margin(EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->accelNed(0), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Accel_N)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->accelNed(1), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Accel_E)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->accelNed(2), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_Accel_D)), EPSILON_FLOAT));
 
     REQUIRE(extractBit(obs->attitudeOutputs->attitudeField, vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELBODY));
-    REQUIRE(obs->attitudeOutputs->linearAccelBody(0) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_LinearAccelBody_X))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->linearAccelBody(1) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_LinearAccelBody_Y))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->linearAccelBody(2) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_LinearAccelBody_Z))).margin(EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->linearAccelBody(0), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_LinearAccelBody_X)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->linearAccelBody(1), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_LinearAccelBody_Y)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->linearAccelBody(2), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_LinearAccelBody_Z)), EPSILON_FLOAT));
 
     REQUIRE(extractBit(obs->attitudeOutputs->attitudeField, vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELNED));
-    REQUIRE(obs->attitudeOutputs->linearAccelNed(0) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_LinearAccel_N))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->linearAccelNed(1) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_LinearAccel_E))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->linearAccelNed(2) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_LinearAccel_D))).margin(EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->linearAccelNed(0), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_LinearAccel_N)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->linearAccelNed(1), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_LinearAccel_E)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->linearAccelNed(2), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_LinearAccel_D)), EPSILON_FLOAT));
 
     REQUIRE(extractBit(obs->attitudeOutputs->attitudeField, vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU));
-    REQUIRE(obs->attitudeOutputs->yprU(0) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_YprU_Y))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->yprU(1) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_YprU_P))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->attitudeOutputs->yprU(2) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_YprU_R))).margin(EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->yprU(0), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_YprU_Y)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->yprU(1), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_YprU_P)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->attitudeOutputs->yprU(2), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_Att_YprU_R)), EPSILON_FLOAT));
 
     REQUIRE(obs->attitudeOutputs->attitudeField == vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_NONE);
 
@@ -703,7 +733,7 @@ void compareDynamicSizeObservation(const std::shared_ptr<const NAV::VectorNavBin
     REQUIRE(obs->insOutputs != nullptr);
 
     REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS));
-    REQUIRE(obs->insOutputs->insStatus.mode() == static_cast<uint8_t>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_InsStatus_Mode)));
+    REQUIRE(obs->insOutputs->insStatus.mode() == static_cast<NAV::vendor::vectornav::InsStatus::Mode>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_InsStatus_Mode)));
     REQUIRE(obs->insOutputs->insStatus.gpsFix() == static_cast<bool>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_InsStatus_GpsFix)));
     REQUIRE(obs->insOutputs->insStatus.errorIMU() == static_cast<bool>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_InsStatus_Error_IMU)));
     REQUIRE(obs->insOutputs->insStatus.errorMagPres() == static_cast<bool>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_InsStatus_Error_MagPres)));
@@ -712,50 +742,50 @@ void compareDynamicSizeObservation(const std::shared_ptr<const NAV::VectorNavBin
     REQUIRE(obs->insOutputs->insStatus.gpsCompass() == static_cast<bool>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_InsStatus_GpsCompass)));
 
     REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_POSLLA));
-    REQUIRE(obs->insOutputs->posLla(0) == Approx(static_cast<double>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_PosLla_latitude))).margin(EPSILON));
-    REQUIRE(obs->insOutputs->posLla(1) == Approx(static_cast<double>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_PosLla_longitude))).margin(EPSILON));
-    REQUIRE(obs->insOutputs->posLla(2) == Approx(static_cast<double>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_PosLla_altitude))).margin(EPSILON));
+    REQUIRE_THAT(obs->insOutputs->posLla(0), Catch::Matchers::WithinAbs(static_cast<double>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_PosLla_latitude)), EPSILON));
+    REQUIRE_THAT(obs->insOutputs->posLla(1), Catch::Matchers::WithinAbs(static_cast<double>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_PosLla_longitude)), EPSILON));
+    REQUIRE_THAT(obs->insOutputs->posLla(2), Catch::Matchers::WithinAbs(static_cast<double>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_PosLla_altitude)), EPSILON));
 
     REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_POSECEF));
-    REQUIRE(obs->insOutputs->posEcef(0) == Approx(static_cast<double>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_PosEcef_X))).margin(EPSILON));
-    REQUIRE(obs->insOutputs->posEcef(1) == Approx(static_cast<double>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_PosEcef_Y))).margin(EPSILON));
-    REQUIRE(obs->insOutputs->posEcef(2) == Approx(static_cast<double>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_PosEcef_Z))).margin(EPSILON));
+    REQUIRE_THAT(obs->insOutputs->posEcef(0), Catch::Matchers::WithinAbs(static_cast<double>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_PosEcef_X)), EPSILON));
+    REQUIRE_THAT(obs->insOutputs->posEcef(1), Catch::Matchers::WithinAbs(static_cast<double>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_PosEcef_Y)), EPSILON));
+    REQUIRE_THAT(obs->insOutputs->posEcef(2), Catch::Matchers::WithinAbs(static_cast<double>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_PosEcef_Z)), EPSILON));
 
     REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_VELBODY));
-    REQUIRE(obs->insOutputs->velBody(0) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_VelBody_X))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->insOutputs->velBody(1) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_VelBody_Y))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->insOutputs->velBody(2) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_VelBody_Z))).margin(EPSILON_FLOAT));
+    REQUIRE_THAT(obs->insOutputs->velBody(0), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_VelBody_X)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->insOutputs->velBody(1), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_VelBody_Y)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->insOutputs->velBody(2), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_VelBody_Z)), EPSILON_FLOAT));
 
     REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_VELNED));
-    REQUIRE(obs->insOutputs->velNed(0) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_VelNed_N))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->insOutputs->velNed(1) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_VelNed_E))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->insOutputs->velNed(2) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_VelNed_D))).margin(EPSILON_FLOAT));
+    REQUIRE_THAT(obs->insOutputs->velNed(0), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_VelNed_N)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->insOutputs->velNed(1), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_VelNed_E)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->insOutputs->velNed(2), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_VelNed_D)), EPSILON_FLOAT));
 
     REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_VELECEF));
-    REQUIRE(obs->insOutputs->velEcef(0) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_VelEcef_X))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->insOutputs->velEcef(1) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_VelEcef_Y))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->insOutputs->velEcef(2) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_VelEcef_Z))).margin(EPSILON_FLOAT));
+    REQUIRE_THAT(obs->insOutputs->velEcef(0), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_VelEcef_X)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->insOutputs->velEcef(1), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_VelEcef_Y)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->insOutputs->velEcef(2), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_VelEcef_Z)), EPSILON_FLOAT));
 
     REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_MAGECEF));
-    REQUIRE(obs->insOutputs->magEcef(0) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_MagEcef_X))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->insOutputs->magEcef(1) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_MagEcef_Y))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->insOutputs->magEcef(2) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_MagEcef_Z))).margin(EPSILON_FLOAT));
+    REQUIRE_THAT(obs->insOutputs->magEcef(0), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_MagEcef_X)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->insOutputs->magEcef(1), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_MagEcef_Y)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->insOutputs->magEcef(2), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_MagEcef_Z)), EPSILON_FLOAT));
 
     REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_ACCELECEF));
-    REQUIRE(obs->insOutputs->accelEcef(0) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_AccelEcef_X))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->insOutputs->accelEcef(1) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_AccelEcef_Y))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->insOutputs->accelEcef(2) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_AccelEcef_Z))).margin(EPSILON_FLOAT));
+    REQUIRE_THAT(obs->insOutputs->accelEcef(0), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_AccelEcef_X)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->insOutputs->accelEcef(1), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_AccelEcef_Y)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->insOutputs->accelEcef(2), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_AccelEcef_Z)), EPSILON_FLOAT));
 
     REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_LINEARACCELECEF));
-    REQUIRE(obs->insOutputs->linearAccelEcef(0) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_LinearAccelEcef_X))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->insOutputs->linearAccelEcef(1) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_LinearAccelEcef_Y))).margin(EPSILON_FLOAT));
-    REQUIRE(obs->insOutputs->linearAccelEcef(2) == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_LinearAccelEcef_Z))).margin(EPSILON_FLOAT));
+    REQUIRE_THAT(obs->insOutputs->linearAccelEcef(0), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_LinearAccelEcef_X)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->insOutputs->linearAccelEcef(1), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_LinearAccelEcef_Y)), EPSILON_FLOAT));
+    REQUIRE_THAT(obs->insOutputs->linearAccelEcef(2), Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_LinearAccelEcef_Z)), EPSILON_FLOAT));
 
     REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_POSU));
-    REQUIRE(obs->insOutputs->posU == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_PosU))).margin(EPSILON_FLOAT));
+    REQUIRE_THAT(obs->insOutputs->posU, Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_PosU)), EPSILON_FLOAT));
 
     REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_VELU));
-    REQUIRE(obs->insOutputs->velU == Approx(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_VelU))).margin(EPSILON_FLOAT));
+    REQUIRE_THAT(obs->insOutputs->velU, Catch::Matchers::WithinAbs(static_cast<float>(REFERENCE_DATA.at(messageCounterData).at(Ref_INS_VelU)), EPSILON_FLOAT));
 
     REQUIRE(obs->insOutputs->insField == vn::protocol::uart::InsGroup::INSGROUP_NONE);
 
@@ -804,71 +834,72 @@ void compareDynamicSizeObservation(const std::shared_ptr<const NAV::VectorNavBin
         REQUIRE(obs->gnss2Outputs->raw.satellites.at(i).slot == REFERENCE_DATA_RAW_MEAS_2.at(messageCounterData).at(i).slot);
         REQUIRE(obs->gnss2Outputs->raw.satellites.at(i).cno == REFERENCE_DATA_RAW_MEAS_2.at(messageCounterData).at(i).cno);
         REQUIRE(obs->gnss2Outputs->raw.satellites.at(i).flags == REFERENCE_DATA_RAW_MEAS_2.at(messageCounterData).at(i).flags);
-        REQUIRE(obs->gnss2Outputs->raw.satellites.at(i).pr == Approx(REFERENCE_DATA_RAW_MEAS_2.at(messageCounterData).at(i).pr).margin(EPSILON));
-        REQUIRE(obs->gnss2Outputs->raw.satellites.at(i).cp == Approx(REFERENCE_DATA_RAW_MEAS_2.at(messageCounterData).at(i).cp).margin(EPSILON));
-        REQUIRE(obs->gnss2Outputs->raw.satellites.at(i).dp == Approx(REFERENCE_DATA_RAW_MEAS_2.at(messageCounterData).at(i).dp).margin(EPSILON_FLOAT));
+        REQUIRE_THAT(obs->gnss2Outputs->raw.satellites.at(i).pr, Catch::Matchers::WithinAbs(REFERENCE_DATA_RAW_MEAS_2.at(messageCounterData).at(i).pr, EPSILON));
+        REQUIRE_THAT(obs->gnss2Outputs->raw.satellites.at(i).cp, Catch::Matchers::WithinAbs(REFERENCE_DATA_RAW_MEAS_2.at(messageCounterData).at(i).cp, EPSILON));
+        REQUIRE_THAT(obs->gnss2Outputs->raw.satellites.at(i).dp, Catch::Matchers::WithinAbs(REFERENCE_DATA_RAW_MEAS_2.at(messageCounterData).at(i).dp, EPSILON_FLOAT));
     }
 
     REQUIRE(obs->gnss2Outputs->gnssField == vn::protocol::uart::GpsGroup::GPSGROUP_NONE);
 }
 
-size_t messageCounterDataCsv = 0; ///< Message Counter for the Gnss data csv file
-size_t messageCounterDataVnb = 0; ///< Message Counter for the Gnss data vnb file
-
-TEST_CASE("[VectorNavFile] Read 'data/VectorNav/DynamicSize/vn310-gnss.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
+TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/DynamicSize/vn310-gnss.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
-    messageCounterDataCsv = 0;
+    auto logger = initializeTestLogger();
 
-    Logger logger;
-
-    // ###########################################################################################################
-    //                                     VectorNavFile-vn310-gnss-csv.flow
-    // ###########################################################################################################
+    // ##########################################################################################################
+    //                                            VectorNavFile.flow
+    // ##########################################################################################################
     //
-    // VectorNavFile("data/VectorNav/DynamicSize/vn310-gnss.csv")
+    //   VectorNavFile (2)                 Plot (8)
+    //      (1) Binary Output |>  --(9)->  |> Pin 1 (3)
     //
-    // ###########################################################################################################
+    // ##########################################################################################################
 
-    nm::RegisterWatcherCallbackToOutputPin(7, [](const std::shared_ptr<const NAV::NodeData>& data) {
-        LOG_TRACE("messageCounterDataCsv = {}", messageCounterDataCsv);
+    nm::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(nm::FindNode(2))->_path = "VectorNav/DynamicSize/vn310-gnss.csv"; });
 
-        compareDynamicSizeObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data), messageCounterDataCsv);
+    size_t messageCounter = 0;
+    nm::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+        LOG_TRACE("messageCounter = {}", messageCounter);
 
-        messageCounterDataCsv++;
+        compareDynamicSizeObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounter);
+
+        messageCounter++;
     });
 
-    testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile-vn310-gnss-dynamic-csv.flow");
+    REQUIRE(testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile.flow"));
 
-    REQUIRE(messageCounterDataCsv == REFERENCE_DATA.size());
+    REQUIRE(messageCounter == REFERENCE_DATA.size());
 }
 
-TEST_CASE("[VectorNavFile] Read 'data/VectorNav/DynamicSize/vn310-gnss.vnb' and compare content with hardcoded values", "[VectorNavFile][flow]")
+TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/DynamicSize/vn310-gnss.vnb' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
-    messageCounterDataVnb = 0;
+    auto logger = initializeTestLogger();
 
-    Logger logger;
-
-    // ###########################################################################################################
-    //                                     VectorNavFile-vn310-gnss-vnb.flow
-    // ###########################################################################################################
+    // ##########################################################################################################
+    //                                            VectorNavFile.flow
+    // ##########################################################################################################
     //
-    // VectorNavFile("data/VectorNav/DynamicSize/vn310-gnss.vnb")
+    //   VectorNavFile (2)                 Plot (8)
+    //      (1) Binary Output |>  --(9)->  |> Pin 1 (3)
     //
-    // ###########################################################################################################
+    // ##########################################################################################################
 
-    nm::RegisterWatcherCallbackToOutputPin(7, [](const std::shared_ptr<const NAV::NodeData>& data) {
-        LOG_TRACE("messageCounterDataVnb = {}", messageCounterDataVnb);
+    nm::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(nm::FindNode(2))->_path = "VectorNav/DynamicSize/vn310-gnss.vnb"; });
 
-        compareDynamicSizeObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data), messageCounterDataVnb);
+    size_t messageCounter = 0;
+    nm::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+        LOG_TRACE("messageCounter = {}", messageCounter);
 
-        messageCounterDataVnb++;
+        compareDynamicSizeObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounter);
+
+        messageCounter++;
     });
 
-    testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile-vn310-gnss-dynamic-vnb.flow");
+    REQUIRE(testFlow("test/flow/Nodes/DataProvider/IMU/VectorNavFile.flow"));
 
-    REQUIRE(messageCounterDataVnb == REFERENCE_DATA.size());
+    REQUIRE(messageCounter == REFERENCE_DATA.size());
 }
 
-} // namespace DynamicData
+} // namespace DynamicSize
 
-} // namespace NAV::TEST::VectorNavFileTests
+} // namespace NAV::TESTS::VectorNavFileTests

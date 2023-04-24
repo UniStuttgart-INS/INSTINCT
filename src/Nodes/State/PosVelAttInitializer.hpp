@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file PosVelAttInitializer.hpp
 /// @brief Position, Velocity, Attitude Initializer from GPS and IMU data
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -69,21 +77,21 @@ class PosVelAttInitializer : public Node
     /// @brief Deinitialize the node
     void deinitialize() override;
 
-    /// Add or removes input pins depending on the settings
-    void updateInputPins();
+    /// Add or removes input pins depending on the settings and modifies the output pin
+    void updatePins();
 
     /// Checks whether all Flags are set and writes logs messages
     void finalizeInit();
 
     /// @brief Receive Imu Observations
-    /// @param[in] nodeData Imu Data
-    /// @param[in] linkId Id of the link over which the data is received
-    void receiveImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void receiveImuObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief Receive Gnss Observations
-    /// @param[in] nodeData Gnss Data
-    /// @param[in] linkId Id of the link over which the data is received
-    void receiveGnssObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void receiveGnssObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief Receive Ublox Observations
     /// @param[in] obs Ublox Data
@@ -106,9 +114,8 @@ class PosVelAttInitializer : public Node
     void receivePosVelAttObs(const std::shared_ptr<const PosVelAtt>& obs);
 
     /// @brief Polls the PVA solution if all is set in the GUI
-    /// @param[in] peek Specifies if the data should be peeked
     /// @return The PVA solution
-    [[nodiscard]] std::shared_ptr<const NodeData> pollPVASolution(bool peek = false);
+    [[nodiscard]] std::shared_ptr<const NodeData> pollPVASolution();
 
     /// Time in [s] to initialize the state
     double _initDuration = 5.0;
@@ -167,6 +174,8 @@ class PosVelAttInitializer : public Node
     /// Whether the states are initialized (pos, vel, att, messages send)
     std::array<bool, 4> _posVelAttInitialized = { false, false, false, false };
 
+    /// Initialization time
+    InsTime _initTime;
     /// Initialized Quaternion body to navigation frame (roll, pitch, yaw)
     Eigen::Quaterniond _n_Quat_b_init;
     /// Position in ECEF coordinates

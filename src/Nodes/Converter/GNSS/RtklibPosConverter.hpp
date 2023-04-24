@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file RtklibPosConverter.hpp
 /// @brief Convert RTKLib pos files into PosVel
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -43,9 +51,9 @@ class RtklibPosConverter : public Node
     bool initialize() override;
 
     /// @brief Converts the RtklibPosObs into PosVel
-    /// @param[in] nodeData RtklibPosObs to process
-    /// @param[in] linkId Id of the link over which the data is received
-    void receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void receiveObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
 };
 
 } // namespace NAV

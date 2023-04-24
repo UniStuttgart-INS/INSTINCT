@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file VectorNavSensor.hpp
 /// @brief Vector Nav Sensors
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -117,6 +125,13 @@ class VectorNavSensor : public Imu, public UartSensor
     /// @brief Stores the time of the last received message
     std::array<InsTime, 3> _lastMessageTime{};
 
+    /// @brief Last received GNSS time
+    struct
+    {
+        InsTime lastGnssTime{};      ///< Last GNSS time received
+        uint64_t timeSinceStartup{}; ///< Time since startup when the GNSS time was received
+    } _gnssTimeCounter;
+
     // ###########################################################################################################
     //                                               SYSTEM MODULE
     // ###########################################################################################################
@@ -160,6 +175,15 @@ class VectorNavSensor : public Imu, public UartSensor
 
     /// Show the SyncIn Pin
     bool _syncInPin = false;
+
+    /// Couple the ImuFilter's rate (window size of moving-average filter) to the output rate (rateDivisor)
+    bool _coupleImuRateOutput = true;
+
+    /// @brief Updates the ImuFilter's rate when pressing the checkbox button
+    /// @param sensor VectorNav sensor (VN100, VN310E, etc.)
+    /// @param bor Binary Output Register
+    /// @param binaryField Binary Field
+    static void coupleImuFilterRates(NAV::VectorNavSensor* sensor, vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField);
 
     /// @brief Communication Protocol Control.
     ///
@@ -250,11 +274,11 @@ class VectorNavSensor : public Imu, public UartSensor
     /// Controls the level of filtering performed on the raw IMU measurements.
     /// @note See User manual VN-310 - 9.2.5 (p 115) / VN-100 - 6.2.5 (p 86)
     vn::sensors::ImuFilteringConfigurationRegister _imuFilteringConfigurationRegister{
-        0,                                                      // MagWindowSize
+        4,                                                      // MagWindowSize
         4,                                                      // AccelWindowSize
         4,                                                      // GyroWindowSize
         4,                                                      // TempWindowSize
-        0,                                                      // PresWindowSize
+        4,                                                      // PresWindowSize
         vn::protocol::uart::FilterMode::FILTERMODE_NOFILTERING, // MagFilterMode
         vn::protocol::uart::FilterMode::FILTERMODE_BOTH,        // AccelFilterMode
         vn::protocol::uart::FilterMode::FILTERMODE_BOTH,        // GyroFilterMode
@@ -449,7 +473,7 @@ class VectorNavSensor : public Imu, public UartSensor
         bool (*isEnabled)(VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& bor, uint32_t binaryField) =
             [](VectorNavModel /* sensorModel */, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return true; };
         /// Function to toggle other bits depending on the status
-        void (*toggleFields)(vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) = nullptr;
+        void (*toggleFields)(VectorNavSensor* sensor, vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) = nullptr;
     };
 
     /// @brief Binary group 1 contains a wide assortment of commonly used data required for most applications.
@@ -460,7 +484,7 @@ class VectorNavSensor : public Imu, public UartSensor
     /// you can hard code the group field to 1, and not worry about implemented support for the other binary groups.
     /// Using group 1 for commonly used outputs also has the advantage of reducing the overall packet size, since
     /// the packet length is dependent upon the number of binary groups active.
-    static const std::array<BinaryGroupData, 15> _binaryGroupCommon;
+    // static const std::array<BinaryGroupData, 15> _binaryGroupCommon;
 
     /// @brief Binary group 2 provides all timing and event counter related outputs.
     ///

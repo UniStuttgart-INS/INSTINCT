@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "Code.hpp"
 
 #include <array>
@@ -45,9 +53,11 @@ Code::operator std::string() const
     if (*this & E5I) { str += (!str.empty() ? filler : "") + "E5I"; }
     if (*this & E5Q) { str += (!str.empty() ? filler : "") + "E5Q"; }
     if (*this & E5X) { str += (!str.empty() ? filler : "") + "E5X"; }
+    if (*this & E6A) { str += (!str.empty() ? filler : "") + "E6A"; }
     if (*this & E6B) { str += (!str.empty() ? filler : "") + "E6B"; }
     if (*this & E6C) { str += (!str.empty() ? filler : "") + "E6C"; }
     if (*this & E6X) { str += (!str.empty() ? filler : "") + "E6X"; }
+    if (*this & E6Z) { str += (!str.empty() ? filler : "") + "E6Z"; }
     if (*this & E7I) { str += (!str.empty() ? filler : "") + "E7I"; }
     if (*this & E7Q) { str += (!str.empty() ? filler : "") + "E7Q"; }
     if (*this & E7X) { str += (!str.empty() ? filler : "") + "E7X"; }
@@ -178,9 +188,11 @@ Code Code::fromFreqAttr(Frequency freq, char attribute)
         if (attribute == 'X') { return E5X; }
         break;
     case E06: // Galileo E6 (1278.75 MHz).
+        if (attribute == 'A') { return E6A; }
         if (attribute == 'B') { return E6B; }
         if (attribute == 'C') { return E6C; }
         if (attribute == 'X') { return E6X; }
+        if (attribute == 'Z') { return E6Z; }
         break;
     case E07: // Galileo E5b (1207.14 MHz).
         if (attribute == 'I') { return E7I; }
@@ -198,8 +210,8 @@ Code Code::fromFreqAttr(Frequency freq, char attribute)
         if (attribute == 'P') { return R1P; }
         break;
     case R02: // GLONASS, "G2" (1246 MHz).
-        if (attribute == 'C') { return R1C; }
-        if (attribute == 'P') { return R1P; }
+        if (attribute == 'C') { return R2C; }
+        if (attribute == 'P') { return R2P; }
         break;
     case R03: // GLONASS, "G3" (1202.025 MHz).
         if (attribute == 'I') { return R3I; }
@@ -344,9 +356,11 @@ const char* Code::GetCodeDescription(Code code)
     if (code == E5I) { return "GAL E5a - Data"; }
     if (code == E5Q) { return "GAL E5a - Pilot"; }
     if (code == E5X) { return "GAL E5a - Combined"; }
+    if (code == E6A) { return "GAL E6 - PRS signal"; }
     if (code == E6B) { return "GAL E6 - Data"; }
     if (code == E6C) { return "GAL E6 - Pilot"; }
-    if (code == E6X) { return "GAL E6 - Combined"; }
+    if (code == E6X) { return "GAL E6 - Combined (B+C)"; }
+    if (code == E6Z) { return "GAL E6 - PRS + OS (A+B+C)"; }
     if (code == E7I) { return "GAL E5b - Data"; }
     if (code == E7Q) { return "GAL E5b - Pilot"; }
     if (code == E7X) { return "GAL E5b - Combined"; }
@@ -466,9 +480,11 @@ Frequency Code::GetCodeFequency(Code code)
     if (code == E5I) { return E05; } // GAL E5a - Data
     if (code == E5Q) { return E05; } // GAL E5a - Pilot
     if (code == E5X) { return E05; } // GAL E5a - Combined
+    if (code == E6A) { return E06; } // GAL E6 - PRS signal
     if (code == E6B) { return E06; } // GAL E6 - Data
     if (code == E6C) { return E06; } // GAL E6 - Pilot
-    if (code == E6X) { return E06; } // GAL E6 - Combined
+    if (code == E6X) { return E06; } // GAL E6 - Combined (B+C)
+    if (code == E6Z) { return E06; } // GAL E6 - PRS + OS (A+B+C)
     if (code == E7I) { return E07; } // GAL E5b - Data
     if (code == E7Q) { return E07; } // GAL E5b - Pilot
     if (code == E7X) { return E07; } // GAL E5b - Combined

@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 namespace Instinct {
 
 /** \defgroup LooselyCoupledKF_n INS/GNSS Loosely-coupled Kalman Filter (local-navigation frame)
@@ -77,7 +85,7 @@ namespace Instinct {
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
-\subsection LooselyCoupledKF_n-ErrorStateEquations-LocalLevelFrame-DetailledForm Detailled form
+\subsection LooselyCoupledKF_n-ErrorStateEquations-LocalLevelFrame-DetailedForm Detailed form
 
 \fl{equation,eq-LCKF_n-stateMatrix}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
@@ -227,8 +235,8 @@ Process noise is introduced into the \f$ \mathbf{F} \f$ and \f$ \mathbf{G} \f$ m
       \mathbf{F}_{\delta \dotup{\psi},\delta \psi}^n & \mathbf{F}_{\delta \dotup{\psi},\delta v}^n & \mathbf{F}_{\delta \dotup{\psi},\delta r}^n &    \mathbf{0}_3      &       \mathbf{C}_b^n      \\
       \mathbf{F}_{\delta \dotup{v},\delta \psi}^n    & \mathbf{F}_{\delta \dotup{v},\delta v}^n    & \mathbf{F}_{\delta \dotup{v},\delta r}^n    &    \mathbf{C}_b^n    &       \mathbf{0}_3        \\
       \mathbf{0}_3                                   & \mathbf{F}_{\delta \dotup{r},\delta v}^n    & \mathbf{F}_{\delta \dotup{r},\delta r}^n    &    \mathbf{0}_3      &       \mathbf{0}_3        \\
-      \mathbf{0}_3                                   & \mathbf{0}_3                                & \mathbf{0}_3                                & \boldsymbol{\beta}_f &       \mathbf{0}_3        \\
-      \mathbf{0}_3                                   & \mathbf{0}_3                                & \mathbf{0}_3                                &    \mathbf{0}_3      & \boldsymbol{\beta}_\omega \\
+      \mathbf{0}_3                                   & \mathbf{0}_3                                & \mathbf{0}_3                                & -\boldsymbol{\beta}_f &       \mathbf{0}_3        \\
+      \mathbf{0}_3                                   & \mathbf{0}_3                                & \mathbf{0}_3                                &    \mathbf{0}_3      & -\boldsymbol{\beta}_\omega \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{F}$} (m-1-5.north east);
 
@@ -301,55 +309,51 @@ The random noise on the accelerometer and gyro measurements can be estimated as 
   \dotup{x} = 0 + W(t)
 \f}
 
-The terms in the noise input matrix \f$ \mathbf{G} \f$ are not scaled and therefore need to be compensated with a noise scale matrix \f$ \mathbf{W} \f$ depending on the amplitude of the power spectral density (PSD) of the noise process.
-
-White noise has a PSD of \f$ \sigma^2 \f$ and therefore the <b>PSDs of the accelerometer and gyro noise</b> are
+In general, the noise can have an arbitrary characteristic. In a Kalman filter, however, it must be normally distributed and is therefore limited to a Wiener Process.
+The terms in the noise input matrix \f$ \mathbf{G} \f$ are not scaled and therefore need to be compensated with a noise scale matrix \f$ \mathbf{W} \f$ depending on the amplitude of the noise process.
+The amplitude is defined by the standard deviation \f$\sigma\f$. This parameter can be chosen by the user for the accel and gyro measurements:
 
 \fl{equation,eq-LCKF_n-random-walk-S-noise}
-  \highlight[darkgray!20]{S_{ra,j}} = \sigma_{ra,j}^2 \tau_i, \qquad
-  \highlight[brown!20]{S_{rg,j}} = \sigma_{rg,j}^2 \tau_i, \qquad\qquad j \in x,y,z
+  \highlight[darkgray!20]{S_{ra,j}} = \sigma_{ra,j}, \qquad
+  \highlight[brown!20]{S_{rg,j}} = \sigma_{rg,j}, \qquad\qquad j \in x,y,z
 \f}
 where
 - \f$ \sigma_{ra} \f$ is the standard deviation of the noise on the accelerometer specific-force measurements
 - \f$ \sigma_{rg} \f$ is the standard deviation of the noise on the gyro angular-rate measurements
-- \f$ \tau_i \f$ is the interval between the input of successive accelerometer and gyro outputs to the inertial navigation equations
 
-see \cite Groves2013 Groves, ch. 14.2.6, eq. 14.83, p. 592
+The bias states are also modeled as a random process. In case of random walk, their amplitudes are defined analogously to the above and \f$\beta = 0\f$.
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
 \subsection LooselyCoupledKF_n-Noise-GM1 Gauss-Markov 1. Order
 
-On the other hand, the dynamic bias of the accelerometer and gyro can be estimated with a Gauss-Markov 1. Order.
+Another option to model the bias states is given by the Gauss-Markov 1. Order process:
 
 \fl{equation,eq-LCKF_n-gauss-markov-1}
   \dotup{x} = -\beta x + W(t)
 \f}
 
-The terms in the  \f$ \mathbf{F} \f$ matrix are
+This introduces a deterministic part into the equation, namely the correlation coefficient \f$\beta\f$. This parameter defines, how much a current state is correlated with past states.
+The elements of the  \f$ \mathbf{F} \f$ matrix are then
 \fl{equation,eq-LCKF_n-random-walk-beta}
-  \highlight[magenta!20]{\boldsymbol{\beta}_f} = \begin{pmatrix} -\beta_{f} &      0     &      0     \\
-                                                                    0       & -\beta_{f} &      0     \\
-                                                                    0       &      0     & -\beta_{f} \end{pmatrix}, \qquad
-  \highlight[olive!20]{\boldsymbol{\beta}_\omega} = \begin{pmatrix} -\beta_{\omega} &        0        &        0        \\
-                                                                           0        & -\beta_{\omega} &        0        \\
-                                                                           0        &        0        & -\beta_{\omega} \end{pmatrix}
+  \highlight[magenta!20]{\boldsymbol{\beta}_f} = \begin{pmatrix} \beta_{f} &      0     &      0     \\
+                                                                    0       & \beta_{f} &      0     \\
+                                                                    0       &      0     & \beta_{f} \end{pmatrix}, \qquad
+  \highlight[olive!20]{\boldsymbol{\beta}_\omega} = \begin{pmatrix} \beta_{\omega} &        0        &        0        \\
+                                                                           0        & \beta_{\omega} &        0        \\
+                                                                           0        &        0        & \beta_{\omega} \end{pmatrix}
 \f}
 where
 - \f$ \beta_{f} \f$ is the Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
 - \f$ \beta_{\omega} \f$ is the Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
 
-Like before, the scaling is done inside the noise scale matrix and the <b>Bias variation PSDs</b> are
-
-\fl{equation,eq-LCKF_n-random-walk-S-bias}
-  \highlight[pink!20]{S_{bad,j}} = \frac{\sigma_{bad,j}^2}{\tau_{bad}} , \qquad
-  \highlight[lightgray!20]{S_{bgd,j}} = \frac{\sigma_{bgd,j}^2}{\tau_{bgd}}, \qquad\qquad j \in x,y,z
+Like before, the scaling is done inside the noise scale matrix. Now, the bias noise's amplitude is given by
+\fl{equation,eq-LCKF_n-random-walk-S-bias_Brown}
+  \highlight[pink!20]{S_{bad,j}} = \sqrt{\frac{2\sigma_{bad,j}^2}{\tau_{bad}}} , \qquad
+  \highlight[lightgray!20]{S_{bgd,j}} = \sqrt{\frac{2\sigma_{bgd,j}^2}{\tau_{bgd}}}, \qquad\qquad j \in x,y,z
 \f}
-where
-- \f$ \sigma_{bad} \f$ and \f$ \sigma_{bgd} \f$ are the standard deviations of the accelerometer and gyro dynamic biases
-- \f$ \tau_{bad} \f$ and \f$ \tau_{bgd} \f$ are the correlation times of the dynamic accelerometer and gyro biases
-
-see \cite Groves2013 Groves, ch. 14.2.6, eq. 14.84, p. 592
+with a given standard deviation of \f$\sigma_{bad}\f$ for the accelerometer's bias noise and \f$\sigma_{bgd}\f$ for the gyro's bias noise. The correlation lengths \f$ \tau_{bad} \f$ and \f$ \tau_{bgd} \f$ define how much
+a current state is correlated to values in the past. This process is generally limited to normal distributions. A detailed example of this type of system can be found in Brown \& Hwang \cite Brown2011 (example 9.6).
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
@@ -376,8 +380,37 @@ see \cite Groves2013 Groves, ch. 14.2.6, eq. 14.84, p. 592
   \end{tikzpicture}
 \f}
 
-\f$ \mathbf{S}_{rg}, \mathbf{S}_{ra}, \mathbf{S}_{bad}, \mathbf{S}_{bgd} \f$ are diagonal matrices which entries are filled with the PSDs from \eqref{eq-LCKF_n-random-walk-S-noise} and \eqref{eq-LCKF_n-random-walk-S-bias}.
+\f$ \mathbf{S}_{rg}, \mathbf{S}_{ra}, \mathbf{S}_{bad}, \mathbf{S}_{bgd} \f$ are diagonal matrices where entries are filled with the PSDs from \eqref{eq-LCKF_n-random-walk-S-noise} and \eqref{eq-LCKF_n-random-walk-S-bias} or \eqref{eq-LCKF_n-random-walk-S-bias_Brown}.
 
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_n-Groves-process-noise-definition Groves' process noise definition
+
+In Groves \cite Groves2013, process noise is defined without the need of integration. Instead, noise amplitudes are given directly integrated over one time step \f$\tau_i\f$.
+Therefore, the <b>PSDs of the accelerometer and gyro noise</b> are:
+\fl{equation,eq-LCKF_n-random-walk-S-noise-Groves}
+  \highlight[darkgray!20]{S_{ra,j}} = \sigma_{ra,j}^2 \tau_i, \qquad
+  \highlight[brown!20]{S_{rg,j}} = \sigma_{rg,j}^2 \tau_i, \qquad\qquad j \in x,y,z
+\f}
+where
+- \f$ \sigma_{ra} \f$ is the standard deviation of the noise on the accelerometer specific-force measurements
+- \f$ \sigma_{rg} \f$ is the standard deviation of the noise on the gyro angular-rate measurements
+- \f$ \tau_i \f$ is the interval between the input of successive accelerometer and gyro outputs to the inertial navigation equations
+
+The bias states are modeled by Groves with the noise PSD's:
+\fl{equation,eq-LCKF_n-random-walk-S-bias}
+  \highlight[pink!20]{S_{bad,j}} = \frac{\sigma_{bad,j}^2}{\tau_{bad}} , \qquad
+  \highlight[lightgray!20]{S_{bgd,j}} = \frac{\sigma_{bgd,j}^2}{\tau_{bgd}}, \qquad\qquad j \in x,y,z
+\f}
+where
+- \f$ \sigma_{bad} \f$ and \f$ \sigma_{bgd} \f$ are the standard deviations of the accelerometer and gyro dynamic biases
+- \f$ \tau_{bad} \f$ and \f$ \tau_{bgd} \f$ are the correlation times of the dynamic accelerometer and gyro biases
+
+see \cite Groves2013 Groves, ch. 14.2.6, eq. 14.84, p. 592
+
+Although correlation lengths \f$\tau_{bad} \f$ and \f$ \tau_{bgd} \f$ are considered, this process is rather a random walk than a Gauss-Markov 1. order process, because of the missing deterministic part in \f$\mathbf{F}\f$.
+
+In INSTINCT, Groves' method \eqref{eq-LCKF_n-random-walk-S-bias} is not altered from its reference \cite Groves2013 to avoid confusion.
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
@@ -417,13 +450,11 @@ The process noise covariance matrix is defined as
   \mathbf{Q}_{k-1} = \int_{t_k - \tau_s}^{t_k} \exp{(\mathbf{F}_{k-1} (t_k-t'))} \mathbf{G}_{k-1} \mathbf{W}_{k-1} \mathbf{G}_{k-1}^T \exp{(\mathbf{F}_{k-1}^T (t_k-t'))} dt'
 \f}
 
-This matrix can be approximated and should be validated against the the exact version prior to use.
+In Groves \cite Groves2013, this matrix is approximated as (see ch. 3.2.3, eq. 3.43/3.45, p. 99):
 
 \fl{equation,eq-LCKF_n-Q-approx}
   \mathbf{Q}_{k-1} \approx \mathbf{G}_{k-1} \mathbf{W}_{k-1} \mathbf{G}_{k-1}^T \tau_s
 \f}
-
-see \cite Groves2013 Groves, ch. 3.2.3, eq. 3.43/3.45, p. 99
 
 Taking the noise input and scale matrices from \eqref{eq-LCKF_n-dynamicModel-short} and \eqref{eq-LCKF_n-random-walk-noise-scale-matrix-W} and putting it into the exact form \eqref{eq-LCKF_n-Q-exact}, it becomes
 
@@ -568,8 +599,6 @@ The exponential \f$ \mathbf{F} \f$ matrix shall be approximated by first order. 
 \end{aligned}
 \f}
 
-//TODO: \f$ \textcolor{red}{\text{Documentation here}} \f$
-
 The final equation is
 
 \fl{equation,eq-LCKF_n-Q-final}
@@ -582,12 +611,14 @@ The final equation is
     };
   \end{tikzpicture}
 \f}
-//TODO: \f$ \textcolor{red}{\text{Finish formula}} \f$
 
 where
 - \f$ \tau_s \f$ is the propagation interval (as we trigger the prediction every time we get IMU measurements this corresponds to \f$ \tau_i \f$, the time between measurements)
 
 see \cite Groves2013 Groves, ch. 14.2.6, eq. 14.80/14.81, p. 591
+
+This method resembles a Taylor expansion up to 1. order. Since Groves \cite Groves2013 models the IMU measurements and their biases as random walk processes (see section \ref LooselyCoupledKF_n-Groves-process-noise-definition), only the van-Loan-method can be configured
+to model biases as Gauss-Markov 1. order processes.
 
 \subsubsection LooselyCoupledKF_n-KF-Phi-Q-Van-Loan Van Loan method
 
@@ -1058,6 +1089,7 @@ The unit \f$ m' \f$ is [pseudometre] and is latitude or longitude converted from
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
 \subsection LooselyCoupledKF_n-Units-beta-G Gauss-Markov constant 𝛽 & Noise scale matrix G
+If a bias state is modeled by a Gauss-Markov first order process instead of random walk, the deterministic part of the equation is extended.
 
 \fl{equation,eq-LCKF_n-Units-noise}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
@@ -1082,13 +1114,13 @@ The unit \f$ m' \f$ is [pseudometre] and is latitude or longitude converted from
   =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
-                nodes={rectangle,text width=3em,align=center},row sep=0.3em, column sep=0.4em]
+                nodes={rectangle,text width=3.3em,align=center},row sep=0.3em, column sep=0.4em]
     {
           \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
           \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
           \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
-      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \boldsymbol{\beta}_f \left[ \frac{1}{\text{s}} \right] &        \mathbf{0}_3                                          \\
-      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 &    \mathbf{0}_3                                        &  \boldsymbol{\beta}_\omega \left[ \frac{1}{\text{s}} \right] \\
+      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & -\boldsymbol{\beta}_f \left[ \frac{1}{\text{s}} \right] &        \mathbf{0}_3                                          \\
+      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 &    \mathbf{0}_3                                        &  -\boldsymbol{\beta}_\omega \left[ \frac{1}{\text{s}} \right] \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{F}$} (m-1-5.north east);
 
@@ -1167,13 +1199,13 @@ However the \f$ \mathbf{G} \f$ matrix has to be adapted.
   =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
-                nodes={rectangle,text width=3em,align=center},row sep=0.3em, column sep=0.4em]
+                nodes={rectangle,text width=3.3em,align=center},row sep=0.3em, column sep=0.4em]
     {
           \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
           \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
           \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
-      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \boldsymbol{\beta}_f \left[ \frac{1}{\text{s}} \right] &        \mathbf{0}_3                                          \\
-      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 &    \mathbf{0}_3                                        &  \boldsymbol{\beta}_\omega \left[ \frac{1}{\text{s}} \right] \\
+      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & -\boldsymbol{\beta}_f \left[ \frac{1}{\text{s}} \right] &        \mathbf{0}_3                                          \\
+      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 &    \mathbf{0}_3                                        &  -\boldsymbol{\beta}_\omega \left[ \frac{1}{\text{s}} \right] \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{F}$} (m-1-5.north east);
 

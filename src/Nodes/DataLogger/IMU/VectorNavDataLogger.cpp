@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "VectorNavDataLogger.hpp"
 
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
@@ -49,14 +57,14 @@ std::string NAV::VectorNavDataLogger::category()
 
 void NAV::VectorNavDataLogger::guiConfig()
 {
-    if (FileWriter::guiConfig(_fileType == FileType::CSV ? ".csv" : ".vnb", { _fileType == FileType::CSV ? ".csv" : ".vnb" }, size_t(id), nameId()))
+    if (FileWriter::guiConfig(_fileType == FileType::ASCII ? ".csv" : ".vnb", { _fileType == FileType::ASCII ? ".csv" : ".vnb" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
         doDeinitialize();
     }
 
     static constexpr std::array<FileType, 2> fileTypes = {
-        { FileType::CSV,
+        { FileType::ASCII,
           FileType::BINARY }
     };
     if (ImGui::BeginCombo(fmt::format("Mode##{}", size_t(id)).c_str(), FileWriter::to_string(_fileType)))
@@ -68,7 +76,7 @@ void NAV::VectorNavDataLogger::guiConfig()
             {
                 _fileType = type;
                 LOG_DEBUG("{}: _fileType changed to {}", nameId(), FileWriter::to_string(_fileType));
-                str::replace(_path, _fileType == FileType::CSV ? ".vnb" : ".csv", _fileType == FileType::CSV ? ".csv" : ".vnb");
+                str::replace(_path, _fileType == FileType::ASCII ? ".vnb" : ".csv", _fileType == FileType::ASCII ? ".csv" : ".vnb");
                 flow::ApplyChanges();
                 if (isInitialized())
                 {
@@ -107,9 +115,9 @@ void NAV::VectorNavDataLogger::restore(json const& j)
     }
 }
 
-bool NAV::VectorNavDataLogger::onCreateLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pin* endPin)
+bool NAV::VectorNavDataLogger::onCreateLink([[maybe_unused]] OutputPin& startPin, [[maybe_unused]] InputPin& endPin)
 {
-    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
+    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
 
     if (isInitialized())
     {
@@ -148,11 +156,11 @@ void NAV::VectorNavDataLogger::deinitialize()
     FileWriter::deinitialize();
 }
 
-void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::VectorNavDataLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto obs = std::static_pointer_cast<const VectorNavBinaryOutput>(nodeData);
+    auto obs = std::static_pointer_cast<const VectorNavBinaryOutput>(queue.extract_front());
 
-    if (_fileType == FileType::CSV)
+    if (_fileType == FileType::ASCII)
     {
         if (!_headerWritten)
         {
@@ -500,24 +508,24 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
         constexpr int floatPrecision = std::numeric_limits<float>::digits10 + 2;
         constexpr int doublePrecision = std::numeric_limits<double>::digits10 + 2;
 
-        if (obs->insTime.has_value())
+        if (!obs->insTime.empty())
         {
-            _filestream << std::setprecision(doublePrecision) << std::round(calcTimeIntoRun(obs->insTime.value()) * 1e9) / 1e9;
+            _filestream << std::setprecision(doublePrecision) << std::round(calcTimeIntoRun(obs->insTime) * 1e9) / 1e9;
         }
         _filestream << ",";
-        if (obs->insTime.has_value())
+        if (!obs->insTime.empty())
         {
-            _filestream << std::fixed << std::setprecision(gpsCyclePrecision) << obs->insTime->toGPSweekTow().gpsCycle;
+            _filestream << std::fixed << std::setprecision(gpsCyclePrecision) << obs->insTime.toGPSweekTow().gpsCycle;
         }
         _filestream << ',';
-        if (obs->insTime.has_value())
+        if (!obs->insTime.empty())
         {
-            _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime->toGPSweekTow().gpsWeek;
+            _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.toGPSweekTow().gpsWeek;
         }
         _filestream << ',';
-        if (obs->insTime.has_value())
+        if (!obs->insTime.empty())
         {
-            _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime->toGPSweekTow().tow;
+            _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.toGPSweekTow().tow;
         }
         // Group 2 (Time)
         if (obs->timeOutputs)
@@ -1106,9 +1114,9 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
             _headerWritten = true;
         }
 
-        if (obs->insTime.has_value())
+        if (!obs->insTime.empty())
         {
-            auto insTimeGPS = obs->insTime->toGPSweekTow();
+            auto insTimeGPS = obs->insTime.toGPSweekTow();
             auto tow = static_cast<double>(insTimeGPS.tow);
             _filestream.write(reinterpret_cast<const char*>(&insTimeGPS.gpsCycle), sizeof(insTimeGPS.gpsCycle));
             _filestream.write(reinterpret_cast<const char*>(&insTimeGPS.gpsWeek), sizeof(insTimeGPS.gpsWeek));

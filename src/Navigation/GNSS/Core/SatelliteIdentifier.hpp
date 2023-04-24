@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file SatelliteIdentifier.hpp
 /// @brief Structs identifying a unique satellite
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -107,6 +115,12 @@ bool ShowSatelliteSelector(const char* label, std::vector<SatId>& satellites);
 
 } // namespace NAV
 
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] satId Object to print
+/// @return Returns the output stream object in order to chain stream insertions
+std::ostream& operator<<(std::ostream& os, const NAV::SatId& satId);
+
 #ifndef DOXYGEN_IGNORE
 
 /// @brief Formatter for SatId
@@ -116,8 +130,7 @@ struct fmt::formatter<NAV::SatId>
     /// @brief Parse function to make the struct formattable
     /// @param[in] ctx Parser context
     /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
+    static constexpr auto parse(format_parse_context& ctx) -> decltype(ctx.begin())
     {
         return ctx.begin();
     }
@@ -127,7 +140,7 @@ struct fmt::formatter<NAV::SatId>
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::SatId& satId, FormatContext& ctx)
+    auto format(const NAV::SatId& satId, FormatContext& ctx) const -> decltype(ctx.out())
     {
         return fmt::format_to(ctx.out(), "{0}{1:02d}", char(satId.satSys), satId.satNum);
     }
@@ -140,8 +153,7 @@ struct fmt::formatter<NAV::SatSigId>
     /// @brief Parse function to make the struct formattable
     /// @param[in] ctx Parser context
     /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
+    static constexpr auto parse(format_parse_context& ctx) -> decltype(ctx.begin())
     {
         return ctx.begin();
     }
@@ -151,7 +163,7 @@ struct fmt::formatter<NAV::SatSigId>
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::SatSigId& satSigId, FormatContext& ctx)
+    auto format(const NAV::SatSigId& satSigId, FormatContext& ctx) const -> decltype(ctx.out())
     {
         return fmt::format_to(ctx.out(), "{0}-{1:02d}", std::string(satSigId.freq), satSigId.satNum);
     }
@@ -167,10 +179,18 @@ struct hash<NAV::SatId>
 {
     /// @brief Hash function for SatId
     /// @param[in] f Satellite identifier
-    /// @return Has value for the satellite identifier
     std::size_t operator()(const NAV::SatId& f) const
     {
-        return std::hash<NAV::SatelliteSystem_>{}(NAV::SatelliteSystem_(f.satSys)) ^ (std::hash<decltype(f.satNum)>()(f.satNum) << 1);
+        auto hash1 = std::hash<NAV::SatelliteSystem_>{}(NAV::SatelliteSystem_(f.satSys));
+        auto hash2 = std::hash<decltype(f.satNum)>()(f.satNum);
+
+        if (hash1 != hash2)
+        {
+            return hash1 ^ hash2 << 1;
+        }
+
+        // If hash1 == hash2, their XOR is zero.
+        return hash1;
     }
 };
 /// @brief Hash function for SatSigId (needed for unordered_map)
@@ -178,11 +198,19 @@ template<>
 struct hash<NAV::SatSigId>
 {
     /// @brief Hash function for SatSigId
-    /// @param[in] f Satellite identifier
-    /// @return Has value for the satellite identifier
+    /// @param[in] f Satellite signal identifier
     std::size_t operator()(const NAV::SatSigId& f) const
     {
-        return std::hash<NAV::Frequency_>{}(NAV::Frequency_(f.freq)) ^ (std::hash<decltype(f.satNum)>()(f.satNum) << 1);
+        auto hash1 = std::hash<NAV::Frequency_>{}(NAV::Frequency_(f.freq));
+        auto hash2 = std::hash<decltype(f.satNum)>()(f.satNum);
+
+        if (hash1 != hash2)
+        {
+            return hash1 ^ hash2 << 1;
+        }
+
+        // If hash1 == hash2, their XOR is zero.
+        return hash1;
     }
 };
 } // namespace std

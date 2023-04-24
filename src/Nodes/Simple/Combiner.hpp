@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file Combiner.hpp
 /// @brief Combiner Node
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -41,12 +49,12 @@ class Combiner : public Node
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
     /// @return True if link is allowed, false if link is rejected
-    bool onCreateLink(Pin* startPin, Pin* endPin) override;
+    bool onCreateLink(OutputPin& startPin, InputPin& endPin) override;
 
     /// @brief Called when a link was deleted
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
-    void afterDeleteLink(Pin* startPin, Pin* endPin) override;
+    void afterDeleteLink(OutputPin& startPin, InputPin& endPin) override;
 
   private:
     constexpr static size_t OUTPUT_PORT_INDEX_FLOW = 0;       ///< @brief Flow
@@ -64,9 +72,9 @@ class Combiner : public Node
     void updateOutputPin(const std::vector<std::string>& oldDataIdentifiers);
 
     /// @brief Receive data
-    /// @param[in] nodeData Observation received
-    /// @param[in] linkId Id of the link over which the data is received
-    void receiveData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx);
 };
 
 } // namespace NAV

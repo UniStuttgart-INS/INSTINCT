@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file Ionosphere.hpp
 /// @brief Ionosphere Models
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -8,6 +16,7 @@
 #include <vector>
 #include <Eigen/Core>
 #include "Navigation/GNSS/Core/Frequency.hpp"
+#include "IonosphericCorrections.hpp"
 
 namespace NAV
 {
@@ -36,14 +45,13 @@ bool ComboIonosphereModel(const char* label, IonosphereModel& ionosphereModel);
 /// @param[in] lla_pos [𝜙, λ, h]^T Geodetic latitude, longitude and height in [rad, rad, m]
 /// @param[in] elevation Angle between the user and satellite [rad]
 /// @param[in] azimuth Angle between the user and satellite, measured clockwise positive from the true North [rad]
-/// @param[in] alpha The coefficients of a cubic equation representing the amplitude of the vertical delay
-/// @param[in] beta The coefficients of a cubic equation representing the period of the model
 /// @param[in] ionosphereModel Ionosphere model to use
+/// @param[in] corrections Ionospheric correction parameters
 /// @return Ionospheric time delay in [s]
 double calcIonosphericTimeDelay(double tow, Frequency freq,
                                 const Eigen::Vector3d& lla_pos,
                                 double elevation, double azimuth,
-                                const std::vector<double>& alpha, const std::vector<double>& beta,
-                                IonosphereModel ionosphereModel = IonosphereModel::None);
+                                IonosphereModel ionosphereModel = IonosphereModel::None,
+                                const IonosphericCorrections* corrections = nullptr);
 
 } // namespace NAV

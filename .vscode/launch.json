@@ -2,19 +2,42 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Linux Debug",
-            "type": "cppdbg",
+            "name": "LLDB Debug",
+            "type": "lldb",
             "request": "launch",
             "preLaunchTask": "MAIN: Build project",
-            "program": "${workspaceFolder}/bin/Debug/instinct",
+            "program": "${workspaceFolder}/build/bin/Debug/instinct",
             "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
                 "--config=config.ini",
                 "--load=\"flow/Default.flow\"",
-                // "--load=\"test/flow/Nodes/DataProcessor/GNSS/SPP-Skydel.flow\"",
+                // "--load=\"test/flow/Nodes/DataProcessor/GNSS/SinglePointPositioning.flow\"",
                 // "--nogui",
                 // "--noinit",
                 "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
                 "--file-log-level=trace", // trace/debug/info/warning/error/critical/off
+                // "--log-filter=SinglePointPositioning.cpp",
+                // ================ To debug flow tests ================
+                // "--flow-path=test/flow",
+                // "--input-path=test/data",
+                // "--output-path=test/logs",
+            ],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Linux Debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "preLaunchTask": "MAIN: Build project",
+            "program": "${workspaceFolder}/build/bin/Debug/instinct",
+            "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
+                "--config=config.ini",
+                "--load=\"flow/Default.flow\"",
+                // "--load=\"test/flow/Nodes/DataProcessor/GNSS/SinglePointPositioning.flow\"",
+                // "--nogui",
+                // "--noinit",
+                "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
+                "--file-log-level=trace", // trace/debug/info/warning/error/critical/off
+                // "--log-filter=SinglePointPositioning.cpp",
                 // ================ To debug flow tests ================
                 // "--flow-path=test/flow",
                 // "--input-path=test/data",
@@ -38,7 +61,7 @@
             "type": "cppdbg",
             "request": "launch",
             "preLaunchTask": "TEST: Build project",
-            "program": "${workspaceFolder}/bin/Debug/tests",
+            "program": "${workspaceFolder}/build/bin/Debug/tests",
             "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
                 "'[Debug]'",
             ],
@@ -56,11 +79,52 @@
             ]
         },
         {
+            "name": "Linux Debug Attach",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "${workspaceFolder}/build/bin/Debug/instinct",
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "Linux Debug Attach Tests",
+            "type": "cppdbg",
+            "request": "attach",
+            "preLaunchTask": "TEST: Build project",
+            "program": "${workspaceFolder}/build/bin/Debug/tests",
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
             "name": "Windows Debug",
             "type": "cppvsdbg",
             "request": "launch",
             "preLaunchTask": "MAIN: Build project",
-            "program": "${workspaceFolder}/bin/Debug/instinct",
+            "program": "${workspaceFolder}/build/bin/Debug/instinct",
             "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
                 "--config=config.ini",
                 "--load=\"flow/Default.flow\"",
@@ -68,6 +132,7 @@
                 // "--noinit",
                 "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
                 "--file-log-level=trace", // trace/debug/info/warning/error/critical/off
+                // "--log-filter=SinglePointPositioning.cpp",
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
@@ -79,7 +144,7 @@
             "type": "cppvsdbg",
             "request": "launch",
             "preLaunchTask": "TEST: Build project",
-            "program": "${workspaceFolder}/bin/Debug/tests",
+            "program": "${workspaceFolder}/build/bin/Debug/tests",
             "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
                 "[Debug]",
             ],

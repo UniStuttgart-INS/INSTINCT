@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "UbloxFile.hpp"
 
 #include "util/Logger.hpp"
@@ -50,7 +58,7 @@ void NAV::UbloxFile::guiConfig()
         flow::ApplyChanges();
         if (res == FileReader::PATH_CHANGED)
         {
-            doInitialize();
+            doReinitialize();
         }
         else
         {
@@ -101,13 +109,11 @@ bool NAV::UbloxFile::resetNode()
     return true;
 }
 
-std::shared_ptr<const NAV::NodeData> NAV::UbloxFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::UbloxFile::pollData()
 {
-    // Get current position
-    auto pos = _filestream.tellg();
     uint8_t i = 0;
     std::unique_ptr<uart::protocol::Packet> packet = nullptr;
-    while (_filestream.readsome(reinterpret_cast<char*>(&i), 1))
+    while (readsome(reinterpret_cast<char*>(&i), 1))
     {
         packet = _sensor.findPacket(i);
 
@@ -129,13 +135,13 @@ std::shared_ptr<const NAV::NodeData> NAV::UbloxFile::pollData(bool peek)
     }
 
     auto obs = std::make_shared<UbloxObs>();
-    vendor::ublox::decryptUbloxObs(obs, *packet, peek);
+    vendor::ublox::decryptUbloxObs(obs, *packet);
 
-    if (obs->insTime.has_value())
+    if (!obs->insTime.empty())
     {
         if (util::time::GetMode() == util::time::Mode::REAL_TIME)
         {
-            util::time::SetCurrentTime(obs->insTime.value());
+            util::time::SetCurrentTime(obs->insTime);
         }
     }
     else if (auto currentTime = util::time::GetCurrentInsTime();
@@ -144,18 +150,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UbloxFile::pollData(bool peek)
         obs->insTime = currentTime;
     }
 
-    if (peek)
-    {
-        // Return to position before "Read line".
-        _filestream.seekg(pos, std::ios_base::beg);
-    }
-
-    // Calls all the callbacks
-    if (!peek)
-    {
-        invokeCallbacks(OUTPUT_PORT_INDEX_UBLOX_OBS, obs);
-    }
-
+    invokeCallbacks(OUTPUT_PORT_INDEX_UBLOX_OBS, obs);
     return obs;
 }
 

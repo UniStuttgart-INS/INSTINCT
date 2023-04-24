@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file TimeSystem.hpp
 /// @brief Time System defintions
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -311,3 +319,18 @@ constexpr bool operator!=(const TimeSystem& lhs, const TimeSystem_& rhs) { retur
 constexpr bool operator!=(const TimeSystem_& lhs, const TimeSystem& rhs) { return !(lhs == rhs); }
 
 } // namespace NAV
+
+namespace std
+{
+/// @brief Hash function for TimeSystem (needed for unordered_map)
+template<>
+struct hash<NAV::TimeSystem>
+{
+    /// @brief Hash function for TimeSystem
+    /// @param[in] f Time system
+    std::size_t operator()(const NAV::TimeSystem& f) const
+    {
+        return std::hash<NAV::TimeSystem_>{}(NAV::TimeSystem_(f));
+    }
+};
+} // namespace std

@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file imgui_ex.hpp
 /// @brief ImGui extensions
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -297,6 +305,48 @@ bool SliderULong3(const char* label, uint64_t v[3], uint64_t v_min, uint64_t v_m
 /// @param[in] flags Slider flags to modify the behavior
 /// @return True if the value was changed
 bool SliderULong4(const char* label, uint64_t v[4], uint64_t v_min, uint64_t v_max, const char* format = "%lu", ImGuiSliderFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+// #####################################################################################################################
+
+/// @brief Shows a Slider GUI element for 'uint32'
+/// @param[in] label Label to display beside the slider. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool SliderUInt(const char* label, uint32_t* v, uint32_t v_min, uint32_t v_max, const char* format = "%lu", ImGuiSliderFlags flags = 0);
+
+/// @brief Shows a Slider GUI element for an array of 'uint32[2]'
+/// @param[in] label Label to display beside the slider. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool SliderUInt2(const char* label, uint32_t v[2], uint32_t v_min, uint32_t v_max, const char* format = "%lu", ImGuiSliderFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+/// @brief Shows a Slider GUI element for an array of 'uint32[3]'
+/// @param[in] label Label to display beside the slider. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool SliderUInt3(const char* label, uint32_t v[3], uint32_t v_min, uint32_t v_max, const char* format = "%lu", ImGuiSliderFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+/// @brief Shows a Slider GUI element for an array of 'uint32[4]'
+/// @param[in] label Label to display beside the slider. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool SliderUInt4(const char* label, uint32_t v[4], uint32_t v_min, uint32_t v_max, const char* format = "%lu", ImGuiSliderFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
 
 // #####################################################################################################################
 

@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "ImuFile.hpp"
 
 #include "util/Logger.hpp"
@@ -50,7 +58,7 @@ void NAV::ImuFile::guiConfig()
         flow::ApplyChanges();
         if (res == FileReader::PATH_CHANGED)
         {
-            doInitialize();
+            doReinitialize();
         }
         else
         {
@@ -148,20 +156,13 @@ bool NAV::ImuFile::resetNode()
     return true;
 }
 
-std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData()
 {
     auto obs = std::make_shared<ImuObs>(_imuPos);
 
     // Read line
     std::string line;
-    // Get current position
-    auto len = _filestream.tellg();
-    std::getline(_filestream, line);
-    if (peek)
-    {
-        // Return to position before "Read line".
-        _filestream.seekg(len, std::ios_base::beg);
-    }
+    getline(line);
     // Remove any starting non text characters
     line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
 
@@ -305,7 +306,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData(bool peek)
 
     if (gpsWeek.has_value() && gpsToW.has_value())
     {
-        obs->insTime.emplace(gpsCycle.value(), gpsWeek.value(), gpsToW.value());
+        obs->insTime = InsTime(gpsCycle.value(), gpsWeek.value(), gpsToW.value());
     }
     if (magUncompX.has_value() && magUncompY.has_value() && magUncompZ.has_value())
     {
@@ -332,11 +333,6 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData(bool peek)
         obs->gyroCompXYZ.emplace(gyroCompX.value(), gyroCompY.value(), gyroCompZ.value());
     }
 
-    // Calls all the callbacks
-    if (!peek)
-    {
-        invokeCallbacks(OUTPUT_PORT_INDEX_IMU_OBS, obs);
-    }
-
+    invokeCallbacks(OUTPUT_PORT_INDEX_IMU_OBS, obs);
     return obs;
 }

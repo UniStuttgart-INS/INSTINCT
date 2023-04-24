@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "NodeRegistry.hpp"
 
 #include "util/Logger.hpp"
@@ -39,11 +47,11 @@ void registerNodeType()
     info.type = T::typeStatic();
 
     T obj;
-    for (const Pin& pin : obj.inputPins)
+    for (const InputPin& pin : obj.inputPins)
     {
         info.pinInfoList.emplace_back(pin.kind, pin.type, pin.dataIdentifier);
     }
-    for (const Pin& pin : obj.outputPins)
+    for (const OutputPin& pin : obj.outputPins)
     {
         info.pinInfoList.emplace_back(pin.kind, pin.type, pin.dataIdentifier);
     }
@@ -86,7 +94,7 @@ bool NAV::NodeRegistry::NodeInfo::hasCompatiblePin(const Pin* pin) const
                  && NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPinDataIdentifier, endPinDataIdentifier))
                 || (pinInfo.type == Pin::Type::Delegate
                     && std::find(endPinDataIdentifier.begin(), endPinDataIdentifier.end(), startPinParentNodeType) != endPinDataIdentifier.end())
-                || ((pinInfo.type == Pin::Type::Object || pinInfo.type == Pin::Type::Matrix) // NOLINT(misc-redundant-expression) // FIXME: error: equivalent expression on both sides of logical operator
+                || ((pinInfo.type == Pin::Type::Object || pinInfo.type == Pin::Type::Matrix) // NOLINT(misc-redundant-expression) - false positive warning
                     && Pin::dataIdentifierHaveCommon(startPinDataIdentifier, endPinDataIdentifier))
                 || pinInfo.type == Pin::Type::Bool || pinInfo.type == Pin::Type::Int || pinInfo.type == Pin::Type::Float || pinInfo.type == Pin::Type::String)
             {
@@ -162,14 +170,14 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 // Utility
 #include "Nodes/util/Demo.hpp"
 #include "Nodes/util/GroupBox.hpp"
+#include "Nodes/util/TimeWindow.hpp"
 // Simple
 #include "Nodes/Simple/Combiner.hpp"
-#include "Nodes/Simple/Delay.hpp"
-#include "Nodes/Simple/Transformation.hpp"
 // Converter
 #include "Nodes/Converter/GNSS/RtklibPosConverter.hpp"
 #include "Nodes/Converter/GNSS/UartPacketConverter.hpp"
 #include "Nodes/Converter/IMU/VectorNavBinaryConverter.hpp"
+
 // Data Logger
 #include "Nodes/DataLogger/General/MatrixLogger.hpp"
 #include "Nodes/DataLogger/GNSS/SppSolutionLogger.hpp"
@@ -187,17 +195,17 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataProcessor/SensorCombiner/ImuFusion.hpp"
 // Data Provider
 #include "Nodes/DataProvider/CSV/CsvFile.hpp"
-#include "Nodes/DataProvider/GNSS/FileReader/RINEX/RinexNavFile.hpp"
-#include "Nodes/DataProvider/GNSS/FileReader/RINEX/RinexObsFile.hpp"
+#include "Nodes/DataProvider/GNSS/FileReader/RinexNavFile.hpp"
+#include "Nodes/DataProvider/GNSS/FileReader/RinexObsFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/EmlidFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RtklibPosFile.hpp"
+#include "Nodes/DataProvider/GNSS/FileReader/NmeaFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/UbloxFile.hpp"
 #include "Nodes/DataProvider/GNSS/Sensors/EmlidSensor.hpp"
 #include "Nodes/DataProvider/GNSS/Sensors/UbloxSensor.hpp"
 #include "Nodes/DataProvider/IMU/FileReader/ImuFile.hpp"
 #include "Nodes/DataProvider/IMU/FileReader/KvhFile.hpp"
 #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
-#include "Nodes/DataProvider/IMU/NetworkStream/SkydelNetworkStream.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/KvhSensor.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/Navio2Sensor.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
@@ -210,21 +218,22 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 // State
 #include "Nodes/State/PosVelAttInitializer.hpp"
 // Experimental
-#include "Nodes/Experimental/Simple/Matrix.hpp"
 #include "Nodes/Experimental/DataProcessor/ARMA.hpp"
+#include "Nodes/Experimental/DataProvider/IMU/NetworkStream/SkydelNetworkStream.hpp"
+#include "Nodes/Experimental/Simple/Delay.hpp"
 
 void NAV::NodeRegistry::RegisterNodeTypes()
 {
     LOG_TRACE("called");
 
+    Node::_autostartWorker = false;
+
     // Utility
     registerNodeType<Demo>();
     registerNodeType<GroupBox>();
+    registerNodeType<TimeWindow>();
     // Simple
     registerNodeType<Combiner>();
-    registerNodeType<Delay>();
-    registerNodeType<NAV::experimental::Matrix>();
-    registerNodeType<Transformation>();
     // Converter
     registerNodeType<RtklibPosConverter>();
     registerNodeType<UartPacketConverter>();
@@ -250,11 +259,11 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<RinexObsFile>();
     registerNodeType<EmlidFile>();
     registerNodeType<RtklibPosFile>();
+    registerNodeType<NmeaFile>();
     registerNodeType<UbloxFile>();
     registerNodeType<EmlidSensor>();
     registerNodeType<UbloxSensor>();
     registerNodeType<ImuFile>();
-    registerNodeType<SkydelNetworkStream>();
     registerNodeType<KvhFile>();
     registerNodeType<VectorNavFile>();
     registerNodeType<KvhSensor>();
@@ -265,14 +274,17 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     // Data Simulator
     registerNodeType<ImuSimulator>();
     // Experimental
-    registerNodeType<NAV::experimental::ARMA>();
+    // registerNodeType<NAV::experimental::ARMA>();
+    // registerNodeType<NAV::experimental::SkydelNetworkStream>();
+    // registerNodeType<NAV::experimental::Delay>();
     // Plotting
     registerNodeType<Plot>();
     // State
     registerNodeType<PosVelAttInitializer>();
+
+    Node::_autostartWorker = true;
 }
 
-#include "NodeData/InsObs.hpp"
 #include "NodeData/General/StringObs.hpp"
 #include "NodeData/GNSS/EmlidObs.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
@@ -292,7 +304,6 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 void NAV::NodeRegistry::RegisterNodeDataTypes()
 {
     registerNodeDataType<NodeData>();
-    registerNodeDataType<InsObs>();
     // General
     registerNodeDataType<StringObs>();
     // GNSS

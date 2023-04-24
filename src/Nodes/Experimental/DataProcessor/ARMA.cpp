@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "ARMA.hpp"
 
 #include "util/Logger.hpp"
@@ -5,7 +13,7 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
-#include <Eigen/Dense>
+#include "util/Eigen.hpp"
 #include <iterator>
 #include <boost/math/distributions/students_t.hpp>
 
@@ -299,9 +307,9 @@ void NAV::experimental::ARMA::hannan_rissanen(Eigen::VectorXd& y, int p, int q, 
     }
 }
 
-void NAV::experimental::ARMA::receiveImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::experimental::ARMA::receiveImuObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto obs = std::static_pointer_cast<const ImuObs>(nodeData);
+    auto obs = std::static_pointer_cast<const ImuObs>(queue.extract_front());
     auto newImuObs = std::make_shared<ImuObs>(obs->imuPos);
     _buffer.push_back(obs); // push latest IMU epoch to deque
 
@@ -369,8 +377,8 @@ void NAV::experimental::ARMA::receiveImuObs(const std::shared_ptr<const NodeData
             _y_hat_t(obs_nr) = _y_hat(_deque_size - 1) + _y_mean; // hand over last entry of y_hat and add y_mean
         }
         // output
-        LOG_TRACE("{}: called {}", nameId(), obs->insTime->toYMDHMS());
-        newImuObs->insTime = obs->insTime.value();
+        LOG_TRACE("{}: called {}", nameId(), obs->insTime.toYMDHMS());
+        newImuObs->insTime = obs->insTime;
         newImuObs->accelCompXYZ = Eigen::Vector3d(_y_hat_t.head(3)); // output estimations of accelerometer observations
         newImuObs->gyroCompXYZ = Eigen::Vector3d(_y_hat_t.tail(3));  // output estimations of gyro observations
         invokeCallbacks(OUTPUT_PORT_INDEX_IMU_OBS, newImuObs);

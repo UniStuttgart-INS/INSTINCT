@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "CsvFile.hpp"
 
 #include "util/Logger.hpp"
@@ -47,7 +55,7 @@ void NAV::CsvFile::guiConfig()
         flow::ApplyChanges();
         if (res == FileReader::PATH_CHANGED)
         {
-            doInitialize();
+            doReinitialize();
         }
         else
         {
@@ -183,9 +191,9 @@ bool NAV::CsvFile::initialize()
     }
 
     std::string line;
-    while (!_filestream.eof())
+    while (!eof())
     {
-        std::getline(_filestream, line);
+        getline(line);
         if (line.empty() || line.at(0) == _comment) { continue; } // Skip empty and comment lines
 
         auto splittedData = str::split(line, _delimiter);
@@ -206,6 +214,14 @@ bool NAV::CsvFile::initialize()
         }
     }
 
+    LOG_TRACE("{}: initialize() finished. Read {} columns over {} lines.", nameId(), _data.description.size(), _data.lines.size());
+
+    return true;
+}
+
+bool NAV::CsvFile::resetNode()
+{
+    LOG_TRACE("{}: called", nameId());
     return true;
 }
 
@@ -221,17 +237,17 @@ void NAV::CsvFile::deinitialize()
 
 NAV::FileReader::FileType NAV::CsvFile::determineFileType()
 {
-    return FileReader::FileType::CSV;
+    return FileReader::FileType::ASCII;
 }
 
 void NAV::CsvFile::readHeader()
 {
-    for (int i = 0; i < _skipLines; i++) { _filestream.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); } // Skip lines at the start of the file
+    for (int i = 0; i < _skipLines; i++) { ignore(std::numeric_limits<std::streamsize>::max(), '\n'); } // Skip lines at the start of the file
 
     std::string line;
     if (_hasHeaderLine)
     {
-        std::getline(_filestream, line);
+        getline(line);
         _data.description = str::split(line, _delimiter);
         for (auto& desc : _data.description)
         {

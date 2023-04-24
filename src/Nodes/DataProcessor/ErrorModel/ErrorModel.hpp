@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file ErrorModel.hpp
 /// @brief Adds errors (biases and noise) to measurements
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -10,7 +18,7 @@
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
 
-#include <Eigen/Core>
+#include "util/Eigen.hpp"
 #include <random>
 
 namespace NAV
@@ -56,8 +64,8 @@ class ErrorModel : public Node
     struct RandomNumberGenerator // NOLINT(cert-msc32-c,cert-msc51-cpp)
     {
         bool useSeedInsteadOfSystemTime = true; ///< Flag whether to use the seed instead of the system time
-        uint64_t seed = 0;                      ///< Seed for the random number generator
-        std::default_random_engine generator;   ///< Random number generator
+        uint32_t seed = 0;                      ///< Seed for the random number generator
+        std::minstd_rand generator;             ///< Random number generator
     };
 
   private:
@@ -70,17 +78,17 @@ class ErrorModel : public Node
     /// @brief Called when a new link was established
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
-    void afterCreateLink(Pin* startPin, Pin* endPin) override;
+    void afterCreateLink(OutputPin& startPin, InputPin& endPin) override;
 
     /// @brief Called when a link was deleted
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
-    void afterDeleteLink(Pin* startPin, Pin* endPin) override;
+    void afterDeleteLink(OutputPin& startPin, InputPin& endPin) override;
 
     /// @brief Callback when receiving data on a port
-    /// @param[in] nodeData Data to process
-    /// @param[in] linkId Id of the link over which the data is received
-    void receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void receiveObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief Callback when receiving an ImuObs
     /// @param[in] imuObs Copied data to modify and send out again

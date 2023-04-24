@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file Demo.hpp
 /// @brief Demo Node which demonstrates all capabilities
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -57,12 +65,12 @@ class Demo : public Node
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
     /// @return True if link is allowed, false if link is rejected
-    bool onCreateLink(Pin* startPin, Pin* endPin) override;
+    bool onCreateLink(OutputPin& startPin, InputPin& endPin) override;
 
     /// @brief Called when a link is to be deleted
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
-    void onDeleteLink(Pin* startPin, Pin* endPin) override;
+    void onDeleteLink(OutputPin& startPin, InputPin& endPin) override;
 
     /// @brief Data struct transmitted over an output port
     struct DemoData
@@ -72,23 +80,23 @@ class Demo : public Node
     };
 
   private:
-    constexpr static size_t OUTPUT_PORT_INDEX_NODE_DATA = 1; ///< @brief Flow (NodeData)
-    constexpr static size_t OUTPUT_PORT_INDEX_INS_OBS = 2;   ///< @brief Flow (InsObs)
-    constexpr static size_t OUTPUT_PORT_INDEX_BOOL = 3;      ///< @brief Bool
-    constexpr static size_t OUTPUT_PORT_INDEX_INT = 4;       ///< @brief Int
-    constexpr static size_t OUTPUT_PORT_INDEX_FLOAT = 5;     ///< @brief Float
-    constexpr static size_t OUTPUT_PORT_INDEX_DOUBLE = 6;    ///< @brief Double
-    constexpr static size_t OUTPUT_PORT_INDEX_STRING = 7;    ///< @brief String
-    constexpr static size_t OUTPUT_PORT_INDEX_DEMO_DATA = 8; ///< @brief DemoData
-    constexpr static size_t OUTPUT_PORT_INDEX_MATRIX = 9;    ///< @brief Matrix
-    constexpr static size_t INPUT_PORT_INDEX_DEMO_NODE = 0;  ///< @brief Delegate (Demo)
-    constexpr static size_t INPUT_PORT_INDEX_BOOL = 3;       ///< @brief Bool
-    constexpr static size_t INPUT_PORT_INDEX_INT = 4;        ///< @brief Int
-    constexpr static size_t INPUT_PORT_INDEX_FLOAT = 5;      ///< @brief Float
-    constexpr static size_t INPUT_PORT_INDEX_DOUBLE = 6;     ///< @brief Double
-    constexpr static size_t INPUT_PORT_INDEX_STRING = 7;     ///< @brief String
-    constexpr static size_t INPUT_PORT_INDEX_DEMO_DATA = 8;  ///< @brief DemoData
-    constexpr static size_t INPUT_PORT_INDEX_MATRIX = 9;     ///< @brief Matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_FLOW_SENSOR = 1; ///< @brief Flow (ImuObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_FLOW_FILE = 2;   ///< @brief Flow (NodeData)
+    constexpr static size_t OUTPUT_PORT_INDEX_BOOL = 3;        ///< @brief Bool
+    constexpr static size_t OUTPUT_PORT_INDEX_INT = 4;         ///< @brief Int
+    constexpr static size_t OUTPUT_PORT_INDEX_FLOAT = 5;       ///< @brief Float
+    constexpr static size_t OUTPUT_PORT_INDEX_DOUBLE = 6;      ///< @brief Double
+    constexpr static size_t OUTPUT_PORT_INDEX_STRING = 7;      ///< @brief String
+    constexpr static size_t OUTPUT_PORT_INDEX_DEMO_DATA = 8;   ///< @brief DemoData
+    constexpr static size_t OUTPUT_PORT_INDEX_MATRIX = 9;      ///< @brief Matrix
+    constexpr static size_t INPUT_PORT_INDEX_DEMO_NODE = 0;    ///< @brief Delegate (Demo)
+    constexpr static size_t INPUT_PORT_INDEX_BOOL = 3;         ///< @brief Bool
+    constexpr static size_t INPUT_PORT_INDEX_INT = 4;          ///< @brief Int
+    constexpr static size_t INPUT_PORT_INDEX_FLOAT = 5;        ///< @brief Float
+    constexpr static size_t INPUT_PORT_INDEX_DOUBLE = 6;       ///< @brief Double
+    constexpr static size_t INPUT_PORT_INDEX_STRING = 7;       ///< @brief String
+    constexpr static size_t INPUT_PORT_INDEX_DEMO_DATA = 8;    ///< @brief DemoData
+    constexpr static size_t INPUT_PORT_INDEX_MATRIX = 9;       ///< @brief Matrix
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -97,19 +105,23 @@ class Demo : public Node
     void deinitialize() override;
 
     /// @brief Receive Sensor Data
-    /// @param[in] nodeData Data to plot
-    /// @param[in] linkId Id of the link over which the data is received
-    void receiveSensorData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void receiveSensorData(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief Receive File Reader Data
-    /// @param[in] nodeData Data to plot
-    /// @param[in] linkId Id of the link over which the data is received
-    void receiveFileReaderData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void receiveFileReaderData(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
-    /// @brief Polls data from the file
+    /// @brief Polls data from the file. This function is needed, if we have multiple output pins, polling data.
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
     /// @return The read observation
-    [[nodiscard]] std::shared_ptr<const NodeData> pollData(bool peek = false);
+    [[nodiscard]] std::shared_ptr<const NodeData> peekPollData(bool peek = false);
+
+    /// @brief Polls data from the file
+    /// @return The read observation
+    [[nodiscard]] std::shared_ptr<const NodeData> pollData();
 
     /// Timer object to handle async data requests
     CallbackTimer _timer;
@@ -135,13 +147,15 @@ class Demo : public Node
     float _valueFloat = 65.4F;                                      ///< Value which is represented over the Float pin
     double _valueDouble = 1242.342;                                 ///< Value which is represented over the Double pin
     std::string _valueString = "Demo";                              ///< Value which is represented over the String pin
+    std::string _connectedString = "N/A";                           ///< Value which is represented over the String pin
     DemoData _valueObject;                                          ///< Value which is represented over the Object pin
     Eigen::MatrixXd _valueMatrix = Eigen::MatrixXd::Identity(3, 3); ///< Value which is represented over the Matrix pin
     size_t _stringUpdateCounter = 0;                                ///< Counter of how often the string was updated
 
     /// @brief Function to call when the string is updated
-    /// @param[in] linkId Id of the Link where the string is connected over
-    void stringUpdatedNotifyFunction(ax::NodeEditor::LinkId linkId);
+    /// @param[in] insTime Time the data was received
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void stringUpdatedNotifyFunction(const InsTime& insTime, size_t pinIdx);
 };
 
 } // namespace NAV

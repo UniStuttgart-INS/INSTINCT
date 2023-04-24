@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file VectorNavFile.hpp
 /// @brief File Reader for Vector Nav log files
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -76,9 +84,8 @@ class VectorNavFile : public Imu, public FileReader
     vn::sensors::BinaryOutputRegister _binaryOutputRegister;
 
     /// @brief Polls data from the file
-    /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
     /// @return The read observation
-    [[nodiscard]] std::shared_ptr<const NodeData> pollData(bool peek = false);
+    [[nodiscard]] std::shared_ptr<const NodeData> pollData();
 
     /// @brief Amount of messages read
     uint32_t _messageCount = 0;

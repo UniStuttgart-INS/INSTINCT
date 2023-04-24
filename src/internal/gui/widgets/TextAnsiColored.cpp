@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "TextAnsiColored.hpp"
 
 #include <array>
@@ -471,7 +479,7 @@ void RenderAnsiText(ImVec2 pos, const char* text, const char* text_end, bool hid
     {
         if (!text_end)
         {
-            text_end = text + strlen(text); // FIXME-OPT
+            text_end = text + strlen(text);
         }
         text_display_end = text_end;
     }
@@ -493,7 +501,7 @@ void RenderAnsiTextWrapped(ImVec2 pos, const char* text, const char* text_end, f
 
     if (!text_end)
     {
-        text_end = text + strlen(text); // FIXME-OPT
+        text_end = text + strlen(text);
     }
 
     if (text != text_end)
@@ -521,7 +529,7 @@ void ImGui::TextAnsiUnformatted(const char* text, const char* text_end)
     const char* text_begin = text;
     if (text_end == nullptr)
     {
-        text_end = text + strlen(text); // FIXME-OPT
+        text_end = text + strlen(text); // NOLINT(clang-analyzer-core.NonNullParamChecker) - false positive, as checked by IM_ASSERT
     }
 
     const ImVec2 text_pos(window->DC.CursorPos.x, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);
@@ -573,7 +581,7 @@ void ImGui::TextAnsiUnformatted(const char* text, const char* text_end)
                 ImRect line_rect(pos, pos + ImVec2(FLT_MAX, line_height));
                 while (line < text_end)
                 {
-                    if (IsClippedEx(line_rect, 0, false))
+                    if (IsClippedEx(line_rect, 0))
                     {
                         break;
                     }
@@ -643,9 +651,9 @@ void ImGui::TextAnsiV(const char* fmt, va_list args)
     ImGuiContext& g = *GImGui;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
-    const char* text_end = g.TempBuffer + ImFormatStringV(g.TempBuffer, IM_ARRAYSIZE(g.TempBuffer), fmt, args); // NOLINT(clang-diagnostic-format-nonliteral)
+    const char* text_end = g.TempBuffer.Data + ImFormatStringV(g.TempBuffer.Data, strlen(g.TempBuffer.Data), fmt, args); // NOLINT(clang-diagnostic-format-nonliteral)
 #pragma GCC diagnostic pop
-    TextAnsiUnformatted(g.TempBuffer, text_end);
+    TextAnsiUnformatted(g.TempBuffer.Data, text_end);
 }
 
 void ImGui::TextAnsiColoredV(const ImVec4& col, const char* fmt, va_list args)

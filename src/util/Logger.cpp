@@ -1,7 +1,16 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "Logger.hpp"
 
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
+#include "Logger/dist_filter_sink.hpp"
 
 #include "internal/ConfigManager.hpp"
 
@@ -44,6 +53,8 @@ const char* logPatternInfo = "[%H:%M:%S.%e] [%^%L%$] %v";
 
 Logger::Logger(const std::string& logpath)
 {
+#ifndef TESTING
+
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
     // Only edit if console and file should log different levels
     console_sink->set_level(spdlog::level::from_str(NAV::ConfigManager::Get<std::string>("console-log-level", "trace")));
@@ -65,6 +76,8 @@ Logger::Logger(const std::string& logpath)
     case spdlog::level::n_levels:
         break;
     }
+
+#endif
 
     auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(logpath, true);
     // Only edit if console and file should log different levels
@@ -88,12 +101,27 @@ Logger::Logger(const std::string& logpath)
         break;
     }
 
-    auto ringbuffer_sink = std::make_shared<spdlog::sinks::ringbuffer_sink_mt>(1024);
-    ringbuffer_sink->set_level(spdlog::level::trace);
-    ringbuffer_sink->set_pattern(logPatternInfo);
+    _ringBufferSink = std::make_shared<spdlog::sinks::ringbuffer_sink_mt>(1024);
+    _ringBufferSink->set_level(spdlog::level::trace);
+    _ringBufferSink->set_pattern(logPatternInfo);
+
+    std::shared_ptr<spdlog::sinks::dist_sink_mt> dist_filter_sink;
+    if (NAV::ConfigManager::HasKey("log-filter"))
+    {
+        dist_filter_sink = std::make_shared<spdlog::sinks::dist_filter_sink_mt>(NAV::ConfigManager::Get<std::string>("log-filter"));
+    }
+    else
+    {
+        dist_filter_sink = std::make_shared<spdlog::sinks::dist_sink_mt>();
+    }
+#ifndef TESTING
+    dist_filter_sink->add_sink(console_sink);
+#endif
+    dist_filter_sink->add_sink(file_sink);
+    dist_filter_sink->add_sink(_ringBufferSink);
 
     // Set the logger as default logger
-    spdlog::set_default_logger(std::make_shared<spdlog::logger>("multi_sink", spdlog::sinks_init_list({ console_sink, file_sink, ringbuffer_sink })));
+    spdlog::set_default_logger(std::make_shared<spdlog::logger>("multi_sink", dist_filter_sink));
 
     // Level should be smaller or equal to the level of the sinks
     spdlog::set_level(spdlog::level::level_enum::trace);
@@ -135,9 +163,9 @@ Logger::~Logger()
     spdlog::default_logger()->flush();
 }
 
-std::shared_ptr<spdlog::sinks::ringbuffer_sink_mt> Logger::GetRingBufferSink()
+const std::shared_ptr<spdlog::sinks::ringbuffer_sink_mt>& Logger::GetRingBufferSink()
 {
-    return std::static_pointer_cast<spdlog::sinks::ringbuffer_sink_mt>(spdlog::get("multi_sink")->sinks().back());
+    return _ringBufferSink;
 }
 
 void Logger::writeSeparator() noexcept

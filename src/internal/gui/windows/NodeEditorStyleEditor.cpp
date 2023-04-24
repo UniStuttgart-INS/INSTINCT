@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "NodeEditorStyleEditor.hpp"
 
 #include <imgui_node_editor.h>
@@ -12,7 +20,7 @@ void NAV::gui::windows::ShowNodeEditorStyleEditor(bool* show /* = nullptr*/)
         return;
     }
 
-    auto paneWidth = ImGui::GetContentRegionAvailWidth();
+    auto paneWidth = ImGui::GetContentRegionAvail().x;
 
     auto& editorStyle = ed::GetStyle();
     ImGui::BeginHorizontal("Style buttons", ImVec2(paneWidth, 0), 1.0F);
@@ -50,19 +58,19 @@ void NAV::gui::windows::ShowNodeEditorStyleEditor(bool* show /* = nullptr*/)
 
     ImGui::Separator();
 
-    static ImGuiColorEditFlags edit_mode = ImGuiColorEditFlags_RGB;
+    static ImGuiColorEditFlags edit_mode = ImGuiColorEditFlags_DisplayRGB;
     ImGui::BeginHorizontal("Color Mode", ImVec2(paneWidth, 0), 1.0F);
     ImGui::TextUnformatted("Filter Colors");
     ImGui::Spring();
-    ImGui::RadioButton("RGB", &edit_mode, ImGuiColorEditFlags_RGB);
+    ImGui::RadioButton("RGB", &edit_mode, ImGuiColorEditFlags_DisplayRGB);
     ImGui::Spring(0);
-    ImGui::RadioButton("HSV", &edit_mode, ImGuiColorEditFlags_HSV);
+    ImGui::RadioButton("HSV", &edit_mode, ImGuiColorEditFlags_DisplayHSV);
     ImGui::Spring(0);
-    ImGui::RadioButton("HEX", &edit_mode, ImGuiColorEditFlags_HEX);
+    ImGui::RadioButton("HEX", &edit_mode, ImGuiColorEditFlags_DisplayHex);
     ImGui::EndHorizontal();
 
     static ImGuiTextFilter filter;
-    filter.Draw("", paneWidth);
+    filter.Draw("##NodeEditorStyleEditor", paneWidth);
 
     ImGui::Spacing();
 

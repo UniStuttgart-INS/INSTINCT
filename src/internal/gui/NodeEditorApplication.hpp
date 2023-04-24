@@ -1,6 +1,14 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file NodeEditorApplication.hpp
 /// @brief GUI callbacks
-/// @author T. Topp (thomas@topp.cc)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-12-14
 
 #pragma once
@@ -80,6 +88,9 @@ class NodeEditorApplication : public Application
 
     /// @brief Frame counter to block the navigate to content function till nodes are correctly loaded
     int frameCountNavigate = 0;
+
+    /// Shows the queue size on the pins (every frame the queue mutex will be locked)
+    static inline bool _showQueueSizeOnPins = false;
 
     /// @brief Pointer to the texture for the instinct logo
     static inline std::array<ImTextureID, 2> m_InstinctLogo{ nullptr, nullptr };

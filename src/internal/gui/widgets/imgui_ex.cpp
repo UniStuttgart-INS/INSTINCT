@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "imgui_ex.hpp"
 
 #include <algorithm>
@@ -135,6 +143,28 @@ bool SliderULong3(const char* label, uint64_t v[3], uint64_t v_min, uint64_t v_m
 bool SliderULong4(const char* label, uint64_t v[4], uint64_t v_min, uint64_t v_max, const char* format, ImGuiSliderFlags flags) // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
 {
     return SliderScalarN(label, ImGuiDataType_U64, v, 4, &v_min, &v_max, format, flags);
+}
+
+// ###########################################################################################################
+
+bool SliderUInt(const char* label, uint32_t* v, uint32_t v_min, uint32_t v_max, const char* format, ImGuiSliderFlags flags)
+{
+    return SliderScalar(label, ImGuiDataType_U32, v, &v_min, &v_max, format, flags);
+}
+
+bool SliderUInt2(const char* label, uint32_t v[2], uint32_t v_min, uint32_t v_max, const char* format, ImGuiSliderFlags flags) // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+{
+    return SliderScalarN(label, ImGuiDataType_U32, v, 2, &v_min, &v_max, format, flags);
+}
+
+bool SliderUInt3(const char* label, uint32_t v[3], uint32_t v_min, uint32_t v_max, const char* format, ImGuiSliderFlags flags) // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+{
+    return SliderScalarN(label, ImGuiDataType_U32, v, 3, &v_min, &v_max, format, flags);
+}
+
+bool SliderUInt4(const char* label, uint32_t v[4], uint32_t v_min, uint32_t v_max, const char* format, ImGuiSliderFlags flags) // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+{
+    return SliderScalarN(label, ImGuiDataType_U32, v, 4, &v_min, &v_max, format, flags);
 }
 
 // ###########################################################################################################

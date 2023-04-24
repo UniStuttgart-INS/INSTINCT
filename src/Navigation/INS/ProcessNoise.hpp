@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file ProcessNoise.hpp
 /// @brief General process Noise definitions
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -21,17 +29,11 @@ Eigen::Matrix3d G_RandomWalk(const Eigen::Vector3d& sigma2);
 /// @note See T. Hobiger (2021) Inertialnavigation V06 - equation (6.3)
 Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vector3d& beta);
 
-/// @brief S_ra Power Spectral Density of the random noise
-/// @param[in] sigma2_r 𝜎²_r standard deviation of the noise on the measurements
-/// @param[in] tau_i 𝜏ᵢ interval between the input of successive outputs to the inertial navigation equations in [s]
-/// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 14.2.6)
-[[nodiscard]] Eigen::Vector3d psdNoise(const Eigen::Vector3d& sigma2_r, const double& tau_i);
-
-/// @brief S_bad Power Spectral Density of the bias variation
-/// @param[in] sigma2_bd 𝜎²_bd standard deviation of the dynamic bias
+/// @brief u_bias Power Spectral Density of the bias for a Gauss-Markov random process
+/// @param[in] sigma2_bd 𝜎²_bd standard deviation of the bias noise
 /// @param[in] tau_bd 𝜏 Correlation length in [s]
-/// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 14.2.6)
-[[nodiscard]] Eigen::Vector3d psdBiasVariation(const Eigen::Vector3d& sigma2_bd, const Eigen::Vector3d& tau_bd);
+/// @note See Brown & Hwang (2011) - Introduction to Random Signals and Applied Kalman Filtering (example 9.6)
+[[nodiscard]] Eigen::Vector3d psdBiasGaussMarkov(const Eigen::Vector3d& sigma2_bd, const Eigen::Vector3d& tau_bd);
 
 /// @brief Submatrix 𝐐_11 of the system noise covariance matrix 𝐐
 /// @param[in] S_rg Power Spectral Density of the gyroscope random noise

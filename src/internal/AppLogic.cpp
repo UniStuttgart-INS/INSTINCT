@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "AppLogic.hpp"
 
 #include <filesystem>
@@ -13,7 +21,12 @@
 namespace nm = NAV::NodeManager;
 
 #include "util/Logger.hpp"
+#include "util/Time/TimeBase.hpp"
 #include "Sleep.hpp"
+
+#ifdef TESTING
+    #include "FlowTester.hpp"
+#endif
 
 #define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2 * !!(condition)]))
 
@@ -28,8 +41,10 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
     // Sets the output path
     NAV::flow::SetOutputPath();
 
+#ifndef TESTING
     // Initialize the logger
     Logger logger((NAV::flow::GetOutputPath() / "instinct.log").string());
+#endif
 
     // Log all the options
     NAV::ConfigManager::CheckOptions(argc, argv);
@@ -44,6 +59,8 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
 
     // Register all Node Data Types which are available to the program
     NAV::NodeRegistry::RegisterNodeDataTypes();
+
+    util::time::SetCurrentTimeToComputerTime();
 
     if (sizeof(long double) != 16)
     {
@@ -83,11 +100,13 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
                 if (NAV::ConfigManager::Get<bool>("nogui")
                     && NAV::ConfigManager::Get<bool>("sigterm"))
                 {
+                    nm::EnableAllCallbacks();
                     NAV::Sleep::waitForSignal(true);
                 }
                 else if (size_t duration = NAV::ConfigManager::Get<size_t>("duration");
                          NAV::ConfigManager::Get<bool>("nogui") && duration)
                 {
+                    nm::EnableAllCallbacks();
                     auto now = std::chrono::steady_clock::now();
                     std::chrono::duration<double> elapsed = now - start;
                     if (elapsed.count() < static_cast<double>(duration))
@@ -97,6 +116,7 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
                 }
 
 #ifdef TESTING
+                TESTS::runGeneralFlowCleanupChecks();
                 nm::CallCleanupCallback();
 #endif
 
@@ -132,7 +152,7 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
                 }
                 catch (...)
                 {
-                    nm::DeleteAllLinksAndNodes();
+                    nm::DeleteAllNodes();
                     NAV::flow::DiscardChanges();
                     NAV::flow::SetCurrentFilename("");
                     LOG_ERROR("Loading flow file failed");

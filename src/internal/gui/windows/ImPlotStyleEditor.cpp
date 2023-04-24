@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "ImPlotStyleEditor.hpp"
 
 #include <vector>
@@ -39,7 +47,7 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
     }
 
     auto loadImPlotStyleFromConfigFile = [](const std::string& path) {
-        std::filesystem::path filepath = flow::GetProgramRootPath();
+        std::filesystem::path filepath = flow::GetConfigPath();
         if (std::filesystem::path inputPath{ path };
             inputPath.is_relative())
         {
@@ -68,35 +76,17 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
         }
     };
 
-    std::filesystem::path filepath = flow::GetProgramRootPath();
-    if (std::filesystem::path inputPath{ ConfigManager::Get<std::string>("implot-config") };
-        inputPath.is_relative())
-    {
-        filepath /= inputPath;
-    }
-    else
-    {
-        filepath = inputPath;
-    }
-
     static std::string path = ConfigManager::Get<std::string>("implot-config");
 
-    if (widgets::FileDialogLoad(path, "ImPlot config file", ".json", { ".json" }, filepath.parent_path() / ".", 0, "ImPlotStyleEditor"))
+    if (widgets::FileDialogLoad(path, "ImPlot config file", ".json", { ".json" }, flow::GetConfigPath(), 0, "ImPlotStyleEditor"))
     {
-        if (path.starts_with(flow::GetProgramRootPath().string()))
-        {
-            path = path.substr(flow::GetProgramRootPath().string().length());
-        }
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("Load##ImPlotStyleFromFile"))
-    {
+        LOG_DEBUG("ImPlot config file changed to: {}", path);
         loadImPlotStyleFromConfigFile(path);
     }
     ImGui::SameLine();
     if (ImGui::Button("Save##ImPlotStyleToFile"))
     {
-        filepath = flow::GetProgramRootPath();
+        std::filesystem::path filepath = flow::GetConfigPath();
         if (std::filesystem::path inputPath{ path };
             inputPath.is_relative())
         {

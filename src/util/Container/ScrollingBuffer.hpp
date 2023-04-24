@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file ScrollingBuffer.hpp
 /// @brief A buffer which is overwriting itself from the start when full
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -163,10 +171,7 @@ class ScrollingBuffer
         _dataStart = _Padding;
         _dataEnd = _infiniteBuffer ? 0 : _Padding;
 
-#pragma GCC diagnostic push // FIXME: This is necessary, because gcc 10.3.0 throws a warning here. This can be removed when the gcc compiler is updated
-#pragma GCC diagnostic ignored "-Wtype-limits"
         for (size_t i = 0; i < _Padding; i++)
-#pragma GCC diagnostic pop
         {
             _data.push_back(0);
         }

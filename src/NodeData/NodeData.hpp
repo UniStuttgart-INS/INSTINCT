@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file NodeData.hpp
 /// @brief Abstract NodeData Class
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -7,6 +15,9 @@
 
 #include <string>
 #include <vector>
+#include <optional>
+
+#include "Navigation/Time/InsTime.hpp"
 
 namespace NAV
 {
@@ -29,11 +40,14 @@ class NodeData
 
     /// @brief Returns the type of the data class
     /// @return The data type
-    [[nodiscard]] static std::string type() { return ""; }
+    [[nodiscard]] static std::string type() { return "NodeData"; }
 
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes() { return {}; }
+
+    /// Time at which the message was received
+    InsTime insTime;
 };
 
 } // namespace NAV

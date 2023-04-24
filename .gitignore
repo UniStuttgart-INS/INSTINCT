@@ -22,6 +22,9 @@ coverage/*
 # Ignore root level compile_commands
 compile_commands.json
 
+# Conan files
+CMakeUserPresets.json
+
 # Coverage file
 junit.xml
 
@@ -30,3 +33,6 @@ junit.xml
 
 # Imgui files
 INSTINCT.ini
+
+# DrawIO temporary files
+.$*

@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "UartPacketConverter.hpp"
 
 #include <cmath>
@@ -61,9 +69,12 @@ void NAV::UartPacketConverter::guiConfig()
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::EmlidObs::type();
         }
 
-        for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.front().id))
+        for (auto& link : outputPins.front().links)
         {
-            nm::RefreshLink(link->id);
+            if (auto* connectedPin = link.getConnectedPin())
+            {
+                outputPins.front().recreateLink(*connectedPin);
+            }
         }
 
         flow::ApplyChanges();
@@ -112,32 +123,32 @@ bool NAV::UartPacketConverter::initialize()
     return true;
 }
 
-void NAV::UartPacketConverter::receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::UartPacketConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto uartPacket = std::static_pointer_cast<const UartPacket>(nodeData);
+    auto uartPacket = std::static_pointer_cast<const UartPacket>(queue.extract_front());
 
-    std::shared_ptr<InsObs> convertedData = nullptr;
+    std::shared_ptr<NodeData> convertedData = nullptr;
 
     if (_outputType == OutputType_UbloxObs)
     {
         auto obs = std::make_shared<UbloxObs>();
-        auto packet = uartPacket->raw; // FIXME: We have to copy our data here because of the const qualifier
-        vendor::ublox::decryptUbloxObs(obs, packet, false);
+        auto packet = uartPacket->raw;
+        vendor::ublox::decryptUbloxObs(obs, packet);
         convertedData = obs;
     }
     else /* if (_outputType == OutputType_EmlidObs) */
     {
         auto obs = std::make_shared<EmlidObs>();
-        auto packet = uartPacket->raw; // FIXME: We have to copy our data here because of the const qualifier
-        vendor::emlid::decryptEmlidObs(obs, packet, false);
+        auto packet = uartPacket->raw;
+        vendor::emlid::decryptEmlidObs(obs, packet);
         convertedData = obs;
     }
 
-    if (convertedData->insTime.has_value())
+    if (!convertedData->insTime.empty())
     {
         if (util::time::GetMode() == util::time::Mode::REAL_TIME)
         {
-            util::time::SetCurrentTime(convertedData->insTime.value());
+            util::time::SetCurrentTime(convertedData->insTime);
         }
     }
     else if (auto currentTime = util::time::GetCurrentInsTime();

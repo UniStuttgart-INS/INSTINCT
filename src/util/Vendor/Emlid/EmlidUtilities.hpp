@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file EmlidUtilities.hpp
 /// @brief Helper Functions to work with Emlid Sensors
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -16,10 +24,9 @@ namespace NAV::vendor::emlid
 {
 /// @brief Decrypts the provided Emlid observation
 ///
-/// @param[in, out] obs Emlid Observation to decrypt
+/// @param[in] obs Emlid Observation to decrypt
 /// @param[in, out] packet Uart packet with the data (content gets changed because data gets extracted)
-/// @param[in] peek Specifies if the data should be peeked or read
-void decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& obs, uart::protocol::Packet& packet, bool peek = false);
+void decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& obs, uart::protocol::Packet& packet);
 
 /// @brief Calculates the two UBX checksums for the provided data vector
 ///

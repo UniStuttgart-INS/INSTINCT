@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "Demo.hpp"
 
 #include "util/Logger.hpp"
@@ -6,7 +14,9 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
+#include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/widgets/Matrix.hpp"
+#include "internal/gui/widgets/imgui_ex.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
 
@@ -16,6 +26,19 @@ namespace nm = NAV::NodeManager;
 
 namespace NAV
 {
+InsTime getCurrentInsTime()
+{
+    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    auto* t = std::localtime(&now); // NOLINT(concurrency-mt-unsafe) // FIXME: error: function is not thread safe
+
+    return { static_cast<uint16_t>(t->tm_year + 1900),
+             static_cast<uint16_t>(t->tm_mon),
+             static_cast<uint16_t>(t->tm_mday),
+             static_cast<uint16_t>(t->tm_hour),
+             static_cast<uint16_t>(t->tm_min),
+             static_cast<long double>(t->tm_sec) };
+}
+
 /// @brief Write info to a json object
 /// @param[out] j Json output
 /// @param[in] data Object to read info from
@@ -49,11 +72,12 @@ NAV::Demo::Demo()
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
+    _lockConfigDuringRun = false;
     _guiConfigDefaultWindowSize = { 630, 410 };
 
     nm::CreateOutputPin(this, "", Pin::Type::Delegate, { typeStatic() }, this);
     nm::CreateOutputPin(this, "Sensor\nData", Pin::Type::Flow, { NAV::ImuObs::type() });
-    nm::CreateOutputPin(this, "FileReader\n Data", Pin::Type::Flow, { NAV::InsObs::type() }, &Demo::pollData);
+    nm::CreateOutputPin(this, "FileReader\n Data", Pin::Type::Flow, { NAV::NodeData::type() }, &Demo::pollData);
     nm::CreateOutputPin(this, "Bool", Pin::Type::Bool, { "" }, &_valueBool);
     nm::CreateOutputPin(this, "Int", Pin::Type::Int, { "" }, &_valueInt);
     nm::CreateOutputPin(this, "Float", Pin::Type::Float, { "" }, &_valueFloat);
@@ -64,7 +88,8 @@ NAV::Demo::Demo()
 
     nm::CreateInputPin(this, "Demo Node", Pin::Type::Delegate, { typeStatic() });
     nm::CreateInputPin(this, "Sensor\nData", Pin::Type::Flow, { NAV::ImuObs::type() }, &Demo::receiveSensorData);
-    nm::CreateInputPin(this, "FileReader\n Data", Pin::Type::Flow, { NAV::InsObs::type() }, &Demo::receiveFileReaderData);
+    inputPins.back().neededForTemporalQueueCheck = false;
+    nm::CreateInputPin(this, "FileReader\n Data", Pin::Type::Flow, { NAV::NodeData::type() }, &Demo::receiveFileReaderData);
     nm::CreateInputPin(this, "Bool", Pin::Type::Bool);
     nm::CreateInputPin(this, "Int", Pin::Type::Int);
     nm::CreateInputPin(this, "Float", Pin::Type::Float);
@@ -91,7 +116,7 @@ std::string NAV::Demo::type() const
 
 std::string NAV::Demo::category()
 {
-    return "Demo";
+    return "Utility";
 }
 
 void NAV::Demo::guiConfig()
@@ -104,8 +129,13 @@ void NAV::Demo::guiConfig()
 
         /* ----------------------------------------------- Delegate ----------------------------------------------- */
         ImGui::TableNextColumn();
-        const auto* connectedNode = getInputValue<Demo>(INPUT_PORT_INDEX_DEMO_NODE);
-        ImGui::Text("Delegate: %s", connectedNode ? connectedNode->nameId().c_str() : "N/A");
+        {
+            const Demo* connectedNode = getInputValue<const Demo>(INPUT_PORT_INDEX_DEMO_NODE);
+            auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_DEMO_NODE);
+            if (mutex) { mutex->lock(); }
+            ImGui::Text("Delegate: %s", connectedNode ? connectedNode->nameId().c_str() : "N/A");
+            if (mutex) { mutex->unlock(); }
+        }
         ImGui::TableNextColumn();
         /* ------------------------------------------------ Sensor ------------------------------------------------ */
         ImGui::TableNextColumn();
@@ -128,19 +158,27 @@ void NAV::Demo::guiConfig()
         }
         /* ------------------------------------------------- Bool ------------------------------------------------- */
         ImGui::TableNextColumn();
-        const auto* connectedBool = getInputValue<bool>(INPUT_PORT_INDEX_BOOL);
-        ImGui::Text("Bool: %s", connectedBool ? (*connectedBool ? "true" : "false") : "N/A");
+        {
+            const auto* connectedBool = getInputValue<const bool>(INPUT_PORT_INDEX_BOOL);
+            auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_BOOL);
+            if (mutex) { mutex->lock(); }
+            ImGui::Text("Bool: %s", connectedBool ? (*connectedBool ? "true" : "false") : "N/A");
+            if (mutex) { mutex->unlock(); }
+        }
         ImGui::TableNextColumn();
         if (ImGui::Checkbox("Bool", &_valueBool))
         {
             flow::ApplyChanges();
-            notifyOutputValueChanged(OUTPUT_PORT_INDEX_BOOL);
         }
+
         /* -------------------------------------------------- Int ------------------------------------------------- */
         ImGui::TableNextColumn();
-        if (const auto* connectedInt = getInputValue<int>(INPUT_PORT_INDEX_INT))
+        if (const auto* connectedInt = getInputValue<const int>(INPUT_PORT_INDEX_INT))
         {
+            auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_INT);
+            if (mutex) { mutex->lock(); }
             ImGui::Text("Int: %d", *connectedInt);
+            if (mutex) { mutex->unlock(); }
         }
         else
         {
@@ -160,13 +198,15 @@ void NAV::Demo::guiConfig()
             }
 
             flow::ApplyChanges();
-            notifyOutputValueChanged(OUTPUT_PORT_INDEX_INT);
         }
         /* ------------------------------------------------- Float ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (const auto* connectedFloat = getInputValue<float>(INPUT_PORT_INDEX_FLOAT))
+        if (const auto* connectedFloat = getInputValue<const float>(INPUT_PORT_INDEX_FLOAT))
         {
+            auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_FLOAT);
+            if (mutex) { mutex->lock(); }
             ImGui::Text("Float: %.3f", *connectedFloat);
+            if (mutex) { mutex->unlock(); }
         }
         else
         {
@@ -176,46 +216,58 @@ void NAV::Demo::guiConfig()
         if (ImGui::DragFloat("Float", &_valueFloat))
         {
             flow::ApplyChanges();
-            notifyOutputValueChanged(OUTPUT_PORT_INDEX_FLOAT);
         }
         /* ------------------------------------------------ Double ------------------------------------------------ */
         ImGui::TableNextColumn();
-
-        if (auto* connectedDouble = getInputValue<double>(INPUT_PORT_INDEX_DOUBLE);
-            connectedDouble == nullptr)
+        if (const auto* connectedDouble = getInputValue<const double>(INPUT_PORT_INDEX_DOUBLE))
+        {
+            auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_DOUBLE);
+            if (mutex) { mutex->lock(); }
+            ImGui::Text("Double : %.3f", *connectedDouble);
+            if (mutex) { mutex->unlock(); }
+        }
+        else
         {
             ImGui::TextUnformatted("Double: N/A");
         }
-        else if (auto floatFromDouble = static_cast<float>(*connectedDouble);
-                 ImGui::DragFloat("Double", &floatFromDouble, 1.0F, 0.0F, 0.0F, "%.6f"))
-        {
-            *connectedDouble = floatFromDouble;
-            flow::ApplyChanges();
-            notifyInputValueChanged(INPUT_PORT_INDEX_DOUBLE);
-        }
         ImGui::TableNextColumn();
-        ImGui::Text("Double: %.6f", _valueDouble);
+
+        if (ImGui::DragDouble("Double", &_valueDouble))
+        {
+            flow::ApplyChanges();
+        }
         /* ------------------------------------------------ String ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (auto* connectedString = getInputValue<std::string>(INPUT_PORT_INDEX_STRING);
-            connectedString == nullptr)
-        {
-            ImGui::Text("String: N/A");
-        }
-        else if (ImGui::InputText("String", connectedString))
-        {
-            flow::ApplyChanges();
-            notifyInputValueChanged(INPUT_PORT_INDEX_STRING);
-        }
+        ImGui::Text("String: %s", _connectedString.c_str());
         ImGui::Text("The String was updated %lu time%s", _stringUpdateCounter, _stringUpdateCounter > 1 || _stringUpdateCounter == 0 ? "s" : "");
         ImGui::TableNextColumn();
-        ImGui::Text("String: %s", _valueString.c_str());
+        requestOutputValueLock(OUTPUT_PORT_INDEX_STRING); // Before accessing and changing the value. A lock has to be requested to ensure it is not changed before all linked nodes received the value.
+        if (ImGui::InputText("String", &_valueString))
+        {
+            flow::ApplyChanges();
+            const auto& outputPin = outputPins[OUTPUT_PORT_INDEX_STRING];
+            if (outputPin.isPinLinked())
+            {
+                if (!isInitialized()) { LOG_WARN("{}: Notifying connected nodes requires this node to be initialized.", nameId()); }
+                else if (!callbacksEnabled) { LOG_WARN("{}: Notifying connected nodes requires enabled callbacks on this node.", nameId()); }
+                else if (std::none_of(outputPin.links.begin(), outputPin.links.end(), [](const OutputPin::OutgoingLink& link) { return link.connectedNode->isInitialized(); }))
+                {
+                    LOG_WARN("{}: Notifying connected nodes requires at least one connected node to be initialized.", nameId());
+                }
+            }
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_STRING, getCurrentInsTime());
+        }
+        ImGui::SameLine();
+        gui::widgets::HelpMarker("The string notifies about changes.\nEnable this nodes callback & initialize both nodes.");
         /* ------------------------------------------------ Object ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (const auto* connectedObject = getInputValue<DemoData>(INPUT_PORT_INDEX_DEMO_DATA))
+        if (const auto* connectedObject = getInputValue<const DemoData>(INPUT_PORT_INDEX_DEMO_DATA))
         {
+            auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_DEMO_DATA);
+            if (mutex) { mutex->lock(); }
             ImGui::Text("Object: [%d, %d, %d], %s", connectedObject->integer.at(0), connectedObject->integer.at(1), connectedObject->integer.at(2),
                         connectedObject->boolean ? "true" : "false");
+            if (mutex) { mutex->unlock(); }
         }
         else
         {
@@ -225,32 +277,31 @@ void NAV::Demo::guiConfig()
         if (ImGui::InputInt3("", _valueObject.integer.data()))
         {
             flow::ApplyChanges();
-            notifyOutputValueChanged(OUTPUT_PORT_INDEX_DEMO_DATA);
         }
         ImGui::SameLine();
         if (ImGui::Checkbox("Object", &_valueObject.boolean))
         {
             flow::ApplyChanges();
-            notifyOutputValueChanged(OUTPUT_PORT_INDEX_DEMO_DATA);
         }
         /* ------------------------------------------------ Matrix ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (auto* connectedMatrix = getInputValue<Eigen::MatrixXd>(INPUT_PORT_INDEX_MATRIX);
-            connectedMatrix == nullptr)
+        if (const auto* connectedMatrix = getInputValue<const Eigen::MatrixXd>(INPUT_PORT_INDEX_MATRIX))
         {
-            ImGui::TextUnformatted("Matrix: N/A");
+            auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_MATRIX);
+            if (mutex) { mutex->lock(); }
+            gui::widgets::MatrixView("Current Matrix", connectedMatrix, GuiMatrixViewFlags_Header, ImGuiTableFlags_Borders | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit, "%.1f");
+            if (mutex) { mutex->unlock(); }
         }
         else
         {
-            if (gui::widgets::InputMatrix("Init Matrix", connectedMatrix, GuiMatrixViewFlags_Header, ImGuiTableFlags_Borders | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit, 30.0F, 0.0, 0.0, "%.1f"))
-            {
-                flow::ApplyChanges();
-                notifyInputValueChanged(INPUT_PORT_INDEX_MATRIX);
-            }
+            ImGui::TextUnformatted("Matrix: N/A");
         }
         ImGui::TableNextColumn();
 
-        gui::widgets::MatrixView("Current Matrix", &_valueMatrix, GuiMatrixViewFlags_Header, ImGuiTableFlags_Borders | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit, "%.1f");
+        if (gui::widgets::InputMatrix("Init Matrix", &_valueMatrix, GuiMatrixViewFlags_Header, ImGuiTableFlags_Borders | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit, 30.0F, 0.0, 0.0, "%.1f"))
+        {
+            flow::ApplyChanges();
+        }
 
         ImGui::EndTable();
     }
@@ -322,10 +373,7 @@ bool NAV::Demo::initialize()
     LOG_TRACE("{}: called", nameId());
 
     // To Show the Initialization in the GUI
-    std::this_thread::sleep_until(std::chrono::steady_clock::now() + std::chrono::milliseconds(2000));
-
-    // Currently crashes clang-tidy (Stack dump: #0 Calling std::chrono::operator<=>), so use sleep_until
-    // std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 
     _receivedDataFromSensorCnt = 0;
     _receivedDataFromFileReaderCnt = 0;
@@ -348,7 +396,7 @@ void NAV::Demo::deinitialize()
     }
 
     // To Show the Deinitialization in the GUI
-    std::this_thread::sleep_until(std::chrono::steady_clock::now() + std::chrono::milliseconds(1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }
 
 bool NAV::Demo::resetNode()
@@ -360,36 +408,40 @@ bool NAV::Demo::resetNode()
     return true;
 }
 
-bool NAV::Demo::onCreateLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pin* endPin)
+bool NAV::Demo::onCreateLink([[maybe_unused]] OutputPin& startPin, [[maybe_unused]] InputPin& endPin)
 {
-    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
+    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
 
     return true;
 }
 
-void NAV::Demo::onDeleteLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pin* endPin)
+void NAV::Demo::onDeleteLink([[maybe_unused]] OutputPin& startPin, [[maybe_unused]] InputPin& endPin)
 {
-    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
+    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
 }
 
-void NAV::Demo::receiveSensorData(const std::shared_ptr<const NodeData>& /*nodeData*/, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::Demo::receiveSensorData(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    LOG_INFO("{}: received Sensor Data", nameId());
-
     _receivedDataFromSensorCnt++;
+    LOG_DEBUG("{}: received {} Sensor Data", nameId(), _receivedDataFromSensorCnt);
+
+    queue.pop_front(); // Here we did not read the data, so lets just pop it from the queue
 }
 
-void NAV::Demo::receiveFileReaderData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::Demo::receiveFileReaderData(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto obs = std::static_pointer_cast<const InsObs>(nodeData);
-    LOG_INFO("{}: received FileReader Data: {}", nameId(), obs->insTime->toYMDHMS());
-
+    // Here we are reading the data, so extracts gets the value and automatically pops it from the queue
+    auto obs = queue.extract_front();
     _receivedDataFromFileReaderCnt++;
+
+    LOG_DEBUG("{}: received {} FileReader Data: {}", nameId(), _receivedDataFromFileReaderCnt, obs->insTime.toYMDHMS());
 }
 
 void NAV::Demo::readSensorDataThread(void* userData)
 {
     auto* node = static_cast<Demo*>(userData);
+
+    if (node->getMode() == Mode::POST_PROCESSING) { return; }
 
     auto imuPos = ImuPos();
     auto obs = std::make_shared<ImuObs>(imuPos);
@@ -419,41 +471,55 @@ void NAV::Demo::readSensorDataThread(void* userData)
     distribution = std::uniform_real_distribution<double>(15.0, 25.0);
     obs->temperature = distribution(generator);
 
-    node->invokeCallbacks(OUTPUT_PORT_INDEX_NODE_DATA, obs);
+    node->invokeCallbacks(OUTPUT_PORT_INDEX_FLOW_SENSOR, obs);
 }
 
-std::shared_ptr<const NAV::NodeData> NAV::Demo::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::Demo::peekPollData(bool peek)
 {
     if (_iPollData >= _nPollData)
     {
         return nullptr;
     }
-    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    auto* t = std::localtime(&now); // NOLINT(concurrency-mt-unsafe) // FIXME: error: function is not thread safe
 
-    if (peek) // Early return with time to let the FlowExecutor sort the observations
+    if (peek) // Early return with time to let the Node sort the observations
     {
-        auto obs = std::make_shared<InsObs>();
-        obs->insTime = InsTime(static_cast<uint16_t>(t->tm_year + 1900),
-                               static_cast<uint16_t>(t->tm_mon),
-                               static_cast<uint16_t>(t->tm_mday),
-                               static_cast<uint16_t>(t->tm_hour),
-                               static_cast<uint16_t>(t->tm_min),
-                               static_cast<long double>(t->tm_sec));
+        auto obs = std::make_shared<NodeData>(); // Construct the real observation (here in example also from type NodeData)
+        obs->insTime = InsTime(2000, 1, 1, 0, 0, _iPollData);
         return obs;
     }
 
+    auto obs = std::make_shared<NodeData>(); // Construct the real observation (here in example also from type NodeData)
+    obs->insTime = InsTime(2000, 1, 1, 0, 0, _iPollData);
+
     _iPollData++;
-
-    auto obs = std::make_shared<InsObs>(); // Construct the real observation (here in example also from type InsObs)
-
     // Calls all the callbacks
-    invokeCallbacks(OUTPUT_PORT_INDEX_INS_OBS, obs);
+    invokeCallbacks(OUTPUT_PORT_INDEX_FLOW_FILE, obs);
 
     return obs;
 }
 
-void NAV::Demo::stringUpdatedNotifyFunction(ax::NodeEditor::LinkId /*linkId*/)
+std::shared_ptr<const NAV::NodeData> NAV::Demo::pollData()
+{
+    if (_iPollData >= _nPollData)
+    {
+        return nullptr; // Tells the node that the last message was read
+    }
+
+    auto obs = std::make_shared<NodeData>(); // Construct the real observation (here in example also from type NodeData)
+    obs->insTime = InsTime(2000, 1, 1, 0, 0, _iPollData);
+
+    _iPollData++;
+
+    invokeCallbacks(OUTPUT_PORT_INDEX_FLOW_FILE, obs); // Calls all the callbacks
+    return obs;
+}
+
+void NAV::Demo::stringUpdatedNotifyFunction([[maybe_unused]] const InsTime& insTime, size_t pinIdx) // TODO: This does not work
 {
     _stringUpdateCounter++;
+
+    _connectedString = *getInputValue<const std::string>(pinIdx);
+    LOG_DEBUG("String value updated to {} at time {}", _connectedString, insTime);
+
+    releaseInputValue(pinIdx); // Do not forget to release the mutex after you are done reading it
 }

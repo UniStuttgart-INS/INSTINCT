@@ -8,24 +8,16 @@
             "label": "CLEAN: Remove Build Files",
             "type": "shell",
             "group": "build",
-            "linux": {
-                "command": "rm",
-                "args": [
-                    "-rf",
-                    "bin",
-                    "build",
-                    "coverage",
-                    "junit.xml",
-                ],
-            },
+            "command": "rm",
+            "args": [
+                "-rf",
+                "build",
+            ],
             "windows": {
                 "command": "Remove-Item",
                 "args": [
                     "-Recurse",
-                    "bin,",
-                    "build,",
-                    "coverage,",
-                    "junit.xml",
+                    "build",
                 ]
             },
             "presentation": {
@@ -36,31 +28,84 @@
             "problemMatcher": [],
         },
         // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
+        // ║                                       Conan Tasks                                        ║
+        // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
+        { // Conan
+            "label": "Conan",
+            "type": "shell",
+            "group": "build",
+            "command": "conan",
+            "args": [
+                "install",
+                ".",
+                "--build=missing",
+                "-s",
+                "build_type=${input:buildType}",
+            ],
+            "presentation": {
+                "clear": true,
+            },
+            "problemMatcher": [],
+        },
+        { // Conan: Debug
+            "label": "Conan: Debug",
+            "type": "shell",
+            "group": "build",
+            "command": "conan",
+            "args": [
+                "install",
+                ".",
+                "--build=missing",
+                "-s",
+                "build_type=Debug",
+            ],
+            "presentation": {
+                "clear": true,
+            },
+            "problemMatcher": [],
+        },
+        { // Conan: Release
+            "label": "Conan: Release",
+            "type": "shell",
+            "group": "build",
+            "command": "conan",
+            "args": [
+                "install",
+                ".",
+                "--build=missing",
+                "-s",
+                "build_type=Release",
+            ],
+            "presentation": {
+                "clear": true,
+            },
+            "problemMatcher": [],
+        },
+        // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
         // ║                                       CMAKE Tasks                                        ║
         // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
         { // CMAKE: Main
             "label": "CMAKE: Main",
             "type": "shell",
             "group": "build",
-            "linux": {
-                "command": "bash",
-                "args": [
-                    "-c",
-                    "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
-                ],
-                // "options": {
-                //     "env": {
-                //         "CC": "/usr/bin/clang",
-                //         "CXX": "/usr/bin/clang++",
-                //     },
-                // },
-            },
+            "command": "bash",
+            "args": [
+                "-c",
+                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DCMAKE_TOOLCHAIN_FILE=build/${input:buildType}/generators/conan_toolchain.cmake -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
+            ],
+            // "options": {
+            //     "env": {
+            //         "CC": "/usr/bin/clang",
+            //         "CXX": "/usr/bin/clang++",
+            //     },
+            // },
             "windows": {
                 "command": "cmake",
                 "args": [
                     "-Bbuild/${input:buildType}-msvc",
                     "-S.",
                     "-DCMAKE_BUILD_TYPE=${input:buildType}",
+                    "-DCMAKE_TOOLCHAIN_FILE=${workspaceFolder}/build/generators/conan_toolchain.cmake",
                     "-DENABLE_MAIN=ON",
                     "-DENABLE_TESTING=OFF",
                     "-DENABLE_DOXYGEN=OFF",
@@ -77,34 +122,33 @@
                     }
                 },
             },
-            "presentation": {
-                "clear": true,
-            },
+            "dependsOn": [
+                "Conan",
+            ],
             "problemMatcher": [],
         },
         { // CMAKE: Testing
             "label": "CMAKE: Testing",
             "type": "shell",
             "group": "build",
-            "linux": {
-                "command": "bash",
-                "args": [
-                    "-c",
-                    "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Debug-${input:compiler} -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
-                ],
-                // "options": {
-                //     "env": {
-                //         "CC": "/usr/bin/clang",
-                //         "CXX": "/usr/bin/clang++",
-                //     }
-                // },
-            },
+            "command": "bash",
+            "args": [
+                "-c",
+                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DCMAKE_TOOLCHAIN_FILE=build/${input:buildType}/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
+            ],
+            // "options": {
+            //     "env": {
+            //         "CC": "/usr/bin/clang",
+            //         "CXX": "/usr/bin/clang++",
+            //     }
+            // },
             "windows": {
                 "command": "cmake",
                 "args": [
-                    "-Bbuild/Debug-msvc",
+                    "-Bbuild/${input:buildType}-msvc",
                     "-S.",
-                    "-DCMAKE_BUILD_TYPE=Debug",
+                    "-DCMAKE_BUILD_TYPE=${input:buildType}",
+                    "-DCMAKE_TOOLCHAIN_FILE=${workspaceFolder}/build/generators/conan_toolchain.cmake",
                     "-DENABLE_MAIN=OFF",
                     "-DENABLE_TESTING=ON",
                     "-DENABLE_DOXYGEN=OFF",
@@ -121,9 +165,9 @@
                     }
                 },
             },
-            "presentation": {
-                "clear": true
-            },
+            "dependsOn": [
+                "Conan",
+            ],
             "problemMatcher": [],
         },
         { // CMAKE: Coverage
@@ -135,6 +179,7 @@
                 "-Bbuild/Debug-cov",
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=Debug",
+                "-DCMAKE_TOOLCHAIN_FILE=build/Debug/generators/conan_toolchain.cmake",
                 "-DENABLE_MAIN=OFF",
                 "-DENABLE_TESTING=ON",
                 "-DENABLE_DOXYGEN=OFF",
@@ -150,9 +195,9 @@
                     "CXX": "/usr/bin/g++",
                 }
             },
-            "presentation": {
-                "clear": true
-            },
+            "dependsOn": [
+                "Conan: Debug",
+            ],
             "problemMatcher": [],
         },
         { // CMAKE: Documentation
@@ -164,6 +209,7 @@
                 "-Bbuild/Release-doc",
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake",
                 "-DENABLE_MAIN=OFF",
                 "-DENABLE_TESTING=OFF",
                 "-DENABLE_DOXYGEN=ON",
@@ -173,9 +219,9 @@
                 "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
                 "-DDOC_CHECK_CODE_DOCUMENTATION=NO",
             ],
-            "presentation": {
-                "clear": true
-            },
+            "dependsOn": [
+                "Conan: Release",
+            ],
             "problemMatcher": [],
         },
         { // CMAKE: Documentation Check
@@ -187,6 +233,7 @@
                 "-Bbuild/Release-doc",
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake",
                 "-DENABLE_MAIN=OFF",
                 "-DENABLE_TESTING=OFF",
                 "-DENABLE_DOXYGEN=ON",
@@ -196,9 +243,9 @@
                 "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
                 "-DDOC_CHECK_CODE_DOCUMENTATION=YES",
             ],
-            "presentation": {
-                "clear": true
-            },
+            "dependsOn": [
+                "Conan: Release",
+            ],
             "problemMatcher": [],
         },
         // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
@@ -235,21 +282,28 @@
             "label": "MAIN: Build project",
             "type": "shell",
             "group": "build",
-            "command": "cmake",
+            "command": "bash",
             "linux": {
                 "args": [
-                    "--build",
-                    "build/${input:buildType}-${input:compiler}",
-                    "--",
-                    "-j8",
+                    "-c",
+                    "cmake --build build/${input:buildType}-${input:compiler} --config ${input:buildType} --parallel$(nproc)",
+                ],
+            },
+            "osx": {
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "cmake --build build/${input:buildType}-${input:compiler} --config ${input:buildType} --parallel$(sysctl -n hw.physicalcpu)",
                 ],
             },
             "windows": {
+                "command": "cmake",
                 "args": [
                     "--build",
                     "build/${input:buildType}-msvc",
-                    "--",
-                    "-maxCpuCount",
+                    "--config",
+                    "${input:buildType}",
+                    "--parallel8",
                 ],
                 "options": {
                     "env": {
@@ -268,21 +322,27 @@
             "type": "shell",
             "group": "build",
             "linux": {
-                "command": "cmake",
+                "command": "bash",
                 "args": [
-                    "--build",
-                    "build/Debug-${input:compiler}",
-                    "--",
-                    "-j8",
+                    "-c",
+                    "cmake --build build/${input:buildType}-${input:compiler} --config ${input:buildType} --parallel$(nproc)",
+                ],
+            },
+            "osx": {
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "cmake --build build/${input:buildType}-${input:compiler} --config ${input:buildType} --parallel$(sysctl -n hw.physicalcpu)",
                 ],
             },
             "windows": {
                 "command": "cmake",
                 "args": [
                     "--build",
-                    "build/Debug-msvc",
-                    "--",
-                    "-maxCpuCount",
+                    "build/${input:buildType}-msvc",
+                    "--config",
+                    "${input:buildType}",
+                    "--parallel8",
                 ],
                 "options": {
                     "env": {
@@ -300,13 +360,20 @@
             "label": "COVERAGE: Build Coverage Report",
             "type": "shell",
             "group": "build",
-            "command": "cmake",
-            "args": [
-                "--build",
-                "build/Debug-cov",
-                "--",
-                "-j8",
-            ],
+            "linux": {
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "cmake --build build/Debug-cov --config ${input:buildType} --parallel$(nproc)",
+                ],
+            },
+            "osx": {
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "cmake --build build/Debug-cov --config ${input:buildType} --parallel$(sysctl -n hw.physicalcpu)",
+                ],
+            },
             "dependsOn": [
                 "CMAKE: Coverage",
             ],
@@ -315,10 +382,7 @@
         { // DOXYGEN: Build Documentation
             "label": "DOXYGEN: Build Documentation",
             "type": "shell",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
+            "group": "build",
             "command": "cmake",
             "args": [
                 "--build",
@@ -357,11 +421,11 @@
                 "kind": "test",
                 "isDefault": true
             },
-            "command": "./bin/${input:buildType}/instinct",
+            "command": "${workspaceFolder}/build/bin/${input:buildType}/instinct",
             "args": [
                 "--config=config.ini",
                 "--load=\"flow/Default.flow\"",
-                // "--load=\"test/flow/Nodes/DataProcessor/GNSS/SPP-Skydel.flow\"",
+                // "--load=\"test/flow/Nodes/DataProcessor/GNSS/SinglePointPositioning.flow\"",
                 // "--sigterm",
                 // "--duration=60",
                 // "--nogui",
@@ -372,6 +436,7 @@
                 // "--implot-config=\"config/implot.json\"",
                 "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
                 "--file-log-level=trace", // trace/debug/info/warning/error/critical/off
+                // "--log-filter=SinglePointPositioning.cpp",
                 // ================ To configure tests ================
                 // "--flow-path=test/flow",
                 // "--input-path=test/data",
@@ -388,23 +453,24 @@
         { // TEST: Build & run
             "label": "TEST: Build & run",
             "type": "shell",
-            "group": "test",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "command": "ctest",
             "args": [
-                "-j4",
+                // "-j4",
                 "--output-on-failure",
                 // "--tests-regex",
                 // "'PVAError|PosVelAtt'",
                 // "--verbose",
             ],
-            "linux": {
-                "options": {
-                    "cwd": "build/Debug-${input:compiler}",
-                },
+            "options": {
+                "cwd": "${workspaceFolder}/build/${input:buildType}-${input:compiler}",
             },
             "windows": {
                 "options": {
-                    "cwd": "build/Debug-msvc",
+                    "cwd": "${workspaceFolder}/build/${input:buildType}-msvc",
                 },
             },
             "dependsOn": [
@@ -427,7 +493,7 @@
                 // "--verbose",
             ],
             "options": {
-                "cwd": "build/Debug-${input:compiler}",
+                "cwd": "${workspaceFolder}/build/${input:buildType}-${input:compiler}",
             },
             "dependsOn": [
                 "TEST: Build project",
@@ -445,7 +511,7 @@
                 // "--verbose",
             ],
             "options": {
-                "cwd": "build/Debug-cov",
+                "cwd": "${workspaceFolder}/build/Debug-cov",
             },
             "dependsOn": [
                 "COVERAGE: Build Coverage Report",
@@ -465,7 +531,7 @@
                 // "--verbose",
             ],
             "options": {
-                "cwd": "build/Debug-cov",
+                "cwd": "${workspaceFolder}/build/Debug-cov",
             },
             "dependsOn": [
                 "COVERAGE: Build Coverage Report",
@@ -479,13 +545,8 @@
             "command": "bash",
             "args": [
                 "-c",
-                "mkdir -p $COVERAGE_PATH && lcov --gcov-tool gcov --capture --no-external --directory . --output-file $COVERAGE_PATH/coverage_all.info && lcov --remove $COVERAGE_PATH/coverage_all.info \"${workspaceFolder}/lib/*\" \"${workspaceFolder}/test/*\" \"${workspaceFolder}/build/*\" --output-file $COVERAGE_PATH/coverage.info && genhtml $COVERAGE_PATH/coverage.info --output-directory $COVERAGE_PATH --config-file doc/coverage/lcovrc && lcov --list $COVERAGE_PATH/coverage.info && python3 tools/lcov_cobertura.py $COVERAGE_PATH/coverage.info --output $COVERAGE_PATH/cobertura-coverage.xml",
+                "mkdir -p build/coverage && gcovr --config doc/coverage/gcovr.cfg",
             ],
-            "options": {
-                "env": {
-                    "COVERAGE_PATH": "bin/doc/html/coverage",
-                },
-            },
             "dependsOn": [
                 "COVERAGE: Run Coverage Tests",
             ],
@@ -498,13 +559,8 @@
             "command": "bash",
             "args": [
                 "-c",
-                "mkdir -p $COVERAGE_PATH && lcov --gcov-tool gcov --capture --no-external --directory . --output-file $COVERAGE_PATH/coverage_all.info && lcov --remove $COVERAGE_PATH/coverage_all.info \"${workspaceFolder}/lib/*\" \"${workspaceFolder}/test/*\" \"${workspaceFolder}/build/*\" --output-file $COVERAGE_PATH/coverage.info && genhtml $COVERAGE_PATH/coverage.info --output-directory $COVERAGE_PATH --config-file doc/coverage/lcovrc && lcov --list $COVERAGE_PATH/coverage.info && python3 tools/lcov_cobertura.py $COVERAGE_PATH/coverage.info --output $COVERAGE_PATH/cobertura-coverage.xml",
+                "mkdir -p build/coverage && gcovr --config doc/coverage/gcovr.cfg",
             ],
-            "options": {
-                "env": {
-                    "COVERAGE_PATH": "bin/doc/html/coverage",
-                },
-            },
             "dependsOn": [
                 "COVERAGE: Run Coverage Tests w/o flow tests",
             ],
@@ -516,7 +572,7 @@
             "group": "build",
             "command": "xdg-open",
             "args": [
-                "bin/doc/html/coverage/index.html",
+                "build/coverage/index.html",
             ],
             "dependsOn": [
                 "COVERAGE: Create",
@@ -529,7 +585,7 @@
             "group": "build",
             "command": "xdg-open",
             "args": [
-                "bin/doc/html/coverage/index.html",
+                "build/coverage/index.html",
             ],
             "dependsOn": [
                 "COVERAGE: Create w/o flow tests",
@@ -542,7 +598,7 @@
             "group": "build",
             "command": "xdg-open",
             "args": [
-                "bin/doc/html/index.html",
+                "build/doc/html/index.html",
             ],
             "dependsOn": [
                 "DOXYGEN: Build Documentation",
@@ -559,7 +615,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "valgrind --callgrind-out-file=bin/${input:buildType}/callgrind.out --tool=callgrind bin/${input:buildType}/instinct -f config.ini --nogui -l flow/Default.flow && kcachegrind bin/${input:buildType}/callgrind.out",
+                "valgrind --callgrind-out-file=build/bin/${input:buildType}/callgrind.out --tool=callgrind build/bin/${input:buildType}/instinct -f config.ini --nogui -l flow/Default.flow && kcachegrind build/bin/${input:buildType}/callgrind.out",
             ],
             "options": {
                 "cwd": "${workspaceFolder}",
@@ -576,7 +632,7 @@
             "command": "valgrind",
             "args": [
                 "--leak-check=yes",
-                "bin/${input:buildType}/instinct",
+                "build/bin/${input:buildType}/instinct",
                 "-f",
                 "config.ini",
                 "--nogui",

@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "UartDataLogger.hpp"
 
 #include "NodeData/General/UartPacket.hpp"
@@ -92,9 +100,9 @@ void NAV::UartDataLogger::deinitialize()
     FileWriter::deinitialize();
 }
 
-void NAV::UartDataLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::UartDataLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto obs = std::static_pointer_cast<const UartPacket>(nodeData);
+    auto obs = std::static_pointer_cast<const UartPacket>(queue.extract_front());
 
     if (obs->raw.getRawDataLength() > 0)
     {

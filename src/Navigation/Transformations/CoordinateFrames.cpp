@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "CoordinateFrames.hpp"
 
 #include "util/Logger.hpp"
@@ -180,6 +188,8 @@ Eigen::Vector3d lla2ecef_GRS80(const Eigen::Vector3d& lla_position)
 
 Eigen::Vector3d ecef2lla(const Eigen::Vector3d& e_position, double a, double b, double e_squared)
 {
+    if (e_position.isZero()) { return { 0, 0, -a }; }
+
     auto x = e_position(0);
     auto y = e_position(1);
     auto z = e_position(2);

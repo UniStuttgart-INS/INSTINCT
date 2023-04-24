@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file ARMA.hpp
 /// @brief ARMA Node
 /// @author MSc. Janis Thürsam (janis.thuersam@yahoo.de)
@@ -63,9 +71,9 @@ class ARMA : public Node
     void deinitialize() override;
 
     /// @brief Receive Sensor Data
-    /// @param[in] nodeData Data to plot
-    /// @param[in] linkId Id of the link over which the data is received
-    void receiveImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void receiveImuObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief calculate autocorrelation function (ACF)
     /// @param[in] y vector of data

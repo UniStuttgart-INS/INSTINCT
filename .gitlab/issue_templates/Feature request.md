@@ -23,18 +23,28 @@ How might it affect the quality of the product? What additional test coverage or
 Please list the test areas (unit, flow) that needs to be added or updated to ensure that this feature will work as intended.
 -->
 
-### What does success look like, and how can we measure that?
+### Merge to GitHub?
 
-<!-- Define both the success metrics and acceptance criteria. Note that success metrics indicate the desired business outcomes, while acceptance criteria indicate when the solution is working correctly. If there is no way to measure success, link to an issue that will implement a way to measure this.-->
+<!-- Please state whether the issue should be merged to the public GitHub repository after it was merged to our GitLab master branch.
+     Additionally indicate this by removing or adding the label 'GitHub' -->
+/label ~"GitHub"
 
 ### Links / references
 
 <!-- Label reminders - you should have one of each of the following labels.
 Use the following resources to find the appropriate labels:
-- https://git.ins.uni-stuttgart.de/thomas.topp/instinct/-/labels
+- https://git.ins.uni-stuttgart.de/instinct/instinct/-/labels
 -->
+
+/label ~"Type::Bug"
+/label ~"Severity::3 - Major"
+
 /label ~"Type::Feature"
-/label ~"Type::Documentation"
+/label ~"Type::Refactor"
 /label ~"Type::Testing"
+/label ~"Type::Documentation"
+/label ~"Type::Chore"
+
 /label ~"Priority::3 - Medium"
+
 /label ~"Workflow::Design"

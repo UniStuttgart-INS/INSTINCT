@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "UlogFile.hpp"
 
 #include "util/Logger.hpp"
@@ -61,7 +69,7 @@ void NAV::UlogFile::guiConfig()
         flow::ApplyChanges();
         if (res == FileReader::PATH_CHANGED)
         {
-            doInitialize();
+            doReinitialize();
         }
         else
         {
@@ -163,10 +171,10 @@ void NAV::UlogFile::readHeader()
             vendor::pixhawk::ulog_Header_s header;
         } ulogHeader{};
 
-        _filestream.read(ulogHeader.data.data(), ulogHeader.data.size());
+        read(ulogHeader.data.data(), ulogHeader.data.size());
 
         // Check "ULog" at beginning of file
-        if (!((ulogHeader.header.fileMagic[0] == 'U') && (ulogHeader.header.fileMagic[1] == 'L') && (ulogHeader.header.fileMagic[2] == 'o') && (ulogHeader.header.fileMagic[3] == 'g')))
+        if ((ulogHeader.header.fileMagic[0] != 'U') || (ulogHeader.header.fileMagic[1] != 'L') || (ulogHeader.header.fileMagic[2] != 'o') || (ulogHeader.header.fileMagic[3] != 'g'))
         {
             LOG_WARN("{}: FileType is binary, but not ULog", nameId());
         }
@@ -182,9 +190,9 @@ void NAV::UlogFile::readHeader()
             vendor::pixhawk::message_header_s msgHeader;
         } ulogMsgHeader{};
 
-        while (!((ulogMsgHeader.msgHeader.msg_type == 'A') || (ulogMsgHeader.msgHeader.msg_type == 'L')))
+        while ((ulogMsgHeader.msgHeader.msg_type != 'A') && (ulogMsgHeader.msgHeader.msg_type != 'L'))
         {
-            _filestream.read(ulogMsgHeader.data.data(), ulogMsgHeader.data.size());
+            read(ulogMsgHeader.data.data(), ulogMsgHeader.data.size());
 
             LOG_DATA("{}: msgSize: {},  msgType: {}", nameId(), ulogMsgHeader.msgHeader.msg_size, ulogMsgHeader.msgHeader.msg_type);
 
@@ -203,7 +211,7 @@ void NAV::UlogFile::readHeader()
                     vendor::pixhawk::ulog_message_flag_bits_s ulogMsgFlagBits_s;
                 } ulogMsgFlagBits{};
 
-                _filestream.read(ulogMsgFlagBits.data.data(), ulogMsgFlagBits.data.size() * sizeof(char)); // 'sizeof' is optional here, but it is the solution in general, since data types can be larger than one byte
+                read(ulogMsgFlagBits.data.data(), ulogMsgFlagBits.data.size() * sizeof(char)); // 'sizeof' is optional here, but it is the solution in general, since data types can be larger than one byte
             }
 
             // Format definition for a single (composite) type that can be logged or used in another definition as a nested type
@@ -215,7 +223,7 @@ void NAV::UlogFile::readHeader()
                 LOG_DATA("{}: messageFormat.header.msg_size: {}", nameId(), messageFormat.header.msg_size);
 
                 messageFormat.format.resize(messageFormat.header.msg_size);
-                _filestream.read(messageFormat.format.data(), ulogMsgHeader.msgHeader.msg_size);
+                read(messageFormat.format.data(), ulogMsgHeader.msgHeader.msg_size);
                 LOG_DATA("{}: messageFormat.format.data(): {}", nameId(), messageFormat.format.data());
 
                 std::string msgName = messageFormat.format.substr(0, messageFormat.format.find(':'));
@@ -298,22 +306,13 @@ void NAV::UlogFile::readHeader()
                 readParameterMessageDefault(ulogMsgHeader.msgHeader.msg_size, ulogMsgHeader.msgHeader.msg_type);
             }
         }
-        _filestream.seekg(-3, std::ios_base::cur); // 'msg_size' + 'msg_type' = 3 Byte
+        seekg(-3, std::ios_base::cur); // 'msg_size' + 'msg_type' = 3 Byte
         LOG_DEBUG("{}: Read 'Definitions Section' completed", nameId());
     }
 }
 
-std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData()
 {
-    // Get current position
-    auto pollStartPos = _filestream.tellg();
-    std::multimap<uint64_t, MeasurementData> peekEpochData;
-    auto peekLastGnssTime = lastGnssTime;
-    if (peek)
-    {
-        peekEpochData = _epochData;
-    }
-
     // Read message header
     union
     {
@@ -323,7 +322,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
 
     while (true)
     {
-        _filestream.read(ulogMsgHeader.data.data(), ulogMsgHeader.data.size());
+        read(ulogMsgHeader.data.data(), ulogMsgHeader.data.size());
 
         LOG_DATA("{}: msgSize: {}", nameId(), ulogMsgHeader.msgHeader.msg_size);
         LOG_DATA("{}: msgType: {}", nameId(), ulogMsgHeader.msgHeader.msg_type);
@@ -332,13 +331,13 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
         {
             vendor::pixhawk::message_add_logged_s messageAddLog;
             messageAddLog.header = ulogMsgHeader.msgHeader;
-            _filestream.read(reinterpret_cast<char*>(&messageAddLog.multi_id), sizeof(messageAddLog.multi_id));
+            read(reinterpret_cast<char*>(&messageAddLog.multi_id), sizeof(messageAddLog.multi_id));
             LOG_DATA("{}: multi_id: {}", nameId(), messageAddLog.multi_id);
-            _filestream.read(reinterpret_cast<char*>(&messageAddLog.msg_id), sizeof(messageAddLog.msg_id));
+            read(reinterpret_cast<char*>(&messageAddLog.msg_id), sizeof(messageAddLog.msg_id));
             LOG_DATA("{}: msg_id: {}", nameId(), messageAddLog.msg_id);
 
             messageAddLog.msg_name.resize(messageAddLog.header.msg_size - 3);
-            _filestream.read(messageAddLog.msg_name.data(), messageAddLog.header.msg_size - 3);
+            read(messageAddLog.msg_name.data(), messageAddLog.header.msg_size - 3);
             LOG_DATA("{}: messageAddLog.msg_name: {}", nameId(), messageAddLog.msg_name);
 
             /// Combines (sensor-)message name with an ID that indicates a possible multiple of a sensor
@@ -348,7 +347,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
         {
             vendor::pixhawk::message_remove_logged_s messageRemoveLog;
             messageRemoveLog.header = ulogMsgHeader.msgHeader;
-            _filestream.read(reinterpret_cast<char*>(&messageRemoveLog.msg_id), sizeof(messageRemoveLog.msg_id));
+            read(reinterpret_cast<char*>(&messageRemoveLog.msg_id), sizeof(messageRemoveLog.msg_id));
             LOG_DATA("{}: Removed message with 'msg_id': {}", nameId(), messageRemoveLog.msg_id);
 
             _subscribedMessages.erase(messageRemoveLog.msg_id);
@@ -357,11 +356,11 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
         {
             vendor::pixhawk::message_data_s messageData;
             messageData.header = ulogMsgHeader.msgHeader;
-            _filestream.read(reinterpret_cast<char*>(&messageData.msg_id), sizeof(messageData.msg_id));
+            read(reinterpret_cast<char*>(&messageData.msg_id), sizeof(messageData.msg_id));
             LOG_DATA("{}: msg_id: {}", nameId(), messageData.msg_id);
 
             messageData.data.resize(messageData.header.msg_size - 2);
-            _filestream.read(messageData.data.data(), messageData.header.msg_size - 2);
+            read(messageData.data.data(), messageData.header.msg_size - 2);
             LOG_DATA("{}: messageData.header.msg_size: {}", nameId(), messageData.header.msg_size);
 
             const auto& messageFormat = _messageFormats.at(_subscribedMessages.at(messageData.msg_id).message_name);
@@ -438,12 +437,11 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                         LOG_WARN("{}: dataField.name = '{}' or dataField.type = '{}' is unknown", nameId(), dataField.name, dataField.type);
                     }
                 }
-                if (!peek)
-                {
-                    LOG_DATA("{}: Inserting [{}] {}: {}", nameId(), sensorAccel.timestamp,
-                             _subscribedMessages.at(messageData.msg_id).multi_id,
-                             _subscribedMessages.at(messageData.msg_id).message_name);
-                }
+
+                LOG_DATA("{}: Inserting [{}] {}: {}", nameId(), sensorAccel.timestamp,
+                         _subscribedMessages.at(messageData.msg_id).multi_id,
+                         _subscribedMessages.at(messageData.msg_id).message_name);
+
                 _epochData.insert(std::make_pair(sensorAccel.timestamp,
                                                  MeasurementData{ _subscribedMessages.at(messageData.msg_id).multi_id,
                                                                   _subscribedMessages.at(messageData.msg_id).message_name,
@@ -510,12 +508,11 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                         LOG_WARN("{}: dataField.name = '{}' or dataField.type = '{}' is unknown", nameId(), dataField.name, dataField.type);
                     }
                 }
-                if (!peek)
-                {
-                    LOG_DATA("{}: Inserting [{}] {}: {}", nameId(), sensorGyro.timestamp,
-                             _subscribedMessages.at(messageData.msg_id).multi_id,
-                             _subscribedMessages.at(messageData.msg_id).message_name);
-                }
+
+                LOG_DATA("{}: Inserting [{}] {}: {}", nameId(), sensorGyro.timestamp,
+                         _subscribedMessages.at(messageData.msg_id).multi_id,
+                         _subscribedMessages.at(messageData.msg_id).message_name);
+
                 _epochData.insert(std::make_pair(sensorGyro.timestamp,
                                                  MeasurementData{ _subscribedMessages.at(messageData.msg_id).multi_id,
                                                                   _subscribedMessages.at(messageData.msg_id).message_name,
@@ -592,12 +589,11 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                         LOG_WARN("{}: dataField.name = '{}' or dataField.type = '{}' is unknown", nameId(), dataField.name, dataField.type);
                     }
                 }
-                if (!peek)
-                {
-                    LOG_DATA("{}: Inserting [{}] {}: {}", nameId(), sensorMag.timestamp,
-                             _subscribedMessages.at(messageData.msg_id).multi_id,
-                             _subscribedMessages.at(messageData.msg_id).message_name);
-                }
+
+                LOG_DATA("{}: Inserting [{}] {}: {}", nameId(), sensorMag.timestamp,
+                         _subscribedMessages.at(messageData.msg_id).multi_id,
+                         _subscribedMessages.at(messageData.msg_id).message_name);
+
                 _epochData.insert(std::make_pair(sensorMag.timestamp,
                                                  MeasurementData{ _subscribedMessages.at(messageData.msg_id).multi_id,
                                                                   _subscribedMessages.at(messageData.msg_id).message_name,
@@ -771,7 +767,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     }
                 }
 
-                if (!peek && lastGnssTime.timeSinceStartup)
+                if (lastGnssTime.timeSinceStartup)
                 {
                     [[maybe_unused]] auto newGnssTime = InsTime(1970, 1, 1, 0, 0, vehicleGpsPosition.time_utc_usec * 1e-6L);
                     LOG_DATA("{}: Updating GnssTime from {} to {} (Diff {} sec)", nameId(), lastGnssTime.gnssTime.toYMDHMS(), newGnssTime.toYMDHMS(), (newGnssTime - lastGnssTime.gnssTime).count());
@@ -792,12 +788,11 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     }
                     _epochData.erase(iter);
                 }
-                if (!peek)
-                {
-                    LOG_DATA("{}: Inserting [{}] {}: {}", nameId(), vehicleGpsPosition.timestamp,
-                             _subscribedMessages.at(messageData.msg_id).multi_id,
-                             _subscribedMessages.at(messageData.msg_id).message_name);
-                }
+
+                LOG_DATA("{}: Inserting [{}] {}: {}", nameId(), vehicleGpsPosition.timestamp,
+                         _subscribedMessages.at(messageData.msg_id).multi_id,
+                         _subscribedMessages.at(messageData.msg_id).message_name);
+
                 _epochData.insert(std::make_pair(vehicleGpsPosition.timestamp,
                                                  MeasurementData{ _subscribedMessages.at(messageData.msg_id).multi_id,
                                                                   _subscribedMessages.at(messageData.msg_id).message_name,
@@ -856,12 +851,11 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     }
                     _epochData.erase(iter);
                 }
-                if (!peek)
-                {
-                    LOG_DATA("{}: Inserting [{}] {}: {}", nameId(), vehicleAttitude.timestamp,
-                             _subscribedMessages.at(messageData.msg_id).multi_id,
-                             _subscribedMessages.at(messageData.msg_id).message_name);
-                }
+
+                LOG_DATA("{}: Inserting [{}] {}: {}", nameId(), vehicleAttitude.timestamp,
+                         _subscribedMessages.at(messageData.msg_id).multi_id,
+                         _subscribedMessages.at(messageData.msg_id).message_name);
+
                 _epochData.insert(std::make_pair(vehicleAttitude.timestamp,
                                                  MeasurementData{ _subscribedMessages.at(messageData.msg_id).multi_id,
                                                                   _subscribedMessages.at(messageData.msg_id).message_name,
@@ -1072,12 +1066,10 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 auto obs = std::make_shared<ImuObs>(this->_imuPos);
 
                 uint64_t timeSinceStartupNew{};
-                if (!peek)
+
+                for ([[maybe_unused]] const auto& [timestamp, measurement] : _epochData)
                 {
-                    for ([[maybe_unused]] const auto& [timestamp, measurement] : _epochData)
-                    {
-                        LOG_DATA("{}: [{}] {}: {}", nameId(), timestamp, measurement.multi_id, measurement.message_name);
-                    }
+                    LOG_DATA("{}: [{}] {}: {}", nameId(), timestamp, measurement.multi_id, measurement.message_name);
                 }
 
                 // Construct ImuObs
@@ -1135,28 +1127,18 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 obs->timeSinceStartup = 1000 * timeSinceStartupNew; // latest timestamp in [ns]
                 LOG_DATA("{}: *obs->timeSinceStartup = {} s", nameId(), static_cast<double>(*obs->timeSinceStartup) * 1e-9);
 
-                if (!peek)
+                LOG_DATA("{}: Sending out ImuObs {}: {} - {}", nameId(), multi_id, obs->insTime.toYMDHMS(), obs->timeSinceStartup.value());
+                if (multi_id == 0)
                 {
-                    LOG_DATA("{}: Sending out ImuObs {}: {} - {}", nameId(), multi_id, obs->insTime->toYMDHMS(), obs->timeSinceStartup.value());
-                    if (multi_id == 0)
-                    {
-                        invokeCallbacks(OUTPUT_PORT_INDEX_IMUOBS_1, obs);
-                    }
-                    else if (multi_id == 1)
-                    {
-                        invokeCallbacks(OUTPUT_PORT_INDEX_IMUOBS_2, obs);
-                    }
-                    else
-                    {
-                        LOG_ERROR("{}: multi_id = {} is invalid", nameId(), multi_id);
-                    }
+                    invokeCallbacks(OUTPUT_PORT_INDEX_IMUOBS_1, obs);
+                }
+                else if (multi_id == 1)
+                {
+                    invokeCallbacks(OUTPUT_PORT_INDEX_IMUOBS_2, obs);
                 }
                 else
                 {
-                    // Return to position before "Read line".
-                    _filestream.seekg(pollStartPos, std::ios_base::beg);
-                    _epochData = peekEpochData;
-                    lastGnssTime = peekLastGnssTime;
+                    LOG_ERROR("{}: multi_id = {} is invalid", nameId(), multi_id);
                 }
                 return obs;
             }
@@ -1170,7 +1152,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 const auto& vehicleGpsPosition = std::get<VehicleGpsPosition>(gpsIter->second.data);
                 const auto& vehicleAttitude = std::get<VehicleAttitude>(attIter->second.data);
 
-                obs->insTime.emplace(0, 0, 0, 0, 0, vehicleGpsPosition.time_utc_usec * 1e-6L);
+                obs->insTime = InsTime(0, 0, 0, 0, 0, vehicleGpsPosition.time_utc_usec * 1e-6L);
                 obs->setState_n(Eigen::Vector3d{ deg2rad(1e-7 * static_cast<double>(vehicleGpsPosition.lat)), deg2rad(1e-7 * static_cast<double>(vehicleGpsPosition.lon)), 1e-3 * (static_cast<double>(vehicleGpsPosition.alt_ellipsoid)) },
                                 Eigen::Vector3d{ vehicleGpsPosition.vel_n_m_s, vehicleGpsPosition.vel_e_m_s, vehicleGpsPosition.vel_d_m_s },
                                 Eigen::Quaterniond{ vehicleAttitude.q.at(0), vehicleAttitude.q.at(1), vehicleAttitude.q.at(2), vehicleAttitude.q.at(3) });
@@ -1182,18 +1164,8 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 _epochData.erase(gpsIter);
                 _epochData.erase(attIter);
 
-                if (!peek)
-                {
-                    LOG_DATA("{}: Sending out PosVelAtt: {}", nameId(), obs->insTime->toYMDHMS());
-                    invokeCallbacks(OUTPUT_PORT_INDEX_POSVELATT, obs);
-                }
-                else
-                {
-                    // Return to position before "Read line".
-                    _filestream.seekg(pollStartPos, std::ios_base::beg);
-                    _epochData = peekEpochData;
-                    lastGnssTime = peekLastGnssTime;
-                }
+                LOG_DATA("{}: Sending out PosVelAtt: {}", nameId(), obs->insTime.toYMDHMS());
+                invokeCallbacks(OUTPUT_PORT_INDEX_POSVELATT, obs);
                 return obs;
             }
         }
@@ -1201,7 +1173,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
         {
             vendor::pixhawk::message_logging_s messageLog;
             messageLog.header = ulogMsgHeader.msgHeader;
-            _filestream.read(reinterpret_cast<char*>(&messageLog.log_level), sizeof(messageLog.log_level));
+            read(reinterpret_cast<char*>(&messageLog.log_level), sizeof(messageLog.log_level));
 
             if (messageLog.log_level == 48) // '0'
             {
@@ -1240,18 +1212,18 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 LOG_WARN("{}: Log-level is out of scope ({}) - possible data loss", nameId(), messageLog.log_level);
             }
 
-            _filestream.read(reinterpret_cast<char*>(&messageLog.timestamp), sizeof(messageLog.timestamp));
+            read(reinterpret_cast<char*>(&messageLog.timestamp), sizeof(messageLog.timestamp));
             LOG_DATA("{}: messageLog.timestamp [µs]: {}", nameId(), messageLog.timestamp);
 
             messageLog.message.resize(messageLog.header.msg_size - 9);
-            _filestream.read(messageLog.message.data(), messageLog.header.msg_size - 9);
+            read(messageLog.message.data(), messageLog.header.msg_size - 9);
             LOG_DATA("{}: messageLog.message: {}", nameId(), messageLog.message);
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'C')
         {
             vendor::pixhawk::message_logging_tagged_s messageLogTagged;
             messageLogTagged.header = ulogMsgHeader.msgHeader;
-            _filestream.read(reinterpret_cast<char*>(&messageLogTagged.log_level), sizeof(messageLogTagged.log_level));
+            read(reinterpret_cast<char*>(&messageLogTagged.log_level), sizeof(messageLogTagged.log_level));
 
             if (messageLogTagged.log_level == 48) // '0'
             {
@@ -1290,28 +1262,27 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 LOG_WARN("{}: Log-level is out of scope ({}) - possible data loss", nameId(), messageLogTagged.log_level);
             }
 
-            _filestream.read(reinterpret_cast<char*>(&messageLogTagged.tag), sizeof(messageLogTagged.tag));
+            read(reinterpret_cast<char*>(&messageLogTagged.tag), sizeof(messageLogTagged.tag));
             LOG_DATA("{}: messageLogTagged.tag: {}", nameId(), messageLogTagged.tag);
-            _filestream.read(reinterpret_cast<char*>(&messageLogTagged.timestamp), sizeof(messageLogTagged.timestamp));
+            read(reinterpret_cast<char*>(&messageLogTagged.timestamp), sizeof(messageLogTagged.timestamp));
             LOG_DATA("{}: messageLogTagged.timestamp [µs]: {}", nameId(), messageLogTagged.timestamp);
 
             messageLogTagged.message.resize(messageLogTagged.header.msg_size - 11);
-            _filestream.read(messageLogTagged.message.data(), messageLogTagged.header.msg_size - 11);
+            read(messageLogTagged.message.data(), messageLogTagged.header.msg_size - 11);
             LOG_DATA("{}: messageLogTagged.header.msg_size: {}", nameId(), messageLogTagged.header.msg_size);
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'S')
         {
             vendor::pixhawk::message_sync_s messageSync;
             messageSync.header = ulogMsgHeader.msgHeader;
-            std::array<uint8_t, 8> sync_magic{};
-            _filestream.read(reinterpret_cast<char*>(messageSync.snyc_magic.data()), sizeof(sync_magic));
-            LOG_DATA("{}: messageSync.snyc_magic[0]: {}", nameId(), messageSync.snyc_magic[0]);
+            read(reinterpret_cast<char*>(messageSync.syncMsg.data()), sizeof(messageSync.syncMsg));
+            LOG_DATA("{}: messageSync.syncMsg[0]: {}", nameId(), messageSync.syncMsg[0]);
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'O')
         {
             vendor::pixhawk::message_dropout_s messageDropout;
             messageDropout.header = ulogMsgHeader.msgHeader;
-            _filestream.read(reinterpret_cast<char*>(&messageDropout.duration), sizeof(messageDropout.duration));
+            read(reinterpret_cast<char*>(&messageDropout.duration), sizeof(messageDropout.duration));
             LOG_WARN("{}: Dropout of duration: {} ms", nameId(), messageDropout.duration);
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'I')
@@ -1333,16 +1304,16 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
         else
         {
             std::string nextChars;
-            [[maybe_unused]] auto unidentifiedPos = static_cast<uint64_t>(_filestream.tellg());
+            [[maybe_unused]] auto unidentifiedPos = static_cast<uint64_t>(tellg());
             nextChars.resize(100);
-            _filestream.read(nextChars.data(), 100);
+            read(nextChars.data(), 100);
             LOG_WARN("{}: Message type not identified. Position: {}, The next 100 chars: {}", nameId(), unidentifiedPos, nextChars);
 
             // Reset read cursor
-            _filestream.seekg(-100, std::ios_base::cur);
+            seekg(-100, std::ios_base::cur);
         }
 
-        if (!_filestream.good() || _filestream.eof())
+        if (!good() || eof())
         {
             break;
         }
@@ -1356,18 +1327,18 @@ void NAV::UlogFile::readInformationMessage(uint16_t msgSize, char msgType)
     vendor::pixhawk::message_info_s messageInfo;
     messageInfo.header.msg_size = msgSize;
     messageInfo.header.msg_type = msgType;
-    _filestream.read(reinterpret_cast<char*>(&messageInfo.key_len), sizeof(messageInfo.key_len));
+    read(reinterpret_cast<char*>(&messageInfo.key_len), sizeof(messageInfo.key_len));
 
     // Read 'key' identifier ('keylength' byte) and its associated 'value'
     messageInfo.key.resize(messageInfo.key_len);
-    _filestream.read(messageInfo.key.data(), messageInfo.key_len);
-    // if (!_filestream.good() || _filestream.eof())
+    read(messageInfo.key.data(), messageInfo.key_len);
+    // if (!good() || eof())
     // {
     //     return false;
     // }
 
     messageInfo.value.resize(static_cast<size_t>(messageInfo.header.msg_size - 1 - messageInfo.key_len)); // 'msg_size' contains key and value, but not header
-    _filestream.read(messageInfo.value.data(), messageInfo.header.msg_size - 1 - messageInfo.key_len);
+    read(messageInfo.value.data(), messageInfo.header.msg_size - 1 - messageInfo.key_len);
     LOG_DATA("{}: Information message - key: {}", nameId(), messageInfo.key);
     LOG_DATA("{}: Information message - value: {}", nameId(), messageInfo.value);
 }
@@ -1378,14 +1349,14 @@ void NAV::UlogFile::readInformationMessageMulti(uint16_t msgSize, char msgType)
     vendor::pixhawk::ulog_message_info_multiple_header_s messageInfoMulti;
     messageInfoMulti.header.msg_size = msgSize;
     messageInfoMulti.header.msg_type = msgType;
-    _filestream.read(reinterpret_cast<char*>(&messageInfoMulti.is_continued), sizeof(messageInfoMulti.is_continued));
-    _filestream.read(reinterpret_cast<char*>(&messageInfoMulti.key_len), sizeof(messageInfoMulti.key_len));
+    read(reinterpret_cast<char*>(&messageInfoMulti.is_continued), sizeof(messageInfoMulti.is_continued));
+    read(reinterpret_cast<char*>(&messageInfoMulti.key_len), sizeof(messageInfoMulti.key_len));
 
     // Read 'key' identifier ('keylength' byte) and its associated 'value'
     messageInfoMulti.key.resize(messageInfoMulti.key_len);
-    _filestream.read(messageInfoMulti.key.data(), messageInfoMulti.key_len);
+    read(messageInfoMulti.key.data(), messageInfoMulti.key_len);
     messageInfoMulti.value.resize(static_cast<size_t>(messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len)); // contains 'is_continued' flag in contrast to information message
-    _filestream.read(messageInfoMulti.value.data(), messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len);
+    read(messageInfoMulti.value.data(), messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len);
     LOG_DATA("{}: Information message multi - key_len: {}", nameId(), messageInfoMulti.key_len);
     LOG_DATA("{}: Information message multi - key: {}", nameId(), messageInfoMulti.key);
     LOG_DATA("{}: Information message multi - value: {}", nameId(), messageInfoMulti.value);
@@ -1399,11 +1370,11 @@ void NAV::UlogFile::readParameterMessage(uint16_t msgSize, char msgType)
     vendor::pixhawk::message_info_s messageParam;
     messageParam.header.msg_size = msgSize;
     messageParam.header.msg_type = msgType;
-    _filestream.read(reinterpret_cast<char*>(&messageParam.key_len), sizeof(messageParam.key_len));
+    read(reinterpret_cast<char*>(&messageParam.key_len), sizeof(messageParam.key_len));
 
     // Read 'key' identifier ('keylength' byte) and its associated 'value'
     messageParam.key.resize(messageParam.key_len);
-    _filestream.read(messageParam.key.data(), messageParam.key_len);
+    read(messageParam.key.data(), messageParam.key_len);
 
     if (!(messageParam.key.find("int32_t")) && !(messageParam.key.find("float")))
     {
@@ -1417,7 +1388,7 @@ void NAV::UlogFile::readParameterMessage(uint16_t msgSize, char msgType)
     else
     {
         messageParam.value.resize(static_cast<size_t>(messageParam.header.msg_size - 1 - messageParam.key_len)); // 'msg_size' contains key and value, but not header
-        _filestream.read(messageParam.value.data(), messageParam.header.msg_size - 1 - messageParam.key_len);
+        read(messageParam.value.data(), messageParam.header.msg_size - 1 - messageParam.key_len);
         LOG_DATA("{}: Parameter message - key: {}", nameId(), messageParam.key);
         LOG_DATA("{}: Parameter message - value: {}", nameId(), messageParam.value);
     }
@@ -1428,13 +1399,13 @@ void NAV::UlogFile::readParameterMessageDefault(uint16_t msgSize, char msgType)
     vendor::pixhawk::ulog_message_parameter_default_header_s messageParamDefault;
     messageParamDefault.header.msg_size = msgSize;
     messageParamDefault.header.msg_type = msgType;
-    _filestream.read(reinterpret_cast<char*>(&messageParamDefault.default_types), sizeof(messageParamDefault.default_types));
-    _filestream.read(reinterpret_cast<char*>(&messageParamDefault.key_len), sizeof(messageParamDefault.key_len));
+    read(reinterpret_cast<char*>(&messageParamDefault.default_types), sizeof(messageParamDefault.default_types));
+    read(reinterpret_cast<char*>(&messageParamDefault.key_len), sizeof(messageParamDefault.key_len));
 
     messageParamDefault.key.resize(messageParamDefault.key_len);
-    _filestream.read(messageParamDefault.key.data(), messageParamDefault.key_len);
+    read(messageParamDefault.key.data(), messageParamDefault.key_len);
     messageParamDefault.value.resize(static_cast<size_t>(messageParamDefault.header.msg_size - 2 - messageParamDefault.key_len));
-    _filestream.read(messageParamDefault.value.data(), messageParamDefault.header.msg_size - 2 - messageParamDefault.key_len);
+    read(messageParamDefault.value.data(), messageParamDefault.header.msg_size - 2 - messageParamDefault.key_len);
     LOG_DEBUG("{}: Parameter default message - key: {}", nameId(), messageParamDefault.key);
     LOG_DEBUG("{}: Parameter default message - value: {}", nameId(), messageParamDefault.value);
 

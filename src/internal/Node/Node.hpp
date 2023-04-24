@@ -1,6 +1,14 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file Node.hpp
 /// @brief Node Class
-/// @author T. Topp (thomas@topp.cc)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-12-14
 
 #pragma once
@@ -10,6 +18,7 @@
 #include <imgui_stdlib.h>
 
 #include "internal/Node/Pin.hpp"
+#include "Navigation/Time/InsTime.hpp"
 
 #include "util/Logger.hpp"
 
@@ -19,7 +28,9 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <atomic>
 #include <chrono>
+#include <map>
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json; ///< json namespace
@@ -30,13 +41,33 @@ class Node;
 class NodeData;
 class GroupBox;
 
+namespace NodeRegistry
+{
+
+void RegisterNodeTypes(); // NOLINT(readability-redundant-declaration) - false warning. This is needed for the friend declaration below
+
+} // namespace NodeRegistry
+
+namespace FlowExecutor
+{
+
+/// @brief Main task of the FlowExecutor thread
+void execute(); // NOLINT(readability-redundant-declaration) - false warning. This is needed for the friend declaration below
+
+/// @brief Deinitialize all Nodes
+void deinitialize(); // NOLINT(readability-redundant-declaration) - false warning. This is needed for the friend declaration below
+
+} // namespace FlowExecutor
+
 namespace gui
 {
 class NodeEditorApplication;
 
 namespace menus
 {
+
 void ShowRunMenu();
+
 } // namespace menus
 
 } // namespace gui
@@ -148,6 +179,13 @@ class Node
         Shutdown,       ///< Node is shutting down
     };
 
+    /// @brief Different Modes the Node can work in
+    enum class Mode
+    {
+        REAL_TIME,       ///< Node running in real-time mode
+        POST_PROCESSING, ///< Node running in post-processing mode
+    };
+
     /// @brief Constructor
     /// @param[in] name Name of the node
     explicit Node(std::string name);
@@ -197,26 +235,22 @@ class Node
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
     /// @return True if link is allowed, false if link is rejected
-    virtual bool onCreateLink(Pin* startPin, Pin* endPin);
+    virtual bool onCreateLink(OutputPin& startPin, InputPin& endPin);
 
     /// @brief Called when a link is to be deleted
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
-    virtual void onDeleteLink(Pin* startPin, Pin* endPin);
+    virtual void onDeleteLink(OutputPin& startPin, InputPin& endPin);
 
     /// @brief Called when a new link was established
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
-    virtual void afterCreateLink(Pin* startPin, Pin* endPin);
+    virtual void afterCreateLink(OutputPin& startPin, InputPin& endPin);
 
     /// @brief Called when a link was deleted
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
-    virtual void afterDeleteLink(Pin* startPin, Pin* endPin);
-
-    /// @brief Notifies the node, that some data was changed on one of it's output ports
-    /// @param[in] linkId Id of the link on which data is changed
-    virtual void notifyOnOutputValueChanged(ax::NodeEditor::LinkId linkId);
+    virtual void afterDeleteLink(OutputPin& startPin, InputPin& endPin);
 
     /// @brief Function called by the flow executer after finishing to flush out remaining data
     virtual void flush();
@@ -226,52 +260,57 @@ class Node
     /* -------------------------------------------------------------------------------------------------------- */
 
     /// @brief Notifies connected nodes about the change
-    /// @param[in] portIndex Input Port index where to set the value
-    void notifyInputValueChanged(size_t portIndex);
+    /// @param[in] pinIdx Output Port index where to set the value
+    /// @param[in] insTime Time the value was generated
+    void notifyOutputValueChanged(size_t pinIdx, const InsTime& insTime);
 
-    /// @brief Notifies connected nodes about the change
-    /// @param[in] portIndex Output Port index where to set the value
-    void notifyOutputValueChanged(size_t portIndex);
+    /// @brief Blocks the thread till the output values was read by all connected nodes
+    /// @param[in] pinIdx Output Pin index where to request the lock
+    void requestOutputValueLock(size_t pinIdx);
 
-    /// @brief Get Input Value connected on the pin
+    /// @brief Get Input Value connected on the pin. Only const data types.
     /// @tparam T Type of the connected object
-    /// @param[in] portIndex Input port where to call the callbacks
+    /// @param[in] portIndex Input port where to retrieve the data from
     /// @return Pointer to the object
-    template<typename T>
+    template<typename T,
+             typename = std::enable_if_t<std::is_const_v<T>>>
     [[nodiscard]] T* getInputValue(size_t portIndex) const
     {
-        // clang-format off
-        if constexpr (std::is_same_v<T, bool>
-                   || std::is_same_v<T, int>
-                   || std::is_same_v<T, float>
-                   || std::is_same_v<T, double>
-                   || std::is_same_v<T, std::string>)
-        { // clang-format on
-            if (const auto* pval = std::get_if<T*>(&inputPins.at(portIndex).data))
-            {
-                return *pval;
-            }
-        }
-        else // constexpr
-        {
-            if (const auto* pval = std::get_if<void*>(&inputPins.at(portIndex).data))
-            {
-                return static_cast<T*>(*pval);
-            }
-        }
-
-        return nullptr;
+        return inputPins.at(portIndex).link.getValue<T>();
     }
+
+    /// @brief Gets the mutex of the connected node pin data
+    /// @param[in] portIndex Input port where the data should be locked
+    std::mutex* getInputValueMutex(size_t portIndex);
+
+    /// @brief Unblocks the connected node. Has to be called when the input value was retrieved
+    /// @param[in] portIndex Input port where the data should be released
+    void releaseInputValue(size_t portIndex);
 
     /// @brief Calls all registered callbacks on the specified output port
     /// @param[in] portIndex Output port where to call the callbacks
     /// @param[in] data The data to pass to the callback targets
     void invokeCallbacks(size_t portIndex, const std::shared_ptr<const NodeData>& data);
 
+    /// @brief Returns the pin with the given id
+    /// @param[in] pinId Id of the Pin
+    /// @return The input pin
+    [[nodiscard]] InputPin& inputPinFromId(ax::NodeEditor::PinId pinId);
+
+    /// @brief Returns the pin with the given id
+    /// @param[in] pinId Id of the Pin
+    /// @return The output pin
+    [[nodiscard]] OutputPin& outputPinFromId(ax::NodeEditor::PinId pinId);
+
     /// @brief Returns the index of the pin
     /// @param[in] pinId Id of the Pin
     /// @return The index of the pin
-    [[nodiscard]] size_t pinIndexFromId(ax::NodeEditor::PinId pinId) const;
+    [[nodiscard]] size_t inputPinIndexFromId(ax::NodeEditor::PinId pinId) const;
+
+    /// @brief Returns the index of the pin
+    /// @param[in] pinId Id of the Pin
+    /// @return The index of the pin
+    [[nodiscard]] size_t outputPinIndexFromId(ax::NodeEditor::PinId pinId) const;
 
     /// @brief Node name and id
     [[nodiscard]] std::string nameId() const;
@@ -288,6 +327,9 @@ class Node
 
     /// @brief Get the current state of the node
     [[nodiscard]] State getState() const;
+
+    /// @brief Get the current mode of the node
+    [[nodiscard]] Mode getMode() const;
 
     /// @brief Asks the node worker to initialize the node
     /// @param[in] wait Wait for the worker to complete the request
@@ -313,11 +355,17 @@ class Node
     /// @return True if enabling was successful
     bool doEnable();
 
+    /// Wakes the worker thread
+    void wakeWorker();
+
     /// @brief Checks if the node is disabled
     [[nodiscard]] bool isDisabled() const;
 
     /// @brief Checks if the node is initialized
     [[nodiscard]] bool isInitialized() const;
+
+    /// @brief Checks if the node is changing its state currently
+    [[nodiscard]] bool isTransient() const;
 
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member variables                                             */
@@ -330,12 +378,15 @@ class Node
     /// Name of the Node
     std::string name;
     /// List of input pins
-    std::vector<Pin> inputPins;
+    std::vector<InputPin> inputPins;
     /// List of output pins
-    std::vector<Pin> outputPins;
+    std::vector<OutputPin> outputPins;
 
     /// Enables the callbacks
     bool callbacksEnabled = false;
+
+    /// Map with callback events (sorted by time)
+    std::multimap<InsTime, OutputPin*> pollEvents;
 
   protected:
     /// The Default Window size for new config windows.
@@ -345,9 +396,15 @@ class Node
     /// Flag if the config window should be shown
     bool _hasConfig = false;
 
+    /// Lock the config when executing post-processing
+    bool _lockConfigDuringRun = true;
+
   private:
-    /// Current state of the node
-    State _state = State::Deinitialized;
+    State _state = State::Deinitialized; ///< Current state of the node
+    mutable std::mutex _stateMutex;      ///< Mutex to interact with the worker state variable
+
+    /// Mode the node is currently running in
+    std::atomic<Mode> _mode = Mode::REAL_TIME;
 
     /// Flag if the node should be reinitialize after deinitializing
     bool _reinitialize = false;
@@ -364,10 +421,14 @@ class Node
     /// Size of the node in pixels
     ImVec2 _size{ 0, 0 };
 
-    std::chrono::duration<int64_t> _workerTimeout = std::chrono::years(1); ///< Periodic timeout of the worker to check if new data available
-    std::thread _worker;                                                   ///< Worker handling initialization and processing of data
-    std::mutex _workerMutex;                                               ///< Mutex to interact with the worker condition variable
-    std::condition_variable _workerConditionVariable;                      ///< Condition variable to signal the worker thread to do something
+    /// Flag which prevents the worker to be autostarted if false
+    static inline bool _autostartWorker = true;
+
+    std::chrono::duration<int64_t> _workerTimeout = std::chrono::minutes(1); ///< Periodic timeout of the worker to check if new data available
+    std::thread _worker;                                                     ///< Worker handling initialization and processing of data
+    std::mutex _workerMutex;                                                 ///< Mutex to interact with the worker condition variable
+    std::condition_variable _workerConditionVariable;                        ///< Condition variable to signal the worker thread to do something
+    bool _workerWakeup = false;                                              ///< Variable to prevent the worker from sleeping
 
     /// @brief Worker thread
     /// @param[in, out] node The node where the thread belongs to
@@ -386,6 +447,13 @@ class Node
 
     friend class gui::NodeEditorApplication;
     friend class NAV::GroupBox;
+
+    /// @brief Main task of the FlowExecutor thread
+    friend void NAV::FlowExecutor::execute();
+    /// @brief Deinitialize all Nodes
+    friend void NAV::FlowExecutor::deinitialize();
+    /// @brief Register all available Node types for the program
+    friend void NAV::NodeRegistry::RegisterNodeTypes();
 
     /// @brief Converts the provided node into a json object
     /// @param[out] j Json object which gets filled with the info

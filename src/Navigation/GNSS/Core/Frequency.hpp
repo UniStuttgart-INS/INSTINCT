@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file Frequency.hpp
 /// @brief Frequency definition for different satellite systems
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -112,6 +120,16 @@ class Frequency
     [[nodiscard]] double getFrequency(int8_t num = -128) const
     {
         return GetFrequency(value, num);
+    }
+
+    /// @brief Returns the L1 Frequency for each constellation
+    /// @param[in] freq Frequency to get the value for
+    static Frequency GetL1(Frequency freq);
+
+    /// @brief Returns the L1 Frequency for each constellation
+    [[nodiscard]] Frequency getL1() const
+    {
+        return GetL1(value);
     }
 
   private:

@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "GlobalActions.hpp"
 
 #include "internal/NodeManager.hpp"
@@ -55,17 +63,23 @@ void NAV::gui::cutFlowElements()
     clipboard.clear();
     NAV::flow::saveLastActions = false;
 
-    for (const auto& link : nm::m_Links())
-    {
-        clipboard["links"]["link-" + std::to_string(size_t(link.id))] = link;
-    }
-
     for (const auto& nodeId : selectedNodeIds)
     {
         const NAV::Node* node = nm::FindNode(nodeId);
 
         clipboard["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
         clipboard["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
+
+        for (const auto& outputPin : node->outputPins)
+        {
+            for (const auto& link : outputPin.links)
+            {
+                auto& j = clipboard["links"]["link-" + std::to_string(size_t(link.linkId))];
+                j["id"] = size_t(link.linkId);
+                j["startPinId"] = size_t(outputPin.id);
+                j["endPinId"] = size_t(link.connectedPinId);
+            }
+        }
 
         nm::DeleteNode(nodeId);
     }
@@ -86,17 +100,23 @@ void NAV::gui::copyFlowElements()
 
     clipboard.clear();
 
-    for (const auto& link : nm::m_Links())
-    {
-        clipboard["links"]["link-" + std::to_string(size_t(link.id))] = link;
-    }
-
     for (const auto& nodeId : selectedNodeIds)
     {
         const NAV::Node* node = nm::FindNode(nodeId);
 
         clipboard["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
         clipboard["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
+
+        for (const auto& outputPin : node->outputPins)
+        {
+            for (const auto& link : outputPin.links)
+            {
+                auto& j = clipboard["links"]["link-" + std::to_string(size_t(link.linkId))];
+                j["id"] = size_t(link.linkId);
+                j["startPinId"] = size_t(outputPin.id);
+                j["endPinId"] = size_t(link.connectedPinId);
+            }
+        }
     }
 
     elementsCutted = false;
@@ -228,14 +248,15 @@ void NAV::gui::pasteFlowElements()
 
             if (startPinKind != Pin::Kind::None && endPinKind != Pin::Kind::None)
             {
-                Pin* startPin = startPinKind == Pin::Kind::Input ? &nm::m_Nodes().at(startPinParentNodeIndex)->inputPins.at(startPinIndex)
-                                                                 : &nm::m_Nodes().at(startPinParentNodeIndex)->outputPins.at(startPinIndex);
-                Pin* endPin = endPinKind == Pin::Kind::Input ? &nm::m_Nodes().at(endPinParentNodeIndex)->inputPins.at(endPinIndex)
-                                                             : &nm::m_Nodes().at(endPinParentNodeIndex)->outputPins.at(endPinIndex);
-
-                if (!nm::FindConnectedLinkToInputPin(endPin->id))
+                if (startPinKind == Pin::Kind::Output && endPinKind == Pin::Kind::Input)
                 {
-                    nm::CreateLink(startPin, endPin);
+                    auto& startPin = nm::m_Nodes().at(startPinParentNodeIndex)->outputPins.at(startPinIndex);
+                    auto& endPin = nm::m_Nodes().at(endPinParentNodeIndex)->inputPins.at(endPinIndex);
+
+                    if (!endPin.isPinLinked())
+                    {
+                        startPin.createLink(endPin);
+                    }
                 }
 
                 newlyLinkedNodes[startPinOldParentNodeId] = nm::m_Nodes().at(startPinParentNodeIndex)->id;
@@ -302,7 +323,7 @@ void restoreAction(const json& target)
     // }
 
     NAV::flow::saveLastActions = false;
-    nm::DeleteAllLinksAndNodes();
+    nm::DeleteAllNodes();
 
     NAV::flow::LoadJson(target);
     if (!target["unsavedChanges"].get<bool>())
@@ -356,15 +377,23 @@ void NAV::gui::saveLastAction()
     }
 
     json j;
-    for (const auto& node : nm::m_Nodes())
+    for (const auto* node : nm::m_Nodes())
     {
         j["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
         j["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
+
+        for (const auto& outputPin : node->outputPins)
+        {
+            for (const auto& link : outputPin.links)
+            {
+                auto& j = clipboard["links"]["link-" + std::to_string(size_t(link.linkId))];
+                j["id"] = size_t(link.linkId);
+                j["startPinId"] = size_t(outputPin.id);
+                j["endPinId"] = size_t(link.connectedPinId);
+            }
+        }
     }
-    for (const auto& link : nm::m_Links())
-    {
-        j["links"]["link-" + std::to_string(size_t(link.id))] = link;
-    }
+
     j["unsavedChanges"] = NAV::flow::HasUnsavedChanges();
 
     if (!actionList.empty())

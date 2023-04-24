@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file Eigen.hpp
 /// @brief Vector space operations
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -11,6 +19,8 @@
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json; ///< json namespace
+
+#include <fmt/ostream.h>
 
 namespace Eigen
 {
@@ -93,64 +103,20 @@ void from_json(const json& j, Matrix<_Scalar, _Rows, _Cols>& matrix)
 
 } // namespace Eigen
 
-namespace NAV
-{
-namespace experimental
-{
-class Matrix;
-} // namespace experimental
+#ifndef DOXYGEN_IGNORE
 
-/// Wrapper for Eigen::Block<Eigen::MatrixXd>
-class BlockMatrix
-{
-  public:
-    /// @brief Default constructor
-    BlockMatrix() = default;
+template<typename T>
+requires std::is_base_of_v<Eigen::DenseBase<T>, T>
+struct fmt::formatter<T> : ostream_formatter
+{};
 
-    /// @brief Constructor
-    /// @param[in, out] matrix Matrix object where the block is taken from
-    /// @param[in] pinName Name of the pin, where the block will be represented
-    /// @param[in] startRow The first row in the block
-    /// @param[in] startCol The first column in the block
-    /// @param[in] blockRows The number of rows in the block
-    /// @param[in] blockCols The number of columns in the block
-    BlockMatrix(Eigen::MatrixXd& matrix, std::string pinName, int startRow, int startCol, int blockRows, int blockCols);
+// FIXME: This is not compiling with gcc 11.3 but with >12.1.
+// template<typename T>
+// requires std::is_base_of_v<Eigen::QuaternionBase<T>, T>
+// struct fmt::formatter<T> : ostream_formatter
+// {};
+template<>
+struct fmt::formatter<Eigen::Quaterniond> : ostream_formatter
+{};
 
-    /// @brief Gets the block matrix
-    Eigen::Block<Eigen::MatrixXd> operator()();
-
-    /// @brief Converts the class to a json object
-    /// @return The json object
-    [[nodiscard]] json to_json() const;
-    /// @brief Fills this object with the information from the provided json object
-    /// @param[in] j Json object
-    void from_json(const json& j);
-
-    friend class NAV::experimental::Matrix;
-
-  private:
-    /// @brief Pointer to the underlying Matrix
-    Eigen::MatrixXd* matrix = nullptr;
-
-    /// @brief Name of the pin
-    std::string pinName;
-
-    /// @brief Start row in the underlying matrix to access with index 0
-    int startRow = 0;
-    /// @brief Start col in the underlying matrix to access with index 0
-    int startCol = 0;
-    /// @brief Amount of rows to access in the underlying matrix
-    int blockRows = 1;
-    /// @brief Amount of cols to access in the underlying matrix
-    int blockCols = 1;
-};
-
-/// @brief Converts the BlockMatrix into a json object
-/// @param[out] j Json object to return
-/// @param[in] data BlockMatrix to convert into json
-void to_json(json& j, const BlockMatrix& data);
-/// @brief Converts the json object into a BlockMatrix
-/// @param[in] j Json object to read information from
-/// @param[out] data Object to read the information into
-void from_json(const json& j, BlockMatrix& data);
-} // namespace NAV
+#endif

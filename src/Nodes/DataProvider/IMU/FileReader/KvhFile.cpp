@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "KvhFile.hpp"
 
 #include "util/Logger.hpp"
@@ -50,7 +58,7 @@ void NAV::KvhFile::guiConfig()
         flow::ApplyChanges();
         if (res == FileReader::PATH_CHANGED)
         {
-            doInitialize();
+            doReinitialize();
         }
         else
         {
@@ -60,7 +68,7 @@ void NAV::KvhFile::guiConfig()
 
     Imu::guiConfig();
 
-    if (_fileType == FileType::CSV)
+    if (_fileType == FileType::ASCII)
     {
         // Header info
         if (ImGui::BeginTable(fmt::format("##VectorNavHeaders ({})", id.AsPointer()).c_str(), 2,
@@ -152,18 +160,15 @@ bool NAV::KvhFile::resetNode()
     return true;
 }
 
-std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData()
 {
     std::shared_ptr<KvhObs> obs = nullptr;
-
-    // Get current position
-    auto pos = _filestream.tellg();
 
     if (_fileType == FileType::BINARY)
     {
         uint8_t i = 0;
         std::unique_ptr<uart::protocol::Packet> packet = nullptr;
-        while (_filestream.readsome(reinterpret_cast<char*>(&i), 1))
+        while (readsome(reinterpret_cast<char*>(&i), 1))
         {
             packet = _sensor.findPacket(i);
 
@@ -188,13 +193,13 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData(bool peek)
 
         vendor::kvh::decryptKvhObs(obs);
     }
-    else if (_fileType == FileType::CSV)
+    else if (_fileType == FileType::ASCII)
     {
         obs = std::make_shared<KvhObs>(_imuPos);
 
         // Read line
         std::string line;
-        std::getline(_filestream, line);
+        getline(line);
         // Remove any starting non text characters
         line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
 
@@ -301,7 +306,7 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData(bool peek)
 
         if (gpsWeek.has_value() && gpsToW.has_value())
         {
-            obs->insTime.emplace(gpsCycle.value(), gpsWeek.value(), gpsToW.value());
+            obs->insTime = InsTime(gpsCycle.value(), gpsWeek.value(), gpsToW.value());
         }
         if (magUncompX.has_value() && magUncompY.has_value() && magUncompZ.has_value())
         {
@@ -322,7 +327,7 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData(bool peek)
              obs->accelUncompXYZ.value().x(), obs->accelUncompXYZ.value().y(), obs->accelUncompXYZ.value().z());
 
     // Check if a packet was skipped
-    if (!peek && callbacksEnabled)
+    if (callbacksEnabled)
     {
         if (_prevSequenceNumber == UINT8_MAX)
         {
@@ -335,18 +340,7 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData(bool peek)
         _prevSequenceNumber = obs->sequenceNumber;
     }
 
-    if (peek)
-    {
-        // Return to position before "Read line".
-        _filestream.seekg(pos, std::ios_base::beg);
-    }
-
-    // Calls all the callbacks
-    if (!peek)
-    {
-        invokeCallbacks(OUTPUT_PORT_INDEX_KVH_OBS, obs);
-    }
-
+    invokeCallbacks(OUTPUT_PORT_INDEX_KVH_OBS, obs);
     return obs;
 }
 
@@ -385,7 +379,7 @@ NAV::FileReader::FileType NAV::KvhFile::determineFileType()
 
         if (n >= 3)
         {
-            return FileType::CSV;
+            return FileType::ASCII;
         }
 
         LOG_ERROR("{} could not determine file type", name);

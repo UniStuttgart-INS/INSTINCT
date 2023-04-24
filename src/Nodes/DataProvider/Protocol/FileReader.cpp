@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "FileReader.hpp"
 
 #include "util/Logger.hpp"
@@ -16,14 +24,8 @@ NAV::FileReader::GuiResult NAV::FileReader::guiConfig(const char* vFilters, cons
 {
     GuiResult result = PATH_UNCHANGED;
 
-    if (gui::widgets::FileDialogLoad(_path, "Select File", vFilters, extensions,
-                                     flow::GetProgramRootPath() / ConfigManager::Get<std::string>("input-path"), id, nameId))
+    if (gui::widgets::FileDialogLoad(_path, "Select File", vFilters, extensions, flow::GetInputPath(), id, nameId))
     {
-        if (_path.starts_with(ConfigManager::Get<std::string>("input-path")))
-        {
-            _path = _path.substr(ConfigManager::Get<std::string>("input-path").size() + 1);
-        }
-
         if (!std::filesystem::exists(getFilepath()))
         {
             result = PATH_CHANGED_INVALID;
@@ -97,7 +99,7 @@ bool NAV::FileReader::initialize()
 
     _fileType = determineFileType();
 
-    if (_fileType == FileType::CSV || _fileType == FileType::BINARY)
+    if (_fileType == FileType::ASCII || _fileType == FileType::BINARY)
     {
         // Does not enable binary read/write, but disables OS dependant treatment of \n, \r
         _filestream = std::ifstream(filepath, std::ios_base::in | std::ios_base::binary);
@@ -112,14 +114,16 @@ bool NAV::FileReader::initialize()
         LOG_ERROR("Could not open file {}", filepath);
         return false;
     }
+    _lineCnt = 0;
 
     readHeader();
 
+    _lineCntDataStart = _lineCnt;
     _dataStart = _filestream.tellg();
 
-    if (_fileType == FileType::CSV)
+    if (_fileType == FileType::ASCII)
     {
-        LOG_DEBUG("CSV-File successfully initialized");
+        LOG_DEBUG("ASCII-File successfully initialized");
     }
     else if (_fileType == FileType::BINARY)
     {
@@ -160,7 +164,7 @@ NAV::FileReader::FileType NAV::FileReader::determineFileType()
 
         if (n >= 3)
         {
-            return FileType::CSV;
+            return FileType::ASCII;
         }
 
         return FileType::BINARY;
@@ -174,13 +178,13 @@ void NAV::FileReader::readHeader()
 {
     LOG_TRACE("called");
 
-    if (_fileType == FileType::CSV)
+    if (_fileType == FileType::ASCII)
     {
         _headerColumns.clear();
 
         // Read header line
         std::string line;
-        std::getline(_filestream, line);
+        getline(line);
         // Remove any starting non text characters
         line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isalnum(ch); }));
         // Convert line into stream
@@ -203,4 +207,5 @@ void NAV::FileReader::resetReader()
     // Return to position
     _filestream.clear();
     _filestream.seekg(_dataStart, std::ios_base::beg);
+    _lineCnt = _lineCntDataStart;
 }

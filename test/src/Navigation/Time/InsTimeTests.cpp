@@ -1,13 +1,22 @@
-#include <catch2/catch.hpp>
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+#include <catch2/catch_test_macros.hpp>
+#include "CatchMatchers.hpp"
 
 #include <iostream>
 #include <limits>
 #include <chrono>
 
-#include "util/Logger.hpp"
+#include "Logger.hpp"
 #include "Navigation/Time/InsTime.hpp"
 
-namespace NAV::TEST::InsTimeTests
+namespace NAV::TESTS::InsTimeTests
 {
 #define TEST_EQUAL_OBJECT(lhs, rhs) \
     REQUIRE(lhs == rhs);            \
@@ -57,7 +66,7 @@ namespace NAV::TEST::InsTimeTests
 
 TEST_CASE("[InsTime_MJD] Comparisons", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     auto time_l_1 = InsTime_MJD(53044, 0.5596990740740740740L);
     auto time_l_2 = InsTime_MJD(53045, 0.5596990640740740740L);
@@ -85,7 +94,7 @@ TEST_CASE("[InsTime_MJD] Comparisons", "[InsTime]")
 
 TEST_CASE("[InsTime_MJD] Comparisons constexpr", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     constexpr auto time_l_1 = InsTime_MJD(53044, 0.5596990740740740740L);
     constexpr auto time_l_2 = InsTime_MJD(53045, 0.5596990640740740740L);
@@ -113,7 +122,7 @@ TEST_CASE("[InsTime_MJD] Comparisons constexpr", "[InsTime]")
 
 TEST_CASE("[InsTime_JD] Comparisons", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     auto time_l_1 = InsTime_JD(2453045, 0.5596990740740740740L);
     auto time_l_2 = InsTime_JD(2453046, 0.5596990640740740740L);
@@ -141,7 +150,7 @@ TEST_CASE("[InsTime_JD] Comparisons", "[InsTime]")
 
 TEST_CASE("[InsTime_JD] Comparisons constexpr", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     constexpr auto time_l_1 = InsTime_JD(2453045, 0.5596990740740740740L);
     constexpr auto time_l_2 = InsTime_JD(2453046, 0.5596990640740740740L);
@@ -169,7 +178,7 @@ TEST_CASE("[InsTime_JD] Comparisons constexpr", "[InsTime]")
 
 TEST_CASE("[InsTime_GPSweekTow] Comparisons", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     auto time_l_1 = InsTime_GPSweekTow(1, 232, 221158.0L);
     auto time_l_2 = InsTime_GPSweekTow(1, 233, 221058.0L);
@@ -207,7 +216,7 @@ TEST_CASE("[InsTime_GPSweekTow] Comparisons", "[InsTime]")
 
 TEST_CASE("[InsTime_GPSweekTow] Comparisons constexpr", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     constexpr auto time_l_1 = InsTime_GPSweekTow(1, 232, 221158.0L);
     constexpr auto time_l_2 = InsTime_GPSweekTow(1, 233, 221058.0L);
@@ -245,7 +254,7 @@ TEST_CASE("[InsTime_GPSweekTow] Comparisons constexpr", "[InsTime]")
 
 TEST_CASE("[InsTime_YMDHMS] Comparisons lesser", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     auto time_l_1 = InsTime_YMDHMS(2003, 2, 10, 13, 25, 58.0L);
     auto time_l_2 = InsTime_YMDHMS(2004, 1, 10, 13, 25, 58.0L);
@@ -265,7 +274,7 @@ TEST_CASE("[InsTime_YMDHMS] Comparisons lesser", "[InsTime]")
 
 TEST_CASE("[InsTime_YMDHMS] Comparisons lesser constexpr", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     constexpr auto time_l_1 = InsTime_YMDHMS(2003, 2, 10, 13, 25, 58.0L);
     constexpr auto time_l_2 = InsTime_YMDHMS(2004, 1, 10, 13, 25, 58.0L);
@@ -285,7 +294,7 @@ TEST_CASE("[InsTime_YMDHMS] Comparisons lesser constexpr", "[InsTime]")
 
 TEST_CASE("[InsTime_YMDHMS] Comparisons equal", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     auto time = InsTime_YMDHMS(2004, 2, 10, 13, 25, 58.0L);
     auto time_e_1 = InsTime_YMDHMS(2004, 2, 10, 13, 25 - 3, 58.0L + 60.0L * 3.0L);
@@ -331,7 +340,7 @@ TEST_CASE("[InsTime_YMDHMS] Comparisons equal", "[InsTime]")
 
 TEST_CASE("[InsTime_YMDHMS] Comparisons equal constexpr", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     constexpr auto time = InsTime_YMDHMS(2004, 2, 10, 13, 25, 58.0L);
     constexpr auto time_e_1 = InsTime_YMDHMS(2004, 2, 10, 13, 25 - 3, 58.0L + 60.0L * 3.0L);
@@ -375,7 +384,7 @@ TEST_CASE("[InsTime_YMDHMS] Comparisons equal constexpr", "[InsTime]")
 
 TEST_CASE("[InsTime_YMDHMS] Comparisons greater", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     auto time = InsTime_YMDHMS(2004, 2, 10, 13, 25, 58.0L);
     auto time_g_1 = InsTime_YMDHMS(2005, 2, 10, 13, 25, 58.0L);
@@ -395,7 +404,7 @@ TEST_CASE("[InsTime_YMDHMS] Comparisons greater", "[InsTime]")
 
 TEST_CASE("[InsTime_YMDHMS] Comparisons greater constexpr", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     constexpr auto time = InsTime_YMDHMS(2004, 2, 10, 13, 25, 58.0L);
     constexpr auto time_g_1 = InsTime_YMDHMS(2005, 2, 10, 13, 25, 58.0L);
@@ -415,7 +424,7 @@ TEST_CASE("[InsTime_YMDHMS] Comparisons greater constexpr", "[InsTime]")
 
 TEST_CASE("[InsTime_YDoySod] Comparisons", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     auto time_l_1 = InsTime_YDoySod(2004, 41, 48358.0L);
     auto time_l_2 = InsTime_YDoySod(2005, 40, 48358.0L);
@@ -457,7 +466,7 @@ TEST_CASE("[InsTime_YDoySod] Comparisons", "[InsTime]")
 
 TEST_CASE("[InsTime_YDoySod] Comparisons constexpr", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     constexpr auto time_l_1 = InsTime_YDoySod(2004, 41, 48358.0L);
     constexpr auto time_l_2 = InsTime_YDoySod(2005, 40, 48358.0L);
@@ -499,7 +508,7 @@ TEST_CASE("[InsTime_YDoySod] Comparisons constexpr", "[InsTime]")
 
 TEST_CASE("[InsTime] Constructors & Conversion", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     auto insTime = InsTime(2004, 3, 10, 13, 25, 58);
 
@@ -528,7 +537,7 @@ TEST_CASE("[InsTime] Constructors & Conversion", "[InsTime]")
 
 TEST_CASE("[InsTime] Constructors & Conversion constexpr", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     constexpr auto insTime = InsTime(2004, 3, 10, 13, 25, 58);
 
@@ -557,7 +566,7 @@ TEST_CASE("[InsTime] Constructors & Conversion constexpr", "[InsTime]")
 
 TEST_CASE("[InsTime] Leap Seconds constexpr", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     STATIC_REQUIRE(InsTime::leapGps2UTC(InsTime_YMDHMS(1980, 1, 1, 0, 0, 0)) == 0);
 
@@ -618,7 +627,7 @@ TEST_CASE("[InsTime] Leap Seconds constexpr", "[InsTime]")
 
 TEST_CASE("[InsTime] Leap Functions", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     auto insTime = InsTime(2004, 2, 10, 13, 25, 58);
 
@@ -644,7 +653,7 @@ TEST_CASE("[InsTime] Leap Functions", "[InsTime]")
 
 TEST_CASE("[InsTime] Leap Functions constexpr", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     constexpr auto insTime = InsTime(2004, 2, 10, 13, 25, 58);
 
@@ -683,7 +692,7 @@ TEST_CASE("[InsTime] Adding values over leap second", "[InsTime]")
     CHECK(calDate_UTC.day == 1);
     CHECK(calDate_UTC.hour == 0);
     CHECK(calDate_UTC.min == 30);
-    CHECK(calDate_UTC.sec == Approx(18).margin(1.0e-14));
+    CHECK_THAT(calDate_UTC.sec - 18, Catch::Matchers::WithinAbs(0, 1.6e-11));
 
     InsTime recoveredTime = timeAfterLeap - std::chrono::seconds(dt);
 
@@ -692,7 +701,7 @@ TEST_CASE("[InsTime] Adding values over leap second", "[InsTime]")
 
 TEST_CASE("[InsTime] Comparisons lesser", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     auto insTime = InsTime(2004, 2, 10, 13, 25, 58.0L);
 
@@ -738,7 +747,7 @@ TEST_CASE("[InsTime] Comparisons lesser", "[InsTime]")
 
 TEST_CASE("[InsTime] Comparisons lesser constexpr", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     constexpr auto insTime = InsTime(2004, 2, 10, 13, 25, 58.0L);
 
@@ -784,7 +793,7 @@ TEST_CASE("[InsTime] Comparisons lesser constexpr", "[InsTime]")
 
 TEST_CASE("[InsTime] Comparisons equal", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     auto insTime = InsTime(2004, 2, 10, 13, 25, 58.0L);
 
@@ -818,7 +827,7 @@ TEST_CASE("[InsTime] Comparisons equal", "[InsTime]")
 
 TEST_CASE("[InsTime] Comparisons equal constexpr", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     constexpr auto insTime = InsTime(2004, 2, 10, 13, 25, 58.0L);
 
@@ -846,7 +855,7 @@ TEST_CASE("[InsTime] Comparisons equal constexpr", "[InsTime]")
 
 TEST_CASE("[InsTime] Comparisons greater", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     auto insTime = InsTime(2004, 2, 10, 13, 25, 58.0L);
 
@@ -907,7 +916,7 @@ TEST_CASE("[InsTime] Comparisons greater", "[InsTime]")
 
 TEST_CASE("[InsTime] Comparisons greater constexpr", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     constexpr auto insTime = InsTime(2004, 2, 10, 13, 25, 58.0L);
 
@@ -953,7 +962,7 @@ TEST_CASE("[InsTime] Comparisons greater constexpr", "[InsTime]")
 
 TEST_CASE("[InsTime] Arithmetic operators", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     using namespace std::chrono_literals;
 
@@ -998,7 +1007,7 @@ TEST_CASE("[InsTime] Arithmetic operators", "[InsTime]")
 
 TEST_CASE("[InsTime] Arithmetic operators constexpr", "[InsTime]")
 {
-    Logger consoleSink;
+    auto logger = initializeTestLogger();
 
     using namespace std::chrono_literals;
 
@@ -1034,4 +1043,4 @@ TEST_CASE("[InsTime] Arithmetic operators constexpr", "[InsTime]")
                               InsTimeUtil::EPSILON);
 }
 
-} // namespace NAV::TEST::InsTimeTests
+} // namespace NAV::TESTS::InsTimeTests

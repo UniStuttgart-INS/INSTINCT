@@ -1,3 +1,11 @@
+# This file is part of INSTINCT, the INS Toolkit for Integrated
+# Navigation Concepts and Training by the Institute of Navigation of
+# the University of Stuttgart, Germany.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 cmake_minimum_required(VERSION 3.15)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
@@ -83,6 +91,8 @@ set(LOG_LEVEL
     "INFO"
     CACHE STRING "DATA|TRACE|DEBUG|INFO|WARN|ERROR|CRITICAL|OFF")
 
+message(STATUS "Setting LOG_LEVEL to ${LOG_LEVEL}")
+
 # Include all project headers
 include_directories(src)
 
@@ -94,22 +104,15 @@ include(cmake/CMakeRC.cmake)
 run_cmakerc()
 
 # ######################################################################################################################
-# Conan Packages
-# ######################################################################################################################
-
-set(CONAN_EXTRA_REQUIRES "")
-set(CONAN_EXTRA_OPTIONS "")
-
-if(BUILD_SHARED_LIBS)
-  list(APPEND CONAN_EXTRA_OPTIONS "Pkg:shared=True")
-endif()
-
-include(cmake/Conan.cmake)
-run_conan()
-
-# ######################################################################################################################
 # Libraries (inlcude as SYSTEM, to prevent Static Analazers to scan them)
 # ######################################################################################################################
+
+find_package(fmt REQUIRED)
+find_package(spdlog REQUIRED)
+find_package(Boost REQUIRED)
+find_package(Eigen3 REQUIRED)
+find_package(Catch2 3 REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
 # ------------------------------------------------- imgui ------------------------------------------------
 
@@ -181,8 +184,8 @@ set_target_properties(application PROPERTIES CXX_CPPCHECK "")
 
 # ----------------------------------------------- VectorNav ---------------------------------------------- */
 
-add_subdirectory(lib/vnproglib libvncxx)
-include_directories(SYSTEM lib/vnproglib/include)
+add_subdirectory(lib/vnproglib/cpp libvncxx)
+include_directories(SYSTEM lib/vnproglib/cpp/include)
 set_target_properties(libvncxx PROPERTIES CXX_CLANG_TIDY "")
 set_target_properties(libvncxx PROPERTIES CXX_CPPCHECK "")
 
@@ -190,8 +193,41 @@ set_target_properties(libvncxx PROPERTIES CXX_CPPCHECK "")
 
 if(NOT APPLE AND NOT WIN32)
   # Include navio2 library
-  add_subdirectory(lib/navio2 libnavio)
-  include_directories(SYSTEM lib/navio2/include)
+  add_library(libnavio lib/navio2/C++/Navio/Common/gpio.cpp
+                       lib/navio2/C++/Navio/Common/I2Cdev.cpp
+                       lib/navio2/C++/Navio/Common/MPU9250.cpp
+                       lib/navio2/C++/Navio/Common/MS5611.cpp
+                       lib/navio2/C++/Navio/Common/Ublox.cpp
+                       lib/navio2/C++/Navio/Common/Util.cpp
+                       lib/navio2/C++/Navio/Navio2/ADC_Navio2.cpp
+                       lib/navio2/C++/Navio/Navio2/Led_Navio2.cpp
+                       lib/navio2/C++/Navio/Navio2/LSM9DS1.cpp
+                       lib/navio2/C++/Navio/Navio2/PWM.cpp
+                       lib/navio2/C++/Navio/Navio2/RCInput_Navio2.cpp
+                       lib/navio2/C++/Navio/Navio2/RCOutput_Navio2.cpp
+                       lib/navio2/C++/Navio/Navio2/RGBled.cpp
+                       lib/navio2/C++/Navio/Common/ADC.h
+                       lib/navio2/C++/Navio/Common/gpio.h
+                       lib/navio2/C++/Navio/Common/I2Cdev.h
+                       lib/navio2/C++/Navio/Common/InertialSensor.h
+                       lib/navio2/C++/Navio/Common/Led.h
+                       lib/navio2/C++/Navio/Common/MPU9250.h
+                       lib/navio2/C++/Navio/Common/MS5611.h
+                       lib/navio2/C++/Navio/Common/RCInput.h
+                       lib/navio2/C++/Navio/Common/RCOutput.h
+                       lib/navio2/C++/Navio/Common/SPIdev.h
+                       lib/navio2/C++/Navio/Common/Ublox.h
+                       lib/navio2/C++/Navio/Common/Util.h
+                       lib/navio2/C++/Navio/Navio2/ADC_Navio2.h
+                       lib/navio2/C++/Navio/Navio2/Led_Navio2.h
+                       lib/navio2/C++/Navio/Navio2/LSM9DS1.h
+                       lib/navio2/C++/Navio/Navio2/PWM.h
+                       lib/navio2/C++/Navio/Navio2/RCInput_Navio2.h
+                       lib/navio2/C++/Navio/Navio2/RCOutput_Navio2.h
+                       lib/navio2/C++/Navio/Navio2/RGBled.h)
+  target_include_directories(libnavio SYSTEM PRIVATE lib/navio2/C++/Navio)
+  include_directories(SYSTEM lib/navio2/C++
+                             lib/navio2/C++/Navio)
   set_target_properties(libnavio PROPERTIES CXX_CLANG_TIDY "")
   set_target_properties(libnavio PROPERTIES CXX_CPPCHECK "")
 endif()
@@ -217,21 +253,22 @@ find_package(Threads REQUIRED)
 
 # Specify output path for executable files
 if(NOT MSVC OR NOT CMAKE_BUILD_TYPE STREQUAL "Release")
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Debug)
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/build/bin/Debug)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/build/bin/Release)
 else()
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Release) # it always takes the DEBUG path (MSVC...)
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/build/bin/Release) # it always takes the DEBUG path (MSVC...)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/build/bin/Release)
 endif()
 
 set(INSTINCT_SOURCE_DIR ${CMAKE_SOURCE_DIR})
-set(INSTINCT_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
+set(INSTINCT_BINARY_DIR ${CMAKE_SOURCE_DIR}/build/bin)
 
 add_subdirectory(src)
 
 add_subdirectory(doc)
 
 if(ENABLE_TESTING)
+  message(STATUS "Building tests")
   enable_testing()
   add_subdirectory(test)
 endif()
@@ -240,21 +277,6 @@ option(ENABLE_UNITY "Enable Unity builds of projects" OFF)
 if(ENABLE_UNITY)
   # Add for any project you want to apply unity builds for
   set_target_properties(${PROJECT_NAME_LOWERCASE} PROPERTIES UNITY_BUILD ON)
-endif()
-
-# Because MSVC sucks and we need to tell the linker to link the release versions manually
-if(MSVC AND CMAKE_BUILD_TYPE STREQUAL "Release")
-  set_target_properties(
-    ${PROJECT_NAME_LOWERCASE}
-    instinct-resources
-    imgui
-    imgui_node_editor
-    ImGuiFileDialog
-    implot
-    application
-    libvncxx
-    libUartSensor
-    PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
 endif()
 
 # ######################################################################################################################

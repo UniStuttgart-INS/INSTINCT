@@ -1,0 +1,346 @@
+{
+    "links": {
+        "link-14": {
+            "endPinId": 8,
+            "id": 14,
+            "startPinId": 2
+        },
+        "link-7": {
+            "endPinId": 1,
+            "id": 7,
+            "startPinId": 4
+        }
+    },
+    "nodes": {
+        "node-13": {
+            "data": {
+                "nInputPins": 1,
+                "nPlots": 0,
+                "overridePositionStartValues": false,
+                "pinData": [
+                    {
+                        "dataIdentifier": "ImuObs",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "Time since startup [ns]"
+                            },
+                            {
+                                "displayName": "Mag uncomp X [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag uncomp Y [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag uncomp Z [Gauss]"
+                            },
+                            {
+                                "displayName": "Accel uncomp X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel uncomp Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel uncomp Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyro uncomp X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro uncomp Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro uncomp Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Mag Comp X [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Comp Y [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Comp Z [Gauss]"
+                            },
+                            {
+                                "displayName": "Accel Comp X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Comp Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Comp Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyro Comp X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Comp Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Comp Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Temperature [°C]"
+                            }
+                        ],
+                        "size": 2000,
+                        "stride": 1
+                    }
+                ],
+                "plots": []
+            },
+            "enabled": true,
+            "id": 13,
+            "inputPins": [
+                {
+                    "id": 8,
+                    "name": "Pin 1"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "Plot",
+            "outputPins": [],
+            "pos": {
+                "x": 744.0,
+                "y": 290.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Plot"
+        },
+        "node-3": {
+            "data": {
+                "dayEnd": 1,
+                "dayStart": 1,
+                "daysEnd": 0,
+                "daysStart": 0,
+                "decFracEnd": 0.0,
+                "decFracStart": 0.0,
+                "endTime": {
+                    "mjd_day": 51544,
+                    "mjd_frac": 9.837962962962963e-05
+                },
+                "gpsCycleEnd": 0,
+                "gpsCycleStart": 0,
+                "gpsTowEnd": 0.0,
+                "gpsTowStart": 0.0,
+                "gpsWeekEnd": 0,
+                "gpsWeekStart": 0,
+                "hourEnd": 0,
+                "hourStart": 0,
+                "minEnd": 0,
+                "minStart": 0,
+                "monthEnd": 1,
+                "monthStart": 1,
+                "secEnd": 8.5,
+                "secStart": 1.5,
+                "startTime": {
+                    "mjd_day": 51544,
+                    "mjd_frac": 1.7361111111111114e-05
+                },
+                "timeFormat": 3,
+                "yearEnd": 2000,
+                "yearStart": 2000
+            },
+            "enabled": true,
+            "id": 3,
+            "inputPins": [
+                {
+                    "id": 1,
+                    "name": "Input"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "TimeWindow",
+            "outputPins": [
+                {
+                    "id": 2,
+                    "name": "Output"
+                }
+            ],
+            "pos": {
+                "x": 452.0,
+                "y": 284.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "TimeWindow"
+        },
+        "node-6": {
+            "data": {
+                "Imu": {
+                    "imuPos": {
+                        "b_positionAccel": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_positionGyro": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_positionMag": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_quatAccel_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatGyro_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatMag_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        }
+                    }
+                },
+                "angularRateEarthRotationEnabled": true,
+                "angularRateTransportRateEnabled": true,
+                "centrifgalAccelerationEnabled": true,
+                "circularHarmonicAmplitudeFactor": 0.1,
+                "circularHarmonicFrequency": 0,
+                "circularTrajectoryCircleCountForStop": 1.0,
+                "circularTrajectoryDirection": 1,
+                "circularTrajectoryHorizontalSpeed": 10.0,
+                "circularTrajectoryOriginAngle": 0.0,
+                "circularTrajectoryRadius": 50.0,
+                "circularTrajectoryVerticalSpeed": 0.0,
+                "coriolisAccelerationEnabled": true,
+                "fixedTrajectoryStartOrientation": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "gnssFrequency": 1.0,
+                "gravitationModel": 4,
+                "imuFrequency": 10.0,
+                "linearTrajectoryDistanceForStop": 100.0,
+                "n_linearTrajectoryStartVelocity": {
+                    "0": {
+                        "0": 1.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "simulationDuration": 10.0,
+                "simulationStopCondition": 0,
+                "splineSampleInterval": 0.1,
+                "startPosition_lla": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "startTime": {
+                    "mjd_day": 51544,
+                    "mjd_frac": 0.0
+                },
+                "startTimeEditFormat": 0,
+                "startTimeSource": 0,
+                "trajectoryType": 0
+            },
+            "enabled": true,
+            "id": 6,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "ImuSimulator",
+            "outputPins": [
+                {
+                    "id": 4,
+                    "name": "ImuObs"
+                },
+                {
+                    "id": 5,
+                    "name": "PosVelAtt"
+                }
+            ],
+            "pos": {
+                "x": 192.0,
+                "y": 286.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "ImuSimulator"
+        }
+    }
+}

@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file Code.hpp
 /// @brief Code definitions
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -38,7 +46,9 @@ namespace NAV
 ///   <tr>                                                                             <td> L1B, L1C, L1X <td> OS (data, pilot, combined)
 ///   <tr>                                                                             <td> L1Z           <td> PRS + OS(data+pilot)
 ///   <tr>                                                                    <td> E5a <td> L5I, L5Q, L5X <td> E5a (data, pilot, combined)
-///   <tr>                                                                    <td> E6  <td> L6B, L6C, L6X <td> E6 (data, pilot, combined)
+///   <tr>                                           <td rowspan="3" valign="top"> E6  <td> L6A           <td> E6 PRS signal
+///   <tr>                                                                             <td> L6B, L6C, L6X <td> E6 (data, pilot, combined)
+///   <tr>                                                                             <td> L6Z           <td> E6 PRS + OS(data+pilot)
 ///   <tr>                                                                    <td> E5b <td> L7I, L7Q, L7X <td> E5b (data, pilot, combined)
 ///   <tr>                                                                    <td> E5  <td> L8I, L8Q, L8X <td> E5 AltBOC (data, pilot, combined)
 ///   <tr><td rowspan= "7" valign="top"> GLONASS     <td rowspan="2" valign="top"> L1  <td> L1C           <td> C/A-code
@@ -111,9 +121,11 @@ class Code
         E5I, ///< GAL E5a - Data
         E5Q, ///< GAL E5a - Pilot
         E5X, ///< GAL E5a - Combined
+        E6A, ///< GAL E6 - PRS signal
         E6B, ///< GAL E6 - Data
         E6C, ///< GAL E6 - Pilot
-        E6X, ///< GAL E6 - Combined
+        E6X, ///< GAL E6 - Combined (B+C)
+        E6Z, ///< GAL E6 - PRS + OS (A+B+C)
         E7I, ///< GAL E5b - Data
         E7Q, ///< GAL E5b - Pilot
         E7X, ///< GAL E5b - Combined
@@ -289,7 +301,7 @@ class Code
     Code(Enum e) { value.set(e, true); } // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
 
     /// Implicit bool conversion operator. Allows if(...)
-    explicit operator bool() { return value.any(); }
+    explicit operator bool() const { return value.any(); }
 
     /// @brief std::bitset conversion operator
     /// @return The bitset representation of the type

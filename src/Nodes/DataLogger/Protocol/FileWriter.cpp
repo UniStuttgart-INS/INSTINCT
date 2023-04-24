@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "FileWriter.hpp"
 
 #include "util/Logger.hpp"
@@ -13,13 +21,8 @@ bool NAV::FileWriter::guiConfig(const char* vFilters, const std::vector<std::str
 {
     bool changesOccurred = false;
 
-    if (gui::widgets::FileDialogSave(_path, "Save File", vFilters, extensions,
-                                     flow::GetProgramRootPath() / ConfigManager::Get<std::string>("output-path"), id, nameId))
+    if (gui::widgets::FileDialogSave(_path, "Save File", vFilters, extensions, flow::GetOutputPath(), id, nameId))
     {
-        if (_path.starts_with(ConfigManager::Get<std::string>("output-path")))
-        {
-            _path = _path.substr(ConfigManager::Get<std::string>("output-path").size() + 1);
-        }
         changesOccurred = true;
     }
     ImGui::SameLine();
@@ -84,7 +87,7 @@ bool NAV::FileWriter::initialize()
         LOG_ERROR("Could not create directory '{}' for file '{}'", filepath.parent_path(), filepath);
     }
 
-    if (_fileType == FileType::CSV || _fileType == FileType::BINARY)
+    if (_fileType == FileType::ASCII || _fileType == FileType::BINARY)
     {
         // Does not enable binary read/write, but disables OS dependant treatment of \n, \r
         _filestream.open(filepath, std::ios_base::trunc | std::ios_base::binary);
@@ -124,7 +127,7 @@ const char* NAV::FileWriter::to_string(NAV::FileWriter::FileType type)
     {
     case FileType::NONE:
         return "None";
-    case FileType::CSV:
+    case FileType::ASCII:
         return "CSV";
     case FileType::BINARY:
         return "Binary";

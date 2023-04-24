@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file RtklibPosFile.hpp
 /// @brief File Reader for RTKLIB Pos files
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -60,9 +68,8 @@ class RtklibPosFile : public Node, public FileReader
     void deinitialize() override;
 
     /// @brief Polls data from the file
-    /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
     /// @return The read observation
-    [[nodiscard]] std::shared_ptr<const NodeData> pollData(bool peek = false);
+    [[nodiscard]] std::shared_ptr<const NodeData> pollData();
 
     /// @brief Determines the type of the file
     /// @return The File Type

@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file LeastSquares.hpp
 /// @brief Least Squares Algorithm
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -22,66 +30,63 @@ struct LeastSquaresResult
     VarianceMatrix variance; ///< Least squares variance
 };
 
-/// @brief Finds the "least squares" solution for the equation \f$ \mathbf{v} = \mathbf{b} - \mathbf{A} \mathbf{x} \f$
+/// @brief Finds the "least squares" solution for the equation \f$ \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} \f$
 ///
 /// Minimizes the functional
 /// \anchor eq-LinearLeastSquares-functional \f{equation}{ \label{eq:eq-LinearLeastSquares-functional}
-///   J(\mathbf{x}) \equiv \sum_{i=1}^m v_i^2 = \mathbf{v}^T \mathbf{v} = (\mathbf{b} - \mathbf{A} \mathbf{x})^T (\mathbf{b} - \mathbf{A} \mathbf{x})
+///   J(\mathbf{x}) \equiv \sum_{i=1}^m v_i^2 = \mathbf{v}^T \mathbf{v} = (\mathbf{dz} - \mathbf{H} \mathbf{x})^T (\mathbf{dz} - \mathbf{H} \mathbf{x})
 /// \f}
-/// which has the solution (assuming that the inverse to \f$ \mathbf{A}^T \mathbf{A} \f$ exists)
+/// which has the solution (assuming that the inverse to \f$ \mathbf{H}^T \mathbf{H} \f$ exists)
 /// \anchor eq-LinearLeastSquares-solution \f{equation}{ \label{eq:eq-LinearLeastSquares-solution}
-///   \mathbf{x} = \left(\mathbf{A}^T \mathbf{A} \right)^{-1} \mathbf{A}^T \mathbf{b}
+///   \mathbf{x} = \left(\mathbf{H}^T \mathbf{H} \right)^{-1} \mathbf{H}^T \mathbf{dz}
 /// \f}
-/// @param[in] A Measurement or design Matrix
-/// @param[in] b Measurement vector
+/// @param[in] H Design Matrix
+/// @param[in] dz Residual vector
 /// @return Least squares solution
 template<typename DerivedA, typename DerivedB>
-Eigen::Vector<typename DerivedA::Scalar, DerivedA::ColsAtCompileTime> solveLinearLeastSquares(const Eigen::MatrixBase<DerivedA>& A, const Eigen::MatrixBase<DerivedB>& b)
+Eigen::Vector<typename DerivedA::Scalar, DerivedA::ColsAtCompileTime> solveLinearLeastSquares(const Eigen::MatrixBase<DerivedA>& H, const Eigen::MatrixBase<DerivedB>& dz)
 {
-    return (A.transpose() * A).inverse() * A.transpose() * b;
+    return (H.transpose() * H).inverse() * H.transpose() * dz;
 }
 
 /// @brief Finds the "weighted least squares" solution
 ///
 /// \anchor eq-WeightedLinearLeastSquares \f{equation}{ \label{eq:eq-WeightedLinearLeastSquares}
-///   \mathbf{x} = \left(\mathbf{A}^T \mathbf{W} \mathbf{A} \right)^{-1} \mathbf{A}^T \mathbf{W} \mathbf{b}
+///   \mathbf{x} = \left(\mathbf{H}^T \mathbf{W} \mathbf{H} \right)^{-1} \mathbf{H}^T \mathbf{W} \mathbf{dz}
 /// \f}
-/// @param[in] A Measurement or design Matrix
+/// @param[in] H Design Matrix
 /// @param[in] W Weight matrix
-/// @param[in] b Measurement vector
+/// @param[in] dz Residual vector
 /// @return Least squares solution
 template<typename DerivedA, typename DerivedW, typename DerivedB>
-Eigen::Vector<typename DerivedA::Scalar, DerivedA::ColsAtCompileTime> solveWeightedLinearLeastSquares(const Eigen::MatrixBase<DerivedA>& A, const Eigen::MatrixBase<DerivedW>& W, const Eigen::MatrixBase<DerivedB>& b)
+Eigen::Vector<typename DerivedA::Scalar, DerivedA::ColsAtCompileTime> solveWeightedLinearLeastSquares(const Eigen::MatrixBase<DerivedA>& H, const Eigen::MatrixBase<DerivedW>& W, const Eigen::MatrixBase<DerivedB>& dz)
 {
-    return (A.transpose() * W * A).inverse() * A.transpose() * W * b;
+    return (H.transpose() * W * H).inverse() * H.transpose() * W * dz;
 }
 
-/// @brief Finds the "least squares" solution for the equation \f$ \mathbf{v} = \mathbf{b} - \mathbf{A} \mathbf{x} \f$
-/// @param[in] A Measurement or design Matrix
-/// @param[in] b Measurement vector
+/// @brief Finds the "least squares" solution for the equation \f$ \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} \f$
+/// @param[in] H Design Matrix
+/// @param[in] dz Residual vector
 /// @return Least squares solution and variance
 template<typename DerivedA, typename DerivedB>
 LeastSquaresResult<Eigen::Vector<typename DerivedA::Scalar, DerivedA::ColsAtCompileTime>, Eigen::Matrix<typename DerivedA::Scalar, DerivedA::ColsAtCompileTime, DerivedA::ColsAtCompileTime>>
-    solveLinearLeastSquaresUncertainties(const Eigen::MatrixBase<DerivedA>& A, const Eigen::MatrixBase<DerivedB>& b)
+    solveLinearLeastSquaresUncertainties(const Eigen::MatrixBase<DerivedA>& H, const Eigen::MatrixBase<DerivedB>& dz)
 {
-    // Covariance / Cofactor matrix
-    Eigen::Matrix<typename DerivedA::Scalar, DerivedA::ColsAtCompileTime, DerivedA::ColsAtCompileTime> Q = (A.transpose() * A).inverse();
+    // Cofactor matrix
+    Eigen::Matrix<typename DerivedA::Scalar, DerivedA::ColsAtCompileTime, DerivedA::ColsAtCompileTime> Q = (H.transpose() * H).inverse();
     LOG_DATA("Q = \n{}", Q);
     // Least squares solution
-    Eigen::Vector<typename DerivedA::Scalar, DerivedA::ColsAtCompileTime> dx = Q * A.transpose() * b;
+    Eigen::Vector<typename DerivedA::Scalar, DerivedA::ColsAtCompileTime> dx = Q * H.transpose() * dz;
     LOG_DATA("dx = {}", dx.transpose());
 
-    // Residual vector
-    typename DerivedB::PlainObject e = b - A * dx;
-    LOG_DATA("e = {}", e.transpose());
     // Residual sum of squares
-    double RSS = std::pow(e.norm(), 2);
+    double RSS = std::pow(dz.norm(), 2);
     LOG_DATA("RSS = {}", RSS);
 
     // Amount of equations
-    auto n = A.rows();
+    auto n = H.rows();
     // Amount of variables
-    auto m = A.cols();
+    auto m = H.cols();
     // Statistical degrees of freedom
     auto dof = n - m;
     LOG_DATA("dof = {}", dof);
@@ -90,6 +95,7 @@ LeastSquaresResult<Eigen::Vector<typename DerivedA::Scalar, DerivedA::ColsAtComp
     double sigma2 = RSS / static_cast<double>(dof);
     LOG_DATA("sigma2 = {}", sigma2);
 
+    // Covariance matrix
     Q *= sigma2;
     LOG_DATA("variance = \n{}", Q);
 
@@ -97,32 +103,29 @@ LeastSquaresResult<Eigen::Vector<typename DerivedA::Scalar, DerivedA::ColsAtComp
 }
 
 /// @brief Finds the "weighted least squares" solution
-/// @param[in] A Measurement or design Matrix
+/// @param[in] H Design Matrix
 /// @param[in] W Weight matrix
-/// @param[in] b Measurement vector
+/// @param[in] dz Residual vector
 /// @return Weighted least squares solution and variance
 template<typename DerivedA, typename DerivedW, typename DerivedB>
 LeastSquaresResult<Eigen::Vector<typename DerivedA::Scalar, DerivedA::ColsAtCompileTime>, Eigen::Matrix<typename DerivedA::Scalar, DerivedA::ColsAtCompileTime, DerivedA::ColsAtCompileTime>>
-    solveWeightedLinearLeastSquaresUncertainties(const Eigen::MatrixBase<DerivedA>& A, const Eigen::MatrixBase<DerivedW>& W, const Eigen::MatrixBase<DerivedB>& b)
+    solveWeightedLinearLeastSquaresUncertainties(const Eigen::MatrixBase<DerivedA>& H, const Eigen::MatrixBase<DerivedW>& W, const Eigen::MatrixBase<DerivedB>& dz)
 {
-    // Covariance / Cofactor matrix
-    Eigen::Matrix<typename DerivedA::Scalar, DerivedA::ColsAtCompileTime, DerivedA::ColsAtCompileTime> Q = (A.transpose() * W * A).inverse();
-    LOG_DATA("Q = \n{}", Q);
+    // Cofactor matrix
+    Eigen::Matrix<typename DerivedA::Scalar, DerivedA::ColsAtCompileTime, DerivedA::ColsAtCompileTime> Q = (H.transpose() * W * H).inverse();
+    LOG_DATA("Cofactor matrix = \n{}", Q);
     // Least squares solution
-    Eigen::Vector<typename DerivedA::Scalar, DerivedA::ColsAtCompileTime> dx = Q * A.transpose() * W * b;
+    Eigen::Vector<typename DerivedA::Scalar, DerivedA::ColsAtCompileTime> dx = Q * H.transpose() * W * dz;
     LOG_DATA("dx = {}", dx.transpose());
 
-    // Residual vector
-    typename DerivedB::PlainObject e = b - A * dx;
-    LOG_DATA("e = {}", e.transpose());
     // Residual sum of squares
-    double RSS = e.transpose() * W * e;
+    double RSS = dz.transpose() * W * dz;
     LOG_DATA("RSS = {}", RSS);
 
     // Amount of equations
-    auto n = A.rows();
+    auto n = H.rows();
     // Amount of variables
-    auto m = A.cols();
+    auto m = H.cols();
     // Statistical degrees of freedom
     auto dof = n - m;
     LOG_DATA("dof = {}", dof);
@@ -131,8 +134,9 @@ LeastSquaresResult<Eigen::Vector<typename DerivedA::Scalar, DerivedA::ColsAtComp
     double sigma2 = RSS / static_cast<double>(dof);
     LOG_DATA("sigma2 = {}", sigma2);
 
+    // Covariance matrix
     Q *= sigma2;
-    LOG_DATA("variance = \n{}", Q);
+    LOG_DATA("Covariance matrix = \n{}", Q);
 
     return { .solution = dx, .variance = Q.cwiseAbs() };
 }

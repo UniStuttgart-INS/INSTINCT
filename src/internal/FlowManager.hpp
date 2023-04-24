@@ -1,6 +1,14 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file FlowManager.hpp
 /// @brief Save/Load the Nodes
-/// @author T. Topp (thomas@topp.cc)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-12-16
 
 #pragma once
@@ -70,6 +78,9 @@ std::filesystem::path GetInputPath();
 
 /// @brief Get the path where flow files are searched
 std::filesystem::path GetFlowPath();
+
+/// @brief Get the path where config files are searched
+std::filesystem::path GetConfigPath();
 
 /// @brief Whether actions should be saved to the last actions list
 extern bool saveLastActions;

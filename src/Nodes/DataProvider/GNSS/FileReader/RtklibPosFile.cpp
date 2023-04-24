@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "RtklibPosFile.hpp"
 
 #include "util/Logger.hpp"
@@ -51,7 +59,7 @@ void NAV::RtklibPosFile::guiConfig()
         flow::ApplyChanges();
         if (res == FileReader::PATH_CHANGED)
         {
-            doInitialize();
+            doReinitialize();
         }
         else
         {
@@ -170,15 +178,13 @@ bool NAV::RtklibPosFile::resetNode()
     return true;
 }
 
-std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData()
 {
     auto obs = std::make_shared<RtklibPosObs>();
-    // Get current position
-    auto pos = _filestream.tellg();
 
     // Read line
     std::string line;
-    std::getline(_filestream, line);
+    getline(line);
     // Remove any starting non text characters
     line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
 
@@ -406,29 +412,18 @@ std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData(bool peek)
     }
 
     if (auto currentTime = util::time::GetCurrentInsTime();
-        !obs->insTime.has_value() && !currentTime.empty())
+        obs->insTime.empty() && !currentTime.empty())
     {
         obs->insTime = currentTime;
     }
 
-    if (peek)
-    {
-        // Return to position before "Read line".
-        _filestream.seekg(pos, std::ios_base::beg);
-    }
-
-    // Calls all the callbacks
-    if (!peek)
-    {
-        invokeCallbacks(OUTPUT_PORT_INDEX_RTKLIB_POS_OBS, obs);
-    }
-
+    invokeCallbacks(OUTPUT_PORT_INDEX_RTKLIB_POS_OBS, obs);
     return obs;
 }
 
 NAV::FileReader::FileType NAV::RtklibPosFile::determineFileType()
 {
-    return FileReader::FileType::CSV;
+    return FileReader::FileType::ASCII;
 }
 
 void NAV::RtklibPosFile::readHeader()
@@ -437,7 +432,7 @@ void NAV::RtklibPosFile::readHeader()
     std::string line;
     do
     {
-        std::getline(_filestream, line);
+        getline(line);
         // Remove any starting non text characters
         line.erase(line.begin(), std::find_if(line.begin(), line.end(),
                                               [](int ch) { return std::isgraph(ch); }));
@@ -453,7 +448,7 @@ void NAV::RtklibPosFile::readHeader()
             if (cell == "GPST") // When RTKLIB selected 'ww ssss GPST' or 'hh:mm:ss GPST'
             {
                 auto pos = lineStream.tellg();
-                std::getline(_filestream, line);
+                getline(line);
                 lineStream.seekg(pos);
 
                 if (line.substr(0, 7).find('/') == std::string::npos)

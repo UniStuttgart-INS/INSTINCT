@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "FileDialog.hpp"
 
 #include "internal/FlowManager.hpp"
@@ -39,9 +47,9 @@ bool NAV::gui::widgets::FileDialogSave(std::string& path, const char* vName,
         if (ImGuiFileDialog::Instance()->IsOk())
         {
             path = ImGuiFileDialog::Instance()->GetFilePathName();
-            if (path.find(flow::GetProgramRootPath().string()) != std::string::npos)
+            if (path.find(startPath.string()) != std::string::npos)
             {
-                path = path.substr(flow::GetProgramRootPath().string().size() + 1);
+                path = path.substr(startPath.string().size() + 1);
             }
             LOG_DEBUG("{}: Selected file: {}", nameId, path);
             changed = true;
@@ -86,9 +94,9 @@ bool NAV::gui::widgets::FileDialogLoad(std::string& path, const char* vName,
                 if (std::filesystem::exists(ImGuiFileDialog::Instance()->GetSelection().begin()->second))
                 {
                     path = ImGuiFileDialog::Instance()->GetSelection().begin()->second;
-                    if (path.find(flow::GetProgramRootPath().string()) != std::string::npos)
+                    if (path.find(startPath.string()) != std::string::npos)
                     {
-                        path = path.substr(flow::GetProgramRootPath().string().size() + 1);
+                        path = path.substr(startPath.string().size() + 1);
                     }
                     LOG_DEBUG("{}: Selected file: {}", nameId, path);
                     changed = true;

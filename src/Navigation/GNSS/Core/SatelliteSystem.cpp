@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "SatelliteSystem.hpp"
 
 #include "util/Logger.hpp"
@@ -50,6 +58,7 @@ SatelliteSystem SatelliteSystem::fromChar(char typeChar)
     case 'E':
         return GAL;
     case 'J':
+    case 'Q':
         return QZSS;
     case 'C':
         return BDS;
@@ -62,28 +71,43 @@ SatelliteSystem SatelliteSystem::fromChar(char typeChar)
     }
 }
 
+SatelliteSystem SatelliteSystem::fromEnum(size_t enumeration)
+{
+    switch (enumeration)
+    {
+    case 0:
+        return SatSys_None;
+    case 1:
+        return GPS;
+    case 2:
+        return GAL;
+    case 3:
+        return GLO;
+    case 4:
+        return BDS;
+    case 5:
+        return QZSS;
+    case 6:
+        return IRNSS;
+    case 7:
+        return SBAS;
+    default:
+        return SatSys_None;
+    }
+}
+
 SatelliteSystem::operator std::string() const
 {
-    switch (value)
-    {
-    case GPS:
-        return "GPS";
-    case GLO:
-        return "GLONASS";
-    case GAL:
-        return "GALILEO";
-    case QZSS:
-        return "QZSS";
-    case BDS:
-        return "BDS";
-    case IRNSS:
-        return "IRNSS";
-    case SBAS:
-        return "SBAS";
-    case SatSys_None:
-        break;
-    }
-    return "None";
+    std::string str;
+    if (value & GPS) { str += ((!str.empty() ? " | " : "") + std::string("GPS")); }
+    if (value & GLO) { str += ((!str.empty() ? " | " : "") + std::string("GLO")); }
+    if (value & GAL) { str += ((!str.empty() ? " | " : "") + std::string("GAL")); }
+    if (value & QZSS) { str += ((!str.empty() ? " | " : "") + std::string("QZSS")); }
+    if (value & BDS) { str += ((!str.empty() ? " | " : "") + std::string("BDS")); }
+    if (value & IRNSS) { str += ((!str.empty() ? " | " : "") + std::string("IRNSS")); }
+    if (value & SBAS) { str += ((!str.empty() ? " | " : "") + std::string("SBAS")); }
+
+    return str.empty() ? "None" : str;
 }
 
 SatelliteSystem::operator char() const
@@ -133,7 +157,12 @@ TimeSystem SatelliteSystem::GetTimeSystemForSatelliteSystem(SatelliteSystem satS
     return TimeSys_None;
 }
 
-std::vector<uint16_t> SatelliteSystem::GetSatellites(SatelliteSystem satSys)
+TimeSystem SatelliteSystem::getTimeSystem() const
+{
+    return GetTimeSystemForSatelliteSystem(value);
+}
+
+std::vector<uint16_t> SatelliteSystem::GetSatellitesForSatelliteSystem(SatelliteSystem satSys)
 {
     switch (SatelliteSystem_(satSys))
     {
@@ -164,6 +193,40 @@ std::vector<uint16_t> SatelliteSystem::GetSatellites(SatelliteSystem satSys)
     return {};
 }
 
+std::vector<uint16_t> SatelliteSystem::getSatellites() const
+{
+    return GetSatellitesForSatelliteSystem(value);
+}
+
+size_t SatelliteSystem::ToEnumeration(SatelliteSystem satSys)
+{
+    switch (SatelliteSystem_(satSys))
+    {
+    case SatSys_None:
+        return 0;
+    case GPS:
+        return 1;
+    case GAL:
+        return 2;
+    case GLO:
+        return 3;
+    case BDS:
+        return 4;
+    case QZSS:
+        return 5;
+    case IRNSS:
+        return 6;
+    case SBAS:
+        return 7;
+    }
+    return 0;
+}
+
+size_t SatelliteSystem::toEnumeration() const
+{
+    return ToEnumeration(value);
+}
+
 void to_json(json& j, const SatelliteSystem& data)
 {
     j = std::string(data);
@@ -171,6 +234,12 @@ void to_json(json& j, const SatelliteSystem& data)
 void from_json(const json& j, SatelliteSystem& data)
 {
     data = SatelliteSystem::fromString(j.get<std::string>());
+}
+
+std::ostream& operator<<(std::ostream& os, const SatelliteSystem& satSys)
+{
+    os << fmt::format("{}", satSys);
+    return os;
 }
 
 } // namespace NAV

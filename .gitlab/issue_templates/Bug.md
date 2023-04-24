@@ -3,9 +3,7 @@
 Please read this!
 
 Before opening a new issue, make sure to search for keywords in the issues
-filtered by the "Type::Bug" label:
-
-- https://git.ins.uni-stuttgart.de/thomas.topp/instinct/-/issues?label_name=Type%3A%3ABug
+filtered by the "Type::Bug" label.
 
 and verify the issue you're about to submit isn't a duplicate.
 --->
@@ -49,6 +47,12 @@ Collapsed text
 ### Possible fixes
 
 <!-- If you can, link to the line of code that might be responsible for the problem. -->
+
+### Merge to GitHub?
+
+<!-- Please state whether the issue should be merged to the public GitHub repository after it was merged to our GitLab master branch.
+     Additionally indicate this by removing or adding the label 'GitHub' -->
+/label ~"GitHub"
 
 ### Environment info
 

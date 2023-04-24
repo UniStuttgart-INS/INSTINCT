@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "ConfigManager.hpp"
 
 #include <string>
@@ -40,9 +48,10 @@ void NAV::ConfigManager::initialize()
             ("output-path,o",     bpo::value<std::string>()->default_value("logs"),                 "Directory path for logs and output files"                                                )
             ("input-path,i",      bpo::value<std::string>()->default_value("data"),                 "Directory path for searching input files"                                                )
             ("flow-path,f",       bpo::value<std::string>()->default_value("flow"),                 "Directory path for searching flow files"                                                 )
-            ("implot-config",     bpo::value<std::string>()->default_value("config/implot.json"),   "Config file to read implot settings from"                                                )
+            ("implot-config",     bpo::value<std::string>()->default_value("implot.json"),          "Config file to read implot settings from"                                                )
             ("console-log-level", bpo::value<std::string>()->default_value("off"),                  "Log level on the console  (possible values: trace/debug/info/warning/error/critical/off" )
             ("file-log-level",    bpo::value<std::string>()->default_value("debug"),                "Log level to the log file (possible values: trace/debug/info/warning/error/critical/off" )
+            ("log-filter",        bpo::value<std::string>(),                                        "Filter for log messages"                                                                 )
         ;
         // clang-format on
     }

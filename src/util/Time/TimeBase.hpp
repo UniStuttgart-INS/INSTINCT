@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file TimeBase.hpp
 /// @brief Keeps track of the current real/simulation time
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -31,7 +39,12 @@ InsTime GetCurrentInsTime();
 /// @param[in] insTime The new current time
 void SetCurrentTime(const InsTime& insTime);
 
+/// @brief Set the current time object to the computer time
+void SetCurrentTimeToComputerTime();
+
 /// @brief Clears the current time object
 void ClearCurrentTime();
+
+// TODO: Remove this all. Nodes have to give the time to each other over links. Each message needs a time, not globally
 
 } // namespace NAV::util::time

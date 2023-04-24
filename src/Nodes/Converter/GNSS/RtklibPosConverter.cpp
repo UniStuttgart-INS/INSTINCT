@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "RtklibPosConverter.hpp"
 
 #include "util/Logger.hpp"
@@ -47,9 +55,9 @@ bool NAV::RtklibPosConverter::initialize()
     return true;
 }
 
-void NAV::RtklibPosConverter::receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::RtklibPosConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto rtklibPosObs = std::static_pointer_cast<const RtklibPosObs>(nodeData);
+    auto rtklibPosObs = std::static_pointer_cast<const RtklibPosObs>(queue.extract_front());
 
     auto posVelObs = std::make_shared<PosVel>();
 

@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file InsTime.hpp
 /// @brief The class is responsible for all time-related tasks
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -15,6 +23,7 @@
 #include <iostream>
 #include <chrono>
 
+#include <fmt/ostream.h>
 #include "gcem.hpp"
 
 #include <nlohmann/json.hpp>
@@ -27,9 +36,10 @@ namespace NAV
 /// @brief Utility Namespace for Time related tasks
 namespace InsTimeUtil
 {
-constexpr int32_t END_OF_THE_CENTURY_MJD = 400000; ///< Modified Julian Date of the end of the century (15.01.2954)
-constexpr int32_t WEEKS_PER_GPS_CYCLE = 1024;      ///< Weeks per GPS cycle
-constexpr int32_t DIFF_TO_6_1_1980_MJD = 44244;    ///< 06.01.1980 in Modified Julian Date
+constexpr int32_t END_OF_THE_CENTURY_MJD = 400000;   ///< Modified Julian Date of the end of the century (15.01.2954)
+constexpr int32_t WEEKS_PER_GPS_CYCLE = 1024;        ///< Weeks per GPS cycle
+constexpr int32_t DIFF_TO_6_1_1980_MJD = 44244;      ///< 06.01.1980 in Modified Julian Date
+constexpr int32_t DIFF_BDT_WEEK_TO_GPST_WEEK = 1356; ///< BeiDou starts zero at 1-Jan-2006 and GPS starts 6-Jan-1980
 
 constexpr int32_t DIFF_MJD_TO_JD_DAYS = 2400000;  ///< Difference of the days between MJD and JD
 constexpr long double DIFF_MJD_TO_JD_FRAC = 0.5L; ///< Difference of the fraction between MJD and JD
@@ -221,6 +231,9 @@ struct InsTime_MJD
     {
         return !(*this <= rhs);
     }
+
+    /// @brief Converts the object into a readable string
+    explicit operator std::string() const;
 };
 
 /// Julien Date [UTC]
@@ -301,6 +314,9 @@ struct InsTime_JD
     {
         return !(*this <= rhs);
     }
+
+    /// @brief Converts the object into a readable string
+    explicit operator std::string() const;
 };
 
 /// GPS week and time of week in GPS standard time [GPST]
@@ -320,7 +336,7 @@ struct InsTime_GPSweekTow
         if (this->tow >= InsTimeUtil::SECONDS_PER_WEEK)
         {
             this->gpsWeek += static_cast<int32_t>(this->tow / InsTimeUtil::SECONDS_PER_WEEK);
-            this->tow = static_cast<int64_t>(this->tow) % InsTimeUtil::SECONDS_PER_WEEK + (this->tow - static_cast<int64_t>(this->tow));
+            this->tow = static_cast<int64_t>(this->tow) % InsTimeUtil::SECONDS_PER_WEEK + (this->tow - gcem::floor(this->tow));
         }
         while (this->tow < 0.0L)
         {
@@ -394,6 +410,9 @@ struct InsTime_GPSweekTow
     {
         return !(*this <= rhs);
     }
+
+    /// @brief Converts the object into a readable string
+    explicit operator std::string() const;
 };
 
 /// Universal Time Coordinated [UTC]
@@ -408,8 +427,8 @@ struct InsTime_YMDHMS
 
     /// @brief Constructor
     /// @param[in] year Year in Universal Time Coordinated [UTC]
-    /// @param[in] month Month in Universal Time Coordinated [UTC]
-    /// @param[in] day Day in Universal Time Coordinated [UTC]
+    /// @param[in] month Month in Universal Time Coordinated (1 = January) [UTC]
+    /// @param[in] day Day in Universal Time Coordinated (1 = first day) [UTC]
     /// @param[in] hour Hour in Universal Time Coordinated [UTC]
     /// @param[in] min Minute in Universal Time Coordinated [UTC]
     /// @param[in] sec Second in Universal Time Coordinated [UTC]
@@ -419,7 +438,7 @@ struct InsTime_YMDHMS
         if (this->sec >= InsTimeUtil::SECONDS_PER_MINUTE)
         {
             this->min += static_cast<int32_t>(this->sec / InsTimeUtil::SECONDS_PER_MINUTE);
-            this->sec = static_cast<int64_t>(this->sec) % InsTimeUtil::SECONDS_PER_MINUTE + (this->sec - static_cast<int64_t>(this->sec));
+            this->sec = static_cast<int64_t>(this->sec) % InsTimeUtil::SECONDS_PER_MINUTE + (this->sec - gcem::floor(this->sec));
         }
         while (this->sec < 0.0L)
         {
@@ -536,6 +555,9 @@ struct InsTime_YMDHMS
     {
         return !(*this <= rhs);
     }
+
+    /// @brief Converts the object into a readable string
+    explicit operator std::string() const;
 };
 
 /// GPS year and day of year in GPS standard time [GPST]
@@ -555,7 +577,7 @@ struct InsTime_YDoySod
         if (this->sod >= InsTimeUtil::SECONDS_PER_DAY)
         {
             this->doy += static_cast<int32_t>(this->sod / InsTimeUtil::SECONDS_PER_DAY);
-            this->sod = static_cast<int64_t>(this->sod) % InsTimeUtil::SECONDS_PER_DAY + (this->sod - static_cast<int64_t>(this->sod));
+            this->sod = static_cast<int64_t>(this->sod) % InsTimeUtil::SECONDS_PER_DAY + (this->sod - gcem::floor(this->sod));
         }
         while (this->sod < 0)
         {
@@ -630,6 +652,9 @@ struct InsTime_YDoySod
     {
         return !(*this <= rhs);
     }
+
+    /// @brief Converts the object into a readable string
+    explicit operator std::string() const;
 };
 
 /// The class is responsible for all time-related tasks
@@ -731,13 +756,13 @@ class InsTime
 
     /// @brief Constructor
     /// @param[in] year Year
-    /// @param[in] month Month
-    /// @param[in] day Day
+    /// @param[in] month Month (1 = January)
+    /// @param[in] day Day (1 = first day)
     /// @param[in] hour Hour
     /// @param[in] min Minute
     /// @param[in] sec Second
     /// @param[in] timesys Time System in which the previous values are given in
-    constexpr InsTime(uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uint16_t min, long double sec, TimeSystem timesys = UTC)
+    constexpr InsTime(int32_t year, int32_t month, int32_t day, int32_t hour, int32_t min, long double sec, TimeSystem timesys = UTC)
         : InsTime(InsTime_YMDHMS(year, month, day, hour, min, sec), timesys) {}
 
     /// @brief Destructor
@@ -846,8 +871,8 @@ class InsTime
         return { year, doy, sod };
     }
 
-    /// @brief Returns the current time rounded to a full day (changes time to 0:0:0h UTC of current day)
-    /// @return The rounded time object
+    /// @brief Returns the current time rounded/cutted to a full day (changes time to 0:0:0h UTC of current day)
+    /// @return The rounded/cutted time object
     [[nodiscard]] constexpr InsTime toFullDay() const
     {
         return InsTime(InsTime_MJD(_mjd.mjd_day, 0.0L));
@@ -902,48 +927,12 @@ class InsTime
         return leapGps2UTC(InsTime(jd).toMJD());
     }
 
-    // TODO: Remove with std::upper_bound, as soon as C++20 gets releases
-
-    /// @brief Returns an iterator pointing to the first element in the range [first, last) that is greater than value, or last if no such element is found.
-    /// @tparam ForwardIt Iterator of the type of the elements
-    /// @tparam T Type of the elements
-    /// @param[in] first Iterator to the first element to search
-    /// @param[in] last Iterator to the last element to search
-    /// @param[in] value Value to search for
-    /// @return Iterator pointing to the first element in the range [first, last) that is greater than value, or last if no such element is found.
-    template<class ForwardIt, class T>
-    static constexpr ForwardIt upper_bound(ForwardIt first, ForwardIt last, const T& value)
-    {
-        ForwardIt it;
-        typename std::iterator_traits<ForwardIt>::difference_type count;
-        typename std::iterator_traits<ForwardIt>::difference_type step;
-        count = std::distance(first, last);
-
-        while (count > 0)
-        {
-            it = first;
-            step = count / 2;
-            std::advance(it, step);
-            if (!(value < *it))
-            {
-                first = ++it;
-                count -= step + 1;
-            }
-            else
-            {
-                count = step;
-            }
-        }
-        return first;
-    }
-
     /// @brief Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_MJD object
     /// @param[in] mjd_in Time point
     /// @return Number of leap seconds
     static constexpr uint16_t leapGps2UTC(const InsTime_MJD& mjd_in)
     {
-        // TODO: Remove with std::upper_bound, as soon as C++20 gets releases
-        return static_cast<uint16_t>(upper_bound(InsTimeUtil::GPS_LEAP_SEC_MJD.begin(), InsTimeUtil::GPS_LEAP_SEC_MJD.end(), mjd_in.mjd_day) - InsTimeUtil::GPS_LEAP_SEC_MJD.begin() - 1);
+        return static_cast<uint16_t>(std::upper_bound(InsTimeUtil::GPS_LEAP_SEC_MJD.begin(), InsTimeUtil::GPS_LEAP_SEC_MJD.end(), mjd_in.mjd_day) - InsTimeUtil::GPS_LEAP_SEC_MJD.begin() - 1);
     }
 
     /// @brief Checks if the current time is a leap year
@@ -1036,6 +1025,9 @@ class InsTime
 
     /* ---------------------------- Utility Functions --------------------------- */
 
+    /// @brief Converts the object into a readable string
+    explicit operator std::string() const;
+
     /// @brief Checks if the Time object has a value
     [[nodiscard]] constexpr bool empty() const
     {
@@ -1080,8 +1072,9 @@ class InsTime
             return 0; // TODO: Implement QZSST<->UTC time difference
         case IRNSST:
             return 0; // TODO: Implement IRNSST<->UTC time difference
+        case BDT:     // = BeiDou Time (UTC) is synchronized with UTC within 100 ns<
+            return this->leapGps2UTC() - 14;
         case UTC:
-        case BDT: // = BeiDou Time (UTC) is synchronized with UTC within 100 ns<
         case TimeSys_None:
             return 0;
         }
@@ -1134,3 +1127,26 @@ void to_json(json& j, const InsTime& insTime);
 void from_json(const json& j, InsTime& insTime);
 
 } // namespace NAV
+
+#ifndef DOXYGEN_IGNORE
+
+template<>
+struct fmt::formatter<NAV::InsTime_MJD> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::InsTime_JD> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::InsTime_GPSweekTow> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::InsTime_YMDHMS> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::InsTime_YDoySod> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::InsTime> : ostream_formatter
+{};
+
+#endif

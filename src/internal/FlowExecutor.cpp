@@ -1,10 +1,17 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "FlowExecutor.hpp"
 
 #include "util/Logger.hpp"
 #include "Navigation/Time/InsTime.hpp"
 
 #include "internal/Node/Node.hpp"
-#include "NodeData/InsObs.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -18,13 +25,32 @@ namespace nm = NAV::NodeManager;
 
 #include <thread>
 #include <atomic>
+#include <mutex>
+#include <condition_variable>
+
+#ifdef TESTING
+    #include <catch2/catch_test_macros.hpp>
+#endif
 
 /* -------------------------------------------------------------------------------------------------------- */
 /*                                              Private Members                                             */
 /* -------------------------------------------------------------------------------------------------------- */
 
-std::atomic<bool> _execute{ false };
+std::mutex _mutex;
+std::condition_variable _cv;
+
+enum class State
+{
+    Idle,
+    Starting,
+    Running,
+    Stopping,
+};
+State _state = State::Idle;
+
 std::thread _thd;
+std::atomic<size_t> _activeNodes{ 0 };
+std::chrono::time_point<std::chrono::steady_clock> _startTime;
 
 /* -------------------------------------------------------------------------------------------------------- */
 /*                                       Private Function Declarations                                      */
@@ -32,12 +58,6 @@ std::thread _thd;
 
 namespace NAV::FlowExecutor
 {
-/// @brief Initializes all Nodes if they are not initialized yet
-/// @return True if all nodes are initialized
-bool initialize();
-
-/// @brief Deinitialize all Nodes
-void deinitialize();
 
 /// @brief Main task of the thread
 void execute();
@@ -50,16 +70,21 @@ void execute();
 
 bool NAV::FlowExecutor::isRunning() noexcept
 {
-    return (_execute.load(std::memory_order_acquire) && _thd.joinable());
+    std::lock_guard<std::mutex> lk(_mutex);
+    return _state != State::Idle;
 }
 
 void NAV::FlowExecutor::start()
 {
-    stop();
-
     LOG_TRACE("called");
 
-    _execute.store(true, std::memory_order_release);
+    stop();
+
+    {
+        std::lock_guard<std::mutex> lk(_mutex);
+        _state = State::Starting;
+    }
+
     _thd = std::thread(execute);
 }
 
@@ -67,195 +92,187 @@ void NAV::FlowExecutor::stop()
 {
     LOG_TRACE("called");
 
-    _execute.store(false, std::memory_order_release);
-    if (_thd.joinable())
+    if (isRunning())
     {
-        _thd.join();
+        {
+            std::lock_guard<std::mutex> lk(_mutex);
+            if (_state == State::Running || _state == State::Starting)
+            {
+                _state = State::Stopping;
+                _cv.notify_all();
+            }
+        }
+
+        waitForFinish();
     }
+
+    if (_thd.joinable()) { _thd.join(); }
 }
 
 void NAV::FlowExecutor::waitForFinish()
 {
-    LOG_TRACE("called");
-
-    if (isRunning())
+    LOG_TRACE("Waiting for finish of FlowExecutor...");
     {
-        _thd.join();
+        std::unique_lock lk(_mutex);
+        _cv.wait(lk, [] { return _state == State::Idle; });
     }
+
+    {
+        std::lock_guard<std::mutex> lk(_mutex);
+        if (_thd.joinable()) { _thd.join(); }
+    }
+    LOG_TRACE("FlowExecutor finished.");
 }
 
-bool NAV::FlowExecutor::initialize()
+void NAV::FlowExecutor::deregisterNode([[maybe_unused]] const Node* node)
 {
-    LOG_TRACE("called");
+    LOG_DEBUG("Node {} finished.", node->nameId());
+    _activeNodes--;
 
-    if (nm::InitializeAllNodes())
+    if (_activeNodes == 0)
     {
-        for (Node* node : nm::m_Nodes())
-        {
-            if (node->isInitialized()) { node->resetNode(); }
-        }
-        util::time::SetMode(util::time::Mode::POST_PROCESSING);
-        util::time::ClearCurrentTime();
-
-        nm::EnableAllCallbacks();
-        return true;
+        std::lock_guard<std::mutex> lk(_mutex);
+        _state = State::Stopping;
+        _cv.notify_all();
     }
-
-    return false;
-}
-
-void NAV::FlowExecutor::deinitialize()
-{
-    LOG_TRACE("called");
-
-    _execute.store(false, std::memory_order_release);
-
-    if (!ConfigManager::Get<bool>("nogui"))
-    {
-        nm::DisableAllCallbacks();
-    }
-
-    for (Node* node : nm::m_Nodes())
-    {
-        node->flush();
-    }
-
-    util::time::SetMode(util::time::Mode::REAL_TIME);
 }
 
 void NAV::FlowExecutor::execute()
 {
     LOG_TRACE("called");
 
-    if (!initialize())
+    for (Node* node : nm::m_Nodes())
     {
-        _execute.store(false, std::memory_order_release);
+        for (auto& inputPin : node->inputPins)
+        {
+            inputPin.queue.clear();
+            inputPin.queueBlocked = false;
+        }
+        node->pollEvents.clear();
+    }
+
+    if (!nm::InitializeAllNodes()) // This wakes the threads
+    {
+        std::lock_guard<std::mutex> lk(_mutex);
+        _state = State::Idle;
+        _cv.notify_all();
         return;
     }
 
-    auto start = std::chrono::steady_clock::now();
+    for (Node* node : nm::m_Nodes())
+    {
+        if (node == nullptr || !node->isInitialized()) { continue; }
 
-    std::multimap<NAV::InsTime, Pin*> events;
+        {
+            std::lock_guard<std::mutex> lk(_mutex);
+            if (_state != State::Starting) { break; }
+        }
+
+        node->_mode = Node::Mode::POST_PROCESSING;
+        _activeNodes += 1;
+        node->resetNode();
+        LOG_TRACE("Putting node '{}' into post-processing mode and adding to active nodes.", node->nameId());
+        for (auto& outputPin : node->outputPins)
+        {
+            if (outputPin.type == Pin::Type::Flow && outputPin.isPinLinked())
+            {
+                outputPin.mode = OutputPin::Mode::POST_PROCESSING;
+                LOG_TRACE("    Putting pin '{}' into post-processing mode", outputPin.name);
+            }
+
+            if (std::holds_alternative<OutputPin::PollDataFunc>(outputPin.data))
+            {
+                LOG_TRACE("    Adding pin '{}' to data poll event list.", outputPin.name);
+                node->pollEvents.insert(std::make_pair(InsTime(), &outputPin));
+            }
+            else if (std::holds_alternative<OutputPin::PeekPollDataFunc>(outputPin.data))
+            {
+                if (auto* callback = std::get_if<OutputPin::PeekPollDataFunc>(&outputPin.data);
+                    outputPin.mode == OutputPin::Mode::POST_PROCESSING && callback != nullptr && *callback != nullptr
+                    && std::any_of(outputPin.links.begin(), outputPin.links.end(), [](const OutputPin::OutgoingLink& link) {
+                           return link.connectedNode->isInitialized();
+                       }))
+                {
+                    if (auto obs = (node->**callback)(true)) // Peek the data
+                    {
+                        LOG_TRACE("    Adding pin '{}' to data poll event list with time {}.", outputPin.name, obs->insTime);
+                        node->pollEvents.insert(std::make_pair(obs->insTime, &outputPin));
+                    }
+                }
+            }
+        }
+    }
+
+    {
+        std::lock_guard<std::mutex> lk(_mutex);
+        if (_state == State::Starting)
+        {
+            nm::EnableAllCallbacks();
+            _state = State::Running;
+        }
+    }
+
+    LOG_INFO("Post-processing started");
+    _startTime = std::chrono::steady_clock::now();
 
     for (Node* node : nm::m_Nodes()) // Search for node pins with data callbacks
     {
-        if (node == nullptr || !node->isInitialized())
+        if (node != nullptr && node->isInitialized())
         {
-            continue;
+            LOG_DEBUG("Waking up node {}", node->nameId());
+            node->wakeWorker();
         }
-
-        for (Pin& outputPin : node->outputPins)
+    }
+    {
+        // Wait for the nodes to finish
+        bool timeout = true;
+        auto timeoutDuration = std::chrono::minutes(1);
+        while (timeout)
         {
-            if (!_execute.load(std::memory_order_acquire))
+            std::unique_lock lk(_mutex);
+            timeout = !_cv.wait_for(lk, timeoutDuration, [] { return _state == State::Stopping; });
+            if (timeout && _activeNodes == 0)
             {
-                deinitialize();
-                return;
-            }
-
-            if (outputPin.type == Pin::Type::Flow
-#ifndef TESTING
-                && nm::IsPinLinked(outputPin.id)
+                LOG_ERROR("FlowExecutor had a timeout, but all nodes finished already.");
+#ifdef TESTING
+                FAIL("The FlowExecutor should not have a timeout when all nodes are finished already.");
 #endif
-            )
-            {
-                auto* callback = std::get_if<std::shared_ptr<const NAV::NodeData> (Node::*)(bool)>(&outputPin.data);
-                if (callback != nullptr && *callback != nullptr)
-                {
-                    LOG_DEBUG("Searching node {} on output pin {} (id {}) for data", node->nameId(), node->pinIndexFromId(outputPin.id), size_t(outputPin.id));
-                    bool dataEventCreated = false;
-                    while (true)
-                    {
-                        // Check if data available (peek = true)
-                        if (auto obs = std::static_pointer_cast<const NAV::InsObs>((node->**callback)(true)))
-                        {
-                            // Check if data has a time
-                            if (obs->insTime.has_value())
-                            {
-                                events.insert(std::make_pair(obs->insTime.value(), &outputPin));
-                                LOG_DEBUG("Taking Data from {} on output pin {} into account.", node->nameId(), size_t(outputPin.id));
-                                dataEventCreated = true;
-                                break;
-                            }
-
-                            // Remove data without calling the callback if no time stamp
-                            // For post processing all data needs a time stamp
-                            node->callbacksEnabled = false;
-                            (node->**callback)(false);
-                            node->callbacksEnabled = true;
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                    if (!dataEventCreated)
-                    {
-                        node->resetNode();
-                    }
-                }
+                break;
             }
         }
     }
 
-    LOG_INFO("Processing Data from files");
-    std::multimap<NAV::InsTime, Pin*>::iterator it;
-    while (it = events.begin(), it != events.end() && _execute.load(std::memory_order_acquire))
+    // Deinitialize
+    LOG_DEBUG("Stopping FlowExecutor...");
+    nm::DisableAllCallbacks();
+
+    for (Node* node : nm::m_Nodes())
     {
-        Pin* pin = it->second;
-        Node* node = pin->parentNode;
-        auto* callback = std::get_if<std::shared_ptr<const NAV::NodeData> (Node::*)(bool)>(&pin->data);
-        if (callback != nullptr && *callback != nullptr)
+        if (node == nullptr || !node->isInitialized()) { continue; }
+
+        node->_mode = Node::Mode::REAL_TIME;
+        for (auto& outputPin : node->outputPins)
         {
-            // Update the global time
-            util::time::SetCurrentTime(it->first);
-
-            // Trigger the already peeked observation and invoke it's callbacks (peek = false)
-            if ((node->**callback)(false) == nullptr)
-            {
-                LOG_ERROR("{}: Could not poll its observation despite being able to peek it.", node->nameId());
-            }
-
-            // Add next data event from the node
-            while (true)
-            {
-                // Check if data available (peek = true)
-                if (auto obs = std::static_pointer_cast<const NAV::InsObs>((node->**callback)(true)))
-                {
-                    // Check if data has a time
-                    if (obs->insTime.has_value())
-                    {
-                        events.insert(std::make_pair(obs->insTime.value(), pin));
-                        break;
-                    }
-
-                    // Remove data without calling the callback if no time stamp
-                    // For post processing all data needs a time stamp
-                    node->callbacksEnabled = false;
-                    (node->**callback)(false);
-                    node->callbacksEnabled = true;
-                }
-                else
-                {
-                    break;
-                }
-            }
+            outputPin.mode = OutputPin::Mode::REAL_TIME;
         }
-        else
-        {
-            LOG_ERROR("{} - {}: Callback is not valid anymore", node->nameId(), size_t(pin->id));
-        }
-
-        events.erase(it);
+        node->flush();
     }
 
     if (!ConfigManager::Get<bool>("nogui")
-        || (!ConfigManager::Get<bool>("sigterm")
-            && !ConfigManager::Get<size_t>("duration")))
+        || (!ConfigManager::Get<bool>("sigterm") && !ConfigManager::Get<size_t>("duration")))
     {
         auto finish = std::chrono::steady_clock::now();
-        [[maybe_unused]] std::chrono::duration<double> elapsed = finish - start;
+        [[maybe_unused]] std::chrono::duration<double> elapsed = finish - _startTime;
         LOG_INFO("Elapsed time: {} s", elapsed.count());
     }
 
-    deinitialize();
+    _activeNodes = 0;
+    LOG_TRACE("FlowExecutor deinitialized.");
+    {
+        std::lock_guard<std::mutex> lk(_mutex);
+        _state = State::Idle;
+        _cv.notify_all();
+    }
+
+    LOG_TRACE("Execute thread finished.");
 }

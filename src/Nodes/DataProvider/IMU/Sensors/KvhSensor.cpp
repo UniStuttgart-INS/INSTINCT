@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "KvhSensor.hpp"
 
 #include "util/Logger.hpp"
@@ -151,7 +159,7 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::pro
         vendor::kvh::decryptKvhObs(obs);
 
         LOG_DATA("DATA({}): {}, {}, {}",
-                 kvhSensor->name, obs->sequenceNumber, obs->temperature.value(), obs->status);
+                 kvhSensor->name, obs->sequenceNumber, obs->temperature.value(), fmt::streamed(obs->status));
 
         // Check if a packet was skipped
         if (kvhSensor->_prevSequenceNumber == UINT8_MAX)

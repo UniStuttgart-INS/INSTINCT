@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file VectorNavTypes.hpp
 /// @brief Type Definitions for VectorNav messages
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -8,6 +16,9 @@
 #include <cstdint>
 #include <vector>
 #include <iostream>
+#include <fmt/ostream.h>
+#include <vn/vector.h>
+#include <vn/matrix.h>
 
 namespace NAV::vendor::vectornav
 {
@@ -126,6 +137,12 @@ enum class SatSys : uint8_t
     QZSS = 5,
     GLONASS = 6,
 };
+
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream where data gets printed to
+/// @param[in] satSys Satellite Constellation
+/// @return Output stream object
+std::ostream& operator<<(std::ostream& os, const SatSys& satSys);
 
 /// @brief Information and measurements pertaining to each GNSS satellite in view.
 ///
@@ -569,6 +586,33 @@ class VpeStatus
 class InsStatus
 {
   public:
+    /// @brief Indicates the current mode of the INS filter.
+    enum class Mode
+    {
+        /// @brief Not tracking.
+        ///
+        /// GNSS Compass is initializing. Output heading is based on magnetometer measurements.
+        NotTracking = 0,
+        /// @brief INS Filter is dynamically aligning.
+        ///
+        /// For a stationary startup: GNSS Compass has initialized and INS Filter is
+        /// aligning from the magnetic heading to the GNSS Compass heading.
+        /// For a dynamic startup: INS Filter has initialized and is dynamically aligning to
+        /// True North heading.
+        /// In operation, if the INS Filter drops from INS Mode 2 back down to 1, the
+        /// attitude uncertainty has increased above 2 degrees.
+        Aligning = 1,
+        /// @brief Tracking.
+        ///
+        /// The INS Filter is tracking and operating within specification.
+        Tracking = 2,
+        /// @brief Loss of GNSS.
+        ///
+        /// A GNSS outage has lasted more than 45 seconds. The INS Filter will
+        /// no longer update the position and velocity outputs, but the attitude remains valid.
+        LossOfGNSS = 3,
+    };
+
     /// Constructor
     /// @param[in] status Status to set
     explicit InsStatus(uint16_t status) : _status(status) {}
@@ -591,9 +635,9 @@ class InsStatus
     }
 
     /// Extract the current mode of the INS filter from the ins status
-    [[nodiscard]] constexpr uint8_t mode() const
+    [[nodiscard]] constexpr Mode mode() const
     {
-        return ((_status & (1U << 0U | 1U << 1U)) >> 0U);
+        return static_cast<Mode>((_status & (1U << 0U | 1U << 1U)) >> 0U);
     }
     /// Extract the GPS Fix from the ins status
     [[nodiscard]] constexpr bool gpsFix() const
@@ -632,3 +676,25 @@ class InsStatus
 };
 
 } // namespace NAV::vendor::vectornav
+
+#ifndef DOXYGEN_IGNORE
+
+template<>
+struct fmt::formatter<NAV::vendor::vectornav::SatSys> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::vendor::vectornav::RawMeas::SatRawElement::Chan> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::vendor::vectornav::RawMeas::SatRawElement::Freq> : ostream_formatter
+{};
+
+template<size_t tdim, typename T>
+struct fmt::formatter<vn::math::vec<tdim, T>> : ostream_formatter
+{};
+
+template<size_t m, size_t n, typename T>
+struct fmt::formatter<vn::math::mat<m, n, T>> : ostream_formatter
+{};
+
+#endif

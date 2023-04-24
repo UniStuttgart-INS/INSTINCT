@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file CsvFile.hpp
 /// @brief CSV File reader
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -54,6 +62,9 @@ class CsvFile : public Node, FileReader
 
     /// @brief Deinitialize the node
     void deinitialize() override;
+
+    /// @brief Resets the node. It is guaranteed that the node is initialized when this is called.
+    bool resetNode() override;
 
     /// @brief Determines the type of the file
     /// @return The File Type

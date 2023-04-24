@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "ImuSimulator.hpp"
 
 #include <ctime>
@@ -63,7 +71,7 @@ void NAV::ImuSimulator::guiConfig()
     {
         if (ImGui::RadioButton(fmt::format("Current Computer Time##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_startTimeSource), static_cast<int>(StartTimeSource::CurrentComputerTime)))
         {
-            LOG_DEBUG("{}: startTimeSource changed to {}", nameId(), _startTimeSource);
+            LOG_DEBUG("{}: startTimeSource changed to {}", nameId(), fmt::underlying(_startTimeSource));
             flow::ApplyChanges();
         }
         if (_startTimeSource == StartTimeSource::CurrentComputerTime)
@@ -80,7 +88,7 @@ void NAV::ImuSimulator::guiConfig()
 
         if (ImGui::RadioButton(fmt::format("Custom Time##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_startTimeSource), static_cast<int>(StartTimeSource::CustomTime)))
         {
-            LOG_DEBUG("{}: startTimeSource changed to {}", nameId(), _startTimeSource);
+            LOG_DEBUG("{}: startTimeSource changed to {}", nameId(), fmt::underlying(_startTimeSource));
             flow::ApplyChanges();
         }
         if (_startTimeSource == StartTimeSource::CustomTime)
@@ -127,7 +135,7 @@ void NAV::ImuSimulator::guiConfig()
                 if (ImGui::Selectable(to_string(static_cast<TrajectoryType>(i)), is_selected))
                 {
                     _trajectoryType = static_cast<TrajectoryType>(i);
-                    LOG_DEBUG("{}: trajectoryType changed to {}", nameId(), _trajectoryType);
+                    LOG_DEBUG("{}: trajectoryType changed to {}", nameId(), fmt::underlying(_trajectoryType));
 
                     if (_trajectoryType == TrajectoryType::Csv && inputPins.empty())
                     {
@@ -135,7 +143,7 @@ void NAV::ImuSimulator::guiConfig()
                     }
                     else if (_trajectoryType != TrajectoryType::Csv && !inputPins.empty())
                     {
-                        nm::DeleteInputPin(inputPins.front().id);
+                        nm::DeleteInputPin(inputPins.front());
                     }
 
                     flow::ApplyChanges();
@@ -153,7 +161,9 @@ void NAV::ImuSimulator::guiConfig()
         {
             auto TextColoredIfExists = [this](int index, const char* text, const char* type) {
                 ImGui::TableSetColumnIndex(index);
-                if (const auto* csvData = getInputValue<CsvData>(INPUT_PORT_INDEX_CSV);
+                auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_CSV);
+                if (mutex) { mutex->lock(); }
+                if (const auto* csvData = getInputValue<const CsvData>(INPUT_PORT_INDEX_CSV);
                     csvData && std::find(csvData->description.begin(), csvData->description.end(), text) != csvData->description.end())
                 {
                     ImGui::TextUnformatted(text);
@@ -166,6 +176,7 @@ void NAV::ImuSimulator::guiConfig()
                     ImGui::TableNextColumn();
                     ImGui::TextDisabled("%s", type);
                 }
+                if (mutex) { mutex->unlock(); }
             };
 
             if (ImGui::TreeNode(fmt::format("Format description##{}", size_t(id)).c_str()))
@@ -379,7 +390,7 @@ void NAV::ImuSimulator::guiConfig()
                         if (ImGui::Selectable(to_string(static_cast<Direction>(i)), is_selected))
                         {
                             _circularTrajectoryDirection = static_cast<Direction>(i);
-                            LOG_DEBUG("{}: circularTrajectoryDirection changed to {}", nameId(), _circularTrajectoryDirection);
+                            LOG_DEBUG("{}: circularTrajectoryDirection changed to {}", nameId(), fmt::underlying(_circularTrajectoryDirection));
                             flow::ApplyChanges();
                             doDeinitialize();
                         }
@@ -583,7 +594,7 @@ void NAV::ImuSimulator::guiConfig()
     Imu::guiConfig();
 }
 
-[[nodiscard]] json NAV::ImuSimulator::save() const
+json NAV::ImuSimulator::save() const
 {
     LOG_TRACE("{}: called", nameId());
 
@@ -661,7 +672,7 @@ void NAV::ImuSimulator::restore(json const& j)
         }
         else if (_trajectoryType != TrajectoryType::Csv && !inputPins.empty())
         {
-            nm::DeleteInputPin(inputPins.front().id);
+            nm::DeleteInputPin(inputPins.front());
         }
     }
     if (j.contains("startPosition_lla"))
@@ -1078,7 +1089,9 @@ bool NAV::ImuSimulator::initializeSplines()
     }
     else if (_trajectoryType == TrajectoryType::Csv)
     {
-        if (const auto* csvData = getInputValue<CsvData>(INPUT_PORT_INDEX_CSV);
+        auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_CSV);
+        if (mutex) { mutex->lock(); }
+        if (const auto* csvData = getInputValue<const CsvData>(INPUT_PORT_INDEX_CSV);
             csvData && csvData->lines.size() >= 2)
         {
             _startTime = getTimeFromCsvLine(csvData->lines.front(), csvData->description);
@@ -1124,6 +1137,7 @@ bool NAV::ImuSimulator::initializeSplines()
                 splineYaw.push_back(i > 0 ? unwrapAngle(rpy(2), splineYaw.back(), M_PI) : rpy(2));
                 LOG_DATA("{}: R {}, P {}, Y {} [deg] (in Spline)", nameId(), rad2deg(splineRoll.back()), rad2deg(splinePitch.back()), rad2deg(splineYaw.back()));
             }
+            if (mutex) { mutex->unlock(); }
             _csvDuration = splineTime.back();
 
             double dt = splineTime[nVirtPoints + 1] - splineTime[nVirtPoints];
@@ -1156,6 +1170,7 @@ bool NAV::ImuSimulator::initializeSplines()
         }
         else
         {
+            if (mutex) { mutex->unlock(); }
             LOG_ERROR("{}: Can't calculate the data without a connected CSV file with at least two datasets", nameId());
             return false;
         }
@@ -1183,10 +1198,13 @@ bool NAV::ImuSimulator::resetNode()
 
     if (_trajectoryType == TrajectoryType::Csv)
     {
-        if (const auto* csvData = getInputValue<CsvData>(INPUT_PORT_INDEX_CSV);
+        auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_CSV);
+        if (mutex) { mutex->lock(); }
+        if (const auto* csvData = getInputValue<const CsvData>(INPUT_PORT_INDEX_CSV);
             csvData && !csvData->lines.empty())
         {
             _startTime = getTimeFromCsvLine(csvData->lines.front(), csvData->description);
+            if (mutex) { mutex->unlock(); }
             if (_startTime.empty())
             {
                 return false;
@@ -1195,6 +1213,7 @@ bool NAV::ImuSimulator::resetNode()
         }
         else
         {
+            if (mutex) { mutex->unlock(); }
             LOG_ERROR("{}: Can't reset the ImuSimulator without a connected CSV file", nameId());
             return false;
         }
@@ -1256,15 +1275,15 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     // ------------------------------------- Early return in case of peeking to avoid heavy calculations ---------------------------------------
     if (peek)
     {
-        auto obs = std::make_shared<InsObs>();
-        obs->insTime = _startTime + std::chrono::duration<double>(imuUpdateTime - 1e-9);
+        auto obs = std::make_shared<NodeData>();
+        obs->insTime = _startTime + std::chrono::duration<double>(imuUpdateTime);
         return obs;
     }
 
     auto obs = std::make_shared<ImuObs>(_imuPos);
     obs->timeSinceStartup = static_cast<uint64_t>(imuUpdateTime * 1e9);
     obs->insTime = _startTime + std::chrono::duration<double>(imuUpdateTime);
-    LOG_DATA("{}: Simulating IMU data for time [{}]", nameId(), obs->insTime->toYMDHMS());
+    LOG_DATA("{}: Simulating IMU data for time [{}]", nameId(), obs->insTime.toYMDHMS());
 
     // --------------------------------------------------------- Calculation of data -----------------------------------------------------------
     LOG_DATA("{}: [{:8.3f}] lla_position = {}°, {}°, {} m", nameId(), imuUpdateTime, rad2deg(lla_position(0)), rad2deg(lla_position(1)), lla_position(2));
@@ -1357,13 +1376,13 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
     // ------------------------------------- Early return in case of peeking to avoid heavy calculations ---------------------------------------
     if (peek)
     {
-        auto obs = std::make_shared<InsObs>();
+        auto obs = std::make_shared<NodeData>();
         obs->insTime = _startTime + std::chrono::duration<double>(gnssUpdateTime);
         return obs;
     }
     auto obs = std::make_shared<PosVelAtt>();
     obs->insTime = _startTime + std::chrono::duration<double>(gnssUpdateTime);
-    LOG_DATA("{}: Simulating GNSS data for time [{}]", nameId(), obs->insTime->toYMDHMS());
+    LOG_DATA("{}: Simulating GNSS data for time [{}]", nameId(), obs->insTime.toYMDHMS());
 
     // --------------------------------------------------------- Calculation of data -----------------------------------------------------------
     LOG_DATA("{}: [{:8.3f}] lla_position = {}°, {}°, {} m", nameId(), gnssUpdateTime, rad2deg(lla_position(0)), rad2deg(lla_position(1)), lla_position(2));

@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file Pos.hpp
 /// @brief Position Storage Class
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -8,12 +16,12 @@
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 
 #include "util/Eigen.hpp"
-#include "NodeData/InsObs.hpp"
+#include "NodeData/NodeData.hpp"
 
 namespace NAV
 {
 /// Position, Velocity and Attitude Storage Class
-class Pos : public InsObs
+class Pos : public NodeData
 {
   public:
     /// @brief Returns the type of the data class
@@ -27,7 +35,7 @@ class Pos : public InsObs
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
     {
-        return { InsObs::type() };
+        return { NodeData::type() };
     }
 
     /* -------------------------------------------------------------------------------------------------------- */

@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file Functions.hpp
 /// @brief GNSS helper functions
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
@@ -51,8 +59,38 @@ namespace NAV
 ///
 /// @param[in] f1 First frequency (usually L1)
 /// @param[in] f2 Second frequency (usually L2)
+/// @param[in] num1 First frequency number. Only used for GLONASS G1 and G2
+/// @param[in] num2 Second frequency number. Only used for GLONASS G1 and G2
 /// @return The ratio (f1/f2)^2 [-]
 /// @note See \cite IS-GPS-200M IS-GPS-200 ch. 20.3.3.3.3.2 p.99
-[[nodiscard]] double ratioFreqSquared(Frequency f1, Frequency f2);
+[[nodiscard]] double ratioFreqSquared(Frequency f1, Frequency f2, int8_t num1 = -128, int8_t num2 = -128);
+
+/// @brief Converts a GALILEO SISA (Signal in space accuracy) value to it's index
+/// @param[in] val SISA value in [m]
+/// @return The SISA index
+///
+/// @note See \cite GAL-ICD-2.0 GAL ICD ch. 5.1.12, p.58
+[[nodiscard]] uint8_t galSisaVal2Idx(double val);
+
+/// @brief Converts a GALILEO SISA (Signal in space accuracy) index to it's value
+/// @param[in] idx The SISA index
+/// @return SISA value in [m]
+///
+/// @note See \cite GAL-ICD-2.0 GAL ICD ch. 5.1.12, p.58
+[[nodiscard]] double galSisaIdx2Val(uint8_t idx);
+
+/// @brief Converts a GPS URA (user range accuracy) value to it's index
+/// @param[in] val URA value in [m]
+/// @return The URA index
+///
+/// @note See \cite IS-GPS-200M GPS ICD ch. 20.3.3.3.1.3, p.92ff
+[[nodiscard]] uint8_t gpsUraVal2Idx(double val);
+
+/// @brief Converts a GPS URA (user range accuracy) index to it's value
+/// @param[in] idx The URA index
+/// @return URA value in [m]
+///
+/// @note See \cite IS-GPS-200M GPS ICD ch. 20.3.3.3.1.3, p.92ff
+[[nodiscard]] double gpsUraIdx2Val(uint8_t idx);
 
 } // namespace NAV

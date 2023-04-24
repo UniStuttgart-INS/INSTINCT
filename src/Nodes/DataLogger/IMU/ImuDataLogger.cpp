@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "ImuDataLogger.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
@@ -15,7 +23,7 @@ NAV::ImuDataLogger::ImuDataLogger()
 {
     LOG_TRACE("{}: called", name);
 
-    _fileType = FileType::CSV;
+    _fileType = FileType::ASCII;
 
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 380, 70 };
@@ -105,32 +113,32 @@ void NAV::ImuDataLogger::deinitialize()
     FileWriter::deinitialize();
 }
 
-void NAV::ImuDataLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::ImuDataLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto obs = std::static_pointer_cast<const ImuObs>(nodeData);
+    auto obs = std::static_pointer_cast<const ImuObs>(queue.extract_front());
 
     constexpr int gpsCyclePrecision = 3;
     constexpr int gpsTimePrecision = 12;
     constexpr int valuePrecision = 9;
 
-    if (obs->insTime.has_value())
+    if (!obs->insTime.empty())
     {
-        _filestream << std::setprecision(valuePrecision) << std::round(calcTimeIntoRun(obs->insTime.value()) * 1e9) / 1e9;
+        _filestream << std::setprecision(valuePrecision) << std::round(calcTimeIntoRun(obs->insTime) * 1e9) / 1e9;
     }
     _filestream << ",";
-    if (obs->insTime.has_value())
+    if (!obs->insTime.empty())
     {
-        _filestream << std::fixed << std::setprecision(gpsCyclePrecision) << obs->insTime.value().toGPSweekTow().gpsCycle;
+        _filestream << std::fixed << std::setprecision(gpsCyclePrecision) << obs->insTime.toGPSweekTow().gpsCycle;
     }
     _filestream << ",";
-    if (obs->insTime.has_value())
+    if (!obs->insTime.empty())
     {
-        _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.value().toGPSweekTow().gpsWeek;
+        _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.toGPSweekTow().gpsWeek;
     }
     _filestream << ",";
-    if (obs->insTime.has_value())
+    if (!obs->insTime.empty())
     {
-        _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.value().toGPSweekTow().tow;
+        _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.toGPSweekTow().tow;
     }
     _filestream << ",";
     if (obs->timeSinceStartup.has_value())

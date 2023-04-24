@@ -1,26 +1,16 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file Saastamoinen.hpp
 /// @brief Saastamoinen troposphere correction model
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2022-05-26
-
-#pragma once
-
-#include <Eigen/Core>
-#include "Navigation/Atmosphere/Troposphere/ZenithDelay.hpp"
-
-namespace NAV
-{
-
-/// @brief Calculates the tropospheric zenith hydrostatic and wet delays with the Saastamoinen model
-/// @param[in] lla_pos [𝜙, λ, h]^T Geodetic latitude, longitude and height in [rad, rad, m]
-/// @return Range correction for troposphere and stratosphere for radio ranging in [m]
-/// @note See \cite Saastamoinen1973 Saastamoinen, p. 32
-/// @note See \cite Davis1985 Davis, Appendix A, p. 1604
-/// @note See \cite Böhm2006 Böhm ch. 1, p. 1
-/// @note See \cite RTKLIB RTKLIB ch. E.5 Troposphere and Ionosphere Models, sec. (1), p. 149
+/// @date 2022-05-26/// #### Algorithm description
 /// @anchor Troposphere-Model-Saastamoinen
-///
-/// #### Algorithm description
 ///
 /// Given the approximate position \f$ \phi \f$, \f$ \lambda \f$, \f$ h \f$, the elevation \f$ \varepsilon \f$ and the relative humidity \f$ h_{\mathrm{rel}} \f$ the tropospheric delay can be calculated using Saastamoinen's formulas.
 ///
@@ -68,6 +58,32 @@ namespace NAV
 ///     \f}
 ///
 ///     where \f$ zd \f$ is the zenith angle as \f$ \varepsilon=\frac{\pi}{2} - z d \f$ in [rad]
-ZenithDelay calcTroposphericRangeDelay_Saastamoinen(const Eigen::Vector3d& lla_pos);
+
+#pragma once
+
+#include <Eigen/Core>
+
+namespace NAV
+{
+
+/// @brief Calculates the tropospheric zenith hydrostatic delay with the Saastamoinen model
+/// @param[in] lla_pos [𝜙, λ, h]^T Geodetic latitude, longitude and height in [rad, rad, m]
+/// @param[in] p Total barometric pressure in [millibar]
+/// @return Range correction for troposphere and stratosphere for radio ranging in [m]
+/// @note See \cite Saastamoinen1973 Saastamoinen, p. 32
+/// @note See \cite Davis1985 Davis, Appendix A, p. 1604
+/// @note See \cite Böhm2006 Böhm ch. 1, p. 1
+/// @note See \cite RTKLIB RTKLIB ch. E.5 Troposphere and Ionosphere Models, sec. (1), p. 149
+double calcZHD_Saastamoinen(const Eigen::Vector3d& lla_pos, double p);
+
+/// @brief Calculates the tropospheric zenith wet delay with the Saastamoinen model
+/// @param[in] T Absolute temperature in [K]
+/// @param[in] e Partial pressure of water vapour in [millibar]
+/// @return Range correction for troposphere and stratosphere for radio ranging in [m]
+/// @note See \cite Saastamoinen1973 Saastamoinen, p. 32
+/// @note See \cite Davis1985 Davis, Appendix A, p. 1604
+/// @note See \cite Böhm2006 Böhm ch. 1, p. 1
+/// @note See \cite RTKLIB RTKLIB ch. E.5 Troposphere and Ionosphere Models, sec. (1), p. 149
+double calcZWD_Saastamoinen(double T, double e);
 
 } // namespace NAV

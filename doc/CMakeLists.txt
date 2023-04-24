@@ -1,3 +1,11 @@
+# This file is part of INSTINCT, the INS Toolkit for Integrated
+# Navigation Concepts and Training by the Institute of Navigation of
+# the University of Stuttgart, Germany.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 # Options
 option(ENABLE_DOXYGEN "Enable doxygen doc builds of source" FALSE)
 option(DOC_INTERNAL "Build internal documentation" OFF)
@@ -82,11 +90,11 @@ if(ENABLE_DOXYGEN)
     add_custom_target(
         doc-prerequisites
         ALL
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTINCT_BINARY_DIR}/doc/html/ ${INSTINCT_BINARY_DIR}/doc/html/resources
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/eigen_navtree_hacks.js           ${INSTINCT_BINARY_DIR}/doc/html${INSTINCT_DOXY_OUTPUT_DIRECTORY_SUFFIX}/
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/ftv2pnode.png                    ${INSTINCT_BINARY_DIR}/doc/html${INSTINCT_DOXY_OUTPUT_DIRECTORY_SUFFIX}/
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/resources/*                      ${INSTINCT_BINARY_DIR}/doc/html${INSTINCT_DOXY_OUTPUT_DIRECTORY_SUFFIX}/resources/
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTINCT_SOURCE_DIR}/build/doc/html/
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/eigen_navtree_hacks.js           ${INSTINCT_SOURCE_DIR}/build/doc/html${INSTINCT_DOXY_OUTPUT_DIRECTORY_SUFFIX}/
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/ftv2pnode.png                    ${INSTINCT_SOURCE_DIR}/build/doc/html${INSTINCT_DOXY_OUTPUT_DIRECTORY_SUFFIX}/
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/resources              ${INSTINCT_SOURCE_DIR}/build/doc/html${INSTINCT_DOXY_OUTPUT_DIRECTORY_SUFFIX}/resources
+        WORKING_DIRECTORY ${INSTINCT_SOURCE_DIR}/build
       )
 
     add_custom_target(doc ALL
