@@ -257,9 +257,9 @@ NAV::FileReader::FileType NAV::MultiImuFile::determineFileType()
 
     auto filepath = getFilepath();
 
-    if (_filestream.good())
+    if (good())
     {
-        return FileType::CSV;
+        return FileType::ASCII;
     }
 
     LOG_ERROR("Could not open file {}", filepath.string());
@@ -275,7 +275,7 @@ void NAV::MultiImuFile::readHeader()
     const char* gpgga = "GPGGA";
 
     // Find first line of data
-    while (std::getline(_filestream, line))
+    while (getline(line))
     {
         // Remove any trailing non text characters
         line.erase(std::find_if(line.begin(), line.end(), [](int ch) { return std::iscntrl(ch); }), line.end());
@@ -298,12 +298,12 @@ std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(bool peek)
     // Read line
     std::string line;
     // Get current position
-    auto len = _filestream.tellg();
-    std::getline(_filestream, line);
+    auto len = tellg();
+    getline(line);
     if (peek)
     {
         // Return to position before "Read line".
-        _filestream.seekg(len, std::ios_base::beg);
+        seekg(len, std::ios_base::beg);
     }
     // Remove any starting non text characters
     line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
@@ -397,7 +397,7 @@ std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(bool peek)
 
     auto obs = std::make_shared<ImuObs>(_imuPosAll[sensorId - 1]);
 
-    obs->insTime.emplace(0, 0, 0, 0, 0, timeStamp);
+    obs->insTime = InsTime(0, 0, 0, 0, 0, timeStamp);
 
     if (accelX.has_value() && accelY.has_value() && accelZ.has_value())
     {
