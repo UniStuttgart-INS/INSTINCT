@@ -8,13 +8,14 @@
 
 /// @file RtklibPosObs.hpp
 /// @brief RTKLIB Pos Observation Class
-/// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2020-06-02
+/// @author
+/// @date
 
 #pragma once
 
 #include "NodeData/State/PosVel.hpp"
 #include "util/Eigen.hpp"
+#include "Navigation/Transformations/Units.hpp"
 
 namespace NAV
 {
@@ -22,6 +23,69 @@ namespace NAV
 class RtklibPosObs : public PosVel
 {
   public:
+#ifdef TESTING
+    /// Default constructor
+    RtklibPosObs() = default;
+
+    /// @brief Constructor
+    /// @param[in] insTime Epoch time
+    /// @param[in] e_position // Position in ECEF coordinates
+    /// @param[in] lla_position // Position in LatLonAlt coordinates [rad, rad, m]
+    /// @param[in] e_velocity // Velocity in earth coordinates [m/s]
+    /// @param[in] n_velocity // Velocity in navigation coordinates [m/s]
+    /// @param[in] Q // 1:fix, 2:float, 3:sbas, 4:dgps, 5:single, 6:ppp
+    /// @param[in] ns // Number of satellites
+    /// @param[in] sdXYZ // Standard Deviation XYZ [m]
+    /// @param[in] sdNED // Standard Deviation North East Down [m]
+    /// @param[in] sdxy // Standard Deviation xy [m]
+    /// @param[in] sdyz // Standard Deviation yz [m]
+    /// @param[in] sdzx // Standard Deviation zx [m]
+    /// @param[in] sdne // Standard Deviation ne [m]
+    /// @param[in] sded // Standard Deviation ed [m]
+    /// @param[in] sddn // Standard Deviation dn [m]
+    /// @param[in] age // Age [s]
+    /// @param[in] ratio // Ratio
+    /// @param[in] sdvNED // Standard Deviation velocity NED [m/s]
+    /// @param[in] sdvne // Standard Deviation velocity north-east [m/s]
+    /// @param[in] sdved // Standard Deviation velocity east-down [m/s]
+    /// @param[in] sdvdn // Standard Deviation velocity down-north [m/s]
+    RtklibPosObs(const InsTime& insTime,
+                 const Eigen::Vector3d& e_position,
+                 Eigen::Vector3d lla_position,
+                 const Eigen::Vector3d& e_velocity,
+                 const Eigen::Vector3d& n_velocity,
+                 std::optional<uint8_t> Q,
+                 std::optional<uint8_t> ns,
+                 const Eigen::Vector3d& sdXYZ,
+                 const Eigen::Vector3d& sdNED,
+                 double sdxy,
+                 double sdyz,
+                 double sdzx,
+                 double sdne,
+                 double sded,
+                 double sddn,
+                 double age,
+                 double ratio,
+                 const Eigen::Vector3d& sdvNED,
+                 double sdvne,
+                 double sdved,
+                 double sdvdn)
+        : Q(Q), ns(ns), sdXYZ(sdXYZ), sdNED(sdNED), sdxy(sdxy), sdyz(sdyz), sdzx(sdzx), sdne(sdne), sded(sded), sddn(sddn), age(age), ratio(ratio), sdvNED(sdvNED), sdvne(sdvne), sdved(sdved), sdvdn(sdvdn)
+    {
+        this->insTime = insTime;
+
+        if (std::isnan(e_position(0)))
+        {
+            lla_position.head<2>() = deg2rad(lla_position.head<2>());
+            this->setPosition_lla(lla_position);
+        }
+        else { this->setPosition_e(e_position); }
+
+        if (std::isnan(e_velocity(0))) { this->setVelocity_n(n_velocity); }
+        else { this->setVelocity_e(e_velocity); }
+    }
+#endif
+
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()
