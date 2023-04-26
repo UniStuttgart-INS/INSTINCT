@@ -388,7 +388,7 @@ void NAV::ImuFusion::guiConfig()
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DATA("{}: initAngularRate changed to {}", nameId(), _pinData[0].initAngularRate);
-                LOG_DATA("{}: AngularRateUnit changed to {}", nameId(), _pinData[0].initAngularRateUnit);
+                LOG_DATA("{}: AngularRateUnit changed to {}", nameId(), fmt::underlying(_pinData[0].initAngularRateUnit));
                 flow::ApplyChanges();
             }
 
@@ -396,7 +396,7 @@ void NAV::ImuFusion::guiConfig()
                                                    configWidth, unitWidth, _pinData[0].initAcceleration.data(), reinterpret_cast<int*>(&_pinData[0].initAccelerationUnit), "m/s²\0\0", "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DATA("{}: initAcceleration changed to {}", nameId(), _pinData[0].initAcceleration);
-                LOG_DATA("{}: initAccelerationUnit changed to {}", nameId(), _pinData[0].initAccelerationUnit);
+                LOG_DATA("{}: initAccelerationUnit changed to {}", nameId(), fmt::underlying(_pinData[0].initAccelerationUnit));
                 flow::ApplyChanges();
             }
 
@@ -406,7 +406,7 @@ void NAV::ImuFusion::guiConfig()
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DATA("{}: initAngularAcc changed to {}", nameId(), _pinData[0].initAngularAcc);
-                LOG_DATA("{}: initAngularAccUnit changed to {}", nameId(), _pinData[0].initAngularAccUnit);
+                LOG_DATA("{}: initAngularAccUnit changed to {}", nameId(), fmt::underlying(_pinData[0].initAngularAccUnit));
                 flow::ApplyChanges();
             }
 
@@ -415,7 +415,7 @@ void NAV::ImuFusion::guiConfig()
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DATA("{}: initJerk changed to {}", nameId(), _pinData[0].initJerk);
-                LOG_DATA("{}: PinData::JerkVarianceUnit changed to {}", nameId(), _pinData[0].initJerkUnit);
+                LOG_DATA("{}: PinData::JerkVarianceUnit changed to {}", nameId(), fmt::underlying(_pinData[0].initJerkUnit));
                 flow::ApplyChanges();
             }
 
@@ -456,7 +456,7 @@ void NAV::ImuFusion::guiConfig()
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DATA("{}: initCovarianceAngularRate changed to {}", nameId(), _pinData[0].initCovarianceAngularRate);
-                LOG_DATA("{}: AngRateVarianceUnit changed to {}", nameId(), _pinData[0].initCovarianceAngularRateUnit);
+                LOG_DATA("{}: AngRateVarianceUnit changed to {}", nameId(), fmt::underlying(_pinData[0].initCovarianceAngularRateUnit));
                 flow::ApplyChanges();
             }
 
@@ -474,7 +474,7 @@ void NAV::ImuFusion::guiConfig()
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DATA("{}: initCovarianceAngularAcc changed to {}", nameId(), _pinData[0].initCovarianceAngularAcc);
-                LOG_DATA("{}: PinData::AngularAccVarianceUnit changed to {}", nameId(), _pinData[0].initCovarianceAngularAccUnit);
+                LOG_DATA("{}: PinData::AngularAccVarianceUnit changed to {}", nameId(), fmt::underlying(_pinData[0].initCovarianceAngularAccUnit));
                 flow::ApplyChanges();
             }
 
@@ -489,7 +489,7 @@ void NAV::ImuFusion::guiConfig()
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DATA("{}: initCovarianceAcceleration changed to {}", nameId(), _pinData[0].initCovarianceAcceleration);
-                LOG_DATA("{}: PinData::AccelerationVarianceUnit changed to {}", nameId(), _pinData[0].initCovarianceAccelerationUnit);
+                LOG_DATA("{}: PinData::AccelerationVarianceUnit changed to {}", nameId(), fmt::underlying(_pinData[0].initCovarianceAccelerationUnit));
                 flow::ApplyChanges();
             }
 
@@ -504,7 +504,7 @@ void NAV::ImuFusion::guiConfig()
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DATA("{}: initCovarianceJerk changed to {}", nameId(), _pinData[0].initCovarianceJerk);
-                LOG_DATA("{}: PinData::JerkVarianceUnit changed to {}", nameId(), _pinData[0].initCovarianceJerkUnit);
+                LOG_DATA("{}: PinData::JerkVarianceUnit changed to {}", nameId(), fmt::underlying(_pinData[0].initCovarianceJerkUnit));
                 flow::ApplyChanges();
             }
 
@@ -524,7 +524,7 @@ void NAV::ImuFusion::guiConfig()
                                                        "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
                     LOG_DATA("{}: initCovarianceBiasAngRate changed to {}", nameId(), _pinData[pinIndex].initCovarianceBiasAngRate);
-                    LOG_DATA("{}: PinData::AngRateVarianceUnit changed to {}", nameId(), _pinData[pinIndex].initCovarianceBiasAngRateUnit);
+                    LOG_DATA("{}: PinData::AngRateVarianceUnit changed to {}", nameId(), fmt::underlying(_pinData[pinIndex].initCovarianceBiasAngRateUnit));
                     flow::ApplyChanges();
                 }
 
@@ -539,7 +539,7 @@ void NAV::ImuFusion::guiConfig()
                                                        "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
                     LOG_DATA("{}: initCovarianceBiasAcc changed to {}", nameId(), _pinData[pinIndex].initCovarianceBiasAcc);
-                    LOG_DATA("{}: PinData::AccelerationVarianceUnit changed to {}", nameId(), _pinData[pinIndex].initCovarianceBiasAccUnit);
+                    LOG_DATA("{}: PinData::AccelerationVarianceUnit changed to {}", nameId(), fmt::underlying(_pinData[pinIndex].initCovarianceBiasAccUnit));
                     flow::ApplyChanges();
                 }
             }
@@ -571,7 +571,7 @@ void NAV::ImuFusion::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DATA("{}: varAngularAccNoise changed to {}", nameId(), _pinData[0].varAngularAccNoise.transpose());
-            LOG_DATA("{}: varAngularAccNoiseUnit changed to {}", nameId(), _pinData[0].varAngularAccNoiseUnit);
+            LOG_DATA("{}: varAngularAccNoiseUnit changed to {}", nameId(), fmt::underlying(_pinData[0].varAngularAccNoiseUnit));
             flow::ApplyChanges();
         }
 
@@ -586,7 +586,7 @@ void NAV::ImuFusion::guiConfig()
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DATA("{}: varJerkNoise changed to {}", nameId(), _pinData[0].varJerkNoise.transpose());
-            LOG_DATA("{}: varJerkNoiseUnit changed to {}", nameId(), _pinData[0].varJerkNoiseUnit);
+            LOG_DATA("{}: varJerkNoiseUnit changed to {}", nameId(), fmt::underlying(_pinData[0].varJerkNoiseUnit));
             flow::ApplyChanges();
         }
 
@@ -606,7 +606,7 @@ void NAV::ImuFusion::guiConfig()
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DATA("{}: varBiasAngRateNoise changed to {}", nameId(), _pinData[pinIndex].varBiasAngRateNoise.transpose());
-                LOG_DATA("{}: varBiasAngRateNoiseUnit changed to {}", nameId(), _pinData[pinIndex].varBiasAngRateNoiseUnit);
+                LOG_DATA("{}: varBiasAngRateNoiseUnit changed to {}", nameId(), fmt::underlying(_pinData[pinIndex].varBiasAngRateNoiseUnit));
                 flow::ApplyChanges();
             }
 
@@ -621,7 +621,7 @@ void NAV::ImuFusion::guiConfig()
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DATA("{}: varBiasAccelerationNoise changed to {}", nameId(), _pinData[pinIndex].varBiasAccelerationNoise.transpose());
-                LOG_DATA("{}: varBiasAccelerationNoiseUnit changed to {}", nameId(), _pinData[pinIndex].varBiasAccelerationNoiseUnit);
+                LOG_DATA("{}: varBiasAccelerationNoiseUnit changed to {}", nameId(), fmt::underlying(_pinData[pinIndex].varBiasAccelerationNoiseUnit));
                 flow::ApplyChanges();
             }
         }
@@ -650,7 +650,7 @@ void NAV::ImuFusion::guiConfig()
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DATA("{}: stdevAngularAcc changed to {}", nameId(), _pinData[pinIndex].measurementUncertaintyAngularRate.transpose());
-                LOG_DATA("{}: stdevAngularAccUnit changed to {}", nameId(), _pinData[pinIndex].measurementUncertaintyAngularRateUnit);
+                LOG_DATA("{}: stdevAngularAccUnit changed to {}", nameId(), fmt::underlying(_pinData[pinIndex].measurementUncertaintyAngularRateUnit));
                 flow::ApplyChanges();
             }
 
@@ -665,7 +665,7 @@ void NAV::ImuFusion::guiConfig()
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DATA("{}: stdevJerk changed to {}", nameId(), _pinData[pinIndex].measurementUncertaintyAcceleration.transpose());
-                LOG_DATA("{}: stdevJerkUnit changed to {}", nameId(), _pinData[pinIndex].measurementUncertaintyAccelerationUnit);
+                LOG_DATA("{}: stdevJerkUnit changed to {}", nameId(), fmt::underlying(_pinData[pinIndex].measurementUncertaintyAccelerationUnit));
                 flow::ApplyChanges();
             }
         }
