@@ -911,7 +911,7 @@ Frequency RinexObsFile::getFrequencyFromBand(SatelliteSystem satSys, int band) c
     return Freq_None;
 }
 
-void RinexObsFile::eraseLessPreciseCodes(const std::shared_ptr<NAV::GnssObs>& gnssObs, const Frequency& freq, uint16_t satNum)
+void RinexObsFile::eraseLessPreciseCodes(const std::shared_ptr<NAV::GnssObs>& gnssObs, const Frequency& freq, uint16_t satNum) // NOLINT(readability-convert-member-functions-to-static)
 {
     auto eraseLessPrecise = [&](const Code& third, const Code& second, const Code& prime) {
         auto eraseSatDataWithCode = [&](const Code& code) {
