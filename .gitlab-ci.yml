@@ -77,7 +77,6 @@ image: ins-cpp:10
     GIT_CLONE_PATH: '$CI_BUILDS_DIR/$CI_PROJECT_NAME/$CI_COMMIT_SHA/$CI_JOB_ID'
     WARNINGS_AS_ERRORS: "OFF"
     TOOLCHAIN_PATH: "build"
-  allow_failure: true
 
 .linux:
   tags:
