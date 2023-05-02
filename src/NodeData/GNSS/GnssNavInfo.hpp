@@ -21,6 +21,7 @@
 #include "Navigation/Atmosphere/Ionosphere/IonosphericCorrections.hpp"
 #include "Navigation/GNSS/Satellite/Satellite.hpp"
 #include "util/Container/Pair.hpp"
+#include "util/Logger.hpp"
 
 namespace NAV
 {

@@ -25,6 +25,8 @@
 #include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
 #include "Navigation/Transformations/Units.hpp"
 
+#include "NodeData/GNSS/GnssObs.hpp"
+
 namespace NAV
 {
 /// @brief Numerically integrates Imu data
@@ -65,7 +67,7 @@ class RealTimeKinematic : public Node
     void restore(const json& j) override;
 
   private:
-    constexpr static size_t INPUT_PORT_INDEX_BASE_PVA = 0;       ///< @brief PosVel
+    constexpr static size_t INPUT_PORT_INDEX_BASE_POS = 0;       ///< @brief Pos
     constexpr static size_t INPUT_PORT_INDEX_BASE_GNSS_OBS = 1;  ///< @brief GnssObs
     constexpr static size_t INPUT_PORT_INDEX_ROVER_GNSS_OBS = 2; ///< @brief GnssObs
     constexpr static size_t INPUT_PORT_INDEX_GNSS_NAV_INFO = 3;  ///< @brief GnssNavInfo
@@ -110,6 +112,14 @@ class RealTimeKinematic : public Node
 
     // ------------------------------------------------------------ Algorithm --------------------------------------------------------------
 
+    /// Base position in ECEF frame [m]
+    Eigen::Vector3d _e_basePosition = Eigen::Vector3d::Zero();
+
+    /// Latest GNSS Observation from the base station
+    std::shared_ptr<const GnssObs> _gnssObsBase = nullptr;
+    /// Latest GNSS Observation from the rover
+    std::shared_ptr<const GnssObs> _gnssObsRover = nullptr;
+
     /// Estimated position in ECEF frame [m]
     Eigen::Vector3d _e_position = Eigen::Vector3d::Zero();
     /// Estimated velocity in ECEF frame [m/s]
@@ -132,6 +142,12 @@ class RealTimeKinematic : public Node
     /// @param[in] queue Queue with all the received data messages
     /// @param[in] pinIdx Index of the pin the data is received on
     void recvRoverGnssObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
+
+    /// @brief Calculates the RTK solution
+    void calcRealTimeKinematicSolution();
+
+    /// @brief Calculates a SPP solution as fallback in case no base data is available
+    void calcFallbackSppSolution();
 };
 
 } // namespace NAV

@@ -1495,6 +1495,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "East velocity [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Down velocity [m/s]");
             // RtkSolution
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Solution Type");
         }
         else if (startPin.dataIdentifier.front() == SppSolution::type())
         {
@@ -2512,6 +2513,7 @@ void NAV::Plot::plotRtkSolution(const std::shared_ptr<const RtkSolution>& obs, s
     addData(pinIndex, i++, obs->n_velocity().y());
     addData(pinIndex, i++, obs->n_velocity().z());
     // RtkSolution
+    addData(pinIndex, i++, static_cast<int>(obs->solType));
 }
 
 void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, size_t pinIndex)

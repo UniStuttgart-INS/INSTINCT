@@ -46,6 +46,18 @@ class RtkSolution : public PosVel
 
     // --------------------------------------------------------- Public Members ------------------------------------------------------------
 
+    /// Possible types of the RTK solution
+    enum class SolutionType
+    {
+        None, ///< No solution type specified
+        SPP,  ///< Solution calculated via SPP algorithm because of missing data for RTK
+        // Int
+        // Float
+    };
+
+    /// Type of th solution
+    SolutionType solType = SolutionType::None;
+
     /// Amount of satellites used for the position calculation
     size_t nSatellitesPosition = 0;
     /// Amount of satellites used for the velocity calculation

@@ -20,7 +20,7 @@
 #include "Navigation/GNSS/Core/Frequency.hpp"
 #include "Navigation/GNSS/Core/Code.hpp"
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
-#include "Navigation/GNSS/Core/ReceiverClock.hpp"
+#include "Navigation/GNSS/Positioning/SinglePointPositioning.hpp"
 #include "Navigation/Atmosphere/Ionosphere/Ionosphere.hpp"
 #include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
 #include "Navigation/Transformations/Units.hpp"
@@ -106,18 +106,13 @@ class SinglePointPositioning : public Node
     /// Troposphere Models used for the calculation
     TroposphereModelSelection _troposphereModels;
 
-    /// Use the weighted least squares algorithm
-    bool _useWeightedLeastSquares = true;
+    /// SPP Estimator algorithm
+    SppEstimator _sppEstimator = SppEstimator::WEIGHTED_LEAST_SQUARES;
 
     // ------------------------------------------------------------ Algorithm --------------------------------------------------------------
 
-    /// Estimated position in ECEF frame [m]
-    Eigen::Vector3d _e_position = Eigen::Vector3d::Zero();
-    /// Estimated velocity in ECEF frame [m/s]
-    Eigen::Vector3d _e_velocity = Eigen::Vector3d::Zero();
-
-    /// Estimated receiver clock parameters
-    ReceiverClock _recvClk;
+    /// State estimated by the algorithm
+    SppState _state;
 
     /// @brief Receive Function for the Gnss Observations
     /// @param[in] queue Queue with all the received data messages
