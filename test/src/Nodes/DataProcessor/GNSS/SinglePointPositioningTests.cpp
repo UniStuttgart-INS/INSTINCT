@@ -109,7 +109,7 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - no 
 
     nm::RegisterWatcherCallbackToInputPin(72, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         messageCounter++;
-        auto sppSol = std::dynamic_pointer_cast<const NAV::SppSolutionExtended>(queue.front());
+        auto sppSol = std::dynamic_pointer_cast<const NAV::SppSolution>(queue.front());
 
         LOG_DEBUG("    e_refRecvPos         {} [m]", e_refRecvPos.transpose());
         LOG_DEBUG("    sppSol->e_position() {} [m]", sppSol->e_position().transpose());
@@ -138,13 +138,10 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - no 
             {
                 LOG_DEBUG("line: {}", line);
                 LOG_DEBUG("[{}][{}-{}] Processing line {} in file", refRecvTime.toYMDHMS(), ref.satSigId, ref.code, ref.counter + 2);
-                auto iter = std::find_if(sppSol->extData.begin(), sppSol->extData.end(), [&ref](const SppSolutionExtended::ExtendedData& extData) {
-                    return extData.satSigId == ref.satSigId && extData.code == ref.code;
-                });
-                REQUIRE(iter != sppSol->extData.end()); // This means something was calculated for the satellite
+                REQUIRE(sppSol->hasSatelliteData(ref.satSigId, ref.code)); // This means something was calculated for the satellite
                 ref.counter++;
 
-                const auto& calcData = (*sppSol)(ref.satSigId.freq, ref.satSigId.satNum, ref.code);
+                const auto& calcData = (*sppSol)(ref.satSigId, ref.code);
 
                 if (calcData.skipped)
                 {

@@ -93,6 +93,77 @@ class SppSolution : public PosVel
         _n_velocityStdev = n_Quat_e().toRotationMatrix() * _e_velocityStdev * n_Quat_e().conjugate().toRotationMatrix();
     }
 
+    /// Extended data structure
+    struct SatelliteData
+    {
+        /// @brief Constructor
+        /// @param[in] satSigId Satellite signal identifier (frequency and satellite number)
+        /// @param[in] code Signal code
+        SatelliteData(const SatSigId& satSigId, const Code code) : satSigId(satSigId), code(code) {}
+
+        SatSigId satSigId = { Freq_None, 0 }; ///< Frequency and satellite number
+        Code code;                            ///< GNSS Code
+
+        InsTime transmitTime{};              ///< Time when the signal was transmitted
+        Eigen::Vector3d e_satPos;            ///< Satellite position in ECEF frame coordinates [m]
+        Eigen::Vector3d e_satVel;            ///< Satellite velocity in ECEF frame coordinates [m/s]
+        double satClkBias{ 0.0 };            ///< Satellite clock bias [s]
+        double satClkDrift{ 0.0 };           ///< Satellite clock drift [s/s]
+        double satElevation{ std::nan("") }; ///< Elevation [rad]
+        double satAzimuth{ std::nan("") };   ///< Azimuth [rad]
+        bool skipped = false;                ///< Bool to check whether the observation was skipped (signal unhealthy)
+        bool elevationMaskTriggered = false; ///< Bool to check whether the elevation mask was triggered
+
+        double pseudorangeRate{ std::nan("") }; ///< Pseudorange rate [m/s]
+        double dpsr_I{ std::nan("") };          ///< Estimated ionosphere propagation error [m]
+        double dpsr_T{ std::nan("") };          ///< Estimated troposphere propagation error [m]
+        double geometricDist{ std::nan("") };   ///< Geometric distance [m]
+    };
+
+    /// @brief Return the element with the identifier or a newly constructed one if it did not exist
+    /// @param[in] satSigId Frequency and satellite number
+    /// @param[in] code Signal code
+    /// @return The element found in the observations or a newly constructed one
+    SatelliteData& operator()(const SatSigId& satSigId, Code code)
+    {
+        auto iter = std::find_if(satData.begin(), satData.end(), [satSigId, code](const SatelliteData& idData) {
+            return idData.satSigId == satSigId && idData.code == code;
+        });
+        if (iter != satData.end())
+        {
+            return *iter;
+        }
+
+        satData.emplace_back(satSigId, code);
+        return satData.back();
+    }
+
+    /// @brief Return the element with the identifier
+    /// @param[in] satSigId Frequency and satellite number
+    /// @param[in] code Signal code
+    /// @return The element found in the observations
+    const SatelliteData& operator()(const SatSigId& satSigId, Code code) const
+    {
+        auto iter = std::find_if(satData.begin(), satData.end(), [satSigId, code](const SatelliteData& idData) {
+            return idData.satSigId == satSigId && idData.code == code;
+        });
+
+        INS_ASSERT_USER_ERROR(iter != satData.end(), "You can not insert new elements in a const context.");
+        return *iter;
+    }
+
+    /// @brief Checks if satellite data exists
+    /// @param[in] satSigId Frequency and satellite number
+    /// @param[in] code Signal code
+    /// @return True if the data entry exists
+    bool hasSatelliteData(const SatSigId& satSigId, Code code) const
+    {
+        auto iter = std::find_if(satData.begin(), satData.end(), [&](const SatelliteData& satData) {
+            return satData.satSigId == satSigId && satData.code == code;
+        });
+        return iter != satData.end();
+    }
+
   private:
     /// Standard deviation of Position in ECEF coordinates [m]
     Eigen::Matrix3d _e_positionStdev = Eigen::Matrix3d::Zero() * std::nan("");
@@ -102,94 +173,9 @@ class SppSolution : public PosVel
     Eigen::Matrix3d _e_velocityStdev = Eigen::Matrix3d::Zero() * std::nan("");
     /// Standard deviation of Velocity in navigation coordinates [m/s]
     Eigen::Matrix3d _n_velocityStdev = Eigen::Matrix3d::Zero() * std::nan("");
+
+    /// Extended data for each satellite frequency and code
+    std::vector<SatelliteData> satData;
 };
-
-#ifdef TESTING
-
-/// SPP Algorithm extended output
-class SppSolutionExtended : public SppSolution
-{
-  public:
-    /// @brief Returns the type of the data class
-    /// @return The data type
-    [[nodiscard]] static std::string type()
-    {
-        return "SppSolutionExtended";
-    }
-
-    /// @brief Returns the parent types of the data class
-    /// @return The parent data types
-    [[nodiscard]] static std::vector<std::string> parentTypes()
-    {
-        auto parent = SppSolution::parentTypes();
-        parent.push_back(SppSolution::type());
-        return parent;
-    }
-
-    /// Extended data structure
-    struct ExtendedData
-    {
-        /// @brief Constructor
-        /// @param[in] satSigId Satellite signal identifier (frequency and satellite number)
-        /// @param[in] code Signal code
-        ExtendedData(const SatSigId& satSigId, const Code code) : satSigId(satSigId), code(code) {}
-
-        SatSigId satSigId = { Freq_None, 0 }; ///< Frequency and satellite number
-        Code code;                            ///< GNSS Code
-        InsTime transmitTime{};               ///< Time when the signal was transmitted
-        Eigen::Vector3d e_satPos;             ///< Satellite position in ECEF frame coordinates [m]
-        Eigen::Vector3d e_satVel;             ///< Satellite velocity in ECEF frame coordinates [m/s]
-        double satClkBias{ 0.0 };             ///< Satellite clock bias [s]
-        double satClkDrift{ 0.0 };            ///< Satellite clock drift [s/s]
-        double satElevation{ std::nan("") };  ///< Elevation [rad]
-        double satAzimuth{ std::nan("") };    ///< Azimuth [rad]
-        bool skipped = false;                 ///< Bool to check whether the observation was skipped (signal unhealthy)
-        bool elevationMaskTriggered = false;  ///< Bool to check whether the elevation mask was triggered
-
-        double pseudorangeRate{ std::nan("") }; ///< Pseudorange rate [m/s]
-        double dpsr_I{ std::nan("") };          ///< Estimated ionosphere propagation error [m]
-        double dpsr_T{ std::nan("") };          ///< Estimated troposphere propagation error [m]
-        double geometricDist{ std::nan("") };   ///< Geometric distance [m]
-    };
-
-    /// Extended data for testing
-    std::vector<ExtendedData> extData;
-
-    /// @brief Return the element with the identifier or a newly constructed one if it did not exist
-    /// @param[in] freq Signal frequency (also identifies the satellite system)
-    /// @param[in] satNum Number of the satellite
-    /// @param[in] code Signal code
-    /// @return The element found in the observations or a newly constructed one
-    ExtendedData& operator()(const Frequency& freq, uint16_t satNum, Code code)
-    {
-        auto iter = std::find_if(extData.begin(), extData.end(), [freq, satNum, code](const ExtendedData& idData) {
-            return idData.satSigId.freq == freq && idData.satSigId.satNum == satNum && idData.code == code;
-        });
-        if (iter != extData.end())
-        {
-            return *iter;
-        }
-
-        extData.emplace_back(SatSigId{ freq, satNum }, code);
-        return extData.back();
-    }
-
-    /// @brief Return the element with the identifier
-    /// @param[in] freq Signal frequency (also identifies the satellite system)
-    /// @param[in] satNum Number of the satellite
-    /// @param[in] code Signal code
-    /// @return The element found in the observations
-    const ExtendedData& operator()(const Frequency& freq, uint16_t satNum, Code code) const
-    {
-        auto iter = std::find_if(extData.begin(), extData.end(), [freq, satNum, code](const ExtendedData& idData) {
-            return idData.satSigId.freq == freq && idData.satSigId.satNum == satNum && idData.code == code;
-        });
-
-        INS_ASSERT_USER_ERROR(iter != extData.end(), "You can not insert new elements in a const context.");
-        return *iter;
-    }
-};
-
-#endif
 
 } // namespace NAV

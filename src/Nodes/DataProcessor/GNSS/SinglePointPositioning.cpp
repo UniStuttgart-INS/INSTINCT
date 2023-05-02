@@ -384,12 +384,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     auto gnssObs = std::static_pointer_cast<const GnssObs>(queue.extract_front());
     LOG_DATA("{}: Calculating SPP for [{}]", nameId(), gnssObs->insTime);
 
-    auto sppSol
-#ifdef TESTING
-        = std::make_shared<SppSolutionExtended>();
-#else
-        = std::make_shared<SppSolution>();
-#endif
+    auto sppSol = std::make_shared<SppSolution>();
     sppSol->insTime = gnssObs->insTime;
 
     // Data calculated for each observation
@@ -437,11 +432,8 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                     if (!satNavData->isHealthy())
                     {
                         LOG_DATA("{}: Satellite {} is skipped because the signal is not healthy.", nameId(), satId);
+                        (*sppSol)(obsData.satSigId, obsData.code).skipped = true;
 
-#ifdef TESTING
-                        auto& sppExtendedData = (*sppSol)(obsData.satSigId.freq, obsData.satSigId.satNum, obsData.code);
-                        sppExtendedData.skipped = true;
-#endif
                         continue;
                     }
                     LOG_DATA("{}: Using observation from {} {}", nameId(), obsData.satSigId, obsData.code);
@@ -566,16 +558,14 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
             calcData[i].satAzimuth = calcSatAzimuth(calcData[i].n_lineOfSightUnitVector);
             LOG_DATA("{}:     [{}]     satAzimuth {}°", nameId(), o, rad2deg(calcData[i].satAzimuth));
 
-#ifdef TESTING
-            auto& sppExtendedData = (*sppSol)(obsData.satSigId.freq, obsData.satSigId.satNum, obsData.code);
-            sppExtendedData.transmitTime = satClk.transmitTime;
-            sppExtendedData.satClkBias = satClk.bias;
-            sppExtendedData.satClkDrift = satClk.drift;
-            sppExtendedData.e_satPos = calcData[i].e_satPos;
-            sppExtendedData.e_satVel = calcData[i].e_satVel;
-            sppExtendedData.satElevation = calcData[i].satElevation;
-            sppExtendedData.satAzimuth = calcData[i].satAzimuth;
-#endif
+            auto& solSatData = (*sppSol)(obsData.satSigId, obsData.code);
+            solSatData.transmitTime = satClk.transmitTime;
+            solSatData.satClkBias = satClk.bias;
+            solSatData.satClkDrift = satClk.drift;
+            solSatData.e_satPos = calcData[i].e_satPos;
+            solSatData.e_satVel = calcData[i].e_satVel;
+            solSatData.satElevation = calcData[i].satElevation;
+            solSatData.satAzimuth = calcData[i].satAzimuth;
 
             if (!_e_position.isZero() && calcData[i].satElevation < _elevationMask) // Do not check elevation mask when not having a valid position
             {
@@ -596,9 +586,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                     satelliteSystems.erase(std::find(satelliteSystems.begin(), satelliteSystems.end(), satId.satSys));
                 }
 
-#ifdef TESTING
-                sppExtendedData.elevationMaskTriggered = true;
-#endif
+                solSatData.elevationMaskTriggered = true;
 
                 if (nMeas - cntSkippedMeas < nParam)
                 {
@@ -611,9 +599,8 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                 }
                 continue;
             }
-#ifdef TESTING
-            sppExtendedData.elevationMaskTriggered = false;
-#endif
+            solSatData.elevationMaskTriggered = false;
+
             usedSatelliteSystems |= satId.satSys;
         }
 
@@ -796,13 +783,11 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
 
                 iv++;
             }
-#ifdef TESTING
-            auto& sppExtendedData = (*sppSol)(obsData.satSigId.freq, obsData.satSigId.satNum, obsData.code);
-            sppExtendedData.pseudorangeRate = calc.pseudorangeRateMeas;
-            sppExtendedData.dpsr_I = dpsr_I;
-            sppExtendedData.dpsr_T = dpsr_T;
-            sppExtendedData.geometricDist = geometricDist;
-#endif
+            auto& solSatData = (*sppSol)(obsData.satSigId, obsData.code);
+            solSatData.pseudorangeRate = calc.pseudorangeRateMeas;
+            solSatData.dpsr_I = dpsr_I;
+            solSatData.dpsr_T = dpsr_T;
+            solSatData.geometricDist = geometricDist;
 
             ix++;
         }
