@@ -6,7 +6,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-/// @file lla_gpst2_111_dd_pos.hpp
+/// @file lla_gpst_000_dd_pos.hpp
 /// @author
 /// @date
 
@@ -16,14 +16,14 @@
 
 namespace NAV::TESTS::RtklibPosFileTests::lla
 {
-/// @brief Test Data for the file lla_gpst2_111_dd.pos
-const std::vector<RtklibPosObs> lla_gpst2_111_dd_pos = {
+/// @brief Test Data for the file lla_gpst_000_dd.pos
+const std::vector<RtklibPosObs> lla_gpst_000_dd_pos = {
     {
-        /* .insTime = */ InsTime{ 2023, 1, 8, 10, 0, 0.0000000, GPST },
+        /* .insTime = */ InsTime{ 0, 2244, 36000.000, GPST }, // *.pos does not give a value for gps cycle, so it is set to 0 since INSTINCT needs a value (seems to calculate that cycle=2)
         /* ._e_position = */ Eigen::Vector3d{ NAN, NAN, NAN },
         /* ._lla_position = */ Eigen::Vector3d{ 29.999994371, 94.999992812, -9.3615 },
         /* ._e_velocity = */ Eigen::Vector3d{ NAN, NAN, NAN },
-        /* ._n_velocity = */ Eigen::Vector3d{ 0.01216, 0.00473, 0.00324 }, // *.pos uses north-east-up, here north-east-down
+        /* ._n_velocity = */ Eigen::Vector3d{ NAN, NAN, NAN },
         /* .Q = */ 5,
         /* .ns = */ 8,
         /* .sdXYZ = */ Eigen::Vector3d{ NAN, NAN, NAN },
@@ -36,17 +36,17 @@ const std::vector<RtklibPosObs> lla_gpst2_111_dd_pos = {
         /* .sddn = */ -2.6572,
         /* .age = */ 0.00,
         /* .ratio = */ 0.0,
-        /* .sdvNED = */ Eigen::Vector3d{ 0.14536, 0.13159, 0.44479 },
-        /* .sdvne = */ 0.03911,
-        /* .sdved = */ -0.13176,
-        /* .sdvdn = */ -0.16769,
+        /* .sdvNED = */ Eigen::Vector3d{ NAN, NAN, NAN },
+        /* .sdvne = */ NAN,
+        /* .sdved = */ NAN,
+        /* .sdvdn = */ NAN,
     },
     {
-        /* .insTime = */ InsTime{ 2023, 1, 8, 14, 0, 0.0000000, GPST },
+        /* .insTime = */ InsTime{ 0, 2244, 50400.000, GPST }, // *.pos does not give a value for gps cycle, so it is set to 0 since INSTINCT needs a value (seems to calculate that cycle=2)
         /* ._e_position = */ Eigen::Vector3d{ NAN, NAN, NAN },
         /* ._lla_position = */ Eigen::Vector3d{ 30.000005283, 94.999995363, -10.8537 },
         /* ._e_velocity = */ Eigen::Vector3d{ NAN, NAN, NAN },
-        /* ._n_velocity = */ Eigen::Vector3d{ -0.00941, 0.00209, -0.00321 }, // *.pos uses north-east-up, here north-east-down
+        /* ._n_velocity = */ Eigen::Vector3d{ NAN, NAN, NAN },
         /* .Q = */ 5,
         /* .ns = */ 7,
         /* .sdXYZ = */ Eigen::Vector3d{ NAN, NAN, NAN },
@@ -59,10 +59,10 @@ const std::vector<RtklibPosObs> lla_gpst2_111_dd_pos = {
         /* .sddn = */ 1.5662,
         /* .age = */ 0.00,
         /* .ratio = */ 0.0,
-        /* .sdvNED = */ Eigen::Vector3d{ 0.17005, 0.13249, 0.34158 },
-        /* .sdvne = */ -0.07425,
-        /* .sdved = */ -0.08412,
-        /* .sdvdn = */ 0.12257,
+        /* .sdvNED = */ Eigen::Vector3d{ NAN, NAN, NAN },
+        /* .sdvne = */ NAN,
+        /* .sdved = */ NAN,
+        /* .sdvdn = */ NAN,
     },
 };
 

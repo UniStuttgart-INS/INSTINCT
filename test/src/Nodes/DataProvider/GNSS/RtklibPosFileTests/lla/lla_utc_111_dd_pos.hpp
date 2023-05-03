@@ -6,7 +6,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-/// @file lla_gpst2_111_dd_pos.hpp
+/// @file lla_utc_111_dd_pos.hpp
 /// @author
 /// @date
 
@@ -16,10 +16,10 @@
 
 namespace NAV::TESTS::RtklibPosFileTests::lla
 {
-/// @brief Test Data for the file lla_gpst2_111_dd.pos
-const std::vector<RtklibPosObs> lla_gpst2_111_dd_pos = {
+/// @brief Test Data for the file lla_utc_111_dd.pos
+const std::vector<RtklibPosObs> lla_utc_111_dd_pos = {
     {
-        /* .insTime = */ InsTime{ 2023, 1, 8, 10, 0, 0.0000000, GPST },
+        /* .insTime = */ InsTime{ 2023, 1, 8, 9, 59, 42.000, UTC },
         /* ._e_position = */ Eigen::Vector3d{ NAN, NAN, NAN },
         /* ._lla_position = */ Eigen::Vector3d{ 29.999994371, 94.999992812, -9.3615 },
         /* ._e_velocity = */ Eigen::Vector3d{ NAN, NAN, NAN },
@@ -42,7 +42,7 @@ const std::vector<RtklibPosObs> lla_gpst2_111_dd_pos = {
         /* .sdvdn = */ -0.16769,
     },
     {
-        /* .insTime = */ InsTime{ 2023, 1, 8, 14, 0, 0.0000000, GPST },
+        /* .insTime = */ InsTime{ 2023, 1, 8, 13, 59, 42.000, UTC },
         /* ._e_position = */ Eigen::Vector3d{ NAN, NAN, NAN },
         /* ._lla_position = */ Eigen::Vector3d{ 30.000005283, 94.999995363, -10.8537 },
         /* ._e_velocity = */ Eigen::Vector3d{ NAN, NAN, NAN },

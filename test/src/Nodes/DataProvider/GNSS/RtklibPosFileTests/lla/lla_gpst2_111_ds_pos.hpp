@@ -21,7 +21,7 @@ const std::vector<RtklibPosObs> lla_gpst2_111_dd_pos = {
     {
         /* .insTime = */ InsTime{ 2023, 1, 8, 10, 0, 0.0000000, GPST },
         /* ._e_position = */ Eigen::Vector3d{ NAN, NAN, NAN },
-        /* ._lla_position = */ Eigen::Vector3d{ 29.999994371, 94.999992812, -9.3615 },
+        /* ._lla_position = */ Eigen::Vector3d{ 29, 59, 59.97974, 94, 59, 59.97412, -9.3615 },
         /* ._e_velocity = */ Eigen::Vector3d{ NAN, NAN, NAN },
         /* ._n_velocity = */ Eigen::Vector3d{ 0.01216, 0.00473, 0.00324 }, // *.pos uses north-east-up, here north-east-down
         /* .Q = */ 5,
@@ -44,7 +44,7 @@ const std::vector<RtklibPosObs> lla_gpst2_111_dd_pos = {
     {
         /* .insTime = */ InsTime{ 2023, 1, 8, 14, 0, 0.0000000, GPST },
         /* ._e_position = */ Eigen::Vector3d{ NAN, NAN, NAN },
-        /* ._lla_position = */ Eigen::Vector3d{ 30.000005283, 94.999995363, -10.8537 },
+        /* ._lla_position = */ Eigen::Vector3d{ 30, 00, 00.01902, 94, 59, 59.98331, -10.8537 },
         /* ._e_velocity = */ Eigen::Vector3d{ NAN, NAN, NAN },
         /* ._n_velocity = */ Eigen::Vector3d{ -0.00941, 0.00209, -0.00321 }, // *.pos uses north-east-up, here north-east-down
         /* .Q = */ 5,

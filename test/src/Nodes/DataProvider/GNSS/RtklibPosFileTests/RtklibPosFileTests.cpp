@@ -26,6 +26,15 @@ namespace nm = NAV::NodeManager;
 
 #include "RtklibPosObsComparisons.hpp"
 #include "lla/lla_gpst2_111_dd_pos.hpp"
+// #include "lla/lla_gpst2_111_ds_pos.hpp"      // not implemented yet
+#include "lla/lla_gpst_000_dd_pos.hpp"
+#include "lla/lla_utc_111_dd_pos.hpp"
+// #include "lla/lla_jst_111_dd_pos.hpp"        // not implemented yet
+// #include "ecef/ecef_gpst2_000_pos.hpp"       // not implemented yet
+// #include "enu/enu_gpst2_111_dd_pos.hpp"      // missing
+// #include "nmea/nmea_gpst2_111_dd_pos.hpp"    // missing
+// #include "corrupt/corrupt_pos.hpp"           // corrupt test
+
 // This is a small hack, which lets us change private/protected parameters
 #pragma GCC diagnostic push
 #if defined(__clang__)
@@ -76,33 +85,81 @@ void testRtklibPosFileFlow(const std::string& path, const std::vector<RtklibPosO
     REQUIRE(msgCounter == rtklibPosObsRef.size());
 }
 // ###########################################################################################################
-//                                              LONG/LAT/ALT + GPST [hh:mm:ss]
+//                                                 LAT/LONG/ALT (lla)
 // ###########################################################################################################
+// lla used for testing the different time and format sytems:
 
-//  Lat Long Format [ddd.dddddd]
+// ################################################ GPST [hh:mm:ss] ##########################################
+
+// Lat Long Format [ddd.dddddd]
 
 TEST_CASE("[RtklibPosFile][flow] Read lla/lla_gpst2_111_dd.pos", "[RtklibPosFile][flow]")
 {
     testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/lla/lla_gpst2_111_dd.pos", lla::lla_gpst2_111_dd_pos);
 }
 
-// ######################################################## TODO ##################################################################
-// Lat Long Format [dd mm ss.ss]
+// TODO Lat Long Format [dd mm ss.ss]
+// (not supported since LAT/LONG use three values each, but the Eigen::Vector3d of _lla_position only supports three in total)
+// TEST_CASE("[RtklibPosFile][flow] Read lla/lla_gpst2_111_ds.pos", "[RtklibPosFile][flow]")
+// {
+//     testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/lla/lla_gpst2_111_ds.pos", lla::lla_gpst2_111_ds_pos);
+// }
 
-// TEST_CASE("[RtklibPosFile][flow] Read lla/gpst2/lla_gpst2_111_ds.pos", "[RtklibPosFile][flow]")
-//{
-//    testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/lla/gpst2/lla_gpst2_111_ds.pos", lla::gpst2::lla_gpst2_111_ds_pos);
-//}
-
-// ###########################################################################################################
-//                                              LONG/LAT/ALT + GPST [ww ssss]
-// ###########################################################################################################
+// ################################################ GPST [ww ssss] ###########################################
 
 // Lat Long Format [ddd.dddddd]
 
-// TEST_CASE("[RtklibPosFile][flow] Read lla/gpst/lla_gpst_111_dd.pos", "[RtklibPosFile][flow]")
+TEST_CASE("[RtklibPosFile][flow] Read lla/lla_gpst_000_dd.pos", "[RtklibPosFile][flow]")
+{
+    testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/lla/lla_gpst_000_dd.pos", lla::lla_gpst_000_dd_pos);
+}
+
+// ################################################ UTC [hh:mm:ss] ###########################################
+
+// Lat Long Format [ddd.dddddd]
+
+TEST_CASE("[RtklibPosFile][flow] Read lla/lla_utc_111_dd.pos", "[RtklibPosFile][flow]")
+{
+    testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/lla/lla_utc_111_dd.pos", lla::lla_utc_111_dd_pos);
+}
+
+// ########################################### TODO JST [hh:mm:ss] ###########################################
+// (JST not identifiable by INSTINCT (yet), suggests GST instead, however GST cant be tested (yet))
+// Lat Long Format [ddd.dddddd]
+
+// TEST_CASE("[RtklibPosFile][flow] Read lla/lla_jst_111_dd.pos", "[RtklibPosFile][flow]")
+// {
+//     testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/lla/lla_jst_111_dd.pos", lla::lla_jst_111_dd_pos);
+// }
+
+// ###########################################################################################################
+//                                                    TODO  ECEF
+// ###########################################################################################################
+// (missing constructor for ECEF, missing sdvXYZ, sdvxy, sdvyz, sdvzx parameter, NOTE: test currently has no _e_velocity set (untested)!)
+// Lat Long Format [ddd.dddddd]
+
+// TEST_CASE("[RtklibPosFile][flow] Read ecef/ecef_gpst2_001.pos", "[RtklibPosFile][flow]")
 //{
-//     testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/lla/gpst/lla_gpst_111_dd.pos", lla::gpst::lla_gpst_111_dd_pos);
+//     testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/ecef/ecef_gpst2_001.pos", ecef::ecef_gpst2_001_pos);
+// }
+
+// ###########################################################################################################
+//                                                    TODO  ENU
+// ###########################################################################################################
+// (DATA MISSING, no file could be generated)
+
+// ###########################################################################################################
+//                                                    TODO  NMEA
+// ###########################################################################################################
+// (DATA MISSING, no file could be generated)
+
+// ###########################################################################################################
+//                                                      corrupt
+// ###########################################################################################################
+
+// TEST_CASE("[RtklibPosFile][flow] Read corrupt/corrupt.pos", "[RtklibPosFile][flow]")
+// {
+//     testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/corrupted/corrupted.pos", corrupt::corrupt_pos);
 // }
 
 } // namespace NAV::TESTS::RtklibPosFileTests

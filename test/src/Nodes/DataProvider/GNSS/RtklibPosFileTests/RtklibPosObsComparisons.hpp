@@ -37,8 +37,8 @@ inline bool operator==(const RtklibPosObs& lhs, const RtklibPosObs& rhs)
     REQUIRE(lhs._e_position == rhs._e_position);
     REQUIRE(lhs._lla_position == rhs._lla_position);
 
-    // if (std::isnan(lhs._e_velocity[0]) == true) { REQUIRE(std::isnan(rhs._e_velocity[0])); }
-    // else { REQUIRE(lhs._e_velocity == rhs._e_velocity); };
+    if (std::isnan(lhs._e_velocity[0]) == true) { REQUIRE(std::isnan(rhs._e_velocity[0])); }
+    else { REQUIRE(lhs._e_velocity == rhs._e_velocity); };
 
     if (std::isnan(lhs._n_velocity[0]) == true) { REQUIRE(std::isnan(rhs._n_velocity[0])); }
     else { REQUIRE(lhs._n_velocity == rhs._n_velocity); };
@@ -70,7 +70,6 @@ inline bool operator==(const RtklibPosObs& lhs, const RtklibPosObs& rhs)
     else { REQUIRE(lhs.sddn == rhs.sddn); };
 
     REQUIRE(lhs.age == rhs.age);
-    REQUIRE(lhs.ratio == rhs.ratio);
     REQUIRE(lhs.ratio == rhs.ratio);
 
     if (std::isnan(lhs.sdvNED[0])) { REQUIRE(std::isnan(rhs.sdvNED[0])); }
