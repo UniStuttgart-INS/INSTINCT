@@ -515,17 +515,17 @@ class TightlyCoupledKF : public Node
     [[nodiscard]] static Eigen::Matrix<double, 17, 14> noiseInputMatrix_G(const Eigen::Quaterniond& ien_Quat_b);
 
     /// @brief Calculates the noise scale matrix 𝐖
-    /// @param[in] sigma_ra Variance of the noise on the accelerometer specific-force measurements
-    /// @param[in] sigma_rg Variance of the noise on the gyro angular-rate measurements
-    /// @param[in] sigma_bad Variance of the accelerometer dynamic bias
-    /// @param[in] sigma_bgd Variance of the gyro dynamic bias
+    /// @param[in] sigma2_ra Variance of the noise on the accelerometer specific-force measurements
+    /// @param[in] sigma2_rg Variance of the noise on the gyro angular-rate measurements
+    /// @param[in] sigma2_bad Variance of the accelerometer dynamic bias
+    /// @param[in] sigma2_bgd Variance of the gyro dynamic bias
     /// @param[in] tau_bad Correleation length for the accelerometer in [s]
     /// @param[in] tau_bgd Correleation length for the gyroscope in [s]
     /// @param[in] sigma2_cPhi Variance of the noise on the clock offset in [m]
     /// @param[in] sigma2_cf Variance of the noise on the clock frequency in [m/s]
     /// @note See \cite Groves2013 Groves, ch. 14.2.6, eq. 14.79, p. 590 (INS part) and ch. 9.4.2, eq. 9.151, p. 416 (GNSS part)
-    [[nodiscard]] Eigen::Matrix<double, 14, 14> noiseScaleMatrix_W(const Eigen::Vector3d& sigma_ra, const Eigen::Vector3d& sigma_rg,
-                                                                   const Eigen::Vector3d& sigma_bad, const Eigen::Vector3d& sigma_bgd,
+    [[nodiscard]] Eigen::Matrix<double, 14, 14> noiseScaleMatrix_W(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+                                                                   const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
                                                                    const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
                                                                    const double& sigma2_cPhi, const double& sigma2_cf);
 

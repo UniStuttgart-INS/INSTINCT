@@ -1210,86 +1210,77 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
 
     // ------------------------------------------- GUI Parameters ----------------------------------------------
 
-    // 𝜎_ra Standard deviation of the noise on the accelerometer specific-force state [m / (s^2 · √(s))]
-    Eigen::Vector3d sigma_ra = Eigen::Vector3d::Zero();
+    // 𝜎²_ra Variance of the noise on the accelerometer specific-force state [m^2 / s^5]
+    Eigen::Vector3d sigma2_ra = Eigen::Vector3d::Zero();
     switch (_stdevAccelNoiseUnits)
     {
     case StdevAccelNoiseUnits::mg_sqrtHz: // [mg / √(Hz)]
-        sigma_ra = _stdev_ra * 1e-3;      // [g / √(Hz)]
-        sigma_ra *= InsConst::G_NORM;     // [m / (s^2 · √(Hz))] = [m / (s · √(s))]
-        // sigma_ra /= 1.;                // [m / (s^2 · √(s))]
+        sigma2_ra = (_stdev_ra * 1e-3 * InsConst::G_NORM).array().square();
         break;
     case StdevAccelNoiseUnits::m_s2_sqrtHz: // [m / (s^2 · √(Hz))] = [m / (s · √(s))]
-        sigma_ra = _stdev_ra;
-        // sigma_ra /= 1.;                  // [m / (s^2 · √(s))]
+        sigma2_ra = _stdev_ra.array().square();
         break;
     }
-    LOG_DATA("{}:     sigma_ra = {} [m / (s^2 · √(s))]", nameId(), sigma_ra.transpose());
+    LOG_DATA("{}:     sigma2_ra = {} [m^2 / s^5]", nameId(), sigma2_ra.transpose());
 
-    // 𝜎_rg Standard deviation of the noise on the gyro angular-rate state [rad / (s · √(s))]
-    Eigen::Vector3d sigma_rg = Eigen::Vector3d::Zero();
+    // 𝜎²_rg Variance of the noise on the gyro angular-rate state [rad^2 / s^3]
+    Eigen::Vector3d sigma2_rg = Eigen::Vector3d::Zero();
     switch (_stdevGyroNoiseUnits)
     {
     case StdevGyroNoiseUnits::deg_hr_sqrtHz: // [deg / hr / √(Hz)] (see Woodman (2007) Chp. 3.2.2 - eq. 7 with seconds instead of hours)
-        sigma_rg = deg2rad(_stdev_rg);       // [rad / hr / √(Hz)]
-        sigma_rg /= 60.;                     // [rad / √(hr)]
-        sigma_rg /= 60.;                     // [rad / √(s)]
-        // sigma_rg /= 1.;                    // [rad / (s · √(s))]
+        sigma2_rg = (deg2rad(_stdev_rg) / 3600.).array().square();
         break;
     case StdevGyroNoiseUnits::rad_s_sqrtHz: // [rad / (s · √(Hz))] = [rad / √(s)]
-        sigma_rg = _stdev_rg;
-        // sigma_rg /= 1.;                  // [rad / (s · √(s))]
+        sigma2_rg = _stdev_rg.array().square();
         break;
     }
-    LOG_DATA("{}:     sigma_rg = {} [rad / (s · √(s))]", nameId(), sigma_rg.transpose());
+    LOG_DATA("{}:     sigma2_rg = {} [rad^2 / s^3]", nameId(), sigma2_rg.transpose());
 
-    // 𝜎_bad Standard deviation of the accelerometer dynamic bias [m / s^2]
-    Eigen::Vector3d sigma_bad = Eigen::Vector3d::Zero();
+    // 𝜎²_bad Variance of the accelerometer dynamic bias [m^2 / s^4]
+    Eigen::Vector3d sigma2_bad = Eigen::Vector3d::Zero();
     switch (_stdevAccelBiasUnits)
     {
-    case StdevAccelBiasUnits::microg:  // [µg]
-        sigma_bad = _stdev_bad * 1e-6; // [g]
-        sigma_bad *= InsConst::G_NORM; // [m / s^2]
+    case StdevAccelBiasUnits::microg: // [µg]
+        sigma2_bad = (_stdev_bad * 1e-6 * InsConst::G_NORM).array().square();
         break;
     case StdevAccelBiasUnits::m_s2: // [m / s^2]
-        sigma_bad = _stdev_bad;
+        sigma2_bad = _stdev_bad.array().square();
         break;
     }
-    LOG_DATA("{}:     sigma_bad = {} [m / s^2]", nameId(), sigma_bad.transpose());
+    LOG_DATA("{}:     sigma2_bad = {} [m^2 / s^4]", nameId(), sigma2_bad.transpose());
 
-    // 𝜎_bgd Standard deviation of the gyro dynamic bias [rad / s]
-    Eigen::Vector3d sigma_bgd = Eigen::Vector3d::Zero();
+    // 𝜎²_bgd Variance of the gyro dynamic bias [rad^2 / s^2]
+    Eigen::Vector3d sigma2_bgd = Eigen::Vector3d::Zero();
     switch (_stdevGyroBiasUnits)
     {
-    case StdevGyroBiasUnits::deg_h:      // [° / h]
-        sigma_bgd = _stdev_bgd / 3600.0; // [° / s]
-        sigma_bgd = deg2rad(sigma_bgd);  // [rad / s]
+    case StdevGyroBiasUnits::deg_h: // [° / h]
+        sigma2_bgd = (deg2rad(_stdev_bgd / 3600.0)).array().square();
         break;
     case StdevGyroBiasUnits::rad_s: // [rad / s]
-        sigma_bgd = _stdev_bgd;
+        sigma2_bgd = _stdev_bgd.array().square();
         break;
     }
-    LOG_DATA("{}:     sigma_bgd = {} [rad / s]", nameId(), sigma_bgd.transpose());
+    LOG_DATA("{}:     sigma2_bgd = {} [rad^2 / s^2]", nameId(), sigma2_bgd.transpose());
 
-    // 𝜎_cPhi standard deviation of the receiver clock phase-drift in [m]
+    // 𝜎²_cPhi variance of the receiver clock phase-drift in [m^2]
     double sigma2_cPhi{};
     switch (_stdevClockPhaseUnits)
     {
     case StdevClockPhaseUnits::m_sqrtHz: // [m / s^2 / √(Hz)]
-        sigma2_cPhi = _stdev_cp;
+        sigma2_cPhi = std::pow(_stdev_cp, 2);
         break;
     }
 
-    // 𝜎_cf Standard deviation of the receiver clock frequency drift state [m / s^2 / √(Hz)]
+    // 𝜎²_cf variance of the receiver clock frequency drift state [m^2 / s^4 / Hz]
     double sigma2_cf{};
     switch (_stdevClockFreqUnits)
     {
     case StdevClockFreqUnits::m_s2_sqrtHz: // [m / s^2 / √(Hz)]
-        sigma2_cf = _stdev_cf;
+        sigma2_cf = std::pow(_stdev_cf, 2);
         break;
     }
-    LOG_DATA("{}:     sigma2_cPhi = {} [m]", nameId(), sigma2_cPhi);
-    LOG_DATA("{}:     sigma2_cf = {} [m/s]", nameId(), sigma2_cf);
+    LOG_DATA("{}:     sigma2_cPhi = {} [m^2]", nameId(), sigma2_cPhi);
+    LOG_DATA("{}:     sigma2_cf = {} [m^2/s^2]", nameId(), sigma2_cf);
 
     // ---------------------------------------------- Prediction -------------------------------------------------
 
@@ -1347,8 +1338,8 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
             // 2. Calculate the system noise covariance matrix Q_{k-1}
             if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_Q); }
 
-            _kalmanFilter.Q = n_systemNoiseCovarianceMatrix_Q(sigma_ra.array().square(), sigma_rg.array().square(),
-                                                              sigma_bad.array().square(), sigma_bgd.array().square(),
+            _kalmanFilter.Q = n_systemNoiseCovarianceMatrix_Q(sigma2_ra, sigma2_rg,
+                                                              sigma2_bad, sigma2_bgd,
                                                               _tau_bad, _tau_bgd,
                                                               sigma2_cPhi, sigma2_cf,
                                                               F.block<3, 3>(3, 0), T_rn_p,
@@ -1376,8 +1367,8 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
             // 2. Calculate the system noise covariance matrix Q_{k-1}
             if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_Q); }
 
-            _kalmanFilter.Q = e_systemNoiseCovarianceMatrix_Q(sigma_ra.array().square(), sigma_rg.array().square(),
-                                                              sigma_bad.array().square(), sigma_bgd.array().square(),
+            _kalmanFilter.Q = e_systemNoiseCovarianceMatrix_Q(sigma2_ra, sigma2_rg,
+                                                              sigma2_bad, sigma2_bgd,
                                                               _tau_bad, _tau_bgd,
                                                               sigma2_cPhi, sigma2_cf,
                                                               F.block<3, 3>(3, 0),
@@ -1391,8 +1382,8 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
         Eigen::Matrix<double, 17, 14> G = noiseInputMatrix_G(_frame == Frame::NED ? inertialNavSol->n_Quat_b() : inertialNavSol->e_Quat_b());
         LOG_DATA("{}:     G =\n{}", nameId(), G);
 
-        Eigen::Matrix<double, 14, 14> W = noiseScaleMatrix_W(sigma_ra, sigma_rg,
-                                                             sigma_bad, sigma_bgd,
+        Eigen::Matrix<double, 14, 14> W = noiseScaleMatrix_W(sigma2_ra, sigma2_rg,
+                                                             sigma2_bad, sigma2_bgd,
                                                              _tau_bad, _tau_bgd,
                                                              sigma2_cPhi, sigma2_cf);
         LOG_DATA("{}:     W =\n{}", nameId(), W);
@@ -2169,8 +2160,9 @@ Eigen::Matrix<double, 17, 14> NAV::TightlyCoupledKF::noiseInputMatrix_G(const Ei
 
     return G;
 }
-Eigen::Matrix<double, 14, 14> NAV::TightlyCoupledKF::noiseScaleMatrix_W(const Eigen::Vector3d& sigma_ra, const Eigen::Vector3d& sigma_rg,
-                                                                        const Eigen::Vector3d& sigma_bad, const Eigen::Vector3d& sigma_bgd,
+
+Eigen::Matrix<double, 14, 14> NAV::TightlyCoupledKF::noiseScaleMatrix_W(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+                                                                        const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
                                                                         const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
                                                                         const double& sigma2_cPhi, const double& sigma2_cf)
 {
@@ -2178,10 +2170,10 @@ Eigen::Matrix<double, 14, 14> NAV::TightlyCoupledKF::noiseScaleMatrix_W(const Ei
     Eigen::Matrix<double, 14, 14> W = Eigen::Matrix<double, 14, 14>::Zero();
 
     // W_INS
-    W.block<3, 3>(0, 0).diagonal() = sigma_rg;                                                                                                               // S_rg
-    W.block<3, 3>(3, 3).diagonal() = sigma_ra;                                                                                                               // S_ra
-    W.block<3, 3>(6, 6).diagonal() = _randomProcessAccel == RandomProcess::RandomWalk ? sigma_bad : psdBiasGaussMarkov(sigma_bad.array().square(), tau_bad); // S_bad
-    W.block<3, 3>(9, 9).diagonal() = _randomProcessGyro == RandomProcess::RandomWalk ? sigma_bgd : psdBiasGaussMarkov(sigma_bgd.array().square(), tau_bgd);  // S_bgd
+    W.block<3, 3>(0, 0).diagonal() = sigma2_rg;                                                                                               // S_rg
+    W.block<3, 3>(3, 3).diagonal() = sigma2_ra;                                                                                               // S_ra
+    W.block<3, 3>(6, 6).diagonal() = _randomProcessAccel == RandomProcess::RandomWalk ? sigma2_bad : psdBiasGaussMarkov(sigma2_bad, tau_bad); // S_bad
+    W.block<3, 3>(9, 9).diagonal() = _randomProcessGyro == RandomProcess::RandomWalk ? sigma2_bgd : psdBiasGaussMarkov(sigma2_bgd, tau_bgd);  // S_bgd
 
     // W_GNSS
     W(12, 12) = sigma2_cPhi; // S_cPhi
