@@ -6,7 +6,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-/// @file SinglePointPositioning.hpp
+/// @file SppAlgorithm.hpp
 /// @brief Single Point Positioning (SPP) / Code Phase Positioning
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2023-05-01
@@ -55,16 +55,16 @@ struct SppState
 };
 
 /// @brief Calculates the SPP solution
-/// @param state Previous SPP state
-/// @param gnssObs GNSS observation received
-/// @param gnssNavInfos Collection of all connected navigation data providers
-/// @param ionosphereModel Ionosphere Model used for the calculation
-/// @param troposphereModels Troposphere Models used for the calculation
-/// @param sppEstimator Estimation algorithm used
-/// @param filterFreq Frequencies used for calculation (GUI filter)
-/// @param filterCode Codes used for calculation (GUI filter)
-/// @param excludedSatellites List of satellites to exclude
-/// @param elevationMask Elevation cut-off angle for satellites in [rad]
+/// @param[in] state Previous SPP state
+/// @param[in] gnssObs GNSS observation received
+/// @param[in] gnssNavInfos Collection of all connected navigation data providers
+/// @param[in] ionosphereModel Ionosphere Model used for the calculation
+/// @param[in] troposphereModels Troposphere Models used for the calculation
+/// @param[in] sppEstimator Estimation algorithm used
+/// @param[in] filterFreq Frequencies used for calculation (GUI filter)
+/// @param[in] filterCode Codes used for calculation (GUI filter)
+/// @param[in] excludedSatellites List of satellites to exclude
+/// @param[in] elevationMask Elevation cut-off angle for satellites in [rad]
 /// @return Shared pointer to the SPP solution
 std::shared_ptr<const SppSolution> calcSppSolution(SppState state,
                                                    const std::shared_ptr<const GnssObs>& gnssObs,

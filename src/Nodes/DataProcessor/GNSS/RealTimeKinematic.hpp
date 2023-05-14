@@ -24,6 +24,7 @@
 #include "Navigation/Atmosphere/Ionosphere/Ionosphere.hpp"
 #include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
 #include "Navigation/Transformations/Units.hpp"
+#include "Navigation/Math/KalmanFilter.hpp"
 
 #include "NodeData/GNSS/GnssObs.hpp"
 
@@ -110,23 +111,63 @@ class RealTimeKinematic : public Node
     /// Troposphere Models used for the calculation
     TroposphereModelSelection _troposphereModels;
 
+    // #####################################################################################
+
+    /// Possible Units for the Standard deviation of the acceleration due to user motion
+    enum class StdevAccelUnits
+    {
+        m_sqrts3, ///< [ m / √(s^3) ]
+    };
+    /// Gui selection for the Unit of the input stdev_accel parameter for the StDev due to acceleration due to user motion
+    StdevAccelUnits _stdevAccelUnits = StdevAccelUnits::m_sqrts3;
+
+    /// @brief 𝜎_a Standard deviation of the acceleration due to user motion in horizontal and vertical component
+    /// @note See Groves (2013) eq. (9.156)
+    std::array<double, 2> _stdev_accel = { { 3.0, 1.5 } } /* [ m / √(s^3) ] */;
+
+    /// Possible Units for the Standard deviation of the receiver clock phase drift
+    enum class StdevClockPhaseUnits
+    {
+        m_sqrtHz, ///< [m / √(Hz)]
+    };
+    /// Gui selection for the Unit of the input stdev_cphi parameter
+    StdevClockPhaseUnits _stdevClockPhaseUnits = StdevClockPhaseUnits::m_sqrtHz;
+
+    /// @brief 𝜎_c𝛟 Standard deviation of the receiver clock phase drift
+    /// @note See Groves (2013) eq. (9.153)
+    double _stdev_cphi = 0.0 /* [m / √(Hz)] */;
+
+    /// Possible Units for the Standard deviation of the receiver clock frequency drift
+    enum class StdevClockFreqUnits
+    {
+        m_s2_sqrtHz, ///< [m / s^2 / √(Hz)]
+    };
+    /// Gui selection for the Unit of the input stdev_cf parameter
+    StdevClockFreqUnits _stdevClockFreqUnits = StdevClockFreqUnits::m_s2_sqrtHz;
+
+    /// @brief 𝜎_cf Standard deviation of the receiver clock frequency drift
+    /// @note See Brown (2012) table 9.2
+    double _stdev_cf = 5.0 /* [m / s^2 / √(Hz)] */;
+
     // ------------------------------------------------------------ Algorithm --------------------------------------------------------------
 
     /// Base position in ECEF frame [m]
     Eigen::Vector3d _e_basePosition = Eigen::Vector3d::Zero();
 
-    /// Latest GNSS Observation from the base station
-    std::shared_ptr<const GnssObs> _gnssObsBase = nullptr;
-    /// Latest GNSS Observation from the rover
-    std::shared_ptr<const GnssObs> _gnssObsRover = nullptr;
-
     /// Estimated position in ECEF frame [m]
     Eigen::Vector3d _e_position = Eigen::Vector3d::Zero();
     /// Estimated velocity in ECEF frame [m/s]
     Eigen::Vector3d _e_velocity = Eigen::Vector3d::Zero();
-
     /// Estimated receiver clock parameters
     ReceiverClock _recvClk;
+
+    /// Kalman Filter representation
+    KalmanFilter _kalmanFilter{ 8, 8 };
+
+    /// Latest GNSS Observation from the base station
+    std::shared_ptr<const GnssObs> _gnssObsBase = nullptr;
+    /// Latest GNSS Observation from the rover
+    std::shared_ptr<const GnssObs> _gnssObsRover = nullptr;
 
     /// @brief Receive Function for the Base Position
     /// @param[in] queue Queue with all the received data messages

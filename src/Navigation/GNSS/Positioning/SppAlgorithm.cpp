@@ -1,4 +1,4 @@
-#include "SinglePointPositioning.hpp"
+#include "SppAlgorithm.hpp"
 
 #include "Navigation/GNSS/Functions.hpp"
 #include "Navigation/GNSS/Satellite/Ephemeris/GLONASSEphemeris.hpp"
@@ -74,11 +74,11 @@ std::shared_ptr<const SppSolution> calcSppSolution(SppState state,
 
         // Data recalculated each iteration
 
-        bool skipped = false;                                            // Whether to skip the measurement
-        Eigen::Vector3d e_lineOfSightUnitVector;                         // Line-of-sight unit vector in ECEF frame coordinates
-        Eigen::Vector3d n_lineOfSightUnitVector;                         // Line-of-sight unit vector in NED frame coordinates
-        double satElevation = calcSatElevation(n_lineOfSightUnitVector); // Elevation [rad]
-        double satAzimuth = calcSatAzimuth(n_lineOfSightUnitVector);     // Azimuth [rad]
+        bool skipped = false;                    // Whether to skip the measurement
+        Eigen::Vector3d e_lineOfSightUnitVector; // Line-of-sight unit vector in ECEF frame coordinates
+        Eigen::Vector3d n_lineOfSightUnitVector; // Line-of-sight unit vector in NED frame coordinates
+        double satElevation = 0.0;               // Elevation [rad]
+        double satAzimuth = 0.0;                 // Azimuth [rad]
     };
 
     // Data calculated for each satellite (only satellites filtered by GUI filter & NAV data available)

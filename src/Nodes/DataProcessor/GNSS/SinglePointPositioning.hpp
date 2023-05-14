@@ -20,7 +20,7 @@
 #include "Navigation/GNSS/Core/Frequency.hpp"
 #include "Navigation/GNSS/Core/Code.hpp"
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
-#include "Navigation/GNSS/Positioning/SinglePointPositioning.hpp"
+#include "Navigation/GNSS/Positioning/SppAlgorithm.hpp"
 #include "Navigation/Atmosphere/Ionosphere/Ionosphere.hpp"
 #include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
 #include "Navigation/Transformations/Units.hpp"
