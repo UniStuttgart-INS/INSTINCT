@@ -49,6 +49,10 @@ class RtklibPosObs : public PosVel
     /// @param[in] sdvne // Standard Deviation velocity north-east [m/s]
     /// @param[in] sdved // Standard Deviation velocity east-down [m/s]
     /// @param[in] sdvdn // Standard Deviation velocity down-north [m/s]
+    /// @param[in] sdvXYZ // Standard Deviation velocity XYZ [m/s] TODO: check units
+    /// @param[in] sdvxy // Standard Deviation velocity xy [m/s] TODO: check units
+    /// @param[in] sdvyz // Standard Deviation velocity yz [m/s] TODO: check units
+    /// @param[in] sdvzx // Standard Deviation velocity zx [m/s] TODO: check units
     RtklibPosObs(const InsTime& insTime,
                  const Eigen::Vector3d& e_position,
                  Eigen::Vector3d lla_position,
@@ -69,8 +73,12 @@ class RtklibPosObs : public PosVel
                  const Eigen::Vector3d& sdvNED,
                  double sdvne,
                  double sdved,
-                 double sdvdn)
-        : Q(Q), ns(ns), sdXYZ(sdXYZ), sdNED(sdNED), sdxy(sdxy), sdyz(sdyz), sdzx(sdzx), sdne(sdne), sded(sded), sddn(sddn), age(age), ratio(ratio), sdvNED(sdvNED), sdvne(sdvne), sdved(sdved), sdvdn(sdvdn)
+                 double sdvdn,
+                 const Eigen::Vector3d& sdvXYZ,
+                 double sdvxy,
+                 double sdvyz,
+                 double sdvzx)
+        : Q(Q), ns(ns), sdXYZ(sdXYZ), sdNED(sdNED), sdxy(sdxy), sdyz(sdyz), sdzx(sdzx), sdne(sdne), sded(sded), sddn(sddn), age(age), ratio(ratio), sdvNED(sdvNED), sdvne(sdvne), sdved(sdved), sdvdn(sdvdn), sdvXYZ(sdvXYZ), sdvxy(sdvxy), sdvyz(sdvyz), sdvzx(sdvzx)
     {
         this->insTime = insTime;
 
@@ -125,7 +133,6 @@ class RtklibPosObs : public PosVel
     double age = std::nan("");
     /// Ratio
     double ratio = std::nan("");
-
     /// Standard Deviation velocity NED [m/s]
     Eigen::Vector3d sdvNED{ std::nan(""), std::nan(""), std::nan("") };
     /// Standard Deviation velocity north-east [m/s]
@@ -134,6 +141,15 @@ class RtklibPosObs : public PosVel
     double sdved = std::nan("");
     /// Standard Deviation velocity down-north [m/s]
     double sdvdn = std::nan("");
+
+    /// Standard Deviation velocity XYZ [m/s] TODO: check units
+    Eigen::Vector3d sdvXYZ{ std::nan(""), std::nan(""), std::nan("") };
+    /// Standard Deviation velocity xy [m/s] TODO: check units
+    double sdvxy = std::nan("");
+    /// Standard Deviation velocity yz [m/s] TODO: check units
+    double sdvyz = std::nan("");
+    /// Standard Deviation velocity zx [m/s] TODO: check units
+    double sdvzx = std::nan("");
 };
 
 } // namespace NAV

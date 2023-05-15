@@ -84,6 +84,19 @@ inline bool operator==(const RtklibPosObs& lhs, const RtklibPosObs& rhs)
     if (std::isnan(lhs.sdvdn)) { REQUIRE(std::isnan(rhs.sdvdn)); }
     else { REQUIRE(lhs.sdvdn == rhs.sdvdn); };
     return true;
+
+    if (std::isnan(lhs.sdvXYZ[0])) { REQUIRE(std::isnan(rhs.sdvXYZ[0])); }
+    else { REQUIRE(lhs.sdvXYZ == rhs.sdvXYZ); };
+
+    if (std::isnan(lhs.sdvxy)) { REQUIRE(std::isnan(rhs.sdvxy)); }
+    else { REQUIRE(lhs.sdvxy == rhs.sdvxy); };
+
+    if (std::isnan(lhs.sdvyz)) { REQUIRE(std::isnan(rhs.sdvyz)); }
+    else { REQUIRE(lhs.sdvyz == rhs.sdvyz); };
+
+    if (std::isnan(lhs.sdvzx)) { REQUIRE(std::isnan(rhs.sdvzx)); }
+    else { REQUIRE(lhs.sdvzx == rhs.sdvzx); };
+    return true;
 }
 
 } // namespace NAV

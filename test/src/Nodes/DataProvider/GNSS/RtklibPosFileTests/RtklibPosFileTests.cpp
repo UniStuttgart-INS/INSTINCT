@@ -30,7 +30,7 @@ namespace nm = NAV::NodeManager;
 #include "lla/lla_gpst_000_dd_pos.hpp"
 #include "lla/lla_utc_111_dd_pos.hpp"
 // #include "lla/lla_jst_111_dd_pos.hpp"        // not implemented yet
-// #include "ecef/ecef_gpst2_000_pos.hpp"       // not implemented yet
+#include "ecef/ecef_gpst2_111_pos.hpp"
 // #include "enu/enu_gpst2_111_dd_pos.hpp"      // missing
 // #include "nmea/nmea_gpst2_111_dd_pos.hpp"    // missing
 // #include "corrupt/corrupt_pos.hpp"           // corrupt test
@@ -124,7 +124,7 @@ TEST_CASE("[RtklibPosFile][flow] Read lla/lla_utc_111_dd.pos", "[RtklibPosFile][
 }
 
 // ########################################### TODO JST [hh:mm:ss] ###########################################
-// (JST not identifiable by INSTINCT (yet), suggests GST instead, however GST cant be tested (yet))
+// (JST not identifiable by INSTINCT (yet))
 // Lat Long Format [ddd.dddddd]
 
 // TEST_CASE("[RtklibPosFile][flow] Read lla/lla_jst_111_dd.pos", "[RtklibPosFile][flow]")
@@ -138,10 +138,10 @@ TEST_CASE("[RtklibPosFile][flow] Read lla/lla_utc_111_dd.pos", "[RtklibPosFile][
 // (missing constructor for ECEF, missing sdvXYZ, sdvxy, sdvyz, sdvzx parameter, NOTE: test currently has no _e_velocity set (untested)!)
 // Lat Long Format [ddd.dddddd]
 
-// TEST_CASE("[RtklibPosFile][flow] Read ecef/ecef_gpst2_001.pos", "[RtklibPosFile][flow]")
-//{
-//     testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/ecef/ecef_gpst2_001.pos", ecef::ecef_gpst2_001_pos);
-// }
+TEST_CASE("[RtklibPosFile][flow] Read ecef/ecef_gpst2_111.pos", "[RtklibPosFile][flow]")
+{
+    testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/ecef/ecef_gpst2_111.pos", ecef::ecef_gpst2_111_pos);
+}
 
 // ###########################################################################################################
 //                                                    TODO  ENU

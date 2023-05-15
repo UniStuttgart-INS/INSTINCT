@@ -40,6 +40,10 @@ const std::vector<RtklibPosObs> lla_gpst_000_dd_pos = {
         /* .sdvne = */ NAN,
         /* .sdved = */ NAN,
         /* .sdvdn = */ NAN,
+        /* .sdvXYZ = */ Eigen::Vector3d{ NAN, NAN, NAN },
+        /* .sdvxy = */ NAN,
+        /* .sdvyz = */ NAN,
+        /* .sdvzx = */ NAN,
     },
     {
         /* .insTime = */ InsTime{ 0, 2244, 50400.000, GPST }, // *.pos does not give a value for gps cycle, so it is set to 0 since INSTINCT needs a value (seems to calculate that cycle=2)
@@ -63,6 +67,10 @@ const std::vector<RtklibPosObs> lla_gpst_000_dd_pos = {
         /* .sdvne = */ NAN,
         /* .sdved = */ NAN,
         /* .sdvdn = */ NAN,
+        /* .sdvXYZ = */ Eigen::Vector3d{ NAN, NAN, NAN },
+        /* .sdvxy = */ NAN,
+        /* .sdvyz = */ NAN,
+        /* .sdvzx = */ NAN,
     },
 };
 

@@ -40,6 +40,10 @@ const std::vector<RtklibPosObs> lla_gpst2_111_dd_pos = {
         /* .sdvne = */ 0.03911,
         /* .sdved = */ -0.13176,
         /* .sdvdn = */ -0.16769,
+        /* .sdvXYZ = */ Eigen::Vector3d{ NAN, NAN, NAN },
+        /* .sdvxy = */ NAN,
+        /* .sdvyz = */ NAN,
+        /* .sdvzx = */ NAN,
     },
     {
         /* .insTime = */ InsTime{ 2023, 1, 8, 14, 0, 0.0000000, GPST },
@@ -63,6 +67,10 @@ const std::vector<RtklibPosObs> lla_gpst2_111_dd_pos = {
         /* .sdvne = */ -0.07425,
         /* .sdved = */ -0.08412,
         /* .sdvdn = */ 0.12257,
+        /* .sdvXYZ = */ Eigen::Vector3d{ NAN, NAN, NAN },
+        /* .sdvxy = */ NAN,
+        /* .sdvyz = */ NAN,
+        /* .sdvzx = */ NAN,
     },
 };
 

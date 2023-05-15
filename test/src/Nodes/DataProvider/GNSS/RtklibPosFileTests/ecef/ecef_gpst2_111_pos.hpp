@@ -16,13 +16,13 @@
 
 namespace NAV::TESTS::RtklibPosFileTests::ecef
 {
-/// @brief Test Data for the file ecef_gpst2_001.pos
-const std::vector<RtklibPosObs> ecef_gpst2_001_pos = {
+/// @brief Test Data for the file ecef_gpst2_111.pos
+const std::vector<RtklibPosObs> ecef_gpst2_111_pos = {
     {
         /* .insTime = */ InsTime{ 2023, 1, 8, 10, 00, 00.000, GPST },
         /* ._e_position = */ Eigen::Vector3d{ -481817.9432, 5507212.2485, 3170368.5142 },
         /* ._lla_position = */ Eigen::Vector3d{ NAN, NAN, NAN },
-        /* ._e_velocity = */ Eigen::Vector3d{ NAN, NAN, NAN },
+        /* ._e_velocity = */ Eigen::Vector3d{ -0.00394, -0.00927, 0.00891 },
         /* ._n_velocity = */ Eigen::Vector3d{ NAN, NAN, NAN },
         /* .Q = */ 5,
         /* .ns = */ 8,
@@ -36,15 +36,18 @@ const std::vector<RtklibPosObs> ecef_gpst2_001_pos = {
         /* .sddn = */ NAN,
         /* .age = */ 0.00,
         /* .ratio = */ 0.0,
-        /* .sdvXYZ = */ Eigen::Vector3d{ 0.12567, 0.42372, 0.20237 },
         /* .sdvNED = */ Eigen::Vector3d{ NAN, NAN, NAN },
         /* .sdvne = */ NAN,
         /* .sdved = */ NAN,
         /* .sdvdn = */ NAN,
+        /* .sdvXYZ = */ Eigen::Vector3d{ 0.12567, 0.42372, 0.20237 },
+        /* .sdvxy = */ 0.04010,
+        /* .sdvyz = */ 0.25072,
+        /* .sdvzx = */ 0.04342,
     },
     {
         /* .insTime = */ InsTime{ 2023, 1, 8, 14, 00, 00.000, GPST },
-        /* ._e_position = */ Eigen::Vector3d{ NAN, NAN, NAN },
+        /* ._e_position = */ Eigen::Vector3d{ -481818.0230, 5507210.3373, 3170368.8157 },
         /* ._lla_position = */ Eigen::Vector3d{ NAN, NAN, NAN },
         /* ._e_velocity = */ Eigen::Vector3d{ -0.00273, 0.00727, -0.00654 },
         /* ._n_velocity = */ Eigen::Vector3d{ NAN, NAN, NAN },
@@ -64,6 +67,10 @@ const std::vector<RtklibPosObs> ecef_gpst2_001_pos = {
         /* .sdvne = */ NAN,
         /* .sdved = */ NAN,
         /* .sdvdn = */ NAN,
+        /* .sdvXYZ = */ Eigen::Vector3d{ 0.13212, 0.28605, 0.25272 },
+        /* .sdvxy = */ -0.04746,
+        /* .sdvyz = */ 0.21463,
+        /* .sdvzx = */ 0.06568,
     },
 };
 
