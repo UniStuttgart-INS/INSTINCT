@@ -20,8 +20,10 @@ if(ENABLE_MAIN)
 
   target_link_libraries(
     ${PROJECT_NAME_LOWERCASE}
+    PRIVATE project_warnings)
+  target_link_libraries(
+    ${PROJECT_NAME_LOWERCASE}
     PRIVATE project_options
-            project_warnings
             instinct::rc
             fmt::fmt
             spdlog::spdlog
@@ -45,12 +47,5 @@ if(ENABLE_MAIN)
 
   if(APPLE)
     target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC BOOST_ASIO_HAS_STD_INVOKE_RESULT=1)
-  endif()
-
-  # Because MSVC sucks and we need to tell the linker to link the release versions manually
-  if(MSVC AND CMAKE_BUILD_TYPE STREQUAL "Release")
-    set_target_properties(${PROJECT_NAME_LOWERCASE}
-                          PROPERTIES
-                          MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
   endif()
 endif()

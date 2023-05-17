@@ -72,8 +72,6 @@ image: ins-cpp:10
     # https://gist.github.com/FeodorFitsner/b34162690ae2838409b7459824d51ed7
     - cmd.exe /c "call `"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat`" && set > %temp%\vcvars-$CI_CONCURRENT_ID.txt"
     - Get-Content "$env:temp\vcvars-$CI_CONCURRENT_ID.txt" | Foreach-Object { if ($_ -match "^(.*?)=(.*)$") { Set-Content "env:\$($matches[1])" $matches[2] } }
-    - python -m pip install colorama
-    - python -m pip install conan
     - conan profile detect --force
   variables:
     GIT_CLONE_PATH: '$CI_BUILDS_DIR/$CI_PROJECT_NAME/$CI_COMMIT_SHA/$CI_JOB_ID'
@@ -217,7 +215,7 @@ documentation:
     - echo "$CMAKE_BUILD_PARALLEL_LEVEL"
     - conan install . --build=missing -s build_type="$BUILD_TYPE"
     - cmake -B"build/$BUILD_TYPE" -S. -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_PATH/generators/conan_toolchain.cmake" -DENABLE_MAIN="$ENABLE_MAIN" -DENABLE_TESTING="$ENABLE_TESTING" -DCATCH2_JUNIT_OUTPUT="$ENABLE_TESTING" -DENABLE_COVERAGE="$ENABLE_TESTING" -DENABLE_DOXYGEN=OFF -DLOG_LEVEL="$LOG_LEVEL_INSTINCT" -DWARNINGS_AS_ERRORS="$WARNINGS_AS_ERRORS" -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build "build/$BUILD_TYPE"
+    - cmake --build "build/$BUILD_TYPE" --config $BUILD_TYPE
 
 .build:linux:
   extends: .linux
@@ -295,7 +293,7 @@ raspberry:gcc:
     - .release
     - .log-trace
   variables:
-    CMAKE_BUILD_PARALLEL_LEVEL: 4
+    CMAKE_BUILD_PARALLEL_LEVEL: 2
 
 main:macOS:
   extends:

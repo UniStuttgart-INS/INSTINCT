@@ -286,14 +286,14 @@
             "linux": {
                 "args": [
                     "-c",
-                    "cmake --build build/${input:buildType}-${input:compiler} --parallel$(nproc)",
+                    "cmake --build build/${input:buildType}-${input:compiler} --config ${input:buildType} --parallel$(nproc)",
                 ],
             },
             "osx": {
                 "command": "bash",
                 "args": [
                     "-c",
-                    "cmake --build build/${input:buildType}-${input:compiler} --parallel$(sysctl -n hw.physicalcpu)",
+                    "cmake --build build/${input:buildType}-${input:compiler} --config ${input:buildType} --parallel$(sysctl -n hw.physicalcpu)",
                 ],
             },
             "windows": {
@@ -301,6 +301,8 @@
                 "args": [
                     "--build",
                     "build/${input:buildType}-msvc",
+                    "--config",
+                    "${input:buildType}",
                     "--parallel8",
                 ],
                 "options": {
@@ -323,14 +325,14 @@
                 "command": "bash",
                 "args": [
                     "-c",
-                    "cmake --build build/${input:buildType}-${input:compiler} --parallel$(nproc)",
+                    "cmake --build build/${input:buildType}-${input:compiler} --config ${input:buildType} --parallel$(nproc)",
                 ],
             },
             "osx": {
                 "command": "bash",
                 "args": [
                     "-c",
-                    "cmake --build build/${input:buildType}-${input:compiler} --parallel$(sysctl -n hw.physicalcpu)",
+                    "cmake --build build/${input:buildType}-${input:compiler} --config ${input:buildType} --parallel$(sysctl -n hw.physicalcpu)",
                 ],
             },
             "windows": {
@@ -338,6 +340,8 @@
                 "args": [
                     "--build",
                     "build/${input:buildType}-msvc",
+                    "--config",
+                    "${input:buildType}",
                     "--parallel8",
                 ],
                 "options": {
@@ -360,14 +364,14 @@
                 "command": "bash",
                 "args": [
                     "-c",
-                    "cmake --build build/Debug-cov --parallel$(nproc)",
+                    "cmake --build build/Debug-cov --config ${input:buildType} --parallel$(nproc)",
                 ],
             },
             "osx": {
                 "command": "bash",
                 "args": [
                     "-c",
-                    "cmake --build build/Debug-cov --parallel$(sysctl -n hw.physicalcpu)",
+                    "cmake --build build/Debug-cov --config ${input:buildType} --parallel$(sysctl -n hw.physicalcpu)",
                 ],
             },
             "dependsOn": [

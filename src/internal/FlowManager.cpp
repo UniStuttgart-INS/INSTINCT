@@ -27,6 +27,7 @@ namespace ed = ax::NodeEditor;
 #include "internal/gui/windows/ImPlotStyleEditor.hpp"
 
 #include <fstream>
+#include <set>
 #include <iomanip>
 #include <string>
 #include <memory>
@@ -213,7 +214,7 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
             {
                 for (const auto& nodeInfo : registeredNode.second)
                 {
-                    if (nodeInfo.type == nodeJson.at("type"))
+                    if (nodeInfo.type == nodeJson.at("type").get<std::string>())
                     {
                         node = nodeInfo.constructor();
                         break;
