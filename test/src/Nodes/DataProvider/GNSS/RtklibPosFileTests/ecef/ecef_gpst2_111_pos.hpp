@@ -6,9 +6,10 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-/// @file lla_gpst2_001_pos.hpp
-/// @author
-/// @date
+/// @file ecef_gpst2_111_pos.hpp
+/// @author N. Stahl (HiWi)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
+/// @date 2023-04-26
 
 #pragma once
 

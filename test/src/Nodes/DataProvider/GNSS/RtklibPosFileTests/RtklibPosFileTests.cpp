@@ -8,8 +8,9 @@
 
 /// @file RtklibPosFileTests.cpp
 /// @brief RtklibPosFile unit test
-/// @author
-/// @date
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
+/// @author N. Stahl (HiWi)
+/// @date 2023-04-26
 
 #include <catch2/catch_test_macros.hpp>
 #include "CatchMatchers.hpp"

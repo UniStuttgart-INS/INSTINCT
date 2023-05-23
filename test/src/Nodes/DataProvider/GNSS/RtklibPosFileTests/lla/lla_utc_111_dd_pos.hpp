@@ -7,8 +7,9 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 /// @file lla_utc_111_dd_pos.hpp
-/// @author
-/// @date
+/// @author N. Stahl (HiWi)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
+/// @date 2023-04-26
 
 #pragma once
 

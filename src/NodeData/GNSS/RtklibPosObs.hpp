@@ -8,8 +8,8 @@
 
 /// @file RtklibPosObs.hpp
 /// @brief RTKLIB Pos Observation Class
-/// @author
-/// @date
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
+/// @date 2020-06-02
 
 #pragma once
 
@@ -29,30 +29,30 @@ class RtklibPosObs : public PosVel
 
     /// @brief Constructor
     /// @param[in] insTime Epoch time
-    /// @param[in] e_position // Position in ECEF coordinates
-    /// @param[in] lla_position // Position in LatLonAlt coordinates [rad, rad, m]
-    /// @param[in] e_velocity // Velocity in earth coordinates [m/s]
-    /// @param[in] n_velocity // Velocity in navigation coordinates [m/s]
-    /// @param[in] Q // 1:fix, 2:float, 3:sbas, 4:dgps, 5:single, 6:ppp
-    /// @param[in] ns // Number of satellites
-    /// @param[in] sdXYZ // Standard Deviation XYZ [m]
-    /// @param[in] sdNED // Standard Deviation North East Down [m]
-    /// @param[in] sdxy // Standard Deviation xy [m]
-    /// @param[in] sdyz // Standard Deviation yz [m]
-    /// @param[in] sdzx // Standard Deviation zx [m]
-    /// @param[in] sdne // Standard Deviation ne [m]
-    /// @param[in] sded // Standard Deviation ed [m]
-    /// @param[in] sddn // Standard Deviation dn [m]
-    /// @param[in] age // Age [s]
-    /// @param[in] ratio // Ratio
-    /// @param[in] sdvNED // Standard Deviation velocity NED [m/s]
-    /// @param[in] sdvne // Standard Deviation velocity north-east [m/s]
-    /// @param[in] sdved // Standard Deviation velocity east-down [m/s]
-    /// @param[in] sdvdn // Standard Deviation velocity down-north [m/s]
-    /// @param[in] sdvXYZ // Standard Deviation velocity XYZ [m/s] TODO: check units
-    /// @param[in] sdvxy // Standard Deviation velocity xy [m/s] TODO: check units
-    /// @param[in] sdvyz // Standard Deviation velocity yz [m/s] TODO: check units
-    /// @param[in] sdvzx // Standard Deviation velocity zx [m/s] TODO: check units
+    /// @param[in] e_position Position in ECEF coordinates
+    /// @param[in] lla_position Position in LatLonAlt coordinates [rad, rad, m]
+    /// @param[in] e_velocity Velocity in earth coordinates [m/s]
+    /// @param[in] n_velocity Velocity in navigation coordinates [m/s]
+    /// @param[in] Q 1:fix, 2:float, 3:sbas, 4:dgps, 5:single, 6:ppp
+    /// @param[in] ns Number of satellites
+    /// @param[in] sdXYZ Standard Deviation XYZ [m]
+    /// @param[in] sdNED Standard Deviation North East Down [m]
+    /// @param[in] sdxy Standard Deviation xy [m]
+    /// @param[in] sdyz Standard Deviation yz [m]
+    /// @param[in] sdzx Standard Deviation zx [m]
+    /// @param[in] sdne Standard Deviation ne [m]
+    /// @param[in] sded Standard Deviation ed [m]
+    /// @param[in] sddn Standard Deviation dn [m]
+    /// @param[in] age Age [s]
+    /// @param[in] ratio Ratio
+    /// @param[in] sdvNED Standard Deviation velocity NED [m/s]
+    /// @param[in] sdvne Standard Deviation velocity north-east [m/s]
+    /// @param[in] sdved Standard Deviation velocity east-down [m/s]
+    /// @param[in] sdvdn Standard Deviation velocity down-north [m/s]
+    /// @param[in] sdvXYZ Standard Deviation velocity XYZ [m/s]
+    /// @param[in] sdvxy Standard Deviation velocity xy [m/s]
+    /// @param[in] sdvyz Standard Deviation velocity yz [m/s]
+    /// @param[in] sdvzx Standard Deviation velocity zx [m/s]
     RtklibPosObs(const InsTime& insTime,
                  const Eigen::Vector3d& e_position,
                  Eigen::Vector3d lla_position,
@@ -142,13 +142,13 @@ class RtklibPosObs : public PosVel
     /// Standard Deviation velocity down-north [m/s]
     double sdvdn = std::nan("");
 
-    /// Standard Deviation velocity XYZ [m/s] TODO: check units
+    /// Standard Deviation velocity XYZ [m/s]
     Eigen::Vector3d sdvXYZ{ std::nan(""), std::nan(""), std::nan("") };
-    /// Standard Deviation velocity xy [m/s] TODO: check units
+    /// Standard Deviation velocity xy [m/s]
     double sdvxy = std::nan("");
-    /// Standard Deviation velocity yz [m/s] TODO: check units
+    /// Standard Deviation velocity yz [m/s]
     double sdvyz = std::nan("");
-    /// Standard Deviation velocity zx [m/s] TODO: check units
+    /// Standard Deviation velocity zx [m/s]
     double sdvzx = std::nan("");
 };
 

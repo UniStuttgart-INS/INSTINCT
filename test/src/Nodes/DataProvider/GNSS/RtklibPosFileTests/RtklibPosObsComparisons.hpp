@@ -7,10 +7,10 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 /// @file RtklibPosObsComparisons.hpp
-/// @brief
-/// @author
-/// @author
-/// @date
+/// @brief Comparison operators to compare the RtklibPosObs type
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
+/// @author N. Stahl (HiWi)
+/// @date 2023-04-26
 
 #pragma once
 
