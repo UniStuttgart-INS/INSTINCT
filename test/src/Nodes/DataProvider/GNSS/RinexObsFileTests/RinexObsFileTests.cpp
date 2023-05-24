@@ -76,6 +76,8 @@ void testRinexObsFileFlow(const std::string& path, const std::vector<GnssObs>& g
     });
 
     REQUIRE(testFlow("test/flow/Nodes/DataProvider/GNSS/RinexObsFile.flow"));
+
+    REQUIRE(msgCounter == gnssObsRef.size());
 }
 
 // ###########################################################################################################
