@@ -200,7 +200,7 @@ std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData()
     std::optional<uint16_t> year;
     std::optional<uint16_t> month;
     std::optional<uint16_t> day;
-    std::optional<uint16_t> hour;
+    std::optional<int32_t> hour;
     std::optional<uint16_t> minute;
     std::optional<long double> second = 0L;
     std::optional<uint16_t> gpsWeek;
@@ -208,179 +208,231 @@ std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData()
     Eigen::Vector3d lla_pos{ std::nan(""), std::nan(""), std::nan("") };
     Eigen::Vector3d e_pos{ std::nan(""), std::nan(""), std::nan("") };
     Eigen::Vector3d n_vel{ std::nan(""), std::nan(""), std::nan("") };
+    Eigen::Vector3d e_vel{ std::nan(""), std::nan(""), std::nan("") };
 
-    for (const auto& column : _headerColumns)
+    std::optional<double> sdvN;
+    std::optional<double> sdvE;
+    std::optional<double> sdvD;
+    std::optional<double> sdvX;
+    std::optional<double> sdvY;
+    std::optional<double> sdvZ;
+
+    try
     {
-        if (lineStream >> cell)
+        for (const auto& column : _headerColumns)
         {
-            // Remove any trailing non text characters
-            cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
-            if (cell.empty())
+            if (lineStream >> cell)
             {
-                continue;
-            }
-
-            // %  GPST          latitude(deg) longitude(deg)  ...
-            // 2120 216180.000   XX.XXXXXXXXX    ...
-            if (column == "GpsWeek")
-            {
-                gpsWeek = static_cast<uint16_t>(std::stoul(cell));
-            }
-            else if (column == "GpsToW")
-            {
-                gpsToW = std::stold(cell);
-            }
-            // %  GPST                  latitude(deg) longitude(deg)  ...
-            // 2020/08/25 12:03:00.000   XX.XXXXXXXXX    ...
-            // %  UTC                   latitude(deg) longitude(deg)  ...
-            // 2020/08/25 12:02:42.000   XX.XXXXXXXXX    ...
-            else if (column.starts_with("Date"))
-            {
-                timeSystem = column.ends_with("-GPST") ? GPST : UTC;
-
-                auto ymd = str::split(cell, "/");
-                if (ymd.size() == 3)
+                // Remove any trailing non text characters
+                cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
+                if (cell.empty())
                 {
-                    year = static_cast<uint16_t>(std::stoi(ymd.at(0)));
-                    month = static_cast<uint16_t>(std::stoi(ymd.at(1)));
-                    day = static_cast<uint16_t>(std::stoi(ymd.at(2)));
+                    continue;
                 }
-            }
-            else if (column.starts_with("Time"))
-            {
-                auto hms = str::split(cell, ":");
-                if (hms.size() == 3)
+
+                // %  GPST          latitude(deg) longitude(deg)  ...
+                // 2120 216180.000   XX.XXXXXXXXX    ...
+                if (column == "GpsWeek")
                 {
-                    hour = static_cast<uint16_t>(std::stoi(hms.at(0)));
-                    minute = static_cast<uint16_t>(std::stoi(hms.at(1)));
-                    second = std::stold(hms.at(2));
+                    gpsWeek = static_cast<uint16_t>(std::stoul(cell));
                 }
-            }
-            else if (column == "x-ecef(m)")
-            {
-                e_pos.x() = std::stod(cell);
-            }
-            else if (column == "y-ecef(m)")
-            {
-                e_pos.y() = std::stod(cell);
-            }
-            else if (column == "z-ecef(m)")
-            {
-                e_pos.z() = std::stod(cell);
-            }
-            else if (column == "latitude(deg)")
-            {
-                lla_pos(0) = deg2rad(std::stod(cell));
-            }
-            else if (column == "longitude(deg)")
-            {
-                lla_pos(1) = deg2rad(std::stod(cell));
-            }
-            else if (column == "height(m)")
-            {
-                lla_pos(2) = std::stod(cell);
-            }
-            else if (column == "Q")
-            {
-                obs->Q = static_cast<uint8_t>(std::stoul(cell));
-            }
-            else if (column == "ns")
-            {
-                obs->ns = static_cast<uint8_t>(std::stoul(cell));
-            }
-            else if (column == "sdx(m)")
-            {
-                obs->sdXYZ.x() = std::stod(cell);
-            }
-            else if (column == "sdy(m)")
-            {
-                obs->sdXYZ.y() = std::stod(cell);
-            }
-            else if (column == "sdz(m)")
-            {
-                obs->sdXYZ.z() = std::stod(cell);
-            }
-            else if (column == "sdn(m)")
-            {
-                obs->sdNED(0) = std::stod(cell);
-            }
-            else if (column == "sde(m)")
-            {
-                obs->sdNED(1) = std::stod(cell);
-            }
-            else if (column == "sdu(m)")
-            {
-                obs->sdNED(2) = std::stod(cell);
-            }
-            else if (column == "sdxy(m)")
-            {
-                obs->sdxy = std::stod(cell);
-            }
-            else if (column == "sdyz(m)")
-            {
-                obs->sdyz = std::stod(cell);
-            }
-            else if (column == "sdzx(m)")
-            {
-                obs->sdzx = std::stod(cell);
-            }
-            else if (column == "sdne(m)")
-            {
-                obs->sdne = std::stod(cell);
-            }
-            else if (column == "sdeu(m)")
-            {
-                obs->sded = std::stod(cell);
-            }
-            else if (column == "sdun(m)")
-            {
-                obs->sddn = std::stod(cell);
-            }
-            else if (column == "age(s)")
-            {
-                obs->age = std::stod(cell);
-            }
-            else if (column == "ratio")
-            {
-                obs->ratio = std::stod(cell);
-            }
-            else if (column == "vn(m/s)")
-            {
-                n_vel(0) = std::stod(cell);
-            }
-            else if (column == "ve(m/s)")
-            {
-                n_vel(1) = std::stod(cell);
-            }
-            else if (column == "vu(m/s)")
-            {
-                n_vel(2) = -std::stod(cell);
-            }
-            else if (column == "sdvn")
-            {
-                obs->sdvNED(0) = std::stod(cell);
-            }
-            else if (column == "sdve")
-            {
-                obs->sdvNED(1) = std::stod(cell);
-            }
-            else if (column == "sdvu")
-            {
-                obs->sdvNED(2) = std::stod(cell);
-            }
-            else if (column == "sdvne")
-            {
-                obs->sdvne = std::stod(cell);
-            }
-            else if (column == "sdveu")
-            {
-                obs->sdved = std::stod(cell);
-            }
-            else if (column == "sdvun")
-            {
-                obs->sdvdn = std::stod(cell);
+                else if (column == "GpsToW")
+                {
+                    gpsToW = std::stold(cell);
+                }
+                // %  GPST                  latitude(deg) longitude(deg)  ...
+                // 2020/08/25 12:03:00.000   XX.XXXXXXXXX    ...
+                // %  UTC                   latitude(deg) longitude(deg)  ...
+                // 2020/08/25 12:02:42.000   XX.XXXXXXXXX    ...
+                else if (column.starts_with("Date"))
+                {
+                    timeSystem = column.ends_with("-GPST") ? GPST : UTC;
+
+                    auto ymd = str::split(cell, "/");
+                    if (ymd.size() == 3)
+                    {
+                        year = static_cast<uint16_t>(std::stoi(ymd.at(0)));
+                        month = static_cast<uint16_t>(std::stoi(ymd.at(1)));
+                        day = static_cast<uint16_t>(std::stoi(ymd.at(2)));
+                    }
+                }
+                else if (column.starts_with("Time"))
+                {
+                    auto hms = str::split(cell, ":");
+                    if (hms.size() == 3)
+                    {
+                        hour = static_cast<uint16_t>(std::stoi(hms.at(0)));
+                        if (column.ends_with("-JST")) { *hour -= 9; }
+                        minute = static_cast<uint16_t>(std::stoi(hms.at(1)));
+                        second = std::stold(hms.at(2));
+                    }
+                }
+                else if (column == "x-ecef(m)")
+                {
+                    e_pos.x() = std::stod(cell);
+                }
+                else if (column == "y-ecef(m)")
+                {
+                    e_pos.y() = std::stod(cell);
+                }
+                else if (column == "z-ecef(m)")
+                {
+                    e_pos.z() = std::stod(cell);
+                }
+                else if (column == "latitude(deg)")
+                {
+                    lla_pos(0) = deg2rad(std::stod(cell));
+                }
+                else if (column == "longitude(deg)")
+                {
+                    lla_pos(1) = deg2rad(std::stod(cell));
+                }
+                else if (column == "height(m)")
+                {
+                    lla_pos(2) = std::stod(cell);
+                }
+                else if (column == "Q")
+                {
+                    obs->Q = static_cast<uint8_t>(std::stoul(cell));
+                }
+                else if (column == "ns")
+                {
+                    obs->ns = static_cast<uint8_t>(std::stoul(cell));
+                }
+                else if (column == "sdx(m)")
+                {
+                    obs->sdXYZ.x() = std::stod(cell);
+                }
+                else if (column == "sdy(m)")
+                {
+                    obs->sdXYZ.y() = std::stod(cell);
+                }
+                else if (column == "sdz(m)")
+                {
+                    obs->sdXYZ.z() = std::stod(cell);
+                }
+                else if (column == "sdn(m)")
+                {
+                    obs->sdNED(0) = std::stod(cell);
+                }
+                else if (column == "sde(m)")
+                {
+                    obs->sdNED(1) = std::stod(cell);
+                }
+                else if (column == "sdu(m)")
+                {
+                    obs->sdNED(2) = std::stod(cell);
+                }
+                else if (column == "sdxy(m)")
+                {
+                    obs->sdxy = std::stod(cell);
+                }
+                else if (column == "sdyz(m)")
+                {
+                    obs->sdyz = std::stod(cell);
+                }
+                else if (column == "sdzx(m)")
+                {
+                    obs->sdzx = std::stod(cell);
+                }
+                else if (column == "sdne(m)")
+                {
+                    obs->sdne = std::stod(cell);
+                }
+                else if (column == "sdeu(m)")
+                {
+                    obs->sded = std::stod(cell);
+                }
+                else if (column == "sdun(m)")
+                {
+                    obs->sddn = std::stod(cell);
+                }
+                else if (column == "age(s)")
+                {
+                    obs->age = std::stod(cell);
+                }
+                else if (column == "ratio")
+                {
+                    obs->ratio = std::stod(cell);
+                }
+                else if (column == "vn(m/s)")
+                {
+                    n_vel(0) = std::stod(cell);
+                }
+                else if (column == "ve(m/s)")
+                {
+                    n_vel(1) = std::stod(cell);
+                }
+                else if (column == "vu(m/s)")
+                {
+                    n_vel(2) = -std::stod(cell);
+                }
+                else if (column == "vx(m/s)")
+                {
+                    e_vel(0) = std::stod(cell);
+                }
+                else if (column == "vy(m/s)")
+                {
+                    e_vel(1) = std::stod(cell);
+                }
+                else if (column == "vz(m/s)")
+                {
+                    e_vel(2) = std::stod(cell);
+                }
+                else if (column == "sdvn")
+                {
+                    sdvN = std::stod(cell);
+                }
+                else if (column == "sdve")
+                {
+                    sdvE = std::stod(cell);
+                }
+                else if (column == "sdvu")
+                {
+                    sdvD = std::stod(cell);
+                }
+                else if (column == "sdvne")
+                {
+                    obs->sdvne = std::stod(cell);
+                }
+                else if (column == "sdveu")
+                {
+                    obs->sdved = std::stod(cell);
+                }
+                else if (column == "sdvun")
+                {
+                    obs->sdvdn = std::stod(cell);
+                }
+                else if (column == "sdvx")
+                {
+                    sdvX = std::stod(cell);
+                }
+                else if (column == "sdvy")
+                {
+                    sdvY = std::stod(cell);
+                }
+                else if (column == "sdvz")
+                {
+                    sdvZ = std::stod(cell);
+                }
+                else if (column == "sdvxy")
+                {
+                    obs->sdvxy = std::stod(cell);
+                }
+                else if (column == "sdvyz")
+                {
+                    obs->sdvyz = std::stod(cell);
+                }
+                else if (column == "sdvzx")
+                {
+                    obs->sdvzx = std::stod(cell);
+                }
             }
         }
+    }
+    catch (...)
+    {
+        return nullptr;
     }
 
     if (gpsWeek.has_value() && gpsToW.has_value())
@@ -395,18 +447,17 @@ std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData()
                                timeSystem);
     }
 
-    if (!std::isnan(e_pos.x()))
-    {
-        obs->setPosition_e(e_pos);
-    }
-    else if (!std::isnan(lla_pos.x()))
-    {
-        obs->setPosition_lla(lla_pos);
-    }
-    if (!std::isnan(n_vel.x()))
-    {
-        obs->setVelocity_n(n_vel);
-    }
+    if (!e_pos.hasNaN()) { obs->setPosition_e(e_pos); }
+    else if (!lla_pos.hasNaN()) { obs->setPosition_lla(lla_pos); }
+
+    if (!obs->sdXYZ.hasNaN()) { obs->sdNED = trafo::n_Quat_e(obs->latitude(), obs->longitude()) * obs->sdXYZ; }
+    else if (!obs->sdNED.hasNaN()) { obs->sdXYZ = trafo::e_Quat_n(obs->latitude(), obs->longitude()) * obs->sdNED; }
+
+    if (!n_vel.hasNaN()) { obs->setVelocity_n(n_vel); }
+    else if (!e_vel.hasNaN()) { obs->setVelocity_e(e_vel); }
+
+    if (sdvN && sdvE && sdvD) { obs->sdvNED = Eigen::Vector3d(sdvN.value(), sdvE.value(), sdvD.value()); }
+    else if (sdvX && sdvY && sdvZ) { obs->sdvXYZ = Eigen::Vector3d(sdvX.value(), sdvY.value(), sdvZ.value()); }
 
     if (auto currentTime = util::time::GetCurrentInsTime();
         obs->insTime.empty() && !currentTime.empty())
@@ -420,6 +471,28 @@ std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData()
 
 NAV::FileReader::FileType NAV::RtklibPosFile::determineFileType()
 {
+    std::filesystem::path filepath = getFilepath();
+
+    auto filestreamHeader = std::ifstream(filepath);
+    if (!filestreamHeader.good())
+    {
+        return FileReader::FileType::NONE;
+    }
+
+    std::string line;
+    do
+    {
+        if (filestreamHeader.eof())
+        {
+            return FileReader::FileType::NONE;
+        }
+
+        std::getline(filestreamHeader, line);
+        // Remove any starting non text characters
+        line.erase(line.begin(), std::find_if(line.begin(), line.end(),
+                                              [](int ch) { return std::isgraph(ch); }));
+    } while (!line.empty() && line.find("%  ") == std::string::npos);
+
     return FileReader::FileType::ASCII;
 }
 
@@ -469,6 +542,13 @@ void NAV::RtklibPosFile::readHeader()
                 // 2020/08/25 12:02:42.000   XX.XXXXXXXXX    ...
                 _headerColumns.emplace_back("Date-UTC");
                 _headerColumns.emplace_back("Time-UTC");
+            }
+            else if (cell == "JST") // When RTKLIB selected 'hh:mm:ss JST'
+            {
+                // %  JST                   latitude(deg) longitude(deg)  ...
+                // 2020/08/25 21:02:42.000   XX.XXXXXXXXX    ...
+                _headerColumns.emplace_back("Date-JST");
+                _headerColumns.emplace_back("Time-JST");
             }
             else
             {

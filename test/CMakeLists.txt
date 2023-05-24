@@ -31,8 +31,10 @@ target_include_directories(tests PRIVATE src)
 
 target_link_libraries(
   tests
-  PRIVATE project_warnings
-          project_options
+  PRIVATE project_warnings)
+target_link_libraries(
+  tests
+  PRIVATE project_options
           Catch2::Catch2WithMain
           instinct::rc
           fmt::fmt

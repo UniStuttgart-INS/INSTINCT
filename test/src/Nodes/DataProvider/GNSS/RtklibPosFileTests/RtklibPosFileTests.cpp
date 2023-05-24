@@ -26,15 +26,13 @@
 namespace nm = NAV::NodeManager;
 
 #include "RtklibPosObsComparisons.hpp"
-#include "lla/lla_gpst2_111_dd_pos.hpp"
-// #include "lla/lla_gpst2_111_ds_pos.hpp"      // not implemented yet
-#include "lla/lla_gpst_000_dd_pos.hpp"
-#include "lla/lla_utc_111_dd_pos.hpp"
-// #include "lla/lla_jst_111_dd_pos.hpp"        // not implemented yet
-#include "ecef/ecef_gpst2_111_pos.hpp"
-// #include "enu/enu_gpst2_111_dd_pos.hpp"      // missing
-// #include "nmea/nmea_gpst2_111_dd_pos.hpp"    // missing
-// #include "corrupt/corrupt_pos.hpp"           // corrupt test
+#include "lla/lla_gpst2_111_dd.hpp"
+#include "lla/lla_gpst_000_dd.hpp"
+#include "lla/lla_utc_111_dd.hpp"
+#include "ecef/ecef_gpst2_111.hpp"
+// #include "enu/enu_gpst2_111_dd.hpp"      // missing
+// #include "nmea/nmea_gpst2_111_dd.hpp"    // missing
+#include "corrupt/inside_data.hpp"
 
 // This is a small hack, which lets us change private/protected parameters
 #pragma GCC diagnostic push
@@ -96,14 +94,14 @@ void testRtklibPosFileFlow(const std::string& path, const std::vector<RtklibPosO
 
 TEST_CASE("[RtklibPosFile][flow] Read lla/lla_gpst2_111_dd.pos", "[RtklibPosFile][flow]")
 {
-    testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/lla/lla_gpst2_111_dd.pos", lla::lla_gpst2_111_dd_pos);
+    testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/lla/lla_gpst2_111_dd.pos", lla::lla_gpst2_111_dd);
 }
 
 // TODO Lat Long Format [dd mm ss.ss]
 // (not supported since LAT/LONG use three values each, but the Eigen::Vector3d of _lla_position only supports three in total)
 // TEST_CASE("[RtklibPosFile][flow] Read lla/lla_gpst2_111_ds.pos", "[RtklibPosFile][flow]")
 // {
-//     testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/lla/lla_gpst2_111_ds.pos", lla::lla_gpst2_111_ds_pos);
+//     testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/lla/lla_gpst2_111_ds.pos", lla::lla_gpst2_111_dd);
 // }
 
 // ################################################ GPST [ww ssss] ###########################################
@@ -112,7 +110,7 @@ TEST_CASE("[RtklibPosFile][flow] Read lla/lla_gpst2_111_dd.pos", "[RtklibPosFile
 
 TEST_CASE("[RtklibPosFile][flow] Read lla/lla_gpst_000_dd.pos", "[RtklibPosFile][flow]")
 {
-    testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/lla/lla_gpst_000_dd.pos", lla::lla_gpst_000_dd_pos);
+    testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/lla/lla_gpst_000_dd.pos", lla::lla_gpst_000_dd);
 }
 
 // ################################################ UTC [hh:mm:ss] ###########################################
@@ -121,27 +119,27 @@ TEST_CASE("[RtklibPosFile][flow] Read lla/lla_gpst_000_dd.pos", "[RtklibPosFile]
 
 TEST_CASE("[RtklibPosFile][flow] Read lla/lla_utc_111_dd.pos", "[RtklibPosFile][flow]")
 {
-    testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/lla/lla_utc_111_dd.pos", lla::lla_utc_111_dd_pos);
+    testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/lla/lla_utc_111_dd.pos", lla::lla_utc_111_dd);
 }
 
-// ########################################### TODO JST [hh:mm:ss] ###########################################
-// (JST not identifiable by INSTINCT (yet))
+// ################################################ JST [hh:mm:ss] ###########################################
+
 // Lat Long Format [ddd.dddddd]
 
-// TEST_CASE("[RtklibPosFile][flow] Read lla/lla_jst_111_dd.pos", "[RtklibPosFile][flow]")
-// {
-//     testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/lla/lla_jst_111_dd.pos", lla::lla_jst_111_dd_pos);
-// }
+TEST_CASE("[RtklibPosFile][flow] Read lla/lla_jst_111_dd.pos", "[RtklibPosFile][flow]")
+{
+    testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/lla/lla_jst_111_dd.pos", lla::lla_utc_111_dd);
+}
 
 // ###########################################################################################################
-//                                                    TODO  ECEF
+//                                                     ECEF
 // ###########################################################################################################
-// (missing constructor for ECEF, missing sdvXYZ, sdvxy, sdvyz, sdvzx parameter, NOTE: test currently has no _e_velocity set (untested)!)
+
 // Lat Long Format [ddd.dddddd]
 
 TEST_CASE("[RtklibPosFile][flow] Read ecef/ecef_gpst2_111.pos", "[RtklibPosFile][flow]")
 {
-    testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/ecef/ecef_gpst2_111.pos", ecef::ecef_gpst2_111_pos);
+    testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/ecef/ecef_gpst2_111_dd.pos", ecef::ecef_gpst2_111);
 }
 
 // ###########################################################################################################
@@ -158,9 +156,30 @@ TEST_CASE("[RtklibPosFile][flow] Read ecef/ecef_gpst2_111.pos", "[RtklibPosFile]
 //                                                      corrupt
 // ###########################################################################################################
 
-// TEST_CASE("[RtklibPosFile][flow] Read corrupt/corrupt.pos", "[RtklibPosFile][flow]")
-// {
-//     testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/corrupted/corrupted.pos", corrupt::corrupt_pos);
-// }
+TEST_CASE("[RtklibPosFile][flow] Read corrupt/inside_data.pos", "[RtklibPosFile][flow]")
+{
+    testRtklibPosFileFlow("DataProvider/GNSS/RtklibPosFile/corrupt/inside_data.pos", corrupt::inside_data);
+}
+
+TEST_CASE("[RtklibPosFile][flow] Read corrupt/header_missing.pos", "[RtklibPosFile][flow]")
+{
+    auto logger = initializeTestLogger();
+
+    nm::RegisterPreInitCallback([&]() {
+        dynamic_cast<RtklibPosFile*>(nm::FindNode(31))->_path = "DataProvider/GNSS/RtklibPosFile/corrupt/header_missing.pos";
+    });
+
+    // ###########################################################################################################
+    //                                            RtklibPosFile.flow
+    // ###########################################################################################################
+    //
+    // RtklibPosFile (31)                Combiner (28)
+    //    (30) RtklibPosObs |> --(32)--> |> GnssObs (25)
+    //                                   |> <not linked> (26)
+    //
+    // ###########################################################################################################
+
+    REQUIRE(!testFlow("test/flow/Nodes/DataProvider/GNSS/RtklibPosFile.flow"));
+}
 
 } // namespace NAV::TESTS::RtklibPosFileTests

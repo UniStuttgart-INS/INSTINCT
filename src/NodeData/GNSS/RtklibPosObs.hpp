@@ -54,43 +54,54 @@ class RtklibPosObs : public PosVel
     /// @param[in] sdvyz Standard Deviation velocity yz [m/s]
     /// @param[in] sdvzx Standard Deviation velocity zx [m/s]
     RtklibPosObs(const InsTime& insTime,
-                 const Eigen::Vector3d& e_position,
-                 Eigen::Vector3d lla_position,
-                 const Eigen::Vector3d& e_velocity,
-                 const Eigen::Vector3d& n_velocity,
-                 std::optional<uint8_t> Q,
-                 std::optional<uint8_t> ns,
-                 const Eigen::Vector3d& sdXYZ,
-                 const Eigen::Vector3d& sdNED,
-                 double sdxy,
-                 double sdyz,
-                 double sdzx,
-                 double sdne,
-                 double sded,
-                 double sddn,
+                 std::optional<Eigen::Vector3d> e_position,
+                 std::optional<Eigen::Vector3d> lla_position,
+                 std::optional<Eigen::Vector3d> e_velocity,
+                 std::optional<Eigen::Vector3d> n_velocity,
+                 uint8_t Q,
+                 uint8_t ns,
+                 std::optional<Eigen::Vector3d> sdXYZ,
+                 std::optional<Eigen::Vector3d> sdNED,
+                 std::optional<double> sdxy,
+                 std::optional<double> sdyz,
+                 std::optional<double> sdzx,
+                 std::optional<double> sdne,
+                 std::optional<double> sded,
+                 std::optional<double> sddn,
                  double age,
                  double ratio,
-                 const Eigen::Vector3d& sdvNED,
-                 double sdvne,
-                 double sdved,
-                 double sdvdn,
-                 const Eigen::Vector3d& sdvXYZ,
-                 double sdvxy,
-                 double sdvyz,
-                 double sdvzx)
-        : Q(Q), ns(ns), sdXYZ(sdXYZ), sdNED(sdNED), sdxy(sdxy), sdyz(sdyz), sdzx(sdzx), sdne(sdne), sded(sded), sddn(sddn), age(age), ratio(ratio), sdvNED(sdvNED), sdvne(sdvne), sdved(sdved), sdvdn(sdvdn), sdvXYZ(sdvXYZ), sdvxy(sdvxy), sdvyz(sdvyz), sdvzx(sdvzx)
+                 std::optional<Eigen::Vector3d> sdvNED,
+                 std::optional<double> sdvne,
+                 std::optional<double> sdved,
+                 std::optional<double> sdvdn,
+                 std::optional<Eigen::Vector3d> sdvXYZ,
+                 std::optional<double> sdvxy,
+                 std::optional<double> sdvyz,
+                 std::optional<double> sdvzx)
+        : Q(Q), ns(ns), sdxy(sdxy), sdyz(sdyz), sdzx(sdzx), sdne(sdne), sded(sded), sddn(sddn), age(age), ratio(ratio), sdvNED(std::move(sdvNED)), sdvXYZ(std::move(sdvXYZ)), sdvne(sdvne), sdved(sdved), sdvdn(sdvdn), sdvxy(sdvxy), sdvyz(sdvyz), sdvzx(sdvzx)
     {
         this->insTime = insTime;
 
-        if (std::isnan(e_position(0)))
+        if (e_position.has_value()) { this->setPosition_e(e_position.value()); }
+        else if (lla_position.has_value())
         {
-            lla_position.head<2>() = deg2rad(lla_position.head<2>());
-            this->setPosition_lla(lla_position);
+            lla_position->head<2>() = deg2rad(lla_position->head<2>());
+            this->setPosition_lla(lla_position.value());
         }
-        else { this->setPosition_e(e_position); }
 
-        if (std::isnan(e_velocity(0))) { this->setVelocity_n(n_velocity); }
-        else { this->setVelocity_e(e_velocity); }
+        if (e_velocity.has_value()) { this->setVelocity_e(e_velocity.value()); }
+        else if (n_velocity.has_value()) { this->setVelocity_n(n_velocity.value()); }
+
+        if (sdXYZ.has_value())
+        {
+            this->sdXYZ = sdXYZ.value();
+            this->sdNED = trafo::n_Quat_e(latitude(), longitude()) * sdXYZ.value();
+        }
+        else if (sdNED.has_value())
+        {
+            this->sdNED = sdNED.value();
+            this->sdXYZ = trafo::e_Quat_n(latitude(), longitude()) * sdNED.value();
+        }
     }
 #endif
 
@@ -109,47 +120,48 @@ class RtklibPosObs : public PosVel
     }
 
     /// 1:fix, 2:float, 3:sbas, 4:dgps, 5:single, 6:ppp
-    std::optional<uint8_t> Q;
+    uint8_t Q = 0;
     /// Number of satellites
-    std::optional<uint8_t> ns;
+    uint8_t ns = 0;
 
     /// Standard Deviation XYZ [m]
     Eigen::Vector3d sdXYZ{ std::nan(""), std::nan(""), std::nan("") };
     /// Standard Deviation North East Down [m]
     Eigen::Vector3d sdNED{ std::nan(""), std::nan(""), std::nan("") };
     /// Standard Deviation xy [m]
-    double sdxy = std::nan("");
+    std::optional<double> sdxy;
     /// Standard Deviation yz [m]
-    double sdyz = std::nan("");
+    std::optional<double> sdyz;
     /// Standard Deviation zx [m]
-    double sdzx = std::nan("");
+    std::optional<double> sdzx;
     /// Standard Deviation ne [m]
-    double sdne = std::nan("");
+    std::optional<double> sdne;
     /// Standard Deviation ed [m]
-    double sded = std::nan("");
+    std::optional<double> sded;
     /// Standard Deviation dn [m]
-    double sddn = std::nan("");
+    std::optional<double> sddn;
+
     /// Age [s]
     double age = std::nan("");
     /// Ratio
     double ratio = std::nan("");
-    /// Standard Deviation velocity NED [m/s]
-    Eigen::Vector3d sdvNED{ std::nan(""), std::nan(""), std::nan("") };
-    /// Standard Deviation velocity north-east [m/s]
-    double sdvne = std::nan("");
-    /// Standard Deviation velocity east-down [m/s]
-    double sdved = std::nan("");
-    /// Standard Deviation velocity down-north [m/s]
-    double sdvdn = std::nan("");
 
+    /// Standard Deviation velocity NED [m/s]
+    std::optional<Eigen::Vector3d> sdvNED;
     /// Standard Deviation velocity XYZ [m/s]
-    Eigen::Vector3d sdvXYZ{ std::nan(""), std::nan(""), std::nan("") };
+    std::optional<Eigen::Vector3d> sdvXYZ;
+    /// Standard Deviation velocity north-east [m/s]
+    std::optional<double> sdvne;
+    /// Standard Deviation velocity east-down [m/s]
+    std::optional<double> sdved;
+    /// Standard Deviation velocity down-north [m/s]
+    std::optional<double> sdvdn;
     /// Standard Deviation velocity xy [m/s]
-    double sdvxy = std::nan("");
+    std::optional<double> sdvxy;
     /// Standard Deviation velocity yz [m/s]
-    double sdvyz = std::nan("");
+    std::optional<double> sdvyz;
     /// Standard Deviation velocity zx [m/s]
-    double sdvzx = std::nan("");
+    std::optional<double> sdvzx;
 };
 
 } // namespace NAV

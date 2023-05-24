@@ -37,65 +37,39 @@ inline bool operator==(const RtklibPosObs& lhs, const RtklibPosObs& rhs)
     REQUIRE(lhs._e_position == rhs._e_position);
     REQUIRE(lhs._lla_position == rhs._lla_position);
 
-    if (std::isnan(lhs._e_velocity[0]) == true) { REQUIRE(std::isnan(rhs._e_velocity[0])); }
+    if (std::isnan(lhs._e_velocity[0])) { REQUIRE(std::isnan(rhs._e_velocity[0])); }
     else { REQUIRE(lhs._e_velocity == rhs._e_velocity); };
 
-    if (std::isnan(lhs._n_velocity[0]) == true) { REQUIRE(std::isnan(rhs._n_velocity[0])); }
+    if (std::isnan(lhs._n_velocity[0])) { REQUIRE(std::isnan(rhs._n_velocity[0])); }
     else { REQUIRE(lhs._n_velocity == rhs._n_velocity); };
 
     REQUIRE(lhs.Q == rhs.Q);
     REQUIRE(lhs.ns == rhs.ns);
 
-    if (std::isnan(lhs.sdXYZ[0]) == true) { REQUIRE(std::isnan(rhs.sdXYZ[0])); }
-    else { REQUIRE(lhs.sdXYZ == rhs.sdXYZ); };
-
+    REQUIRE(lhs.sdXYZ == rhs.sdXYZ);
     REQUIRE(lhs.sdNED == rhs.sdNED);
 
-    if (std::isnan(lhs.sdxy)) { REQUIRE(std::isnan(rhs.sdxy)); }
-    else { REQUIRE(lhs.sdxy == rhs.sdxy); };
-
-    if (std::isnan(lhs.sdyz)) { REQUIRE(std::isnan(rhs.sdyz)); }
-    else { REQUIRE(lhs.sdyz == rhs.sdyz); };
-
-    if (std::isnan(lhs.sdzx)) { REQUIRE(std::isnan(rhs.sdzx)); }
-    else { REQUIRE(lhs.sdzx == rhs.sdzx); };
-
-    if (std::isnan(lhs.sdne)) { REQUIRE(std::isnan(rhs.sdne)); }
-    else { REQUIRE(lhs.sdne == rhs.sdne); };
-
-    if (std::isnan(lhs.sded)) { REQUIRE(std::isnan(rhs.sded)); }
-    else { REQUIRE(lhs.sded == rhs.sded); };
-
-    if (std::isnan(lhs.sddn)) { REQUIRE(std::isnan(rhs.sddn)); }
-    else { REQUIRE(lhs.sddn == rhs.sddn); };
+    REQUIRE(lhs.sdxy == rhs.sdxy);
+    REQUIRE(lhs.sdyz == rhs.sdyz);
+    REQUIRE(lhs.sdzx == rhs.sdzx);
+    REQUIRE(lhs.sdne == rhs.sdne);
+    REQUIRE(lhs.sded == rhs.sded);
+    REQUIRE(lhs.sddn == rhs.sddn);
 
     REQUIRE(lhs.age == rhs.age);
     REQUIRE(lhs.ratio == rhs.ratio);
 
-    if (std::isnan(lhs.sdvNED[0])) { REQUIRE(std::isnan(rhs.sdvNED[0])); }
-    else { REQUIRE(lhs.sdvNED == rhs.sdvNED); };
+    REQUIRE(lhs.sdvNED == rhs.sdvNED);
+    REQUIRE(lhs.sdvXYZ == rhs.sdvXYZ);
 
-    if (std::isnan(lhs.sdvne)) { REQUIRE(std::isnan(rhs.sdvne)); }
-    else { REQUIRE(lhs.sdvne == rhs.sdvne); };
+    REQUIRE(lhs.sdvne == rhs.sdvne);
+    REQUIRE(lhs.sdved == rhs.sdved);
+    REQUIRE(lhs.sdvdn == rhs.sdvdn);
 
-    if (std::isnan(lhs.sdved)) { REQUIRE(std::isnan(rhs.sdved)); }
-    else { REQUIRE(lhs.sdved == rhs.sdved); };
+    REQUIRE(lhs.sdvxy == rhs.sdvxy);
+    REQUIRE(lhs.sdvyz == rhs.sdvyz);
+    REQUIRE(lhs.sdvzx == rhs.sdvzx);
 
-    if (std::isnan(lhs.sdvdn)) { REQUIRE(std::isnan(rhs.sdvdn)); }
-    else { REQUIRE(lhs.sdvdn == rhs.sdvdn); };
-    return true;
-
-    if (std::isnan(lhs.sdvXYZ[0])) { REQUIRE(std::isnan(rhs.sdvXYZ[0])); }
-    else { REQUIRE(lhs.sdvXYZ == rhs.sdvXYZ); };
-
-    if (std::isnan(lhs.sdvxy)) { REQUIRE(std::isnan(rhs.sdvxy)); }
-    else { REQUIRE(lhs.sdvxy == rhs.sdvxy); };
-
-    if (std::isnan(lhs.sdvyz)) { REQUIRE(std::isnan(rhs.sdvyz)); }
-    else { REQUIRE(lhs.sdvyz == rhs.sdvyz); };
-
-    if (std::isnan(lhs.sdvzx)) { REQUIRE(std::isnan(rhs.sdvzx)); }
-    else { REQUIRE(lhs.sdvzx == rhs.sdvzx); };
     return true;
 }
 
