@@ -233,20 +233,6 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
                 revertButton(style.DigitalBitGap, NodeEditorApplication::imPlotReferenceStyle.DigitalBitGap, "DigitalBitGap");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                float indent = ImGui::CalcItemWidth() - ImGui::GetFrameHeight();
-                ImGui::Indent(ImGui::CalcItemWidth() - ImGui::GetFrameHeight());
-                if (ImGui::Checkbox("AntiAliasedLines", &style.AntiAliasedLines))
-                {
-                    if (saveConfigInFlow)
-                    {
-                        flow::ApplyChanges();
-                    }
-                }
-                ImGui::Unindent(indent);
-                revertButton(style.AntiAliasedLines, NodeEditorApplication::imPlotReferenceStyle.AntiAliasedLines, "AntiAliasedLines");
-
-                ImGui::TableNextRow();
-                ImGui::TableNextColumn();
                 ImGui::Text("Plot Styling");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
