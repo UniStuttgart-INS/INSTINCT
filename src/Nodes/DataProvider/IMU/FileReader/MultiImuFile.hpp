@@ -95,6 +95,8 @@ class MultiImuFile : public Node, public FileReader
 
     /// @brief Container for individual sensor orientations of a Multi-IMU
     std::vector<ImuPos> _imuPosAll;
+
+    InsTime _lastFiltObs{};
 };
 
 } // namespace NAV

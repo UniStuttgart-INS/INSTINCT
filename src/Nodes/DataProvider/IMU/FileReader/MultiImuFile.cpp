@@ -225,6 +225,8 @@ bool NAV::MultiImuFile::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+    _lastFiltObs.reset();
+
     return FileReader::initialize();
 }
 
@@ -239,6 +241,15 @@ bool NAV::MultiImuFile::resetNode()
 {
     FileReader::resetReader();
 
+    for (auto& sensor : _messages)
+    {
+        sensor.clear();
+    }
+    for (auto& cnt : _messageCnt)
+    {
+        cnt = 0;
+    }
+
     return true;
 }
 
@@ -248,6 +259,9 @@ void NAV::MultiImuFile::updateNumberOfOutputPins()
     {
         nm::CreateOutputPin(this, fmt::format("ImuObs {}", outputPins.size() + 1).c_str(), Pin::Type::Flow, { NAV::ImuObs::type() }, &MultiImuFile::pollData);
         _imuPosAll.resize(_nSensors);
+
+        _messages.resize(_nSensors);
+        _messageCnt.resize(_nSensors);
     }
 }
 
@@ -273,6 +287,7 @@ void NAV::MultiImuFile::readHeader()
     bool gpggaFound = false;
     std::string line;
     const char* gpgga = "GPGGA";
+    auto len = tellg();
 
     // Find first line of data
     while (getline(line))
@@ -283,136 +298,179 @@ void NAV::MultiImuFile::readHeader()
         if (line.find(gpgga) != std::string::npos)
         {
             gpggaFound = true;
+            len = tellg();
             continue;
         }
         if ((std::find_if(line.begin(), line.begin() + 1, [](int ch) { return std::isdigit(ch); }) != (std::begin(line) + 1)) && gpggaFound)
         {
             LOG_DEBUG("{}: Found first line of data: {}", nameId(), line);
+            seekg(len, std::ios_base::beg); // Reser the read cursor, otherwise we skip the first message
             break;
         }
+        len = tellg();
     }
 }
 
-std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(size_t pinIdx, bool peek)
 {
-    // Read line
-    std::string line;
-    // Get current position
-    auto len = tellg();
-    getline(line);
-    if (peek)
+    std::shared_ptr<ImuObs> obs = nullptr;
+
+    if (!_messages.at(pinIdx).empty()) // Another pin was reading a message for this pin
     {
-        // Return to position before "Read line".
-        seekg(len, std::ios_base::beg);
-    }
-    // Remove any starting non text characters
-    line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
-
-    if (line.empty())
-    {
-        return nullptr;
-    }
-
-    // Convert line into stream
-    std::stringstream lineStream(line);
-    std::string cell;
-
-    size_t sensorId{};
-    double gpsSecond{};
-    double timeNumerator{};
-    double timeDenominator{};
-    std::optional<double> accelX;
-    std::optional<double> accelY;
-    std::optional<double> accelZ;
-    std::optional<double> gyroX;
-    std::optional<double> gyroY;
-    std::optional<double> gyroZ;
-
-    // Split line at comma
-    for (const auto& col : _columns)
-    {
-        if (std::getline(lineStream, cell, ' '))
+        obs = _messages.at(pinIdx).begin()->second;
+        if (!peek) // When peeking, we leave the message in the buffer, so we can remove it when polling
         {
-            // Remove any trailing non text characters
-            cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
-            while (cell.empty())
+            _messages.at(pinIdx).erase(_messages.at(pinIdx).begin());
+        }
+    }
+    else
+    {
+        // Read line
+        std::string line;
+        while (getline(line))
+        {
+            // Remove any starting non text characters
+            line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
+
+            if (line.empty())
             {
-                std::getline(lineStream, cell, ' ');
+                continue;
             }
 
-            if (col == "sensorId")
+            // Convert line into stream
+            std::stringstream lineStream(line);
+            std::string cell;
+
+            size_t sensorId{};
+            double gpsSecond{};
+            double timeNumerator{};
+            double timeDenominator{};
+            std::optional<double> accelX;
+            std::optional<double> accelY;
+            std::optional<double> accelZ;
+            std::optional<double> gyroX;
+            std::optional<double> gyroY;
+            std::optional<double> gyroZ;
+
+            // Split line at comma
+            for (const auto& col : _columns)
             {
-                sensorId = std::stoul(cell); // NOLINT(clang-diagnostic-implicit-int-conversion)
-            }
-            if (col == "gpsSecond")
-            {
-                gpsSecond = std::stod(cell); // [s]
-                // Start time axis from first timestamp onwards
-                if (_startTime == 0)
+                if (std::getline(lineStream, cell, ' '))
                 {
-                    _startTime = gpsSecond;
+                    // Remove any trailing non text characters
+                    cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
+                    while (cell.empty())
+                    {
+                        std::getline(lineStream, cell, ' ');
+                    }
+
+                    if (col == "sensorId")
+                    {
+                        sensorId = std::stoul(cell); // NOLINT(clang-diagnostic-implicit-int-conversion)
+                    }
+                    else if (col == "gpsSecond")
+                    {
+                        gpsSecond = std::stod(cell); // [s]
+                        // Start time axis from first timestamp onwards
+                        if (_startTime == 0)
+                        {
+                            _startTime = gpsSecond;
+                        }
+                    }
+                    else if (col == "timeNumerator")
+                    {
+                        timeNumerator = std::stod(cell);
+                    }
+                    else if (col == "timeDenominator")
+                    {
+                        timeDenominator = std::stod(cell);
+                    }
+                    else if (col == "accelX")
+                    {
+                        accelX = 0.001 * std::stod(cell); // [m/s²]
+                    }
+                    else if (col == "accelY")
+                    {
+                        accelY = 0.001 * std::stod(cell); // [m/s²]
+                    }
+                    else if (col == "accelZ")
+                    {
+                        accelZ = 0.001 * std::stod(cell); // [m/s²]
+                    }
+                    else if (col == "gyroX")
+                    {
+                        gyroX = deg2rad(std::stod(cell) / 131); // [deg/s]
+                    }
+                    else if (col == "gyroY")
+                    {
+                        gyroY = deg2rad(std::stod(cell)) / 131; // [deg/s]
+                    }
+                    else if (col == "gyroZ")
+                    {
+                        gyroZ = deg2rad(std::stod(cell)) / 131; // [deg/s]
+                    }
                 }
             }
-            if (col == "timeNumerator")
+
+            // auto timeStamp = gpsSecond + timeNumerator / timeDenominator - _startTime;
+            // if (!peek)
+            // {
+            //     LOG_DEBUG("line: {}", line);
+            //     LOG_DEBUG("timeStamp: {}", timeStamp);
+            // }
+
+            obs = std::make_shared<ImuObs>(_imuPosAll[sensorId - 1]);
+
+            // TODO: re-configure Multi-IMU-Recv to provide GpsWeek and GpsTow, OR make GUI inputs
+            obs->insTime = InsTime(0, 2263, 3. * 86400. + gpsSecond + timeNumerator / timeDenominator, UTC); // 2023-05-24 (MIMU-TCKF-ENC-flights)
+            // obs->insTime = InsTime(0, 2262, 4. * 86400. + gpsSecond + timeNumerator / timeDenominator, UTC); // 2023-05-18 test on roof
+            // obs->insTime = InsTime(0, 0, 0, 0, 0, timeStamp);
+
+            if (accelX.has_value() && accelY.has_value() && accelZ.has_value())
             {
-                timeNumerator = std::stod(cell);
+                obs->accelUncompXYZ.emplace(accelX.value(), accelY.value(), accelZ.value());
             }
-            if (col == "timeDenominator")
+            if (gyroX.has_value() && gyroY.has_value() && gyroZ.has_value())
             {
-                timeDenominator = std::stod(cell);
+                obs->gyroUncompXYZ.emplace(gyroX.value(), gyroY.value(), gyroZ.value());
             }
-            if (col == "accelX")
+
+            if (sensorId - 1 != pinIdx)
             {
-                accelX = 0.001 * std::stod(cell); // [m/s²]
+                // Write message into buffer to process later on correct pin
+                _messages.at(sensorId - 1).insert(std::make_pair(obs->insTime, obs));
+
+                continue; // Read next line in file and search for correct sensor
             }
-            if (col == "accelY")
+            if (peek)
             {
-                accelY = 0.001 * std::stod(cell); // [m/s²]
+                // Write message into buffer to process later in poll step
+                _messages.at(pinIdx).insert(std::make_pair(obs->insTime, obs));
             }
-            if (col == "accelZ")
-            {
-                accelZ = 0.001 * std::stod(cell); // [m/s²]
-            }
-            if (col == "gyroX")
-            {
-                gyroX = deg2rad(std::stod(cell) / 131); // [deg/s]
-            }
-            if (col == "gyroY")
-            {
-                gyroY = deg2rad(std::stod(cell)) / 131; // [deg/s]
-            }
-            if (col == "gyroZ")
-            {
-                gyroZ = deg2rad(std::stod(cell)) / 131; // [deg/s]
-            }
+            break;
         }
     }
 
-    auto timeStamp = gpsSecond + timeNumerator / timeDenominator - _startTime;
-    // if (!peek)
-    // {
-    //     LOG_DEBUG("line: {}", line);
-    //     LOG_DEBUG("timeStamp: {}", timeStamp);
-    // }
-
-    auto obs = std::make_shared<ImuObs>(_imuPosAll[sensorId - 1]);
-
-    obs->insTime = InsTime(0, 0, 0, 0, 0, timeStamp);
-
-    if (accelX.has_value() && accelY.has_value() && accelZ.has_value())
-    {
-        obs->accelUncompXYZ.emplace(accelX.value(), accelY.value(), accelZ.value());
-    }
-    if (gyroX.has_value() && gyroY.has_value() && gyroZ.has_value())
-    {
-        obs->gyroUncompXYZ.emplace(gyroX.value(), gyroY.value(), gyroZ.value());
-    }
-
     // Calls all the callbacks
-    if (!peek)
+    if (obs && !peek)
     {
-        invokeCallbacks(sensorId - 1, obs);
-    }
+        _messageCnt.at(pinIdx)++;
 
+        // Detect jumps back in time
+        if (pinIdx == 2)
+        {
+            if (obs->insTime < _lastFiltObs)
+            {
+                LOG_ERROR("{}: obs->insTime < _lastFiltObs --> {}", nameId(), (obs->insTime - _lastFiltObs).count());
+            }
+            _lastFiltObs = obs->insTime;
+        }
+
+        invokeCallbacks(pinIdx, obs);
+    }
+    if (obs == nullptr)
+    {
+        LOG_DEBUG("{}: Finished reading on pinIdx {}. Read a total of {} messages.", nameId(), pinIdx, _messageCnt.at(pinIdx));
+    }
     return obs;
 }

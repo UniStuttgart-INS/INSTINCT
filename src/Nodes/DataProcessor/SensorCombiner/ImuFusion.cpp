@@ -761,6 +761,7 @@ bool NAV::ImuFusion::initialize()
     _measurementNoiseVariances.clear();
     _cumulatedImuObs.clear();
     _imuPosSet = false;
+    _lastFiltObs.reset();
 
     _latestTimestamp = InsTime{};
 
@@ -1020,12 +1021,13 @@ void NAV::ImuFusion::recvSignal(NAV::InputPin::NodeDataQueue& queue, size_t pinI
     auto DCM_gyro = _imuRotations_gyro.at(pinIdx);
     LOG_DATA("{}: DCM_gyro =\n{}", nameId(), DCM_gyro);
 
+    // FIXME: Data is already rotated into body-frame through design matrix!
     // Initialize '_imuPos' of the combined solution - that of the reference sensor
-    if (!_imuPosSet && pinIdx == 0)
-    {
-        this->_imuPos = imuObs->imuPos;
-        _imuPosSet = true;
-    }
+    // if (!_imuPosSet && pinIdx == 0)
+    // {
+    //     this->_imuPos = imuObs->imuPos;
+    //     _imuPosSet = true;
+    // }
 
     _kalmanFilter.H = designMatrix_H(DCM_accel, DCM_gyro, pinIdx);
     LOG_DATA("{}: kalmanFilter.H =\n{}", nameId(), _kalmanFilter.H);
@@ -1110,6 +1112,13 @@ void NAV::ImuFusion::combineSignals(const std::shared_ptr<const ImuObs>& imuObs)
     imuObsFiltered->insTime = imuObs->insTime;
     imuObsFiltered->accelUncompXYZ.emplace(_kalmanFilter.x(6, 0), _kalmanFilter.x(7, 0), _kalmanFilter.x(8, 0));
     imuObsFiltered->gyroUncompXYZ.emplace(_kalmanFilter.x(0, 0), _kalmanFilter.x(1, 0), _kalmanFilter.x(2, 0));
+
+    // Detect jumps back in time
+    if (imuObsFiltered->insTime < _lastFiltObs)
+    {
+        LOG_ERROR("{}: imuObsFiltered->insTime < _lastFiltObs --> {}", nameId(), (imuObsFiltered->insTime - _lastFiltObs).count());
+    }
+    _lastFiltObs = imuObsFiltered->insTime;
 
     invokeCallbacks(OUTPUT_PORT_INDEX_COMBINED_SIGNAL, imuObsFiltered);
 

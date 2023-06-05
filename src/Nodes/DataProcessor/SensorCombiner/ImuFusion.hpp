@@ -202,6 +202,10 @@ class ImuFusion : public Imu
         AccelerationVarianceUnit measurementUncertaintyAccelerationUnit = AccelerationVarianceUnit::m_s2;
     };
 
+  protected:
+    /// Position and rotation information for conversion from platform to body frame
+    ImuPos _imuPos;
+
   private:
     constexpr static size_t OUTPUT_PORT_INDEX_COMBINED_SIGNAL = 0; ///< @brief Flow (ImuObs)
     constexpr static size_t OUTPUT_PORT_INDEX_BIASES = 1;          ///< @brief Flow (ImuBiases)
@@ -279,6 +283,8 @@ class ImuFusion : public Imu
                                                                            const Eigen::VectorXd& e,
                                                                            const Eigen::MatrixXd& H,
                                                                            const Eigen::MatrixXd& P);
+
+    InsTime _lastFiltObs{};
 
     /// @brief Calculates the initial measurement noise matrix R
     /// @param[in] R Measurement noise uncertainty matrix for sensor at 'pinIndex'
