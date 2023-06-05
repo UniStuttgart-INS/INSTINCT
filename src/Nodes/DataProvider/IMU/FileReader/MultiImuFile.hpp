@@ -80,12 +80,22 @@ class MultiImuFile : public Node, public FileReader
     void readHeader() override;
 
     /// @brief Polls data from the file
+    /// @param[in] pinIdx Index of the pin the data is requested on
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
     /// @return The read observation
-    [[nodiscard]] std::shared_ptr<const NodeData> pollData(bool peek = false);
+    [[nodiscard]] std::shared_ptr<const NodeData> pollData(size_t pinIdx, bool peek);
 
     /// Number of connected sensors
     size_t _nSensors = 5;
+
+    /// @brief Read messages.
+    /// Vector idx: Sensor Id,
+    /// - Map Key: InsTime
+    /// - Map Value: IMU Observation
+    std::vector<std::map<InsTime, std::shared_ptr<ImuObs>>> _messages;
+
+    /// @brief Counter for messages
+    std::vector<size_t> _messageCnt;
 
     /// @brief First 'gpsSecond', s.t. measurements start at time = 0
     double _startTime{};
@@ -96,6 +106,7 @@ class MultiImuFile : public Node, public FileReader
     /// @brief Container for individual sensor orientations of a Multi-IMU
     std::vector<ImuPos> _imuPosAll;
 
+    /// @brief Previous observation (for timestamp)
     InsTime _lastFiltObs{};
 };
 

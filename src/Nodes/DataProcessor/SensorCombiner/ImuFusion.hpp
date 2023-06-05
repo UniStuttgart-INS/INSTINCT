@@ -284,6 +284,7 @@ class ImuFusion : public Imu
                                                                            const Eigen::MatrixXd& H,
                                                                            const Eigen::MatrixXd& P);
 
+    /// @brief Previous observation (for timestamp)
     InsTime _lastFiltObs{};
 
     /// @brief Calculates the initial measurement noise matrix R

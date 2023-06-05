@@ -696,10 +696,11 @@ void NAV::Node::workerThread(Node* node)
                 // Post-processing (FileReader/Simulator)
                 if (node->_mode == Node::Mode::POST_PROCESSING && !node->pollEvents.empty())
                 {
-                    std::multimap<InsTime, OutputPin*>::iterator it;
+                    std::multimap<InsTime, std::pair<OutputPin*, size_t>>::iterator it;
                     while (it = node->pollEvents.begin(), it != node->pollEvents.end() && node->isInitialized() && node->callbacksEnabled)
                     {
-                        OutputPin* outputPin = it->second;
+                        OutputPin* outputPin = it->second.first;
+                        size_t outputPinIdx = it->second.second;
                         Node* node = outputPin->parentNode;
 
                         if (std::holds_alternative<OutputPin::PollDataFunc>(outputPin->data))
@@ -724,23 +725,23 @@ void NAV::Node::workerThread(Node* node)
                                 {
                                     LOG_DATA("{}: Polling data from output pin '{}'", node->nameId(), str::replaceAll_copy(outputPin->name, "\n", ""));
                                     // Trigger the already peeked observation and invoke it's callbacks (peek = false)
-                                    if ((node->**callback)(false) == nullptr)
+                                    if ((node->**callback)(outputPinIdx, false) == nullptr)
                                     {
                                         LOG_ERROR("{}: {} could not poll its observation despite being able to peek it.", node->nameId(), outputPin->name);
                                     }
                                 }
 
                                 // Check if data available (peek = true)
-                                if (auto obs = (node->**callback)(true))
+                                if (auto obs = (node->**callback)(outputPinIdx, true))
                                 {
                                     // Check if data has a time
                                     if (!obs->insTime.empty())
                                     {
-                                        node->pollEvents.insert(std::make_pair(obs->insTime, outputPin));
+                                        node->pollEvents.insert(std::make_pair(obs->insTime, std::make_pair(outputPin, outputPinIdx)));
                                     }
                                     else // If no time, call the object and remove it
                                     {
-                                        (node->**callback)(false);
+                                        (node->**callback)(outputPinIdx, false);
                                         continue; // Do not erase the iterator, because this pin needs to be called again
                                     }
                                 }

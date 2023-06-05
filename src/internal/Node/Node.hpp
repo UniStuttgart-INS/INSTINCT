@@ -386,7 +386,7 @@ class Node
     bool callbacksEnabled = false;
 
     /// Map with callback events (sorted by time)
-    std::multimap<InsTime, OutputPin*> pollEvents;
+    std::multimap<InsTime, std::pair<OutputPin*, size_t>> pollEvents;
 
   protected:
     /// The Default Window size for new config windows.
