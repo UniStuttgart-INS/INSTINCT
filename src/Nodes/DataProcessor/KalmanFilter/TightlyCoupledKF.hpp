@@ -270,14 +270,14 @@ class TightlyCoupledKF : public Node
     /// Possible Units for the Standard deviation of the receiver clock frequency drift
     enum class StdevClockFreqUnits
     {
-        m_s2_sqrtHz, ///< [m / s^2 / √(Hz)]
+        m_s_sqrtHz, ///< [m / s / √(Hz)]
     };
     /// Gui selection for the Unit of the input stdev_cf parameter
-    StdevClockFreqUnits _stdevClockFreqUnits = StdevClockFreqUnits::m_s2_sqrtHz;
+    StdevClockFreqUnits _stdevClockFreqUnits = StdevClockFreqUnits::m_s_sqrtHz;
 
     /// @brief 𝜎_cf Standard deviation of the receiver clock frequency drift
     /// @note See Brown (2012) table 9.2
-    double _stdev_cf = 5 /* [m / s^2 / √(Hz)] */;
+    double _stdev_cf = 5 /* [m / s / √(Hz)] */;
 
     // ###########################################################################################################
 

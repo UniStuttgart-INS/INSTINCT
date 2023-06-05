@@ -507,7 +507,7 @@ void NAV::TightlyCoupledKF::guiConfig()
 
             auto* _stdev_cfPointer = &_stdev_cf;
             if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the receiver\nclock frequency drift (IRW)##{}", size_t(id)).c_str(),
-                                                  configWidth, unitWidth, _stdev_cfPointer, reinterpret_cast<int*>(&_stdevClockFreqUnits), "m/s^2/√(Hz)\0\0",
+                                                  configWidth, unitWidth, _stdev_cfPointer, reinterpret_cast<int*>(&_stdevClockFreqUnits), "m/s/√(Hz)\0\0",
                                                   0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: stdev_cf changed to {}", nameId(), _stdev_cf);
@@ -1002,6 +1002,14 @@ bool NAV::TightlyCoupledKF::initialize()
     _accumulatedAccelBiases.setZero();
     _accumulatedGyroBiases.setZero();
 
+    // Hardware: bias inits from static test (15 hrs) // FIXME: Make GUI inputs, with this as defaults?
+    _accumulatedAccelBiases(0, 0) = 0.34;  // Accel X bias
+    _accumulatedAccelBiases(1, 0) = -0.11; // Accel Y bias
+    _accumulatedAccelBiases(2, 0) = 2.43;  // Accel Z bias
+    _accumulatedGyroBiases(0, 0) = -0.062; // Gyro X bias
+    _accumulatedGyroBiases(1, 0) = 0.021;  // Gyro Y bias
+    _accumulatedGyroBiases(2, 0) = -0.03;  // Gyro Z bias
+
     // Initial Covariance of the attitude angles in [rad²]
     Eigen::Vector3d variance_angles = Eigen::Vector3d::Zero();
     if (_initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::rad2)
@@ -1275,7 +1283,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
     double sigma2_cf{};
     switch (_stdevClockFreqUnits)
     {
-    case StdevClockFreqUnits::m_s2_sqrtHz: // [m / s^2 / √(Hz)]
+    case StdevClockFreqUnits::m_s_sqrtHz: // [m / s^2 / √(Hz)]
         sigma2_cf = std::pow(_stdev_cf, 2);
         break;
     }
