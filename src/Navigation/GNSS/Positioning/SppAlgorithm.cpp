@@ -1,5 +1,6 @@
 #include "SppAlgorithm.hpp"
 
+#include "Navigation/GNSS/Errors.hpp"
 #include "Navigation/GNSS/Functions.hpp"
 #include "Navigation/GNSS/Satellite/Ephemeris/GLONASSEphemeris.hpp"
 #include "Navigation/Math/LeastSquares.hpp"
@@ -353,41 +354,16 @@ std::shared_ptr<const SppSolution> calcSppSolution(SppState state,
             {
                 // Weight matrix - RTKLIB eq. E6.23, p. 158
 
-                constexpr double ERR_BRDCI = 0.5;  // Broadcast iono model error factor (See GPS ICD ch. 20.3.3.5.2.5, p. 130: 50% reduction on RMS error)
-                constexpr double ERR_SAAS = 0.3;   // Saastamoinen model error std [m] (maximum zenith wet delay - formulas with worst possible values)
-                constexpr double ERR_CBIAS = 0.3;  // Code bias error Std (m)
-                constexpr double EFACT_GPS = 1.0;  // Satellite system error factor GPS/GAL/QZS/BeiDou
-                constexpr double EFACT_GLO = 1.5;  // Satellite system error factor GLONASS/IRNSS
-                constexpr double EFACT_SBAS = 3.0; // Satellite system error factor SBAS
-
-                double satSysErrFactor = satId.satSys & (GLO | IRNSS)
-                                             ? EFACT_GLO
-                                             : (satId.satSys == SBAS
-                                                    ? EFACT_SBAS
-                                                    : EFACT_GPS);
-                double ele = std::max(calc.satElevation, deg2rad(5));
-
-                // Code/Carrier-Phase Error Ratio - Measurement error standard deviation
-                std::unordered_map<Frequency, double> codeCarrierPhaseErrorRatio = { { G01, 300.0 },
-                                                                                     { G02, 300.0 },
-                                                                                     { G05, 300.0 } };
-                double carrierPhaseErrorA = 0.003; // Carrier-Phase Error Factor a [m] - Measurement error standard deviation
-                double carrierPhaseErrorB = 0.003; // Carrier-Phase Error Factor b [m] - Measurement error standard deviation
-
-                double varPsrMeas = std::pow(satSysErrFactor, 2) * std::pow(codeCarrierPhaseErrorRatio.at(G01), 2)
-                                    * (std::pow(carrierPhaseErrorA, 2) + std::pow(carrierPhaseErrorB, 2) / std::sin(ele));
+                double varPsrMeas = psrMeasErrorVar(obsData.satSigId.toSatId().satSys, obsData.satSigId.freq, calc.satElevation);
                 LOG_DATA("    [{}]     varPsrMeas {}", o, varPsrMeas);
-
                 double varEph = calc.satNavData->calcSatellitePositionVariance();
                 LOG_DATA("    [{}]     varEph {}", o, varEph);
-                double varIono = ratioFreqSquared(obsData.satSigId.freq.getL1(), obsData.satSigId.freq, freqNum, freqNum)
-                                 * std::pow(dpsr_I * ERR_BRDCI, 2);
+                double varIono = ionoErrorVar(dpsr_I, obsData.satSigId.freq, freqNum);
                 LOG_DATA("    [{}]     varIono {}", o, varIono);
-                double varTrop = dpsr_T == 0.0 ? 0.0 : std::pow(ERR_SAAS / (std::sin(calc.satElevation) + 0.1), 2);
+                double varTrop = tropoErrorVar(dpsr_T, calc.satElevation);
                 LOG_DATA("    [{}]     varTrop {}", o, varTrop);
-                double varBias = std::pow(ERR_CBIAS, 2);
+                double varBias = codeBiasErrorVar();
                 LOG_DATA("    [{}]     varBias {}", o, varBias);
-
                 double varErrors = varPsrMeas + varEph + varIono + varTrop + varBias;
                 LOG_DATA("    [{}]     varErrors {}", o, varErrors);
 
@@ -432,14 +408,10 @@ std::shared_ptr<const SppSolution> calcSppSolution(SppState state,
                 {
                     // Weight matrix
 
-                    double dopplerFrequency = 1; // Doppler Frequency error factor [Hz] - Measurement error standard deviation
-
-                    double varDopMeas = std::pow(dopplerFrequency, 2);
+                    double varDopMeas = dopplerErrorVar();
                     LOG_DATA("    [{}]     varDopMeas {}", o, varDopMeas);
-
                     double varEph = calc.satNavData->calcSatellitePositionVariance();
                     LOG_DATA("    [{}]     varEph {}", o, varEph);
-
                     double varErrors = varDopMeas + varEph;
                     LOG_DATA("    [{}]     varErrors {}", o, varErrors);
 

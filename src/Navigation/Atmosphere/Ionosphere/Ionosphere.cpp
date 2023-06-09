@@ -15,6 +15,8 @@
 
 #include "Models/Klobuchar.hpp"
 
+#include "Navigation/GNSS/Functions.hpp"
+
 namespace NAV
 {
 
@@ -66,6 +68,14 @@ double calcIonosphericTimeDelay(double tow, Frequency freq,
     }
 
     return 0.0;
+}
+
+double ionoErrorVar(double dpsr_I, Frequency freq, int8_t num)
+{
+    constexpr double ERR_BRDCI = 0.5; // Broadcast iono model error factor (See GPS ICD ch. 20.3.3.5.2.5, p. 130: 50% reduction on RMS error)
+
+    return ratioFreqSquared(freq.getL1(), freq, num, num)
+           * std::pow(dpsr_I * ERR_BRDCI, 2);
 }
 
 } // namespace NAV

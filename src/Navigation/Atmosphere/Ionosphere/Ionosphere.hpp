@@ -54,4 +54,11 @@ double calcIonosphericTimeDelay(double tow, Frequency freq,
                                 IonosphereModel ionosphereModel = IonosphereModel::None,
                                 const IonosphericCorrections* corrections = nullptr);
 
+/// @brief Calculates the ionospheric error variance
+/// @param[in] dpsr_I Ionosphere propagation error [m]
+/// @param[in] freq Frequency
+/// @param[in] num Frequency number. Only used for GLONASS G1 and G2
+/// @return Variance of the error [m^2]
+double ionoErrorVar(double dpsr_I, Frequency freq, int8_t num = -128);
+
 } // namespace NAV

@@ -356,6 +356,13 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& /* insTime */, const 
              .zwdMappingFactor = zwdMappingFactor };
 }
 
+double tropoErrorVar(double dpsr_T, double elevation)
+{
+    constexpr double ERR_SAAS = 0.3; // Saastamoinen model error std [m] (maximum zenith wet delay - formulas with worst possible values)
+
+    return dpsr_T == 0.0 ? 0.0 : std::pow(ERR_SAAS / (std::sin(elevation) + 0.1), 2);
+}
+
 void to_json(json& j, const AtmosphereModels& obj)
 {
     j = json{

@@ -89,6 +89,12 @@ bool ComboTroposphereModel(const char* label, TroposphereModelSelection& troposp
 ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen::Vector3d& lla_pos, double elevation, double azimuth,
                                             const TroposphereModelSelection& troposphereModels);
 
+/// @brief Calculates the tropospheric error variance
+/// @param[in] dpsr_T Tropospheric propagation error [m]
+/// @param[in] elevation Satellite elevation in [rad]
+/// @return Variance of the error [m^2]
+double tropoErrorVar(double dpsr_T, double elevation);
+
 /// @brief Converts the provided object into json
 /// @param[out] j Json object which gets filled with the info
 /// @param[in] obj Object to convert into json
