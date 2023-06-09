@@ -407,6 +407,40 @@ Frequency Frequency::GetL1(Frequency freq)
     return Freq_None;
 }
 
+size_t Frequency::count() const
+{
+    size_t num = 0;
+    if (value & G01) { num += 1; }
+    if (value & G02) { num += 1; }
+    if (value & G05) { num += 1; }
+    if (value & E01) { num += 1; }
+    if (value & E05) { num += 1; }
+    if (value & E06) { num += 1; }
+    if (value & E07) { num += 1; }
+    if (value & E08) { num += 1; }
+    if (value & R01) { num += 1; }
+    if (value & R02) { num += 1; }
+    if (value & R03) { num += 1; }
+    if (value & R04) { num += 1; }
+    if (value & R06) { num += 1; }
+    if (value & B01) { num += 1; }
+    if (value & B02) { num += 1; }
+    if (value & B05) { num += 1; }
+    if (value & B06) { num += 1; }
+    if (value & B07) { num += 1; }
+    if (value & B08) { num += 1; }
+    if (value & J01) { num += 1; }
+    if (value & J02) { num += 1; }
+    if (value & J05) { num += 1; }
+    if (value & J06) { num += 1; }
+    if (value & I05) { num += 1; }
+    if (value & I09) { num += 1; }
+    if (value & S01) { num += 1; }
+    if (value & S05) { num += 1; }
+
+    return num;
+}
+
 void to_json(json& j, const Frequency& data)
 {
     j = std::string(data);

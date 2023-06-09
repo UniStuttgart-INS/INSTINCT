@@ -236,7 +236,7 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& /* insTime */, const 
 {
     if (lla_pos(2) < -1000 || lla_pos(2) > 1e4)
     {
-        LOG_WARN("Not calculating tropospheric delay, due to altitude being invalid: {}m", lla_pos(2));
+        LOG_TRACE("Not calculating tropospheric delay, due to altitude being invalid: {}m", lla_pos(2));
         return {};
     }
 

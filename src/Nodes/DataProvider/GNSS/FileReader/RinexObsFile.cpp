@@ -679,6 +679,8 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
                 break;
             }
 
+            gnssObs->satData(SatId{ satSys, satNum }).frequencies |= obsDesc.frequency;
+
             LOG_DATA("{}:     {}-{}-{}-{}: {}, LLI {}, SSI {}", nameId(),
                      obsTypeToChar(obsDesc.type), obsDesc.frequency, obsDesc.code, satNum,
                      observation, LLI, SSI);

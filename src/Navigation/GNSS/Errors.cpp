@@ -69,12 +69,12 @@ double gnssMeasErrorVar(const SatelliteSystem& satSys, const Frequency& freq, do
            * (std::pow(carrierPhaseErrorA, 2) + std::pow(carrierPhaseErrorB, 2) / std::sin(ele));
 }
 
-double psrMeasError(const SatelliteSystem& satSys, const Frequency& freq, double elevation)
+double psrMeasErrorVar(const SatelliteSystem& satSys, const Frequency& freq, double elevation)
 {
     return gnssMeasErrorVar(satSys, freq, elevation, true);
 }
 
-double carrierMeasError(const SatelliteSystem& satSys, const Frequency& freq, double elevation)
+double carrierMeasErrorVar(const SatelliteSystem& satSys, const Frequency& freq, double elevation)
 {
     return gnssMeasErrorVar(satSys, freq, elevation, false);
 }

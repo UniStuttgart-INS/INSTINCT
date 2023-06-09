@@ -335,7 +335,7 @@ std::shared_ptr<const SppSolution> calcSppSolution(SppState state,
             double geometricDist = (calc.e_satPos - state.e_position).norm();
             LOG_DATA("    [{}]     geometricDist {}", o, geometricDist);
             // System time difference to GPS [s]
-            double sysTimeDiff = satId.satSys != state.recvClk.referenceTimeSatelliteSystem
+            double sysTimeDiff = satId.satSys != state.recvClk.referenceTimeSatelliteSystem && state.recvClk.sysTimeDiff.contains(satId.satSys)
                                      ? state.recvClk.sysTimeDiff.at(satId.satSys).value
                                      : 0.0;
 

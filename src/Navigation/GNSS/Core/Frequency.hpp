@@ -132,6 +132,9 @@ class Frequency
         return GetL1(value);
     }
 
+    /// Counts the amount of frequencies contained
+    [[nodiscard]] size_t count() const;
+
   private:
     /// @brief Internal value
     Frequency_ value = Frequency_::Freq_None;

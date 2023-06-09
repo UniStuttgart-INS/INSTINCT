@@ -101,17 +101,17 @@ All trajectories are calculated with a cubic spline. The spline points are calcu
 
 The fixed trajectory describes a geostationary position on Earth.
 
-#### Position
+\paragraph ImuSimulator-Trajectory-Fixed-Position Position
 \fl{equation,eq-ImuSimulator-Trajectory-Fixed-position}
   \mathbf{x}^n = \begin{pmatrix} \phi & \lambda & h \end{pmatrix}^T = \text{const}
 \f}
 
-#### Velocity
+\paragraph ImuSimulator-Trajectory-Fixed-Velocity Velocity
 \fl{equation,eq-ImuSimulator-Trajectory-Fixed-velocity}
   \boldsymbol{v}^n = \mathbf{\dot{x}}^n = 0
 \f}
 
-#### Acceleration
+\paragraph ImuSimulator-Trajectory-Fixed-Acceleration Acceleration
 \fl{equation,eq-ImuSimulator-Trajectory-Fixed-acceleration}
   \mathbf{a}^n = \boldsymbol{\dot{v}}^n = 0
 \f}
@@ -121,7 +121,7 @@ The fixed trajectory describes a geostationary position on Earth.
 
 The linear trajectory describes a vehicle moving with constant velocity in local-navigation coordinates.
 
-#### Position
+\paragraph ImuSimulator-Trajectory-Linear-Position Position
 
 The time derivative of the curvilinear position (lat, lon, alt) is given by (\cite Groves2013 Groves, ch. 2.4.2, eq. 2.111, p. 61 or \cite Titterton2004 Titterton, ch. 3.7, eq. 3.81,3.85,3.86, p. 48ff)
 
@@ -144,12 +144,12 @@ As the velocity in local-navigation coordinates is constant and neglecting the c
   \cdot t
 \f}
 
-#### Velocity
+\paragraph ImuSimulator-Trajectory-Linear-Velocity Velocity
 \fl{equation,eq-ImuSimulator-Trajectory-Linear-velocity}
 \boldsymbol{v}^n = \mathbf{\dot{x}}^n = const
 \f}
 
-#### Acceleration
+\paragraph ImuSimulator-Trajectory-Linear-Acceleration Acceleration
 \fl{equation,eq-ImuSimulator-Trajectory-Linear-acceleration}
   \mathbf{a}^n = \boldsymbol{\dot{v}}^n = 0
 \f}
@@ -167,7 +167,7 @@ The vertical velocity is
 - for the circular trajectory: \f$ v_D = 0 \f$
 - for the helical trajectory: \f$ v_D = \text{const} \f$
 
-#### Position
+\paragraph ImuSimulator-Trajectory-Circular-Position Position
 In the local-navigation frame in a tangential plane to the Earth surface a circular path can be expressed as
 
 \fl{equation,eq-ImuSimulator-Trajectory-Circular-local-position-phi}
@@ -215,11 +215,11 @@ The local position can then be added to the start position after rotating it int
   \mathbf{x}^e = \mathbf{x}_M^e + \mathbf{C}_n^e(\mathbf{x}_M) \cdot \mathbf{x}^n
 \f}
 
-#### Velocity
+\paragraph ImuSimulator-Trajectory-Circular-Velocity Velocity
 
 The velocity is the first derivative of the position spline.
 
-#### Acceleration
+\paragraph ImuSimulator-Trajectory-Circular-Acceleration Acceleration
 
 The acceleration is the second derivative of the position spline.
 

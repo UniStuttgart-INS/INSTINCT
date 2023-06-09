@@ -112,10 +112,17 @@ class GnssObs : public NodeData
 
         SatSigId satSigId = { Freq_None, 0 };     ///< Frequency and satellite number
         Code code;                                ///< GNSS Code
-        std::optional<Pseudorange> pseudorange;   ///< Pseudorange measurement
-        std::optional<CarrierPhase> carrierPhase; ///< Carrier phase measurement
+        std::optional<Pseudorange> pseudorange;   ///< Pseudorange measurement [m]
+        std::optional<CarrierPhase> carrierPhase; ///< Carrier phase measurement [cycles]
         std::optional<double> doppler;            ///< Doppler measurement [Hz]
         std::optional<double> CN0;                ///< Carrier-to-Noise density [dBHz]
+    };
+
+    /// @brief Useful information of the satellites
+    struct SatelliteData
+    {
+        SatId satId;                       ///< Satellite identifier
+        Frequency frequencies = Freq_None; ///< Frequencies transmitted by this satellite
     };
 
 #ifdef TESTING
@@ -147,6 +154,39 @@ class GnssObs : public NodeData
 
     /// @brief Satellite observations
     std::vector<ObservationData> data;
+
+    /// @brief Access or insert the satellite data
+    /// @param satId Satellite identifier
+    /// @return The satellite data
+    SatelliteData& satData(const SatId& satId)
+    {
+        auto iter = std::find_if(_satData.begin(), _satData.end(), [&satId](const SatelliteData& sat) {
+            return sat.satId == satId;
+        });
+        if (iter != _satData.end())
+        {
+            return *iter;
+        }
+
+        _satData.emplace_back();
+        _satData.back().satId = satId;
+        return _satData.back();
+    }
+
+    /// @brief Access the satellite data
+    /// @param satId Satellite identifier
+    /// @return The satellite data if in the list
+    [[nodiscard]] std::optional<std::reference_wrapper<const SatelliteData>> satData(const SatId& satId) const
+    {
+        auto iter = std::find_if(_satData.begin(), _satData.end(), [&satId](const SatelliteData& sat) {
+            return sat.satId == satId;
+        });
+        if (iter != _satData.end())
+        {
+            return *iter;
+        }
+        return std::nullopt;
+    }
 
     /// @brief Checks if an element with the identifier exists
     /// @param[in] freq Signal frequency (also identifies the satellite system)
@@ -185,15 +225,22 @@ class GnssObs : public NodeData
     /// @param[in] satNum Number of the satellite
     /// @param[in] code Signal code
     /// @return The element found in the observations
-    const ObservationData& operator()(const Frequency& freq, uint16_t satNum, Code code) const
+    std::optional<std::reference_wrapper<const ObservationData>> operator()(const Frequency& freq, uint16_t satNum, Code code) const
     {
         auto iter = std::find_if(data.begin(), data.end(), [freq, satNum, code](const ObservationData& idData) {
             return idData.satSigId.freq == freq && idData.satSigId.satNum == satNum && idData.code == code;
         });
 
-        INS_ASSERT_USER_ERROR(iter != data.end(), "You can not insert new elements in a const context.");
-        return *iter;
+        if (iter != data.end())
+        {
+            return *iter;
+        }
+        return std::nullopt;
     }
+
+  private:
+    /// @brief Useful information of the satellites
+    std::vector<SatelliteData> _satData;
 };
 
 } // namespace NAV
