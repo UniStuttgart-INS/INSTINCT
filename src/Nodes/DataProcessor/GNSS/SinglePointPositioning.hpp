@@ -88,13 +88,7 @@ class SinglePointPositioning : public Node
     /// Frequencies used for calculation (GUI filter)
     Frequency _filterFreq = G01;
     /// Codes used for calculation (GUI filter)
-    Code _filterCode = Code::G1C | Code::G2C | Code_G5I_G5Q_G5X
-                       | Code_E1B_E1C_E1X | Code_E5I_E5Q_E5X | Code_E6B_E6C_E6X | Code_E7I_E7Q_E7X | Code_E8I_E8Q_E8X
-                       | Code::R1C | Code::R2C | Code_R3I_R3Q_R3X | Code_R4A_R4B_R4X | Code_R6A_R6B_R6X
-                       | Code_B1D_B1P_B1X | Code_B2I_B2Q_B2X | Code_B5D_B5P_B5X | Code_B6I_B6Q_B6X | Code_B7I_B7Q_B7X | Code_B8D_B8P_B8X
-                       | Code::J1C | Code_J2S_J2L_J2X | Code_J5I_J5Q_J5X | Code_J6S_J6L_J6X
-                       | Code::I5A | Code::I9A
-                       | Code::S1C | Code_S5I_S5Q_S5X;
+    Code _filterCode = Code_ALL;
     /// List of satellites to exclude
     std::vector<SatId> _excludedSatellites;
     /// Elevation cut-off angle for satellites in [rad]

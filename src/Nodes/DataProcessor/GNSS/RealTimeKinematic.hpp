@@ -96,13 +96,7 @@ class RealTimeKinematic : public Node
     /// Frequencies used for calculation (GUI filter)
     Frequency _filterFreq = G01;
     /// Codes used for calculation (GUI filter)
-    Code _filterCode = Code::G1C | Code::G2C | Code_G5I_G5Q_G5X
-                       | Code_E1B_E1C_E1X | Code_E5I_E5Q_E5X | Code_E6B_E6C_E6X | Code_E7I_E7Q_E7X | Code_E8I_E8Q_E8X
-                       | Code::R1C | Code::R2C | Code_R3I_R3Q_R3X | Code_R4A_R4B_R4X | Code_R6A_R6B_R6X
-                       | Code_B1D_B1P_B1X | Code_B2I_B2Q_B2X | Code_B5D_B5P_B5X | Code_B6I_B6Q_B6X | Code_B7I_B7Q_B7X | Code_B8D_B8P_B8X
-                       | Code::J1C | Code_J2S_J2L_J2X | Code_J5I_J5Q_J5X | Code_J6S_J6L_J6X
-                       | Code::I5A | Code::I9A
-                       | Code::S1C | Code_S5I_S5Q_S5X;
+    Code _filterCode = Code_ALL;
     /// List of satellites to exclude
     std::vector<SatId> _excludedSatellites;
     /// Elevation cut-off angle for satellites in [rad]
@@ -130,85 +124,84 @@ class RealTimeKinematic : public Node
 
     // ------------------------------------------------------------ Algorithm --------------------------------------------------------------
 
-    /// Data calculated for each observation
-    struct SatelliteData
+    /// Measured and calculated data per satellite
+    struct SatData
     {
-        /// Receiver specific data
-        struct ReceiverSpecificData
-        {
-            /// @brief Constructor
-            /// @param[in] gnssObs GNSS observation
-            /// @param[in] obsIdx GNSS observation data index
-            /// @param[in] e_satPos Satellite position in e frame
-            /// @param[in] lla_satPos Satellite position in lla frame
-            /// @param[in] e_recPos Receiver position in e frame
-            ReceiverSpecificData(std::shared_ptr<const GnssObs> gnssObs,
-                                 size_t obsIdx,
-                                 const Eigen::Vector3d& e_satPos,
-                                 const Eigen::Vector3d& lla_satPos,
-                                 const Eigen::Vector3d& e_recPos);
-
-            std::shared_ptr<const GnssObs> gnssObs = nullptr; ///< GNSS observation
-            size_t obsIdx = 0;                                ///< Gnss observation data index
-            Eigen::Vector3d e_lineOfSightUnitVector;          ///< Line-of-sight unit vector in ECEF frame coordinates
-            double satElevation = 0.0;                        ///< Satellite Elevation [rad]
-            double satAzimuth = 0.0;                          ///< Satellite Azimuth [rad]
-
-            /// @brief Returns the observation data
-            [[nodiscard]] const GnssObs::ObservationData& obsData() const
-            {
-                return gnssObs->data.at(obsIdx);
-            }
-        };
-
         /// @brief Constructor
-        /// @param gnssObsRover GNSS observation of the rover
-        /// @param obsIdxRover GNSS observation data index of the rover
-        /// @param gnssObsBase GNSS observation of the base
-        /// @param obsIdxBase GNSS observation data index of the base
-        /// @param satNavData Satellite Navigation data
+        /// @param satId Satellite Identifier
+        /// @param navData Satellite Navigation data
         /// @param e_satPos Satellite position in e frame
         /// @param lla_satPos Satellite position in lla frame
         /// @param e_satVel Satellite velocity in e frame
         /// @param e_roverPos Rover receiver position in e frame
         /// @param e_basePos Base receiver position in e frame
-        SatelliteData(const std::shared_ptr<const GnssObs>& gnssObsRover,
-                      size_t obsIdxRover,
-                      const std::shared_ptr<const GnssObs>& gnssObsBase,
-                      size_t obsIdxBase,
-                      std::shared_ptr<SatNavData> satNavData,
-                      const Eigen::Vector3d& e_satPos,
-                      const Eigen::Vector3d& lla_satPos,
-                      Eigen::Vector3d e_satVel,
-                      const Eigen::Vector3d& e_roverPos,
-                      const Eigen::Vector3d& e_basePos);
+        SatData(const SatId& satId, std::shared_ptr<SatNavData> navData,
+                const Eigen::Vector3d& e_satPos, const Eigen::Vector3d& lla_satPos, Eigen::Vector3d e_satVel,
+                const Eigen::Vector3d& e_roverPos, const Eigen::Vector3d& e_basePos)
+            : satId(satId), navData(std::move(navData)), e_satPos(e_satPos), lla_satPos(lla_satPos), e_satVel(std::move(e_satVel)), rover(e_satPos, lla_satPos, e_roverPos), base(e_satPos, lla_satPos, e_basePos) {}
 
-        /// @brief Destructor
-        ~SatelliteData() = default;
-        /// @brief Copy constructor
-        SatelliteData(const SatelliteData&) = default;
-        /// @brief Move constructor
-        SatelliteData(SatelliteData&&) = default;
-        /// @brief Copy assignment operator
-        SatelliteData& operator=(const SatelliteData& other) = default;
-        /// @brief Move assignment operator
-        SatelliteData& operator=(SatelliteData&&) = default;
-
-        SatSigId satSigId; ///< Satellite and Signal identifier
-
-        ReceiverSpecificData rover;                       ///< Rover specific data
-        ReceiverSpecificData base;                        ///< Base specific data
-        std::shared_ptr<SatNavData> satNavData = nullptr; ///< Satellite Navigation data
+        SatId satId;                                   ///< Satellite Identifier
+        std::shared_ptr<SatNavData> navData = nullptr; ///< Satellite Navigation data
 
         Eigen::Vector3d e_satPos;   ///< Satellite position in ECEF frame coordinates [m]
         Eigen::Vector3d lla_satPos; ///< Satellite position in LLA frame coordinates [rad, rad, m]
         Eigen::Vector3d e_satVel;   ///< Satellite velocity in ECEF frame coordinates [m/s]
 
-        double doubleDifferenceMeasurementPseudorange = 0.0;  ///< Double difference of the pseudorange measurement
-        double doubleDifferenceMeasurementCarrierPhase = 0.0; ///< Double difference of the carrier-phase measurement
+        /// Receiver specific data
+        struct ReceiverSpecificData
+        {
+            /// @brief Constructor
+            /// @param[in] e_satPos Satellite position in e frame
+            /// @param[in] lla_satPos Satellite position in lla frame
+            /// @param[in] e_recPos Receiver position in e frame
+            ReceiverSpecificData(const Eigen::Vector3d& e_satPos,
+                                 const Eigen::Vector3d& lla_satPos,
+                                 const Eigen::Vector3d& e_recPos);
 
-        double doubleDifferenceEstimatePseudorange = 0.0;  ///< Double difference of the pseudorange estimate
-        double doubleDifferenceEstimateCarrierPhase = 0.0; ///< Double difference of the carrier-phase estimate
+            Eigen::Vector3d e_lineOfSightUnitVector; ///< Line-of-sight unit vector in ECEF frame coordinates
+            double satElevation = 0.0;               ///< Satellite Elevation [rad]
+            double satAzimuth = 0.0;                 ///< Satellite Azimuth [rad]
+        };
+
+        ReceiverSpecificData rover; ///< Satellite data concerning the rover
+        ReceiverSpecificData base;  ///< Satellite data concerning the base
+
+        /// Data calculated for each observation
+        struct Signal
+        {
+            /// @brief Constructor
+            /// @param gnssObsRover GNSS observation of the rover
+            /// @param obsIdxRover GNSS observation data index of the rover
+            /// @param gnssObsBase GNSS observation of the base
+            /// @param obsIdxBase GNSS observation data index of the base
+            Signal(const std::shared_ptr<const GnssObs>& gnssObsRover, size_t obsIdxRover,
+                   const std::shared_ptr<const GnssObs>& gnssObsBase, size_t obsIdxBase)
+                : obsRover({ gnssObsRover, obsIdxRover }), obsBase({ gnssObsBase, obsIdxBase }) {}
+
+            double doubleDifferenceMeasurementPseudorange = 0.0;  ///< Double difference of the pseudorange measurement
+            double doubleDifferenceMeasurementCarrierPhase = 0.0; ///< Double difference of the carrier-phase measurement
+
+            double doubleDifferenceEstimatePseudorange = 0.0;  ///< Double difference estimate of the pseudorange
+            double doubleDifferenceEstimateCarrierPhase = 0.0; ///< Double difference estimate of the carrier-phase
+
+            /// Receiver specific data
+            struct Observation
+            {
+                std::shared_ptr<const GnssObs> gnssObs = nullptr; ///< GNSS observation
+                size_t obsIdx = 0;                                ///< Gnss observation data index
+
+                /// @brief Returns the observation data
+                [[nodiscard]] const GnssObs::ObservationData& obs() const
+                {
+                    return gnssObs->data.at(obsIdx);
+                }
+            };
+            Observation obsRover; ///< Rover observation
+            Observation obsBase;  ///< Base observation
+        };
+
+        /// @brief Measurements and calculations concerning each signal received by this satellite
+        std::unordered_map<Frequency, Signal> signals;
     };
 
     /// Base position in ECEF frame [m]
@@ -225,7 +218,7 @@ class RealTimeKinematic : public Node
     struct PivotSatellite
     {
         bool reevaluate = false; ///< Flag whether to reevaluate the pivot satellite in the current epoch
-        SatelliteData satData;   ///< Satellite Data
+        SatData satData;         ///< Satellite Data
     };
 
     /// Pivot satellites for each constellation
@@ -262,20 +255,21 @@ class RealTimeKinematic : public Node
 
     /// @brief Returns a list of observations used for calculation of RTK (only satellites filtered by GUI filter & NAV data available & ...)
     /// @param[in] gnssNavInfos Collection of all connected navigation data providers
-    std::vector<SatelliteData> selectSatellitesForCalculation(const std::vector<const GnssNavInfo*>& gnssNavInfos);
+    std::vector<SatData> selectSatellitesForCalculation(const std::vector<const GnssNavInfo*>& gnssNavInfos);
 
     /// @brief Update the pivot satellites for each constellation
     /// @param satelliteData List of GNSS observation data used for the calculation of this epoch
-    void updatePivotSatellites(const std::vector<SatelliteData>& satelliteData);
+    void updatePivotSatellites(const std::vector<SatData>& satelliteData);
 
     /// @brief Calculates the measured double differences for each satellite
     /// @param satelliteData List of GNSS observation data used for the calculation of this epoch
-    void calculateMeasurementDoubleDifferences(std::vector<SatelliteData>& satelliteData);
+    /// @return The amount of double differences calculated
+    size_t calculateMeasurementDoubleDifferences(std::vector<SatData>& satelliteData);
 
     /// @brief Calculates the estimated double differences for each satellite
     /// @param satelliteData List of GNSS observation data used for the calculation of this epoch
     /// @param ionosphericCorrections Ionospheric correction parameters collected from the Nav data
-    void calculateEstimatedDoubleDifferences(std::vector<SatelliteData>& satelliteData, const IonosphericCorrections& ionosphericCorrections);
+    void calculateEstimatedDoubleDifferences(std::vector<SatData>& satelliteData, const IonosphericCorrections& ionosphericCorrections);
 };
 
 } // namespace NAV

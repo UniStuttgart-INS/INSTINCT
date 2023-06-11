@@ -120,8 +120,8 @@ conan profile detect --force
 # Documentation (Ubuntu 22.04 has too old doxygen version)
 sudo apt install -y pdf2svg texlive texlive-lang-german texlive-latex-extra ghostscript
 sudo apt install -y flex bison graphviz mscgen dia # Build dependencies
-wget -c https://www.doxygen.nl/files/doxygen-1.9.5.src.tar.gz -O - | tar -xz
-mkdir doxygen-1.9.5/build && cd doxygen-1.9.5/build
+wget -c https://www.doxygen.nl/files/doxygen-1.9.7.src.tar.gz -O - | tar -xz
+mkdir doxygen-1.9.7/build && cd doxygen-1.9.7/build
 cmake -G "Unix Makefiles" .. && make && sudo make install
 
 # Optional

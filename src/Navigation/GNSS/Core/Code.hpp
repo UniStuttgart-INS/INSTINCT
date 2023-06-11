@@ -296,6 +296,10 @@ class Code
     /// @param[in] set Bitset with values to construct the Code from
     explicit Code(const Set& set) : value(set) {}
 
+    /// @brief Constructor from a frequency
+    /// @param[in] freq Frequency to set all codes for
+    explicit Code(Frequency_ freq);
+
     /// @brief Constructor from a single code value
     /// @param[in] e Code enum value to construct the code from
     Code(Enum e) { value.set(e, true); } // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
@@ -610,6 +614,8 @@ const Code Code_I5B_I5C_I5X = Code::I5B | Code::I5C | Code::I5X; ///< RS (data, 
 const Code Code_I9B_I9C_I9X = Code::I9B | Code::I9C | Code::I9X; ///< RS (data, pilot, combined)
 
 const Code Code_S5I_S5Q_S5X = Code::S5I | Code::S5Q | Code::S5X; ///< L5 (data, pilot, combined)
+
+const Code Code_ALL = Code(Code::Set().set()); ///< All codes set
 
 /// @brief Shows a ComboBox to select signal codes
 /// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
