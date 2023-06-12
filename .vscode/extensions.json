@@ -5,6 +5,7 @@
         "ms-vscode.cpptools",
         "twxs.cmake",
         "cschlosser.doxdocgen",
+        "xaver.clang-format",
         "Gruntfuggly.todo-tree",
         "streetsidesoftware.code-spell-checker",
         "emilast.LogFileHighlighter",

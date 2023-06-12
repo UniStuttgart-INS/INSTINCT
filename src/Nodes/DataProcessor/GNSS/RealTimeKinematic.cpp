@@ -278,16 +278,29 @@ void RealTimeKinematic::guiConfig()
     if (ImGui::TreeNode(fmt::format("System/Process noise (Standard Deviations)##{}", size_t(id)).c_str()))
     {
         if (gui::widgets::InputDouble2WithUnit(fmt::format("Acceleration due to user motion (Hor/Ver)##{}", size_t(id)).c_str(),
-                                               configWidth, unitWidth, _stdev_accel.data(), reinterpret_cast<int*>(&_stdevAccelUnits), "m/√(s^3)\0\0",
+                                               configWidth, unitWidth, _gui_stdevAccel.data(), reinterpret_cast<int*>(&_gui_stdevAccelUnits), "m/√(s^3)\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
-            LOG_DEBUG("{}: stdev_accel changed to horizontal {} and vertical {}", nameId(), _stdev_accel.at(0), _stdev_accel.at(1));
-            LOG_DEBUG("{}: stdevAccelNoiseUnits changed to {}", nameId(), fmt::underlying(_stdevAccelUnits));
+            LOG_DEBUG("{}: stdevAccel changed to horizontal {} and vertical {}", nameId(), _gui_stdevAccel.at(0), _gui_stdevAccel.at(1));
+            LOG_DEBUG("{}: stdevAccelNoiseUnits changed to {}", nameId(), fmt::underlying(_gui_stdevAccelUnits));
+            recalcVarAccel();
             flow::ApplyChanges();
         }
 
         ImGui::TreePop();
     }
+}
+
+void RealTimeKinematic::recalcVarAccel()
+{
+    // 𝜎_a Standard deviation of the acceleration due to user motion in horizontal and vertical component in [m / √(s^3)]
+    switch (_gui_stdevAccelUnits)
+    {
+    case StdevAccelUnits::m_sqrts3: // [m / √(s^3)]
+        _varAccel = { std::pow(_gui_stdevAccel.at(0), 2), std::pow(_gui_stdevAccel.at(1), 2) };
+        break;
+    }
+    LOG_DATA("  sigma2_accel = h: {}, v: {} [m^2 / s^3]", nameId(), sigma2_accel.at(0), sigma2_accel.at(1));
 }
 
 [[nodiscard]] json RealTimeKinematic::save() const
@@ -304,8 +317,8 @@ void RealTimeKinematic::guiConfig()
     j["ionosphereModel"] = _ionosphereModel;
     j["troposphereModels"] = _troposphereModels;
 
-    j["stdevAccelUnits"] = _stdevAccelUnits;
-    j["stdev_accel"] = _stdev_accel;
+    j["stdevAccelUnits"] = _gui_stdevAccelUnits;
+    j["stdevAccel"] = _gui_stdevAccel;
 
     return j;
 }
@@ -349,11 +362,13 @@ void RealTimeKinematic::restore(json const& j)
 
     if (j.contains("stdevAccelUnits"))
     {
-        _stdevAccelUnits = j.at("stdevAccelUnits");
+        _gui_stdevAccelUnits = j.at("stdevAccelUnits");
+        recalcVarAccel();
     }
-    if (j.contains("stdev_accel"))
+    if (j.contains("stdevAccel"))
     {
-        _stdev_accel = j.at("stdev_accel");
+        _gui_stdevAccel = j.at("stdevAccel");
+        recalcVarAccel();
     }
 }
 
@@ -482,8 +497,8 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
     // TODO: Debugging, remove later
     _lla_roverPosition = Eigen::Vector3d(deg2rad(30), deg2rad(95.02), 0.0);
     _e_roverPosition = trafo::lla2ecef_WGS84(_lla_roverPosition);
-    // _e_roverPosition = _e_basePosition;
-    // _lla_roverPosition = trafo::ecef2lla_WGS84(_e_roverPosition);
+    //_e_roverPosition = _e_basePosition;
+    //_lla_roverPosition = trafo::ecef2lla_WGS84(_e_roverPosition);
 
     // Collection of all connected navigation data providers
     std::vector<const GnssNavInfo*> gnssNavInfos;
@@ -496,18 +511,6 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
     }
     if (!gnssNavInfos.empty())
     {
-        // ------------------------------------ GUI Settings conversion --------------------------------------
-
-        // 𝜎_a Standard deviation of the acceleration due to user motion in horizontal and vertical component in [m / √(s^3)]
-        std::array<double, 2> sigma2_accel{};
-        switch (_stdevAccelUnits)
-        {
-        case StdevAccelUnits::m_sqrts3: // [m / √(s^3)]
-            sigma2_accel = { std::pow(_stdev_accel.at(0), 2), std::pow(_stdev_accel.at(1), 2) };
-            break;
-        }
-        LOG_DATA("  sigma2_accel = h: {}, v: {} [m^2 / s^3]", nameId(), sigma2_accel.at(0), sigma2_accel.at(1));
-
         // Collection of all connected Ionospheric Corrections
         IonosphericCorrections ionosphericCorrections;
         for (const auto* gnssNavInfo : gnssNavInfos)

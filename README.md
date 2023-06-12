@@ -113,7 +113,7 @@ sudo pacman -S --noconfirm --needed valgrind kcachegrind
 # Needed
 sudo apt update
 sudo apt upgrade -y
-sudo apt install -y build-essential git-lfs clang clang-tidy cmake python3-pip libglfw3-dev libglfw3
+sudo apt install -y build-essential git-lfs clang clang-tidy clang-format cmake python3-pip libglfw3-dev libglfw3
 pip3 install conan --user
 conan profile detect --force
 

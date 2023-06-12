@@ -116,11 +116,17 @@ class RealTimeKinematic : public Node
         m_sqrts3, ///< [ m / √(s^3) ]
     };
     /// Gui selection for the Unit of the input stdev_accel parameter for the StDev due to acceleration due to user motion
-    StdevAccelUnits _stdevAccelUnits = StdevAccelUnits::m_sqrts3;
+    StdevAccelUnits _gui_stdevAccelUnits = StdevAccelUnits::m_sqrts3;
 
-    /// @brief 𝜎_a Standard deviation of the acceleration due to user motion in horizontal and vertical component
+    /// @brief GUI selection for the Standard deviation of the acceleration 𝜎_a due to user motion in horizontal and vertical component
     /// @note See Groves (2013) eq. (9.156)
-    std::array<double, 2> _stdev_accel = { { 3.0, 1.5 } } /* [ m / √(s^3) ] */;
+    std::array<double, 2> _gui_stdevAccel = { { 3.0, 1.5 } } /* [ m / √(s^3) ] */;
+
+    /// 𝜎²_a Variance of the acceleration due to user motion in horizontal and vertical component in [m / √(s^3)]
+    std::array<double, 2> _varAccel{};
+
+    /// Recalculates the variance of the acceleration with the GUI setting
+    void recalcVarAccel();
 
     // ------------------------------------------------------------ Algorithm --------------------------------------------------------------
 
