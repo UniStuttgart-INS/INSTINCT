@@ -136,22 +136,22 @@ class RealTimeKinematic : public Node
         /// @brief Constructor
         /// @param satId Satellite Identifier
         /// @param navData Satellite Navigation data
-        /// @param e_satPos Satellite position in e frame
-        /// @param lla_satPos Satellite position in lla frame
-        /// @param e_satVel Satellite velocity in e frame
+        /// @param e_roverSatPos Satellite position in e frame seen from rover
+        /// @param lla_roverSatPos Satellite position in lla frame seen from rover
+        /// @param e_roverSatVel Satellite velocity in e frame seen from rover
+        /// @param e_baseSatPos Satellite position in e frame seen from base
+        /// @param lla_baseSatPos Satellite position in lla frame seen from base
+        /// @param e_baseSatVel Satellite velocity in e frame seen from base
         /// @param e_roverPos Rover receiver position in e frame
         /// @param e_basePos Base receiver position in e frame
         SatData(const SatId& satId, std::shared_ptr<SatNavData> navData,
-                const Eigen::Vector3d& e_satPos, const Eigen::Vector3d& lla_satPos, Eigen::Vector3d e_satVel,
+                const Eigen::Vector3d& e_roverSatPos, const Eigen::Vector3d& lla_roverSatPos, const Eigen::Vector3d& e_roverSatVel,
+                const Eigen::Vector3d& e_baseSatPos, const Eigen::Vector3d& lla_baseSatPos, const Eigen::Vector3d& e_baseSatVel,
                 const Eigen::Vector3d& e_roverPos, const Eigen::Vector3d& e_basePos)
-            : satId(satId), navData(std::move(navData)), e_satPos(e_satPos), lla_satPos(lla_satPos), e_satVel(std::move(e_satVel)), rover(e_satPos, lla_satPos, e_roverPos), base(e_satPos, lla_satPos, e_basePos) {}
+            : satId(satId), navData(std::move(navData)), rover(e_roverSatPos, lla_roverSatPos, e_roverSatVel, e_roverPos), base(e_baseSatPos, lla_baseSatPos, e_baseSatVel, e_basePos) {}
 
         SatId satId;                                   ///< Satellite Identifier
         std::shared_ptr<SatNavData> navData = nullptr; ///< Satellite Navigation data
-
-        Eigen::Vector3d e_satPos;   ///< Satellite position in ECEF frame coordinates [m]
-        Eigen::Vector3d lla_satPos; ///< Satellite position in LLA frame coordinates [rad, rad, m]
-        Eigen::Vector3d e_satVel;   ///< Satellite velocity in ECEF frame coordinates [m/s]
 
         /// Receiver specific data
         struct ReceiverSpecificData
@@ -162,7 +162,12 @@ class RealTimeKinematic : public Node
             /// @param[in] e_recPos Receiver position in e frame
             ReceiverSpecificData(const Eigen::Vector3d& e_satPos,
                                  const Eigen::Vector3d& lla_satPos,
+                                 const Eigen::Vector3d& e_satVel,
                                  const Eigen::Vector3d& e_recPos);
+
+            Eigen::Vector3d e_satPos;   ///< Satellite position in ECEF frame coordinates [m]
+            Eigen::Vector3d lla_satPos; ///< Satellite position in LLA frame coordinates [rad, rad, m]
+            Eigen::Vector3d e_satVel;   ///< Satellite velocity in ECEF frame coordinates [m/s]
 
             Eigen::Vector3d e_lineOfSightUnitVector; ///< Line-of-sight unit vector in ECEF frame coordinates
             double satElevation = 0.0;               ///< Satellite Elevation [rad]
@@ -184,17 +189,25 @@ class RealTimeKinematic : public Node
                    const std::shared_ptr<const GnssObs>& gnssObsBase, size_t obsIdxBase)
                 : obsRover({ gnssObsRover, obsIdxRover }), obsBase({ gnssObsBase, obsIdxBase }) {}
 
-            double doubleDifferenceMeasurementPseudorange = 0.0;  ///< Double difference of the pseudorange measurement
-            double doubleDifferenceMeasurementCarrierPhase = 0.0; ///< Double difference of the carrier-phase measurement
+            double singleDiffMeasPseudorange_br_s = 0.0; ///< Single difference of the pseudorange measurement
+            double singleDiffMeasCarrier_br_s = 0.0;     ///< Single difference of the carrier-phase measurement
 
-            double doubleDifferenceEstimatePseudorange = 0.0;  ///< Double difference estimate of the pseudorange
-            double doubleDifferenceEstimateCarrierPhase = 0.0; ///< Double difference estimate of the carrier-phase
+            double singleDiffEstPseudorange_br_s = 0.0; ///< Single difference estimate of the pseudorange
+            double singleDiffEstCarrier_br_s = 0.0;     ///< Single difference estimate of the carrier-phase
+
+            double doubleDiffMeasPseudorange_br_1s = 0.0; ///< Double difference of the pseudorange measurement
+            double doubleDiffMeasCarrier_br_1s = 0.0;     ///< Double difference of the carrier-phase measurement
+
+            double doubleDiffEstPseudorange_br_1s = 0.0; ///< Double difference estimate of the pseudorange
+            double doubleDiffEstCarrier_br_1s = 0.0;     ///< Double difference estimate of the carrier-phase
 
             /// Receiver specific data
             struct Observation
             {
                 std::shared_ptr<const GnssObs> gnssObs = nullptr; ///< GNSS observation
                 size_t obsIdx = 0;                                ///< Gnss observation data index
+
+                double psrEst = 0.0; ///< Estimated Pseudorange [m]
 
                 /// @brief Returns the observation data
                 [[nodiscard]] const GnssObs::ObservationData& obs() const
@@ -212,6 +225,8 @@ class RealTimeKinematic : public Node
 
     /// Base position in ECEF frame [m]
     Eigen::Vector3d _e_basePosition = Eigen::Vector3d::Zero();
+    /// Base position in LLA frame [rad, rad, m]
+    Eigen::Vector3d _lla_basePosition = Eigen::Vector3d::Zero();
 
     /// Estimated position in ECEF frame [m]
     Eigen::Vector3d _e_roverPosition = Eigen::Vector3d::Zero();
