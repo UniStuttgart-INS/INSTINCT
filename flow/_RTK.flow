@@ -40,20 +40,20 @@
             "id": 158,
             "startPinId": 156
         },
-        "link-163": {
-            "endPinId": 159,
-            "id": 163,
-            "startPinId": 112
+        "link-174": {
+            "endPinId": 172,
+            "id": 174,
+            "startPinId": 168
         },
-        "link-164": {
-            "endPinId": 160,
-            "id": 164,
-            "startPinId": 115
+        "link-183": {
+            "endPinId": 180,
+            "id": 183,
+            "startPinId": 168
         },
-        "link-165": {
+        "link-189": {
             "endPinId": 104,
-            "id": 165,
-            "startPinId": 161
+            "id": 189,
+            "startPinId": 185
         }
     },
     "nodes": {
@@ -63,40 +63,40 @@
                 "elevationMask": 14.999999999999998,
                 "excludedSatellites": [],
                 "frequencies": 1,
-                "ionosphereModel": 1,
-                "nNavInfoPins": 1,
+                "ionosphereModel": 0,
+                "nNavInfoPins": 2,
                 "sppEstimator": 1,
                 "troposphereModels": {
                     "zhdMappingFunction": [
-                        1,
+                        0,
                         {
-                            "pressureModel": 2,
-                            "temperatureModel": 2,
-                            "waterVaporModel": 1
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
                         }
                     ],
                     "zhdModel": [
-                        1,
+                        0,
                         {
-                            "pressureModel": 2,
-                            "temperatureModel": 2,
-                            "waterVaporModel": 1
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
                         }
                     ],
                     "zwdMappingFunction": [
-                        1,
+                        0,
                         {
-                            "pressureModel": 2,
-                            "temperatureModel": 2,
-                            "waterVaporModel": 1
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
                         }
                     ],
                     "zwdModel": [
-                        1,
+                        0,
                         {
-                            "pressureModel": 2,
-                            "temperatureModel": 2,
-                            "waterVaporModel": 1
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
                         }
                     ]
                 }
@@ -110,7 +110,11 @@
                 },
                 {
                     "id": 101,
-                    "name": "GnssNavInfo"
+                    "name": "GnssNavInfo - GPS"
+                },
+                {
+                    "id": 180,
+                    "name": "GnssNavInfo - GAL"
                 }
             ],
             "kind": "Blueprint",
@@ -122,8 +126,8 @@
                 }
             ],
             "pos": {
-                "x": 353.0,
-                "y": 78.0
+                "x": 241.0,
+                "y": 414.0
             },
             "size": {
                 "x": 0.0,
@@ -133,43 +137,48 @@
         },
         "node-109": {
             "data": {
-                "codes": "11110001000100111000111111000011110001110111111111111111111111010111111101110111011101110000000001000000001",
+                "codes": "11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
                 "elevationMask": 14.999999999999998,
                 "excludedSatellites": [],
-                "frequencies": 1,
-                "ionosphereModel": 1,
-                "nNavInfoPins": 1,
+                "frequencies": 7943,
+                "ionosphereModel": 0,
+                "nNavInfoPins": 2,
+                "stdevAccel": [
+                    3.0,
+                    1.5
+                ],
+                "stdevAccelUnits": 0,
                 "troposphereModels": {
                     "zhdMappingFunction": [
-                        1,
+                        0,
                         {
-                            "pressureModel": 2,
-                            "temperatureModel": 2,
-                            "waterVaporModel": 1
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
                         }
                     ],
                     "zhdModel": [
-                        1,
+                        0,
                         {
-                            "pressureModel": 2,
-                            "temperatureModel": 2,
-                            "waterVaporModel": 1
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
                         }
                     ],
                     "zwdMappingFunction": [
-                        1,
+                        0,
                         {
-                            "pressureModel": 2,
-                            "temperatureModel": 2,
-                            "waterVaporModel": 1
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
                         }
                     ],
                     "zwdModel": [
-                        1,
+                        0,
                         {
-                            "pressureModel": 2,
-                            "temperatureModel": 2,
-                            "waterVaporModel": 1
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
                         }
                     ]
                 }
@@ -191,7 +200,11 @@
                 },
                 {
                     "id": 129,
-                    "name": "GnssNavInfo"
+                    "name": "GnssNavInfo - GPS"
+                },
+                {
+                    "id": 172,
+                    "name": "GnssNavInfo - GAL"
                 }
             ],
             "kind": "Blueprint",
@@ -203,8 +216,8 @@
                 }
             ],
             "pos": {
-                "x": 346.0,
-                "y": 342.0
+                "x": 248.0,
+                "y": 114.0
             },
             "size": {
                 "x": 0.0,
@@ -215,7 +228,7 @@
         "node-111": {
             "data": {
                 "FileReader": {
-                    "path": "2020-08-25_Testflug_Mengen_Icare_KVH/Flight-2/Icare_NetR9_1Hz.obs"
+                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_static-rover_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/Spirent_RINEX_MO_Rover.obs"
                 },
                 "eraseLessPreciseCodes": true
             },
@@ -231,8 +244,8 @@
                 }
             ],
             "pos": {
-                "x": 17.0,
-                "y": 446.0
+                "x": -47.0,
+                "y": 270.0
             },
             "size": {
                 "x": 0.0,
@@ -243,7 +256,7 @@
         "node-113": {
             "data": {
                 "FileReader": {
-                    "path": "2020-08-25_Testflug_Mengen_Icare_KVH/Flight-2/Base_Alloy_1Hz.obs"
+                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_static-rover_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/Spirent_RINEX_MO_Base.obs"
                 },
                 "eraseLessPreciseCodes": true
             },
@@ -259,8 +272,8 @@
                 }
             ],
             "pos": {
-                "x": 23.0,
-                "y": 190.0
+                "x": -41.0,
+                "y": 110.0
             },
             "size": {
                 "x": 0.0,
@@ -271,14 +284,14 @@
         "node-116": {
             "data": {
                 "FileReader": {
-                    "path": "2020-08-25_Testflug_Mengen_Icare_KVH/Flight-2/Allo202008251200C.nav"
+                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_static-rover_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/Spirent_RINEX_GN.23N"
                 }
             },
             "enabled": true,
             "id": 116,
             "inputPins": [],
             "kind": "Blueprint",
-            "name": "RinexNavFile",
+            "name": "RinexNavFile - GPS",
             "outputPins": [
                 {
                     "id": 115,
@@ -286,8 +299,8 @@
                 }
             ],
             "pos": {
-                "x": 87.0,
-                "y": 366.0
+                "x": -19.0,
+                "y": 350.0
             },
             "size": {
                 "x": 0.0,
@@ -305,11 +318,11 @@
             "outputPins": [],
             "pos": {
                 "x": -64.0,
-                "y": 32.0
+                "y": -16.0
             },
             "size": {
-                "x": 304.0,
-                "y": 218.0
+                "x": 240.0,
+                "y": 186.0
             },
             "type": "GroupBox"
         },
@@ -322,20 +335,20 @@
             "name": "Rover",
             "outputPins": [],
             "pos": {
-                "x": 0.0,
-                "y": 320.0
+                "x": -64.0,
+                "y": 224.0
             },
             "size": {
                 "x": 240.0,
-                "y": 186.0
+                "y": 346.0
             },
             "type": "GroupBox"
         },
         "node-137": {
             "data": {
                 "nInputPins": 4,
-                "nPlots": 2,
-                "overridePositionStartValues": false,
+                "nPlots": 4,
+                "overridePositionStartValues": true,
                 "pinData": [
                     {
                         "dataIdentifier": "SppSolution",
@@ -687,6 +700,24 @@
                             },
                             {
                                 "displayName": "sdvdn [m/s]"
+                            },
+                            {
+                                "displayName": "sdvx [m/s]"
+                            },
+                            {
+                                "displayName": "sdvy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvxy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvyz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvzx [m/s]"
                             }
                         ],
                         "size": 0,
@@ -865,6 +896,24 @@
                             },
                             {
                                 "displayName": "sdvdn [m/s]"
+                            },
+                            {
+                                "displayName": "sdvx [m/s]"
+                            },
+                            {
+                                "displayName": "sdvy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvxy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvyz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvzx [m/s]"
                             }
                         ],
                         "size": 0,
@@ -1096,7 +1145,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "markerSize": 1.0,
+                                    "markerSize": 6.599999904632568,
                                     "markerStyle": 7,
                                     "markerWeight": 1.0,
                                     "markers": false,
@@ -1124,8 +1173,262 @@
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
                         "yAxisFlags": 0
+                    },
+                    {
+                        "headerText": "East/West Position",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 6,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "East/West [m] (SPP (INSTINCT))",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 9,
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "East/West [m] (SPP (RTKLib))",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 9,
+                                "pinIndex": 3,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "East/West [m] (RTK (RTKLib))",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 3,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "East/West Position",
+                        "xAxisFlags": 0,
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "East/West [m]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 0
+                    },
+                    {
+                        "headerText": "Altitude",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 4,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Altitude [m] (SPP (INSTINCT))",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 7,
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Altitude [m] (SPP (RTKLib))",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 7,
+                                "pinIndex": 3,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Altitude [m] (RTK (RTKLib))",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 3,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Altitude",
+                        "xAxisFlags": 0,
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Altitude [m]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxisFlags": 0
                     }
-                ]
+                ],
+                "startValue_East": 1.6584118552796565,
+                "startValue_North": 0.523598775649385
             },
             "enabled": true,
             "id": 137,
@@ -1151,8 +1454,8 @@
             "name": "Plot",
             "outputPins": [],
             "pos": {
-                "x": 760.0,
-                "y": 222.0
+                "x": 680.0,
+                "y": 234.0
             },
             "size": {
                 "x": 0.0,
@@ -1163,7 +1466,7 @@
         "node-149": {
             "data": {
                 "FileReader": {
-                    "path": "2020-08-25_Testflug_Mengen_Icare_KVH/Flight-2/Icare_NetR9_1Hz_SPP.pos"
+                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_static-rover_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/Spirent_RINEX_MO_Rover_SPP.pos"
                 }
             },
             "enabled": true,
@@ -1178,8 +1481,8 @@
                 }
             ],
             "pos": {
-                "x": 430.0,
-                "y": 190.0
+                "x": 350.0,
+                "y": 558.0
             },
             "size": {
                 "x": 0.0,
@@ -1196,12 +1499,12 @@
             "name": "SPP",
             "outputPins": [],
             "pos": {
-                "x": 320.0,
-                "y": 32.0
+                "x": 208.0,
+                "y": 368.0
             },
             "size": {
-                "x": 336.0,
-                "y": 218.0
+                "x": 368.0,
+                "y": 250.0
             },
             "type": "GroupBox"
         },
@@ -1214,19 +1517,19 @@
             "name": "RTK",
             "outputPins": [],
             "pos": {
-                "x": 320.0,
-                "y": 304.0
+                "x": 208.0,
+                "y": -16.0
             },
             "size": {
-                "x": 336.0,
-                "y": 266.0
+                "x": 368.0,
+                "y": 298.0
             },
             "type": "GroupBox"
         },
         "node-157": {
             "data": {
                 "FileReader": {
-                    "path": "2020-08-25_Testflug_Mengen_Icare_KVH/Flight-2/Icare_NetR9_1Hz_RTK.pos"
+                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_static-rover_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/Spirent_RINEX_MO_Rover_RTK.pos"
                 }
             },
             "enabled": true,
@@ -1241,8 +1544,8 @@
                 }
             ],
             "pos": {
-                "x": 444.0,
-                "y": 510.0
+                "x": 364.0,
+                "y": 30.0
             },
             "size": {
                 "x": 0.0,
@@ -1250,79 +1553,82 @@
             },
             "type": "RtklibPosFile"
         },
-        "node-162": {
+        "node-167": {
             "data": {
-                "codes": "11110001000100111000111111000011110001110111111111111111111111010111111101110111011101110000000001000000001",
-                "elevationMask": 14.999999999999998,
-                "excludedSatellites": [],
-                "frequencies": 1,
-                "ionosphereModel": 1,
-                "nNavInfoPins": 1,
-                "sppEstimator": 1,
-                "troposphereModels": {
-                    "zhdMappingFunction": [
-                        1,
-                        {
-                            "pressureModel": 2,
-                            "temperatureModel": 2,
-                            "waterVaporModel": 1
-                        }
-                    ],
-                    "zhdModel": [
-                        1,
-                        {
-                            "pressureModel": 2,
-                            "temperatureModel": 2,
-                            "waterVaporModel": 1
-                        }
-                    ],
-                    "zwdMappingFunction": [
-                        1,
-                        {
-                            "pressureModel": 2,
-                            "temperatureModel": 2,
-                            "waterVaporModel": 1
-                        }
-                    ],
-                    "zwdModel": [
-                        1,
-                        {
-                            "pressureModel": 2,
-                            "temperatureModel": 2,
-                            "waterVaporModel": 1
-                        }
-                    ]
+                "FileReader": {
+                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_static-rover_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/Spirent_RINEX_EN.23L"
                 }
             },
             "enabled": true,
-            "id": 162,
-            "inputPins": [
+            "id": 167,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "RinexNavFile - GAL",
+            "outputPins": [
                 {
-                    "id": 159,
-                    "name": "GnssObs"
-                },
-                {
-                    "id": 160,
+                    "id": 168,
                     "name": "GnssNavInfo"
                 }
             ],
-            "kind": "Blueprint",
-            "name": "SinglePointPositioning - SPP",
-            "outputPins": [
-                {
-                    "id": 161,
-                    "name": "SppSolution"
-                }
-            ],
             "pos": {
-                "x": -47.0,
-                "y": 78.0
+                "x": -20.0,
+                "y": 430.0
             },
             "size": {
                 "x": 0.0,
                 "y": 0.0
             },
-            "type": "SinglePointPositioning - SPP"
+            "type": "RinexNavFile"
+        },
+        "node-188": {
+            "data": {
+                "attitudeMode": 0,
+                "initDuration": 5.0,
+                "n_overrideValuesVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "overridePosition": true,
+                "overrideRollPitchYaw": [
+                    true,
+                    true,
+                    true
+                ],
+                "overrideValuesPosition_lla": [
+                    30.0,
+                    95.0,
+                    0.0
+                ],
+                "overrideValuesRollPitchYaw": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "overrideVelocity": true,
+                "positionAccuracyThreshold": 10.0,
+                "velocityAccuracyThreshold": 10.0
+            },
+            "enabled": true,
+            "id": 188,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "PosVelAttInitializer",
+            "outputPins": [
+                {
+                    "id": 185,
+                    "name": "PosVelAtt"
+                }
+            ],
+            "pos": {
+                "x": -38.0,
+                "y": 30.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "PosVelAttInitializer"
         }
     }
 }
