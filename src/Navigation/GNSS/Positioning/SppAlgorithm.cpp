@@ -292,6 +292,8 @@ std::shared_ptr<const SppSolution> calcSppSolution(SppState state,
             LOG_DATA("    [{}] satellite {}", o, obsData.satSigId);
             auto satId = obsData.satSigId.toSatId();
 
+            auto& solSatData = (*sppSol)(obsData.satSigId, obsData.code);
+
             // #############################################################################################################################
             //                                                    Position calculation
             // #############################################################################################################################
@@ -304,6 +306,7 @@ std::shared_ptr<const SppSolution> calcSppSolution(SppState state,
                                                      calc.satElevation, calc.satAzimuth, ionosphereModel, &ionosphericCorrections)
                             * InsConst::C;
             LOG_DATA("    [{}]     dpsr_I {} [m] (Estimated modulation ionosphere propagation error)", o, dpsr_I);
+            solSatData.dpsr_I = dpsr_I;
 
             auto tropo = calcTroposphericDelayAndMapping(gnssObs->insTime, lla_pos, calc.satElevation, calc.satAzimuth, troposphereModels);
             LOG_DATA("    [{}]     ZHD {}", o, tropo.ZHD);
@@ -314,6 +317,7 @@ std::shared_ptr<const SppSolution> calcSppSolution(SppState state,
             // Estimated modulation troposphere propagation error [m]
             double dpsr_T = tropo.ZHD * tropo.zhdMappingFactor + tropo.ZWD * tropo.zwdMappingFactor;
             LOG_DATA("    [{}]     dpsr_T {} [m] (Estimated modulation troposphere propagation error)", o, dpsr_T);
+            solSatData.dpsr_T = dpsr_T;
 
             // Measurement/Geometry matrix - Groves ch. 9.4.1, eq. 9.144, p. 412
             e_H_psr.block<1, 3>(static_cast<int>(ix), 0) = -calc.e_lineOfSightUnitVector;
@@ -328,16 +332,19 @@ std::shared_ptr<const SppSolution> calcSppSolution(SppState state,
             }
             LOG_DATA("    [{}]     e_H_psr.row({}) {}", o, ix, e_H_psr.row(static_cast<int>(ix)));
 
-            // Sagnac correction - Springer Handbook ch. 19.1.1, eq. 19.7, p. 562
+            // Sagnac correction [m] - Springer Handbook ch. 19.1.1, eq. 19.7, p. 562
             double dpsr_ie = 1.0 / InsConst::C * (state.e_position - calc.e_satPos).dot(InsConst::e_omega_ie.cross(state.e_position));
             LOG_DATA("    [{}]     dpsr_ie {}", o, dpsr_ie);
+            solSatData.dpsr_ie = dpsr_ie;
             // Geometric distance [m]
             double geometricDist = (calc.e_satPos - state.e_position).norm();
             LOG_DATA("    [{}]     geometricDist {}", o, geometricDist);
+            solSatData.geometricDist = geometricDist;
             // System time difference to GPS [s]
             double sysTimeDiff = satId.satSys != state.recvClk.referenceTimeSatelliteSystem && state.recvClk.sysTimeDiff.contains(satId.satSys)
                                      ? state.recvClk.sysTimeDiff.at(satId.satSys).value
                                      : 0.0;
+            solSatData.dpsr_clkISB = sysTimeDiff * InsConst::C;
 
             // Pseudorange estimate [m]
             psrEst(static_cast<int>(ix)) = geometricDist
@@ -349,6 +356,7 @@ std::shared_ptr<const SppSolution> calcSppSolution(SppState state,
                                            + dpsr_ie;
             LOG_DATA("    [{}]     psrEst({}) {}", o, ix, psrEst(static_cast<int>(ix)));
             calc.pseudorangeEst = psrEst(static_cast<int>(ix));
+            solSatData.psrEst = psrEst(static_cast<int>(ix));
 
             if (sppEstimator == SppEstimator::WEIGHTED_LEAST_SQUARES)
             {
@@ -403,6 +411,7 @@ std::shared_ptr<const SppSolution> calcSppSolution(SppState state,
                                                    - calc.satClkDrift * InsConst::C
                                                    - dpsr_dot_ie;
                 LOG_DATA("    [{}]     psrRateEst({}) {}", o, iv, psrRateEst(static_cast<int>(iv)));
+                solSatData.psrRateEst = psrRateEst(static_cast<int>(iv));
 
                 if (sppEstimator == SppEstimator::WEIGHTED_LEAST_SQUARES)
                 {
@@ -421,11 +430,6 @@ std::shared_ptr<const SppSolution> calcSppSolution(SppState state,
 
                 iv++;
             }
-            auto& solSatData = (*sppSol)(obsData.satSigId, obsData.code);
-            solSatData.pseudorangeRate = calc.pseudorangeRateMeas;
-            solSatData.dpsr_I = dpsr_I;
-            solSatData.dpsr_T = dpsr_T;
-            solSatData.geometricDist = geometricDist;
 
             ix++;
         }

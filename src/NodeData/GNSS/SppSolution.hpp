@@ -114,10 +114,13 @@ class SppSolution : public PosVel
         bool skipped = false;                ///< Bool to check whether the observation was skipped (signal unhealthy)
         bool elevationMaskTriggered = false; ///< Bool to check whether the elevation mask was triggered
 
-        double pseudorangeRate{ std::nan("") }; ///< Pseudorange rate [m/s]
-        double dpsr_I{ std::nan("") };          ///< Estimated ionosphere propagation error [m]
-        double dpsr_T{ std::nan("") };          ///< Estimated troposphere propagation error [m]
-        double geometricDist{ std::nan("") };   ///< Geometric distance [m]
+        double psrEst{ std::nan("") };        ///< Estimated Pseudorange [m]
+        double psrRateEst{ std::nan("") };    ///< Estimated Pseudorange rate [m/s]
+        double geometricDist{ std::nan("") }; ///< Geometric distance [m]
+        double dpsr_clkISB{ std::nan("") };   ///< Estimated Inter-system clock bias [m]
+        double dpsr_I{ std::nan("") };        ///< Estimated ionosphere propagation error [m]
+        double dpsr_T{ std::nan("") };        ///< Estimated troposphere propagation error [m]
+        double dpsr_ie{ std::nan("") };       ///< Sagnac correction  [m]
     };
 
     /// @brief Return the element with the identifier or a newly constructed one if it did not exist
@@ -164,6 +167,9 @@ class SppSolution : public PosVel
         return iter != satData.end();
     }
 
+    /// Extended data for each satellite frequency and code
+    std::vector<SatelliteData> satData;
+
   private:
     /// Standard deviation of Position in ECEF coordinates [m]
     Eigen::Matrix3d _e_positionStdev = Eigen::Matrix3d::Zero() * std::nan("");
@@ -173,9 +179,6 @@ class SppSolution : public PosVel
     Eigen::Matrix3d _e_velocityStdev = Eigen::Matrix3d::Zero() * std::nan("");
     /// Standard deviation of Velocity in navigation coordinates [m/s]
     Eigen::Matrix3d _n_velocityStdev = Eigen::Matrix3d::Zero() * std::nan("");
-
-    /// Extended data for each satellite frequency and code
-    std::vector<SatelliteData> satData;
 };
 
 } // namespace NAV

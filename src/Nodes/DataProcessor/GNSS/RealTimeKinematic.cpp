@@ -554,15 +554,14 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
             {
                 if (pivotSatData.signals.contains(freq))
                 {
+                    // Measurement innovation (psr, phi)
+                    // LOG_DEBUG("{}: [{}] d_psr_s  = {:+e} [m]", nameId(), SatSigId{ freq, satData.satId.satNum }, signal.obsRover.obs().pseudorange->value - signal.obsRover.psrEst);
                     // Measurement innovation (single-difference)
-                    // LOG_DEBUG("{}: [{}] d_psr_s  = {:+} [m]", nameId(), SatSigId{ freq, satData.satId.satNum }, signal.obsRover.obs().pseudorange->value - signal.obsRover.psrEst);
-                    // LOG_DEBUG("{}: [{}] d_phi_s  = {:+} [m]", nameId(), SatSigId{ freq, satData.satId.satNum }, signal.singleDiffMeasCarrier_br_s - signal.singleDiffEstCarrier_br_s);
-                    // Measurement innovation (single-difference)
-                    LOG_DEBUG("{}: [{}] dz_psr_s  = {:+} [m]", nameId(), SatSigId{ freq, satData.satId.satNum }, signal.singleDiffMeasPseudorange_br_s - signal.singleDiffEstPseudorange_br_s);
-                    LOG_DEBUG("{}: [{}] dz_phi_s  = {:+} [m]", nameId(), SatSigId{ freq, satData.satId.satNum }, signal.singleDiffMeasCarrier_br_s - signal.singleDiffEstCarrier_br_s);
+                    // LOG_DEBUG("{}: [{}] dz_psr_s  = {:+e} [m]", nameId(), SatSigId{ freq, satData.satId.satNum }, signal.singleDiffMeasPseudorange_br_s - signal.singleDiffEstPseudorange_br_s);
+                    // LOG_DEBUG("{}: [{}] dz_phi_s  = {:+e} [m]", nameId(), SatSigId{ freq, satData.satId.satNum }, signal.singleDiffMeasCarrier_br_s - signal.singleDiffEstCarrier_br_s);
                     // Measurement innovation (double-difference)
-                    LOG_DEBUG("{}: [{}] dz_psr_1s = {:+} [m]", nameId(), SatSigId{ freq, satData.satId.satNum }, signal.doubleDiffMeasPseudorange_br_1s - signal.doubleDiffEstPseudorange_br_1s);
-                    LOG_DEBUG("{}: [{}] dz_phi_1s = {:+} [m]", nameId(), SatSigId{ freq, satData.satId.satNum }, signal.doubleDiffMeasCarrier_br_1s - signal.doubleDiffEstCarrier_br_1s);
+                    LOG_DEBUG("{}: [{}] dz_psr_1s = {:+e} [m]", nameId(), SatSigId{ freq, satData.satId.satNum }, signal.doubleDiffMeasPseudorange_br_1s - signal.doubleDiffEstPseudorange_br_1s);
+                    LOG_DEBUG("{}: [{}] dz_phi_1s = {:+e} [m]", nameId(), SatSigId{ freq, satData.satId.satNum }, signal.doubleDiffMeasCarrier_br_1s - signal.doubleDiffEstCarrier_br_1s);
                 }
             }
         }
@@ -863,6 +862,14 @@ void RealTimeKinematic::calculateEstimatedDoubleDifferences(std::vector<SatData>
         double dpsr_T_br_s = dpsr_T_r_s - dpsr_T_b_s;
         double dpsr_T_br_1 = dpsr_T_r_1 - dpsr_T_b_1;
 
+        // Sagnac correction [m] - Springer Handbook ch. 19.1.1, eq. 19.7, p. 562
+        double dpsr_ie_r_s = 1.0 / InsConst::C * (_e_roverPosition - satData_s.rover.e_satPos).dot(InsConst::e_omega_ie.cross(_e_roverPosition));
+        double dpsr_ie_b_s = 1.0 / InsConst::C * (_e_basePosition - satData_s.base.e_satPos).dot(InsConst::e_omega_ie.cross(_e_basePosition));
+        double dpsr_ie_r_1 = 1.0 / InsConst::C * (_e_roverPosition - satData_1.rover.e_satPos).dot(InsConst::e_omega_ie.cross(_e_roverPosition));
+        double dpsr_ie_b_1 = 1.0 / InsConst::C * (_e_basePosition - satData_1.base.e_satPos).dot(InsConst::e_omega_ie.cross(_e_basePosition));
+        double dpsr_ie_br_s = dpsr_ie_r_s - dpsr_ie_b_s;
+        double dpsr_ie_br_1 = dpsr_ie_r_1 - dpsr_ie_b_1;
+
         for (auto& [freq, signal] : satData_s.signals)
         {
             if (satData_1.signals.contains(freq))
@@ -885,18 +892,18 @@ void RealTimeKinematic::calculateEstimatedDoubleDifferences(std::vector<SatData>
                 double N_br_s = 0.0; // TODO: Update with values from KF
                 double N_br_1 = 0.0;
 
-                signal.obsRover.psrEst = rho_r_s + dpsr_T_r_s + dpsr_I_r_s;
-                signal.obsBase.psrEst = rho_b_s + dpsr_T_b_s + dpsr_I_b_s;
+                signal.obsRover.psrEst = rho_r_s + dpsr_T_r_s + dpsr_I_r_s + dpsr_ie_r_s;
+                signal.obsBase.psrEst = rho_b_s + dpsr_T_b_s + dpsr_I_b_s + dpsr_ie_b_s;
 
-                signal.singleDiffEstPseudorange_br_s = rho_br_s + dpsr_T_br_s + dpsr_I_br_s;
-                double singleDiffEstPseudorange_br_1 = rho_br_1 + dpsr_T_br_1 + dpsr_I_br_1;
+                signal.singleDiffEstPseudorange_br_s = rho_br_s + dpsr_T_br_s + dpsr_I_br_s + dpsr_ie_br_s;
+                double singleDiffEstPseudorange_br_1 = rho_br_1 + dpsr_T_br_1 + dpsr_I_br_1 + dpsr_ie_br_1;
                 signal.doubleDiffEstPseudorange_br_1s = signal.singleDiffEstPseudorange_br_s - singleDiffEstPseudorange_br_1;
                 LOG_DATA("{}: [{}]           psrEst_br_s     = {} [m]", nameId(), SatSigId{ freq, satData_s.satId.satNum }, signal.singleDiffEstPseudorange_br_s);
                 LOG_DATA("{}:           [{}]  - psrEst_br_1  = {} [m]", nameId(), SatSigId{ freq, satData_1.satId.satNum }, singleDiffEstPseudorange_br_1);
                 LOG_DATA("{}: [{}] - [{}]  = psrEst_br_1s = {} [m]", nameId(), SatSigId{ freq, satData_s.satId.satNum }, SatSigId{ freq, satData_1.satId.satNum }, signal.doubleDiffEstPseudorange_br_1s);
 
-                signal.singleDiffEstCarrier_br_s = rho_br_s + dpsr_T_br_s - dpsr_I_br_s + lambda_j * N_br_s;
-                double singleDiffEstCarrier_br_1 = rho_br_1 + dpsr_T_br_1 - dpsr_I_br_1 + lambda_j * N_br_1;
+                signal.singleDiffEstCarrier_br_s = rho_br_s + dpsr_T_br_s - dpsr_I_br_s + dpsr_ie_br_s + lambda_j * N_br_s;
+                double singleDiffEstCarrier_br_1 = rho_br_1 + dpsr_T_br_1 - dpsr_I_br_1 + dpsr_ie_br_1 + lambda_j * N_br_1;
                 signal.doubleDiffEstCarrier_br_1s = signal.singleDiffEstCarrier_br_s - singleDiffEstCarrier_br_1;
                 LOG_DATA("{}: [{}]           phiEst_br_s     = {} [m]", nameId(), SatSigId{ freq, satData_s.satId.satNum }, signal.singleDiffEstCarrier_br_s);
                 LOG_DATA("{}:           [{}]  - phiEst_br_1  = {} [m]", nameId(), SatSigId{ freq, satData_1.satId.satNum }, singleDiffEstCarrier_br_1);
