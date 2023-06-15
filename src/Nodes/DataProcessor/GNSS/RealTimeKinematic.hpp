@@ -134,16 +134,16 @@ class RealTimeKinematic : public Node
     struct SatData
     {
         /// @brief Constructor
-        /// @param satId Satellite Identifier
-        /// @param navData Satellite Navigation data
-        /// @param e_roverSatPos Satellite position in e frame seen from rover
-        /// @param lla_roverSatPos Satellite position in lla frame seen from rover
-        /// @param e_roverSatVel Satellite velocity in e frame seen from rover
-        /// @param e_baseSatPos Satellite position in e frame seen from base
-        /// @param lla_baseSatPos Satellite position in lla frame seen from base
-        /// @param e_baseSatVel Satellite velocity in e frame seen from base
-        /// @param e_roverPos Rover receiver position in e frame
-        /// @param e_basePos Base receiver position in e frame
+        /// @param[in] satId Satellite Identifier
+        /// @param[in] navData Satellite Navigation data
+        /// @param[in] e_roverSatPos Satellite position in e frame seen from rover
+        /// @param[in] lla_roverSatPos Satellite position in lla frame seen from rover
+        /// @param[in] e_roverSatVel Satellite velocity in e frame seen from rover
+        /// @param[in] e_baseSatPos Satellite position in e frame seen from base
+        /// @param[in] lla_baseSatPos Satellite position in lla frame seen from base
+        /// @param[in] e_baseSatVel Satellite velocity in e frame seen from base
+        /// @param[in] e_roverPos Rover receiver position in e frame
+        /// @param[in] e_basePos Base receiver position in e frame
         SatData(const SatId& satId, std::shared_ptr<SatNavData> navData,
                 const Eigen::Vector3d& e_roverSatPos, const Eigen::Vector3d& lla_roverSatPos, const Eigen::Vector3d& e_roverSatVel,
                 const Eigen::Vector3d& e_baseSatPos, const Eigen::Vector3d& lla_baseSatPos, const Eigen::Vector3d& e_baseSatVel,
@@ -159,6 +159,7 @@ class RealTimeKinematic : public Node
             /// @brief Constructor
             /// @param[in] e_satPos Satellite position in e frame
             /// @param[in] lla_satPos Satellite position in lla frame
+            /// @param[in] e_satVel Satellite velocity in e frame
             /// @param[in] e_recPos Receiver position in e frame
             ReceiverSpecificData(const Eigen::Vector3d& e_satPos,
                                  const Eigen::Vector3d& lla_satPos,
@@ -181,10 +182,10 @@ class RealTimeKinematic : public Node
         struct Signal
         {
             /// @brief Constructor
-            /// @param gnssObsRover GNSS observation of the rover
-            /// @param obsIdxRover GNSS observation data index of the rover
-            /// @param gnssObsBase GNSS observation of the base
-            /// @param obsIdxBase GNSS observation data index of the base
+            /// @param[in] gnssObsRover GNSS observation of the rover
+            /// @param[in] obsIdxRover GNSS observation data index of the rover
+            /// @param[in] gnssObsBase GNSS observation of the base
+            /// @param[in] obsIdxBase GNSS observation data index of the base
             Signal(const std::shared_ptr<const GnssObs>& gnssObsRover, size_t obsIdxRover,
                    const std::shared_ptr<const GnssObs>& gnssObsBase, size_t obsIdxBase)
                 : obsRover({ gnssObsRover, obsIdxRover }), obsBase({ gnssObsBase, obsIdxBase }) {}

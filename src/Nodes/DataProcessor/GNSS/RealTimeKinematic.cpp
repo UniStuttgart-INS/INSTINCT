@@ -302,7 +302,7 @@ void RealTimeKinematic::recalcVarAccel()
         _varAccel = { std::pow(_gui_stdevAccel.at(0), 2), std::pow(_gui_stdevAccel.at(1), 2) };
         break;
     }
-    LOG_DATA("  sigma2_accel = h: {}, v: {} [m^2 / s^3]", nameId(), sigma2_accel.at(0), sigma2_accel.at(1));
+    LOG_DATA("  sigma2_accel = h: {}, v: {} [m^2 / s^3]", nameId(), _varAccel.at(0), _varAccel.at(1));
 }
 
 [[nodiscard]] json RealTimeKinematic::save() const

@@ -232,7 +232,7 @@ class BDSEphemeris final : public SatNavData
     [[nodiscard]] double calcSatellitePositionVariance() const final;
 
     /// @brief Calculates clock bias and drift of the satellite
-    /// @param[in] recvTime Receiver time to calculate the satellite position for
+    /// @param[in] recvTime Receive time of the signal
     /// @param[in] dist Distance between receiver and satellite (normally the pseudorange) [m]
     /// @param[in] freq Signal Frequency
     /// @note See \cite BDS-SIS-ICD-2.1 BDS ICD, ch. 5.2.4.10, p. 29ff

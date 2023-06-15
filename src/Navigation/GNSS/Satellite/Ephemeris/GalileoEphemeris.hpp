@@ -253,7 +253,7 @@ class GalileoEphemeris final : public SatNavData
     [[nodiscard]] double calcSatellitePositionVariance() const final;
 
     /// @brief Calculates clock bias and drift of the satellite
-    /// @param[in] recvTime Receiver time to calculate the satellite position for
+    /// @param[in] recvTime Receive time of the signal
     /// @param[in] dist Distance between receiver and satellite (normally the pseudorange) [m]
     /// @param[in] freq Signal Frequency
     [[nodiscard]] Corrections calcClockCorrections(const InsTime& recvTime, double dist, const Frequency& freq) const final;
