@@ -244,7 +244,7 @@ class RealTimeKinematic : public Node
     };
 
     /// Pivot satellites for each constellation
-    std::map<SatelliteSystem, PivotSatellite> _pivotSatellites;
+    std::map<Frequency, PivotSatellite> _pivotSatellites;
 
     /// Kalman Filter representation
     KalmanFilter _kalmanFilter{ 8, 8 };
