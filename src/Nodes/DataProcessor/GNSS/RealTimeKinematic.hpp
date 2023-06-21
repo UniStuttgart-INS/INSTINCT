@@ -26,6 +26,7 @@
 #include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
 #include "Navigation/Transformations/Units.hpp"
 #include "Navigation/Math/KalmanFilter.hpp"
+#include "Navigation/Math/ManagedKalmanFilter.hpp"
 
 #include "NodeData/GNSS/RtkSolution.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
@@ -163,7 +164,7 @@ class RealTimeKinematic : public Node
             /// @param[in] e_recPos Receiver position in e frame
             ReceiverSpecificData(const Eigen::Vector3d& e_satPos,
                                  const Eigen::Vector3d& lla_satPos,
-                                 const Eigen::Vector3d& e_satVel,
+                                 Eigen::Vector3d e_satVel,
                                  const Eigen::Vector3d& e_recPos);
 
             Eigen::Vector3d e_satPos;   ///< Satellite position in ECEF frame coordinates [m]

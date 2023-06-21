@@ -39,9 +39,9 @@ namespace NAV
 
 RealTimeKinematic::SatData::ReceiverSpecificData::ReceiverSpecificData(const Eigen::Vector3d& e_satPos,
                                                                        const Eigen::Vector3d& lla_satPos,
-                                                                       const Eigen::Vector3d& e_satVel,
+                                                                       Eigen::Vector3d e_satVel,
                                                                        const Eigen::Vector3d& e_recPos)
-    : e_satPos(e_satPos), lla_satPos(lla_satPos), e_satVel(e_satVel)
+    : e_satPos(e_satPos), lla_satPos(lla_satPos), e_satVel(std::move(e_satVel))
 {
     e_lineOfSightUnitVector = e_calcLineOfSightUnitVector(e_recPos, e_satPos);
     Eigen::Vector3d n_lineOfSightUnitVector = trafo::n_Quat_e(lla_satPos(0), lla_satPos(1)) * e_lineOfSightUnitVector;
@@ -719,7 +719,7 @@ void RealTimeKinematic::updatePivotSatellites(const std::vector<SatData>& satell
     std::vector<Frequency> erasePivotSatSys;
     for (auto& [pivotFreq, pivotSat] : _pivotSatellites)
     {
-        auto satIter = std::find_if(satelliteData.begin(), satelliteData.end(), [&pivotSat](const SatData& satData) {
+        auto satIter = std::find_if(satelliteData.begin(), satelliteData.end(), [&](const SatData& satData) {
             return pivotSat.satData.satId == satData.satId;
         });
         if (satIter != satelliteData.end()
@@ -745,7 +745,7 @@ void RealTimeKinematic::updatePivotSatellites(const std::vector<SatData>& satell
     // Determine pivot satellite
     for (const auto& satData : satelliteData)
     {
-        for (auto& [freq, signal] : satData.signals)
+        for (const auto& [freq, signal] : satData.signals)
         {
             if (!_pivotSatellites.contains(freq))
             {
