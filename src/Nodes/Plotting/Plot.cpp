@@ -1004,6 +1004,7 @@ void NAV::Plot::guiConfig()
                                              pinData.plotData.at(plot.selectedXdata.at(plotItem.pinIndex)).buffer.data(),
                                              plotData.buffer.data(),
                                              dataPointCount,
+                                             ImPlotLineFlags_None,
                                              static_cast<int>(std::ceil(static_cast<double>(plotData.buffer.offset()) / static_cast<double>(stride))),
                                              stride * static_cast<int>(sizeof(double)));
                         }
@@ -1013,6 +1014,7 @@ void NAV::Plot::guiConfig()
                                                 pinData.plotData.at(plot.selectedXdata.at(plotItem.pinIndex)).buffer.data(),
                                                 plotData.buffer.data(),
                                                 dataPointCount,
+                                                ImPlotScatterFlags_None,
                                                 static_cast<int>(std::ceil(static_cast<double>(plotData.buffer.offset()) / static_cast<double>(stride))),
                                                 stride * static_cast<int>(sizeof(double)));
                         }
