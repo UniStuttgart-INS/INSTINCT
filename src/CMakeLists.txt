@@ -20,8 +20,10 @@ if(ENABLE_MAIN)
 
   target_link_libraries(
     ${PROJECT_NAME_LOWERCASE}
+    PRIVATE project_warnings)
+  target_link_libraries(
+    ${PROJECT_NAME_LOWERCASE}
     PRIVATE project_options
-            project_warnings
             instinct::rc
             fmt::fmt
             spdlog::spdlog

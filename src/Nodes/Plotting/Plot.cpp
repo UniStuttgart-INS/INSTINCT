@@ -1632,6 +1632,12 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "sdvne [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "sdved [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "sdvdn [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "sdvx [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "sdvy [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "sdvz [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "sdvxy [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "sdvyz [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "sdvzx [m/s]");
         }
         else if (startPin.dataIdentifier.front() == UbloxObs::type())
         {
@@ -2672,20 +2678,20 @@ void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs,
     addData(pinIndex, i++, obs->lla_position()(2));
     addData(pinIndex, i++, northSouth);
     addData(pinIndex, i++, eastWest);
-    addData(pinIndex, i++, obs->Q.has_value() ? obs->Q.value() : std::nan(""));
-    addData(pinIndex, i++, obs->ns.has_value() ? obs->ns.value() : std::nan(""));
+    addData(pinIndex, i++, obs->Q);
+    addData(pinIndex, i++, obs->ns);
     addData(pinIndex, i++, obs->sdXYZ.x());
     addData(pinIndex, i++, obs->sdXYZ.y());
     addData(pinIndex, i++, obs->sdXYZ.z());
     addData(pinIndex, i++, obs->sdNED.x());
     addData(pinIndex, i++, obs->sdNED.y());
     addData(pinIndex, i++, obs->sdNED.z());
-    addData(pinIndex, i++, obs->sdxy);
-    addData(pinIndex, i++, obs->sdyz);
-    addData(pinIndex, i++, obs->sdzx);
-    addData(pinIndex, i++, obs->sdne);
-    addData(pinIndex, i++, obs->sded);
-    addData(pinIndex, i++, obs->sddn);
+    addData(pinIndex, i++, obs->sdxy.has_value() ? obs->sdxy.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdyz.has_value() ? obs->sdyz.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdzx.has_value() ? obs->sdzx.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdne.has_value() ? obs->sdne.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sded.has_value() ? obs->sded.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sddn.has_value() ? obs->sddn.value() : std::nan(""));
     addData(pinIndex, i++, obs->age);
     addData(pinIndex, i++, obs->ratio);
     addData(pinIndex, i++, obs->e_velocity().x());
@@ -2694,12 +2700,18 @@ void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs,
     addData(pinIndex, i++, obs->n_velocity().x());
     addData(pinIndex, i++, obs->n_velocity().y());
     addData(pinIndex, i++, obs->n_velocity().z());
-    addData(pinIndex, i++, obs->sdvNED.x());
-    addData(pinIndex, i++, obs->sdvNED.y());
-    addData(pinIndex, i++, obs->sdvNED.z());
-    addData(pinIndex, i++, obs->sdvne);
-    addData(pinIndex, i++, obs->sdved);
-    addData(pinIndex, i++, obs->sdvdn);
+    addData(pinIndex, i++, obs->sdvNED.has_value() ? obs->sdvNED->x() : std::nan(""));
+    addData(pinIndex, i++, obs->sdvNED.has_value() ? obs->sdvNED->y() : std::nan(""));
+    addData(pinIndex, i++, obs->sdvNED.has_value() ? obs->sdvNED->z() : std::nan(""));
+    addData(pinIndex, i++, obs->sdvne.has_value() ? obs->sdvne.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdved.has_value() ? obs->sdved.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdvdn.has_value() ? obs->sdvdn.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdvXYZ.has_value() ? obs->sdvXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->sdvXYZ.has_value() ? obs->sdvXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->sdvXYZ.has_value() ? obs->sdvXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->sdvxy.has_value() ? obs->sdvxy.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdvyz.has_value() ? obs->sdvyz.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdvzx.has_value() ? obs->sdvzx.value() : std::nan(""));
 }
 
 void NAV::Plot::plotUbloxObs(const std::shared_ptr<const UbloxObs>& obs, size_t pinIndex)

@@ -18,6 +18,7 @@
 #include <optional>
 #include <bitset>
 #include <vector>
+#include <cstdint>
 
 namespace NAV::vendor::emlid
 {

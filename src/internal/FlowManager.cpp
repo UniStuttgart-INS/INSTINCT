@@ -214,7 +214,7 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
             {
                 for (const auto& nodeInfo : registeredNode.second)
                 {
-                    if (nodeInfo.type == nodeJson.at("type"))
+                    if (nodeInfo.type == nodeJson.at("type").get<std::string>())
                     {
                         node = nodeInfo.constructor();
                         break;
