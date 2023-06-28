@@ -1003,12 +1003,12 @@ bool NAV::TightlyCoupledKF::initialize()
     _accumulatedGyroBiases.setZero();
 
     // Hardware: bias inits from static test (15 hrs) // FIXME: Make GUI inputs, with this as defaults?
-    _accumulatedAccelBiases(0, 0) = 0.34;  // Accel X bias
-    _accumulatedAccelBiases(1, 0) = -0.11; // Accel Y bias
-    _accumulatedAccelBiases(2, 0) = 2.43;  // Accel Z bias
-    _accumulatedGyroBiases(0, 0) = -0.062; // Gyro X bias
-    _accumulatedGyroBiases(1, 0) = 0.021;  // Gyro Y bias
-    _accumulatedGyroBiases(2, 0) = -0.03;  // Gyro Z bias
+    // _accumulatedAccelBiases(0, 0) = 0.34;  // Accel X bias
+    // _accumulatedAccelBiases(1, 0) = -0.11; // Accel Y bias
+    // _accumulatedAccelBiases(2, 0) = 2.43;  // Accel Z bias
+    // _accumulatedGyroBiases(0, 0) = -0.062; // Gyro X bias
+    // _accumulatedGyroBiases(1, 0) = 0.021;  // Gyro Y bias
+    // _accumulatedGyroBiases(2, 0) = -0.03;  // Gyro Z bias
 
     // Initial Covariance of the attitude angles in [rad²]
     Eigen::Vector3d variance_angles = Eigen::Vector3d::Zero();
