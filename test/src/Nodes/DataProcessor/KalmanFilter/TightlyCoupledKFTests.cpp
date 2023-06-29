@@ -144,10 +144,10 @@ void testTCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
             auto obs = std::static_pointer_cast<const InertialNavSol>(queue.front());
             // LOG_TRACE("InertialNavSol time = [{} - {}]", obs->insTime.toYMDHMS(), obs->insTime.toGPSweekTow());
 
-            Eigen::Vector3d refPos_lla(deg2rad(48.739960), deg2rad(8.921572), 535.); // TODO: adapt
+            Eigen::Vector3d refPos_lla(deg2rad(48.780660038), deg2rad(9.171496838), 329.2047);
             Eigen::Vector3d refRollPitchYaw(0., 0., 0.);
             Eigen::Vector3d allowedPositionOffsetImuOnly_n(2.0, 5.2, 1.0);
-            Eigen::Vector3d allowedPositionOffsetCombined_n(250., 300., 55.);
+            Eigen::Vector3d allowedPositionOffsetCombined_n(2., 2., 2.);
             Eigen::Vector3d allowedVelocityErrorImuOnly_e(0.14, 13.7, 0.1);
             Eigen::Vector3d allowedVelocityErrorCombined_e(0.09, 0.05, 0.08);
             Eigen::Vector3d allowedRollPitchYawOffsetImuOnly(1.3, 1.3, 90.0);
@@ -245,16 +245,16 @@ void testTCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
                           settings);
 }
 
-TEST_CASE("[TightlyCoupledKF][flow] Test flow with IMU data arriving before GNSS data", "[TightlyCoupledKF][flow]")
+TEST_CASE("[TightlyCoupledKF][flow] Test flow with IMU data arriving before GNSS data", "[TightlyCoupledKF][flow][debug]")
 {
     // GNSS: 176 messages, 162 messages with InsTime, 48 messages with fix (first GNSS message at 22.799s)
-    size_t MESSAGE_COUNT_GNSS = 2950; // TODO: adapt
-    size_t MESSAGE_COUNT_GNSS_FIX = 2950;
+    size_t MESSAGE_COUNT_GNSS = 166;
+    size_t MESSAGE_COUNT_GNSS_FIX = 166;
     // IMU:  690 messages, 466 messages with InsTime, 170 messages with fix (first IMU message at 9.037s)
-    size_t MESSAGE_COUNT_IMU = 29501;
-    size_t MESSAGE_COUNT_IMU_FIX = 29501;
+    size_t MESSAGE_COUNT_IMU = 1638;
+    size_t MESSAGE_COUNT_IMU_FIX = 1638;
 
-    testTCKFwithImuFile("GNSS/2023-05-24_IhingerHof_VN310E_Multi-IMU/vn310-imu.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_GNSS_FIX, MESSAGE_COUNT_IMU, MESSAGE_COUNT_IMU_FIX);
+    testTCKFwithImuFile("DataProcessor/tckf/vn310-imu.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_GNSS_FIX, MESSAGE_COUNT_IMU, MESSAGE_COUNT_IMU_FIX);
 }
 
 // TEST_CASE("[TightlyCoupledKF][flow] Test flow with IMU data arriving after GNSS data", "[TightlyCoupledKF][flow]")

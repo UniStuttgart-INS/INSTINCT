@@ -257,46 +257,6 @@
             "endPinId": 6,
             "id": 631,
             "startPinId": 590
-        },
-        "link-632": {
-            "endPinId": 252,
-            "id": 632,
-            "startPinId": 593
-        },
-        "link-633": {
-            "endPinId": 253,
-            "id": 633,
-            "startPinId": 594
-        },
-        "link-634": {
-            "endPinId": 254,
-            "id": 634,
-            "startPinId": 595
-        },
-        "link-635": {
-            "endPinId": 255,
-            "id": 635,
-            "startPinId": 596
-        },
-        "link-636": {
-            "endPinId": 256,
-            "id": 636,
-            "startPinId": 597
-        },
-        "link-637": {
-            "endPinId": 263,
-            "id": 637,
-            "startPinId": 598
-        },
-        "link-638": {
-            "endPinId": 264,
-            "id": 638,
-            "startPinId": 599
-        },
-        "link-639": {
-            "endPinId": 456,
-            "id": 639,
-            "startPinId": 600
         }
     },
     "nodes": {
@@ -367,9 +327,9 @@
                     true
                 ],
                 "overrideValuesPosition_lla": [
-                    48.739959716796875,
-                    8.921571731567383,
-                    535.0
+                    48.78065872192383,
+                    9.171496391296387,
+                    329.2047119140625
                 ],
                 "overrideValuesRollPitchYaw": [
                     0.0,
@@ -5627,7 +5587,7 @@
         "node-324": {
             "data": {
                 "FileReader": {
-                    "path": "GNSS/2023-05-24_IhingerHof_VN310E_Multi-IMU/vn310-imu.csv"
+                    "path": "DataProcessor/tckf/vn310-imu.csv"
                 },
                 "Imu": {
                     "imuPos": {
@@ -5733,7 +5693,7 @@
         "node-326": {
             "data": {
                 "FileReader": {
-                    "path": "GNSS/2023-05-24_IhingerHof_VN310E_Multi-IMU/vn310-gnss.csv"
+                    "path": "DataProcessor/tckf/vn310-gnss.csv"
                 },
                 "Imu": {
                     "imuPos": {
@@ -6363,7 +6323,7 @@
         "node-616": {
             "data": {
                 "FileReader": {
-                    "path": "GNSS/2023-05-24_IhingerHof_VN310E_Multi-IMU/reach-base-_raw_202305240809.nav"
+                    "path": "DataProcessor/tckf/reach-m2-01_raw_202306291111.nav"
                 }
             },
             "enabled": true,
