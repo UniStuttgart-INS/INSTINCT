@@ -21,7 +21,6 @@
 namespace NAV
 {
 /// @brief Generalized Kalman Filter class
-
 template<typename StateKey, typename MeasKey>
 class ManagedKalmanFilter
 {
@@ -39,7 +38,7 @@ class ManagedKalmanFilter
     void predict()
     {
         // Math: \mathbf{\hat{x}}_k^- = \mathbf{\Phi}_{k-1}\mathbf{\hat{x}}_{k-1}^+ \qquad \text{P. Groves}\,(3.14)
-        x = Phi * x;
+        _x = Phi * _x;
 
         // Math: \mathbf{P}_k^- = \mathbf{\Phi}_{k-1} P_{k-1}^+ \mathbf{\Phi}_{k-1}^T + \mathbf{Q}_{k-1} \qquad \text{P. Groves}\,(3.15)
         P = Phi * P * Phi.transpose() + Q;
@@ -57,7 +56,7 @@ class ManagedKalmanFilter
         K = P * H.transpose() * S.inverse();
 
         // Math: \begin{align*} \mathbf{\hat{x}}_k^+ &= \mathbf{\hat{x}}_k^- + \mathbf{K}_k (\mathbf{z}_k - \mathbf{H}_k \mathbf{\hat{x}}_k^-) \\ &= \mathbf{\hat{x}}_k^- + \mathbf{K}_k \mathbf{\delta z}_k^{-} \end{align*} \qquad \text{P. Groves}\,(3.24)
-        x = x + K * (z - H * x);
+        _x = _x + K * (z - H * _x);
 
         // Math: \mathbf{P}_k^+ = (\mathbf{I} - \mathbf{K}_k \mathbf{H}_k) \mathbf{P}_k^- \qquad \text{P. Groves}\,(3.25)
         P = (I - K * H) * P;
@@ -74,7 +73,7 @@ class ManagedKalmanFilter
         K = P * H.transpose() * (H * P * H.transpose() + R).inverse();
 
         // Math: \begin{align*} \mathbf{\hat{x}}_k^+ &= \mathbf{\hat{x}}_k^- + \mathbf{K}_k (\mathbf{z}_k - \mathbf{H}_k \mathbf{\hat{x}}_k^-) \\ &= \mathbf{\hat{x}}_k^- + \mathbf{K}_k \mathbf{\delta z}_k^{-} \end{align*} \qquad \text{P. Groves}\,(3.24)
-        x = x + K * z;
+        _x = _x + K * z;
 
         // Math: \mathbf{P}_k^+ = (\mathbf{I} - \mathbf{K}_k \mathbf{H}_k) \mathbf{P}_k^- \qquad \text{P. Groves}\,(3.25)
         // P = (I - K * H) * P;
@@ -93,7 +92,6 @@ class ManagedKalmanFilter
         return Eigen::MatrixXd::Identity(F.rows(), F.cols()) + F * tau_s;
     }
 
-    Eigen::MatrixXd x;   ///< x̂ State vector (n x 1)
     Eigen::MatrixXd P;   ///< 𝐏 Error covariance matrix (n x n)
     Eigen::MatrixXd Phi; ///< 𝚽 State transition matrix (n x n)
     Eigen::MatrixXd Q;   ///< 𝐐 System/Process noise covariance matrix (n x n)
@@ -112,18 +110,18 @@ class ManagedKalmanFilter
             removeState(key);
         }
 
-        states.insert(std::make_pair(key, Entry{ .index = x.rows(), .length = length }));
-        int n = x.rows() + length;
-        int m = z.rows();
-        x.conservativeResize(n, 1);
-        P.conservativeResize(n, n);
-        Phi.conservativeResize(n, n);
-        Q.conservativeResize(n, n);
-        // z.conservativeResize(m, 1);
-        H.conservativeResize(m, n);
-        // R.conservativeResize(m, m);
-        // S.conservativeResize(m, m);
-        K.conservativeResize(n, m);
+        states.insert(std::make_pair(key, Entry{ .index = static_cast<size_t>(_x.rows()), .length = length }));
+        auto n = _x.rows() + static_cast<Eigen::Index>(length);
+        auto m = z.rows();
+        _x.conservativeResizeLike(Eigen::VectorXd::Zero(n));
+        P.conservativeResizeLike(Eigen::MatrixXd::Zero(n, n));
+        Phi.conservativeResizeLike(Eigen::MatrixXd::Zero(n, n));
+        Q.conservativeResizeLike(Eigen::MatrixXd::Zero(n, n));
+        // z.conservativeResizeLike(Eigen::VectorXd::Zero(m));
+        H.conservativeResizeLike(Eigen::MatrixXd::Zero(m, n));
+        // R.conservativeResizeLike(Eigen::MatrixXd::Zero(m, m));
+        // S.conservativeResizeLike(Eigen::MatrixXd::Zero(m, m));
+        K.conservativeResizeLike(Eigen::MatrixXd::Zero(n, m));
         I = Eigen::MatrixXd::Identity(n, n);
     }
 
@@ -133,16 +131,13 @@ class ManagedKalmanFilter
         {
             auto index = states.at(key).index;
             auto length = states.at(key).length;
-            int n = x.rows() - length;
+            auto n = _x.rows() - static_cast<Eigen::Index>(length);
 
-            removeRows(x, index, length);
+            removeRows(_x, index, length);
             removeRowsAndCols(P, index, length, index, length);
             removeRowsAndCols(Phi, index, length, index, length);
             removeRowsAndCols(Q, index, length, index, length);
-            // z.conservativeResize(m, 1);
             removeCols(H, index, length);
-            // R.conservativeResize(m, m);
-            // S.conservativeResize(m, m);
             removeRows(K, index, length);
             I = Eigen::MatrixXd::Identity(n, n);
 
@@ -165,17 +160,17 @@ class ManagedKalmanFilter
         }
 
         measurements.insert(std::make_pair(key, Entry{ .index = z.rows(), .length = length }));
-        int n = x.rows();
+        int n = _x.rows();
         int m = z.rows() + length;
-        // x.conservativeResize(n, 1);
-        // P.conservativeResize(n, n);
-        // Phi.conservativeResize(n, n);
-        // Q.conservativeResize(n, n);
-        z.conservativeResize(m, 1);
-        H.conservativeResize(m, n);
-        R.conservativeResize(m, m);
-        S.conservativeResize(m, m);
-        K.conservativeResize(n, m);
+        // _x.conservativeResizeLike(Eigen::VectorXd::Zero(n));
+        // P.conservativeResizeLike(Eigen::MatrixXd::Zero(n, n));
+        // Phi.conservativeResizeLike(Eigen::MatrixXd::Zero(n, n));
+        // Q.conservativeResizeLike(Eigen::MatrixXd::Zero(n, n));
+        z.conservativeResizeLike(Eigen::VectorXd::Zero(m));
+        H.conservativeResizeLike(Eigen::MatrixXd::Zero(m, n));
+        R.conservativeResizeLike(Eigen::MatrixXd::Zero(m, m));
+        S.conservativeResizeLike(Eigen::MatrixXd::Zero(m, m));
+        K.conservativeResizeLike(Eigen::MatrixXd::Zero(n, m));
         // I = Eigen::MatrixXd::Identity(n, n);
     }
 
@@ -186,21 +181,23 @@ class ManagedKalmanFilter
             auto index = measurements.at(key).index;
             auto length = measurements.at(key).length;
 
-            // x.conservativeResize(n, 1);
-            // P.conservativeResize(n, n);
-            // Phi.conservativeResize(n, n);
-            // Q.conservativeResize(n, n);
             removeRows(z, index, length);
             removeRows(H, index, length);
             removeRowsAndCols(R, index, length, index, length);
             removeRowsAndCols(S, index, length, index, length);
             removeCols(K, index, length);
-            // I = Eigen::MatrixXd::Identity(n, n);
 
             measurements.erase(key);
         }
     }
 
+    Eigen::Ref<Eigen::VectorXd> x(const StateKey& key)
+    {
+        const auto& entry = states.at(key);
+        return _x.segment(static_cast<Eigen::Index>(entry.index), static_cast<Eigen::Index>(entry.index + entry.length));
+    }
+
+    Eigen::VectorXd _x; ///< x̂ State vector (n x 1)
   private:
     Eigen::MatrixXd I; ///< 𝑰 Identity Matrix (n x n)
 
