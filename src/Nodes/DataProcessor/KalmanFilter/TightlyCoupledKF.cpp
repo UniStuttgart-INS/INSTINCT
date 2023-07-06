@@ -1818,6 +1818,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         //                                                    Velocity calculation
         // #############################################################################################################################
 
+        // TODO: loosen the dependency on rangeRate
         if (nDopplerMeas - cntSkippedMeas >= nParam && !std::isnan(calc.pseudorangeRate))
         {
             // Pseudorange-rate measurement [m/s] - Groves ch. 8.5.3, eq. 8.48, p. 342

@@ -52,19 +52,21 @@ namespace nm = NAV::NodeManager;
 namespace NAV::TESTS::TightlyCoupledKFTests
 {
 
-void testTCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, size_t MESSAGE_COUNT_GNSS_FIX, size_t MESSAGE_COUNT_IMU, size_t MESSAGE_COUNT_IMU_FIX)
+void testTCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, size_t MESSAGE_COUNT_IMU)
 {
     auto logger = initializeTestLogger();
 
-    bool imuAfter = false; // std::string(imuFilePath) == "GNSS/2023-05-24_IhingerHof_VN310E_Multi-IMU/vn310-imu.csv";
+    bool imuAfter = std::string(imuFilePath) == "DataProcessor/tckf/vn310-imu-after.csv";
 
     std::array<std::vector<std::function<void()>>, 6> settings = { {
         { [&]() { LOG_WARN("Setting ImuIntegrator - _path to: {}", imuFilePath);
                   dynamic_cast<VectorNavFile*>(nm::FindNode(324))->_path = imuFilePath; } },
-        { []() { LOG_WARN("Setting TightlyCoupledKF - _frame to: NED");
+        {
+            []() { LOG_WARN("Setting TightlyCoupledKF - _frame to: NED");
                  dynamic_cast<TightlyCoupledKF*>(nm::FindNode(591))->_frame = TightlyCoupledKF::Frame::NED; },
-          []() { LOG_WARN("Setting TightlyCoupledKF - _frame to: ECEF");
-                 dynamic_cast<TightlyCoupledKF*>(nm::FindNode(591))->_frame = TightlyCoupledKF::Frame::ECEF; } }, // TODO: check whether this makes sense with the TCKF
+            //   []() { LOG_WARN("Setting TightlyCoupledKF - _frame to: ECEF");
+            //          dynamic_cast<TightlyCoupledKF*>(nm::FindNode(591))->_frame = TightlyCoupledKF::Frame::ECEF; }
+        }, // TODO: enable ECEF option once this is implemented in the TCKF
         { []() { LOG_WARN("Setting TightlyCoupledKF - _phiCalculationAlgorithm to: Taylor");
                  dynamic_cast<TightlyCoupledKF*>(nm::FindNode(591))->_phiCalculationAlgorithm = TightlyCoupledKF::PhiCalculationAlgorithm::Taylor; },
           []() { LOG_WARN("Setting TightlyCoupledKF - _phiCalculationAlgorithm to: Exponential");
@@ -93,7 +95,7 @@ void testTCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
         size_t messageCounter_TightlyCoupledKF_InertialNavSol = 0;
         size_t messageCounter_TightlyCoupledKF_GnssObs = 0;
 
-        auto timeOfFirstGnssObs = imuAfter ? InsTime() : InsTime(2, 215, 288748.270706);
+        auto timeOfFirstGnssObs = imuAfter ? InsTime() : InsTime(2, 220, 385980.783684);
 
         nm::RegisterPreInitCallback([&]() {
             settings[0][i0]();
@@ -147,23 +149,21 @@ void testTCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
             Eigen::Vector3d refPos_lla(deg2rad(48.780660038), deg2rad(9.171496838), 329.2047);
             Eigen::Vector3d refRollPitchYaw(0., 0., 0.);
             Eigen::Vector3d allowedPositionOffsetImuOnly_n(2.0, 5.2, 1.0);
-            Eigen::Vector3d allowedPositionOffsetCombined_n(2., 2., 2.);
+            Eigen::Vector3d allowedPositionOffsetCombined_n(8.55, 3., 51.);
             Eigen::Vector3d allowedVelocityErrorImuOnly_e(0.14, 13.7, 0.1);
-            Eigen::Vector3d allowedVelocityErrorCombined_e(0.09, 0.05, 0.08);
+            Eigen::Vector3d allowedVelocityErrorCombined_e(0.3, 0.05, 0.3);
             Eigen::Vector3d allowedRollPitchYawOffsetImuOnly(1.3, 1.3, 90.0);
             Eigen::Vector3d allowedRollPitchYawOffsetCombined(2.7, 2.0, 94.0);
 
-            if (i1 == 1) // TightlyCoupledKF::Frame::ECEF
-            {
-                allowedRollPitchYawOffsetImuOnly = { 1.3, 2.8, 90.0 };
-                allowedRollPitchYawOffsetCombined = { 2.7, 3.2, 94.0 };
-            }
+            // if (i1 == 1) // TightlyCoupledKF::Frame::ECEF // TODO: enable ECEF option once this is implemented in the TCKF
+            // {
+            //     allowedRollPitchYawOffsetImuOnly = { 1.3, 2.8, 90.0 };
+            //     allowedRollPitchYawOffsetCombined = { 2.7, 3.2, 94.0 };
+            // }
 
             if (imuAfter)
             {
-                allowedPositionOffsetCombined_n = { 0.13, 0.05, 0.07 };
-                allowedVelocityErrorCombined_e = { 0.088, 0.05, 0.08 };
-                allowedRollPitchYawOffsetCombined = { 5, 5, 242.0 };
+                allowedRollPitchYawOffsetCombined = { 9., 2.0, 94.0 };
             }
 
             // North/South deviation [m]
@@ -174,18 +174,17 @@ void testTCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
             [[maybe_unused]] double eastWest = calcGeographicalDistance(obs->latitude(), obs->longitude(),
                                                                         obs->latitude(), refPos_lla.y());
 
-            // TODO: make meaningful requirements - e.g. static recordings instead of dynamic, much shorter time range should also be sufficient
-            // REQUIRE(northSouth <= (obs->insTime < timeOfFirstGnssObs ? allowedPositionOffsetImuOnly_n(0) : allowedPositionOffsetCombined_n(0)));
-            // REQUIRE(eastWest <= (obs->insTime < timeOfFirstGnssObs ? allowedPositionOffsetImuOnly_n(1) : allowedPositionOffsetCombined_n(1)));
-            // REQUIRE(std::abs(obs->altitude() - refPos_lla(2)) <= (obs->insTime < timeOfFirstGnssObs ? allowedPositionOffsetImuOnly_n(2) : allowedPositionOffsetCombined_n(2)));
+            REQUIRE(northSouth <= (obs->insTime < timeOfFirstGnssObs ? allowedPositionOffsetImuOnly_n(0) : allowedPositionOffsetCombined_n(0)));
+            REQUIRE(eastWest <= (obs->insTime < timeOfFirstGnssObs ? allowedPositionOffsetImuOnly_n(1) : allowedPositionOffsetCombined_n(1)));
+            REQUIRE(std::abs(obs->altitude() - refPos_lla(2)) <= (obs->insTime < timeOfFirstGnssObs ? allowedPositionOffsetImuOnly_n(2) : allowedPositionOffsetCombined_n(2)));
 
-            // REQUIRE(obs->e_velocity()(0) <= (obs->insTime < timeOfFirstGnssObs ? allowedVelocityErrorImuOnly_e(0) : allowedVelocityErrorCombined_e(0)));
-            // REQUIRE(obs->e_velocity()(1) <= (obs->insTime < timeOfFirstGnssObs ? allowedVelocityErrorImuOnly_e(1) : allowedVelocityErrorCombined_e(1)));
-            // REQUIRE(obs->e_velocity()(2) <= (obs->insTime < timeOfFirstGnssObs ? allowedVelocityErrorImuOnly_e(2) : allowedVelocityErrorCombined_e(2)));
+            REQUIRE(obs->e_velocity()(0) <= (obs->insTime < timeOfFirstGnssObs ? allowedVelocityErrorImuOnly_e(0) : allowedVelocityErrorCombined_e(0)));
+            REQUIRE(obs->e_velocity()(1) <= (obs->insTime < timeOfFirstGnssObs ? allowedVelocityErrorImuOnly_e(1) : allowedVelocityErrorCombined_e(1)));
+            REQUIRE(obs->e_velocity()(2) <= (obs->insTime < timeOfFirstGnssObs ? allowedVelocityErrorImuOnly_e(2) : allowedVelocityErrorCombined_e(2)));
 
-            // REQUIRE(std::abs(rad2deg(obs->rollPitchYaw()(0)) - refRollPitchYaw(0)) <= (obs->insTime < timeOfFirstGnssObs ? allowedRollPitchYawOffsetImuOnly(0) : allowedRollPitchYawOffsetCombined(0)));
-            // REQUIRE(std::abs(rad2deg(obs->rollPitchYaw()(1)) - refRollPitchYaw(1)) <= (obs->insTime < timeOfFirstGnssObs ? allowedRollPitchYawOffsetImuOnly(1) : allowedRollPitchYawOffsetCombined(1)));
-            // REQUIRE(std::abs(rad2deg(obs->rollPitchYaw()(2)) - refRollPitchYaw(2)) <= (obs->insTime < timeOfFirstGnssObs ? allowedRollPitchYawOffsetImuOnly(2) : allowedRollPitchYawOffsetCombined(2)));
+            REQUIRE(std::abs(rad2deg(obs->rollPitchYaw()(0)) - refRollPitchYaw(0)) <= (obs->insTime < timeOfFirstGnssObs ? allowedRollPitchYawOffsetImuOnly(0) : allowedRollPitchYawOffsetCombined(0)));
+            REQUIRE(std::abs(rad2deg(obs->rollPitchYaw()(1)) - refRollPitchYaw(1)) <= (obs->insTime < timeOfFirstGnssObs ? allowedRollPitchYawOffsetImuOnly(1) : allowedRollPitchYawOffsetCombined(1)));
+            REQUIRE(std::abs(rad2deg(obs->rollPitchYaw()(2)) - refRollPitchYaw(2)) <= (obs->insTime < timeOfFirstGnssObs ? allowedRollPitchYawOffsetImuOnly(2) : allowedRollPitchYawOffsetCombined(2)));
         });
 
         // TightlyCoupledKF (591) |> GnssObs (587)
@@ -235,37 +234,34 @@ void testTCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
 
         REQUIRE(messageCounter_VectorNavBinaryConverterImu_BinaryOutput == MESSAGE_COUNT_IMU);
         REQUIRE(messageCounter_VectorNavBinaryConverterGnss_BinaryOutput == MESSAGE_COUNT_GNSS);
-        REQUIRE(messageCounter_ImuIntegrator_ImuObs == MESSAGE_COUNT_IMU_FIX);
+        REQUIRE(messageCounter_ImuIntegrator_ImuObs == MESSAGE_COUNT_IMU);
         REQUIRE(messageCounter_ImuIntegrator_PosVelAttInit == 1);
-        REQUIRE(messageCounter_ImuIntegrator_PVAError == MESSAGE_COUNT_GNSS_FIX);
-        REQUIRE(messageCounter_ImuIntegrator_Sync == MESSAGE_COUNT_GNSS_FIX);
-        REQUIRE(messageCounter_TightlyCoupledKF_InertialNavSol == MESSAGE_COUNT_IMU_FIX + MESSAGE_COUNT_GNSS_FIX - 1); // First GNSS message is used to initialize filter, does not update
-        REQUIRE(messageCounter_TightlyCoupledKF_GnssObs == MESSAGE_COUNT_GNSS_FIX);
+        REQUIRE(messageCounter_ImuIntegrator_PVAError == MESSAGE_COUNT_GNSS);
+        REQUIRE(messageCounter_ImuIntegrator_Sync == MESSAGE_COUNT_GNSS);
+        REQUIRE(messageCounter_TightlyCoupledKF_InertialNavSol == MESSAGE_COUNT_IMU + MESSAGE_COUNT_GNSS - 1); // First GNSS message is used to initialize filter, does not update
+        REQUIRE(messageCounter_TightlyCoupledKF_GnssObs == MESSAGE_COUNT_GNSS);
     },
                           settings);
 }
 
-TEST_CASE("[TightlyCoupledKF][flow] Test flow with IMU data arriving before GNSS data", "[TightlyCoupledKF][flow][debug]")
+TEST_CASE("[TightlyCoupledKF][flow] Test flow with IMU data arriving before GNSS data", "[TightlyCoupledKF][flow]")
 {
-    // GNSS: 176 messages, 162 messages with InsTime, 48 messages with fix (first GNSS message at 22.799s)
+    // GNSS: 166 messages, 166 messages with InsTime (first GNSS message at 0.004999876 s)
     size_t MESSAGE_COUNT_GNSS = 166;
-    size_t MESSAGE_COUNT_GNSS_FIX = 166;
-    // IMU:  690 messages, 466 messages with InsTime, 170 messages with fix (first IMU message at 9.037s)
+    // IMU:  1638 messages, 1638 messages with InsTime (first IMU message at 0 s)
     size_t MESSAGE_COUNT_IMU = 1638;
-    size_t MESSAGE_COUNT_IMU_FIX = 1638;
 
-    testTCKFwithImuFile("DataProcessor/tckf/vn310-imu.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_GNSS_FIX, MESSAGE_COUNT_IMU, MESSAGE_COUNT_IMU_FIX);
+    testTCKFwithImuFile("DataProcessor/tckf/vn310-imu.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_IMU);
 }
 
-// TEST_CASE("[TightlyCoupledKF][flow] Test flow with IMU data arriving after GNSS data", "[TightlyCoupledKF][flow]")
-// {
-//     // GNSS: 176 messages, 162 messages with InsTime, 48 messages with fix (first GNSS message at 22.799717387000001s)
-//     size_t MESSAGE_COUNT_GNSS = 162;
-//     size_t MESSAGE_COUNT_GNSS_FIX = 48;
-//     // IMU:  167 messages (first IMU message at 24.017697899000002s)
-//     size_t MESSAGE_COUNT_IMU = 167;
+TEST_CASE("[TightlyCoupledKF][flow] Test flow with IMU data arriving after GNSS data", "[TightlyCoupledKF][flow][debug]")
+{
+    // GNSS: 166 messages, 166 messages with InsTime (first GNSS message at 0.004999876 s)
+    size_t MESSAGE_COUNT_GNSS = 166;
+    // IMU:  1636 messages, 1636 messages with InsTime (first IMU message at 0.039999962 s)
+    size_t MESSAGE_COUNT_IMU = 1636;
 
-//     testTCKFwithImuFile("VectorNav/Static/vn310-imu-after.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_GNSS_FIX, MESSAGE_COUNT_IMU, MESSAGE_COUNT_IMU);
-// }
+    testTCKFwithImuFile("DataProcessor/tckf/vn310-imu-after.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_IMU);
+}
 
 } // namespace NAV::TESTS::TightlyCoupledKFTests
