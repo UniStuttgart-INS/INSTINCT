@@ -194,7 +194,7 @@ class ManagedKalmanFilter
     Eigen::Ref<Eigen::VectorXd> x(const StateKey& key)
     {
         const auto& entry = states.at(key);
-        return _x.segment(static_cast<Eigen::Index>(entry.index), static_cast<Eigen::Index>(entry.index + entry.length));
+        return _x.segment(static_cast<Eigen::Index>(entry.index), static_cast<Eigen::Index>(entry.length));
     }
 
     Eigen::VectorXd _x; ///< x̂ State vector (n x 1)

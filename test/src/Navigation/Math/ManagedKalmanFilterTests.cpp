@@ -14,102 +14,100 @@
 
 #include <iostream>
 
-// struct Position
-// {};
-// struct Velocity
-// {};
-// struct Ambiguity
-// {
-//     Ambiguity(size_t number) : number(number) {}
-//     size_t number = 0;
-// };
+struct Position
+{
+    constexpr bool operator==(const Position& /* rhs */) const { return true; }
+};
+struct Velocity
+{
+    constexpr bool operator==(const Velocity& /* rhs */) const { return true; }
+};
+struct Ambiguity
+{
+    constexpr Ambiguity(size_t number) : number(number) {}
+    constexpr bool operator==(const Ambiguity& rhs) const { return number == rhs.number; }
 
-// struct Pseudorange
-// {
-//     size_t number = 0;
-// };
-// struct Carrierphase
-// {
-//     size_t number = 0;
-// };
+    size_t number = 0;
+};
 
-// namespace std
-// {
-// /// @brief Hash function (needed for unordered_map)
-// template<>
-// struct hash<Position>
-// {
-//     /// @brief Hash function
-//     size_t operator()(const Position& /* p */) const { return 0; }
-// };
-// /// @brief Hash function (needed for unordered_map)
-// template<>
-// struct hash<Velocity>
-// {
-//     /// @brief Hash function
-//     size_t operator()(const Velocity& /* v */) const { return 1; }
-// };
-// /// @brief Hash function (needed for unordered_map)
-// template<>
-// struct hash<Ambiguity>
-// {
-//     /// @brief Hash function
-//     /// @param[in] a Ambiguity
-//     size_t operator()(const Ambiguity& a) const { return 2 + a.number; }
-// };
-// /// @brief Hash function (needed for unordered_map)
-// template<>
-// struct hash<Pseudorange>
-// {
-//     /// @brief Hash function
-//     /// @param[in] psr Pseudorange
-//     size_t operator()(const Pseudorange& psr) const { return psr.number; }
-// };
-// /// @brief Hash function (needed for unordered_map)
-// template<>
-// struct hash<Carrierphase>
-// {
-//     /// @brief Hash function
-//     /// @param[in] cp Carrierphase
-//     size_t operator()(const Carrierphase& cp) const { return 1000 + cp.number; }
-// };
-// } // namespace std
+struct Pseudorange
+{
+    size_t number = 0;
+};
+struct Carrierphase
+{
+    size_t number = 0;
+};
+
+namespace std
+{
+/// @brief Hash function (needed for unordered_map)
+template<>
+struct hash<Position>
+{
+    /// @brief Hash function
+    size_t operator()(const Position& /* p */) const { return 0; }
+};
+/// @brief Hash function (needed for unordered_map)
+template<>
+struct hash<Velocity>
+{
+    /// @brief Hash function
+    size_t operator()(const Velocity& /* v */) const { return 1; }
+};
+/// @brief Hash function (needed for unordered_map)
+template<>
+struct hash<Ambiguity>
+{
+    /// @brief Hash function
+    /// @param[in] a Ambiguity
+    size_t operator()(const Ambiguity& a) const { return 2 + a.number; }
+};
+/// @brief Hash function (needed for unordered_map)
+template<>
+struct hash<Pseudorange>
+{
+    /// @brief Hash function
+    /// @param[in] psr Pseudorange
+    size_t operator()(const Pseudorange& psr) const { return psr.number; }
+};
+/// @brief Hash function (needed for unordered_map)
+template<>
+struct hash<Carrierphase>
+{
+    /// @brief Hash function
+    /// @param[in] cp Carrierphase
+    size_t operator()(const Carrierphase& cp) const { return 1000 + cp.number; }
+};
+} // namespace std
 
 namespace NAV::TESTS
 {
 
-TEST_CASE("[Math] Managed Kalman Filter", "[Math]")
+TEST_CASE("[Math] Managed Kalman Filter", "[Math][Debug]")
 {
     auto logger = initializeTestLogger();
 
-    enum StateKeys
-    {
-        Position,
-        Velocity,
-        Ambiguity
-    };
-    enum MeasKeys
-    {
-        Psr,
-        Carrier,
-    };
+    using StateKeys = std::variant<Position, Velocity, Ambiguity>;
+    using MeasKeys = std::variant<Pseudorange, Carrierphase>;
+    ManagedKalmanFilter<StateKeys, MeasKeys> mkf;
 
-    ManagedKalmanFilter<std::pair<StateKeys, size_t>, std::pair<MeasKeys, size_t>> mkf;
+    mkf.addState(Position{}, 3);
+    mkf.addState(Velocity{}, 3);
+    mkf.addState(Ambiguity{ 1 }, 1);
+    mkf.addState(Ambiguity{ 2 }, 1);
 
-    mkf.addState(std::make_pair(Position, 0UL), 3);
-    mkf.addState(std::make_pair(Velocity, 0UL), 3);
-    mkf.addState(std::make_pair(Ambiguity, 1UL), 1);
-    mkf.addState(std::make_pair(Ambiguity, 2UL), 3);
+    mkf.x(Position{}) = Eigen::Vector3d(1, 2, 3);
+    mkf.x(Velocity{}) = Eigen::Vector3d(4, 5, 6);
+    mkf.x(Ambiguity{ 1 }) = Eigen::VectorXd::Ones(1) * 7;
+    mkf.x(Ambiguity{ 2 }) = Eigen::VectorXd::Ones(1) * 8;
 
-    // mkf.addState(Position{}, 3);
-    // mkf.addState(Velocity{}, 3);
-    // mkf.addState(Ambiguity{ 1 }, 1);
-    // mkf.addState(Ambiguity{ 2 }, 1);
+    REQUIRE(mkf.x(Position{}) == Eigen::Vector3d(1, 2, 3));
+    REQUIRE(mkf.x(Velocity{}) == Eigen::Vector3d(4, 5, 6));
+    REQUIRE(mkf.x(Ambiguity{ 1 }) == Eigen::VectorXd::Ones(1) * 7);
+    REQUIRE(mkf.x(Ambiguity{ 2 }) == Eigen::VectorXd::Ones(1) * 8);
 
-    mkf.x(std::make_pair(Position, 0UL)) = Eigen::Vector3d(1, 2, 3);
-    // REQUIRE(mkf.x.rows() == 2);
-
-    std::cout << mkf._x << std::endl;
+    std::cout << mkf._x.transpose() << std::endl;
     REQUIRE(false);
 }
 
