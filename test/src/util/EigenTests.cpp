@@ -19,7 +19,7 @@
 namespace NAV::TESTS
 {
 
-TEST_CASE("[Eigen] removeRows Matrix", "[Eigen][Debug]")
+TEST_CASE("[Eigen] removeRows Matrix", "[Eigen]")
 {
     auto logger = initializeTestLogger();
 

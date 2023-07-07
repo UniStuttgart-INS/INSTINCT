@@ -107,8 +107,26 @@ void removeRows(Eigen::DenseBase<Derived>& matrix, size_t index, size_t length)
     for (int i = 0; i < static_cast<int>(index); i++) { indicesToKeep.push_back(i); }
     for (int i = static_cast<int>(index + length); i < matrix.rows(); i++) { indicesToKeep.push_back(i); }
 
-    Eigen::Map<Eigen::VectorXi> rows(indicesToKeep.data(), static_cast<int>(indicesToKeep.size()));
-    matrix = matrix(rows, Eigen::all).eval();
+    matrix = matrix(indicesToKeep, Eigen::all).eval();
+}
+
+/// @brief Removes rows from a matrix or vector
+/// @param matrix Matrix to remove from
+/// @param rowIndices List with indices of rows to remove
+template<typename Derived>
+void removeRows(Eigen::DenseBase<Derived>& matrix, const std::vector<int>& rowIndices)
+{
+    std::vector<int> rowIndicesToKeep;
+    rowIndicesToKeep.reserve(static_cast<size_t>(matrix.rows()) - rowIndices.size());
+    for (int i = 0; i < matrix.rows(); i++)
+    {
+        if (std::find(rowIndices.begin(), rowIndices.end(), i) == rowIndices.end())
+        {
+            rowIndicesToKeep.push_back(i);
+        }
+    }
+
+    matrix = matrix(rowIndicesToKeep, Eigen::all).eval();
 }
 
 /// @brief Removes columns from a matrix or vector
@@ -125,8 +143,26 @@ void removeCols(Eigen::DenseBase<Derived>& matrix, size_t index, size_t length)
     for (int i = 0; i < static_cast<int>(index); i++) { indicesToKeep.push_back(i); }
     for (int i = static_cast<int>(index + length); i < matrix.cols(); i++) { indicesToKeep.push_back(i); }
 
-    Eigen::Map<Eigen::VectorXi> cols(indicesToKeep.data(), static_cast<int>(indicesToKeep.size()));
-    matrix = matrix(Eigen::all, cols).eval();
+    matrix = matrix(Eigen::all, indicesToKeep).eval();
+}
+
+/// @brief Removes cols from a matrix or vector
+/// @param matrix Matrix to remove from
+/// @param colIndices List with indices of cols to remove
+template<typename Derived>
+void removeCols(Eigen::DenseBase<Derived>& matrix, const std::vector<int>& colIndices)
+{
+    std::vector<int> colIndicesToKeep;
+    colIndicesToKeep.reserve(static_cast<size_t>(matrix.cols()) - colIndices.size());
+    for (int i = 0; i < matrix.cols(); i++)
+    {
+        if (std::find(colIndices.begin(), colIndices.end(), i) == colIndices.end())
+        {
+            colIndicesToKeep.push_back(i);
+        }
+    }
+
+    matrix = matrix(Eigen::all, colIndicesToKeep).eval();
 }
 
 /// @brief Removes rows and columns from a matrix or vector
@@ -151,9 +187,37 @@ void removeRowsAndCols(Eigen::DenseBase<Derived>& matrix, size_t row, size_t row
     for (int i = 0; i < static_cast<int>(col); i++) { colsToKeep.push_back(i); }
     for (int i = static_cast<int>(col + cols); i < matrix.cols(); i++) { colsToKeep.push_back(i); }
 
-    Eigen::Map<Eigen::VectorXi> rowsToKeepVec(rowsToKeep.data(), static_cast<int>(rowsToKeep.size()));
-    Eigen::Map<Eigen::VectorXi> colsToKeepVec(colsToKeep.data(), static_cast<int>(colsToKeep.size()));
-    matrix = matrix(rowsToKeepVec, colsToKeepVec).eval();
+    matrix = matrix(rowsToKeep, colsToKeep).eval();
+}
+
+/// @brief Removes rows and columns from a matrix or vector
+/// @param matrix Matrix to remove from
+/// @param rowIndices List with indices of rows to remove
+/// @param colIndices List with indices of cols to remove
+template<typename Derived>
+void removeRowsAndCols(Eigen::DenseBase<Derived>& matrix, const std::vector<int>& rowIndices, const std::vector<int>& colIndices)
+{
+    std::vector<int> rowIndicesToKeep;
+    rowIndicesToKeep.reserve(static_cast<size_t>(matrix.rows()) - rowIndices.size());
+    for (int i = 0; i < matrix.rows(); i++)
+    {
+        if (std::find(rowIndices.begin(), rowIndices.end(), i) == rowIndices.end())
+        {
+            rowIndicesToKeep.push_back(i);
+        }
+    }
+
+    std::vector<int> colIndicesToKeep;
+    colIndicesToKeep.reserve(static_cast<size_t>(matrix.cols()) - colIndices.size());
+    for (int i = 0; i < matrix.cols(); i++)
+    {
+        if (std::find(colIndices.begin(), colIndices.end(), i) == colIndices.end())
+        {
+            colIndicesToKeep.push_back(i);
+        }
+    }
+
+    matrix = matrix(rowIndicesToKeep, colIndicesToKeep).eval();
 }
 
 } // namespace NAV

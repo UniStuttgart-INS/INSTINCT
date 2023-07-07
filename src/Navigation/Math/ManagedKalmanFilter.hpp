@@ -197,9 +197,9 @@ class ManagedKalmanFilter
         return _x.segment(static_cast<Eigen::Index>(entry.index), static_cast<Eigen::Index>(entry.length));
     }
 
-    Eigen::VectorXd _x; ///< x̂ State vector (n x 1)
   private:
-    Eigen::MatrixXd I; ///< 𝑰 Identity Matrix (n x n)
+    Eigen::MatrixXd I;  ///< 𝑰 Identity Matrix (n x n)
+    Eigen::VectorXd _x; ///< x̂ State vector (n x 1)
 
     std::unordered_map<StateKey, Entry> states;
     std::unordered_map<MeasKey, Entry> measurements;
