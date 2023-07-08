@@ -88,6 +88,8 @@ TEST_CASE("[KeyedMatrix] Constructors dynamic sized", "[KeyedMatrix]")
 
 TEST_CASE("[KeyedMatrix] rowKeys & colKeys", "[KeyedMatrix]")
 {
+    auto logger = initializeTestLogger();
+
     enum Keys
     {
         ONE,
@@ -102,6 +104,8 @@ TEST_CASE("[KeyedMatrix] rowKeys & colKeys", "[KeyedMatrix]")
 
 TEST_CASE("[KeyedMatrix] hasRow(s) & hasCol(s)", "[KeyedMatrix]")
 {
+    auto logger = initializeTestLogger();
+
     enum Keys
     {
         ONE,
@@ -129,6 +133,8 @@ TEST_CASE("[KeyedMatrix] hasRow(s) & hasCol(s)", "[KeyedMatrix]")
 
 TEST_CASE("[KeyedMatrix] operator(rowKey(s), colKey(s))", "[KeyedMatrix]")
 {
+    auto logger = initializeTestLogger();
+
     Eigen::Matrix3d eigMat;
     eigMat << 1, 2, 3,
         4, 5, 6,
@@ -174,6 +180,8 @@ TEST_CASE("[KeyedMatrix] operator(rowKey(s), colKey(s))", "[KeyedMatrix]")
 
 TEST_CASE("[KeyedMatrix] addRows & addCols", "[KeyedMatrix]")
 {
+    auto logger = initializeTestLogger();
+
     KeyedMatrix<double, const char*, int> mat;
     mat.addRow("1");
     mat.addCol(1);
@@ -200,8 +208,10 @@ TEST_CASE("[KeyedMatrix] addRows & addCols", "[KeyedMatrix]")
     REQUIRE(mat("2", 1) == 4);
 }
 
-TEST_CASE("[KeyedMatrix] removeRows & removeCols", "[KeyedMatrix][Debug]")
+TEST_CASE("[KeyedMatrix] removeRows & removeCols", "[KeyedMatrix]")
 {
+    auto logger = initializeTestLogger();
+
     Eigen::Matrix4d eigMat;
     eigMat << 1, 2, 3, 4,
         5, 6, 7, 8,
@@ -264,6 +274,8 @@ TEST_CASE("[KeyedMatrix] removeRows & removeCols", "[KeyedMatrix][Debug]")
 
 TEST_CASE("[KeyedMatrix] Access with all", "[KeyedMatrix]")
 {
+    auto logger = initializeTestLogger();
+
     Eigen::Matrix3d eigMat;
     eigMat << 1, 2, 3,
         4, 5, 6,
@@ -280,27 +292,34 @@ TEST_CASE("[KeyedMatrix] Access with all", "[KeyedMatrix]")
 
 TEST_CASE("[KeyedMatrix] Access with alias", "[KeyedMatrix]")
 {
+    auto logger = initializeTestLogger();
+
     enum Keys
     {
-        PosX,
-        PosY,
-        VelX,
-        VelY,
+        Px,
+        Py,
+        Vx,
+        Vy,
     };
-    Eigen::Matrix4d eigMat;
-    eigMat << 1, 2, 3, 4,
-        5, 6, 7, 8,
-        9, 10, 11, 12,
-        13, 14, 15, 16;
+    Eigen::Matrix4<std::string> eigMat;
+    eigMat << "Px-Px", "Px-Py", "Px-Vx", "Px-Vy",
+        "Py-Px", "Py-Py", "Py-Vx", "Py-Vy",
+        "Vx-Px", "Vx-Py", "Vx-Vx", "Vx-Vy",
+        "Vy-Px", "Vy-Py", "Vy-Vx", "Vy-Vy";
 
-    KeyedMatrix<double, Keys, Keys, 4, 4> mat(eigMat, { PosX, PosY, VelX, VelY });
+    KeyedMatrix<std::string, Keys> mat(eigMat, { Px, Py, Vx, Vy });
 
-    static const std::vector<Keys> Pos = { PosX, PosY };
-    static const std::vector<Keys> Vel = { VelX, VelY };
+    static const std::vector<Keys> Pos = { Px, Py };
+    static const std::vector<Keys> Vel = { Vx, Vy };
 
     REQUIRE(mat(Pos, all) == eigMat({ 0, 1 }, Eigen::all));
     REQUIRE(mat(Pos, Vel) == eigMat({ 0, 1 }, { 2, 3 }));
+    Eigen::Matrix2<std::string> refMat;
+    refMat << "Px-Vx", "Px-Vy",
+        "Py-Vx", "Py-Vy";
+    REQUIRE(mat(Pos, Vel) == refMat);
 }
+
 } // namespace NAV::TESTS
 
 namespace keym
@@ -380,6 +399,8 @@ namespace NAV::TESTS
 {
 TEST_CASE("[KeyedMatrix] std::variant as Keys", "[KeyedMatrix]")
 {
+    auto logger = initializeTestLogger();
+
     using keym::Position, keym::Velocity, keym::Ambiguity, keym::Pseudorange, keym::Carrierphase;
 
     Eigen::Matrix4d eigMat;
