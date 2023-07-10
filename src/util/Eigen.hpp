@@ -21,6 +21,8 @@ using json = nlohmann::json; ///< json namespace
 
 #include <fmt/ostream.h>
 
+#include "Assert.h"
+
 namespace Eigen
 {
 using Array3ld = Array<long double, 3, 1>; ///< Long double 3x1 Eigen::Array
@@ -88,10 +90,142 @@ void from_json(const json& j, Matrix<_Scalar, _Rows, _Cols>& matrix)
 
 } // namespace Eigen
 
+namespace NAV
+{
+
+/// @brief Removes rows from a matrix or vector
+/// @param matrix Matrix to remove from
+/// @param index Index to start removing
+/// @param length Length to remove
+template<typename Derived>
+void removeRows(Eigen::DenseBase<Derived>& matrix, size_t index, size_t length)
+{
+    INS_ASSERT_USER_ERROR(static_cast<size_t>(matrix.rows()) >= index + length, "Tried to remove rows which do not exist");
+
+    std::vector<int> indicesToKeep;
+    indicesToKeep.reserve(static_cast<size_t>(matrix.rows()) - length);
+    for (int i = 0; i < static_cast<int>(index); i++) { indicesToKeep.push_back(i); }
+    for (int i = static_cast<int>(index + length); i < matrix.rows(); i++) { indicesToKeep.push_back(i); }
+
+    matrix = matrix(indicesToKeep, Eigen::all).eval();
+}
+
+/// @brief Removes rows from a matrix or vector
+/// @param matrix Matrix to remove from
+/// @param rowIndices List with indices of rows to remove
+template<typename Derived>
+void removeRows(Eigen::DenseBase<Derived>& matrix, const std::vector<int>& rowIndices)
+{
+    std::vector<int> rowIndicesToKeep;
+    rowIndicesToKeep.reserve(static_cast<size_t>(matrix.rows()) - rowIndices.size());
+    for (int i = 0; i < matrix.rows(); i++)
+    {
+        if (std::find(rowIndices.begin(), rowIndices.end(), i) == rowIndices.end())
+        {
+            rowIndicesToKeep.push_back(i);
+        }
+    }
+
+    matrix = matrix(rowIndicesToKeep, Eigen::all).eval();
+}
+
+/// @brief Removes columns from a matrix or vector
+/// @param matrix Matrix to remove from
+/// @param index Index to start removing
+/// @param length Length to remove
+template<typename Derived>
+void removeCols(Eigen::DenseBase<Derived>& matrix, size_t index, size_t length)
+{
+    INS_ASSERT_USER_ERROR(static_cast<size_t>(matrix.cols()) >= index + length, "Tried to remove cols which do not exist");
+
+    std::vector<int> indicesToKeep;
+    indicesToKeep.reserve(static_cast<size_t>(matrix.cols()) - length);
+    for (int i = 0; i < static_cast<int>(index); i++) { indicesToKeep.push_back(i); }
+    for (int i = static_cast<int>(index + length); i < matrix.cols(); i++) { indicesToKeep.push_back(i); }
+
+    matrix = matrix(Eigen::all, indicesToKeep).eval();
+}
+
+/// @brief Removes cols from a matrix or vector
+/// @param matrix Matrix to remove from
+/// @param colIndices List with indices of cols to remove
+template<typename Derived>
+void removeCols(Eigen::DenseBase<Derived>& matrix, const std::vector<int>& colIndices)
+{
+    std::vector<int> colIndicesToKeep;
+    colIndicesToKeep.reserve(static_cast<size_t>(matrix.cols()) - colIndices.size());
+    for (int i = 0; i < matrix.cols(); i++)
+    {
+        if (std::find(colIndices.begin(), colIndices.end(), i) == colIndices.end())
+        {
+            colIndicesToKeep.push_back(i);
+        }
+    }
+
+    matrix = matrix(Eigen::all, colIndicesToKeep).eval();
+}
+
+/// @brief Removes rows and columns from a matrix or vector
+/// @param matrix Matrix to remove from
+/// @param row Row index to start removing
+/// @param rows Amount of rows to remove
+/// @param col Col index to start removing
+/// @param cols Amount of cols to remove
+template<typename Derived>
+void removeRowsAndCols(Eigen::DenseBase<Derived>& matrix, size_t row, size_t rows, size_t col, size_t cols)
+{
+    INS_ASSERT_USER_ERROR(static_cast<size_t>(matrix.rows()) >= row + rows, "Tried to remove rows which do not exist");
+    INS_ASSERT_USER_ERROR(static_cast<size_t>(matrix.cols()) >= col + cols, "Tried to remove cols which do not exist");
+
+    std::vector<int> rowsToKeep;
+    rowsToKeep.reserve(static_cast<size_t>(matrix.rows()) - rows);
+    for (int i = 0; i < static_cast<int>(row); i++) { rowsToKeep.push_back(i); }
+    for (int i = static_cast<int>(row + rows); i < matrix.rows(); i++) { rowsToKeep.push_back(i); }
+
+    std::vector<int> colsToKeep;
+    colsToKeep.reserve(static_cast<size_t>(matrix.cols()) - cols);
+    for (int i = 0; i < static_cast<int>(col); i++) { colsToKeep.push_back(i); }
+    for (int i = static_cast<int>(col + cols); i < matrix.cols(); i++) { colsToKeep.push_back(i); }
+
+    matrix = matrix(rowsToKeep, colsToKeep).eval();
+}
+
+/// @brief Removes rows and columns from a matrix or vector
+/// @param matrix Matrix to remove from
+/// @param rowIndices List with indices of rows to remove
+/// @param colIndices List with indices of cols to remove
+template<typename Derived>
+void removeRowsAndCols(Eigen::DenseBase<Derived>& matrix, const std::vector<int>& rowIndices, const std::vector<int>& colIndices)
+{
+    std::vector<int> rowIndicesToKeep;
+    rowIndicesToKeep.reserve(static_cast<size_t>(matrix.rows()) - rowIndices.size());
+    for (int i = 0; i < matrix.rows(); i++)
+    {
+        if (std::find(rowIndices.begin(), rowIndices.end(), i) == rowIndices.end())
+        {
+            rowIndicesToKeep.push_back(i);
+        }
+    }
+
+    std::vector<int> colIndicesToKeep;
+    colIndicesToKeep.reserve(static_cast<size_t>(matrix.cols()) - colIndices.size());
+    for (int i = 0; i < matrix.cols(); i++)
+    {
+        if (std::find(colIndices.begin(), colIndices.end(), i) == colIndices.end())
+        {
+            colIndicesToKeep.push_back(i);
+        }
+    }
+
+    matrix = matrix(rowIndicesToKeep, colIndicesToKeep).eval();
+}
+
+} // namespace NAV
+
 #ifndef DOXYGEN_IGNORE
 
 template<typename T>
-requires std::is_base_of_v<Eigen::DenseBase<T>, T>
+    requires std::is_base_of_v<Eigen::DenseBase<T>, T>
 struct fmt::formatter<T> : ostream_formatter
 {};
 
