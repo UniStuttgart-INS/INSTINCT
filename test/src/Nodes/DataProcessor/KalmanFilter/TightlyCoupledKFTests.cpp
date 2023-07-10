@@ -52,11 +52,12 @@ namespace nm = NAV::NodeManager;
 namespace NAV::TESTS::TightlyCoupledKFTests
 {
 
-void testTCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, size_t MESSAGE_COUNT_IMU)
+void testTCKFwithImuFile(const char* imuFilePath, const char* gnssFilePath, size_t MESSAGE_COUNT_GNSS, size_t MESSAGE_COUNT_IMU)
 {
     auto logger = initializeTestLogger();
 
     bool imuAfter = std::string(imuFilePath) == "DataProcessor/tckf/vn310-imu-after.csv";
+    bool gnssRinex = std::string(gnssFilePath) == "DataProcessor/tckf/reach-m2-01_raw_202306291111.23O";
 
     std::array<std::vector<std::function<void()>>, 6> settings = { {
         { [&]() { LOG_WARN("Setting ImuIntegrator - _path to: {}", imuFilePath);
@@ -111,10 +112,13 @@ void testTCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
             messageCounter_VectorNavBinaryConverterImu_BinaryOutput++;
         });
 
-        // VectorNavBinaryConverter (624) |> Binary Output (623)
-        nm::RegisterWatcherCallbackToInputPin(623, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
-            messageCounter_VectorNavBinaryConverterGnss_BinaryOutput++;
-        });
+        if (!gnssRinex)
+        {
+            // VectorNavBinaryConverter (624) |> Binary Output (623)
+            nm::RegisterWatcherCallbackToInputPin(623, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+                messageCounter_VectorNavBinaryConverterGnss_BinaryOutput++;
+            });
+        }
 
         // ImuIntegrator (163) |> ImuObs (164)
         nm::RegisterWatcherCallbackToInputPin(164, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
@@ -148,12 +152,31 @@ void testTCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
 
             Eigen::Vector3d refPos_lla(deg2rad(48.780660038), deg2rad(9.171496838), 329.2047);
             Eigen::Vector3d refRollPitchYaw(0., 0., 0.);
-            Eigen::Vector3d allowedPositionOffsetImuOnly_n(2.0, 5.2, 1.0);
-            Eigen::Vector3d allowedPositionOffsetCombined_n(8.55, 3., 51.);
-            Eigen::Vector3d allowedVelocityErrorImuOnly_e(0.14, 13.7, 0.1);
-            Eigen::Vector3d allowedVelocityErrorCombined_e(0.3, 0.05, 0.3);
-            Eigen::Vector3d allowedRollPitchYawOffsetImuOnly(1.3, 1.3, 90.0);
-            Eigen::Vector3d allowedRollPitchYawOffsetCombined(2.7, 2.0, 94.0);
+            Eigen::Vector3d allowedPositionOffsetImuOnly_n(0., 0., 0.);
+            Eigen::Vector3d allowedPositionOffsetCombined_n(0., 0., 0.);
+            Eigen::Vector3d allowedVelocityErrorImuOnly_e(0., 0., 0.);
+            Eigen::Vector3d allowedVelocityErrorCombined_e(0., 0., 0.);
+            Eigen::Vector3d allowedRollPitchYawOffsetImuOnly(0., 0., 0.);
+            Eigen::Vector3d allowedRollPitchYawOffsetCombined(0., 0., 0.);
+
+            if (gnssRinex)
+            {
+                allowedPositionOffsetImuOnly_n << 5.4, 2.3, 35.;
+                allowedPositionOffsetCombined_n << 8.55, 3., 51.;
+                allowedVelocityErrorImuOnly_e << 0.14, 13.7, 0.1;
+                allowedVelocityErrorCombined_e << 0.3, 0.05, 0.3;
+                allowedRollPitchYawOffsetImuOnly << 1.3, 1.3, 90.0;
+                allowedRollPitchYawOffsetCombined << 5., 1.2, 94.0;
+            }
+            else
+            {
+                allowedPositionOffsetImuOnly_n << 2.0, 5.2, 1.0;
+                allowedPositionOffsetCombined_n << 8.55, 3., 51.;
+                allowedVelocityErrorImuOnly_e << 0.14, 13.7, 0.1;
+                allowedVelocityErrorCombined_e << 0.3, 0.05, 0.3;
+                allowedRollPitchYawOffsetImuOnly << 1.3, 1.3, 90.0;
+                allowedRollPitchYawOffsetCombined << 2.7, 2.0, 94.0;
+            }
 
             // if (i1 == 1) // TightlyCoupledKF::Frame::ECEF // TODO: enable ECEF option once this is implemented in the TCKF
             // {
@@ -230,10 +253,56 @@ void testTCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
         //                                                                                                                                                                                                                                                  (600) K |> ----------(639)---->  |> KF.K (456)
         //
         // ###########################################################################################################
-        REQUIRE(testFlow("test/flow/Nodes/DataProcessor/KalmanFilter/TightlyCoupledKF.flow"));
+
+        // ###########################################################################################################
+        //                                           TightlyCoupledKF_Rinex.flow
+        // ###########################################################################################################
+        //
+        //                                                                                                                                                                                                    Plot (9)
+        //                                                                    ImuSimulator (577) (disabled)                            (585)--------------------------------------------------------------->  |> ImuObs (4)
+        //                                                                       (575) ImuObs |>                                      /                                                                       |> Nominal (5)
+        //                                                                    (576) PosVelAtt |>                                     /                                                                   -->  |> Filter (121)
+        //                                                                                       \                                  /                                                                   /
+        //                                                                                        \          Combiner (344)        /            PosVelAttInitializer (21)                               |
+        // VectorNavFile - IMU (324)              VectorNavBinaryConverter (333)                   (581)-->  |> (345)    (347) |> -                      (20) PosVelAtt |>                              |
+        //    (323) Binary Output |>  --(334)-->  |> Binary Output (332)   (331) ImuObsWDelta |> --(561)-->  |> (346)              \                                       \                          (383)
+        //                                                                                                                          \                                      /                            |
+        //                                                                                                                           \           --------(322)-------------                             |
+        //                                                                                                                            \         /                                                       |
+        //                                                                                                                             \       |     ImuIntegrator (163)                               /
+        //                                                                                                                              (583)----->  |> ImuObs (164)          (166) InertialNavSol |> -
+        //                                                                                                                                     \-->  |> PosVelAttInit (165)                            \
+        //                                                                                                                                  ------>  |> PVAError (224)                                 |
+        //                                                                                                                                 /    -->  |> Sync (6)                                       |
+        //                                                                                                                                |    /                                                       |
+        //                                                                                                                                |    \-------------------------------------------------------|---------------------------------------------------------------(601)
+        //                                                                                                                                 \                                                           |                                                                    \
+        // RinexObsFile   (633)                                                                                                             (592)------------------------------------------------------|----------------------------------------------------------------    |
+        //     (632) RinexObsFile  |>--------------------------------------------------------------------                                                                                              |                                                                \   |
+        //                                                                                               \                                                                                             \          TightlyCoupledKF (591)                                /   |
+        //                                                                                                \                                                                                             (611)-->  |> InertialNavSol (586)            (589) PVAError |> ----/---              Plot (250)
+        // RinexNavFile         (616)                                                                      \(632)---------------------------------------------------------------------------------------------->  |> GnssObs (587)                       (590) Sync |> ----    \-(610)---->  |> PVAError (245)
+        //     (615) GnssNavInfo   |>-----------------------------------------------------------------------(617)---------------------------------------------------------------------------------------------->  |> GnssNavInfo (588)                      (593) x |> ----------(632)---->  |> KF.x (252)
+        //                                                                                                                                                                                                                                                  (594) P |> ----------(633)---->  |> KF.P (253)
+        //                                                                                                                                                                                                                                                (595) Phi |> ----------(634)---->  |> KF.Phi (254)
+        //                                                                                                                                                                                                                                                  (596) Q |> ----------(635)---->  |> KF.Q (255)
+        //                                                                                                                                                                                                                                                  (597) z |> ----------(636)---->  |> KF.z (256)
+        //                                                                                                                                                                                                                                                  (598) H |> ----------(637)---->  |> KF.H (263)
+        //                                                                                                                                                                                                                                                  (599) R |> ----------(638)---->  |> KF.R (264)
+        //                                                                                                                                                                                                                                                  (600) K |> ----------(639)---->  |> KF.K (456)
+        //
+        // ###########################################################################################################
+        if (gnssRinex)
+        {
+            REQUIRE(testFlow("test/flow/Nodes/DataProcessor/KalmanFilter/TightlyCoupledKF_Rinex.flow"));
+        }
+        else
+        {
+            REQUIRE(testFlow("test/flow/Nodes/DataProcessor/KalmanFilter/TightlyCoupledKF.flow"));
+            REQUIRE(messageCounter_VectorNavBinaryConverterGnss_BinaryOutput == MESSAGE_COUNT_GNSS);
+        }
 
         REQUIRE(messageCounter_VectorNavBinaryConverterImu_BinaryOutput == MESSAGE_COUNT_IMU);
-        REQUIRE(messageCounter_VectorNavBinaryConverterGnss_BinaryOutput == MESSAGE_COUNT_GNSS);
         REQUIRE(messageCounter_ImuIntegrator_ImuObs == MESSAGE_COUNT_IMU);
         REQUIRE(messageCounter_ImuIntegrator_PosVelAttInit == 1);
         REQUIRE(messageCounter_ImuIntegrator_PVAError == MESSAGE_COUNT_GNSS);
@@ -251,17 +320,37 @@ TEST_CASE("[TightlyCoupledKF][flow] Test flow with IMU data arriving before GNSS
     // IMU:  1638 messages, 1638 messages with InsTime (first IMU message at 0 s)
     size_t MESSAGE_COUNT_IMU = 1638;
 
-    testTCKFwithImuFile("DataProcessor/tckf/vn310-imu.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_IMU);
+    testTCKFwithImuFile("DataProcessor/tckf/vn310-imu.csv", "DataProcessor/tckf/vn310-gnss.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_IMU);
 }
 
-TEST_CASE("[TightlyCoupledKF][flow] Test flow with IMU data arriving after GNSS data", "[TightlyCoupledKF][flow][debug]")
+TEST_CASE("[TightlyCoupledKF][flow] Test flow with IMU data arriving after GNSS data", "[TightlyCoupledKF][flow]")
 {
     // GNSS: 166 messages, 166 messages with InsTime (first GNSS message at 0.004999876 s)
     size_t MESSAGE_COUNT_GNSS = 166;
     // IMU:  1636 messages, 1636 messages with InsTime (first IMU message at 0.039999962 s)
     size_t MESSAGE_COUNT_IMU = 1636;
 
-    testTCKFwithImuFile("DataProcessor/tckf/vn310-imu-after.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_IMU);
+    testTCKFwithImuFile("DataProcessor/tckf/vn310-imu-after.csv", "DataProcessor/tckf/vn310-gnss.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_IMU);
 }
+
+TEST_CASE("[TightlyCoupledKF][flow] Test flow with GNSS containing only psr (no doppler) in some epochs", "[TightlyCoupledKF][flow]")
+{
+    // GNSS: 610 messages, 610 messages with InsTime (first GNSS message at 0.004999876 s)
+    size_t MESSAGE_COUNT_GNSS = 610;
+    // IMU:  1638 messages, 1638 messages with InsTime (first IMU message at 0.039999962 s)
+    size_t MESSAGE_COUNT_IMU = 1638;
+
+    testTCKFwithImuFile("DataProcessor/tckf/vn310-imu.csv", "DataProcessor/tckf/reach-m2-01_raw_202306291111.23O", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_IMU);
+}
+
+// TEST_CASE("[TightlyCoupledKF][flow] Test flow with GNSS containing only doppler (no psr) in some epochs", "[TightlyCoupledKF][flow][debug]")
+// {
+//     // GNSS: 166 messages, 166 messages with InsTime (first GNSS message at 0.004999876 s)
+//     size_t MESSAGE_COUNT_GNSS = 166;
+//     // IMU:  1636 messages, 1636 messages with InsTime (first IMU message at 0.039999962 s)
+//     size_t MESSAGE_COUNT_IMU = 1636;
+
+//     testTCKFwithImuFile("DataProcessor/tckf/vn310-imu-after.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_IMU);
+// }
 
 } // namespace NAV::TESTS::TightlyCoupledKFTests
