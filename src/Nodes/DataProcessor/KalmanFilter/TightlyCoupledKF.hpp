@@ -457,6 +457,33 @@ class TightlyCoupledKF : public Node
     QCalculationAlgorithm _qCalculationAlgorithm = QCalculationAlgorithm::Taylor1;
 
     // ###########################################################################################################
+
+    /// Possible Units for the initial accelerometer biases
+    enum class InitBiasAccelUnit
+    {
+        m_s2, ///< acceleration [m/s^2]
+    };
+    /// Gui selection for the unit of the initial accelerometer biases
+    InitBiasAccelUnit _initBiasAccelUnit = InitBiasAccelUnit::m_s2;
+
+    /// GUI selection of the initial accelerometer biases
+    Eigen::Vector3d _initBiasAccel{ 0.34, -0.11, 2.43 };
+
+    // ###########################################################################################################
+
+    /// Possible Units for the initial gyroscope biases
+    enum class InitBiasGyroUnit
+    {
+        rad_s, ///< angular rate [rad/s]
+        deg_s, ///< angular rate [deg/s]
+    };
+    /// Gui selection for the unit of the initial gyroscope biases
+    InitBiasGyroUnit _initBiasGyroUnit = InitBiasGyroUnit::deg_s;
+
+    /// GUI selection of the initial gyroscope biases
+    Eigen::Vector3d _initBiasGyro{ -0.062, 0.021, -0.03 };
+
+    // ###########################################################################################################
     //                                                Prediction
     // ###########################################################################################################
 

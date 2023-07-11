@@ -693,6 +693,33 @@ void NAV::TightlyCoupledKF::guiConfig()
             ImGui::TreePop();
         }
 
+        // ###########################################################################################################
+        //                                                IMU biases
+        // ###########################################################################################################
+
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::TreeNode(fmt::format("IMU biases (init)##{}", size_t(id)).c_str()))
+        {
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Accelerometer biases##{}", size_t(id)).c_str(),
+                                                   configWidth, unitWidth, _initBiasAccel.data(), reinterpret_cast<int*>(&_initBiasAccelUnit), "m/s^2\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: initBiasAccel changed to {}", nameId(), _initBiasAccel.transpose());
+                LOG_DEBUG("{}: initBiasAccelUnit changed to {}", nameId(), fmt::underlying(_initBiasAccelUnit));
+                flow::ApplyChanges();
+            }
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Gyro biases##{}", size_t(id)).c_str(),
+                                                   configWidth, unitWidth, _initBiasGyro.data(), reinterpret_cast<int*>(&_initBiasGyroUnit), "rad/s\0deg/s\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: initBiasGyro changed to {}", nameId(), _initBiasGyro.transpose());
+                LOG_DEBUG("{}: initBiasGyroUnit changed to {}", nameId(), fmt::underlying(_initBiasGyroUnit));
+                flow::ApplyChanges();
+            }
+
+            ImGui::TreePop();
+        }
+
         ImGui::Separator();
 
         if (ImGui::Checkbox(fmt::format("Rank check for Kalman filter matrices##{}", size_t(id)).c_str(), &_checkKalmanMatricesRanks))
@@ -753,6 +780,10 @@ void NAV::TightlyCoupledKF::guiConfig()
     j["stdevClockFreqUnits"] = _stdevClockFreqUnits;
     j["stdev_cp"] = _stdev_cp;
     j["stdev_cf"] = _stdev_cf;
+    j["initBiasAccel"] = _initBiasAccel;
+    j["initBiasAccelUnit"] = _initBiasAccelUnit;
+    j["initBiasGyro"] = _initBiasGyro;
+    j["initBiasGyroUnit"] = _initBiasGyroUnit;
 
     // TODO: Add gnssObsUncertainty... Unit, etc.
 
@@ -904,6 +935,22 @@ void NAV::TightlyCoupledKF::restore(json const& j)
     {
         _stdev_cf = j.at("stdev_cf");
     }
+    if (j.contains("initBiasAccel"))
+    {
+        _initBiasAccel = j.at("initBiasAccel");
+    }
+    if (j.contains("initBiasAccelUnit"))
+    {
+        _initBiasAccelUnit = j.at("initBiasAccelUnit");
+    }
+    if (j.contains("initBiasGyro"))
+    {
+        _initBiasGyro = j.at("initBiasGyro");
+    }
+    if (j.contains("initBiasGyroUnit"))
+    {
+        _initBiasGyroUnit = j.at("initBiasGyroUnit");
+    }
 
     // -------------------------------- 𝐑 Measurement noise covariance matrix -----------------------------------
     if (j.contains("gnssMeasurementUncertaintyPseudorangeUnit"))
@@ -999,16 +1046,10 @@ bool NAV::TightlyCoupledKF::initialize()
     _latestInertialNavSol = nullptr;
     _lastPredictTime.reset();
     _lastPredictRequestedTime.reset();
-    _accumulatedAccelBiases.setZero();
-    _accumulatedGyroBiases.setZero();
 
-    // Hardware: bias inits from static test (15 hrs) // FIXME: Make GUI inputs, with this as defaults?
-    // _accumulatedAccelBiases(0, 0) = 0.34;  // Accel X bias
-    // _accumulatedAccelBiases(1, 0) = -0.11; // Accel Y bias
-    // _accumulatedAccelBiases(2, 0) = 2.43;  // Accel Z bias
-    // _accumulatedGyroBiases(0, 0) = -0.062; // Gyro X bias
-    // _accumulatedGyroBiases(1, 0) = 0.021;  // Gyro Y bias
-    // _accumulatedGyroBiases(2, 0) = -0.03;  // Gyro Z bias
+    // Bias inits
+    _accumulatedAccelBiases = _initBiasAccel;
+    _accumulatedGyroBiases = _initBiasGyro;
 
     // Initial Covariance of the attitude angles in [rad²]
     Eigen::Vector3d variance_angles = Eigen::Vector3d::Zero();
@@ -1818,7 +1859,6 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         //                                                    Velocity calculation
         // #############################################################################################################################
 
-        // TODO: loosen the dependency on rangeRate
         if (nDopplerMeas - cntSkippedMeas >= nParam && !std::isnan(calc.pseudorangeRate))
         {
             // Pseudorange-rate measurement [m/s] - Groves ch. 8.5.3, eq. 8.48, p. 342
