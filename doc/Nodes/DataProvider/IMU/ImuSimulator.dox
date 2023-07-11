@@ -215,11 +215,11 @@ The local position can then be added to the start position after rotating it int
   \mathbf{x}^e = \mathbf{x}_M^e + \mathbf{C}_n^e(\mathbf{x}_M) \cdot \mathbf{x}^n
 \f}
 
-#### Velocity
+\b Velocity <br>
 
 The velocity is the first derivative of the position spline.
 
-#### Acceleration
+\b Acceleration <br>
 
 The acceleration is the second derivative of the position spline.
 
