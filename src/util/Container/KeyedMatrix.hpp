@@ -155,6 +155,13 @@ class KeyedMatrixRowsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols
         return std::all_of(keys.begin(), keys.end(), [&](const RowKeyType& key) { return hasRow(key); });
     }
 
+    /// @brief Checks if the matrix has any key
+    /// @param keys Row keys to check for
+    bool hasAnyRows(const std::vector<RowKeyType>& keys) const
+    {
+        return std::any_of(keys.begin(), keys.end(), [&](const RowKeyType& key) { return hasRow(key); });
+    }
+
   protected:
     /// RowKey to Row Index mapping
     std::unordered_map<RowKeyType, Eigen::Index> rowIndices;
@@ -281,10 +288,9 @@ class KeyedMatrixRows<Scalar, RowKeyType, Eigen::Dynamic, Cols>
     /// @param rowKeys Row keys
     void addRows(const std::vector<RowKeyType>& rowKeys)
     {
-        for ([[maybe_unused]] const auto& rowKey : rowKeys)
-        {
-            INS_ASSERT_USER_ERROR(!this->rowIndices.contains(rowKey), "You cannot add a row key which is already in the matrix.");
-        }
+        INS_ASSERT_USER_ERROR(!this->hasAnyRows(rowKeys), "You cannot add a row key which is already in the matrix.");
+        std::unordered_set<RowKeyType> rowSet = { rowKeys.begin(), rowKeys.end() };
+        INS_ASSERT_USER_ERROR(rowSet.size() == rowKeys.size(), "Each row key must be unique");
 
         auto initialSize = static_cast<Eigen::Index>(this->rowIndices.size());
         for (const auto& rowKey : rowKeys) { this->rowIndices.insert({ rowKey, static_cast<Eigen::Index>(this->rowIndices.size()) }); }
@@ -311,6 +317,7 @@ class KeyedMatrixRows<Scalar, RowKeyType, Eigen::Dynamic, Cols>
         for (const auto& rowKey : rowKeys)
         {
             auto iter = std::find_if(this->rowIndices.begin(), this->rowIndices.end(), [&](const auto& item) { return item.first == rowKey; });
+            INS_ASSERT_USER_ERROR(iter != this->rowIndices.end(), "You tried removing a row key, which did not exist.");
             if (iter != this->rowIndices.end())
             {
                 indices.push_back(static_cast<int>(iter->second));
@@ -405,6 +412,13 @@ class KeyedMatrixColsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols
     bool hasCols(const std::vector<ColKeyType>& keys) const
     {
         return std::all_of(keys.begin(), keys.end(), [&](const ColKeyType& key) { return hasCol(key); });
+    }
+
+    /// @brief Checks if the matrix has any keys
+    /// @param keys Col keys to check for
+    bool hasAnyCols(const std::vector<ColKeyType>& keys) const
+    {
+        return std::any_of(keys.begin(), keys.end(), [&](const ColKeyType& key) { return hasCol(key); });
     }
 
   protected:
@@ -533,10 +547,9 @@ class KeyedMatrixCols<Scalar, ColKeyType, Rows, Eigen::Dynamic>
     /// @param colKeys Col keys
     void addCols(const std::vector<ColKeyType>& colKeys)
     {
-        for ([[maybe_unused]] const auto& colKey : colKeys)
-        {
-            INS_ASSERT_USER_ERROR(!this->colIndices.contains(colKey), "You cannot add a col key which is already in the matrix.");
-        }
+        INS_ASSERT_USER_ERROR(!this->hasAnyCols(colKeys), "You cannot add a col key which is already in the matrix.");
+        std::unordered_set<ColKeyType> colSet = { colKeys.begin(), colKeys.end() };
+        INS_ASSERT_USER_ERROR(colSet.size() == colKeys.size(), "Each col key must be unique");
 
         auto initialSize = static_cast<Eigen::Index>(this->colIndices.size());
         for (const auto& colKey : colKeys) { this->colIndices.insert({ colKey, static_cast<Eigen::Index>(this->colIndices.size()) }); }
@@ -563,6 +576,7 @@ class KeyedMatrixCols<Scalar, ColKeyType, Rows, Eigen::Dynamic>
         for (const auto& colKey : colKeys)
         {
             auto iter = std::find_if(this->colIndices.begin(), this->colIndices.end(), [&](const auto& item) { return item.first == colKey; });
+            INS_ASSERT_USER_ERROR(iter != this->colIndices.end(), "You tried removing a col key, which did not exist.");
             if (iter != this->colIndices.end())
             {
                 indices.push_back(static_cast<int>(iter->second));
@@ -616,14 +630,14 @@ class KeyedVectorBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, 1>
     /// @return Scalar value
     const Scalar& operator()(const RowKeyType& rowKey) const
     {
-        return this->matrix(this->rowIndices.at(rowKey), Eigen::all);
+        return this->matrix(this->rowIndices.at(rowKey), 0);
     }
     /// @brief Gets the value for the row key
     /// @param rowKey Row Key
     /// @return Scalar value
     Scalar& operator()(const RowKeyType& rowKey)
     {
-        return this->matrix(this->rowIndices.at(rowKey), Eigen::all);
+        return this->matrix(this->rowIndices.at(rowKey), 0);
     }
 
     /// @brief Gets the values for the row keys
@@ -635,7 +649,7 @@ class KeyedVectorBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, 1>
         rowIdx.reserve(rowKeys.size());
         for (const auto& rowKey : rowKeys) { rowIdx.push_back(this->rowIndices.at(rowKey)); }
 
-        return this->matrix(rowIdx, Eigen::all);
+        return this->matrix(rowIdx, 0);
     }
     /// @brief Gets the values for the row keys
     /// @param rowKeys Row Keys
@@ -646,7 +660,7 @@ class KeyedVectorBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, 1>
         rowIdx.reserve(rowKeys.size());
         for (const auto& rowKey : rowKeys) { rowIdx.push_back(this->rowIndices.at(rowKey)); }
 
-        return this->matrix(rowIdx, Eigen::all);
+        return this->matrix(rowIdx, 0);
     }
 
     /// @brief Requests the full vector
@@ -683,14 +697,14 @@ class KeyedRowVectorBase : public KeyedMatrixCols<Scalar, ColKeyType, 1, Cols>
     /// @return Scalar value
     const Scalar& operator()(const ColKeyType& colKey) const
     {
-        return this->matrix(Eigen::all, this->colIndices.at(colKey));
+        return this->matrix(0, this->colIndices.at(colKey));
     }
     /// @brief Gets the value for the col key
     /// @param colKey Col Key
     /// @return Scalar value
     Scalar& operator()(const ColKeyType& colKey)
     {
-        return this->matrix(Eigen::all, this->colIndices.at(colKey));
+        return this->matrix(0, this->colIndices.at(colKey));
     }
 
     /// @brief Gets the values for the col keys
@@ -702,7 +716,7 @@ class KeyedRowVectorBase : public KeyedMatrixCols<Scalar, ColKeyType, 1, Cols>
         colIdx.reserve(colKeys.size());
         for (const auto& colKey : colKeys) { colIdx.push_back(this->colIndices.at(colKey)); }
 
-        return this->matrix(Eigen::all, colIdx);
+        return this->matrix(0, colIdx);
     }
     /// @brief Gets the values for the col keys
     /// @param colKeys Col Keys
@@ -713,7 +727,7 @@ class KeyedRowVectorBase : public KeyedMatrixCols<Scalar, ColKeyType, 1, Cols>
         colIdx.reserve(colKeys.size());
         for (const auto& colKey : colKeys) { colIdx.push_back(this->colIndices.at(colKey)); }
 
-        return this->matrix(Eigen::all, colIdx);
+        return this->matrix(0, colIdx);
     }
 
     /// @brief Requests the full vector
@@ -1117,6 +1131,100 @@ class KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic
     KeyedMatrix(const Eigen::MatrixBase<Derived>& matrix, const std::vector<RowKeyType>& keys)
         : KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>(matrix, keys, keys)
     {}
+
+    /// @brief Adds new rows and cols to the matrix
+    /// @param rowKeys Row keys
+    /// @param colKeys Col keys
+    void addRowsCols(const std::vector<RowKeyType>& rowKeys, const std::vector<ColKeyType>& colKeys)
+    {
+        INS_ASSERT_USER_ERROR(!this->hasAnyRows(rowKeys), "You cannot add a row key which is already in the matrix.");
+        INS_ASSERT_USER_ERROR(!this->hasAnyCols(colKeys), "You cannot add a col key which is already in the matrix.");
+        std::unordered_set<RowKeyType> rowSet = { rowKeys.begin(), rowKeys.end() };
+        INS_ASSERT_USER_ERROR(rowSet.size() == rowKeys.size(), "Each row key must be unique");
+        std::unordered_set<ColKeyType> colSet = { colKeys.begin(), colKeys.end() };
+        INS_ASSERT_USER_ERROR(colSet.size() == colKeys.size(), "Each col key must be unique");
+
+        auto initialRowSize = static_cast<Eigen::Index>(this->rowIndices.size());
+        for (const auto& rowKey : rowKeys) { this->rowIndices.insert({ rowKey, static_cast<Eigen::Index>(this->rowIndices.size()) }); }
+        this->rowKeysVector.reserve(this->rowKeysVector.size() + rowKeys.size());
+        std::copy(rowKeys.begin(), rowKeys.end(), std::back_inserter(this->rowKeysVector));
+        auto finalRowSize = static_cast<Eigen::Index>(this->rowIndices.size());
+
+        auto initialColSize = static_cast<Eigen::Index>(this->colIndices.size());
+        for (const auto& colKey : colKeys) { this->colIndices.insert({ colKey, static_cast<Eigen::Index>(this->colIndices.size()) }); }
+        this->colKeysVector.reserve(this->colKeysVector.size() + colKeys.size());
+        std::copy(colKeys.begin(), colKeys.end(), std::back_inserter(this->colKeysVector));
+        auto finalColSize = static_cast<Eigen::Index>(this->colIndices.size());
+
+        auto rows = finalRowSize - initialRowSize;
+        auto cols = finalColSize - initialColSize;
+        if (rows > 0 || cols > 0)
+        {
+            this->matrix.conservativeResize(finalRowSize, finalColSize);
+            this->matrix.block(initialRowSize, 0, rows, this->matrix.cols()) = Eigen::MatrixX<Scalar>::Zero(rows, this->matrix.cols());
+            this->matrix.block(0, initialColSize, this->matrix.rows(), cols) = Eigen::MatrixX<Scalar>::Zero(this->matrix.rows(), cols);
+        }
+    }
+
+    /// @brief Removes the rows and cols from the matrix
+    /// @param rowKeys Row Keys
+    /// @param colKeys Col Keys
+    void removeRowsCols(const std::vector<RowKeyType>& rowKeys, const std::vector<ColKeyType>& colKeys)
+    {
+        std::vector<int> rowIndices;
+        for (const auto& rowKey : rowKeys)
+        {
+            auto iter = std::find_if(this->rowIndices.begin(), this->rowIndices.end(), [&](const auto& item) { return item.first == rowKey; });
+            INS_ASSERT_USER_ERROR(iter != this->rowIndices.end(), "You tried removing a row key, which did not exist.");
+            if (iter != this->rowIndices.end())
+            {
+                rowIndices.push_back(static_cast<int>(iter->second));
+            }
+        }
+        std::vector<int> colIndices;
+        for (const auto& colKey : colKeys)
+        {
+            auto iter = std::find_if(this->colIndices.begin(), this->colIndices.end(), [&](const auto& item) { return item.first == colKey; });
+            INS_ASSERT_USER_ERROR(iter != this->colIndices.end(), "You tried removing a col key, which did not exist.");
+            if (iter != this->colIndices.end())
+            {
+                colIndices.push_back(static_cast<int>(iter->second));
+            }
+        }
+
+        NAV::removeRowsAndCols(this->matrix, rowIndices, colIndices);
+
+        for (const auto& rowKey : rowKeys)
+        {
+            auto iter = std::find_if(this->rowIndices.begin(), this->rowIndices.end(), [&](const auto& item) { return item.first == rowKey; });
+            if (iter != this->rowIndices.end())
+            {
+                std::erase_if(this->rowKeysVector, [&](const auto& item) { return item == rowKey; });
+
+                auto idx = iter->second;
+                for (auto& rowIndex : this->rowIndices)
+                {
+                    if (rowIndex.second > idx) { rowIndex.second--; }
+                }
+                this->rowIndices.erase(iter);
+            }
+        }
+        for (const auto& colKey : colKeys)
+        {
+            auto iter = std::find_if(this->colIndices.begin(), this->colIndices.end(), [&](const auto& item) { return item.first == colKey; });
+            if (iter != this->colIndices.end())
+            {
+                std::erase_if(this->colKeysVector, [&](const auto& item) { return item == colKey; });
+
+                auto idx = iter->second;
+                for (auto& colIndex : this->colIndices)
+                {
+                    if (colIndex.second > idx) { colIndex.second--; }
+                }
+                this->colIndices.erase(iter);
+            }
+        }
+    }
 };
 
 /// @brief Dynamic size KeyedMatrix

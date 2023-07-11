@@ -6,6 +6,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+/// @file KeyedMatrixTests.cpp
+/// @brief UnitTests for the KeyedMatrix class
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
+/// @date 2023-07-06
+
 #include <catch2/catch_test_macros.hpp>
 #include <variant>
 
@@ -112,6 +117,7 @@ TEST_CASE("[KeyedMatrix] hasRow(s) & hasCol(s)", "[KeyedMatrix]")
         TWO,
         THREE,
         FOUR,
+        FIVE,
     };
 
     KeyedMatrixX<double, Keys, int> mat(Eigen::Matrix3d{}, { ONE, TWO, THREE }, { 1, 2, 3 });
@@ -129,6 +135,16 @@ TEST_CASE("[KeyedMatrix] hasRow(s) & hasCol(s)", "[KeyedMatrix]")
     REQUIRE(mat.hasCols({ 2, 3 }));
     REQUIRE(!mat.hasCols({ 9 }));
     REQUIRE(!mat.hasCols({ 1, 9 }));
+
+    REQUIRE(mat.hasAnyRows({ ONE }));
+    REQUIRE(mat.hasAnyRows({ ONE, THREE }));
+    REQUIRE(mat.hasAnyRows({ ONE, FOUR }));
+    REQUIRE(!mat.hasAnyRows({ FOUR, FIVE }));
+
+    REQUIRE(mat.hasAnyCols({ 2 }));
+    REQUIRE(mat.hasAnyCols({ 2, 3 }));
+    REQUIRE(!mat.hasAnyCols({ 9 }));
+    REQUIRE(mat.hasAnyCols({ 1, 9 }));
 }
 
 TEST_CASE("[KeyedMatrix] operator(rowKey(s), colKey(s))", "[KeyedMatrix]")
@@ -206,6 +222,25 @@ TEST_CASE("[KeyedMatrix] addRows & addCols", "[KeyedMatrix]")
     mat(all, all) = eigMat;
 
     REQUIRE(mat("2", 1) == 4);
+
+    mat.addRowsCols({ "4", "5" }, { 4, 5 });
+    REQUIRE(mat.rowKeys() == std::vector{ "1", "2", "3", "4", "5" });
+    REQUIRE(mat.colKeys() == std::vector{ 1, 2, 3, 4, 5 });
+    // clang-format off
+    REQUIRE(mat(all, all) == (Eigen::MatrixXd(5, 5) << 1, 2, 3, 0, 0,
+                                                       4, 5, 6, 0, 0,
+                                                       7, 8, 9, 0, 0,
+                                                       0, 0, 0, 0, 0,
+                                                       0, 0, 0, 0, 0).finished());
+    // clang-format on
+
+    mat.removeRowsCols({ "1", "3", "4" }, { 2, 4 });
+    REQUIRE(mat.rowKeys() == std::vector{ "2", "5" });
+    REQUIRE(mat.colKeys() == std::vector{ 1, 3, 5 });
+    // clang-format off
+    REQUIRE(mat(all, all) == (Eigen::MatrixXd(2, 3) << 4, 6, 0,
+                                                       0, 0, 0).finished());
+    // clang-format on
 }
 
 TEST_CASE("[KeyedMatrix] removeRows & removeCols", "[KeyedMatrix]")
@@ -324,19 +359,16 @@ TEST_CASE("[KeyedMatrix] Access with alias", "[KeyedMatrix]")
 
 namespace keym
 {
+enum Keys
+{
+    Position,
+    Velocity,
+    COUNT
+};
 
-struct Position
-{
-    constexpr bool operator==(const Position& /* rhs */) const { return true; }
-};
-struct Velocity
-{
-    constexpr bool operator==(const Velocity& /* rhs */) const { return true; }
-};
 struct Ambiguity
 {
     constexpr bool operator==(const Ambiguity& rhs) const { return number == rhs.number; }
-
     size_t number = 0;
 };
 
@@ -356,25 +388,11 @@ namespace std
 {
 /// @brief Hash function (needed for unordered_map)
 template<>
-struct hash<keym::Position>
-{
-    /// @brief Hash function
-    size_t operator()(const keym::Position& /* p */) const { return 0; }
-};
-/// @brief Hash function (needed for unordered_map)
-template<>
-struct hash<keym::Velocity>
-{
-    /// @brief Hash function
-    size_t operator()(const keym::Velocity& /* v */) const { return 1; }
-};
-/// @brief Hash function (needed for unordered_map)
-template<>
 struct hash<keym::Ambiguity>
 {
     /// @brief Hash function
     /// @param[in] a Ambiguity
-    size_t operator()(const keym::Ambiguity& a) const { return 2 + a.number; }
+    size_t operator()(const keym::Ambiguity& a) const { return keym::Keys::COUNT + a.number; }
 };
 /// @brief Hash function (needed for unordered_map)
 template<>
@@ -401,7 +419,7 @@ TEST_CASE("[KeyedMatrix] std::variant as Keys", "[KeyedMatrix]")
 {
     auto logger = initializeTestLogger();
 
-    using keym::Position, keym::Velocity, keym::Ambiguity, keym::Pseudorange, keym::Carrierphase;
+    using keym::Keys, keym::Ambiguity, keym::Pseudorange, keym::Carrierphase;
 
     Eigen::Matrix4d eigMat;
     eigMat << 1, 2, 3, 4,
@@ -409,15 +427,15 @@ TEST_CASE("[KeyedMatrix] std::variant as Keys", "[KeyedMatrix]")
         9, 10, 11, 12,
         13, 14, 15, 16;
 
-    using RowKeys = std::variant<Position, Velocity, Ambiguity>;
+    using RowKeys = std::variant<Keys, Ambiguity>;
     using ColKeys = std::variant<Pseudorange, Carrierphase>;
 
     KeyedMatrixX<double, RowKeys, ColKeys> mat(eigMat,
-                                               { Position{}, Velocity{}, Ambiguity{ 0 }, Ambiguity{ 1 } },
+                                               { Keys::Position, Keys::Velocity, Ambiguity{ 0 }, Ambiguity{ 1 } },
                                                { Pseudorange{ 0 }, Pseudorange{ 1 }, Carrierphase{ 0 }, Carrierphase{ 1 } });
     REQUIRE(mat(all, all) == eigMat);
-    REQUIRE(mat(Position{}, all) == eigMat(0, Eigen::all));
-    REQUIRE(mat({ Position{}, Ambiguity{ 1 } }, all) == eigMat({ 0, 3 }, Eigen::all));
+    REQUIRE(mat(Keys::Position, all) == eigMat(0, Eigen::all));
+    REQUIRE(mat({ Keys::Position, Ambiguity{ 1 } }, all) == eigMat({ 0, 3 }, Eigen::all));
 }
 
 TEST_CASE("[KeyedMatrix] Vector", "[KeyedMatrix]")
