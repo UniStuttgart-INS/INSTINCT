@@ -5914,7 +5914,7 @@
                 "frame": 1,
                 "frequencies": 1,
                 "gnssMeasurementUncertaintyPseudorange": 0.5,
-                "gnssMeasurementUncertaintyPseudorangeRate": 0.05,
+                "gnssMeasurementUncertaintyPseudorangeRate": 5000.0,
                 "gnssMeasurementUncertaintyPseudorangeRateUnit": 1,
                 "gnssMeasurementUncertaintyPseudorangeUnit": 1,
                 "initCovarianceAttitudeAngles": {
@@ -5953,7 +5953,7 @@
                     }
                 },
                 "initCovarianceBiasGyroUnit": 3,
-                "initCovarianceFreq": 30.0,
+                "initCovarianceFreq": 3000.0,
                 "initCovarianceFreqUnit": 1,
                 "initCovariancePhase": 300.0,
                 "initCovariancePhaseUnit": 2,
@@ -6016,7 +6016,7 @@
                         "0": 5.0
                     }
                 },
-                "stdev_cf": 0.03,
+                "stdev_cf": 3.0,
                 "stdev_cp": 5.0,
                 "stdev_ra": {
                     "0": {

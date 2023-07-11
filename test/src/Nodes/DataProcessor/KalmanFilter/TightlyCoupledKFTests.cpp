@@ -333,14 +333,14 @@ TEST_CASE("[TightlyCoupledKF][flow] Test flow with IMU data arriving after GNSS 
     testTCKFwithImuFile("DataProcessor/tckf/vn310-imu-after.csv", "DataProcessor/tckf/vn310-gnss.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_IMU);
 }
 
-TEST_CASE("[TightlyCoupledKF][flow] Test flow with GNSS containing only psr (no doppler) in some epochs", "[TightlyCoupledKF][flow]")
+TEST_CASE("[TightlyCoupledKF][flow] Test flow with GNSS containing only psr, no doppler", "[TightlyCoupledKF][flow]")
 {
     // GNSS: 610 messages, 610 messages with InsTime (first GNSS message at 0.004999876 s)
-    size_t MESSAGE_COUNT_GNSS = 610;
+    size_t MESSAGE_COUNT_GNSS = 166;
     // IMU:  1638 messages, 1638 messages with InsTime (first IMU message at 0.039999962 s)
     size_t MESSAGE_COUNT_IMU = 1638;
 
-    testTCKFwithImuFile("DataProcessor/tckf/vn310-imu.csv", "DataProcessor/tckf/reach-m2-01_raw_202306291111.23O", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_IMU);
+    testTCKFwithImuFile("DataProcessor/tckf/vn310-imu.csv", "DataProcessor/tckf/reach-m2-01_raw_202306291111_noDoppler.23O", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_IMU);
 }
 
 // TEST_CASE("[TightlyCoupledKF][flow] Test flow with GNSS containing only doppler (no psr) in some epochs", "[TightlyCoupledKF][flow][debug]")

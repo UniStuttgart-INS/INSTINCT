@@ -1920,7 +1920,10 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         for (size_t obsIdx = 0; obsIdx < n_lineOfSightUnitVectors.size(); obsIdx++)
         {
             pseudoRangeEstimates[obsIdx] = psrEst(static_cast<Eigen::Index>(obsIdx));
-            pseudoRangeRateEstimates[obsIdx] = psrRateEst(static_cast<Eigen::Index>(obsIdx));
+            if (psrRateEst.size() != 0)
+            {
+                pseudoRangeRateEstimates[obsIdx] = psrRateEst(static_cast<Eigen::Index>(obsIdx));
+            }
         }
 
         // 8. Formulate the measurement z_k
@@ -2493,7 +2496,10 @@ Eigen::MatrixXd NAV::TightlyCoupledKF::measurementInnovation_dz(const std::vecto
     for (size_t j = 0; j < numSats; j++)
     {
         deltaZ(static_cast<Eigen::Index>(j), 0) = pseudoRangeObservations[j] - pseudoRangeEstimates[j];
-        deltaZ(static_cast<Eigen::Index>(numSats + j), 0) = pseudoRangeRateObservations[j] - pseudoRangeRateEstimates[j];
+        if (!std::isnan(pseudoRangeRateObservations[j]))
+        {
+            deltaZ(static_cast<Eigen::Index>(numSats + j), 0) = pseudoRangeRateObservations[j] - pseudoRangeRateEstimates[j];
+        }
     }
 
     return deltaZ;
