@@ -1653,6 +1653,10 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
                 }
             }
         }
+        else if (!obsData.pseudorange && obsData.doppler)
+        {
+            LOG_WARN("{}: Epoch contains Doppler ({}), but no Pseudorange and is thus skipped.", nameId(), obsData.doppler.value());
+        }
     }
 
     size_t nMeas = calcData.size();
@@ -1777,16 +1781,19 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
 
     size_t ix = 0;
     size_t iv = 0;
-    _recvClk.referenceTimeSatelliteSystem = satelliteSystems.front();
-    for (const auto& availSatSys : satelliteSystems)
+    if (!satelliteSystems.empty()) // skip this, if there is e.g. no pseudorange available. Better than crashing
     {
-        if (SatelliteSystem_(availSatSys) < SatelliteSystem_(_recvClk.referenceTimeSatelliteSystem))
+        _recvClk.referenceTimeSatelliteSystem = satelliteSystems.front();
+        for (const auto& availSatSys : satelliteSystems)
         {
-            _recvClk.referenceTimeSatelliteSystem = availSatSys;
+            if (SatelliteSystem_(availSatSys) < SatelliteSystem_(_recvClk.referenceTimeSatelliteSystem))
+            {
+                _recvClk.referenceTimeSatelliteSystem = availSatSys;
+            }
         }
+        satelliteSystems.erase(std::find(satelliteSystems.begin(), satelliteSystems.end(), _recvClk.referenceTimeSatelliteSystem));
+        LOG_DATA("{}: _recvClk.referenceTimeSatelliteSystem {} ({} other time systems)", nameId(), _recvClk.referenceTimeSatelliteSystem, satelliteSystems.size());
     }
-    satelliteSystems.erase(std::find(satelliteSystems.begin(), satelliteSystems.end(), _recvClk.referenceTimeSatelliteSystem));
-    LOG_DATA("{}: _recvClk.referenceTimeSatelliteSystem {} ({} other time systems)", nameId(), _recvClk.referenceTimeSatelliteSystem, satelliteSystems.size());
 
     double tau_epoch = !_lastEpochTime.empty()
                            ? static_cast<double>((gnssObs->insTime - _lastEpochTime).count())
@@ -1987,7 +1994,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     LOG_DATA("{}:     KF.R =\n{}", nameId(), _kalmanFilter.R);
     LOG_DATA("{}:     KF.z =\n{}", nameId(), _kalmanFilter.z);
 
-    if (_checkKalmanMatricesRanks)
+    if (_checkKalmanMatricesRanks && _kalmanFilter.H.rows() > 0) // Number of rows of H is 0, if there is no pseudorange in one epoch. Better skip this than crashing.
     {
         Eigen::FullPivLU<Eigen::MatrixXd> lu(_kalmanFilter.H * _kalmanFilter.P * _kalmanFilter.H.transpose() + _kalmanFilter.R);
         auto rank = lu.rank();
@@ -2019,7 +2026,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     LOG_DATA("{}:     KF.x =\n{}", nameId(), _kalmanFilter.x);
     LOG_DATA("{}:     KF.P =\n{}", nameId(), _kalmanFilter.P);
 
-    if (_checkKalmanMatricesRanks)
+    if (_checkKalmanMatricesRanks && _kalmanFilter.H.rows() > 0) // Number of rows of H is 0, if there is no pseudorange in one epoch. Better skip this than crashing.
     {
         Eigen::FullPivLU<Eigen::MatrixXd> lu(_kalmanFilter.H * _kalmanFilter.P * _kalmanFilter.H.transpose() + _kalmanFilter.R);
         auto rank = lu.rank();
