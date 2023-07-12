@@ -1944,7 +1944,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         // 5. Calculate the measurement matrix H_k
         if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_H); }
 
-        _kalmanFilter.H = n_measurementMatrix_H(R_N, R_E, lla_position, n_lineOfSightUnitVectors);
+        _kalmanFilter.H = n_measurementMatrix_H(R_N, R_E, lla_position, n_lineOfSightUnitVectors, pseudoRangeRateObservations);
         LOG_DATA("{}: kalmanFilter.H =\n{}", nameId(), _kalmanFilter.H);
 
         // 6. Calculate the measurement noise covariance matrix R_k
@@ -2381,7 +2381,7 @@ Eigen::Matrix<double, 17, 17> NAV::TightlyCoupledKF::initialErrorCovarianceMatri
 //                                                  Update
 // ###########################################################################################################
 
-Eigen::MatrixXd NAV::TightlyCoupledKF::n_measurementMatrix_H(const double& R_N, const double& R_E, const Eigen::Vector3d& lla_position, const std::vector<Eigen::Vector3d>& n_lineOfSightUnitVectors)
+Eigen::MatrixXd NAV::TightlyCoupledKF::n_measurementMatrix_H(const double& R_N, const double& R_E, const Eigen::Vector3d& lla_position, const std::vector<Eigen::Vector3d>& n_lineOfSightUnitVectors, std::vector<double>& pseudoRangeRateObservations)
 {
     // Math: \mathbf{H}_{G,k}^n \approx \begin{pmatrix} 0_{1,3} & 0_{1,3} & {\mathbf{h}_{\rho p}^1}^\text{T} & 0_{1,3} & 0_{1,3} & 1 & 0 \\ 0_{1,3} & 0_{1,3} & {\mathbf{h}_{\rho p}^2}^\text{T} & 0_{1,3} & 0_{1,3} & 1 & 0 \\ \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\ 0_{1,3} & 0_{1,3} & {\mathbf{h}_{\rho p}^m}^\text{T} & 0_{1,3} & 0_{1,3} & 1 & 0 \\ - & - & - & - & - & - & - \\ 0_{1,3} & {\mathbf{u}_{a1}^n}^\text{T} & 0_{1,3} & 0_{1,3} & 0_{1,3} & 0 & 1 \\ 0_{1,3} & {\mathbf{u}_{a2}^n}^\text{T} & 0_{1,3} & 0_{1,3} & 0_{1,3} & 0 & 1 \\ \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\ 0_{1,3} & {\mathbf{u}_{am}^n}^\text{T} & 0_{1,3} & 0_{1,3} & 0_{1,3} & 0 & 1 \end{pmatrix}_{\mathbf{x} = \hat{\mathbf{x}}_k^-} \qquad \text{P. Groves}\,(14.127)
 
@@ -2403,8 +2403,12 @@ Eigen::MatrixXd NAV::TightlyCoupledKF::n_measurementMatrix_H(const double& R_N, 
         H.block<1, 3>(i, 6) = h_rhoP.transpose();
         H(i, 15) = 1;
 
-        H.block<1, 3>(numSats + i, 3) = n_lineOfSightUnitVectors[j].transpose();
-        H(numSats + i, 16) = 1;
+        // Take pseudorange-rate observation only into account, if available (otherwise, this ruins the stochastics)
+        if (!std::isnan(pseudoRangeRateObservations[j]))
+        {
+            H.block<1, 3>(numSats + i, 3) = n_lineOfSightUnitVectors[j].transpose();
+            H(numSats + i, 16) = 1;
+        }
     }
 
     // H.middleCols<3>(0) *= 1. / SCALE_FACTOR_ATTITUDE; // Only zero elements

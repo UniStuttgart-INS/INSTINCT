@@ -6070,6 +6070,30 @@
                 "gnssMeasurementUncertaintyPseudorangeRate": 0.05,
                 "gnssMeasurementUncertaintyPseudorangeRateUnit": 1,
                 "gnssMeasurementUncertaintyPseudorangeUnit": 1,
+                "initBiasAccel": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "initBiasAccelUnit": 0,
+                "initBiasGyro": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "initBiasGyroUnit": 1,
                 "initCovarianceAttitudeAngles": {
                     "0": {
                         "0": 1.0

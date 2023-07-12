@@ -625,11 +625,13 @@ class TightlyCoupledKF : public Node
     /// @param[in] R_E Prime vertical radius of curvature (East/West) [m]
     /// @param[in] lla_position Position as Lat Lon Alt in [rad rad m]
     /// @param[in] n_lineOfSightUnitVectors Vector of line-of-sight unit vectors to each satellite in NED frame coordinates (Groves ch. 8.5.3, eq. 8.41, p. 341)
+    /// @param[in] pseudoRangeRateObservations Pseudorange-Rate observations
     /// @return The 2*m x 17 measurement matrix 𝐇 (m: number of satellites)
     [[nodiscard]] static Eigen::MatrixXd n_measurementMatrix_H(const double& R_N,
                                                                const double& R_E,
                                                                const Eigen::Vector3d& lla_position,
-                                                               const std::vector<Eigen::Vector3d>& n_lineOfSightUnitVectors);
+                                                               const std::vector<Eigen::Vector3d>& n_lineOfSightUnitVectors,
+                                                               std::vector<double>& pseudoRangeRateObservations);
 
     /// @brief Measurement noise covariance matrix 𝐑 with CN0 and range accel
     /// @param[in] sigma_rhoZ Standard deviation of the zenith pseudo-range error in [m]

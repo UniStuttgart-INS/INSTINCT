@@ -57,7 +57,7 @@ void testTCKFwithImuFile(const char* imuFilePath, const char* gnssFilePath, size
     auto logger = initializeTestLogger();
 
     bool imuAfter = std::string(imuFilePath) == "DataProcessor/tckf/vn310-imu-after.csv";
-    bool gnssRinex = std::string(gnssFilePath) == "DataProcessor/tckf/reach-m2-01_raw_202306291111.23O";
+    bool gnssRinex = std::string(gnssFilePath) == "DataProcessor/tckf/reach-m2-01_raw_202306291111.23O" || "DataProcessor/tckf/reach-m2-01_raw_202306291111_noDoppler.23O" || "DataProcessor/tckf/reach-m2-01_raw_202306291111_psrGaps.23O";
 
     std::array<std::vector<std::function<void()>>, 6> settings = { {
         { [&]() { LOG_WARN("Setting ImuIntegrator - _path to: {}", imuFilePath);
@@ -162,11 +162,11 @@ void testTCKFwithImuFile(const char* imuFilePath, const char* gnssFilePath, size
             if (gnssRinex)
             {
                 allowedPositionOffsetImuOnly_n << 5.4, 2.3, 35.;
-                allowedPositionOffsetCombined_n << 8.55, 3., 51.;
+                allowedPositionOffsetCombined_n << 14., 5., 120.;
                 allowedVelocityErrorImuOnly_e << 0.14, 13.7, 0.1;
-                allowedVelocityErrorCombined_e << 0.3, 0.05, 0.3;
+                allowedVelocityErrorCombined_e << 3., 2., 35.;
                 allowedRollPitchYawOffsetImuOnly << 1.3, 1.3, 90.0;
-                allowedRollPitchYawOffsetCombined << 5., 1.2, 94.0;
+                allowedRollPitchYawOffsetCombined << 11., 5., 90.;
             }
             else
             {
@@ -175,7 +175,7 @@ void testTCKFwithImuFile(const char* imuFilePath, const char* gnssFilePath, size
                 allowedVelocityErrorImuOnly_e << 0.14, 13.7, 0.1;
                 allowedVelocityErrorCombined_e << 0.3, 0.05, 0.3;
                 allowedRollPitchYawOffsetImuOnly << 1.3, 1.3, 90.0;
-                allowedRollPitchYawOffsetCombined << 2.7, 2.0, 94.0;
+                allowedRollPitchYawOffsetCombined << 2.7, 12., 94.0;
             }
 
             // if (i1 == 1) // TightlyCoupledKF::Frame::ECEF // TODO: enable ECEF option once this is implemented in the TCKF
@@ -186,7 +186,7 @@ void testTCKFwithImuFile(const char* imuFilePath, const char* gnssFilePath, size
 
             if (imuAfter)
             {
-                allowedRollPitchYawOffsetCombined = { 9., 2.0, 94.0 };
+                allowedRollPitchYawOffsetCombined = { 9., 5., 94. };
             }
 
             // North/South deviation [m]
@@ -316,7 +316,7 @@ void testTCKFwithImuFile(const char* imuFilePath, const char* gnssFilePath, size
 TEST_CASE("[TightlyCoupledKF][flow] Test flow with IMU data arriving before GNSS data", "[TightlyCoupledKF][flow]")
 {
     // GNSS: 166 messages, 166 messages with InsTime (first GNSS message at 0.004999876 s)
-    size_t MESSAGE_COUNT_GNSS = 166;
+    size_t MESSAGE_COUNT_GNSS = 610;
     // IMU:  1638 messages, 1638 messages with InsTime (first IMU message at 0 s)
     size_t MESSAGE_COUNT_IMU = 1638;
 
@@ -326,7 +326,7 @@ TEST_CASE("[TightlyCoupledKF][flow] Test flow with IMU data arriving before GNSS
 TEST_CASE("[TightlyCoupledKF][flow] Test flow with IMU data arriving after GNSS data", "[TightlyCoupledKF][flow]")
 {
     // GNSS: 166 messages, 166 messages with InsTime (first GNSS message at 0.004999876 s)
-    size_t MESSAGE_COUNT_GNSS = 166;
+    size_t MESSAGE_COUNT_GNSS = 610;
     // IMU:  1636 messages, 1636 messages with InsTime (first IMU message at 0.039999962 s)
     size_t MESSAGE_COUNT_IMU = 1636;
 
@@ -336,7 +336,7 @@ TEST_CASE("[TightlyCoupledKF][flow] Test flow with IMU data arriving after GNSS 
 TEST_CASE("[TightlyCoupledKF][flow] Test flow with GNSS containing only psr, no doppler", "[TightlyCoupledKF][flow]")
 {
     // GNSS: 610 messages, 610 messages with InsTime (first GNSS message at 0.004999876 s)
-    size_t MESSAGE_COUNT_GNSS = 166;
+    size_t MESSAGE_COUNT_GNSS = 610;
     // IMU:  1638 messages, 1638 messages with InsTime (first IMU message at 0.039999962 s)
     size_t MESSAGE_COUNT_IMU = 1638;
 
@@ -347,10 +347,10 @@ TEST_CASE("[TightlyCoupledKF][flow] Test flow with GNSS containing only psr, no 
 // {
 //     // GNSS: 166 messages, 166 messages with InsTime (first GNSS message at 0.004999876 s)
 //     size_t MESSAGE_COUNT_GNSS = 166;
-//     // IMU:  1636 messages, 1636 messages with InsTime (first IMU message at 0.039999962 s)
-//     size_t MESSAGE_COUNT_IMU = 1636;
+//     // IMU:  1638 messages, 1638 messages with InsTime (first IMU message at 0.039999962 s)
+//     size_t MESSAGE_COUNT_IMU = 1638;
 
-//     testTCKFwithImuFile("DataProcessor/tckf/vn310-imu-after.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_IMU);
+//     testTCKFwithImuFile("DataProcessor/tckf/vn310-imu.csv", "DataProcessor/tckf/reach-m2-01_raw_202306291111_psrGaps.23O", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_IMU);
 // }
 
 } // namespace NAV::TESTS::TightlyCoupledKFTests

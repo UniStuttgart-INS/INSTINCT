@@ -5914,9 +5914,33 @@
                 "frame": 1,
                 "frequencies": 1,
                 "gnssMeasurementUncertaintyPseudorange": 0.5,
-                "gnssMeasurementUncertaintyPseudorangeRate": 5000.0,
+                "gnssMeasurementUncertaintyPseudorangeRate": 0.05,
                 "gnssMeasurementUncertaintyPseudorangeRateUnit": 1,
                 "gnssMeasurementUncertaintyPseudorangeUnit": 1,
+                "initBiasAccel": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "initBiasAccelUnit": 0,
+                "initBiasGyro": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "initBiasGyroUnit": 1,
                 "initCovarianceAttitudeAngles": {
                     "0": {
                         "0": 1.0
@@ -5953,7 +5977,7 @@
                     }
                 },
                 "initCovarianceBiasGyroUnit": 3,
-                "initCovarianceFreq": 3000.0,
+                "initCovarianceFreq": 30.0,
                 "initCovarianceFreqUnit": 1,
                 "initCovariancePhase": 300.0,
                 "initCovariancePhaseUnit": 2,
@@ -6016,7 +6040,7 @@
                         "0": 5.0
                     }
                 },
-                "stdev_cf": 3.0,
+                "stdev_cf": 0.03,
                 "stdev_cp": 5.0,
                 "stdev_ra": {
                     "0": {
@@ -6197,7 +6221,7 @@
         "node-633": {
             "data": {
                 "FileReader": {
-                    "path": "DataProcessor/tckf/reach-m2-01_raw_202306291111.23O"
+                    "path": "DataProcessor/tckf/reach-m2-01_raw_202306291111_noDoppler.23O"
                 },
                 "eraseLessPreciseCodes": true
             },
@@ -6730,12 +6754,12 @@
                             "y": 300.0
                         },
                         "title": "Position - East",
-                        "xAxisFlags": 0,
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "y1AxisLabel": "East/West [m]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
-                        "yAxisFlags": 0
+                        "yAxisFlags": 2048
                     },
                     {
                         "headerText": "Altitude",
