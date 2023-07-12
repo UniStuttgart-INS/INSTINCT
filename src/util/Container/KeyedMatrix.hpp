@@ -617,8 +617,25 @@ class KeyedVectorBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, 1>
     template<typename Derived>
     explicit KeyedVectorBase(const Eigen::MatrixBase<Derived>& vector)
     {
-        INS_ASSERT_USER_ERROR(vector.cols() == 1, "Only vectors with 1 column are allowed.");
         this->matrix = vector;
+    }
+
+    /// @brief Constructor
+    /// @param vector Eigen vector to initialize from
+    /// @param rowKeys Row keys describing the vector
+    template<typename Derived>
+    KeyedVectorBase(const Eigen::MatrixBase<Derived>& vector, const std::vector<RowKeyType>& rowKeys)
+    {
+        std::unordered_set<RowKeyType> rowSet = { rowKeys.begin(), rowKeys.end() };
+        INS_ASSERT_USER_ERROR(rowSet.size() == rowKeys.size(), "Each row key must be unique");
+
+        INS_ASSERT_USER_ERROR(vector.cols() == 1, "Only vectors with 1 column are allowed.");
+        INS_ASSERT_USER_ERROR(vector.rows() == static_cast<Eigen::Index>(rowKeys.size()), "Number of vector rows doesn't correspond to the amount of row keys");
+
+        for (size_t i = 0; i < rowKeys.size(); i++) { this->rowIndices.insert({ rowKeys.at(i), static_cast<Eigen::Index>(i) }); }
+
+        this->matrix = vector;
+        this->rowKeysVector = rowKeys;
     }
 
     // #######################################################################################################
@@ -684,8 +701,25 @@ class KeyedRowVectorBase : public KeyedMatrixCols<Scalar, ColKeyType, 1, Cols>
     template<typename Derived>
     explicit KeyedRowVectorBase(const Eigen::MatrixBase<Derived>& vector)
     {
-        INS_ASSERT_USER_ERROR(vector.rows() == 1, "Only vectors with 1 row are allowed.");
         this->matrix = vector;
+    }
+
+    /// @brief Constructor
+    /// @param vector Eigen vector to initialize from
+    /// @param colKeys Col keys describing the vector
+    template<typename Derived>
+    KeyedRowVectorBase(const Eigen::MatrixBase<Derived>& vector, const std::vector<ColKeyType>& colKeys)
+    {
+        std::unordered_set<ColKeyType> colSet = { colKeys.begin(), colKeys.end() };
+        INS_ASSERT_USER_ERROR(colSet.size() == colKeys.size(), "Each col key must be unique");
+
+        INS_ASSERT_USER_ERROR(vector.rows() == 1, "Only vectors with 1 row are allowed.");
+        INS_ASSERT_USER_ERROR(vector.cols() == static_cast<Eigen::Index>(colKeys.size()), "Number of vector cols doesn't correspond to the amount of col keys");
+
+        for (size_t i = 0; i < colKeys.size(); i++) { this->colIndices.insert({ colKeys.at(i), static_cast<Eigen::Index>(i) }); }
+
+        this->matrix = vector;
+        this->colKeysVector = colKeys;
     }
 
     // #######################################################################################################
@@ -754,6 +788,32 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     explicit KeyedMatrixBase(const Eigen::MatrixBase<Derived>& matrix)
     {
         this->matrix = matrix;
+    }
+
+    /// @brief Non-symmetric matrix constructor
+    /// @param matrix Eigen Matrix to initialize from
+    /// @param rowKeys Row keys describing the matrix
+    /// @param colKeys Col keys describing the matrix
+    template<typename Derived>
+    KeyedMatrixBase(const Eigen::MatrixBase<Derived>& matrix, const std::vector<RowKeyType>& rowKeys, const std::vector<ColKeyType>& colKeys)
+    {
+        std::unordered_set<RowKeyType> rowSet = { rowKeys.begin(), rowKeys.end() };
+        INS_ASSERT_USER_ERROR(rowSet.size() == rowKeys.size(), "Each row key must be unique");
+        std::unordered_set<ColKeyType> colSet = { colKeys.begin(), colKeys.end() };
+        INS_ASSERT_USER_ERROR(colSet.size() == colKeys.size(), "Each col key must be unique");
+
+        INS_ASSERT_USER_ERROR(matrix.rows() == static_cast<Eigen::Index>(rowKeys.size()), "Number of matrix rows doesn't correspond to the amount of row keys");
+        INS_ASSERT_USER_ERROR(matrix.cols() == static_cast<Eigen::Index>(colKeys.size()), "Number of matrix cols doesn't correspond to the amount of col keys");
+
+        INS_ASSERT_USER_ERROR(Rows == Eigen::Dynamic || Rows == static_cast<int>(rowKeys.size()), "Number of matrix rows doesn't correspond to the static amount of row keys");
+        INS_ASSERT_USER_ERROR(Cols == Eigen::Dynamic || Cols == static_cast<int>(colKeys.size()), "Number of matrix cols doesn't correspond to the static amount of col keys");
+
+        for (size_t i = 0; i < rowKeys.size(); i++) { this->rowIndices.insert({ rowKeys.at(i), static_cast<Eigen::Index>(i) }); }
+        for (size_t i = 0; i < colKeys.size(); i++) { this->colIndices.insert({ colKeys.at(i), static_cast<Eigen::Index>(i) }); }
+
+        this->matrix = matrix;
+        this->rowKeysVector = rowKeys;
+        this->colKeysVector = colKeys;
     }
 
     /// @brief Destructor
@@ -938,22 +998,22 @@ template<typename Scalar, typename RowKeyType, int Rows>
 class KeyedVector : public internal::KeyedVectorBase<Scalar, RowKeyType, Rows>
 {
   public:
-    /// @brief Constructor
+    /// @brief Vector constructor
     /// @tparam Derived Derived Eigen Type
     /// @param vector Eigen vector to initialize from
     /// @param rowKeys Row keys describing the vector
     template<typename Derived>
-    KeyedVector(const Eigen::MatrixBase<Derived>& vector,
-                const std::array<RowKeyType, static_cast<size_t>(Rows)>& rowKeys)
-        : internal::KeyedVectorBase<Scalar, RowKeyType, Rows>(vector)
-    {
-        std::unordered_set<RowKeyType> rowSet = { rowKeys.begin(), rowKeys.end() };
-        INS_ASSERT_USER_ERROR(rowSet.size() == rowKeys.size(), "Each row key must be unique");
+    KeyedVector(const Eigen::MatrixBase<Derived>& vector, const std::vector<RowKeyType>& rowKeys)
+        : internal::KeyedVectorBase<Scalar, RowKeyType, Rows>(vector, rowKeys)
+    {}
 
-        for (size_t i = 0; i < rowKeys.size(); i++) { this->rowIndices.insert({ rowKeys.at(i), static_cast<Eigen::Index>(i) }); }
+    // ------------------------------- Operators from a Dynamic KeyedVector ----------------------------------
 
-        this->rowKeysVector.assign(rowKeys.begin(), rowKeys.end());
-    }
+    /// @brief Copy constructor
+    /// @param other The other object
+    KeyedVector(const KeyedVector<Scalar, RowKeyType, Eigen::Dynamic>& other) // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
+        : internal::KeyedVectorBase<Scalar, RowKeyType, Rows>(other(all), other.rowKeys())
+    {}
 };
 
 /// @brief Dynamic sized KeyedVector
@@ -973,16 +1033,14 @@ class KeyedVector<Scalar, RowKeyType, Eigen::Dynamic> : public internal::KeyedVe
     /// @param rowKeys Row keys describing the vector
     template<typename Derived>
     KeyedVector(const Eigen::MatrixBase<Derived>& vector, const std::vector<RowKeyType>& rowKeys)
-        : internal::KeyedVectorBase<Scalar, RowKeyType, Eigen::Dynamic>(vector)
+        : internal::KeyedVectorBase<Scalar, RowKeyType, Eigen::Dynamic>(vector, rowKeys)
+    {}
+
+    // TODO
+    template<int oRows>
+    KeyedVector(const KeyedVector<Scalar, RowKeyType, oRows>& other) // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
+        : internal::KeyedVectorBase<Scalar, RowKeyType, Eigen::Dynamic>(other(all), other.rowKeys())
     {
-        std::unordered_set<RowKeyType> rowSet = { rowKeys.begin(), rowKeys.end() };
-        INS_ASSERT_USER_ERROR(rowSet.size() == rowKeys.size(), "Each row key must be unique");
-
-        INS_ASSERT_USER_ERROR(vector.rows() == static_cast<Eigen::Index>(rowKeys.size()), "Number of vector rows doesn't correspond to the amount of row keys");
-
-        for (size_t i = 0; i < rowKeys.size(); i++) { this->rowIndices.insert({ rowKeys.at(i), static_cast<Eigen::Index>(i) }); }
-
-        this->rowKeysVector = rowKeys;
     }
 };
 
@@ -994,22 +1052,19 @@ template<typename Scalar, typename ColKeyType, int Cols>
 class KeyedRowVector : public internal::KeyedRowVectorBase<Scalar, ColKeyType, Cols>
 {
   public:
-    /// @brief Constructor
+    /// @brief RowVector constructor
     /// @tparam Derived Derived Eigen Type
     /// @param vector Eigen vector to initialize from
     /// @param colKeys Col keys describing the vector
     template<typename Derived>
-    KeyedRowVector(const Eigen::MatrixBase<Derived>& vector,
-                   const std::array<ColKeyType, static_cast<size_t>(Cols)>& colKeys)
-        : internal::KeyedRowVectorBase<Scalar, ColKeyType, Cols>(vector)
-    {
-        std::unordered_set<ColKeyType> colSet = { colKeys.begin(), colKeys.end() };
-        INS_ASSERT_USER_ERROR(colSet.size() == colKeys.size(), "Each col key must be unique");
+    KeyedRowVector(const Eigen::MatrixBase<Derived>& vector, const std::vector<ColKeyType>& colKeys)
+        : internal::KeyedRowVectorBase<Scalar, ColKeyType, Cols>(vector, colKeys)
+    {}
 
-        for (size_t i = 0; i < colKeys.size(); i++) { this->colIndices.insert({ colKeys.at(i), static_cast<Eigen::Index>(i) }); }
-
-        this->colKeysVector.assign(colKeys.begin(), colKeys.end());
-    }
+    // TODO
+    KeyedRowVector(const KeyedRowVector<Scalar, ColKeyType, Eigen::Dynamic>& other) // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
+        : internal::KeyedRowVectorBase<Scalar, ColKeyType, Cols>(other(all), other.colKeys())
+    {}
 };
 
 /// @brief Dynamic sized KeyedRowVector
@@ -1030,16 +1085,14 @@ class KeyedRowVector<Scalar, ColKeyType, Eigen::Dynamic>
     /// @param colKeys Col keys describing the vector
     template<typename Derived>
     KeyedRowVector(const Eigen::MatrixBase<Derived>& vector, const std::vector<ColKeyType>& colKeys)
-        : internal::KeyedRowVectorBase<Scalar, ColKeyType, Eigen::Dynamic>(vector)
+        : internal::KeyedRowVectorBase<Scalar, ColKeyType, Eigen::Dynamic>(vector, colKeys)
+    {}
+
+    // TODO
+    template<int oCols>
+    KeyedRowVector(const KeyedRowVector<Scalar, ColKeyType, oCols>& other) // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
+        : internal::KeyedRowVectorBase<Scalar, ColKeyType, Eigen::Dynamic>(other(all), other.colKeys())
     {
-        std::unordered_set<ColKeyType> colSet = { colKeys.begin(), colKeys.end() };
-        INS_ASSERT_USER_ERROR(colSet.size() == colKeys.size(), "Each col key must be unique");
-
-        INS_ASSERT_USER_ERROR(vector.cols() == static_cast<Eigen::Index>(colKeys.size()), "Number of vector cols doesn't correspond to the amount of col keys");
-
-        for (size_t i = 0; i < colKeys.size(); i++) { this->colIndices.insert({ colKeys.at(i), static_cast<Eigen::Index>(i) }); }
-
-        this->colKeysVector = colKeys;
     }
 };
 
@@ -1059,30 +1112,22 @@ class KeyedMatrix : public internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyT
     /// @param rowKeys Row keys describing the matrix
     /// @param colKeys Col keys describing the matrix
     template<typename Derived>
-    KeyedMatrix(const Eigen::MatrixBase<Derived>& matrix,
-                const std::array<RowKeyType, static_cast<size_t>(Rows)>& rowKeys,
-                const std::array<ColKeyType, static_cast<size_t>(Cols)>& colKeys)
-        : internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Rows, Cols>(matrix)
-    {
-        std::unordered_set<RowKeyType> rowSet = { rowKeys.begin(), rowKeys.end() };
-        INS_ASSERT_USER_ERROR(rowSet.size() == rowKeys.size(), "Each row key must be unique");
-        std::unordered_set<ColKeyType> colSet = { colKeys.begin(), colKeys.end() };
-        INS_ASSERT_USER_ERROR(colSet.size() == colKeys.size(), "Each col key must be unique");
-
-        for (size_t i = 0; i < rowKeys.size(); i++) { this->rowIndices.insert({ rowKeys.at(i), static_cast<Eigen::Index>(i) }); }
-        for (size_t i = 0; i < colKeys.size(); i++) { this->colIndices.insert({ colKeys.at(i), static_cast<Eigen::Index>(i) }); }
-
-        this->rowKeysVector.assign(rowKeys.begin(), rowKeys.end());
-        this->colKeysVector.assign(colKeys.begin(), colKeys.end());
-    }
+    KeyedMatrix(const Eigen::MatrixBase<Derived>& matrix, const std::vector<RowKeyType>& rowKeys, const std::vector<ColKeyType>& colKeys)
+        : internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Rows, Cols>(matrix, rowKeys, colKeys)
+    {}
 
     /// @brief Symmetric matrix constructor
     /// @tparam Derived Derived Eigen Type
     /// @param matrix Eigen matrix to initialize from
     /// @param keys Row and col keys describing the matrix
     template<typename Derived>
-    KeyedMatrix(const Eigen::MatrixBase<Derived>& matrix, const std::array<RowKeyType, static_cast<size_t>(Rows)>& keys)
+    KeyedMatrix(const Eigen::MatrixBase<Derived>& matrix, const std::vector<RowKeyType>& keys)
         : KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Cols>(matrix, keys, keys)
+    {}
+
+    // TODO
+    KeyedMatrix(const KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>& other) // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
+        : internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Rows, Cols>(other(all, all), other.rowKeys(), other.colKeys())
     {}
 };
 
@@ -1106,22 +1151,8 @@ class KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic
     /// @param colKeys Col keys describing the matrix
     template<typename Derived>
     KeyedMatrix(const Eigen::MatrixBase<Derived>& matrix, const std::vector<RowKeyType>& rowKeys, const std::vector<ColKeyType>& colKeys)
-        : internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>(matrix)
-    {
-        std::unordered_set<RowKeyType> rowSet = { rowKeys.begin(), rowKeys.end() };
-        INS_ASSERT_USER_ERROR(rowSet.size() == rowKeys.size(), "Each row key must be unique");
-        std::unordered_set<ColKeyType> colSet = { colKeys.begin(), colKeys.end() };
-        INS_ASSERT_USER_ERROR(colSet.size() == colKeys.size(), "Each col key must be unique");
-
-        INS_ASSERT_USER_ERROR(matrix.rows() == static_cast<Eigen::Index>(rowKeys.size()), "Number of matrix rows doesn't correspond to the amount of row keys");
-        INS_ASSERT_USER_ERROR(matrix.cols() == static_cast<Eigen::Index>(colKeys.size()), "Number of matrix cols doesn't correspond to the amount of col keys");
-
-        for (size_t i = 0; i < rowKeys.size(); i++) { this->rowIndices.insert({ rowKeys.at(i), static_cast<Eigen::Index>(i) }); }
-        for (size_t i = 0; i < colKeys.size(); i++) { this->colIndices.insert({ colKeys.at(i), static_cast<Eigen::Index>(i) }); }
-
-        this->rowKeysVector = rowKeys;
-        this->colKeysVector = colKeys;
-    }
+        : internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>(matrix, rowKeys, colKeys)
+    {}
 
     /// @brief Symmetric matrix constructor
     /// @tparam Derived Derived Eigen Type
@@ -1131,6 +1162,21 @@ class KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic
     KeyedMatrix(const Eigen::MatrixBase<Derived>& matrix, const std::vector<RowKeyType>& keys)
         : KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>(matrix, keys, keys)
     {}
+
+    // #######################################################################################################
+    //                                 Operators from a Static KeyedMatrix
+    // #######################################################################################################
+
+    /// @brief Copy constructor
+    /// @param other The other object
+    template<int oRows, int oCols>
+    KeyedMatrix(const KeyedMatrix<Scalar, RowKeyType, ColKeyType, oRows, oCols>& other) // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
+        : internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>(other(all, all), other.rowKeys(), other.colKeys())
+    {}
+
+    // #######################################################################################################
+    //                                           Modifying methods
+    // #######################################################################################################
 
     /// @brief Adds new rows and cols to the matrix
     /// @param rowKeys Row keys
@@ -1236,22 +1282,22 @@ using KeyedMatrixX = KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic,
 /// @brief Dynamic size KeyedMatrix with double types
 /// @tparam RowKeyType Type of the key used for row lookup
 /// @tparam ColKeyType Type of the key used for col lookup
-template<typename RowKeyType, typename ColKeyType>
+template<typename RowKeyType, typename ColKeyType = RowKeyType>
 using KeyedMatrixXd = KeyedMatrixX<double, RowKeyType, ColKeyType>;
 /// @brief Static 2x2 squared size KeyedMatrix with double types
 /// @tparam RowKeyType Type of the key used for row lookup
 /// @tparam ColKeyType Type of the key used for col lookup
-template<typename RowKeyType, typename ColKeyType>
+template<typename RowKeyType, typename ColKeyType = RowKeyType>
 using KeyedMatrix2d = KeyedMatrix<double, RowKeyType, ColKeyType, 2, 2>;
 /// @brief Static 3x3 squared size KeyedMatrix with double types
 /// @tparam RowKeyType Type of the key used for row lookup
 /// @tparam ColKeyType Type of the key used for col lookup
-template<typename RowKeyType, typename ColKeyType>
+template<typename RowKeyType, typename ColKeyType = RowKeyType>
 using KeyedMatrix3d = KeyedMatrix<double, RowKeyType, ColKeyType, 3, 3>;
 /// @brief Static 4x4 squared size KeyedMatrix with double types
 /// @tparam RowKeyType Type of the key used for row lookup
 /// @tparam ColKeyType Type of the key used for col lookup
-template<typename RowKeyType, typename ColKeyType>
+template<typename RowKeyType, typename ColKeyType = RowKeyType>
 using KeyedMatrix4d = KeyedMatrix<double, RowKeyType, ColKeyType, 4, 4>;
 
 /// @brief Dynamic size KeyedVector

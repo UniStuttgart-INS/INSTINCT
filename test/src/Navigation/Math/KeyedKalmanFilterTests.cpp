@@ -100,9 +100,9 @@ TEST_CASE("[KeyedKalmanFilter] Basic usage", "[KeyedKalmanFilter]")
     REQUIRE(kf.x(Pos) == Eigen::VectorXd::Zero(3));
     REQUIRE(kf.x(StateKey::PosX) == 0);
     REQUIRE(kf.P(all, all) == Eigen::MatrixXd::Zero(6, 6));
-    REQUIRE(kf.P(Pos) == Eigen::MatrixXd::Zero(3, 3));
+    REQUIRE(kf.P(Pos, Pos) == Eigen::MatrixXd::Zero(3, 3));
     REQUIRE(kf.P(Pos, Vel) == Eigen::MatrixXd::Zero(3, 3));
-    REQUIRE(kf.P(StateKey::PosX) == 0);
+    REQUIRE(kf.P(StateKey::PosX, StateKey::PosX) == 0);
     REQUIRE(kf.P(StateKey::PosX, StateKey::VelX) == 0);
     REQUIRE(kf.Phi(all, all) == Eigen::MatrixXd::Zero(6, 6));
     REQUIRE(kf.Q(all, all) == Eigen::MatrixXd::Zero(6, 6));
