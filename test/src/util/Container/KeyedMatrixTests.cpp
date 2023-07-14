@@ -20,6 +20,478 @@
 namespace NAV::TESTS
 {
 
+TEST_CASE("[KeyedMatrix] Special member functions (static size)", "[KeyedMatrix]")
+{
+    auto logger = initializeTestLogger();
+
+    Eigen::Vector2d matA(1, 2);
+    Eigen::Vector2d matB(3, 4);
+    std::vector<int> rowKeys = { 1, 2 };
+    std::vector<int> colKeys = { 1 };
+
+    KeyedMatrix<double, int, int, 2, 1> a(matA, rowKeys, colKeys);
+    REQUIRE(a(all, all) == matA);
+    REQUIRE(a.rowKeys() == rowKeys);
+    REQUIRE(a.colKeys() == colKeys);
+
+    KeyedMatrix<double, int, int, 2, 1> b(matB, rowKeys, colKeys);
+    REQUIRE(b(all, all) == matB);
+    REQUIRE(b.rowKeys() == rowKeys);
+    REQUIRE(b.colKeys() == colKeys);
+
+    // Copy constructor
+    KeyedMatrix<double, int, int, 2, 1> c(a);
+    REQUIRE(c(all, all) == matA);
+    REQUIRE(c.rowKeys() == rowKeys);
+    REQUIRE(c.colKeys() == colKeys);
+
+    // Copy assignment
+    c = b;
+    REQUIRE(c(all, all) == matB);
+    REQUIRE(c.rowKeys() == rowKeys);
+    REQUIRE(c.colKeys() == colKeys);
+
+    // Move constructor
+    KeyedMatrix<double, int, int, 2, 1> d(std::move(a));
+    REQUIRE(d(all, all) == matA);
+    REQUIRE(d.rowKeys() == rowKeys);
+    REQUIRE(d.colKeys() == colKeys);
+
+    // Move assignment
+    d = std::move(b);
+    REQUIRE(d(all, all) == matB);
+    REQUIRE(d.rowKeys() == rowKeys);
+    REQUIRE(d.colKeys() == colKeys);
+}
+
+TEST_CASE("[KeyedMatrix] Special member functions (dynamic size)", "[KeyedMatrix][Debug]")
+{
+    auto logger = initializeTestLogger();
+
+    Eigen::Vector2d matA(1, 2);
+    Eigen::Vector2d matB(3, 4);
+    std::vector<int> rowKeys = { 1, 2 };
+    std::vector<int> colKeys = { 1 };
+
+    KeyedMatrixX<double, int, int> a(matA, rowKeys, colKeys);
+    REQUIRE(a(all, all) == matA);
+    REQUIRE(a.rowKeys() == rowKeys);
+    REQUIRE(a.colKeys() == colKeys);
+
+    KeyedMatrixX<double, int, int> b(matB, rowKeys, colKeys);
+    REQUIRE(b(all, all) == matB);
+    REQUIRE(b.rowKeys() == rowKeys);
+    REQUIRE(b.colKeys() == colKeys);
+
+    // Copy constructor
+    KeyedMatrixX<double, int, int> c(a);
+    REQUIRE(c(all, all) == matA);
+    REQUIRE(c.rowKeys() == rowKeys);
+    REQUIRE(c.colKeys() == colKeys);
+
+    // Copy assignment
+    c = b;
+    REQUIRE(c(all, all) == matB);
+    REQUIRE(c.rowKeys() == rowKeys);
+    REQUIRE(c.colKeys() == colKeys);
+
+    // Move constructor
+    KeyedMatrixX<double, int, int> d(std::move(a));
+    REQUIRE(d(all, all) == matA);
+    REQUIRE(d.rowKeys() == rowKeys);
+    REQUIRE(d.colKeys() == colKeys);
+
+    // Move assignment
+    d = std::move(b);
+    REQUIRE(d(all, all) == matB);
+    REQUIRE(d.rowKeys() == rowKeys);
+    REQUIRE(d.colKeys() == colKeys);
+}
+
+TEST_CASE("[KeyedMatrix] Special member functions (static <- dynamic)", "[KeyedMatrix]")
+{
+    auto logger = initializeTestLogger();
+
+    Eigen::Vector2d matA(1, 2);
+    Eigen::Vector2d matB(3, 4);
+    std::vector<int> rowKeys = { 1, 2 };
+    std::vector<int> colKeys = { 1 };
+
+    KeyedMatrixX<double, int, int> a(matA, rowKeys, colKeys);
+    REQUIRE(a(all, all) == matA);
+    REQUIRE(a.rowKeys() == rowKeys);
+    REQUIRE(a.colKeys() == colKeys);
+
+    KeyedMatrixX<double, int, int> b(matB, rowKeys, colKeys);
+    REQUIRE(b(all, all) == matB);
+    REQUIRE(b.rowKeys() == rowKeys);
+    REQUIRE(b.colKeys() == colKeys);
+
+    // Copy constructor
+    KeyedMatrix<double, int, int, 2, 1> c(a);
+    REQUIRE(c(all, all) == matA);
+    REQUIRE(c.rowKeys() == rowKeys);
+    REQUIRE(c.colKeys() == colKeys);
+
+    // Copy assignment
+    c = b;
+    REQUIRE(c(all, all) == matB);
+    REQUIRE(c.rowKeys() == rowKeys);
+    REQUIRE(c.colKeys() == colKeys);
+
+    // Move constructor
+    KeyedMatrix<double, int, int, 2, 1> d(std::move(a));
+    REQUIRE(d(all, all) == matA);
+    REQUIRE(d.rowKeys() == rowKeys);
+    REQUIRE(d.colKeys() == colKeys);
+
+    // Move assignment
+    d = std::move(b);
+    REQUIRE(d(all, all) == matB);
+    REQUIRE(d.rowKeys() == rowKeys);
+    REQUIRE(d.colKeys() == colKeys);
+}
+
+TEST_CASE("[KeyedMatrix] Special member functions (dynamic <- static)", "[KeyedMatrix]")
+{
+    auto logger = initializeTestLogger();
+
+    Eigen::Vector2d matA(1, 2);
+    Eigen::Vector2d matB(3, 4);
+    std::vector<int> rowKeys = { 1, 2 };
+    std::vector<int> colKeys = { 1 };
+
+    KeyedMatrix<double, int, int, 2, 1> a(matA, rowKeys, colKeys);
+    REQUIRE(a(all, all) == matA);
+    REQUIRE(a.rowKeys() == rowKeys);
+    REQUIRE(a.colKeys() == colKeys);
+
+    KeyedMatrix<double, int, int, 2, 1> b(matB, rowKeys, colKeys);
+    REQUIRE(b(all, all) == matB);
+    REQUIRE(b.rowKeys() == rowKeys);
+    REQUIRE(b.colKeys() == colKeys);
+
+    // Copy constructor
+    KeyedMatrixX<double, int, int> c(a);
+    REQUIRE(c(all, all) == matA);
+    REQUIRE(c.rowKeys() == rowKeys);
+    REQUIRE(c.colKeys() == colKeys);
+
+    // Copy assignment
+    c = b;
+    REQUIRE(c(all, all) == matB);
+    REQUIRE(c.rowKeys() == rowKeys);
+    REQUIRE(c.colKeys() == colKeys);
+
+    // Move constructor
+    KeyedMatrixX<double, int, int> d(std::move(a));
+    REQUIRE(d(all, all) == matA);
+    REQUIRE(d.rowKeys() == rowKeys);
+    REQUIRE(d.colKeys() == colKeys);
+
+    // Move assignment
+    d = std::move(b);
+    REQUIRE(d(all, all) == matB);
+    REQUIRE(d.rowKeys() == rowKeys);
+    REQUIRE(d.colKeys() == colKeys);
+}
+
+TEST_CASE("[KeyedVector] Special member functions (static size)", "[KeyedVector]")
+{
+    auto logger = initializeTestLogger();
+
+    Eigen::Vector2d matA(1, 2);
+    Eigen::Vector2d matB(3, 4);
+    std::vector<int> rowKeys = { 1, 2 };
+
+    KeyedVector<double, int, 2> a(matA, rowKeys);
+    REQUIRE(a(all) == matA);
+    REQUIRE(a.rowKeys() == rowKeys);
+
+    KeyedVector<double, int, 2> b(matB, rowKeys);
+    REQUIRE(b(all) == matB);
+    REQUIRE(b.rowKeys() == rowKeys);
+
+    // Copy constructor
+    KeyedVector<double, int, 2> c(a);
+    REQUIRE(c(all) == matA);
+    REQUIRE(c.rowKeys() == rowKeys);
+
+    // Copy assignment
+    c = b;
+    REQUIRE(c(all) == matB);
+    REQUIRE(c.rowKeys() == rowKeys);
+
+    // Move constructor
+    KeyedVector<double, int, 2> d(std::move(a));
+    REQUIRE(d(all) == matA);
+    REQUIRE(d.rowKeys() == rowKeys);
+
+    // Move assignment
+    d = std::move(b);
+    REQUIRE(d(all) == matB);
+    REQUIRE(d.rowKeys() == rowKeys);
+}
+
+TEST_CASE("[KeyedVector] Special member functions (dynamic size)", "[KeyedVector]")
+{
+    auto logger = initializeTestLogger();
+
+    Eigen::Vector2d matA(1, 2);
+    Eigen::Vector2d matB(3, 4);
+    std::vector<int> rowKeys = { 1, 2 };
+
+    KeyedVectorX<double, int> a(matA, rowKeys);
+    REQUIRE(a(all) == matA);
+    REQUIRE(a.rowKeys() == rowKeys);
+
+    KeyedVectorX<double, int> b(matB, rowKeys);
+    REQUIRE(b(all) == matB);
+    REQUIRE(b.rowKeys() == rowKeys);
+
+    // Copy constructor
+    KeyedVectorX<double, int> c(a);
+    REQUIRE(c(all) == matA);
+    REQUIRE(c.rowKeys() == rowKeys);
+
+    // Copy assignment
+    c = b;
+    REQUIRE(c(all) == matB);
+    REQUIRE(c.rowKeys() == rowKeys);
+
+    // Move constructor
+    KeyedVectorX<double, int> d(std::move(a));
+    REQUIRE(d(all) == matA);
+    REQUIRE(d.rowKeys() == rowKeys);
+
+    // Move assignment
+    d = std::move(b);
+    REQUIRE(d(all) == matB);
+    REQUIRE(d.rowKeys() == rowKeys);
+}
+
+TEST_CASE("[KeyedVector] Special member functions (static <- dynamic)", "[KeyedVector]")
+{
+    auto logger = initializeTestLogger();
+
+    Eigen::Vector2d matA(1, 2);
+    Eigen::Vector2d matB(3, 4);
+    std::vector<int> rowKeys = { 1, 2 };
+
+    KeyedVector<double, int, 2> a(matA, rowKeys);
+    REQUIRE(a(all) == matA);
+    REQUIRE(a.rowKeys() == rowKeys);
+
+    KeyedVector<double, int, 2> b(matB, rowKeys);
+    REQUIRE(b(all) == matB);
+    REQUIRE(b.rowKeys() == rowKeys);
+
+    // Copy constructor
+    KeyedVectorX<double, int> c(a);
+    REQUIRE(c(all) == matA);
+    REQUIRE(c.rowKeys() == rowKeys);
+
+    // Copy assignment
+    c = b;
+    REQUIRE(c(all) == matB);
+    REQUIRE(c.rowKeys() == rowKeys);
+
+    // Move constructor
+    KeyedVectorX<double, int> d(std::move(a));
+    REQUIRE(d(all) == matA);
+    REQUIRE(d.rowKeys() == rowKeys);
+
+    // Move assignment
+    d = std::move(b);
+    REQUIRE(d(all) == matB);
+    REQUIRE(d.rowKeys() == rowKeys);
+}
+
+TEST_CASE("[KeyedVector] Special member functions (dynamic <- static)", "[KeyedVector]")
+{
+    auto logger = initializeTestLogger();
+
+    Eigen::Vector2d matA(1, 2);
+    Eigen::Vector2d matB(3, 4);
+    std::vector<int> rowKeys = { 1, 2 };
+
+    KeyedVectorX<double, int> a(matA, rowKeys);
+    REQUIRE(a(all) == matA);
+    REQUIRE(a.rowKeys() == rowKeys);
+
+    KeyedVectorX<double, int> b(matB, rowKeys);
+    REQUIRE(b(all) == matB);
+    REQUIRE(b.rowKeys() == rowKeys);
+
+    // Copy constructor
+    KeyedVector<double, int, 2> c(a);
+    REQUIRE(c(all) == matA);
+    REQUIRE(c.rowKeys() == rowKeys);
+
+    // Copy assignment
+    c = b;
+    REQUIRE(c(all) == matB);
+    REQUIRE(c.rowKeys() == rowKeys);
+
+    // Move constructor
+    KeyedVector<double, int, 2> d(std::move(a));
+    REQUIRE(d(all) == matA);
+    REQUIRE(d.rowKeys() == rowKeys);
+
+    // Move assignment
+    d = std::move(b);
+    REQUIRE(d(all) == matB);
+    REQUIRE(d.rowKeys() == rowKeys);
+}
+
+TEST_CASE("[KeyedRowVector] Special member functions (static size)", "[KeyedRowVector]")
+{
+    auto logger = initializeTestLogger();
+
+    Eigen::RowVector2d matA(1, 2);
+    Eigen::RowVector2d matB(3, 4);
+    std::vector<int> colKeys = { 1, 2 };
+
+    KeyedRowVector<double, int, 2> a(matA, colKeys);
+    REQUIRE(a(all) == matA);
+    REQUIRE(a.colKeys() == colKeys);
+
+    KeyedRowVector<double, int, 2> b(matB, colKeys);
+    REQUIRE(b(all) == matB);
+    REQUIRE(b.colKeys() == colKeys);
+
+    // Copy constructor
+    KeyedRowVector<double, int, 2> c(a);
+    REQUIRE(c(all) == matA);
+    REQUIRE(c.colKeys() == colKeys);
+
+    // Copy assignment
+    c = b;
+    REQUIRE(c(all) == matB);
+    REQUIRE(c.colKeys() == colKeys);
+
+    // Move constructor
+    KeyedRowVector<double, int, 2> d(std::move(a));
+    REQUIRE(d(all) == matA);
+    REQUIRE(d.colKeys() == colKeys);
+
+    // Move assignment
+    d = std::move(b);
+    REQUIRE(d(all) == matB);
+    REQUIRE(d.colKeys() == colKeys);
+}
+
+TEST_CASE("[KeyedRowVector] Special member functions (dynamic size)", "[KeyedRowVector]")
+{
+    auto logger = initializeTestLogger();
+
+    Eigen::RowVector2d matA(1, 2);
+    Eigen::RowVector2d matB(3, 4);
+    std::vector<int> colKeys = { 1, 2 };
+
+    KeyedRowVectorX<double, int> a(matA, colKeys);
+    REQUIRE(a(all) == matA);
+    REQUIRE(a.colKeys() == colKeys);
+
+    KeyedRowVectorX<double, int> b(matB, colKeys);
+    REQUIRE(b(all) == matB);
+    REQUIRE(b.colKeys() == colKeys);
+
+    // Copy constructor
+    KeyedRowVectorX<double, int> c(a);
+    REQUIRE(c(all) == matA);
+    REQUIRE(c.colKeys() == colKeys);
+
+    // Copy assignment
+    c = b;
+    REQUIRE(c(all) == matB);
+    REQUIRE(c.colKeys() == colKeys);
+
+    // Move constructor
+    KeyedRowVectorX<double, int> d(std::move(a));
+    REQUIRE(d(all) == matA);
+    REQUIRE(d.colKeys() == colKeys);
+
+    // Move assignment
+    d = std::move(b);
+    REQUIRE(d(all) == matB);
+    REQUIRE(d.colKeys() == colKeys);
+}
+
+TEST_CASE("[KeyedRowVector] Special member functions (static <- dynamic)", "[KeyedRowVector]")
+{
+    auto logger = initializeTestLogger();
+
+    Eigen::RowVector2d matA(1, 2);
+    Eigen::RowVector2d matB(3, 4);
+    std::vector<int> colKeys = { 1, 2 };
+
+    KeyedRowVector<double, int, 2> a(matA, colKeys);
+    REQUIRE(a(all) == matA);
+    REQUIRE(a.colKeys() == colKeys);
+
+    KeyedRowVector<double, int, 2> b(matB, colKeys);
+    REQUIRE(b(all) == matB);
+    REQUIRE(b.colKeys() == colKeys);
+
+    // Copy constructor
+    KeyedRowVectorX<double, int> c(a);
+    REQUIRE(c(all) == matA);
+    REQUIRE(c.colKeys() == colKeys);
+
+    // Copy assignment
+    c = b;
+    REQUIRE(c(all) == matB);
+    REQUIRE(c.colKeys() == colKeys);
+
+    // Move constructor
+    KeyedRowVectorX<double, int> d(std::move(a));
+    REQUIRE(d(all) == matA);
+    REQUIRE(d.colKeys() == colKeys);
+
+    // Move assignment
+    d = std::move(b);
+    REQUIRE(d(all) == matB);
+    REQUIRE(d.colKeys() == colKeys);
+}
+
+TEST_CASE("[KeyedRowVector] Special member functions (dynamic <- static)", "[KeyedRowVector]")
+{
+    auto logger = initializeTestLogger();
+
+    Eigen::RowVector2d matA(1, 2);
+    Eigen::RowVector2d matB(3, 4);
+    std::vector<int> colKeys = { 1, 2 };
+
+    KeyedRowVectorX<double, int> a(matA, colKeys);
+    REQUIRE(a(all) == matA);
+    REQUIRE(a.colKeys() == colKeys);
+
+    KeyedRowVectorX<double, int> b(matB, colKeys);
+    REQUIRE(b(all) == matB);
+    REQUIRE(b.colKeys() == colKeys);
+
+    // Copy constructor
+    KeyedRowVector<double, int, 2> c(a);
+    REQUIRE(c(all) == matA);
+    REQUIRE(c.colKeys() == colKeys);
+
+    // Copy assignment
+    c = b;
+    REQUIRE(c(all) == matB);
+    REQUIRE(c.colKeys() == colKeys);
+
+    // Move constructor
+    KeyedRowVector<double, int, 2> d(std::move(a));
+    REQUIRE(d(all) == matA);
+    REQUIRE(d.colKeys() == colKeys);
+
+    // Move assignment
+    d = std::move(b);
+    REQUIRE(d(all) == matB);
+    REQUIRE(d.colKeys() == colKeys);
+}
+
 TEST_CASE("[KeyedMatrix] Constructors static sized", "[KeyedMatrix]")
 {
     auto logger = initializeTestLogger();
@@ -438,7 +910,7 @@ TEST_CASE("[KeyedMatrix] std::variant as Keys", "[KeyedMatrix]")
     REQUIRE(mat({ Keys::Position, Ambiguity{ 1 } }, all) == eigMat({ 0, 3 }, Eigen::all));
 }
 
-TEST_CASE("[KeyedMatrix] Vector", "[KeyedMatrix]")
+TEST_CASE("[KeyedVector] All functions", "[KeyedVector]")
 {
     auto logger = initializeTestLogger();
 
@@ -473,7 +945,7 @@ TEST_CASE("[KeyedMatrix] Vector", "[KeyedMatrix]")
     REQUIRE(vec(all) == (Eigen::VectorXd(5) << 1, 5, 6, 7, 8).finished());
 }
 
-TEST_CASE("[KeyedMatrix] RowVector", "[KeyedMatrix]")
+TEST_CASE("[KeyedRowVector] All functions", "[KeyedRowVector]")
 {
     auto logger = initializeTestLogger();
 

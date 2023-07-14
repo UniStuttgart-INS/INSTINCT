@@ -42,46 +42,22 @@ template<typename Scalar, int Rows, int Cols>
 class KeyedMatrixStorage
 {
   public:
-    /// @brief Default Constructor
-    KeyedMatrixStorage() = default;
-    /// @brief Destructor
-    virtual ~KeyedMatrixStorage() = default;
-    /// @brief Copy constructor
-    /// @param other The other object
-    KeyedMatrixStorage(const KeyedMatrixStorage& other)
-    {
-        this->matrix = other.matrix;
-    }
-    /// @brief Copy assignment operator
-    /// @param other The other object
-    KeyedMatrixStorage& operator=(const KeyedMatrixStorage& other)
-    {
-        // Guard self assignment
-        if (this == &other) { return *this; }
+    /// @brief Return the rows of the underlying Eigen matrix
+    decltype(auto) rows() const { return matrix.rows(); }
 
-        this->matrix = other.matrix;
-
-        return *this;
-    }
-    /// @brief Move constructor
-    /// @param other The other object
-    KeyedMatrixStorage(KeyedMatrixStorage&& other) noexcept
-    {
-        this->matrix = std::move(other.matrix);
-    }
-    /// @brief Move assignment operator
-    /// @param other The other object
-    KeyedMatrixStorage& operator=(KeyedMatrixStorage&& other) noexcept
-    {
-        if (this == &other) { return *this; }
-
-        this->matrix = std::move(other.matrix);
-
-        return *this;
-    }
+    /// @brief Return the cols of the underlying Eigen matrix
+    decltype(auto) cols() const { return matrix.cols(); }
 
   protected:
     Eigen::Matrix<Scalar, Rows, Cols> matrix; ///< Data storage of the type
+
+  private:
+    template<typename Scalar_, typename RowKeyType_, typename ColKeyType_, int Rows_, int Cols_>
+    friend class KeyedMatrixBase;
+    template<typename Scalar_, typename RowKeyType_, int Rows_>
+    friend class KeyedVectorBase;
+    template<typename Scalar_, typename ColKeyType_, int Cols_>
+    friend class KeyedRowVectorBase;
 };
 
 // ###########################################################################################################
@@ -95,52 +71,6 @@ template<typename Scalar, typename RowKeyType, int Rows, int Cols>
 class KeyedMatrixRowsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols>
 {
   public:
-    /// @brief Default Constructor
-    KeyedMatrixRowsBase() = default;
-    /// @brief Destructor
-    ~KeyedMatrixRowsBase() override = default;
-    /// @brief Copy constructor
-    /// @param other The other object
-    KeyedMatrixRowsBase(const KeyedMatrixRowsBase& other)
-    {
-        this->matrix = other.matrix;
-        this->rowIndices = other.rowIndices;
-        this->rowKeysVector = other.rowKeysVector;
-    }
-    /// @brief Copy assignment operator
-    /// @param other The other object
-    KeyedMatrixRowsBase& operator=(const KeyedMatrixRowsBase& other)
-    {
-        // Guard self assignment
-        if (this == &other) { return *this; }
-
-        this->matrix = other.matrix;
-        this->rowIndices = other.rowIndices;
-        this->rowKeysVector = other.rowKeysVector;
-
-        return *this;
-    }
-    /// @brief Move constructor
-    /// @param other The other object
-    KeyedMatrixRowsBase(KeyedMatrixRowsBase&& other) noexcept
-    {
-        this->matrix = std::move(other.matrix);
-        this->rowIndices = std::move(other.rowIndices);
-        this->rowKeysVector = std::move(other.rowKeysVector);
-    }
-    /// @brief Move assignment operator
-    /// @param other The other object
-    KeyedMatrixRowsBase& operator=(KeyedMatrixRowsBase&& other) noexcept
-    {
-        if (this == &other) { return *this; }
-
-        this->matrix = std::move(other.matrix);
-        this->rowIndices = std::move(other.rowIndices);
-        this->rowKeysVector = std::move(other.rowKeysVector);
-
-        return *this;
-    }
-
     /// @brief Returns the row keys
     const std::vector<RowKeyType>& rowKeys() const { return rowKeysVector; }
 
@@ -167,6 +97,15 @@ class KeyedMatrixRowsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols
     std::unordered_map<RowKeyType, Eigen::Index> rowIndices;
     /// Row Keys
     std::vector<RowKeyType> rowKeysVector;
+
+    /// Row Slice used for accessing
+    mutable std::vector<Eigen::Index> rowSlice;
+
+  private:
+    template<typename Scalar_, typename RowKeyType_, typename ColKeyType_, int Rows_, int Cols_>
+    friend class KeyedMatrixBase;
+    template<typename Scalar_, typename RowKeyType_, int Rows_>
+    friend class KeyedVectorBase;
 };
 
 /// @brief Base class for Keyed matrices with multiple rows of static size
@@ -175,111 +114,17 @@ class KeyedMatrixRowsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols
 /// @tparam Rows Number of rows, or \b Dynamic
 /// @tparam Cols Number of columns, or \b Dynamic
 template<typename Scalar, typename RowKeyType, int Rows, int Cols>
-class KeyedMatrixRows : virtual public KeyedMatrixRowsBase<Scalar, RowKeyType, Rows, Cols>
-{
-  public:
-    /// @brief Default Constructor
-    KeyedMatrixRows() = default;
-    /// @brief Destructor
-    ~KeyedMatrixRows() override = default;
-    /// @brief Copy constructor
-    /// @param other The other object
-    KeyedMatrixRows(const KeyedMatrixRows& other)
-    {
-        this->matrix = other.matrix;
-        this->rowIndices = other.rowIndices;
-        this->rowKeysVector = other.rowKeysVector;
-    }
-    /// @brief Copy assignment operator
-    /// @param other The other object
-    KeyedMatrixRows& operator=(const KeyedMatrixRows& other)
-    {
-        // Guard self assignment
-        if (this == &other) { return *this; }
-
-        this->matrix = other.matrix;
-        this->rowIndices = other.rowIndices;
-        this->rowKeysVector = other.rowKeysVector;
-
-        return *this;
-    }
-    /// @brief Move constructor
-    /// @param other The other object
-    KeyedMatrixRows(KeyedMatrixRows&& other) noexcept
-    {
-        this->matrix = std::move(other.matrix);
-        this->rowIndices = std::move(other.rowIndices);
-        this->rowKeysVector = std::move(other.rowKeysVector);
-    }
-    /// @brief Move assignment operator
-    /// @param other The other object
-    KeyedMatrixRows& operator=(KeyedMatrixRows&& other) noexcept
-    {
-        if (this == &other) { return *this; }
-
-        this->matrix = std::move(other.matrix);
-        this->rowIndices = std::move(other.rowIndices);
-        this->rowKeysVector = std::move(other.rowKeysVector);
-
-        return *this;
-    }
-};
+class KeyedMatrixRows : public KeyedMatrixRowsBase<Scalar, RowKeyType, Rows, Cols>
+{};
 
 /// @brief Base class for Keyed matrices with multiple rows of dynamic size
 /// @tparam Scalar Numeric type, e.g. float, double, int or std::complex<float>.
 /// @tparam RowKeyType Type of the key used for row lookup
 /// @tparam Cols Number of columns, or \b Dynamic
 template<typename Scalar, typename RowKeyType, int Cols>
-class KeyedMatrixRows<Scalar, RowKeyType, Eigen::Dynamic, Cols>
-    : virtual public KeyedMatrixRowsBase<Scalar, RowKeyType, Eigen::Dynamic, Cols>
+class KeyedMatrixRows<Scalar, RowKeyType, Eigen::Dynamic, Cols> : public KeyedMatrixRowsBase<Scalar, RowKeyType, Eigen::Dynamic, Cols>
 {
   public:
-    /// @brief Default Constructor
-    KeyedMatrixRows() = default;
-    /// @brief Destructor
-    ~KeyedMatrixRows() override = default;
-    /// @brief Copy constructor
-    /// @param other The other object
-    KeyedMatrixRows(const KeyedMatrixRows& other)
-    {
-        this->matrix = other.matrix;
-        this->rowIndices = other.rowIndices;
-        this->rowKeysVector = other.rowKeysVector;
-    }
-    /// @brief Copy assignment operator
-    /// @param other The other object
-    KeyedMatrixRows& operator=(const KeyedMatrixRows& other)
-    {
-        // Guard self assignment
-        if (this == &other) { return *this; }
-
-        this->matrix = other.matrix;
-        this->rowIndices = other.rowIndices;
-        this->rowKeysVector = other.rowKeysVector;
-
-        return *this;
-    }
-    /// @brief Move constructor
-    /// @param other The other object
-    KeyedMatrixRows(KeyedMatrixRows&& other) noexcept
-    {
-        this->matrix = std::move(other.matrix);
-        this->rowIndices = std::move(other.rowIndices);
-        this->rowKeysVector = std::move(other.rowKeysVector);
-    }
-    /// @brief Move assignment operator
-    /// @param other The other object
-    KeyedMatrixRows& operator=(KeyedMatrixRows&& other) noexcept
-    {
-        if (this == &other) { return *this; }
-
-        this->matrix = std::move(other.matrix);
-        this->rowIndices = std::move(other.rowIndices);
-        this->rowKeysVector = std::move(other.rowKeysVector);
-
-        return *this;
-    }
-
     /// @brief Adds a new row to the matrix
     /// @param rowKey Row key
     void addRow(const RowKeyType& rowKey) { addRows({ rowKey }); }
@@ -289,8 +134,7 @@ class KeyedMatrixRows<Scalar, RowKeyType, Eigen::Dynamic, Cols>
     void addRows(const std::vector<RowKeyType>& rowKeys)
     {
         INS_ASSERT_USER_ERROR(!this->hasAnyRows(rowKeys), "You cannot add a row key which is already in the matrix.");
-        std::unordered_set<RowKeyType> rowSet = { rowKeys.begin(), rowKeys.end() };
-        INS_ASSERT_USER_ERROR(rowSet.size() == rowKeys.size(), "Each row key must be unique");
+        INS_ASSERT_USER_ERROR(std::unordered_set<RowKeyType>(rowKeys.begin(), rowKeys.end()).size() == rowKeys.size(), "Each row key must be unique");
 
         auto initialSize = static_cast<Eigen::Index>(this->rowIndices.size());
         for (const auto& rowKey : rowKeys) { this->rowIndices.insert({ rowKey, static_cast<Eigen::Index>(this->rowIndices.size()) }); }
@@ -303,6 +147,7 @@ class KeyedMatrixRows<Scalar, RowKeyType, Eigen::Dynamic, Cols>
             this->matrix.conservativeResize(finalSize, Eigen::NoChange);
             this->matrix.block(initialSize, 0, finalSize - initialSize, this->matrix.cols()) = Eigen::MatrixX<Scalar>::Zero(finalSize - initialSize, this->matrix.cols());
         }
+        this->rowSlice.reserve(this->rowKeysVector.size());
     }
 
     /// @brief Removes the row from the matrix
@@ -354,52 +199,6 @@ template<typename Scalar, typename ColKeyType, int Rows, int Cols>
 class KeyedMatrixColsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols>
 {
   public:
-    /// @brief Default Constructor
-    KeyedMatrixColsBase() = default;
-    /// @brief Destructor
-    ~KeyedMatrixColsBase() override = default;
-    /// @brief Copy constructor
-    /// @param other The other object
-    KeyedMatrixColsBase(const KeyedMatrixColsBase& other)
-    {
-        this->matrix = other.matrix;
-        this->colIndices = other.colIndices;
-        this->colKeysVector = other.colKeysVector;
-    }
-    /// @brief Copy assignment operator
-    /// @param other The other object
-    KeyedMatrixColsBase& operator=(const KeyedMatrixColsBase& other)
-    {
-        // Guard self assignment
-        if (this == &other) { return *this; }
-
-        this->matrix = other.matrix;
-        this->colIndices = other.colIndices;
-        this->colKeysVector = other.colKeysVector;
-
-        return *this;
-    }
-    /// @brief Move constructor
-    /// @param other The other object
-    KeyedMatrixColsBase(KeyedMatrixColsBase&& other) noexcept
-    {
-        this->matrix = std::move(other.matrix);
-        this->colIndices = std::move(other.colIndices);
-        this->colKeysVector = std::move(other.colKeysVector);
-    }
-    /// @brief Move assignment operator
-    /// @param other The other object
-    KeyedMatrixColsBase& operator=(KeyedMatrixColsBase&& other) noexcept
-    {
-        if (this == &other) { return *this; }
-
-        this->matrix = std::move(other.matrix);
-        this->colIndices = std::move(other.colIndices);
-        this->colKeysVector = std::move(other.colKeysVector);
-
-        return *this;
-    }
-
     /// @brief Returns the col keys
     const std::vector<ColKeyType>& colKeys() const { return colKeysVector; }
 
@@ -426,6 +225,15 @@ class KeyedMatrixColsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols
     std::unordered_map<ColKeyType, Eigen::Index> colIndices;
     /// Col Keys
     std::vector<ColKeyType> colKeysVector;
+
+    /// Col Slice used for accessing
+    mutable std::vector<Eigen::Index> colSlice;
+
+  private:
+    template<typename Scalar_, typename RowKeyType_, typename ColKeyType_, int Rows_, int Cols_>
+    friend class KeyedMatrixBase;
+    template<typename Scalar_, typename ColKeyType_, int Cols_>
+    friend class KeyedRowVectorBase;
 };
 
 /// @brief Base class for Keyed matrices with multiple columns of static size
@@ -434,111 +242,17 @@ class KeyedMatrixColsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols
 /// @tparam Rows Number of rows, or \b Dynamic
 /// @tparam Cols Number of columns, or \b Dynamic
 template<typename Scalar, typename ColKeyType, int Rows, int Cols>
-class KeyedMatrixCols : virtual public KeyedMatrixColsBase<Scalar, ColKeyType, Rows, Cols>
-{
-  public:
-    /// @brief Default Constructor
-    KeyedMatrixCols() = default;
-    /// @brief Destructor
-    ~KeyedMatrixCols() override = default;
-    /// @brief Copy constructor
-    /// @param other The other object
-    KeyedMatrixCols(const KeyedMatrixCols& other)
-    {
-        this->matrix = other.matrix;
-        this->colIndices = other.colIndices;
-        this->colKeysVector = other.colKeysVector;
-    }
-    /// @brief Copy assignment operator
-    /// @param other The other object
-    KeyedMatrixCols& operator=(const KeyedMatrixCols& other)
-    {
-        // Guard self assignment
-        if (this == &other) { return *this; }
-
-        this->matrix = other.matrix;
-        this->colIndices = other.colIndices;
-        this->colKeysVector = other.colKeysVector;
-
-        return *this;
-    }
-    /// @brief Move constructor
-    /// @param other The other object
-    KeyedMatrixCols(KeyedMatrixCols&& other) noexcept
-    {
-        this->matrix = std::move(other.matrix);
-        this->colIndices = std::move(other.colIndices);
-        this->colKeysVector = std::move(other.colKeysVector);
-    }
-    /// @brief Move assignment operator
-    /// @param other The other object
-    KeyedMatrixCols& operator=(KeyedMatrixCols&& other) noexcept
-    {
-        if (this == &other) { return *this; }
-
-        this->matrix = std::move(other.matrix);
-        this->colIndices = std::move(other.colIndices);
-        this->colKeysVector = std::move(other.colKeysVector);
-
-        return *this;
-    }
-};
+class KeyedMatrixCols : public KeyedMatrixColsBase<Scalar, ColKeyType, Rows, Cols>
+{};
 
 /// @brief Base class for Keyed matrices with multiple columns of dynamic size
 /// @tparam Scalar Numeric type, e.g. float, double, int or std::complex<float>.
 /// @tparam ColKeyType Type of the key used for col lookup
 /// @tparam Rows Number of rows, or \b Dynamic
 template<typename Scalar, typename ColKeyType, int Rows>
-class KeyedMatrixCols<Scalar, ColKeyType, Rows, Eigen::Dynamic>
-    : virtual public KeyedMatrixColsBase<Scalar, ColKeyType, Rows, Eigen::Dynamic>
+class KeyedMatrixCols<Scalar, ColKeyType, Rows, Eigen::Dynamic> : public KeyedMatrixColsBase<Scalar, ColKeyType, Rows, Eigen::Dynamic>
 {
   public:
-    /// @brief Default Constructor
-    KeyedMatrixCols() = default;
-    /// @brief Destructor
-    ~KeyedMatrixCols() override = default;
-    /// @brief Copy constructor
-    /// @param other The other object
-    KeyedMatrixCols(const KeyedMatrixCols& other)
-    {
-        this->matrix = other.matrix;
-        this->colIndices = other.colIndices;
-        this->colKeysVector = other.colKeysVector;
-    }
-    /// @brief Copy assignment operator
-    /// @param other The other object
-    KeyedMatrixCols& operator=(const KeyedMatrixCols& other)
-    {
-        // Guard self assignment
-        if (this == &other) { return *this; }
-
-        this->matrix = other.matrix;
-        this->colIndices = other.colIndices;
-        this->colKeysVector = other.colKeysVector;
-
-        return *this;
-    }
-    /// @brief Move constructor
-    /// @param other The other object
-    KeyedMatrixCols(KeyedMatrixCols&& other) noexcept
-    {
-        this->matrix = std::move(other.matrix);
-        this->colIndices = std::move(other.colIndices);
-        this->colKeysVector = std::move(other.colKeysVector);
-    }
-    /// @brief Move assignment operator
-    /// @param other The other object
-    KeyedMatrixCols& operator=(KeyedMatrixCols&& other) noexcept
-    {
-        if (this == &other) { return *this; }
-
-        this->matrix = std::move(other.matrix);
-        this->colIndices = std::move(other.colIndices);
-        this->colKeysVector = std::move(other.colKeysVector);
-
-        return *this;
-    }
-
     /// @brief Adds a new col to the matrix
     /// @param colKey Col key
     void addCol(const ColKeyType& colKey) { addCols({ colKey }); }
@@ -548,8 +262,7 @@ class KeyedMatrixCols<Scalar, ColKeyType, Rows, Eigen::Dynamic>
     void addCols(const std::vector<ColKeyType>& colKeys)
     {
         INS_ASSERT_USER_ERROR(!this->hasAnyCols(colKeys), "You cannot add a col key which is already in the matrix.");
-        std::unordered_set<ColKeyType> colSet = { colKeys.begin(), colKeys.end() };
-        INS_ASSERT_USER_ERROR(colSet.size() == colKeys.size(), "Each col key must be unique");
+        INS_ASSERT_USER_ERROR(std::unordered_set<ColKeyType>(colKeys.begin(), colKeys.end()).size() == colKeys.size(), "Each col key must be unique");
 
         auto initialSize = static_cast<Eigen::Index>(this->colIndices.size());
         for (const auto& colKey : colKeys) { this->colIndices.insert({ colKey, static_cast<Eigen::Index>(this->colIndices.size()) }); }
@@ -562,6 +275,7 @@ class KeyedMatrixCols<Scalar, ColKeyType, Rows, Eigen::Dynamic>
             this->matrix.conservativeResize(Eigen::NoChange, finalSize);
             this->matrix.block(0, initialSize, this->matrix.rows(), finalSize - initialSize) = Eigen::MatrixX<Scalar>::Zero(this->matrix.rows(), finalSize - initialSize);
         }
+        this->colSlice.reserve(this->colKeysVector.size());
     }
 
     /// @brief Removes the col from the matrix
@@ -626,16 +340,126 @@ class KeyedVectorBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, 1>
     template<typename Derived>
     KeyedVectorBase(const Eigen::MatrixBase<Derived>& vector, const std::vector<RowKeyType>& rowKeys)
     {
-        std::unordered_set<RowKeyType> rowSet = { rowKeys.begin(), rowKeys.end() };
-        INS_ASSERT_USER_ERROR(rowSet.size() == rowKeys.size(), "Each row key must be unique");
+        INS_ASSERT_USER_ERROR(std::unordered_set<RowKeyType>(rowKeys.begin(), rowKeys.end()).size() == rowKeys.size(), "Each row key must be unique");
 
         INS_ASSERT_USER_ERROR(vector.cols() == 1, "Only vectors with 1 column are allowed.");
-        INS_ASSERT_USER_ERROR(vector.rows() == static_cast<Eigen::Index>(rowKeys.size()), "Number of vector rows doesn't correspond to the amount of row keys");
+        INS_ASSERT_USER_ERROR(Rows == Eigen::Dynamic || vector.rows() == static_cast<int>(rowKeys.size()), "Number of vector rows doesn't correspond to the amount of row keys");
 
         for (size_t i = 0; i < rowKeys.size(); i++) { this->rowIndices.insert({ rowKeys.at(i), static_cast<Eigen::Index>(i) }); }
 
         this->matrix = vector;
         this->rowKeysVector = rowKeys;
+        this->rowSlice.reserve(this->rowKeysVector.size());
+    }
+
+    // #######################################################################################################
+    //                                       Special member functions
+    // #######################################################################################################
+
+    /// @brief Copy constructor
+    /// @param other The other object
+    KeyedVectorBase(const KeyedVectorBase& other)
+    {
+        this->matrix = other.matrix;
+        this->rowIndices = other.rowIndices;
+        this->rowKeysVector = other.rowKeysVector;
+        this->rowSlice.reserve(this->rowKeysVector.size());
+    }
+    /// @brief Copy assignment operator
+    /// @param other The other object
+    KeyedVectorBase& operator=(const KeyedVectorBase& other)
+    {
+        if (this == &other) { return *this; } // Guard self assignment
+
+        this->matrix = other.matrix;
+        this->rowIndices = other.rowIndices;
+        this->rowKeysVector = other.rowKeysVector;
+        this->rowSlice.reserve(this->rowKeysVector.size());
+
+        return *this;
+    }
+    /// @brief Move constructor
+    /// @param other The other object
+    KeyedVectorBase(KeyedVectorBase&& other) noexcept
+    {
+        this->matrix = std::move(other.matrix);
+        this->rowIndices = std::move(other.rowIndices);
+        this->rowKeysVector = std::move(other.rowKeysVector);
+        this->rowSlice.reserve(this->rowKeysVector.size());
+    }
+    /// @brief Move assignment operator
+    /// @param other The other object
+    KeyedVectorBase& operator=(KeyedVectorBase&& other) noexcept
+    {
+        if (this == &other) { return *this; } // Guard self assignment
+
+        this->matrix = std::move(other.matrix);
+        this->rowIndices = std::move(other.rowIndices);
+        this->rowKeysVector = std::move(other.rowKeysVector);
+        this->rowSlice.reserve(this->rowKeysVector.size());
+
+        return *this;
+    }
+
+    // ###########################################################################################################
+    //                             Special member functions with different Rows/Cols
+    // ###########################################################################################################
+
+    /// @brief Copy constructor
+    /// @param other The other object
+    template<int oRows>
+    KeyedVectorBase(const KeyedVectorBase<Scalar, RowKeyType, oRows>& other)
+    {
+        INS_ASSERT_USER_ERROR(Rows == Eigen::Dynamic || other.rows() == Rows, "Can only copy construct dynamic<=>static matrices if the rows match");
+
+        this->matrix = other.matrix;
+        this->rowIndices = other.rowIndices;
+        this->rowKeysVector = other.rowKeysVector;
+        this->rowSlice.reserve(this->rowKeysVector.size());
+    }
+    /// @brief Copy assignment operator
+    /// @param other The other object
+    template<int oRows>
+    KeyedVectorBase& operator=(const KeyedVectorBase<Scalar, RowKeyType, oRows>& other)
+    {
+        // No need to guard self assignment, as the types are different, so it cannot be the same object
+
+        INS_ASSERT_USER_ERROR(other.rowKeys() == this->rowKeys(), "Can only copy assign matrices if the row keys match");
+
+        this->matrix = other.matrix;
+        this->rowIndices = other.rowIndices;
+        this->rowKeysVector = other.rowKeysVector;
+        this->rowSlice.reserve(this->rowKeysVector.size());
+
+        return *this;
+    }
+    /// @brief Move constructor
+    /// @param other The other object
+    template<int oRows>
+    KeyedVectorBase(KeyedVectorBase<Scalar, RowKeyType, oRows>&& other) noexcept
+    {
+        INS_ASSERT_USER_ERROR(Rows == Eigen::Dynamic || other.rows() == Rows, "Can only copy construct dynamic<=>static matrices if the rows match");
+
+        this->matrix = std::move(other.matrix);
+        this->rowIndices = std::move(other.rowIndices);
+        this->rowKeysVector = std::move(other.rowKeysVector);
+        this->rowSlice.reserve(this->rowKeysVector.size());
+    }
+    /// @brief Move assignment operator
+    /// @param other The other object
+    template<int oRows>
+    KeyedVectorBase& operator=(KeyedVectorBase<Scalar, RowKeyType, oRows>&& other) noexcept
+    {
+        // No need to guard self assignment, as the types are different, so it cannot be the same object
+
+        INS_ASSERT_USER_ERROR(other.rowKeys() == this->rowKeys(), "Can only copy assign matrices if the row keys match");
+
+        this->matrix = std::move(other.matrix);
+        this->rowIndices = std::move(other.rowIndices);
+        this->rowKeysVector = std::move(other.rowKeysVector);
+        this->rowSlice.reserve(this->rowKeysVector.size());
+
+        return *this;
     }
 
     // #######################################################################################################
@@ -662,22 +486,20 @@ class KeyedVectorBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, 1>
     /// @return View into the matrix for the row keys
     decltype(auto) operator()(const std::vector<RowKeyType>& rowKeys) const
     {
-        std::vector<Eigen::Index> rowIdx;
-        rowIdx.reserve(rowKeys.size());
-        for (const auto& rowKey : rowKeys) { rowIdx.push_back(this->rowIndices.at(rowKey)); }
+        this->rowSlice.clear();
+        for (const auto& rowKey : rowKeys) { this->rowSlice.push_back(this->rowIndices.at(rowKey)); }
 
-        return this->matrix(rowIdx, 0);
+        return this->matrix(this->rowSlice, 0);
     }
     /// @brief Gets the values for the row keys
     /// @param rowKeys Row Keys
     /// @return View into the matrix for the row keys
     decltype(auto) operator()(const std::vector<RowKeyType>& rowKeys)
     {
-        std::vector<Eigen::Index> rowIdx;
-        rowIdx.reserve(rowKeys.size());
-        for (const auto& rowKey : rowKeys) { rowIdx.push_back(this->rowIndices.at(rowKey)); }
+        this->rowSlice.clear();
+        for (const auto& rowKey : rowKeys) { this->rowSlice.push_back(this->rowIndices.at(rowKey)); }
 
-        return this->matrix(rowIdx, 0);
+        return this->matrix(this->rowSlice, 0);
     }
 
     /// @brief Requests the full vector
@@ -710,16 +532,126 @@ class KeyedRowVectorBase : public KeyedMatrixCols<Scalar, ColKeyType, 1, Cols>
     template<typename Derived>
     KeyedRowVectorBase(const Eigen::MatrixBase<Derived>& vector, const std::vector<ColKeyType>& colKeys)
     {
-        std::unordered_set<ColKeyType> colSet = { colKeys.begin(), colKeys.end() };
-        INS_ASSERT_USER_ERROR(colSet.size() == colKeys.size(), "Each col key must be unique");
+        INS_ASSERT_USER_ERROR(std::unordered_set<ColKeyType>(colKeys.begin(), colKeys.end()).size() == colKeys.size(), "Each col key must be unique");
 
         INS_ASSERT_USER_ERROR(vector.rows() == 1, "Only vectors with 1 row are allowed.");
-        INS_ASSERT_USER_ERROR(vector.cols() == static_cast<Eigen::Index>(colKeys.size()), "Number of vector cols doesn't correspond to the amount of col keys");
+        INS_ASSERT_USER_ERROR(Cols == Eigen::Dynamic || vector.cols() == static_cast<Eigen::Index>(colKeys.size()), "Number of vector cols doesn't correspond to the amount of col keys");
 
         for (size_t i = 0; i < colKeys.size(); i++) { this->colIndices.insert({ colKeys.at(i), static_cast<Eigen::Index>(i) }); }
 
         this->matrix = vector;
         this->colKeysVector = colKeys;
+        this->colSlice.reserve(this->colKeysVector.size());
+    }
+
+    // #######################################################################################################
+    //                                       Special member functions
+    // #######################################################################################################
+
+    /// @brief Copy constructor
+    /// @param other The other object
+    KeyedRowVectorBase(const KeyedRowVectorBase& other)
+    {
+        this->matrix = other.matrix;
+        this->colIndices = other.colIndices;
+        this->colKeysVector = other.colKeysVector;
+        this->colSlice.reserve(this->colKeysVector.size());
+    }
+    /// @brief Copy assignment operator
+    /// @param other The other object
+    KeyedRowVectorBase& operator=(const KeyedRowVectorBase& other)
+    {
+        if (this == &other) { return *this; } // Guard self assignment
+
+        this->matrix = other.matrix;
+        this->colIndices = other.colIndices;
+        this->colKeysVector = other.colKeysVector;
+        this->colSlice.reserve(this->colKeysVector.size());
+
+        return *this;
+    }
+    /// @brief Move constructor
+    /// @param other The other object
+    KeyedRowVectorBase(KeyedRowVectorBase&& other) noexcept
+    {
+        this->matrix = std::move(other.matrix);
+        this->colIndices = std::move(other.colIndices);
+        this->colKeysVector = std::move(other.colKeysVector);
+        this->colSlice.reserve(this->colKeysVector.size());
+    }
+    /// @brief Move assignment operator
+    /// @param other The other object
+    KeyedRowVectorBase& operator=(KeyedRowVectorBase&& other) noexcept
+    {
+        if (this == &other) { return *this; } // Guard self assignment
+
+        this->matrix = std::move(other.matrix);
+        this->colIndices = std::move(other.colIndices);
+        this->colKeysVector = std::move(other.colKeysVector);
+        this->colSlice.reserve(this->colKeysVector.size());
+
+        return *this;
+    }
+
+    // ###########################################################################################################
+    //                             Special member functions with different Rows/Cols
+    // ###########################################################################################################
+
+    /// @brief Copy constructor
+    /// @param other The other object
+    template<int oCols>
+    KeyedRowVectorBase(const KeyedRowVectorBase<Scalar, ColKeyType, oCols>& other)
+    {
+        INS_ASSERT_USER_ERROR(Cols == Eigen::Dynamic || other.cols() == Cols, "Can only copy construct dynamic<=>static matrices if the cols match");
+
+        this->matrix = other.matrix;
+        this->colIndices = other.colIndices;
+        this->colKeysVector = other.colKeysVector;
+        this->colSlice.reserve(this->colKeysVector.size());
+    }
+    /// @brief Copy assignment operator
+    /// @param other The other object
+    template<int oCols>
+    KeyedRowVectorBase& operator=(const KeyedRowVectorBase<Scalar, ColKeyType, oCols>& other)
+    {
+        // No need to guard self assignment, as the types are different, so it cannot be the same object
+
+        INS_ASSERT_USER_ERROR(other.colKeys() == this->colKeys(), "Can only copy assign matrices if the col keys match");
+
+        this->matrix = other.matrix;
+        this->colIndices = other.colIndices;
+        this->colKeysVector = other.colKeysVector;
+        this->colSlice.reserve(this->colKeysVector.size());
+
+        return *this;
+    }
+    /// @brief Move constructor
+    /// @param other The other object
+    template<int oCols>
+    KeyedRowVectorBase(KeyedRowVectorBase<Scalar, ColKeyType, oCols>&& other) noexcept
+    {
+        INS_ASSERT_USER_ERROR(Cols == Eigen::Dynamic || other.cols() == Cols, "Can only copy construct dynamic<=>static matrices if the cols match");
+
+        this->matrix = std::move(other.matrix);
+        this->colIndices = std::move(other.colIndices);
+        this->colKeysVector = std::move(other.colKeysVector);
+        this->colSlice.reserve(this->colKeysVector.size());
+    }
+    /// @brief Move assignment operator
+    /// @param other The other object
+    template<int oCols>
+    KeyedRowVectorBase& operator=(KeyedRowVectorBase<Scalar, ColKeyType, oCols>&& other) noexcept
+    {
+        // No need to guard self assignment, as the types are different, so it cannot be the same object
+
+        INS_ASSERT_USER_ERROR(other.colKeys() == this->colKeys(), "Can only copy assign matrices if the col keys match");
+
+        this->matrix = std::move(other.matrix);
+        this->colIndices = std::move(other.colIndices);
+        this->colKeysVector = std::move(other.colKeysVector);
+        this->colSlice.reserve(this->colKeysVector.size());
+
+        return *this;
     }
 
     // #######################################################################################################
@@ -746,22 +678,20 @@ class KeyedRowVectorBase : public KeyedMatrixCols<Scalar, ColKeyType, 1, Cols>
     /// @return View into the matrix for the col keys
     decltype(auto) operator()(const std::vector<ColKeyType>& colKeys) const
     {
-        std::vector<Eigen::Index> colIdx;
-        colIdx.reserve(colKeys.size());
-        for (const auto& colKey : colKeys) { colIdx.push_back(this->colIndices.at(colKey)); }
+        this->colSlice.clear();
+        for (const auto& colKey : colKeys) { this->colSlice.push_back(this->colIndices.at(colKey)); }
 
-        return this->matrix(0, colIdx);
+        return this->matrix(0, this->colSlice);
     }
     /// @brief Gets the values for the col keys
     /// @param colKeys Col Keys
     /// @return View into the matrix for the col keys
     decltype(auto) operator()(const std::vector<ColKeyType>& colKeys)
     {
-        std::vector<Eigen::Index> colIdx;
-        colIdx.reserve(colKeys.size());
-        for (const auto& colKey : colKeys) { colIdx.push_back(this->colIndices.at(colKey)); }
+        this->colSlice.clear();
+        for (const auto& colKey : colKeys) { this->colSlice.push_back(this->colIndices.at(colKey)); }
 
-        return this->matrix(0, colIdx);
+        return this->matrix(0, this->colSlice);
     }
 
     /// @brief Requests the full vector
@@ -789,7 +719,6 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     {
         this->matrix = matrix;
     }
-
     /// @brief Non-symmetric matrix constructor
     /// @param matrix Eigen Matrix to initialize from
     /// @param rowKeys Row keys describing the matrix
@@ -797,10 +726,8 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     template<typename Derived>
     KeyedMatrixBase(const Eigen::MatrixBase<Derived>& matrix, const std::vector<RowKeyType>& rowKeys, const std::vector<ColKeyType>& colKeys)
     {
-        std::unordered_set<RowKeyType> rowSet = { rowKeys.begin(), rowKeys.end() };
-        INS_ASSERT_USER_ERROR(rowSet.size() == rowKeys.size(), "Each row key must be unique");
-        std::unordered_set<ColKeyType> colSet = { colKeys.begin(), colKeys.end() };
-        INS_ASSERT_USER_ERROR(colSet.size() == colKeys.size(), "Each col key must be unique");
+        INS_ASSERT_USER_ERROR(std::unordered_set<RowKeyType>(rowKeys.begin(), rowKeys.end()).size() == rowKeys.size(), "Each row key must be unique");
+        INS_ASSERT_USER_ERROR(std::unordered_set<ColKeyType>(colKeys.begin(), colKeys.end()).size() == colKeys.size(), "Each col key must be unique");
 
         INS_ASSERT_USER_ERROR(matrix.rows() == static_cast<Eigen::Index>(rowKeys.size()), "Number of matrix rows doesn't correspond to the amount of row keys");
         INS_ASSERT_USER_ERROR(matrix.cols() == static_cast<Eigen::Index>(colKeys.size()), "Number of matrix cols doesn't correspond to the amount of col keys");
@@ -814,34 +741,39 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
         this->matrix = matrix;
         this->rowKeysVector = rowKeys;
         this->colKeysVector = colKeys;
+        this->colSlice.reserve(this->colKeysVector.size());
+        this->rowSlice.reserve(this->rowKeysVector.size());
     }
 
-    /// @brief Destructor
-    ~KeyedMatrixBase() override = default;
+    // #######################################################################################################
+    //                                       Special member functions
+    // #######################################################################################################
+
     /// @brief Copy constructor
     /// @param other The other object
     KeyedMatrixBase(const KeyedMatrixBase& other)
-        : KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>(),
-          KeyedMatrixCols<Scalar, ColKeyType, Rows, Cols>()
     {
         this->matrix = other.matrix;
         this->rowIndices = other.rowIndices;
         this->rowKeysVector = other.rowKeysVector;
         this->colIndices = other.colIndices;
         this->colKeysVector = other.colKeysVector;
+        this->colSlice.reserve(this->colKeysVector.size());
+        this->rowSlice.reserve(this->rowKeysVector.size());
     }
     /// @brief Copy assignment operator
     /// @param other The other object
     KeyedMatrixBase& operator=(const KeyedMatrixBase& other)
     {
-        // Guard self assignment
-        if (this == &other) { return *this; }
+        if (this == &other) { return *this; } // Guard self assignment
 
         this->matrix = other.matrix;
         this->rowIndices = other.rowIndices;
         this->rowKeysVector = other.rowKeysVector;
         this->colIndices = other.colIndices;
         this->colKeysVector = other.colKeysVector;
+        this->colSlice.reserve(this->colKeysVector.size());
+        this->rowSlice.reserve(this->rowKeysVector.size());
 
         return *this;
     }
@@ -854,18 +786,99 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
         this->rowKeysVector = std::move(other.rowKeysVector);
         this->colIndices = std::move(other.colIndices);
         this->colKeysVector = std::move(other.colKeysVector);
+        this->colSlice.reserve(this->colKeysVector.size());
+        this->rowSlice.reserve(this->rowKeysVector.size());
     }
     /// @brief Move assignment operator
     /// @param other The other object
     KeyedMatrixBase& operator=(KeyedMatrixBase&& other) noexcept
     {
-        if (this == &other) { return *this; }
+        if (this == &other) { return *this; } // Guard self assignment
 
         this->matrix = std::move(other.matrix);
         this->rowIndices = std::move(other.rowIndices);
         this->rowKeysVector = std::move(other.rowKeysVector);
         this->colIndices = std::move(other.colIndices);
         this->colKeysVector = std::move(other.colKeysVector);
+        this->colSlice.reserve(this->colKeysVector.size());
+        this->rowSlice.reserve(this->rowKeysVector.size());
+
+        return *this;
+    }
+
+    // ###########################################################################################################
+    //                             Special member functions with different Rows/Cols
+    // ###########################################################################################################
+
+    /// @brief Copy constructor
+    /// @param other The other object
+    template<int oRows, int oCols>
+    KeyedMatrixBase(const KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, oRows, oCols>& other)
+    {
+        INS_ASSERT_USER_ERROR(Rows == Eigen::Dynamic || other.rows() == Rows, "Can only copy construct dynamic<=>static matrices if the rows match");
+        INS_ASSERT_USER_ERROR(Cols == Eigen::Dynamic || other.cols() == Cols, "Can only copy construct dynamic<=>static matrices if the cols match");
+
+        this->matrix = other.matrix;
+        this->rowIndices = other.rowIndices;
+        this->rowKeysVector = other.rowKeysVector;
+        this->colIndices = other.colIndices;
+        this->colKeysVector = other.colKeysVector;
+        this->colSlice.reserve(this->colKeysVector.size());
+        this->rowSlice.reserve(this->rowKeysVector.size());
+    }
+    /// @brief Copy assignment operator
+    /// @param other The other object
+    template<int oRows, int oCols>
+    KeyedMatrixBase& operator=(const KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, oRows, oCols>& other)
+    {
+        // No need to guard self assignment, as the types are different, so it cannot be the same object
+
+        INS_ASSERT_USER_ERROR(other.rowKeys() == this->rowKeys(), "Can only copy assign matrices if the row keys match");
+        INS_ASSERT_USER_ERROR(other.colKeys() == this->colKeys(), "Can only copy assign matrices if the col keys match");
+
+        this->matrix = other.matrix;
+        this->rowIndices = other.rowIndices;
+        this->rowKeysVector = other.rowKeysVector;
+        this->colIndices = other.colIndices;
+        this->colKeysVector = other.colKeysVector;
+        this->colSlice.reserve(this->colKeysVector.size());
+        this->rowSlice.reserve(this->rowKeysVector.size());
+
+        return *this;
+    }
+    /// @brief Move constructor
+    /// @param other The other object
+    template<int oRows, int oCols>
+    KeyedMatrixBase(KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, oRows, oCols>&& other) noexcept
+    {
+        INS_ASSERT_USER_ERROR(Rows == Eigen::Dynamic || other.rows() == Rows, "Can only copy construct dynamic<=>static matrices if the rows match");
+        INS_ASSERT_USER_ERROR(Cols == Eigen::Dynamic || other.cols() == Cols, "Can only copy construct dynamic<=>static matrices if the cols match");
+
+        this->matrix = std::move(other.matrix);
+        this->rowIndices = std::move(other.rowIndices);
+        this->rowKeysVector = std::move(other.rowKeysVector);
+        this->colIndices = std::move(other.colIndices);
+        this->colKeysVector = std::move(other.colKeysVector);
+        this->colSlice.reserve(this->colKeysVector.size());
+        this->rowSlice.reserve(this->rowKeysVector.size());
+    }
+    /// @brief Move assignment operator
+    /// @param other The other object
+    template<int oRows, int oCols>
+    KeyedMatrixBase& operator=(KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, oRows, oCols>&& other) noexcept
+    {
+        // No need to guard self assignment, as the types are different, so it cannot be the same object
+
+        INS_ASSERT_USER_ERROR(other.rowKeys() == this->rowKeys(), "Can only copy assign matrices if the row keys match");
+        INS_ASSERT_USER_ERROR(other.colKeys() == this->colKeys(), "Can only copy assign matrices if the col keys match");
+
+        this->matrix = std::move(other.matrix);
+        this->rowIndices = std::move(other.rowIndices);
+        this->rowKeysVector = std::move(other.rowKeysVector);
+        this->colIndices = std::move(other.colIndices);
+        this->colKeysVector = std::move(other.colKeysVector);
+        this->colSlice.reserve(this->colKeysVector.size());
+        this->rowSlice.reserve(this->rowKeysVector.size());
 
         return *this;
     }
@@ -897,15 +910,13 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     /// @return View into the matrix for the row and col keys
     decltype(auto) operator()(const std::vector<RowKeyType>& rowKeys, const std::vector<ColKeyType>& colKeys) const
     {
-        std::vector<Eigen::Index> rowIdx;
-        rowIdx.reserve(rowKeys.size());
-        for (const auto& rowKey : rowKeys) { rowIdx.push_back(this->rowIndices.at(rowKey)); }
+        this->rowSlice.clear();
+        for (const auto& rowKey : rowKeys) { this->rowSlice.push_back(this->rowIndices.at(rowKey)); }
 
-        std::vector<Eigen::Index> colIdx;
-        colIdx.reserve(colKeys.size());
-        for (const auto& colKey : colKeys) { colIdx.push_back(this->colIndices.at(colKey)); }
+        this->colSlice.clear();
+        for (const auto& colKey : colKeys) { this->colSlice.push_back(this->colIndices.at(colKey)); }
 
-        return this->matrix(rowIdx, colIdx);
+        return this->matrix(this->rowSlice, this->colSlice);
     }
     /// @brief Gets the values for the row and col keys
     /// @param rowKeys Row Keys
@@ -913,15 +924,13 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     /// @return View into the matrix for the row and col keys
     decltype(auto) operator()(const std::vector<RowKeyType>& rowKeys, const std::vector<ColKeyType>& colKeys)
     {
-        std::vector<Eigen::Index> rowIdx;
-        rowIdx.reserve(rowKeys.size());
-        for (const auto& rowKey : rowKeys) { rowIdx.push_back(this->rowIndices.at(rowKey)); }
+        this->rowSlice.clear();
+        for (const auto& rowKey : rowKeys) { this->rowSlice.push_back(this->rowIndices.at(rowKey)); }
 
-        std::vector<Eigen::Index> colIdx;
-        colIdx.reserve(colKeys.size());
-        for (const auto& colKey : colKeys) { colIdx.push_back(this->colIndices.at(colKey)); }
+        this->colSlice.clear();
+        for (const auto& colKey : colKeys) { this->colSlice.push_back(this->colIndices.at(colKey)); }
 
-        return this->matrix(rowIdx, colIdx);
+        return this->matrix(this->rowSlice, this->colSlice);
     }
     /// @brief Gets the values for the row and col keys
     /// @param rowKeys Row Keys
@@ -1007,13 +1016,87 @@ class KeyedVector : public internal::KeyedVectorBase<Scalar, RowKeyType, Rows>
         : internal::KeyedVectorBase<Scalar, RowKeyType, Rows>(vector, rowKeys)
     {}
 
-    // ------------------------------- Operators from a Dynamic KeyedVector ----------------------------------
+    // #######################################################################################################
+    //                                       Special member functions
+    // #######################################################################################################
 
     /// @brief Copy constructor
     /// @param other The other object
-    KeyedVector(const KeyedVector<Scalar, RowKeyType, Eigen::Dynamic>& other) // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
-        : internal::KeyedVectorBase<Scalar, RowKeyType, Rows>(other(all), other.rowKeys())
+    KeyedVector(const KeyedVector& other)
+        : internal::KeyedVectorBase<Scalar, RowKeyType, Rows>(other)
     {}
+    /// @brief Copy assignment operator
+    /// @param other The other object
+    KeyedVector& operator=(const KeyedVector& other)
+    {
+        if (this == &other) { return *this; } // Guard self assignment
+
+        static_cast<internal::KeyedVectorBase<Scalar, RowKeyType, Rows>&>(*this) =
+            static_cast<const internal::KeyedVectorBase<Scalar, RowKeyType, Rows>&>(other);
+
+        return *this;
+    }
+    /// @brief Move constructor
+    /// @param other The other object
+    KeyedVector(KeyedVector&& other) noexcept
+        : internal::KeyedVectorBase<Scalar, RowKeyType, Rows>(std::move(other))
+    {}
+    /// @brief Move assignment operator
+    /// @param other The other object
+    KeyedVector& operator=(KeyedVector&& other) noexcept
+    {
+        if (this == &other) { return *this; } // Guard self assignment
+
+        static_cast<internal::KeyedVectorBase<Scalar, RowKeyType, Rows>&>(*this) =
+            std::move(static_cast<internal::KeyedVectorBase<Scalar, RowKeyType, Rows>&>(other));
+
+        return *this;
+    }
+
+    // ###########################################################################################################
+    //                             Special member functions with different Rows/Cols
+    // ###########################################################################################################
+
+    /// @brief Copy constructor
+    /// @param other The other object
+    KeyedVector(const KeyedVector<Scalar, RowKeyType, Eigen::Dynamic>& other)
+        : internal::KeyedVectorBase<Scalar, RowKeyType, Rows>(other)
+    {
+        INS_ASSERT_USER_ERROR(other.rows() == Rows, "Can only copy assign dynamic matrices from static ones if the size matches");
+    }
+    /// @brief Copy assignment operator
+    /// @param other The other object
+    KeyedVector& operator=(const KeyedVector<Scalar, RowKeyType, Eigen::Dynamic>& other)
+    {
+        // No need to guard self assignment, as the types are different, so it cannot be the same object
+
+        INS_ASSERT_USER_ERROR(other.rows() == Rows, "Can only copy assign dynamic matrices from static ones if the size matches");
+
+        static_cast<internal::KeyedVectorBase<Scalar, RowKeyType, Rows>&>(*this) =
+            static_cast<const internal::KeyedVectorBase<Scalar, RowKeyType, Eigen::Dynamic>&>(other);
+
+        return *this;
+    }
+    /// @brief Move constructor
+    /// @param other The other object
+    KeyedVector(KeyedVector<Scalar, RowKeyType, Eigen::Dynamic>&& other) noexcept
+        : internal::KeyedVectorBase<Scalar, RowKeyType, Rows>(std::move(other))
+    {
+        INS_ASSERT_USER_ERROR(other.rows() == Rows, "Can only move construct dynamic matrices from static ones if the size matches");
+    }
+    /// @brief Move assignment operator
+    /// @param other The other object
+    KeyedVector& operator=(KeyedVector<Scalar, RowKeyType, Eigen::Dynamic>&& other) noexcept
+    {
+        // No need to guard self assignment, as the types are different, so it cannot be the same object
+
+        INS_ASSERT_USER_ERROR(other.rows() == Rows, "Can only move assign dynamic matrices from static ones if the size matches");
+
+        static_cast<internal::KeyedVectorBase<Scalar, RowKeyType, Rows>&>(*this) =
+            std::move(static_cast<internal::KeyedVectorBase<Scalar, RowKeyType, Eigen::Dynamic>&>(other));
+
+        return *this;
+    }
 };
 
 /// @brief Dynamic sized KeyedVector
@@ -1036,11 +1119,82 @@ class KeyedVector<Scalar, RowKeyType, Eigen::Dynamic> : public internal::KeyedVe
         : internal::KeyedVectorBase<Scalar, RowKeyType, Eigen::Dynamic>(vector, rowKeys)
     {}
 
-    // TODO
-    template<int oRows>
-    KeyedVector(const KeyedVector<Scalar, RowKeyType, oRows>& other) // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
-        : internal::KeyedVectorBase<Scalar, RowKeyType, Eigen::Dynamic>(other(all), other.rowKeys())
+    // #######################################################################################################
+    //                                       Special member functions
+    // #######################################################################################################
+
+    /// @brief Copy constructor
+    /// @param other The other object
+    KeyedVector(const KeyedVector& other)
+        : internal::KeyedVectorBase<Scalar, RowKeyType, Eigen::Dynamic>(other)
+    {}
+    /// @brief Copy assignment operator
+    /// @param other The other object
+    KeyedVector& operator=(const KeyedVector& other)
     {
+        if (this == &other) { return *this; } // Guard self assignment
+
+        static_cast<internal::KeyedVectorBase<Scalar, RowKeyType, Eigen::Dynamic>&>(*this) =
+            static_cast<const internal::KeyedVectorBase<Scalar, RowKeyType, Eigen::Dynamic>&>(other);
+
+        return *this;
+    }
+    /// @brief Move constructor
+    /// @param other The other object
+    KeyedVector(KeyedVector&& other) noexcept
+        : internal::KeyedVectorBase<Scalar, RowKeyType, Eigen::Dynamic>(std::move(other))
+    {}
+    /// @brief Move assignment operator
+    /// @param other The other object
+    KeyedVector& operator=(KeyedVector&& other) noexcept
+    {
+        if (this == &other) { return *this; } // Guard self assignment
+
+        static_cast<internal::KeyedVectorBase<Scalar, RowKeyType, Eigen::Dynamic>&>(*this) =
+            std::move(static_cast<internal::KeyedVectorBase<Scalar, RowKeyType, Eigen::Dynamic>&>(other));
+
+        return *this;
+    }
+
+    // ###########################################################################################################
+    //                             Special member functions with different Rows/Cols
+    // ###########################################################################################################
+
+    /// @brief Copy constructor
+    /// @param other The other object
+    template<int oRows>
+    KeyedVector(const KeyedVector<Scalar, RowKeyType, oRows>& other)
+        : internal::KeyedVectorBase<Scalar, RowKeyType, Eigen::Dynamic>(other)
+    {}
+    /// @brief Copy assignment operator
+    /// @param other The other object
+    template<int oRows>
+    KeyedVector& operator=(const KeyedVector<Scalar, RowKeyType, oRows>& other)
+    {
+        // No need to guard self assignment, as the types are different, so it cannot be the same object
+
+        static_cast<internal::KeyedVectorBase<Scalar, RowKeyType, Eigen::Dynamic>&>(*this) =
+            static_cast<const internal::KeyedVectorBase<Scalar, RowKeyType, oRows>&>(other);
+
+        return *this;
+    }
+    /// @brief Move constructor
+    /// @param other The other object
+    template<int oRows>
+    KeyedVector(KeyedVector<Scalar, RowKeyType, oRows>&& other) noexcept
+        : internal::KeyedVectorBase<Scalar, RowKeyType, Eigen::Dynamic>(std::move(other))
+    {}
+    /// @brief Move assignment operator
+    /// @param other The other object
+    template<int oRows>
+    KeyedVector& operator=(KeyedVector<Scalar, RowKeyType, oRows>&& other) noexcept
+    {
+        // No need to guard self assignment, as the types are different, so it cannot be the same object
+
+        static_cast<internal::KeyedVectorBase<Scalar, RowKeyType, Eigen::Dynamic>&>(*this) =
+            std::move(static_cast<internal::KeyedVectorBase<Scalar, RowKeyType, oRows>&>(other));
+
+        return *this;
     }
 };
 
@@ -1061,10 +1215,87 @@ class KeyedRowVector : public internal::KeyedRowVectorBase<Scalar, ColKeyType, C
         : internal::KeyedRowVectorBase<Scalar, ColKeyType, Cols>(vector, colKeys)
     {}
 
-    // TODO
-    KeyedRowVector(const KeyedRowVector<Scalar, ColKeyType, Eigen::Dynamic>& other) // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
-        : internal::KeyedRowVectorBase<Scalar, ColKeyType, Cols>(other(all), other.colKeys())
+    // #######################################################################################################
+    //                                       Special member functions
+    // #######################################################################################################
+
+    /// @brief Copy constructor
+    /// @param other The other object
+    KeyedRowVector(const KeyedRowVector& other)
+        : internal::KeyedRowVectorBase<Scalar, ColKeyType, Cols>(other)
     {}
+    /// @brief Copy assignment operator
+    /// @param other The other object
+    KeyedRowVector& operator=(const KeyedRowVector& other)
+    {
+        if (this == &other) { return *this; } // Guard self assignment
+
+        static_cast<internal::KeyedRowVectorBase<Scalar, ColKeyType, Cols>&>(*this) =
+            static_cast<const internal::KeyedRowVectorBase<Scalar, ColKeyType, Cols>&>(other);
+
+        return *this;
+    }
+    /// @brief Move constructor
+    /// @param other The other object
+    KeyedRowVector(KeyedRowVector&& other) noexcept
+        : internal::KeyedRowVectorBase<Scalar, ColKeyType, Cols>(std::move(other))
+    {}
+    /// @brief Move assignment operator
+    /// @param other The other object
+    KeyedRowVector& operator=(KeyedRowVector&& other) noexcept
+    {
+        if (this == &other) { return *this; } // Guard self assignment
+
+        static_cast<internal::KeyedRowVectorBase<Scalar, ColKeyType, Cols>&>(*this) =
+            std::move(static_cast<internal::KeyedRowVectorBase<Scalar, ColKeyType, Cols>&>(other));
+
+        return *this;
+    }
+
+    // ###########################################################################################################
+    //                             Special member functions with different Cols
+    // ###########################################################################################################
+
+    /// @brief Copy constructor
+    /// @param other The other object
+    KeyedRowVector(const KeyedRowVector<Scalar, ColKeyType, Eigen::Dynamic>& other)
+        : internal::KeyedRowVectorBase<Scalar, ColKeyType, Cols>(other)
+    {
+        INS_ASSERT_USER_ERROR(other.cols() == Cols, "Can only copy assign dynamic matrices from static ones if the size matches");
+    }
+    /// @brief Copy assignment operator
+    /// @param other The other object
+    KeyedRowVector& operator=(const KeyedRowVector<Scalar, ColKeyType, Eigen::Dynamic>& other)
+    {
+        // No need to guard self assignment, as the types are different, so it cannot be the same object
+
+        INS_ASSERT_USER_ERROR(other.cols() == Cols, "Can only copy assign dynamic matrices from static ones if the size matches");
+
+        static_cast<internal::KeyedRowVectorBase<Scalar, ColKeyType, Cols>&>(*this) =
+            static_cast<const internal::KeyedRowVectorBase<Scalar, ColKeyType, Eigen::Dynamic>&>(other);
+
+        return *this;
+    }
+    /// @brief Move constructor
+    /// @param other The other object
+    KeyedRowVector(KeyedRowVector<Scalar, ColKeyType, Eigen::Dynamic>&& other) noexcept
+        : internal::KeyedRowVectorBase<Scalar, ColKeyType, Cols>(std::move(other))
+    {
+        INS_ASSERT_USER_ERROR(other.cols() == Cols, "Can only move construct dynamic matrices from static ones if the size matches");
+    }
+    /// @brief Move assignment operator
+    /// @param other The other object
+    KeyedRowVector& operator=(KeyedRowVector<Scalar, ColKeyType, Eigen::Dynamic>&& other) noexcept
+    {
+        // No need to guard self assignment, as the types are different, so it cannot be the same object
+
+        INS_ASSERT_USER_ERROR(other.cols() == Cols, "Can only move assign dynamic matrices from static ones if the size matches");
+
+        static_cast<internal::KeyedRowVectorBase<Scalar, ColKeyType, Cols>&>(*this) =
+            std::move(static_cast<internal::KeyedRowVectorBase<Scalar, ColKeyType, Eigen::Dynamic>&>(other));
+
+        return *this;
+    }
 };
 
 /// @brief Dynamic sized KeyedRowVector
@@ -1088,11 +1319,82 @@ class KeyedRowVector<Scalar, ColKeyType, Eigen::Dynamic>
         : internal::KeyedRowVectorBase<Scalar, ColKeyType, Eigen::Dynamic>(vector, colKeys)
     {}
 
-    // TODO
-    template<int oCols>
-    KeyedRowVector(const KeyedRowVector<Scalar, ColKeyType, oCols>& other) // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
-        : internal::KeyedRowVectorBase<Scalar, ColKeyType, Eigen::Dynamic>(other(all), other.colKeys())
+    // #######################################################################################################
+    //                                       Special member functions
+    // #######################################################################################################
+
+    /// @brief Copy constructor
+    /// @param other The other object
+    KeyedRowVector(const KeyedRowVector& other)
+        : internal::KeyedRowVectorBase<Scalar, ColKeyType, Eigen::Dynamic>(other)
+    {}
+    /// @brief Copy assignment operator
+    /// @param other The other object
+    KeyedRowVector& operator=(const KeyedRowVector& other)
     {
+        if (this == &other) { return *this; } // Guard self assignment
+
+        static_cast<internal::KeyedRowVectorBase<Scalar, ColKeyType, Eigen::Dynamic>&>(*this) =
+            static_cast<const internal::KeyedRowVectorBase<Scalar, ColKeyType, Eigen::Dynamic>&>(other);
+
+        return *this;
+    }
+    /// @brief Move constructor
+    /// @param other The other object
+    KeyedRowVector(KeyedRowVector&& other) noexcept
+        : internal::KeyedRowVectorBase<Scalar, ColKeyType, Eigen::Dynamic>(std::move(other))
+    {}
+    /// @brief Move assignment operator
+    /// @param other The other object
+    KeyedRowVector& operator=(KeyedRowVector&& other) noexcept
+    {
+        if (this == &other) { return *this; } // Guard self assignment
+
+        static_cast<internal::KeyedRowVectorBase<Scalar, ColKeyType, Eigen::Dynamic>&>(*this) =
+            std::move(static_cast<internal::KeyedRowVectorBase<Scalar, ColKeyType, Eigen::Dynamic>&>(other));
+
+        return *this;
+    }
+
+    // ###########################################################################################################
+    //                             Special member functions with different Cols
+    // ###########################################################################################################
+
+    /// @brief Copy constructor
+    /// @param other The other object
+    template<int oCols>
+    KeyedRowVector(const KeyedRowVector<Scalar, ColKeyType, oCols>& other)
+        : internal::KeyedRowVectorBase<Scalar, ColKeyType, Eigen::Dynamic>(other)
+    {}
+    /// @brief Copy assignment operator
+    /// @param other The other object
+    template<int oCols>
+    KeyedRowVector& operator=(const KeyedRowVector<Scalar, ColKeyType, oCols>& other)
+    {
+        // No need to guard self assignment, as the types are different, so it cannot be the same object
+
+        static_cast<internal::KeyedRowVectorBase<Scalar, ColKeyType, Eigen::Dynamic>&>(*this) =
+            static_cast<const internal::KeyedRowVectorBase<Scalar, ColKeyType, oCols>&>(other);
+
+        return *this;
+    }
+    /// @brief Move constructor
+    /// @param other The other object
+    template<int oCols>
+    KeyedRowVector(KeyedRowVector<Scalar, ColKeyType, oCols>&& other) noexcept
+        : internal::KeyedRowVectorBase<Scalar, ColKeyType, Eigen::Dynamic>(std::move(other))
+    {}
+    /// @brief Move assignment operator
+    /// @param other The other object
+    template<int oCols>
+    KeyedRowVector& operator=(KeyedRowVector<Scalar, ColKeyType, oCols>&& other) noexcept
+    {
+        // No need to guard self assignment, as the types are different, so it cannot be the same object
+
+        static_cast<internal::KeyedRowVectorBase<Scalar, ColKeyType, Eigen::Dynamic>&>(*this) =
+            std::move(static_cast<internal::KeyedRowVectorBase<Scalar, ColKeyType, oCols>&>(other));
+
+        return *this;
     }
 };
 
@@ -1125,10 +1427,87 @@ class KeyedMatrix : public internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyT
         : KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Cols>(matrix, keys, keys)
     {}
 
-    // TODO
-    KeyedMatrix(const KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>& other) // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
-        : internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Rows, Cols>(other(all, all), other.rowKeys(), other.colKeys())
+    // #######################################################################################################
+    //                                       Special member functions
+    // #######################################################################################################
+
+    /// @brief Copy constructor
+    /// @param other The other object
+    KeyedMatrix(const KeyedMatrix& other)
+        : internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Rows, Cols>(other)
     {}
+    /// @brief Copy assignment operator
+    /// @param other The other object
+    KeyedMatrix& operator=(const KeyedMatrix& other)
+    {
+        if (this == &other) { return *this; } // Guard self assignment
+
+        static_cast<internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Rows, Cols>&>(*this) =
+            static_cast<const internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Rows, Cols>&>(other);
+
+        return *this;
+    }
+    /// @brief Move constructor
+    /// @param other The other object
+    KeyedMatrix(KeyedMatrix&& other) noexcept
+        : internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Rows, Cols>(std::move(other))
+    {}
+    /// @brief Move assignment operator
+    /// @param other The other object
+    KeyedMatrix& operator=(KeyedMatrix&& other) noexcept
+    {
+        if (this == &other) { return *this; } // Guard self assignment
+
+        static_cast<internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Rows, Cols>&>(*this) =
+            std::move(static_cast<internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Rows, Cols>&>(other));
+
+        return *this;
+    }
+
+    // ###########################################################################################################
+    //                             Special member functions with different Rows/Cols
+    // ###########################################################################################################
+
+    /// @brief Copy constructor
+    /// @param other The other object
+    KeyedMatrix(const KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>& other)
+        : internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Rows, Cols>(other)
+    {
+        INS_ASSERT_USER_ERROR(other.rows() == Rows && other.cols() == Cols, "Can only copy assign dynamic matrices from static ones if the size matches");
+    }
+    /// @brief Copy assignment operator
+    /// @param other The other object
+    KeyedMatrix& operator=(const KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>& other)
+    {
+        // No need to guard self assignment, as the types are different, so it cannot be the same object
+
+        INS_ASSERT_USER_ERROR(other.rows() == Rows && other.cols() == Cols, "Can only copy assign dynamic matrices from static ones if the size matches");
+
+        static_cast<internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Rows, Cols>&>(*this) =
+            static_cast<const internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>&>(other);
+
+        return *this;
+    }
+    /// @brief Move constructor
+    /// @param other The other object
+    KeyedMatrix(KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>&& other) noexcept
+        : internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Rows, Cols>(std::move(other))
+    {
+        INS_ASSERT_USER_ERROR(other.rows() == Rows && other.cols() == Cols, "Can only move construct dynamic matrices from static ones if the size matches");
+    }
+    /// @brief Move assignment operator
+    /// @param other The other object
+    KeyedMatrix& operator=(KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>&& other) noexcept
+    {
+        // No need to guard self assignment, as the types are different, so it cannot be the same object
+
+        INS_ASSERT_USER_ERROR(other.rows() == Rows && other.cols() == Cols, "Can only move assign dynamic matrices from static ones if the size matches");
+
+        static_cast<internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Rows, Cols>&>(*this) =
+            std::move(static_cast<internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>&>(other));
+
+        return *this;
+    }
 };
 
 /// @brief Dynamic sized KeyedMatrix
@@ -1164,15 +1543,82 @@ class KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic
     {}
 
     // #######################################################################################################
-    //                                 Operators from a Static KeyedMatrix
+    //                                       Special member functions
     // #######################################################################################################
 
     /// @brief Copy constructor
     /// @param other The other object
-    template<int oRows, int oCols>
-    KeyedMatrix(const KeyedMatrix<Scalar, RowKeyType, ColKeyType, oRows, oCols>& other) // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
-        : internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>(other(all, all), other.rowKeys(), other.colKeys())
+    KeyedMatrix(const KeyedMatrix& other)
+        : internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>(other)
     {}
+    /// @brief Copy assignment operator
+    /// @param other The other object
+    KeyedMatrix& operator=(const KeyedMatrix& other)
+    {
+        if (this == &other) { return *this; } // Guard self assignment
+
+        static_cast<internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>&>(*this) =
+            static_cast<const internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>&>(other);
+
+        return *this;
+    }
+    /// @brief Move constructor
+    /// @param other The other object
+    KeyedMatrix(KeyedMatrix&& other) noexcept
+        : internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>(std::move(other))
+    {}
+    /// @brief Move assignment operator
+    /// @param other The other object
+    KeyedMatrix& operator=(KeyedMatrix&& other) noexcept
+    {
+        if (this == &other) { return *this; } // Guard self assignment
+
+        static_cast<internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>&>(*this) =
+            std::move(static_cast<internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>&>(other));
+
+        return *this;
+    }
+
+    // ###########################################################################################################
+    //                             Special member functions with different Rows/Cols
+    // ###########################################################################################################
+
+    /// @brief Copy constructor
+    /// @param other The other object
+    template<int oRows, int oCols>
+    KeyedMatrix(const KeyedMatrix<Scalar, RowKeyType, ColKeyType, oRows, oCols>& other)
+        : internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>(other)
+    {}
+    /// @brief Copy assignment operator
+    /// @param other The other object
+    template<int oRows, int oCols>
+    KeyedMatrix& operator=(const KeyedMatrix<Scalar, RowKeyType, ColKeyType, oRows, oCols>& other)
+    {
+        // No need to guard self assignment, as the types are different, so it cannot be the same object
+
+        static_cast<internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>&>(*this) =
+            static_cast<const internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, oRows, oCols>&>(other);
+
+        return *this;
+    }
+    /// @brief Move constructor
+    /// @param other The other object
+    template<int oRows, int oCols>
+    KeyedMatrix(KeyedMatrix<Scalar, RowKeyType, ColKeyType, oRows, oCols>&& other) noexcept
+        : internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>(std::move(other))
+    {}
+    /// @brief Move assignment operator
+    /// @param other The other object
+    template<int oRows, int oCols>
+    KeyedMatrix& operator=(KeyedMatrix<Scalar, RowKeyType, ColKeyType, oRows, oCols>&& other) noexcept
+    {
+        // No need to guard self assignment, as the types are different, so it cannot be the same object
+
+        static_cast<internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>&>(*this) =
+            std::move(static_cast<internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, oRows, oCols>&>(other));
+
+        return *this;
+    }
 
     // #######################################################################################################
     //                                           Modifying methods
@@ -1185,10 +1631,8 @@ class KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic
     {
         INS_ASSERT_USER_ERROR(!this->hasAnyRows(rowKeys), "You cannot add a row key which is already in the matrix.");
         INS_ASSERT_USER_ERROR(!this->hasAnyCols(colKeys), "You cannot add a col key which is already in the matrix.");
-        std::unordered_set<RowKeyType> rowSet = { rowKeys.begin(), rowKeys.end() };
-        INS_ASSERT_USER_ERROR(rowSet.size() == rowKeys.size(), "Each row key must be unique");
-        std::unordered_set<ColKeyType> colSet = { colKeys.begin(), colKeys.end() };
-        INS_ASSERT_USER_ERROR(colSet.size() == colKeys.size(), "Each col key must be unique");
+        INS_ASSERT_USER_ERROR(std::unordered_set<RowKeyType>(rowKeys.begin(), rowKeys.end()).size() == rowKeys.size(), "Each row key must be unique");
+        INS_ASSERT_USER_ERROR(std::unordered_set<ColKeyType>(colKeys.begin(), colKeys.end()).size() == colKeys.size(), "Each col key must be unique");
 
         auto initialRowSize = static_cast<Eigen::Index>(this->rowIndices.size());
         for (const auto& rowKey : rowKeys) { this->rowIndices.insert({ rowKey, static_cast<Eigen::Index>(this->rowIndices.size()) }); }
@@ -1210,6 +1654,8 @@ class KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic
             this->matrix.block(initialRowSize, 0, rows, this->matrix.cols()) = Eigen::MatrixX<Scalar>::Zero(rows, this->matrix.cols());
             this->matrix.block(0, initialColSize, this->matrix.rows(), cols) = Eigen::MatrixX<Scalar>::Zero(this->matrix.rows(), cols);
         }
+        this->colSlice.reserve(this->colKeysVector.size());
+        this->rowSlice.reserve(this->rowKeysVector.size());
     }
 
     /// @brief Removes the rows and cols from the matrix
