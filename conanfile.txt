@@ -5,6 +5,7 @@ boost/1.81.0
 eigen/3.4.0
 catch2/3.3.1
 nlohmann_json/3.11.2
+unordered_dense/4.0.1
 
 [options]
 boost*:without_atomic=True

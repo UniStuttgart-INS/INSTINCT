@@ -12,6 +12,24 @@
 /// @note Based on ideas from Kevin Gutsche (kevin.gutsche@ins.uni-stuttgart.de) and Bayram Stucke (bayram.stucke@ins.uni-stuttgart.de)
 /// @date 2023-07-06
 
+#ifndef unordered_map_type
+    /// @brief Map type, override with std::unordered_map if you do not have access to this library
+    #define unordered_map_type ankerl::unordered_dense::map
+
+    #ifdef protected
+        #define protectedTmp
+        #undef protected
+        #undef private
+    #endif
+    #include <ankerl/unordered_dense.h>
+    #ifdef protectedTmp
+        #define protected public
+        #define private public
+        #undef protectedTmp
+    #endif
+
+#endif
+
 #include <unordered_set>
 #include <vector>
 #include <array>
@@ -22,9 +40,13 @@
 #include "util/Assert.h"
 #include "util/Eigen.hpp"
 
+#pragma GCC diagnostic push
+#if !defined(__clang__) && defined(__GNUC__)
+    #pragma GCC diagnostic ignored "-Wvirtual-move-assign" // NOLINT(clang-diagnostic-unknown-warning-option)
+#endif
+
 namespace NAV
 {
-
 namespace internal
 {
 /// @brief All type to request all rows or columns in KeyedMatrices
@@ -43,10 +65,10 @@ class KeyedMatrixStorage
 {
   public:
     /// @brief Return the rows of the underlying Eigen matrix
-    decltype(auto) rows() const { return matrix.rows(); }
+    [[nodiscard]] decltype(auto) rows() const { return matrix.rows(); }
 
     /// @brief Return the cols of the underlying Eigen matrix
-    decltype(auto) cols() const { return matrix.cols(); }
+    [[nodiscard]] decltype(auto) cols() const { return matrix.cols(); }
 
   protected:
     Eigen::Matrix<Scalar, Rows, Cols> matrix; ///< Data storage of the type
@@ -94,7 +116,7 @@ class KeyedMatrixRowsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols
 
   protected:
     /// RowKey to Row Index mapping
-    std::unordered_map<RowKeyType, Eigen::Index> rowIndices;
+    unordered_map_type<RowKeyType, Eigen::Index> rowIndices;
     /// Row Keys
     std::vector<RowKeyType> rowKeysVector;
 
@@ -222,7 +244,7 @@ class KeyedMatrixColsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols
 
   protected:
     /// ColKey to Col Index mapping
-    std::unordered_map<ColKeyType, Eigen::Index> colIndices;
+    unordered_map_type<ColKeyType, Eigen::Index> colIndices;
     /// Col Keys
     std::vector<ColKeyType> colKeysVector;
 
@@ -318,6 +340,9 @@ class KeyedMatrixCols<Scalar, ColKeyType, Rows, Eigen::Dynamic> : public KeyedMa
 
 // ###########################################################################################################
 
+template<typename Scalar, typename ColKeyType, int Cols>
+class KeyedRowVectorBase;
+
 /// @brief Class to inherit common methods for static and dynamic sized vectors
 /// @tparam Scalar Numeric type, e.g. float, double, int or std::complex<float>.
 /// @tparam RowKeyType Type of the key used for row lookup
@@ -356,6 +381,8 @@ class KeyedVectorBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, 1>
     //                                       Special member functions
     // #######################################################################################################
 
+    /// @brief Destructor
+    ~KeyedVectorBase() = default;
     /// @brief Copy constructor
     /// @param other The other object
     KeyedVectorBase(const KeyedVectorBase& other)
@@ -408,7 +435,7 @@ class KeyedVectorBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, 1>
     /// @brief Copy constructor
     /// @param other The other object
     template<int oRows>
-    KeyedVectorBase(const KeyedVectorBase<Scalar, RowKeyType, oRows>& other)
+    KeyedVectorBase(const KeyedVectorBase<Scalar, RowKeyType, oRows>& other) // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
     {
         INS_ASSERT_USER_ERROR(Rows == Eigen::Dynamic || other.rows() == Rows, "Can only copy construct dynamic<=>static matrices if the rows match");
 
@@ -436,7 +463,7 @@ class KeyedVectorBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, 1>
     /// @brief Move constructor
     /// @param other The other object
     template<int oRows>
-    KeyedVectorBase(KeyedVectorBase<Scalar, RowKeyType, oRows>&& other) noexcept
+    KeyedVectorBase(KeyedVectorBase<Scalar, RowKeyType, oRows>&& other) noexcept // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
     {
         INS_ASSERT_USER_ERROR(Rows == Eigen::Dynamic || other.rows() == Rows, "Can only copy construct dynamic<=>static matrices if the rows match");
 
@@ -508,6 +535,77 @@ class KeyedVectorBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, 1>
     Eigen::Matrix<Scalar, Rows, 1>& operator()(all_t /* all */) { return this->matrix; }
     /// @brief Conversion into Eigen::Vector
     explicit operator Eigen::Vector<Scalar, Rows>() { return this->matrix; }
+
+    // #######################################################################################################
+    //                                           Block operations
+    // #######################################################################################################
+
+    /// @brief Gets the values for the row keys
+    /// @param rowKeys Row Keys
+    /// @return View into the matrix for the row keys
+    template<size_t P>
+    decltype(auto) segment(const std::vector<RowKeyType>& rowKeys) const
+    {
+        checkContinuousSegment(rowKeys, P);
+
+        return this->matrix.template middleRows<P>(this->rowIndices.at(rowKeys.at(0)));
+    }
+    /// @brief Gets the values for the row keys
+    /// @param rowKeys Row Keys
+    /// @return View into the matrix for the row keys
+    template<size_t P>
+    decltype(auto) segment(const std::vector<RowKeyType>& rowKeys)
+    {
+        checkContinuousSegment(rowKeys, P);
+
+        return this->matrix.template middleRows<P>(this->rowIndices.at(rowKeys.at(0)));
+    }
+    /// @brief Gets the values for the row keys
+    /// @param rowKeys Row Keys
+    /// @return View into the matrix for the row keys
+    decltype(auto) segment(const std::vector<RowKeyType>& rowKeys) const
+    {
+        checkContinuousSegment(rowKeys, rowKeys.size());
+
+        return this->matrix.template middleRows(this->rowIndices.at(rowKeys.at(0)), rowKeys.size());
+    }
+    /// @brief Gets the values for the row keys
+    /// @param rowKeys Row Keys
+    /// @return View into the matrix for the row keys
+    decltype(auto) segment(const std::vector<RowKeyType>& rowKeys)
+    {
+        checkContinuousSegment(rowKeys, rowKeys.size());
+
+        return this->matrix.template middleRows(this->rowIndices.at(rowKeys.at(0)), rowKeys.size());
+    }
+
+    // #######################################################################################################
+    //                                                Methods
+    // #######################################################################################################
+
+    /// @brief Calculates the transposed vector
+    [[nodiscard]] KeyedRowVectorBase<Scalar, RowKeyType, Rows> transposed() const
+    {
+        return { this->matrix.transpose(), this->rowKeys() };
+    }
+
+  private:
+    /// @brief Checks if the row keys are describing a continuous block
+    /// @param rowKeys Row keys
+    /// @param P Size of the row keys
+    void checkContinuousSegment([[maybe_unused]] const std::vector<RowKeyType>& rowKeys, [[maybe_unused]] size_t P) const
+    {
+#ifndef NDEBUG
+        INS_ASSERT_USER_ERROR(P == rowKeys.size(), "The block size must be equivalent to the amount of row keys.");
+
+        std::vector<Eigen::Index> consecutiveRows(rowKeys.size());
+        std::iota(std::begin(consecutiveRows), std::end(consecutiveRows), this->rowIndices.at(rowKeys.at(0)));
+        std::vector<Eigen::Index> rowIndices;
+        rowIndices.reserve(rowKeys.size());
+        for (const auto& rowKey : rowKeys) { rowIndices.push_back(this->rowIndices.at(rowKey)); }
+        INS_ASSERT_USER_ERROR(rowIndices == consecutiveRows, "The given rowKeys must describe a consecutive part in the matrix.");
+#endif
+    }
 };
 
 /// @brief Class to inherit common methods for static and dynamic sized row vectors
@@ -548,6 +646,8 @@ class KeyedRowVectorBase : public KeyedMatrixCols<Scalar, ColKeyType, 1, Cols>
     //                                       Special member functions
     // #######################################################################################################
 
+    /// @brief Destructor
+    ~KeyedRowVectorBase() = default;
     /// @brief Copy constructor
     /// @param other The other object
     KeyedRowVectorBase(const KeyedRowVectorBase& other)
@@ -600,7 +700,7 @@ class KeyedRowVectorBase : public KeyedMatrixCols<Scalar, ColKeyType, 1, Cols>
     /// @brief Copy constructor
     /// @param other The other object
     template<int oCols>
-    KeyedRowVectorBase(const KeyedRowVectorBase<Scalar, ColKeyType, oCols>& other)
+    KeyedRowVectorBase(const KeyedRowVectorBase<Scalar, ColKeyType, oCols>& other) // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
     {
         INS_ASSERT_USER_ERROR(Cols == Eigen::Dynamic || other.cols() == Cols, "Can only copy construct dynamic<=>static matrices if the cols match");
 
@@ -628,7 +728,7 @@ class KeyedRowVectorBase : public KeyedMatrixCols<Scalar, ColKeyType, 1, Cols>
     /// @brief Move constructor
     /// @param other The other object
     template<int oCols>
-    KeyedRowVectorBase(KeyedRowVectorBase<Scalar, ColKeyType, oCols>&& other) noexcept
+    KeyedRowVectorBase(KeyedRowVectorBase<Scalar, ColKeyType, oCols>&& other) noexcept // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
     {
         INS_ASSERT_USER_ERROR(Cols == Eigen::Dynamic || other.cols() == Cols, "Can only copy construct dynamic<=>static matrices if the cols match");
 
@@ -700,6 +800,77 @@ class KeyedRowVectorBase : public KeyedMatrixCols<Scalar, ColKeyType, 1, Cols>
     Eigen::Matrix<Scalar, 1, Cols>& operator()(all_t /* all */) { return this->matrix; }
     /// @brief Conversion into Eigen::RowVector
     explicit operator Eigen::RowVector<Scalar, Cols>() { return this->matrix; }
+
+    // #######################################################################################################
+    //                                           Block operations
+    // #######################################################################################################
+
+    /// @brief Gets the values for the col keys
+    /// @param colKeys Col Keys
+    /// @return View into the matrix for the col keys
+    template<size_t Q>
+    decltype(auto) segment(const std::vector<ColKeyType>& colKeys) const
+    {
+        checkContinuousSegment(colKeys, Q);
+
+        return this->matrix.template middleCols<Q>(this->colIndices.at(colKeys.at(0)));
+    }
+    /// @brief Gets the values for the col keys
+    /// @param colKeys Col Keys
+    /// @return View into the matrix for the col keys
+    template<size_t Q>
+    decltype(auto) segment(const std::vector<ColKeyType>& colKeys)
+    {
+        checkContinuousSegment(colKeys, Q);
+
+        return this->matrix.template middleCols<Q>(this->colIndices.at(colKeys.at(0)));
+    }
+    /// @brief Gets the values for the col keys
+    /// @param colKeys Col Keys
+    /// @return View into the matrix for the col keys
+    decltype(auto) segment(const std::vector<ColKeyType>& colKeys) const
+    {
+        checkContinuousSegment(colKeys, colKeys.size());
+
+        return this->matrix.template middleCols(this->colIndices.at(colKeys.at(0)), colKeys.size());
+    }
+    /// @brief Gets the values for the col keys
+    /// @param colKeys Col Keys
+    /// @return View into the matrix for the col keys
+    decltype(auto) segment(const std::vector<ColKeyType>& colKeys)
+    {
+        checkContinuousSegment(colKeys, colKeys.size());
+
+        return this->matrix.template middleCols(this->colIndices.at(colKeys.at(0)), colKeys.size());
+    }
+
+    // #######################################################################################################
+    //                                                Methods
+    // #######################################################################################################
+
+    /// @brief Calculates the transposed vector
+    [[nodiscard]] KeyedVectorBase<Scalar, ColKeyType, Cols> transposed() const
+    {
+        return { this->matrix.transpose(), this->colKeys() };
+    }
+
+  private:
+    /// @brief Checks if the col keys are describing a continuous block
+    /// @param colKeys Col keys
+    /// @param Q Size of the col keys
+    void checkContinuousSegment([[maybe_unused]] const std::vector<ColKeyType>& colKeys, [[maybe_unused]] size_t Q) const
+    {
+#ifndef NDEBUG
+        INS_ASSERT_USER_ERROR(Q == colKeys.size(), "The block size must be equivalent to the amount of col keys.");
+
+        std::vector<Eigen::Index> consecutiveCols(colKeys.size());
+        std::iota(std::begin(consecutiveCols), std::end(consecutiveCols), this->colIndices.at(colKeys.at(0)));
+        std::vector<Eigen::Index> colIndices;
+        colIndices.reserve(colKeys.size());
+        for (const auto& colKey : colKeys) { colIndices.push_back(this->colIndices.at(colKey)); }
+        INS_ASSERT_USER_ERROR(colIndices == consecutiveCols, "The given colKeys must describe a consecutive part in the matrix.");
+#endif
+    }
 };
 
 /// @brief Class to inherit common methods for static and dynamic sized matrices
@@ -749,6 +920,8 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     //                                       Special member functions
     // #######################################################################################################
 
+    /// @brief Destructor
+    ~KeyedMatrixBase() = default;
     /// @brief Copy constructor
     /// @param other The other object
     KeyedMatrixBase(const KeyedMatrixBase& other)
@@ -813,7 +986,7 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     /// @brief Copy constructor
     /// @param other The other object
     template<int oRows, int oCols>
-    KeyedMatrixBase(const KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, oRows, oCols>& other)
+    KeyedMatrixBase(const KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, oRows, oCols>& other) // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
     {
         INS_ASSERT_USER_ERROR(Rows == Eigen::Dynamic || other.rows() == Rows, "Can only copy construct dynamic<=>static matrices if the rows match");
         INS_ASSERT_USER_ERROR(Cols == Eigen::Dynamic || other.cols() == Cols, "Can only copy construct dynamic<=>static matrices if the cols match");
@@ -849,7 +1022,7 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     /// @brief Move constructor
     /// @param other The other object
     template<int oRows, int oCols>
-    KeyedMatrixBase(KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, oRows, oCols>&& other) noexcept
+    KeyedMatrixBase(KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, oRows, oCols>&& other) noexcept // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
     {
         INS_ASSERT_USER_ERROR(Rows == Eigen::Dynamic || other.rows() == Rows, "Can only copy construct dynamic<=>static matrices if the rows match");
         INS_ASSERT_USER_ERROR(Cols == Eigen::Dynamic || other.cols() == Cols, "Can only copy construct dynamic<=>static matrices if the cols match");
@@ -953,37 +1126,37 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     /// @return View into the matrix for the row and col keys
     decltype(auto) operator()(const RowKeyType& rowKey, const std::vector<ColKeyType>& colKeys) { return (*this)(std::vector{ rowKey }, colKeys); }
 
-    /// @brief Gets the values for the row and col keys
+    /// @brief Gets the values for the row key
     /// @param rowKey Row Key
-    /// @return View into the matrix for the row and col keys
+    /// @return View into the matrix for the row key
     decltype(auto) operator()(const RowKeyType& rowKey, all_t /* all */) const { return (*this)(std::vector{ rowKey }, this->colKeys()); }
-    /// @brief Gets the values for the row and col keys
+    /// @brief Gets the values for the row key
     /// @param rowKey Row Key
-    /// @return View into the matrix for the row and col keys
+    /// @return View into the matrix for the row key
     decltype(auto) operator()(const RowKeyType& rowKey, all_t /* all */) { return (*this)(std::vector{ rowKey }, this->colKeys()); }
-    /// @brief Gets the values for the row and col keys
+    /// @brief Gets the values for the col key
     /// @param colKey Col Key
-    /// @return View into the matrix for the row and col keys
+    /// @return View into the matrix for the col key
     decltype(auto) operator()(all_t /* all */, const ColKeyType& colKey) const { return *this(this->rowKeys(), std::vector{ colKey }); }
-    /// @brief Gets the values for the row and col keys
+    /// @brief Gets the values for the col keys
     /// @param colKey Col Key
-    /// @return View into the matrix for the row and col keys
+    /// @return View into the matrix for the col key
     decltype(auto) operator()(all_t /* all */, const ColKeyType& colKey) { return (*this)(this->rowKeys(), std::vector{ colKey }); }
-    /// @brief Gets the values for the row and col keys
+    /// @brief Gets the values for the row keys
     /// @param rowKeys Row Keys
-    /// @return View into the matrix for the row and col keys
+    /// @return View into the matrix for the row keys
     decltype(auto) operator()(const std::vector<RowKeyType>& rowKeys, all_t /* all */) const { return (*this)(rowKeys, this->colKeys()); }
-    /// @brief Gets the values for the row and col keys
+    /// @brief Gets the values for the row keys
     /// @param rowKeys Row Keys
-    /// @return View into the matrix for the row and col keys
+    /// @return View into the matrix for the row keys
     decltype(auto) operator()(const std::vector<RowKeyType>& rowKeys, all_t /* all */) { return (*this)(rowKeys, this->colKeys()); }
-    /// @brief Gets the values for the row and col keys
+    /// @brief Gets the values for the col keys
     /// @param colKeys Col Keys
-    /// @return View into the matrix for the row and col keys
+    /// @return View into the matrix for the col keys
     decltype(auto) operator()(all_t /* all */, const std::vector<ColKeyType>& colKeys) const { return (*this)(this->rowKeys(), colKeys); }
-    /// @brief Gets the values for the row and col keys
+    /// @brief Gets the values for the col keys
     /// @param colKeys Col Keys
-    /// @return View into the matrix for the row and col keys
+    /// @return View into the matrix for the col keys
     decltype(auto) operator()(all_t /* all */, const std::vector<ColKeyType>& colKeys) { return (*this)(this->rowKeys(), colKeys); }
 
     /// @brief Requests the full matrix
@@ -992,6 +1165,270 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     Eigen::Matrix<Scalar, Rows, Cols>& operator()(all_t /* all */, all_t /* all */) { return this->matrix; }
     /// @brief Conversion into Eigen::Matrix
     explicit operator Eigen::Matrix<Scalar, Rows, Cols>() { return this->matrix; }
+
+    // ###########################################################################################################
+    //                                          Static Block operations
+    // ###########################################################################################################
+
+    /// @brief Gets the values for the row and col keys
+    /// @param rowKeys Row Keys
+    /// @param colKeys Col Keys
+    /// @return View into the matrix for the row and col keys
+    template<size_t P, size_t Q = P>
+    decltype(auto) block(const std::vector<RowKeyType>& rowKeys, const std::vector<ColKeyType>& colKeys) const
+    {
+        checkContinuousBlock(rowKeys, colKeys, P, Q);
+
+        return this->matrix.template block<P, Q>(this->rowIndices.at(rowKeys.at(0)), this->colIndices.at(colKeys.at(0)));
+    }
+    /// @brief Gets the values for the row and col keys
+    /// @param rowKeys Row Keys
+    /// @param colKeys Col Keys
+    /// @return View into the matrix for the row and col keys
+    template<size_t P, size_t Q = P>
+    decltype(auto) block(const std::vector<RowKeyType>& rowKeys, const std::vector<ColKeyType>& colKeys)
+    {
+        checkContinuousBlock(rowKeys, colKeys, P, Q);
+
+        return this->matrix.template block<P, Q>(this->rowIndices.at(rowKeys.at(0)), this->colIndices.at(colKeys.at(0)));
+    }
+    /// @brief Gets the values for the row and col keys
+    /// @param rowKeys Row Keys
+    /// @param colKey Col Key
+    /// @return View into the matrix for the row and col keys
+    template<size_t P>
+    decltype(auto) block(const std::vector<RowKeyType>& rowKeys, const ColKeyType& colKey) const
+    {
+        return this->block<P, 1>(rowKeys, std::vector{ colKey });
+    }
+    /// @brief Gets the values for the row and col keys
+    /// @param rowKeys Row Keys
+    /// @param colKey Col Key
+    /// @return View into the matrix for the row and col keys
+    template<size_t P>
+    decltype(auto) block(const std::vector<RowKeyType>& rowKeys, const ColKeyType& colKey)
+    {
+        return this->block<P, 1>(rowKeys, std::vector{ colKey });
+    }
+    /// @brief Gets the values for the row and col keys
+    /// @param rowKey Row Key
+    /// @param colKeys Col Keys
+    /// @return View into the matrix for the row and col keys
+    template<size_t Q>
+    decltype(auto) block(const RowKeyType& rowKey, const std::vector<ColKeyType>& colKeys) const
+    {
+        return this->block<1, Q>(std::vector{ rowKey }, colKeys);
+    }
+    /// @brief Gets the values for the row and col keys
+    /// @param rowKey Row Key
+    /// @param colKeys Col Keys
+    /// @return View into the matrix for the row and col keys
+    template<size_t Q>
+    decltype(auto) block(const RowKeyType& rowKey, const std::vector<ColKeyType>& colKeys)
+    {
+        return this->block<1, Q>(std::vector{ rowKey }, colKeys);
+    }
+
+    /// @brief Gets the values for the row keys
+    /// @param rowKeys Row Keys
+    /// @return View into the matrix for the row keys
+    template<size_t P>
+    decltype(auto) middleRows(const std::vector<RowKeyType>& rowKeys) const
+    {
+        checkContinuousBlock(rowKeys, this->colKeys(), P, this->colKeys().size());
+
+        return this->matrix.template middleRows<P>(this->rowIndices.at(rowKeys.at(0)));
+    }
+    /// @brief Gets the values for the row keys
+    /// @param rowKeys Row Keys
+    /// @return View into the matrix for the row keys
+    template<size_t P>
+    decltype(auto) middleRows(const std::vector<RowKeyType>& rowKeys)
+    {
+        checkContinuousBlock(rowKeys, this->colKeys(), P, this->colKeys().size());
+
+        return this->matrix.template middleRows<P>(this->rowIndices.at(rowKeys.at(0)));
+    }
+    /// @brief Gets the values for the col keys
+    /// @param colKeys Col Keys
+    /// @return View into the matrix for the col keys
+    template<size_t Q>
+    decltype(auto) middleCols(const std::vector<ColKeyType>& colKeys) const
+    {
+        checkContinuousBlock(this->rowKeys(), colKeys, this->rowKeys().size(), Q);
+
+        return this->matrix.template middleCols<Q>(this->colIndices.at(colKeys.at(0)));
+    }
+    /// @brief Gets the values for the col keys
+    /// @param colKeys Col Keys
+    /// @return View into the matrix for the col keys
+    template<size_t Q>
+    decltype(auto) middleCols(const std::vector<ColKeyType>& colKeys)
+    {
+        checkContinuousBlock(this->rowKeys(), colKeys, this->rowKeys().size(), Q);
+
+        return this->matrix.template middleCols<Q>(this->colIndices.at(colKeys.at(0)));
+    }
+    /// @brief Gets the values for the row key
+    /// @param rowKey Row Key
+    /// @return View into the matrix for the row key
+    decltype(auto) row(const RowKeyType& rowKey) const { return this->matrix.row(this->rowIndices.at(rowKey)); }
+    /// @brief Gets the values for the row key
+    /// @param rowKey Row Key
+    /// @return View into the matrix for the row key
+    decltype(auto) row(const RowKeyType& rowKey) { return this->matrix.row(this->rowIndices.at(rowKey)); }
+    /// @brief Gets the values for the col key
+    /// @param colKey Col Key
+    /// @return View into the matrix for the col key
+    decltype(auto) col(const ColKeyType& colKey) const { return this->matrix.col(this->colIndices.at(colKey)); }
+    /// @brief Gets the values for the col key
+    /// @param colKey Col Key
+    /// @return View into the matrix for the col key
+    decltype(auto) col(const ColKeyType& colKey) { return this->matrix.col(this->colIndices.at(colKey)); }
+
+    /// @brief Requests the full matrix
+    const Eigen::Matrix<Scalar, Rows, Cols>& block(all_t /* all */, all_t /* all */) const { return this->matrix; }
+    /// @brief Requests the full matrix
+    Eigen::Matrix<Scalar, Rows, Cols>& block(all_t /* all */, all_t /* all */) { return this->matrix; }
+
+    // ###########################################################################################################
+    //                                         Dynamic block operations
+    // ###########################################################################################################
+
+    /// @brief Gets the values for the row and col keys
+    /// @param rowKeys Row Keys
+    /// @param colKeys Col Keys
+    /// @return View into the matrix for the row and col keys
+    decltype(auto) block(const std::vector<RowKeyType>& rowKeys, const std::vector<ColKeyType>& colKeys) const
+    {
+        checkContinuousBlock(rowKeys, colKeys, rowKeys.size(), colKeys.size());
+
+        return this->matrix.template block(this->rowIndices.at(rowKeys.at(0)), this->colIndices.at(colKeys.at(0)), rowKeys.size(), colKeys.size());
+    }
+    /// @brief Gets the values for the row and col keys
+    /// @param rowKeys Row Keys
+    /// @param colKeys Col Keys
+    /// @return View into the matrix for the row and col keys
+    decltype(auto) block(const std::vector<RowKeyType>& rowKeys, const std::vector<ColKeyType>& colKeys)
+    {
+        checkContinuousBlock(rowKeys, colKeys, rowKeys.size(), colKeys.size());
+
+        return this->matrix.template block(this->rowIndices.at(rowKeys.at(0)), this->colIndices.at(colKeys.at(0)), rowKeys.size(), colKeys.size());
+    }
+    /// @brief Gets the values for the row and col keys
+    /// @param rowKeys Row Keys
+    /// @param colKey Col Key
+    /// @return View into the matrix for the row and col keys
+    decltype(auto) block(const std::vector<RowKeyType>& rowKeys, const ColKeyType& colKey) const
+    {
+        return this->block(rowKeys, std::vector{ colKey });
+    }
+    /// @brief Gets the values for the row and col keys
+    /// @param rowKeys Row Keys
+    /// @param colKey Col Key
+    /// @return View into the matrix for the row and col keys
+    decltype(auto) block(const std::vector<RowKeyType>& rowKeys, const ColKeyType& colKey)
+    {
+        return this->block(rowKeys, std::vector{ colKey });
+    }
+    /// @brief Gets the values for the row and col keys
+    /// @param rowKey Row Key
+    /// @param colKeys Col Keys
+    /// @return View into the matrix for the row and col keys
+    decltype(auto) block(const RowKeyType& rowKey, const std::vector<ColKeyType>& colKeys) const
+    {
+        return this->block(std::vector{ rowKey }, colKeys);
+    }
+    /// @brief Gets the values for the row and col keys
+    /// @param rowKey Row Key
+    /// @param colKeys Col Keys
+    /// @return View into the matrix for the row and col keys
+    decltype(auto) block(const RowKeyType& rowKey, const std::vector<ColKeyType>& colKeys)
+    {
+        return this->block(std::vector{ rowKey }, colKeys);
+    }
+
+    /// @brief Gets the values for the row keys
+    /// @param rowKeys Row Keys
+    /// @return View into the matrix for the row keys
+    decltype(auto) middleRows(const std::vector<RowKeyType>& rowKeys) const
+    {
+        checkContinuousBlock(rowKeys, this->colKeys(), rowKeys.size(), this->colKeys().size());
+
+        return this->matrix.middleRows(this->rowIndices.at(rowKeys.at(0)), rowKeys.size());
+    }
+    /// @brief Gets the values for the row keys
+    /// @param rowKeys Row Keys
+    /// @return View into the matrix for the row keys
+    decltype(auto) middleRows(const std::vector<RowKeyType>& rowKeys)
+    {
+        checkContinuousBlock(rowKeys, this->colKeys(), rowKeys.size(), this->colKeys().size());
+
+        return this->matrix.middleRows(this->rowIndices.at(rowKeys.at(0)), rowKeys.size());
+    }
+    /// @brief Gets the values for the col keys
+    /// @param colKeys Col Keys
+    /// @return View into the matrix for the col keys
+    decltype(auto) middleCols(const std::vector<ColKeyType>& colKeys) const
+    {
+        checkContinuousBlock(this->rowKeys(), colKeys, this->rowKeys().size(), colKeys.size());
+
+        return this->matrix.middleCols(this->colIndices.at(colKeys.at(0)), colKeys.size());
+    }
+    /// @brief Gets the values for the col keys
+    /// @param colKeys Col Keys
+    /// @return View into the matrix for the col keys
+    decltype(auto) middleCols(const std::vector<ColKeyType>& colKeys)
+    {
+        checkContinuousBlock(this->rowKeys(), colKeys, this->rowKeys().size(), colKeys.size());
+
+        return this->matrix.middleCols(this->colIndices.at(colKeys.at(0)), colKeys.size());
+    }
+
+    // #######################################################################################################
+    //                                                Methods
+    // #######################################################################################################
+
+    /// @brief Calculates the transposed matrix
+    [[nodiscard]] KeyedMatrixBase<Scalar, ColKeyType, RowKeyType, Cols, Rows> transposed() const
+    {
+        return { this->matrix.transpose(), this->colKeys(), this->rowKeys() };
+    }
+
+    /// @brief Calculates the inverse matrix
+    [[nodiscard]] KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Rows, Cols> inverse() const
+    {
+        return { this->matrix.inverse(), this->rowKeys(), this->colKeys() };
+    }
+
+  private:
+    /// @brief Checks if the row and col keys are describing a continuous block
+    /// @param rowKeys Row keys
+    /// @param colKeys Col keys
+    /// @param P Size of the row keys
+    /// @param Q Size of the col keys
+    void checkContinuousBlock([[maybe_unused]] const std::vector<RowKeyType>& rowKeys, [[maybe_unused]] const std::vector<ColKeyType>& colKeys,
+                              [[maybe_unused]] size_t P, [[maybe_unused]] size_t Q) const
+    {
+#ifndef NDEBUG
+        INS_ASSERT_USER_ERROR(P == rowKeys.size(), "The block size must be equivalent to the amount of row keys.");
+        INS_ASSERT_USER_ERROR(Q == colKeys.size(), "The block size must be equivalent to the amount of col keys.");
+
+        std::vector<Eigen::Index> consecutiveRows(rowKeys.size());
+        std::iota(std::begin(consecutiveRows), std::end(consecutiveRows), this->rowIndices.at(rowKeys.at(0)));
+        std::vector<Eigen::Index> rowIndices;
+        rowIndices.reserve(rowKeys.size());
+        for (const auto& rowKey : rowKeys) { rowIndices.push_back(this->rowIndices.at(rowKey)); }
+        INS_ASSERT_USER_ERROR(rowIndices == consecutiveRows, "The given rowKeys must describe a consecutive part in the matrix.");
+
+        std::vector<Eigen::Index> consecutiveCols(colKeys.size());
+        std::iota(std::begin(consecutiveCols), std::end(consecutiveCols), this->colIndices.at(colKeys.at(0)));
+        std::vector<Eigen::Index> colIndices;
+        colIndices.reserve(colKeys.size());
+        for (const auto& colKey : colKeys) { colIndices.push_back(this->colIndices.at(colKey)); }
+        INS_ASSERT_USER_ERROR(colIndices == consecutiveCols, "The given colKeys must describe a consecutive part in the matrix.");
+#endif
+    }
 };
 
 } // namespace internal
@@ -1020,6 +1457,8 @@ class KeyedVector : public internal::KeyedVectorBase<Scalar, RowKeyType, Rows>
     //                                       Special member functions
     // #######################################################################################################
 
+    /// @brief Destructor
+    ~KeyedVector() = default;
     /// @brief Copy constructor
     /// @param other The other object
     KeyedVector(const KeyedVector& other)
@@ -1059,7 +1498,7 @@ class KeyedVector : public internal::KeyedVectorBase<Scalar, RowKeyType, Rows>
 
     /// @brief Copy constructor
     /// @param other The other object
-    KeyedVector(const KeyedVector<Scalar, RowKeyType, Eigen::Dynamic>& other)
+    KeyedVector(const KeyedVector<Scalar, RowKeyType, Eigen::Dynamic>& other) // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
         : internal::KeyedVectorBase<Scalar, RowKeyType, Rows>(other)
     {
         INS_ASSERT_USER_ERROR(other.rows() == Rows, "Can only copy assign dynamic matrices from static ones if the size matches");
@@ -1079,10 +1518,10 @@ class KeyedVector : public internal::KeyedVectorBase<Scalar, RowKeyType, Rows>
     }
     /// @brief Move constructor
     /// @param other The other object
-    KeyedVector(KeyedVector<Scalar, RowKeyType, Eigen::Dynamic>&& other) noexcept
+    KeyedVector(KeyedVector<Scalar, RowKeyType, Eigen::Dynamic>&& other) noexcept // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
         : internal::KeyedVectorBase<Scalar, RowKeyType, Rows>(std::move(other))
     {
-        INS_ASSERT_USER_ERROR(other.rows() == Rows, "Can only move construct dynamic matrices from static ones if the size matches");
+        INS_ASSERT_USER_ERROR(this->rows() == Rows, "Can only move construct dynamic matrices from static ones if the size matches");
     }
     /// @brief Move assignment operator
     /// @param other The other object
@@ -1123,6 +1562,8 @@ class KeyedVector<Scalar, RowKeyType, Eigen::Dynamic> : public internal::KeyedVe
     //                                       Special member functions
     // #######################################################################################################
 
+    /// @brief Destructor
+    ~KeyedVector() = default;
     /// @brief Copy constructor
     /// @param other The other object
     KeyedVector(const KeyedVector& other)
@@ -1163,7 +1604,7 @@ class KeyedVector<Scalar, RowKeyType, Eigen::Dynamic> : public internal::KeyedVe
     /// @brief Copy constructor
     /// @param other The other object
     template<int oRows>
-    KeyedVector(const KeyedVector<Scalar, RowKeyType, oRows>& other)
+    KeyedVector(const KeyedVector<Scalar, RowKeyType, oRows>& other) // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
         : internal::KeyedVectorBase<Scalar, RowKeyType, Eigen::Dynamic>(other)
     {}
     /// @brief Copy assignment operator
@@ -1181,7 +1622,7 @@ class KeyedVector<Scalar, RowKeyType, Eigen::Dynamic> : public internal::KeyedVe
     /// @brief Move constructor
     /// @param other The other object
     template<int oRows>
-    KeyedVector(KeyedVector<Scalar, RowKeyType, oRows>&& other) noexcept
+    KeyedVector(KeyedVector<Scalar, RowKeyType, oRows>&& other) noexcept // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
         : internal::KeyedVectorBase<Scalar, RowKeyType, Eigen::Dynamic>(std::move(other))
     {}
     /// @brief Move assignment operator
@@ -1219,6 +1660,8 @@ class KeyedRowVector : public internal::KeyedRowVectorBase<Scalar, ColKeyType, C
     //                                       Special member functions
     // #######################################################################################################
 
+    /// @brief Destructor
+    ~KeyedRowVector() = default;
     /// @brief Copy constructor
     /// @param other The other object
     KeyedRowVector(const KeyedRowVector& other)
@@ -1258,7 +1701,7 @@ class KeyedRowVector : public internal::KeyedRowVectorBase<Scalar, ColKeyType, C
 
     /// @brief Copy constructor
     /// @param other The other object
-    KeyedRowVector(const KeyedRowVector<Scalar, ColKeyType, Eigen::Dynamic>& other)
+    KeyedRowVector(const KeyedRowVector<Scalar, ColKeyType, Eigen::Dynamic>& other) // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
         : internal::KeyedRowVectorBase<Scalar, ColKeyType, Cols>(other)
     {
         INS_ASSERT_USER_ERROR(other.cols() == Cols, "Can only copy assign dynamic matrices from static ones if the size matches");
@@ -1278,10 +1721,10 @@ class KeyedRowVector : public internal::KeyedRowVectorBase<Scalar, ColKeyType, C
     }
     /// @brief Move constructor
     /// @param other The other object
-    KeyedRowVector(KeyedRowVector<Scalar, ColKeyType, Eigen::Dynamic>&& other) noexcept
+    KeyedRowVector(KeyedRowVector<Scalar, ColKeyType, Eigen::Dynamic>&& other) noexcept // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
         : internal::KeyedRowVectorBase<Scalar, ColKeyType, Cols>(std::move(other))
     {
-        INS_ASSERT_USER_ERROR(other.cols() == Cols, "Can only move construct dynamic matrices from static ones if the size matches");
+        INS_ASSERT_USER_ERROR(this->cols() == Cols, "Can only move construct dynamic matrices from static ones if the size matches");
     }
     /// @brief Move assignment operator
     /// @param other The other object
@@ -1323,6 +1766,8 @@ class KeyedRowVector<Scalar, ColKeyType, Eigen::Dynamic>
     //                                       Special member functions
     // #######################################################################################################
 
+    /// @brief Destructor
+    ~KeyedRowVector() = default;
     /// @brief Copy constructor
     /// @param other The other object
     KeyedRowVector(const KeyedRowVector& other)
@@ -1363,7 +1808,7 @@ class KeyedRowVector<Scalar, ColKeyType, Eigen::Dynamic>
     /// @brief Copy constructor
     /// @param other The other object
     template<int oCols>
-    KeyedRowVector(const KeyedRowVector<Scalar, ColKeyType, oCols>& other)
+    KeyedRowVector(const KeyedRowVector<Scalar, ColKeyType, oCols>& other) // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
         : internal::KeyedRowVectorBase<Scalar, ColKeyType, Eigen::Dynamic>(other)
     {}
     /// @brief Copy assignment operator
@@ -1381,7 +1826,7 @@ class KeyedRowVector<Scalar, ColKeyType, Eigen::Dynamic>
     /// @brief Move constructor
     /// @param other The other object
     template<int oCols>
-    KeyedRowVector(KeyedRowVector<Scalar, ColKeyType, oCols>&& other) noexcept
+    KeyedRowVector(KeyedRowVector<Scalar, ColKeyType, oCols>&& other) noexcept // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
         : internal::KeyedRowVectorBase<Scalar, ColKeyType, Eigen::Dynamic>(std::move(other))
     {}
     /// @brief Move assignment operator
@@ -1431,6 +1876,8 @@ class KeyedMatrix : public internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyT
     //                                       Special member functions
     // #######################################################################################################
 
+    /// @brief Destructor
+    ~KeyedMatrix() = default;
     /// @brief Copy constructor
     /// @param other The other object
     KeyedMatrix(const KeyedMatrix& other)
@@ -1470,7 +1917,7 @@ class KeyedMatrix : public internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyT
 
     /// @brief Copy constructor
     /// @param other The other object
-    KeyedMatrix(const KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>& other)
+    KeyedMatrix(const KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>& other) // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
         : internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Rows, Cols>(other)
     {
         INS_ASSERT_USER_ERROR(other.rows() == Rows && other.cols() == Cols, "Can only copy assign dynamic matrices from static ones if the size matches");
@@ -1490,10 +1937,10 @@ class KeyedMatrix : public internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyT
     }
     /// @brief Move constructor
     /// @param other The other object
-    KeyedMatrix(KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>&& other) noexcept
+    KeyedMatrix(KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>&& other) noexcept // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
         : internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Rows, Cols>(std::move(other))
     {
-        INS_ASSERT_USER_ERROR(other.rows() == Rows && other.cols() == Cols, "Can only move construct dynamic matrices from static ones if the size matches");
+        INS_ASSERT_USER_ERROR(this->rows() == Rows && this->cols() == Cols, "Can only move construct dynamic matrices from static ones if the size matches");
     }
     /// @brief Move assignment operator
     /// @param other The other object
@@ -1507,6 +1954,24 @@ class KeyedMatrix : public internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyT
             std::move(static_cast<internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>&>(other));
 
         return *this;
+    }
+
+    // #######################################################################################################
+    //                                                Methods
+    // #######################################################################################################
+
+    /// @brief Returns a submatrix specified by the row and col keys
+    /// @param rowKeys Row keys
+    /// @param colKeys Col keys
+    [[nodiscard]] KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>
+        getSubMatrix(const std::vector<RowKeyType>& rowKeys, const std::vector<ColKeyType>& colKeys) const
+    {
+        if (rowKeys == this->rowKeysVector && colKeys == this->colKeysVector)
+        {
+            return *this;
+        }
+
+        return { (*this)(rowKeys, colKeys), rowKeys, colKeys };
     }
 };
 
@@ -1546,6 +2011,8 @@ class KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic
     //                                       Special member functions
     // #######################################################################################################
 
+    /// @brief Destructor
+    ~KeyedMatrix() = default;
     /// @brief Copy constructor
     /// @param other The other object
     KeyedMatrix(const KeyedMatrix& other)
@@ -1586,7 +2053,7 @@ class KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic
     /// @brief Copy constructor
     /// @param other The other object
     template<int oRows, int oCols>
-    KeyedMatrix(const KeyedMatrix<Scalar, RowKeyType, ColKeyType, oRows, oCols>& other)
+    KeyedMatrix(const KeyedMatrix<Scalar, RowKeyType, ColKeyType, oRows, oCols>& other) // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
         : internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>(other)
     {}
     /// @brief Copy assignment operator
@@ -1604,7 +2071,7 @@ class KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic
     /// @brief Move constructor
     /// @param other The other object
     template<int oRows, int oCols>
-    KeyedMatrix(KeyedMatrix<Scalar, RowKeyType, ColKeyType, oRows, oCols>&& other) noexcept
+    KeyedMatrix(KeyedMatrix<Scalar, RowKeyType, ColKeyType, oRows, oCols>&& other) noexcept // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
         : internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>(std::move(other))
     {}
     /// @brief Move assignment operator
@@ -1717,6 +2184,24 @@ class KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic
             }
         }
     }
+
+    // #######################################################################################################
+    //                                                Methods
+    // #######################################################################################################
+
+    /// @brief Returns a submatrix specified by the row and col keys
+    /// @param rowKeys Row keys
+    /// @param colKeys Col keys
+    [[nodiscard]] KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>
+        getSubMatrix(const std::vector<RowKeyType>& rowKeys, const std::vector<ColKeyType>& colKeys) const
+    {
+        if (rowKeys == this->rowKeysVector && colKeys == this->colKeysVector)
+        {
+            return *this;
+        }
+
+        return { (*this)(rowKeys, colKeys), rowKeys, colKeys };
+    }
 };
 
 /// @brief Dynamic size KeyedMatrix
@@ -1790,3 +2275,5 @@ template<typename ColKeyType>
 using KeyedRowVector4d = KeyedRowVector<double, ColKeyType, 4>;
 
 } // namespace NAV
+
+#pragma GCC diagnostic pop
