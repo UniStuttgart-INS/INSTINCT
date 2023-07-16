@@ -42,6 +42,7 @@ target_link_libraries(
           Boost::program_options
           Eigen3::Eigen
           nlohmann_json::nlohmann_json
+          unordered_dense::unordered_dense
           Threads::Threads
           imgui
           imgui_node_editor

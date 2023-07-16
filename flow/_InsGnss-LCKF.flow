@@ -40,11 +40,6 @@
             "id": 378,
             "startPinId": 329
         },
-        "link-379": {
-            "endPinId": 164,
-            "id": 379,
-            "startPinId": 347
-        },
         "link-380": {
             "endPinId": 227,
             "id": 380,
@@ -144,6 +139,11 @@
             "endPinId": 456,
             "id": 512,
             "startPinId": 503
+        },
+        "link-551": {
+            "endPinId": 164,
+            "id": 551,
+            "startPinId": 347
         },
         "link-552": {
             "endPinId": 18,
@@ -596,49 +596,49 @@
                                 "displayName": "GPS time of week [s]"
                             },
                             {
-                                "displayName": "0, 0"
+                                "displayName": "0"
                             },
                             {
-                                "displayName": "1, 0"
+                                "displayName": "1"
                             },
                             {
-                                "displayName": "2, 0"
+                                "displayName": "2"
                             },
                             {
-                                "displayName": "3, 0"
+                                "displayName": "3"
                             },
                             {
-                                "displayName": "4, 0"
+                                "displayName": "4"
                             },
                             {
-                                "displayName": "5, 0"
+                                "displayName": "5"
                             },
                             {
-                                "displayName": "6, 0"
+                                "displayName": "6"
                             },
                             {
-                                "displayName": "7, 0"
+                                "displayName": "7"
                             },
                             {
-                                "displayName": "8, 0"
+                                "displayName": "8"
                             },
                             {
-                                "displayName": "9, 0"
+                                "displayName": "9"
                             },
                             {
-                                "displayName": "10, 0"
+                                "displayName": "10"
                             },
                             {
-                                "displayName": "11, 0"
+                                "displayName": "11"
                             },
                             {
-                                "displayName": "12, 0"
+                                "displayName": "12"
                             },
                             {
-                                "displayName": "13, 0"
+                                "displayName": "13"
                             },
                             {
-                                "displayName": "14, 0"
+                                "displayName": "14"
                             }
                         ],
                         "size": 0,
@@ -2722,22 +2722,22 @@
                                 "displayName": "GPS time of week [s]"
                             },
                             {
-                                "displayName": "0, 0"
+                                "displayName": "0"
                             },
                             {
-                                "displayName": "1, 0"
+                                "displayName": "1"
                             },
                             {
-                                "displayName": "2, 0"
+                                "displayName": "2"
                             },
                             {
-                                "displayName": "3, 0"
+                                "displayName": "3"
                             },
                             {
-                                "displayName": "4, 0"
+                                "displayName": "4"
                             },
                             {
-                                "displayName": "5, 0"
+                                "displayName": "5"
                             }
                         ],
                         "size": 0,

@@ -337,7 +337,7 @@ NAV::Plot::Plot()
     // PinData::PinType::Matrix:
     _pinData.at(4).pinType = PinData::PinType::Matrix;
     inputPins.at(4).type = Pin::Type::Matrix;
-    inputPins.at(4).dataIdentifier = { "Eigen::MatrixXd" };
+    inputPins.at(4).dataIdentifier = { "Eigen::MatrixXd", "Eigen::VectorXd" };
     inputPins.at(4).callback = static_cast<InputPin::DataChangedNotifyFunc>(&Plot::plotMatrix);
 }
 
@@ -504,7 +504,7 @@ void NAV::Plot::guiConfig()
                         break;
                     case PinData::PinType::Matrix:
                         inputPins.at(pinIndex).type = Pin::Type::Matrix;
-                        inputPins.at(pinIndex).dataIdentifier = { "Eigen::MatrixXd" };
+                        inputPins.at(pinIndex).dataIdentifier = { "Eigen::MatrixXd", "Eigen::VectorXd" };
                         inputPins.at(pinIndex).callback = static_cast<InputPin::DataChangedNotifyFunc>(&Plot::plotMatrix);
                         break;
                     }
@@ -1004,6 +1004,7 @@ void NAV::Plot::guiConfig()
                                              pinData.plotData.at(plot.selectedXdata.at(plotItem.pinIndex)).buffer.data(),
                                              plotData.buffer.data(),
                                              dataPointCount,
+                                             ImPlotLineFlags_None,
                                              static_cast<int>(std::ceil(static_cast<double>(plotData.buffer.offset()) / static_cast<double>(stride))),
                                              stride * static_cast<int>(sizeof(double)));
                         }
@@ -1013,6 +1014,7 @@ void NAV::Plot::guiConfig()
                                                 pinData.plotData.at(plot.selectedXdata.at(plotItem.pinIndex)).buffer.data(),
                                                 plotData.buffer.data(),
                                                 dataPointCount,
+                                                ImPlotLineFlags_None,
                                                 static_cast<int>(std::ceil(static_cast<double>(plotData.buffer.offset()) / static_cast<double>(stride))),
                                                 stride * static_cast<int>(sizeof(double)));
                         }
@@ -1274,7 +1276,7 @@ void NAV::Plot::restore(json const& j)
                 break;
             case Plot::PinData::PinType::Matrix:
                 inputPins.at(inputPinIndex).type = Pin::Type::Matrix;
-                inputPins.at(inputPinIndex).dataIdentifier = { "Eigen::MatrixXd" };
+                inputPins.at(inputPinIndex).dataIdentifier = { "Eigen::MatrixXd", "Eigen::VectorXd" };
                 inputPins.at(inputPinIndex).callback = static_cast<InputPin::DataChangedNotifyFunc>(&Plot::plotMatrix);
                 break;
             default:
@@ -1987,6 +1989,19 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
                 if (mutex) { mutex->unlock(); }
             }
         }
+        else if (startPin.dataIdentifier.front() == "Eigen::VectorXd")
+        {
+            if (const auto* matrix = getInputValue<const Eigen::VectorXd>(pinIndex))
+            {
+                auto* mutex = getInputValueMutex(pinIndex);
+                if (mutex) { mutex->lock(); }
+                for (int row = 0; row < matrix->rows(); row++)
+                {
+                    _pinData.at(pinIndex).addPlotDataItem(i++, fmt::format("{}", row));
+                }
+                if (mutex) { mutex->unlock(); }
+            }
+        }
 
         for (size_t dataIndex = i; dataIndex < _pinData.at(pinIndex).plotData.size(); dataIndex++)
         {
@@ -2191,6 +2206,27 @@ void NAV::Plot::plotMatrix(const InsTime& insTime, size_t pinIdx)
                     {
                         addData(pinIdx, i++, (*value)(row, col));
                     }
+                }
+            }
+        }
+        else if (sourcePin->dataIdentifier.front() == "Eigen::VectorXd")
+        {
+            const auto* value = getInputValue<const Eigen::VectorXd>(pinIdx);
+
+            if (value != nullptr && !insTime.empty())
+            {
+                if (_startTime.empty()) { _startTime = insTime; }
+                size_t i = 0;
+
+                std::scoped_lock<std::mutex> guard(_pinData.at(pinIdx).mutex);
+
+                // NodeData
+                addData(pinIdx, i++, static_cast<double>((insTime - _startTime).count()));
+                addData(pinIdx, i++, static_cast<double>(insTime.toGPSweekTow().tow));
+                // Vector
+                for (int row = 0; row < value->rows(); row++)
+                {
+                    addData(pinIdx, i++, (*value)(row));
                 }
             }
         }

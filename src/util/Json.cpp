@@ -108,7 +108,6 @@ void to_json(json& j, const ImPlotStyle& style)
         { "ErrorBarWeight", style.ErrorBarWeight },
         { "DigitalBitHeight", style.DigitalBitHeight },
         { "DigitalBitGap", style.DigitalBitGap },
-        { "AntiAliasedLines", style.AntiAliasedLines },
         { "PlotBorderSize", style.PlotBorderSize },
         { "MinorAlpha", style.MinorAlpha },
         { "MajorTickLen", style.MajorTickLen },
@@ -191,10 +190,6 @@ void from_json(const json& j, ImPlotStyle& style)
     if (j.contains("DigitalBitGap"))
     {
         j.at("DigitalBitGap").get_to(style.DigitalBitGap);
-    }
-    if (j.contains("AntiAliasedLines"))
-    {
-        j.at("AntiAliasedLines").get_to(style.AntiAliasedLines);
     }
     if (j.contains("PlotBorderSize"))
     {

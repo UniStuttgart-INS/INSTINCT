@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include "util/Assert.h"
 #include <cstdint>
 #include <Eigen/Core>
 
@@ -26,15 +27,17 @@ uint64_t factorial(uint64_t n);
 
 /// @brief Calculates the skew symmetric matrix of the given vector.
 ///        This is needed to perform the cross product with a scalar product operation
-/// @tparam _Scalar Data type of the Matrix
+/// @tparam Derived Derived Eigen Type
 /// @param[in] a The vector
 /// @return Skew symmetric matrix
 /// @note See Groves (2013) equation (2.50)
-template<typename _Scalar,
-         typename = std::enable_if_t<std::is_arithmetic_v<_Scalar>>>
-Eigen::Matrix<_Scalar, 3, 3> skewSymmetricMatrix(const Eigen::Matrix<_Scalar, 3, 1>& a)
+template<typename Derived>
+Eigen::Matrix<typename Derived::Scalar, 3, 3> skewSymmetricMatrix(const Eigen::MatrixBase<Derived>& a)
 {
-    Eigen::Matrix<_Scalar, 3, 3> skewMat;
+    INS_ASSERT_USER_ERROR(a.cols() == 1, "Given Eigen Object must be a vector");
+    INS_ASSERT_USER_ERROR(a.rows() == 3, "Given Vector must have 3 Rows");
+
+    Eigen::Matrix<typename Derived::Scalar, 3, 3> skewMat;
     skewMat << 0, -a(2), a(1),
         a(2), 0, -a(0),
         -a(1), a(0), 0;
@@ -43,14 +46,16 @@ Eigen::Matrix<_Scalar, 3, 3> skewSymmetricMatrix(const Eigen::Matrix<_Scalar, 3,
 }
 
 /// @brief Calculates the square of a skew symmetric matrix of the given vector.
-/// @tparam _Scalar Data type of the Matrix
-/// @param[in, out] a The vector
+/// @tparam Derived Derived Eigen Type
+/// @param[in] a The vector
 /// @return Square of skew symmetric matrix
-template<typename _Scalar,
-         typename = std::enable_if_t<std::is_arithmetic_v<_Scalar>>>
-Eigen::Matrix<_Scalar, 3, 3> skewSymmetricMatrixSquared(const Eigen::Matrix<_Scalar, 3, 1>& a)
+template<typename Derived>
+Eigen::Matrix<typename Derived::Scalar, 3, 3> skewSymmetricMatrixSquared(const Eigen::MatrixBase<Derived>& a)
 {
-    Eigen::Matrix<_Scalar, 3, 3> skewMat2;
+    INS_ASSERT_USER_ERROR(a.cols() == 1, "Given Eigen Object must be a vector");
+    INS_ASSERT_USER_ERROR(a.rows() == 3, "Given Vector must have 3 Rows");
+
+    Eigen::Matrix<typename Derived::Scalar, 3, 3> skewMat2;
     skewMat2 << std::pow(a(2), 2) + std::pow(a(1), 2), a(0) * a(1), a(0) * a(2),
         a(0) * a(1), std::pow(a(2), 2) + std::pow(a(0), 2), a(1) * a(2),
         a(0) * a(2), a(1) * a(2), std::pow(a(0), 2) + std::pow(a(1), 2);

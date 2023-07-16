@@ -140,7 +140,7 @@ void NAV::ConfigManager::CheckOptions(const int argc, [[maybe_unused]] const cha
         {
             LOG_DEBUG("\tvm[{}] = '{}'", value.first, *v);
         }
-        else if ([[maybe_unused]] const auto* v = boost::any_cast<bool>(&value.second.value()))
+        else if ([[maybe_unused]] const auto* v = boost::any_cast<bool>(&value.second.value())) // NOLINT(bugprone-bool-pointer-implicit-conversion)
         {
             LOG_DEBUG("\tvm[{}] = '{}'", value.first, *v);
         }

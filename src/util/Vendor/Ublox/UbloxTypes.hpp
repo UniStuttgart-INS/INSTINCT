@@ -19,6 +19,7 @@
 #include <bitset>
 #include <vector>
 #include <cstdint>
+#include <fmt/ostream.h>
 
 namespace NAV::vendor::ublox
 {
@@ -769,3 +770,65 @@ enum UbxUpdMessages
 [[nodiscard]] uint8_t getMsgIdFromString(const std::string& className, const std::string& idName);
 
 } // namespace NAV::vendor::ublox
+
+#ifndef DOXYGEN_IGNORE
+
+template<>
+struct fmt::formatter<NAV::vendor::ublox::ErrorDetectionMode> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::vendor::ublox::NmeaTalkerID> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::vendor::ublox::NmeaMessageClass> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::vendor::ublox::NmeaStandardMessages> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::vendor::ublox::NmeaPubxMessages> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::vendor::ublox::UbxClass> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::vendor::ublox::UbxAckMessages> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::vendor::ublox::UbxCfgMessages> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::vendor::ublox::UbxEsfMessages> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::vendor::ublox::UbxHnrMessages> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::vendor::ublox::UbxInfMessages> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::vendor::ublox::UbxLogMessages> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::vendor::ublox::UbxMgaMessages> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::vendor::ublox::UbxMonMessages> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::vendor::ublox::UbxNavMessages> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::vendor::ublox::UbxRxmMessages> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::vendor::ublox::UbxSecMessages> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::vendor::ublox::UbxTimMessages> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::vendor::ublox::UbxUpdMessages> : ostream_formatter
+{};
+
+#endif

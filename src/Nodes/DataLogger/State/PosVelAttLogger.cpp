@@ -100,7 +100,7 @@ bool NAV::PosVelAttLogger::initialize()
 
     CommonLog::initialize();
 
-    _filestream << "Time [s],GpsCycle,GpsWeek,GpsTow [s],"
+    _filestream << "Time [s],GpsCycle,GpsWeek,GpsToW [s],"
                 << "Pos ECEF X [m],Pos ECEF Y [m],Pos ECEF Z [m],Latitude [deg],Longitude [deg],Altitude [m],"
                 << "North/South [m],East/West [m],"
                 << "Vel ECEF X [m/s],Vel ECEF Y [m/s],Vel ECEF Z [m/s],Vel N [m/s],Vel E [m/s],Vel D [m/s],"
