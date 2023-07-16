@@ -34,7 +34,7 @@ If no GUI is required, the application can be run in ```--nogui``` mode and a `.
 
 ##### Build & run the main program
 ```shell
-conan install . --build=missing -s build_type=Release
+conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
 cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=INFO
 cmake --build build/Release --parallel8
 ./build/bin/Release/instinct
@@ -42,7 +42,7 @@ cmake --build build/Release --parallel8
 
 ##### Build & run the tests
 ```shell
-conan install . --build=missing -s build_type=Release
+conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
 cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=TRACE
 cmake --build build/Release --parallel8
 cd build/Release
@@ -51,7 +51,7 @@ ctest --output-on-failure
 
 ##### Build the documentation
 ```shell
-conan install . --build=missing -s build_type=Release
+conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
 cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=NO
 cmake --build build/Release --target doc
 ```

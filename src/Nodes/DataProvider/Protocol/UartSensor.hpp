@@ -15,6 +15,7 @@
 
 #include <string>
 
+#include <fmt/ostream.h>
 #include <nlohmann/json.hpp>
 using json = nlohmann::json; ///< json namespace
 
@@ -82,3 +83,11 @@ class UartSensor
 };
 
 } // namespace NAV
+
+#ifndef DOXYGEN_IGNORE
+
+template<>
+struct fmt::formatter<NAV::UartSensor::Baudrate> : ostream_formatter
+{};
+
+#endif

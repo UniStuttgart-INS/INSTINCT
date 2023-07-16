@@ -16,9 +16,11 @@
 #include <cstdint>
 #include <vector>
 #include <iostream>
+#include <fmt/format.h>
 #include <fmt/ostream.h>
 #include <vn/vector.h>
 #include <vn/matrix.h>
+#include <vn/types.h>
 
 namespace NAV::vendor::vectornav
 {
@@ -678,6 +680,133 @@ class InsStatus
 } // namespace NAV::vendor::vectornav
 
 #ifndef DOXYGEN_IGNORE
+
+template<>
+struct fmt::formatter<vn::protocol::uart::ErrorDetectionMode> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::AsciiAsync> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::AsyncMode> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::BinaryGroup> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::CommonGroup> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::TimeGroup> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::ImuGroup> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::GpsGroup> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::AttitudeGroup> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::InsGroup> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::SensorError> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::BootloaderError> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::SyncInMode> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::SyncInEdge> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::SyncOutMode> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::SyncOutPolarity> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::CountMode> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::StatusMode> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::ChecksumMode> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::ErrorMode> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::FilterMode> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::IntegrationFrame> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::CompensationMode> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::AccCompensationMode> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::EarthRateCorrection> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::GpsFix> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::GpsMode> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::PpsSource> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::GpsRate> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::AntPower> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::VpeEnable> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::HeadingMode> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::VpeMode> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::Scenario> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::HsiMode> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::HsiOutput> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::VelocityCompensationMode> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::MagneticMode> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::ExternalSensorMode> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::FoamInit> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::SensSat> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<vn::protocol::uart::InsStatus> : ostream_formatter
+{};
 
 template<>
 struct fmt::formatter<NAV::vendor::vectornav::SatSys> : ostream_formatter

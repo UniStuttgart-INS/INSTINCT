@@ -20,6 +20,7 @@
 
 #include "Navigation/Time/InsTime.hpp"
 
+#include <fmt/ostream.h>
 #include <nlohmann/json.hpp>
 using json = nlohmann::json; ///< json namespace
 
@@ -170,3 +171,11 @@ class FileReader
 };
 
 } // namespace NAV
+
+#ifndef DOXYGEN_IGNORE
+
+template<>
+struct fmt::formatter<NAV::FileReader::FileType> : ostream_formatter
+{};
+
+#endif

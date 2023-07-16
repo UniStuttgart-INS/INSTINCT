@@ -116,6 +116,7 @@ find_package(Boost REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(Catch2 3 REQUIRED)
 find_package(nlohmann_json REQUIRED)
+find_package(unordered_dense CONFIG REQUIRED)
 
 # ------------------------------------------------- imgui ------------------------------------------------
 

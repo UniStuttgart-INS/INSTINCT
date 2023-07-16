@@ -224,6 +224,8 @@ void removeRowsAndCols(Eigen::DenseBase<Derived>& matrix, const std::vector<int>
 
 #ifndef DOXYGEN_IGNORE
 
+// clang-format off
+
 template<typename T>
     requires std::is_base_of_v<Eigen::DenseBase<T>, T>
 struct fmt::formatter<T> : ostream_formatter
@@ -237,5 +239,7 @@ struct fmt::formatter<T> : ostream_formatter
 template<>
 struct fmt::formatter<Eigen::Quaterniond> : ostream_formatter
 {};
+
+// clang-format on
 
 #endif

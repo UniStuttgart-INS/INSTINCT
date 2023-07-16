@@ -88,7 +88,7 @@ void NAV::VectorNavBinaryConverter::guiConfig()
     {
         if (ImGui::Combo(fmt::format("Data Source##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_posVelSource), "Best\0INS\0GNSS 1\0GNSS 2\0\0"))
         {
-            LOG_DEBUG("{}: _posVelSource changed to {}", nameId(), _posVelSource);
+            LOG_DEBUG("{}: _posVelSource changed to {}", nameId(), fmt::underlying(_posVelSource));
             flow::ApplyChanges();
         }
         if (ImGui::Checkbox(fmt::format("Force static##{}", size_t(id)).c_str(), &_forceStatic))

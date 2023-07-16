@@ -208,7 +208,7 @@ void NAV::vendor::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& o
         }
         else
         {
-            LOG_DATA("Erb: {:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
+            LOG_DATA("Erb: {:x}, Size {}, not implemented yet!", obs->msgId, packet.getRawDataLength());
         }
     }
 }
