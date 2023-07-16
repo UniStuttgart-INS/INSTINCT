@@ -18,6 +18,9 @@
 #include "Logger.hpp"
 #include "util/Container/KeyedMatrix.hpp"
 
+// Do not use 'const char*' as key. Always use 'std::string'
+using namespace std::string_literals; // The string literal ""s is needed
+
 namespace NAV::TESTS
 {
 
@@ -654,16 +657,13 @@ TEST_CASE("[KeyedMatrix] operator(rowKey(s), colKey(s))", "[KeyedMatrix]")
         REQUIRE(mat({ 2, 3 }, { 2, 3 }) == (Eigen::Matrix2d(2, 2) << 5, 6, 8, 9).finished());
     }
     {
-        // The string literal ""s is needed
-        using namespace std::string_literals;
-
-        KeyedMatrixX<double, const char*, std::string> mat(eigMat, { "1", "2", "3" }, { "1"s, "2"s, "3"s });
+        KeyedMatrixX<double, std::string, std::string> mat(eigMat, { "1", "2", "3" }, { "1", "2", "3" });
 
         REQUIRE(mat(all, all) == eigMat);
-        REQUIRE(mat("1", "1") == 1.0);
-        REQUIRE(mat({ "1", "3" }, "1"s) == Eigen::Vector2d(1, 7));
-        REQUIRE(mat("2", { "2"s, "3"s }) == Eigen::RowVector2d(5, 6));
-        REQUIRE(mat({ "2", "3" }, { "2"s, "3"s }) == (Eigen::Matrix2d(2, 2) << 5, 6, 8, 9).finished());
+        REQUIRE(mat("1"s, "1"s) == 1.0);
+        REQUIRE(mat({ "1"s, "3"s }, "1"s) == Eigen::Vector2d(1, 7));
+        REQUIRE(mat("2"s, { "2"s, "3"s }) == Eigen::RowVector2d(5, 6));
+        REQUIRE(mat({ "2"s, "3"s }, { "2"s, "3"s }) == (Eigen::Matrix2d(2, 2) << 5, 6, 8, 9).finished());
     }
 }
 
@@ -766,22 +766,22 @@ TEST_CASE("[KeyedRowVector] segment(colKeys)", "[KeyedRowVector]")
     }
 }
 
-TEST_CASE("[KeyedMatrix] addRows & addCols", "[KeyedMatrix]")
+TEST_CASE("[KeyedMatrix] addRows & addCols", "[KeyedMatrix][Debug]")
 {
     auto logger = initializeTestLogger();
 
-    KeyedMatrixX<double, const char*, int> mat;
-    mat.addRow("1");
+    KeyedMatrixX<double, std::string, int> mat;
+    mat.addRow("1"s);
     mat.addCol(1);
     REQUIRE(mat(all, all) == Eigen::VectorXd::Zero(1));
-    REQUIRE(mat("1", 1) == 0);
-    REQUIRE(mat.rowKeys() == std::vector{ "1" });
+    REQUIRE(mat("1"s, 1) == 0);
+    REQUIRE(mat.rowKeys() == std::vector{ "1"s });
     REQUIRE(mat.colKeys() == std::vector{ 1 });
 
-    mat.addRows({ "2", "3" });
+    mat.addRows({ "2"s, "3"s });
     REQUIRE(mat(all, all) == Eigen::MatrixXd::Zero(3, 1));
-    REQUIRE(mat("2", 1) == 0);
-    REQUIRE(mat.rowKeys() == std::vector{ "1", "2", "3" });
+    REQUIRE(mat("2"s, 1) == 0);
+    REQUIRE(mat.rowKeys() == std::vector{ "1"s, "2"s, "3"s });
     REQUIRE(mat.colKeys() == std::vector{ 1 });
 
     mat.addCols({ 2, 3 });
@@ -793,10 +793,10 @@ TEST_CASE("[KeyedMatrix] addRows & addCols", "[KeyedMatrix]")
         7, 8, 9;
     mat(all, all) = eigMat;
 
-    REQUIRE(mat("2", 1) == 4);
+    REQUIRE(mat("2"s, 1) == 4);
 
-    mat.addRowsCols({ "4", "5" }, { 4, 5 });
-    REQUIRE(mat.rowKeys() == std::vector{ "1", "2", "3", "4", "5" });
+    mat.addRowsCols({ "4"s, "5"s }, { 4, 5 });
+    REQUIRE(mat.rowKeys() == std::vector{ "1"s, "2"s, "3"s, "4"s, "5"s });
     REQUIRE(mat.colKeys() == std::vector{ 1, 2, 3, 4, 5 });
     // clang-format off
     REQUIRE(mat(all, all) == (Eigen::MatrixXd(5, 5) << 1, 2, 3, 0, 0,
@@ -806,8 +806,8 @@ TEST_CASE("[KeyedMatrix] addRows & addCols", "[KeyedMatrix]")
                                                        0, 0, 0, 0, 0).finished());
     // clang-format on
 
-    mat.removeRowsCols({ "1", "3", "4" }, { 2, 4 });
-    REQUIRE(mat.rowKeys() == std::vector{ "2", "5" });
+    mat.removeRowsCols({ "1"s, "3"s, "4"s }, { 2, 4 });
+    REQUIRE(mat.rowKeys() == std::vector{ "2"s, "5"s });
     REQUIRE(mat.colKeys() == std::vector{ 1, 3, 5 });
     // clang-format off
     REQUIRE(mat(all, all) == (Eigen::MatrixXd(2, 3) << 4, 6, 0,
@@ -1022,7 +1022,7 @@ TEST_CASE("[KeyedMatrix] Formatting", "[KeyedMatrix]")
         7.1234567, 8.1234567, 9.1234567;
 
     {
-        KeyedMatrixX<double, int, const char*> mat(eigMat, { 1, 2, 3 }, { "long-column-name", "2", "3" });
+        KeyedMatrixX<double, int, std::string> mat(eigMat, { 1, 2, 3 }, { "long-column-name", "2", "3" });
 
         std::string output = fmt::format("{}", mat);
         std::string expected = "   long-column-name       2       3\n"
@@ -1032,7 +1032,7 @@ TEST_CASE("[KeyedMatrix] Formatting", "[KeyedMatrix]")
         REQUIRE(output == expected);
     }
     {
-        KeyedMatrix<double, const char*, const char*, 3, 3> mat(eigMat, { "1", "2", "123" }, { "long-column-name", "2", "3" });
+        KeyedMatrix<double, std::string, std::string, 3, 3> mat(eigMat, { "1", "2", "123" }, { "long-column-name", "2", "3" });
 
         std::string output = fmt::format("{}", mat);
         std::string expected = "     long-column-name       2       3\n"
@@ -1060,7 +1060,7 @@ TEST_CASE("[KeyedVector] Formatting", "[KeyedVector]")
         REQUIRE(output == expected);
     }
     {
-        KeyedVector<double, const char*, 4> vec(eigVec, { "1", "2", "3", "1234" });
+        KeyedVector<double, std::string, 4> vec(eigVec, { "1", "2", "3", "1234" });
 
         std::string output = fmt::format("{}", vec);
         std::string expected = "   1       1\n"
@@ -1086,7 +1086,7 @@ TEST_CASE("[KeyedRowVector] Formatting", "[KeyedRowVector]")
         REQUIRE(output == expected);
     }
     {
-        KeyedRowVector<double, const char*, 4> vec(eigVec, { "1", "2", "3", "1234" });
+        KeyedRowVector<double, std::string, 4> vec(eigVec, { "1", "2", "3", "1234" });
 
         std::string output = fmt::format("{}", vec);
         std::string expected = "     1       2       3    1234\n"
@@ -1104,12 +1104,12 @@ TEST_CASE("[KeyedMatrix] Access with all", "[KeyedMatrix]")
         4, 5, 6,
         7, 8, 9;
 
-    KeyedMatrixX<double, const char*, int> mat(eigMat, { "1", "2", "3" }, { 1, 2, 3 });
+    KeyedMatrixX<double, std::string, int> mat(eigMat, { "1", "2", "3" }, { 1, 2, 3 });
 
     REQUIRE(mat(all, all) == eigMat);
-    REQUIRE(mat("1", all) == eigMat.row(0));
+    REQUIRE(mat("1"s, all) == eigMat.row(0));
     REQUIRE(mat(all, 2) == eigMat.col(1));
-    REQUIRE(mat({ "1", "3" }, all) == eigMat({ 0, 2 }, Eigen::all));
+    REQUIRE(mat({ "1"s, "3"s }, all) == eigMat({ 0, 2 }, Eigen::all));
     REQUIRE(mat(all, { 1, 2 }) == eigMat.leftCols(2));
 }
 
@@ -1148,24 +1148,24 @@ TEST_CASE("[KeyedMatrix] Type aliases", "[KeyedMatrix]")
     auto logger = initializeTestLogger();
     {
         Eigen::MatrixXd eigMat = (Eigen::MatrixXd(2, 2) << 1, 2, 3, 4).finished();
-        KeyedMatrixXd<const char*, int> mat(eigMat, { "1", "2" }, { 1, 2 });
+        KeyedMatrixXd<std::string, int> mat(eigMat, { "1", "2" }, { 1, 2 });
         REQUIRE(mat(all, all) == eigMat);
         mat.addCol(3);
         REQUIRE(mat.colKeys() == std::vector{ 1, 2, 3 });
     }
     {
         Eigen::Matrix2d eigMat = (Eigen::Matrix2d() << 1, 2, 3, 4).finished();
-        KeyedMatrix2d<const char*, int> mat(eigMat, { "1", "2" }, { 1, 2 });
+        KeyedMatrix2d<std::string, int> mat(eigMat, { "1", "2" }, { 1, 2 });
         REQUIRE(mat(all, all) == eigMat);
     }
     {
         Eigen::Matrix3d eigMat = (Eigen::Matrix3d() << 1, 2, 3, 4, 5, 6, 7, 8, 9).finished();
-        KeyedMatrix3d<const char*, int> mat(eigMat, { "1", "2", "3" }, { 1, 2, 3 });
+        KeyedMatrix3d<std::string, int> mat(eigMat, { "1", "2", "3" }, { 1, 2, 3 });
         REQUIRE(mat(all, all) == eigMat);
     }
     {
         Eigen::Matrix4d eigMat = (Eigen::Matrix4d() << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16).finished();
-        KeyedMatrix4d<const char*, int> mat(eigMat, { "1", "2", "3", "4" }, { 1, 2, 3, 4 });
+        KeyedMatrix4d<std::string, int> mat(eigMat, { "1", "2", "3", "4" }, { 1, 2, 3, 4 });
         REQUIRE(mat(all, all) == eigMat);
     }
 }
@@ -1176,32 +1176,32 @@ TEST_CASE("[KeyedVector] All functions", "[KeyedVector]")
 
     Eigen::Vector3d eigVec(1, 2, 3);
     {
-        KeyedVector3d<const char*> vec(eigVec, { "1", "2", "3" });
-        REQUIRE(vec.rowKeys() == std::vector{ "1", "2", "3" });
+        KeyedVector3d<std::string> vec(eigVec, { "1", "2", "3" });
+        REQUIRE(vec.rowKeys() == std::vector{ "1"s, "2"s, "3"s });
         REQUIRE(vec(all) == eigVec);
     }
 
-    KeyedVectorXd<const char*> vec(eigVec, { "1", "2", "3" });
+    KeyedVectorXd<std::string> vec(eigVec, { "1", "2", "3" });
 
     vec.addRow("4");
-    REQUIRE(vec.rowKeys() == std::vector{ "1", "2", "3", "4" });
+    REQUIRE(vec.rowKeys() == std::vector{ "1"s, "2"s, "3"s, "4"s });
     REQUIRE(vec.hasRow("2"));
     REQUIRE(vec.hasRows({ "2", "3" }));
     REQUIRE(vec(all) == (Eigen::VectorXd(4) << 1, 2, 3, 0).finished());
 
     vec.addRows({ "5", "6", "7", "8" });
-    REQUIRE(vec.rowKeys() == std::vector{ "1", "2", "3", "4", "5", "6", "7", "8" });
+    REQUIRE(vec.rowKeys() == std::vector{ "1"s, "2"s, "3"s, "4"s, "5"s, "6"s, "7"s, "8"s });
     REQUIRE(vec(all) == (Eigen::VectorXd(8) << 1, 2, 3, 0, 0, 0, 0, 0).finished());
 
     vec(all) = (Eigen::VectorXd(8) << 1, 2, 3, 4, 5, 6, 7, 8).finished();
     REQUIRE(vec(all) == (Eigen::VectorXd(8) << 1, 2, 3, 4, 5, 6, 7, 8).finished());
 
     vec.removeRow("2");
-    REQUIRE(vec.rowKeys() == std::vector{ "1", "3", "4", "5", "6", "7", "8" });
+    REQUIRE(vec.rowKeys() == std::vector{ "1"s, "3"s, "4"s, "5"s, "6"s, "7"s, "8"s });
     REQUIRE(vec(all) == (Eigen::VectorXd(7) << 1, 3, 4, 5, 6, 7, 8).finished());
 
     vec.removeRows({ "3", "4" });
-    REQUIRE(vec.rowKeys() == std::vector{ "1", "5", "6", "7", "8" });
+    REQUIRE(vec.rowKeys() == std::vector{ "1"s, "5"s, "6"s, "7"s, "8"s });
     REQUIRE(vec(all) == (Eigen::VectorXd(5) << 1, 5, 6, 7, 8).finished());
 }
 
@@ -1211,32 +1211,32 @@ TEST_CASE("[KeyedRowVector] All functions", "[KeyedRowVector]")
 
     Eigen::RowVector3d eigVec(1, 2, 3);
     {
-        KeyedRowVector3d<const char*> vec(eigVec, { "1", "2", "3" });
-        REQUIRE(vec.colKeys() == std::vector{ "1", "2", "3" });
+        KeyedRowVector3d<std::string> vec(eigVec, { "1", "2", "3" });
+        REQUIRE(vec.colKeys() == std::vector{ "1"s, "2"s, "3"s });
         REQUIRE(vec(all) == eigVec);
     }
 
-    KeyedRowVectorXd<const char*> vec(eigVec, { "1", "2", "3" });
+    KeyedRowVectorXd<std::string> vec(eigVec, { "1", "2", "3" });
 
     vec.addCol("4");
-    REQUIRE(vec.colKeys() == std::vector{ "1", "2", "3", "4" });
+    REQUIRE(vec.colKeys() == std::vector{ "1"s, "2"s, "3"s, "4"s });
     REQUIRE(vec.hasCol("2"));
     REQUIRE(vec.hasCols({ "2", "3" }));
     REQUIRE(vec(all) == (Eigen::RowVectorXd(4) << 1, 2, 3, 0).finished());
 
     vec.addCols({ "5", "6", "7", "8" });
-    REQUIRE(vec.colKeys() == std::vector{ "1", "2", "3", "4", "5", "6", "7", "8" });
+    REQUIRE(vec.colKeys() == std::vector{ "1"s, "2"s, "3"s, "4"s, "5"s, "6"s, "7"s, "8"s });
     REQUIRE(vec(all) == (Eigen::RowVectorXd(8) << 1, 2, 3, 0, 0, 0, 0, 0).finished());
 
     vec(all) = (Eigen::RowVectorXd(8) << 1, 2, 3, 4, 5, 6, 7, 8).finished();
     REQUIRE(vec(all) == (Eigen::RowVectorXd(8) << 1, 2, 3, 4, 5, 6, 7, 8).finished());
 
     vec.removeCol("2");
-    REQUIRE(vec.colKeys() == std::vector{ "1", "3", "4", "5", "6", "7", "8" });
+    REQUIRE(vec.colKeys() == std::vector{ "1"s, "3"s, "4"s, "5"s, "6"s, "7"s, "8"s });
     REQUIRE(vec(all) == (Eigen::RowVectorXd(7) << 1, 3, 4, 5, 6, 7, 8).finished());
 
     vec.removeCols({ "3", "4" });
-    REQUIRE(vec.colKeys() == std::vector{ "1", "5", "6", "7", "8" });
+    REQUIRE(vec.colKeys() == std::vector{ "1"s, "5"s, "6"s, "7"s, "8"s });
     REQUIRE(vec(all) == (Eigen::RowVectorXd(5) << 1, 5, 6, 7, 8).finished());
 }
 

@@ -567,7 +567,7 @@ class KeyedVectorBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, 1>
     {
         checkContinuousSegment(rowKeys, rowKeys.size());
 
-        return this->matrix.template middleRows(this->rowIndices.at(rowKeys.at(0)), rowKeys.size());
+        return this->matrix.middleRows(this->rowIndices.at(rowKeys.at(0)), rowKeys.size());
     }
     /// @brief Gets the values for the row keys
     /// @param rowKeys Row Keys
@@ -576,7 +576,7 @@ class KeyedVectorBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, 1>
     {
         checkContinuousSegment(rowKeys, rowKeys.size());
 
-        return this->matrix.template middleRows(this->rowIndices.at(rowKeys.at(0)), rowKeys.size());
+        return this->matrix.middleRows(this->rowIndices.at(rowKeys.at(0)), rowKeys.size());
     }
 
     // #######################################################################################################
@@ -832,7 +832,7 @@ class KeyedRowVectorBase : public KeyedMatrixCols<Scalar, ColKeyType, 1, Cols>
     {
         checkContinuousSegment(colKeys, colKeys.size());
 
-        return this->matrix.template middleCols(this->colIndices.at(colKeys.at(0)), colKeys.size());
+        return this->matrix.middleCols(this->colIndices.at(colKeys.at(0)), colKeys.size());
     }
     /// @brief Gets the values for the col keys
     /// @param colKeys Col Keys
@@ -841,7 +841,7 @@ class KeyedRowVectorBase : public KeyedMatrixCols<Scalar, ColKeyType, 1, Cols>
     {
         checkContinuousSegment(colKeys, colKeys.size());
 
-        return this->matrix.template middleCols(this->colIndices.at(colKeys.at(0)), colKeys.size());
+        return this->matrix.middleCols(this->colIndices.at(colKeys.at(0)), colKeys.size());
     }
 
     // #######################################################################################################
@@ -1074,7 +1074,9 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     /// @return Scalar value
     Scalar& operator()(const RowKeyType& rowKey, const ColKeyType& colKey)
     {
-        return this->matrix(this->rowIndices.at(rowKey), this->colIndices.at(colKey));
+        auto rowIdx = this->rowIndices.at(rowKey);
+        auto colIdx = this->colIndices.at(colKey);
+        return this->matrix(rowIdx, colIdx);
     }
 
     /// @brief Gets the values for the row and col keys
@@ -1303,7 +1305,7 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     {
         checkContinuousBlock(rowKeys, colKeys, rowKeys.size(), colKeys.size());
 
-        return this->matrix.template block(this->rowIndices.at(rowKeys.at(0)), this->colIndices.at(colKeys.at(0)), rowKeys.size(), colKeys.size());
+        return this->matrix.block(this->rowIndices.at(rowKeys.at(0)), this->colIndices.at(colKeys.at(0)), rowKeys.size(), colKeys.size());
     }
     /// @brief Gets the values for the row and col keys
     /// @param rowKeys Row Keys
@@ -1313,7 +1315,7 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     {
         checkContinuousBlock(rowKeys, colKeys, rowKeys.size(), colKeys.size());
 
-        return this->matrix.template block(this->rowIndices.at(rowKeys.at(0)), this->colIndices.at(colKeys.at(0)), rowKeys.size(), colKeys.size());
+        return this->matrix.block(this->rowIndices.at(rowKeys.at(0)), this->colIndices.at(colKeys.at(0)), rowKeys.size(), colKeys.size());
     }
     /// @brief Gets the values for the row and col keys
     /// @param rowKeys Row Keys
