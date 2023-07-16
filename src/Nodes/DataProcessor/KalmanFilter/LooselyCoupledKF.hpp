@@ -632,4 +632,16 @@ class LooselyCoupledKF : public Node
                                                                                    const Eigen::Quaterniond& e_Quat_b, const Eigen::Vector3d& b_leverArm_InsGnss,
                                                                                    const Eigen::Vector3d& b_omega_ib, const Eigen::Matrix3d& e_Omega_ie);
 };
+
 } // namespace NAV
+
+#ifndef DOXYGEN_IGNORE
+
+template<>
+struct fmt::formatter<NAV::LooselyCoupledKF::KFStates> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<NAV::LooselyCoupledKF::KFMeas> : ostream_formatter
+{};
+
+#endif

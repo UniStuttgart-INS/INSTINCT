@@ -2374,8 +2374,7 @@ struct fmt::formatter<NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Col
     /// @param[in] mat Struct to format
     /// @param[in, out] ctx Format context
     /// @return Output iterator
-    template<typename FormatContext>
-    auto format(const NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Cols>& mat, FormatContext& ctx)
+    auto format(const NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Cols>& mat, format_context& ctx)
     {
         std::string result;
         auto rows = static_cast<size_t>(mat.rows());
@@ -2463,8 +2462,7 @@ struct fmt::formatter<NAV::KeyedVector<Scalar, RowKeyType, Rows>>
     /// @param[in] vec Struct to format
     /// @param[in, out] ctx Format context
     /// @return Output iterator
-    template<typename FormatContext>
-    auto format(const NAV::KeyedVector<Scalar, RowKeyType, Rows>& vec, FormatContext& ctx)
+    auto format(const NAV::KeyedVector<Scalar, RowKeyType, Rows>& vec, format_context& ctx)
     {
         std::string result;
         auto rows = static_cast<size_t>(vec.rows());
@@ -2523,8 +2521,7 @@ struct fmt::formatter<NAV::KeyedRowVector<Scalar, ColKeyType, Cols>>
     /// @param[in] vec Struct to format
     /// @param[in, out] ctx Format context
     /// @return Output iterator
-    template<typename FormatContext>
-    auto format(const NAV::KeyedRowVector<Scalar, ColKeyType, Cols>& vec, FormatContext& ctx)
+    auto format(const NAV::KeyedRowVector<Scalar, ColKeyType, Cols>& vec, format_context& ctx)
     {
         std::string result;
         auto cols = static_cast<size_t>(vec.cols());
