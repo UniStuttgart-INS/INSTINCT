@@ -13,20 +13,20 @@
 /// @date 2023-07-06
 
 #ifndef unordered_map_type
-    /// @brief Map type, override with std::unordered_map if you do not have access to this library
-    #define unordered_map_type ankerl::unordered_dense::map
+/// @brief Map type, override with std::unordered_map if you do not have access to this library
+#define unordered_map_type ankerl::unordered_dense::map
 
-    #ifdef protected
-        #define protectedTmp
-        #undef protected
-        #undef private
-    #endif
-    #include <ankerl/unordered_dense.h>
-    #ifdef protectedTmp
-        #define protected public
-        #define private public
-        #undef protectedTmp
-    #endif
+#ifdef protected
+    #define protectedTmp
+    #undef protected
+    #undef private
+#endif
+#include <ankerl/unordered_dense.h>
+#ifdef protectedTmp
+    #define protected public
+    #define private public
+    #undef protectedTmp
+#endif
 
 #endif
 
@@ -42,7 +42,7 @@
 
 #pragma GCC diagnostic push
 #if !defined(__clang__) && defined(__GNUC__)
-    #pragma GCC diagnostic ignored "-Wvirtual-move-assign" // NOLINT(clang-diagnostic-unknown-warning-option)
+#pragma GCC diagnostic ignored "-Wvirtual-move-assign" // NOLINT(clang-diagnostic-unknown-warning-option)
 #endif
 
 namespace NAV
@@ -1436,6 +1436,9 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
 /// @brief Used to request all rows or columns in KeyedMatrices
 static const internal::all_t all;
 
+template<typename Scalar, typename ColKeyType, int Cols>
+class KeyedRowVector;
+
 /// @brief Static sized KeyedVector
 /// @tparam Scalar Numeric type, e.g. float, double, int or std::complex<float>.
 /// @tparam RowKeyType Type of the key used for row lookup
@@ -1535,6 +1538,17 @@ class KeyedVector : public internal::KeyedVectorBase<Scalar, RowKeyType, Rows>
             std::move(static_cast<internal::KeyedVectorBase<Scalar, RowKeyType, Eigen::Dynamic>&>(other));
 
         return *this;
+    }
+
+    // #######################################################################################################
+    //                                                Methods
+    // #######################################################################################################
+
+    /// @brief Calculates the transposed vector
+    [[nodiscard]] KeyedRowVector<Scalar, RowKeyType, Rows> transposed() const
+    {
+        auto transpose = static_cast<const internal::KeyedVectorBase<Scalar, RowKeyType, Rows>&>(*this).transposed();
+        return { transpose(all), transpose.colKeys() };
     }
 };
 
@@ -1636,6 +1650,17 @@ class KeyedVector<Scalar, RowKeyType, Eigen::Dynamic> : public internal::KeyedVe
             std::move(static_cast<internal::KeyedVectorBase<Scalar, RowKeyType, oRows>&>(other));
 
         return *this;
+    }
+
+    // #######################################################################################################
+    //                                                Methods
+    // #######################################################################################################
+
+    /// @brief Calculates the transposed vector
+    [[nodiscard]] KeyedRowVector<Scalar, RowKeyType, Eigen::Dynamic> transposed() const
+    {
+        auto transpose = static_cast<const internal::KeyedVectorBase<Scalar, RowKeyType, Eigen::Dynamic>&>(*this).transposed();
+        return { transpose(all), transpose.colKeys() };
     }
 };
 
@@ -1739,6 +1764,17 @@ class KeyedRowVector : public internal::KeyedRowVectorBase<Scalar, ColKeyType, C
 
         return *this;
     }
+
+    // #######################################################################################################
+    //                                                Methods
+    // #######################################################################################################
+
+    /// @brief Calculates the transposed vector
+    [[nodiscard]] KeyedVector<Scalar, ColKeyType, Cols> transposed() const
+    {
+        auto transpose = static_cast<const internal::KeyedRowVectorBase<Scalar, ColKeyType, Cols>&>(*this).transposed();
+        return { transpose(all), transpose.rowKeys() };
+    }
 };
 
 /// @brief Dynamic sized KeyedRowVector
@@ -1840,6 +1876,17 @@ class KeyedRowVector<Scalar, ColKeyType, Eigen::Dynamic>
             std::move(static_cast<internal::KeyedRowVectorBase<Scalar, ColKeyType, oCols>&>(other));
 
         return *this;
+    }
+
+    // #######################################################################################################
+    //                                                Methods
+    // #######################################################################################################
+
+    /// @brief Calculates the transposed vector
+    [[nodiscard]] KeyedVector<Scalar, ColKeyType, Eigen::Dynamic> transposed() const
+    {
+        auto transpose = static_cast<const internal::KeyedRowVectorBase<Scalar, ColKeyType, Eigen::Dynamic>&>(*this).transposed();
+        return { transpose(all), transpose.rowKeys() };
     }
 };
 
@@ -1972,6 +2019,20 @@ class KeyedMatrix : public internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyT
         }
 
         return { (*this)(rowKeys, colKeys), rowKeys, colKeys };
+    }
+
+    /// @brief Calculates the transposed matrix
+    [[nodiscard]] KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Cols> transposed() const
+    {
+        auto transpose = static_cast<const internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Rows, Cols>&>(*this).transposed();
+        return { transpose(all, all), transpose.rowKeys(), transpose.colKeys() };
+    }
+
+    /// @brief Calculates the inverse matrix
+    [[nodiscard]] KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Cols> inverse() const
+    {
+        auto inv = static_cast<const internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Rows, Cols>&>(*this).inverse();
+        return { inv(all, all), inv.rowKeys(), inv.colKeys() };
     }
 };
 
@@ -2202,6 +2263,20 @@ class KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic
 
         return { (*this)(rowKeys, colKeys), rowKeys, colKeys };
     }
+
+    /// @brief Calculates the transposed matrix
+    [[nodiscard]] KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic> transposed() const
+    {
+        auto transpose = static_cast<const internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>&>(*this).transposed();
+        return { transpose(all, all), transpose.rowKeys(), transpose.colKeys() };
+    }
+
+    /// @brief Calculates the inverse matrix
+    [[nodiscard]] KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic> inverse() const
+    {
+        auto inv = static_cast<const internal::KeyedMatrixBase<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic>&>(*this).inverse();
+        return { inv(all, all), inv.rowKeys(), inv.colKeys() };
+    }
 };
 
 /// @brief Dynamic size KeyedMatrix
@@ -2277,3 +2352,222 @@ using KeyedRowVector4d = KeyedRowVector<double, ColKeyType, 4>;
 } // namespace NAV
 
 #pragma GCC diagnostic pop
+
+#ifndef DOXYGEN_IGNORE
+
+/// @brief Formatter for Frequency
+template<typename Scalar, typename RowKeyType, typename ColKeyType, int Rows, int Cols>
+struct fmt::formatter<NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Cols>>
+{
+    /// @brief Parse function to make the struct formattable
+    /// @param[in] ctx Parser context
+    /// @return Beginning of the context
+    template<typename ParseContext>
+    constexpr auto parse(ParseContext& ctx)
+    {
+        return ctx.begin();
+    }
+
+    /// @brief Defines how to format KeyedMatrix structs
+    /// @param[in] mat Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Cols>& mat, FormatContext& ctx)
+    {
+        std::string result;
+        auto rows = static_cast<size_t>(mat.rows());
+        auto cols = static_cast<size_t>(mat.cols());
+
+        if (rows > 0 && cols > 0)
+        {
+            std::vector<std::string> rowKeysStr;
+            std::vector<size_t> rowKeysLength;
+            rowKeysStr.reserve(rows);
+            rowKeysLength.reserve(rows);
+            size_t rowKeysColSpace = 0;
+            for (const auto& rowKey : mat.rowKeys())
+            {
+                rowKeysStr.push_back(fmt::format("{}", rowKey));
+                auto rowKeyLength = rowKeysStr.back().length();
+                rowKeysColSpace = std::max(rowKeysColSpace, rowKeyLength);
+                rowKeysLength.push_back(rowKeyLength);
+            }
+
+            size_t colMinLength = 6UL;
+
+            std::vector<std::string> colKeysStr;
+            std::vector<size_t> colKeysLength;
+            size_t rowLineLength = rowKeysColSpace + 1; // '\n' at the end of line
+            colKeysStr.reserve(cols);
+            colKeysLength.reserve(cols);
+            for (const auto& colKey : mat.colKeys())
+            {
+                colKeysStr.push_back(fmt::format("{}", colKey));
+                auto colKeyLength = colKeysStr.back().length();
+                colKeysLength.push_back(colKeyLength);
+                rowLineLength += 2 + std::max(colKeysStr.back().length(), colMinLength); // 2 spaces before each column
+            }
+
+            result.reserve((rows + 1) * rowLineLength);
+            // ---------------------------------------- Column keys ------------------------------------------
+            result += std::string(rowKeysColSpace, ' ');
+            for (size_t c = 0; c < cols; c++)
+            {
+                result += "  ";
+                if (colMinLength > colKeysLength.at(c))
+                {
+                    result += std::string(colMinLength - colKeysLength.at(c), ' '); // Spaces in front of column name (if too short)
+                }
+                result += colKeysStr.at(c);
+            }
+            result += '\n';
+            // ------------------------------------------- Rows ----------------------------------------------
+            for (size_t r = 0; r < rows; r++)
+            {
+                if (rowKeysColSpace > rowKeysLength.at(r))
+                {
+                    result += std::string(rowKeysColSpace - rowKeysLength.at(r), ' '); // Spaces in front of row name (if too short)
+                }
+                result += rowKeysStr.at(r);
+                for (size_t c = 0; c < cols; c++)
+                {
+                    auto colLength = std::max(colKeysStr.at(c).length(), colMinLength);
+
+                    result += fmt::format("  {:>{}.{}}", mat(NAV::all, NAV::all)(static_cast<int>(r), static_cast<int>(c)), colLength, colLength - 1);
+                }
+                if (r != rows - 1) { result += '\n'; }
+            }
+        }
+
+        return fmt::format_to(ctx.out(), "{}", result);
+    }
+};
+
+/// @brief Formatter for Frequency
+template<typename Scalar, typename RowKeyType, int Rows>
+struct fmt::formatter<NAV::KeyedVector<Scalar, RowKeyType, Rows>>
+{
+    /// @brief Parse function to make the struct formattable
+    /// @param[in] ctx Parser context
+    /// @return Beginning of the context
+    template<typename ParseContext>
+    constexpr auto parse(ParseContext& ctx)
+    {
+        return ctx.begin();
+    }
+
+    /// @brief Defines how to format KeyedVector structs
+    /// @param[in] vec Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::KeyedVector<Scalar, RowKeyType, Rows>& vec, FormatContext& ctx)
+    {
+        std::string result;
+        auto rows = static_cast<size_t>(vec.rows());
+
+        if (rows > 0)
+        {
+            std::vector<std::string> rowKeysStr;
+            std::vector<size_t> rowKeysLength;
+            rowKeysStr.reserve(rows);
+            rowKeysLength.reserve(rows);
+            size_t rowKeysColSpace = 0;
+            for (const auto& rowKey : vec.rowKeys())
+            {
+                rowKeysStr.push_back(fmt::format("{}", rowKey));
+                auto rowKeyLength = rowKeysStr.back().length();
+                rowKeysColSpace = std::max(rowKeysColSpace, rowKeyLength);
+                rowKeysLength.push_back(rowKeyLength);
+            }
+
+            size_t colLength = 6UL;
+
+            result.reserve(rows * (rowKeysColSpace + 2 + colLength));
+            // ------------------------------------------- Rows ----------------------------------------------
+            for (size_t r = 0; r < rows; r++)
+            {
+                if (rowKeysColSpace > rowKeysLength.at(r))
+                {
+                    result += std::string(rowKeysColSpace - rowKeysLength.at(r), ' '); // Spaces in front of row name (if too short)
+                }
+                result += rowKeysStr.at(r);
+
+                result += fmt::format("  {:>{}.{}}", vec(NAV::all)(static_cast<int>(r)), colLength, colLength - 1);
+
+                if (r != rows - 1) { result += '\n'; }
+            }
+        }
+
+        return fmt::format_to(ctx.out(), "{}", result);
+    }
+};
+
+/// @brief Formatter for Frequency
+template<typename Scalar, typename ColKeyType, int Cols>
+struct fmt::formatter<NAV::KeyedRowVector<Scalar, ColKeyType, Cols>>
+{
+    /// @brief Parse function to make the struct formattable
+    /// @param[in] ctx Parser context
+    /// @return Beginning of the context
+    template<typename ParseContext>
+    constexpr auto parse(ParseContext& ctx)
+    {
+        return ctx.begin();
+    }
+
+    /// @brief Defines how to format KeyedRowVector structs
+    /// @param[in] vec Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::KeyedRowVector<Scalar, ColKeyType, Cols>& vec, FormatContext& ctx)
+    {
+        std::string result;
+        auto cols = static_cast<size_t>(vec.cols());
+
+        if (cols > 0)
+        {
+            size_t colMinLength = 6UL;
+
+            std::vector<std::string> colKeysStr;
+            std::vector<size_t> colKeysLength;
+            size_t rowLineLength = 1; // '\n' at the end of line
+            colKeysStr.reserve(cols);
+            colKeysLength.reserve(cols);
+            for (const auto& colKey : vec.colKeys())
+            {
+                colKeysStr.push_back(fmt::format("{}", colKey));
+                auto colKeyLength = colKeysStr.back().length();
+                colKeysLength.push_back(colKeyLength);
+                rowLineLength += 2 + std::max(colKeysStr.back().length(), colMinLength); // 2 spaces before each column
+            }
+
+            result.reserve(2 * rowLineLength);
+            // ---------------------------------------- Column keys ------------------------------------------
+            for (size_t c = 0; c < cols; c++)
+            {
+                if (c != 0) { result += "  "; }
+                if (colMinLength > colKeysLength.at(c))
+                {
+                    result += std::string(colMinLength - colKeysLength.at(c), ' '); // Spaces in front of column name (if too short)
+                }
+                result += colKeysStr.at(c);
+            }
+            result += '\n';
+            // ------------------------------------------ Values ---------------------------------------------
+
+            for (size_t c = 0; c < cols; c++)
+            {
+                auto colLength = std::max(colKeysStr.at(c).length(), colMinLength);
+                if (c != 0) { result += "  "; }
+                result += fmt::format("{:>{}.{}}", vec(NAV::all)(static_cast<int>(c)), colLength, colLength - 1);
+            }
+        }
+
+        return fmt::format_to(ctx.out(), "{}", result);
+    }
+};
+
+#endif

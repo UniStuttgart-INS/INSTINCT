@@ -919,7 +919,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
 
         // System Matrix
         F = n_systemMatrix_F(n_Quat_b, b_acceleration, n_omega_in, n_velocity, lla_position, R_N, R_E, g_0, r_eS_e, _tau_bad, _tau_bgd);
-        LOG_DATA("{}:     F =\n{}", nameId(), F(all, all));
+        LOG_DATA("{}:     F =\n{}", nameId(), F);
 
         if (_qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
         {
@@ -1017,7 +1017,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q, predictTime);
     }
 
-    LOG_DATA("{}:     Q - Q^T =\n{}", nameId(), _kalmanFilter.Q - _kalmanFilter.Q.transpose());
+    LOG_DATA("{}:     Q - Q^T =\n{}", nameId(), _kalmanFilter.Q(all, all) - _kalmanFilter.Q(all, all).transpose());
     LOG_DATA("{}:     KF.P (before prediction) =\n{}", nameId(), _kalmanFilter.P);
 
     // 3. Propagate the state vector estimate from x(+) and x(-)
@@ -1035,7 +1035,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, predictTime);
         notifyOutputValueChanged(OUTPUT_PORT_INDEX_P, predictTime);
     }
-    LOG_DATA("{}:     KF.x = {}", nameId(), _kalmanFilter.x.transpose());
+    LOG_DATA("{}:     KF.x = {}", nameId(), _kalmanFilter.x.transposed());
     LOG_DATA("{}:     KF.P (after prediction) =\n{}", nameId(), _kalmanFilter.P);
 
     // Averaging of P to avoid numerical problems with symmetry (did not work)
