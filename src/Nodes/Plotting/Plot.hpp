@@ -338,6 +338,10 @@ class Plot : public Node
         ImPlotAxisFlags xAxisFlags = ImPlotAxisFlags_AutoFit;
         /// Flags for the y-Axes
         ImPlotAxisFlags yAxisFlags = ImPlotAxisFlags_AutoFit;
+        /// Scale for the x-Axis
+        ImPlotScale xAxisScale = ImPlotScale_Linear;
+        /// Scale for the y-Axes
+        std::array<ImPlotScale, 3> yAxesScale = { ImPlotScale_Linear, ImPlotScale_Linear, ImPlotScale_Linear };
 
         /// @brief Key: PinIndex, Value: plotData to use for x-Axis
         std::vector<size_t> selectedXdata;

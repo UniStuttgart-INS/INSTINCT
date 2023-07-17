@@ -211,6 +211,8 @@ void to_json(json& j, const Plot::PlotInfo& data)
         { "size", data.size },
         { "xAxisFlags", data.xAxisFlags },
         { "yAxisFlags", data.yAxisFlags },
+        { "xAxisScale", data.xAxisScale },
+        { "yAxesScale", data.yAxesScale },
         { "headerText", data.headerText },
         { "leftPaneWidth", data.leftPaneWidth },
         { "plotFlags", data.plotFlags },
@@ -242,6 +244,14 @@ void from_json(const json& j, Plot::PlotInfo& data)
     if (j.contains("yAxisFlags"))
     {
         j.at("yAxisFlags").get_to(data.yAxisFlags);
+    }
+    if (j.contains("xAxisScale"))
+    {
+        j.at("xAxisScale").get_to(data.xAxisScale);
+    }
+    if (j.contains("yAxesScale"))
+    {
+        j.at("yAxesScale").get_to(data.yAxesScale);
     }
     if (j.contains("headerText"))
     {
@@ -840,6 +850,54 @@ void NAV::Plot::guiConfig()
                     flow::ApplyChanges();
                 }
 
+                auto axisScaleCombo = [&](const char* label, ImPlotScale& axisScale) {
+                    auto getImPlotScaleString = [](ImPlotScale scale) {
+                        switch (scale)
+                        {
+                        case ImPlotScale_Linear: // default linear scale
+                            return "Linear";
+                        case ImPlotScale_Time: // date/time scale
+                            return "Time";
+                        case ImPlotScale_Log10: // base 10 logartithmic scale
+                            return "Log10";
+                        case ImPlotScale_SymLog: // symmetric log scale
+                            return "SymLog";
+                        default:
+                            return "-";
+                        }
+                        return "-";
+                    };
+
+                    ImGui::SetNextItemWidth(100.0F);
+                    if (ImGui::BeginCombo(fmt::format("{}-Axis Scale##{} - {}", label, size_t(id), plotIdx).c_str(), getImPlotScaleString(axisScale)))
+                    {
+                        for (size_t n = 0; n < 4; ++n)
+                        {
+                            const bool is_selected = (static_cast<size_t>(axisScale) == n);
+                            if (ImGui::Selectable(getImPlotScaleString(static_cast<ImPlotScale>(n)), is_selected))
+                            {
+                                axisScale = static_cast<ImPlotScale>(n);
+                                flow::ApplyChanges();
+                            }
+                            if (is_selected) { ImGui::SetItemDefaultFocus(); } // Set the initial focus when opening the combo
+                        }
+                        ImGui::EndCombo();
+                    }
+                };
+                axisScaleCombo("X", plot.xAxisScale);
+                ImGui::SameLine();
+                axisScaleCombo("Y1", plot.yAxesScale[0]);
+                if (plot.plotFlags & ImPlotFlags_YAxis2)
+                {
+                    ImGui::SameLine();
+                    axisScaleCombo("Y2", plot.yAxesScale[1]);
+                }
+                if (plot.plotFlags & ImPlotFlags_YAxis3)
+                {
+                    ImGui::SameLine();
+                    axisScaleCombo("Y3", plot.yAxesScale[2]);
+                }
+
                 ImGui::TreePop();
             }
 
@@ -946,14 +1004,18 @@ void NAV::Plot::guiConfig()
             if (ImPlot::BeginPlot(fmt::format("{}##{} - {}", plot.title, size_t(id), plotIdx).c_str(), plot.size, plot.plotFlags))
             {
                 ImPlot::SetupAxis(ImAxis_X1, xLabel, plot.xAxisFlags);
+                ImPlot::SetupAxisScale(ImAxis_X1, plot.xAxisScale);
                 ImPlot::SetupAxis(ImAxis_Y1, y1Label, plot.yAxisFlags);
+                ImPlot::SetupAxisScale(ImAxis_Y1, plot.yAxesScale[0]);
                 if (plot.plotFlags & ImPlotFlags_YAxis2)
                 {
                     ImPlot::SetupAxis(ImAxis_Y2, y2Label, plot.yAxisFlags | ImPlotAxisFlags_NoGridLines | ImPlotAxisFlags_Opposite);
+                    ImPlot::SetupAxisScale(ImAxis_Y2, plot.yAxesScale[1]);
                 }
                 if (plot.plotFlags & ImPlotFlags_YAxis3)
                 {
                     ImPlot::SetupAxis(ImAxis_Y3, y3Label, plot.yAxisFlags | ImPlotAxisFlags_NoGridLines | ImPlotAxisFlags_Opposite);
+                    ImPlot::SetupAxisScale(ImAxis_Y3, plot.yAxesScale[2]);
                 }
 
                 for (auto& plotItem : plot.plotItems)
