@@ -42,12 +42,12 @@ struct SatId
     /// @brief Equal comparison (needed for unordered_map)
     /// @param[in] rhs Right hand side of the operator
     /// @return True if the elements are equal
-    bool operator==(const SatId& rhs) const { return satSys == rhs.satSys && satNum == rhs.satNum; }
+    constexpr bool operator==(const SatId& rhs) const { return satSys == rhs.satSys && satNum == rhs.satNum; }
 
     /// @brief Less than comparison (needed for map)
     /// @param[in] rhs Right hand side of the operator
     /// @return True if lhs < rhs
-    bool operator<(const SatId& rhs) const
+    constexpr bool operator<(const SatId& rhs) const
     {
         return satSys == rhs.satSys ? satNum < rhs.satNum
                                     : satSys < rhs.satSys;
@@ -72,12 +72,12 @@ struct SatSigId
     /// @brief Equal comparison (needed for unordered_map)
     /// @param[in] rhs Right hand side of the operator
     /// @return True if the elements are equal
-    bool operator==(const SatSigId& rhs) const { return freq == rhs.freq && satNum == rhs.satNum; }
+    constexpr bool operator==(const SatSigId& rhs) const { return freq == rhs.freq && satNum == rhs.satNum; }
 
     /// @brief Less than comparison (needed for map)
     /// @param[in] rhs Right hand side of the operator
     /// @return True if lhs < rhs
-    bool operator<(const SatSigId& rhs) const
+    constexpr bool operator<(const SatSigId& rhs) const
     {
         return freq == rhs.freq ? satNum < rhs.satNum
                                 : freq < rhs.freq;
@@ -201,7 +201,7 @@ struct hash<NAV::SatSigId>
     /// @param[in] f Satellite signal identifier
     std::size_t operator()(const NAV::SatSigId& f) const
     {
-        auto hash1 = std::hash<NAV::Frequency_>{}(NAV::Frequency_(f.freq));
+        auto hash1 = std::hash<NAV::Frequency_>()(NAV::Frequency_(f.freq));
         auto hash2 = std::hash<decltype(f.satNum)>()(f.satNum);
 
         if (hash1 != hash2)

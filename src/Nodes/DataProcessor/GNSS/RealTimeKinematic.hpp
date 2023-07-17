@@ -26,7 +26,7 @@
 #include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
 #include "Navigation/Transformations/Units.hpp"
 #include "Navigation/Math/KalmanFilter.hpp"
-#include "Navigation/Math/ManagedKalmanFilter.hpp"
+#include "Navigation/Math/KeyedKalmanFilter.hpp"
 
 #include "NodeData/GNSS/RtkSolution.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
@@ -34,6 +34,58 @@
 
 namespace NAV
 {
+namespace RealTimeKinematicKF
+{
+namespace States
+{
+
+/// @brief State Keys of the Kalman filter
+enum KFStates
+{
+    PosX,
+    PosY,
+    PosZ,
+    VelX,
+    VelY,
+    VelZ,
+    KFStates_COUNT,
+};
+struct AmbiguitySD
+{
+    constexpr bool operator==(const AmbiguitySD& rhs) const { return satSigId == rhs.satSigId; }
+    SatSigId satSigId;
+};
+
+using StateKeyTypes = std::variant<KFStates, AmbiguitySD>;
+/// @brief Vector with all position and velocity state keys
+inline static const std::vector<StateKeyTypes> PosVel = { KFStates::PosX, KFStates::PosY, KFStates::PosZ,
+                                                          KFStates::VelX, KFStates::VelY, KFStates::VelZ };
+/// @brief All position keys
+inline static const std::vector<KFStates> Pos = { KFStates::PosX, KFStates::PosY, KFStates::PosZ };
+/// @brief All velocity keys
+inline static const std::vector<KFStates> Vel = { KFStates::VelX, KFStates::VelY, KFStates::VelZ };
+
+} // namespace States
+
+namespace Meas
+{
+
+struct PsrDD
+{
+    constexpr bool operator==(const PsrDD& rhs) const { return satSigId == rhs.satSigId; }
+    SatSigId satSigId;
+};
+struct CarrierDD
+{
+    constexpr bool operator==(const CarrierDD& rhs) const { return satSigId == rhs.satSigId; }
+    SatSigId satSigId;
+};
+
+using MeasKeyTypes = std::variant<CarrierDD, PsrDD>;
+
+} // namespace Meas
+} // namespace RealTimeKinematicKF
+
 /// @brief Numerically integrates Imu data
 class RealTimeKinematic : public Node
 {
@@ -247,13 +299,13 @@ class RealTimeKinematic : public Node
     /// Pivot satellites for each constellation
     std::map<Frequency, PivotSatellite> _pivotSatellites;
 
-    /// Kalman Filter representation
-    KalmanFilter _kalmanFilter{ 8, 8 };
-
     /// Latest GNSS Observation from the base station
     std::shared_ptr<const GnssObs> _gnssObsBase = nullptr;
     /// Latest GNSS Observation from the rover
     std::shared_ptr<const GnssObs> _gnssObsRover = nullptr;
+
+    /// Kalman Filter representation
+    KeyedKalmanFilterD<RealTimeKinematicKF::States::StateKeyTypes, RealTimeKinematicKF::Meas::MeasKeyTypes> _kalmanFilter{ RealTimeKinematicKF::States::PosVel, {} };
 
     /// @brief Receive Function for the Base Position
     /// @param[in] queue Queue with all the received data messages
@@ -296,3 +348,40 @@ class RealTimeKinematic : public Node
 };
 
 } // namespace NAV
+
+namespace std
+{
+/// @brief Hash function (needed for unordered_map)
+template<>
+struct hash<NAV::RealTimeKinematicKF::States::AmbiguitySD>
+{
+    /// @brief Hash function
+    /// @param[in] ambSD Single differenced ambiguity
+    size_t operator()(const NAV::RealTimeKinematicKF::States::AmbiguitySD& ambSD) const
+    {
+        return NAV::RealTimeKinematicKF::States::KFStates_COUNT ^ std::hash<NAV::SatSigId>()(ambSD.satSigId) << 1;
+    }
+};
+/// @brief Hash function (needed for unordered_map)
+template<>
+struct hash<NAV::RealTimeKinematicKF::Meas::PsrDD>
+{
+    /// @brief Hash function
+    /// @param[in] psrDD Double differenced pseudorange
+    size_t operator()(const NAV::RealTimeKinematicKF::Meas::PsrDD& psrDD) const
+    {
+        return std::hash<NAV::SatSigId>()(psrDD.satSigId);
+    }
+};
+/// @brief Hash function (needed for unordered_map)
+template<>
+struct hash<NAV::RealTimeKinematicKF::Meas::CarrierDD>
+{
+    /// @brief Hash function
+    /// @param[in] cpDD Double differenced carrier-phase
+    size_t operator()(const NAV::RealTimeKinematicKF::Meas::CarrierDD& cpDD) const
+    {
+        return std::hash<NAV::SatSigId>()(cpDD.satSigId) << 2;
+    }
+};
+} // namespace std

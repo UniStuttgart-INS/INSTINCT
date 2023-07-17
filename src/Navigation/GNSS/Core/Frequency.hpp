@@ -135,6 +135,9 @@ class Frequency
     /// Counts the amount of frequencies contained
     [[nodiscard]] size_t count() const;
 
+    /// @brief Returns a list with all possible frequencies
+    static std::vector<Frequency> GetAll();
+
   private:
     /// @brief Internal value
     Frequency_ value = Frequency_::Freq_None;

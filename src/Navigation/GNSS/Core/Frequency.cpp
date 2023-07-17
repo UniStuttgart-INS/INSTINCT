@@ -441,6 +441,18 @@ size_t Frequency::count() const
     return num;
 }
 
+std::vector<Frequency> Frequency::GetAll()
+{
+    return { Freq_None,
+             G01, G02, G05,
+             E01, E05, E06, E07, E08,
+             R01, R02, R03, R04, R06,
+             B01, B02, B05, B06, B07, B08,
+             J01, J02, J05, J06,
+             I05, I09,
+             S01, S05 };
+}
+
 void to_json(json& j, const Frequency& data)
 {
     j = std::string(data);
