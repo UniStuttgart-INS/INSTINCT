@@ -42,20 +42,25 @@ namespace States
 /// @brief State Keys of the Kalman filter
 enum KFStates
 {
-    PosX,
-    PosY,
-    PosZ,
-    VelX,
-    VelY,
-    VelZ,
-    KFStates_COUNT,
+    PosX,           ///< Position ECEF_X
+    PosY,           ///< Position ECEF_Y
+    PosZ,           ///< Position ECEF_Z
+    VelX,           ///< Velocity ECEF_X
+    VelY,           ///< Velocity ECEF_Y
+    VelZ,           ///< Velocity ECEF_Z
+    KFStates_COUNT, ///< Count
 };
+/// @brief Single differenced (rover - base) ambiguity N_br^1 (one for each satellite signal)
 struct AmbiguitySD
 {
+    /// @brief Equal comparison operator
+    /// @param rhs Right-hand side
     constexpr bool operator==(const AmbiguitySD& rhs) const { return satSigId == rhs.satSigId; }
+    /// @brief Satellite Signal Id
     SatSigId satSigId;
 };
 
+/// Alias for the state key type
 using StateKeyTypes = std::variant<KFStates, AmbiguitySD>;
 /// @brief Vector with all position and velocity state keys
 inline static const std::vector<StateKeyTypes> PosVel = { KFStates::PosX, KFStates::PosY, KFStates::PosZ,
@@ -70,17 +75,26 @@ inline static const std::vector<KFStates> Vel = { KFStates::VelX, KFStates::VelY
 namespace Meas
 {
 
+/// @brief Double differenced pseudorange measurement psr_br^1s (one for each satellite signal, referenced to the pivot satellite)
 struct PsrDD
 {
+    /// @brief Equal comparison operator
+    /// @param rhs Right-hand side
     constexpr bool operator==(const PsrDD& rhs) const { return satSigId == rhs.satSigId; }
+    /// @brief Satellite Signal Id
     SatSigId satSigId;
 };
+/// @brief Double differenced carrier-phase measurement phi_br^1s (one for each satellite signal, referenced to the pivot satellite)
 struct CarrierDD
 {
+    /// @brief Equal comparison operator
+    /// @param rhs Right-hand side
     constexpr bool operator==(const CarrierDD& rhs) const { return satSigId == rhs.satSigId; }
+    /// @brief Satellite Signal Id
     SatSigId satSigId;
 };
 
+/// Alias for the measurement key type
 using MeasKeyTypes = std::variant<CarrierDD, PsrDD>;
 
 } // namespace Meas

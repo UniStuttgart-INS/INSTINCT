@@ -717,11 +717,12 @@ void RealTimeKinematic::updatePivotSatellites(const std::vector<SatData>& satell
 {
     // Update or erase pivot satellites from last epoch
     std::vector<Frequency> erasePivotSatSys;
-    for (auto& [pivotFreq, pivotSat] : _pivotSatellites)
+    for (auto& pivotSatellite : _pivotSatellites)
     {
         auto satIter = std::find_if(satelliteData.begin(), satelliteData.end(), [&](const SatData& satData) {
-            return pivotSat.satData.satId == satData.satId;
+            return pivotSatellite.second.satData.satId == satData.satId;
         });
+        auto& [pivotFreq, pivotSat] = pivotSatellite;
         if (satIter != satelliteData.end()
             && satIter->rover.satElevation > deg2rad(10) // Do not use the pivot satellite anymore, if elevation < 10°
             && satIter->base.satElevation > deg2rad(10))
