@@ -182,15 +182,9 @@ struct hash<NAV::SatId>
     std::size_t operator()(const NAV::SatId& f) const
     {
         auto hash1 = std::hash<NAV::SatelliteSystem_>{}(NAV::SatelliteSystem_(f.satSys));
-        auto hash2 = std::hash<decltype(f.satNum)>()(f.satNum);
+        auto hash2 = static_cast<size_t>(f.satNum);
 
-        if (hash1 != hash2)
-        {
-            return hash1 ^ hash2 << 1;
-        }
-
-        // If hash1 == hash2, their XOR is zero.
-        return hash1;
+        return hash1 | (hash2 << 10);
     }
 };
 /// @brief Hash function for SatSigId (needed for unordered_map)
@@ -202,15 +196,9 @@ struct hash<NAV::SatSigId>
     std::size_t operator()(const NAV::SatSigId& f) const
     {
         auto hash1 = std::hash<NAV::Frequency_>()(NAV::Frequency_(f.freq));
-        auto hash2 = std::hash<decltype(f.satNum)>()(f.satNum);
+        auto hash2 = static_cast<size_t>(f.satNum);
 
-        if (hash1 != hash2)
-        {
-            return hash1 ^ hash2 << 1;
-        }
-
-        // If hash1 == hash2, their XOR is zero.
-        return hash1;
+        return hash1 | (hash2 << 10);
     }
 };
 } // namespace std

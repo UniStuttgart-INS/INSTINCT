@@ -16,10 +16,50 @@
 #include "Logger.hpp"
 
 #include <unordered_map>
+#include <bitset>
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 
 namespace NAV::TESTS::RealTimeKinematicTests
 {
+
+TEST_CASE("[SatelliteIdentifier] SatId hash unique", "[SatelliteIdentifier]")
+{
+    auto logger = initializeTestLogger();
+
+    // auto frequencies = Frequency::GetAll();
+    std::vector satSystems = { SatSys_None, GPS, GAL, GLO, BDS, QZSS, IRNSS, SBAS };
+    const uint16_t MAX_SATELLITES = 200;
+
+    std::unordered_map<size_t, SatId> unique;
+
+    for (const auto& satSys : satSystems)
+    {
+        for (uint16_t satNum = 1; satNum <= MAX_SATELLITES; satNum++)
+        {
+            auto satId = SatId{ satSys, satNum };
+            auto hash = std::hash<SatId>()(satId);
+            if (unique.contains(hash))
+            {
+                LOG_ERROR("Hash ({}) for SatId {} was already in the map but for SatId {}",
+                          std::bitset<64>(hash).to_string(),
+                          satId,
+                          unique.at(hash));
+            }
+            unique[hash] = satId;
+        }
+    }
+    REQUIRE(unique.size() == satSystems.size() * MAX_SATELLITES);
+
+    for (const auto& satSys : satSystems)
+    {
+        for (uint16_t satNum = 1; satNum <= MAX_SATELLITES; satNum++)
+        {
+            auto satId = SatId{ satSys, satNum };
+            auto hash = std::hash<SatId>()(satId);
+            REQUIRE(unique.at(hash) == satId);
+        }
+    }
+}
 
 TEST_CASE("[SatelliteIdentifier] SatSigId hash unique", "[SatelliteIdentifier]")
 {
@@ -28,24 +68,33 @@ TEST_CASE("[SatelliteIdentifier] SatSigId hash unique", "[SatelliteIdentifier]")
     auto frequencies = Frequency::GetAll();
     const uint16_t MAX_SATELLITES = 200;
 
-    std::unordered_map<size_t, size_t> unique;
-    size_t iter = 0;
+    std::unordered_map<size_t, SatSigId> unique;
 
     for (const auto& freq : frequencies)
     {
-        for (uint16_t satNum = 0; satNum < MAX_SATELLITES; satNum++)
+        for (uint16_t satNum = 1; satNum <= MAX_SATELLITES; satNum++)
         {
-            unique[std::hash<SatSigId>()(SatSigId{ freq, satNum })] = iter++;
+            auto satSigId = SatSigId{ freq, satNum };
+            auto hash = std::hash<SatSigId>()(satSigId);
+            if (unique.contains(hash))
+            {
+                LOG_ERROR("Hash ({}) for SatSigId {} was already in the map but for SatSigId {}",
+                          std::bitset<64>(hash).to_string(),
+                          satSigId,
+                          unique.at(hash));
+            }
+            unique[hash] = satSigId;
         }
     }
     REQUIRE(unique.size() == frequencies.size() * MAX_SATELLITES);
 
-    iter = 0;
     for (const auto& freq : frequencies)
     {
-        for (uint16_t satNum = 0; satNum < MAX_SATELLITES; satNum++)
+        for (uint16_t satNum = 1; satNum <= MAX_SATELLITES; satNum++)
         {
-            REQUIRE(unique.at(std::hash<SatSigId>()(SatSigId{ freq, satNum })) == iter++);
+            auto satSigId = SatSigId{ freq, satNum };
+            auto hash = std::hash<SatSigId>()(satSigId);
+            REQUIRE(unique.at(hash) == satSigId);
         }
     }
 }

@@ -359,7 +359,7 @@ struct hash<NAV::RealTimeKinematicKF::States::AmbiguitySD>
     /// @param[in] ambSD Single differenced ambiguity
     size_t operator()(const NAV::RealTimeKinematicKF::States::AmbiguitySD& ambSD) const
     {
-        return NAV::RealTimeKinematicKF::States::KFStates_COUNT ^ std::hash<NAV::SatSigId>()(ambSD.satSigId) << 1;
+        return NAV::RealTimeKinematicKF::States::KFStates_COUNT + std::hash<NAV::SatSigId>()(ambSD.satSigId);
     }
 };
 /// @brief Hash function (needed for unordered_map)
@@ -381,7 +381,7 @@ struct hash<NAV::RealTimeKinematicKF::Meas::CarrierDD>
     /// @param[in] cpDD Double differenced carrier-phase
     size_t operator()(const NAV::RealTimeKinematicKF::Meas::CarrierDD& cpDD) const
     {
-        return std::hash<NAV::SatSigId>()(cpDD.satSigId) << 2;
+        return std::hash<NAV::SatSigId>()(cpDD.satSigId) << 12;
     }
 };
 } // namespace std

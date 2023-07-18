@@ -335,13 +335,44 @@ namespace std
 {
 /// @brief Hash function for SatelliteSystem (needed for unordered_map)
 template<>
+struct hash<NAV::SatelliteSystem_>
+{
+    /// @brief Hash function for SatelliteSystem
+    /// @param[in] satSys Satellite system
+    std::size_t operator()(const NAV::SatelliteSystem_& satSys) const
+    {
+        using namespace NAV;
+        switch (satSys)
+        {
+        case SatSys_None:
+            return 1;
+        case GPS:
+            return 100;
+        case GAL:
+            return 200;
+        case GLO:
+            return 300;
+        case BDS:
+            return 400;
+        case QZSS:
+            return 500;
+        case IRNSS:
+            return 600;
+        case SBAS:
+            return 700;
+        }
+        return 0;
+    }
+};
+/// @brief Hash function for SatelliteSystem (needed for unordered_map)
+template<>
 struct hash<NAV::SatelliteSystem>
 {
     /// @brief Hash function for SatelliteSystem
-    /// @param[in] f Satellite system
-    std::size_t operator()(const NAV::SatelliteSystem& f) const
+    /// @param[in] satSys Satellite system
+    std::size_t operator()(const NAV::SatelliteSystem& satSys) const
     {
-        return std::hash<NAV::SatelliteSystem_>{}(NAV::SatelliteSystem_(f));
+        return std::hash<NAV::SatelliteSystem_>()(NAV::SatelliteSystem_(satSys));
     }
 };
 } // namespace std

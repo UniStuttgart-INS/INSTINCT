@@ -31,38 +31,47 @@ TEST_CASE("[RealTimeKinematic] State keys unique", "[RealTimeKinematic]")
     auto frequencies = Frequency::GetAll();
     const uint16_t MAX_SATELLITES = 200;
 
-    std::unordered_map<size_t, size_t> unique;
-    size_t iter = 0;
+    std::unordered_map<size_t, SatSigId> unique;
 
-    unique[std::hash<States::KFStates>()(States::PosX)] = iter++;
-    unique[std::hash<States::KFStates>()(States::PosY)] = iter++;
-    unique[std::hash<States::KFStates>()(States::PosZ)] = iter++;
-    unique[std::hash<States::KFStates>()(States::VelX)] = iter++;
-    unique[std::hash<States::KFStates>()(States::VelY)] = iter++;
-    unique[std::hash<States::KFStates>()(States::VelZ)] = iter++;
+    unique[std::hash<States::KFStates>()(States::PosX)] = SatSigId{ Freq_None, 201 };
+    unique[std::hash<States::KFStates>()(States::PosY)] = SatSigId{ Freq_None, 202 };
+    unique[std::hash<States::KFStates>()(States::PosZ)] = SatSigId{ Freq_None, 203 };
+    unique[std::hash<States::KFStates>()(States::VelX)] = SatSigId{ Freq_None, 204 };
+    unique[std::hash<States::KFStates>()(States::VelY)] = SatSigId{ Freq_None, 205 };
+    unique[std::hash<States::KFStates>()(States::VelZ)] = SatSigId{ Freq_None, 206 };
 
     for (const auto& freq : frequencies)
     {
-        for (uint16_t satNum = 0; satNum < MAX_SATELLITES; satNum++)
+        for (uint16_t satNum = 1; satNum <= MAX_SATELLITES; satNum++)
         {
-            unique[std::hash<States::AmbiguitySD>()(States::AmbiguitySD{ SatSigId{ freq, satNum } })] = iter++;
+            auto satSigId = SatSigId{ freq, satNum };
+            auto hash = std::hash<States::AmbiguitySD>()(States::AmbiguitySD{ satSigId });
+            if (unique.contains(hash))
+            {
+                LOG_ERROR("Hash ({}) for SatSigId {} was already in the map but for SatSigId {}",
+                          std::bitset<64>(hash).to_string(),
+                          satSigId,
+                          unique.at(hash));
+            }
+            unique[hash] = satSigId;
         }
     }
     REQUIRE(unique.size() == 6 + frequencies.size() * MAX_SATELLITES);
 
-    iter = 0;
-    REQUIRE(unique.at(std::hash<States::KFStates>()(States::PosX)) == iter++);
-    REQUIRE(unique.at(std::hash<States::KFStates>()(States::PosY)) == iter++);
-    REQUIRE(unique.at(std::hash<States::KFStates>()(States::PosZ)) == iter++);
-    REQUIRE(unique.at(std::hash<States::KFStates>()(States::VelX)) == iter++);
-    REQUIRE(unique.at(std::hash<States::KFStates>()(States::VelY)) == iter++);
-    REQUIRE(unique.at(std::hash<States::KFStates>()(States::VelZ)) == iter++);
+    REQUIRE(unique.at(std::hash<States::KFStates>()(States::PosX)) == SatSigId{ Freq_None, 201 });
+    REQUIRE(unique.at(std::hash<States::KFStates>()(States::PosY)) == SatSigId{ Freq_None, 202 });
+    REQUIRE(unique.at(std::hash<States::KFStates>()(States::PosZ)) == SatSigId{ Freq_None, 203 });
+    REQUIRE(unique.at(std::hash<States::KFStates>()(States::VelX)) == SatSigId{ Freq_None, 204 });
+    REQUIRE(unique.at(std::hash<States::KFStates>()(States::VelY)) == SatSigId{ Freq_None, 205 });
+    REQUIRE(unique.at(std::hash<States::KFStates>()(States::VelZ)) == SatSigId{ Freq_None, 206 });
 
     for (const auto& freq : frequencies)
     {
-        for (uint16_t satNum = 0; satNum < MAX_SATELLITES; satNum++)
+        for (uint16_t satNum = 1; satNum <= MAX_SATELLITES; satNum++)
         {
-            REQUIRE(unique.at(std::hash<States::AmbiguitySD>()(States::AmbiguitySD{ SatSigId{ freq, satNum } })) == iter++);
+            auto satSigId = SatSigId{ freq, satNum };
+            auto hash = std::hash<States::AmbiguitySD>()(States::AmbiguitySD{ satSigId });
+            REQUIRE(unique.at(hash) == satSigId);
         }
     }
 }
@@ -76,27 +85,48 @@ TEST_CASE("[RealTimeKinematic] Meas keys unique", "[RealTimeKinematic]")
     auto frequencies = Frequency::GetAll();
     const uint16_t MAX_SATELLITES = 200;
 
-    std::unordered_map<size_t, size_t> unique;
-    size_t iter = 0;
+    std::unordered_map<size_t, SatSigId> unique;
 
     for (const auto& freq : frequencies)
     {
-        for (uint16_t satNum = 0; satNum < MAX_SATELLITES; satNum++)
+        for (uint16_t satNum = 1; satNum <= MAX_SATELLITES; satNum++)
         {
-            unique[std::hash<Meas::PsrDD>()(Meas::PsrDD{ SatSigId{ freq, satNum } })] = iter++;
-            unique[std::hash<Meas::CarrierDD>()(Meas::CarrierDD{ SatSigId{ freq, satNum } })] = iter++;
+            auto satSigId = SatSigId{ freq, satNum };
+            auto hash = std::hash<Meas::PsrDD>()(Meas::PsrDD{ satSigId });
+            if (unique.contains(hash))
+            {
+                LOG_ERROR("PsrDD Hash ({}) for SatSigId {} was already in the map but for SatSigId {}",
+                          std::bitset<64>(hash).to_string(),
+                          satSigId,
+                          unique.at(hash));
+            }
+            unique[hash] = satSigId;
+
+            satSigId = SatSigId{ freq, static_cast<uint16_t>(satNum + 300) };
+            hash = std::hash<Meas::CarrierDD>()(Meas::CarrierDD{ satSigId });
+            if (unique.contains(hash))
+            {
+                LOG_ERROR("CarrierDD Hash ({}) for SatSigId {} was already in the map but for SatSigId {}",
+                          std::bitset<64>(hash).to_string(),
+                          satSigId,
+                          unique.at(hash));
+            }
+            unique[hash] = satSigId;
         }
     }
     REQUIRE(unique.size() == 2 * frequencies.size() * MAX_SATELLITES);
 
-    iter = 0;
-
     for (const auto& freq : frequencies)
     {
-        for (uint16_t satNum = 0; satNum < MAX_SATELLITES; satNum++)
+        for (uint16_t satNum = 1; satNum <= MAX_SATELLITES; satNum++)
         {
-            REQUIRE(unique.at(std::hash<Meas::PsrDD>()(Meas::PsrDD{ SatSigId{ freq, satNum } })) == iter++);
-            REQUIRE(unique.at(std::hash<Meas::CarrierDD>()(Meas::CarrierDD{ SatSigId{ freq, satNum } })) == iter++);
+            auto satSigId = SatSigId{ freq, satNum };
+            auto hash = std::hash<Meas::PsrDD>()(Meas::PsrDD{ satSigId });
+            REQUIRE(unique.at(hash) == satSigId);
+
+            satSigId = SatSigId{ freq, static_cast<uint16_t>(satNum + 300) };
+            hash = std::hash<Meas::CarrierDD>()(Meas::CarrierDD{ satSigId });
+            REQUIRE(unique.at(hash) == satSigId);
         }
     }
 }
