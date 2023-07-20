@@ -63,13 +63,6 @@ struct all_t
 template<typename Scalar, int Rows, int Cols>
 class KeyedMatrixStorage
 {
-  public:
-    /// @brief Return the rows of the underlying Eigen matrix
-    [[nodiscard]] decltype(auto) rows() const { return matrix.rows(); }
-
-    /// @brief Return the cols of the underlying Eigen matrix
-    [[nodiscard]] decltype(auto) cols() const { return matrix.cols(); }
-
   protected:
     Eigen::Matrix<Scalar, Rows, Cols> matrix; ///< Data storage of the type
 
@@ -93,6 +86,9 @@ template<typename Scalar, typename RowKeyType, int Rows, int Cols>
 class KeyedMatrixRowsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols>
 {
   public:
+    /// @brief Return the rows of the underlying Eigen matrix
+    [[nodiscard]] decltype(auto) rows() const { return this->matrix.rows(); }
+
     /// @brief Returns the row keys
     const std::vector<RowKeyType>& rowKeys() const { return rowKeysVector; }
 
@@ -221,6 +217,9 @@ template<typename Scalar, typename ColKeyType, int Rows, int Cols>
 class KeyedMatrixColsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols>
 {
   public:
+    /// @brief Return the cols of the underlying Eigen matrix
+    [[nodiscard]] decltype(auto) cols() const { return this->matrix.cols(); }
+
     /// @brief Returns the col keys
     const std::vector<ColKeyType>& colKeys() const { return colKeysVector; }
 
