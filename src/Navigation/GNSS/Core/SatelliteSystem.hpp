@@ -116,6 +116,16 @@ struct SatelliteSystem
     /// @brief Returns a continuous enumeration of the object
     [[nodiscard]] size_t toEnumeration() const;
 
+    /// @brief Get a vector representation of the specified Satellite Systems
+    /// @param[in] satSys Satellite System to get the vector for
+    static std::vector<SatelliteSystem> ToVector(SatelliteSystem satSys);
+
+    /// @brief Get a vector representation of the specified Satellite Systems
+    [[nodiscard]] std::vector<SatelliteSystem> toVector() const;
+
+    /// @brief Returns a list with all possible satellite systems
+    static std::vector<SatelliteSystem> GetAll();
+
   private:
     /// @brief Internal value
     SatelliteSystem_ value = SatelliteSystem_::SatSys_None;
@@ -341,7 +351,7 @@ struct hash<NAV::SatelliteSystem_>
     /// @param[in] satSys Satellite system
     std::size_t operator()(const NAV::SatelliteSystem_& satSys) const
     {
-        using namespace NAV;
+        using namespace NAV; // NOLINT(google-build-using-namespace)
         switch (satSys)
         {
         case SatSys_None:

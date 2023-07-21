@@ -20,18 +20,16 @@
 #include "internal/gui/NodeEditorApplication.hpp"
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
+#include "internal/gui/widgets/InputWithUnit.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-#include "NodeData/GNSS/GnssObs.hpp"
-#include "NodeData/GNSS/GnssNavInfo.hpp"
-#include "NodeData/GNSS/SppSolution.hpp"
-
-#include "Navigation/GNSS/Functions.hpp"
 #include "Navigation/GNSS/Satellite/Ephemeris/GLONASSEphemeris.hpp"
-#include "Navigation/Math/LeastSquares.hpp"
+#include "Navigation/Math/VanLoan.hpp"
+
+namespace SPP = NAV::GNSS::Positioning::SPP;
 
 NAV::SinglePointPositioning::SinglePointPositioning()
     : Node(typeStatic())
@@ -206,6 +204,10 @@ void NAV::SinglePointPositioning::guiConfig()
         ImGui::EndTable();
     }
 
+    ImGui::Separator();
+
+    // ###########################################################################################################
+
     const float itemWidth = 250.0F * gui::NodeEditorApplication::windowFontRatio();
 
     ImGui::SetNextItemWidth(itemWidth);
@@ -235,12 +237,22 @@ void NAV::SinglePointPositioning::guiConfig()
         flow::ApplyChanges();
     }
 
+    ImGui::Separator();
+
+    // ###########################################################################################################
+
     ImGui::SetNextItemWidth(itemWidth);
-    if (ComboSppEstimator(fmt::format("Estimation algorithm##{}", size_t(id)).c_str(), _sppEstimator))
+    if (SPP::ComboSppEstimatorType(fmt::format("Estimation algorithm##{}", size_t(id)).c_str(), _estimatorType))
     {
-        LOG_DEBUG("{}: SPP estimator algorithm changed to {}", nameId(), NAV::to_string(_sppEstimator));
+        LOG_DEBUG("{}: SPP estimator algorithm changed to {}", nameId(), NAV::to_string(_estimatorType));
         flow::ApplyChanges();
     }
+
+    // ###########################################################################################################
+
+    ImGui::Separator();
+
+    // ###########################################################################################################
 
     ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
     if (ImGui::TreeNode(fmt::format("Compensation models##{}", size_t(id)).c_str()))
@@ -257,6 +269,8 @@ void NAV::SinglePointPositioning::guiConfig()
         }
         ImGui::TreePop();
     }
+
+    // ###########################################################################################################
 }
 
 [[nodiscard]] json NAV::SinglePointPositioning::save() const
@@ -270,7 +284,11 @@ void NAV::SinglePointPositioning::guiConfig()
     j["codes"] = _filterCode;
     j["excludedSatellites"] = _excludedSatellites;
     j["elevationMask"] = rad2deg(_elevationMask);
-    j["sppEstimator"] = _sppEstimator;
+
+    // ###########################################################################################################
+
+    j["estimatorType"] = _estimatorType;
+
     j["ionosphereModel"] = _ionosphereModel;
     j["troposphereModels"] = _troposphereModels;
 
@@ -305,10 +323,16 @@ void NAV::SinglePointPositioning::restore(json const& j)
         j.at("elevationMask").get_to(_elevationMask);
         _elevationMask = deg2rad(_elevationMask);
     }
-    if (j.contains("sppEstimator"))
+
+    // ###########################################################################################################
+
+    if (j.contains("estimatorType"))
     {
-        j.at("sppEstimator").get_to(_sppEstimator);
+        j.at("estimatorType").get_to(_estimatorType);
     }
+
+    // ###########################################################################################################
+
     if (j.contains("ionosphereModel"))
     {
         j.at("ionosphereModel").get_to(_ionosphereModel);
@@ -317,6 +341,8 @@ void NAV::SinglePointPositioning::restore(json const& j)
     {
         j.at("troposphereModels").get_to(_troposphereModels);
     }
+
+    // ###########################################################################################################
 }
 
 bool NAV::SinglePointPositioning::initialize()
@@ -331,7 +357,7 @@ bool NAV::SinglePointPositioning::initialize()
 
     _state = {};
 
-    LOG_DEBUG("SinglePointPositioning initialized");
+    LOG_DEBUG("{}: initialized", nameId());
 
     return true;
 }
@@ -369,13 +395,13 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     auto gnssObs = std::static_pointer_cast<const GnssObs>(queue.extract_front());
     LOG_DATA("{}: Calculating SPP for [{}]", nameId(), gnssObs->insTime);
 
-    if (auto sppSol = calcSppSolution(_state, gnssObs, gnssNavInfos,
-                                      _ionosphereModel, _troposphereModels, _sppEstimator,
-                                      _filterFreq, _filterCode, _excludedSatellites, _elevationMask))
+    if (auto sppSol = calcSppSolutionLSE(_state, gnssObs, gnssNavInfos,
+                                         _ionosphereModel, _troposphereModels, _estimatorType,
+                                         _filterFreq, _filterCode, _excludedSatellites, _elevationMask))
     {
-        _state = SppState{ .e_position = sppSol->e_position(),
-                           .e_velocity = sppSol->e_velocity(),
-                           .recvClk = sppSol->recvClk };
+        _state = SPP::State{ .e_position = sppSol->e_position(),
+                             .e_velocity = sppSol->e_velocity(),
+                             .recvClk = sppSol->recvClk };
 
         invokeCallbacks(OUTPUT_PORT_INDEX_SPPSOL, sppSol);
     }

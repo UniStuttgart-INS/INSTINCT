@@ -588,12 +588,13 @@ std::shared_ptr<RtkSolution> RealTimeKinematic::calcFallbackSppSolution()
     }
     if (!gnssNavInfos.empty())
     {
-        SppState state = { .e_position = _e_roverPosition,
-                           .e_velocity = _e_roverVelocity,
-                           .recvClk = {} };
-        if (auto sppSol = calcSppSolution(state, _gnssObsRover, gnssNavInfos,
-                                          _ionosphereModel, _troposphereModels, SppEstimator::WEIGHTED_LEAST_SQUARES,
-                                          _filterFreq, _filterCode, _excludedSatellites, _elevationMask))
+        GNSS::Positioning::SPP::State state = { .e_position = _e_roverPosition,
+                                                .e_velocity = _e_roverVelocity,
+                                                .recvClk = {} };
+        if (auto sppSol = GNSS::Positioning::SPP::calcSppSolutionLSE(state, _gnssObsRover, gnssNavInfos,
+                                                                     _ionosphereModel, _troposphereModels,
+                                                                     GNSS::Positioning::SPP::EstimatorType::WEIGHTED_LEAST_SQUARES,
+                                                                     _filterFreq, _filterCode, _excludedSatellites, _elevationMask))
         {
             _e_roverPosition = sppSol->e_position();
             _lla_roverPosition = trafo::ecef2lla_WGS84(_e_roverPosition);
@@ -601,8 +602,8 @@ std::shared_ptr<RtkSolution> RealTimeKinematic::calcFallbackSppSolution()
 
             auto rtkSol = std::make_shared<RtkSolution>();
             rtkSol->insTime = sppSol->insTime;
-            rtkSol->setPositionAndStdDev_e(sppSol->e_position(), sppSol->e_positionStdev());
-            rtkSol->setVelocityAndStdDev_e(sppSol->e_velocity(), sppSol->e_velocityStdev());
+            rtkSol->setPosition_e(sppSol->e_position()); // TODO: Set covariance and stdDev
+            rtkSol->setVelocity_e(sppSol->e_velocity());
             rtkSol->nSatellitesPosition = sppSol->nSatellitesPosition;
             rtkSol->nSatellitesVelocity = sppSol->nSatellitesVelocity;
             rtkSol->recvClk = sppSol->recvClk;

@@ -252,47 +252,12 @@ Frequency::operator std::string() const
 
 SatelliteSystem Frequency::GetSatelliteSystemForFrequency(Frequency freq)
 {
-    switch (Frequency_(freq))
+    SatelliteSystem retVal = SatSys_None;
+    for (auto satSys : SatelliteSystem::GetAll())
     {
-    case B01:
-    case B02:
-    case B05:
-    case B06:
-    case B07:
-    case B08:
-        return BDS;
-    case E01:
-    case E05:
-    case E06:
-    case E07:
-    case E08:
-        return GAL;
-    case G01:
-    case G02:
-    case G05:
-        return GPS;
-    case I05:
-    case I09:
-        return IRNSS;
-    case J01:
-    case J02:
-    case J05:
-    case J06:
-        return QZSS;
-    case R01:
-    case R02:
-    case R03:
-    case R04:
-    case R06:
-        return GLO;
-    case S01:
-    case S05:
-        return SBAS;
-    case Freq_None:
-        return SatSys_None;
+        if (freq & satSys) { retVal |= satSys; }
     }
-
-    return SatSys_None;
+    return retVal;
 }
 
 double Frequency::GetFrequency(Frequency freq, int8_t num)
@@ -443,8 +408,7 @@ size_t Frequency::count() const
 
 std::vector<Frequency> Frequency::GetAll()
 {
-    return { Freq_None,
-             G01, G02, G05,
+    return { G01, G02, G05,
              E01, E05, E06, E07, E08,
              R01, R02, R03, R04, R06,
              B01, B02, B05, B06, B07, B08,

@@ -23,7 +23,16 @@
 #include "Navigation/GNSS/Positioning/SppAlgorithm.hpp"
 #include "Navigation/Atmosphere/Ionosphere/Ionosphere.hpp"
 #include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
+
 #include "Navigation/Transformations/Units.hpp"
+#include "Navigation/Math/KalmanFilter.hpp"
+#include "Navigation/Math/LeastSquares.hpp"
+#include "Navigation/GNSS/Functions.hpp"
+#include "Navigation/GNSS/Satellite/internal/SatNavData.hpp"
+
+#include "NodeData/GNSS/GnssObs.hpp"
+#include "NodeData/GNSS/GnssNavInfo.hpp"
+#include "NodeData/GNSS/SppSolution.hpp"
 
 namespace NAV
 {
@@ -70,8 +79,6 @@ class SinglePointPositioning : public Node
 
     constexpr static size_t OUTPUT_PORT_INDEX_SPPSOL = 0; ///< @brief Flow (SppSol)
 
-    // --------------------------------------------------------------- Gui -----------------------------------------------------------------
-
     /// @brief Initialize the node
     bool initialize() override;
 
@@ -100,13 +107,11 @@ class SinglePointPositioning : public Node
     /// Troposphere Models used for the calculation
     TroposphereModelSelection _troposphereModels;
 
-    /// SPP Estimator algorithm
-    SppEstimator _sppEstimator = SppEstimator::WEIGHTED_LEAST_SQUARES;
-
-    // ------------------------------------------------------------ Algorithm --------------------------------------------------------------
+    /// Estimator type
+    GNSS::Positioning::SPP::EstimatorType _estimatorType = GNSS::Positioning::SPP::EstimatorType::WEIGHTED_LEAST_SQUARES;
 
     /// State estimated by the algorithm
-    SppState _state;
+    GNSS::Positioning::SPP::State _state;
 
     /// @brief Receive Function for the Gnss Observations
     /// @param[in] queue Queue with all the received data messages

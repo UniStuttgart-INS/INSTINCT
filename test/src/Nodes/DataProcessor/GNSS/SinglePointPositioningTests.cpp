@@ -195,7 +195,7 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - no 
 
                 if (calcData.elevationMaskTriggered)
                 {
-                    REQUIRE(std::isnan(calcData.psrRateEst));
+                    REQUIRE(!calcData.psrRateEst.has_value());
                     REQUIRE(std::isnan(calcData.dpsr_I));
                     REQUIRE(std::isnan(calcData.dpsr_T));
                     REQUIRE(std::isnan(calcData.geometricDist));

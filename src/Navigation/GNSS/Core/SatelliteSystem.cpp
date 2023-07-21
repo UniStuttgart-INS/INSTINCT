@@ -227,6 +227,26 @@ size_t SatelliteSystem::toEnumeration() const
     return ToEnumeration(value);
 }
 
+std::vector<SatelliteSystem> SatelliteSystem::ToVector(SatelliteSystem satSys)
+{
+    std::vector<SatelliteSystem> v;
+    for (const SatelliteSystem& sys : GetAll())
+    {
+        if (sys.value & satSys.value) { v.push_back(sys); }
+    }
+    return v;
+}
+
+std::vector<SatelliteSystem> SatelliteSystem::toVector() const
+{
+    return ToVector(value);
+}
+
+std::vector<SatelliteSystem> SatelliteSystem::GetAll()
+{
+    return { GPS, GAL, GLO, BDS, QZSS, IRNSS, SBAS };
+}
+
 void to_json(json& j, const SatelliteSystem& data)
 {
     j = std::string(data);

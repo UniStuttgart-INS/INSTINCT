@@ -578,7 +578,7 @@ TEST_CASE("[KeyedMatrix] rowKeys & colKeys", "[KeyedMatrix]")
         THREE,
     };
 
-    KeyedMatrixX<double, Keys, int> mat(Eigen::Matrix3d{}, { ONE, TWO, THREE }, { 1, 2, 3 });
+    KeyedMatrixX<double, Keys, int> mat(Eigen::Matrix3d::Zero(), { ONE, TWO, THREE }, { 1, 2, 3 });
     REQUIRE(mat.rowKeys() == std::vector<Keys>{ ONE, TWO, THREE });
     REQUIRE(mat.colKeys() == std::vector<int>{ 1, 2, 3 });
 }
@@ -596,7 +596,7 @@ TEST_CASE("[KeyedMatrix] hasRow(s) & hasCol(s)", "[KeyedMatrix]")
         FIVE,
     };
 
-    KeyedMatrixX<double, Keys, int> mat(Eigen::Matrix3d{}, { ONE, TWO, THREE }, { 1, 2, 3 });
+    KeyedMatrixX<double, Keys, int> mat(Eigen::Matrix3d::Zero(), { ONE, TWO, THREE }, { 1, 2, 3 });
     REQUIRE(mat.hasRow(TWO));
     REQUIRE(!mat.hasRow(FOUR));
 

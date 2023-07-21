@@ -467,7 +467,7 @@ struct hash<NAV::Frequency_>
     /// @return Has value for the frequency
     std::size_t operator()(const NAV::Frequency_& f) const
     {
-        using namespace NAV;
+        using namespace NAV; // NOLINT(google-build-using-namespace)
         switch (f)
         {
         case Freq_None:
