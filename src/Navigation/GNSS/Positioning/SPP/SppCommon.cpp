@@ -21,22 +21,6 @@
 namespace NAV::GNSS::Positioning::SPP
 {
 
-IonosphericCorrections collectIonosphericCorrections(const std::vector<const GnssNavInfo*>& gnssNavInfos)
-{
-    IonosphericCorrections ionosphericCorrections;
-    for (const auto* gnssNavInfo : gnssNavInfos)
-    {
-        for (const auto& correction : gnssNavInfo->ionosphericCorrections.data())
-        {
-            if (!ionosphericCorrections.contains(correction.satSys, correction.alphaBeta))
-            {
-                ionosphericCorrections.insert(correction.satSys, correction.alphaBeta, correction.data);
-            }
-        }
-    }
-    return ionosphericCorrections;
-}
-
 std::vector<CalcData> selectObservations(const std::shared_ptr<SppSolution>& sppSol,
                                          const std::shared_ptr<const GnssObs>& gnssObs,
                                          const std::vector<const GnssNavInfo*>& gnssNavInfos,
@@ -104,7 +88,7 @@ size_t findDopplerMeasurements(std::vector<CalcData>& calcData)
 ValueWeight<double> calcPsrAndWeight(const std::shared_ptr<SppSolution>& sppSol,
                                      const CalcData& calc,
                                      const InsTime& insTime,
-                                     const State& state,
+                                     State& state,
                                      const Eigen::Vector3d& lla_pos,
                                      const IonosphericCorrections& ionosphericCorrections,
                                      const IonosphereModel& ionosphereModel,
@@ -143,7 +127,7 @@ ValueWeight<double> calcPsrAndWeight(const std::shared_ptr<SppSolution>& sppSol,
     solSatData.geometricDist = geometricDist;
     // System time difference to GPS [s]
     double sysTimeDiff = satSys != state.recvClk.referenceTimeSatelliteSystem && state.recvClk.sysTimeDiff.contains(satSys)
-                             ? state.recvClk.sysTimeDiff.at(satSys).value
+                             ? state.recvClk.sysTimeDiff[satSys].value
                              : 0.0;
     solSatData.dpsr_clkISB = sysTimeDiff * InsConst::C;
 
@@ -183,7 +167,7 @@ ValueWeight<double> calcPsrAndWeight(const std::shared_ptr<SppSolution>& sppSol,
 }
 
 ValueWeight<double> calcPsrRateAndWeight(const CalcData& calc,
-                                         const State& state,
+                                         State& state,
                                          const EstimatorType& estimatorType)
 {
     const auto& obsData = calc.obsData;
@@ -196,7 +180,7 @@ ValueWeight<double> calcPsrRateAndWeight(const CalcData& calc,
     LOG_DATA("         dpsr_dot_ie {}", dpsr_dot_ie);
     // System time drift difference to GPS [s/s]
     double sysDriftDiff = satSys != state.recvClk.referenceTimeSatelliteSystem
-                              ? state.recvClk.sysDriftDiff.at(satSys).value
+                              ? state.recvClk.sysDriftDiff[satSys].value
                               : 0.0;
 
     // Pseudorange-rate estimate [m/s] - Groves ch. 9.4.1, eq. 9.142, p. 412 (Sagnac correction different sign)
@@ -231,7 +215,7 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
                                                                 int nMeasPsr,
                                                                 int nMeasDoppler,
                                                                 const InsTime& insTime,
-                                                                const State& state,
+                                                                State& state,
                                                                 const Eigen::Vector3d& lla_pos,
                                                                 const std::vector<SatelliteSystem>& satelliteSystems,
                                                                 const IonosphericCorrections& ionosphericCorrections,

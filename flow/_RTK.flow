@@ -61,11 +61,11 @@
             "data": {
                 "codes": "11110001000100111000111111000011110001110111111111111111111111010111111101110111011101110000000001000000001",
                 "elevationMask": 14.999999999999998,
+                "estimatorType": 1,
                 "excludedSatellites": [],
                 "frequencies": 1,
                 "ionosphereModel": 0,
                 "nNavInfoPins": 2,
-                "sppEstimator": 1,
                 "troposphereModels": {
                     "zhdMappingFunction": [
                         0,
@@ -228,7 +228,7 @@
         "node-111": {
             "data": {
                 "FileReader": {
-                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_static-rover_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/Spirent_RINEX_MO_Rover.obs"
+                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_static-rover_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/Spirent_RINEX_MO_Rover-2km.obs"
                 },
                 "eraseLessPreciseCodes": true
             },
@@ -1043,9 +1043,15 @@
                         "title": "Horizontal Position",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "West / East [m]",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "South / North [m]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -1169,9 +1175,15 @@
                         "title": "North/South Position",
                         "xAxisFlags": 0,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "South/North [m]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 0
                     },
                     {
@@ -1295,9 +1307,15 @@
                         "title": "East/West Position",
                         "xAxisFlags": 0,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "East/West [m]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 0
                     },
                     {
@@ -1421,9 +1439,15 @@
                         "title": "Altitude",
                         "xAxisFlags": 0,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Altitude [m]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 0
                     }
                 ],
@@ -1466,7 +1490,7 @@
         "node-149": {
             "data": {
                 "FileReader": {
-                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_static-rover_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/Spirent_RINEX_MO_Rover_SPP.pos"
+                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_static-rover_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/Spirent_RINEX_MO_Rover-2km_SPP.pos"
                 }
             },
             "enabled": true,
@@ -1529,7 +1553,7 @@
         "node-157": {
             "data": {
                 "FileReader": {
-                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_static-rover_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/Spirent_RINEX_MO_Rover_RTK.pos"
+                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_static-rover_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/Spirent_RINEX_MO_Rover-2km_RTK.pos"
                 }
             },
             "enabled": true,

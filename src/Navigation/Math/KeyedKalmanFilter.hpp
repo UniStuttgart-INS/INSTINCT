@@ -18,6 +18,7 @@
 #include "util/Eigen.hpp"
 #include "util/Container/KeyedMatrix.hpp"
 #include "Navigation/Math/Math.hpp"
+#include "Navigation/Math/VanLoan.hpp"
 
 namespace NAV
 {
@@ -47,7 +48,11 @@ class KeyedKalmanFilter
 
         x = KeyedVectorX<Scalar, StateKeyType>(Eigen::VectorX<Scalar>::Zero(n), stateKeys);
         P = KeyedMatrixX<Scalar, StateKeyType, StateKeyType>(Eigen::MatrixX<Scalar>::Zero(n, n), stateKeys);
+        F = KeyedMatrixX<Scalar, StateKeyType, StateKeyType>(Eigen::MatrixX<Scalar>::Zero(n, n), stateKeys);
         Phi = KeyedMatrixX<Scalar, StateKeyType, StateKeyType>(Eigen::MatrixX<Scalar>::Zero(n, n), stateKeys);
+
+        G = KeyedMatrixX<Scalar, StateKeyType, StateKeyType>(Eigen::MatrixX<Scalar>::Zero(n, n), stateKeys);
+        W = KeyedMatrixX<Scalar, StateKeyType, StateKeyType>(Eigen::MatrixX<Scalar>::Zero(n, n), stateKeys);
         Q = KeyedMatrixX<Scalar, StateKeyType, StateKeyType>(Eigen::MatrixX<Scalar>::Zero(n, n), stateKeys);
         z = KeyedVectorX<Scalar, MeasKeyType>(Eigen::VectorX<Scalar>::Zero(m), measKeys);
         H = KeyedMatrixX<Scalar, MeasKeyType, StateKeyType>(Eigen::MatrixX<Scalar>::Zero(m, n), measKeys, stateKeys);
@@ -62,7 +67,10 @@ class KeyedKalmanFilter
     {
         x(all).setZero();        // x̂ State vector
         P(all, all).setZero();   // 𝐏 Error covariance matrix
+        F(all, all).setZero();   // 𝐅 System model matrix (n x n)
         Phi(all, all).setZero(); // 𝚽 State transition matrix
+        G(all, all).setZero();   // 𝐆 Noise input matrix (n x o)
+        W(all, all).setZero();   // 𝐖 Noise scale matrix (o x o)
         Q(all, all).setZero();   // 𝐐 System/Process noise covariance matrix
         z(all).setZero();        // 𝐳 Measurement vector
         H(all, all).setZero();   // 𝐇 Measurement sensitivity Matrix
@@ -121,16 +129,6 @@ class KeyedKalmanFilter
         P(all, all) = (I - K(all, all) * H(all, all)) * P(all, all) * (I - K(all, all) * H(all, all)).transpose() + K(all, all) * R(all, all) * K(all, all).transpose();
     }
 
-    /// @brief Calculates the state transition matrix 𝚽 limited to first order in 𝐅𝜏ₛ
-    /// @param[in] F System Matrix
-    /// @param[in] tau_s time interval in [s]
-    /// @note See Groves (2013) chapter 14.2.4, equation (14.72)
-    static KeyedMatrixXd<StateKeyType> calcTransitionMatrix(const KeyedMatrixXd<StateKeyType>& F, double tau_s)
-    {
-        // Transition matrix 𝚽
-        return { Eigen::MatrixXd::Identity(F(all, all).rows(), F(all, all).cols()) + F(all, all) * tau_s, F.rowKeys() };
-    }
-
     /// @brief Add a new state to the filter
     /// @param stateKey State key
     void addState(const StateKeyType& stateKey) { addStates({ stateKey }); }
@@ -147,11 +145,29 @@ class KeyedKalmanFilter
 
         x.addRows(stateKeys);
         P.addRowsCols(stateKeys, stateKeys);
+        F.addRowsCols(stateKeys, stateKeys);
         Phi.addRowsCols(stateKeys, stateKeys);
+        G.addRows(stateKeys);
         Q.addRowsCols(stateKeys, stateKeys);
         H.addCols(stateKeys);
         K.addRows(stateKeys);
         I = Eigen::MatrixX<Scalar>::Identity(n, n);
+    }
+
+    /// @brief Add a new noise state to the filter
+    /// @param stateKey State key
+    void addNoiseState(const StateKeyType& stateKey) { addNoiseStates({ stateKey }); }
+
+    /// @brief Add new noise states to the filter
+    /// @param stateKeys State keys
+    void addNoiseStates(const std::vector<StateKeyType>& stateKeys)
+    {
+        INS_ASSERT_USER_ERROR(!G.hasAnyCols(stateKeys), "You cannot add a state key which is already in the noise matrix of the Kalman filter.");
+        std::unordered_set<StateKeyType> stateSet = { stateKeys.begin(), stateKeys.end() };
+        INS_ASSERT_USER_ERROR(stateSet.size() == stateKeys.size(), "Each state key must be unique");
+
+        G.addCols(stateKeys);
+        W.addRowsCols(stateKeys, stateKeys);
     }
 
     /// @brief Remove a state from the filter
@@ -166,15 +182,33 @@ class KeyedKalmanFilter
         std::unordered_set<StateKeyType> stateSet = { stateKeys.begin(), stateKeys.end() };
         INS_ASSERT_USER_ERROR(stateSet.size() == stateKeys.size(), "Each state key must be unique");
 
-        auto n = x(all).rows() - static_cast<int>(stateKeys.size());
+        auto n = x.rows() - static_cast<int>(stateKeys.size());
 
         x.removeRows(stateKeys);
         P.removeRowsCols(stateKeys, stateKeys);
+        F.removeRowsCols(stateKeys, stateKeys);
         Phi.removeRowsCols(stateKeys, stateKeys);
+        G.removeRows(stateKeys);
         Q.removeRowsCols(stateKeys, stateKeys);
         H.removeCols(stateKeys);
         K.removeRows(stateKeys);
         I = Eigen::MatrixX<Scalar>::Identity(n, n);
+    }
+
+    /// @brief Remove a noise state from the filter
+    /// @param stateKey State key
+    void removeNoiseState(const StateKeyType& stateKey) { removeNoiseStates({ stateKey }); }
+
+    /// @brief Remove noise states from the filter
+    /// @param stateKeys State keys
+    void removeNoiseStates(const std::vector<StateKeyType>& stateKeys)
+    {
+        INS_ASSERT_USER_ERROR(G.hasCols(stateKeys), "Not all noise state keys you are trying to remove are in the Kalman filter.");
+        std::unordered_set<StateKeyType> stateSet = { stateKeys.begin(), stateKeys.end() };
+        INS_ASSERT_USER_ERROR(stateSet.size() == stateKeys.size(), "Each state key must be unique");
+
+        G.removeCols(stateKeys);
+        W.removeRowsCols(stateKeys, stateKeys);
     }
 
     /// @brief Sets the measurement keys and initializes matrices z, H, R, S, K with Zero
@@ -184,7 +218,7 @@ class KeyedKalmanFilter
         std::unordered_set<MeasKeyType> measSet = { measKeys.begin(), measKeys.end() };
         INS_ASSERT_USER_ERROR(measSet.size() == measKeys.size(), "Each measurement key must be unique");
 
-        auto n = static_cast<int>(x(all).rows());
+        auto n = static_cast<int>(x.rows());
         auto m = static_cast<int>(measKeys.size());
 
         const auto& stateKeys = x.rowKeys();
@@ -205,6 +239,46 @@ class KeyedKalmanFilter
     KeyedMatrixX<Scalar, MeasKeyType, MeasKeyType> R;     ///< 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix (m x m)
     KeyedMatrixX<Scalar, MeasKeyType, MeasKeyType> S;     ///< 𝗦 Measurement prediction covariance matrix (m x m)
     KeyedMatrixX<Scalar, StateKeyType, MeasKeyType> K;    ///< 𝐊 Kalman gain matrix (n x m)
+
+    KeyedMatrixX<Scalar, StateKeyType, StateKeyType> F; ///< 𝐅 System model matrix (n x n)
+    KeyedMatrixX<Scalar, StateKeyType, StateKeyType> G; ///< 𝐆 Noise input matrix (n x o)
+    KeyedMatrixX<Scalar, StateKeyType, StateKeyType> W; ///< 𝐖 Noise scale matrix (o x o)
+
+    /// @brief Calculates the state transition matrix 𝚽 limited to specified order in 𝐅𝜏ₛ
+    /// @param[in] tau Time interval in [s]
+    /// @param[in] order The order of the Taylor polynom to calculate
+    /// @note See \cite Groves2013 Groves, ch. 3.2.3, eq. 3.34, p. 98
+    void calcTransitionMatrix_Phi_Taylor(Scalar tau, size_t order)
+    {
+        INS_ASSERT_USER_ERROR(F.rowKeys() == Phi.rowKeys(), "The system model matrix F and the state transition matrix 𝚽 need to have the same keys.");
+
+        Phi = transitionMatrix_Phi_Taylor(F, tau, order);
+    }
+
+    /// @brief Calculates the state transition matrix 𝚽 using the exponential matrix
+    /// @param[in] tau Time interval in [s]
+    /// @note See \cite Groves2013 Groves, ch. 3.2.3, eq. 3.33, p. 97
+    /// @attention The cost of the computation is approximately 20n^3 for matrices of size n. The number 20 depends weakly on the norm of the matrix.
+    void calcTransitionMatrix_Phi_exp(Scalar tau)
+    {
+        INS_ASSERT_USER_ERROR(F.rowKeys() == Phi.rowKeys(), "The system model matrix F and the state transition matrix 𝚽 need to have the same keys.");
+
+        Phi = transitionMatrix_Phi_exp(F, tau);
+    }
+
+    /// @brief Numerical Method to calculate the State transition matrix 𝚽 and System/Process noise covariance matrix 𝐐
+    /// @param[in] dt Time step in [s]
+    /// @note See C.F. van Loan (1978) - Computing Integrals Involving the Matrix Exponential \cite Loan1978
+    void calcPhiAndQWithVanLoanMethod(Scalar dt)
+    {
+        INS_ASSERT_USER_ERROR(G.colKeys() == W.rowKeys(), "The columns of the noise input matrix G and rows of the noise scale matrix W must match. (G * W * G^T)");
+        INS_ASSERT_USER_ERROR(G.rowKeys() == Q.rowKeys(), "The rows of the noise input matrix G and the System/Process noise covariance matrix Q must match.");
+        INS_ASSERT_USER_ERROR(G.colKeys() == Q.colKeys(), "The cols of the noise input matrix G and the System/Process noise covariance matrix Q must match.");
+
+        auto [Phi, Q] = NAV::calcPhiAndQWithVanLoanMethod(F(all, all), G(all, all), W(all, all), dt);
+        this->Phi(all, all) = Phi;
+        this->Q(all, all) = Q;
+    }
 
   private:
     Eigen::MatrixXd I; ///< 𝑰 Identity matrix (n x n)

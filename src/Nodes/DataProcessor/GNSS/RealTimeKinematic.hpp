@@ -66,9 +66,9 @@ using StateKeyTypes = std::variant<KFStates, AmbiguitySD>;
 inline static const std::vector<StateKeyTypes> PosVel = { KFStates::PosX, KFStates::PosY, KFStates::PosZ,
                                                           KFStates::VelX, KFStates::VelY, KFStates::VelZ };
 /// @brief All position keys
-inline static const std::vector<KFStates> Pos = { KFStates::PosX, KFStates::PosY, KFStates::PosZ };
+inline static const std::vector<StateKeyTypes> Pos = { KFStates::PosX, KFStates::PosY, KFStates::PosZ };
 /// @brief All velocity keys
-inline static const std::vector<KFStates> Vel = { KFStates::VelX, KFStates::VelY, KFStates::VelZ };
+inline static const std::vector<StateKeyTypes> Vel = { KFStates::VelX, KFStates::VelY, KFStates::VelZ };
 
 } // namespace States
 
@@ -318,8 +318,11 @@ class RealTimeKinematic : public Node
     /// Latest GNSS Observation from the rover
     std::shared_ptr<const GnssObs> _gnssObsRover = nullptr;
 
+    /// Last update time
+    InsTime _lastUpdate;
+
     /// Kalman Filter representation
-    KeyedKalmanFilterD<RealTimeKinematicKF::States::StateKeyTypes, RealTimeKinematicKF::Meas::MeasKeyTypes> _kalmanFilter{ RealTimeKinematicKF::States::PosVel, {} };
+    KeyedKalmanFilterD<RealTimeKinematicKF::States::StateKeyTypes, RealTimeKinematicKF::Meas::MeasKeyTypes> _kalmanFilter;
 
     /// @brief Receive Function for the Base Position
     /// @param[in] queue Queue with all the received data messages
@@ -342,9 +345,10 @@ class RealTimeKinematic : public Node
     /// @brief Calculates a SPP solution as fallback in case no base data is available
     std::shared_ptr<RtkSolution> calcFallbackSppSolution();
 
-    /// @brief Returns a list of observations used for calculation of RTK (only satellites filtered by GUI filter & NAV data available & ...)
+    /// @brief Returns a list of observations used for calculation of RTK (only satellites filtered by GUI filter & NAV data available & ...) and the amount of signals
     /// @param[in] gnssNavInfos Collection of all connected navigation data providers
-    std::vector<SatData> selectSatellitesForCalculation(const std::vector<const GnssNavInfo*>& gnssNavInfos);
+    /// @return List of satellite data and amount of signals
+    std::pair<std::vector<SatData>, size_t> selectSatellitesForCalculation(const std::vector<const GnssNavInfo*>& gnssNavInfos);
 
     /// @brief Update the pivot satellites for each constellation
     /// @param satelliteData List of GNSS observation data used for the calculation of this epoch
@@ -399,3 +403,91 @@ struct hash<NAV::RealTimeKinematicKF::Meas::CarrierDD>
     }
 };
 } // namespace std
+
+#ifndef DOXYGEN_IGNORE
+
+/// @brief Formatter for SatelliteSystem
+template<>
+struct fmt::formatter<NAV::RealTimeKinematicKF::States::StateKeyTypes>
+{
+    /// @brief Parse function to make the struct formattable
+    /// @param[in] ctx Parser context
+    /// @return Beginning of the context
+    template<typename ParseContext>
+    constexpr auto parse(ParseContext& ctx)
+    {
+        return ctx.begin();
+    }
+
+    /// @brief Defines how to format SatelliteSystem structs
+    /// @param[in] state Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::RealTimeKinematicKF::States::StateKeyTypes& state, FormatContext& ctx)
+    {
+        using namespace NAV::RealTimeKinematicKF::States; // NOLINT(google-build-using-namespace)
+
+        if (const auto* s = std::get_if<NAV::RealTimeKinematicKF::States::KFStates>(&state))
+        {
+            switch (*s)
+            {
+            case PosX:
+                return fmt::format_to(ctx.out(), "PosX");
+            case PosY:
+                return fmt::format_to(ctx.out(), "PosY");
+            case PosZ:
+                return fmt::format_to(ctx.out(), "PosZ");
+            case VelX:
+                return fmt::format_to(ctx.out(), "VelX");
+            case VelY:
+                return fmt::format_to(ctx.out(), "VelY");
+            case VelZ:
+                return fmt::format_to(ctx.out(), "VelZ");
+            case KFStates_COUNT:
+                return fmt::format_to(ctx.out(), "KFStates_COUNT");
+            }
+        }
+        if (const auto* amb = std::get_if<NAV::RealTimeKinematicKF::States::AmbiguitySD>(&state))
+        {
+            return fmt::format_to(ctx.out(), "Amb({})", amb->satSigId);
+        }
+
+        return fmt::format_to(ctx.out(), "ERROR");
+    }
+};
+
+/// @brief Formatter for SatelliteSystem
+template<>
+struct fmt::formatter<NAV::RealTimeKinematicKF::Meas::MeasKeyTypes>
+{
+    /// @brief Parse function to make the struct formattable
+    /// @param[in] ctx Parser context
+    /// @return Beginning of the context
+    template<typename ParseContext>
+    constexpr auto parse(ParseContext& ctx)
+    {
+        return ctx.begin();
+    }
+
+    /// @brief Defines how to format SatelliteSystem structs
+    /// @param[in] meas Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::RealTimeKinematicKF::Meas::MeasKeyTypes& meas, FormatContext& ctx)
+    {
+        if (const auto* psrDD = std::get_if<NAV::RealTimeKinematicKF::Meas::PsrDD>(&meas))
+        {
+            return fmt::format_to(ctx.out(), "psrDD({})", psrDD->satSigId);
+        }
+        if (const auto* phiDD = std::get_if<NAV::RealTimeKinematicKF::Meas::CarrierDD>(&meas))
+        {
+            return fmt::format_to(ctx.out(), "phiDD({})", phiDD->satSigId);
+        }
+
+        return fmt::format_to(ctx.out(), "ERROR");
+    }
+};
+
+#endif

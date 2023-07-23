@@ -51,7 +51,7 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
                           "This function only works for the estimator types LSE or WLSE.");
 
     // Collection of all connected Ionospheric Corrections
-    IonosphericCorrections ionosphericCorrections = collectIonosphericCorrections(gnssNavInfos);
+    IonosphericCorrections ionosphericCorrections(gnssNavInfos);
 
     auto sppSol = std::make_shared<SppSolution>();
     sppSol->insTime = gnssObs->insTime;

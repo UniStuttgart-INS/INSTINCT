@@ -22,6 +22,9 @@
 namespace NAV
 {
 
+/// GNSS Navigation message information
+class GnssNavInfo;
+
 /// @brief Ionospheric Corrections
 class IonosphericCorrections
 {
@@ -40,6 +43,17 @@ class IonosphericCorrections
         AlphaBeta alphaBeta;        ///< Alpha or beta value
         std::array<double, 4> data; ///< Data storage (3 values for GAL, otherwise 4)
     };
+
+    /// @brief Default constructor
+    IonosphericCorrections() = default;
+
+    /// @brief Constructor which collects the ionospheric parameters from the Navigation infos
+    /// @param[in] gnssNavInfos List of GNSS navigation infos
+    explicit IonosphericCorrections(const std::vector<const GnssNavInfo*>& gnssNavInfos);
+
+    /// @brief Constructor from raw corrections
+    /// @param corrections Corrections vector
+    IonosphericCorrections(const std::vector<Corrections>& corrections); // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
 
     /// @brief Get the Ionospheric Correction values
     /// @param[in] satSys Satellite System to search the value for

@@ -57,10 +57,6 @@ struct CalcData
     int8_t freqNum = -128; ///< Frequency number (GLONASS only)
 };
 
-/// @brief Collect the ionospheric parameters from the Navigation infos
-/// @param[in] gnssNavInfos List of GNSS navigation infos
-IonosphericCorrections collectIonosphericCorrections(const std::vector<const GnssNavInfo*>& gnssNavInfos);
-
 /// @brief Selects the satellite signals depending on various filters
 /// @param[out] sppSol SPP solution
 /// @param[in] gnssObs GNSS observations (pseudoranges, carrier phases, doppler, CN0, ...)
@@ -104,7 +100,7 @@ struct ValueWeight
 ValueWeight<double> calcPsrAndWeight(const std::shared_ptr<SppSolution>& sppSol,
                                      const CalcData& calc,
                                      const InsTime& insTime,
-                                     const State& state,
+                                     State& state,
                                      const Eigen::Vector3d& lla_pos,
                                      const IonosphericCorrections& ionosphericCorrections,
                                      const IonosphereModel& ionosphereModel,
@@ -117,7 +113,7 @@ ValueWeight<double> calcPsrAndWeight(const std::shared_ptr<SppSolution>& sppSol,
 /// @param[in] estimatorType Estimator type
 /// @return Pseudorange rate and its weight
 ValueWeight<double> calcPsrRateAndWeight(const CalcData& calc,
-                                         const State& state,
+                                         State& state,
                                          const EstimatorType& estimatorType);
 
 /// @brief Return type for the function 'calcMeasurementEstimatesAndDesignMatrix'
@@ -167,7 +163,7 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
                                                                 int nMeasPsr,
                                                                 int nMeasDoppler,
                                                                 const InsTime& insTime,
-                                                                const State& state,
+                                                                State& state,
                                                                 const Eigen::Vector3d& lla_pos,
                                                                 const std::vector<SatelliteSystem>& satelliteSystems,
                                                                 const IonosphericCorrections& ionosphericCorrections,
