@@ -107,6 +107,9 @@ class SinglePointPositioning : public Node
     /// Troposphere Models used for the calculation
     TroposphereModelSelection _troposphereModels;
 
+    /// GNSS measurement error model to use
+    GnssMeasurementErrorModel _gnssMeasurementErrorModel;
+
     /// Estimator type
     GNSS::Positioning::SPP::EstimatorType _estimatorType = GNSS::Positioning::SPP::EstimatorType::WEIGHTED_LEAST_SQUARES;
 

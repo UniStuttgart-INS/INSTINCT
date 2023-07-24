@@ -295,6 +295,16 @@ void RealTimeKinematic::guiConfig()
 
         ImGui::TreePop();
     }
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+    if (ImGui::TreeNode(fmt::format("GNSS Measurement Error##{}", size_t(id)).c_str()))
+    {
+        if (_gnssMeasurementErrorModel.ShowGuiWidgets(std::to_string(size_t(id)).c_str(), itemWidth - ImGui::GetStyle().IndentSpacing))
+        {
+            LOG_DEBUG("{}: GNSS Measurement Error Model changed.", nameId());
+            flow::ApplyChanges();
+        }
+        ImGui::TreePop();
+    }
 }
 
 void RealTimeKinematic::recalcVarAccel()
@@ -322,6 +332,7 @@ void RealTimeKinematic::recalcVarAccel()
     j["elevationMask"] = rad2deg(_elevationMask);
     j["ionosphereModel"] = _ionosphereModel;
     j["troposphereModels"] = _troposphereModels;
+    j["gnssMeasurementError"] = _gnssMeasurementErrorModel;
 
     j["stdevAccelUnits"] = _gui_stdevAccelUnits;
     j["stdevAccel"] = _gui_stdevAccel;
@@ -364,6 +375,10 @@ void RealTimeKinematic::restore(json const& j)
     if (j.contains("troposphereModels"))
     {
         j.at("troposphereModels").get_to(_troposphereModels);
+    }
+    if (j.contains("gnssMeasurementError"))
+    {
+        j.at("gnssMeasurementError").get_to(_gnssMeasurementErrorModel);
     }
 
     if (j.contains("stdevAccelUnits"))
@@ -528,7 +543,6 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
                       rad2deg(_lla_roverPosition(0)), rad2deg(_lla_roverPosition(1)), _lla_roverPosition(2),
                       _e_roverPosition.transpose());
             LOG_TRACE("{}: Initial rover velocity: {} [m/s] (ECEF)", nameId(), _e_roverVelocity.transpose());
-            // LOG_TRACE("{}: Initial baseline (r - b): {} [m] (ECEF)", nameId(), _kalmanFilter.x.segment<3>(States::Pos).transpose());
         }
         else
         {
@@ -568,30 +582,30 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
         // ###################################################################################################
 
         double dt = static_cast<double>((_gnssObsRover->insTime - _lastUpdate).count());
-        LOG_DATA("{}: dt = {}s", nameId(), dt);
+        LOG_TRACE("{}: dt = {}s", nameId(), dt);
 
         // TODO: Add states for new ambiguities and remove old ones which are gone for a certain amount of time
         // _kalmanFilter.addStates({ States::AmbiguitySD{ SatSigId{ G01, 1 } } });
         // _kalmanFilter.addNoiseStates({ States::AmbiguitySD{ SatSigId{ G01, 1 } } }); // Add same states as noise states
 
-        LOG_DATA("{}: F =\n{}", nameId(), _kalmanFilter.F);
+        LOG_TRACE("{}: F =\n{}", nameId(), _kalmanFilter.F);
         _kalmanFilter.calcTransitionMatrix_Phi_Taylor(dt, 1);
-        LOG_DATA("{}: Phi =\n{}", nameId(), _kalmanFilter.Phi);
+        LOG_TRACE("{}: Phi =\n{}", nameId(), _kalmanFilter.Phi);
 
         _kalmanFilter.G.block<3>(States::Vel, States::Vel) = trafo::e_Quat_n(_lla_roverPosition(0), _lla_roverPosition(1)).toRotationMatrix();
         _kalmanFilter.W.block<3>(States::Vel, States::Vel).diagonal() << _varAccel.at(0), _varAccel.at(0), _varAccel.at(1);
         // _kalmanFilter.G(States::AmbiguitySD{ SatSigId{ G01, 1 } }, States::AmbiguitySD{ SatSigId{ G01, 1 } }) = 1;
         // Ambiguities are modeled as RW with very small noise to keep numerical stability
         // _kalmanFilter.W(States::AmbiguitySD{ SatSigId{ G01, 1 } }, States::AmbiguitySD{ SatSigId{ G01, 1 } }) = 1e-6;
-        LOG_DATA("{}: G =\n{}", nameId(), _kalmanFilter.G);
-        LOG_DATA("{}: W =\n{}", nameId(), _kalmanFilter.W);
+        LOG_TRACE("{}: G =\n{}", nameId(), _kalmanFilter.G);
+        LOG_TRACE("{}: W =\n{}", nameId(), _kalmanFilter.W);
 
         _kalmanFilter.calcPhiAndQWithVanLoanMethod(dt);
-        LOG_DATA("{}: Q =\n{}", nameId(), _kalmanFilter.Q);
+        LOG_TRACE("{}: Q =\n{}", nameId(), _kalmanFilter.Q);
 
-        LOG_DATA("{}: x (a posteriori, t-1 = {}) =\n{}", nameId(), _lastUpdate, _kalmanFilter.x.transposed());
+        LOG_TRACE("{}: x (a posteriori, t-1 = {}) =\n{}", nameId(), _lastUpdate, _kalmanFilter.x.transposed());
         _kalmanFilter.predict();
-        LOG_DATA("{}: x (a priori    , t   = {}) =\n{}", nameId(), _gnssObsRover->insTime, _kalmanFilter.x.transposed());
+        LOG_TRACE("{}: x (a priori    , t   = {}) =\n{}", nameId(), _gnssObsRover->insTime, _kalmanFilter.x.transposed());
 
         // ###################################################################################################
         //                                      Kalman Filter - Update
@@ -652,7 +666,7 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
         _e_roverPosition = _kalmanFilter.x.segment<3>(States::Pos);
         _e_roverVelocity = _kalmanFilter.x.segment<3>(States::Vel);
         _lla_roverPosition = trafo::ecef2lla_WGS84(_e_roverPosition);
-        LOG_DATA("{}: x (a posteriori, t   = {}) =\n{}", nameId(), _gnssObsRover->insTime, _kalmanFilter.x.transposed());
+        LOG_TRACE("{}: x (a posteriori, t   = {}) =\n{}", nameId(), _gnssObsRover->insTime, _kalmanFilter.x.transposed());
 
         rtkSol->solType = RtkSolution::SolutionType::RTK_Float;
         rtkSol->nSatellites = satelliteData.size() - _pivotSatellites.size();
@@ -686,7 +700,7 @@ std::shared_ptr<RtkSolution> RealTimeKinematic::calcFallbackSppSolution()
                                                 .e_velocity = _e_roverVelocity,
                                                 .recvClk = {} };
         if (auto sppSol = GNSS::Positioning::SPP::calcSppSolutionLSE(state, _gnssObsRover, gnssNavInfos,
-                                                                     _ionosphereModel, _troposphereModels,
+                                                                     _ionosphereModel, _troposphereModels, _gnssMeasurementErrorModel,
                                                                      GNSS::Positioning::SPP::EstimatorType::WEIGHTED_LEAST_SQUARES,
                                                                      _filterFreq, _filterCode, _excludedSatellites, _elevationMask))
         {
@@ -1000,8 +1014,8 @@ void RealTimeKinematic::calculateEstimatedDoubleDifferences(std::vector<SatData>
 
             // -------------------------------------------- Errors -----------------------------------------------
 
-            signal.varPseudorangeMeas_r_s = psrMeasErrorVar(freq.getSatSys(), freq, satData_s.rover.satElevation);
-            signal.varCarrierMeas_r_s = carrierMeasErrorVar(freq.getSatSys(), freq, satData_s.rover.satElevation);
+            signal.varPseudorangeMeas_r_s = _gnssMeasurementErrorModel.psrMeasErrorVar(freq.getSatSys(), freq, satData_s.rover.satElevation);
+            signal.varCarrierMeas_r_s = _gnssMeasurementErrorModel.carrierMeasErrorVar(freq.getSatSys(), satData_s.rover.satElevation);
         }
     }
 }

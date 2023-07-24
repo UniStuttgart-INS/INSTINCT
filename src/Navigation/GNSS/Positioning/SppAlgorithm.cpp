@@ -41,6 +41,7 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
                                                 const std::vector<const GnssNavInfo*>& gnssNavInfos,
                                                 const IonosphereModel& ionosphereModel,
                                                 const TroposphereModelSelection& troposphereModels,
+                                                const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
                                                 const EstimatorType& estimatorType,
                                                 const Frequency& filterFreq,
                                                 const Code& filterCode,
@@ -128,7 +129,7 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
                                                     state, lla_pos,
                                                     satelliteSystems,
                                                     ionosphericCorrections, ionosphereModel,
-                                                    troposphereModels, estimatorType);
+                                                    troposphereModels, gnssMeasurementErrorModel, estimatorType);
 
         // #################################################################################################################################
         //                                                     Least squares solution

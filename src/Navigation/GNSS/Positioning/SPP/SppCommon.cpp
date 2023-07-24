@@ -93,6 +93,7 @@ ValueWeight<double> calcPsrAndWeight(const std::shared_ptr<SppSolution>& sppSol,
                                      const IonosphericCorrections& ionosphericCorrections,
                                      const IonosphereModel& ionosphereModel,
                                      const TroposphereModelSelection& troposphereModels,
+                                     const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
                                      const EstimatorType& estimatorType)
 {
     const auto& obsData = calc.obsData;
@@ -146,7 +147,7 @@ ValueWeight<double> calcPsrAndWeight(const std::shared_ptr<SppSolution>& sppSol,
     {
         // Weight matrix - RTKLIB eq. E6.23, p. 158
 
-        double varPsrMeas = psrMeasErrorVar(obsData.satSigId.toSatId().satSys, obsData.satSigId.freq, calc.satElevation);
+        double varPsrMeas = gnssMeasurementErrorModel.psrMeasErrorVar(obsData.satSigId.toSatId().satSys, obsData.satSigId.freq, calc.satElevation);
         LOG_DATA("         varPsrMeas {}", varPsrMeas);
         double varEph = calc.satNavData->calcSatellitePositionVariance();
         LOG_DATA("         varEph {}", varEph);
@@ -154,7 +155,7 @@ ValueWeight<double> calcPsrAndWeight(const std::shared_ptr<SppSolution>& sppSol,
         LOG_DATA("         varIono {}", varIono);
         double varTrop = tropoErrorVar(dpsr_T, calc.satElevation);
         LOG_DATA("         varTrop {}", varTrop);
-        double varBias = codeBiasErrorVar();
+        double varBias = gnssMeasurementErrorModel.codeBiasErrorVar();
         LOG_DATA("         varBias {}", varBias);
         double varErrors = varPsrMeas + varEph + varIono + varTrop + varBias;
         LOG_DATA("         varErrors {}", varErrors);
@@ -168,7 +169,8 @@ ValueWeight<double> calcPsrAndWeight(const std::shared_ptr<SppSolution>& sppSol,
 
 ValueWeight<double> calcPsrRateAndWeight(const CalcData& calc,
                                          State& state,
-                                         const EstimatorType& estimatorType)
+                                         const EstimatorType& estimatorType,
+                                         const GnssMeasurementErrorModel& gnssMeasurementErrorModel)
 {
     const auto& obsData = calc.obsData;
     auto satSys = obsData.satSigId.toSatId().satSys;
@@ -195,7 +197,7 @@ ValueWeight<double> calcPsrRateAndWeight(const CalcData& calc,
     double W_psrRate = 1.0;
     if (estimatorType == EstimatorType::WEIGHTED_LEAST_SQUARES || estimatorType == EstimatorType::KF)
     {
-        double varDopMeas = dopplerErrorVar();
+        double varDopMeas = gnssMeasurementErrorModel.dopplerErrorVar();
         LOG_DATA("         varDopMeas {}", varDopMeas);
         double varEph = calc.satNavData->calcSatellitePositionVariance();
         LOG_DATA("         varEph {}", varEph);
@@ -221,6 +223,7 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
                                                                 const IonosphericCorrections& ionosphericCorrections,
                                                                 const IonosphereModel& ionosphereModel,
                                                                 const TroposphereModelSelection& troposphereModels,
+                                                                const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
                                                                 const EstimatorType& estimatorType)
 {
     EstWeightDesignMatrices retVal;
@@ -257,7 +260,9 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
         LOG_DATA("         psrMeas({}) {}", ix, retVal.psrMeas(ix));
 
         // Pseudorange estimate [m] and Weight of pseudorange measurement [1/m²]
-        auto [psrEst_i, W_psr_i] = calcPsrAndWeight(sppSol, calc, insTime, state, lla_pos, ionosphericCorrections, ionosphereModel, troposphereModels, estimatorType);
+        auto [psrEst_i, W_psr_i] = calcPsrAndWeight(sppSol, calc, insTime, state, lla_pos,
+                                                    ionosphericCorrections, ionosphereModel, troposphereModels,
+                                                    gnssMeasurementErrorModel, estimatorType);
         retVal.psrEst(ix) = psrEst_i;
         calc.pseudorangeEst = retVal.psrEst(ix);
         solSatData.psrEst = retVal.psrEst(ix);
@@ -286,7 +291,7 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
             retVal.psrRateMeas(iv) = calc.pseudorangeRateMeas.value(); // + (multipath and/or NLOS errors) + (tracking errors)
             LOG_DATA("         psrRateMeas({}) {}", iv, retVal.psrRateMeas(iv));
 
-            auto [psrRateEst_i, W_psrRate_i] = calcPsrRateAndWeight(calc, state, estimatorType);
+            auto [psrRateEst_i, W_psrRate_i] = calcPsrRateAndWeight(calc, state, estimatorType, gnssMeasurementErrorModel);
             retVal.psrRateEst(iv) = psrRateEst_i;
             solSatData.psrRateEst = retVal.psrRateEst(iv);
             retVal.W_psrRate(iv, iv) = W_psrRate_i;

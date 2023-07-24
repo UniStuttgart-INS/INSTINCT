@@ -21,6 +21,7 @@
 #include "Navigation/Atmosphere/Ionosphere/Ionosphere.hpp"
 #include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
 #include "Navigation/GNSS/Core/ReceiverClock.hpp"
+#include "Navigation/GNSS/Errors.hpp"
 
 namespace NAV
 {
@@ -58,6 +59,7 @@ struct State
 /// @param[in] gnssNavInfos Collection of all connected navigation data providers
 /// @param[in] ionosphereModel Ionosphere Model used for the calculation
 /// @param[in] troposphereModels Troposphere Models used for the calculation
+/// @param[in] gnssMeasurementErrorModel GNSS measurement error model to use
 /// @param[in] estimatorType Estimation algorithm used
 /// @param[in] filterFreq Frequencies used for calculation (GUI filter)
 /// @param[in] filterCode Codes used for calculation (GUI filter)
@@ -69,6 +71,7 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
                                                 const std::vector<const GnssNavInfo*>& gnssNavInfos,
                                                 const IonosphereModel& ionosphereModel,
                                                 const TroposphereModelSelection& troposphereModels,
+                                                const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
                                                 const EstimatorType& estimatorType,
                                                 const Frequency& filterFreq,
                                                 const Code& filterCode,

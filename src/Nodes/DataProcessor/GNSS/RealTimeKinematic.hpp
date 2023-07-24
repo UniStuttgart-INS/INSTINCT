@@ -21,6 +21,7 @@
 #include "Navigation/GNSS/Core/Code.hpp"
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "Navigation/GNSS/Core/ReceiverClock.hpp"
+#include "Navigation/GNSS/Errors.hpp"
 #include "Navigation/GNSS/Satellite/internal/SatNavData.hpp"
 #include "Navigation/Atmosphere/Ionosphere/Ionosphere.hpp"
 #include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
@@ -174,6 +175,9 @@ class RealTimeKinematic : public Node
 
     /// Troposphere Models used for the calculation
     TroposphereModelSelection _troposphereModels;
+
+    /// GNSS measurement error model to use
+    GnssMeasurementErrorModel _gnssMeasurementErrorModel;
 
     // #####################################################################################
 

@@ -37,7 +37,7 @@ NAV::SinglePointPositioning::SinglePointPositioning()
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 407, 506 };
+    _guiConfigDefaultWindowSize = { 538, 536 };
 
     nm::CreateInputPin(this, NAV::GnssObs::type().c_str(), Pin::Type::Flow, { NAV::GnssObs::type() }, &SinglePointPositioning::recvGnssObs);
     updateNumberOfInputPins();
@@ -269,6 +269,16 @@ void NAV::SinglePointPositioning::guiConfig()
         }
         ImGui::TreePop();
     }
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+    if (ImGui::TreeNode(fmt::format("GNSS Measurement Error##{}", size_t(id)).c_str()))
+    {
+        if (_gnssMeasurementErrorModel.ShowGuiWidgets(std::to_string(size_t(id)).c_str(), itemWidth - ImGui::GetStyle().IndentSpacing))
+        {
+            LOG_DEBUG("{}: GNSS Measurement Error Model changed.", nameId());
+            flow::ApplyChanges();
+        }
+        ImGui::TreePop();
+    }
 
     // ###########################################################################################################
 }
@@ -396,7 +406,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     LOG_DATA("{}: Calculating SPP for [{}]", nameId(), gnssObs->insTime);
 
     if (auto sppSol = calcSppSolutionLSE(_state, gnssObs, gnssNavInfos,
-                                         _ionosphereModel, _troposphereModels, _estimatorType,
+                                         _ionosphereModel, _troposphereModels, _gnssMeasurementErrorModel, _estimatorType,
                                          _filterFreq, _filterCode, _excludedSatellites, _elevationMask))
     {
         _state = SPP::State{ .e_position = sppSol->e_position(),

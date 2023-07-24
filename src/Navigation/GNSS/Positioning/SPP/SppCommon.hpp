@@ -23,6 +23,7 @@
 #include "NodeData/GNSS/GnssNavInfo.hpp"
 #include "NodeData/GNSS/SppSolution.hpp"
 #include "Navigation/Atmosphere/Ionosphere/Ionosphere.hpp"
+#include "Navigation/GNSS/Errors.hpp"
 
 namespace NAV::GNSS::Positioning::SPP
 {
@@ -95,6 +96,7 @@ struct ValueWeight
 /// @param[in] ionosphericCorrections Ionospheric corrections from the navigation data
 /// @param[in] ionosphereModel Ionospheric model to use
 /// @param[in] troposphereModels Troposphere mode to use
+/// @param[in] gnssMeasurementErrorModel GNSS measurement error model to use
 /// @param[in] estimatorType Estimator type
 /// @return Pseudorange and its weight
 ValueWeight<double> calcPsrAndWeight(const std::shared_ptr<SppSolution>& sppSol,
@@ -105,16 +107,19 @@ ValueWeight<double> calcPsrAndWeight(const std::shared_ptr<SppSolution>& sppSol,
                                      const IonosphericCorrections& ionosphericCorrections,
                                      const IonosphereModel& ionosphereModel,
                                      const TroposphereModelSelection& troposphereModels,
+                                     const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
                                      const EstimatorType& estimatorType);
 
 /// @brief Calculate pseudorange rate estimate and weight
 /// @param[in] calc Data calculated for each satellite, that is available and selected
 /// @param[in] state SPP state from the previous epoch
 /// @param[in] estimatorType Estimator type
+/// @param[in] gnssMeasurementErrorModel GNSS measurement error model to use
 /// @return Pseudorange rate and its weight
 ValueWeight<double> calcPsrRateAndWeight(const CalcData& calc,
                                          State& state,
-                                         const EstimatorType& estimatorType);
+                                         const EstimatorType& estimatorType,
+                                         const GnssMeasurementErrorModel& gnssMeasurementErrorModel);
 
 /// @brief Return type for the function 'calcMeasurementEstimatesAndDesignMatrix'
 struct EstWeightDesignMatrices
@@ -155,6 +160,7 @@ struct EstWeightDesignMatrices
 /// @param[in] ionosphericCorrections Ionospheric corrections from the navigation data
 /// @param[in] ionosphereModel Ionospheric model to use
 /// @param[in] troposphereModels Troposphere mode to use
+/// @param[in] gnssMeasurementErrorModel GNSS measurement error model to use
 /// @param[in] estimatorType Estimator type
 /// @return Matrices: e_H_psr, psrEst, psrMeas, W_psr, dpsr, e_H_r, psrRateEst, psrRateMeas, W_psrRate, dpsr_dot
 EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::shared_ptr<SppSolution>& sppSol,
@@ -169,6 +175,7 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
                                                                 const IonosphericCorrections& ionosphericCorrections,
                                                                 const IonosphereModel& ionosphereModel,
                                                                 const TroposphereModelSelection& troposphereModels,
+                                                                const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
                                                                 const EstimatorType& estimatorType);
 
 /// @brief Prepares data further based on the current estimation and applies elevation mask
