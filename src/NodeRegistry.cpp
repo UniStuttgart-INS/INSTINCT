@@ -178,6 +178,8 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/Converter/GNSS/UartPacketConverter.hpp"
 #include "Nodes/Converter/IMU/VectorNavBinaryConverter.hpp"
 
+// Data Link
+#include "Nodes/DataLink/udpSend.hpp"
 // Data Logger
 #include "Nodes/DataLogger/General/MatrixLogger.hpp"
 #include "Nodes/DataLogger/GNSS/SppSolutionLogger.hpp"
@@ -237,6 +239,8 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<RtklibPosConverter>();
     registerNodeType<UartPacketConverter>();
     registerNodeType<VectorNavBinaryConverter>();
+    // Data Link
+    registerNodeType<UdpSend>();
     // Data Logger
     registerNodeType<MatrixLogger>();
     registerNodeType<SppSolutionLogger>();
