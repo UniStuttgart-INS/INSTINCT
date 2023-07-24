@@ -211,14 +211,20 @@ class RealTimeKinematic : public Node
         /// @param[in] e_baseSatVel Satellite velocity in e frame seen from base
         /// @param[in] e_roverPos Rover receiver position in e frame
         /// @param[in] e_basePos Base receiver position in e frame
-        SatData(const SatId& satId, std::shared_ptr<SatNavData> navData,
+        /// @param[in] varEph Variance of the Ephemeris [m^2]
+        SatData(const SatId& satId, std::shared_ptr<SatNavData> navData, double varEph,
                 const Eigen::Vector3d& e_roverSatPos, const Eigen::Vector3d& lla_roverSatPos, const Eigen::Vector3d& e_roverSatVel,
                 const Eigen::Vector3d& e_baseSatPos, const Eigen::Vector3d& lla_baseSatPos, const Eigen::Vector3d& e_baseSatVel,
                 const Eigen::Vector3d& e_roverPos, const Eigen::Vector3d& e_basePos)
-            : satId(satId), navData(std::move(navData)), rover(e_roverSatPos, lla_roverSatPos, e_roverSatVel, e_roverPos), base(e_baseSatPos, lla_baseSatPos, e_baseSatVel, e_basePos) {}
+            : satId(satId),
+              navData(std::move(navData)),
+              varEph(varEph),
+              rover(e_roverSatPos, lla_roverSatPos, e_roverSatVel, e_roverPos),
+              base(e_baseSatPos, lla_baseSatPos, e_baseSatVel, e_basePos) {}
 
         SatId satId;                                   ///< Satellite Identifier
         std::shared_ptr<SatNavData> navData = nullptr; ///< Satellite Navigation data
+        double varEph = 0.0;                           ///< Variance of the Ephemeris [m^2]
 
         /// Receiver specific data
         struct ReceiverSpecificData
@@ -268,6 +274,9 @@ class RealTimeKinematic : public Node
 
             double doubleDiffEstPseudorange_br_1s = 0.0; ///< Double difference estimate of the pseudorange
             double doubleDiffEstCarrier_br_1s = 0.0;     ///< Double difference estimate of the carrier-phase
+
+            double varPseudorangeMeas_r_s = 0.0; ///< Variance of the pseudorange measurement from rover to the satellite
+            double varCarrierMeas_r_s = 0.0;     ///< Variance of the carrier-phase measurement from rover to the satellite
 
             /// Receiver specific data
             struct Observation

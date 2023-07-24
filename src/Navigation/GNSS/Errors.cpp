@@ -58,7 +58,7 @@ double gnssMeasErrorVar(const SatelliteSystem& satSys, const Frequency& freq, do
         case S01:       // SBAS L1 (1575.42 MHz).
         case S05:       // SBAS L5 (1176.45 MHz).
         case Freq_None: // None
-            codeCarrierPhaseErrorRatio = 300.0;
+            codeCarrierPhaseErrorRatio = 100.0;
         }
     }
 

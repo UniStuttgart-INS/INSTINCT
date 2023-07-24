@@ -232,7 +232,7 @@ class GPSEphemeris final : public SatNavData
     /// @brief Move assignment operator
     GPSEphemeris& operator=(GPSEphemeris&&) = delete;
 
-    /// @brief Calculates the Variance of the satellite position in [m]
+    /// @brief Calculates the Variance of the satellite position in [m^2]
     [[nodiscard]] double calcSatellitePositionVariance() const final;
 
     /// @brief Calculates clock bias and drift of the satellite

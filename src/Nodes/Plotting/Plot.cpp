@@ -1560,6 +1560,19 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "Down velocity [m/s]");
             // RtkSolution
             _pinData.at(pinIndex).addPlotDataItem(i++, "Solution Type");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Number satellites");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "X-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Y-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Z-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "North StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "East StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Down StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "X velocity ECEF StDev [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Y velocity ECEF StDev [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Z velocity ECEF StDev [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "North velocity StDev [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "East velocity StDev [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Down velocity StDev [m/s]");
         }
         else if (startPin.dataIdentifier.front() == SppSolution::type())
         {
@@ -2618,6 +2631,19 @@ void NAV::Plot::plotRtkSolution(const std::shared_ptr<const RtkSolution>& obs, s
     addData(pinIndex, i++, obs->n_velocity().z());
     // RtkSolution
     addData(pinIndex, i++, static_cast<int>(obs->solType));
+    addData(pinIndex, i++, static_cast<double>(obs->nSatellites));
+    addData(pinIndex, i++, obs->e_positionStdev()(0)); // X-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_positionStdev()(1)); // Y-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_positionStdev()(2)); // Z-ECEF StDev [m]
+    addData(pinIndex, i++, obs->n_positionStdev()(0)); // North StDev [m]
+    addData(pinIndex, i++, obs->n_positionStdev()(1)); // East StDev [m]
+    addData(pinIndex, i++, obs->n_positionStdev()(2)); // Down StDev [m]
+    addData(pinIndex, i++, obs->e_velocityStdev()(0)); // X velocity ECEF StDev [m/s]
+    addData(pinIndex, i++, obs->e_velocityStdev()(1)); // Y velocity ECEF StDev [m/s]
+    addData(pinIndex, i++, obs->e_velocityStdev()(2)); // Z velocity ECEF StDev [m/s]
+    addData(pinIndex, i++, obs->n_velocityStdev()(0)); // North velocity StDev [m/s]
+    addData(pinIndex, i++, obs->n_velocityStdev()(1)); // East velocity StDev [m/s]
+    addData(pinIndex, i++, obs->n_velocityStdev()(2)); // Down velocity StDev [m/s]
 }
 
 void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, size_t pinIndex)

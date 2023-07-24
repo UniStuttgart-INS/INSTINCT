@@ -65,7 +65,7 @@ class Orbit
     /// @param[in] transTime Transmit time to calculate the satellite position, velocity and acceleration for
     [[nodiscard]] PosVelAccel calcSatellitePosVelAccel(const InsTime& transTime) const;
 
-    /// @brief Calculates the Variance of the satellite position in [m]
+    /// @brief Calculates the Variance of the satellite position in [m^2]
     [[nodiscard]] virtual double calcSatellitePositionVariance() const = 0;
 
   protected:

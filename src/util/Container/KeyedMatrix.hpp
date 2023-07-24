@@ -2395,7 +2395,7 @@ struct fmt::formatter<NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Col
                 rowKeysLength.push_back(rowKeyLength);
             }
 
-            size_t colMinLength = 6UL;
+            size_t colMinLength = 9UL;
 
             std::vector<std::string> colKeysStr;
             std::vector<size_t> colKeysLength;
@@ -2412,10 +2412,10 @@ struct fmt::formatter<NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Col
 
             result.reserve((rows + 1) * rowLineLength);
             // ---------------------------------------- Column keys ------------------------------------------
-            result += std::string(rowKeysColSpace, ' ');
+            result += " " + std::string(rowKeysColSpace, ' ');
             for (size_t c = 0; c < cols; c++)
             {
-                result += "  ";
+                result += " ";
                 if (colMinLength > colKeysLength.at(c))
                 {
                     result += std::string(colMinLength - colKeysLength.at(c), ' '); // Spaces in front of column name (if too short)
@@ -2430,12 +2430,17 @@ struct fmt::formatter<NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Col
                 {
                     result += std::string(rowKeysColSpace - rowKeysLength.at(r), ' '); // Spaces in front of row name (if too short)
                 }
-                result += rowKeysStr.at(r);
+                result += rowKeysStr.at(r) + " ";
                 for (size_t c = 0; c < cols; c++)
                 {
                     auto colLength = std::max(colKeysStr.at(c).length(), colMinLength);
 
-                    result += fmt::format("  {:>{}.{}}", mat(NAV::all, NAV::all)(static_cast<int>(r), static_cast<int>(c)), colLength, colLength - 1);
+                    std::string tmp = fmt::format(" {:> {}.{}g}", mat(NAV::all, NAV::all)(static_cast<int>(r), static_cast<int>(c)), colLength, colLength - 2);
+                    if (tmp.length() > colLength)
+                    {
+                        tmp = fmt::format(" {:> {}.{}g}", mat(NAV::all, NAV::all)(static_cast<int>(r), static_cast<int>(c)), colLength, colLength - 6);
+                    }
+                    result += tmp;
                 }
                 if (r != rows - 1) { result += '\n'; }
             }
@@ -2482,7 +2487,7 @@ struct fmt::formatter<NAV::KeyedVector<Scalar, RowKeyType, Rows>>
                 rowKeysLength.push_back(rowKeyLength);
             }
 
-            size_t colLength = 6UL;
+            size_t colLength = 9UL;
 
             result.reserve(rows * (rowKeysColSpace + 2 + colLength));
             // ------------------------------------------- Rows ----------------------------------------------
@@ -2494,7 +2499,12 @@ struct fmt::formatter<NAV::KeyedVector<Scalar, RowKeyType, Rows>>
                 }
                 result += rowKeysStr.at(r);
 
-                result += fmt::format("  {:>{}.{}}", vec(NAV::all)(static_cast<int>(r)), colLength, colLength - 1);
+                std::string tmp = fmt::format("  {:> {}.{}g}", vec(NAV::all)(static_cast<int>(r)), colLength, colLength - 2);
+                if (tmp.length() > colLength)
+                {
+                    tmp = fmt::format("  {:> {}.{}g}", vec(NAV::all)(static_cast<int>(r)), colLength, colLength - 6);
+                }
+                result += tmp;
 
                 if (r != rows - 1) { result += '\n'; }
             }
@@ -2528,7 +2538,7 @@ struct fmt::formatter<NAV::KeyedRowVector<Scalar, ColKeyType, Cols>>
 
         if (cols > 0)
         {
-            size_t colMinLength = 6UL;
+            size_t colMinLength = 9UL;
 
             std::vector<std::string> colKeysStr;
             std::vector<size_t> colKeysLength;
@@ -2547,7 +2557,7 @@ struct fmt::formatter<NAV::KeyedRowVector<Scalar, ColKeyType, Cols>>
             // ---------------------------------------- Column keys ------------------------------------------
             for (size_t c = 0; c < cols; c++)
             {
-                if (c != 0) { result += "  "; }
+                if (c != 0) { result += " "; }
                 if (colMinLength > colKeysLength.at(c))
                 {
                     result += std::string(colMinLength - colKeysLength.at(c), ' '); // Spaces in front of column name (if too short)
@@ -2560,8 +2570,13 @@ struct fmt::formatter<NAV::KeyedRowVector<Scalar, ColKeyType, Cols>>
             for (size_t c = 0; c < cols; c++)
             {
                 auto colLength = std::max(colKeysStr.at(c).length(), colMinLength);
-                if (c != 0) { result += "  "; }
-                result += fmt::format("{:>{}.{}}", vec(NAV::all)(static_cast<int>(c)), colLength, colLength - 1);
+                if (c != 0) { result += " "; }
+                std::string tmp = fmt::format("{:> {}.{}g}", vec(NAV::all)(static_cast<int>(c)), colLength, colLength - 2);
+                if (tmp.length() > colLength)
+                {
+                    tmp = fmt::format("{:> {}.{}g}", vec(NAV::all)(static_cast<int>(c)), colLength, colLength - 6);
+                }
+                result += tmp;
             }
         }
 

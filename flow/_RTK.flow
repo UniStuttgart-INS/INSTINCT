@@ -54,6 +54,11 @@
             "endPinId": 104,
             "id": 189,
             "startPinId": 185
+        },
+        "link-214": {
+            "endPinId": 150,
+            "id": 214,
+            "startPinId": 108
         }
     },
     "nodes": {
@@ -140,7 +145,7 @@
                 "codes": "11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
                 "elevationMask": 14.999999999999998,
                 "excludedSatellites": [],
-                "frequencies": 7943,
+                "frequencies": 1,
                 "ionosphereModel": 0,
                 "nNavInfoPins": 2,
                 "stdevAccel": [
@@ -347,7 +352,7 @@
         "node-137": {
             "data": {
                 "nInputPins": 4,
-                "nPlots": 4,
+                "nPlots": 5,
                 "overridePositionStartValues": true,
                 "pinData": [
                     {
@@ -774,6 +779,48 @@
                             },
                             {
                                 "displayName": "Down velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Solution Type"
+                            },
+                            {
+                                "displayName": "Number satellites"
+                            },
+                            {
+                                "displayName": "X-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "North StDev [m]"
+                            },
+                            {
+                                "displayName": "East StDev [m]"
+                            },
+                            {
+                                "displayName": "Down StDev [m]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity StDev [m/s]"
                             }
                         ],
                         "size": 0,
@@ -1025,10 +1072,43 @@
                                     "stride": 0,
                                     "thickness": 1.0
                                 }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 5,
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "RTK (INSTINCT)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
                             }
                         ],
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 3,
+                        "selectedPin": 2,
                         "selectedXdata": [
                             6,
                             9,
@@ -1158,10 +1238,43 @@
                                     "stride": 0,
                                     "thickness": 1.0
                                 }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 5,
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "RTK (INSTINCT)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
                             }
                         ],
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 3,
+                        "selectedPin": 2,
                         "selectedXdata": [
                             0,
                             0,
@@ -1173,7 +1286,7 @@
                             "y": 300.0
                         },
                         "title": "North/South Position",
-                        "xAxisFlags": 0,
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
                         "y1AxisLabel": "South/North [m]",
@@ -1184,7 +1297,7 @@
                             0,
                             0
                         ],
-                        "yAxisFlags": 0
+                        "yAxisFlags": 2048
                     },
                     {
                         "headerText": "East/West Position",
@@ -1203,7 +1316,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "East/West [m] (SPP (INSTINCT))",
+                                    "legendName": "SPP (INSTINCT)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1236,7 +1349,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "East/West [m] (SPP (RTKLib))",
+                                    "legendName": "SPP (RTKLib)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1269,7 +1382,40 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "East/West [m] (RTK (RTKLib))",
+                                    "legendName": "RTK (RTKLib)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 6,
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "RTK (INSTINCT)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1293,7 +1439,7 @@
                             }
                         ],
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 3,
+                        "selectedPin": 2,
                         "selectedXdata": [
                             0,
                             0,
@@ -1305,7 +1451,7 @@
                             "y": 300.0
                         },
                         "title": "East/West Position",
-                        "xAxisFlags": 0,
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
                         "y1AxisLabel": "East/West [m]",
@@ -1316,7 +1462,7 @@
                             0,
                             0
                         ],
-                        "yAxisFlags": 0
+                        "yAxisFlags": 2048
                     },
                     {
                         "headerText": "Altitude",
@@ -1335,7 +1481,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "Altitude [m] (SPP (INSTINCT))",
+                                    "legendName": "SPP (INSTINCT)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1368,7 +1514,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "Altitude [m] (SPP (RTKLib))",
+                                    "legendName": "SPP (RTKLib)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1401,7 +1547,40 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "Altitude [m] (RTK (RTKLib))",
+                                    "legendName": "RTK (RTKLib)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 4,
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "RTK (INSTINCT)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1425,7 +1604,7 @@
                             }
                         ],
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 3,
+                        "selectedPin": 2,
                         "selectedXdata": [
                             0,
                             0,
@@ -1441,6 +1620,171 @@
                         "xAxisLabel": "",
                         "xAxisScale": 0,
                         "y1AxisLabel": "Altitude [m]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "yAxisFlags": 0
+                    },
+                    {
+                        "headerText": "Plot 5",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 16,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "SPP (INSTINCT)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 11,
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "SPP (RTKLib)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 11,
+                                "pinIndex": 3,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "RTK (RTKLib)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 17,
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "RTK (INSTINCT)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 2,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Plot 5",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "xAxisScale": 0,
+                        "y1AxisLabel": "",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
                         "yAxesScale": [

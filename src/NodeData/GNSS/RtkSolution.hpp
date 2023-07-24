@@ -49,71 +49,64 @@ class RtkSolution : public PosVel
     /// Possible types of the RTK solution
     enum class SolutionType
     {
-        None, ///< No solution type specified
-        SPP,  ///< Solution calculated via SPP algorithm because of missing data for RTK
-        // Int
-        // Float
+        None,      ///< No solution type specified
+        SPP,       ///< Solution calculated via SPP algorithm because of missing data for RTK
+        RTK_Float, ///< RTK solution with floating point ambiguities
+        RTK_Fixed, ///< RTK solution with fixed ambiguities to integers
     };
 
     /// Type of th solution
     SolutionType solType = SolutionType::None;
 
-    /// Amount of satellites used for the position calculation
-    size_t nSatellitesPosition = 0;
-    /// Amount of satellites used for the velocity calculation
-    size_t nSatellitesVelocity = 0;
-
-    /// Estimated receiver clock parameter
-    ReceiverClock recvClk = { .bias = { std::nan(""), std::nan("") },
-                              .drift = { std::nan(""), std::nan("") },
-                              .sysTimeDiff = {},
-                              .sysDriftDiff = {} };
+    /// Amount of satellites used
+    size_t nSatellites = 0;
 
     // ------------------------------------------------------------- Getter ----------------------------------------------------------------
 
     /// Returns the standard deviation of the position in ECEF frame coordinates in [m]
-    [[nodiscard]] const std::optional<Eigen::Matrix3d>& e_positionStdev() const { return _e_positionStdev; }
+    [[nodiscard]] const Eigen::Vector3d& e_positionStdev() const { return _e_positionStdev; }
 
     /// Returns the standard deviation of the position in local navigation frame coordinates in [m]
-    [[nodiscard]] const std::optional<Eigen::Matrix3d>& n_positionStdev() const { return _n_positionStdev; }
+    [[nodiscard]] const Eigen::Vector3d& n_positionStdev() const { return _n_positionStdev; }
 
     /// Returns the standard deviation of the velocity in [m/s], in earth coordinates
-    [[nodiscard]] const std::optional<Eigen::Matrix3d>& e_velocityStdev() const { return _e_velocityStdev; }
+    [[nodiscard]] const Eigen::Vector3d& e_velocityStdev() const { return _e_velocityStdev; }
 
     /// Returns the standard deviation of the velocity in [m/s], in navigation coordinates
-    [[nodiscard]] const std::optional<Eigen::Matrix3d>& n_velocityStdev() const { return _n_velocityStdev; }
+    [[nodiscard]] const Eigen::Vector3d& n_velocityStdev() const { return _n_velocityStdev; }
 
     // ------------------------------------------------------------- Setter ----------------------------------------------------------------
 
     /// @brief Set the Position in ECEF coordinates and its standard deviation
     /// @param[in] e_position New Position in ECEF coordinates [m]
-    /// @param[in] e_positionStdev Standard deviation of Position in ECEF coordinates [m]
-    void setPositionAndStdDev_e(const Eigen::Vector3d& e_position, const Eigen::Matrix3d& e_positionStdev)
+    /// @param[in] e_PositionCovarianceMatrix Standard deviation of Position in ECEF coordinates [m]
+    void setPositionAndStdDev_e(const Eigen::Vector3d& e_position, const Eigen::Matrix3d& e_PositionCovarianceMatrix)
     {
         setPosition_e(e_position);
-        _e_positionStdev = e_positionStdev;
-        _n_positionStdev = (n_Quat_e().toRotationMatrix() * _e_positionStdev.value() * n_Quat_e().conjugate().toRotationMatrix()).cwiseAbs();
+        _e_positionStdev = e_PositionCovarianceMatrix.diagonal().cwiseSqrt();
+        _n_positionStdev = (n_Quat_e().toRotationMatrix() * e_PositionCovarianceMatrix * n_Quat_e().conjugate().toRotationMatrix()).diagonal().cwiseSqrt();
     }
 
     /// @brief Set the Velocity in ECEF coordinates and its standard deviation
     /// @param[in] e_velocity New Velocity in ECEF coordinates [m/s]
-    /// @param[in] e_velocityStdev Standard deviation of Velocity in earth coordinates [m/s]
-    void setVelocityAndStdDev_e(const Eigen::Vector3d& e_velocity, const Eigen::Matrix3d& e_velocityStdev)
+    /// @param[in] e_velocityCovarianceMatrix Covariance matrix of Velocity in earth coordinates [m/s]
+    void setVelocityAndStdDev_e(const Eigen::Vector3d& e_velocity, const Eigen::Matrix3d& e_velocityCovarianceMatrix)
     {
         setVelocity_e(e_velocity);
-        _e_velocityStdev = e_velocityStdev;
-        _n_velocityStdev = n_Quat_e().toRotationMatrix() * _e_velocityStdev.value() * n_Quat_e().conjugate().toRotationMatrix();
+        _e_velocityStdev = e_velocityCovarianceMatrix.diagonal().cwiseSqrt();
+        _n_velocityStdev = (n_Quat_e().toRotationMatrix() * e_velocityCovarianceMatrix * n_Quat_e().conjugate().toRotationMatrix()).diagonal().cwiseSqrt();
     }
 
   private:
     /// Standard deviation of Position in ECEF coordinates [m]
-    std::optional<Eigen::Matrix3d> _e_positionStdev;
+    Eigen::Vector3d _e_positionStdev = Eigen::Vector3d::Zero() * std::nan("");
     /// Standard deviation of Position in local navigation frame coordinates [m]
-    std::optional<Eigen::Matrix3d> _n_positionStdev;
+    Eigen::Vector3d _n_positionStdev = Eigen::Vector3d::Zero() * std::nan("");
+
     /// Standard deviation of Velocity in earth coordinates [m/s]
-    std::optional<Eigen::Matrix3d> _e_velocityStdev;
+    Eigen::Vector3d _e_velocityStdev = Eigen::Vector3d::Zero() * std::nan("");
     /// Standard deviation of Velocity in navigation coordinates [m/s]
-    std::optional<Eigen::Matrix3d> _n_velocityStdev;
+    Eigen::Vector3d _n_velocityStdev = Eigen::Vector3d::Zero() * std::nan("");
 };
 
 } // namespace NAV
