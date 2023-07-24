@@ -15,6 +15,8 @@
 
 #include "internal/Node/Node.hpp"
 
+#include "NodeData/State/PosVelAtt.hpp"
+
 namespace NAV
 {
 /// UDP Client
@@ -63,8 +65,7 @@ class UdpSend : public Node
     //   explicit UdpSend(std::string name);
 
   private:
-    constexpr static size_t INPUT_PORT_INDEX_NODE_DATA = 0;    ///< @brief Object (NodeData)
-    constexpr static size_t OUTPUT_PORT_INDEX_POS_VEL_ATT = 0; ///< @brief Flow (PosVelAtt)
+    constexpr static size_t INPUT_PORT_INDEX_NODE_DATA = 0; ///< @brief Object (NodeData)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -72,9 +73,16 @@ class UdpSend : public Node
     /// @brief Deinitialize the node
     void deinitialize() override;
 
-    /// @brief Polls the next PosVelAtt data
-    /// @param[in] peek Specifies if the data should be peeked or read
-    /// @return The PosVelAtt data
-    [[nodiscard]] std::shared_ptr<const NodeData> pollPosVelAtt(bool peek = false);
+    /// @brief Callback when receiving data on a port
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void receivePosVelAtt(InputPin::NodeDataQueue& queue, size_t pinIdx);
+
+    /// IPv4
+    // int _ip = 0;
+    int _ip[4];
+
+    /// Port
+    int _port = 0;
 };
 } // namespace NAV

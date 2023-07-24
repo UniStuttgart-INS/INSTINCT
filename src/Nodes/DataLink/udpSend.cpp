@@ -12,7 +12,9 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-#include "NodeData/State/PosVelAtt.hpp"
+#include "internal/gui/widgets/HelpMarker.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
+
 // #include "util/Eigen.hpp"
 // #include "Navigation/Time/InsTime.hpp"
 
@@ -23,8 +25,6 @@ namespace nm = NAV::NodeManager;
 
 #include "util/Logger.hpp"
 
-// NAV::UdpSend::UdpSend(std::string name)
-//     : Node(std::move(name))
 NAV::UdpSend::UdpSend()
     : Node(typeStatic())
 {
@@ -33,7 +33,7 @@ NAV::UdpSend::UdpSend()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 677, 580 };
 
-    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &UdpSend::pollPosVelAtt);
+    nm::CreateInputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &UdpSend::receivePosVelAtt);
 }
 
 NAV::UdpSend::~UdpSend()
@@ -58,6 +58,16 @@ std::string NAV::UdpSend::category()
 
 void NAV::UdpSend::guiConfig()
 {
+    ImGui::SetNextItemWidth(150 * gui::NodeEditorApplication::windowFontRatio());
+    if (ImGui::InputInt4("IPv4", _ip))
+    {
+        flow::ApplyChanges();
+    }
+    ImGui::SetNextItemWidth(150 * gui::NodeEditorApplication::windowFontRatio());
+    if (ImGui::InputInt(fmt::format("Port##{}", size_t(id)).c_str(), &_port))
+    {
+        flow::ApplyChanges();
+    }
 }
 
 bool NAV::UdpSend::resetNode()
@@ -91,9 +101,9 @@ void NAV::UdpSend::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-std::shared_ptr<const NAV::NodeData> NAV::UdpSend::pollPosVelAtt(bool /* peek */)
+void NAV::UdpSend::receivePosVelAtt(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto obs = std::make_shared<PosVelAtt>();
+    auto posVelAtt = std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(queue.extract_front()));
 
-    return obs;
+    // TODO: buffer, etc. here
 }
