@@ -57,7 +57,7 @@ void testTCKFwithImuFile(const char* imuFilePath, const char* gnssFilePath, size
     auto logger = initializeTestLogger();
 
     bool imuAfter = std::string(imuFilePath) == "DataProcessor/tckf/vn310-imu-after.csv";
-    bool gnssRinex = std::string(gnssFilePath) == "DataProcessor/tckf/reach-m2-01_raw_202306291111.23O" || "DataProcessor/tckf/reach-m2-01_raw_202306291111_noDoppler.23O" || "DataProcessor/tckf/reach-m2-01_raw_202306291111_psrGaps.23O";
+    bool gnssRinex = std::string(gnssFilePath) == "DataProcessor/tckf/reach-m2-01_raw_202306291111.23O" || std::string(gnssFilePath) == "DataProcessor/tckf/reach-m2-01_raw_202306291111_noDoppler.23O" || std::string(gnssFilePath) == "DataProcessor/tckf/reach-m2-01_raw_202306291111_psrGaps.23O";
 
     std::array<std::vector<std::function<void()>>, 6> settings = { {
         { [&]() { LOG_WARN("Setting ImuIntegrator - _path to: {}", imuFilePath);
@@ -316,7 +316,7 @@ void testTCKFwithImuFile(const char* imuFilePath, const char* gnssFilePath, size
 TEST_CASE("[TightlyCoupledKF][flow] Test flow with IMU data arriving before GNSS data", "[TightlyCoupledKF][flow]")
 {
     // GNSS: 166 messages, 166 messages with InsTime (first GNSS message at 0.004999876 s)
-    size_t MESSAGE_COUNT_GNSS = 610;
+    size_t MESSAGE_COUNT_GNSS = 166;
     // IMU:  1638 messages, 1638 messages with InsTime (first IMU message at 0 s)
     size_t MESSAGE_COUNT_IMU = 1638;
 
@@ -326,7 +326,7 @@ TEST_CASE("[TightlyCoupledKF][flow] Test flow with IMU data arriving before GNSS
 TEST_CASE("[TightlyCoupledKF][flow] Test flow with IMU data arriving after GNSS data", "[TightlyCoupledKF][flow]")
 {
     // GNSS: 166 messages, 166 messages with InsTime (first GNSS message at 0.004999876 s)
-    size_t MESSAGE_COUNT_GNSS = 610;
+    size_t MESSAGE_COUNT_GNSS = 166;
     // IMU:  1636 messages, 1636 messages with InsTime (first IMU message at 0.039999962 s)
     size_t MESSAGE_COUNT_IMU = 1636;
 
