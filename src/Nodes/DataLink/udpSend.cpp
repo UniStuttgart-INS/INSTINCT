@@ -31,7 +31,7 @@ NAV::UdpSend::UdpSend()
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 677, 580 };
+    _guiConfigDefaultWindowSize = { 202, 96 };
 
     nm::CreateInputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &UdpSend::receivePosVelAtt);
 }
@@ -59,7 +59,7 @@ std::string NAV::UdpSend::category()
 void NAV::UdpSend::guiConfig()
 {
     ImGui::SetNextItemWidth(150 * gui::NodeEditorApplication::windowFontRatio());
-    if (ImGui::InputInt4("IPv4", _ip))
+    if (ImGui::InputInt4(fmt::format("IPv4##{}", size_t(id)).c_str(), _ip.data()))
     {
         flow::ApplyChanges();
     }

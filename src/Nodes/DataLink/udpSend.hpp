@@ -59,11 +59,6 @@ class UdpSend : public Node
     /// @brief Resets the node. Moves the read cursor to the start
     bool resetNode() override;
 
-    // protected:
-    //   /// @brief Constructor
-    //   /// @param[in] name Name of the node
-    //   explicit UdpSend(std::string name);
-
   private:
     constexpr static size_t INPUT_PORT_INDEX_NODE_DATA = 0; ///< @brief Object (NodeData)
 
@@ -78,11 +73,10 @@ class UdpSend : public Node
     /// @param[in] pinIdx Index of the pin the data is received on
     void receivePosVelAtt(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
-    /// IPv4
-    // int _ip = 0;
-    int _ip[4];
+    /// IPv4 address
+    std::array<int, 4> _ip{};
 
-    /// Port
+    /// UDP port number
     int _port = 0;
 };
 } // namespace NAV
