@@ -61,11 +61,15 @@ Logger::Logger(const std::string& logpath)
     switch (spdlog::level::from_str(NAV::ConfigManager::Get<std::string>("console-log-level", "trace")))
     {
     case spdlog::level::trace:
+    #if LOG_LEVEL == LOG_LEVEL_DATA || LOG_LEVEL == LOG_LEVEL_TRACE
         console_sink->set_pattern(logPatternTraceColor);
         break;
+    #endif
     case spdlog::level::debug:
+    #if LOG_LEVEL == LOG_LEVEL_DEBUG
         console_sink->set_pattern(logPatternDebugColor);
         break;
+    #endif
     case spdlog::level::info:
     case spdlog::level::warn:
     case spdlog::level::err:
@@ -85,11 +89,15 @@ Logger::Logger(const std::string& logpath)
     switch (spdlog::level::from_str(NAV::ConfigManager::Get<std::string>("file-log-level", "trace")))
     {
     case spdlog::level::trace:
+#if LOG_LEVEL == LOG_LEVEL_DATA || LOG_LEVEL == LOG_LEVEL_TRACE
         file_sink->set_pattern(logPatternTrace);
         break;
+#endif
     case spdlog::level::debug:
+#if LOG_LEVEL == LOG_LEVEL_DEBUG
         file_sink->set_pattern(logPatternDebug);
         break;
+#endif
     case spdlog::level::info:
     case spdlog::level::warn:
     case spdlog::level::err:

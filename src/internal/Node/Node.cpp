@@ -102,7 +102,7 @@ void NAV::Node::notifyOutputValueChanged(size_t pinIdx, const InsTime& insTime)
             if (link.connectedNode->isInitialized() && !targetPin->queueBlocked)
             {
                 outputPin.dataAccessCounter++;
-                LOG_DATA("{}: Increasing data access counter on output pin '{}'. Value now {}.", nameId(), outputPin.name, outputPin.dataAccessCounter);
+                LOG_DATA("{}: Increasing data access counter on output pin '{}'. Value now {}.", nameId(), outputPin.name, fmt::streamed(outputPin.dataAccessCounter));
 
                 if (nm::showFlowWhenNotifyingValueChange)
                 {
@@ -132,7 +132,7 @@ void NAV::Node::requestOutputValueLock(size_t pinIdx)
     auto& outputPin = outputPins.at(pinIdx);
     if (outputPin.dataAccessCounter > 0)
     {
-        LOG_DATA("{}: Requesting lock on output pin '{}', {} threads accessing still.", nameId(), outputPin.name, outputPin.dataAccessCounter);
+        LOG_DATA("{}: Requesting lock on output pin '{}', {} threads accessing still.", nameId(), outputPin.name, fmt::streamed(outputPin.dataAccessCounter));
         std::unique_lock<std::mutex> lk(outputPin.dataAccessMutex);
         outputPin.dataAccessConditionVariable.wait(lk, [&outputPin]() { return outputPin.dataAccessCounter == 0; });
         LOG_DATA("{}: Lock on output pin '{}' acquired.", nameId(), outputPin.name);

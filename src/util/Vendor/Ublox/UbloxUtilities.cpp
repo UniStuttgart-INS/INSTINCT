@@ -45,14 +45,14 @@ void NAV::vendor::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& o
             }
             else
             {
-                LOG_DATA("UBX:  ACK-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
+                LOG_DATA("UBX:  ACK-{:x}, Size {}, not implemented yet!", obs->msgId, packet.getRawDataLength());
             }
         }
         // Configuration Input Messages: Configure the receiver
         else if (obs->msgClass == UbxClass::UBX_CLASS_CFG)
         {
             [[maybe_unused]] auto msgId = static_cast<UbxCfgMessages>(obs->msgId);
-            LOG_DATA("UBX:  CFG-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
+            LOG_DATA("UBX:  CFG-{:x}, Size {}, not implemented yet!", obs->msgId, packet.getRawDataLength());
         }
         // External Sensor Fusion Messages: External Sensor Measurements and Status Information
         else if (obs->msgClass == UbxClass::UBX_CLASS_ESF)
@@ -91,38 +91,38 @@ void NAV::vendor::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& o
             }
             else
             {
-                LOG_DATA("UBX:  ESF-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
+                LOG_DATA("UBX:  ESF-{:x}, Size {}, not implemented yet!", obs->msgId, packet.getRawDataLength());
             }
         }
         // High Rate Navigation Results Messages: High rate time, position, speed, heading
         else if (obs->msgClass == UbxClass::UBX_CLASS_HNR)
         {
             [[maybe_unused]] auto msgId = static_cast<UbxHnrMessages>(obs->msgId);
-            LOG_DATA("UBX:  HNR-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
+            LOG_DATA("UBX:  HNR-{:x}, Size {}, not implemented yet!", obs->msgId, packet.getRawDataLength());
         }
         // Information Messages: Printf-Style Messages, with IDs such as Error, Warning, Notice
         else if (obs->msgClass == UbxClass::UBX_CLASS_INF)
         {
             [[maybe_unused]] auto msgId = static_cast<UbxInfMessages>(obs->msgId);
-            LOG_DATA("UBX:  INF-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
+            LOG_DATA("UBX:  INF-{:x}, Size {}, not implemented yet!", obs->msgId, packet.getRawDataLength());
         }
         // Logging Messages: Log creation, deletion, info and retrieval
         else if (obs->msgClass == UbxClass::UBX_CLASS_LOG)
         {
             [[maybe_unused]] auto msgId = static_cast<UbxLogMessages>(obs->msgId);
-            LOG_DATA("UBX:  LOG-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
+            LOG_DATA("UBX:  LOG-{:x}, Size {}, not implemented yet!", obs->msgId, packet.getRawDataLength());
         }
         // Multiple GNSS Assistance Messages: Assistance data for various GNSS
         else if (obs->msgClass == UbxClass::UBX_CLASS_MGA)
         {
             [[maybe_unused]] auto msgId = static_cast<UbxMgaMessages>(obs->msgId);
-            LOG_DATA("UBX:  MGA-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
+            LOG_DATA("UBX:  MGA-{:x}, Size {}, not implemented yet!", obs->msgId, packet.getRawDataLength());
         }
         // Monitoring Messages: Communication Status, CPU Load, Stack Usage, Task Status
         else if (obs->msgClass == UbxClass::UBX_CLASS_MON)
         {
             [[maybe_unused]] auto msgId = static_cast<UbxMonMessages>(obs->msgId);
-            LOG_DATA("UBX:  MON-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
+            LOG_DATA("UBX:  MON-{:x}, Size {}, not implemented yet!", obs->msgId, packet.getRawDataLength());
         }
         // Navigation Results Messages: Position, Speed, Time, Acceleration, Heading, DOP, SVs used
         else if (obs->msgClass == UbxClass::UBX_CLASS_NAV)
@@ -235,7 +235,7 @@ void NAV::vendor::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& o
             }
             else
             {
-                LOG_DATA("UBX:  NAV-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
+                LOG_DATA("UBX:  NAV-{:x}, Size {}, not implemented yet!", obs->msgId, packet.getRawDataLength());
             }
         }
         // Receiver Manager Messages: Satellite Status, RTC Status
@@ -319,30 +319,30 @@ void NAV::vendor::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& o
             }
             else
             {
-                LOG_DATA("UBX:  RXM-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
+                LOG_DATA("UBX:  RXM-{:x}, Size {}, not implemented yet!", obs->msgId, packet.getRawDataLength());
             }
         }
         // Security Feature Messages
         else if (obs->msgClass == UbxClass::UBX_CLASS_SEC)
         {
             [[maybe_unused]] auto msgId = static_cast<UbxSecMessages>(obs->msgId);
-            LOG_DATA("UBX:  SEC-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
+            LOG_DATA("UBX:  SEC-{:x}, Size {}, not implemented yet!", obs->msgId, packet.getRawDataLength());
         }
         // Timing Messages: Time Pulse Output, Time Mark Results
         else if (obs->msgClass == UbxClass::UBX_CLASS_TIM)
         {
             [[maybe_unused]] auto msgId = static_cast<UbxTimMessages>(obs->msgId);
-            LOG_DATA("UBX:  TIM-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
+            LOG_DATA("UBX:  TIM-{:x}, Size {}, not implemented yet!", obs->msgId, packet.getRawDataLength());
         }
         // Firmware Update Messages: Memory/Flash erase/write, Reboot, Flash identification, etc.
         else if (obs->msgClass == UbxClass::UBX_CLASS_UPD)
         {
             [[maybe_unused]] auto msgId = static_cast<UbxUpdMessages>(obs->msgId);
-            LOG_DATA("UBX:  UPD-{:x}, Size {}, not implemented yet!", msgId, packet.getRawDataLength());
+            LOG_DATA("UBX:  UPD-{:x}, Size {}, not implemented yet!", obs->msgId, packet.getRawDataLength());
         }
         else
         {
-            LOG_DATA("UBX:  {:x}-{:x}, Size {}, not implemented yet!", obs->msgClass, obs->msgId, packet.getRawDataLength());
+            LOG_DATA("UBX:  {:x}-{:x}, Size {}, not implemented yet!", static_cast<int>(obs->msgClass), static_cast<int>(obs->msgId), packet.getRawDataLength());
         }
     }
     else if (packet.type() == uart::protocol::Packet::Type::TYPE_ASCII)

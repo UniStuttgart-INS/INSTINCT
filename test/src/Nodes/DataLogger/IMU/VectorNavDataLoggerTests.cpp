@@ -885,7 +885,10 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
     nm::RegisterWatcherCallbackToInputPin(41, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) { // data/VectorNav/StaticSize/vn310-imu.csv
         messageCounterImuDataCsv++;
 
-        LOG_TRACE("messageCounterImuDataCsv = {}, messageCounterImuLogCsv = {}, messageCounterImuLogVnb = {}", messageCounterImuDataCsv, messageCounterImuLogCsv, messageCounterImuLogVnb);
+        LOG_TRACE("messageCounterImuDataCsv = {}, messageCounterImuLogCsv = {}, messageCounterImuLogVnb = {}",
+                  fmt::streamed(messageCounterImuDataCsv),
+                  fmt::streamed(messageCounterImuLogCsv),
+                  fmt::streamed(messageCounterImuLogVnb));
 
         std::lock_guard lk(comparisonMutex);
         data_vn310_imu_csv.push_back(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()));
@@ -896,7 +899,10 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
     nm::RegisterWatcherCallbackToInputPin(54, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) { // logs/vn310-imu.csv
         messageCounterImuLogCsv++;
 
-        LOG_TRACE("messageCounterImuDataCsv = {}, messageCounterImuLogCsv = {}, messageCounterImuLogVnb = {}", messageCounterImuDataCsv, messageCounterImuLogCsv, messageCounterImuLogVnb);
+        LOG_TRACE("messageCounterImuDataCsv = {}, messageCounterImuLogCsv = {}, messageCounterImuLogVnb = {}",
+                  fmt::streamed(messageCounterImuDataCsv),
+                  fmt::streamed(messageCounterImuLogCsv),
+                  fmt::streamed(messageCounterImuLogVnb));
 
         std::lock_guard lk(comparisonMutex);
         logs_vn310_imu_csv.push_back(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()));
@@ -907,7 +913,10 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
     nm::RegisterWatcherCallbackToInputPin(61, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) { // logs/vn310-imu.vnb
         messageCounterImuLogVnb++;
 
-        LOG_TRACE("messageCounterImuDataCsv = {}, messageCounterImuLogCsv = {}, messageCounterImuLogVnb = {}", messageCounterImuDataCsv, messageCounterImuLogCsv, messageCounterImuLogVnb);
+        LOG_TRACE("messageCounterImuDataCsv = {}, messageCounterImuLogCsv = {}, messageCounterImuLogVnb = {}",
+                  fmt::streamed(messageCounterImuDataCsv),
+                  fmt::streamed(messageCounterImuLogCsv),
+                  fmt::streamed(messageCounterImuLogVnb));
 
         std::lock_guard lk(comparisonMutex);
         logs_vn310_imu_vnb.push_back(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()));
@@ -920,7 +929,10 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
     nm::RegisterWatcherCallbackToInputPin(68, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) { // data/VectorNav/StaticSize/vn310-gnss.csv
         messageCounterGnssDataCsv++;
 
-        LOG_TRACE("messageCounterGnssDataCsv = {}, messageCounterGnssLogCsv = {}, messageCounterGnssLogVnb = {}", messageCounterGnssDataCsv, messageCounterGnssLogCsv, messageCounterGnssLogVnb);
+        LOG_TRACE("messageCounterGnssDataCsv = {}, messageCounterGnssLogCsv = {}, messageCounterGnssLogVnb = {}",
+                  fmt::streamed(messageCounterGnssDataCsv),
+                  fmt::streamed(messageCounterGnssLogCsv),
+                  fmt::streamed(messageCounterGnssLogVnb));
 
         std::lock_guard lk(comparisonMutex);
         data_vn310_gnss_csv.push_back(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()));
@@ -931,7 +943,10 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
     nm::RegisterWatcherCallbackToInputPin(75, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) { // logs/vn310-gnss.csv
         messageCounterGnssLogCsv++;
 
-        LOG_TRACE("messageCounterGnssDataCsv = {}, messageCounterGnssLogCsv = {}, messageCounterGnssLogVnb = {}", messageCounterGnssDataCsv, messageCounterGnssLogCsv, messageCounterGnssLogVnb);
+        LOG_TRACE("messageCounterGnssDataCsv = {}, messageCounterGnssLogCsv = {}, messageCounterGnssLogVnb = {}",
+                  fmt::streamed(messageCounterGnssDataCsv),
+                  fmt::streamed(messageCounterGnssLogCsv),
+                  fmt::streamed(messageCounterGnssLogVnb));
 
         std::lock_guard lk(comparisonMutex);
         logs_vn310_gnss_csv.push_back(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()));
@@ -942,7 +957,10 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
     nm::RegisterWatcherCallbackToInputPin(82, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) { // logs/vn310-gnss.vnb
         messageCounterGnssLogVnb++;
 
-        LOG_TRACE("messageCounterGnssDataCsv = {}, messageCounterGnssLogCsv = {}, messageCounterGnssLogVnb = {}", messageCounterGnssDataCsv, messageCounterGnssLogCsv, messageCounterGnssLogVnb);
+        LOG_TRACE("messageCounterGnssDataCsv = {}, messageCounterGnssLogCsv = {}, messageCounterGnssLogVnb = {}",
+                  fmt::streamed(messageCounterGnssDataCsv),
+                  fmt::streamed(messageCounterGnssLogCsv),
+                  fmt::streamed(messageCounterGnssLogVnb));
 
         std::lock_guard lk(comparisonMutex);
         logs_vn310_gnss_vnb.push_back(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()));

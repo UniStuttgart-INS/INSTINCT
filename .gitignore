@@ -36,3 +36,6 @@ INSTINCT.ini
 
 # DrawIO temporary files
 .$*
+
+# Jupyter
+.ipynb_checkpoints

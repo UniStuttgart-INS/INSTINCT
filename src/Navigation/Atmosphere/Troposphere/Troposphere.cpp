@@ -259,7 +259,8 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& /* insTime */, const 
     std::array<double, COUNT> temperature{}; // Absolute temperature in [K]
     std::array<double, COUNT> waterVapor{};  // Partial pressure of water vapour in [hPa]
 
-    LOG_DATA("Calculating Atmosphere parameters (ZHD={}, ZWD={}, ZHDMapFunc={}, ZWDMapFunc={}, ", ZHD, ZWD, ZHDMapFunc, ZWDMapFunc);
+    LOG_DATA("Calculating Atmosphere parameters (ZHD={}, ZWD={}, ZHDMapFunc={}, ZWDMapFunc={}, ",
+             fmt::underlying(ZHD), fmt::underlying(ZWD), fmt::underlying(ZHDMapFunc), fmt::underlying(ZWDMapFunc));
     for (size_t i = 0; i < COUNT; i++)
     {
         bool alreadyCalculated = false;
