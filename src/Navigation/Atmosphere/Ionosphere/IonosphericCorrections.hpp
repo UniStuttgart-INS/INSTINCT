@@ -53,7 +53,7 @@ class IonosphericCorrections
 
     /// @brief Constructor from raw corrections
     /// @param corrections Corrections vector
-    IonosphericCorrections(const std::vector<Corrections>& corrections); // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
+    IonosphericCorrections(std::vector<Corrections> corrections); // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
 
     /// @brief Get the Ionospheric Correction values
     /// @param[in] satSys Satellite System to search the value for

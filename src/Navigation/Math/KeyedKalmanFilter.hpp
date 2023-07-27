@@ -123,7 +123,7 @@ class KeyedKalmanFilter
         x(all) = x(all) + K(all, all) * z(all);
 
         // Math: \mathbf{P}_k^+ = (\mathbf{I} - \mathbf{K}_k \mathbf{H}_k) \mathbf{P}_k^- \qquad \text{P. Groves}\,(3.25)
-        // _P(all, all) = (I - K(all, all) * H(all, all)) * _P(all, all);
+        // P(all, all) = (I - K(all, all) * H(all, all)) * P(all, all);
 
         // Math: \mathbf{P}_k^+ = (\mathbf{I} - \mathbf{K}_k \mathbf{H}_k) \mathbf{P}_k^- (\mathbf{I} - \mathbf{K}_k \mathbf{H}_k)^T + \mathbf{K}_k \mathbf{R}_k \mathbf{K}_k^T \qquad \text{Brown & Hwang}\,(p. 145, eq. 4.2.11)
         P(all, all) = (I - K(all, all) * H(all, all)) * P(all, all) * (I - K(all, all) * H(all, all)).transpose() + K(all, all) * R(all, all) * K(all, all).transpose();

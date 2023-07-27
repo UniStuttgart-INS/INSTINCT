@@ -193,7 +193,7 @@ class RealTimeKinematic : public Node
     /// @note See Groves (2013) eq. (9.156)
     std::array<double, 2> _gui_stdevAccel = { { 3.0, 1.5 } } /* [ m / √(s^3) ] */;
 
-    /// 𝜎²_a Variance of the acceleration due to user motion in horizontal and vertical component in [m / √(s^3)]
+    /// 𝜎²_a Variance of the acceleration due to user motion in horizontal and vertical component in [m^2 / s^3]
     std::array<double, 2> _varAccel{};
 
     /// Recalculates the variance of the acceleration with the GUI setting
@@ -215,20 +215,17 @@ class RealTimeKinematic : public Node
         /// @param[in] e_baseSatVel Satellite velocity in e frame seen from base
         /// @param[in] e_roverPos Rover receiver position in e frame
         /// @param[in] e_basePos Base receiver position in e frame
-        /// @param[in] varEph Variance of the Ephemeris [m^2]
-        SatData(const SatId& satId, std::shared_ptr<SatNavData> navData, double varEph,
+        SatData(const SatId& satId, std::shared_ptr<SatNavData> navData,
                 const Eigen::Vector3d& e_roverSatPos, const Eigen::Vector3d& lla_roverSatPos, const Eigen::Vector3d& e_roverSatVel,
                 const Eigen::Vector3d& e_baseSatPos, const Eigen::Vector3d& lla_baseSatPos, const Eigen::Vector3d& e_baseSatVel,
                 const Eigen::Vector3d& e_roverPos, const Eigen::Vector3d& e_basePos)
             : satId(satId),
               navData(std::move(navData)),
-              varEph(varEph),
               rover(e_roverSatPos, lla_roverSatPos, e_roverSatVel, e_roverPos),
               base(e_baseSatPos, lla_baseSatPos, e_baseSatVel, e_basePos) {}
 
         SatId satId;                                   ///< Satellite Identifier
         std::shared_ptr<SatNavData> navData = nullptr; ///< Satellite Navigation data
-        double varEph = 0.0;                           ///< Variance of the Ephemeris [m^2]
 
         /// Receiver specific data
         struct ReceiverSpecificData

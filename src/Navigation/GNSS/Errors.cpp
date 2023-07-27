@@ -111,11 +111,11 @@ bool GnssMeasurementErrorModel::ShowGuiWidgets(const char* id, float width)
     if (model == GnssMeasurementErrorModel::RTKLIB)
     {
         ImGui::SetNextItemWidth(width);
-        changed |= ImGui::InputDouble2(fmt::format("Code/Carrier-Phase Error Ratio L1/L2##", id).c_str(), rtklibParams.codeCarrierPhaseErrorRatio.data(), "%.1f");
+        changed |= ImGui::InputDouble2(fmt::format("Code/Carrier-Phase Error Ratio L1/L2##", id).c_str(), rtklibParams.codeCarrierPhaseErrorRatio.data(), "%.1g");
         ImGui::SetNextItemWidth(width);
-        changed |= ImGui::InputDouble2(fmt::format("Carrier-Phase Error a+b/sin(El)##", id).c_str(), rtklibParams.carrierPhaseErrorAB.data(), "%.3f m");
+        changed |= ImGui::InputDouble2(fmt::format("Carrier-Phase Error a+b/sin(El)##", id).c_str(), rtklibParams.carrierPhaseErrorAB.data(), "%.3g m");
         ImGui::SetNextItemWidth(width);
-        changed |= ImGui::InputDouble(fmt::format("Doppler Frequency##", id).c_str(), &(rtklibParams.dopplerFrequency), 0.0, 0.0, "%.3f Hz");
+        changed |= ImGui::InputDouble(fmt::format("Doppler Frequency##", id).c_str(), &(rtklibParams.dopplerFrequency), 0.0, 0.0, "%.3g Hz");
     }
     return changed;
 }

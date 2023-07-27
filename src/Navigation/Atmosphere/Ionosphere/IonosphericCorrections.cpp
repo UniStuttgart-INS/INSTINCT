@@ -31,7 +31,7 @@ IonosphericCorrections::IonosphericCorrections(const std::vector<const GnssNavIn
     }
 }
 
-IonosphericCorrections::IonosphericCorrections(const std::vector<Corrections>& corrections)
-    : m_ionosphericCorrections(corrections) {}
+IonosphericCorrections::IonosphericCorrections(std::vector<Corrections> corrections)
+    : m_ionosphericCorrections(std::move(corrections)) {}
 
 } // namespace NAV

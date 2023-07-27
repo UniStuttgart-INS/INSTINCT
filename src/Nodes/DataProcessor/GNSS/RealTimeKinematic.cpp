@@ -418,6 +418,8 @@ bool RealTimeKinematic::initialize()
 
     _kalmanFilter.F.block<3>(States::Pos, States::Vel) = Eigen::Matrix3d::Identity();
 
+    _kalmanFilter.P(all, all).diagonal() << 1e4, 1e4, 1e4, 1e2, 1e2, 1e2; // TODO: Initialize from SPP
+
     LOG_DEBUG("RealTimeKinematic initialized");
 
     return true;
@@ -532,7 +534,7 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
             // _e_roverVelocity = Eigen::Vector3d::Zero();
             // _lla_roverPosition = trafo::ecef2lla_WGS84(_e_roverPosition);
             // _lla_basePosition = trafo::ecef2lla_WGS84(_e_basePosition);
-            // _kalmanFilter.x.segment<3>(States::Pos) = _e_roverPosition - _e_basePosition;
+            // _kalmanFilter.x.segment<3>(States::Pos) = _e_roverPosition;
             // _kalmanFilter.x.segment<3>(States::Vel) = _e_roverVelocity;
             // #######################################################################################################
 
@@ -581,6 +583,8 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
         //                                    Kalman Filter - Prediction
         // ###################################################################################################
 
+        // Update the State transition matrix (𝚽) and the Process noise covariance matrix (𝐐)
+
         double dt = static_cast<double>((_gnssObsRover->insTime - _lastUpdate).count());
         LOG_TRACE("{}: dt = {}s", nameId(), dt);
 
@@ -588,9 +592,7 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
         // _kalmanFilter.addStates({ States::AmbiguitySD{ SatSigId{ G01, 1 } } });
         // _kalmanFilter.addNoiseStates({ States::AmbiguitySD{ SatSigId{ G01, 1 } } }); // Add same states as noise states
 
-        LOG_TRACE("{}: F =\n{}", nameId(), _kalmanFilter.F);
-        _kalmanFilter.calcTransitionMatrix_Phi_Taylor(dt, 1);
-        LOG_TRACE("{}: Phi =\n{}", nameId(), _kalmanFilter.Phi);
+        LOG_DATA("{}: F =\n{}", nameId(), _kalmanFilter.F);
 
         _kalmanFilter.G.block<3>(States::Vel, States::Vel) = trafo::e_Quat_n(_lla_roverPosition(0), _lla_roverPosition(1)).toRotationMatrix();
         _kalmanFilter.W.block<3>(States::Vel, States::Vel).diagonal() << _varAccel.at(0), _varAccel.at(0), _varAccel.at(1);
@@ -599,19 +601,27 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
         // _kalmanFilter.W(States::AmbiguitySD{ SatSigId{ G01, 1 } }, States::AmbiguitySD{ SatSigId{ G01, 1 } }) = 1e-6;
         LOG_TRACE("{}: G =\n{}", nameId(), _kalmanFilter.G);
         LOG_TRACE("{}: W =\n{}", nameId(), _kalmanFilter.W);
+        LOG_TRACE("{}: GWG^T =\n{}", nameId(),
+                  KeyedMatrixXd<States::StateKeyTypes>(_kalmanFilter.G(all, all)
+                                                           * _kalmanFilter.W(all, all)
+                                                           * _kalmanFilter.G(all, all).transpose(),
+                                                       _kalmanFilter.G.rowKeys()));
 
         _kalmanFilter.calcPhiAndQWithVanLoanMethod(dt);
+        LOG_TRACE("{}: Phi =\n{}", nameId(), _kalmanFilter.Phi);
         LOG_TRACE("{}: Q =\n{}", nameId(), _kalmanFilter.Q);
 
         LOG_TRACE("{}: x (a posteriori, t-1 = {}) =\n{}", nameId(), _lastUpdate, _kalmanFilter.x.transposed());
+        LOG_TRACE("{}: P (a posteriori, t-1 = {}) =\n{}", nameId(), _lastUpdate, _kalmanFilter.P);
         _kalmanFilter.predict();
         LOG_TRACE("{}: x (a priori    , t   = {}) =\n{}", nameId(), _gnssObsRover->insTime, _kalmanFilter.x.transposed());
+        LOG_TRACE("{}: P (a priori    , t   = {}) =\n{}", nameId(), _gnssObsRover->insTime, _kalmanFilter.P);
 
         // ###################################################################################################
         //                                      Kalman Filter - Update
         // ###################################################################################################
 
-        // Measurement sensitivity Matrix (𝐇), the Measurement noise covariance matrix (𝐑) and the Measurement vector (𝐳)
+        // Update the Measurement sensitivity Matrix (𝐇), the Measurement noise covariance matrix (𝐑) and the Measurement vector (𝐳)
 
         std::vector<Meas::MeasKeyTypes> measKeys;
         measKeys.reserve(nSignals * 2);
@@ -662,11 +672,25 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
         LOG_TRACE("{}: H =\n{}", nameId(), _kalmanFilter.H);
         LOG_TRACE("{}: R =\n{}", nameId(), _kalmanFilter.R);
 
+        LOG_TRACE("{}: HPH^T =\n{}", nameId(),
+                  KeyedMatrixXd<Meas::MeasKeyTypes>(_kalmanFilter.H(all, all)
+                                                        * _kalmanFilter.P(all, all)
+                                                        * _kalmanFilter.H(all, all).transpose(),
+                                                    _kalmanFilter.z.rowKeys()));
+        LOG_TRACE("{}: S =\n{}", nameId(),
+                  KeyedMatrixXd<Meas::MeasKeyTypes>((_kalmanFilter.H(all, all)
+                                                         * _kalmanFilter.P(all, all)
+                                                         * _kalmanFilter.H(all, all).transpose()
+                                                     + _kalmanFilter.R(all, all))
+                                                        .inverse(),
+                                                    _kalmanFilter.z.rowKeys()));
+
         _kalmanFilter.correctWithMeasurementInnovation();
         _e_roverPosition = _kalmanFilter.x.segment<3>(States::Pos);
         _e_roverVelocity = _kalmanFilter.x.segment<3>(States::Vel);
         _lla_roverPosition = trafo::ecef2lla_WGS84(_e_roverPosition);
         LOG_TRACE("{}: x (a posteriori, t   = {}) =\n{}", nameId(), _gnssObsRover->insTime, _kalmanFilter.x.transposed());
+        LOG_TRACE("{}: P (a posteriori, t   = {}) =\n{}", nameId(), _gnssObsRover->insTime, _kalmanFilter.P);
 
         rtkSol->solType = RtkSolution::SolutionType::RTK_Float;
         rtkSol->nSatellites = satelliteData.size() - _pivotSatellites.size();
@@ -772,8 +796,6 @@ std::pair<std::vector<RealTimeKinematic::SatData>, size_t>
                         auto baseSatPosVel = satNavData->calcSatellitePosVel(baseSatClk.transmitTime);
                         auto lla_baseSatPos = trafo::ecef2lla_WGS84(baseSatPosVel.e_pos);
 
-                        auto varEph = satNavData->calcSatellitePositionVariance();
-
                         LOG_DATA("{}:     e_roverSatPos - e_baseSatPos: {}", nameId(), (roverSatPosVel.e_pos - baseSatPosVel.e_pos).transpose());
 
                         auto obsIdxBase = static_cast<size_t>(obsDataBase - _gnssObsBase->data.begin());
@@ -787,7 +809,7 @@ std::pair<std::vector<RealTimeKinematic::SatData>, size_t>
                         }
                         else
                         {
-                            SatData satData = SatData(satId, satNavData, varEph,
+                            SatData satData = SatData(satId, satNavData,
                                                       roverSatPosVel.e_pos, lla_roverSatPos, roverSatPosVel.e_vel,
                                                       baseSatPosVel.e_pos, lla_baseSatPos, baseSatPosVel.e_vel,
                                                       _e_roverPosition, _e_basePosition);
