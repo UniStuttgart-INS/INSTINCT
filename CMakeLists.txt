@@ -81,6 +81,9 @@ enable_sanitizers(project_options)
 # allow for static analysis options
 include(cmake/StaticAnalyzers.cmake)
 
+# use an alternative linker
+include(cmake/AlternativeLinker.cmake)
+
 # If true, the library target will be a shared library, otherwise it will be static.
 option(BUILD_SHARED_LIBS "Enable compilation of shared libraries" OFF)
 option(ENABLE_TESTING "Enable Test Builds" OFF)
@@ -113,6 +116,7 @@ find_package(Boost REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(Catch2 3 REQUIRED)
 find_package(nlohmann_json REQUIRED)
+find_package(unordered_dense CONFIG REQUIRED)
 
 # ------------------------------------------------- imgui ------------------------------------------------
 

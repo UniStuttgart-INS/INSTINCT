@@ -31,8 +31,10 @@ target_include_directories(tests PRIVATE src)
 
 target_link_libraries(
   tests
-  PRIVATE project_warnings
-          project_options
+  PRIVATE project_warnings)
+target_link_libraries(
+  tests
+  PRIVATE project_options
           Catch2::Catch2WithMain
           instinct::rc
           fmt::fmt
@@ -40,6 +42,7 @@ target_link_libraries(
           Boost::program_options
           Eigen3::Eigen
           nlohmann_json::nlohmann_json
+          unordered_dense::unordered_dense
           Threads::Threads
           imgui
           imgui_node_editor

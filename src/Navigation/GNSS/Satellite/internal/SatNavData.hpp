@@ -13,6 +13,8 @@
 
 #pragma once
 
+#include <fmt/ostream.h>
+
 #include "Clock.hpp"
 #include "Orbit.hpp"
 
@@ -62,3 +64,11 @@ class SatNavData : public Clock, public Orbit
 };
 
 } // namespace NAV
+
+#ifndef DOXYGEN_IGNORE
+
+template<>
+struct fmt::formatter<NAV::SatNavData::Type> : ostream_formatter
+{};
+
+#endif

@@ -484,7 +484,7 @@ void NAV::ImuSimulator::guiConfig()
         {
             if (ImGui::RadioButton(fmt::format("##simulationStopConditionDuration{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_simulationStopCondition), static_cast<int>(StopCondition::Duration)))
             {
-                LOG_DEBUG("{}: simulationStopCondition changed to {}", nameId(), _simulationStopCondition);
+                LOG_DEBUG("{}: simulationStopCondition changed to {}", nameId(), fmt::underlying(_simulationStopCondition));
                 flow::ApplyChanges();
                 doDeinitialize();
             }
@@ -502,7 +502,7 @@ void NAV::ImuSimulator::guiConfig()
         {
             if (ImGui::RadioButton(fmt::format("##simulationStopConditionDistanceOrCircles{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_simulationStopCondition), static_cast<int>(StopCondition::DistanceOrCircles)))
             {
-                LOG_DEBUG("{}: simulationStopCondition changed to {}", nameId(), _simulationStopCondition);
+                LOG_DEBUG("{}: simulationStopCondition changed to {}", nameId(), fmt::underlying(_simulationStopCondition));
                 flow::ApplyChanges();
                 doDeinitialize();
             }

@@ -34,7 +34,7 @@ If no GUI is required, the application can be run in ```--nogui``` mode and a `.
 
 ##### Build & run the main program
 ```shell
-conan install . --build=missing -s build_type=Release
+conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
 cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=INFO
 cmake --build build/Release --parallel8
 ./build/bin/Release/instinct
@@ -42,7 +42,7 @@ cmake --build build/Release --parallel8
 
 ##### Build & run the tests
 ```shell
-conan install . --build=missing -s build_type=Release
+conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
 cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=TRACE
 cmake --build build/Release --parallel8
 cd build/Release
@@ -51,7 +51,7 @@ ctest --output-on-failure
 
 ##### Build the documentation
 ```shell
-conan install . --build=missing -s build_type=Release
+conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
 cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=NO
 cmake --build build/Release --target doc
 ```
@@ -113,15 +113,15 @@ sudo pacman -S --noconfirm --needed valgrind kcachegrind
 # Needed
 sudo apt update
 sudo apt upgrade -y
-sudo apt install -y build-essential git-lfs clang clang-tidy cmake python3-pip libglfw3-dev libglfw3
+sudo apt install -y build-essential git-lfs clang clang-tidy clang-format cmake python3-pip libglfw3-dev libglfw3
 pip3 install conan --user
 conan profile detect --force
 
 # Documentation (Ubuntu 22.04 has too old doxygen version)
 sudo apt install -y pdf2svg texlive texlive-lang-german texlive-latex-extra ghostscript
 sudo apt install -y flex bison graphviz mscgen dia # Build dependencies
-wget -c https://www.doxygen.nl/files/doxygen-1.9.5.src.tar.gz -O - | tar -xz
-mkdir doxygen-1.9.5/build && cd doxygen-1.9.5/build
+wget -c https://www.doxygen.nl/files/doxygen-1.9.7.src.tar.gz -O - | tar -xz
+mkdir doxygen-1.9.7/build && cd doxygen-1.9.7/build
 cmake -G "Unix Makefiles" .. && make && sudo make install
 
 # Optional

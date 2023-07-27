@@ -1,0 +1,70 @@
+{
+    "links": {
+        "link-32": {
+            "endPinId": 25,
+            "id": 32,
+            "startPinId": 30
+        }
+    },
+    "nodes": {
+        "node-28": {
+            "data": null,
+            "enabled": true,
+            "id": 28,
+            "inputPins": [
+                {
+                    "id": 25,
+                    "name": ""
+                },
+                {
+                    "id": 26,
+                    "name": ""
+                }
+            ],
+            "kind": "Simple",
+            "name": "Combiner",
+            "outputPins": [
+                {
+                    "id": 27,
+                    "name": ""
+                }
+            ],
+            "pos": {
+                "x": 520.0,
+                "y": 188.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Combiner"
+        },
+        "node-31": {
+            "data": {
+                "FileReader": {
+                    "path": "GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/RTKLIB/Septentrio-PolaRx5T_E.pos"
+                }
+            },
+            "enabled": true,
+            "id": 31,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "RtklibPosFile",
+            "outputPins": [
+                {
+                    "id": 30,
+                    "name": "RtklibPosObs"
+                }
+            ],
+            "pos": {
+                "x": 277.0,
+                "y": 158.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "RtklibPosFile"
+        }
+    }
+}

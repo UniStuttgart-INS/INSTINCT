@@ -211,6 +211,8 @@ void to_json(json& j, const Plot::PlotInfo& data)
         { "size", data.size },
         { "xAxisFlags", data.xAxisFlags },
         { "yAxisFlags", data.yAxisFlags },
+        { "xAxisScale", data.xAxisScale },
+        { "yAxesScale", data.yAxesScale },
         { "headerText", data.headerText },
         { "leftPaneWidth", data.leftPaneWidth },
         { "plotFlags", data.plotFlags },
@@ -242,6 +244,14 @@ void from_json(const json& j, Plot::PlotInfo& data)
     if (j.contains("yAxisFlags"))
     {
         j.at("yAxisFlags").get_to(data.yAxisFlags);
+    }
+    if (j.contains("xAxisScale"))
+    {
+        j.at("xAxisScale").get_to(data.xAxisScale);
+    }
+    if (j.contains("yAxesScale"))
+    {
+        j.at("yAxesScale").get_to(data.yAxesScale);
     }
     if (j.contains("headerText"))
     {
@@ -337,7 +347,7 @@ NAV::Plot::Plot()
     // PinData::PinType::Matrix:
     _pinData.at(4).pinType = PinData::PinType::Matrix;
     inputPins.at(4).type = Pin::Type::Matrix;
-    inputPins.at(4).dataIdentifier = { "Eigen::MatrixXd" };
+    inputPins.at(4).dataIdentifier = { "Eigen::MatrixXd", "Eigen::VectorXd" };
     inputPins.at(4).callback = static_cast<InputPin::DataChangedNotifyFunc>(&Plot::plotMatrix);
 }
 
@@ -504,7 +514,7 @@ void NAV::Plot::guiConfig()
                         break;
                     case PinData::PinType::Matrix:
                         inputPins.at(pinIndex).type = Pin::Type::Matrix;
-                        inputPins.at(pinIndex).dataIdentifier = { "Eigen::MatrixXd" };
+                        inputPins.at(pinIndex).dataIdentifier = { "Eigen::MatrixXd", "Eigen::VectorXd" };
                         inputPins.at(pinIndex).callback = static_cast<InputPin::DataChangedNotifyFunc>(&Plot::plotMatrix);
                         break;
                     }
@@ -840,6 +850,54 @@ void NAV::Plot::guiConfig()
                     flow::ApplyChanges();
                 }
 
+                auto axisScaleCombo = [&](const char* label, ImPlotScale& axisScale) {
+                    auto getImPlotScaleString = [](ImPlotScale scale) {
+                        switch (scale)
+                        {
+                        case ImPlotScale_Linear: // default linear scale
+                            return "Linear";
+                        case ImPlotScale_Time: // date/time scale
+                            return "Time";
+                        case ImPlotScale_Log10: // base 10 logartithmic scale
+                            return "Log10";
+                        case ImPlotScale_SymLog: // symmetric log scale
+                            return "SymLog";
+                        default:
+                            return "-";
+                        }
+                        return "-";
+                    };
+
+                    ImGui::SetNextItemWidth(100.0F);
+                    if (ImGui::BeginCombo(fmt::format("{}-Axis Scale##{} - {}", label, size_t(id), plotIdx).c_str(), getImPlotScaleString(axisScale)))
+                    {
+                        for (size_t n = 0; n < 4; ++n)
+                        {
+                            const bool is_selected = (static_cast<size_t>(axisScale) == n);
+                            if (ImGui::Selectable(getImPlotScaleString(static_cast<ImPlotScale>(n)), is_selected))
+                            {
+                                axisScale = static_cast<ImPlotScale>(n);
+                                flow::ApplyChanges();
+                            }
+                            if (is_selected) { ImGui::SetItemDefaultFocus(); } // Set the initial focus when opening the combo
+                        }
+                        ImGui::EndCombo();
+                    }
+                };
+                axisScaleCombo("X", plot.xAxisScale);
+                ImGui::SameLine();
+                axisScaleCombo("Y1", plot.yAxesScale[0]);
+                if (plot.plotFlags & ImPlotFlags_YAxis2)
+                {
+                    ImGui::SameLine();
+                    axisScaleCombo("Y2", plot.yAxesScale[1]);
+                }
+                if (plot.plotFlags & ImPlotFlags_YAxis3)
+                {
+                    ImGui::SameLine();
+                    axisScaleCombo("Y3", plot.yAxesScale[2]);
+                }
+
                 ImGui::TreePop();
             }
 
@@ -946,14 +1004,18 @@ void NAV::Plot::guiConfig()
             if (ImPlot::BeginPlot(fmt::format("{}##{} - {}", plot.title, size_t(id), plotIdx).c_str(), plot.size, plot.plotFlags))
             {
                 ImPlot::SetupAxis(ImAxis_X1, xLabel, plot.xAxisFlags);
+                ImPlot::SetupAxisScale(ImAxis_X1, plot.xAxisScale);
                 ImPlot::SetupAxis(ImAxis_Y1, y1Label, plot.yAxisFlags);
+                ImPlot::SetupAxisScale(ImAxis_Y1, plot.yAxesScale[0]);
                 if (plot.plotFlags & ImPlotFlags_YAxis2)
                 {
                     ImPlot::SetupAxis(ImAxis_Y2, y2Label, plot.yAxisFlags | ImPlotAxisFlags_NoGridLines | ImPlotAxisFlags_Opposite);
+                    ImPlot::SetupAxisScale(ImAxis_Y2, plot.yAxesScale[1]);
                 }
                 if (plot.plotFlags & ImPlotFlags_YAxis3)
                 {
                     ImPlot::SetupAxis(ImAxis_Y3, y3Label, plot.yAxisFlags | ImPlotAxisFlags_NoGridLines | ImPlotAxisFlags_Opposite);
+                    ImPlot::SetupAxisScale(ImAxis_Y3, plot.yAxesScale[2]);
                 }
 
                 for (auto& plotItem : plot.plotItems)
@@ -1004,6 +1066,7 @@ void NAV::Plot::guiConfig()
                                              pinData.plotData.at(plot.selectedXdata.at(plotItem.pinIndex)).buffer.data(),
                                              plotData.buffer.data(),
                                              dataPointCount,
+                                             ImPlotLineFlags_None,
                                              static_cast<int>(std::ceil(static_cast<double>(plotData.buffer.offset()) / static_cast<double>(stride))),
                                              stride * static_cast<int>(sizeof(double)));
                         }
@@ -1013,6 +1076,7 @@ void NAV::Plot::guiConfig()
                                                 pinData.plotData.at(plot.selectedXdata.at(plotItem.pinIndex)).buffer.data(),
                                                 plotData.buffer.data(),
                                                 dataPointCount,
+                                                ImPlotScatterFlags_None,
                                                 static_cast<int>(std::ceil(static_cast<double>(plotData.buffer.offset()) / static_cast<double>(stride))),
                                                 stride * static_cast<int>(sizeof(double)));
                         }
@@ -1274,7 +1338,7 @@ void NAV::Plot::restore(json const& j)
                 break;
             case Plot::PinData::PinType::Matrix:
                 inputPins.at(inputPinIndex).type = Pin::Type::Matrix;
-                inputPins.at(inputPinIndex).dataIdentifier = { "Eigen::MatrixXd" };
+                inputPins.at(inputPinIndex).dataIdentifier = { "Eigen::MatrixXd", "Eigen::VectorXd" };
                 inputPins.at(inputPinIndex).callback = static_cast<InputPin::DataChangedNotifyFunc>(&Plot::plotMatrix);
                 break;
             default:
@@ -1597,6 +1661,12 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "sdvne [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "sdved [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "sdvdn [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "sdvx [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "sdvy [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "sdvz [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "sdvxy [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "sdvyz [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "sdvzx [m/s]");
         }
         else if (startPin.dataIdentifier.front() == UbloxObs::type())
         {
@@ -1981,6 +2051,19 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
                 if (mutex) { mutex->unlock(); }
             }
         }
+        else if (startPin.dataIdentifier.front() == "Eigen::VectorXd")
+        {
+            if (const auto* matrix = getInputValue<const Eigen::VectorXd>(pinIndex))
+            {
+                auto* mutex = getInputValueMutex(pinIndex);
+                if (mutex) { mutex->lock(); }
+                for (int row = 0; row < matrix->rows(); row++)
+                {
+                    _pinData.at(pinIndex).addPlotDataItem(i++, fmt::format("{}", row));
+                }
+                if (mutex) { mutex->unlock(); }
+            }
+        }
 
         for (size_t dataIndex = i; dataIndex < _pinData.at(pinIndex).plotData.size(); dataIndex++)
         {
@@ -2185,6 +2268,27 @@ void NAV::Plot::plotMatrix(const InsTime& insTime, size_t pinIdx)
                     {
                         addData(pinIdx, i++, (*value)(row, col));
                     }
+                }
+            }
+        }
+        else if (sourcePin->dataIdentifier.front() == "Eigen::VectorXd")
+        {
+            const auto* value = getInputValue<const Eigen::VectorXd>(pinIdx);
+
+            if (value != nullptr && !insTime.empty())
+            {
+                if (_startTime.empty()) { _startTime = insTime; }
+                size_t i = 0;
+
+                std::scoped_lock<std::mutex> guard(_pinData.at(pinIdx).mutex);
+
+                // NodeData
+                addData(pinIdx, i++, static_cast<double>((insTime - _startTime).count()));
+                addData(pinIdx, i++, static_cast<double>(insTime.toGPSweekTow().tow));
+                // Vector
+                for (int row = 0; row < value->rows(); row++)
+                {
+                    addData(pinIdx, i++, (*value)(row));
                 }
             }
         }
@@ -2591,20 +2695,20 @@ void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs,
     addData(pinIndex, i++, obs->lla_position()(2));
     addData(pinIndex, i++, northSouth);
     addData(pinIndex, i++, eastWest);
-    addData(pinIndex, i++, obs->Q.has_value() ? obs->Q.value() : std::nan(""));
-    addData(pinIndex, i++, obs->ns.has_value() ? obs->ns.value() : std::nan(""));
+    addData(pinIndex, i++, obs->Q);
+    addData(pinIndex, i++, obs->ns);
     addData(pinIndex, i++, obs->sdXYZ.x());
     addData(pinIndex, i++, obs->sdXYZ.y());
     addData(pinIndex, i++, obs->sdXYZ.z());
     addData(pinIndex, i++, obs->sdNED.x());
     addData(pinIndex, i++, obs->sdNED.y());
     addData(pinIndex, i++, obs->sdNED.z());
-    addData(pinIndex, i++, obs->sdxy);
-    addData(pinIndex, i++, obs->sdyz);
-    addData(pinIndex, i++, obs->sdzx);
-    addData(pinIndex, i++, obs->sdne);
-    addData(pinIndex, i++, obs->sded);
-    addData(pinIndex, i++, obs->sddn);
+    addData(pinIndex, i++, obs->sdxy.has_value() ? obs->sdxy.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdyz.has_value() ? obs->sdyz.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdzx.has_value() ? obs->sdzx.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdne.has_value() ? obs->sdne.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sded.has_value() ? obs->sded.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sddn.has_value() ? obs->sddn.value() : std::nan(""));
     addData(pinIndex, i++, obs->age);
     addData(pinIndex, i++, obs->ratio);
     addData(pinIndex, i++, obs->e_velocity().x());
@@ -2613,12 +2717,18 @@ void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs,
     addData(pinIndex, i++, obs->n_velocity().x());
     addData(pinIndex, i++, obs->n_velocity().y());
     addData(pinIndex, i++, obs->n_velocity().z());
-    addData(pinIndex, i++, obs->sdvNED.x());
-    addData(pinIndex, i++, obs->sdvNED.y());
-    addData(pinIndex, i++, obs->sdvNED.z());
-    addData(pinIndex, i++, obs->sdvne);
-    addData(pinIndex, i++, obs->sdved);
-    addData(pinIndex, i++, obs->sdvdn);
+    addData(pinIndex, i++, obs->sdvNED.has_value() ? obs->sdvNED->x() : std::nan(""));
+    addData(pinIndex, i++, obs->sdvNED.has_value() ? obs->sdvNED->y() : std::nan(""));
+    addData(pinIndex, i++, obs->sdvNED.has_value() ? obs->sdvNED->z() : std::nan(""));
+    addData(pinIndex, i++, obs->sdvne.has_value() ? obs->sdvne.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdved.has_value() ? obs->sdved.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdvdn.has_value() ? obs->sdvdn.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdvXYZ.has_value() ? obs->sdvXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->sdvXYZ.has_value() ? obs->sdvXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->sdvXYZ.has_value() ? obs->sdvXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->sdvxy.has_value() ? obs->sdvxy.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdvyz.has_value() ? obs->sdvyz.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdvzx.has_value() ? obs->sdvzx.value() : std::nan(""));
 }
 
 void NAV::Plot::plotUbloxObs(const std::shared_ptr<const UbloxObs>& obs, size_t pinIndex)

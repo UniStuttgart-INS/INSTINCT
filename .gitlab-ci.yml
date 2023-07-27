@@ -77,7 +77,6 @@ image: ins-cpp:10
     GIT_CLONE_PATH: '$CI_BUILDS_DIR/$CI_PROJECT_NAME/$CI_COMMIT_SHA/$CI_JOB_ID'
     WARNINGS_AS_ERRORS: "OFF"
     TOOLCHAIN_PATH: "build"
-  allow_failure: true
 
 .linux:
   tags:
@@ -157,7 +156,7 @@ clang-tidy:
     - .linux
     - .clang
   script:
-    - conan install . --build=missing -s build_type=Release
+    - conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target copy-compile-commands
     - python3 ./tools/run-clang-tidy.py $PWD/src
@@ -169,7 +168,7 @@ clang-tidy:tests:
     - .linux
     - .clang
   script:
-    - conan install . --build=missing -s build_type=Release
+    - conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target copy-compile-commands
     - python3 ./tools/run-clang-tidy.py $PWD/test
@@ -189,7 +188,7 @@ documentation:
   extends:
     - .linux
   script:
-    - conan install . --build=missing -s build_type=Release
+    - conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES
     - cmake --build build/Release --target doc
   artifacts:
@@ -213,7 +212,7 @@ documentation:
     - echo "$LOG_LEVEL_INSTINCT"
     - echo "$WARNINGS_AS_ERRORS"
     - echo "$CMAKE_BUILD_PARALLEL_LEVEL"
-    - conan install . --build=missing -s build_type="$BUILD_TYPE"
+    - conan install . --build=missing -s build_type="$BUILD_TYPE" -s compiler.cppstd=20
     - cmake -B"build/$BUILD_TYPE" -S. -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_PATH/generators/conan_toolchain.cmake" -DENABLE_MAIN="$ENABLE_MAIN" -DENABLE_TESTING="$ENABLE_TESTING" -DCATCH2_JUNIT_OUTPUT="$ENABLE_TESTING" -DENABLE_COVERAGE="$ENABLE_TESTING" -DENABLE_DOXYGEN=OFF -DLOG_LEVEL="$LOG_LEVEL_INSTINCT" -DWARNINGS_AS_ERRORS="$WARNINGS_AS_ERRORS" -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build "build/$BUILD_TYPE" --config $BUILD_TYPE
 
@@ -463,7 +462,7 @@ doxygen:
   extends:
     - .linux
   script:
-    - conan install . --build=missing -s build_type=Release
+    - conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target doc
   artifacts:
