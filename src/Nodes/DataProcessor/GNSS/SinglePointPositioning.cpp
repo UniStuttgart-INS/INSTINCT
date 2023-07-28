@@ -269,15 +269,18 @@ void NAV::SinglePointPositioning::guiConfig()
         }
         ImGui::TreePop();
     }
-    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-    if (ImGui::TreeNode(fmt::format("GNSS Measurement Error##{}", size_t(id)).c_str()))
+    if (_estimatorType != SPP::EstimatorType::LEAST_SQUARES)
     {
-        if (_gnssMeasurementErrorModel.ShowGuiWidgets(std::to_string(size_t(id)).c_str(), itemWidth - ImGui::GetStyle().IndentSpacing))
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::TreeNode(fmt::format("GNSS Measurement Error##{}", size_t(id)).c_str()))
         {
-            LOG_DEBUG("{}: GNSS Measurement Error Model changed.", nameId());
-            flow::ApplyChanges();
+            if (_gnssMeasurementErrorModel.ShowGuiWidgets(std::to_string(size_t(id)).c_str(), itemWidth - ImGui::GetStyle().IndentSpacing))
+            {
+                LOG_DEBUG("{}: GNSS Measurement Error Model changed.", nameId());
+                flow::ApplyChanges();
+            }
+            ImGui::TreePop();
         }
-        ImGui::TreePop();
     }
 
     // ###########################################################################################################
