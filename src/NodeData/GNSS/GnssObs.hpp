@@ -30,6 +30,14 @@ namespace NAV
 class GnssObs : public NodeData
 {
   public:
+    /// @brief Observation types
+    enum ObservationType
+    {
+        Pseudorange, ///< Pseudorange
+        Carrier,     ///< Carrier-Phase
+        Doppler,     ///< Doppler (Pseudorange rate)
+    };
+
     /// @brief Stores the satellites observations
     struct ObservationData
     {
@@ -84,25 +92,21 @@ class GnssObs : public NodeData
 
         /// @brief Constructor
         /// @param[in] satSigId Satellite signal identifier (frequency and satellite number)
-        /// @param[in] code Signal code
-        ObservationData(const SatSigId& satSigId, const Code code) : satSigId(satSigId), code(code) {}
+        ObservationData(const SatSigId& satSigId) : satSigId(satSigId) {}
 
 #ifdef TESTING
         /// @brief Constructor
         /// @param[in] satSigId Satellite signal identifier (frequency and satellite number)
-        /// @param[in] code Signal code
         /// @param[in] pseudorange Pseudorange measurement [m] and Signal Strength Indicator (SSI)
         /// @param[in] carrierPhase Carrier phase measurement [cycles], Signal Strength Indicator (SSI) and Loss of Lock Indicator (LLI)
         /// @param[in] doppler Doppler measurement [Hz]
         /// @param[in] CN0 Carrier-to-Noise density [dBHz]
         ObservationData(const SatSigId& satSigId,
-                        const Code code,
                         std::optional<Pseudorange> pseudorange,
                         std::optional<CarrierPhase> carrierPhase,
                         std::optional<double> doppler,
                         std::optional<double> CN0)
             : satSigId(satSigId),
-              code(code),
               pseudorange(pseudorange),
               carrierPhase(carrierPhase),
               doppler(doppler),
@@ -110,8 +114,7 @@ class GnssObs : public NodeData
         {}
 #endif
 
-        SatSigId satSigId = { Freq_None, 0 };     ///< Frequency and satellite number
-        Code code;                                ///< GNSS Code
+        SatSigId satSigId = { Code::None, 0 };    ///< SignalId and satellite number
         std::optional<Pseudorange> pseudorange;   ///< Pseudorange measurement [m]
         std::optional<CarrierPhase> carrierPhase; ///< Carrier phase measurement [cycles]
         std::optional<double> doppler;            ///< Doppler measurement [Hz]
@@ -189,46 +192,40 @@ class GnssObs : public NodeData
     }
 
     /// @brief Checks if an element with the identifier exists
-    /// @param[in] freq Signal frequency (also identifies the satellite system)
-    /// @param[in] satNum Number of the satellite
-    /// @param[in] code Signal code
+    /// @param[in] satSigId Signal id
     /// @return True if the element exists
-    [[nodiscard]] bool contains(const Frequency& freq, uint16_t satNum, Code code) const
+    [[nodiscard]] bool contains(const SatSigId& satSigId) const
     {
-        auto iter = std::find_if(data.begin(), data.end(), [freq, satNum, code](const ObservationData& idData) {
-            return idData.satSigId.freq == freq && idData.satSigId.satNum == satNum && idData.code == code;
+        auto iter = std::find_if(data.begin(), data.end(), [&satSigId](const ObservationData& idData) {
+            return idData.satSigId == satSigId;
         });
         return iter != data.end();
     }
 
     /// @brief Return the element with the identifier or a newly constructed one if it did not exist
-    /// @param[in] freq Signal frequency (also identifies the satellite system)
-    /// @param[in] satNum Number of the satellite
-    /// @param[in] code Signal code
+    /// @param[in] satSigId Signal id
     /// @return The element found in the observations or a newly constructed one
-    ObservationData& operator()(const Frequency& freq, uint16_t satNum, Code code)
+    ObservationData& operator()(const SatSigId& satSigId)
     {
-        auto iter = std::find_if(data.begin(), data.end(), [freq, satNum, code](const ObservationData& idData) {
-            return idData.satSigId.freq == freq && idData.satSigId.satNum == satNum && idData.code == code;
+        auto iter = std::find_if(data.begin(), data.end(), [&satSigId](const ObservationData& idData) {
+            return idData.satSigId == satSigId;
         });
         if (iter != data.end())
         {
             return *iter;
         }
 
-        data.emplace_back(SatSigId{ freq, satNum }, code);
+        data.push_back(satSigId);
         return data.back();
     }
 
     /// @brief Return the element with the identifier
-    /// @param[in] freq Signal frequency (also identifies the satellite system)
-    /// @param[in] satNum Number of the satellite
-    /// @param[in] code Signal code
+    /// @param[in] satSigId Signal id
     /// @return The element found in the observations
-    std::optional<std::reference_wrapper<const ObservationData>> operator()(const Frequency& freq, uint16_t satNum, Code code) const
+    std::optional<std::reference_wrapper<const ObservationData>> operator()(const SatSigId& satSigId) const
     {
-        auto iter = std::find_if(data.begin(), data.end(), [freq, satNum, code](const ObservationData& idData) {
-            return idData.satSigId.freq == freq && idData.satSigId.satNum == satNum && idData.code == code;
+        auto iter = std::find_if(data.begin(), data.end(), [&satSigId](const ObservationData& idData) {
+            return idData.satSigId == satSigId;
         });
 
         if (iter != data.end())
@@ -242,5 +239,22 @@ class GnssObs : public NodeData
     /// @brief Useful information of the satellites
     std::vector<SatelliteData> _satData;
 };
+
+/// @brief Converts the enum to a string
+/// @param[in] obsType Enum value to convert into text
+/// @return String representation of the enum
+constexpr const char* to_string(GnssObs::ObservationType obsType)
+{
+    switch (obsType)
+    {
+    case GnssObs::Pseudorange:
+        return "Pseudorange";
+    case GnssObs::Carrier:
+        return "Carrier";
+    case GnssObs::Doppler:
+        return "Doppler";
+    }
+    return "";
+}
 
 } // namespace NAV

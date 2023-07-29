@@ -90,6 +90,8 @@ class Code
     /// @brief Enumeration of all Codes
     enum Enum
     {
+        None, ///< None
+
         G1C, ///< GPS L1 - C/A-code
         G1S, ///< GPS L1 - L1C-D (data)
         G1L, ///< GPS L1 - L1C-P (pilot)
@@ -290,11 +292,11 @@ class Code
     using Set = std::bitset<COUNT>;
 
     /// Default constructor for an empty code
-    Code() = default;
+    constexpr Code() = default;
 
     /// @brief Constructor from a biset
     /// @param[in] set Bitset with values to construct the Code from
-    explicit Code(const Set& set) : value(set) {}
+    constexpr explicit Code(const Set& set) : value(set) {}
 
     /// @brief Constructor from a frequency
     /// @param[in] freq Frequency to set all codes for
@@ -302,14 +304,14 @@ class Code
 
     /// @brief Constructor from a single code value
     /// @param[in] e Code enum value to construct the code from
-    Code(Enum e) { value.set(e, true); } // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
+    constexpr Code(Enum e) { value.set(e, true); } // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
 
     /// Implicit bool conversion operator. Allows if(...)
-    explicit operator bool() const { return value.any(); }
+    constexpr explicit operator bool() const { return value.any(); }
 
     /// @brief std::bitset conversion operator
     /// @return The bitset representation of the type
-    explicit operator Set() const { return value; }
+    constexpr explicit operator Set() const { return value; }
 
     /// @brief std::string conversion operator
     /// @return A std::string representation of the type
@@ -339,6 +341,16 @@ class Code
     /// @param[in] first First GNSS signal code
     /// @param[in] second Second GNSS signal code
     static bool IsCodeCombined(Code first, Code second);
+
+    /// @brief Returns a list with all possible codes
+    static std::vector<Code> GetAll();
+
+    /// @brief Returns the enum value for the code (only one must be set)
+    /// @param code GNSS signal code
+    static Enum GetCodeEnumValue(Code code);
+
+    /// @brief Returns the enum value for the code (only one must be set)
+    [[nodiscard]] Enum getEnumValue() const;
 
     // #####################################################################################################################################
 

@@ -33,8 +33,8 @@ std::vector<CalcData> selectObservations(const std::shared_ptr<SppSolution>& spp
     {
         auto satId = obsData.satSigId.toSatId();
 
-        if ((obsData.satSigId.freq & filterFreq)                                                                   // frequency is selected in GUI
-            && (obsData.code & filterCode)                                                                         // code is selected in GUI
+        if ((obsData.satSigId.freq() & filterFreq)                                                                 // frequency is selected in GUI
+            && (obsData.satSigId.code & filterCode)                                                                // code is selected in GUI
             && obsData.pseudorange                                                                                 // has a valid pseudorange
             && std::find(excludedSatellites.begin(), excludedSatellites.end(), satId) == excludedSatellites.end()) // is not excluded
         {
@@ -45,11 +45,11 @@ std::vector<CalcData> selectObservations(const std::shared_ptr<SppSolution>& spp
                     if (!satNavData->isHealthy())
                     {
                         LOG_DATA("Satellite {} is skipped because the signal is not healthy.", satId);
-                        (*sppSol)(obsData.satSigId, obsData.code).skipped = true;
+                        (*sppSol)(obsData.satSigId).skipped = true;
 
                         continue;
                     }
-                    LOG_DATA("Using observation from {} {}", obsData.satSigId, obsData.code);
+                    LOG_DATA("Using observation from {}", obsData.satSigId);
                     calcData.emplace_back(obsData, satNavData);
                     calcData.back().pseudorangeEst = obsData.pseudorange.value().value;
                     break;
@@ -71,7 +71,7 @@ size_t findDopplerMeasurements(std::vector<CalcData>& calcData)
         {
             nDopplerMeas++;
             // TODO: Find out what this is used for and find a way to use it, after the GLONASS orbit calculation is working
-            if (obsData.satSigId.freq & (R01 | R02))
+            if (obsData.satSigId.freq() & (R01 | R02))
             {
                 if (auto satNavData = std::dynamic_pointer_cast<GLONASSEphemeris>(calc.satNavData))
                 {
@@ -79,7 +79,7 @@ size_t findDopplerMeasurements(std::vector<CalcData>& calcData)
                 }
             }
 
-            calc.pseudorangeRateMeas = doppler2psrRate(obsData.doppler.value(), obsData.satSigId.freq);
+            calc.pseudorangeRateMeas = doppler2psrRate(obsData.doppler.value(), obsData.satSigId.freq());
         }
     }
     return nDopplerMeas;
@@ -97,11 +97,11 @@ ValueWeight<double> calcPsrAndWeight(const std::shared_ptr<SppSolution>& sppSol,
                                      const EstimatorType& estimatorType)
 {
     const auto& obsData = calc.obsData;
-    auto& solSatData = (*sppSol)(obsData.satSigId, obsData.code);
+    auto& solSatData = (*sppSol)(obsData.satSigId);
     auto satSys = obsData.satSigId.toSatId().satSys;
 
     // Estimated modulation ionosphere propagation error [m]
-    double dpsr_I = calcIonosphericTimeDelay(static_cast<double>(insTime.toGPSweekTow().tow), obsData.satSigId.freq, lla_pos,
+    double dpsr_I = calcIonosphericTimeDelay(static_cast<double>(insTime.toGPSweekTow().tow), obsData.satSigId.freq(), lla_pos,
                                              calc.satElevation, calc.satAzimuth, ionosphereModel, &ionosphericCorrections)
                     * InsConst::C;
     LOG_DATA("         dpsr_I {} [m] (Estimated modulation ionosphere propagation error)", dpsr_I);
@@ -147,11 +147,11 @@ ValueWeight<double> calcPsrAndWeight(const std::shared_ptr<SppSolution>& sppSol,
     {
         // Weight matrix - RTKLIB eq. E6.23, p. 158
 
-        double varPsrMeas = gnssMeasurementErrorModel.psrMeasErrorVar(obsData.satSigId.toSatId().satSys, obsData.satSigId.freq, calc.satElevation);
+        double varPsrMeas = gnssMeasurementErrorModel.psrMeasErrorVar(obsData.satSigId.toSatId().satSys, obsData.satSigId.freq(), calc.satElevation);
         LOG_DATA("         varPsrMeas {}", varPsrMeas);
         double varEph = calc.satNavData->calcSatellitePositionVariance();
         LOG_DATA("         varEph {}", varEph);
-        double varIono = ionoErrorVar(dpsr_I, obsData.satSigId.freq);
+        double varIono = ionoErrorVar(dpsr_I, obsData.satSigId.freq());
         LOG_DATA("         varIono {}", varIono);
         double varTrop = tropoErrorVar(dpsr_T, calc.satElevation);
         LOG_DATA("         varTrop {}", varTrop);
@@ -249,7 +249,7 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
         LOG_DATA("     satellite {}", obsData.satSigId);
         auto satId = obsData.satSigId.toSatId();
 
-        auto& solSatData = (*sppSol)(obsData.satSigId, obsData.code);
+        auto& solSatData = (*sppSol)(obsData.satSigId);
 
         // #############################################################################################################################
         //                                                    Position calculation
@@ -336,7 +336,7 @@ bool calcDataBasedOnEstimates(const std::shared_ptr<SppSolution>& sppSol,
         // Calculate satellite clock, position and velocity
         LOG_DATA("         pseudorangeEst {}", calc.pseudorangeEst);
 
-        auto satClk = calc.satNavData->calcClockCorrections(insTime, calc.pseudorangeEst, obsData.satSigId.freq);
+        auto satClk = calc.satNavData->calcClockCorrections(insTime, calc.pseudorangeEst, obsData.satSigId.freq());
         calc.satClkBias = satClk.bias;
         calc.satClkDrift = satClk.drift;
         LOG_DATA("         satClkBias {}, satClkDrift {}", calc.satClkBias, calc.satClkDrift);
@@ -360,7 +360,7 @@ bool calcDataBasedOnEstimates(const std::shared_ptr<SppSolution>& sppSol,
         calc.satAzimuth = calcSatAzimuth(calc.n_lineOfSightUnitVector);
         LOG_DATA("         satAzimuth {}°", rad2deg(calc.satAzimuth));
 
-        auto& solSatData = (*sppSol)(obsData.satSigId, obsData.code);
+        auto& solSatData = (*sppSol)(obsData.satSigId);
         solSatData.transmitTime = satClk.transmitTime;
         solSatData.satClkBias = satClk.bias;
         solSatData.satClkDrift = satClk.drift;

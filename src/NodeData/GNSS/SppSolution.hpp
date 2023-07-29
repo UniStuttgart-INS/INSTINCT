@@ -215,12 +215,10 @@ class SppSolution : public PosVel
     struct SatelliteData
     {
         /// @brief Constructor
-        /// @param[in] satSigId Satellite signal identifier (frequency and satellite number)
-        /// @param[in] code Signal code
-        SatelliteData(const SatSigId& satSigId, const Code code) : satSigId(satSigId), code(code) {}
+        /// @param[in] satSigId Satellite signal identifier (code and satellite number)
+        SatelliteData(const SatSigId& satSigId) : satSigId(satSigId) {}
 
-        SatSigId satSigId = { Freq_None, 0 }; ///< Frequency and satellite number
-        Code code;                            ///< GNSS Code
+        SatSigId satSigId = { Code::None, 0 }; ///< Code and satellite number
 
         InsTime transmitTime{};              ///< Time when the signal was transmitted
         Eigen::Vector3d e_satPos;            ///< Satellite position in ECEF frame coordinates [m]
@@ -242,31 +240,29 @@ class SppSolution : public PosVel
     };
 
     /// @brief Return the element with the identifier or a newly constructed one if it did not exist
-    /// @param[in] satSigId Frequency and satellite number
-    /// @param[in] code Signal code
+    /// @param[in] satSigId Code and satellite number
     /// @return The element found in the observations or a newly constructed one
-    SatelliteData& operator()(const SatSigId& satSigId, Code code)
+    SatelliteData& operator()(const SatSigId& satSigId)
     {
-        auto iter = std::find_if(satData.begin(), satData.end(), [satSigId, code](const SatelliteData& idData) {
-            return idData.satSigId == satSigId && idData.code == code;
+        auto iter = std::find_if(satData.begin(), satData.end(), [&satSigId](const SatelliteData& idData) {
+            return idData.satSigId == satSigId;
         });
         if (iter != satData.end())
         {
             return *iter;
         }
 
-        satData.emplace_back(satSigId, code);
+        satData.emplace_back(satSigId);
         return satData.back();
     }
 
     /// @brief Return the element with the identifier
-    /// @param[in] satSigId Frequency and satellite number
-    /// @param[in] code Signal code
+    /// @param[in] satSigId Code and satellite number
     /// @return The element found in the observations
-    const SatelliteData& operator()(const SatSigId& satSigId, Code code) const
+    const SatelliteData& operator()(const SatSigId& satSigId) const
     {
-        auto iter = std::find_if(satData.begin(), satData.end(), [satSigId, code](const SatelliteData& idData) {
-            return idData.satSigId == satSigId && idData.code == code;
+        auto iter = std::find_if(satData.begin(), satData.end(), [&satSigId](const SatelliteData& idData) {
+            return idData.satSigId == satSigId;
         });
 
         INS_ASSERT_USER_ERROR(iter != satData.end(), "You can not insert new elements in a const context.");
@@ -274,13 +270,12 @@ class SppSolution : public PosVel
     }
 
     /// @brief Checks if satellite data exists
-    /// @param[in] satSigId Frequency and satellite number
-    /// @param[in] code Signal code
+    /// @param[in] satSigId Code and satellite number
     /// @return True if the data entry exists
-    bool hasSatelliteData(const SatSigId& satSigId, Code code) const
+    bool hasSatelliteData(const SatSigId& satSigId) const
     {
-        auto iter = std::find_if(satData.begin(), satData.end(), [&](const SatelliteData& satData) {
-            return satData.satSigId == satSigId && satData.code == code;
+        auto iter = std::find_if(satData.begin(), satData.end(), [&satSigId](const SatelliteData& satData) {
+            return satData.satSigId == satSigId;
         });
         return iter != satData.end();
     }

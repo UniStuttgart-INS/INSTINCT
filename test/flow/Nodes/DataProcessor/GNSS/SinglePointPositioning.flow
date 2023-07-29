@@ -433,6 +433,24 @@
                             },
                             {
                                 "displayName": "sdvdn [m/s]"
+                            },
+                            {
+                                "displayName": "sdvx [m/s]"
+                            },
+                            {
+                                "displayName": "sdvy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvxy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvyz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvzx [m/s]"
                             }
                         ],
                         "size": 0,
@@ -526,9 +544,15 @@
                         "title": "Position",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "North/South [m]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -617,9 +641,15 @@
                         "title": "North/South",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "North/South [m]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -708,9 +738,15 @@
                         "title": "East/West",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "East/West [m]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -799,9 +835,15 @@
                         "title": "Altitude",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Altitude [m]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -890,9 +932,15 @@
                         "title": "# Satellites",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "# Satellites",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -981,9 +1029,15 @@
                         "title": "Velocity North",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Velocity North [m/s]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -1072,9 +1126,15 @@
                         "title": "Velocity East",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Velocity East [m/s]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -1163,9 +1223,15 @@
                         "title": "Velocity Down",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Velocity Down [m/s]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -1254,9 +1320,15 @@
                         "title": "StDev North",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "StDev North [m]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     }
                 ],
@@ -1317,8 +1389,9 @@
         },
         "node-91": {
             "data": {
-                "codes": "11110001000100111000111111000011110001110111111111111111111111010111111101110111011101110000000001000000001",
+                "codes": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110",
                 "elevationMask": 0.0,
+                "estimatorType": 1,
                 "excludedSatellites": [],
                 "frequencies": 1,
                 "ionosphereModel": 0,
@@ -1356,8 +1429,7 @@
                             "waterVaporModel": 0
                         }
                     ]
-                },
-                "useWeightedLeastSquares": true
+                }
             },
             "enabled": true,
             "id": 91,

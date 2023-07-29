@@ -57,12 +57,11 @@ namespace NAV::TESTS::SinglePointPositioningTests
 struct SppReference
 {
     /// @brief Constructor
-    /// @param[in] freq GNSS frequency
-    /// @param[in] satNum Satellite number (SVID)
     /// @param[in] code Signal code
+    /// @param[in] satNum Satellite number (SVID)
     /// @param[in] path Path to the reference file
-    SppReference(Frequency freq, uint16_t satNum, Code code, const std::string& path)
-        : satSigId(freq, satNum), code(code), fs("test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/sat_data/" + path, std::ios_base::binary)
+    SppReference(Code code, uint16_t satNum, const std::string& path)
+        : satSigId(code, satNum), fs("test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/sat_data/" + path, std::ios_base::binary)
     {
         REQUIRE(fs.good());
         std::string line;
@@ -75,7 +74,6 @@ struct SppReference
     }
 
     SatSigId satSigId;   ///< GNSS frequency and satellite number
-    Code code;           ///< Signal code
     std::ifstream fs;    ///< File stream to the reference file
     int64_t dataCnt;     ///< Amount of data lines in the file
     int64_t counter = 0; ///< Counter to see how many lines were read
@@ -106,20 +104,20 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - no 
     LOG_DEBUG("lla_refRecvPos {}, {}, {}", rad2deg(lla_refRecvPos.x()), rad2deg(lla_refRecvPos.y()), lla_refRecvPos.z());
 
     std::vector<SppReference> sppReference;
-    sppReference.emplace_back(G01, 1, Code::G1C, "L1CA 01.csv");
-    sppReference.emplace_back(G01, 3, Code::G1C, "L1CA 03.csv");
-    sppReference.emplace_back(G01, 6, Code::G1C, "L1CA 06.csv");
-    sppReference.emplace_back(G01, 7, Code::G1C, "L1CA 07.csv");
-    sppReference.emplace_back(G01, 8, Code::G1C, "L1CA 08.csv");
-    sppReference.emplace_back(G01, 9, Code::G1C, "L1CA 09.csv");
-    sppReference.emplace_back(G01, 11, Code::G1C, "L1CA 11.csv");
-    sppReference.emplace_back(G01, 13, Code::G1C, "L1CA 13.csv");
-    sppReference.emplace_back(G01, 14, Code::G1C, "L1CA 14.csv");
-    sppReference.emplace_back(G01, 17, Code::G1C, "L1CA 17.csv");
-    sppReference.emplace_back(G01, 19, Code::G1C, "L1CA 19.csv");
-    sppReference.emplace_back(G01, 21, Code::G1C, "L1CA 21.csv");
-    sppReference.emplace_back(G01, 24, Code::G1C, "L1CA 24.csv");
-    sppReference.emplace_back(G01, 30, Code::G1C, "L1CA 30.csv");
+    sppReference.emplace_back(Code::G1C, 1, "L1CA 01.csv");
+    sppReference.emplace_back(Code::G1C, 3, "L1CA 03.csv");
+    sppReference.emplace_back(Code::G1C, 6, "L1CA 06.csv");
+    sppReference.emplace_back(Code::G1C, 7, "L1CA 07.csv");
+    sppReference.emplace_back(Code::G1C, 8, "L1CA 08.csv");
+    sppReference.emplace_back(Code::G1C, 9, "L1CA 09.csv");
+    sppReference.emplace_back(Code::G1C, 11, "L1CA 11.csv");
+    sppReference.emplace_back(Code::G1C, 13, "L1CA 13.csv");
+    sppReference.emplace_back(Code::G1C, 14, "L1CA 14.csv");
+    sppReference.emplace_back(Code::G1C, 17, "L1CA 17.csv");
+    sppReference.emplace_back(Code::G1C, 19, "L1CA 19.csv");
+    sppReference.emplace_back(Code::G1C, 21, "L1CA 21.csv");
+    sppReference.emplace_back(Code::G1C, 24, "L1CA 24.csv");
+    sppReference.emplace_back(Code::G1C, 30, "L1CA 30.csv");
 
     size_t messageCounter = 0; // Message Counter
 
@@ -153,11 +151,11 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - no 
             if (sppSol->insTime == refRecvTime)
             {
                 LOG_DEBUG("line: {}", line);
-                LOG_DEBUG("[{}][{}-{}] Processing line {} in file", refRecvTime.toYMDHMS(), ref.satSigId, ref.code, ref.counter + 2);
-                REQUIRE(sppSol->hasSatelliteData(ref.satSigId, ref.code)); // This means something was calculated for the satellite
+                LOG_DEBUG("[{}][{}] Processing line {} in file", refRecvTime.toYMDHMS(), ref.satSigId, ref.counter + 2);
+                REQUIRE(sppSol->hasSatelliteData(ref.satSigId)); // This means something was calculated for the satellite
                 ref.counter++;
 
-                const auto& calcData = (*sppSol)(ref.satSigId, ref.code);
+                const auto& calcData = (*sppSol)(ref.satSigId);
 
                 if (calcData.skipped)
                 {
@@ -243,7 +241,7 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - no 
     CHECK(messageCounter == 49);
     for (auto& ref : sppReference)
     {
-        LOG_DEBUG("Checking if all messages from satellite {}-{} were read.", ref.satSigId, ref.code);
+        LOG_DEBUG("Checking if all messages from satellite {} were read.", ref.satSigId);
         REQUIRE(ref.counter == ref.dataCnt);
     }
 }

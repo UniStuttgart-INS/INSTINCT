@@ -95,9 +95,6 @@ class RinexObsFile : public Node, public FileReader
         /// X = Receiver channel numbers
         ObsType type{ ObsType::Error };
 
-        /// GNSS Frequency
-        Frequency frequency{ Freq_None };
-
         /// GNSS Code
         Code code;
     };

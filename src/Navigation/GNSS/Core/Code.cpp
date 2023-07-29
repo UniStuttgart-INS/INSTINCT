@@ -632,6 +632,30 @@ bool Code::IsCodeCombined(Code first, Code second)
            || ((first & Code_S5I_S5Q_S5X) && (second & Code_S5I_S5Q_S5X));
 }
 
+std::vector<Code> Code::GetAll()
+{
+    std::vector<Code> codes;
+    for (size_t i = 1; i < static_cast<size_t>(COUNT); i++)
+    {
+        codes.push_back(static_cast<Enum>(i));
+    }
+    return codes;
+}
+
+Code::Enum Code::GetCodeEnumValue(Code code)
+{
+    for (size_t i = 0; i < static_cast<size_t>(COUNT); i++)
+    {
+        if (static_cast<Enum>(i) == code) { return static_cast<Enum>(i); }
+    }
+    return Code::None;
+}
+
+Code::Enum Code::getEnumValue() const
+{
+    return GetCodeEnumValue(*this);
+}
+
 // #########################################################################################################################################
 
 Code operator|(const Code& lhs, const Code& rhs)

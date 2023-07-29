@@ -65,16 +65,16 @@ TEST_CASE("[SatelliteIdentifier] SatSigId hash unique", "[SatelliteIdentifier]")
 {
     auto logger = initializeTestLogger();
 
-    auto frequencies = Frequency::GetAll();
+    auto codes = Code::GetAll();
     const uint16_t MAX_SATELLITES = 200;
 
     std::unordered_map<size_t, SatSigId> unique;
 
-    for (const auto& freq : frequencies)
+    for (const auto& code : codes)
     {
         for (uint16_t satNum = 1; satNum <= MAX_SATELLITES; satNum++)
         {
-            auto satSigId = SatSigId{ freq, satNum };
+            auto satSigId = SatSigId{ code, satNum };
             auto hash = std::hash<SatSigId>()(satSigId);
             if (unique.contains(hash))
             {
@@ -86,13 +86,13 @@ TEST_CASE("[SatelliteIdentifier] SatSigId hash unique", "[SatelliteIdentifier]")
             unique[hash] = satSigId;
         }
     }
-    REQUIRE(unique.size() == frequencies.size() * MAX_SATELLITES);
+    REQUIRE(unique.size() == codes.size() * MAX_SATELLITES);
 
-    for (const auto& freq : frequencies)
+    for (const auto& code : codes)
     {
         for (uint16_t satNum = 1; satNum <= MAX_SATELLITES; satNum++)
         {
-            auto satSigId = SatSigId{ freq, satNum };
+            auto satSigId = SatSigId{ code, satNum };
             auto hash = std::hash<SatSigId>()(satSigId);
             REQUIRE(unique.at(hash) == satSigId);
         }
