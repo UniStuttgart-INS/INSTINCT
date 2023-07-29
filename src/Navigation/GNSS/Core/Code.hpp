@@ -637,6 +637,23 @@ bool ShowCodeSelector(const char* label, Code& code, const Frequency& filterFreq
 
 } // namespace NAV
 
+namespace std
+{
+
+/// @brief Hash function for Frequency (needed for unordered_map)
+template<>
+struct hash<NAV::Code>
+{
+    /// @brief Hash function for signal code
+    /// @param[in] c Signal code
+    /// @return Has value for the signal code
+    std::size_t operator()(const NAV::Code& c) const
+    {
+        return static_cast<size_t>(c.getEnumValue());
+    }
+};
+} // namespace std
+
 #ifndef DOXYGEN_IGNORE
 
 /// @brief Formatter for Code

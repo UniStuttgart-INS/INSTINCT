@@ -39,7 +39,7 @@ const char* to_string(IonosphereModel ionosphereModel);
 /// @param[in] ionosphereModel Reference to the ionosphere model to select
 bool ComboIonosphereModel(const char* label, IonosphereModel& ionosphereModel);
 
-/// @brief Calculates the ionospheric time delay with the Klobuchar model
+/// @brief Calculates the ionospheric delay
 /// @param[in] tow GPS time of week in [s]
 /// @param[in] freq Frequency of the signal
 /// @param[in] lla_pos [𝜙, λ, h]^T Geodetic latitude, longitude and height in [rad, rad, m]
@@ -47,12 +47,12 @@ bool ComboIonosphereModel(const char* label, IonosphereModel& ionosphereModel);
 /// @param[in] azimuth Angle between the user and satellite, measured clockwise positive from the true North [rad]
 /// @param[in] ionosphereModel Ionosphere model to use
 /// @param[in] corrections Ionospheric correction parameters
-/// @return Ionospheric time delay in [s]
-double calcIonosphericTimeDelay(double tow, Frequency freq,
-                                const Eigen::Vector3d& lla_pos,
-                                double elevation, double azimuth,
-                                IonosphereModel ionosphereModel = IonosphereModel::None,
-                                const IonosphericCorrections* corrections = nullptr);
+/// @return Ionospheric time delay in [m]
+double calcIonosphericDelay(double tow, Frequency freq,
+                            const Eigen::Vector3d& lla_pos,
+                            double elevation, double azimuth,
+                            IonosphereModel ionosphereModel = IonosphereModel::None,
+                            const IonosphericCorrections* corrections = nullptr);
 
 /// @brief Calculates the ionospheric error variance
 /// @param[in] dpsr_I Ionosphere propagation error [m]

@@ -635,9 +635,10 @@ bool Code::IsCodeCombined(Code first, Code second)
 std::vector<Code> Code::GetAll()
 {
     std::vector<Code> codes;
+    codes.reserve(COUNT);
     for (size_t i = 1; i < static_cast<size_t>(COUNT); i++)
     {
-        codes.push_back(static_cast<Enum>(i));
+        codes.emplace_back(static_cast<Enum>(i));
     }
     return codes;
 }

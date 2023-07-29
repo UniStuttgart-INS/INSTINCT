@@ -16,6 +16,7 @@
 #include "Models/Klobuchar.hpp"
 
 #include "Navigation/GNSS/Functions.hpp"
+#include "Navigation/Constants.hpp"
 
 namespace NAV
 {
@@ -39,11 +40,11 @@ bool ComboIonosphereModel(const char* label, IonosphereModel& ionosphereModel)
     return gui::widgets::EnumCombo(label, ionosphereModel);
 }
 
-double calcIonosphericTimeDelay(double tow, Frequency freq,
-                                const Eigen::Vector3d& lla_pos,
-                                double elevation, double azimuth,
-                                IonosphereModel ionosphereModel,
-                                const IonosphericCorrections* corrections)
+double calcIonosphericDelay(double tow, Frequency freq,
+                            const Eigen::Vector3d& lla_pos,
+                            double elevation, double azimuth,
+                            IonosphereModel ionosphereModel,
+                            const IonosphericCorrections* corrections)
 {
     switch (ionosphereModel)
     {
@@ -55,7 +56,8 @@ double calcIonosphericTimeDelay(double tow, Frequency freq,
             const auto* beta = corrections->get(GPS, IonosphericCorrections::Beta);
             if (alpha && beta)
             {
-                return calcIonosphericTimeDelay_Klobuchar(tow, freq, lla_pos(0), lla_pos(1), elevation, azimuth, *alpha, *beta);
+                return calcIonosphericTimeDelay_Klobuchar(tow, freq, lla_pos(0), lla_pos(1), elevation, azimuth, *alpha, *beta)
+                       * InsConst::C;
             }
         }
 

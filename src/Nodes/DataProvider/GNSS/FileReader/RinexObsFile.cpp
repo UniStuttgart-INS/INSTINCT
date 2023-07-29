@@ -681,8 +681,8 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
 
             gnssObs->satData(SatId{ satSys, satNum }).frequencies |= obsDesc.code.getFrequency();
 
-            LOG_DATA("{}:     {}-{}-{}-{}: {}, LLI {}, SSI {}", nameId(),
-                     obsTypeToChar(obsDesc.type), obsDesc.frequency, obsDesc.code, satNum,
+            LOG_DATA("{}:     {}-{}-{}: {}, LLI {}, SSI {}", nameId(),
+                     obsTypeToChar(obsDesc.type), obsDesc.code, satNum,
                      observation, LLI, SSI);
 
             if (_eraseLessPreciseCodes) { eraseLessPreciseCodes(gnssObs, obsDesc.code.getFrequency(), satNum); }
@@ -692,15 +692,15 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
         {
             if (!gnssObs->data.back().carrierPhase)
             {
-                LOG_WARN("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing carrier phase.", nameId(), epochTime.toYMDHMS());
+                LOG_DATA("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing carrier phase.", nameId(), epochTime.toYMDHMS());
             }
             if (!gnssObs->data.back().doppler)
             {
-                LOG_WARN("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing doppler.", nameId(), epochTime.toYMDHMS());
+                LOG_DATA("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing doppler.", nameId(), epochTime.toYMDHMS());
             }
             if (!gnssObs->data.back().CN0)
             {
-                LOG_WARN("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing raw signal strength(carrier to noise ratio).", nameId(), epochTime.toYMDHMS());
+                LOG_DATA("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing raw signal strength(carrier to noise ratio).", nameId(), epochTime.toYMDHMS());
             }
         }
     }
@@ -917,13 +917,13 @@ void RinexObsFile::eraseLessPreciseCodes(const std::shared_ptr<NAV::GnssObs>& gn
 {
     auto eraseLessPrecise = [&](const Code& third, const Code& second, const Code& prime) {
         auto eraseSatDataWithCode = [&](const Code& code) {
-            LOG_DATA("{}: Searching for {}-{}-{}", nameId(), code, satNum);
+            LOG_DATA("{}: Searching for {}-{}", nameId(), code, satNum);
             auto iter = std::find_if(gnssObs->data.begin(), gnssObs->data.end(), [code, satNum](const GnssObs::ObservationData& idData) {
                 return idData.satSigId == SatSigId{ code, satNum };
             });
             if (iter != gnssObs->data.end())
             {
-                LOG_DATA("{}: Erasing {}-{}-{}", nameId(), code, satNum);
+                LOG_DATA("{}: Erasing {}-{}", nameId(), code, satNum);
                 gnssObs->data.erase(iter);
             }
         };

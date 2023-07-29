@@ -101,9 +101,8 @@ ValueWeight<double> calcPsrAndWeight(const std::shared_ptr<SppSolution>& sppSol,
     auto satSys = obsData.satSigId.toSatId().satSys;
 
     // Estimated modulation ionosphere propagation error [m]
-    double dpsr_I = calcIonosphericTimeDelay(static_cast<double>(insTime.toGPSweekTow().tow), obsData.satSigId.freq(), lla_pos,
-                                             calc.satElevation, calc.satAzimuth, ionosphereModel, &ionosphericCorrections)
-                    * InsConst::C;
+    double dpsr_I = calcIonosphericDelay(static_cast<double>(insTime.toGPSweekTow().tow), obsData.satSigId.freq(), lla_pos,
+                                         calc.satElevation, calc.satAzimuth, ionosphereModel, &ionosphericCorrections);
     LOG_DATA("         dpsr_I {} [m] (Estimated modulation ionosphere propagation error)", dpsr_I);
     solSatData.dpsr_I = dpsr_I;
 

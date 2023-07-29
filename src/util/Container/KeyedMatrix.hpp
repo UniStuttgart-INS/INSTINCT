@@ -12,37 +12,19 @@
 /// @note Based on ideas from Kevin Gutsche (kevin.gutsche@ins.uni-stuttgart.de) and Bayram Stucke (bayram.stucke@ins.uni-stuttgart.de)
 /// @date 2023-07-06
 
-#ifndef unordered_map_type
-/// @brief Map type, override with std::unordered_map if you do not have access to this library
-#define unordered_map_type ankerl::unordered_dense::map
-
-#ifdef protected
-    #define protectedTmp
-    #undef protected
-    #undef private
-#endif
-#include <ankerl/unordered_dense.h>
-#ifdef protectedTmp
-    #define protected public
-    #define private public
-    #undef protectedTmp
-#endif
-
-#endif
-
 #include <unordered_set>
 #include <vector>
 #include <array>
-#include <unordered_map>
 #include <algorithm>
 #include <ranges>
 #include <type_traits>
 #include "util/Assert.h"
 #include "util/Eigen.hpp"
+#include "util/Container/Unordered_map.hpp"
 
 #pragma GCC diagnostic push
 #if !defined(__clang__) && defined(__GNUC__)
-#pragma GCC diagnostic ignored "-Wvirtual-move-assign" // NOLINT(clang-diagnostic-unknown-warning-option)
+    #pragma GCC diagnostic ignored "-Wvirtual-move-assign" // NOLINT(clang-diagnostic-unknown-warning-option)
 #endif
 
 namespace NAV
@@ -116,7 +98,7 @@ class KeyedMatrixRowsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols
 
   protected:
     /// RowKey to Row Index mapping
-    unordered_map_type<RowKeyType, Eigen::Index> rowIndices;
+    unordered_map<RowKeyType, Eigen::Index> rowIndices;
     /// Row Keys
     std::vector<RowKeyType> rowKeysVector;
 
@@ -244,7 +226,7 @@ class KeyedMatrixColsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols
 
   protected:
     /// ColKey to Col Index mapping
-    unordered_map_type<ColKeyType, Eigen::Index> colIndices;
+    unordered_map<ColKeyType, Eigen::Index> colIndices;
     /// Col Keys
     std::vector<ColKeyType> colKeysVector;
 

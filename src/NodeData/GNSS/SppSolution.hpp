@@ -216,7 +216,7 @@ class SppSolution : public PosVel
     {
         /// @brief Constructor
         /// @param[in] satSigId Satellite signal identifier (code and satellite number)
-        SatelliteData(const SatSigId& satSigId) : satSigId(satSigId) {}
+        explicit SatelliteData(const SatSigId& satSigId) : satSigId(satSigId) {}
 
         SatSigId satSigId = { Code::None, 0 }; ///< Code and satellite number
 

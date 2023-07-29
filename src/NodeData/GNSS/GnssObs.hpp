@@ -92,7 +92,7 @@ class GnssObs : public NodeData
 
         /// @brief Constructor
         /// @param[in] satSigId Satellite signal identifier (frequency and satellite number)
-        ObservationData(const SatSigId& satSigId) : satSigId(satSigId) {}
+        explicit ObservationData(const SatSigId& satSigId) : satSigId(satSigId) {}
 
 #ifdef TESTING
         /// @brief Constructor
@@ -215,7 +215,7 @@ class GnssObs : public NodeData
             return *iter;
         }
 
-        data.push_back(satSigId);
+        data.emplace_back(satSigId);
         return data.back();
     }
 
