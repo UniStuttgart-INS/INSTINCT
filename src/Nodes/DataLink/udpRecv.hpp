@@ -16,6 +16,9 @@
 #include "internal/Node/Node.hpp"
 
 #include "NodeData/State/PosVelAtt.hpp"
+#include <boost/asio.hpp>
+#include <string>
+using boost::asio::ip::udp;
 
 namespace NAV
 {
@@ -60,7 +63,7 @@ class UdpRecv : public Node
     bool resetNode() override;
 
   private:
-    constexpr static size_t INPUT_PORT_INDEX_NODE_DATA = 0; ///< @brief Object (NodeData)
+    constexpr static size_t OUTPUT_PORT_INDEX_NODE_DATA = 0; ///< @brief Object (NodeData)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -69,14 +72,25 @@ class UdpRecv : public Node
     void deinitialize() override;
 
     /// @brief Polls the next data
-    /// @param[in] peek Specifies if the data should be peeked or read
-    /// @return The received observation
-    [[nodiscard]] std::shared_ptr<const NodeData> pollPosVelAtt(bool peek = false);
-
-    /// IPv4 address
-    std::array<int, 4> _ip{};
+    void pollPosVelAtt();
 
     /// UDP port number
-    int _port = 0;
+    int _port = 4567;
+
+    /// Asynchronous receive fct
+    boost::asio::io_context _io_context;
+    /// Boost udp socket
+    udp::socket _socket;
+    /// Boost udp endpoint
+    udp::endpoint _sender_endpoint;
+
+    /// Receiver thread
+    std::thread _recvThread;
+
+    /// Flag that indicates the running data link
+    bool _running = false;
+
+    /// Flag that indicates whether seding is stopped
+    double _flagsenderstopped = 1.0;
 };
 } // namespace NAV

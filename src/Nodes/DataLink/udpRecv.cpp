@@ -18,14 +18,14 @@ namespace nm = NAV::NodeManager;
 #include "util/Logger.hpp"
 
 NAV::UdpRecv::UdpRecv()
-    : Node(typeStatic())
+    : Node(typeStatic()), _socket(_io_context, udp::endpoint(udp::v4(), static_cast<unsigned short>(4567)))
 {
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 202, 96 };
 
-    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &UdpRecv::pollPosVelAtt);
+    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() });
 }
 
 NAV::UdpRecv::~UdpRecv()
@@ -50,11 +50,6 @@ std::string NAV::UdpRecv::category()
 
 void NAV::UdpRecv::guiConfig()
 {
-    ImGui::SetNextItemWidth(150 * gui::NodeEditorApplication::windowFontRatio());
-    if (ImGui::InputInt4(fmt::format("IPv4##{}", size_t(id)).c_str(), _ip.data()))
-    {
-        flow::ApplyChanges();
-    }
     ImGui::SetNextItemWidth(150 * gui::NodeEditorApplication::windowFontRatio());
     if (ImGui::InputInt(fmt::format("Port##{}", size_t(id)).c_str(), &_port))
     {
@@ -84,17 +79,38 @@ void NAV::UdpRecv::restore(json const& /* j */)
 bool NAV::UdpRecv::initialize()
 {
     LOG_TRACE("{}: called", nameId());
+    _running = true;
+    _flagsenderstopped = 0.0;
+    _recvThread = std::thread(&NAV::UdpRecv::pollPosVelAtt, this);
 
     return true;
 }
 
 void NAV::UdpRecv::deinitialize()
 {
+    _running = false;
+    _recvThread.join();
+
     LOG_TRACE("{}: called", nameId());
 }
 
-std::shared_ptr<const NAV::NodeData> NAV::UdpRecv::pollPosVelAtt(bool /*peek = false*/)
+void NAV::UdpRecv::pollPosVelAtt()
 {
-    auto obs = std::make_shared<PosVelAtt>();
-    return obs;
+    std::vector<double> v(10);
+
+    while (_running && (_flagsenderstopped < 1.0))
+    {
+        _socket.receive_from(boost::asio::buffer(v), _sender_endpoint);
+
+        auto obs = std::make_shared<PosVelAtt>();
+
+        Eigen::Vector3d test;
+        test << v.at(0), 0, 0;
+        _flagsenderstopped = v.at(9);
+
+        obs->setPosition_lla(test);
+        // obs->insTime()
+
+        this->invokeCallbacks(OUTPUT_PORT_INDEX_NODE_DATA, obs);
+    }
 }
