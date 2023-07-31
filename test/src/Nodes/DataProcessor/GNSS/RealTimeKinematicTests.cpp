@@ -102,7 +102,7 @@ TEST_CASE("[RealTimeKinematic] Meas keys unique", "[RealTimeKinematic]")
             }
             unique[hash] = satSigId;
 
-            satSigId = SatSigId{ code, static_cast<uint16_t>(satNum + 300) };
+            satSigId = SatSigId{ code, static_cast<uint16_t>(satNum) };
             hash = std::hash<Meas::CarrierDD>()(Meas::CarrierDD{ satSigId });
             if (unique.contains(hash))
             {
@@ -112,9 +112,20 @@ TEST_CASE("[RealTimeKinematic] Meas keys unique", "[RealTimeKinematic]")
                           unique.at(hash));
             }
             unique[hash] = satSigId;
+
+            satSigId = SatSigId{ code, static_cast<uint16_t>(satNum) };
+            hash = std::hash<Meas::DopplerDD>()(Meas::DopplerDD{ satSigId });
+            if (unique.contains(hash))
+            {
+                LOG_ERROR("DopplerDD Hash ({}) for SatSigId {} was already in the map but for SatSigId {}",
+                          std::bitset<64>(hash).to_string(),
+                          satSigId,
+                          unique.at(hash));
+            }
+            unique[hash] = satSigId;
         }
     }
-    REQUIRE(unique.size() == 2 * codes.size() * MAX_SATELLITES);
+    REQUIRE(unique.size() == 3 * codes.size() * MAX_SATELLITES);
 
     for (const auto& code : codes)
     {
@@ -124,8 +135,12 @@ TEST_CASE("[RealTimeKinematic] Meas keys unique", "[RealTimeKinematic]")
             auto hash = std::hash<Meas::PsrDD>()(Meas::PsrDD{ satSigId });
             REQUIRE(unique.at(hash) == satSigId);
 
-            satSigId = SatSigId{ code, static_cast<uint16_t>(satNum + 300) };
+            satSigId = SatSigId{ code, static_cast<uint16_t>(satNum) };
             hash = std::hash<Meas::CarrierDD>()(Meas::CarrierDD{ satSigId });
+            REQUIRE(unique.at(hash) == satSigId);
+
+            satSigId = SatSigId{ code, static_cast<uint16_t>(satNum) };
+            hash = std::hash<Meas::DopplerDD>()(Meas::DopplerDD{ satSigId });
             REQUIRE(unique.at(hash) == satSigId);
         }
     }

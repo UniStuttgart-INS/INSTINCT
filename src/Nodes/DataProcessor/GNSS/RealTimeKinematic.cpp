@@ -515,22 +515,20 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
             _receiver[Rover].lla_pos = trafo::ecef2lla_WGS84(_receiver[Rover].e_pos);
             _receiver[Rover].e_vel = sol->e_velocity();
 
-            _kalmanFilter.x.segment<3>(States::Pos) = _receiver[Rover].e_pos;
-            _kalmanFilter.x.segment<3>(States::Vel) = _receiver[Rover].e_vel;
-
             // #######################################################################################################
             //                                     TODO: Debugging, remove later
             // #######################################################################################################
+            // _receiver[Base].lla_pos = Eigen::Vector3d(deg2rad(30), deg2rad(95), 0.0);
+            // // _receiver[Base].e_pos = Eigen::Vector3d{ -481819.3135, 5507219.9538, 3170373.7354 };  // From the RINEX obs file
+            // _receiver[Base].e_pos = trafo::lla2ecef_WGS84(_receiver[Base].lla_pos);
             // _receiver[Rover].lla_pos = Eigen::Vector3d(deg2rad(30), deg2rad(95.02), 0.0);
+            // // _receiver[Rover].e_pos = Eigen::Vector3d{ -483741.6665, 5507051.4316, 3170373.7354 }; // From the RINEX obs file
             // _receiver[Rover].e_pos = trafo::lla2ecef_WGS84(_receiver[Rover].lla_pos);
-            // _receiver[Base].e_pos = Eigen::Vector3d{ -481819.3135, 5507219.9538, 3170373.7354 };  // From the RINEX obs file
-            // _receiver[Rover].e_pos = Eigen::Vector3d{ -483741.6665, 5507051.4316, 3170373.7354 }; // From the RINEX obs file
             // _receiver[Rover].e_vel = Eigen::Vector3d::Zero();
-            // _receiver[Rover].lla_pos = trafo::ecef2lla_WGS84(_receiver[Rover].e_pos);
-            // _receiver[Base].lla_pos = trafo::ecef2lla_WGS84(_receiver[Base].e_pos);
-            // _kalmanFilter.x.segment<3>(States::Pos) = _receiver[Rover].e_pos;
-            // _kalmanFilter.x.segment<3>(States::Vel) = _receiver[Rover].e_vel;
             // #######################################################################################################
+
+            _kalmanFilter.x.segment<3>(States::Pos) = _receiver[Rover].e_pos;
+            _kalmanFilter.x.segment<3>(States::Vel) = _receiver[Rover].e_vel;
 
             LOG_TRACE("{}: Initial base  position: {}°, {}°, {}m (ECEF {} [m])", nameId(),
                       rad2deg(_receiver[Base].lla_pos(0)), rad2deg(_receiver[Base].lla_pos(1)), _receiver[Base].lla_pos(2),
@@ -565,22 +563,22 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
         auto rtkSol = std::make_shared<RtkSolution>();
         rtkSol->insTime = _receiver[Rover].gnssObs->insTime;
 
+        std::unordered_set<GnssObs::ObservationType> obsTypes = { GnssObs::Pseudorange, GnssObs::Carrier /*, GnssObs::Doppler */ };
+
         // Data calculated for each satellite (only satellites filtered by GUI filter & NAV data available & ...)
-        auto [satelliteData, observations, nObs] = selectSatObservationsForCalculation({ GnssObs::Pseudorange, GnssObs::Carrier, GnssObs::Doppler },
-                                                                                       gnssNavInfos);
+        auto [satelliteData, observations, nObs] = selectSatObservationsForCalculation(obsTypes, gnssNavInfos);
 
         updatePivotSatellites(satelliteData, observations);
 
         calcObservationEstimates(satelliteData, observations, ionosphericCorrections);
 
-        calcMeasurementDoubleDifferences(satelliteData);
-        calcEstimatedDoubleDifferences(satelliteData, ionosphericCorrections);
+        auto singleDifferences = calcSingleDifferences(observations);
+        auto doubleDifferences = calcDoubleDifferences(singleDifferences);
 
         // ###################################################################################################
         //                                    Kalman Filter - Prediction
         // ###################################################################################################
 
-        /*
         // Update the State transition matrix (𝚽) and the Process noise covariance matrix (𝐐)
 
         double dt = static_cast<double>((_receiver[Rover].gnssObs->insTime - _lastUpdate).count());
@@ -622,47 +620,61 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
         // Update the Measurement sensitivity Matrix (𝐇), the Measurement noise covariance matrix (𝐑) and the Measurement vector (𝐳)
 
         std::vector<Meas::MeasKeyTypes> measKeys;
-        measKeys.reserve(nSignals * 2);
-        for (const auto& satData : satelliteData)
+        measKeys.reserve(doubleDifferences.size() * obsTypes.size());
+        for (const auto& [satSigId, doubleDiff] : doubleDifferences)
         {
-            for (const auto& signal : satData.signals)
+            for (const auto& [obsType, diff] : doubleDiff)
             {
-                const auto& pivotSatData = _pivotSatellites.at(signal.first).satData;
-                if (satData.satId == pivotSatData.satId) { continue; } // Exclude pivot-satellites
-
-                measKeys.emplace_back(Meas::CarrierDD{ SatSigId{ signal.first, satData.satId.satNum } });
-            }
-        }
-        for (const auto& satData : satelliteData)
-        {
-            for (const auto& signal : satData.signals)
-            {
-                const auto& pivotSatData = _pivotSatellites.at(signal.first).satData;
-                if (satData.satId == pivotSatData.satId) { continue; } // Exclude pivot-satellites
-
-                measKeys.emplace_back(Meas::PsrDD{ SatSigId{ signal.first, satData.satId.satNum } });
+                switch (obsType)
+                {
+                case GnssObs::Pseudorange:
+                    measKeys.emplace_back(Meas::PsrDD{ satSigId });
+                    break;
+                case GnssObs::Carrier:
+                    measKeys.emplace_back(Meas::CarrierDD{ satSigId });
+                    break;
+                case GnssObs::Doppler:
+                    measKeys.emplace_back(Meas::DopplerDD{ satSigId });
+                    break;
+                }
             }
         }
         _kalmanFilter.setMeasurements(measKeys);
 
-        for (auto& satData : satelliteData)
+        for (const auto& [satSigId_s, doubleDiff] : doubleDifferences)
         {
-            for (auto& [freq, signal] : satData.signals)
+            auto satData_s = std::find_if(satelliteData.begin(), satelliteData.end(),
+                                          [&satSigId_s](const SatData& satData) { return satData.satId == satSigId_s.toSatId(); });
+
+            const auto& satSigId_1 = _pivotSatellites.at(satSigId_s.code).satSigId;
+            auto satData_1 = std::find_if(satelliteData.begin(), satelliteData.end(),
+                                          [&satSigId_1](const SatData& satData) { return satData.satId == satSigId_1.toSatId(); });
+
+            for (auto& [obsType, obs] : doubleDiff)
             {
-                const auto& pivotSatData = _pivotSatellites.at(freq).satData;
-                if (satData.satId == pivotSatData.satId) { continue; } // No double-difference with itself
-
-                if (pivotSatData.signals.contains(freq))
+                switch (obsType)
                 {
-                    SatSigId satSigId(freq, satData.satId.satNum);
-                    _kalmanFilter.z(Meas::PsrDD{ satSigId }) = signal.doubleDiffMeasPseudorange_br_1s - signal.doubleDiffEstPseudorange_br_1s;
-                    _kalmanFilter.z(Meas::CarrierDD{ satSigId }) = signal.doubleDiffMeasCarrier_br_1s - signal.doubleDiffEstCarrier_br_1s;
-
-                    _kalmanFilter.H.block<3>(Meas::PsrDD{ satSigId }, States::Pos) = (pivotSatData.rover.e_lineOfSightUnitVector - satData.rover.e_lineOfSightUnitVector).transpose();
-                    _kalmanFilter.H.block<3>(Meas::CarrierDD{ satSigId }, States::Pos) = (pivotSatData.rover.e_lineOfSightUnitVector - satData.rover.e_lineOfSightUnitVector).transpose();
-
-                    _kalmanFilter.R(Meas::PsrDD{ satSigId }, Meas::PsrDD{ satSigId }) = 4. * signal.varPseudorangeMeas_r_s;
-                    _kalmanFilter.R(Meas::CarrierDD{ satSigId }, Meas::CarrierDD{ satSigId }) = 4. * signal.varCarrierMeas_r_s;
+                case GnssObs::Pseudorange:
+                    _kalmanFilter.z(Meas::PsrDD{ satSigId_s }) = obs.measurement - obs.estimate;
+                    _kalmanFilter.H.block<3>(Meas::PsrDD{ satSigId_s }, States::Pos) = (satData_1->receiverData.at(Rover).e_lineOfSightUnitVector
+                                                                                        - satData_s->receiverData.at(Rover).e_lineOfSightUnitVector)
+                                                                                           .transpose();
+                    _kalmanFilter.R(Meas::PsrDD{ satSigId_s }, Meas::PsrDD{ satSigId_s }) = obs.measVar;
+                    break;
+                case GnssObs::Carrier:
+                    _kalmanFilter.z(Meas::CarrierDD{ satSigId_s }) = obs.measurement - obs.estimate;
+                    _kalmanFilter.H.block<3>(Meas::CarrierDD{ satSigId_s }, States::Pos) = (satData_1->receiverData.at(Rover).e_lineOfSightUnitVector
+                                                                                            - satData_s->receiverData.at(Rover).e_lineOfSightUnitVector)
+                                                                                               .transpose();
+                    _kalmanFilter.R(Meas::CarrierDD{ satSigId_s }, Meas::CarrierDD{ satSigId_s }) = obs.measVar;
+                    break;
+                case GnssObs::Doppler:
+                    _kalmanFilter.z(Meas::DopplerDD{ satSigId_s }) = obs.measurement - obs.estimate;
+                    _kalmanFilter.H.block<3>(Meas::DopplerDD{ satSigId_s }, States::Pos) = (satData_1->receiverData.at(Rover).e_lineOfSightUnitVector
+                                                                                            - satData_s->receiverData.at(Rover).e_lineOfSightUnitVector)
+                                                                                               .transpose();
+                    _kalmanFilter.R(Meas::DopplerDD{ satSigId_s }, Meas::DopplerDD{ satSigId_s }) = obs.measVar;
+                    break;
                 }
             }
         }
@@ -694,7 +706,6 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
         rtkSol->nSatellites = satelliteData.size() - _pivotSatellites.size();
         rtkSol->setPositionAndStdDev_e(_receiver[Rover].e_pos, _kalmanFilter.P.block<3>(States::Pos, States::Pos));
         rtkSol->setVelocityAndStdDev_e(_receiver[Rover].e_vel, _kalmanFilter.P.block<3>(States::Vel, States::Vel));
-    }*/
 
         _lastUpdate = rtkSol->insTime;
         invokeCallbacks(OUTPUT_PORT_INDEX_RTKSOL, rtkSol);
@@ -727,10 +738,6 @@ std::shared_ptr<RtkSolution> RealTimeKinematic::calcFallbackSppSolution()
                                                                      GNSS::Positioning::SPP::EstimatorType::WEIGHTED_LEAST_SQUARES,
                                                                      _filterFreq, _filterCode, _excludedSatellites, _elevationMask))
         {
-            _receiver[Rover].e_pos = sppSol->e_position();
-            _receiver[Rover].lla_pos = trafo::ecef2lla_WGS84(_receiver[Rover].e_pos);
-            _receiver[Rover].e_vel = sppSol->e_velocity();
-
             auto rtkSol = std::make_shared<RtkSolution>();
             rtkSol->insTime = sppSol->insTime;
             rtkSol->setPosition_e(sppSol->e_position()); // TODO: Set covariance and stdDev
@@ -1025,10 +1032,6 @@ void RealTimeKinematic::calcObservationEstimates(const std::vector<SatData>& sat
                                                          _ionosphereModel, &ionosphericCorrections);
                 // Sagnac correction [m] - Springer Handbook ch. 19.1.1, eq. 19.7, p. 562
                 double dpsr_ie_r_s = 1.0 / InsConst::C * (receiver.e_pos - recvSatData.e_satPos).dot(InsConst::e_omega_ie.cross(receiver.e_pos));
-                // ------------------------------------------- Ambiguity ---------------------------------------------
-                // double lambda_j = InsConst::C / freq.getFrequency(); // TODO: GLONASS frequency number
-                // double N_br_s = 0.0;                                 // TODO: Update with values from KF
-                // double N_br_1 = 0.0;
 
                 for (auto& [obsType, obsData] : recvObs)
                 {
@@ -1052,134 +1055,72 @@ void RealTimeKinematic::calcObservationEstimates(const std::vector<SatData>& sat
     }
 }
 
-size_t RealTimeKinematic::calcMeasurementDoubleDifferences(std::vector<SatData>& satelliteData)
+RealTimeKinematic::Differences RealTimeKinematic::calcSingleDifferences(const Observations& observations) const
 {
-    size_t doubleDifferencesCount = 0;
-    /*
-    for (auto& satData_s : satelliteData)
+    Differences singleDifferences;
+    singleDifferences.reserve(observations.size());
+
+    LOG_DATA("{}: Calculating single differences (rover - base):", nameId());
+    for (const auto& observation : observations)
     {
-        for (auto& [obsType, obsData] : satData_s.obs)
+        const auto satSigId = observation.first;
+
+        const auto& baseObservations = observation.second.at(Base);
+        const auto& roverObservations = observation.second.at(Rover);
+
+        for (const auto& [obsType, baseObs] : baseObservations)
         {
-            for (auto& [freq, signal_s] : obsData)
+            const auto& roverObs = roverObservations.at(obsType);
+
+            singleDifferences[satSigId][obsType].estimate = roverObs.estimate - baseObs.estimate;
+            singleDifferences[satSigId].at(obsType).measurement = roverObs.measurement - baseObs.measurement;
+            singleDifferences[satSigId].at(obsType).measVar = roverObs.measVar + baseObs.measVar;
+
+            if (obsType == GnssObs::Carrier)
             {
-                const auto& satData_1 = _pivotSatellites.at(freq).satData.obs.at(obsType).at(freq);
-                if (satData_s.satId == satData_1.satId) { continue; } // No double-difference with itself
+                // ------------------------------------------- Ambiguity ---------------------------------------------
+                double lambda_j = InsConst::C / satSigId.freq().getFrequency(); // TODO: GLONASS frequency number
+                double N_br_s = 0.0;                                            // TODO: Update with values from KF
+                singleDifferences[satSigId][obsType].estimate += lambda_j * N_br_s;
 
-                if (satData_1.signals.contains(freq))
-                {
-                    const auto& signal_1 = satData_1.signals.at(freq);
-
-                    signal_s.singleDiffMeasPseudorange_br_s = signal_s.obsRover.obs().pseudorange->value - signal_s.obsBase.obs().pseudorange->value;
-                    double singleDiffMeasPseudorange_br_1 = signal_1.obsRover.obs().pseudorange->value - signal_1.obsBase.obs().pseudorange->value;
-                    signal_s.doubleDiffMeasPseudorange_br_1s = signal_s.singleDiffMeasPseudorange_br_s - singleDiffMeasPseudorange_br_1;
-                    LOG_DATA("{}: [{}]           psrMeas_br_s     = {} [m]", nameId(), SatSigId{ freq, satData_s.satId.satNum }, signal_s.singleDiffMeasPseudorange_br_s);
-                    LOG_DATA("{}:           [{}]  - psrMeas_br_1  = {} [m]", nameId(), SatSigId{ freq, satData_1.satId.satNum }, singleDiffMeasPseudorange_br_1);
-                    LOG_DATA("{}: [{}] - [{}]  = psrMeas_br_1s = {} [m]", nameId(), SatSigId{ freq, satData_s.satId.satNum }, SatSigId{ freq, satData_1.satId.satNum }, signal_s.doubleDiffMeasPseudorange_br_1s);
-
-                    auto lambda_j = InsConst::C / freq.getFrequency();
-
-                    signal_s.singleDiffMeasCarrier_br_s = lambda_j * (signal_s.obsRover.obs().carrierPhase->value - signal_s.obsBase.obs().carrierPhase->value);
-                    double singleDiffMeasCarrier_br_1 = lambda_j * (signal_1.obsRover.obs().carrierPhase->value - signal_1.obsBase.obs().carrierPhase->value);
-                    signal_s.doubleDiffMeasCarrier_br_1s = signal_s.singleDiffMeasCarrier_br_s - singleDiffMeasCarrier_br_1;
-                    LOG_DATA("{}: [{}]           phiMeas_br_s     = {} [m]", nameId(), SatSigId{ freq, satData_s.satId.satNum }, signal_s.singleDiffMeasCarrier_br_s);
-                    LOG_DATA("{}:           [{}]  - phiMeas_br_1  = {} [m]", nameId(), SatSigId{ freq, satData_1.satId.satNum }, singleDiffMeasCarrier_br_1);
-                    LOG_DATA("{}: [{}] - [{}]  = phiMeas_br_1s = {} [m]", nameId(), SatSigId{ freq, satData_s.satId.satNum }, SatSigId{ freq, satData_1.satId.satNum }, signal_s.doubleDiffMeasCarrier_br_1s);
-
-                    doubleDifferencesCount++;
-                }
+                singleDifferences[satSigId].at(obsType).measurement *= lambda_j;
             }
+
+            LOG_DATA("{}:   [{}][{:11}]e {} - {} = {}", nameId(), observation.first, NAV::to_string(obsType), roverObs.estimate, baseObs.estimate, singleDifferences[satSigId][obsType].estimate);
+            LOG_DATA("{}:   [{}][{:11}]m {} - {} = {}", nameId(), observation.first, NAV::to_string(obsType), roverObs.measurement, baseObs.measurement, singleDifferences[satSigId][obsType].measurement);
         }
     }
-    */
 
-    return doubleDifferencesCount;
+    return singleDifferences;
 }
 
-void RealTimeKinematic::calcEstimatedDoubleDifferences(std::vector<SatData>& satelliteData, const IonosphericCorrections& ionosphericCorrections)
+RealTimeKinematic::Differences RealTimeKinematic::calcDoubleDifferences(const Differences& singleDifferences) const
 {
-    /*
-    for (auto& satData_s : satelliteData)
+    Differences doubleDifferences;
+    doubleDifferences.reserve(singleDifferences.size() - 1);
+
+    LOG_DATA("{}: Calculating double differences (sat - pivot):", nameId());
+    for (const auto& [satSigId_s, singleDiff_s] : singleDifferences)
     {
-        for (auto& [freq, signal] : satData_s.signals)
+        const auto& satSigId_1 = _pivotSatellites.at(satSigId_s.code).satSigId;
+        if (satSigId_s == satSigId_1) { continue; } // No double difference with itself
+
+        const auto& singleDiff_1 = singleDifferences.at(satSigId_1);
+
+        for (const auto& [obsType, obs_s] : singleDiff_s)
         {
-            const auto& satData_1 = _pivotSatellites.at(freq).satData;
-            if (satData_s.satId == satData_1.satId) { continue; } // No double-difference with itself
+            const auto& obs_1 = singleDiff_1.at(obsType);
 
-            // ----------------------------------- Receiver-Satellite Range --------------------------------------
-            double rho_r_s = (satData_s.rover.e_satPos - _receiver[Rover].e_pos).norm();
-            double rho_b_s = (satData_s.base.e_satPos - _receiver[Base].e_pos).norm();
-            double rho_r_1 = (satData_1.rover.e_satPos - _receiver[Rover].e_pos).norm();
-            double rho_b_1 = (satData_1.base.e_satPos - _receiver[Base].e_pos).norm();
-            double rho_br_s = rho_r_s - rho_b_s;
-            double rho_br_1 = rho_r_1 - rho_b_1;
+            doubleDifferences[satSigId_s][obsType].estimate = obs_s.estimate - obs_1.estimate;
+            doubleDifferences[satSigId_s].at(obsType).measurement = obs_s.measurement - obs_1.measurement;
+            doubleDifferences[satSigId_s].at(obsType).measVar = obs_s.measVar + obs_1.measVar;
 
-            // ------------------------------------------ Troposphere --------------------------------------------
-            auto tropo_r_s = calcTroposphericDelayAndMapping(_receiver[Rover].gnssObs->insTime, _receiver[Rover].lla_pos,
-                                                             satData_s.rover.satElevation, satData_s.rover.satAzimuth, _troposphereModels);
-            auto tropo_b_s = calcTroposphericDelayAndMapping(_receiver[Base].gnssObs->insTime, _receiver[Rover].lla_pos,
-                                                             satData_s.base.satElevation, satData_s.base.satAzimuth, _troposphereModels);
-            auto tropo_r_1 = calcTroposphericDelayAndMapping(_receiver[Rover].gnssObs->insTime, _receiver[Rover].lla_pos,
-                                                             satData_1.rover.satElevation, satData_1.rover.satAzimuth, _troposphereModels);
-            auto tropo_b_1 = calcTroposphericDelayAndMapping(_receiver[Base].gnssObs->insTime, _receiver[Rover].lla_pos,
-                                                             satData_1.base.satElevation, satData_1.base.satAzimuth, _troposphereModels);
-            // Estimated troposphere propagation error [m]
-            double dpsr_T_r_s = tropo_r_s.ZHD * tropo_r_s.zhdMappingFactor + tropo_r_s.ZWD * tropo_r_s.zwdMappingFactor;
-            double dpsr_T_b_s = tropo_b_s.ZHD * tropo_b_s.zhdMappingFactor + tropo_b_s.ZWD * tropo_b_s.zwdMappingFactor;
-            double dpsr_T_r_1 = tropo_r_1.ZHD * tropo_r_1.zhdMappingFactor + tropo_r_1.ZWD * tropo_r_1.zwdMappingFactor;
-            double dpsr_T_b_1 = tropo_b_1.ZHD * tropo_b_1.zhdMappingFactor + tropo_b_1.ZWD * tropo_b_1.zwdMappingFactor;
-            double dpsr_T_br_s = dpsr_T_r_s - dpsr_T_b_s;
-            double dpsr_T_br_1 = dpsr_T_r_1 - dpsr_T_b_1;
-
-            // Sagnac correction [m] - Springer Handbook ch. 19.1.1, eq. 19.7, p. 562
-            double dpsr_ie_r_s = 1.0 / InsConst::C * (_receiver[Rover].e_pos - satData_s.rover.e_satPos).dot(InsConst::e_omega_ie.cross(_receiver[Rover].e_pos));
-            double dpsr_ie_b_s = 1.0 / InsConst::C * (_receiver[Base].e_pos - satData_s.base.e_satPos).dot(InsConst::e_omega_ie.cross(_receiver[Base].e_pos));
-            double dpsr_ie_r_1 = 1.0 / InsConst::C * (_receiver[Rover].e_pos - satData_1.rover.e_satPos).dot(InsConst::e_omega_ie.cross(_receiver[Rover].e_pos));
-            double dpsr_ie_b_1 = 1.0 / InsConst::C * (_receiver[Base].e_pos - satData_1.base.e_satPos).dot(InsConst::e_omega_ie.cross(_receiver[Base].e_pos));
-            double dpsr_ie_br_s = dpsr_ie_r_s - dpsr_ie_b_s;
-            double dpsr_ie_br_1 = dpsr_ie_r_1 - dpsr_ie_b_1;
-
-            // ------------------------------------------ Ionosphere ---------------------------------------------
-            // Estimated ionosphere propagation error [s]
-            double dpsr_I_r_s = calcIonosphericTimeDelay(static_cast<double>(_receiver[Rover].gnssObs->insTime.toGPSweekTow().tow), freq, _receiver[Rover].lla_pos,
-                                                         satData_s.rover.satElevation, satData_s.rover.satAzimuth, _ionosphereModel, &ionosphericCorrections);
-            double dpsr_I_b_s = calcIonosphericTimeDelay(static_cast<double>(_receiver[Base].gnssObs->insTime.toGPSweekTow().tow), freq, _receiver[Base].lla_pos,
-                                                         satData_s.base.satElevation, satData_s.base.satAzimuth, _ionosphereModel, &ionosphericCorrections);
-            double dpsr_I_r_1 = calcIonosphericTimeDelay(static_cast<double>(_receiver[Rover].gnssObs->insTime.toGPSweekTow().tow), freq, _receiver[Rover].lla_pos,
-                                                         satData_1.rover.satElevation, satData_1.rover.satAzimuth, _ionosphereModel, &ionosphericCorrections);
-            double dpsr_I_b_1 = calcIonosphericTimeDelay(static_cast<double>(_receiver[Base].gnssObs->insTime.toGPSweekTow().tow), freq, _receiver[Base].lla_pos,
-                                                         satData_1.base.satElevation, satData_1.base.satAzimuth, _ionosphereModel, &ionosphericCorrections);
-            double dpsr_I_br_s = (dpsr_I_r_s - dpsr_I_b_s) * InsConst::C;
-            double dpsr_I_br_1 = (dpsr_I_r_1 - dpsr_I_b_1) * InsConst::C;
-
-            // ------------------------------------------- Ambiguity ---------------------------------------------
-            double lambda_j = InsConst::C / freq.getFrequency(); // TODO: GLONASS frequency number
-            double N_br_s = 0.0;                                 // TODO: Update with values from KF
-            double N_br_1 = 0.0;
-
-            signal.obsRover.psrEst = rho_r_s + dpsr_T_r_s + dpsr_I_r_s + dpsr_ie_r_s;
-            signal.obsBase.psrEst = rho_b_s + dpsr_T_b_s + dpsr_I_b_s + dpsr_ie_b_s;
-
-            signal.singleDiffEstPseudorange_br_s = rho_br_s + dpsr_T_br_s + dpsr_I_br_s + dpsr_ie_br_s;
-            double singleDiffEstPseudorange_br_1 = rho_br_1 + dpsr_T_br_1 + dpsr_I_br_1 + dpsr_ie_br_1;
-            signal.doubleDiffEstPseudorange_br_1s = signal.singleDiffEstPseudorange_br_s - singleDiffEstPseudorange_br_1;
-            LOG_DATA("{}: [{}]           psrEst_br_s     = {} [m]", nameId(), SatSigId{ freq, satData_s.satId.satNum }, signal.singleDiffEstPseudorange_br_s);
-            LOG_DATA("{}:           [{}]  - psrEst_br_1  = {} [m]", nameId(), SatSigId{ freq, satData_1.satId.satNum }, singleDiffEstPseudorange_br_1);
-            LOG_DATA("{}: [{}] - [{}]  = psrEst_br_1s = {} [m]", nameId(), SatSigId{ freq, satData_s.satId.satNum }, SatSigId{ freq, satData_1.satId.satNum }, signal.doubleDiffEstPseudorange_br_1s);
-
-            signal.singleDiffEstCarrier_br_s = rho_br_s + dpsr_T_br_s - dpsr_I_br_s + dpsr_ie_br_s + lambda_j * N_br_s;
-            double singleDiffEstCarrier_br_1 = rho_br_1 + dpsr_T_br_1 - dpsr_I_br_1 + dpsr_ie_br_1 + lambda_j * N_br_1;
-            signal.doubleDiffEstCarrier_br_1s = signal.singleDiffEstCarrier_br_s - singleDiffEstCarrier_br_1;
-            LOG_DATA("{}: [{}]           phiEst_br_s     = {} [m]", nameId(), SatSigId{ freq, satData_s.satId.satNum }, signal.singleDiffEstCarrier_br_s);
-            LOG_DATA("{}:           [{}]  - phiEst_br_1  = {} [m]", nameId(), SatSigId{ freq, satData_1.satId.satNum }, singleDiffEstCarrier_br_1);
-            LOG_DATA("{}: [{}] - [{}]  = phiEst_br_1s = {} [m]", nameId(), SatSigId{ freq, satData_s.satId.satNum }, SatSigId{ freq, satData_1.satId.satNum }, signal.doubleDiffEstCarrier_br_1s);
-
-            // -------------------------------------------- Errors -----------------------------------------------
-
-            signal.varPseudorangeMeas_r_s = _gnssMeasurementErrorModel.psrMeasErrorVar(freq.getSatSys(), freq, satData_s.rover.satElevation);
-            signal.varCarrierMeas_r_s = _gnssMeasurementErrorModel.carrierMeasErrorVar(freq.getSatSys(), satData_s.rover.satElevation);
+            LOG_DATA("{}:   [{}][{:11}]e {} - {} = {}", nameId(), satSigId_s, NAV::to_string(obsType), obs_s.estimate, obs_1.estimate, doubleDifferences[satSigId_s][obsType].estimate);
+            LOG_DATA("{}:   [{}][{:11}]m {} - {} = {}", nameId(), satSigId_s, NAV::to_string(obsType), obs_s.measurement, obs_1.measurement, doubleDifferences[satSigId_s][obsType].measurement);
         }
     }
-    */
+
+    return doubleDifferences;
 }
 
 const char* RealTimeKinematic::to_string(RealTimeKinematic::ReceiverType receiver)

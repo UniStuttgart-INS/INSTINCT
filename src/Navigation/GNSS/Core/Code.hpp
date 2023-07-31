@@ -628,9 +628,20 @@ const Code Code_I9B_I9C_I9X = Code::I9B | Code::I9C | Code::I9X; ///< RS (data, 
 const Code Code_S5I_S5Q_S5X = Code::S5I | Code::S5Q | Code::S5X; ///< L5 (data, pilot, combined)
 
 const Code Code_ALL = Code(Code::Set().set()); ///< All codes set
+/// Default selection for codes
+const Code Code_Default = Code(Code::Set().set())
+                          & ~Code(Code::G1P)  // GPS L1 - P-code (unencrypted)
+                          & ~Code(Code::G1W)  // GPS L1 - Semicodeless P(Y) tracking (Z-tracking)
+                          & ~Code(Code::G1Y)  // GPS L1 - Y-code (with decryption)
+                          & ~Code(Code::G1M)  // GPS L1 - M-code
+                          & ~Code(Code::G1N)  // GPS L1 - codeless
+                          & ~Code(Code::G2D)  // GPS L2 - Semi-codeless P(Y) tracking (L1 C/A + (P2-P1))
+                          & ~Code(Code::G2P)  // GPS L2 - P-code (unencrypted)
+                          & ~Code(Code::G2W)  // GPS L2 - Semicodeless P(Y) tracking (Z-tracking)
+                          & ~Code(Code::G2Y)  // GPS L2 - Y-code (with decryption)
+                          & ~Code(Code::G2M)  // GPS L2 - M-code
+                          & ~Code(Code::G2N); // GPS L2 - codeless
 
-/// @brief Shows a ComboBox to select signal codes
-/// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
 /// @param[in, out] code Reference to the code object to select
 /// @param[in] filterFreq Frequencies to select codes for. Other Frequencies will be diabled.
 bool ShowCodeSelector(const char* label, Code& code, const Frequency& filterFreq);

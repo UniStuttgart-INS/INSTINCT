@@ -94,9 +94,18 @@ struct CarrierDD
     /// @brief Satellite Signal Id
     SatSigId satSigId;
 };
+/// @brief Double differenced doppler measurement d_br^1s (one for each satellite signal, referenced to the pivot satellite)
+struct DopplerDD
+{
+    /// @brief Equal comparison operator
+    /// @param rhs Right-hand side
+    constexpr bool operator==(const DopplerDD& rhs) const { return satSigId == rhs.satSigId; }
+    /// @brief Satellite Signal Id
+    SatSigId satSigId;
+};
 
 /// Alias for the measurement key type
-using MeasKeyTypes = std::variant<CarrierDD, PsrDD>;
+using MeasKeyTypes = std::variant<PsrDD, CarrierDD, DopplerDD>;
 
 } // namespace Meas
 } // namespace RealTimeKinematicKF
@@ -164,7 +173,7 @@ class RealTimeKinematic : public Node
     /// Frequencies used for calculation (GUI filter)
     Frequency _filterFreq = G01;
     /// Codes used for calculation (GUI filter)
-    Code _filterCode = Code_ALL;
+    Code _filterCode = Code_Default;
     /// List of satellites to exclude
     std::vector<SatId> _excludedSatellites;
     /// Elevation cut-off angle for satellites in [rad]
@@ -301,23 +310,18 @@ class RealTimeKinematic : public Node
                                                      unordered_map<GnssObs::ObservationType,
                                                                    Observation>>>;
 
-    // struct SingleDifferences
-    // {
-    //     double singleDiffMeas_br_s = 0.0; ///< Single difference of the measurement
-    //     double singleDiffEst_br_s = 0.0;  ///< Single difference estimate
-    // };
-    // unordered_map<GnssObs::ObservationType,
-    //               unordered_map<Frequency, SingleDifferences>>
-    //     singleDiffs;
+    /// Differences (single or double)
+    struct Difference
+    {
+        double estimate = 0.0;    ///< Estimate
+        double measurement = 0.0; ///< Measurement
+        double measVar = 0.0;     ///< Variance of the measurement
+    };
 
-    // struct DoubleDifferences
-    // {
-    //     double doubleDiffMeas_br_1s = 0.0; ///< Double difference of the measurement
-    //     double doubleDiffEst_br_1s = 0.0;  ///< Double difference estimate
-    // };
-    // unordered_map<GnssObs::ObservationType,
-    //               unordered_map<Frequency, DoubleDifferences>>
-    //     doubleDiffs;
+    /// @brief Difference storage type
+    using Differences = unordered_map<SatSigId,
+                                      unordered_map<GnssObs::ObservationType,
+                                                    Difference>>;
 
     /// @brief Pivot Satellite information
     struct PivotSatellite
@@ -374,15 +378,13 @@ class RealTimeKinematic : public Node
     /// @param ionosphericCorrections Ionospheric correction parameters collected from the Nav data
     void calcObservationEstimates(const std::vector<SatData>& satelliteData, Observations& observations, const IonosphericCorrections& ionosphericCorrections);
 
-    /// @brief Calculates the measured double differences for each satellite
-    /// @param satelliteData List of GNSS observation data used for the calculation of this epoch
-    /// @return The amount of double differences calculated
-    size_t calcMeasurementDoubleDifferences(std::vector<SatData>& satelliteData);
+    /// @brief Calculates the single difference of the measurements and estimates
+    /// @param[in] observations List of GNSS observation data used for the calculation of this epoch
+    [[nodiscard]] Differences calcSingleDifferences(const Observations& observations) const;
 
-    /// @brief Calculates the estimated double differences for each satellite
-    /// @param satelliteData List of GNSS observation data used for the calculation of this epoch
-    /// @param ionosphericCorrections Ionospheric correction parameters collected from the Nav data
-    void calcEstimatedDoubleDifferences(std::vector<SatData>& satelliteData, const IonosphericCorrections& ionosphericCorrections);
+    /// @brief Calculates the double difference of the measurements and estimates
+    /// @param[in] singleDifferences List of single differences
+    [[nodiscard]] Differences calcDoubleDifferences(const Differences& singleDifferences) const;
 
     /// @brief Converts the enum to a string
     /// @param[in] receiver Enum value to convert into text
@@ -425,6 +427,17 @@ struct hash<NAV::RealTimeKinematicKF::Meas::CarrierDD>
     size_t operator()(const NAV::RealTimeKinematicKF::Meas::CarrierDD& cpDD) const
     {
         return std::hash<NAV::SatSigId>()(cpDD.satSigId) << 12;
+    }
+};
+/// @brief Hash function (needed for unordered_map)
+template<>
+struct hash<NAV::RealTimeKinematicKF::Meas::DopplerDD>
+{
+    /// @brief Hash function
+    /// @param[in] dDD Double differenced doppler
+    size_t operator()(const NAV::RealTimeKinematicKF::Meas::DopplerDD& dDD) const
+    {
+        return std::hash<NAV::SatSigId>()(dDD.satSigId) << 24;
     }
 };
 } // namespace std
