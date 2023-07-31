@@ -16,6 +16,9 @@
 #include "internal/Node/Node.hpp"
 
 #include "NodeData/State/PosVelAtt.hpp"
+#include <boost/asio.hpp>
+#include <string>
+using boost::asio::ip::udp;
 
 namespace NAV
 {
@@ -77,6 +80,21 @@ class UdpSend : public Node
     std::array<int, 4> _ip{};
 
     /// UDP port number
-    int _port = 0;
+    int _port = 4567;
+
+    /// Asynchronous receive fct
+    boost::asio::io_context _io_context;
+    /// Boost udp socket
+    udp::socket _socket;
+    /// Boost udp resolver
+    udp::resolver _resolver;
+    /// Boost udp endpoint
+    udp::resolver::results_type _endpoints;
+
+    /// Flag that indicates the running data link
+    bool _running = false;
+
+    /// Flag that indicates whether seding is stopped
+    double _flagsenderstopped = 1.0;
 };
 } // namespace NAV

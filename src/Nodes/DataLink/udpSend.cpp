@@ -20,13 +20,11 @@ namespace nm = NAV::NodeManager;
 
 // #include "NodeData/General/CsvData.hpp"
 
-// #include <cstdlib>
-// #include <boost/asio.hpp>
-
 #include "util/Logger.hpp"
+using boost::asio::ip::udp;
 
 NAV::UdpSend::UdpSend()
-    : Node(typeStatic())
+    : Node(typeStatic()), _socket(_io_context, udp::endpoint(udp::v4(), 0)), _resolver(_io_context), _endpoints(_resolver.resolve(udp::v4(), "192.168.178.80", "4567"))
 {
     LOG_TRACE("{}: called", name);
 
@@ -93,17 +91,57 @@ bool NAV::UdpSend::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+    _running = true;
+    _flagsenderstopped = 0.0;
+    // _socket.close();
+    // _socket.open(udp::v4());
+    // _socket.bind(udp::endpoint(udp::v4(), static_cast<uint_least16_t>(_port)));
+
+    std::string ipString{};
+    for (size_t i = 0; i < 4; i++)
+    {
+        ipString.append(std::to_string(_ip[i]));
+        i < 3 ? ipString.append(".") : ipString.append("");
+    }
+
+    _endpoints = _resolver.resolve(udp::v4(), ipString, std::to_string(_port));
+
     return true;
 }
 
 void NAV::UdpSend::deinitialize()
 {
+    _running = false;
+
+    _flagsenderstopped = 1.0;
+    std::vector<double> testvector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, _flagsenderstopped };
+    _socket.send_to(boost::asio::buffer(testvector), *_endpoints.begin());
+
     LOG_TRACE("{}: called", nameId());
 }
 
 void NAV::UdpSend::receivePosVelAtt(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto posVelAtt = std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(queue.extract_front()));
+    [[maybe_unused]] auto posVelAtt = std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(queue.extract_front()));
 
+    if (_running)
+    {
+        Eigen::Vector3d test = posVelAtt->lla_position();
+
+        std::vector<double> testvector{ test(0), 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, _flagsenderstopped };
+
+        // for (int i(0); i < 20; i = i + 1)
+        // {
+        _socket.send_to(boost::asio::buffer(testvector), *_endpoints.begin());
+        // }
+
+        // std::vector<double> position;
+        // position.push_back(1.2345);
+
+        // for (size_t i = 0; i < 10; i++)
+        // {
+        //     _socket.send_to(boost::asio::buffer(position, position.size()), *_endpoints.begin());
+        // }
+    }
     // TODO: buffer, etc. here
 }
