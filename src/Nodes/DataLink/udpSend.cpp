@@ -107,7 +107,7 @@ bool NAV::UdpSend::initialize()
     std::string ipString{};
     for (size_t i = 0; i < 4; i++)
     {
-        ipString.append(std::to_string(_ip[i]));
+        ipString.append(std::to_string(_ip.at(i)));
         i < 3 ? ipString.append(".") : ipString.append("");
     }
 
@@ -133,22 +133,12 @@ void NAV::UdpSend::receivePosVelAtt(NAV::InputPin::NodeDataQueue& queue, size_t 
 
     if (_running)
     {
-        Eigen::Vector3d test = posVelAtt->lla_position();
+        Eigen::Vector3d posLLA = posVelAtt->lla_position();
+        Eigen::Vector3d vel_n = posVelAtt->n_velocity();
+        Eigen::Vector4d n_Quat_b = { posVelAtt->n_Quat_b().x(), posVelAtt->n_Quat_b().y(), posVelAtt->n_Quat_b().z(), posVelAtt->n_Quat_b().w() };
 
-        std::vector<double> testvector{ test(0), 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, _flagsenderstopped };
+        std::vector<double> udp_posVelAtt{ posLLA(0), posLLA(1), posLLA(2), vel_n(0), vel_n(1), vel_n(2), n_Quat_b(0), n_Quat_b(1), n_Quat_b(2), n_Quat_b(3), _flagsenderstopped };
 
-        // TODO: buffer, etc. here
-        // for (int i(0); i < 20; i = i + 1)
-        // {
-        _socket.send_to(boost::asio::buffer(testvector), *_endpoints.begin());
-        // }
-
-        // std::vector<double> position;
-        // position.push_back(1.2345);
-
-        // for (size_t i = 0; i < 10; i++)
-        // {
-        //     _socket.send_to(boost::asio::buffer(position, position.size()), *_endpoints.begin());
-        // }
+        _socket.send_to(boost::asio::buffer(udp_posVelAtt), *_endpoints.begin());
     }
 }

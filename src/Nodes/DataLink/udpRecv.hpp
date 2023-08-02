@@ -95,22 +95,18 @@ class UdpRecv : public Node
     bool _isStartup = true;
 
     /// Flag that indicates whether seding is stopped
-    double _flagsenderstopped = 1.0;
+    double _flagsenderstopped = 1.0; // FIXME: Is this still necessary for the asynchronous receive fct?
 
     /// Time point where the first package has been received
     std::chrono::steady_clock::time_point _startPoint;
 
     /// Stores the time of the last received message
-    uint64_t _lastMessageTime{};
+    // uint64_t _lastMessageTime{}; // FIXME: Still necessary here?
 
-    /// Network data stream buffer size (boost::asio)
-    constexpr static unsigned int _maxLength = 10;
-
-    constexpr static unsigned int _maxBytes = 80;
+    /// Network data stream maximum buffer size in [bytes]
+    constexpr static unsigned int _maxBytes = 88;
 
     /// Network data stream array
-    // std::vector<double> _data{};
-    /// Network data stream array
-    std::array<double, _maxLength> _data{};
+    std::array<double, 11> _data{};
 };
 } // namespace NAV

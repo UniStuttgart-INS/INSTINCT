@@ -126,39 +126,29 @@ void NAV::UdpRecv::pollData()
         [this](boost::system::error_code errorRcvd, std::size_t bytesRcvd) {
             if ((!errorRcvd) && (bytesRcvd > 0))
             {
-                auto obsG = std::make_shared<PosVelAtt>();
+                auto obs = std::make_shared<PosVelAtt>();
 
-                double posX = _data.at(0);
-                double posY = _data.at(1);
-                double posZ = _data.at(2);
-                // double attRoll = 0.0;
-                // double attPitch = 0.0;
-                // double attYaw = 0.0;
+                // Position in LLA coordinates
+                Eigen::Vector3d posLLA{ _data.at(0), _data.at(1), _data.at(2) };
 
-                // Set GNSS values
-                Eigen::Vector3d e_position{ posX, posY, posZ };
-                // Eigen::Vector3d lla_position = trafo::ecef2lla_WGS84(e_position);
-                // Eigen::Quaterniond e_Quat_b;
-                // e_Quat_b = trafo::e_Quat_n(lla_position(0), lla_position(1)) * trafo::n_Quat_b(attRoll, attPitch, attYaw);
+                // Velocity in local frame
+                Eigen::Vector3d vel_n{ _data.at(3), _data.at(4), _data.at(5) };
 
-                obsG->setPosition_e(e_position);
-                Eigen::Vector3d velDummy{ 0, 0, 0 }; // TODO: Add velocity output in Skydel API and NetStream
-                obsG->setVelocity_e(velDummy);
-                // obsG->setAttitude_e_Quat_b(e_Quat_b); // Attitude MUST BE set after Position, because the n- to e-sys trafo depends on lla_position
+                // Attitude
+                Eigen::Quaterniond n_Quat_b{};
+                n_Quat_b.x() = _data.at(6);
+                n_Quat_b.y() = _data.at(7);
+                n_Quat_b.z() = _data.at(8);
+                n_Quat_b.w() = _data.at(9);
 
-                // Set IMU values
-                // obs->accelCompXYZ.emplace(accelX, accelY, accelZ);
-                // obs->accelUncompXYZ = obs->accelCompXYZ;
-                // obs->gyroCompXYZ.emplace(gyroX, gyroY, gyroZ);
-                // obs->gyroUncompXYZ = obs->gyroCompXYZ;
-                // obs->magCompXYZ.emplace(0.0, 0.0, 0.0); // TODO: Add magnetometer model to Skydel API 'InstinctDataStream'
-                // obs->magUncompXYZ.emplace(0.0, 0.0, 0.0);
+                obs->setPosition_lla(posLLA);
+                obs->setVelocity_n(vel_n);
+                obs->setAttitude_n_Quat_b(n_Quat_b);
 
                 InsTime currentTime = util::time::GetCurrentInsTime();
                 if (!currentTime.empty())
                 {
-                    // obs->insTime = currentTime;
-                    obsG->insTime = currentTime;
+                    obs->insTime = currentTime;
                 }
 
                 // if (obs->timeSinceStartup.has_value())
@@ -176,42 +166,7 @@ void NAV::UdpRecv::pollData()
                 //     _lastMessageTime = obs->timeSinceStartup.value();
                 // }
 
-                this->invokeCallbacks(OUTPUT_PORT_INDEX_NODE_DATA, obsG);
-                // this->invokeCallbacks(OUTPUT_PORT_INDEX_IMU_OBS, obs);
-
-                // Data rate (for visualization in GUI)
-                // _packageCount++;
-
-                // if (_startCounter < _startNow)
-                // {
-                //     _packageCount = 0;
-                //     _startCounter++;
-                // }
-
-                // if (_packageCount == 1)
-                // {
-                //     _startPoint = std::chrono::steady_clock::now();
-                // }
-                // else if (_packageCount == _packagesNumber)
-                // {
-                //     std::chrono::duration<double> elapsed_seconds = std::chrono::steady_clock::now() - _startPoint;
-                //     _dataRate = static_cast<double>(_packagesNumber - 1) / elapsed_seconds.count();
-
-                //     // Dynamic adaptation of data rate to a human-readable display update rate in GUI (~ 1 Hz)
-                //     if ((_dataRate > 2) && (_dataRate < 1001)) // restriction on 'reasonable' sensor data rates (Skydel max. is 1000 Hz)
-                //     {
-                //         _packagesNumber = static_cast<int>(_dataRate);
-                //     }
-                //     else if (_dataRate >= 1001)
-                //     {
-                //         _packagesNumber = 1000;
-                //     }
-
-                //     _packageCount = 0;
-
-                //     LOG_DATA("Elapsed Seconds = {}", elapsed_seconds.count());
-                //     LOG_DATA("SkydelNetworkStream: dataRate = {}", _dataRate);
-                // }
+                this->invokeCallbacks(OUTPUT_PORT_INDEX_NODE_DATA, obs);
             }
             else
             {
