@@ -50,8 +50,14 @@ class GnssMeasurementErrorModel
     /// @return Variance of the code bias error [m^2]
     [[nodiscard]] double codeBiasErrorVar() const;
 
+    /// @brief Returns the Pseudo-range rate Error Variance
+    /// @param[in] freq Frequency the measurement originates from
+    /// @param[in] num  Frequency number. Only used for GLONASS G1 and G2
+    /// @return Variance of the Pseudo-range rate error [m^2/s^2]
+    [[nodiscard]] double psrRateErrorVar(Frequency freq, int8_t num = -128) const;
+
     /// @brief Returns the Doppler Error Variance
-    /// @return Variance of the Doppler error [m^2]
+    /// @return Variance of the Doppler error [Hz^2]
     [[nodiscard]] double dopplerErrorVar() const;
 
     /// @brief Model to use

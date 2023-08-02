@@ -194,11 +194,11 @@ ValueWeight<double> calcPsrRateAndWeight(const CalcData& calc,
     double W_psrRate = 1.0;
     if (estimatorType == EstimatorType::WEIGHTED_LEAST_SQUARES || estimatorType == EstimatorType::KF)
     {
-        double varDopMeas = gnssMeasurementErrorModel.dopplerErrorVar();
-        LOG_DATA("         varDopMeas {}", varDopMeas);
+        double varPsrRateMeas = gnssMeasurementErrorModel.psrRateErrorVar(obsData.satSigId.freq());
+        LOG_DATA("         varPsrRateMeas {}", varPsrRateMeas);
         double varEph = calc.satNavData->calcSatellitePositionVariance();
         LOG_DATA("         varEph {}", varEph);
-        double varErrors = varDopMeas + varEph;
+        double varErrors = varPsrRateMeas + varEph;
         LOG_DATA("         varErrors {}", varErrors);
 
         W_psrRate = 1.0 / varErrors;

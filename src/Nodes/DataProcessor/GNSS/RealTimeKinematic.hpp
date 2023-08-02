@@ -529,6 +529,10 @@ struct fmt::formatter<NAV::RealTimeKinematicKF::Meas::MeasKeyTypes>
         {
             return fmt::format_to(ctx.out(), "phiDD({})", phiDD->satSigId);
         }
+        if (const auto* dDD = std::get_if<NAV::RealTimeKinematicKF::Meas::DopplerDD>(&meas))
+        {
+            return fmt::format_to(ctx.out(), "dopDD({})", dDD->satSigId);
+        }
 
         return fmt::format_to(ctx.out(), "ERROR");
     }

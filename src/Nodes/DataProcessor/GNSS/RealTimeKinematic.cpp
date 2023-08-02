@@ -705,10 +705,11 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
                     const auto& e_vLOS_1 = satData_1->receiverData.at(Rover).e_vLOS;
                     const auto& e_vLOS_s = satData_s->receiverData.at(Rover).e_vLOS;
 
-                    _kalmanFilter.H.block<3>(Meas::DopplerDD{ satSigId_s }, States::Pos) = Eigen::Vector3d(
+                    _kalmanFilter.H.block<3>(Meas::DopplerDD{ satSigId_s }, States::Pos) = Eigen::RowVector3d(
                         -e_vLOS_1.x() * e_pLOS_1.x() * e_pLOS_1.x() + e_vLOS_1.x() + e_vLOS_s.x() * e_pLOS_s.x() * e_pLOS_s.x() - e_vLOS_s.x() - e_vLOS_1.y() * e_pLOS_1.x() * e_pLOS_1.y() + e_vLOS_s.y() * e_pLOS_s.x() * e_pLOS_s.y() - e_vLOS_1.z() * e_pLOS_1.x() * e_pLOS_1.z() + e_vLOS_s.z() * e_pLOS_s.x() * e_pLOS_s.z(),
                         -e_vLOS_1.x() * e_pLOS_1.x() * e_pLOS_1.y() + e_vLOS_s.x() * e_pLOS_s.x() * e_pLOS_s.y() - e_vLOS_1.y() * e_pLOS_1.y() * e_pLOS_1.y() + e_vLOS_1.y() + e_vLOS_s.y() * e_pLOS_s.y() * e_pLOS_s.y() - e_vLOS_s.y() - e_vLOS_1.z() * e_pLOS_1.y() * e_pLOS_1.z() + e_vLOS_s.z() * e_pLOS_s.y() * e_pLOS_s.z(),
                         -e_vLOS_1.x() * e_pLOS_1.x() * e_pLOS_1.z() + e_vLOS_s.x() * e_pLOS_s.x() * e_pLOS_s.z() - e_vLOS_1.y() * e_pLOS_1.y() * e_pLOS_1.z() + e_vLOS_s.y() * e_pLOS_s.y() * e_pLOS_s.z() - e_vLOS_1.z() * e_pLOS_1.z() * e_pLOS_1.z() + e_vLOS_1.z() + e_vLOS_s.z() * e_pLOS_s.z() * e_pLOS_s.z() - e_vLOS_s.z());
+                    _kalmanFilter.H.block<3>(Meas::DopplerDD{ satSigId_s }, States::Vel) = (e_pLOS_1 - e_pLOS_s).transpose();
                     _kalmanFilter.R(Meas::DopplerDD{ satSigId_s }, Meas::DopplerDD{ satSigId_s }) = obs.measVar;
                     break;
                 }
@@ -1086,7 +1087,7 @@ void RealTimeKinematic::calcObservationEstimates(const std::vector<SatData>& sat
                         obsData.estimate = e_calcLineOfSightUnitVector(receiver.e_pos, recvSatData.e_satPos).transpose()
                                                * (recvSatData.e_satVel - receiver.e_vel)
                                            - calcSagnacRateCorrection(receiver.e_pos, recvSatData.e_satPos, receiver.e_vel, recvSatData.e_satVel);
-                        obsData.measVar = _gnssMeasurementErrorModel.dopplerErrorVar();
+                        obsData.measVar = _gnssMeasurementErrorModel.psrRateErrorVar(freq);
                         break;
                     }
                 }

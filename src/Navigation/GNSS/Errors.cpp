@@ -7,6 +7,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "Errors.hpp"
+#include "Navigation/GNSS/Functions.hpp"
 #include "Navigation/Transformations/Units.hpp"
 #include "internal/gui/widgets/EnumCombo.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
@@ -90,6 +91,15 @@ double GnssMeasurementErrorModel::codeBiasErrorVar() const
         constexpr double ERR_CBIAS = 0.3; // Code bias error Std [m]
 
         return std::pow(ERR_CBIAS, 2);
+    }
+    return 0.0;
+}
+
+[[nodiscard]] double GnssMeasurementErrorModel::psrRateErrorVar(Frequency freq, int8_t num) const
+{
+    if (model == RTKLIB)
+    {
+        return std::pow(doppler2psrRate(rtklibParams.dopplerFrequency, freq, num), 2);
     }
     return 0.0;
 }
