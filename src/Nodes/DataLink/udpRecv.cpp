@@ -20,7 +20,7 @@ namespace nm = NAV::NodeManager;
 #include "util/Logger.hpp"
 
 NAV::UdpRecv::UdpRecv()
-    : Node(typeStatic()), _socket(_io_context, udp::endpoint(udp::v4(), static_cast<unsigned short>(_port)))
+    : Node(typeStatic()), _socket(_io_context, boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), static_cast<unsigned short>(_port)))
 {
     LOG_TRACE("{}: called", name);
 

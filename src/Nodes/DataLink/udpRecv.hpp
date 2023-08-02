@@ -18,7 +18,6 @@
 #include "NodeData/State/PosVelAtt.hpp"
 #include <boost/asio.hpp>
 #include <string>
-using boost::asio::ip::udp;
 
 namespace NAV
 {
@@ -83,9 +82,9 @@ class UdpRecv : public Node
     /// Asynchronous receive fct
     boost::asio::io_context _io_context;
     /// Boost udp socket
-    udp::socket _socket;
+    boost::asio::ip::udp::socket _socket;
     /// Boost udp endpoint
-    udp::endpoint _sender_endpoint;
+    boost::asio::ip::udp::endpoint _sender_endpoint;
 
     /// Receiver thread
     std::thread _recvThread;

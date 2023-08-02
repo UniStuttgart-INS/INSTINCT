@@ -18,7 +18,6 @@
 #include "NodeData/State/PosVelAtt.hpp"
 #include <boost/asio.hpp>
 #include <string>
-using boost::asio::ip::udp;
 
 namespace NAV
 {
@@ -85,11 +84,11 @@ class UdpSend : public Node
     /// Asynchronous receive fct
     boost::asio::io_context _io_context;
     /// Boost udp socket
-    udp::socket _socket;
+    boost::asio::ip::udp::socket _socket;
     /// Boost udp resolver
-    udp::resolver _resolver;
+    boost::asio::ip::udp::resolver _resolver;
     /// Boost udp endpoint
-    udp::resolver::results_type _endpoints;
+    boost::asio::ip::udp::resolver::results_type _endpoints;
 
     /// Flag that indicates the running data link
     bool _running = false;

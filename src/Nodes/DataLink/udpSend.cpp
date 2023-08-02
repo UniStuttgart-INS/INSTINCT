@@ -21,10 +21,9 @@ namespace nm = NAV::NodeManager;
 // #include "NodeData/General/CsvData.hpp"
 
 #include "util/Logger.hpp"
-using boost::asio::ip::udp;
 
 NAV::UdpSend::UdpSend()
-    : Node(typeStatic()), _socket(_io_context, udp::endpoint(udp::v4(), 0)), _resolver(_io_context), _endpoints(_resolver.resolve(udp::v4(), "0.0.0.0", std::to_string(_port)))
+    : Node(typeStatic()), _socket(_io_context, boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), 0)), _resolver(_io_context), _endpoints(_resolver.resolve(boost::asio::ip::udp::v4(), "0.0.0.0", std::to_string(_port)))
 {
     LOG_TRACE("{}: called", name);
 
@@ -112,7 +111,7 @@ bool NAV::UdpSend::initialize()
         i < 3 ? ipString.append(".") : ipString.append("");
     }
 
-    _endpoints = _resolver.resolve(udp::v4(), ipString, std::to_string(_port));
+    _endpoints = _resolver.resolve(boost::asio::ip::udp::v4(), ipString, std::to_string(_port));
 
     return true;
 }
