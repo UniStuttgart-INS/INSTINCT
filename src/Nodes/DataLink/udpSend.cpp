@@ -24,7 +24,7 @@ namespace nm = NAV::NodeManager;
 using boost::asio::ip::udp;
 
 NAV::UdpSend::UdpSend()
-    : Node(typeStatic()), _socket(_io_context, udp::endpoint(udp::v4(), 0)), _resolver(_io_context), _endpoints(_resolver.resolve(udp::v4(), "192.168.178.80", "4567"))
+    : Node(typeStatic()), _socket(_io_context, udp::endpoint(udp::v4(), 0)), _resolver(_io_context), _endpoints(_resolver.resolve(udp::v4(), "0.0.0.0", std::to_string(_port)))
 {
     LOG_TRACE("{}: called", name);
 
@@ -79,12 +79,23 @@ json NAV::UdpSend::save() const
 
     json j;
 
+    j["ip"] = _ip;
+    j["port"] = _port;
+
     return j;
 }
 
-void NAV::UdpSend::restore(json const& /* j */)
+void NAV::UdpSend::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
+    if (j.contains("ip"))
+    {
+        j.at("ip").get_to(_ip);
+    }
+    if (j.contains("port"))
+    {
+        j.at("port").get_to(_port);
+    }
 }
 
 bool NAV::UdpSend::initialize()
@@ -93,9 +104,6 @@ bool NAV::UdpSend::initialize()
 
     _running = true;
     _flagsenderstopped = 0.0;
-    // _socket.close();
-    // _socket.open(udp::v4());
-    // _socket.bind(udp::endpoint(udp::v4(), static_cast<uint_least16_t>(_port)));
 
     std::string ipString{};
     for (size_t i = 0; i < 4; i++)
@@ -130,6 +138,7 @@ void NAV::UdpSend::receivePosVelAtt(NAV::InputPin::NodeDataQueue& queue, size_t 
 
         std::vector<double> testvector{ test(0), 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, _flagsenderstopped };
 
+        // TODO: buffer, etc. here
         // for (int i(0); i < 20; i = i + 1)
         // {
         _socket.send_to(boost::asio::buffer(testvector), *_endpoints.begin());
@@ -143,5 +152,4 @@ void NAV::UdpSend::receivePosVelAtt(NAV::InputPin::NodeDataQueue& queue, size_t 
         //     _socket.send_to(boost::asio::buffer(position, position.size()), *_endpoints.begin());
         // }
     }
-    // TODO: buffer, etc. here
 }

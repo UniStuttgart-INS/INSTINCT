@@ -69,13 +69,18 @@ json NAV::UdpRecv::save() const
     LOG_TRACE("{}: called", nameId());
 
     json j;
+    j["port"] = _port;
 
     return j;
 }
 
-void NAV::UdpRecv::restore(json const& /* j */)
+void NAV::UdpRecv::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
+    if (j.contains("port"))
+    {
+        j.at("port").get_to(_port);
+    }
 }
 
 bool NAV::UdpRecv::initialize()
