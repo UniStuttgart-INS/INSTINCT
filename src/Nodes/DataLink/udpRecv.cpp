@@ -20,7 +20,7 @@ namespace nm = NAV::NodeManager;
 #include "util/Logger.hpp"
 
 NAV::UdpRecv::UdpRecv()
-    : Node(typeStatic()), _socket(_io_context, boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), static_cast<unsigned short>(_port)))
+    : Node(typeStatic()), _socket(_io_context, boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), static_cast<uint16_t>(_port)))
 {
     LOG_TRACE("{}: called", name);
 
@@ -87,7 +87,6 @@ bool NAV::UdpRecv::initialize()
 {
     LOG_TRACE("{}: called", nameId());
     _running = true;
-    _flagsenderstopped = 0.0;
 
     pollData();
 
@@ -141,30 +140,13 @@ void NAV::UdpRecv::pollData()
                 n_Quat_b.z() = _data.at(8);
                 n_Quat_b.w() = _data.at(9);
 
-                obs->setPosition_lla(posLLA);
-                obs->setVelocity_n(vel_n);
-                obs->setAttitude_n_Quat_b(n_Quat_b);
+                // Time
+                auto gpsC = static_cast<int32_t>(_data.at(10));
+                auto gpsW = static_cast<int32_t>(_data.at(11));
+                auto gpsT = static_cast<long double>(_data.at(12));
 
-                InsTime currentTime = util::time::GetCurrentInsTime();
-                if (!currentTime.empty())
-                {
-                    obs->insTime = currentTime;
-                }
-
-                // if (obs->timeSinceStartup.has_value())
-                // {
-                //     if (_lastMessageTime)
-                //     {
-                //         // FIXME: This seems like a bug in clang-tidy. Check if it is working in future versions of clang-tidy
-                //         // NOLINTNEXTLINE(hicpp-use-nullptr, modernize-use-nullptr)
-                //         if (obs->timeSinceStartup.value() - _lastMessageTime >= static_cast<uint64_t>(1.5 / _dataRate * 1e9))
-                //         {
-                //             LOG_WARN("{}: Potentially lost a message. Previous message was at {} and current message at {} which is a time difference of {} seconds.", nameId(),
-                //                      _lastMessageTime, obs->timeSinceStartup.value(), static_cast<double>(obs->timeSinceStartup.value() - _lastMessageTime) * 1e-9);
-                //         }
-                //     }
-                //     _lastMessageTime = obs->timeSinceStartup.value();
-                // }
+                obs->setState_n(posLLA, vel_n, n_Quat_b);
+                obs->insTime = InsTime(gpsC, gpsW, gpsT);
 
                 this->invokeCallbacks(OUTPUT_PORT_INDEX_NODE_DATA, obs);
             }

@@ -92,8 +92,5 @@ class UdpSend : public Node
 
     /// Flag that indicates the running data link
     bool _running = false;
-
-    /// Flag that indicates whether seding shall be stopped
-    double _flagsenderstopped = 1.0;
 };
 } // namespace NAV

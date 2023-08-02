@@ -102,7 +102,6 @@ bool NAV::UdpSend::initialize()
     LOG_TRACE("{}: called", nameId());
 
     _running = true;
-    _flagsenderstopped = 0.0;
 
     std::string ipString{};
     for (size_t i = 0; i < 4; i++)
@@ -120,10 +119,6 @@ void NAV::UdpSend::deinitialize()
 {
     _running = false;
 
-    _flagsenderstopped = 1.0;
-    std::vector<double> testvector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, _flagsenderstopped };
-    _socket.send_to(boost::asio::buffer(testvector), *_endpoints.begin());
-
     LOG_TRACE("{}: called", nameId());
 }
 
@@ -136,8 +131,12 @@ void NAV::UdpSend::receivePosVelAtt(NAV::InputPin::NodeDataQueue& queue, size_t 
         Eigen::Vector3d posLLA = posVelAtt->lla_position();
         Eigen::Vector3d vel_n = posVelAtt->n_velocity();
         Eigen::Vector4d n_Quat_b = { posVelAtt->n_Quat_b().x(), posVelAtt->n_Quat_b().y(), posVelAtt->n_Quat_b().z(), posVelAtt->n_Quat_b().w() };
+        auto timeStamp = posVelAtt->insTime.toGPSweekTow();
+        auto gpsC = timeStamp.gpsCycle;
+        auto gpsW = timeStamp.gpsWeek;
+        auto gpsT = timeStamp.tow;
 
-        std::vector<double> udp_posVelAtt{ posLLA(0), posLLA(1), posLLA(2), vel_n(0), vel_n(1), vel_n(2), n_Quat_b(0), n_Quat_b(1), n_Quat_b(2), n_Quat_b(3), _flagsenderstopped };
+        std::vector<double> udp_posVelAtt{ posLLA(0), posLLA(1), posLLA(2), vel_n(0), vel_n(1), vel_n(2), n_Quat_b(0), n_Quat_b(1), n_Quat_b(2), n_Quat_b(3), static_cast<double>(gpsC), static_cast<double>(gpsW), static_cast<double>(gpsT) };
 
         _socket.send_to(boost::asio::buffer(udp_posVelAtt), *_endpoints.begin());
     }

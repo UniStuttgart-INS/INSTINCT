@@ -94,19 +94,13 @@ class UdpRecv : public Node
     /// Startup handler: used in 'initialize()' to differentiate between startup and re-initialization
     bool _isStartup = true;
 
-    /// Flag that indicates whether seding is stopped
-    double _flagsenderstopped = 1.0; // FIXME: Is this still necessary for the asynchronous receive fct?
-
     /// Time point where the first package has been received
     std::chrono::steady_clock::time_point _startPoint;
 
-    /// Stores the time of the last received message
-    // uint64_t _lastMessageTime{}; // FIXME: Still necessary here?
-
     /// Network data stream maximum buffer size in [bytes]
-    constexpr static unsigned int _maxBytes = 88;
+    constexpr static unsigned int _maxBytes = 104;
 
     /// Network data stream array
-    std::array<double, 11> _data{};
+    std::array<double, 13> _data{};
 };
 } // namespace NAV
