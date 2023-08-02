@@ -72,7 +72,10 @@ class UdpRecv : public Node
     void deinitialize() override;
 
     /// @brief Polls the next data
-    void pollPosVelAtt();
+    // void pollPosVelAtt();
+
+    /// @brief Polls the next data
+    void pollData();
 
     /// UDP port number
     int _port = 4567;
@@ -89,8 +92,26 @@ class UdpRecv : public Node
 
     /// Flag that indicates the running data link
     bool _running = false;
+    /// Startup handler: used in 'initialize()' to differentiate between startup and re-initialization
+    bool _isStartup = true;
 
     /// Flag that indicates whether seding is stopped
     double _flagsenderstopped = 1.0;
+
+    /// Time point where the first package has been received
+    std::chrono::steady_clock::time_point _startPoint;
+
+    /// Stores the time of the last received message
+    uint64_t _lastMessageTime{};
+
+    /// Network data stream buffer size (boost::asio)
+    constexpr static unsigned int _maxLength = 10;
+
+    constexpr static unsigned int _maxBytes = 80;
+
+    /// Network data stream array
+    // std::vector<double> _data{};
+    /// Network data stream array
+    std::array<double, _maxLength> _data{};
 };
 } // namespace NAV
