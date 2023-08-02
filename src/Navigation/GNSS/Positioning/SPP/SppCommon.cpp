@@ -117,8 +117,8 @@ ValueWeight<double> calcPsrAndWeight(const std::shared_ptr<SppSolution>& sppSol,
     LOG_DATA("         dpsr_T {} [m] (Estimated modulation troposphere propagation error)", dpsr_T);
     solSatData.dpsr_T = dpsr_T;
 
-    // Sagnac correction [m] - Springer Handbook ch. 19.1.1, eq. 19.7, p. 562
-    double dpsr_ie = 1.0 / InsConst::C * (state.e_position - calc.e_satPos).dot(InsConst::e_omega_ie.cross(state.e_position));
+    // Sagnac correction [m]
+    double dpsr_ie = calcSagnacCorrection(state.e_position, calc.e_satPos);
     LOG_DATA("         dpsr_ie {}", dpsr_ie);
     solSatData.dpsr_ie = dpsr_ie;
     // Geometric distance [m]
@@ -174,10 +174,8 @@ ValueWeight<double> calcPsrRateAndWeight(const CalcData& calc,
     const auto& obsData = calc.obsData;
     auto satSys = obsData.satSigId.toSatId().satSys;
 
-    // Range-rate Sagnac correction - Groves ch. 8.5.3, eq. 8.46, p. 342
-    double dpsr_dot_ie = InsConst::omega_ie / InsConst::C
-                         * (calc.e_satVel.y() * state.e_position.x() + calc.e_satPos.y() * state.e_velocity.x()
-                            - calc.e_satVel.x() * state.e_position.y() - calc.e_satPos.x() * state.e_velocity.y());
+    // Range-rate Sagnac correction [m/s]
+    double dpsr_dot_ie = calcSagnacRateCorrection(state.e_position, calc.e_satPos, state.e_velocity, calc.e_satVel);
     LOG_DATA("         dpsr_dot_ie {}", dpsr_dot_ie);
     // System time drift difference to GPS [s/s]
     double sysDriftDiff = satSys != state.recvClk.referenceTimeSatelliteSystem

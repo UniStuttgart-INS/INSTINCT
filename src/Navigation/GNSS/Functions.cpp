@@ -30,6 +30,18 @@ double calcSatAzimuth(const Eigen::Vector3d& n_lineOfSightUnitVector)
     return std::atan2(n_lineOfSightUnitVector(1), n_lineOfSightUnitVector(0));
 }
 
+double calcSagnacCorrection(const Eigen::Vector3d& e_posAnt, const Eigen::Vector3d& e_satPos)
+{
+    return 1.0 / InsConst::C * (e_posAnt - e_satPos).dot(InsConst::e_omega_ie.cross(e_posAnt));
+}
+
+double calcSagnacRateCorrection(const Eigen::Vector3d& e_posAnt, const Eigen::Vector3d& e_satPos, const Eigen::Vector3d& e_velAnt, const Eigen::Vector3d& e_satVel)
+{
+    return InsConst::omega_ie / InsConst::C
+           * (e_satVel.y() * e_posAnt.x() + e_satPos.y() * e_velAnt.x()
+              - e_satVel.x() * e_posAnt.y() - e_satPos.x() * e_velAnt.y());
+}
+
 double doppler2psrRate(double doppler, Frequency freq, int8_t num)
 {
     return -InsConst::C / freq.getFrequency(num) * doppler;

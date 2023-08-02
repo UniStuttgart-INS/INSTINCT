@@ -304,10 +304,10 @@ class Code
 
     /// @brief Constructor from a single code value
     /// @param[in] e Code enum value to construct the code from
-    constexpr Code(Enum e) { value.set(e, true); } // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
+    Code(Enum e) { value.set(e, true); } // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
 
     /// Implicit bool conversion operator. Allows if(...)
-    constexpr explicit operator bool() const { return value.any(); }
+    explicit operator bool() const { return value.any(); }
 
     /// @brief std::bitset conversion operator
     /// @return The bitset representation of the type

@@ -73,12 +73,12 @@ struct SatSigId
     /// @brief Equal comparison (needed for unordered_map)
     /// @param[in] rhs Right hand side of the operator
     /// @return True if the elements are equal
-    constexpr bool operator==(const SatSigId& rhs) const { return code == rhs.code && satNum == rhs.satNum; }
+    bool operator==(const SatSigId& rhs) const { return code == rhs.code && satNum == rhs.satNum; }
 
     /// @brief Less than comparison (needed for map)
     /// @param[in] rhs Right hand side of the operator
     /// @return True if lhs < rhs
-    constexpr bool operator<(const SatSigId& rhs) const
+    bool operator<(const SatSigId& rhs) const
     {
         return code == rhs.code ? satNum < rhs.satNum
                                 : Code::Set(code).count() < Code::Set(rhs.code).count();
@@ -202,7 +202,7 @@ struct hash<NAV::SatSigId>
     /// @param[in] f Satellite signal identifier
     std::size_t operator()(const NAV::SatSigId& f) const
     {
-        auto hash1 = f.code.getEnumValue();
+        auto hash1 = static_cast<size_t>(f.code.getEnumValue());
         auto hash2 = static_cast<size_t>(f.satNum);
 
         return hash1 | (hash2 << 8);

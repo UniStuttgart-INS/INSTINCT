@@ -56,7 +56,7 @@ struct AmbiguitySD
 {
     /// @brief Equal comparison operator
     /// @param rhs Right-hand side
-    constexpr bool operator==(const AmbiguitySD& rhs) const { return satSigId == rhs.satSigId; }
+    bool operator==(const AmbiguitySD& rhs) const { return satSigId == rhs.satSigId; }
     /// @brief Satellite Signal Id
     SatSigId satSigId;
 };
@@ -81,7 +81,7 @@ struct PsrDD
 {
     /// @brief Equal comparison operator
     /// @param rhs Right-hand side
-    constexpr bool operator==(const PsrDD& rhs) const { return satSigId == rhs.satSigId; }
+    bool operator==(const PsrDD& rhs) const { return satSigId == rhs.satSigId; }
     /// @brief Satellite Signal Id
     SatSigId satSigId;
 };
@@ -90,7 +90,7 @@ struct CarrierDD
 {
     /// @brief Equal comparison operator
     /// @param rhs Right-hand side
-    constexpr bool operator==(const CarrierDD& rhs) const { return satSigId == rhs.satSigId; }
+    bool operator==(const CarrierDD& rhs) const { return satSigId == rhs.satSigId; }
     /// @brief Satellite Signal Id
     SatSigId satSigId;
 };
@@ -99,7 +99,7 @@ struct DopplerDD
 {
     /// @brief Equal comparison operator
     /// @param rhs Right-hand side
-    constexpr bool operator==(const DopplerDD& rhs) const { return satSigId == rhs.satSigId; }
+    bool operator==(const DopplerDD& rhs) const { return satSigId == rhs.satSigId; }
     /// @brief Satellite Signal Id
     SatSigId satSigId;
 };
@@ -178,6 +178,9 @@ class RealTimeKinematic : public Node
     std::vector<SatId> _excludedSatellites;
     /// Elevation cut-off angle for satellites in [rad]
     double _elevationMask = static_cast<double>(15.0_deg);
+
+    /// Utilized observations (Order from GnssObs::ObservationType: Psr, Carrier, Doppler)
+    std::array<bool, 3> _usedObservations = { true, true, true };
 
     /// Ionosphere Model used for the calculation
     IonosphereModel _ionosphereModel = IonosphereModel::Klobuchar;
@@ -260,11 +263,13 @@ class RealTimeKinematic : public Node
             /// @param[in] lla_satPos Satellite position in lla frame
             /// @param[in] e_satVel Satellite velocity in e frame
             /// @param[in] e_recPos Receiver position in e frame
+            /// @param[in] e_recVel Receiver velocity in e frame
             ReceiverSpecificData(std::shared_ptr<const GnssObs> gnssObs,
                                  const Eigen::Vector3d& e_satPos,
                                  const Eigen::Vector3d& lla_satPos,
                                  Eigen::Vector3d e_satVel,
-                                 const Eigen::Vector3d& e_recPos);
+                                 const Eigen::Vector3d& e_recPos,
+                                 const Eigen::Vector3d& e_recVel);
 
             std::shared_ptr<const GnssObs> gnssObs = nullptr; ///< GNSS observation
 
@@ -272,9 +277,10 @@ class RealTimeKinematic : public Node
             Eigen::Vector3d lla_satPos; ///< Satellite position in LLA frame coordinates [rad, rad, m]
             Eigen::Vector3d e_satVel;   ///< Satellite velocity in ECEF frame coordinates [m/s]
 
-            Eigen::Vector3d e_lineOfSightUnitVector; ///< Line-of-sight unit vector in ECEF frame coordinates
-            double satElevation = 0.0;               ///< Satellite Elevation [rad]
-            double satAzimuth = 0.0;                 ///< Satellite Azimuth [rad]
+            Eigen::Vector3d e_pLOS;    ///< Position Line-of-sight unit vector in ECEF frame coordinates
+            Eigen::Vector3d e_vLOS;    ///< Velocity Line-of-sight unit vector in ECEF frame coordinates
+            double satElevation = 0.0; ///< Satellite Elevation [rad]
+            double satAzimuth = 0.0;   ///< Satellite Azimuth [rad]
         };
 
         unordered_map<ReceiverType, ReceiverSpecificData> receiverData; ///< Satellite data concerning a receiver
