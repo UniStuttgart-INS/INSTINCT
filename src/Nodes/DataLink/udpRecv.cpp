@@ -20,7 +20,7 @@ namespace nm = NAV::NodeManager;
 #include "util/Logger.hpp"
 
 NAV::UdpRecv::UdpRecv()
-    : Node(typeStatic()), _socket(_io_context, boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), static_cast<uint16_t>(_port)))
+    : Node(typeStatic()), _socket(_io_context)
 {
     LOG_TRACE("{}: called", name);
 
@@ -86,6 +86,17 @@ void NAV::UdpRecv::restore(json const& j)
 bool NAV::UdpRecv::initialize()
 {
     LOG_TRACE("{}: called", nameId());
+
+    try
+    {
+        _socket = boost::asio::ip::udp::socket(_io_context, boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), static_cast<uint16_t>(_port)));
+    }
+    catch (const std::exception& /* e */)
+    {
+        LOG_ERROR("{}: Port {} is already in use. Choose a different port for this instance.", nameId(), _port);
+        return false;
+    }
+
     _running = true;
 
     pollData();
@@ -114,6 +125,7 @@ void NAV::UdpRecv::deinitialize()
     _running = false;
     _io_context.stop();
     _recvThread.join();
+    _socket.close();
 
     LOG_TRACE("{}: called", nameId());
 }

@@ -15,15 +15,10 @@ namespace nm = NAV::NodeManager;
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
 
-// #include "util/Eigen.hpp"
-// #include "Navigation/Time/InsTime.hpp"
-
-// #include "NodeData/General/CsvData.hpp"
-
 #include "util/Logger.hpp"
 
 NAV::UdpSend::UdpSend()
-    : Node(typeStatic()), _socket(_io_context, boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), 0)), _resolver(_io_context), _endpoints(_resolver.resolve(boost::asio::ip::udp::v4(), "0.0.0.0", std::to_string(_port)))
+    : Node(typeStatic()), _socket(_io_context, boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), 0)), _resolver(_io_context)
 {
     LOG_TRACE("{}: called", name);
 
@@ -118,6 +113,8 @@ bool NAV::UdpSend::initialize()
 void NAV::UdpSend::deinitialize()
 {
     _running = false;
+
+    _io_context.stop();
 
     LOG_TRACE("{}: called", nameId());
 }
