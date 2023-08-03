@@ -44,10 +44,10 @@ namespace NAV
 RealTimeKinematic::SatData::ReceiverSpecificData::ReceiverSpecificData(std::shared_ptr<const GnssObs> gnssObs,
                                                                        const Eigen::Vector3d& e_satPos,
                                                                        const Eigen::Vector3d& lla_satPos,
-                                                                       Eigen::Vector3d e_satVel,
+                                                                       const Eigen::Vector3d& e_satVel,
                                                                        const Eigen::Vector3d& e_recPos,
                                                                        const Eigen::Vector3d& e_recVel)
-    : gnssObs(std::move(gnssObs)), e_satPos(e_satPos), lla_satPos(lla_satPos), e_satVel(std::move(e_satVel))
+    : gnssObs(std::move(gnssObs)), e_satPos(e_satPos), lla_satPos(lla_satPos), e_satVel(e_satVel)
 {
     e_pLOS = e_calcLineOfSightUnitVector(e_recPos, e_satPos);
     e_vLOS = (e_recVel - e_satVel) / (e_recPos - e_satPos).norm();
@@ -685,7 +685,7 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
             const auto& e_pLOS_1 = satData_1->receiverData.at(Rover).e_pLOS;
             const auto& e_pLOS_s = satData_s->receiverData.at(Rover).e_pLOS;
 
-            for (auto& [obsType, obs] : doubleDiff)
+            for (const auto& [obsType, obs] : doubleDiff)
             {
                 switch (obsType)
                 {
@@ -923,7 +923,8 @@ std::tuple<std::vector<RealTimeKinematic::SatData>, RealTimeKinematic::Observati
                         observations[recvObsData->satSigId][recv.type].at(obsType).measurement = recvObsData->carrierPhase->value;
                         break;
                     case GnssObs::Doppler:
-                        observations[recvObsData->satSigId][recv.type].at(obsType).measurement = recvObsData->doppler.value();
+                        observations[recvObsData->satSigId][recv.type].at(obsType).measurement = doppler2psrRate(recvObsData->doppler.value(),
+                                                                                                                 recvObsData->satSigId.freq());
                         break;
                     }
                 }
@@ -1030,8 +1031,10 @@ void RealTimeKinematic::updatePivotSatellites(const std::vector<SatData>& satell
     {
         if (pivotSat.reevaluate)
         {
-            auto pivotIter = std::find_if(satelliteData.begin(), satelliteData.end(),
-                                          [&pivotSat = pivotSat](const SatData& satData) { return satData.satId == pivotSat.satSigId.toSatId(); });
+            [[maybe_unused]] auto pivotIter = std::find_if(satelliteData.begin(), satelliteData.end(),
+                                                           [&pivotSat = pivotSat](const SatData& satData) {
+                                                               return satData.satId == pivotSat.satSigId.toSatId();
+                                                           });
 
             LOG_TRACE("{}: Code [{}] uses [{}] as pivot satellite with elevation {:.4}°", nameId(),
                       pivotCode,
@@ -1096,7 +1099,7 @@ void RealTimeKinematic::calcObservationEstimates(const std::vector<SatData>& sat
     }
 }
 
-RealTimeKinematic::Differences RealTimeKinematic::calcSingleDifferences(const Observations& observations) const
+RealTimeKinematic::Differences RealTimeKinematic::calcSingleDifferences(const Observations& observations) const // NOLINT(readability-convert-member-functions-to-static)
 {
     Differences singleDifferences;
     singleDifferences.reserve(observations.size());

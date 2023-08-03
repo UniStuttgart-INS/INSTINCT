@@ -267,7 +267,7 @@ class RealTimeKinematic : public Node
             ReceiverSpecificData(std::shared_ptr<const GnssObs> gnssObs,
                                  const Eigen::Vector3d& e_satPos,
                                  const Eigen::Vector3d& lla_satPos,
-                                 Eigen::Vector3d e_satVel,
+                                 const Eigen::Vector3d& e_satVel,
                                  const Eigen::Vector3d& e_recPos,
                                  const Eigen::Vector3d& e_recVel);
 

@@ -642,6 +642,8 @@ const Code Code_Default = Code(Code::Set().set())
                           & ~Code(Code::G2M)  // GPS L2 - M-code
                           & ~Code(Code::G2N); // GPS L2 - codeless
 
+/// @brief Shows a ComboBox to select signal codes
+/// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
 /// @param[in, out] code Reference to the code object to select
 /// @param[in] filterFreq Frequencies to select codes for. Other Frequencies will be diabled.
 bool ShowCodeSelector(const char* label, Code& code, const Frequency& filterFreq);
