@@ -32,16 +32,6 @@ Eigen::Vector3d psdBiasGaussMarkov(const Eigen::Vector3d& sigma2_bd, const Eigen
     return (2 * sigma2_bd.array() / tau_bd.array()).cwiseSqrt();
 }
 
-// double psdClockPhaseDrift(const double& sigma2_cPhi, const double& tau_i)
-// {
-//     return sigma2_cPhi / tau_i;
-// }
-
-// double psdClockFreqDrift(const double& sigma2_cf, const double& tau_i)
-// {
-//     return sigma2_cf / tau_i;
-// }
-
 Eigen::Matrix3d Q_psi_psi(const Eigen::Vector3d& S_rg, const Eigen::Vector3d& S_bgd, const double& tau_s)
 {
     return (S_rg.asDiagonal() * tau_s + 1.0 / 3.0 * S_bgd.asDiagonal() * std::pow(tau_s, 3)) * Eigen::Matrix3d::Identity();

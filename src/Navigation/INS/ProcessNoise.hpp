@@ -35,18 +35,6 @@ Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vecto
 /// @note See Brown & Hwang (2011) - Introduction to Random Signals and Applied Kalman Filtering (example 9.6)
 [[nodiscard]] Eigen::Vector3d psdBiasGaussMarkov(const Eigen::Vector3d& sigma2_bd, const Eigen::Vector3d& tau_bd);
 
-// /// @brief S_cPhi Power Spectral Density of the receiver clock phase drift
-// /// @param[in] sigma2_cPhi 𝜎²_bd standard deviation of the receiver clock phase drift in [m]
-// /// @param[in] tau_i 𝜏ᵢ interval between the input of successive outputs to the inertial navigation equations in [s]
-// /// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 9.4.2, eq. 9.157)
-// double psdClockPhaseDrift(const double& sigma2_cPhi, const double& tau_i);
-
-// /// @brief S_cf Power Spectral Density of the receiver clock frequency-drift
-// /// @param sigma2_cf 𝜎²_bd standard deviation of the receiver clock frequency-drift in [m/s]
-// /// @param tau_i 𝜏ᵢ interval between the input of successive outputs to the inertial navigation equations in [s]
-// /// @return See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 9.4.2, eq. 9.157)
-// double psdClockFreqDrift(const double& sigma2_cf, const double& tau_i);
-
 /// @brief Submatrix 𝐐_11 of the system noise covariance matrix 𝐐
 /// @param[in] S_rg Power Spectral Density of the gyroscope random noise
 /// @param[in] S_bgd Power Spectral Density of the gyroscope bias variation

@@ -54,7 +54,7 @@ NAV::TightlyCoupledKF::TightlyCoupledKF()
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 866, 679 }; // TODO: Adapt, once config options are implemented
+    _guiConfigDefaultWindowSize = { 866, 938 };
 
     nm::CreateInputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() }, &TightlyCoupledKF::recvInertialNavigationSolution, nullptr, 1);
     inputPins.back().neededForTemporalQueueCheck = false;
@@ -271,11 +271,13 @@ void NAV::TightlyCoupledKF::guiConfig()
         ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
         if (ImGui::TreeNode(fmt::format("GNSS input settings##{}", size_t(id)).c_str()))
         {
+            ImGui::BeginDisabled();
             ImGui::SetNextItemWidth(configWidth);
             if (ShowFrequencySelector(fmt::format("Satellite Frequencies##{}", size_t(id)).c_str(), _filterFreq))
             {
                 flow::ApplyChanges();
             }
+            ImGui::EndDisabled();
 
             ImGui::SetNextItemWidth(configWidth);
             if (ShowCodeSelector(fmt::format("Signal Codes##{}", size_t(id)).c_str(), _filterCode, _filterFreq))
@@ -784,8 +786,6 @@ void NAV::TightlyCoupledKF::guiConfig()
     j["initBiasAccelUnit"] = _initBiasAccelUnit;
     j["initBiasGyro"] = _initBiasGyro;
     j["initBiasGyroUnit"] = _initBiasGyroUnit;
-
-    // TODO: Add gnssObsUncertainty... Unit, etc.
 
     j["initCovariancePositionUnit"] = _initCovariancePositionUnit;
     j["initCovariancePosition"] = _initCovariancePosition;
@@ -1819,20 +1819,20 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         psrMeas(static_cast<int>(ix)) = obsData.pseudorange.value().value /* + (multipath and/or NLOS errors) + (tracking errors) */;
         LOG_DATA("{}:     psrMeas({}) {}", nameId(), ix, psrMeas(static_cast<int>(ix)));
         // Estimated modulation ionosphere propagation error [m]
-        // double dpsr_I = calcIonosphericTimeDelay(static_cast<double>(gnssObs->insTime.toGPSweekTow().tow), obsData.satSigId.freq, lla_position,
-        //                                          calc.satElevation, calc.satAzimuth, _ionosphereModel, &ionosphericCorrections)
-        //                 * InsConst::C;
-        // LOG_DATA("{}:     dpsr_I {} [m] (Estimated modulation ionosphere propagation error)", nameId(),dpsr_I);
+        double dpsr_I = calcIonosphericTimeDelay(static_cast<double>(gnssObs->insTime.toGPSweekTow().tow), obsData.satSigId.freq, lla_position,
+                                                 calc.satElevation, calc.satAzimuth, _ionosphereModel, &ionosphericCorrections)
+                        * InsConst::C;
+        LOG_DATA("{}:     dpsr_I {} [m] (Estimated modulation ionosphere propagation error)", nameId(), dpsr_I);
 
-        // auto tropo = calcTroposphericDelayAndMapping(gnssObs->insTime, lla_position, calc.satElevation, calc.satAzimuth, _troposphereModels);
-        // LOG_DATA("{}:     ZHD {}", nameId(),tropo.ZHD);
-        // LOG_DATA("{}:     ZWD {}", nameId(),tropo.ZWD);
-        // LOG_DATA("{}:     zhdMappingFactor {}", nameId(),tropo.zhdMappingFactor);
-        // LOG_DATA("{}:     zwdMappingFactor {}", nameId(),tropo.zwdMappingFactor);
+        auto tropo = calcTroposphericDelayAndMapping(gnssObs->insTime, lla_position, calc.satElevation, calc.satAzimuth, _troposphereModels);
+        LOG_DATA("{}:     ZHD {}", nameId(), tropo.ZHD);
+        LOG_DATA("{}:     ZWD {}", nameId(), tropo.ZWD);
+        LOG_DATA("{}:     zhdMappingFactor {}", nameId(), tropo.zhdMappingFactor);
+        LOG_DATA("{}:     zwdMappingFactor {}", nameId(), tropo.zwdMappingFactor);
 
         // Estimated modulation troposphere propagation error [m]
-        // double dpsr_T = tropo.ZHD * tropo.zhdMappingFactor + tropo.ZWD * tropo.zwdMappingFactor;
-        // LOG_DATA("{}:     dpsr_T {} [m] (Estimated modulation troposphere propagation error)", nameId(),dpsr_T);
+        double dpsr_T = tropo.ZHD * tropo.zhdMappingFactor + tropo.ZWD * tropo.zwdMappingFactor;
+        LOG_DATA("{}:     dpsr_T {} [m] (Estimated modulation troposphere propagation error)", nameId(), dpsr_T);
 
         // Sagnac correction - Springer Handbook ch. 19.1.1, eq. 19.7, p. 562
         double dpsr_ie = 1.0 / InsConst::C * (e_position - calc.e_satPos).dot(InsConst::e_omega_ie.cross(e_position));
@@ -1840,23 +1840,18 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         // Geometric distance [m]
         double geometricDist = (calc.e_satPos - e_position).norm();
         LOG_DATA("{}:     geometricDist {}", nameId(), geometricDist);
-        // System time difference to GPS [s]
-        // double sysTimeDiff = satId.satSys != _recvClk.referenceTimeSatelliteSystem
-        //                          ? _recvClk.sysTimeDiff[satId.satSys].value
-        //                          : 0.0;
 
-        // _recvClk.bias.value += _kalmanFilter.x(15, 0) / InsConst::C;
+        _recvClk.bias.value += _kalmanFilter.x(15, 0) / InsConst::C;
 
-        // LOG_ERROR("{}: _recvClk.bias {} s", nameId(), _recvClk.bias.value);
+        LOG_DATA("{}: _recvClk.bias {} s", nameId(), _recvClk.bias.value);
 
         // Pseudorange estimate [m]
         psrEst(static_cast<int>(ix)) = geometricDist
                                        + _recvClk.bias.value * InsConst::C
                                        + _recvClk.drift.value * InsConst::C * tau_epoch
-                                       //    + sysTimeDiff * InsConst::C
                                        - calc.satClkBias * InsConst::C
-                                       //    + dpsr_I
-                                       //    + dpsr_T
+                                       + dpsr_I
+                                       + dpsr_T
                                        + dpsr_ie;
         LOG_DATA("{}:     psrEst({}) {}", nameId(), ix, psrEst(static_cast<int>(ix)));
 
@@ -1877,27 +1872,20 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
                                  * (calc.e_satVel.y() * e_position.x() + calc.e_satPos.y() * e_velocity.x()
                                     - calc.e_satVel.x() * e_position.y() - calc.e_satPos.x() * e_velocity.y());
             LOG_DATA("{}:     dpsr_dot_ie {}", nameId(), dpsr_dot_ie);
-            // System time drift difference to GPS [s/s]
-            // double sysDriftDiff = satId.satSys != _recvClk.referenceTimeSatelliteSystem
-            //                           ? _recvClk.sysDriftDiff[satId.satSys].value
-            //                           : 0.0;
 
-            // LOG_DATA("{}: _kalmanFilter.x(16, 0) = {} m/s", nameId(), _kalmanFilter.x(16, 0));
-            // LOG_DATA("{}: _recvClk.drift {} s/s", nameId(), _recvClk.drift.value);
+            LOG_DATA("{}: _kalmanFilter.x(16, 0) = {} m/s", nameId(), _kalmanFilter.x(16, 0));
+            LOG_DATA("{}: _recvClk.drift {} s/s", nameId(), _recvClk.drift.value);
 
-            // _recvClk.drift.value += _kalmanFilter.x(16, 0) / InsConst::C;
+            _recvClk.drift.value += _kalmanFilter.x(16, 0) / InsConst::C;
 
-            // LOG_ERROR("{}: _recvClk.drift {} s/s", nameId(), _recvClk.drift.value);
+            LOG_DATA("{}: _recvClk.drift {} s/s", nameId(), _recvClk.drift.value);
 
             // Pseudorange-rate estimate [m/s] - Groves ch. 9.4.1, eq. 9.142, p. 412 (Sagnac correction different sign)
             psrRateEst(static_cast<int>(iv)) = calc.e_lineOfSightUnitVector.transpose() * (calc.e_satVel - e_velocity)
                                                + _recvClk.drift.value * InsConst::C
-                                               //    + sysDriftDiff * InsConst::C
                                                - calc.satClkDrift * InsConst::C
                                                - dpsr_dot_ie;
             LOG_DATA("{}:     psrRateEst({}) {}", nameId(), iv, psrRateEst(static_cast<int>(iv)));
-
-            // LOG_DATA("{}:     dpsrRate({}) {}", nameId(), ix, psrRateMeas(static_cast<int>(iv)) - psrRateEst(static_cast<int>(iv)));
 
             iv++;
         }
@@ -2426,29 +2414,6 @@ Eigen::MatrixXd NAV::TightlyCoupledKF::n_measurementMatrix_H(const double& R_N, 
     return H;
 }
 
-Eigen::MatrixXd NAV::TightlyCoupledKF::measurementNoiseCovariance_R(const double& sigma_rhoZ, const double& sigma_rZ, const std::vector<double>& satElevation, const double& sigma_rhoC, const double& sigma_rC, const std::vector<double>& CN0, const double& sigma_rhoA, const double& sigma_rA, const std::vector<double>& rangeAccel)
-{
-    // Math: \mathbf{R}_G = \begin{pmatrix} \sigma_{\rho1}^2 & 0 & \dots & 0 & | & 0 & 0 & \dots & 0 \\ 0 & \sigma_{\rho2}^2 & \dots & 0 & | & 0 & 0 & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots & | & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \dots & \sigma_{\rho m}^2 & | & 0 & 0 & \dots & 0 \\ - & - & - & - & - & - & - & - & - \\ 0 & 0 & \dots & 0 & | & \sigma_{r1}^2 & 0 & \dots & 0 \\ 0 & 0 & \dots & 0 & | & 0 & \sigma_{r 2}^2 & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots & | & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \dots & 0 & | & 0 & 0 & \dots & \sigma_{rm}^2 \end{pmatrix} \qquad \text{P. Groves}\,(9.168)
-
-    auto numSats = static_cast<uint8_t>(satElevation.size());
-
-    auto numMeasurements = static_cast<Eigen::Index>(2 * numSats);
-    Eigen::MatrixXd R = Eigen::MatrixXd::Zero(numMeasurements, numMeasurements);
-
-    for (size_t j = 0; j < numSats; j++)
-    {
-        auto sigma_rho2 = sigma2(satElevation[j], sigma_rhoZ, sigma_rhoC, sigma_rhoA, CN0[j], rangeAccel[j]);
-        auto sigma_r2 = sigma2(satElevation[j], sigma_rZ, sigma_rC, sigma_rA, CN0[j], rangeAccel[j]);
-
-        auto i = static_cast<uint8_t>(j);
-
-        R(i, i) = sigma_rho2;
-        R(numSats + i, numSats + i) = sigma_r2;
-    }
-
-    return R;
-}
-
 Eigen::MatrixXd NAV::TightlyCoupledKF::measurementNoiseCovariance_R(const double& sigma_rhoZ, const double& sigma_rZ, const std::vector<double>& satElevation)
 {
     // Math: \mathbf{R}_G = \begin{pmatrix} \sigma_{\rho1}^2 & 0 & \dots & 0 & | & 0 & 0 & \dots & 0 \\ 0 & \sigma_{\rho2}^2 & \dots & 0 & | & 0 & 0 & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots & | & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \dots & \sigma_{\rho m}^2 & | & 0 & 0 & \dots & 0 \\ - & - & - & - & - & - & - & - & - \\ 0 & 0 & \dots & 0 & | & \sigma_{r1}^2 & 0 & \dots & 0 \\ 0 & 0 & \dots & 0 & | & 0 & \sigma_{r 2}^2 & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots & | & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \dots & 0 & | & 0 & 0 & \dots & \sigma_{rm}^2 \end{pmatrix} \qquad \text{P. Groves}\,(9.168)
@@ -2462,52 +2427,6 @@ Eigen::MatrixXd NAV::TightlyCoupledKF::measurementNoiseCovariance_R(const double
     {
         auto sigma_rho2 = sigma2(satElevation[j], sigma_rhoZ, 0., 0., 0., 0.);
         auto sigma_r2 = sigma2(satElevation[j], sigma_rZ, 0., 0., 0., 0.);
-
-        auto i = static_cast<uint8_t>(j);
-
-        R(i, i) = sigma_rho2;
-        R(numSats + i, numSats + i) = sigma_r2;
-    }
-
-    return R;
-}
-
-Eigen::MatrixXd NAV::TightlyCoupledKF::measurementNoiseCovariance_RwithCN0only(const double& sigma_rhoZ, const double& sigma_rZ, const std::vector<double>& satElevation, const double& sigma_rhoC, const double& sigma_rC, const std::vector<double>& CN0)
-{
-    // Math: \mathbf{R}_G = \begin{pmatrix} \sigma_{\rho1}^2 & 0 & \dots & 0 & | & 0 & 0 & \dots & 0 \\ 0 & \sigma_{\rho2}^2 & \dots & 0 & | & 0 & 0 & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots & | & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \dots & \sigma_{\rho m}^2 & | & 0 & 0 & \dots & 0 \\ - & - & - & - & - & - & - & - & - \\ 0 & 0 & \dots & 0 & | & \sigma_{r1}^2 & 0 & \dots & 0 \\ 0 & 0 & \dots & 0 & | & 0 & \sigma_{r 2}^2 & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots & | & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \dots & 0 & | & 0 & 0 & \dots & \sigma_{rm}^2 \end{pmatrix} \qquad \text{P. Groves}\,(9.168)
-
-    auto numSats = static_cast<uint8_t>(satElevation.size());
-
-    auto numMeasurements = static_cast<Eigen::Index>(2 * numSats);
-    Eigen::MatrixXd R = Eigen::MatrixXd::Zero(numMeasurements, numMeasurements);
-
-    for (size_t j = 0; j < numSats; j++)
-    {
-        auto sigma_rho2 = sigma2(satElevation[j], sigma_rhoZ, sigma_rhoC, 0., CN0[j], 0.);
-        auto sigma_r2 = sigma2(satElevation[j], sigma_rZ, sigma_rC, 0., CN0[j], 0.);
-
-        auto i = static_cast<uint8_t>(j);
-
-        R(i, i) = sigma_rho2;
-        R(numSats + i, numSats + i) = sigma_r2;
-    }
-
-    return R;
-}
-
-Eigen::MatrixXd NAV::TightlyCoupledKF::measurementNoiseCovariance_RwithRangeAccelOnly(const double& sigma_rhoZ, const double& sigma_rZ, const std::vector<double>& satElevation, const double& sigma_rhoA, const double& sigma_rA, const std::vector<double>& rangeAccel)
-{
-    // Math: \mathbf{R}_G = \begin{pmatrix} \sigma_{\rho1}^2 & 0 & \dots & 0 & | & 0 & 0 & \dots & 0 \\ 0 & \sigma_{\rho2}^2 & \dots & 0 & | & 0 & 0 & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots & | & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \dots & \sigma_{\rho m}^2 & | & 0 & 0 & \dots & 0 \\ - & - & - & - & - & - & - & - & - \\ 0 & 0 & \dots & 0 & | & \sigma_{r1}^2 & 0 & \dots & 0 \\ 0 & 0 & \dots & 0 & | & 0 & \sigma_{r 2}^2 & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots & | & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \dots & 0 & | & 0 & 0 & \dots & \sigma_{rm}^2 \end{pmatrix} \qquad \text{P. Groves}\,(9.168)
-
-    auto numSats = static_cast<uint8_t>(satElevation.size());
-
-    auto numMeasurements = static_cast<Eigen::Index>(2 * numSats);
-    Eigen::MatrixXd R = Eigen::MatrixXd::Zero(numMeasurements, numMeasurements);
-
-    for (size_t j = 0; j < numSats; j++)
-    {
-        auto sigma_rho2 = sigma2(satElevation[j], sigma_rhoZ, 0., sigma_rhoA, 0., rangeAccel[j]);
-        auto sigma_r2 = sigma2(satElevation[j], sigma_rZ, 0., sigma_rA, 0., rangeAccel[j]);
 
         auto i = static_cast<uint8_t>(j);
 
@@ -2554,27 +2473,4 @@ Eigen::MatrixXd NAV::TightlyCoupledKF::measurementInnovation_dz(const std::vecto
     }
 
     return deltaZ;
-}
-
-double NAV::TightlyCoupledKF::pseudoRangeEstimate(Eigen::Vector3d& e_satPosEst, Eigen::Vector3d& e_recvPosEst, double& recvClkOffset, Eigen::Matrix3d& i_Dcm_e)
-{
-    // Math: \hat{\rho}_{a,C,k}^{j-} = \sqrt{\begin{bmatrix} \mathbf{C}_e^I(\tilde{t}_{st,a,k}^j) \hat{\mathbf{r}}_{ej}^e(\tilde{t}_{st,a,k}^j) - \hat{\mathbf{r}}_{ea,k}^{e-} \end{bmatrix}^\text{T} \begin{bmatrix} \mathbf{C}_e^I(\tilde{t}_{st,a,k}^j) \hat{\mathbf{r}}_{ej}^e(\tilde{t}_{st,a,k}^j) - \hat{\mathbf{r}}_{ea,k}^{e-} \end{bmatrix}} + \delta\hat{\rho}_{c,k}^{a-} \qquad \text{P. Groves}\,(9.165)
-
-    return std::sqrt((i_Dcm_e * e_satPosEst - e_recvPosEst).transpose() * (i_Dcm_e * e_satPosEst - e_recvPosEst)) + recvClkOffset;
-}
-
-double NAV::TightlyCoupledKF::pseudoRangeRateEstimate(Eigen::Vector3d& e_satPosEst, Eigen::Vector3d& e_satVelEst, Eigen::Vector3d& e_recvPosEst, Eigen::Vector3d& e_recvVelEst, Eigen::Vector3d& e_lineOfSight, double& recvClkDrift, Eigen::Matrix3d& i_Dcm_e, const Eigen::Matrix3d& e_Omega_ie)
-{
-    // Math: \hat{\dot{\rho}}_{a,C,k}^{j-} = {\hat{\mathbf{u}}_{as,j}^{e-}}^{\text{T}} \begin{bmatrix} \mathbf{C}_e^I(\tilde{t}_{st,a,k}^j) \begin{pmatrix} \hat{\mathbf{v}}_{ej}^e (\tilde{t}_{st,a,k}^j) + \mathbf{\Omega}_{ie}^e \hat{\mathbf{r}}_{ej}^e (\tilde{t}_{st,a,k}^j) \end{pmatrix} - \begin{pmatrix} \hat{\mathbf{v}}_{ea,k}^{e-} + \mathbf{\Omega}_{ie}^e \hat{\mathbf{r}}_{ea,k}^{e-} \end{pmatrix} \end{bmatrix} + \delta \hat{\dot{\rho}}_{c,k}^{a-} \qquad \text{P. Groves}\,(9.165)
-
-    return e_lineOfSight.transpose() * (i_Dcm_e * (e_satVelEst + e_Omega_ie * e_satPosEst) - (e_recvVelEst + e_Omega_ie * e_recvPosEst)) + recvClkDrift;
-}
-
-double NAV::TightlyCoupledKF::transmissionTime(NAV::InsTime& recvTimestamp, double& pseudoRange, double& pseudoRangeError)
-{
-    // Math: \tilde{t}_{st,a}^j = \tilde{t}_{sa,a}^j - (\tilde{\rho}_{a,R}^j + \delta\hat{\rho}_c^j) / c \qquad \text{P. Groves}\,(9.125)
-
-    auto recvT = static_cast<double>(static_cast<double>(recvTimestamp.toYMDHMS().hour * 3600 + recvTimestamp.toYMDHMS().min * 60) + recvTimestamp.toYMDHMS().sec);
-
-    return recvT - (pseudoRange + pseudoRangeError) / InsConst::C;
 }

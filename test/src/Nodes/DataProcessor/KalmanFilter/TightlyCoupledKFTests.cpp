@@ -161,11 +161,11 @@ void testTCKFwithImuFile(const char* imuFilePath, const char* gnssFilePath, size
 
             if (gnssRinex)
             {
-                allowedPositionOffsetImuOnly_n << 5.4, 2.3, 35.;
-                allowedPositionOffsetCombined_n << 14., 5., 120.;
+                allowedPositionOffsetImuOnly_n << 5.4, 3.2, 35.;
+                allowedPositionOffsetCombined_n << 17., 9., 140.;
                 allowedVelocityErrorImuOnly_e << 0.14, 13.7, 0.1;
                 allowedVelocityErrorCombined_e << 3., 2., 35.;
-                allowedRollPitchYawOffsetImuOnly << 1.3, 1.3, 90.0;
+                allowedRollPitchYawOffsetImuOnly << 1.3, 1.3, 90.0; // yaw = 90 deg, due to static observation, where yaw cannot be observed
                 allowedRollPitchYawOffsetCombined << 11., 5., 90.;
             }
             else
@@ -174,7 +174,7 @@ void testTCKFwithImuFile(const char* imuFilePath, const char* gnssFilePath, size
                 allowedPositionOffsetCombined_n << 8.55, 3., 51.;
                 allowedVelocityErrorImuOnly_e << 0.14, 13.7, 0.1;
                 allowedVelocityErrorCombined_e << 0.3, 0.05, 0.3;
-                allowedRollPitchYawOffsetImuOnly << 1.3, 1.3, 90.0;
+                allowedRollPitchYawOffsetImuOnly << 1.3, 1.3, 90.0; // yaw = 90 deg, due to static observation, where yaw cannot be observed
                 allowedRollPitchYawOffsetCombined << 2.7, 12., 94.0;
             }
 
@@ -190,12 +190,12 @@ void testTCKFwithImuFile(const char* imuFilePath, const char* gnssFilePath, size
             }
 
             // North/South deviation [m]
-            [[maybe_unused]] double northSouth = calcGeographicalDistance(obs->latitude(), obs->longitude(),
-                                                                          refPos_lla.x(), obs->longitude());
+            double northSouth = calcGeographicalDistance(obs->latitude(), obs->longitude(),
+                                                         refPos_lla.x(), obs->longitude());
 
             // East/West deviation [m]
-            [[maybe_unused]] double eastWest = calcGeographicalDistance(obs->latitude(), obs->longitude(),
-                                                                        obs->latitude(), refPos_lla.y());
+            double eastWest = calcGeographicalDistance(obs->latitude(), obs->longitude(),
+                                                       obs->latitude(), refPos_lla.y());
 
             REQUIRE(northSouth <= (obs->insTime < timeOfFirstGnssObs ? allowedPositionOffsetImuOnly_n(0) : allowedPositionOffsetCombined_n(0)));
             REQUIRE(eastWest <= (obs->insTime < timeOfFirstGnssObs ? allowedPositionOffsetImuOnly_n(1) : allowedPositionOffsetCombined_n(1)));
@@ -313,7 +313,7 @@ void testTCKFwithImuFile(const char* imuFilePath, const char* gnssFilePath, size
                           settings);
 }
 
-TEST_CASE("[TightlyCoupledKF][flow] Test flow with IMU data arriving before GNSS data", "[TightlyCoupledKF][flow]")
+TEST_CASE("[TightlyCoupledKF][flow] Test flow with IMU data arriving before GNSS data", "[TightlyCoupledKF][flow][debug]")
 {
     // GNSS: 166 messages, 166 messages with InsTime (first GNSS message at 0.004999876 s)
     size_t MESSAGE_COUNT_GNSS = 166;

@@ -1531,12 +1531,12 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF Y error [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF Z error [m]");
             // ImuBiases
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_X accumulated [m/s^2]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_Y accumulated [m/s^2]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_Z accumulated [m/s^2]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_X accumulated [rad/s]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_Y accumulated [rad/s]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_Z accumulated [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_X [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_Y [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_Z [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_X [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_Y [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_Z [rad/s]");
         }
         else if (startPin.dataIdentifier.front() == TcKfInsGnssErrors::type())
         {
@@ -1563,15 +1563,15 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF Y error [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF Z error [m]");
             // ImuBiases
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_X accumulated [m/s^2]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_Y accumulated [m/s^2]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_Z accumulated [m/s^2]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_X accumulated [rad/s]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_Y accumulated [rad/s]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_Z accumulated [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_X [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_Y [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_Z [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_X [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_Y [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_Z [rad/s]");
             // GnssErrors
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock offset accumulated [m]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock drift accumulated [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock offset [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock drift [m/s]");
         }
         else if (startPin.dataIdentifier.front() == SppSolution::type())
         {
