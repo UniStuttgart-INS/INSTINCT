@@ -241,22 +241,22 @@ const std::string& Application::GetName() const
     return m_Name;
 }
 
-ImFont* Application::DefaultFont() const
+ImFont* Application::DefaultFont()
 {
     return m_DefaultFont;
 }
 
-ImFont* Application::WindowFont() const
+ImFont* Application::WindowFont()
 {
     return m_WindowFont;
 }
 
-ImFont* Application::MonoFont() const
+ImFont* Application::MonoFont()
 {
     return m_MonoFont;
 }
 
-ImFont* Application::HeaderFont() const
+ImFont* Application::HeaderFont()
 {
     return m_HeaderFont;
 }

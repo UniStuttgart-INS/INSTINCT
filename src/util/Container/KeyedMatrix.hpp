@@ -12,6 +12,8 @@
 /// @note Based on ideas from Kevin Gutsche (kevin.gutsche@ins.uni-stuttgart.de) and Bayram Stucke (bayram.stucke@ins.uni-stuttgart.de)
 /// @date 2023-07-06
 
+#pragma once
+
 #include <unordered_set>
 #include <vector>
 #include <array>
@@ -2377,7 +2379,7 @@ struct fmt::formatter<NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Col
                 rowKeysLength.push_back(rowKeyLength);
             }
 
-            size_t colMinLength = 9UL;
+            constexpr size_t colMinLength = 9UL;
 
             std::vector<std::string> colKeysStr;
             std::vector<size_t> colKeysLength;

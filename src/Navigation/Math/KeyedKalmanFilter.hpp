@@ -15,6 +15,8 @@
 
 #include <unordered_map>
 
+#include "imgui.h"
+#include "internal/gui/widgets/KeyedMatrix.hpp"
 #include "util/Eigen.hpp"
 #include "util/Container/KeyedMatrix.hpp"
 #include "Navigation/Math/Math.hpp"
@@ -116,8 +118,10 @@ class KeyedKalmanFilter
     /// @note See Brown & Hwang (2012) - Introduction to Random Signals and Applied Kalman Filtering (ch. 5.5 - figure 5.5)
     void correctWithMeasurementInnovation()
     {
+        S(all, all) = H(all, all) * P(all, all) * H(all, all).transpose() + R(all, all);
+
         // Math: \mathbf{K}_k = \mathbf{P}_k^- \mathbf{H}_k^T (\mathbf{H}_k \mathbf{P}_k^- \mathbf{H}_k^T + R_k)^{-1} \qquad \text{P. Groves}\,(3.21)
-        K(all, all) = P(all, all) * H(all, all).transpose() * (H(all, all) * P(all, all) * H(all, all).transpose() + R(all, all)).inverse();
+        K(all, all) = P(all, all) * H(all, all).transpose() * S(all, all).inverse();
 
         // Math: \begin{align*} \mathbf{\hat{x}}_k^+ &= \mathbf{\hat{x}}_k^- + \mathbf{K}_k (\mathbf{z}_k - \mathbf{H}_k \mathbf{\hat{x}}_k^-) \\ &= \mathbf{\hat{x}}_k^- + \mathbf{K}_k \mathbf{\delta z}_k^{-} \end{align*} \qquad \text{P. Groves}\,(3.24)
         x(all) = x(all) + K(all, all) * z(all);
@@ -278,6 +282,72 @@ class KeyedKalmanFilter
         auto [Phi, Q] = NAV::calcPhiAndQWithVanLoanMethod(F(all, all), G(all, all), W(all, all), dt);
         this->Phi(all, all) = Phi;
         this->Q(all, all) = Q;
+    }
+
+    /// @brief Shows ImGui Tree nodes for all matrices
+    /// @param id Unique id for ImGui
+    void showKalmanFilterMatrixViews(const char* id)
+    {
+        if (ImGui::TreeNode(fmt::format("x - State vector##{}", id).c_str()))
+        {
+            gui::widgets::KeyedVectorView(fmt::format("Kalman Filter x##{}", id).c_str(), &x);
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNode(fmt::format("P - Error covariance matrix##{}", id).c_str()))
+        {
+            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter P##{}", id).c_str(), &P);
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNode(fmt::format("Phi - State transition matrix##{}", id).c_str()))
+        {
+            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter Phi##{}", id).c_str(), &Phi);
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNode(fmt::format("Q System/Process noise covariance matrix##{}", id).c_str()))
+        {
+            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter Q##{}", id).c_str(), &Q);
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNode(fmt::format("z - Measurement vector##{}", id).c_str()))
+        {
+            gui::widgets::KeyedVectorView(fmt::format("Kalman Filter z##{}", id).c_str(), &z);
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNode(fmt::format("H - Measurement sensitivity matrix##{}", id).c_str()))
+        {
+            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter H##{}", id).c_str(), &H);
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNode(fmt::format("R - Measurement noise covariance matrix##{}", id).c_str()))
+        {
+            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter R##{}", id).c_str(), &R);
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNode(fmt::format("S - Measurement prediction covariance matrix##{}", id).c_str()))
+        {
+            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter S##{}", id).c_str(), &S);
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNode(fmt::format("K - Kalman gain matrix##{}", id).c_str()))
+        {
+            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter K##{}", id).c_str(), &K);
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNode(fmt::format("F - System model matrix##{}", id).c_str()))
+        {
+            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter F##{}", id).c_str(), &F);
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNode(fmt::format("G - Noise input matrix##{}", id).c_str()))
+        {
+            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter G##{}", id).c_str(), &G);
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNode(fmt::format("W - Noise scale matrix##{}", id).c_str()))
+        {
+            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter W##{}", id).c_str(), &W);
+            ImGui::TreePop();
+        }
     }
 
   private:

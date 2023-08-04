@@ -102,7 +102,7 @@ TEST_CASE("[RealTimeKinematic] Meas keys unique", "[RealTimeKinematic]")
             }
             unique[hash] = satSigId;
 
-            satSigId = SatSigId{ code, static_cast<uint16_t>(satNum) };
+            satSigId = SatSigId{ code, satNum };
             hash = std::hash<Meas::CarrierDD>()(Meas::CarrierDD{ satSigId });
             if (unique.contains(hash))
             {
@@ -113,7 +113,7 @@ TEST_CASE("[RealTimeKinematic] Meas keys unique", "[RealTimeKinematic]")
             }
             unique[hash] = satSigId;
 
-            satSigId = SatSigId{ code, static_cast<uint16_t>(satNum) };
+            satSigId = SatSigId{ code, satNum };
             hash = std::hash<Meas::DopplerDD>()(Meas::DopplerDD{ satSigId });
             if (unique.contains(hash))
             {
@@ -135,11 +135,11 @@ TEST_CASE("[RealTimeKinematic] Meas keys unique", "[RealTimeKinematic]")
             auto hash = std::hash<Meas::PsrDD>()(Meas::PsrDD{ satSigId });
             REQUIRE(unique.at(hash) == satSigId);
 
-            satSigId = SatSigId{ code, static_cast<uint16_t>(satNum) };
+            satSigId = SatSigId{ code, satNum };
             hash = std::hash<Meas::CarrierDD>()(Meas::CarrierDD{ satSigId });
             REQUIRE(unique.at(hash) == satSigId);
 
-            satSigId = SatSigId{ code, static_cast<uint16_t>(satNum) };
+            satSigId = SatSigId{ code, satNum };
             hash = std::hash<Meas::DopplerDD>()(Meas::DopplerDD{ satSigId });
             REQUIRE(unique.at(hash) == satSigId);
         }

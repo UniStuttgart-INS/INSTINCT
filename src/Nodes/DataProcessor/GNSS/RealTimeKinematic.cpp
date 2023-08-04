@@ -330,6 +330,13 @@ void RealTimeKinematic::guiConfig()
         }
         ImGui::TreePop();
     }
+
+    ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
+    if (ImGui::TreeNode(fmt::format("Kalman Filter matrices##{}", size_t(id)).c_str()))
+    {
+        _kalmanFilter.showKalmanFilterMatrixViews(std::to_string(size_t(id)).c_str());
+        ImGui::TreePop();
+    }
 }
 
 void RealTimeKinematic::recalcVarAccel()

@@ -444,6 +444,13 @@ void NAV::LooselyCoupledKF::guiConfig()
 
         ImGui::TreePop();
     }
+
+    ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
+    if (ImGui::TreeNode(fmt::format("Kalman Filter matrices##{}", size_t(id)).c_str()))
+    {
+        _kalmanFilter.showKalmanFilterMatrixViews(std::to_string(size_t(id)).c_str());
+        ImGui::TreePop();
+    }
 }
 
 [[nodiscard]] json NAV::LooselyCoupledKF::save() const
@@ -889,9 +896,6 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
                                                 - _accumulatedAccelBiases);
     LOG_DATA("{}:     b_acceleration = {} [m/s^2]", nameId(), b_acceleration.transpose());
 
-    // System Matrix
-    KeyedMatrix<double, KFStates, KFStates, 15, 15> F(Eigen::Matrix<double, 15, 15>::Zero(), States);
-
     if (_frame == Frame::NED)
     {
         // n_velocity (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
@@ -918,7 +922,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         LOG_DATA("{}:     n_omega_in = {} [rad/s]", nameId(), n_omega_in.transpose());
 
         // System Matrix
-        F = n_systemMatrix_F(n_Quat_b, b_acceleration, n_omega_in, n_velocity, lla_position, R_N, R_E, g_0, r_eS_e, _tau_bad, _tau_bgd);
+        _kalmanFilter.F = n_systemMatrix_F(n_Quat_b, b_acceleration, n_omega_in, n_velocity, lla_position, R_N, R_E, g_0, r_eS_e, _tau_bad, _tau_bgd);
         LOG_DATA("{}:     F =\n{}", nameId(), F);
 
         if (_qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
@@ -929,7 +933,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
             _kalmanFilter.Q = n_systemNoiseCovarianceMatrix_Q(sigma_ra.array().square(), sigma_rg.array().square(),
                                                               sigma_bad.array().square(), sigma_bgd.array().square(),
                                                               _tau_bad, _tau_bgd,
-                                                              F.block<3>(Vel, Att), T_rn_p,
+                                                              _kalmanFilter.F.block<3>(Vel, Att), T_rn_p,
                                                               n_Quat_b.toRotationMatrix(), tau_i);
         }
     }
@@ -946,7 +950,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         Eigen::Vector3d e_gravitation = trafo::e_Quat_n(lla_position(0), lla_position(1)) * n_calcGravitation_EGM96(lla_position);
 
         // System Matrix
-        F = e_systemMatrix_F(e_Quat_b, b_acceleration, e_position, e_gravitation, r_eS_e, InsConst::e_omega_ie, _tau_bad, _tau_bgd);
+        _kalmanFilter.F = e_systemMatrix_F(e_Quat_b, b_acceleration, e_position, e_gravitation, r_eS_e, InsConst::e_omega_ie, _tau_bad, _tau_bgd);
         LOG_DATA("{}:     F =\n{}", nameId(), F);
 
         if (_qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
@@ -957,7 +961,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
             _kalmanFilter.Q = e_systemNoiseCovarianceMatrix_Q(sigma_ra.array().square(), sigma_rg.array().square(),
                                                               sigma_bad.array().square(), sigma_bgd.array().square(),
                                                               _tau_bad, _tau_bgd,
-                                                              F.block<3>(Vel, Att),
+                                                              _kalmanFilter.F.block<3>(Vel, Att),
                                                               e_Quat_b.toRotationMatrix(), tau_i);
         }
     }
@@ -965,27 +969,22 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     if (_qCalculationAlgorithm == QCalculationAlgorithm::VanLoan)
     {
         // Noise Input Matrix
-        auto G = noiseInputMatrix_G(_frame == Frame::NED ? inertialNavSol->n_Quat_b() : inertialNavSol->e_Quat_b());
+        _kalmanFilter.G = noiseInputMatrix_G(_frame == Frame::NED ? inertialNavSol->n_Quat_b() : inertialNavSol->e_Quat_b());
         LOG_DATA("{}:     G =\n{}", nameId(), G);
 
-        Eigen::Matrix<double, 12, 12> W = noiseScaleMatrix_W(sigma_ra, sigma_rg,
-                                                             sigma_bad, sigma_bgd,
-                                                             _tau_bad, _tau_bgd);
+        _kalmanFilter.W(all, all) = noiseScaleMatrix_W(sigma_ra, sigma_rg,
+                                                       sigma_bad, sigma_bgd,
+                                                       _tau_bad, _tau_bgd);
         LOG_DATA("{}:     W =\n{}", nameId(), W);
 
         LOG_DATA("{}:     G*W*G^T =\n{}", nameId(), G(all, all) * W * G(all, all).transpose());
 
-        auto [Phi, Q] = calcPhiAndQWithVanLoanMethod(F(all, all), G(all, all), W, tau_i);
-
         // 1. Calculate the transition matrix 𝚽_{k-1}
         if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_Phi); }
-
-        _kalmanFilter.Phi(all, all) = Phi;
-
         // 2. Calculate the system noise covariance matrix Q_{k-1}
         if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_Q); }
 
-        _kalmanFilter.Q(all, all) = Q;
+        _kalmanFilter.calcPhiAndQWithVanLoanMethod(tau_i);
     }
 
     // If Q was calculated over Van Loan, then the Phi matrix was automatically calculated with the exponential matrix
@@ -996,12 +995,12 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Exponential)
         {
             // 1. Calculate the transition matrix 𝚽_{k-1}
-            _kalmanFilter.Phi = transitionMatrix_Phi_exp(F, tau_i);
+            _kalmanFilter.calcTransitionMatrix_Phi_exp(tau_i);
         }
         else if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor)
         {
             // 1. Calculate the transition matrix 𝚽_{k-1}
-            _kalmanFilter.Phi = transitionMatrix_Phi_Taylor(F, tau_i, static_cast<size_t>(_phiCalculationTaylorOrder));
+            _kalmanFilter.calcTransitionMatrix_Phi_Taylor(tau_i, static_cast<size_t>(_phiCalculationTaylorOrder));
         }
         else
         {
@@ -1414,18 +1413,14 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
 //                                     System noise covariance matrix 𝐐
 // ###########################################################################################################
 
-NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates, 15, 12>
+NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates, 15, 15>
     NAV::LooselyCoupledKF::noiseInputMatrix_G(const Eigen::Quaterniond& ien_Quat_b)
 {
     // DCM matrix from body to navigation frame
     Eigen::Matrix3d ien_Dcm_b = ien_Quat_b.toRotationMatrix();
 
     // Math: \mathbf{G}_{a} = \begin{bmatrix} -\mathbf{C}_b^{i,e,n} & 0 & 0 & 0 \\ 0 & \mathbf{C}_b^{i,e,n} & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & \mathbf{I}_3 & 0 \\ 0 & 0 & 0 & \mathbf{I}_3 \end{bmatrix}
-    KeyedMatrix<double, KFStates, KFStates, 15, 12> G(Eigen::Matrix<double, 15, 12>::Zero(), States,
-                                                      { Roll, Pitch, Yaw,
-                                                        VelN, VelE, VelD,
-                                                        AccBiasX, AccBiasY, AccBiasZ,
-                                                        GyrBiasX, GyrBiasY, GyrBiasZ });
+    KeyedMatrix<double, KFStates, KFStates, 15, 15> G(Eigen::Matrix<double, 15, 15>::Zero(), States, States);
 
     G.block<3>(Att, Att) = SCALE_FACTOR_ATTITUDE * -ien_Dcm_b;
     G.block<3>(Vel, Vel) = ien_Dcm_b;
@@ -1435,14 +1430,15 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
     return G;
 }
 
-Eigen::Matrix<double, 12, 12> NAV::LooselyCoupledKF::noiseScaleMatrix_W(const Eigen::Vector3d& sigma_ra, const Eigen::Vector3d& sigma_rg,
+Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::noiseScaleMatrix_W(const Eigen::Vector3d& sigma_ra, const Eigen::Vector3d& sigma_rg,
                                                                         const Eigen::Vector3d& sigma_bad, const Eigen::Vector3d& sigma_bgd,
                                                                         const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd)
 {
-    Eigen::Matrix<double, 12, 12> W = Eigen::Matrix<double, 12, 12>::Zero();
+    Eigen::Matrix<double, 15, 15> W = Eigen::Matrix<double, 15, 15>::Zero();
 
     W.diagonal() << sigma_rg,
         sigma_ra,
+        Eigen::Vector3d::Zero(),
         _randomProcessAccel == RandomProcess::RandomWalk ? sigma_bad : psdBiasGaussMarkov(sigma_bad.array().square(), tau_bad), // S_bad
         _randomProcessGyro == RandomProcess::RandomWalk ? sigma_bgd : psdBiasGaussMarkov(sigma_bgd.array().square(), tau_bgd);  // S_bgd
 

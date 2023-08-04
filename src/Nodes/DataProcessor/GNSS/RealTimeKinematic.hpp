@@ -450,7 +450,7 @@ struct hash<NAV::RealTimeKinematicKF::Meas::DopplerDD>
 
 #ifndef DOXYGEN_IGNORE
 
-/// @brief Formatter for SatelliteSystem
+/// @brief Formatter
 template<>
 struct fmt::formatter<NAV::RealTimeKinematicKF::States::StateKeyTypes>
 {
@@ -463,7 +463,7 @@ struct fmt::formatter<NAV::RealTimeKinematicKF::States::StateKeyTypes>
         return ctx.begin();
     }
 
-    /// @brief Defines how to format SatelliteSystem structs
+    /// @brief Defines how to format structs
     /// @param[in] state Struct to format
     /// @param[in, out] ctx Format context
     /// @return Output iterator
@@ -501,7 +501,7 @@ struct fmt::formatter<NAV::RealTimeKinematicKF::States::StateKeyTypes>
     }
 };
 
-/// @brief Formatter for SatelliteSystem
+/// @brief Formatter
 template<>
 struct fmt::formatter<NAV::RealTimeKinematicKF::Meas::MeasKeyTypes>
 {
@@ -514,7 +514,7 @@ struct fmt::formatter<NAV::RealTimeKinematicKF::Meas::MeasKeyTypes>
         return ctx.begin();
     }
 
-    /// @brief Defines how to format SatelliteSystem structs
+    /// @brief Defines how to format structs
     /// @param[in] meas Struct to format
     /// @param[in, out] ctx Format context
     /// @return Output iterator
