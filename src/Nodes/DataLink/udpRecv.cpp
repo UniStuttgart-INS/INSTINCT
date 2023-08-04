@@ -99,7 +99,7 @@ bool NAV::UdpRecv::initialize()
 
     _running = true;
 
-    pollData();
+    asyncReceive();
 
     if (_isStartup)
     {
@@ -130,7 +130,7 @@ void NAV::UdpRecv::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-void NAV::UdpRecv::pollData()
+void NAV::UdpRecv::asyncReceive()
 {
     _socket.async_receive_from(
         boost::asio::buffer(_data, _maxBytes), _sender_endpoint,
@@ -169,7 +169,7 @@ void NAV::UdpRecv::pollData()
 
             if (_running)
             {
-                pollData();
+                asyncReceive();
             }
         });
 }

@@ -14,6 +14,7 @@ namespace nm = NAV::NodeManager;
 
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
+#include "internal/gui/widgets/imgui_ex.hpp"
 
 #include "util/Logger.hpp"
 
@@ -51,7 +52,7 @@ std::string NAV::UdpSend::category()
 void NAV::UdpSend::guiConfig()
 {
     ImGui::SetNextItemWidth(150 * gui::NodeEditorApplication::windowFontRatio());
-    if (ImGui::InputInt4(fmt::format("IPv4##{}", size_t(id)).c_str(), _ip.data()))
+    if (ImGui::InputInt4L(fmt::format("IPv4##{}", size_t(id)).c_str(), _ip.data()))
     {
         flow::ApplyChanges();
     }
@@ -96,8 +97,6 @@ bool NAV::UdpSend::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    _running = true;
-
     std::string ipString{};
     for (size_t i = 0; i < 4; i++)
     {
@@ -112,8 +111,6 @@ bool NAV::UdpSend::initialize()
 
 void NAV::UdpSend::deinitialize()
 {
-    _running = false;
-
     _io_context.stop();
 
     LOG_TRACE("{}: called", nameId());
@@ -121,20 +118,17 @@ void NAV::UdpSend::deinitialize()
 
 void NAV::UdpSend::receivePosVelAtt(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    [[maybe_unused]] auto posVelAtt = std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(queue.extract_front()));
+    auto posVelAtt = std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(queue.extract_front()));
 
-    if (_running)
-    {
-        Eigen::Vector3d posLLA = posVelAtt->lla_position();
-        Eigen::Vector3d vel_n = posVelAtt->n_velocity();
-        Eigen::Vector4d n_Quat_b = { posVelAtt->n_Quat_b().x(), posVelAtt->n_Quat_b().y(), posVelAtt->n_Quat_b().z(), posVelAtt->n_Quat_b().w() };
-        auto timeStamp = posVelAtt->insTime.toGPSweekTow();
-        auto gpsC = timeStamp.gpsCycle;
-        auto gpsW = timeStamp.gpsWeek;
-        auto gpsT = timeStamp.tow;
+    Eigen::Vector3d posLLA = posVelAtt->lla_position();
+    Eigen::Vector3d vel_n = posVelAtt->n_velocity();
+    Eigen::Vector4d n_Quat_b = { posVelAtt->n_Quat_b().x(), posVelAtt->n_Quat_b().y(), posVelAtt->n_Quat_b().z(), posVelAtt->n_Quat_b().w() };
+    auto timeStamp = posVelAtt->insTime.toGPSweekTow();
+    auto gpsC = timeStamp.gpsCycle;
+    auto gpsW = timeStamp.gpsWeek;
+    auto gpsT = timeStamp.tow;
 
-        std::vector<double> udp_posVelAtt{ posLLA(0), posLLA(1), posLLA(2), vel_n(0), vel_n(1), vel_n(2), n_Quat_b(0), n_Quat_b(1), n_Quat_b(2), n_Quat_b(3), static_cast<double>(gpsC), static_cast<double>(gpsW), static_cast<double>(gpsT) };
+    std::vector<double> udp_posVelAtt{ posLLA(0), posLLA(1), posLLA(2), vel_n(0), vel_n(1), vel_n(2), n_Quat_b(0), n_Quat_b(1), n_Quat_b(2), n_Quat_b(3), static_cast<double>(gpsC), static_cast<double>(gpsW), static_cast<double>(gpsT) };
 
-        _socket.send_to(boost::asio::buffer(udp_posVelAtt), *_endpoints.begin());
-    }
+    _socket.send_to(boost::asio::buffer(udp_posVelAtt), *_endpoints.begin());
 }

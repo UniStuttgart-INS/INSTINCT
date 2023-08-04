@@ -71,10 +71,7 @@ class UdpRecv : public Node
     void deinitialize() override;
 
     /// @brief Polls the next data
-    // void pollPosVelAtt();
-
-    /// @brief Polls the next data
-    void pollData();
+    void asyncReceive();
 
     /// UDP port number
     int _port = 4567;

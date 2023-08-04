@@ -89,8 +89,5 @@ class UdpSend : public Node
     boost::asio::ip::udp::resolver _resolver;
     /// Boost udp endpoint
     boost::asio::ip::udp::resolver::results_type _endpoints;
-
-    /// Flag that indicates the running data link
-    bool _running = false;
 };
 } // namespace NAV
