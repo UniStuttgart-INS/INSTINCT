@@ -441,8 +441,6 @@ bool RealTimeKinematic::initialize()
 
     _kalmanFilter.F.block<3>(States::Pos, States::Vel) = Eigen::Matrix3d::Identity();
 
-    _kalmanFilter.P(all, all).diagonal() << 1e4, 1e4, 1e4, 1e2, 1e2, 1e2; // TODO: Initialize from SPP
-
     LOG_DEBUG("RealTimeKinematic initialized");
 
     return true;
@@ -533,46 +531,6 @@ void RealTimeKinematic::recvRoverGnssObs(InputPin::NodeDataQueue& queue, size_t 
 void RealTimeKinematic::calcRealTimeKinematicSolution()
 {
     LOG_DATA("{}: Calculate RTK Solution for  [{}]", nameId(), _receiver[Rover].gnssObs->insTime);
-
-    // Calculate a Single point solution if the Rover Position is not known yet
-    if (_receiver[Rover].e_pos.isZero())
-    {
-        if (auto sol = calcFallbackSppSolution())
-        {
-            _lastUpdate = sol->insTime;
-            _receiver[Rover].e_pos = sol->e_position();
-            _receiver[Rover].lla_pos = trafo::ecef2lla_WGS84(_receiver[Rover].e_pos);
-            _receiver[Rover].e_vel = sol->e_velocity();
-
-            // #######################################################################################################
-            //                                     TODO: Debugging, remove later
-            // #######################################################################################################
-            // _receiver[Base].lla_pos = Eigen::Vector3d(deg2rad(30), deg2rad(95), 0.0);
-            // // _receiver[Base].e_pos = Eigen::Vector3d{ -481819.3135, 5507219.9538, 3170373.7354 };  // From the RINEX obs file
-            // _receiver[Base].e_pos = trafo::lla2ecef_WGS84(_receiver[Base].lla_pos);
-            // _receiver[Rover].lla_pos = Eigen::Vector3d(deg2rad(30), deg2rad(95.02), 0.0);
-            // // _receiver[Rover].e_pos = Eigen::Vector3d{ -483741.6665, 5507051.4316, 3170373.7354 }; // From the RINEX obs file
-            // _receiver[Rover].e_pos = trafo::lla2ecef_WGS84(_receiver[Rover].lla_pos);
-            // _receiver[Rover].e_vel = Eigen::Vector3d::Zero();
-            // #######################################################################################################
-
-            _kalmanFilter.x.segment<3>(States::Pos) = _receiver[Rover].e_pos;
-            _kalmanFilter.x.segment<3>(States::Vel) = _receiver[Rover].e_vel;
-
-            LOG_TRACE("{}: Initial base  position: {}°, {}°, {}m (ECEF {} [m])", nameId(),
-                      rad2deg(_receiver[Base].lla_pos(0)), rad2deg(_receiver[Base].lla_pos(1)), _receiver[Base].lla_pos(2),
-                      _receiver[Base].e_pos.transpose());
-            LOG_TRACE("{}: Initial rover position: {}°, {}°, {}m (ECEF {} [m])", nameId(),
-                      rad2deg(_receiver[Rover].lla_pos(0)), rad2deg(_receiver[Rover].lla_pos(1)), _receiver[Rover].lla_pos(2),
-                      _receiver[Rover].e_pos.transpose());
-            LOG_TRACE("{}: Initial rover velocity: {} [m/s] (ECEF)", nameId(), _receiver[Rover].e_vel.transpose());
-        }
-        else
-        {
-            return;
-        }
-    }
-
     // Collection of all connected navigation data providers
     std::vector<const GnssNavInfo*> gnssNavInfos;
     for (size_t i = 0; i < _nNavInfoPins; i++)
@@ -584,6 +542,51 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
     }
     if (!gnssNavInfos.empty())
     {
+        // Calculate a Single point solution if the Rover Position is not known yet
+        if (_receiver[Rover].e_pos.isZero())
+        {
+            if (auto sol = GNSS::Positioning::SPP::calcSppSolutionLSE(GNSS::Positioning::SPP::State{},
+                                                                      _receiver[Rover].gnssObs, gnssNavInfos,
+                                                                      _ionosphereModel, _troposphereModels, _gnssMeasurementErrorModel,
+                                                                      GNSS::Positioning::SPP::EstimatorType::WEIGHTED_LEAST_SQUARES,
+                                                                      _filterFreq, _filterCode, _excludedSatellites, _elevationMask))
+            {
+                _lastUpdate = sol->insTime;
+                _receiver[Rover].e_pos = sol->e_position();
+                _receiver[Rover].lla_pos = trafo::ecef2lla_WGS84(_receiver[Rover].e_pos);
+                _receiver[Rover].e_vel = sol->e_velocity();
+
+                // #######################################################################################################
+                //                                     TODO: Debugging, remove later
+                // #######################################################################################################
+                // _receiver[Base].lla_pos = Eigen::Vector3d(deg2rad(30), deg2rad(95), 0.0);
+                // // _receiver[Base].e_pos = Eigen::Vector3d{ -481819.3135, 5507219.9538, 3170373.7354 };  // From the RINEX obs file
+                // _receiver[Base].e_pos = trafo::lla2ecef_WGS84(_receiver[Base].lla_pos);
+                // _receiver[Rover].lla_pos = Eigen::Vector3d(deg2rad(30), deg2rad(95.02), 0.0);
+                // // _receiver[Rover].e_pos = Eigen::Vector3d{ -483741.6665, 5507051.4316, 3170373.7354 }; // From the RINEX obs file
+                // _receiver[Rover].e_pos = trafo::lla2ecef_WGS84(_receiver[Rover].lla_pos);
+                // _receiver[Rover].e_vel = Eigen::Vector3d::Zero();
+                // #######################################################################################################
+
+                _kalmanFilter.x.segment<3>(States::Pos) = _receiver[Rover].e_pos;
+                _kalmanFilter.x.segment<3>(States::Vel) = _receiver[Rover].e_vel;
+
+                _kalmanFilter.P(all, all).diagonal() << sol->e_positionStdev().array().pow(2), sol->e_velocityStdev().array().pow(2);
+
+                LOG_TRACE("{}: Initial base  position: {}°, {}°, {}m (ECEF {} [m])", nameId(),
+                          rad2deg(_receiver[Base].lla_pos(0)), rad2deg(_receiver[Base].lla_pos(1)), _receiver[Base].lla_pos(2),
+                          _receiver[Base].e_pos.transpose());
+                LOG_TRACE("{}: Initial rover position: {}°, {}°, {}m (ECEF {} [m])", nameId(),
+                          rad2deg(_receiver[Rover].lla_pos(0)), rad2deg(_receiver[Rover].lla_pos(1)), _receiver[Rover].lla_pos(2),
+                          _receiver[Rover].e_pos.transpose());
+                LOG_TRACE("{}: Initial rover velocity: {} [m/s] (ECEF)", nameId(), _receiver[Rover].e_vel.transpose());
+            }
+            else
+            {
+                return;
+            }
+        }
+
         // Collection of all connected Ionospheric Corrections
         IonosphericCorrections ionosphericCorrections(gnssNavInfos);
 
