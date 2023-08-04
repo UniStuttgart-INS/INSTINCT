@@ -630,7 +630,7 @@ run-tests:ubuntu:22.04:gcc:debug:
     - pacman -Sy archlinux-keyring --noconfirm
     - pacman -Syyu --noconfirm --needed
     - pacman -S --noconfirm --needed base-devel cmake clang ccache cppcheck python-pip glfw-x11
-    - pip install conan
+    - pip install conan --break-system-packages
     - conan profile detect --force
     - g++ --version
     - clang++ --version
