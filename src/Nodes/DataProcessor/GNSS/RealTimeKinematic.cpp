@@ -433,6 +433,7 @@ bool RealTimeKinematic::initialize()
         return false;
     }
 
+    _pivotSatellites.clear();
     _lastUpdate.reset();
     _receiver = { { Receiver(Base), Receiver(Rover) } };
 
@@ -573,13 +574,13 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
 
                 _kalmanFilter.P(all, all).diagonal() << sol->e_positionStdev().array().pow(2), sol->e_velocityStdev().array().pow(2);
 
-                LOG_TRACE("{}: Initial base  position: {}°, {}°, {}m (ECEF {} [m])", nameId(),
+                LOG_DEBUG("{}: Initial base  position: {}°, {}°, {}m (ECEF {} [m])", nameId(),
                           rad2deg(_receiver[Base].lla_pos(0)), rad2deg(_receiver[Base].lla_pos(1)), _receiver[Base].lla_pos(2),
                           _receiver[Base].e_pos.transpose());
-                LOG_TRACE("{}: Initial rover position: {}°, {}°, {}m (ECEF {} [m])", nameId(),
+                LOG_DEBUG("{}: Initial rover position: {}°, {}°, {}m (ECEF {} [m])", nameId(),
                           rad2deg(_receiver[Rover].lla_pos(0)), rad2deg(_receiver[Rover].lla_pos(1)), _receiver[Rover].lla_pos(2),
                           _receiver[Rover].e_pos.transpose());
-                LOG_TRACE("{}: Initial rover velocity: {} [m/s] (ECEF)", nameId(), _receiver[Rover].e_vel.transpose());
+                LOG_DEBUG("{}: Initial rover velocity: {} [m/s] (ECEF)", nameId(), _receiver[Rover].e_vel.transpose());
             }
             else
             {
@@ -947,7 +948,7 @@ std::tuple<std::vector<RealTimeKinematic::SatData>, RealTimeKinematic::Observati
     }
     if (nMeasStr.ends_with(", ")) { nMeasStr = nMeasStr.erase(nMeasStr.length() - 2); }
 
-    LOG_DEBUG("{}: Using {} measurements ({}) from satellites", nameId(), nMeasTotal, nMeasStr);
+    LOG_TRACE("{}: Using {} measurements ({}) from satellites", nameId(), nMeasTotal, nMeasStr);
     for (const auto& satData : satelliteData)
     {
         Frequency frequencies = Freq_None;
@@ -958,7 +959,7 @@ std::tuple<std::vector<RealTimeKinematic::SatData>, RealTimeKinematic::Observati
             frequencies |= observation.first.freq();
             codes |= observation.first.code;
         }
-        LOG_DEBUG("{}:   [{}] on frequencies [{}] with codes [{}]", nameId(), satData.satId, frequencies, codes);
+        LOG_TRACE("{}:   [{}] on frequencies [{}] with codes [{}]", nameId(), satData.satId, frequencies, codes);
     }
 
     return std::make_tuple(satelliteData, observations, nMeasTotal);
