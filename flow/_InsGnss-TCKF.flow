@@ -1,0 +1,2452 @@
+{
+    "implot": {
+        "prefereFlowOverGlobal": true,
+        "style": {
+            "AnnotationPadding": {
+                "x": 2.0,
+                "y": 2.0
+            },
+            "Colormap": {
+                "active": 0
+            },
+            "Colors": {
+                "AxisBg": {
+                    "col": "Auto"
+                },
+                "AxisBgActive": {
+                    "col": "Auto"
+                },
+                "AxisBgHovered": {
+                    "col": "Auto"
+                },
+                "AxisGrid": {
+                    "col": "Auto"
+                },
+                "AxisText": {
+                    "col": {
+                        "w": 1.0,
+                        "x": 9.999999974752427e-07,
+                        "y": 9.999899930335232e-07,
+                        "z": 9.999899930335232e-07
+                    }
+                },
+                "AxisTick": {
+                    "col": "Auto"
+                },
+                "Crosshairs": {
+                    "col": "Auto"
+                },
+                "ErrorBar": {
+                    "col": "Auto"
+                },
+                "Fill": {
+                    "col": "Auto"
+                },
+                "FrameBg": {
+                    "col": {
+                        "w": 1.0,
+                        "x": 0.9999997019767761,
+                        "y": 0.9999998211860657,
+                        "z": 1.0
+                    }
+                },
+                "InlayText": {
+                    "col": "Auto"
+                },
+                "LegendBg": {
+                    "col": {
+                        "w": 1.0,
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    }
+                },
+                "LegendBorder": {
+                    "col": "Auto"
+                },
+                "LegendText": {
+                    "col": {
+                        "w": 1.0,
+                        "x": 9.999999974752427e-07,
+                        "y": 9.999899930335232e-07,
+                        "z": 9.999899930335232e-07
+                    }
+                },
+                "Line": {
+                    "col": "Auto"
+                },
+                "MarkerFill": {
+                    "col": "Auto"
+                },
+                "MarkerOutline": {
+                    "col": "Auto"
+                },
+                "PlotBg": {
+                    "col": {
+                        "w": 1.0,
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    }
+                },
+                "PlotBorder": {
+                    "col": "Auto"
+                },
+                "Selection": {
+                    "col": "Auto"
+                },
+                "TitleText": {
+                    "col": {
+                        "w": 1.0,
+                        "x": 9.999999974752427e-07,
+                        "y": 9.999899930335232e-07,
+                        "z": 9.999899930335232e-07
+                    }
+                }
+            },
+            "DigitalBitGap": 4.0,
+            "DigitalBitHeight": 8.0,
+            "ErrorBarSize": 5.0,
+            "ErrorBarWeight": 1.5,
+            "FillAlpha": 1.0,
+            "FitPadding": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "LabelPadding": {
+                "x": 5.0,
+                "y": 5.0
+            },
+            "LegendInnerPadding": {
+                "x": 5.0,
+                "y": 5.0
+            },
+            "LegendPadding": {
+                "x": 10.0,
+                "y": 10.0
+            },
+            "LegendSpacing": {
+                "x": 5.0,
+                "y": 0.0
+            },
+            "LineWeight": 1.0,
+            "MajorGridSize": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "MajorTickLen": {
+                "x": 10.0,
+                "y": 10.0
+            },
+            "MajorTickSize": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "MarkerSize": 4.0,
+            "MarkerWeight": 1.0,
+            "MinorAlpha": 0.25,
+            "MinorGridSize": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "MinorTickLen": {
+                "x": 5.0,
+                "y": 5.0
+            },
+            "MinorTickSize": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "MousePosPadding": {
+                "x": 10.0,
+                "y": 10.0
+            },
+            "PlotBorderSize": 1.0,
+            "PlotDefaultSize": {
+                "x": 400.0,
+                "y": 300.0
+            },
+            "PlotMinSize": {
+                "x": 200.0,
+                "y": 150.0
+            },
+            "PlotPadding": {
+                "x": 10.0,
+                "y": 10.0
+            }
+        }
+    },
+    "links": {
+        "link-1161": {
+            "endPinId": 1149,
+            "id": 1161,
+            "startPinId": 954
+        },
+        "link-1162": {
+            "endPinId": 1150,
+            "id": 1162,
+            "startPinId": 844
+        },
+        "link-1163": {
+            "endPinId": 1155,
+            "id": 1163,
+            "startPinId": 822
+        },
+        "link-845": {
+            "endPinId": 819,
+            "id": 845,
+            "startPinId": 844
+        },
+        "link-846": {
+            "endPinId": 843,
+            "id": 846,
+            "startPinId": 823
+        },
+        "link-847": {
+            "endPinId": 842,
+            "id": 847,
+            "startPinId": 822
+        },
+        "link-848": {
+            "endPinId": 820,
+            "id": 848,
+            "startPinId": 561
+        },
+        "link-849": {
+            "endPinId": 821,
+            "id": 849,
+            "startPinId": 558
+        },
+        "link-956": {
+            "endPinId": 401,
+            "id": 956,
+            "startPinId": 954
+        },
+        "link-974": {
+            "endPinId": 385,
+            "id": 974,
+            "startPinId": 953
+        },
+        "link-976": {
+            "endPinId": 840,
+            "id": 976,
+            "startPinId": 384
+        },
+        "link-990": {
+            "endPinId": 841,
+            "id": 990,
+            "startPinId": 989
+        },
+        "link-991": {
+            "endPinId": 987,
+            "id": 991,
+            "startPinId": 384
+        },
+        "link-992": {
+            "endPinId": 988,
+            "id": 992,
+            "startPinId": 402
+        }
+    },
+    "nodes": {
+        "node-1147": {
+            "data": null,
+            "enabled": true,
+            "id": 1147,
+            "inputPins": [],
+            "kind": "GroupBox",
+            "name": "IMU",
+            "outputPins": [],
+            "pos": {
+                "x": -144.0,
+                "y": -832.0
+            },
+            "size": {
+                "x": 448.0,
+                "y": 250.0
+            },
+            "type": "GroupBox"
+        },
+        "node-1154": {
+            "data": {
+                "nInputPins": 2,
+                "nPlots": 4,
+                "overridePositionStartValues": false,
+                "pinData": [
+                    {
+                        "dataIdentifier": "PosVelAtt",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "Latitude [deg]"
+                            },
+                            {
+                                "displayName": "Longitude [deg]"
+                            },
+                            {
+                                "displayName": "Altitude [m]"
+                            },
+                            {
+                                "displayName": "North/South [m]"
+                            },
+                            {
+                                "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Roll [deg]"
+                            },
+                            {
+                                "displayName": "Pitch [deg]"
+                            },
+                            {
+                                "displayName": "Yaw [deg]"
+                            },
+                            {
+                                "displayName": "Quaternion::w"
+                            },
+                            {
+                                "displayName": "Quaternion::x"
+                            },
+                            {
+                                "displayName": "Quaternion::y"
+                            },
+                            {
+                                "displayName": "Quaternion::z"
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "InertialNavSol",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "Latitude [deg]"
+                            },
+                            {
+                                "displayName": "Longitude [deg]"
+                            },
+                            {
+                                "displayName": "Altitude [m]"
+                            },
+                            {
+                                "displayName": "North/South [m]"
+                            },
+                            {
+                                "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Roll [deg]"
+                            },
+                            {
+                                "displayName": "Pitch [deg]"
+                            },
+                            {
+                                "displayName": "Yaw [deg]"
+                            },
+                            {
+                                "displayName": "Quaternion::w"
+                            },
+                            {
+                                "displayName": "Quaternion::x"
+                            },
+                            {
+                                "displayName": "Quaternion::y"
+                            },
+                            {
+                                "displayName": "Quaternion::z"
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 1
+                    }
+                ],
+                "plots": [
+                    {
+                        "headerText": "Position",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 5,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Simulated Trajectory",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 5,
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "TCKF",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            6,
+                            6
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 499.0
+                        },
+                        "title": "",
+                        "xAxisFlags": 0,
+                        "xAxisLabel": "",
+                        "xAxisScale": 0,
+                        "y1AxisLabel": "North/South [m]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "yAxisFlags": 0
+                    },
+                    {
+                        "headerText": "Velocity",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 13,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "North",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 14,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "East",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "xAxisScale": 0,
+                        "y1AxisLabel": "Velocity [m/s]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "Flight angles",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 16,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Simulated Trajectory - Roll",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 17,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Simulated Trajectory - Pitch",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 18,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Simulated Trajectory - Yaw",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 16,
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "TCKF - Roll",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 17,
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "TCKF - Pitch",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 18,
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "TCKF - Yaw",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "xAxisScale": 0,
+                        "y1AxisLabel": "Angle [deg]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "Altitude",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 4,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Simulated Trajectory",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 4,
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "TCKF",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "",
+                        "xAxisFlags": 0,
+                        "xAxisLabel": "",
+                        "xAxisScale": 0,
+                        "y1AxisLabel": "Altitude [m]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "yAxisFlags": 0
+                    }
+                ]
+            },
+            "enabled": true,
+            "id": 1154,
+            "inputPins": [
+                {
+                    "id": 1149,
+                    "name": "Simulated Trajectory"
+                },
+                {
+                    "id": 1150,
+                    "name": "TCKF"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "Navigation Solution",
+            "outputPins": [],
+            "pos": {
+                "x": 1160.0,
+                "y": -850.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Plot"
+        },
+        "node-1160": {
+            "data": {
+                "nInputPins": 1,
+                "nPlots": 4,
+                "overridePositionStartValues": false,
+                "pinData": [
+                    {
+                        "dataIdentifier": "TcKfInsGnssErrors",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "Roll error [deg]"
+                            },
+                            {
+                                "displayName": "Pitch error [deg]"
+                            },
+                            {
+                                "displayName": "Yaw error [deg]"
+                            },
+                            {
+                                "displayName": "North velocity error [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity error [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity error [m/s]"
+                            },
+                            {
+                                "displayName": "Latitude error [deg]"
+                            },
+                            {
+                                "displayName": "Longitude error [deg]"
+                            },
+                            {
+                                "displayName": "Altitude error [m]"
+                            },
+                            {
+                                "displayName": "Alpha_eb [deg]"
+                            },
+                            {
+                                "displayName": "Beta_eb [deg]"
+                            },
+                            {
+                                "displayName": "Gamma_eb [deg]"
+                            },
+                            {
+                                "displayName": "ECEF X velocity error [m/s]"
+                            },
+                            {
+                                "displayName": "ECEF Y velocity error [m/s]"
+                            },
+                            {
+                                "displayName": "ECEF Z velocity error [m/s]"
+                            },
+                            {
+                                "displayName": "ECEF X error [m]"
+                            },
+                            {
+                                "displayName": "ECEF Y error [m]"
+                            },
+                            {
+                                "displayName": "ECEF Z error [m]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock offset [m]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift [m/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock offset [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift [s/s]"
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 1
+                    }
+                ],
+                "plots": [
+                    {
+                        "headerText": "Accelerometer biases",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 20,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "X",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 21,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Y",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 22,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Z",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "",
+                        "xAxisFlags": 0,
+                        "xAxisLabel": "",
+                        "xAxisScale": 0,
+                        "y1AxisLabel": "Accel bias [m/s^2]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "yAxisFlags": 0
+                    },
+                    {
+                        "headerText": "Gyroscope biases accumulated",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 23,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "X",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 24,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Y",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 25,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Z",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "xAxisScale": 0,
+                        "y1AxisLabel": "Gyro bias [rad/s]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "Receiver clock offset",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 26,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Receiver clock offset [m] (TCKF)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "xAxisScale": 0,
+                        "y1AxisLabel": "Recv clock offset [m]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "Receiver clock drift",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 27,
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Receiver clock drift [m/s] (TCKF)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "xAxisScale": 0,
+                        "y1AxisLabel": "Recv clock drift [m/s]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "yAxisFlags": 2048
+                    }
+                ]
+            },
+            "enabled": true,
+            "id": 1160,
+            "inputPins": [
+                {
+                    "id": 1155,
+                    "name": "TCKF"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "Errors",
+            "outputPins": [],
+            "pos": {
+                "x": 1208.0,
+                "y": -514.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Plot"
+        },
+        "node-386": {
+            "data": {
+                "attitudeBias": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "attitudeBiasUnit": 1,
+                "attitudeNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "attitudeNoiseUnit": 1,
+                "attitudeRandomNumberGenerator": {
+                    "seed": 0,
+                    "useSeedInsteadOfSystemTime": true
+                },
+                "imuAccelerometerBiasUnit": 0,
+                "imuAccelerometerBias_p": {
+                    "0": {
+                        "0": 0.1
+                    },
+                    "1": {
+                        "0": 0.2
+                    },
+                    "2": {
+                        "0": 0.3
+                    }
+                },
+                "imuAccelerometerNoise": {
+                    "0": {
+                        "0": 0.004
+                    },
+                    "1": {
+                        "0": 0.004
+                    },
+                    "2": {
+                        "0": 0.004
+                    }
+                },
+                "imuAccelerometerNoiseUnit": 0,
+                "imuAccelerometerRandomNumberGenerator": {
+                    "seed": 4585,
+                    "useSeedInsteadOfSystemTime": true
+                },
+                "imuGyroscopeBiasUnit": 0,
+                "imuGyroscopeBias_p": {
+                    "0": {
+                        "0": 0.001
+                    },
+                    "1": {
+                        "0": 0.002
+                    },
+                    "2": {
+                        "0": 0.003
+                    }
+                },
+                "imuGyroscopeNoise": {
+                    "0": {
+                        "0": 0.005
+                    },
+                    "1": {
+                        "0": 0.005
+                    },
+                    "2": {
+                        "0": 0.005
+                    }
+                },
+                "imuGyroscopeNoiseUnit": 1,
+                "imuGyroscopeRandomNumberGenerator": {
+                    "seed": 5456746,
+                    "useSeedInsteadOfSystemTime": true
+                },
+                "positionBias": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "positionBiasUnit": 0,
+                "positionNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "positionNoiseUnit": 0,
+                "positionRandomNumberGenerator": {
+                    "seed": 0,
+                    "useSeedInsteadOfSystemTime": true
+                },
+                "velocityBias": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "velocityBiasUnit": 0,
+                "velocityNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "velocityNoiseUnit": 0,
+                "velocityRandomNumberGenerator": {
+                    "seed": 0,
+                    "useSeedInsteadOfSystemTime": true
+                }
+            },
+            "enabled": true,
+            "id": 386,
+            "inputPins": [
+                {
+                    "id": 385,
+                    "name": "True"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "ErrorModel",
+            "outputPins": [
+                {
+                    "id": 384,
+                    "name": "Biased"
+                }
+            ],
+            "pos": {
+                "x": 113.0,
+                "y": -786.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "ErrorModel"
+        },
+        "node-403": {
+            "data": {
+                "attitudeBias": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "attitudeBiasUnit": 1,
+                "attitudeNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "attitudeNoiseUnit": 1,
+                "attitudeRandomNumberGenerator": {
+                    "seed": 2193613086,
+                    "useSeedInsteadOfSystemTime": true
+                },
+                "imuAccelerometerBiasUnit": 0,
+                "imuAccelerometerBias_p": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuAccelerometerNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuAccelerometerNoiseUnit": 0,
+                "imuAccelerometerRandomNumberGenerator": {
+                    "seed": 0,
+                    "useSeedInsteadOfSystemTime": true
+                },
+                "imuGyroscopeBiasUnit": 0,
+                "imuGyroscopeBias_p": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuGyroscopeNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuGyroscopeNoiseUnit": 0,
+                "imuGyroscopeRandomNumberGenerator": {
+                    "seed": 0,
+                    "useSeedInsteadOfSystemTime": true
+                },
+                "positionBias": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "positionBiasUnit": 0,
+                "positionNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "positionNoiseUnit": 0,
+                "positionRandomNumberGenerator": {
+                    "seed": 59824,
+                    "useSeedInsteadOfSystemTime": true
+                },
+                "velocityBias": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "velocityBiasUnit": 0,
+                "velocityNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "velocityNoiseUnit": 0,
+                "velocityRandomNumberGenerator": {
+                    "seed": 3158694891,
+                    "useSeedInsteadOfSystemTime": true
+                }
+            },
+            "enabled": true,
+            "id": 403,
+            "inputPins": [
+                {
+                    "id": 401,
+                    "name": "True"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "ErrorModel",
+            "outputPins": [
+                {
+                    "id": 402,
+                    "name": "Biased"
+                }
+            ],
+            "pos": {
+                "x": 113.0,
+                "y": -642.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "ErrorModel"
+        },
+        "node-559": {
+            "data": {
+                "FileReader": {
+                    "path": "Spirent_circleOscillationTraj_noiseAdded_nav.rnx"
+                }
+            },
+            "enabled": true,
+            "id": 559,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "RinexNavFile",
+            "outputPins": [
+                {
+                    "id": 558,
+                    "name": "GnssNavInfo"
+                }
+            ],
+            "pos": {
+                "x": 119.0,
+                "y": -386.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "RinexNavFile"
+        },
+        "node-562": {
+            "data": {
+                "FileReader": {
+                    "path": "Spirent_circleOscillationTraj_noiseAdded_obs.rnx"
+                },
+                "eraseLessPreciseCodes": true
+            },
+            "enabled": true,
+            "id": 562,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "RinexObsFile",
+            "outputPins": [
+                {
+                    "id": 561,
+                    "name": "GnssObs"
+                }
+            ],
+            "pos": {
+                "x": 117.0,
+                "y": -466.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "RinexObsFile"
+        },
+        "node-810": {
+            "data": {
+                "checkKalmanMatricesRanks": true,
+                "codes": "11110001000100111000111111000011110001110111111111111111111111010111111101110111011101110000000001000000001",
+                "elevationMask": 14.999999999999998,
+                "excludedSatellites": [],
+                "frame": 1,
+                "frequencies": 1,
+                "gnssMeasurementUncertaintyPseudorange": 0.5,
+                "gnssMeasurementUncertaintyPseudorangeRate": 0.05,
+                "gnssMeasurementUncertaintyPseudorangeRateUnit": 1,
+                "gnssMeasurementUncertaintyPseudorangeUnit": 1,
+                "initBiasAccel": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "initBiasAccelUnit": 0,
+                "initBiasGyro": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "initBiasGyroUnit": 1,
+                "initCovarianceAttitudeAngles": {
+                    "0": {
+                        "0": 1.0
+                    },
+                    "1": {
+                        "0": 1.0
+                    },
+                    "2": {
+                        "0": 10.0
+                    }
+                },
+                "initCovarianceAttitudeAnglesUnit": 3,
+                "initCovarianceBiasAccel": {
+                    "0": {
+                        "0": 1.0
+                    },
+                    "1": {
+                        "0": 1.0
+                    },
+                    "2": {
+                        "0": 1.0
+                    }
+                },
+                "initCovarianceBiasAccelUnit": 1,
+                "initCovarianceBiasGyro": {
+                    "0": {
+                        "0": 0.01
+                    },
+                    "1": {
+                        "0": 0.01
+                    },
+                    "2": {
+                        "0": 0.01
+                    }
+                },
+                "initCovarianceBiasGyroUnit": 3,
+                "initCovarianceFreq": 30.0,
+                "initCovarianceFreqUnit": 1,
+                "initCovariancePhase": 300.0,
+                "initCovariancePhaseUnit": 2,
+                "initCovariancePosition": {
+                    "0": {
+                        "0": 10.0
+                    },
+                    "1": {
+                        "0": 10.0
+                    },
+                    "2": {
+                        "0": 10.0
+                    }
+                },
+                "initCovariancePositionUnit": 3,
+                "initCovarianceVelocity": {
+                    "0": {
+                        "0": 1.0
+                    },
+                    "1": {
+                        "0": 1.0
+                    },
+                    "2": {
+                        "0": 1.0
+                    }
+                },
+                "initCovarianceVelocityUnit": 1,
+                "ionosphereModel": 0,
+                "nNavInfoPins": 1,
+                "phiCalculationAlgorithm": 0,
+                "phiCalculationTaylorOrder": 2,
+                "qCalculationAlgorithm": 0,
+                "randomProcessAccel": 0,
+                "randomProcessGyro": 0,
+                "showKalmanFilterOutputPins": false,
+                "stdevAccelBiasUnits": 1,
+                "stdevAccelNoiseUnits": 1,
+                "stdevClockFreqUnits": 0,
+                "stdevGyroBiasUnits": 0,
+                "stdevGyroNoiseUnits": 0,
+                "stdev_bad": {
+                    "0": {
+                        "0": 0.001
+                    },
+                    "1": {
+                        "0": 0.001
+                    },
+                    "2": {
+                        "0": 0.001
+                    }
+                },
+                "stdev_bgd": {
+                    "0": {
+                        "0": 1.0
+                    },
+                    "1": {
+                        "0": 1.0
+                    },
+                    "2": {
+                        "0": 1.0
+                    }
+                },
+                "stdev_cf": 0.03,
+                "stdev_cp": 5.0,
+                "stdev_ra": {
+                    "0": {
+                        "0": 0.004
+                    },
+                    "1": {
+                        "0": 0.004
+                    },
+                    "2": {
+                        "0": 0.004
+                    }
+                },
+                "stdev_rg": {
+                    "0": {
+                        "0": 18.0
+                    },
+                    "1": {
+                        "0": 18.0
+                    },
+                    "2": {
+                        "0": 18.0
+                    }
+                },
+                "tau_bad": {
+                    "0": {
+                        "0": 10000.0
+                    },
+                    "1": {
+                        "0": 10000.0
+                    },
+                    "2": {
+                        "0": 10000.0
+                    }
+                },
+                "tau_bgd": {
+                    "0": {
+                        "0": 10000.0
+                    },
+                    "1": {
+                        "0": 10000.0
+                    },
+                    "2": {
+                        "0": 10000.0
+                    }
+                },
+                "troposphereModels": {
+                    "zhdMappingFunction": [
+                        0,
+                        {
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
+                        }
+                    ],
+                    "zhdModel": [
+                        0,
+                        {
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
+                        }
+                    ],
+                    "zwdMappingFunction": [
+                        0,
+                        {
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
+                        }
+                    ],
+                    "zwdModel": [
+                        0,
+                        {
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
+                        }
+                    ]
+                }
+            },
+            "enabled": true,
+            "id": 810,
+            "inputPins": [
+                {
+                    "id": 819,
+                    "name": "InertialNavSol"
+                },
+                {
+                    "id": 820,
+                    "name": "GnssObs"
+                },
+                {
+                    "id": 821,
+                    "name": "GnssNavInfo"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "TightlyCoupledKF",
+            "outputPins": [
+                {
+                    "id": 822,
+                    "name": "Errors"
+                },
+                {
+                    "id": 823,
+                    "name": "Sync"
+                }
+            ],
+            "pos": {
+                "x": 772.0,
+                "y": -514.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "TightlyCoupledKF"
+        },
+        "node-837": {
+            "data": {
+                "angularRateEarthRotationCompensationEnabled": true,
+                "angularRateTransportRateCompensationEnabled": true,
+                "centrifgalAccelerationCompensationEnabled": true,
+                "coriolisAccelerationCompensationEnabled": true,
+                "gravitationModel": 4,
+                "integrationAlgorithm": 0,
+                "integrationFrame": 1,
+                "prefereTimeSinceStartupOverInsTime": false,
+                "prefereUncompensatedData": true,
+                "showCorrectionsInputPin": true
+            },
+            "enabled": true,
+            "id": 837,
+            "inputPins": [
+                {
+                    "id": 840,
+                    "name": "ImuObs"
+                },
+                {
+                    "id": 841,
+                    "name": "PosVelAttInit"
+                },
+                {
+                    "id": 842,
+                    "name": "PVAError"
+                },
+                {
+                    "id": 843,
+                    "name": "Sync"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "ImuIntegrator",
+            "outputPins": [
+                {
+                    "id": 844,
+                    "name": "InertialNavSol"
+                }
+            ],
+            "pos": {
+                "x": 757.0,
+                "y": -764.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "ImuIntegrator"
+        },
+        "node-952": {
+            "data": {
+                "Imu": {
+                    "imuPos": {
+                        "b_positionAccel": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_positionGyro": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_positionMag": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_quatAccel_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatGyro_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatMag_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        }
+                    }
+                },
+                "angularRateEarthRotationEnabled": true,
+                "angularRateTransportRateEnabled": true,
+                "centrifgalAccelerationEnabled": true,
+                "circularHarmonicAmplitudeFactor": 0.2,
+                "circularHarmonicFrequency": 10,
+                "circularTrajectoryCircleCountForStop": 1.0,
+                "circularTrajectoryDirection": 0,
+                "circularTrajectoryHorizontalSpeed": 10.0,
+                "circularTrajectoryOriginAngle": 1.5707963267948966,
+                "circularTrajectoryRadius": 100.0,
+                "circularTrajectoryVerticalSpeed": 0.0,
+                "coriolisAccelerationEnabled": true,
+                "fixedTrajectoryStartOrientation": {
+                    "0": {
+                        "0": 0.17453292519943295
+                    },
+                    "1": {
+                        "0": 0.17453292519943295
+                    },
+                    "2": {
+                        "0": 0.17453292519943295
+                    }
+                },
+                "gnssFrequency": 25.0,
+                "gravitationModel": 4,
+                "imuFrequency": 25.0,
+                "linearTrajectoryDistanceForStop": 5000.0,
+                "n_linearTrajectoryStartVelocity": {
+                    "0": {
+                        "0": 1.0
+                    },
+                    "1": {
+                        "0": 2.0
+                    },
+                    "2": {
+                        "0": 3.0
+                    }
+                },
+                "simulationDuration": 600.0,
+                "simulationStopCondition": 1,
+                "splineSampleInterval": 0.1,
+                "startPosition_lla": {
+                    "0": {
+                        "0": 0.5235987755982988
+                    },
+                    "1": {
+                        "0": 1.6580627893946132
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "startTime": {
+                    "mjd_day": 59994,
+                    "mjd_frac": 0.4164583333333333
+                },
+                "startTimeEditFormat": 0,
+                "startTimeSource": 0,
+                "trajectoryType": 2
+            },
+            "enabled": true,
+            "id": 952,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "ImuSimulator",
+            "outputPins": [
+                {
+                    "id": 953,
+                    "name": "ImuObs"
+                },
+                {
+                    "id": 954,
+                    "name": "PosVelAtt"
+                }
+            ],
+            "pos": {
+                "x": -112.0,
+                "y": -738.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "ImuSimulator"
+        },
+        "node-966": {
+            "data": null,
+            "enabled": true,
+            "id": 966,
+            "inputPins": [],
+            "kind": "GroupBox",
+            "name": "Reference (Single IMU)",
+            "outputPins": [],
+            "pos": {
+                "x": 672.0,
+                "y": -816.0
+            },
+            "size": {
+                "x": 432.0,
+                "y": 410.0
+            },
+            "type": "GroupBox"
+        },
+        "node-978": {
+            "data": null,
+            "enabled": true,
+            "id": 978,
+            "inputPins": [],
+            "kind": "GroupBox",
+            "name": "GNSS",
+            "outputPins": [],
+            "pos": {
+                "x": 80.0,
+                "y": -512.0
+            },
+            "size": {
+                "x": 224.0,
+                "y": 186.0
+            },
+            "type": "GroupBox"
+        },
+        "node-986": {
+            "data": {
+                "attitudeMode": 2,
+                "initDuration": 5.0,
+                "n_overrideValuesVelocity": [
+                    0.0,
+                    10.0,
+                    0.0
+                ],
+                "overridePosition": false,
+                "overrideRollPitchYaw": [
+                    false,
+                    false,
+                    false
+                ],
+                "overrideValuesPosition_lla": [
+                    30.000999450683594,
+                    95.0,
+                    0.0
+                ],
+                "overrideValuesRollPitchYaw": [
+                    0.0,
+                    0.0,
+                    90.0
+                ],
+                "overrideVelocity": false,
+                "positionAccuracyThreshold": 10.0,
+                "velocityAccuracyThreshold": 10.0
+            },
+            "enabled": true,
+            "id": 986,
+            "inputPins": [
+                {
+                    "id": 987,
+                    "name": "ImuObs"
+                },
+                {
+                    "id": 988,
+                    "name": "PosVelAttInit"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "PosVelAttInitializer",
+            "outputPins": [
+                {
+                    "id": 989,
+                    "name": "PosVelAtt"
+                }
+            ],
+            "pos": {
+                "x": 376.0,
+                "y": -674.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "PosVelAttInitializer"
+        }
+    }
+}
