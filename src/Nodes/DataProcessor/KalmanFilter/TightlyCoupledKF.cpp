@@ -1663,9 +1663,6 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     LOG_DEBUG("{}: nMeas {}", nameId(), nMeas);
     size_t nParam = 4 + availSatelliteSystems.size() - 1; // 3x pos, 1x clk, (N-1)x clkDiff
 
-    // Frequency number (GLONASS only)
-    int8_t freqNum = -128;
-
     // Find all observations providing a doppler measurement (for velocity calculation)
     size_t nDopplerMeas = 0;
     for (size_t i = 0; i < nMeas; i++)
@@ -1673,6 +1670,9 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         const auto& obsData = gnssObs->data[calcData[i].obsIdx];
         if (obsData.doppler)
         {
+            // Frequency number (GLONASS only)
+            int8_t freqNum = -128;
+
             nDopplerMeas++;
             // TODO: Find out what this is used for and find a way to use it, after the GLONASS orbit calculation is working
             if (obsData.satSigId.freq & (R01 | R02))

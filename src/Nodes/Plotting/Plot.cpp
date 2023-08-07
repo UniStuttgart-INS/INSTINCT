@@ -1572,6 +1572,8 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             // GnssErrors
             _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock offset [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock drift [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock offset [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock drift [s/s]");
         }
         else if (startPin.dataIdentifier.front() == SppSolution::type())
         {
@@ -2621,8 +2623,10 @@ void NAV::Plot::plotTcKfInsGnssErrors(const std::shared_ptr<const TcKfInsGnssErr
     addData(pinIndex, i++, obs->b_biasGyro(1));
     addData(pinIndex, i++, obs->b_biasGyro(2));
     // GnssErrors
-    addData(pinIndex, i++, obs->recvClkOffset);
-    addData(pinIndex, i++, obs->recvClkDrift);
+    addData(pinIndex, i++, obs->recvClkOffset);               // Receiver clock offset in [m]
+    addData(pinIndex, i++, obs->recvClkDrift);                // Receiver clock drift in [m/s]
+    addData(pinIndex, i++, obs->recvClkOffset / InsConst::C); // Receiver clock offset in [s]
+    addData(pinIndex, i++, obs->recvClkDrift / InsConst::C);  // Receiver clock drift in [s/s]
 }
 
 void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, size_t pinIndex)
