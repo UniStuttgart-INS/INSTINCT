@@ -156,7 +156,7 @@ class TightlyCoupledKF : public Node
     /// Accumulated Gyroscope biases
     Eigen::Vector3d _accumulatedGyroBiases;
 
-    /// Kalman Filter representation - States: 3xAtt, 3xVel, 3xPos, 3xAccelBias, 3xGyroBias, receiver clock offset, receiver clock drift - Measurements: psr, psrRate (from Doppler)
+    /// Kalman Filter representation - States: 3xAtt, 3xVel, 3xPos, 3xAccelBias, 3xGyroBias, receiver clock offset, receiver clock drift - Measurements: (4+n) x psr, (4+n) x psrRate (from Doppler)
     KalmanFilter _kalmanFilter{ 17, 8 };
 
     // ###########################################################################################################

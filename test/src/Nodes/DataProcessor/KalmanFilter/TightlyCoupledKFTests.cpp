@@ -41,6 +41,7 @@ namespace nm = NAV::NodeManager;
 #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
 #include "Nodes/DataProcessor/KalmanFilter/TightlyCoupledKF.hpp"
 #include "Nodes/DataProcessor/Integrator/ImuIntegrator.hpp"
+#include "Nodes/DataProvider/GNSS/FileReader/RinexObsFile.hpp"
 #undef protected
 #undef private
 #pragma GCC diagnostic pop
@@ -59,9 +60,11 @@ void testTCKFwithImuFile(const char* imuFilePath, const char* gnssFilePath, size
     bool imuAfter = std::string(imuFilePath) == "DataProcessor/tckf/vn310-imu-after.csv";
     bool gnssRinex = std::string(gnssFilePath) == "DataProcessor/tckf/reach-m2-01_raw_202306291111.23O" || std::string(gnssFilePath) == "DataProcessor/tckf/reach-m2-01_raw_202306291111_noDoppler.23O" || std::string(gnssFilePath) == "DataProcessor/tckf/reach-m2-01_raw_202306291111_psrGaps.23O";
 
-    std::array<std::vector<std::function<void()>>, 6> settings = { {
+    std::array<std::vector<std::function<void()>>, 7> settings = { {
         { [&]() { LOG_WARN("Setting ImuIntegrator - _path to: {}", imuFilePath);
                   dynamic_cast<VectorNavFile*>(nm::FindNode(324))->_path = imuFilePath; } },
+        { [&]() { LOG_WARN("Setting TightlyCoupledKF - _path to: {}", gnssFilePath);
+                  if (auto* rinexObsFile = dynamic_cast<RinexObsFile*>(nm::FindNode(633))) { rinexObsFile->_path = gnssFilePath; } } },
         {
             []() { LOG_WARN("Setting TightlyCoupledKF - _frame to: NED");
                  dynamic_cast<TightlyCoupledKF*>(nm::FindNode(591))->_frame = TightlyCoupledKF::Frame::NED; },
@@ -77,16 +80,12 @@ void testTCKFwithImuFile(const char* imuFilePath, const char* gnssFilePath, size
           []() { LOG_WARN("Setting TightlyCoupledKF - _qCalculationAlgorithm to: VanLoan");
                  dynamic_cast<TightlyCoupledKF*>(nm::FindNode(591))->_qCalculationAlgorithm = TightlyCoupledKF::QCalculationAlgorithm::VanLoan; } },
         { []() { LOG_WARN("Setting TightlyCoupledKF - _randomProcessAccel to: GaussMarkov1");
-                 dynamic_cast<TightlyCoupledKF*>(nm::FindNode(591))->_randomProcessAccel = TightlyCoupledKF::RandomProcess::GaussMarkov1; },
-          []() { LOG_WARN("Setting TightlyCoupledKF - _randomProcessAccel to: RandomWalk");
-                 dynamic_cast<TightlyCoupledKF*>(nm::FindNode(591))->_randomProcessAccel = TightlyCoupledKF::RandomProcess::RandomWalk; } },
+                 dynamic_cast<TightlyCoupledKF*>(nm::FindNode(591))->_randomProcessAccel = TightlyCoupledKF::RandomProcess::GaussMarkov1; } },
         { []() { LOG_WARN("Setting TightlyCoupledKF - _randomProcessGyro to: GaussMarkov1");
-                 dynamic_cast<TightlyCoupledKF*>(nm::FindNode(591))->_randomProcessGyro = TightlyCoupledKF::RandomProcess::GaussMarkov1; },
-          []() { LOG_WARN("Setting TightlyCoupledKF - _randomProcessGyro to: RandomWalk");
-                 dynamic_cast<TightlyCoupledKF*>(nm::FindNode(591))->_randomProcessGyro = TightlyCoupledKF::RandomProcess::RandomWalk; } },
+                 dynamic_cast<TightlyCoupledKF*>(nm::FindNode(591))->_randomProcessGyro = TightlyCoupledKF::RandomProcess::GaussMarkov1; } },
     } };
 
-    cartesian_product_idx([&](size_t i0, size_t i1, size_t i2, size_t i3, size_t i4, size_t i5) {
+    cartesian_product_idx([&](size_t i0, size_t i1, size_t i2, size_t i3, size_t i4, size_t i5, size_t i6) {
         size_t messageCounter_VectorNavBinaryConverterImu_BinaryOutput = 0;
         size_t messageCounter_VectorNavBinaryConverterGnss_BinaryOutput = 0;
         size_t messageCounter_ImuIntegrator_ImuObs = 0;
@@ -105,6 +104,7 @@ void testTCKFwithImuFile(const char* imuFilePath, const char* gnssFilePath, size
             settings[3][i3]();
             settings[4][i4]();
             settings[5][i5]();
+            settings[6][i6]();
         });
 
         // VectorNavBinaryConverter (333) |> Binary Output (332)
@@ -162,7 +162,7 @@ void testTCKFwithImuFile(const char* imuFilePath, const char* gnssFilePath, size
             if (gnssRinex)
             {
                 allowedPositionOffsetImuOnly_n << 5.4, 3.2, 35.;
-                allowedPositionOffsetCombined_n << 17., 9., 140.;
+                allowedPositionOffsetCombined_n << 17., 9., 51.;
                 allowedVelocityErrorImuOnly_e << 0.14, 13.7, 0.1;
                 allowedVelocityErrorCombined_e << 3., 2., 35.;
                 allowedRollPitchYawOffsetImuOnly << 1.3, 1.3, 90.0; // yaw = 90 deg, due to static observation, where yaw cannot be observed
@@ -187,6 +187,10 @@ void testTCKFwithImuFile(const char* imuFilePath, const char* gnssFilePath, size
             if (imuAfter)
             {
                 allowedRollPitchYawOffsetCombined = { 9., 5., 94. };
+            }
+            if (std::string(gnssFilePath) == "DataProcessor/tckf/reach-m2-01_raw_202306291111_noDoppler.23O")
+            {
+                allowedPositionOffsetCombined_n << 17., 9., 130.; // Due to no doppler data, the TCKF takes longer to converge and the initial offset (especially in altitude) is considerably high
             }
 
             // North/South deviation [m]
