@@ -12,9 +12,9 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
+#include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
-#include "internal/gui/widgets/imgui_ex.hpp"
 
 #include "util/Logger.hpp"
 
@@ -52,12 +52,12 @@ std::string NAV::UdpSend::category()
 void NAV::UdpSend::guiConfig()
 {
     ImGui::SetNextItemWidth(150 * gui::NodeEditorApplication::windowFontRatio());
-    if (ImGui::InputInt4L(fmt::format("IPv4##{}", size_t(id)).c_str(), _ip.data()))
+    if (ImGui::InputInt4L(fmt::format("IPv4##{}", size_t(id)).c_str(), _ip.data(), IP_LIMITS[0], IP_LIMITS[1]))
     {
         flow::ApplyChanges();
     }
     ImGui::SetNextItemWidth(150 * gui::NodeEditorApplication::windowFontRatio());
-    if (ImGui::InputInt(fmt::format("Port##{}", size_t(id)).c_str(), &_port))
+    if (ImGui::InputIntL(fmt::format("Port##{}", size_t(id)).c_str(), &_port, PORT_LIMITS[0], PORT_LIMITS[1]))
     {
         flow::ApplyChanges();
     }

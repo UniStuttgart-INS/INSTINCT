@@ -81,6 +81,11 @@ class UdpSend : public Node
     /// UDP port number
     int _port = 4567;
 
+    /// Range an IPv4 address can be in [0, 2^8-1]
+    static constexpr std::array<int, 2> IP_LIMITS = { 0, 255 };
+    /// Range a port can be in [0, 2^16-1]
+    static constexpr std::array<int, 2> PORT_LIMITS = { 0, 65535 };
+
     /// Asynchronous receive fct
     boost::asio::io_context _io_context;
     /// Boost udp socket

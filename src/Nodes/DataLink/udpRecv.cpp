@@ -12,6 +12,7 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
+#include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
 
@@ -53,7 +54,7 @@ std::string NAV::UdpRecv::category()
 void NAV::UdpRecv::guiConfig()
 {
     ImGui::SetNextItemWidth(150 * gui::NodeEditorApplication::windowFontRatio());
-    if (ImGui::InputInt(fmt::format("Port##{}", size_t(id)).c_str(), &_port))
+    if (ImGui::InputIntL(fmt::format("Port##{}", size_t(id)).c_str(), &_port, PORT_LIMITS[0], PORT_LIMITS[1]))
     {
         flow::ApplyChanges();
     }
