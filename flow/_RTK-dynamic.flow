@@ -70,7 +70,7 @@
         "node-103": {
             "data": {
                 "codes": "011111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000111010000011111",
-                "elevationMask": 9.999999999999998,
+                "elevationMask": 0.0,
                 "estimatorType": 1,
                 "excludedSatellites": [],
                 "frequencies": 1,
@@ -136,7 +136,7 @@
                 }
             ],
             "pos": {
-                "x": 241.0,
+                "x": 232.0,
                 "y": 494.0
             },
             "size": {
@@ -148,7 +148,7 @@
         "node-109": {
             "data": {
                 "codes": "011111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000111010000011111",
-                "elevationMask": 9.999999999999998,
+                "elevationMask": 0.0,
                 "excludedSatellites": [],
                 "frequencies": 1,
                 "gnssMeasurementError": {
@@ -1166,7 +1166,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "markerSize": 1.0,
+                                    "markerSize": 4.0,
                                     "markerStyle": 7,
                                     "markerWeight": 1.0,
                                     "markers": false,
@@ -1199,7 +1199,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "markerSize": 1.0,
+                                    "markerSize": 3.0,
                                     "markerStyle": 7,
                                     "markerWeight": 1.0,
                                     "markers": false,
@@ -1248,6 +1248,7 @@
                             9,
                             6,
                             9,
+                            6,
                             6
                         ],
                         "size": {
@@ -1299,9 +1300,9 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "markerSize": 1.0,
+                                    "markerSize": 8.399999618530273,
                                     "markerStyle": 7,
-                                    "markerWeight": 1.0,
+                                    "markerWeight": 2.1500000953674316,
                                     "markers": false,
                                     "stride": 0,
                                     "thickness": 1.0
@@ -1365,7 +1366,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "markerSize": 6.599999904632568,
+                                    "markerSize": 5.900000095367432,
                                     "markerStyle": 7,
                                     "markerWeight": 1.0,
                                     "markers": false,
@@ -1398,7 +1399,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "markerSize": 1.0,
+                                    "markerSize": 7.699999809265137,
                                     "markerStyle": 7,
                                     "markerWeight": 1.0,
                                     "markers": false,
@@ -1443,6 +1444,7 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 4,
                         "selectedXdata": [
+                            0,
                             0,
                             0,
                             0,
@@ -1498,9 +1500,9 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "markerSize": 1.0,
+                                    "markerSize": 10.0,
                                     "markerStyle": 7,
-                                    "markerWeight": 1.0,
+                                    "markerWeight": 3.0,
                                     "markers": false,
                                     "stride": 0,
                                     "thickness": 1.0
@@ -1531,7 +1533,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "markerSize": 1.0,
+                                    "markerSize": 10.0,
                                     "markerStyle": 7,
                                     "markerWeight": 1.0,
                                     "markers": false,
@@ -1564,12 +1566,12 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "markerSize": 1.0,
+                                    "markerSize": 10.0,
                                     "markerStyle": 7,
                                     "markerWeight": 1.0,
                                     "markers": false,
                                     "stride": 0,
-                                    "thickness": 1.0
+                                    "thickness": 1.2000000476837158
                                 }
                             },
                             {
@@ -1642,6 +1644,7 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 4,
                         "selectedXdata": [
+                            0,
                             0,
                             0,
                             0,
@@ -1845,6 +1848,7 @@
                             0,
                             0,
                             0,
+                            0,
                             0
                         ],
                         "size": {
@@ -1866,212 +1870,14 @@
                         "yAxisFlags": 2048
                     },
                     {
-                        "headerText": "Velocity ECEF",
+                        "headerText": "Velocity North",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 10,
-                                "pinIndex": 2,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "X (RTK)",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 11,
-                                "pinIndex": 2,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Y (RTK)",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 12,
-                                "pinIndex": 2,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Z (RTK)",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 10,
-                                "pinIndex": 4,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "X (Nominal)",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 11,
-                                "pinIndex": 4,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Y (Nominal)",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 12,
-                                "pinIndex": 4,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Z (Nominal)",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 10,
+                                "dataIndex": 13,
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -2080,7 +1886,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "X (SPP)",
+                                    "legendName": "SPP (INSTINCT)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -2104,8 +1910,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 11,
-                                "pinIndex": 0,
+                                "dataIndex": 29,
+                                "pinIndex": 1,
                                 "style": {
                                     "color": {
                                         "w": -1.0,
@@ -2113,7 +1919,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "Y (SPP)",
+                                    "legendName": "SPP (RTKLib)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -2137,8 +1943,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 12,
-                                "pinIndex": 0,
+                                "dataIndex": 13,
+                                "pinIndex": 2,
                                 "style": {
                                     "color": {
                                         "w": -1.0,
@@ -2146,7 +1952,73 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "Z (SPP)",
+                                    "legendName": "RTK (INSTINCT)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 29,
+                                "pinIndex": 3,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "RTK (RTKLib)",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 13,
+                                "pinIndex": 4,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Nominal",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -2170,8 +2042,9 @@
                             }
                         ],
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 0,
+                        "selectedPin": 4,
                         "selectedXdata": [
+                            0,
                             0,
                             0,
                             0,
@@ -2182,8 +2055,8 @@
                             "x": -1.0,
                             "y": 300.0
                         },
-                        "title": "Velocity ECEF",
-                        "xAxisFlags": 2048,
+                        "title": "Velocity North",
+                        "xAxisFlags": 0,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
                         "y1AxisLabel": "Velocity [m/s]",
@@ -2194,7 +2067,7 @@
                             0,
                             0
                         ],
-                        "yAxisFlags": 2048
+                        "yAxisFlags": 0
                     },
                     {
                         "headerText": "Number satellites",
@@ -2342,6 +2215,7 @@
                             0,
                             0,
                             0,
+                            0,
                             0
                         ],
                         "size": {
@@ -2363,7 +2237,7 @@
                         "yAxisFlags": 2048
                     },
                     {
-                        "headerText": "NED StDev [m] - INSTINCT",
+                        "headerText": "Pos NED StDev [m] - INSTINCT",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
@@ -2475,13 +2349,14 @@
                             0,
                             0,
                             0,
+                            0,
                             0
                         ],
                         "size": {
                             "x": -1.0,
                             "y": 300.0
                         },
-                        "title": "NED StDev [m] - INSTINCT",
+                        "title": "Pos NED StDev [m] - INSTINCT",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
@@ -2496,14 +2371,14 @@
                         "yAxisFlags": 2048
                     },
                     {
-                        "headerText": "ECEF StDev [m] - INSTINCT",
+                        "headerText": "Vel NED StDev [m] - INSTINCT",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 18,
+                                "dataIndex": 27,
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2512,7 +2387,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "X",
+                                    "legendName": "North",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -2536,7 +2411,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 19,
+                                "dataIndex": 28,
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2545,7 +2420,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "Y",
+                                    "legendName": "East",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -2569,7 +2444,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 20,
+                                "dataIndex": 29,
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2578,7 +2453,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "Z",
+                                    "legendName": "Down",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -2608,13 +2483,14 @@
                             0,
                             0,
                             0,
+                            0,
                             0
                         ],
                         "size": {
                             "x": -1.0,
                             "y": 300.0
                         },
-                        "title": "ECEF StDev [m] - INSTINCT",
+                        "title": "Vel NED StDev [m] - INSTINCT",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,

@@ -538,7 +538,9 @@ void RealTimeKinematic::recvRoverGnssObs(InputPin::NodeDataQueue& queue, size_t 
 
 void RealTimeKinematic::calcRealTimeKinematicSolution()
 {
-    LOG_DATA("{}: Calculate RTK Solution for  [{}]", nameId(), _receiver[Rover].gnssObs->insTime);
+    INS_ASSERT_USER_ERROR(_receiver[Rover].gnssObs->insTime == _receiver[Base].gnssObs->insTime, "Receiver and Base must have same times");
+    LOG_TRACE("{}: {}", nameId(), std::string(100, '='));
+    LOG_TRACE("{}: Calculate RTK Solution for  [{}]", nameId(), _receiver[Rover].gnssObs->insTime);
     // Collection of all connected navigation data providers
     std::vector<const GnssNavInfo*> gnssNavInfos;
     for (size_t i = 0; i < _nNavInfoPins; i++)
@@ -631,7 +633,7 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
         // _kalmanFilter.addStates({ States::AmbiguitySD{ SatSigId{ G01, 1 } } });
         // _kalmanFilter.addNoiseStates({ States::AmbiguitySD{ SatSigId{ G01, 1 } } }); // Add same states as noise states
 
-        LOG_DATA("{}: F =\n{}", nameId(), _kalmanFilter.F);
+        LOG_TRACE("{}: F =\n{}", nameId(), _kalmanFilter.F);
 
         _kalmanFilter.G.block<3>(States::Vel, States::Vel) = trafo::e_Quat_n(_receiver[Rover].lla_pos(0), _receiver[Rover].lla_pos(1)).toRotationMatrix();
         _kalmanFilter.W.block<3>(States::Vel, States::Vel).diagonal() << _varAccel.at(0), _varAccel.at(0), _varAccel.at(1);
@@ -650,11 +652,17 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
         LOG_TRACE("{}: Phi =\n{}", nameId(), _kalmanFilter.Phi);
         LOG_TRACE("{}: Q =\n{}", nameId(), _kalmanFilter.Q);
 
-        LOG_TRACE("{}: x (a posteriori, t-1 = {}) =\n{}", nameId(), _lastUpdate, _kalmanFilter.x.transposed());
         LOG_TRACE("{}: P (a posteriori, t-1 = {}) =\n{}", nameId(), _lastUpdate, _kalmanFilter.P);
+        LOG_TRACE("{}: x (a posteriori, t-1 = {}) =\n{}", nameId(), _lastUpdate, _kalmanFilter.x);
         _kalmanFilter.predict();
-        LOG_TRACE("{}: x (a priori    , t   = {}) =\n{}", nameId(), _receiver[Rover].gnssObs->insTime, _kalmanFilter.x.transposed());
+        LOG_TRACE("{}: x (a priori    , t   = {}) =\n{}", nameId(), _receiver[Rover].gnssObs->insTime, _kalmanFilter.x);
         LOG_TRACE("{}: P (a priori    , t   = {}) =\n{}", nameId(), _receiver[Rover].gnssObs->insTime, _kalmanFilter.P);
+
+        rtkSol->solType = RtkSolution::SolutionType::RTK_Float;
+        rtkSol->nSatellites = satelliteData.size() - _pivotSatellites.size();
+        rtkSol->setPositionAndStdDev_e(_kalmanFilter.x.segment<3>(States::Pos), _kalmanFilter.P.block<3>(States::Pos, States::Pos));
+        rtkSol->setVelocityAndStdDev_e(_kalmanFilter.x.segment<3>(States::Vel), _kalmanFilter.P.block<3>(States::Vel, States::Vel));
+        invokeCallbacks(OUTPUT_PORT_INDEX_RTKSOL, rtkSol);
 
         // ###################################################################################################
         //                                      Kalman Filter - Update
@@ -727,7 +735,7 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
                 }
             }
         }
-        LOG_TRACE("{}: z =\n{}", nameId(), _kalmanFilter.z.transposed());
+        LOG_TRACE("{}: z =\n{}", nameId(), _kalmanFilter.z);
         LOG_TRACE("{}: H =\n{}", nameId(), _kalmanFilter.H);
         LOG_TRACE("{}: R =\n{}", nameId(), _kalmanFilter.R);
 
@@ -745,10 +753,11 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
                                                     _kalmanFilter.z.rowKeys()));
 
         _kalmanFilter.correctWithMeasurementInnovation();
+
         _receiver[Rover].e_pos = _kalmanFilter.x.segment<3>(States::Pos);
         _receiver[Rover].e_vel = _kalmanFilter.x.segment<3>(States::Vel);
         _receiver[Rover].lla_pos = trafo::ecef2lla_WGS84(_receiver[Rover].e_pos);
-        LOG_TRACE("{}: x (a posteriori, t   = {}) =\n{}", nameId(), _receiver[Rover].gnssObs->insTime, _kalmanFilter.x.transposed());
+        LOG_TRACE("{}: x (a posteriori, t   = {}) =\n{}", nameId(), _receiver[Rover].gnssObs->insTime, _kalmanFilter.x);
         LOG_TRACE("{}: P (a posteriori, t   = {}) =\n{}", nameId(), _receiver[Rover].gnssObs->insTime, _kalmanFilter.P);
 
         rtkSol->solType = RtkSolution::SolutionType::RTK_Float;
@@ -931,7 +940,8 @@ std::tuple<std::vector<RealTimeKinematic::SatData>, RealTimeKinematic::Observati
                         observations[recvObsData->satSigId][recv.type].at(obsType).measurement = recvObsData->pseudorange->value;
                         break;
                     case GnssObs::Carrier:
-                        observations[recvObsData->satSigId][recv.type].at(obsType).measurement = recvObsData->carrierPhase->value;
+                        observations[recvObsData->satSigId][recv.type].at(obsType).measurement = InsConst::C / recvObsData->satSigId.freq().getFrequency()
+                                                                                                 * recvObsData->carrierPhase->value;
                         break;
                     case GnssObs::Doppler:
                         observations[recvObsData->satSigId][recv.type].at(obsType).measurement = doppler2psrRate(recvObsData->doppler.value(),
@@ -1058,6 +1068,7 @@ void RealTimeKinematic::updatePivotSatellites(const std::vector<SatData>& satell
 
 void RealTimeKinematic::calcObservationEstimates(const std::vector<SatData>& satelliteData, Observations& observations, const IonosphericCorrections& ionosphericCorrections)
 {
+    LOG_DATA("{}: Calculating observation estimates:", nameId());
     for (const auto& satData : satelliteData)
     {
         for (auto& observation : observations)
@@ -1080,7 +1091,7 @@ void RealTimeKinematic::calcObservationEstimates(const std::vector<SatData>& sat
                 double dpsr_T_r_s = tropo_r_s.ZHD * tropo_r_s.zhdMappingFactor + tropo_r_s.ZWD * tropo_r_s.zwdMappingFactor;
                 // Estimated ionosphere propagation error [m]
                 double dpsr_I_r_s = calcIonosphericDelay(static_cast<double>(receiver.gnssObs->insTime.toGPSweekTow().tow),
-                                                         freq, receiver.lla_pos, recvSatData.satElevation, recvSatData.satAzimuth,
+                                                         freq, -128, receiver.lla_pos, recvSatData.satElevation, recvSatData.satAzimuth,
                                                          _ionosphereModel, &ionosphericCorrections);
                 // Sagnac correction [m]
                 double dpsr_ie_r_s = calcSagnacCorrection(receiver.e_pos, recvSatData.e_satPos);
@@ -1092,16 +1103,25 @@ void RealTimeKinematic::calcObservationEstimates(const std::vector<SatData>& sat
                     case GnssObs::Pseudorange:
                         obsData.estimate = rho_r_s + dpsr_T_r_s + dpsr_I_r_s + dpsr_ie_r_s;
                         obsData.measVar = _gnssMeasurementErrorModel.psrMeasErrorVar(freq.getSatSys(), freq, recvSatData.satElevation);
+                        LOG_DATA("{}:   [{}][{:11}][{:5}] {} [m] = {} + {} + {} + {}; diff to meas: {} (high values due to satellite clock are okay here)", nameId(), observation.first, NAV::to_string(obsType), to_string(recv),
+                                 obsData.estimate, rho_r_s, dpsr_T_r_s, dpsr_I_r_s, dpsr_ie_r_s, obsData.measurement - obsData.estimate);
                         break;
                     case GnssObs::Carrier:
                         obsData.estimate = rho_r_s + dpsr_T_r_s - dpsr_I_r_s + dpsr_ie_r_s;
                         obsData.measVar = _gnssMeasurementErrorModel.carrierMeasErrorVar(freq.getSatSys(), recvSatData.satElevation);
+                        LOG_DATA("{}:   [{}][{:11}][{:5}] {} [m] = {} + {} - {} + {}; diff to meas: {} (high values due to satellite clock are okay here)", nameId(), observation.first, NAV::to_string(obsType), to_string(recv),
+                                 obsData.estimate, rho_r_s, dpsr_T_r_s, dpsr_I_r_s, dpsr_ie_r_s, obsData.measurement - obsData.estimate);
                         break;
                     case GnssObs::Doppler:
                         obsData.estimate = e_calcLineOfSightUnitVector(receiver.e_pos, recvSatData.e_satPos).transpose()
                                                * (recvSatData.e_satVel - receiver.e_vel)
                                            - calcSagnacRateCorrection(receiver.e_pos, recvSatData.e_satPos, receiver.e_vel, recvSatData.e_satVel);
                         obsData.measVar = _gnssMeasurementErrorModel.psrRateErrorVar(freq);
+                        LOG_DATA("{}:   [{}][{:11}][{:5}] {} [m/s] = {} - {}; diff to meas: {}", nameId(), observation.first, NAV::to_string(obsType), to_string(recv),
+                                 obsData.estimate,
+                                 e_calcLineOfSightUnitVector(receiver.e_pos, recvSatData.e_satPos).transpose() * (recvSatData.e_satVel - receiver.e_vel),
+                                 calcSagnacRateCorrection(receiver.e_pos, recvSatData.e_satPos, receiver.e_vel, recvSatData.e_satVel),
+                                 obsData.measurement - obsData.estimate);
                         break;
                     }
                 }
@@ -1137,12 +1157,13 @@ RealTimeKinematic::Differences RealTimeKinematic::calcSingleDifferences(const Ob
                 double lambda_j = InsConst::C / satSigId.freq().getFrequency(); // TODO: GLONASS frequency number
                 double N_br_s = 0.0;                                            // TODO: Update with values from KF
                 singleDifferences[satSigId][obsType].estimate += lambda_j * N_br_s;
-
-                singleDifferences[satSigId].at(obsType).measurement *= lambda_j;
             }
 
-            LOG_DATA("{}:   [{}][{:11}]e {} - {} = {}", nameId(), observation.first, NAV::to_string(obsType), roverObs.estimate, baseObs.estimate, singleDifferences[satSigId][obsType].estimate);
-            LOG_DATA("{}:   [{}][{:11}]m {} - {} = {}", nameId(), observation.first, NAV::to_string(obsType), roverObs.measurement, baseObs.measurement, singleDifferences[satSigId][obsType].measurement);
+            LOG_DATA("{}:   [{}][{:11}] (meas r {} - b {}) - (est r {} - b {}) = {} - {} = {}", nameId(), observation.first, NAV::to_string(obsType),
+                     roverObs.measurement, baseObs.measurement,
+                     roverObs.estimate, baseObs.estimate,
+                     singleDifferences[satSigId][obsType].measurement, singleDifferences[satSigId][obsType].estimate,
+                     singleDifferences[satSigId][obsType].measurement - singleDifferences[satSigId][obsType].estimate);
         }
     }
 
@@ -1162,16 +1183,19 @@ RealTimeKinematic::Differences RealTimeKinematic::calcDoubleDifferences(const Di
 
         const auto& singleDiff_1 = singleDifferences.at(satSigId_1);
 
-        for (const auto& [obsType, obs_s] : singleDiff_s)
+        for (const auto& [obsType, sDiff_s] : singleDiff_s)
         {
-            const auto& obs_1 = singleDiff_1.at(obsType);
+            const auto& sDiff_1 = singleDiff_1.at(obsType);
 
-            doubleDifferences[satSigId_s][obsType].estimate = obs_s.estimate - obs_1.estimate;
-            doubleDifferences[satSigId_s].at(obsType).measurement = obs_s.measurement - obs_1.measurement;
-            doubleDifferences[satSigId_s].at(obsType).measVar = obs_s.measVar + obs_1.measVar;
+            doubleDifferences[satSigId_s][obsType].estimate = sDiff_s.estimate - sDiff_1.estimate;
+            doubleDifferences[satSigId_s].at(obsType).measurement = sDiff_s.measurement - sDiff_1.measurement;
+            doubleDifferences[satSigId_s].at(obsType).measVar = sDiff_s.measVar + sDiff_1.measVar;
 
-            LOG_DATA("{}:   [{}][{:11}]e {} - {} = {}", nameId(), satSigId_s, NAV::to_string(obsType), obs_s.estimate, obs_1.estimate, doubleDifferences[satSigId_s][obsType].estimate);
-            LOG_DATA("{}:   [{}][{:11}]m {} - {} = {}", nameId(), satSigId_s, NAV::to_string(obsType), obs_s.measurement, obs_1.measurement, doubleDifferences[satSigId_s][obsType].measurement);
+            LOG_DATA("{}:   [{}][{:11}] (meas sat {} - piv {}) - (est sat {} - piv {}) = {} - {} = {}", nameId(), satSigId_s, NAV::to_string(obsType),
+                     sDiff_s.measurement, sDiff_1.measurement,
+                     sDiff_s.estimate, sDiff_1.estimate,
+                     doubleDifferences[satSigId_s][obsType].measurement, doubleDifferences[satSigId_s][obsType].estimate,
+                     doubleDifferences[satSigId_s][obsType].measurement - doubleDifferences[satSigId_s][obsType].estimate);
         }
     }
 

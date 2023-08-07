@@ -22,6 +22,7 @@ namespace NAV
 /// @brief Calculates the ionospheric time delay with the Klobuchar model
 /// @param[in] tow GPS time of week in [s]
 /// @param[in] freq Frequency of the signal
+/// @param[in] freqNum Frequency number. Only used for GLONASS G1 and G2
 /// @param[in] latitude 𝜙 Geodetic latitude in [rad]
 /// @param[in] longitude λ Geodetic longitude in [rad]
 /// @param[in] elevation Angle between the user and satellite [rad]
@@ -93,7 +94,7 @@ namespace NAV
 ///     \f}
 ///
 /// - The ionospheric time delay \f$ I_{L1_{GPS}} \f$ refers to the GPS L1 frequency and gets adapted to the given frequency automatically.
-double calcIonosphericTimeDelay_Klobuchar(double tow, Frequency freq,
+double calcIonosphericTimeDelay_Klobuchar(double tow, Frequency freq, int8_t freqNum,
                                           double latitude, double longitude,
                                           double elevation, double azimuth,
                                           const std::array<double, 4>& alpha, const std::array<double, 4>& beta);

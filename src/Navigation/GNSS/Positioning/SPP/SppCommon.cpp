@@ -101,8 +101,8 @@ ValueWeight<double> calcPsrAndWeight(const std::shared_ptr<SppSolution>& sppSol,
     auto satSys = obsData.satSigId.toSatId().satSys;
 
     // Estimated modulation ionosphere propagation error [m]
-    double dpsr_I = calcIonosphericDelay(static_cast<double>(insTime.toGPSweekTow().tow), obsData.satSigId.freq(), lla_pos,
-                                         calc.satElevation, calc.satAzimuth, ionosphereModel, &ionosphericCorrections);
+    double dpsr_I = calcIonosphericDelay(static_cast<double>(insTime.toGPSweekTow().tow), obsData.satSigId.freq(), calc.freqNum,
+                                         lla_pos, calc.satElevation, calc.satAzimuth, ionosphereModel, &ionosphericCorrections);
     LOG_DATA("         dpsr_I {} [m] (Estimated modulation ionosphere propagation error)", dpsr_I);
     solSatData.dpsr_I = dpsr_I;
 
@@ -119,17 +119,20 @@ ValueWeight<double> calcPsrAndWeight(const std::shared_ptr<SppSolution>& sppSol,
 
     // Sagnac correction [m]
     double dpsr_ie = calcSagnacCorrection(state.e_position, calc.e_satPos);
-    LOG_DATA("         dpsr_ie {}", dpsr_ie);
+    LOG_DATA("         dpsr_ie {} [m]", dpsr_ie);
     solSatData.dpsr_ie = dpsr_ie;
     // Geometric distance [m]
     double geometricDist = (calc.e_satPos - state.e_position).norm();
-    LOG_DATA("         geometricDist {}", geometricDist);
+    LOG_DATA("         geometricDist {} [m]", geometricDist);
     solSatData.geometricDist = geometricDist;
     // System time difference to GPS [s]
     double sysTimeDiff = satSys != state.recvClk.referenceTimeSatelliteSystem && state.recvClk.sysTimeDiff.contains(satSys)
                              ? state.recvClk.sysTimeDiff[satSys].value
                              : 0.0;
     solSatData.dpsr_clkISB = sysTimeDiff * InsConst::C;
+    LOG_DATA("         recClkBias  {} [m]", state.recvClk.bias.value * InsConst::C);
+    LOG_DATA("         satClkBias  {} [m]", calc.satClkBias * InsConst::C);
+    LOG_DATA("         dpsr_clkISB {} [m]", sysTimeDiff * InsConst::C);
 
     // Pseudorange estimate [m]
     double psrEst = geometricDist
@@ -139,7 +142,7 @@ ValueWeight<double> calcPsrAndWeight(const std::shared_ptr<SppSolution>& sppSol,
                     + dpsr_I
                     + dpsr_T
                     + dpsr_ie;
-    LOG_DATA("         psrEst {}", psrEst);
+    LOG_DATA("         psrEst {} [m]", psrEst);
 
     double W_psr = 1.0;
     if (estimatorType == EstimatorType::WEIGHTED_LEAST_SQUARES || estimatorType == EstimatorType::KF)
@@ -150,7 +153,7 @@ ValueWeight<double> calcPsrAndWeight(const std::shared_ptr<SppSolution>& sppSol,
         LOG_DATA("         varPsrMeas {}", varPsrMeas);
         double varEph = calc.satNavData->calcSatellitePositionVariance();
         LOG_DATA("         varEph {}", varEph);
-        double varIono = ionoErrorVar(dpsr_I, obsData.satSigId.freq());
+        double varIono = ionoErrorVar(dpsr_I, obsData.satSigId.freq(), calc.freqNum);
         LOG_DATA("         varIono {}", varIono);
         double varTrop = tropoErrorVar(dpsr_T, calc.satElevation);
         LOG_DATA("         varTrop {}", varTrop);

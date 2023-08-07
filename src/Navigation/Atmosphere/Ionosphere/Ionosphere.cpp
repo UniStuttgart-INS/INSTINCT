@@ -40,7 +40,7 @@ bool ComboIonosphereModel(const char* label, IonosphereModel& ionosphereModel)
     return gui::widgets::EnumCombo(label, ionosphereModel);
 }
 
-double calcIonosphericDelay(double tow, Frequency freq,
+double calcIonosphericDelay(double tow, Frequency freq, int8_t freqNum,
                             const Eigen::Vector3d& lla_pos,
                             double elevation, double azimuth,
                             IonosphereModel ionosphereModel,
@@ -56,7 +56,7 @@ double calcIonosphericDelay(double tow, Frequency freq,
             const auto* beta = corrections->get(GPS, IonosphericCorrections::Beta);
             if (alpha && beta)
             {
-                return calcIonosphericTimeDelay_Klobuchar(tow, freq, lla_pos(0), lla_pos(1), elevation, azimuth, *alpha, *beta)
+                return calcIonosphericTimeDelay_Klobuchar(tow, freq, freqNum, lla_pos(0), lla_pos(1), elevation, azimuth, *alpha, *beta)
                        * InsConst::C;
             }
         }
