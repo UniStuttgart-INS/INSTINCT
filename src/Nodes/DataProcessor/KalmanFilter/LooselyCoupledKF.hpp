@@ -651,7 +651,7 @@ struct fmt::formatter<NAV::LooselyCoupledKF::KFStates>
     }
 
     /// @brief Defines how to format structs
-    /// @param[in] struct Struct to format
+    /// @param[in] st Struct to format
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
@@ -707,7 +707,7 @@ struct fmt::formatter<NAV::LooselyCoupledKF::KFMeas>
     }
 
     /// @brief Defines how to format structs
-    /// @param[in] struct Struct to format
+    /// @param[in] st Struct to format
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>

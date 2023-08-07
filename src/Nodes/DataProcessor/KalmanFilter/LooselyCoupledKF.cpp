@@ -923,7 +923,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
 
         // System Matrix
         _kalmanFilter.F = n_systemMatrix_F(n_Quat_b, b_acceleration, n_omega_in, n_velocity, lla_position, R_N, R_E, g_0, r_eS_e, _tau_bad, _tau_bgd);
-        LOG_DATA("{}:     F =\n{}", nameId(), F);
+        LOG_DATA("{}:     F =\n{}", nameId(), _kalmanFilter.F);
 
         if (_qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
         {
@@ -951,7 +951,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
 
         // System Matrix
         _kalmanFilter.F = e_systemMatrix_F(e_Quat_b, b_acceleration, e_position, e_gravitation, r_eS_e, InsConst::e_omega_ie, _tau_bad, _tau_bgd);
-        LOG_DATA("{}:     F =\n{}", nameId(), F);
+        LOG_DATA("{}:     F =\n{}", nameId(), _kalmanFilter.F);
 
         if (_qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
         {
@@ -970,14 +970,14 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     {
         // Noise Input Matrix
         _kalmanFilter.G = noiseInputMatrix_G(_frame == Frame::NED ? inertialNavSol->n_Quat_b() : inertialNavSol->e_Quat_b());
-        LOG_DATA("{}:     G =\n{}", nameId(), G);
+        LOG_DATA("{}:     G =\n{}", nameId(), _kalmanFilter.G);
 
         _kalmanFilter.W(all, all) = noiseScaleMatrix_W(sigma_ra, sigma_rg,
                                                        sigma_bad, sigma_bgd,
                                                        _tau_bad, _tau_bgd);
-        LOG_DATA("{}:     W =\n{}", nameId(), W);
+        LOG_DATA("{}:     W =\n{}", nameId(), _kalmanFilter.W);
 
-        LOG_DATA("{}:     G*W*G^T =\n{}", nameId(), G(all, all) * W * G(all, all).transpose());
+        LOG_DATA("{}:     G*W*G^T =\n{}", nameId(), _kalmanFilter.G(all, all) * _kalmanFilter.W * _kalmanFilter.G(all, all).transpose());
 
         // 1. Calculate the transition matrix 𝚽_{k-1}
         if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_Phi); }
