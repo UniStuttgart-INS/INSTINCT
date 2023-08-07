@@ -168,8 +168,8 @@
                 "ionosphereModel": 0,
                 "nNavInfoPins": 2,
                 "stdevAccel": [
-                    0.01,
-                    0.01
+                    1.0,
+                    0.0001
                 ],
                 "stdevAccelUnits": 0,
                 "troposphereModels": {
@@ -1456,7 +1456,7 @@
                             "y": 300.0
                         },
                         "title": "North/South Position",
-                        "xAxisFlags": 2048,
+                        "xAxisFlags": 0,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
                         "y1AxisLabel": "South/North [m]",
@@ -1467,7 +1467,7 @@
                             0,
                             0
                         ],
-                        "yAxisFlags": 2048
+                        "yAxisFlags": 0
                     },
                     {
                         "headerText": "East/West Position",
@@ -2536,7 +2536,7 @@
             "name": "Plot",
             "outputPins": [],
             "pos": {
-                "x": 680.0,
+                "x": 664.0,
                 "y": 234.0
             },
             "size": {
@@ -2715,7 +2715,7 @@
         "node-217": {
             "data": {
                 "FileReader": {
-                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_dynamic-rover_duration-5min_rate-1s_sys-GE_iono-none_tropo-none/Rose-figure_PVA.csv"
+                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_dynamic-rover_duration-5min_rate-1s_sys-GE_iono-none_tropo-none/Rose-figure_PVA_Spirent.csv"
                 }
             },
             "enabled": true,

@@ -569,13 +569,15 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
                 // #######################################################################################################
                 //                                     TODO: Debugging, remove later
                 // #######################################################################################################
-                // _receiver[Base].lla_pos = Eigen::Vector3d(deg2rad(30), deg2rad(95), 0.0);
-                // // _receiver[Base].e_pos = Eigen::Vector3d{ -481819.3135, 5507219.9538, 3170373.7354 };  // From the RINEX obs file
-                // _receiver[Base].e_pos = trafo::lla2ecef_WGS84(_receiver[Base].lla_pos);
-                // _receiver[Rover].lla_pos = Eigen::Vector3d(deg2rad(30), deg2rad(95.02), 0.0);
-                // // _receiver[Rover].e_pos = Eigen::Vector3d{ -483741.6665, 5507051.4316, 3170373.7354 }; // From the RINEX obs file
+                // // _receiver[Base].lla_pos = Eigen::Vector3d(deg2rad(48.780736), deg2rad(9.171992), 320);
+                // // _receiver[Base].e_pos = trafo::lla2ecef_WGS84(_receiver[Base].lla_pos);
+                // _receiver[Base].e_pos = Eigen::Vector3d{ 4157177.0658, 671230.4766, 4774767.0311 }; // From the RINEX obs file
+                // _receiver[Base].lla_pos = trafo::ecef2lla_WGS84(_receiver[Base].e_pos);
+                // _receiver[Rover].lla_pos = Eigen::Vector3d(deg2rad(48.7807357850344), deg2rad(9.17267255313124), 320.000195601453);
                 // _receiver[Rover].e_pos = trafo::lla2ecef_WGS84(_receiver[Rover].lla_pos);
-                // _receiver[Rover].e_vel = Eigen::Vector3d::Zero();
+                // // _receiver[Rover].e_pos = Eigen::Vector3d{ 4157169.09562069,671279.836905924,4774767.03132723 }; // From the RINEX obs file
+                // // _receiver[Rover].e_vel = Eigen::Vector3d::Zero();
+                // _receiver[Rover].e_vel = Eigen::Vector3d(-3.8613, -0.6248, 3.4297);
                 // #######################################################################################################
 
                 _kalmanFilter.x.segment<3>(States::Pos) = _receiver[Rover].e_pos;
@@ -599,26 +601,6 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
 
         // Collection of all connected Ionospheric Corrections
         IonosphericCorrections ionosphericCorrections(gnssNavInfos);
-
-        // ----------------------------------------- RTK Algorithm -------------------------------------------
-
-        auto rtkSol = std::make_shared<RtkSolution>();
-        rtkSol->insTime = _receiver[Rover].gnssObs->insTime;
-
-        std::unordered_set<GnssObs::ObservationType> obsTypes;
-        if (_usedObservations.at(GnssObs::Pseudorange)) { obsTypes.insert(GnssObs::Pseudorange); }
-        if (_usedObservations.at(GnssObs::Carrier)) { obsTypes.insert(GnssObs::Carrier); }
-        if (_usedObservations.at(GnssObs::Doppler)) { obsTypes.insert(GnssObs::Doppler); }
-
-        // Data calculated for each satellite (only satellites filtered by GUI filter & NAV data available & ...)
-        auto [satelliteData, observations, nObs] = selectSatObservationsForCalculation(obsTypes, gnssNavInfos);
-
-        updatePivotSatellites(satelliteData, observations);
-
-        calcObservationEstimates(satelliteData, observations, ionosphericCorrections);
-
-        auto singleDifferences = calcSingleDifferences(observations);
-        auto doubleDifferences = calcDoubleDifferences(singleDifferences);
 
         // ###################################################################################################
         //                                    Kalman Filter - Prediction
@@ -657,16 +639,38 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
         _kalmanFilter.predict();
         LOG_TRACE("{}: x (a priori    , t   = {}) =\n{}", nameId(), _receiver[Rover].gnssObs->insTime, _kalmanFilter.x);
         LOG_TRACE("{}: P (a priori    , t   = {}) =\n{}", nameId(), _receiver[Rover].gnssObs->insTime, _kalmanFilter.P);
+        _receiver[Rover].e_pos = _kalmanFilter.x.segment<3>(States::Pos);
+        _receiver[Rover].e_vel = _kalmanFilter.x.segment<3>(States::Vel);
+        _receiver[Rover].lla_pos = trafo::ecef2lla_WGS84(_receiver[Rover].e_pos);
 
+        // ###################################################################################################
+        //                                      Kalman Filter - Update
+        // ###################################################################################################
+
+        std::unordered_set<GnssObs::ObservationType> obsTypes;
+        if (_usedObservations.at(GnssObs::Pseudorange)) { obsTypes.insert(GnssObs::Pseudorange); }
+        if (_usedObservations.at(GnssObs::Carrier)) { obsTypes.insert(GnssObs::Carrier); }
+        if (_usedObservations.at(GnssObs::Doppler)) { obsTypes.insert(GnssObs::Doppler); }
+
+        // Data calculated for each satellite (only satellites filtered by GUI filter & NAV data available & ...)
+        auto [satelliteData, observations, nObs] = selectSatObservationsForCalculation(obsTypes, gnssNavInfos);
+
+        updatePivotSatellites(satelliteData, observations);
+
+        calcObservationEstimates(satelliteData, observations, ionosphericCorrections);
+
+        auto singleDifferences = calcSingleDifferences(observations);
+        auto doubleDifferences = calcDoubleDifferences(singleDifferences);
+
+        // ----------------------------------- Send out predicted state --------------------------------------
+
+        auto rtkSol = std::make_shared<RtkSolution>();
+        rtkSol->insTime = _receiver[Rover].gnssObs->insTime;
         rtkSol->solType = RtkSolution::SolutionType::RTK_Float;
         rtkSol->nSatellites = satelliteData.size() - _pivotSatellites.size();
         rtkSol->setPositionAndStdDev_e(_kalmanFilter.x.segment<3>(States::Pos), _kalmanFilter.P.block<3>(States::Pos, States::Pos));
         rtkSol->setVelocityAndStdDev_e(_kalmanFilter.x.segment<3>(States::Vel), _kalmanFilter.P.block<3>(States::Vel, States::Vel));
         invokeCallbacks(OUTPUT_PORT_INDEX_RTKSOL, rtkSol);
-
-        // ###################################################################################################
-        //                                      Kalman Filter - Update
-        // ###################################################################################################
 
         // Update the Measurement sensitivity Matrix (𝐇), the Measurement noise covariance matrix (𝐑) and the Measurement vector (𝐳)
 
@@ -753,12 +757,14 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
                                                     _kalmanFilter.z.rowKeys()));
 
         _kalmanFilter.correctWithMeasurementInnovation();
+        LOG_TRACE("{}: x (a posteriori, t   = {}) =\n{}", nameId(), _receiver[Rover].gnssObs->insTime, _kalmanFilter.x);
+        LOG_TRACE("{}: P (a posteriori, t   = {}) =\n{}", nameId(), _receiver[Rover].gnssObs->insTime, _kalmanFilter.P);
 
+        LOG_TRACE("{}: dx (ECEF) = {}", nameId(), (_kalmanFilter.x.segment<3>(States::Pos) - _receiver[Rover].e_pos).transpose());
+        LOG_TRACE("{}: dv (ECEF) = {}", nameId(), (_kalmanFilter.x.segment<3>(States::Vel) - _receiver[Rover].e_vel).transpose());
         _receiver[Rover].e_pos = _kalmanFilter.x.segment<3>(States::Pos);
         _receiver[Rover].e_vel = _kalmanFilter.x.segment<3>(States::Vel);
         _receiver[Rover].lla_pos = trafo::ecef2lla_WGS84(_receiver[Rover].e_pos);
-        LOG_TRACE("{}: x (a posteriori, t   = {}) =\n{}", nameId(), _receiver[Rover].gnssObs->insTime, _kalmanFilter.x);
-        LOG_TRACE("{}: P (a posteriori, t   = {}) =\n{}", nameId(), _receiver[Rover].gnssObs->insTime, _kalmanFilter.P);
 
         rtkSol->solType = RtkSolution::SolutionType::RTK_Float;
         rtkSol->nSatellites = satelliteData.size() - _pivotSatellites.size();
@@ -885,6 +891,7 @@ std::tuple<std::vector<RealTimeKinematic::SatData>, RealTimeKinematic::Observati
         {
             SatData satData = SatData(satId, satNavData);
 
+            bool elevationMaskTriggered = false;
             for (const auto& recv : _receiver)
             {
                 auto recvObsData = std::find_if(recv.gnssObs->data.begin(), recv.gnssObs->data.end(),
@@ -906,17 +913,13 @@ std::tuple<std::vector<RealTimeKinematic::SatData>, RealTimeKinematic::Observati
                 {
                     LOG_TRACE("{}: Satellite {} is skipped because of elevation mask. ({} < {})", nameId(), satId,
                               satData.receiverData.at(recv.type).satElevation, _elevationMask);
+                    elevationMaskTriggered = true;
                     break;
                 }
             }
+            if (elevationMaskTriggered) { continue; }
 
             satelliteData.push_back(satData);
-        }
-        if (std::find_if(satelliteData.begin(), satelliteData.end(),
-                         [&satId](const SatData& satData) { return satData.satId == satId; })
-            == satelliteData.end())
-        {
-            continue; // Elevation mask triggered
         }
 
         for (const auto& recv : _receiver)

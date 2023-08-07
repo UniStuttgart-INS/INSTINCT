@@ -143,7 +143,7 @@
         "node-109": {
             "data": {
                 "codes": "011111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000111010000011111",
-                "elevationMask": 14.999999999999998,
+                "elevationMask": 0.0,
                 "excludedSatellites": [],
                 "frequencies": 1,
                 "gnssMeasurementError": {
