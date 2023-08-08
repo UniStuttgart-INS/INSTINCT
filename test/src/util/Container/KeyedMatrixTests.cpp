@@ -68,7 +68,7 @@ TEST_CASE("[KeyedMatrix] Special member functions (static size)", "[KeyedMatrix]
     REQUIRE(d.colKeys() == colKeys);
 }
 
-TEST_CASE("[KeyedMatrix] Special member functions (dynamic size)", "[KeyedMatrix][Debug]")
+TEST_CASE("[KeyedMatrix] Special member functions (dynamic size)", "[KeyedMatrix]")
 {
     auto logger = initializeTestLogger();
 
@@ -766,7 +766,7 @@ TEST_CASE("[KeyedRowVector] segment(colKeys)", "[KeyedRowVector]")
     }
 }
 
-TEST_CASE("[KeyedMatrix] addRows & addCols", "[KeyedMatrix][Debug]")
+TEST_CASE("[KeyedMatrix] addRows & addCols", "[KeyedMatrix]")
 {
     auto logger = initializeTestLogger();
 
