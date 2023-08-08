@@ -192,6 +192,26 @@
             "id": 1163,
             "startPinId": 822
         },
+        "link-1194": {
+            "endPinId": 1190,
+            "id": 1194,
+            "startPinId": 561
+        },
+        "link-1195": {
+            "endPinId": 1191,
+            "id": 1195,
+            "startPinId": 558
+        },
+        "link-1197": {
+            "endPinId": 1196,
+            "id": 1197,
+            "startPinId": 1192
+        },
+        "link-1199": {
+            "endPinId": 1198,
+            "id": 1199,
+            "startPinId": 1192
+        },
         "link-845": {
             "endPinId": 819,
             "id": 845,
@@ -269,7 +289,7 @@
         },
         "node-1154": {
             "data": {
-                "nInputPins": 2,
+                "nInputPins": 3,
                 "nPlots": 4,
                 "overridePositionStartValues": false,
                 "pinData": [
@@ -426,6 +446,239 @@
                         ],
                         "size": 0,
                         "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "SppSolution",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "Latitude [deg]"
+                            },
+                            {
+                                "displayName": "Longitude [deg]"
+                            },
+                            {
+                                "displayName": "Altitude [m]"
+                            },
+                            {
+                                "displayName": "North/South [m]"
+                            },
+                            {
+                                "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Number satellites (pos)"
+                            },
+                            {
+                                "displayName": "Number satellites (vel)"
+                            },
+                            {
+                                "displayName": "Receiver clock bias [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "X-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XY-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "North StDev [m]"
+                            },
+                            {
+                                "displayName": "East StDev [m]"
+                            },
+                            {
+                                "displayName": "Down StDev [m]"
+                            },
+                            {
+                                "displayName": "NE-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "ND-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "ED-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "XY velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "North velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "NE velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ND velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ED velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift StDev [s/s]"
+                            },
+                            {
+                                "displayName": "System time reference system"
+                            },
+                            {
+                                "displayName": "GPS system time difference [s]"
+                            },
+                            {
+                                "displayName": "GAL system time difference [s]"
+                            },
+                            {
+                                "displayName": "GLO system time difference [s]"
+                            },
+                            {
+                                "displayName": "BDS system time difference [s]"
+                            },
+                            {
+                                "displayName": "QZSS system time difference [s]"
+                            },
+                            {
+                                "displayName": "IRNSS system time difference [s]"
+                            },
+                            {
+                                "displayName": "SBAS system time difference [s]"
+                            },
+                            {
+                                "displayName": "GPS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "GAL system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "GLO system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "BDS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "QZSS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "IRNSS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "SBAS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "GPS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "GAL system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "GLO system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "BDS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "QZSS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "IRNSS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "SBAS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "GPS system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "GAL system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "GLO system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "BDS system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "QZSS system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "IRNSS system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "SBAS system time drift difference StDev [s/s]"
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 1
                     }
                 ],
                 "plots": [
@@ -500,11 +753,45 @@
                                     "stride": 0,
                                     "thickness": 1.0
                                 }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 5,
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "SPP",
+                                    "lineType": 0,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 6.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.5,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
                             }
                         ],
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 1,
+                        "selectedPin": 2,
                         "selectedXdata": [
+                            6,
                             6,
                             6
                         ],
@@ -513,7 +800,7 @@
                             "y": 499.0
                         },
                         "title": "",
-                        "xAxisFlags": 0,
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
                         "y1AxisLabel": "North/South [m]",
@@ -524,7 +811,7 @@
                             0,
                             0
                         ],
-                        "yAxisFlags": 0
+                        "yAxisFlags": 2048
                     },
                     {
                         "headerText": "Velocity",
@@ -602,6 +889,7 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 0,
                         "selectedXdata": [
+                            0,
                             0,
                             0
                         ],
@@ -832,6 +1120,7 @@
                         "selectedPin": 1,
                         "selectedXdata": [
                             0,
+                            0,
                             0
                         ],
                         "size": {
@@ -923,11 +1212,45 @@
                                     "stride": 0,
                                     "thickness": 1.0
                                 }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 4,
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "SPP",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
                             }
                         ],
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 1,
+                        "selectedPin": 2,
                         "selectedXdata": [
+                            0,
                             0,
                             0
                         ],
@@ -936,7 +1259,7 @@
                             "y": 300.0
                         },
                         "title": "",
-                        "xAxisFlags": 0,
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
                         "y1AxisLabel": "Altitude [m]",
@@ -947,7 +1270,7 @@
                             0,
                             0
                         ],
-                        "yAxisFlags": 0
+                        "yAxisFlags": 2048
                     }
                 ]
             },
@@ -961,6 +1284,10 @@
                 {
                     "id": 1150,
                     "name": "TCKF"
+                },
+                {
+                    "id": 1196,
+                    "name": "SPP"
                 }
             ],
             "kind": "Blueprint",
@@ -978,7 +1305,7 @@
         },
         "node-1160": {
             "data": {
-                "nInputPins": 1,
+                "nInputPins": 2,
                 "nPlots": 4,
                 "overridePositionStartValues": false,
                 "pinData": [
@@ -1075,6 +1402,239 @@
                             },
                             {
                                 "displayName": "Receiver clock drift [s/s]"
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "SppSolution",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "Latitude [deg]"
+                            },
+                            {
+                                "displayName": "Longitude [deg]"
+                            },
+                            {
+                                "displayName": "Altitude [m]"
+                            },
+                            {
+                                "displayName": "North/South [m]"
+                            },
+                            {
+                                "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Number satellites (pos)"
+                            },
+                            {
+                                "displayName": "Number satellites (vel)"
+                            },
+                            {
+                                "displayName": "Receiver clock bias [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "X-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XY-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "North StDev [m]"
+                            },
+                            {
+                                "displayName": "East StDev [m]"
+                            },
+                            {
+                                "displayName": "Down StDev [m]"
+                            },
+                            {
+                                "displayName": "NE-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "ND-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "ED-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "XY velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "North velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "NE velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ND velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ED velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift StDev [s/s]"
+                            },
+                            {
+                                "displayName": "System time reference system"
+                            },
+                            {
+                                "displayName": "GPS system time difference [s]"
+                            },
+                            {
+                                "displayName": "GAL system time difference [s]"
+                            },
+                            {
+                                "displayName": "GLO system time difference [s]"
+                            },
+                            {
+                                "displayName": "BDS system time difference [s]"
+                            },
+                            {
+                                "displayName": "QZSS system time difference [s]"
+                            },
+                            {
+                                "displayName": "IRNSS system time difference [s]"
+                            },
+                            {
+                                "displayName": "SBAS system time difference [s]"
+                            },
+                            {
+                                "displayName": "GPS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "GAL system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "GLO system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "BDS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "QZSS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "IRNSS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "SBAS system time drift difference [s/s]"
+                            },
+                            {
+                                "displayName": "GPS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "GAL system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "GLO system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "BDS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "QZSS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "IRNSS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "SBAS system time difference StDev [s]"
+                            },
+                            {
+                                "displayName": "GPS system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "GAL system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "GLO system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "BDS system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "QZSS system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "IRNSS system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "SBAS system time drift difference StDev [s/s]"
                             }
                         ],
                         "size": 0,
@@ -1191,6 +1751,7 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 0,
                         "selectedXdata": [
+                            0,
                             0
                         ],
                         "size": {
@@ -1198,7 +1759,7 @@
                             "y": 300.0
                         },
                         "title": "",
-                        "xAxisFlags": 0,
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
                         "y1AxisLabel": "Accel bias [m/s^2]",
@@ -1209,7 +1770,7 @@
                             0,
                             0
                         ],
-                        "yAxisFlags": 0
+                        "yAxisFlags": 2048
                     },
                     {
                         "headerText": "Gyroscope biases accumulated",
@@ -1320,6 +1881,7 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 0,
                         "selectedXdata": [
+                            0,
                             0
                         ],
                         "size": {
@@ -1348,7 +1910,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 26,
+                                "dataIndex": 28,
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1357,7 +1919,40 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "Receiver clock offset [m] (TCKF)",
+                                    "legendName": "TCKF",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 18,
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "SPP",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1381,8 +1976,9 @@
                             }
                         ],
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 0,
+                        "selectedPin": 1,
                         "selectedXdata": [
+                            0,
                             0
                         ],
                         "size": {
@@ -1411,7 +2007,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 27,
+                                "dataIndex": 29,
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1420,7 +2016,40 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "Receiver clock drift [m/s] (TCKF)",
+                                    "legendName": "TCKF",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 19,
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "SPP",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1444,8 +2073,9 @@
                             }
                         ],
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 0,
+                        "selectedPin": 1,
                         "selectedXdata": [
+                            0,
                             0
                         ],
                         "size": {
@@ -1474,6 +2104,10 @@
                 {
                     "id": 1155,
                     "name": "TCKF"
+                },
+                {
+                    "id": 1198,
+                    "name": "SPP"
                 }
             ],
             "kind": "Blueprint",
@@ -1488,6 +2122,80 @@
                 "y": 0.0
             },
             "type": "Plot"
+        },
+        "node-1193": {
+            "data": {
+                "codes": "11110001000100111000111111000011110001110111111111111111111111010111111101110111011101110000000001000000001",
+                "elevationMask": 14.999999999999998,
+                "excludedSatellites": [],
+                "frequencies": 1,
+                "ionosphereModel": 0,
+                "nNavInfoPins": 1,
+                "troposphereModels": {
+                    "zhdMappingFunction": [
+                        0,
+                        {
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
+                        }
+                    ],
+                    "zhdModel": [
+                        0,
+                        {
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
+                        }
+                    ],
+                    "zwdMappingFunction": [
+                        0,
+                        {
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
+                        }
+                    ],
+                    "zwdModel": [
+                        0,
+                        {
+                            "pressureModel": 0,
+                            "temperatureModel": 0,
+                            "waterVaporModel": 0
+                        }
+                    ]
+                },
+                "useWeightedLeastSquares": true
+            },
+            "enabled": true,
+            "id": 1193,
+            "inputPins": [
+                {
+                    "id": 1190,
+                    "name": "GnssObs"
+                },
+                {
+                    "id": 1191,
+                    "name": "GnssNavInfo"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "SinglePointPositioning - SPP",
+            "outputPins": [
+                {
+                    "id": 1192,
+                    "name": "SppSolution"
+                }
+            ],
+            "pos": {
+                "x": 769.0,
+                "y": -350.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "SinglePointPositioning - SPP"
         },
         "node-386": {
             "data": {
@@ -2393,28 +3101,41 @@
             "data": {
                 "attitudeMode": 2,
                 "initDuration": 5.0,
-                "n_overrideValuesVelocity": [
-                    0.0,
-                    10.0,
-                    0.0
-                ],
-                "overridePosition": false,
+                "overrideValuesVelocity": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 10.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+
+                "overridePosition": 2,
                 "overrideRollPitchYaw": [
                     false,
                     false,
                     false
                 ],
-                "overrideValuesPosition_lla": [
-                    30.000999450683594,
-                    95.0,
-                    0.0
-                ],
+                "overrideValuesPosition_lla": {
+                    "0": {
+                        "0": 30.000999450683594
+                    },
+                    "1": {
+                        "0": 95.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
                 "overrideValuesRollPitchYaw": [
                     0.0,
                     0.0,
                     90.0
                 ],
-                "overrideVelocity": false,
+                "overrideVelocity": 2,
                 "positionAccuracyThreshold": 10.0,
                 "velocityAccuracyThreshold": 10.0
             },

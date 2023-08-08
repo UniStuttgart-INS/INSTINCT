@@ -1660,7 +1660,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     }
 
     size_t nMeas = calcData.size();
-    LOG_DEBUG("{}: nMeas {}", nameId(), nMeas);
+    LOG_DATA("{}: nMeas {}", nameId(), nMeas);
     size_t nParam = 4 + availSatelliteSystems.size() - 1; // 3x pos, 1x clk, (N-1)x clkDiff
 
     // Find all observations providing a doppler measurement (for velocity calculation)
@@ -1892,8 +1892,8 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
 
         ix++;
     }
-    LOG_DEBUG("{}: _recvClk.bias {} s", nameId(), _recvClk.bias.value);
-    LOG_DEBUG("{}: _recvClk.drift {} s/s", nameId(), _recvClk.drift.value);
+    LOG_DATA("{}: _recvClk.bias {} s", nameId(), _recvClk.bias.value);
+    LOG_DATA("{}: _recvClk.drift {} s/s", nameId(), _recvClk.drift.value);
 
     // ---------------------------------------------- Update -----------------------------------------------------
 
@@ -1965,7 +1965,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_z); }
 
         _kalmanFilter.z = measurementInnovation_dz(pseudoRangeObservations, pseudoRangeEstimates, pseudoRangeRateObservations, pseudoRangeRateEstimates);
-        LOG_DEBUG("{}: _kalmanFilter.z =\n{}", nameId(), _kalmanFilter.z);
+        LOG_DATA("{}: _kalmanFilter.z =\n{}", nameId(), _kalmanFilter.z);
     }
     else // if (_frame == Frame::ECEF)
     {
