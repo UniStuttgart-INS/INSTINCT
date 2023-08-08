@@ -975,12 +975,6 @@ void NAV::ImuFusion::combineSignals(const std::shared_ptr<const ImuObs>& imuObs)
         {
             LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank);
         }
-
-        rank = _kalmanFilter.K.fullPivLu().rank();
-        if (rank != _kalmanFilter.K.cols())
-        {
-            LOG_WARN("{}: K.rank = {}", nameId(), rank);
-        }
     }
     if (_checkKalmanMatricesRanks)
     {

@@ -1,4 +1,6 @@
-# Ignore everything except this file (in order to push the folder)
+# Ignore everything except these files (in order to push the folder)
 *
 !.gitignore
 !vn100_R+-90_P+-90_Y+-90.csv
+!Spirent_circleOscillationTraj_noiseAdded_obs.rnx
+!Spirent_circleOscillationTraj_noiseAdded_nav.rnx

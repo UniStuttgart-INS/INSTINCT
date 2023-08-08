@@ -318,7 +318,7 @@ NAV::Plot::Plot()
     _lockConfigDuringRun = false;
     _guiConfigDefaultWindowSize = { 750, 650 };
 
-    _dataIdentifier = { Pos::type(), PosVel::type(), PosVelAtt::type(), LcKfInsGnssErrors::type(),
+    _dataIdentifier = { Pos::type(), PosVel::type(), PosVelAtt::type(), LcKfInsGnssErrors::type(), TcKfInsGnssErrors::type(),
                         SppSolution::type(), RtklibPosObs::type(), UbloxObs::type(),
                         ImuObs::type(), KvhObs::type(), ImuObsWDelta::type(), VectorNavBinaryOutput::type() };
 
@@ -1531,12 +1531,49 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF Y error [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF Z error [m]");
             // ImuBiases
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_X accumulated [m/s^2]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_Y accumulated [m/s^2]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_Z accumulated [m/s^2]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_X accumulated [rad/s]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_Y accumulated [rad/s]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_Z accumulated [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_X [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_Y [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_Z [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_X [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_Y [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_Z [rad/s]");
+        }
+        else if (startPin.dataIdentifier.front() == TcKfInsGnssErrors::type())
+        {
+            // NodeData
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
+            // PVAError
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Roll error [deg]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Pitch error [deg]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Yaw error [deg]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "North velocity error [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "East velocity error [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Down velocity error [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Latitude error [deg]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Longitude error [deg]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Altitude error [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Alpha_eb [deg]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Beta_eb [deg]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gamma_eb [deg]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF X velocity error [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF Y velocity error [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF Z velocity error [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF X error [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF Y error [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "ECEF Z error [m]");
+            // ImuBiases
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_X [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_Y [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias b_Z [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_X [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_Y [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias b_Z [rad/s]");
+            // GnssErrors
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock offset [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock drift [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock offset [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock drift [s/s]");
         }
         else if (startPin.dataIdentifier.front() == SppSolution::type())
         {
@@ -2323,6 +2360,10 @@ void NAV::Plot::plotData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
         {
             plotLcKfInsGnssErrors(std::static_pointer_cast<const LcKfInsGnssErrors>(nodeData), pinIdx);
         }
+        else if (sourcePin->dataIdentifier.front() == TcKfInsGnssErrors::type())
+        {
+            plotTcKfInsGnssErrors(std::static_pointer_cast<const TcKfInsGnssErrors>(nodeData), pinIdx);
+        }
         else if (sourcePin->dataIdentifier.front() == SppSolution::type())
         {
             plotSppSolution(std::static_pointer_cast<const SppSolution>(nodeData), pinIdx);
@@ -2542,6 +2583,50 @@ void NAV::Plot::plotLcKfInsGnssErrors(const std::shared_ptr<const LcKfInsGnssErr
     addData(pinIndex, i++, obs->b_biasGyro(0));
     addData(pinIndex, i++, obs->b_biasGyro(1));
     addData(pinIndex, i++, obs->b_biasGyro(2));
+}
+
+void NAV::Plot::plotTcKfInsGnssErrors(const std::shared_ptr<const TcKfInsGnssErrors>& obs, size_t pinIndex)
+{
+    if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
+    size_t i = 0;
+
+    std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
+
+    // NodeData
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>((obs->insTime - _startTime).count()) : std::nan(""));
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>(obs->insTime.toGPSweekTow().tow) : std::nan(""));
+    // PVAError
+    addData(pinIndex, i++, obs->frame == TcKfInsGnssErrors::Frame::NED ? rad2deg(obs->attitudeError(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == TcKfInsGnssErrors::Frame::NED ? rad2deg(obs->attitudeError(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == TcKfInsGnssErrors::Frame::NED ? rad2deg(obs->attitudeError(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == TcKfInsGnssErrors::Frame::NED ? obs->velocityError(0) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == TcKfInsGnssErrors::Frame::NED ? obs->velocityError(1) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == TcKfInsGnssErrors::Frame::NED ? obs->velocityError(2) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == TcKfInsGnssErrors::Frame::NED ? rad2deg(obs->positionError(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == TcKfInsGnssErrors::Frame::NED ? rad2deg(obs->positionError(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == TcKfInsGnssErrors::Frame::NED ? obs->positionError(2) : std::nan(""));
+
+    addData(pinIndex, i++, obs->frame == TcKfInsGnssErrors::Frame::ECEF ? rad2deg(obs->attitudeError(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == TcKfInsGnssErrors::Frame::ECEF ? rad2deg(obs->attitudeError(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == TcKfInsGnssErrors::Frame::ECEF ? rad2deg(obs->attitudeError(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == TcKfInsGnssErrors::Frame::ECEF ? obs->velocityError(0) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == TcKfInsGnssErrors::Frame::ECEF ? obs->velocityError(1) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == TcKfInsGnssErrors::Frame::ECEF ? obs->velocityError(2) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == TcKfInsGnssErrors::Frame::ECEF ? obs->positionError(0) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == TcKfInsGnssErrors::Frame::ECEF ? obs->positionError(1) : std::nan(""));
+    addData(pinIndex, i++, obs->frame == TcKfInsGnssErrors::Frame::ECEF ? obs->positionError(2) : std::nan(""));
+    // ImuBiases
+    addData(pinIndex, i++, obs->b_biasAccel(0));
+    addData(pinIndex, i++, obs->b_biasAccel(1));
+    addData(pinIndex, i++, obs->b_biasAccel(2));
+    addData(pinIndex, i++, obs->b_biasGyro(0));
+    addData(pinIndex, i++, obs->b_biasGyro(1));
+    addData(pinIndex, i++, obs->b_biasGyro(2));
+    // GnssErrors
+    addData(pinIndex, i++, obs->recvClkOffset);               // Receiver clock offset in [m]
+    addData(pinIndex, i++, obs->recvClkDrift);                // Receiver clock drift in [m/s]
+    addData(pinIndex, i++, obs->recvClkOffset / InsConst::C); // Receiver clock offset in [s]
+    addData(pinIndex, i++, obs->recvClkDrift / InsConst::C);  // Receiver clock drift in [s/s]
 }
 
 void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, size_t pinIndex)

@@ -195,6 +195,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataProcessor/GNSS/SinglePointPositioning.hpp"
 #include "Nodes/DataProcessor/Integrator/ImuIntegrator.hpp"
 #include "Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.hpp"
+#include "Nodes/DataProcessor/KalmanFilter/TightlyCoupledKF.hpp"
 #include "Nodes/DataProcessor/SensorCombiner/ImuFusion.hpp"
 // Data Provider
 #include "Nodes/DataProvider/CSV/CsvFile.hpp"
@@ -257,6 +258,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<SinglePointPositioning>();
     registerNodeType<ImuIntegrator>();
     registerNodeType<LooselyCoupledKF>();
+    registerNodeType<TightlyCoupledKF>();
     registerNodeType<ImuFusion>();
     // Data Provider
     registerNodeType<CsvFile>();
@@ -301,6 +303,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
 #include "NodeData/State/InertialNavSol.hpp"
 #include "NodeData/State/LcKfInsGnssErrors.hpp"
+#include "NodeData/State/TcKfInsGnssErrors.hpp"
 #include "NodeData/State/Pos.hpp"
 #include "NodeData/State/PosVel.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
@@ -324,6 +327,7 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     // State
     registerNodeDataType<InertialNavSol>();
     registerNodeDataType<LcKfInsGnssErrors>();
+    registerNodeDataType<TcKfInsGnssErrors>();
     registerNodeDataType<Pos>();
     registerNodeDataType<PosVel>();
     registerNodeDataType<PosVelAtt>();

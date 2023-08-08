@@ -203,4 +203,11 @@ Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vecto
 /// @note See Groves (2013) equation (14.80)
 [[nodiscard]] Eigen::Matrix3d Q_domega_domega(const Eigen::Vector3d& S_bgd, const double& tau_s);
 
+/// @brief Submatrix 𝐐_66 of the system noise covariance matrix 𝐐
+/// @param[in] S_cPhi Power Spectral Density of the receiver clock phase drift in [m^2 s^-1]
+/// @param[in] S_cf Power Spectral Density of the receiver clock frequency-drift [m^2 s^-3]
+/// @param[in] tau_s Time interval in [s]
+/// @return See Groves (2013) equation (9.152)
+[[nodiscard]] Eigen::Matrix2d Q_gnss(const double& S_cPhi, const double& S_cf, const double& tau_s);
+
 } // namespace NAV
