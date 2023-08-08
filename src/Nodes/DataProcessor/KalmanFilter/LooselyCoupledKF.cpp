@@ -1240,13 +1240,6 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
             LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank);
         }
 
-        Eigen::FullPivLU<Eigen::MatrixXd> luK(_kalmanFilter.K(all, all));
-        rank = luK.rank();
-        if (rank != _kalmanFilter.K(all, all).cols())
-        {
-            LOG_WARN("{}: K.rank = {}", nameId(), rank);
-        }
-
         Eigen::FullPivLU<Eigen::MatrixXd> luP(_kalmanFilter.P(all, all));
         rank = luP.rank();
         if (rank != _kalmanFilter.P(all, all).rows())

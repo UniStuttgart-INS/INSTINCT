@@ -135,32 +135,60 @@ class PosVelAttInitializer : public Node
     /// @brief Converts the enum to a string
     /// @param[in] attitudeMode Enum value to convert into text
     /// @return String representation of the enum
-    static const char* to_string(AttitudeMode attitudeMode);
+    friend constexpr const char* to_string(AttitudeMode attitudeMode);
 
     /// GUI option to pecify the initialization source for attitude
     AttitudeMode _attitudeMode = AttitudeMode::BOTH;
 
-    /// Whether the GNSS values should be used or we want to override the values manually
-    bool _overridePosition = false;
-    /// Values to override the Position in [deg, deg, m]
-    std::array<float, 3> _lla_overrideValuesPosition = {};
-    /// Position Accuracy to achieve in [cm]
-    float _positionAccuracyThreshold = 10;
-    /// Last position accuracy in [cm] for XYZ or NED
-    std::array<float, 3> _lastPositionAccuracy = { std::numeric_limits<float>::infinity(),
-                                                   std::numeric_limits<float>::infinity(),
-                                                   std::numeric_limits<float>::infinity() };
+    /// Override options for Position
+    enum class PositionOverride
+    {
+        OFF,   ///< Do not override the values
+        ECEF,  ///< Override with ECEF values
+        LLA,   ///< Override with LLA values
+        COUNT, ///< Amount of items in the enum
+    };
+
+    /// @brief Converts the enum to a string
+    /// @param[in] posOverride Enum value to convert into text
+    /// @return String representation of the enum
+    friend constexpr const char* to_string(PositionOverride posOverride);
 
     /// Whether the GNSS values should be used or we want to override the values manually
-    bool _overrideVelocity = false;
+    PositionOverride _overridePosition = PositionOverride::OFF;
+    /// Values to override the Position in LatLonAlt in [deg, deg, m] or in ECEF coordinates in [m]
+    Eigen::Vector3d _overrideValuesPosition = Eigen::Vector3d::Zero();
+    /// Position Accuracy to achieve in [cm]
+    double _positionAccuracyThreshold = 10;
+    /// Last position accuracy in [cm] for XYZ or NED
+    std::array<double, 3> _lastPositionAccuracy = { std::numeric_limits<double>::infinity(),
+                                                    std::numeric_limits<double>::infinity(),
+                                                    std::numeric_limits<double>::infinity() };
+
+    /// Override options for Position
+    enum class VelocityOverride
+    {
+        OFF,   ///< Do not override the values
+        ECEF,  ///< Override with ECEF values
+        NED,   ///< Override with NED values
+        COUNT, ///< Amount of items in the enum
+    };
+
+    /// @brief Converts the enum to a string
+    /// @param[in] velOverride Enum value to convert into text
+    /// @return String representation of the enum
+    friend constexpr const char* to_string(VelocityOverride velOverride);
+
+    /// Whether the GNSS values should be used or we want to override the values manually
+    VelocityOverride _overrideVelocity = VelocityOverride::OFF;
     /// Values to override the Velocity in [m/s]
-    std::array<float, 3> _n_overrideValuesVelocity = {};
+    Eigen::Vector3d _overrideValuesVelocity = Eigen::Vector3d::Zero();
     /// Velocity Accuracy to achieve in [cm/s]
-    float _velocityAccuracyThreshold = 10;
+    double _velocityAccuracyThreshold = 10;
     /// Last velocity accuracy in [cm/s] for XYZ or NED
-    std::array<float, 3> _lastVelocityAccuracy = { std::numeric_limits<float>::infinity(),
-                                                   std::numeric_limits<float>::infinity(),
-                                                   std::numeric_limits<float>::infinity() };
+    std::array<double, 3> _lastVelocityAccuracy = { std::numeric_limits<double>::infinity(),
+                                                    std::numeric_limits<double>::infinity(),
+                                                    std::numeric_limits<double>::infinity() };
 
     /// Count of received attitude measurements
     double _countAveragedAttitude = 0.0;
@@ -169,7 +197,7 @@ class PosVelAttInitializer : public Node
     /// Whether the IMU values should be used or we want to override the values manually
     std::array<bool, 3> _overrideRollPitchYaw = { false, false, false };
     /// Values to override Roll, Pitch and Yaw with in [deg]
-    std::array<float, 3> _overrideValuesRollPitchYaw = {};
+    std::array<double, 3> _overrideValuesRollPitchYaw = {};
 
     /// Whether the states are initialized (pos, vel, att, messages send)
     std::array<bool, 4> _posVelAttInitialized = { false, false, false, false };
@@ -183,5 +211,62 @@ class PosVelAttInitializer : public Node
     /// Velocity in navigation coordinates
     Eigen::Vector3d _n_initVelocity;
 };
+
+/// @brief Converts the enum to a string
+/// @param[in] attitudeMode Enum value to convert into text
+/// @return String representation of the enum
+constexpr const char* to_string(PosVelAttInitializer::AttitudeMode attitudeMode)
+{
+    switch (attitudeMode)
+    {
+    case NAV::PosVelAttInitializer::AttitudeMode::BOTH:
+        return "Both";
+    case NAV::PosVelAttInitializer::AttitudeMode::IMU:
+        return "IMU";
+    case NAV::PosVelAttInitializer::AttitudeMode::GNSS:
+        return "GNSS";
+    case NAV::PosVelAttInitializer::AttitudeMode::COUNT:
+        return "";
+    }
+    return "";
+}
+
+/// @brief Converts the enum to a string
+/// @param[in] posOverride Enum value to convert into text
+/// @return String representation of the enum
+constexpr const char* to_string(PosVelAttInitializer::PositionOverride posOverride)
+{
+    switch (posOverride)
+    {
+    case NAV::PosVelAttInitializer::PositionOverride::OFF:
+        return "OFF";
+    case NAV::PosVelAttInitializer::PositionOverride::ECEF:
+        return "ECEF";
+    case NAV::PosVelAttInitializer::PositionOverride::LLA:
+        return "LLA";
+    case NAV::PosVelAttInitializer::PositionOverride::COUNT:
+        return "";
+    }
+    return "";
+}
+
+/// @brief Converts the enum to a string
+/// @param[in] velOverride Enum value to convert into text
+/// @return String representation of the enum
+constexpr const char* to_string(PosVelAttInitializer::VelocityOverride velOverride)
+{
+    switch (velOverride)
+    {
+    case NAV::PosVelAttInitializer::VelocityOverride::OFF:
+        return "OFF";
+    case NAV::PosVelAttInitializer::VelocityOverride::ECEF:
+        return "ECEF";
+    case NAV::PosVelAttInitializer::VelocityOverride::NED:
+        return "NED";
+    case NAV::PosVelAttInitializer::VelocityOverride::COUNT:
+        return "";
+    }
+    return "";
+}
 
 } // namespace NAV

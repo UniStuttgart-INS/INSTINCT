@@ -127,4 +127,14 @@ Eigen::Matrix3d Q_domega_domega(const Eigen::Vector3d& S_bgd, const double& tau_
     return S_bgd.asDiagonal() * tau_s * Eigen::Matrix3d::Identity();
 }
 
+Eigen::Matrix2d Q_gnss(const double& S_cPhi, const double& S_cf, const double& tau_s)
+{
+    Eigen::Matrix2d Qg = Eigen::Matrix2d::Zero();
+    Qg(0, 0) = S_cPhi * tau_s + 1. / 3. * S_cf * std::pow(tau_s, 3);
+    Qg(0, 1) = 0.5 * S_cf * std::pow(tau_s, 2);
+    Qg(1, 0) = 0.5 * S_cf * std::pow(tau_s, 2);
+    Qg(1, 1) = S_cf * tau_s;
+    return Qg;
+}
+
 } // namespace NAV
