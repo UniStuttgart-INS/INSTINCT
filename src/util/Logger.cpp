@@ -13,6 +13,7 @@
 #include "Logger/dist_filter_sink.hpp"
 
 #include "internal/ConfigManager.hpp"
+#include "internal/Version.hpp"
 
 #include <chrono>
 #include <ctime>
@@ -190,9 +191,9 @@ void Logger::writeHeader() noexcept
     [[maybe_unused]] tm* t = std::localtime(&now_c); // NOLINT(concurrency-mt-unsafe)
 
 #ifdef NDEBUG
-    LOG_INFO("Program started in Release on {:04d}-{:02d}-{:02d}", 1900 + t->tm_year, 1 + t->tm_mon, t->tm_mday);
+    LOG_INFO("INSTINCT v{} started in Release on {:04d}-{:02d}-{:02d}", PROJECT_VERSION_STRING, 1900 + t->tm_year, 1 + t->tm_mon, t->tm_mday);
 #else
-    LOG_INFO("Program started in Debug on {:04d}-{:02d}-{:02d}", 1900 + t->tm_year, 1 + t->tm_mon, t->tm_mday);
+    LOG_INFO("INSTINCT v{} started in Debug on {:04d}-{:02d}-{:02d}", PROJECT_VERSION_STRING, 1900 + t->tm_year, 1 + t->tm_mon, t->tm_mday);
 #endif
 
     writeSeparator();
