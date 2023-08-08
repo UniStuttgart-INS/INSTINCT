@@ -135,7 +135,7 @@ class PosVelAttInitializer : public Node
     /// @brief Converts the enum to a string
     /// @param[in] attitudeMode Enum value to convert into text
     /// @return String representation of the enum
-    friend const char* to_string(AttitudeMode attitudeMode);
+    friend constexpr const char* to_string(AttitudeMode attitudeMode);
 
     /// GUI option to pecify the initialization source for attitude
     AttitudeMode _attitudeMode = AttitudeMode::BOTH;
@@ -152,7 +152,7 @@ class PosVelAttInitializer : public Node
     /// @brief Converts the enum to a string
     /// @param[in] posOverride Enum value to convert into text
     /// @return String representation of the enum
-    friend const char* to_string(PositionOverride posOverride);
+    friend constexpr const char* to_string(PositionOverride posOverride);
 
     /// Whether the GNSS values should be used or we want to override the values manually
     PositionOverride _overridePosition = PositionOverride::OFF;
@@ -177,7 +177,7 @@ class PosVelAttInitializer : public Node
     /// @brief Converts the enum to a string
     /// @param[in] velOverride Enum value to convert into text
     /// @return String representation of the enum
-    friend const char* to_string(VelocityOverride velOverride);
+    friend constexpr const char* to_string(VelocityOverride velOverride);
 
     /// Whether the GNSS values should be used or we want to override the values manually
     VelocityOverride _overrideVelocity = VelocityOverride::OFF;
@@ -215,16 +215,58 @@ class PosVelAttInitializer : public Node
 /// @brief Converts the enum to a string
 /// @param[in] attitudeMode Enum value to convert into text
 /// @return String representation of the enum
-const char* to_string(PosVelAttInitializer::AttitudeMode attitudeMode);
+constexpr const char* to_string(PosVelAttInitializer::AttitudeMode attitudeMode)
+{
+    switch (attitudeMode)
+    {
+    case NAV::PosVelAttInitializer::AttitudeMode::BOTH:
+        return "Both";
+    case NAV::PosVelAttInitializer::AttitudeMode::IMU:
+        return "IMU";
+    case NAV::PosVelAttInitializer::AttitudeMode::GNSS:
+        return "GNSS";
+    case NAV::PosVelAttInitializer::AttitudeMode::COUNT:
+        return "";
+    }
+    return "";
+}
 
 /// @brief Converts the enum to a string
 /// @param[in] posOverride Enum value to convert into text
 /// @return String representation of the enum
-const char* to_string(PosVelAttInitializer::PositionOverride posOverride);
+constexpr const char* to_string(PosVelAttInitializer::PositionOverride posOverride)
+{
+    switch (posOverride)
+    {
+    case NAV::PosVelAttInitializer::PositionOverride::OFF:
+        return "OFF";
+    case NAV::PosVelAttInitializer::PositionOverride::ECEF:
+        return "ECEF";
+    case NAV::PosVelAttInitializer::PositionOverride::LLA:
+        return "LLA";
+    case NAV::PosVelAttInitializer::PositionOverride::COUNT:
+        return "";
+    }
+    return "";
+}
 
 /// @brief Converts the enum to a string
 /// @param[in] velOverride Enum value to convert into text
 /// @return String representation of the enum
-const char* to_string(PosVelAttInitializer::VelocityOverride velOverride);
+constexpr const char* to_string(PosVelAttInitializer::VelocityOverride velOverride)
+{
+    switch (velOverride)
+    {
+    case NAV::PosVelAttInitializer::VelocityOverride::OFF:
+        return "OFF";
+    case NAV::PosVelAttInitializer::VelocityOverride::ECEF:
+        return "ECEF";
+    case NAV::PosVelAttInitializer::VelocityOverride::NED:
+        return "NED";
+    case NAV::PosVelAttInitializer::VelocityOverride::COUNT:
+        return "";
+    }
+    return "";
+}
 
 } // namespace NAV
