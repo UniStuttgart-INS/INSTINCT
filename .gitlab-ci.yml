@@ -323,7 +323,7 @@ tests:gcc:
     - .build:linux
     - .gcc
     - .debug
-    - .log-data
+    - .log-trace
   artifacts:
     untracked: true # For the coverage report
     expire_in: 2h

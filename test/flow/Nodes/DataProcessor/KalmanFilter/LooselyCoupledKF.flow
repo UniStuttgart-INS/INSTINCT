@@ -167,28 +167,40 @@
             "data": {
                 "attitudeMode": 2,
                 "initDuration": 5.0,
-                "n_overrideValuesVelocity": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "overridePosition": true,
+                "overrideValuesVelocity": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "overridePosition": 2,
                 "overrideRollPitchYaw": [
                     true,
                     true,
                     true
                 ],
-                "overrideValuesPosition_lla": [
-                    48.780704498291016,
-                    9.171577453613281,
-                    325.031005859375
-                ],
+                "overrideValuesPosition": {
+                    "0": {
+                        "0": 48.780704498291016
+                    },
+                    "1": {
+                        "0": 9.171577453613281
+                    },
+                    "2": {
+                        "0": 325.031005859375
+                    }
+                },
                 "overrideValuesRollPitchYaw": [
                     0.42855000495910645,
                     -5.278240203857422,
                     -61.86539840698242
                 ],
-                "overrideVelocity": true,
+                "overrideVelocity": 2,
                 "positionAccuracyThreshold": 10.0,
                 "velocityAccuracyThreshold": 10.0
             },

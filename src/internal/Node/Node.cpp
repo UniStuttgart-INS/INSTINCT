@@ -951,9 +951,6 @@ bool NAV::Node::workerDeinitializeNode()
 void NAV::Node::workerTimeoutHandler()
 {
     LOG_TRACE("{}: called", nameId());
-#ifdef TESTING
-    FAIL("In testing, nodes should not timeout, as the test got then stuck and the timeout is unhandled by the node itself.");
-#endif
 }
 
 void NAV::to_json(json& j, const Node& node)

@@ -183,6 +183,7 @@
                 },
                 "simulationDuration": 100.0,
                 "simulationStopCondition": 0,
+                "splineSampleInterval": 0.1,
                 "startPosition_lla": {
                     "0": {
                         "0": 0.0
@@ -348,6 +349,7 @@
                 },
                 "simulationDuration": 100.0,
                 "simulationStopCondition": 0,
+                "splineSampleInterval": 0.1,
                 "startPosition_lla": {
                     "0": {
                         "0": 0.0
@@ -513,6 +515,7 @@
                 },
                 "simulationDuration": 100.0,
                 "simulationStopCondition": 0,
+                "splineSampleInterval": 0.1,
                 "startPosition_lla": {
                     "0": {
                         "0": 0.0
@@ -678,6 +681,7 @@
                 },
                 "simulationDuration": 100.0,
                 "simulationStopCondition": 0,
+                "splineSampleInterval": 0.1,
                 "startPosition_lla": {
                     "0": {
                         "0": 0.0
@@ -2540,7 +2544,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "",
+                                    "legendName": "Accel uncomp Z [m/s^2] (Pin 1)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -2578,9 +2582,15 @@
                         "title": "Plot 1",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     }
                 ]
