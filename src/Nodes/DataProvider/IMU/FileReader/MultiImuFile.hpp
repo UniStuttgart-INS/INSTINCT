@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 /// @file MultiImuFile.hpp
 /// @brief File reader for Multi-IMU data log files
 /// @author M. Maier (marcel.maier@ins.uni-stuttgart.de)
@@ -8,6 +16,7 @@
 #include "internal/Node/Node.hpp"
 #include "Nodes/DataProvider/Protocol/FileReader.hpp"
 #include "NodeData/IMU/ImuPos.hpp"
+#include "internal/gui/widgets/TimeEdit.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
 
@@ -98,16 +107,57 @@ class MultiImuFile : public Node, public FileReader
     std::vector<size_t> _messageCnt;
 
     /// @brief First 'gpsSecond', s.t. measurements start at time = 0
-    double _startTime{};
+    double _startupGpsSecond{};
+
+    /// Time Format to input the start time with
+    gui::widgets::TimeEditFormat _startTimeEditFormat = gui::widgets::TimeEditFormat::GPSWeekToW;
+
+    /// @brief Absolute start time
+    InsTime _startTime{ 2000, 1, 1, 0, 0, 0 };
 
     /// @brief Container of column names
     std::vector<std::string> _columns{ "sensorId", "gpsSecond", "timeNumerator", "timeDenominator", "accelX", "accelY", "accelZ", "gyroX", "gyroY", "gyroZ" };
+
+    /// @brief Container of header column names
+    std::vector<std::string> _headerColumns{ "nmeaMsgType", "UTC_HMS", "day", "month", "year" };
 
     /// @brief Container for individual sensor orientations of a Multi-IMU
     std::vector<ImuPos> _imuPosAll;
 
     /// @brief Previous observation (for timestamp)
     InsTime _lastFiltObs{};
+
+    /// Types of NMEA messages available
+    enum class NmeaType
+    {
+        GPGGA, ///< NMEA message type
+        GPZDA, ///< NMEA message type
+        COUNT, ///< Number of items in the enum
+    };
+    /// @brief Converts the enum to a string
+    /// @param[in] value Enum value to convert into text
+    /// @return String representation of the enum
+    friend constexpr const char* to_string(NmeaType value);
+
+    /// Selected NMEA type in the GUI
+    NmeaType _nmeaType = NmeaType::GPZDA;
 };
+
+/// @brief Converts the enum to a string
+/// @param[in] value Enum value to convert into text
+/// @return String representation of the enum
+constexpr const char* to_string(NAV::MultiImuFile::NmeaType value)
+{
+    switch (value)
+    {
+    case NAV::MultiImuFile::NmeaType::GPGGA:
+        return "GPGGA";
+    case NAV::MultiImuFile::NmeaType::GPZDA:
+        return "GPZDA";
+    case NAV::MultiImuFile::NmeaType::COUNT:
+        return "";
+    }
+    return "";
+}
 
 } // namespace NAV

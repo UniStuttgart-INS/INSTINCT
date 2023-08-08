@@ -1,3 +1,11 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 #include "MultiImuFile.hpp"
 
 #include "util/Logger.hpp"
@@ -8,7 +16,9 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
+#include "internal/gui/widgets/EnumCombo.hpp"
 #include "internal/gui/widgets/HelpMarker.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
 
 NAV::MultiImuFile::MultiImuFile()
     : Node(typeStatic())
@@ -16,7 +26,7 @@ NAV::MultiImuFile::MultiImuFile()
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 538, 1021 };
+    _guiConfigDefaultWindowSize = { 528, 379 };
 
     updateNumberOfOutputPins();
 }
@@ -43,16 +53,41 @@ std::string NAV::MultiImuFile::category()
 
 void NAV::MultiImuFile::guiConfig()
 {
+    float columnWidth = 130.0F * gui::NodeEditorApplication::windowFontRatio();
+
     if (FileReader::guiConfig(".txt", { ".txt" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
         deinitialize();
     }
 
+    ImGui::SetNextItemWidth(columnWidth);
+
+    if (gui::widgets::EnumCombo(fmt::format("NMEA message type##{}", size_t(id)).c_str(), _nmeaType))
+    {
+        LOG_DEBUG("{}: nmeaType changed to {}", nameId(), fmt::underlying(_nmeaType));
+
+        flow::ApplyChanges();
+        doDeinitialize();
+    }
+    ImGui::SameLine();
+    gui::widgets::HelpMarker("Until June 2023, NMEA messages in the Multi-IMU file's header were of the 'GPGGA' type. Since this type does not provide an absolute time reference, it was changed to 'GPZDA'.\n\n");
+
+    if (_nmeaType == NmeaType::GPGGA)
+    {
+        if (gui::widgets::TimeEdit(fmt::format("{}", size_t(id)).c_str(), _startTime, _startTimeEditFormat))
+        {
+            LOG_DEBUG("{}: startTime changed to {}", nameId(), _startTime);
+            flow::ApplyChanges();
+        }
+    }
+
+    ImGui::Separator();
     // Set Imu Position and Rotation (from 'Imu::guiConfig();')
     for (size_t i = 0; i < _nSensors; ++i)
     {
-        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        bool showRotation = i == 0 ? true : false;
+        ImGui::SetNextItemOpen(showRotation, ImGuiCond_FirstUseEver);
         if (ImGui::TreeNode(fmt::format("Imu #{} Position & Rotation##{}", i + 1, size_t(id)).c_str()))
         {
             std::array<float, 3> imuPosAccel = { static_cast<float>(_imuPosAll[i].b_positionAccel().x()), static_cast<float>(_imuPosAll[i].b_positionAccel().y()), static_cast<float>(_imuPosAll[i].b_positionAccel().z()) };
@@ -115,8 +150,6 @@ void NAV::MultiImuFile::guiConfig()
                 flow::ApplyChanges();
                 _imuPosAll[i]._b_quatAccel_p = trafo::b_Quat_p(deg2rad(imuRotAccel.at(0)), deg2rad(imuRotAccel.at(1)), deg2rad(imuRotAccel.at(2)));
             }
-            // ImGui::SameLine();
-            // TrafoHelperMarker(_imuPosAll[i].b_quatAccel_p()); // TODO: Enable this, see 'Imu.cpp'
 
             Eigen::Vector3d eulerGyro = rad2deg(trafo::quat2eulerZYX(_imuPosAll[i].p_quatGyro_b()));
             std::array<float, 3> imuRotGyro = { static_cast<float>(eulerGyro.x()), static_cast<float>(eulerGyro.y()), static_cast<float>(eulerGyro.z()) };
@@ -151,8 +184,6 @@ void NAV::MultiImuFile::guiConfig()
                 flow::ApplyChanges();
                 _imuPosAll[i]._b_quatGyro_p = trafo::b_Quat_p(deg2rad(imuRotGyro.at(0)), deg2rad(imuRotGyro.at(1)), deg2rad(imuRotGyro.at(2)));
             }
-            // ImGui::SameLine();
-            // TrafoHelperMarker(_imuPosAll[i].b_quatGyro_p()); // TODO: Enable this, see 'Imu.cpp'
 
             Eigen::Vector3d eulerMag = rad2deg(trafo::quat2eulerZYX(_imuPosAll[i].p_quatMag_b()));
             std::array<float, 3> imuRotMag = { static_cast<float>(eulerMag.x()), static_cast<float>(eulerMag.y()), static_cast<float>(eulerMag.z()) };
@@ -187,8 +218,6 @@ void NAV::MultiImuFile::guiConfig()
                 flow::ApplyChanges();
                 _imuPosAll[i]._b_quatMag_p = trafo::b_Quat_p(deg2rad(imuRotMag.at(0)), deg2rad(imuRotMag.at(1)), deg2rad(imuRotMag.at(2)));
             }
-            // ImGui::SameLine();
-            // TrafoHelperMarker(_imuPosAll[i].b_quatMag_p()); // TODO: Enable this, see 'Imu.cpp'
 
             ImGui::TreePop();
         }
@@ -203,6 +232,8 @@ void NAV::MultiImuFile::guiConfig()
 
     j["FileReader"] = FileReader::save();
     j["imuPos"] = _imuPosAll;
+    j["nmeaType"] = _nmeaType;
+    j["startTime"] = _startTime;
 
     return j;
 }
@@ -218,6 +249,14 @@ void NAV::MultiImuFile::restore(json const& j)
     if (j.contains("imuPos"))
     {
         j.at("imuPos").get_to(_imuPosAll);
+    }
+    if (j.contains("nmeaType"))
+    {
+        j.at("nmeaType").get_to(_nmeaType);
+    }
+    if (j.contains("startTime"))
+    {
+        j.at("startTime").get_to(_startTime);
     }
 }
 
@@ -284,9 +323,12 @@ void NAV::MultiImuFile::readHeader()
 {
     LOG_TRACE("called");
 
+    bool gpzdaFound = false;
     bool gpggaFound = false;
-    std::string line;
+    const char* gpzda = "GPZDA";
     const char* gpgga = "GPGGA";
+
+    std::string line;
     auto len = tellg();
 
     // Find first line of data
@@ -295,19 +337,89 @@ void NAV::MultiImuFile::readHeader()
         // Remove any trailing non text characters
         line.erase(std::find_if(line.begin(), line.end(), [](int ch) { return std::iscntrl(ch); }), line.end());
 
+        if ((line.find(gpzda)) != std::string::npos)
+        {
+            gpzdaFound = true;
+
+            int32_t year{};
+            int32_t month{};
+            int32_t day{};
+            int32_t hour{};
+            int32_t min{};
+            long double sec{};
+
+            // Convert line into stream
+            std::stringstream lineStream(line);
+            std::string cell;
+
+            // Split line at comma
+            for (const auto& col : _headerColumns)
+            {
+                if (std::getline(lineStream, cell, ','))
+                {
+                    // Remove any trailing non text characters
+                    cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
+                    while (cell.empty())
+                    {
+                        std::getline(lineStream, cell, ',');
+                    }
+
+                    if (col == "nmeaMsgType")
+                    {
+                        LOG_DEBUG("{}: nmeaMsgType read.", nameId());
+                        continue;
+                    }
+                    else if (col == "UTC_HMS")
+                    {
+                        hour = std::stoi(cell.substr(0, 2));
+                        min = std::stoi(cell.substr(2, 2));
+                        sec = std::stold(cell.substr(4, 5));
+                        continue;
+                    }
+                    else if (col == "day")
+                    {
+                        day = std::stoi(cell);
+                        continue;
+                    }
+                    else if (col == "month")
+                    {
+                        month = std::stoi(cell);
+                        continue;
+                    }
+                    else if (col == "year")
+                    {
+                        year = std::stoi(cell);
+                    }
+
+                    _startTime = InsTime(year, month, day, hour, min, sec, UTC);
+
+                    len = tellg();
+                    continue;
+                }
+            }
+        }
         if (line.find(gpgga) != std::string::npos)
         {
             gpggaFound = true;
+            LOG_INFO("{}: Multi-IMU has no absolute time reference due to NMEA message 'GPGGA' instead of 'GPZDA' (used in old version of the Multi-IMU).", nameId());
             len = tellg();
             continue;
         }
-        if ((std::find_if(line.begin(), line.begin() + 1, [](int ch) { return std::isdigit(ch); }) != (std::begin(line) + 1)) && gpggaFound)
+        if ((std::find_if(line.begin(), line.begin() + 1, [](int ch) { return std::isdigit(ch); }) != (std::begin(line) + 1)) && (gpggaFound || gpzdaFound))
         {
             LOG_DEBUG("{}: Found first line of data: {}", nameId(), line);
             seekg(len, std::ios_base::beg); // Reser the read cursor, otherwise we skip the first message
             break;
         }
         len = tellg();
+    }
+    if (gpggaFound && _nmeaType == NmeaType::GPZDA)
+    {
+        LOG_WARN("{}: NMEA message type was set to 'GPZDA', but the file contains 'GPGGA'. Make sure that the absolute time reference is set correctly.", nameId());
+    }
+    if (gpzdaFound && _nmeaType == NmeaType::GPGGA)
+    {
+        LOG_WARN("{}: NMEA message type was set to 'GPGGA', but the file contains 'GPZDA'. The absolute time reference was read from the header, not the GUI input.", nameId());
     }
 }
 
@@ -371,10 +483,9 @@ std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(size_t pinIdx, 
                     else if (col == "gpsSecond")
                     {
                         gpsSecond = std::stod(cell); // [s]
-                        // Start time axis from first timestamp onwards
-                        if (_startTime == 0)
+                        if (_startupGpsSecond == 0)
                         {
-                            _startTime = gpsSecond;
+                            _startupGpsSecond = gpsSecond;
                         }
                     }
                     else if (col == "timeNumerator")
@@ -412,19 +523,16 @@ std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(size_t pinIdx, 
                 }
             }
 
-            // auto timeStamp = gpsSecond + timeNumerator / timeDenominator - _startTime;
-            // if (!peek)
-            // {
-            //     LOG_DEBUG("line: {}", line);
-            //     LOG_DEBUG("timeStamp: {}", timeStamp);
-            // }
+            auto timeStamp = gpsSecond + timeNumerator / timeDenominator - _startupGpsSecond;
+            if (!peek)
+            {
+                LOG_DEBUG("line: {}", line);
+                LOG_DEBUG("timeStamp: {}", timeStamp);
+            }
 
             obs = std::make_shared<ImuObs>(_imuPosAll[sensorId - 1]);
 
-            // TODO: re-configure Multi-IMU-Recv to provide GpsWeek and GpsTow, OR make GUI inputs
-            obs->insTime = InsTime(0, 2263, 3. * 86400. + gpsSecond + timeNumerator / timeDenominator, UTC); // 2023-05-24 (MIMU-TCKF-ENC-flights)
-            // obs->insTime = InsTime(0, 2262, 4. * 86400. + gpsSecond + timeNumerator / timeDenominator, UTC); // 2023-05-18 test on roof
-            // obs->insTime = InsTime(0, 0, 0, 0, 0, timeStamp);
+            obs->insTime = _startTime + std::chrono::duration<double>(timeStamp);
 
             if (accelX.has_value() && accelY.has_value() && accelZ.has_value())
             {
