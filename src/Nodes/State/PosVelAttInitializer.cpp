@@ -14,7 +14,9 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
+#include "internal/gui/widgets/EnumCombo.hpp"
 #include "internal/gui/widgets/HelpMarker.hpp"
+#include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
 
 #include "util/Time/TimeBase.hpp"
@@ -78,26 +80,10 @@ void NAV::PosVelAttInitializer::guiConfig()
         && !(_overrideRollPitchYaw.at(0) && _overrideRollPitchYaw.at(1) && _overrideRollPitchYaw.at(2)))
     {
         ImGui::SetNextItemWidth(100 * gui::NodeEditorApplication::windowFontRatio());
-        if (ImGui::BeginCombo(fmt::format("Attitude Init Source##{}", size_t(id)).c_str(), to_string(_attitudeMode)))
+        if (gui::widgets::EnumCombo(fmt::format("Attitude Init Source##{}", size_t(id)).c_str(), _attitudeMode))
         {
-            for (size_t i = 0; i < static_cast<size_t>(AttitudeMode::COUNT); i++)
-            {
-                const bool is_selected = (static_cast<size_t>(_attitudeMode) == i);
-                if (ImGui::Selectable(to_string(static_cast<AttitudeMode>(i)), is_selected))
-                {
-                    _attitudeMode = static_cast<AttitudeMode>(i);
-                    LOG_DEBUG("{}: Attitude Init Source changed to {}", nameId(), to_string(_attitudeMode));
-                    flow::ApplyChanges();
-                }
-
-                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-                if (is_selected)
-                {
-                    ImGui::SetItemDefaultFocus();
-                }
-            }
-
-            ImGui::EndCombo();
+            LOG_DEBUG("{}: Attitude Init Source changed to {}", nameId(), to_string(_attitudeMode));
+            flow::ApplyChanges();
         }
     }
 
@@ -121,21 +107,21 @@ void NAV::PosVelAttInitializer::guiConfig()
         ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(ImGui::GetCursorScreenPos().x + size / 1.2F,
                                                            ImGui::GetCursorScreenPos().y + size * 1.8F),
                                                     size,
-                                                    _posVelAttInitialized.at(0) || _overridePosition
+                                                    _posVelAttInitialized.at(0) || _overridePosition != PositionOverride::OFF
                                                         ? ImColor(0.0F, 255.0F, 0.0F)
                                                         : ImColor(255.0F, 0.0F, 0.0F));
         ImGui::Selectable(("##determinePosition" + std::to_string(size_t(id))).c_str(),
                           false, ImGuiSelectableFlags_Disabled, ImVec2(1.6F * size, 0.0F));
         if (ImGui::IsItemHovered())
         {
-            ImGui::SetTooltip("%s", _posVelAttInitialized.at(0) || _overridePosition
+            ImGui::SetTooltip("%s", _posVelAttInitialized.at(0) || _overridePosition != PositionOverride::OFF
                                         ? "Successfully Initialized"
                                         : "To be initialized");
         }
         ImGui::TableNextColumn();
         ImGui::SetNextItemWidth(-FLT_MIN);
-        if (ImGui::DragFloat(("##positionAccuracyThreshold" + std::to_string(size_t(id))).c_str(),
-                             &_positionAccuracyThreshold, 0.1F, 0.0F, 1000.0F, "%.1f cm"))
+        if (ImGui::DragDouble(("##positionAccuracyThreshold" + std::to_string(size_t(id))).c_str(),
+                              &_positionAccuracyThreshold, 0.1F, 0.0, 1000.0, "%.1f cm"))
         {
             flow::ApplyChanges();
         }
@@ -189,21 +175,21 @@ void NAV::PosVelAttInitializer::guiConfig()
         ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(ImGui::GetCursorScreenPos().x + size / 1.2F,
                                                            ImGui::GetCursorScreenPos().y + size * 1.8F),
                                                     size,
-                                                    _posVelAttInitialized.at(1) || _overrideVelocity
+                                                    _posVelAttInitialized.at(1) || _overrideVelocity != VelocityOverride::OFF
                                                         ? ImColor(0.0F, 255.0F, 0.0F)
                                                         : ImColor(255.0F, 0.0F, 0.0F));
         ImGui::Selectable(("##determineVelocity" + std::to_string(size_t(id))).c_str(),
                           false, ImGuiSelectableFlags_Disabled, ImVec2(1.6F * size, 0.0F));
         if (ImGui::IsItemHovered())
         {
-            ImGui::SetTooltip("%s", _posVelAttInitialized.at(1) || _overrideVelocity
+            ImGui::SetTooltip("%s", _posVelAttInitialized.at(1) || _overrideVelocity != VelocityOverride::OFF
                                         ? "Successfully Initialized"
                                         : "To be initialized");
         }
         ImGui::TableNextColumn();
         ImGui::SetNextItemWidth(-FLT_MIN);
-        if (ImGui::DragFloat(("##velocityAccuracyThreshold" + std::to_string(size_t(id))).c_str(),
-                             &_velocityAccuracyThreshold, 1.0F, 0.0F, 1000.0F, "%.0f cm/s"))
+        if (ImGui::DragDouble(("##velocityAccuracyThreshold" + std::to_string(size_t(id))).c_str(),
+                              &_velocityAccuracyThreshold, 1.0F, 0.0, 1000.0, "%.0f cm/s"))
         {
             flow::ApplyChanges();
         }
@@ -273,27 +259,44 @@ void NAV::PosVelAttInitializer::guiConfig()
         ImGui::EndTable();
     }
 
-    if (ImGui::Checkbox(fmt::format("Override Position##{}", size_t(id)).c_str(), &_overridePosition))
+    auto oldOverridePosition = _overridePosition;
+    ImGui::SetNextItemWidth(100 * gui::NodeEditorApplication::windowFontRatio());
+    if (gui::widgets::EnumCombo(fmt::format("Override Position##{}", size_t(id)).c_str(), _overridePosition))
     {
         updatePins();
         flow::ApplyChanges();
+        if (oldOverridePosition == PositionOverride::LLA && _overridePosition == PositionOverride::ECEF)
+        {
+            _overrideValuesPosition = trafo::lla2ecef_WGS84({ deg2rad(_overrideValuesPosition(0)),
+                                                              deg2rad(_overrideValuesPosition(1)),
+                                                              _overrideValuesPosition(2) });
+        }
+        else if (oldOverridePosition == PositionOverride::ECEF && _overridePosition == PositionOverride::LLA)
+        {
+            Eigen::Vector3d lla = trafo::ecef2lla_WGS84(_overrideValuesPosition);
+            _overrideValuesPosition = Eigen::Vector3d(rad2deg(lla(0)), rad2deg(lla(1)), lla(2));
+        }
     }
-    if (_overridePosition)
+    if (_overridePosition != PositionOverride::OFF)
     {
         ImGui::Indent();
 
-        ImGui::SetNextItemWidth(100 * gui::NodeEditorApplication::windowFontRatio());
-        if (ImGui::DragFloat(fmt::format("Latitude [deg]##{}", size_t(id)).c_str(), &_lla_overrideValuesPosition.at(0), 1.0F, -90.0F, 90.0F, "%.6f"))
+        bool lla = _overridePosition == PositionOverride::LLA;
+        ImGui::SetNextItemWidth(140 * gui::NodeEditorApplication::windowFontRatio());
+        if (ImGui::DragDouble(fmt::format("{}##{}", lla ? "Latitude [deg]" : "ECEF X [m]", size_t(id)).c_str(), &_overrideValuesPosition(0),
+                              1.0F, lla ? -90.0 : 0.0, lla ? 90.0 : 0.0, lla ? "%.9f" : "%.4f"))
         {
             flow::ApplyChanges();
         }
-        ImGui::SetNextItemWidth(100 * gui::NodeEditorApplication::windowFontRatio());
-        if (ImGui::DragFloat(fmt::format("Longitude [deg]##{}", size_t(id)).c_str(), &_lla_overrideValuesPosition.at(1), 1.0F, -180.0F, 180.0F, "%.6f"))
+        ImGui::SetNextItemWidth(140 * gui::NodeEditorApplication::windowFontRatio());
+        if (ImGui::DragDouble(fmt::format("{}##{}", lla ? "Longitude [deg]" : "ECEF Y [m]", size_t(id)).c_str(), &_overrideValuesPosition(1),
+                              1.0F, lla ? -180.0 : 0.0, lla ? 180.0 : 0.0, lla ? "%.9f" : "%.4f"))
         {
             flow::ApplyChanges();
         }
-        ImGui::SetNextItemWidth(100 * gui::NodeEditorApplication::windowFontRatio());
-        if (ImGui::DragFloat(fmt::format("Altitude [m]##{}", size_t(id)).c_str(), &_lla_overrideValuesPosition.at(2)))
+        ImGui::SetNextItemWidth(140 * gui::NodeEditorApplication::windowFontRatio());
+        if (ImGui::DragDouble(fmt::format("{}##{}", lla ? "Altitude [m]" : "ECEF Z [m]", size_t(id)).c_str(), &_overrideValuesPosition(2),
+                              1.0F, 0.0, 0.0, "%.4f"))
         {
             flow::ApplyChanges();
         }
@@ -301,27 +304,32 @@ void NAV::PosVelAttInitializer::guiConfig()
         ImGui::Unindent();
     }
 
-    if (ImGui::Checkbox(fmt::format("Override Velocity##{}", size_t(id)).c_str(), &_overrideVelocity))
+    ImGui::SetNextItemWidth(100 * gui::NodeEditorApplication::windowFontRatio());
+    if (gui::widgets::EnumCombo(fmt::format("Override Velocity##{}", size_t(id)).c_str(), _overrideVelocity))
     {
         updatePins();
         flow::ApplyChanges();
     }
-    if (_overrideVelocity)
+    if (_overrideVelocity != VelocityOverride::OFF)
     {
         ImGui::Indent();
 
+        bool ned = _overrideVelocity == VelocityOverride::NED;
         ImGui::SetNextItemWidth(100 * gui::NodeEditorApplication::windowFontRatio());
-        if (ImGui::DragFloat(fmt::format("Velocity N [m/s]##{}", size_t(id)).c_str(), &_n_overrideValuesVelocity.at(0)))
+        if (ImGui::DragDouble(fmt::format("Velocity {} [m/s]##{}", ned ? "North" : "ECEF X", size_t(id)).c_str(), &_overrideValuesVelocity(0),
+                              1.0F, 0.0, 0.0, "%.4f"))
         {
             flow::ApplyChanges();
         }
         ImGui::SetNextItemWidth(100 * gui::NodeEditorApplication::windowFontRatio());
-        if (ImGui::DragFloat(fmt::format("Velocity E [m/s]##{}", size_t(id)).c_str(), &_n_overrideValuesVelocity.at(1)))
+        if (ImGui::DragDouble(fmt::format("Velocity {} [m/s]##{}", ned ? "Eeast" : "ECEF Y", size_t(id)).c_str(), &_overrideValuesVelocity(1),
+                              1.0F, 0.0, 0.0, "%.4f"))
         {
             flow::ApplyChanges();
         }
         ImGui::SetNextItemWidth(100 * gui::NodeEditorApplication::windowFontRatio());
-        if (ImGui::DragFloat(fmt::format("Velocity D [m/s]##{}", size_t(id)).c_str(), &_n_overrideValuesVelocity.at(2)))
+        if (ImGui::DragDouble(fmt::format("Velocity {} [m/s]##{}", ned ? "Down" : "ECEF Z", size_t(id)).c_str(), &_overrideValuesVelocity(2),
+                              1.0F, 0.0, 0.0, "%.4f"))
         {
             flow::ApplyChanges();
         }
@@ -341,9 +349,9 @@ void NAV::PosVelAttInitializer::guiConfig()
         ImGui::TableNextColumn();
         if (_overrideRollPitchYaw.at(0))
         {
-            ImGui::SetNextItemWidth(60 * gui::NodeEditorApplication::windowFontRatio());
-            if (ImGui::DragFloat(("##overrideValuesRollPitchYaw.at(0)" + std::to_string(size_t(id))).c_str(),
-                                 &_overrideValuesRollPitchYaw.at(0), 1.0F, -180.0F, 180.0F, "%.1f °"))
+            ImGui::SetNextItemWidth(80 * gui::NodeEditorApplication::windowFontRatio());
+            if (ImGui::DragDouble(("##overrideValuesRollPitchYaw.at(0)" + std::to_string(size_t(id))).c_str(),
+                                  &_overrideValuesRollPitchYaw.at(0), 1.0F, -180.0, 180.0, "%.3f °"))
             {
                 flow::ApplyChanges();
             }
@@ -358,9 +366,9 @@ void NAV::PosVelAttInitializer::guiConfig()
         ImGui::TableNextColumn();
         if (_overrideRollPitchYaw.at(1))
         {
-            ImGui::SetNextItemWidth(60 * gui::NodeEditorApplication::windowFontRatio());
-            if (ImGui::DragFloat(("##overrideValuesRollPitchYaw.at(1)" + std::to_string(size_t(id))).c_str(),
-                                 &_overrideValuesRollPitchYaw.at(1), 1.0F, -90.0F, 90.0F, "%.1f °"))
+            ImGui::SetNextItemWidth(80 * gui::NodeEditorApplication::windowFontRatio());
+            if (ImGui::DragDouble(("##overrideValuesRollPitchYaw.at(1)" + std::to_string(size_t(id))).c_str(),
+                                  &_overrideValuesRollPitchYaw.at(1), 1.0F, -90.0, 90.0, "%.3f °"))
             {
                 flow::ApplyChanges();
             }
@@ -375,9 +383,9 @@ void NAV::PosVelAttInitializer::guiConfig()
         ImGui::TableNextColumn();
         if (_overrideRollPitchYaw.at(2))
         {
-            ImGui::SetNextItemWidth(60 * gui::NodeEditorApplication::windowFontRatio());
-            if (ImGui::DragFloat(("##overrideValuesRollPitchYaw.at(2)" + std::to_string(size_t(id))).c_str(),
-                                 &_overrideValuesRollPitchYaw.at(2), 1.0F, -180.0F, 180.0F, "%.1f °"))
+            ImGui::SetNextItemWidth(80 * gui::NodeEditorApplication::windowFontRatio());
+            if (ImGui::DragDouble(("##overrideValuesRollPitchYaw.at(2)" + std::to_string(size_t(id))).c_str(),
+                                  &_overrideValuesRollPitchYaw.at(2), 1.0, -180.0, 180.0, "%.3f °"))
             {
                 flow::ApplyChanges();
             }
@@ -398,9 +406,9 @@ void NAV::PosVelAttInitializer::guiConfig()
     j["positionAccuracyThreshold"] = _positionAccuracyThreshold;
     j["velocityAccuracyThreshold"] = _velocityAccuracyThreshold;
     j["overridePosition"] = _overridePosition;
-    j["overrideValuesPosition_lla"] = _lla_overrideValuesPosition;
+    j["overrideValuesPosition"] = _overrideValuesPosition;
     j["overrideVelocity"] = _overrideVelocity;
-    j["n_overrideValuesVelocity"] = _n_overrideValuesVelocity;
+    j["overrideValuesVelocity"] = _overrideValuesVelocity;
     j["overrideRollPitchYaw"] = _overrideRollPitchYaw;
     j["overrideValuesRollPitchYaw"] = _overrideValuesRollPitchYaw;
 
@@ -431,17 +439,17 @@ void NAV::PosVelAttInitializer::restore(json const& j)
     {
         j.at("overridePosition").get_to(_overridePosition);
     }
-    if (j.contains("overrideValuesPosition_lla"))
+    if (j.contains("overrideValuesPosition"))
     {
-        j.at("overrideValuesPosition_lla").get_to(_lla_overrideValuesPosition);
+        j.at("overrideValuesPosition").get_to(_overrideValuesPosition);
     }
     if (j.contains("overrideVelocity"))
     {
         j.at("overrideVelocity").get_to(_overrideVelocity);
     }
-    if (j.contains("n_overrideValuesVelocity"))
+    if (j.contains("overrideValuesVelocity"))
     {
-        j.at("n_overrideValuesVelocity").get_to(_n_overrideValuesVelocity);
+        j.at("overrideValuesVelocity").get_to(_overrideValuesVelocity);
     }
     if (j.contains("overrideRollPitchYaw"))
     {
@@ -462,12 +470,12 @@ bool NAV::PosVelAttInitializer::initialize()
 
     _countAveragedAttitude = 0.0;
 
-    _lastPositionAccuracy = { std::numeric_limits<float>::infinity(),
-                              std::numeric_limits<float>::infinity(),
-                              std::numeric_limits<float>::infinity() };
-    _lastVelocityAccuracy = { std::numeric_limits<float>::infinity(),
-                              std::numeric_limits<float>::infinity(),
-                              std::numeric_limits<float>::infinity() };
+    _lastPositionAccuracy = { std::numeric_limits<double>::infinity(),
+                              std::numeric_limits<double>::infinity(),
+                              std::numeric_limits<double>::infinity() };
+    _lastVelocityAccuracy = { std::numeric_limits<double>::infinity(),
+                              std::numeric_limits<double>::infinity(),
+                              std::numeric_limits<double>::infinity() };
 
     _posVelAttInitialized = { false, false, false, false };
 
@@ -499,12 +507,16 @@ void NAV::PosVelAttInitializer::updatePins()
         }
     }
 
-    if (_overridePosition && _overrideVelocity && _overrideRollPitchYaw[0] && _overrideRollPitchYaw[1] && _overrideRollPitchYaw[2] && _inputPinIdxGNSS >= 0)
+    if (_overridePosition != PositionOverride::OFF
+        && _overrideVelocity != VelocityOverride::OFF
+        && _overrideRollPitchYaw[0] && _overrideRollPitchYaw[1] && _overrideRollPitchYaw[2] && _inputPinIdxGNSS >= 0)
     {
         nm::DeleteInputPin(inputPins.at(static_cast<size_t>(_inputPinIdxGNSS)));
         _inputPinIdxGNSS = -1;
     }
-    else if ((!_overridePosition || !_overrideVelocity || !_overrideRollPitchYaw[0] || !_overrideRollPitchYaw[1] || !_overrideRollPitchYaw[2]) && _inputPinIdxGNSS < 0)
+    else if ((_overridePosition == PositionOverride::OFF || _overrideVelocity == VelocityOverride::OFF
+              || !_overrideRollPitchYaw[0] || !_overrideRollPitchYaw[1] || !_overrideRollPitchYaw[2])
+             && _inputPinIdxGNSS < 0)
     {
         nm::CreateInputPin(this, "PosVelAttInit", Pin::Type::Flow,
                            { NAV::UbloxObs::type(), NAV::RtklibPosObs::type(), NAV::PosVelAtt::type(), NAV::PosVel::type(), NAV::Pos::type() },
@@ -525,8 +537,8 @@ void NAV::PosVelAttInitializer::updatePins()
 void NAV::PosVelAttInitializer::finalizeInit()
 {
     if (!_posVelAttInitialized.at(3)
-        && (_posVelAttInitialized.at(0) || _overridePosition)
-        && (_posVelAttInitialized.at(1) || _overrideVelocity)
+        && (_posVelAttInitialized.at(0) || _overridePosition != PositionOverride::OFF)
+        && (_posVelAttInitialized.at(1) || _overrideVelocity != VelocityOverride::OFF)
         && (_posVelAttInitialized.at(2) || (_overrideRollPitchYaw.at(0) && _overrideRollPitchYaw.at(1) && _overrideRollPitchYaw.at(2))))
     {
         for (auto& inputPin : inputPins)
@@ -535,15 +547,29 @@ void NAV::PosVelAttInitializer::finalizeInit()
         }
         _posVelAttInitialized.at(3) = true;
 
-        if (_overridePosition)
+        if (_overridePosition == PositionOverride::LLA)
         {
-            _e_initPosition = trafo::lla2ecef_WGS84(Eigen::Vector3d(deg2rad(_lla_overrideValuesPosition.at(0)),
-                                                                    deg2rad(_lla_overrideValuesPosition.at(1)),
-                                                                    _lla_overrideValuesPosition.at(2)));
+            _e_initPosition = trafo::lla2ecef_WGS84(Eigen::Vector3d(deg2rad(_overrideValuesPosition(0)),
+                                                                    deg2rad(_overrideValuesPosition(1)),
+                                                                    _overrideValuesPosition(2)));
         }
-        if (_overrideVelocity)
+        else if (_overridePosition == PositionOverride::ECEF)
         {
-            _n_initVelocity = Eigen::Vector3d(_n_overrideValuesVelocity.at(0), _n_overrideValuesVelocity.at(1), _n_overrideValuesVelocity.at(2));
+            _e_initPosition = _overrideValuesPosition;
+        }
+        [[maybe_unused]] auto lla_position = trafo::ecef2lla_WGS84(_e_initPosition);
+        LOG_INFO("{}: Position initialized to Lat {:3.12f} [°], Lon {:3.12f} [°], Alt {:4.3f} [m]", nameId(),
+                 rad2deg(lla_position.x()),
+                 rad2deg(lla_position.y()),
+                 lla_position.z());
+
+        if (_overrideVelocity == VelocityOverride::NED)
+        {
+            _n_initVelocity = _overrideValuesVelocity;
+        }
+        else if (_overrideVelocity == VelocityOverride::ECEF)
+        {
+            _n_initVelocity = trafo::n_Quat_e(lla_position(0), lla_position(1)) * _overrideValuesVelocity;
         }
 
         if (_overrideRollPitchYaw.at(0) && _overrideRollPitchYaw.at(1) && _overrideRollPitchYaw.at(2))
@@ -552,12 +578,6 @@ void NAV::PosVelAttInitializer::finalizeInit()
                                              deg2rad(_overrideValuesRollPitchYaw.at(1)),
                                              deg2rad(_overrideValuesRollPitchYaw.at(2)));
         }
-
-        [[maybe_unused]] auto lla_position = trafo::ecef2lla_WGS84(_e_initPosition);
-        LOG_INFO("{}: Position initialized to Lat {:3.12f} [°], Lon {:3.12f} [°], Alt {:4.3f} [m]", nameId(),
-                 rad2deg(lla_position.x()),
-                 rad2deg(lla_position.y()),
-                 lla_position.z());
 
         if (lla_position.z() < 0)
         {
@@ -847,16 +867,27 @@ std::shared_ptr<const NAV::NodeData> NAV::PosVelAttInitializer::pollPVASolution(
     }
 
     int initCount = 0;
-    if (_overridePosition)
+    if (_overridePosition == PositionOverride::LLA)
     {
-        _e_initPosition = trafo::lla2ecef_WGS84(Eigen::Vector3d(deg2rad(_lla_overrideValuesPosition.at(0)),
-                                                                deg2rad(_lla_overrideValuesPosition.at(1)),
-                                                                _lla_overrideValuesPosition.at(2)));
+        _e_initPosition = trafo::lla2ecef_WGS84(Eigen::Vector3d(deg2rad(_overrideValuesPosition(0)),
+                                                                deg2rad(_overrideValuesPosition(1)),
+                                                                _overrideValuesPosition(2)));
         ++initCount;
     }
-    if (_overrideVelocity)
+    else if (_overridePosition == PositionOverride::ECEF)
     {
-        _n_initVelocity = Eigen::Vector3d(_n_overrideValuesVelocity.at(0), _n_overrideValuesVelocity.at(1), _n_overrideValuesVelocity.at(2));
+        _e_initPosition = _overrideValuesPosition;
+        ++initCount;
+    }
+    if (_overrideVelocity == VelocityOverride::NED)
+    {
+        _n_initVelocity = _overrideValuesVelocity;
+        ++initCount;
+    }
+    else if (_overrideVelocity == VelocityOverride::ECEF)
+    {
+        auto pos_lla = trafo::ecef2lla_WGS84(_e_initPosition);
+        _n_initVelocity = trafo::n_Quat_e(pos_lla(0), pos_lla(1)) * _overrideValuesVelocity;
         ++initCount;
     }
 
@@ -883,17 +914,49 @@ std::shared_ptr<const NAV::NodeData> NAV::PosVelAttInitializer::pollPVASolution(
     return nullptr;
 }
 
-const char* NAV::PosVelAttInitializer::to_string(AttitudeMode attitudeMode)
+const char* NAV::to_string(NAV::PosVelAttInitializer::AttitudeMode attitudeMode)
 {
     switch (attitudeMode)
     {
-    case AttitudeMode::BOTH:
+    case NAV::PosVelAttInitializer::AttitudeMode::BOTH:
         return "Both";
-    case AttitudeMode::IMU:
+    case NAV::PosVelAttInitializer::AttitudeMode::IMU:
         return "IMU";
-    case AttitudeMode::GNSS:
+    case NAV::PosVelAttInitializer::AttitudeMode::GNSS:
         return "GNSS";
-    case AttitudeMode::COUNT:
+    case NAV::PosVelAttInitializer::AttitudeMode::COUNT:
+        return "";
+    }
+    return "";
+}
+
+const char* NAV::to_string(NAV::PosVelAttInitializer::PositionOverride posOverride)
+{
+    switch (posOverride)
+    {
+    case NAV::PosVelAttInitializer::PositionOverride::OFF:
+        return "OFF";
+    case NAV::PosVelAttInitializer::PositionOverride::ECEF:
+        return "ECEF";
+    case NAV::PosVelAttInitializer::PositionOverride::LLA:
+        return "LLA";
+    case NAV::PosVelAttInitializer::PositionOverride::COUNT:
+        return "";
+    }
+    return "";
+}
+
+const char* NAV::to_string(NAV::PosVelAttInitializer::VelocityOverride velOverride)
+{
+    switch (velOverride)
+    {
+    case NAV::PosVelAttInitializer::VelocityOverride::OFF:
+        return "OFF";
+    case NAV::PosVelAttInitializer::VelocityOverride::ECEF:
+        return "ECEF";
+    case NAV::PosVelAttInitializer::VelocityOverride::NED:
+        return "NED";
+    case NAV::PosVelAttInitializer::VelocityOverride::COUNT:
         return "";
     }
     return "";
