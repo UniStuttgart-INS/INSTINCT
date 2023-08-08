@@ -317,7 +317,7 @@ void testTCKFwithImuFile(const char* imuFilePath, const char* gnssFilePath, size
                           settings);
 }
 
-TEST_CASE("[TightlyCoupledKF][flow] Test flow with IMU data arriving before GNSS data", "[TightlyCoupledKF][flow][debug]")
+TEST_CASE("[TightlyCoupledKF][flow] Test flow with IMU data arriving before GNSS data", "[TightlyCoupledKF][flow]")
 {
     // GNSS: 166 messages, 166 messages with InsTime (first GNSS message at 0.004999876 s)
     size_t MESSAGE_COUNT_GNSS = 166;

@@ -259,8 +259,9 @@
         },
         "node-50": {
             "data": {
-                "codes": "00111100010001001110001111110000111100011101111111111111111111110101111111111111011101110000000001000000001",
+                "codes": "011111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000111010000011111",
                 "elevationMask": 0.0,
+                "estimatorType": 1,
                 "excludedSatellites": [],
                 "frequencies": 1,
                 "ionosphereModel": 0,
@@ -298,8 +299,7 @@
                             "waterVaporModel": 0
                         }
                     ]
-                },
-                "useWeightedLeastSquares": true
+                }
             },
             "enabled": true,
             "id": 50,

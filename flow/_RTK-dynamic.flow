@@ -169,7 +169,7 @@
                 "nNavInfoPins": 2,
                 "stdevAccel": [
                     1.0,
-                    0.0001
+                    0.01
                 ],
                 "stdevAccelUnits": 0,
                 "troposphereModels": {
@@ -1300,9 +1300,9 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "markerSize": 8.399999618530273,
+                                    "markerSize": 8.0,
                                     "markerStyle": 7,
-                                    "markerWeight": 2.1500000953674316,
+                                    "markerWeight": 2.0,
                                     "markers": false,
                                     "stride": 0,
                                     "thickness": 1.0
@@ -1399,9 +1399,9 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "markerSize": 7.699999809265137,
+                                    "markerSize": 8.0,
                                     "markerStyle": 7,
-                                    "markerWeight": 1.0,
+                                    "markerWeight": 2.0,
                                     "markers": false,
                                     "stride": 0,
                                     "thickness": 1.0
@@ -1456,7 +1456,7 @@
                             "y": 300.0
                         },
                         "title": "North/South Position",
-                        "xAxisFlags": 0,
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
                         "y1AxisLabel": "South/North [m]",
@@ -1467,7 +1467,7 @@
                             0,
                             0
                         ],
-                        "yAxisFlags": 0
+                        "yAxisFlags": 2048
                     },
                     {
                         "headerText": "East/West Position",
@@ -1966,9 +1966,9 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "markerSize": 1.0,
+                                    "markerSize": 8.0,
                                     "markerStyle": 7,
-                                    "markerWeight": 1.0,
+                                    "markerWeight": 2.0,
                                     "markers": false,
                                     "stride": 0,
                                     "thickness": 1.0
@@ -2056,7 +2056,7 @@
                             "y": 300.0
                         },
                         "title": "Velocity North",
-                        "xAxisFlags": 0,
+                        "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
                         "y1AxisLabel": "Velocity [m/s]",
@@ -2067,7 +2067,7 @@
                             0,
                             0
                         ],
-                        "yAxisFlags": 0
+                        "yAxisFlags": 2048
                     },
                     {
                         "headerText": "Number satellites",
@@ -2666,28 +2666,40 @@
             "data": {
                 "attitudeMode": 0,
                 "initDuration": 5.0,
-                "n_overrideValuesVelocity": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "overridePosition": true,
+                "overridePosition": 1,
                 "overrideRollPitchYaw": [
                     true,
                     true,
                     true
                 ],
-                "overrideValuesPosition_lla": [
-                    48.78073501586914,
-                    9.171992301940918,
-                    320.0
-                ],
+                "overrideValuesPosition": {
+                    "0": {
+                        "0": 4157177.0658
+                    },
+                    "1": {
+                        "0": 671230.4766
+                    },
+                    "2": {
+                        "0": 4774767.0311
+                    }
+                },
                 "overrideValuesRollPitchYaw": [
                     0.0,
                     0.0,
                     0.0
                 ],
-                "overrideVelocity": true,
+                "overrideValuesVelocity": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "overrideVelocity": 2,
                 "positionAccuracyThreshold": 10.0,
                 "velocityAccuracyThreshold": 10.0
             },

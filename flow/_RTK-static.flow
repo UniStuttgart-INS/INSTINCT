@@ -2367,28 +2367,40 @@
             "data": {
                 "attitudeMode": 0,
                 "initDuration": 5.0,
-                "n_overrideValuesVelocity": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "overridePosition": true,
+                "overrideValuesVelocity": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "overridePosition": 2,
                 "overrideRollPitchYaw": [
                     true,
                     true,
                     true
                 ],
-                "overrideValuesPosition_lla": [
-                    30.0,
-                    95.0,
-                    0.0
-                ],
+                "overrideValuesPosition": {
+                    "0": {
+                        "0": 30.0
+                    },
+                    "1": {
+                        "0": 95.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
                 "overrideValuesRollPitchYaw": [
                     0.0,
                     0.0,
                     0.0
                 ],
-                "overrideVelocity": true,
+                "overrideVelocity": 2,
                 "positionAccuracyThreshold": 10.0,
                 "velocityAccuracyThreshold": 10.0
             },
