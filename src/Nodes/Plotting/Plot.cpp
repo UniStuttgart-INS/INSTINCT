@@ -1733,6 +1733,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "QZSS system time drift difference StDev [s/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "IRNSS system time drift difference StDev [s/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "SBAS system time drift difference StDev [s/s]");
+            _pinData.at(pinIndex).dynamicDataStartIndex = static_cast<int>(i);
         }
         else if (startPin.dataIdentifier.front() == RtklibPosObs::type())
         {
@@ -2922,6 +2923,27 @@ void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, s
     addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(QZSS) ? obs->recvClk.sysDriftDiff.at(QZSS).stdDev : std::nan(""));   // QZSS system time drift difference StDev [s/s]
     addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(IRNSS) ? obs->recvClk.sysDriftDiff.at(IRNSS).stdDev : std::nan("")); // IRNSS system time drift difference StDev [s/s]
     addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(SBAS) ? obs->recvClk.sysDriftDiff.at(SBAS).stdDev : std::nan(""));   // SBAS system time drift difference StDev [s/s]
+
+    // Dynamic data
+    for (const auto& satData : obs->satData) { addData(pinIndex, fmt::format("SatPos ECEF X [m] {} ", satData.satSigId), satData.e_satPos.x()); }
+    for (const auto& satData : obs->satData) { addData(pinIndex, fmt::format("SatPos ECEF Y [m] {} ", satData.satSigId), satData.e_satPos.y()); }
+    for (const auto& satData : obs->satData) { addData(pinIndex, fmt::format("SatPos ECEF Z [m] {} ", satData.satSigId), satData.e_satPos.z()); }
+    for (const auto& satData : obs->satData) { addData(pinIndex, fmt::format("SatVel ECEF X [m/s] {}", satData.satSigId), satData.e_satVel.x()); }
+    for (const auto& satData : obs->satData) { addData(pinIndex, fmt::format("SatVel ECEF Y [m/s] {}", satData.satSigId), satData.e_satVel.y()); }
+    for (const auto& satData : obs->satData) { addData(pinIndex, fmt::format("SatVel ECEF Z [m/s] {}", satData.satSigId), satData.e_satVel.z()); }
+    for (const auto& satData : obs->satData) { addData(pinIndex, fmt::format("Satellite clock bias [s] {}", satData.satSigId), satData.satClkBias); }
+    for (const auto& satData : obs->satData) { addData(pinIndex, fmt::format("Satellite clock drift [s/s] {}", satData.satSigId), satData.satClkDrift); }
+    for (const auto& satData : obs->satData) { addData(pinIndex, fmt::format("Elevation [deg] {}", satData.satSigId), rad2deg(satData.satElevation)); }
+    for (const auto& satData : obs->satData) { addData(pinIndex, fmt::format("Azimuth [deg] {}", satData.satSigId), rad2deg(satData.satAzimuth)); }
+    for (const auto& satData : obs->satData) { addData(pinIndex, fmt::format("Unhealthy (skipped) {}", satData.satSigId), static_cast<int>(satData.skipped)); }
+    for (const auto& satData : obs->satData) { addData(pinIndex, fmt::format("Elevation mask triggered {}", satData.satSigId), static_cast<int>(satData.elevationMaskTriggered)); }
+    for (const auto& satData : obs->satData) { addData(pinIndex, fmt::format("Estimated Pseudorange [m] {}", satData.satSigId), satData.psrEst); }
+    for (const auto& satData : obs->satData) { addData(pinIndex, fmt::format("Estimated Pseudorange rate [m/s] {}", satData.satSigId), satData.psrRateEst.has_value() ? satData.psrRateEst.value() : std::nan("")); }
+    for (const auto& satData : obs->satData) { addData(pinIndex, fmt::format("Geometric distance [m] {}", satData.satSigId), satData.geometricDist); }
+    for (const auto& satData : obs->satData) { addData(pinIndex, fmt::format("Estimated Inter-system clock bias [m] {}", satData.satSigId), satData.dpsr_clkISB); }
+    for (const auto& satData : obs->satData) { addData(pinIndex, fmt::format("Estimated ionosphere propagation error [m] {}", satData.satSigId), satData.dpsr_I); }
+    for (const auto& satData : obs->satData) { addData(pinIndex, fmt::format("Estimated troposphere propagation error [m] {}", satData.satSigId), satData.dpsr_T); }
+    for (const auto& satData : obs->satData) { addData(pinIndex, fmt::format("Sagnac correction [m] {}", satData.satSigId), satData.dpsr_ie); }
 }
 
 void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs, size_t pinIndex)

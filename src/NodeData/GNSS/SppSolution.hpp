@@ -236,7 +236,7 @@ class SppSolution : public PosVel
         double dpsr_clkISB{ std::nan("") };   ///< Estimated Inter-system clock bias [m]
         double dpsr_I{ std::nan("") };        ///< Estimated ionosphere propagation error [m]
         double dpsr_T{ std::nan("") };        ///< Estimated troposphere propagation error [m]
-        double dpsr_ie{ std::nan("") };       ///< Sagnac correction  [m]
+        double dpsr_ie{ std::nan("") };       ///< Sagnac correction [m]
     };
 
     /// @brief Return the element with the identifier or a newly constructed one if it did not exist
