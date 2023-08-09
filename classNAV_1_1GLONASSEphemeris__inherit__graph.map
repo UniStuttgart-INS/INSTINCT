@@ -1,6 +1,9 @@
 <map id="NAV::GLONASSEphemeris" name="NAV::GLONASSEphemeris">
-<area shape="rect" id="node1" title="Broadcasted ephemeris message data." alt="" coords="95,505,330,817"/>
-<area shape="rect" id="node2" href="$classNAV_1_1SatNavData.html" title="Satellite Navigation data (to calculate SatNavData and clock)" alt="" coords="145,277,281,457"/>
-<area shape="rect" id="node3" href="$classNAV_1_1Clock.html" title="Abstract satellite clock information." alt="" coords="5,35,188,200"/>
-<area shape="rect" id="node4" href="$classNAV_1_1Orbit.html" title="Abstract satellite orbit information." alt="" coords="213,5,447,229"/>
+<area shape="rect" id="Node000001" title="Broadcasted ephemeris message data." alt="" coords="91,572,318,957"/>
+<area shape="rect" id="Node000002" href="$classNAV_1_1SatNavData.html" title="Satellite Navigation data (to calculate SatNavData and clock)" alt="" coords="141,319,269,524"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="207,538,207,572,202,572,202,538"/>
+<area shape="rect" id="Node000003" href="$classNAV_1_1Clock.html" title="Abstract satellite clock information." alt="" coords="5,45,180,231"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="137,243,167,317,162,319,132,244"/>
+<area shape="rect" id="Node000004" href="$classNAV_1_1Orbit.html" title="Abstract satellite orbit information." alt="" coords="205,5,431,271"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="262,285,248,320,243,318,257,283"/>
 </map>

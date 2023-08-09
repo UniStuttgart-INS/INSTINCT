@@ -1,4 +1,5 @@
 <map id="NAV::InputPin::IncomingLink" name="NAV::InputPin::IncomingLink">
-<area shape="rect" id="node1" title="Collection of information about the connected node and pin." alt="" coords="5,175,209,296"/>
-<area shape="rect" id="node2" href="$structNAV_1_1Pin_1_1Link.html" title="Link between two pins." alt="" coords="38,5,177,127"/>
+<area shape="rect" id="Node000001" title="Collection of information about the connected node and pin." alt="" coords="5,179,201,304"/>
+<area shape="rect" id="Node000002" href="$structNAV_1_1Pin_1_1Link.html" title="Link between two pins." alt="" coords="39,5,168,131"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="106,145,106,178,101,178,101,145"/>
 </map>

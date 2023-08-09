@@ -18,11 +18,15 @@ var searchData=
   ['r6a_15',['R6A',['../classNAV_1_1Code.html#af180d7a6aba068a798f8efc3799f8a6ca090d29c35ac9c5a5fb18d4965c3e585e',1,'NAV::Code']]],
   ['r6b_16',['R6B',['../classNAV_1_1Code.html#af180d7a6aba068a798f8efc3799f8a6ca970a626c6a5063badcb87bcbd004e937',1,'NAV::Code']]],
   ['r6x_17',['R6X',['../classNAV_1_1Code.html#af180d7a6aba068a798f8efc3799f8a6cad9a4a399a3ba6582ebef24bc49cbafbf',1,'NAV::Code']]],
-  ['real_5ftime_18',['REAL_TIME',['../TimeBase_8hpp.html#a5c85c03de6b1c2d12775311f31cced8faa211f45bf313bdaed8cb10ddb5fe42f6',1,'REAL_TIME()NAV::util::time'],['../classNAV_1_1Node.html#a3bf21eafea4312a9a11558c2180d31a6aa211f45bf313bdaed8cb10ddb5fe42f6',1,'NAV::Node::REAL_TIME()'],['../classNAV_1_1OutputPin.html#a3793349d41669847c1349a2b86b3af84aa211f45bf313bdaed8cb10ddb5fe42f6',1,'NAV::OutputPin::REAL_TIME()']]],
-  ['respectcase_19',['RespectCase',['../StringUtil_8hpp.html#a439b8f4f7776fc73ddbb78330d0f5828a7823bb65d3e0f9df35ec541298dbc5c2',1,'NAV::str']]],
-  ['rungekutta1_20',['RungeKutta1',['../NumericalIntegration_8hpp.html#ab3feb12b560d393d392c597cd47a0ebaa791e44f7cbf89248f313ef521141d506',1,'NAV']]],
-  ['rungekutta2_21',['RungeKutta2',['../NumericalIntegration_8hpp.html#ab3feb12b560d393d392c597cd47a0ebaa082cf2b93a893c3199ef04417bc6a30f',1,'NAV']]],
-  ['rungekutta3_22',['RungeKutta3',['../NumericalIntegration_8hpp.html#ab3feb12b560d393d392c597cd47a0ebaa772ae238ca6c1ac8c7825cfae28216f9',1,'NAV']]],
-  ['rungekutta4_23',['RungeKutta4',['../NumericalIntegration_8hpp.html#ab3feb12b560d393d392c597cd47a0ebaa2ad1d4b322353ee07200045be21ffb58',1,'NAV']]],
-  ['rxchannel_24',['RxChannel',['../structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a247c769adc4c27fc42453348df186a57a181440b45b22da791a9bf5e6c7fb96e7',1,'NAV::vendor::vectornav::RawMeas::SatRawElement']]]
+  ['rad2_5fs2_18',['rad2_s2',['../structNAV_1_1ImuFusion_1_1PinData.html#a3702b5d724039c41ce853b01193409eaa0a2b17a8bff7d8f903ffda8c0f306543',1,'NAV::ImuFusion::PinData']]],
+  ['rad2_5fs4_19',['rad2_s4',['../structNAV_1_1ImuFusion_1_1PinData.html#acadeab3237d157428548d5f28d758aacacd6bc0c13dd4371f902ae8d998e6a2f8',1,'NAV::ImuFusion::PinData']]],
+  ['rad_5fs_20',['rad_s',['../structNAV_1_1ImuFusion_1_1PinData.html#a3702b5d724039c41ce853b01193409eaa5048ae192d391e12c3401c38f2ffc497',1,'NAV::ImuFusion::PinData']]],
+  ['rad_5fs2_21',['rad_s2',['../structNAV_1_1ImuFusion_1_1PinData.html#acadeab3237d157428548d5f28d758aacad6ac8036a0bd18efad0ac6ac1725bd30',1,'NAV::ImuFusion::PinData']]],
+  ['real_5ftime_22',['REAL_TIME',['../classNAV_1_1OutputPin.html#a3793349d41669847c1349a2b86b3af84aa211f45bf313bdaed8cb10ddb5fe42f6',1,'NAV::OutputPin::REAL_TIME'],['../classNAV_1_1Node.html#a3bf21eafea4312a9a11558c2180d31a6aa211f45bf313bdaed8cb10ddb5fe42f6',1,'NAV::Node::REAL_TIME'],['../TimeBase_8hpp.html#a5c85c03de6b1c2d12775311f31cced8faa211f45bf313bdaed8cb10ddb5fe42f6',1,'REAL_TIMENAV::util::time']]],
+  ['respectcase_23',['RespectCase',['../StringUtil_8hpp.html#a439b8f4f7776fc73ddbb78330d0f5828a7823bb65d3e0f9df35ec541298dbc5c2',1,'NAV::str']]],
+  ['rungekutta1_24',['RungeKutta1',['../NumericalIntegration_8hpp.html#ab3feb12b560d393d392c597cd47a0ebaa791e44f7cbf89248f313ef521141d506',1,'NAV']]],
+  ['rungekutta2_25',['RungeKutta2',['../NumericalIntegration_8hpp.html#ab3feb12b560d393d392c597cd47a0ebaa082cf2b93a893c3199ef04417bc6a30f',1,'NAV']]],
+  ['rungekutta3_26',['RungeKutta3',['../NumericalIntegration_8hpp.html#ab3feb12b560d393d392c597cd47a0ebaa772ae238ca6c1ac8c7825cfae28216f9',1,'NAV']]],
+  ['rungekutta4_27',['RungeKutta4',['../NumericalIntegration_8hpp.html#ab3feb12b560d393d392c597cd47a0ebaa2ad1d4b322353ee07200045be21ffb58',1,'NAV']]],
+  ['rxchannel_28',['RxChannel',['../structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a247c769adc4c27fc42453348df186a57a181440b45b22da791a9bf5e6c7fb96e7',1,'NAV::vendor::vectornav::RawMeas::SatRawElement']]]
 ];

@@ -1,4 +1,5 @@
 <map id="NAV::Plot" name="NAV::Plot">
-<area shape="rect" id="node1" title="Plot node which plots all kind of observations." alt="" coords="48,424,195,677"/>
-<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,376"/>
+<area shape="rect" id="Node000001" title="Plot node which plots all kind of observations." alt="" coords="48,519,187,824"/>
+<area shape="rect" id="Node000002" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,229,471"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="120,484,120,518,115,518,115,484"/>
 </map>

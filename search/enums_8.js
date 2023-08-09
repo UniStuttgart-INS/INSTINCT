@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['linetype_0',['LineType',['../structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem_1_1Style.html#a27134cc2e67fbc7b0c3dbe7e0ca57fb9',1,'NAV::Plot::PlotInfo::PlotItem::Style']]]
+  ['jerkvarianceunit_0',['JerkVarianceUnit',['../structNAV_1_1ImuFusion_1_1PinData.html#a588ad6975e388fa2d238ec5fffe0f6c5',1,'NAV::ImuFusion::PinData']]]
 ];

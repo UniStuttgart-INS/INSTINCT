@@ -15,11 +15,11 @@ var ProcessNoise_8hpp =
     [ "n_Q_dr_dr", "ProcessNoise_8hpp.html#ae60234b030e7a93754666ea7eca093d9", null ],
     [ "n_Q_dr_dv", "ProcessNoise_8hpp.html#a6e2c1494f6fd58e59011ab87765ea9a5", null ],
     [ "n_Q_dr_psi", "ProcessNoise_8hpp.html#ab52124f662be373b9d39dc462aeeea97", null ],
-    [ "psdBiasVariation", "ProcessNoise_8hpp.html#aed731f65fe731a666d2fac61d16b645e", null ],
-    [ "psdNoise", "ProcessNoise_8hpp.html#ae848885873ef3d5a9bedfa2b4dccece7", null ],
+    [ "psdBiasGaussMarkov", "ProcessNoise_8hpp.html#a9bf8f89bc761b66f7b085cc9155e62be", null ],
     [ "Q_df_df", "ProcessNoise_8hpp.html#a2b8f362d4b65f5465206dd44c18291a2", null ],
     [ "Q_df_dv", "ProcessNoise_8hpp.html#a8480eb96aa7dc68da3a87dbeee0dfae9", null ],
     [ "Q_domega_domega", "ProcessNoise_8hpp.html#aae21131944fba50d98d4ecbaeb76fa9f", null ],
     [ "Q_domega_psi", "ProcessNoise_8hpp.html#a2b4a1019ba09a5e0eaca3e4b5b7f470c", null ],
+    [ "Q_gnss", "ProcessNoise_8hpp.html#ac1eb8f48cf64a84309ff6d0e00717184", null ],
     [ "Q_psi_psi", "ProcessNoise_8hpp.html#a8ebeaa3c5a938cb3cbd844e694e517d5", null ]
 ];

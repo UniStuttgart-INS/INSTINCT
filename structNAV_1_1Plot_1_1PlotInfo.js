@@ -16,8 +16,10 @@ var structNAV_1_1Plot_1_1PlotInfo =
     [ "visible", "structNAV_1_1Plot_1_1PlotInfo.html#a00468bb0bb25d88ee8c360c19bca040a", null ],
     [ "xAxisFlags", "structNAV_1_1Plot_1_1PlotInfo.html#a64880e9f1fbefd93a2624ccf68bc14ed", null ],
     [ "xAxisLabel", "structNAV_1_1Plot_1_1PlotInfo.html#aa58d550678f3b2d7d7edefa2ffa5dc3b", null ],
+    [ "xAxisScale", "structNAV_1_1Plot_1_1PlotInfo.html#ab5bc8bc940fc2a46338a0f56760529b9", null ],
     [ "y1AxisLabel", "structNAV_1_1Plot_1_1PlotInfo.html#ae3d76ef204bb53fb82c0ab461113600c", null ],
     [ "y2AxisLabel", "structNAV_1_1Plot_1_1PlotInfo.html#a14854c495cf5c4b5ebc55b28333ebf96", null ],
     [ "y3AxisLabel", "structNAV_1_1Plot_1_1PlotInfo.html#af15a8d654bcaa14f4eb29e46ad7e42a9", null ],
+    [ "yAxesScale", "structNAV_1_1Plot_1_1PlotInfo.html#a414602966475e8e5b36e063eee22154b", null ],
     [ "yAxisFlags", "structNAV_1_1Plot_1_1PlotInfo.html#ae59cbe800ffe13effeb11a107ac8e7b5", null ]
 ];

@@ -11,5 +11,8 @@ var classNAV_1_1PosVelAttInitializer =
     [ "restore", "classNAV_1_1PosVelAttInitializer.html#a9d8c0a96cf76b138dd7b45052bb18820", null ],
     [ "save", "classNAV_1_1PosVelAttInitializer.html#abb12302a16ab1b647a3b4e7a3f77b013", null ],
     [ "type", "classNAV_1_1PosVelAttInitializer.html#a7dc168cb1dc745b9a84d6c998a98440f", null ],
-    [ "typeStatic", "classNAV_1_1PosVelAttInitializer.html#a4e564bae71f63fe3c70f6ae0f03b6d8d", null ]
+    [ "typeStatic", "classNAV_1_1PosVelAttInitializer.html#a4e564bae71f63fe3c70f6ae0f03b6d8d", null ],
+    [ "to_string", "classNAV_1_1PosVelAttInitializer.html#a70fcc9cee5f22d18bbcdbdc48329f369", null ],
+    [ "to_string", "classNAV_1_1PosVelAttInitializer.html#a142d6dedaf620ef183085e9d8ab42c18", null ],
+    [ "to_string", "classNAV_1_1PosVelAttInitializer.html#ad54bb3a40adcfed19495f3fad5fb4643", null ]
 ];

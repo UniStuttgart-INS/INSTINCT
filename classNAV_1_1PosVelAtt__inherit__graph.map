@@ -1,7 +1,11 @@
 <map id="NAV::PosVelAtt" name="NAV::PosVelAtt">
-<area shape="rect" id="node1" title="Position, Velocity and Attitude Storage Class." alt="" coords="5,704,192,928"/>
-<area shape="rect" id="node5" href="$classNAV_1_1InertialNavSol.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="25,976,173,1068"/>
-<area shape="rect" id="node2" href="$classNAV_1_1PosVel.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="31,505,166,656"/>
-<area shape="rect" id="node3" href="$classNAV_1_1Pos.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="27,233,170,457"/>
-<area shape="rect" id="node4" href="$classNAV_1_1NodeData.html" title="Parent class for all data transmitted over Flow pins." alt="" coords="35,5,162,185"/>
+<area shape="rect" id="Node000001" title="Position, Velocity and Attitude Storage Class." alt="" coords="5,785,184,1051"/>
+<area shape="rect" id="Node000005" href="$classNAV_1_1InertialNavSol.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="25,1099,165,1184"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="97,1064,97,1099,92,1099,92,1064"/>
+<area shape="rect" id="Node000002" href="$classNAV_1_1PosVel.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="32,572,157,737"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="97,751,97,785,92,785,92,751"/>
+<area shape="rect" id="Node000003" href="$classNAV_1_1Pos.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="28,259,161,524"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="97,538,97,572,92,572,92,538"/>
+<area shape="rect" id="Node000004" href="$classNAV_1_1NodeData.html" title="Parent class for all data transmitted over Flow pins." alt="" coords="36,5,153,211"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="97,225,97,258,92,258,92,225"/>
 </map>

@@ -1,4 +1,5 @@
 <map id="NAV::RtklibPosConverter" name="NAV::RtklibPosConverter">
-<area shape="rect" id="node1" title="Convert RTKLib pos files into PosVel." alt="" coords="30,424,213,619"/>
-<area shape="rect" id="node2" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,376"/>
+<area shape="rect" id="Node000001" title="Convert RTKLib pos files into PosVel." alt="" coords="30,519,205,744"/>
+<area shape="rect" id="Node000002" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,229,471"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="120,485,120,518,115,518,115,485"/>
 </map>

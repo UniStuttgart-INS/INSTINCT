@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['e_0',['e',['../classNAV_1_1GalileoEphemeris.html#a2552d79e1aa32c48fc9d869a28b5daf9',1,'NAV::GalileoEphemeris::e()'],['../classNAV_1_1GPSEphemeris.html#a6f90ccd3e5a28beb1ceb88f56354c584',1,'NAV::GPSEphemeris::e()'],['../classNAV_1_1BDSEphemeris.html#a16e0c61464eb809d7196919db9aee304',1,'NAV::BDSEphemeris::e()']]],
+  ['e_0',['e',['../classNAV_1_1GalileoEphemeris.html#a2552d79e1aa32c48fc9d869a28b5daf9',1,'NAV::GalileoEphemeris::e'],['../classNAV_1_1GPSEphemeris.html#a6f90ccd3e5a28beb1ceb88f56354c584',1,'NAV::GPSEphemeris::e'],['../classNAV_1_1BDSEphemeris.html#a16e0c61464eb809d7196919db9aee304',1,'NAV::BDSEphemeris::e']]],
   ['e1b_5fdatavaliditystatus_1',['E1B_DataValidityStatus',['../structNAV_1_1GalileoEphemeris_1_1SvHealth.html#ad5c8ce7f64d09a7b5c9b948669f1e41e',1,'NAV::GalileoEphemeris::SvHealth']]],
   ['e1bc_5fsignalhealthstatus_2',['E1BC_SignalHealthStatus',['../structNAV_1_1GalileoEphemeris_1_1SvHealth.html#a57f52fe888ca79f6808d75be93ac219b',1,'NAV::GalileoEphemeris::SvHealth']]],
   ['e5a_5fdatavaliditystatus_3',['E5a_DataValidityStatus',['../structNAV_1_1GalileoEphemeris_1_1SvHealth.html#a5b425ab85a8883c524f637b8f9769977',1,'NAV::GalileoEphemeris::SvHealth']]],
@@ -9,9 +9,9 @@ var searchData=
   ['e5b_5fsignalhealthstatus_6',['E5b_SignalHealthStatus',['../structNAV_1_1GalileoEphemeris_1_1SvHealth.html#a08df38e8080e0b35be78afcad5c777ef',1,'NAV::GalileoEphemeris::SvHealth']]],
   ['e_5faccel_7',['e_accel',['../structNAV_1_1Orbit_1_1PosVelAccel.html#a6f17d0c00dc8493f851870a37a5f00f1',1,'NAV::Orbit::PosVelAccel']]],
   ['e_5fomega_5fie_8',['e_omega_ie',['../Constants_8hpp.html#ab10e9db27025a3237df8050116681b75',1,'NAV::InsConst']]],
-  ['e_5fpos_9',['e_pos',['../structNAV_1_1Orbit_1_1PosVel.html#aa7332cfbe3fa683022de373fd19fb63b',1,'NAV::Orbit::PosVel::e_pos()'],['../structNAV_1_1Orbit_1_1PosVelAccel.html#ae68d95155e3bba831e5544a36facf184',1,'NAV::Orbit::PosVelAccel::e_pos()'],['../structNAV_1_1Orbit_1_1Pos.html#a64ecdf24d37d30c6a88fe78acb13ce74',1,'NAV::Orbit::Pos::e_pos()']]],
-  ['e_5fsquared_10',['e_squared',['../namespaceNAV_1_1InsConst_1_1PZ90.html#aa705f51665306eb6712c132670714b38',1,'NAV::InsConst::PZ90::PZ90_11::e_squared()'],['../namespaceNAV_1_1InsConst_1_1GRS80.html#a8b1b6bb24b199e4694adfef3576262ab',1,'NAV::InsConst::GRS80::e_squared()'],['../namespaceNAV_1_1InsConst_1_1WGS84.html#aee2b2d86017f4302a16217e14d7580c2',1,'NAV::InsConst::WGS84::e_squared()']]],
-  ['e_5fvel_11',['e_vel',['../structNAV_1_1Orbit_1_1PosVel.html#a250906fcd03b6643547604baf198a74a',1,'NAV::Orbit::PosVel::e_vel()'],['../structNAV_1_1Orbit_1_1PosVelAccel.html#acd6bc09c66841dab04b36197abcf99c5',1,'NAV::Orbit::PosVelAccel::e_vel()']]],
+  ['e_5fpos_9',['e_pos',['../structNAV_1_1Orbit_1_1PosVel.html#aa7332cfbe3fa683022de373fd19fb63b',1,'NAV::Orbit::PosVel::e_pos'],['../structNAV_1_1Orbit_1_1PosVelAccel.html#ae68d95155e3bba831e5544a36facf184',1,'NAV::Orbit::PosVelAccel::e_pos'],['../structNAV_1_1Orbit_1_1Pos.html#a64ecdf24d37d30c6a88fe78acb13ce74',1,'NAV::Orbit::Pos::e_pos']]],
+  ['e_5fsquared_10',['e_squared',['../namespaceNAV_1_1InsConst_1_1PZ90.html#aa705f51665306eb6712c132670714b38',1,'NAV::InsConst::PZ90::PZ90_11::e_squared'],['../namespaceNAV_1_1InsConst_1_1GRS80.html#a8b1b6bb24b199e4694adfef3576262ab',1,'NAV::InsConst::GRS80::e_squared'],['../namespaceNAV_1_1InsConst_1_1WGS84.html#aee2b2d86017f4302a16217e14d7580c2',1,'NAV::InsConst::WGS84::e_squared']]],
+  ['e_5fvel_11',['e_vel',['../structNAV_1_1Orbit_1_1PosVel.html#a250906fcd03b6643547604baf198a74a',1,'NAV::Orbit::PosVel::e_vel'],['../structNAV_1_1Orbit_1_1PosVelAccel.html#acd6bc09c66841dab04b36197abcf99c5',1,'NAV::Orbit::PosVelAccel::e_vel']]],
   ['eastwest_12',['eastWest',['../structNAV_1_1CommonLog_1_1LocalPosition.html#ab9454b60a45ded170e1eac034424381c',1,'NAV::CommonLog::LocalPosition']]],
   ['ecefx_13',['ecefX',['../structNAV_1_1vendor_1_1ublox_1_1UbxNavPosecef.html#a9da2d8ab0b42e969a47680dc3d11765d',1,'NAV::vendor::ublox::UbxNavPosecef']]],
   ['ecefy_14',['ecefY',['../structNAV_1_1vendor_1_1ublox_1_1UbxNavPosecef.html#a100838ba08823c96269c5e5a329e88c1',1,'NAV::vendor::ublox::UbxNavPosecef']]],

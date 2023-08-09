@@ -1,7 +1,7 @@
 var searchData=
 [
   ['pin_0',['Pin',['../classNAV_1_1Pin.html',1,'NAV']]],
-  ['pindata_1',['PinData',['../structNAV_1_1Plot_1_1PinData.html',1,'NAV::Plot']]],
+  ['pindata_1',['PinData',['../structNAV_1_1ImuFusion_1_1PinData.html',1,'NAV::ImuFusion::PinData'],['../structNAV_1_1Plot_1_1PinData.html',1,'NAV::Plot::PinData']]],
   ['pininfo_2',['PinInfo',['../structNAV_1_1NodeRegistry_1_1PinInfo.html',1,'NAV::NodeRegistry']]],
   ['plot_3',['Plot',['../classNAV_1_1Plot.html',1,'NAV']]],
   ['plotdata_4',['PlotData',['../structNAV_1_1Plot_1_1PinData_1_1PlotData.html',1,'NAV::Plot::PinData']]],

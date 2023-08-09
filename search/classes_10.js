@@ -12,7 +12,7 @@ var searchData=
   ['scrollingbuffer_3c_20double_20_3e_9',['ScrollingBuffer&lt; double &gt;',['../classNAV_1_1ScrollingBuffer.html',1,'NAV']]],
   ['scrollingbuffer_3c_20std_3a_3astring_20_3e_10',['ScrollingBuffer&lt; std::string &gt;',['../classNAV_1_1ScrollingBuffer.html',1,'NAV']]],
   ['singlepointpositioning_11',['SinglePointPositioning',['../classNAV_1_1SinglePointPositioning.html',1,'NAV']]],
-  ['skydelnetworkstream_12',['SkydelNetworkStream',['../classNAV_1_1SkydelNetworkStream.html',1,'NAV']]],
+  ['skydelnetworkstream_12',['SkydelNetworkStream',['../classNAV_1_1experimental_1_1SkydelNetworkStream.html',1,'NAV::experimental']]],
   ['sppsolution_13',['SppSolution',['../classNAV_1_1SppSolution.html',1,'NAV']]],
   ['sppsolutionlogger_14',['SppSolutionLogger',['../classNAV_1_1SppSolutionLogger.html',1,'NAV']]],
   ['stringobs_15',['StringObs',['../classNAV_1_1StringObs.html',1,'NAV']]],

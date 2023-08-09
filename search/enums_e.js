@@ -1,8 +1,7 @@
 var searchData=
 [
-  ['temperaturemodel_0',['TemperatureModel',['../Temperature_8hpp.html#a5db7671d793d38b0024135b106b2a80c',1,'NAV']]],
-  ['timeeditformat_1',['TimeEditFormat',['../TimeEdit_8hpp.html#a9360d54a0a4dde862adc5cc169fbed71',1,'NAV::gui::widgets']]],
-  ['timesystem_5f_2',['TimeSystem_',['../TimeSystem_8hpp.html#a3356fa3cc3daa77e1a1ad447ced1f7d6',1,'NAV']]],
-  ['tropospheremodel_3',['TroposphereModel',['../Troposphere_8hpp.html#a1c4cbd6aa0755db3257ad569c052cff9',1,'NAV']]],
-  ['type_4',['Type',['../classNAV_1_1SatNavData.html#a8df84a20fa1c90edf3c88f47facabf6f',1,'NAV::SatNavData']]]
+  ['satellitesystem_5f_0',['SatelliteSystem_',['../SatelliteSystem_8hpp.html#af01e645814479c1179804a8d5ffb411e',1,'NAV']]],
+  ['satsys_1',['SatSys',['../VectorNavTypes_8hpp.html#a62e32a1bad2112cd23a8beddf30bd9c5',1,'NAV::vendor::vectornav']]],
+  ['signalhealthstatus_2',['SignalHealthStatus',['../structNAV_1_1GalileoEphemeris_1_1SvHealth.html#ada9e01487f6fe957e7cfea77073c47c0',1,'NAV::GalileoEphemeris::SvHealth']]],
+  ['state_3',['State',['../classNAV_1_1Node.html#a04c7d8fd52bb21f40d924a0b9a950534',1,'NAV::Node']]]
 ];

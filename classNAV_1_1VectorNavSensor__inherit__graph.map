@@ -1,6 +1,9 @@
 <map id="NAV::VectorNavSensor" name="NAV::VectorNavSensor">
-<area shape="rect" id="node1" title="Vector Nav Sensor Class." alt="" coords="123,696,293,964"/>
-<area shape="rect" id="node2" href="$classNAV_1_1Imu.html" title="Abstract IMU Class." alt="" coords="59,431,183,641"/>
-<area shape="rect" id="node3" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,237,376"/>
-<area shape="rect" id="node4" href="$classNAV_1_1UartSensor.html" title="Abstract Uart Sensor Class." alt="" coords="208,424,381,648"/>
+<area shape="rect" id="Node000001" title="Vector Nav Sensor Class." alt="" coords="119,832,281,1157"/>
+<area shape="rect" id="Node000002" href="$classNAV_1_1Imu.html" title="Abstract IMU Class." alt="" coords="59,529,175,774"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="153,787,163,831,158,833,147,788"/>
+<area shape="rect" id="Node000003" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,229,471"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="120,485,120,528,115,528,115,485"/>
+<area shape="rect" id="Node000004" href="$classNAV_1_1UartSensor.html" title="Abstract Uart Sensor Class." alt="" coords="200,519,365,784"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="250,798,242,832,237,831,245,797"/>
 </map>

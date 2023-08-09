@@ -1,5 +1,6 @@
 var hierarchy =
 [
+    [ "NAV::internal::all_t", "structNAV_1_1internal_1_1all__t.html", null ],
     [ "NAV::AtmosphereModels", "structNAV_1_1AtmosphereModels.html", null ],
     [ "NAV::vendor::vectornav::AttitudeOutputs", "structNAV_1_1vendor_1_1vectornav_1_1AttitudeOutputs.html", null ],
     [ "ax::NodeEditor::Utilities::BlueprintNodeBuilder", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html", null ],
@@ -29,6 +30,7 @@ var hierarchy =
     [ "NAV::CsvData", "classNAV_1_1CsvData.html", null ],
     [ "NAV::CubicSpline", "classNAV_1_1CubicSpline.html", null ],
     [ "NAV::Demo::DemoData", "structNAV_1_1Demo_1_1DemoData.html", null ],
+    [ "spdlog::sinks::dist_filter_sink< Mutex >", "classspdlog_1_1sinks_1_1dist__filter__sink.html", null ],
     [ "NAV::vendor::vectornav::DOP", "structNAV_1_1vendor_1_1vectornav_1_1DOP.html", null ],
     [ "NAV::vendor::emlid::EmlidUartSensor", "classNAV_1_1vendor_1_1emlid_1_1EmlidUartSensor.html", null ],
     [ "NAV::vendor::emlid::ErbDops", "structNAV_1_1vendor_1_1emlid_1_1ErbDops.html", null ],
@@ -84,6 +86,101 @@ var hierarchy =
     [ "NAV::InsTime_YMDHMS", "structNAV_1_1InsTime__YMDHMS.html", null ],
     [ "NAV::IonosphericCorrections", "classNAV_1_1IonosphericCorrections.html", null ],
     [ "NAV::KalmanFilter", "classNAV_1_1KalmanFilter.html", null ],
+    [ "NAV::KeyedKalmanFilter< Scalar, StateKeyType, MeasKeyType >", "classNAV_1_1KeyedKalmanFilter.html", null ],
+    [ "NAV::KeyedKalmanFilter< KFStates, KFMeas >", "classNAV_1_1KeyedKalmanFilter.html", null ],
+    [ "NAV::internal::KeyedMatrixStorage< Scalar, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixStorage.html", [
+      [ "NAV::internal::KeyedMatrixColsBase< Scalar, ColKeyType, Rows, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedMatrixColsBase.html", [
+        [ "NAV::internal::KeyedMatrixCols< Scalar, ColKeyType, Rows, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedMatrixCols_3_01Scalar_00_01ColKeyType_00_01Rows_00_01Eigen_1_1Dynamic_01_4.html", null ]
+      ] ],
+      [ "NAV::internal::KeyedMatrixColsBase< Scalar, StateKeyType, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixColsBase.html", null ],
+      [ "NAV::internal::KeyedMatrixColsBase< Scalar, MeasKeyType, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixColsBase.html", null ],
+      [ "NAV::internal::KeyedMatrixColsBase< KFStates, KFMeas, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixColsBase.html", null ],
+      [ "NAV::internal::KeyedMatrixColsBase< KFStates, MeasKeyType, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixColsBase.html", null ],
+      [ "NAV::internal::KeyedMatrixRowsBase< Scalar, RowKeyType, Eigen::Dynamic, Cols >", "classNAV_1_1internal_1_1KeyedMatrixRowsBase.html", [
+        [ "NAV::internal::KeyedMatrixRows< Scalar, RowKeyType, Eigen::Dynamic, Cols >", "classNAV_1_1internal_1_1KeyedMatrixRows_3_01Scalar_00_01RowKeyType_00_01Eigen_1_1Dynamic_00_01Cols_01_4.html", null ]
+      ] ],
+      [ "NAV::internal::KeyedMatrixRowsBase< Scalar, StateKeyType, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixRowsBase.html", null ],
+      [ "NAV::internal::KeyedMatrixRowsBase< Scalar, MeasKeyType, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixRowsBase.html", null ],
+      [ "NAV::internal::KeyedMatrixRowsBase< KFStates, KFMeas, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixRowsBase.html", null ],
+      [ "NAV::internal::KeyedMatrixRowsBase< KFStates, MeasKeyType, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixRowsBase.html", null ],
+      [ "NAV::internal::KeyedMatrixColsBase< Scalar, ColKeyType, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixColsBase.html", [
+        [ "NAV::internal::KeyedMatrixCols< Scalar, ColKeyType, 1, Cols >", "classNAV_1_1internal_1_1KeyedMatrixCols.html", [
+          [ "NAV::internal::KeyedRowVectorBase< Scalar, ColKeyType, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedRowVectorBase.html", [
+            [ "NAV::KeyedRowVector< Scalar, ColKeyType, Eigen::Dynamic >", "classNAV_1_1KeyedRowVector_3_01Scalar_00_01ColKeyType_00_01Eigen_1_1Dynamic_01_4.html", null ]
+          ] ],
+          [ "NAV::internal::KeyedRowVectorBase< Scalar, ColKeyType, Cols >", "classNAV_1_1internal_1_1KeyedRowVectorBase.html", [
+            [ "NAV::KeyedRowVector< Scalar, ColKeyType, Cols >", "classNAV_1_1KeyedRowVector.html", null ]
+          ] ]
+        ] ],
+        [ "NAV::internal::KeyedMatrixCols< Scalar, StateKeyType, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixCols.html", null ],
+        [ "NAV::internal::KeyedMatrixCols< Scalar, MeasKeyType, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixCols.html", null ],
+        [ "NAV::internal::KeyedMatrixCols< KFStates, KFMeas, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixCols.html", null ],
+        [ "NAV::internal::KeyedMatrixCols< KFStates, MeasKeyType, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixCols.html", null ],
+        [ "NAV::internal::KeyedMatrixCols< Scalar, ColKeyType, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixCols.html", [
+          [ "NAV::internal::KeyedMatrixBase< Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedMatrixBase.html", [
+            [ "NAV::KeyedMatrix< Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic >", "classNAV_1_1KeyedMatrix_3_01Scalar_00_01RowKeyType_00_01ColKeyType_00_01Eigen_1_1Dynamic_00_01Eigen_1_1Dynamic_01_4.html", null ]
+          ] ],
+          [ "NAV::internal::KeyedMatrixBase< Scalar, StateKeyType, StateKeyType, Eigen::Dynamic, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedMatrixBase.html", null ],
+          [ "NAV::internal::KeyedMatrixBase< Scalar, MeasKeyType, StateKeyType, Eigen::Dynamic, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedMatrixBase.html", null ],
+          [ "NAV::internal::KeyedMatrixBase< Scalar, MeasKeyType, MeasKeyType, Eigen::Dynamic, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedMatrixBase.html", null ],
+          [ "NAV::internal::KeyedMatrixBase< Scalar, StateKeyType, MeasKeyType, Eigen::Dynamic, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedMatrixBase.html", null ],
+          [ "NAV::internal::KeyedMatrixBase< KFStates, KFMeas, KFMeas, Eigen::Dynamic, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedMatrixBase.html", null ],
+          [ "NAV::internal::KeyedMatrixBase< KFStates, MeasKeyType, KFMeas, Eigen::Dynamic, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedMatrixBase.html", null ],
+          [ "NAV::internal::KeyedMatrixBase< KFStates, MeasKeyType, MeasKeyType, Eigen::Dynamic, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedMatrixBase.html", null ],
+          [ "NAV::internal::KeyedMatrixBase< KFStates, KFMeas, MeasKeyType, Eigen::Dynamic, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedMatrixBase.html", null ],
+          [ "NAV::internal::KeyedMatrixBase< Scalar, RowKeyType, ColKeyType, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixBase.html", [
+            [ "NAV::KeyedMatrix< Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic >< Scalar, StateKeyType, StateKeyType >", "classNAV_1_1KeyedMatrix_3_01Scalar_00_01RowKeyType_00_01ColKeyType_00_01Eigen_1_1Dynamic_00_01Eigen_1_1Dynamic_01_4.html", null ],
+            [ "NAV::KeyedMatrix< Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic >< Scalar, MeasKeyType, StateKeyType >", "classNAV_1_1KeyedMatrix_3_01Scalar_00_01RowKeyType_00_01ColKeyType_00_01Eigen_1_1Dynamic_00_01Eigen_1_1Dynamic_01_4.html", null ],
+            [ "NAV::KeyedMatrix< Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic >< Scalar, MeasKeyType, MeasKeyType >", "classNAV_1_1KeyedMatrix_3_01Scalar_00_01RowKeyType_00_01ColKeyType_00_01Eigen_1_1Dynamic_00_01Eigen_1_1Dynamic_01_4.html", null ],
+            [ "NAV::KeyedMatrix< Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic >< Scalar, StateKeyType, MeasKeyType >", "classNAV_1_1KeyedMatrix_3_01Scalar_00_01RowKeyType_00_01ColKeyType_00_01Eigen_1_1Dynamic_00_01Eigen_1_1Dynamic_01_4.html", null ],
+            [ "NAV::KeyedMatrix< Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic >< KFStates, KFMeas, KFMeas >", "classNAV_1_1KeyedMatrix_3_01Scalar_00_01RowKeyType_00_01ColKeyType_00_01Eigen_1_1Dynamic_00_01Eigen_1_1Dynamic_01_4.html", null ],
+            [ "NAV::KeyedMatrix< Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic >< KFStates, MeasKeyType, KFMeas >", "classNAV_1_1KeyedMatrix_3_01Scalar_00_01RowKeyType_00_01ColKeyType_00_01Eigen_1_1Dynamic_00_01Eigen_1_1Dynamic_01_4.html", null ],
+            [ "NAV::KeyedMatrix< Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic >< KFStates, MeasKeyType, MeasKeyType >", "classNAV_1_1KeyedMatrix_3_01Scalar_00_01RowKeyType_00_01ColKeyType_00_01Eigen_1_1Dynamic_00_01Eigen_1_1Dynamic_01_4.html", null ],
+            [ "NAV::KeyedMatrix< Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic >< KFStates, KFMeas, MeasKeyType >", "classNAV_1_1KeyedMatrix_3_01Scalar_00_01RowKeyType_00_01ColKeyType_00_01Eigen_1_1Dynamic_00_01Eigen_1_1Dynamic_01_4.html", null ],
+            [ "NAV::KeyedMatrix< Scalar, RowKeyType, ColKeyType, Rows, Cols >", "classNAV_1_1KeyedMatrix.html", null ]
+          ] ]
+        ] ]
+      ] ],
+      [ "NAV::internal::KeyedMatrixRowsBase< Scalar, RowKeyType, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixRowsBase.html", [
+        [ "NAV::internal::KeyedMatrixRows< Scalar, RowKeyType, Rows, 1 >", "classNAV_1_1internal_1_1KeyedMatrixRows.html", [
+          [ "NAV::internal::KeyedVectorBase< Scalar, RowKeyType, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedVectorBase.html", [
+            [ "NAV::KeyedVector< Scalar, RowKeyType, Eigen::Dynamic >", "classNAV_1_1KeyedVector_3_01Scalar_00_01RowKeyType_00_01Eigen_1_1Dynamic_01_4.html", null ]
+          ] ],
+          [ "NAV::internal::KeyedVectorBase< Scalar, RowKeyType, Rows >", "classNAV_1_1internal_1_1KeyedVectorBase.html", [
+            [ "NAV::KeyedVector< Scalar, RowKeyType, Eigen::Dynamic >< Scalar, StateKeyType >", "classNAV_1_1KeyedVector_3_01Scalar_00_01RowKeyType_00_01Eigen_1_1Dynamic_01_4.html", null ],
+            [ "NAV::KeyedVector< Scalar, RowKeyType, Eigen::Dynamic >< Scalar, MeasKeyType >", "classNAV_1_1KeyedVector_3_01Scalar_00_01RowKeyType_00_01Eigen_1_1Dynamic_01_4.html", null ],
+            [ "NAV::KeyedVector< Scalar, RowKeyType, Eigen::Dynamic >< KFStates, KFMeas >", "classNAV_1_1KeyedVector_3_01Scalar_00_01RowKeyType_00_01Eigen_1_1Dynamic_01_4.html", null ],
+            [ "NAV::KeyedVector< Scalar, RowKeyType, Eigen::Dynamic >< KFStates, MeasKeyType >", "classNAV_1_1KeyedVector_3_01Scalar_00_01RowKeyType_00_01Eigen_1_1Dynamic_01_4.html", null ],
+            [ "NAV::KeyedVector< Scalar, RowKeyType, Rows >", "classNAV_1_1KeyedVector.html", null ]
+          ] ]
+        ] ],
+        [ "NAV::internal::KeyedMatrixRows< Scalar, StateKeyType, Rows, 1 >", "classNAV_1_1internal_1_1KeyedMatrixRows.html", null ],
+        [ "NAV::internal::KeyedMatrixRows< Scalar, StateKeyType, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixRows.html", null ],
+        [ "NAV::internal::KeyedMatrixRows< Scalar, MeasKeyType, Rows, 1 >", "classNAV_1_1internal_1_1KeyedMatrixRows.html", null ],
+        [ "NAV::internal::KeyedMatrixRows< Scalar, MeasKeyType, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixRows.html", null ],
+        [ "NAV::internal::KeyedMatrixRows< KFStates, KFMeas, Rows, 1 >", "classNAV_1_1internal_1_1KeyedMatrixRows.html", null ],
+        [ "NAV::internal::KeyedMatrixRows< KFStates, KFMeas, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixRows.html", null ],
+        [ "NAV::internal::KeyedMatrixRows< KFStates, MeasKeyType, Rows, 1 >", "classNAV_1_1internal_1_1KeyedMatrixRows.html", null ],
+        [ "NAV::internal::KeyedMatrixRows< KFStates, MeasKeyType, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixRows.html", null ],
+        [ "NAV::internal::KeyedMatrixRows< Scalar, RowKeyType, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixRows.html", [
+          [ "NAV::internal::KeyedMatrixBase< Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedMatrixBase.html", null ],
+          [ "NAV::internal::KeyedMatrixBase< Scalar, StateKeyType, StateKeyType, Eigen::Dynamic, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedMatrixBase.html", null ],
+          [ "NAV::internal::KeyedMatrixBase< Scalar, MeasKeyType, StateKeyType, Eigen::Dynamic, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedMatrixBase.html", null ],
+          [ "NAV::internal::KeyedMatrixBase< Scalar, MeasKeyType, MeasKeyType, Eigen::Dynamic, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedMatrixBase.html", null ],
+          [ "NAV::internal::KeyedMatrixBase< Scalar, StateKeyType, MeasKeyType, Eigen::Dynamic, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedMatrixBase.html", null ],
+          [ "NAV::internal::KeyedMatrixBase< KFStates, KFMeas, KFMeas, Eigen::Dynamic, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedMatrixBase.html", null ],
+          [ "NAV::internal::KeyedMatrixBase< KFStates, MeasKeyType, KFMeas, Eigen::Dynamic, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedMatrixBase.html", null ],
+          [ "NAV::internal::KeyedMatrixBase< KFStates, MeasKeyType, MeasKeyType, Eigen::Dynamic, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedMatrixBase.html", null ],
+          [ "NAV::internal::KeyedMatrixBase< KFStates, KFMeas, MeasKeyType, Eigen::Dynamic, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedMatrixBase.html", null ],
+          [ "NAV::internal::KeyedVectorBase< Scalar, StateKeyType, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedVectorBase.html", null ],
+          [ "NAV::internal::KeyedVectorBase< Scalar, MeasKeyType, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedVectorBase.html", null ],
+          [ "NAV::internal::KeyedVectorBase< KFStates, KFMeas, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedVectorBase.html", null ],
+          [ "NAV::internal::KeyedVectorBase< KFStates, MeasKeyType, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedVectorBase.html", null ],
+          [ "NAV::internal::KeyedMatrixBase< Scalar, RowKeyType, ColKeyType, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixBase.html", null ]
+        ] ]
+      ] ]
+    ] ],
+    [ "NAV::internal::KeyedMatrixStorage< KFStates, Rows, Cols >", "classNAV_1_1internal_1_1KeyedMatrixStorage.html", null ],
     [ "NAV::Node::Kind", "structNAV_1_1Node_1_1Kind.html", null ],
     [ "NAV::Pin::Kind", "structNAV_1_1Pin_1_1Kind.html", null ],
     [ "NAV::vendor::kvh::KvhUartSensor", "classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html", null ],
@@ -110,7 +207,6 @@ var hierarchy =
     [ "NAV::Node", "classNAV_1_1Node.html", [
       [ "NAV::Combiner", "classNAV_1_1Combiner.html", null ],
       [ "NAV::CsvFile", "classNAV_1_1CsvFile.html", null ],
-      [ "NAV::Delay", "classNAV_1_1Delay.html", null ],
       [ "NAV::Demo", "classNAV_1_1Demo.html", null ],
       [ "NAV::EmlidFile", "classNAV_1_1EmlidFile.html", null ],
       [ "NAV::EmlidSensor", "classNAV_1_1EmlidSensor.html", null ],
@@ -118,14 +214,15 @@ var hierarchy =
       [ "NAV::GroupBox", "classNAV_1_1GroupBox.html", null ],
       [ "NAV::Imu", "classNAV_1_1Imu.html", [
         [ "NAV::ImuFile", "classNAV_1_1ImuFile.html", null ],
+        [ "NAV::ImuFusion", "classNAV_1_1ImuFusion.html", null ],
         [ "NAV::ImuSimulator", "classNAV_1_1ImuSimulator.html", null ],
         [ "NAV::KvhFile", "classNAV_1_1KvhFile.html", null ],
         [ "NAV::KvhSensor", "classNAV_1_1KvhSensor.html", null ],
         [ "NAV::Navio2Sensor", "classNAV_1_1Navio2Sensor.html", null ],
-        [ "NAV::SkydelNetworkStream", "classNAV_1_1SkydelNetworkStream.html", null ],
         [ "NAV::UlogFile", "classNAV_1_1UlogFile.html", null ],
         [ "NAV::VectorNavFile", "classNAV_1_1VectorNavFile.html", null ],
-        [ "NAV::VectorNavSensor", "classNAV_1_1VectorNavSensor.html", null ]
+        [ "NAV::VectorNavSensor", "classNAV_1_1VectorNavSensor.html", null ],
+        [ "NAV::experimental::SkydelNetworkStream", "classNAV_1_1experimental_1_1SkydelNetworkStream.html", null ]
       ] ],
       [ "NAV::ImuDataLogger", "classNAV_1_1ImuDataLogger.html", null ],
       [ "NAV::ImuIntegrator", "classNAV_1_1ImuIntegrator.html", null ],
@@ -143,14 +240,18 @@ var hierarchy =
       [ "NAV::RtklibPosFile", "classNAV_1_1RtklibPosFile.html", null ],
       [ "NAV::SinglePointPositioning", "classNAV_1_1SinglePointPositioning.html", null ],
       [ "NAV::SppSolutionLogger", "classNAV_1_1SppSolutionLogger.html", null ],
+      [ "NAV::TightlyCoupledKF", "classNAV_1_1TightlyCoupledKF.html", null ],
       [ "NAV::TimeWindow", "classNAV_1_1TimeWindow.html", null ],
       [ "NAV::UartDataLogger", "classNAV_1_1UartDataLogger.html", null ],
       [ "NAV::UartPacketConverter", "classNAV_1_1UartPacketConverter.html", null ],
       [ "NAV::UbloxFile", "classNAV_1_1UbloxFile.html", null ],
       [ "NAV::UbloxSensor", "classNAV_1_1UbloxSensor.html", null ],
+      [ "NAV::UdpRecv", "classNAV_1_1UdpRecv.html", null ],
+      [ "NAV::UdpSend", "classNAV_1_1UdpSend.html", null ],
       [ "NAV::VectorNavBinaryConverter", "classNAV_1_1VectorNavBinaryConverter.html", null ],
       [ "NAV::VectorNavDataLogger", "classNAV_1_1VectorNavDataLogger.html", null ],
-      [ "NAV::experimental::ARMA", "classNAV_1_1experimental_1_1ARMA.html", null ]
+      [ "NAV::experimental::ARMA", "classNAV_1_1experimental_1_1ARMA.html", null ],
+      [ "NAV::experimental::Delay", "classNAV_1_1experimental_1_1Delay.html", null ]
     ] ],
     [ "NAV::NodeData", "classNAV_1_1NodeData.html", [
       [ "NAV::EmlidObs", "classNAV_1_1EmlidObs.html", null ],
@@ -159,7 +260,9 @@ var hierarchy =
         [ "NAV::ImuObsWDelta", "classNAV_1_1ImuObsWDelta.html", null ],
         [ "NAV::KvhObs", "classNAV_1_1KvhObs.html", null ]
       ] ],
-      [ "NAV::LcKfInsGnssErrors", "classNAV_1_1LcKfInsGnssErrors.html", null ],
+      [ "NAV::LcKfInsGnssErrors", "classNAV_1_1LcKfInsGnssErrors.html", [
+        [ "NAV::TcKfInsGnssErrors", "classNAV_1_1TcKfInsGnssErrors.html", null ]
+      ] ],
       [ "NAV::Pos", "classNAV_1_1Pos.html", [
         [ "NAV::PosVel", "classNAV_1_1PosVel.html", [
           [ "NAV::PosVelAtt", "classNAV_1_1PosVelAtt.html", [
@@ -184,6 +287,7 @@ var hierarchy =
       [ "NAV::InputPin", "classNAV_1_1InputPin.html", null ],
       [ "NAV::OutputPin", "classNAV_1_1OutputPin.html", null ]
     ] ],
+    [ "NAV::ImuFusion::PinData", "structNAV_1_1ImuFusion_1_1PinData.html", null ],
     [ "NAV::Plot::PinData", "structNAV_1_1Plot_1_1PinData.html", null ],
     [ "NAV::NodeRegistry::PinInfo", "structNAV_1_1NodeRegistry_1_1PinInfo.html", null ],
     [ "NAV::Plot::PinData::PlotData", "structNAV_1_1Plot_1_1PinData_1_1PlotData.html", null ],

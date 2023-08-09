@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['qualityindicator_0',['QualityIndicator',['../structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html#ae16495b8f32ef5e3c93422bd99b99d59',1,'NAV::vendor::vectornav::SatInfo::SatInfoElement']]]
+  ['pintype_0',['PinType',['../structNAV_1_1Plot_1_1PinData.html#af5cb5f6b25b78422acbafb3ea9cccbf2',1,'NAV::Plot::PinData']]],
+  ['pressuremodel_1',['PressureModel',['../Pressure_8hpp.html#a455ac84c32458e04612c1c02e8bf8f42',1,'NAV']]]
 ];

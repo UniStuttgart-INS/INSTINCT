@@ -44,7 +44,7 @@ var searchData=
   ['bdt_41',['BDT',['../TimeSystem_8hpp.html#a3356fa3cc3daa77e1a1ad447ced1f7d6a398294058674126eedcf593d2d402c58',1,'NAV']]],
   ['beidouephemeris_42',['BeiDouEphemeris',['../classNAV_1_1SatNavData.html#a8df84a20fa1c90edf3c88f47facabf6fad0bd48c6f6d8b857cd0e3bbd3ae9bbcd',1,'NAV::SatNavData']]],
   ['beta_43',['Beta',['../classNAV_1_1IonosphericCorrections.html#a387d1004a5d80f019ad197e82c301feca6644318ad10089e266112072272a7617',1,'NAV::IonosphericCorrections']]],
-  ['binary_44',['BINARY',['../classNAV_1_1FileWriter.html#a39fe4e126e5c5669e123167b3e6cf623a98ad0e8750ae10ad556ed7a62affb452',1,'NAV::FileWriter::BINARY()'],['../classNAV_1_1FileReader.html#af2e5120198c08c760522fdccd1ac8c2eabab7b9439937fbc5374332f59762d419',1,'NAV::FileReader::BINARY()']]],
+  ['binary_44',['BINARY',['../classNAV_1_1FileWriter.html#a39fe4e126e5c5669e123167b3e6cf623a98ad0e8750ae10ad556ed7a62affb452',1,'NAV::FileWriter::BINARY'],['../classNAV_1_1FileReader.html#af2e5120198c08c760522fdccd1ac8c2eabab7b9439937fbc5374332f59762d419',1,'NAV::FileReader::BINARY']]],
   ['blueprint_45',['Blueprint',['../structNAV_1_1Node_1_1Kind.html#a7a07f8df7c0ef9ecbe2dc5ce3851b04aa34007f1aba1b8b2f9f28b034c02d3232',1,'NAV::Node::Kind']]],
-  ['bool_46',['Bool',['../structNAV_1_1Plot_1_1PinData.html#af5cb5f6b25b78422acbafb3ea9cccbf2ac26f15e86e3de4c398a8273272aba034',1,'NAV::Plot::PinData::Bool()'],['../structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07add6563ecb6a5326e51a96bb7a00af647',1,'NAV::Pin::Type::Bool()']]]
+  ['bool_46',['Bool',['../structNAV_1_1Plot_1_1PinData.html#af5cb5f6b25b78422acbafb3ea9cccbf2ac26f15e86e3de4c398a8273272aba034',1,'NAV::Plot::PinData::Bool'],['../structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07add6563ecb6a5326e51a96bb7a00af647',1,'NAV::Pin::Type::Bool']]]
 ];

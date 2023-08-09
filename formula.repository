@@ -673,8 +673,8 @@
       \mathbf{F}_{\dotup{\psi},\psi}^e     & \mathbf{0}_3                             & \mathbf{0}_3                             &    \mathbf{0}_3      &       \mathbf{C}_b^e       \\
       \mathbf{F}_{\delta \dotup{v},\psi}^e & \mathbf{F}_{\delta \dotup{v},\delta v}^e & \mathbf{F}_{\delta \dotup{v},\delta r}^e &    \mathbf{C}_b^e    &       \mathbf{0}_3         \\
       \mathbf{0}_3                         & \mathbf{I}_3                             & \mathbf{0}_3                             &    \mathbf{0}_3      &       \mathbf{0}_3         \\
-      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             & \boldsymbol{\beta}_f &       \mathbf{0}_3         \\
-      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             &    \mathbf{0}_3      &  \boldsymbol{\beta}_\omega \\
+      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             & -\boldsymbol{\beta}_f &       \mathbf{0}_3         \\
+      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             &    \mathbf{0}_3      &  -\boldsymbol{\beta}_\omega \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{F}$} (m-1-5.north east);
 
@@ -736,36 +736,37 @@
 \_form#153=1524x19:\begin{equation} \label{eq:eq-LCKF_e-random-walk}
   \dotup{x} = 0 + W(t)
 \end{equation}
-\_form#154=18x18:$ \sigma^2 $
-\_form#155=1689x28:\begin{equation} \label{eq:eq-LCKF_e-random-walk-S-noise}
-  \highlight[darkgray!20]{S_{ra,j}} = \sigma_{ra,j}^2 \tau_i, \qquad
-  \highlight[brown!20]{S_{rg,j}} = \sigma_{rg,j}^2 \tau_i, \qquad\qquad j \in x,y,z
+\_form#154=11x11:$\sigma$
+\_form#155=1675x28:\begin{equation} \label{eq:eq-LCKF_e-random-walk-S-noise}
+  \highlight[darkgray!20]{S_{ra,j}} = \sigma_{ra,j}, \qquad
+  \highlight[brown!20]{S_{rg,j}} = \sigma_{rg,j}, \qquad\qquad j \in x,y,z
 \end{equation}
 \_form#156=25x12:$ \sigma_{ra} $
 \_form#157=25x14:$ \sigma_{rg} $
-\_form#158=12x12:$ \tau_i $
+\_form#158=44x18:$\beta = 0$
 \_form#159=1537x19:\begin{equation} \label{eq:eq-LCKF_e-gauss-markov-1}
   \dotup{x} = -\beta x + W(t)
 \end{equation}
-\_form#160=1715x63:\begin{equation} \label{eq:eq-LCKF_e-random-walk-beta}
-  \highlight[magenta!20]{\boldsymbol{\beta}_f} = \begin{pmatrix} -\beta_{f} &      0     &      0     \\
-                                                                    0       & -\beta_{f} &      0     \\
-                                                                    0       &      0     & -\beta_{f} \end{pmatrix}, \qquad
-  \highlight[olive!20]{\boldsymbol{\beta}_\omega} = \begin{pmatrix} -\beta_{\omega} &        0        &        0        \\
-                                                                           0        & -\beta_{\omega} &        0        \\
-                                                                           0        &        0        & -\beta_{\omega} \end{pmatrix}
+\_form#160=11x18:$\beta$
+\_form#161=1675x63:\begin{equation} \label{eq:eq-LCKF_e-random-walk-beta}
+  \highlight[magenta!20]{\boldsymbol{\beta}_f} = \begin{pmatrix} \beta_{f} &      0     &      0     \\
+                                                                    0       & \beta_{f} &      0     \\
+                                                                    0       &      0     & \beta_{f} \end{pmatrix}, \qquad
+  \highlight[olive!20]{\boldsymbol{\beta}_\omega} = \begin{pmatrix} \beta_{\omega} &        0        &        0        \\
+                                                                           0        & \beta_{\omega} &        0        \\
+                                                                           0        &        0        & \beta_{\omega} \end{pmatrix}
 \end{equation}
-\_form#161=18x19:$ \beta_{f} $
-\_form#162=19x18:$ \beta_{\omega} $
-\_form#163=1692x47:\begin{equation} \label{eq:eq-LCKF_e-random-walk-S-bias}
-  \highlight[pink!20]{S_{bad,j}} = \frac{\sigma_{bad,j}^2}{\tau_{bad}} , \qquad
-  \highlight[lightgray!20]{S_{bgd,j}} = \frac{\sigma_{bgd,j}^2}{\tau_{bgd}}, \qquad\qquad j \in x,y,z
+\_form#162=18x19:$ \beta_{f} $
+\_form#163=19x18:$ \beta_{\omega} $
+\_form#164=1719x54:\begin{equation} \label{eq:eq-LCKF_e-random-walk-S-bias_Brown}
+  \highlight[pink!20]{S_{bad,j}} = \sqrt{\frac{2\sigma_{bad,j}^2}{\tau_{bad}}} , \qquad
+  \highlight[lightgray!20]{S_{bgd,j}} = \sqrt{\frac{2\sigma_{bgd,j}^2}{\tau_{bgd}}}, \qquad\qquad j \in x,y,z
 \end{equation}
-\_form#164=32x12:$ \sigma_{bad} $
-\_form#165=32x14:$ \sigma_{bgd} $
-\_form#166=30x12:$ \tau_{bad} $
-\_form#167=28x14:$ \tau_{bgd} $
-\_form#168=1622x138:\begin{equation} \label{eq:eq-LCKF_e-random-walk-noise-scale-matrix-W}
+\_form#165=32x12:$\sigma_{bad}$
+\_form#166=32x14:$\sigma_{bgd}$
+\_form#167=30x12:$ \tau_{bad} $
+\_form#168=28x14:$ \tau_{bgd} $
+\_form#169=1622x138:\begin{equation} \label{eq:eq-LCKF_e-random-walk-noise-scale-matrix-W}
   \mathbf{W} =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
@@ -785,30 +786,41 @@
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#169=140x18:$ \mathbf{S}_{rg}, \mathbf{S}_{ra}, \mathbf{S}_{bad}, \mathbf{S}_{bgd} $
-\_form#170=33x19:\eqref{eq:eq-LCKF_e-random-walk-S-noise}
-\_form#171=33x19:\eqref{eq:eq-LCKF_e-random-walk-S-bias}
-\_form#172=1526x19:\begin{equation} \label{eq:eq-LCKF_e-Phi-exp}
+\_form#170=140x18:$ \mathbf{S}_{rg}, \mathbf{S}_{ra}, \mathbf{S}_{bad}, \mathbf{S}_{bgd} $
+\_form#171=33x19:\eqref{eq:eq-LCKF_e-random-walk-S-noise}
+\_form#172=33x19:\eqref{eq:eq-LCKF_e-random-walk-S-bias}
+\_form#173=33x19:\eqref{eq:eq-LCKF_e-random-walk-S-bias_Brown}
+\_form#174=12x12:$\tau_i$
+\_form#175=1689x28:\begin{equation} \label{eq:eq-LCKF_e-random-walk-S-noise-Groves}
+  \highlight[darkgray!20]{S_{ra,j}} = \sigma_{ra,j}^2 \tau_i, \qquad
+  \highlight[brown!20]{S_{rg,j}} = \sigma_{rg,j}^2 \tau_i, \qquad\qquad j \in x,y,z
+\end{equation}
+\_form#176=12x12:$ \tau_i $
+\_form#177=1692x47:\begin{equation} \label{eq:eq-LCKF_e-random-walk-S-bias}
+  \highlight[pink!20]{S_{bad,j}} = \frac{\sigma_{bad,j}^2}{\tau_{bad}} , \qquad
+  \highlight[lightgray!20]{S_{bgd,j}} = \frac{\sigma_{bgd,j}^2}{\tau_{bgd}}, \qquad\qquad j \in x,y,z
+\end{equation}
+\_form#178=32x12:$ \sigma_{bad} $
+\_form#179=32x14:$ \sigma_{bgd} $
+\_form#180=30x12:$\tau_{bad} $
+\_form#181=12x14:$\mathbf{F}$
+\_form#182=1526x19:\begin{equation} \label{eq:eq-LCKF_e-Phi-exp}
   \boldsymbol{\Phi} = \exp{(\mathbf{F} \tau_s)}
 \end{equation}
-\_form#173=1659x51:\begin{equation} \label{eq:eq-LCKF_e-Phi-Taylor}
+\_form#183=1659x51:\begin{equation} \label{eq:eq-LCKF_e-Phi-Taylor}
   \boldsymbol{\Phi} = \sum_{r=0}^{\infty} \frac{\mathbf{F}^r \tau_s^r}{r!} = \mathbf{I} + \mathbf{F} \tau_s + \frac{1}{2} \mathbf{F}^2 \tau^2 + \frac{1}{6} \mathbf{F}^3 \tau_s^3 + \dots
 \end{equation}
-\_form#174=1750x47:\begin{equation} \label{eq:eq-LCKF_e-Q-exact}
+\_form#184=1750x47:\begin{equation} \label{eq:eq-LCKF_e-Q-exact}
   \mathbf{Q}_{k-1} = \int_{t_k - \tau_s}^{t_k} \exp{(\mathbf{F}_{k-1} (t_k-t'))} \mathbf{G}_{k-1} \mathbf{W}_{k-1} \mathbf{G}_{k-1}^T \exp{(\mathbf{F}_{k-1}^T (t_k-t'))} dt'
 \end{equation}
-\_form#175=1577x21:\begin{equation} \label{eq:eq-LCKF_e-Q-approx}
+\_form#185=1577x21:\begin{equation} \label{eq:eq-LCKF_e-Q-approx}
   \mathbf{Q}_{k-1} \approx \mathbf{G}_{k-1} \mathbf{W}_{k-1} \mathbf{G}_{k-1}^T \tau_s
 \end{equation}
-\_form#176=44x19:\eqref{eq:eq-LCKF_n-dynamicModel-short}
-\_form#177=44x19:\eqref{eq:eq-LCKF_n-random-walk-noise-scale-matrix-W}
-\_form#178=44x19:\eqref{eq:eq-LCKF_n-Q-exact}
-\_form#179=133x16:$ \text{\textcolor{red}{Add content here}} $
-\_form#180=1566x42:\begin{equation} \label{eq:eq-LCKF_e-Loan-A}
+\_form#186=1566x42:\begin{equation} \label{eq:eq-LCKF_e-Loan-A}
   \mathbf{A} = \begin{bmatrix} -\mathbf{F} & \mathbf{G} \mathbf{W} \mathbf{G}^T \\
                                 \mathbf{0} &            \mathbf{F}^T          \end{bmatrix} \Delta t
 \end{equation}
-\_form#181=1661x67:\begin{equation} \label{eq:eq-LCKF_e-Loan-B}
+\_form#187=1661x67:\begin{equation} \label{eq:eq-LCKF_e-Loan-B}
   \mathbf{B} = \text{expm}(\mathbf{A}) = \left[ \begin{array}{c;{2pt/2pt}c}
                                             \dots          & \mathbf{\Phi}^{-1} \mathbf{Q} \\[2mm]
                                             \hdashline[2pt/2pt] &                                  \\[-2mm]
@@ -816,13 +828,13 @@
                                        = \begin{bmatrix} \mathbf{B}_{11} & \mathbf{B}_{12} \\
                                                          \mathbf{B}_{21} & \mathbf{B}_{22} \end{bmatrix}
 \end{equation}
-\_form#182=1505x21:\begin{equation} \label{eq:eq-LCKF_e-Loan-Phi}
+\_form#188=1505x21:\begin{equation} \label{eq:eq-LCKF_e-Loan-Phi}
   \mathbf{\Phi} = \mathbf{B}_{22}^T
 \end{equation}
-\_form#183=1512x19:\begin{equation} \label{eq:eq-LCKF_e-Loan-Q}
+\_form#189=1512x19:\begin{equation} \label{eq:eq-LCKF_e-Loan-Q}
   \mathbf{Q} = \mathbf{\Phi} \mathbf{B}_{12}
 \end{equation}
-\_form#184=1670x233:\begin{equation} \label{eq:eq-LCKF_e-P}
+\_form#190=1670x233:\begin{equation} \label{eq:eq-LCKF_e-P}
   \mathbf{P}_0 =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
@@ -843,17 +855,17 @@
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#185=1647x44:\begin{equation} \label{eq:eq-LCKF_e-deltaz}
+\_form#191=1647x44:\begin{equation} \label{eq:eq-LCKF_e-deltaz}
   \boldsymbol{\delta} \mathbf{z}^e = \begin{pmatrix} \tilde{\mathbf{r}}_{b,G}^e - \hat{\mathbf{r}}_{b}^e - \mathbf{C}_b^e \mathbf{l}_{ba}^b \\
                                       \tilde{\mathbf{v}}^e_{G} - \hat{\mathbf{v}}^e - \mathbf{C}_b^e (\boldsymbol{\omega}_{ib}^b \times \mathbf{l}_{ba}^b) + \boldsymbol{\Omega}_{ie}^e \mathbf{C}_b^e \mathbf{l}_{ba}^b \end{pmatrix}
 \end{equation}
-\_form#186=14x14:$ G $
-\_form#187=19x21:$ \mathbf{l}_{ba}^b $
-\_form#188=1624x49:\begin{equation} \label{eq:eq-LCKF_e-H-general}
+\_form#192=14x14:$ G $
+\_form#193=19x21:$ \mathbf{l}_{ba}^b $
+\_form#194=1624x49:\begin{equation} \label{eq:eq-LCKF_e-H-general}
   \mathbf{H}_k = \left. \frac{\partial \mathbf{h} (\mathbf{x}, t_k)}{\partial \mathbf{x}} \right|_{x = \hat{x}_k^{-}}
                = \left. \frac{\partial \mathbf{z} (\mathbf{x}, t_k)}{\partial \mathbf{x}} \right|_{x = \hat{x}_k^{-}}
 \end{equation}
-\_form#189=1671x96:\begin{equation} \label{eq:eq-LCKF_e-H}
+\_form#195=1671x96:\begin{equation} \label{eq:eq-LCKF_e-H}
   \mathbf{H}^e =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
@@ -871,14 +883,14 @@
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#190=1636x110:\begin{equation} \label{eq:eq-LCKF_e-H-sub}
+\_form#196=1636x110:\begin{equation} \label{eq:eq-LCKF_e-H-sub}
 \begin{aligned}
   \highlight[green!20]{\mathbf{H}_{r,\delta \psi}^e}    &\approx \left[ (\mathbf{C}_b^e \mathbf{l}_{ba}^b) \times \right] \\
   \highlight[green!20]{\mathbf{H}_{v,\delta \psi}^e}    &\approx \left[ \left\{ \mathbf{C}_b^e (\boldsymbol{\omega}_{ib}^b \times \mathbf{l}_{ba}^b) - \boldsymbol{\Omega}_{ie}^e \mathbf{C}_b^e \mathbf{l}_{ba}^b \right\} \times \right] \\
   \highlight[orange!20]{\mathbf{H}_{v,\omega_{ib}^b}^e} &\approx \mathbf{C}_b^e \left[ \mathbf{l}_{ba}^b \times \right] \\
 \end{aligned}
 \end{equation}
-\_form#191=1670x96:\begin{equation} \label{eq:eq-LCKF_e-R}
+\_form#197=1670x96:\begin{equation} \label{eq:eq-LCKF_e-R}
   \mathbf{R} = E \left( (\mathbf{z} - \mathbf{H} \mathbf{x})(\mathbf{z} - \mathbf{H} \mathbf{x})^T \right) =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
@@ -893,74 +905,74 @@
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#192=1542x44:\begin{equation} \label{eq:eq-LCKF_e-correction-position-velocity}
+\_form#198=1542x44:\begin{equation} \label{eq:eq-LCKF_e-correction-position-velocity}
 \begin{aligned}
   \boldsymbol{r}^{e,+} &= \boldsymbol{r}^{e,-} - \boldsymbol{\delta r}^{e} \\
   \boldsymbol{v}^{e,+} &= \boldsymbol{v}^{e,-} - \boldsymbol{\delta v}^{e}
 \end{aligned}
 \end{equation}
-\_form#193=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-estimate-errors}
-\_form#194=1570x25:\begin{equation} \label{eq:eq-LCKF_e-correction-attitude}
+\_form#199=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-estimate-errors}
+\_form#200=1570x25:\begin{equation} \label{eq:eq-LCKF_e-correction-attitude}
   \mathbf{C}_b^{e,+} = (\mathbf{I}_3 - [\boldsymbol{\delta \psi} \times]) \mathbf{C}_b^{e,-}
 \end{equation}
-\_form#195=1563x53:\begin{equation} \label{eq:eq-LCKF_e-correction-accel-gyro-accumulate}
+\_form#201=1563x53:\begin{equation} \label{eq:eq-LCKF_e-correction-accel-gyro-accumulate}
 \begin{aligned}
   \boldsymbol{\Delta f}^{b,+}           &= \boldsymbol{\Delta f}^{b,-}           + \boldsymbol{\delta f}^b \\
   \boldsymbol{\Delta \omega}_{ib}^{b,+} &= \boldsymbol{\Delta \omega}_{ib}^{b,-} + \boldsymbol{\delta \omega}_{ib}^b
 \end{aligned}
 \end{equation}
-\_form#196=1568x53:\begin{equation} \label{eq:eq-LCKF_e-correction-accel-gyro}
+\_form#202=1568x53:\begin{equation} \label{eq:eq-LCKF_e-correction-accel-gyro}
 \begin{aligned}
   \boldsymbol{f}^{p,+}           &= \boldsymbol{f}^{p,-}           - \mathbf{C}_b^p \boldsymbol{\Delta f}^{b,+} \\
   \boldsymbol{\omega}_{ib}^{p,+} &= \boldsymbol{\omega}_{ib}^{p,-} - \mathbf{C}_b^p \boldsymbol{\Delta \omega}_{ib}^{b,+}
 \end{aligned}
 \end{equation}
-\_form#197=1507x19:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Position-timeDerivative}
+\_form#203=1507x19:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Position-timeDerivative}
   \mathbf{\dot{r}}_{eb}^e = \mathbf{v}_{eb}^e
 \end{equation}
-\_form#198=1531x26:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Position-differential}
+\_form#204=1531x26:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Position-differential}
   \boldsymbol{\delta}\mathbf{\dot{r}}_{eb}^e = \highlight[cyan!20]{\mathbf{I}_3} \cdot \mathbf{v}_{eb}^e
 \end{equation}
-\_form#199=21x23:$ \mathbf{\hat{C}}_b^e $
-\_form#200=21x18:$ \mathbf{C}_b^e $
-\_form#201=1512x23:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-estimate-true}
+\_form#205=21x23:$ \mathbf{\hat{C}}_b^e $
+\_form#206=21x18:$ \mathbf{C}_b^e $
+\_form#207=1512x23:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-estimate-true}
   \mathbf{\hat{C}}_b^e = \mathbf{B} \mathbf{C}_b^e
 \end{equation}
-\_form#202=14x14:$ \mathbf{B} $
-\_form#203=1603x63:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-transformation}
+\_form#208=14x14:$ \mathbf{B} $
+\_form#209=1603x63:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-transformation}
   \mathbf{B} = [\mathbf{I} - \mathbf{\Psi}], \quad \text{with}~ \mathbf{\Psi} = \begin{pmatrix} \delta\alpha \\ \delta\beta \\ \delta\gamma \end{pmatrix} \times
 \end{equation}
-\_form#204=16x14:$ \mathbf{\Psi} $
-\_form#205=74x19:$ \delta\alpha, \delta\beta, \delta\gamma $
-\_form#206=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-transformation}
-\_form#207=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-estimate-true}
-\_form#208=1533x23:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-estimate-errors}
+\_form#210=16x14:$ \mathbf{\Psi} $
+\_form#211=74x19:$ \delta\alpha, \delta\beta, \delta\gamma $
+\_form#212=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-transformation}
+\_form#213=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-estimate-true}
+\_form#214=1533x23:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-estimate-errors}
   \mathbf{\hat{C}}_b^e \approx [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e
 \end{equation}
-\_form#209=1533x23:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat}
+\_form#215=1533x23:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat}
   \mathbf{\Psi} = \mathbf{I} - \mathbf{\hat{C}}_b^e {\mathbf{C}_b^e}^T
 \end{equation}
-\_form#210=1563x26:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot}
+\_form#216=1563x26:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot}
   \mathbf{\dot{\Psi}} = -\mathbf{\dot{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle e$}} {\mathbf{C}_b^e}^T - \mathbf{\hat{C}}_b^e {\mathbf{\dot{C}}_b^e}\raise1.25ex\hbox{$\scriptstyle T$}
 \end{equation}
-\_form#211=135x23:$ \boldsymbol{\omega}_{\beta\alpha}^\gamma = \boldsymbol{\omega}_{\beta\delta}^\gamma + \boldsymbol{\omega}_{\delta\alpha}^\gamma $
-\_form#212=135x25:$ \mathbf{\Omega}_{\beta\alpha}^\delta = \mathbf{C}_\gamma^\delta \mathbf{\Omega}_{\beta\alpha}^\gamma \mathbf{C}_\delta^\gamma $
-\_form#213=1554x51:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-DCM-dot}
+\_form#217=135x23:$ \boldsymbol{\omega}_{\beta\alpha}^\gamma = \boldsymbol{\omega}_{\beta\delta}^\gamma + \boldsymbol{\omega}_{\delta\alpha}^\gamma $
+\_form#218=135x25:$ \mathbf{\Omega}_{\beta\alpha}^\delta = \mathbf{C}_\gamma^\delta \mathbf{\Omega}_{\beta\alpha}^\gamma \mathbf{C}_\delta^\gamma $
+\_form#219=1554x51:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-DCM-dot}
 \begin{aligned}
   \mathbf{\dot{C}}_b^e &= \mathbf{C}_b^e \boldsymbol{\Omega}_{eb}^b \\
                        &= \mathbf{C}_b^e \boldsymbol{\Omega}_{ib}^b - \boldsymbol{\Omega}_{ie}^e \mathbf{C}_b^e
 \end{aligned}
 \end{equation}
-\_form#214=26x21:$ \mathbf{\Omega}_{ib}^b $
-\_form#215=26x18:$ \mathbf{\Omega}_{ie}^e $
-\_form#216=21x26:$ \mathbf{\dot{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle e$}} $
-\_form#217=1554x26:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-DCM-dot-estimated}
+\_form#220=26x21:$ \mathbf{\Omega}_{ib}^b $
+\_form#221=26x18:$ \mathbf{\Omega}_{ie}^e $
+\_form#222=21x26:$ \mathbf{\dot{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle e$}} $
+\_form#223=1554x26:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-DCM-dot-estimated}
   \mathbf{\dot{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle e$}} = \mathbf{\hat{C}}_b^e \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\hat{C}}_b^e
 \end{equation}
-\_form#218=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-DCM-dot}
-\_form#219=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-DCM-dot-estimated}
-\_form#220=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot}
-\_form#221=1692x91:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc1}
+\_form#224=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-DCM-dot}
+\_form#225=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-DCM-dot-estimated}
+\_form#226=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot}
+\_form#227=1692x91:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc1}
 \begin{aligned}
   \mathbf{\dot{\Psi}} &= -(\mathbf{\hat{C}}_b^e \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\hat{C}}_b^e) {\mathbf{C}_b^e}^T
                          - \mathbf{\hat{C}}_b^e (\mathbf{C}_b^e \mathbf{\Omega}_{ib}^b - \mathbf{\Omega}_{ie}^e \mathbf{C}_b^e)^T \\
@@ -973,8 +985,8 @@
                          - \mathbf{\hat{C}}_b^e {\mathbf{C}_b^e}^T \mathbf{\Omega}_{ie}^e
 \end{aligned}
 \end{equation}
-\_form#222=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc1}
-\_form#223=1759x109:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc2}
+\_form#228=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc1}
+\_form#229=1759x109:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc2}
 \begin{aligned}
   \mathbf{\dot{\Psi}} &= - [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e \left[ \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b \right] {\mathbf{C}_b^e}^T
                          + \mathbf{\hat{\Omega}}_{ie}^e [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e {\mathbf{C}_b^e}^T
@@ -987,20 +999,20 @@
                             - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\Psi} + \mathbf{\Psi} \mathbf{\Omega}_{ie}^e
 \end{aligned}
 \end{equation}
-\_form#224=135x23:$ \boldsymbol{\delta}\mathbf{\Omega}_{ie}^e = \mathbf{\hat{\Omega}}_{ie}^e - \mathbf{\Omega}_{ie}^e $
-\_form#225=133x23:$ \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b = \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b $
-\_form#226=1629x23:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot-final}
+\_form#230=135x23:$ \boldsymbol{\delta}\mathbf{\Omega}_{ie}^e = \mathbf{\hat{\Omega}}_{ie}^e - \mathbf{\Omega}_{ie}^e $
+\_form#231=133x23:$ \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b = \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b $
+\_form#232=1629x23:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot-final}
   \mathbf{\dot{\Psi}} \approx \mathbf{\Psi} \mathbf{\Omega}_{ie}^e - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\Psi}
                               + \boldsymbol{\delta}\mathbf{\Omega}_{ie}^e
                               - \mathbf{C}_b^e \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b {\mathbf{C}_b^e}^T
 \end{equation}
-\_form#227=1738x23:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-element-comp}
+\_form#233=1738x23:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-element-comp}
   \boldsymbol{\psi} \times = \mathbf{\Psi} \qquad\quad
   \boldsymbol{\omega}_{ie}^e \times = \mathbf{\Omega}_{ie}^e \qquad\quad
   \boldsymbol{\delta \omega}_{ie}^e \times = \boldsymbol{\delta}\mathbf{\Omega}_{ie}^e \qquad\quad
   \boldsymbol{\delta \omega}_{ib}^b \times = \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b
 \end{equation}
-\_form#228=1617x130:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-differential}
+\_form#234=1617x130:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-differential}
 \begin{aligned}
   \boldsymbol{\dot{\psi}} &\approx \highlight[green!20]{-\boldsymbol{\omega}_{ie}^e \times} \boldsymbol{\psi}
                                    + \overbrace{\boldsymbol{\delta \omega}_{ie}^e}^{= 0}
@@ -1009,26 +1021,26 @@
                              \highlight[orange!20]{- \mathbf{C}_b^e} \boldsymbol{\delta \omega}_{ib}^b \\
 \end{aligned}
 \end{equation}
-\_form#229=1586x67:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative}
+\_form#235=1586x67:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative}
   \boldsymbol{\dot{v}}^e
       = \overbrace{\boldsymbol{f}^e}^{\hidewidth\text{measured}\hidewidth}
         -\ \underbrace{2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e}_{\hidewidth\text{coriolis acceleration}\hidewidth}
         +\ \overbrace{\mathbf{g}^e}^{\hidewidth\text{gravity}\hidewidth}
 \end{equation}
-\_form#230=19x19:$ \boldsymbol{f}^e $
-\_form#231=25x18:$ \boldsymbol{\omega}_{ie}^e $
-\_form#232=18x18:$ \mathbf{g}^e $
-\_form#233=23x18:$ \boldsymbol{\gamma}_{ib}^e $
-\_form#234=131x19:$ -\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{r}^e ] $
-\_form#235=1570x25:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-estimate}
+\_form#236=19x19:$ \boldsymbol{f}^e $
+\_form#237=25x18:$ \boldsymbol{\omega}_{ie}^e $
+\_form#238=18x18:$ \mathbf{g}^e $
+\_form#239=23x18:$ \boldsymbol{\gamma}_{ib}^e $
+\_form#240=131x19:$ -\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{r}^e ] $
+\_form#241=1570x25:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-estimate}
   \boldsymbol{\dot{\hat{v}}}^{\raise-0.45ex\hbox{$\scriptstyle e$}}
       = \boldsymbol{\hat{f}}^e
       - 2 \boldsymbol{\hat{\omega}}_{ie}^e \times \boldsymbol{\hat{v}}_e^e
       + \mathbf{\hat{g}}^e
 \end{equation}
-\_form#236=44x19:\eqref{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative}
-\_form#237=44x19:\eqref{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-estimate}
-\_form#238=1684x56:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-differential}
+\_form#242=44x19:\eqref{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative}
+\_form#243=44x19:\eqref{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-estimate}
+\_form#244=1684x56:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-differential}
 \begin{aligned}
   \boldsymbol{\delta} \boldsymbol{\dot{v}}^e &= \boldsymbol{\dot{\hat{v}}}^{\raise-0.45ex\hbox{$\scriptstyle e$}} - \boldsymbol{\dot{v}}^e \\
                                 &= \mathbf{\hat{C}}_b^e \boldsymbol{\hat{f}}^b
@@ -1039,12 +1051,12 @@
                                        - \mathbf{g}^e
 \end{aligned}
 \end{equation}
-\_form#239=121x23:$ \mathbf{\hat{C}}_b^e \approx [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e $
-\_form#240=110x25:$ \boldsymbol{\delta} \boldsymbol{f}^b = \boldsymbol{\hat{f}}^b - \boldsymbol{f}^b $
-\_form#241=109x16:$ \boldsymbol{\delta} \boldsymbol{v}^e = \boldsymbol{\hat{v}}^e - \boldsymbol{v}^e $
-\_form#242=163x19:$ \boldsymbol{\delta} \boldsymbol{\omega}_{ie}^e = \boldsymbol{\hat{\omega}}_{ie}^e - \boldsymbol{\omega}_{ie}^e = 0 $
-\_form#243=107x19:$ \boldsymbol{\delta} \mathbf{g}^e = \mathbf{\hat{g}}^e - \mathbf{g}^e $
-\_form#244=1708x133:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-differential-transformation}
+\_form#245=121x23:$ \mathbf{\hat{C}}_b^e \approx [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e $
+\_form#246=110x25:$ \boldsymbol{\delta} \boldsymbol{f}^b = \boldsymbol{\hat{f}}^b - \boldsymbol{f}^b $
+\_form#247=109x16:$ \boldsymbol{\delta} \boldsymbol{v}^e = \boldsymbol{\hat{v}}^e - \boldsymbol{v}^e $
+\_form#248=163x19:$ \boldsymbol{\delta} \boldsymbol{\omega}_{ie}^e = \boldsymbol{\hat{\omega}}_{ie}^e - \boldsymbol{\omega}_{ie}^e = 0 $
+\_form#249=107x19:$ \boldsymbol{\delta} \mathbf{g}^e = \mathbf{\hat{g}}^e - \mathbf{g}^e $
+\_form#250=1708x133:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-differential-transformation}
 \begin{aligned}
   \boldsymbol{\delta \dot{v}}^e &= [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e \boldsymbol{\hat{f}}^b
                                        - \mathbf{C}_b^e \boldsymbol{f}^b
@@ -1066,15 +1078,15 @@
                                    + \boldsymbol{\delta} \mathbf{g}^e \\
 \end{aligned}
 \end{equation}
-\_form#245=96x23:$ \boldsymbol{\delta f}^b \times \boldsymbol{\psi} \approx 0 $
-\_form#246=1642x30:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-differential-transformation-neglect}
+\_form#251=96x23:$ \boldsymbol{\delta f}^b \times \boldsymbol{\psi} \approx 0 $
+\_form#252=1642x30:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-differential-transformation-neglect}
 \renewcommand*{\arraystretch}{1.9}
   \boldsymbol{\delta \dot{v}}^e \approx \highlight[purple!20]{\boldsymbol{f}^e \times} \boldsymbol{\psi}
                                    + \highlight[red!20]{\mathbf{C}_b^e} \boldsymbol{\delta f}^b
                                    \highlight[blue!20]{- 2 \boldsymbol{\omega}_{ie}^e \times} \boldsymbol{\delta v}^e
                                    + \boldsymbol{\delta} \mathbf{g}^e
 \end{equation}
-\_form#247=1708x70:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-gravityError}
+\_form#253=1708x70:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-gravityError}
 \begin{aligned}
   \boldsymbol{\delta} \mathbf{g}^e = \overbrace{\boldsymbol{\hat{\gamma}}_{ib}^e - \boldsymbol{\gamma}_{ib}^e}^{\hidewidth\text{gravitation error}\hidewidth}
                                       - \underbrace{\boldsymbol{\Omega}_{ie}^e \boldsymbol{\Omega}_{ie}^e \boldsymbol{\delta} \mathbf{r}_{eb}^e}_{\hidewidth\text{centrifugal acceleration error}\hidewidth}
@@ -1082,8 +1094,8 @@
                                            - \boldsymbol{\Omega}_{ie}^e \boldsymbol{\Omega}_{ie}^e \boldsymbol{\delta} \mathbf{r}_{eb}^e
 \end{aligned}
 \end{equation}
-\_form#248=70x18:$ h << r_{eS}^e $
-\_form#249=1790x133:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-final}
+\_form#254=70x18:$ h << r_{eS}^e $
+\_form#255=1790x133:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-final}
 \renewcommand*{\arraystretch}{1.9}
   \boldsymbol{\delta \dot{v}}^e \approx \highlight[purple!20]{\boldsymbol{f}^e \times} \boldsymbol{\psi}
                                    + \highlight[red!20]{\mathbf{C}_b^e} \boldsymbol{\delta f}^b
@@ -1091,7 +1103,7 @@
                                    \highlight[violet!20]{- \left(  \dfrac{2 \boldsymbol{\gamma}_{ib}^e}{r_{eS}^e} \dfrac{{\mathbf{r}_{eb}^e}^T}{\left| \mathbf{r}_{eb}^e \right|}
                                                                  + \boldsymbol{\Omega}_{ie}^e \boldsymbol{\Omega}_{ie}^e \right)} \boldsymbol{\delta} \mathbf{r}_{eb}^e
 \end{equation}
-\_form#250=1752x207:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-short}
+\_form#256=1752x207:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-short}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.4em] {
       \boldsymbol{\delta \dot{\psi}} \\
@@ -1157,7 +1169,7 @@
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#251=2319x716:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix}
+\_form#257=2319x716:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=1.5em,align=center,minimum height=2.3em,anchor=center},row sep=0.3em, column sep=0.4em,] {
@@ -1252,14 +1264,14 @@
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#252=61x33:$ \highlight[yellow!20]{\mathbf{F}_{\delta \dotup{\psi},\delta v}^n} $
-\_form#253=61x33:$ \highlight[lime!20]{\mathbf{F}_{\delta \dotup{\psi},\delta r}^n} $
-\_form#254=63x33:$ \highlight[orange!20]{\mathbf{F}_{\delta \dotup{\psi},\delta \omega}^n} $
-\_form#255=61x32:$ \highlight[purple!20]{\mathbf{F}_{\delta \dotup{v},\delta \psi}^n} $
-\_form#256=1549x19:\begin{equation} \label{eq:eq-LCKF_n-dynamicModel}
+\_form#258=61x33:$ \highlight[yellow!20]{\mathbf{F}_{\delta \dotup{\psi},\delta v}^n} $
+\_form#259=61x33:$ \highlight[lime!20]{\mathbf{F}_{\delta \dotup{\psi},\delta r}^n} $
+\_form#260=63x33:$ \highlight[orange!20]{\mathbf{F}_{\delta \dotup{\psi},\delta \omega}^n} $
+\_form#261=61x32:$ \highlight[purple!20]{\mathbf{F}_{\delta \dotup{v},\delta \psi}^n} $
+\_form#262=1549x19:\begin{equation} \label{eq:eq-LCKF_n-dynamicModel}
   \boldsymbol{\delta} \mathbf{\dot{x}} = \mathbf{F} \cdot \boldsymbol{\delta} \mathbf{x} + \mathbf{G} \cdot \mathbf{w}
 \end{equation}
-\_form#257=1902x214:\begin{equation} \label{eq:eq-LCKF_n-dynamicModel-short}
+\_form#263=1902x214:\begin{equation} \label{eq:eq-LCKF_n-dynamicModel-short}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.4em] {
       \boldsymbol{\delta \dot{\psi}} \\
@@ -1286,8 +1298,8 @@
       \mathbf{F}_{\delta \dotup{\psi},\delta \psi}^n & \mathbf{F}_{\delta \dotup{\psi},\delta v}^n & \mathbf{F}_{\delta \dotup{\psi},\delta r}^n &    \mathbf{0}_3      &       \mathbf{C}_b^n      \\
       \mathbf{F}_{\delta \dotup{v},\delta \psi}^n    & \mathbf{F}_{\delta \dotup{v},\delta v}^n    & \mathbf{F}_{\delta \dotup{v},\delta r}^n    &    \mathbf{C}_b^n    &       \mathbf{0}_3        \\
       \mathbf{0}_3                                   & \mathbf{F}_{\delta \dotup{r},\delta v}^n    & \mathbf{F}_{\delta \dotup{r},\delta r}^n    &    \mathbf{0}_3      &       \mathbf{0}_3        \\
-      \mathbf{0}_3                                   & \mathbf{0}_3                                & \mathbf{0}_3                                & \boldsymbol{\beta}_f &       \mathbf{0}_3        \\
-      \mathbf{0}_3                                   & \mathbf{0}_3                                & \mathbf{0}_3                                &    \mathbf{0}_3      & \boldsymbol{\beta}_\omega \\
+      \mathbf{0}_3                                   & \mathbf{0}_3                                & \mathbf{0}_3                                & -\boldsymbol{\beta}_f &       \mathbf{0}_3        \\
+      \mathbf{0}_3                                   & \mathbf{0}_3                                & \mathbf{0}_3                                &    \mathbf{0}_3      & -\boldsymbol{\beta}_\omega \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{F}$} (m-1-5.north east);
 
@@ -1349,29 +1361,29 @@
   \cdot
   \mathbf{w}
 \end{equation}
-\_form#258=1524x19:\begin{equation} \label{eq:eq-LCKF_n-random-walk}
+\_form#264=1524x19:\begin{equation} \label{eq:eq-LCKF_n-random-walk}
   \dotup{x} = 0 + W(t)
 \end{equation}
-\_form#259=1689x28:\begin{equation} \label{eq:eq-LCKF_n-random-walk-S-noise}
-  \highlight[darkgray!20]{S_{ra,j}} = \sigma_{ra,j}^2 \tau_i, \qquad
-  \highlight[brown!20]{S_{rg,j}} = \sigma_{rg,j}^2 \tau_i, \qquad\qquad j \in x,y,z
+\_form#265=1675x28:\begin{equation} \label{eq:eq-LCKF_n-random-walk-S-noise}
+  \highlight[darkgray!20]{S_{ra,j}} = \sigma_{ra,j}, \qquad
+  \highlight[brown!20]{S_{rg,j}} = \sigma_{rg,j}, \qquad\qquad j \in x,y,z
 \end{equation}
-\_form#260=1537x19:\begin{equation} \label{eq:eq-LCKF_n-gauss-markov-1}
+\_form#266=1537x19:\begin{equation} \label{eq:eq-LCKF_n-gauss-markov-1}
   \dotup{x} = -\beta x + W(t)
 \end{equation}
-\_form#261=1715x63:\begin{equation} \label{eq:eq-LCKF_n-random-walk-beta}
-  \highlight[magenta!20]{\boldsymbol{\beta}_f} = \begin{pmatrix} -\beta_{f} &      0     &      0     \\
-                                                                    0       & -\beta_{f} &      0     \\
-                                                                    0       &      0     & -\beta_{f} \end{pmatrix}, \qquad
-  \highlight[olive!20]{\boldsymbol{\beta}_\omega} = \begin{pmatrix} -\beta_{\omega} &        0        &        0        \\
-                                                                           0        & -\beta_{\omega} &        0        \\
-                                                                           0        &        0        & -\beta_{\omega} \end{pmatrix}
+\_form#267=1675x63:\begin{equation} \label{eq:eq-LCKF_n-random-walk-beta}
+  \highlight[magenta!20]{\boldsymbol{\beta}_f} = \begin{pmatrix} \beta_{f} &      0     &      0     \\
+                                                                    0       & \beta_{f} &      0     \\
+                                                                    0       &      0     & \beta_{f} \end{pmatrix}, \qquad
+  \highlight[olive!20]{\boldsymbol{\beta}_\omega} = \begin{pmatrix} \beta_{\omega} &        0        &        0        \\
+                                                                           0        & \beta_{\omega} &        0        \\
+                                                                           0        &        0        & \beta_{\omega} \end{pmatrix}
 \end{equation}
-\_form#262=1692x47:\begin{equation} \label{eq:eq-LCKF_n-random-walk-S-bias}
-  \highlight[pink!20]{S_{bad,j}} = \frac{\sigma_{bad,j}^2}{\tau_{bad}} , \qquad
-  \highlight[lightgray!20]{S_{bgd,j}} = \frac{\sigma_{bgd,j}^2}{\tau_{bgd}}, \qquad\qquad j \in x,y,z
+\_form#268=1719x54:\begin{equation} \label{eq:eq-LCKF_n-random-walk-S-bias_Brown}
+  \highlight[pink!20]{S_{bad,j}} = \sqrt{\frac{2\sigma_{bad,j}^2}{\tau_{bad}}} , \qquad
+  \highlight[lightgray!20]{S_{bgd,j}} = \sqrt{\frac{2\sigma_{bgd,j}^2}{\tau_{bgd}}}, \qquad\qquad j \in x,y,z
 \end{equation}
-\_form#263=1622x138:\begin{equation} \label{eq:eq-LCKF_n-random-walk-noise-scale-matrix-W}
+\_form#269=1622x138:\begin{equation} \label{eq:eq-LCKF_n-random-walk-noise-scale-matrix-W}
   \mathbf{W} =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
@@ -1391,21 +1403,33 @@
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#264=44x19:\eqref{eq:eq-LCKF_n-random-walk-S-noise}
-\_form#265=44x19:\eqref{eq:eq-LCKF_n-random-walk-S-bias}
-\_form#266=1526x19:\begin{equation} \label{eq:eq-LCKF_n-Phi-exp}
+\_form#270=44x19:\eqref{eq:eq-LCKF_n-random-walk-S-noise}
+\_form#271=44x19:\eqref{eq:eq-LCKF_n-random-walk-S-bias}
+\_form#272=44x19:\eqref{eq:eq-LCKF_n-random-walk-S-bias_Brown}
+\_form#273=1689x28:\begin{equation} \label{eq:eq-LCKF_n-random-walk-S-noise-Groves}
+  \highlight[darkgray!20]{S_{ra,j}} = \sigma_{ra,j}^2 \tau_i, \qquad
+  \highlight[brown!20]{S_{rg,j}} = \sigma_{rg,j}^2 \tau_i, \qquad\qquad j \in x,y,z
+\end{equation}
+\_form#274=1692x47:\begin{equation} \label{eq:eq-LCKF_n-random-walk-S-bias}
+  \highlight[pink!20]{S_{bad,j}} = \frac{\sigma_{bad,j}^2}{\tau_{bad}} , \qquad
+  \highlight[lightgray!20]{S_{bgd,j}} = \frac{\sigma_{bgd,j}^2}{\tau_{bgd}}, \qquad\qquad j \in x,y,z
+\end{equation}
+\_form#275=1526x19:\begin{equation} \label{eq:eq-LCKF_n-Phi-exp}
   \boldsymbol{\Phi} = \exp{(\mathbf{F} \tau_s)}
 \end{equation}
-\_form#267=1659x51:\begin{equation} \label{eq:eq-LCKF_n-Phi-Taylor}
+\_form#276=1659x51:\begin{equation} \label{eq:eq-LCKF_n-Phi-Taylor}
   \boldsymbol{\Phi} = \sum_{r=0}^{\infty} \frac{\mathbf{F}^r \tau_s^r}{r!} = \mathbf{I} + \mathbf{F} \tau_s + \frac{1}{2} \mathbf{F}^2 \tau^2 + \frac{1}{6} \mathbf{F}^3 \tau_s^3 + \dots
 \end{equation}
-\_form#268=1750x47:\begin{equation} \label{eq:eq-LCKF_n-Q-exact}
+\_form#277=1750x47:\begin{equation} \label{eq:eq-LCKF_n-Q-exact}
   \mathbf{Q}_{k-1} = \int_{t_k - \tau_s}^{t_k} \exp{(\mathbf{F}_{k-1} (t_k-t'))} \mathbf{G}_{k-1} \mathbf{W}_{k-1} \mathbf{G}_{k-1}^T \exp{(\mathbf{F}_{k-1}^T (t_k-t'))} dt'
 \end{equation}
-\_form#269=1577x21:\begin{equation} \label{eq:eq-LCKF_n-Q-approx}
+\_form#278=1577x21:\begin{equation} \label{eq:eq-LCKF_n-Q-approx}
   \mathbf{Q}_{k-1} \approx \mathbf{G}_{k-1} \mathbf{W}_{k-1} \mathbf{G}_{k-1}^T \tau_s
 \end{equation}
-\_form#270=2121x357:\begin{equation} \label{eq:eq-LCKF_n-Q-GWGT}
+\_form#279=44x19:\eqref{eq:eq-LCKF_n-dynamicModel-short}
+\_form#280=44x19:\eqref{eq:eq-LCKF_n-random-walk-noise-scale-matrix-W}
+\_form#281=44x19:\eqref{eq:eq-LCKF_n-Q-exact}
+\_form#282=2121x357:\begin{equation} \label{eq:eq-LCKF_n-Q-GWGT}
 \begin{aligned}
   \mathbf{Q}_{k-1} &= \int_{t_k - \tau_s}^{t_k}
                            \exp{(\mathbf{F}_{k-1} (t_k-t'))}
@@ -1470,7 +1494,7 @@
                       dt'
 \end{aligned}
 \end{equation}
-\_form#271=2445x191:\begin{equation} \label{eq:eq-LCKF_n-Q-GWGT-approx}
+\_form#283=2445x191:\begin{equation} \label{eq:eq-LCKF_n-Q-GWGT-approx}
 \begin{aligned}
   \mathbf{Q}_{k-1} &\approx \int_{t_k - \tau_s}^{t_k}
                                  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
@@ -1542,8 +1566,7 @@
                             dt'
 \end{aligned}
 \end{equation}
-\_form#272=156x14:$ \textcolor{red}{\text{Documentation here}} $
-\_form#273=1703x44:\begin{equation} \label{eq:eq-LCKF_n-Q-final}
+\_form#284=1703x44:\begin{equation} \label{eq:eq-LCKF_n-Q-final}
   \mathbf{Q} =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
@@ -1553,13 +1576,12 @@
     };
   \end{tikzpicture}
 \end{equation}
-\_form#274=112x14:$ \textcolor{red}{\text{Finish formula}} $
-\_form#275=14x12:$ \tau_s $
-\_form#276=1566x42:\begin{equation} \label{eq:eq-LCKF_n-Loan-A}
+\_form#285=14x12:$ \tau_s $
+\_form#286=1566x42:\begin{equation} \label{eq:eq-LCKF_n-Loan-A}
   \mathbf{A} = \begin{bmatrix} -\mathbf{F} & \mathbf{G} \mathbf{W} \mathbf{G}^T \\
                                 \mathbf{0} &            \mathbf{F}^T          \end{bmatrix} \Delta t
 \end{equation}
-\_form#277=1661x67:\begin{equation} \label{eq:eq-LCKF_n-Loan-B}
+\_form#287=1661x67:\begin{equation} \label{eq:eq-LCKF_n-Loan-B}
   \mathbf{B} = \text{expm}(\mathbf{A}) = \left[ \begin{array}{c;{2pt/2pt}c}
                                             \dots          & \mathbf{\Phi}^{-1} \mathbf{Q} \\[2mm]
                                             \hdashline[2pt/2pt] &                                  \\[-2mm]
@@ -1567,13 +1589,13 @@
                                        = \begin{bmatrix} \mathbf{B}_{11} & \mathbf{B}_{12} \\
                                                          \mathbf{B}_{21} & \mathbf{B}_{22} \end{bmatrix}
 \end{equation}
-\_form#278=1505x21:\begin{equation} \label{eq:eq-LCKF_n-Loan-Phi}
+\_form#288=1505x21:\begin{equation} \label{eq:eq-LCKF_n-Loan-Phi}
   \mathbf{\Phi} = \mathbf{B}_{22}^T
 \end{equation}
-\_form#279=1512x19:\begin{equation} \label{eq:eq-LCKF_n-Loan-Q}
+\_form#289=1512x19:\begin{equation} \label{eq:eq-LCKF_n-Loan-Q}
   \mathbf{Q} = \mathbf{\Phi} \mathbf{B}_{12}
 \end{equation}
-\_form#280=1670x233:\begin{equation} \label{eq:eq-LCKF_n-P}
+\_form#290=1670x233:\begin{equation} \label{eq:eq-LCKF_n-P}
   \mathbf{P}_0 =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
@@ -1594,18 +1616,18 @@
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#281=1652x46:\begin{equation} \label{eq:eq-LCKF_n-deltaz}
+\_form#291=1652x46:\begin{equation} \label{eq:eq-LCKF_n-deltaz}
   \boldsymbol{\delta} \mathbf{z}^n = \begin{pmatrix} \tilde{\mathbf{p}}_{b,G} - \hat{\mathbf{p}}_{b} - \mathbf{T}_{r(n)}^{p} \mathbf{C}_b^n \mathbf{l}_{ba}^b \\
                                       \tilde{\mathbf{v}}^n_{G} - \hat{\mathbf{v}}^n - \mathbf{C}_b^n (\boldsymbol{\omega}_{ib}^b \times \mathbf{l}_{ba}^b) + \boldsymbol{\Omega}_{ie}^n \mathbf{C}_b^n \mathbf{l}_{ba}^b \end{pmatrix}
 \end{equation}
-\_form#282=278x67:$ \mathbf{T}_{r(n)}^{p} = \begin{pmatrix} \frac{1}{R_N + h} &               0               &  0 \\
+\_form#292=278x67:$ \mathbf{T}_{r(n)}^{p} = \begin{pmatrix} \frac{1}{R_N + h} &               0               &  0 \\
                                                        0        & \frac{1}{(R_E + h)\cos{\phi}} &  0 \\
                                                        0        &               0               & -1 \end{pmatrix} $
-\_form#283=1624x49:\begin{equation} \label{eq:eq-LCKF_n-H-general}
+\_form#293=1624x49:\begin{equation} \label{eq:eq-LCKF_n-H-general}
   \mathbf{H}_k = \left. \frac{\partial \mathbf{h} (\mathbf{x}, t_k)}{\partial \mathbf{x}} \right|_{x = \hat{x}_k^{-}}
                = \left. \frac{\partial \mathbf{z} (\mathbf{x}, t_k)}{\partial \mathbf{x}} \right|_{x = \hat{x}_k^{-}}
 \end{equation}
-\_form#284=1671x96:\begin{equation} \label{eq:eq-LCKF_n-H}
+\_form#294=1671x96:\begin{equation} \label{eq:eq-LCKF_n-H}
   \mathbf{H}^n =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
@@ -1623,14 +1645,14 @@
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#285=1638x110:\begin{equation} \label{eq:eq-LCKF_n-H-sub}
+\_form#295=1638x110:\begin{equation} \label{eq:eq-LCKF_n-H-sub}
 \begin{aligned}
   \highlight[green!20]{\mathbf{H}_{r,\delta \psi}^n}    &\approx \mathbf{T}_{r(n)}^{p} \left[ (\mathbf{C}_b^n \mathbf{l}_{ba}^b) \times \right] \\
   \highlight[green!20]{\mathbf{H}_{v,\delta \psi}^n}    &\approx \left[ \left\{ \mathbf{C}_b^n (\boldsymbol{\omega}_{ib}^b \times \mathbf{l}_{ba}^b) - \boldsymbol{\Omega}_{ie}^n \mathbf{C}_b^n \mathbf{l}_{ba}^b \right\} \times \right] \\
   \highlight[orange!20]{\mathbf{H}_{v,\omega_{ib}^b}^n} &\approx \mathbf{C}_b^n \left[ \mathbf{l}_{ba}^b \times \right] \\
 \end{aligned}
 \end{equation}
-\_form#286=1773x273:\begin{equation} \label{eq:eq-LCKF_n-R}
+\_form#296=1773x273:\begin{equation} \label{eq:eq-LCKF_n-R}
   \mathbf{R} = E \left( (\mathbf{z} - \mathbf{H} \mathbf{x})(\mathbf{z} - \mathbf{H} \mathbf{x})^T \right) =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
@@ -1653,29 +1675,29 @@
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#287=1545x44:\begin{equation} \label{eq:eq-LCKF_n-correction-position-velocity}
+\_form#297=1545x44:\begin{equation} \label{eq:eq-LCKF_n-correction-position-velocity}
 \begin{aligned}
   \boldsymbol{p}_b^{+} &= \boldsymbol{p}_b^{-} - \boldsymbol{\delta p}_b \\
   \boldsymbol{v}^{n,+} &= \boldsymbol{v}^{n,-} - \boldsymbol{\delta v}^{n}
 \end{aligned}
 \end{equation}
-\_form#288=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-estimate-errors}
-\_form#289=1572x25:\begin{equation} \label{eq:eq-LCKF_n-correction-attitude}
+\_form#298=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-estimate-errors}
+\_form#299=1572x25:\begin{equation} \label{eq:eq-LCKF_n-correction-attitude}
   \mathbf{C}_b^{n,+} = (\mathbf{I}_3 - [\boldsymbol{\delta \psi} \times]) \mathbf{C}_b^{n,-}
 \end{equation}
-\_form#290=1563x53:\begin{equation} \label{eq:eq-LCKF_n-correction-accel-gyro-accumulate}
+\_form#300=1563x53:\begin{equation} \label{eq:eq-LCKF_n-correction-accel-gyro-accumulate}
 \begin{aligned}
   \boldsymbol{\Delta f}^{b,+}           &= \boldsymbol{\Delta f}^{b,-}           + \boldsymbol{\delta f}^b \\
   \boldsymbol{\Delta \omega}_{ib}^{b,+} &= \boldsymbol{\Delta \omega}_{ib}^{b,-} + \boldsymbol{\delta \omega}_{ib}^b
 \end{aligned}
 \end{equation}
-\_form#291=1568x53:\begin{equation} \label{eq:eq-LCKF_n-correction-accel-gyro}
+\_form#301=1568x53:\begin{equation} \label{eq:eq-LCKF_n-correction-accel-gyro}
 \begin{aligned}
   \boldsymbol{f}^{p,+}           &= \boldsymbol{f}^{p,-}           - \mathbf{C}_b^p \boldsymbol{\Delta f}^{b,+} \\
   \boldsymbol{\omega}_{ib}^{p,+} &= \boldsymbol{\omega}_{ib}^{p,-} - \mathbf{C}_b^p \boldsymbol{\Delta \omega}_{ib}^{b,+}
 \end{aligned}
 \end{equation}
-\_form#292=2504x711:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-units}
+\_form#302=2504x711:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-units}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=1.6em,align=center,minimum height=2.3em,anchor=center},row sep=0.3em, column sep=0.1em,] {
@@ -1790,8 +1812,8 @@
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#293=21x16:$ \boldsymbol{\delta} \mathbf{x} $
-\_form#294=2555x753:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-units-scaled}
+\_form#303=21x16:$ \boldsymbol{\delta} \mathbf{x} $
+\_form#304=2555x753:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-units-scaled}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=2.4em,align=center,minimum height=2.3em,anchor=center},row sep=0.3em, column sep=0.1em,] {
@@ -1922,8 +1944,8 @@
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#295=19x16:$ m' $
-\_form#296=2090x221:\begin{equation} \label{eq:eq-LCKF_n-Units-noise}
+\_form#305=19x16:$ m' $
+\_form#306=2104x221:\begin{equation} \label{eq:eq-LCKF_n-Units-noise}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,nodes in empty cells,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.1em] {
@@ -1946,13 +1968,13 @@
   =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
-                nodes={rectangle,text width=3em,align=center},row sep=0.3em, column sep=0.4em]
+                nodes={rectangle,text width=3.3em,align=center},row sep=0.3em, column sep=0.4em]
     {
           \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
           \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
           \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
-      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \boldsymbol{\beta}_f \left[ \frac{1}{\text{s}} \right] &        \mathbf{0}_3                                          \\
-      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 &    \mathbf{0}_3                                        &  \boldsymbol{\beta}_\omega \left[ \frac{1}{\text{s}} \right] \\
+      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & -\boldsymbol{\beta}_f \left[ \frac{1}{\text{s}} \right] &        \mathbf{0}_3                                          \\
+      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 &    \mathbf{0}_3                                        &  -\boldsymbol{\beta}_\omega \left[ \frac{1}{\text{s}} \right] \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{F}$} (m-1-5.north east);
 
@@ -2004,8 +2026,8 @@
   \cdot
   \mathbf{w} \left[ \frac{1}{\sqrt{\text{s}}} \right]
 \end{equation}
-\_form#297=11x18:$ \mathbf{\beta} $
-\_form#298=2144x245:\begin{equation} \label{eq:eq-LCKF_n-Units-noise-scaled}
+\_form#307=11x18:$ \mathbf{\beta} $
+\_form#308=2158x245:\begin{equation} \label{eq:eq-LCKF_n-Units-noise-scaled}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,nodes in empty cells,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=2.4em,align=center},row sep=0.3em, column sep=0.1em] {
@@ -2028,13 +2050,13 @@
   =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
-                nodes={rectangle,text width=3em,align=center},row sep=0.3em, column sep=0.4em]
+                nodes={rectangle,text width=3.3em,align=center},row sep=0.3em, column sep=0.4em]
     {
           \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
           \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
           \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
-      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \boldsymbol{\beta}_f \left[ \frac{1}{\text{s}} \right] &        \mathbf{0}_3                                          \\
-      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 &    \mathbf{0}_3                                        &  \boldsymbol{\beta}_\omega \left[ \frac{1}{\text{s}} \right] \\
+      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & -\boldsymbol{\beta}_f \left[ \frac{1}{\text{s}} \right] &        \mathbf{0}_3                                          \\
+      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 &    \mathbf{0}_3                                        &  -\boldsymbol{\beta}_\omega \left[ \frac{1}{\text{s}} \right] \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{F}$} (m-1-5.north east);
 
@@ -2091,7 +2113,7 @@
   \cdot
   \mathbf{w} \left[ \frac{1}{\sqrt{\text{s}}} \right]
 \end{equation}
-\_form#299=2282x693:\begin{equation} \label{eq:eq-LCKF_n-Units-P}
+\_form#309=2282x693:\begin{equation} \label{eq:eq-LCKF_n-Units-P}
   \mathbf{P}_0 =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,nodes in empty cells,left delimiter={(},right delimiter={)},
@@ -2133,8 +2155,8 @@
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#300=14x14:$ \mathbf{P} $
-\_form#301=2298x733:\begin{equation} \label{eq:eq-LCKF_n-Units-P-scaled}
+\_form#310=14x14:$ \mathbf{P} $
+\_form#311=2298x733:\begin{equation} \label{eq:eq-LCKF_n-Units-P-scaled}
   \mathbf{P}_0 =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,nodes in empty cells,left delimiter={(},right delimiter={)},
@@ -2215,7 +2237,7 @@
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#302=1927x273:\begin{equation} \label{eq:eq-LCKF_n-Units-deltaz}
+\_form#312=1927x273:\begin{equation} \label{eq:eq-LCKF_n-Units-deltaz}
   \boldsymbol{\delta} \mathbf{z} =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
@@ -2257,8 +2279,8 @@
     };
   \end{tikzpicture}
 \end{equation}
-\_form#303=19x16:$ \boldsymbol{\delta} \mathbf{z} $
-\_form#304=1972x285:\begin{equation} \label{eq:eq-LCKF_n-Units-deltaz-scaled}
+\_form#313=19x16:$ \boldsymbol{\delta} \mathbf{z} $
+\_form#314=1972x285:\begin{equation} \label{eq:eq-LCKF_n-Units-deltaz-scaled}
   \boldsymbol{\delta} \mathbf{z} =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
@@ -2304,7 +2326,7 @@
     \draw[decorate,transform canvas={xshift=-1.4em},thick,red] ($(m-1-1.south west) + (0,2.5em) $) -- node[left=2pt] {$ \times R_0 $} (m-1-1.north west);
   \end{tikzpicture}
 \end{equation}
-\_form#305=2142x711:\begin{equation} \label{eq:eq-LCKF_n-Units-H}
+\_form#315=2142x711:\begin{equation} \label{eq:eq-LCKF_n-Units-H}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
                 nodes={rectangle,text width=1.8em,align=center,minimum height=2.3em,anchor=center},] {
@@ -2374,8 +2396,8 @@
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#306=16x14:$ \mathbf{H} $
-\_form#307=2170x746:\begin{equation} \label{eq:eq-LCKF_n-Units-H-scaled}
+\_form#316=16x14:$ \mathbf{H} $
+\_form#317=2170x746:\begin{equation} \label{eq:eq-LCKF_n-Units-H-scaled}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
                 nodes={rectangle,text width=1.8em,align=center,minimum height=2.3em,anchor=center},] {
@@ -2452,7 +2474,7 @@
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#308=1878x284:\begin{equation} \label{eq:eq-LCKF_n-Units-R}
+\_form#318=1878x284:\begin{equation} \label{eq:eq-LCKF_n-Units-R}
   \mathbf{R} = E \left( (\mathbf{z} - \mathbf{H} \mathbf{x})(\mathbf{z} - \mathbf{H} \mathbf{x})^T \right) =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
@@ -2475,8 +2497,8 @@
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#309=16x14:$ \mathbf{R} $
-\_form#310=1892x284:\begin{equation} \label{eq:eq-LCKF_n-Units-R-scaled}
+\_form#319=16x14:$ \mathbf{R} $
+\_form#320=1892x284:\begin{equation} \label{eq:eq-LCKF_n-Units-R-scaled}
   \mathbf{R} = E \left( (\mathbf{z} - \mathbf{H} \mathbf{x})(\mathbf{z} - \mathbf{H} \mathbf{x})^T \right) =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
@@ -2525,47 +2547,47 @@
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#311=1545x105:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Position-timeDerivative}
+\_form#321=1545x105:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Position-timeDerivative}
 \begin{aligned}
   \dotup{\phi}    &= \frac{v_N}{R_N + h}             \\
   \dotup{\lambda} &= \frac{v_E}{(R_E + h)\cos{\phi}} \\
   \dotup{h}       &= -v_D                            \\
 \end{aligned}
 \end{equation}
-\_form#312=26x16:$R_N $
-\_form#313=25x16:$R_E $
-\_form#314=89x19:$ \nicefrac{\partial R_N}{\partial p_i} = 0 $
-\_form#315=88x19:$ \quad \nicefrac{\partial R_E}{\partial p_i} = 0$
-\_form#316=1841x159:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Position-differential}
+\_form#322=26x16:$R_N $
+\_form#323=25x16:$R_E $
+\_form#324=89x19:$ \nicefrac{\partial R_N}{\partial p_i} = 0 $
+\_form#325=88x19:$ \quad \nicefrac{\partial R_E}{\partial p_i} = 0$
+\_form#326=1841x159:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Position-differential}
 \begin{aligned}
   \delta\dotup{\phi}    &= \frac{\partial \dotup{\phi}}{\partial v_N} \delta v_N + \frac{\partial \dotup{\phi}}{\partial h} \delta h = \highlight[teal!20]{\dfrac{1}{R_N + h}} \delta v_N \highlight[cyan!20]{- \dfrac{v_N}{(R_N + h)^2}} \delta h \\
   \delta\dotup{\lambda} &= \frac{\partial \dotup{\lambda}}{\partial v_E} \delta v_E + \frac{\partial \dotup{\lambda}}{\partial h} \delta h + \frac{\partial \dotup{\lambda}}{\partial \phi} \delta \phi = \highlight[teal!20]{\dfrac{1}{(R_E + h)\cos{\phi}}} \delta v_E \highlight[cyan!20]{- \dfrac{v_E}{(R_E + h)^2\cos{\phi}}} \delta h + \highlight[cyan!20]{\dfrac{v_E \tan{\phi}}{(R_E + h)\cos{\phi}}} \delta \phi \\
   \delta\dotup{h}       &= \frac{\partial \dotup{h}}{\partial v_D} \delta v_D = \highlight[teal!20]{-1} \cdot \delta v_D \\
 \end{aligned}
 \end{equation}
-\_form#317=23x23:$ \mathbf{\hat{C}}_b^n $
-\_form#318=23x18:$ \mathbf{C}_b^n $
-\_form#319=1514x23:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-estimate-true}
+\_form#327=23x23:$ \mathbf{\hat{C}}_b^n $
+\_form#328=23x18:$ \mathbf{C}_b^n $
+\_form#329=1514x23:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-estimate-true}
   \mathbf{\hat{C}}_b^n = \mathbf{B} \mathbf{C}_b^n
 \end{equation}
-\_form#320=1603x63:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-transformation}
+\_form#330=1603x63:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-transformation}
   \mathbf{B} = [\mathbf{I} - \mathbf{\Psi}], \quad \text{with}~ \mathbf{\Psi} = \begin{pmatrix} \delta\alpha \\ \delta\beta \\ \delta\gamma \end{pmatrix} \times
 \end{equation}
-\_form#321=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-transformation}
-\_form#322=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-estimate-true}
-\_form#323=1535x23:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-estimate-errors}
+\_form#331=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-transformation}
+\_form#332=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-estimate-true}
+\_form#333=1535x23:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-estimate-errors}
   \mathbf{\hat{C}}_b^n \approx [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^n
 \end{equation}
-\_form#324=1535x23:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-skew-mat}
+\_form#334=1535x23:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-skew-mat}
   \mathbf{\Psi} = \mathbf{I} - \mathbf{\hat{C}}_b^n {\mathbf{C}_b^n}^T
 \end{equation}
-\_form#325=1566x26:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot}
+\_form#335=1566x26:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot}
   \mathbf{\dot{\Psi}} = -\mathbf{\dot{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle n$}} {\mathbf{C}_b^n}^T - \mathbf{\hat{C}}_b^n {\mathbf{\dot{C}}_b^n}\raise1.25ex\hbox{$\scriptstyle T$}
 \end{equation}
-\_form#326=102x23:$ \mathbf{\dot{C}}_b^n = \mathbf{C}_b^n \mathbf{\Omega}_{nb}^b $
-\_form#327=301x44:$ \mathbf{\dot{C}}_\beta^\alpha(t) = \lim_{\delta t \to 0}\left(\dfrac{\mathbf{C}_\beta^\alpha(t+\delta t) - \mathbf{C}_\beta^\alpha(t)}{\delta t}\right) $
-\_form#328=446x63:$ C_\alpha^\beta \approx \begin{pmatrix} 1 & -\psi_{\beta\alpha} & \theta_{\beta\alpha} \\ \psi_{\beta\alpha} & 1 & -\phi_{\beta\alpha} \\ -\theta_{\beta\alpha} & \phi_{\beta\alpha} & 1 \end{pmatrix} = \mathbf{I}_3 + [\boldsymbol{\psi}_{\beta\alpha} \times ] = \mathbf{I}_3 + \mathbf{\Omega}_{\beta\alpha} $
-\_form#329=1577x109:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-DCM-dot}
+\_form#336=102x23:$ \mathbf{\dot{C}}_b^n = \mathbf{C}_b^n \mathbf{\Omega}_{nb}^b $
+\_form#337=301x44:$ \mathbf{\dot{C}}_\beta^\alpha(t) = \lim_{\delta t \to 0}\left(\dfrac{\mathbf{C}_\beta^\alpha(t+\delta t) - \mathbf{C}_\beta^\alpha(t)}{\delta t}\right) $
+\_form#338=446x63:$ C_\alpha^\beta \approx \begin{pmatrix} 1 & -\psi_{\beta\alpha} & \theta_{\beta\alpha} \\ \psi_{\beta\alpha} & 1 & -\phi_{\beta\alpha} \\ -\theta_{\beta\alpha} & \phi_{\beta\alpha} & 1 \end{pmatrix} = \mathbf{I}_3 + [\boldsymbol{\psi}_{\beta\alpha} \times ] = \mathbf{I}_3 + \mathbf{\Omega}_{\beta\alpha} $
+\_form#339=1577x109:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-DCM-dot}
 \begin{aligned}
   \mathbf{\dot{C}}_b^n &= \mathbf{C}_b^n \mathbf{\Omega}_{nb}^b \\
                        &= \mathbf{C}_b^n (\mathbf{\Omega}_{ib}^b - \mathbf{\Omega}_{in}^b) \\
@@ -2573,18 +2595,18 @@
                        &= \mathbf{C}_b^n \mathbf{\Omega}_{ib}^b - \mathbf{\Omega}_{in}^n \mathbf{C}_b^n
 \end{aligned}
 \end{equation}
-\_form#330=28x21:$ \mathbf{\Omega}_{in}^b $
-\_form#331=26x18:$ \mathbf{\Omega}_{ie}^n $
-\_form#332=30x18:$ \mathbf{\Omega}_{en}^n $
-\_form#333=23x26:$ \mathbf{\dot{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle n$}} $
-\_form#334=1558x26:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-DCM-dot-estimated}
+\_form#340=28x21:$ \mathbf{\Omega}_{in}^b $
+\_form#341=26x18:$ \mathbf{\Omega}_{ie}^n $
+\_form#342=30x18:$ \mathbf{\Omega}_{en}^n $
+\_form#343=23x26:$ \mathbf{\dot{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle n$}} $
+\_form#344=1558x26:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-DCM-dot-estimated}
   \mathbf{\dot{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle n$}} = \mathbf{\hat{C}}_b^n \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\hat{\Omega}}_{in}^n \mathbf{\hat{C}}_b^n
 \end{equation}
-\_form#335=28x23:$ \mathbf{\hat{\Omega}}_{in}^b $
-\_form#336=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-DCM-dot}
-\_form#337=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-DCM-dot-estimated}
-\_form#338=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot}
-\_form#339=1703x91:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot-calc1}
+\_form#345=28x23:$ \mathbf{\hat{\Omega}}_{in}^b $
+\_form#346=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-DCM-dot}
+\_form#347=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-DCM-dot-estimated}
+\_form#348=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot}
+\_form#349=1703x91:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot-calc1}
 \begin{aligned}
   \mathbf{\dot{\Psi}} &= -(\mathbf{\hat{C}}_b^n \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\hat{\Omega}}_{in}^n \mathbf{\hat{C}}_b^n) {\mathbf{C}_b^n}^T
                          - \mathbf{\hat{C}}_b^n (\mathbf{C}_b^n \mathbf{\Omega}_{ib}^b - \mathbf{\Omega}_{in}^n \mathbf{C}_b^n)^T \\
@@ -2597,8 +2619,8 @@
                          - \mathbf{\hat{C}}_b^n {\mathbf{C}_b^n}^T \mathbf{\Omega}_{in}^n
 \end{aligned}
 \end{equation}
-\_form#340=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot-calc1}
-\_form#341=1766x109:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot-calc2}
+\_form#350=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot-calc1}
+\_form#351=1766x109:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot-calc2}
 \begin{aligned}
   \mathbf{\dot{\Psi}} &= - [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^n \left[ \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b \right] {\mathbf{C}_b^n}^T
                          + \mathbf{\hat{\Omega}}_{in}^n [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^n {\mathbf{C}_b^n}^T
@@ -2611,19 +2633,19 @@
                             - \mathbf{\hat{\Omega}}_{in}^n \mathbf{\Psi} + \mathbf{\Psi} \mathbf{\Omega}_{in}^n
 \end{aligned}
 \end{equation}
-\_form#342=140x23:$ \boldsymbol{\delta}\mathbf{\Omega}_{in}^n = \mathbf{\hat{\Omega}}_{in}^n - \mathbf{\Omega}_{in}^n $
-\_form#343=1635x23:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot-final}
+\_form#352=140x23:$ \boldsymbol{\delta}\mathbf{\Omega}_{in}^n = \mathbf{\hat{\Omega}}_{in}^n - \mathbf{\Omega}_{in}^n $
+\_form#353=1635x23:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot-final}
   \mathbf{\dot{\Psi}} \approx \mathbf{\Psi} \mathbf{\Omega}_{in}^n - \mathbf{\hat{\Omega}}_{in}^n \mathbf{\Psi}
                               + \boldsymbol{\delta}\mathbf{\Omega}_{in}^n
                               - \mathbf{C}_b^n \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b {\mathbf{C}_b^n}^T
 \end{equation}
-\_form#344=1745x23:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-element-comp}
+\_form#354=1745x23:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-element-comp}
   \boldsymbol{\delta \psi} \times = \mathbf{\Psi} \qquad\quad
   \boldsymbol{\omega}_{in}^n \times = \mathbf{\Omega}_{in}^n \qquad\quad
   \boldsymbol{\delta \omega}_{in}^n \times = \boldsymbol{\delta}\mathbf{\Omega}_{in}^n \qquad\quad
   \boldsymbol{\delta \omega}_{ib}^b \times = \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b
 \end{equation}
-\_form#345=1642x65:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-differential}
+\_form#355=1642x65:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-differential}
 \begin{aligned}
   \boldsymbol{\delta \dot{\psi}} &\approx \highlight[green!20]{-\boldsymbol{\omega}_{in}^n \times} \boldsymbol{\delta \psi}
                                                 + \boldsymbol{\delta \omega}_{in}^n
@@ -2633,10 +2655,10 @@
                                           \highlight[orange!20]{- \mathbf{C}_b^n} \boldsymbol{\delta \omega}_{ib}^b
 \end{aligned}
 \end{equation}
-\_form#346=1638x47:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-transport-rate}
+\_form#356=1638x47:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-transport-rate}
   \boldsymbol{\omega}_{en}^n = \begin{bmatrix} \dfrac{v_E}{R_E + h} & -\dfrac{v_N}{R_N + h} & -\dfrac{v_E \tan{\phi}}{R_E + h} \end{bmatrix}^T
 \end{equation}
-\_form#347=1845x142:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-transport-rate-differential}
+\_form#357=1845x142:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-transport-rate-differential}
 \begin{aligned}
   \delta \omega_{en,1}^n &= \frac{\partial \omega_{en,1}^n}{\partial v_E} \delta v_E
                               + \frac{\partial\omega_{en,1}^n}{\partial h} \delta h
@@ -2654,7 +2676,7 @@
                               - \frac{v_E}{(R_E + h)\cos^2{\phi}} \delta \phi
 \end{aligned}
 \end{equation}
-\_form#348=1787x63:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-earth-rotation-n}
+\_form#358=1787x63:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-earth-rotation-n}
   \boldsymbol{\omega}_{ie}^n = \mathbf{C}_e^n \boldsymbol{\omega}_{ie}^e
                              = \begin{pmatrix} -\sin{\phi}\cos{\lambda} & -\sin{\phi}\sin{\lambda} & \cos{\phi} \\
                                                     -\sin{\lambda}      &      \cos{\lambda}       &      0     \\
@@ -2662,16 +2684,16 @@
                                \cdot \begin{pmatrix} 0 \\ 0 \\ \omega_{ie} \end{pmatrix}
                              = \omega_{ie} \cdot \begin{pmatrix} \cos{\phi} \\ 0 \\ -\sin{\phi} \end{pmatrix}
 \end{equation}
-\_form#349=1607x63:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-earth-rotation-n-differential}
+\_form#359=1607x63:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-earth-rotation-n-differential}
 \begin{aligned}
   \boldsymbol{\delta \omega}_{ie}^n = \frac{\partial \boldsymbol{\omega}_{ie}^n}{\partial \phi} \delta \phi
                                     = \begin{pmatrix} -\omega_{ie}\sin{\phi} \\ 0 \\ -\omega_{ie}\cos{\phi} \end{pmatrix} \delta \phi
 \end{aligned}
 \end{equation}
-\_form#350=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-transport-rate-differential}
-\_form#351=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-earth-rotation-n-differential}
-\_form#352=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-differential}
-\_form#353=2002x137:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-differential-final}
+\_form#360=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-transport-rate-differential}
+\_form#361=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-earth-rotation-n-differential}
+\_form#362=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-differential}
+\_form#363=2002x137:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-differential-final}
   \boldsymbol{\delta \dot{\psi}} \approx \highlight[green!20]{-\boldsymbol{\omega}_{in}^n \times} \boldsymbol{\delta \psi}
                                          + \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
                                              \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
@@ -2737,23 +2759,23 @@
                                            \begin{pmatrix} \delta \phi \\ \delta \lambda \\ \delta h \end{pmatrix}
                                          \highlight[orange!20]{- \mathbf{C}_b^n} \boldsymbol{\delta \omega}_{ib}^b
 \end{equation}
-\_form#354=1621x67:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative}
+\_form#364=1621x67:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative}
   \boldsymbol{\dot{v}}^n
       = \overbrace{\boldsymbol{f}^n}^{\hidewidth\text{measured}\hidewidth}
         -\ \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis acceleration}}
         +\ \overbrace{\mathbf{g}^n}^{\hidewidth\text{gravity}\hidewidth}
 \end{equation}
-\_form#355=19x18:$ \mathbf{g}^n $
-\_form#356=23x18:$ \boldsymbol{\gamma}_{ib}^n $
-\_form#357=1607x25:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-estimate}
+\_form#365=19x18:$ \mathbf{g}^n $
+\_form#366=23x18:$ \boldsymbol{\gamma}_{ib}^n $
+\_form#367=1607x25:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-estimate}
   \boldsymbol{\dot{\hat{v}}}^{\raise-0.45ex\hbox{$\scriptstyle n$}}
       = \boldsymbol{\hat{f}}^n
       - (2 \boldsymbol{\hat{\omega}}_{ie}^n + \boldsymbol{\hat{\omega}}_{en}^n) \times \boldsymbol{\hat{v}}_e^n
       + \mathbf{\hat{g}}^n
 \end{equation}
-\_form#358=44x19:\eqref{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative}
-\_form#359=44x19:\eqref{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-estimate}
-\_form#360=1754x56:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-differential}
+\_form#368=44x19:\eqref{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative}
+\_form#369=44x19:\eqref{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-estimate}
+\_form#370=1754x56:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-differential}
 \begin{aligned}
   \boldsymbol{\delta \dot{v}}^n &= \boldsymbol{\dot{\hat{v}}}^{\raise-0.45ex\hbox{$\scriptstyle n$}} - \boldsymbol{\dot{v}}^n \\
                                 &= \mathbf{\hat{C}}_b^n \boldsymbol{\hat{f}}^b
@@ -2764,13 +2786,13 @@
                                        - \mathbf{g}^n
 \end{aligned}
 \end{equation}
-\_form#361=124x23:$ \mathbf{\hat{C}}_b^n \approx [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^n $
-\_form#362=110x25:$ \boldsymbol{\delta f}^b = \boldsymbol{\hat{f}}^b - \boldsymbol{f}^b $
-\_form#363=114x16:$ \boldsymbol{\delta v}^n = \boldsymbol{\hat{v}}^n - \boldsymbol{v}^n $
-\_form#364=130x19:$ \boldsymbol{\delta \omega}_{ie}^n = \boldsymbol{\hat{\omega}}_{ie}^n - \boldsymbol{\omega}_{ie}^n $
-\_form#365=142x19:$ \boldsymbol{\delta \omega}_{en}^n = \boldsymbol{\hat{\omega}}_{en}^n - \boldsymbol{\omega}_{en}^n $
-\_form#366=114x19:$ \boldsymbol{\delta} \mathbf{g}^n = \mathbf{\hat{g}}^n - \mathbf{g}^n $
-\_form#367=1869x138:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-differential-transformation}
+\_form#371=124x23:$ \mathbf{\hat{C}}_b^n \approx [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^n $
+\_form#372=110x25:$ \boldsymbol{\delta f}^b = \boldsymbol{\hat{f}}^b - \boldsymbol{f}^b $
+\_form#373=114x16:$ \boldsymbol{\delta v}^n = \boldsymbol{\hat{v}}^n - \boldsymbol{v}^n $
+\_form#374=130x19:$ \boldsymbol{\delta \omega}_{ie}^n = \boldsymbol{\hat{\omega}}_{ie}^n - \boldsymbol{\omega}_{ie}^n $
+\_form#375=142x19:$ \boldsymbol{\delta \omega}_{en}^n = \boldsymbol{\hat{\omega}}_{en}^n - \boldsymbol{\omega}_{en}^n $
+\_form#376=114x19:$ \boldsymbol{\delta} \mathbf{g}^n = \mathbf{\hat{g}}^n - \mathbf{g}^n $
+\_form#377=1869x138:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-differential-transformation}
 \begin{aligned}
   \boldsymbol{\delta \dot{v}}^n &= [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^n \boldsymbol{\hat{f}}^b
                                        - \mathbf{C}_b^n \boldsymbol{f}^b
@@ -2795,18 +2817,18 @@
                                    + \boldsymbol{\delta} \mathbf{g}^n \\
 \end{aligned}
 \end{equation}
-\_form#368=105x23:$ \boldsymbol{\delta f}^b \times \boldsymbol{\delta \psi} \approx 0 $
-\_form#369=201x19:$ (2 \boldsymbol{\delta \omega}_{ie}^n + \boldsymbol{\delta \omega}_{en}^n) \times \boldsymbol{\delta v}^n \approx 0$
-\_form#370=1776x35:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-differential-transformation-neglect}
+\_form#378=105x23:$ \boldsymbol{\delta f}^b \times \boldsymbol{\delta \psi} \approx 0 $
+\_form#379=201x19:$ (2 \boldsymbol{\delta \omega}_{ie}^n + \boldsymbol{\delta \omega}_{en}^n) \times \boldsymbol{\delta v}^n \approx 0$
+\_form#380=1776x35:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-differential-transformation-neglect}
   \boldsymbol{\delta \dot{v}}^n \approx \highlight[purple!20]{\boldsymbol{f}^n \times} \boldsymbol{\delta \psi}
                                    + \highlight[red!20]{\mathbf{C}_b^n \boldsymbol{\delta f}^b}
                                    - (2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{\delta v}^n
                                    - (2 \boldsymbol{\delta \omega}_{ie}^n + \boldsymbol{\delta \omega}_{en}^n) \times \boldsymbol{v}^n
                                    + \boldsymbol{\delta} \mathbf{g}^n
 \end{equation}
-\_form#371=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-transport-rate}
-\_form#372=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-earth-rotation-n}
-\_form#373=2296x369:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-final-pre}
+\_form#381=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-transport-rate}
+\_form#382=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-earth-rotation-n}
+\_form#383=2296x369:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-final-pre}
 \renewcommand*{\arraystretch}{1.9}
 \begin{aligned}
   \boldsymbol{\delta \dot{v}}^n &\approx \highlight[purple!20]{\boldsymbol{f}^n \times} \boldsymbol{\delta \psi}
@@ -2857,13 +2879,13 @@
                                    + \boldsymbol{\delta} \mathbf{g}^n \\
 \end{aligned}
 \end{equation}
-\_form#374=1540x44:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-gravityError}
+\_form#384=1540x44:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-gravityError}
 \begin{aligned}
   \boldsymbol{\delta} \mathbf{g}^e \approx - \frac{2 g_0}{r_{eS}^e} \delta h \mathbf{u}_D^e
 \end{aligned}
 \end{equation}
-\_form#375=23x18:$ \mathbf{u}_D^e $
-\_form#376=2268x147:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-final}
+\_form#385=23x18:$ \mathbf{u}_D^e $
+\_form#386=2268x147:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-final}
   \boldsymbol{\delta \dot{v}}^n \approx \highlight[purple!20]{\boldsymbol{f}^n \times} \boldsymbol{\delta \psi}
                                         + \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
                                             \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
@@ -2925,7 +2947,7 @@
                                           \end{pmatrix}
                                         + \highlight[red!20]{\mathbf{C}_b^n \boldsymbol{\delta f}^b}
 \end{equation}
-\_form#377=2331x716:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Titterton}
+\_form#387=2331x716:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Titterton}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=1.5em,align=center,minimum height=2.3em,anchor=center},row sep=0.3em, column sep=0.4em,] {
@@ -3020,13 +3042,13 @@
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#378=1565x23:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Groves-attitude-correction}
+\_form#388=1565x23:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Groves-attitude-correction}
   \mathbf{C}_b^n \approx (\mathbf{I}_3 - [\boldsymbol{\delta \psi}_{nb}^n \times]) \mathbf{\hat{C}}_b^n
 \end{equation}
-\_form#379=1556x23:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Groves-attitude-correction-Titterton}
+\_form#389=1556x23:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Groves-attitude-correction-Titterton}
   \mathbf{C}_b^n = (\mathbf{I}_3 + [\boldsymbol{\delta \psi} \times]) \mathbf{\hat{C}}_b^n
 \end{equation}
-\_form#380=1825x107:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Gleason-position-error}
+\_form#390=1825x107:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Gleason-position-error}
 \begin{aligned}
   \boldsymbol{\delta} \mathbf{\dot{p}}  &= T' \boldsymbol{\delta} \mathbf{p}^n + T \boldsymbol{\delta v}^n \\
   \boldsymbol{\delta \dot{v}}^n         &= \highlight[purple!20]{\left[ (\mathbf{C}_b^n \boldsymbol{f}^b) \times \right]} \boldsymbol{\delta \psi}_{nb}^n
@@ -3037,7 +3059,7 @@
   \boldsymbol{\delta \dot{\psi}}_{nb}^n &= \highlight[green!20]{- \left[ \boldsymbol{\omega}_{in}^n \times \right]} \boldsymbol{\delta \psi}_{nb}^n + \boldsymbol{\delta \omega}_{in}^n \highlight[orange!20]{-\mathbf{C}_b^n} \boldsymbol{\delta \omega}_{ib}^b
 \end{aligned}
 \end{equation}
-\_form#381=1638x67:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Position}
+\_form#391=1638x67:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Position}
   \begin{pmatrix} \delta \dotup{\phi} \\ \delta \dotup{\lambda} \\ \delta \dotup{h} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -3047,7 +3069,7 @@
   \end{pmatrix}
   \begin{pmatrix} \delta v_E \\ \delta v_N \\ \delta v_U \end{pmatrix}
 \end{equation}
-\_form#382=1666x63:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Velocity}
+\_form#392=1666x63:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Velocity}
   \begin{pmatrix} \delta \dotup{v}_{E} \\ \delta \dotup{v}_{N} \\ \delta \dotup{v}_{U} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -3058,7 +3080,7 @@
   \begin{pmatrix} \delta P \\ \delta R \\ \delta Y \end{pmatrix}
   + \mathbf{C}_b^{enu} \boldsymbol{\delta f}^b
 \end{equation}
-\_form#383=1673x72:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Attitude}
+\_form#393=1673x72:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Attitude}
   \begin{pmatrix} \delta \dotup{P} \\ \delta \dotup{R} \\ \delta \dotup{Y} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -3069,7 +3091,7 @@
   \begin{pmatrix} \delta v_E \\ \delta v_N \\ \delta v_U \end{pmatrix}
   + \mathbf{C}_b^{enu} \boldsymbol{\delta \omega}_{ib}^b
 \end{equation}
-\_form#384=1638x67:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Position-reordered}
+\_form#394=1638x67:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Position-reordered}
   \begin{pmatrix} \delta \dotup{\phi} \\ \delta \dotup{\lambda} \\ \delta \dotup{h} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -3079,7 +3101,7 @@
   \end{pmatrix}
   \begin{pmatrix} \delta v_N \\ \delta v_E \\ \delta v_U \end{pmatrix}
 \end{equation}
-\_form#385=1666x63:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Velocity-reordered}
+\_form#395=1666x63:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Velocity-reordered}
   \begin{pmatrix} \delta \dotup{v}_{N} \\ \delta \dotup{v}_{E} \\ \delta \dotup{v}_{U} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -3090,7 +3112,7 @@
   \begin{pmatrix} \delta R \\ \delta P \\ \delta Y \end{pmatrix}
   + \mathbf{C}_b^{neu} \boldsymbol{\delta f}^b
 \end{equation}
-\_form#386=1673x72:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Attitude-reordered}
+\_form#396=1673x72:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Attitude-reordered}
   \begin{pmatrix} \delta \dotup{R} \\ \delta \dotup{P} \\ \delta \dotup{Y} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -3101,7 +3123,7 @@
   \begin{pmatrix} \delta v_N \\ \delta v_E \\ \delta v_U \end{pmatrix}
   + \mathbf{C}_b^{neu} \boldsymbol{\delta \omega}_{ib}^b
 \end{equation}
-\_form#387=1638x67:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Position-yaw-sign}
+\_form#397=1638x67:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Position-yaw-sign}
   \begin{pmatrix} \delta \dotup{\phi} \\ \delta \dotup{\lambda} \\ \delta \dotup{h} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -3111,7 +3133,7 @@
   \end{pmatrix}
   \begin{pmatrix} \delta v_N \\ \delta v_E \\ \delta v_U \end{pmatrix}
 \end{equation}
-\_form#388=1666x63:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Velocity-yaw-sign}
+\_form#398=1666x63:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Velocity-yaw-sign}
   \begin{pmatrix} \delta \dotup{v}_{N} \\ \delta \dotup{v}_{E} \\ \delta \dotup{v}_{U} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -3122,7 +3144,7 @@
   \begin{pmatrix} \delta R \\ \delta P \\ \delta Y \end{pmatrix}
   + \mathbf{C}_b^{neu} \boldsymbol{\delta f}^b
 \end{equation}
-\_form#389=1673x72:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Attitude-yaw-sign}
+\_form#399=1673x72:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Attitude-yaw-sign}
   \begin{pmatrix} \delta \dotup{R} \\ \delta \dotup{P} \\ \delta \dotup{Y} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -3133,7 +3155,7 @@
   \begin{pmatrix} \delta v_N \\ \delta v_E \\ \delta v_U \end{pmatrix}
   + \mathbf{C}_b^{neu} \boldsymbol{\delta \omega}_{ib}^b
 \end{equation}
-\_form#390=1645x67:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Position-up-down}
+\_form#400=1645x67:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Position-up-down}
   \begin{pmatrix} \delta \dotup{\phi} \\ \delta \dotup{\lambda} \\ \delta \dotup{h} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -3143,7 +3165,7 @@
   \end{pmatrix}
   \begin{pmatrix} \delta v_N \\ \delta v_E \\ \delta v_D \end{pmatrix}
 \end{equation}
-\_form#391=1678x68:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Velocity-up-down}
+\_form#401=1678x68:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Velocity-up-down}
   \begin{pmatrix} \delta \dotup{v}_{N} \\ \delta \dotup{v}_{E} \\ \delta \dotup{v}_{D} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -3154,7 +3176,7 @@
   \begin{pmatrix} \delta R \\ \delta P \\ \delta Y \end{pmatrix}
   \highlight[red!60]{+} \mathbf{C}_b^n \boldsymbol{\delta f}^b
 \end{equation}
-\_form#392=1684x74:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Attitude-up-down}
+\_form#402=1684x74:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Attitude-up-down}
   \begin{pmatrix} \delta \dotup{R} \\ \delta \dotup{P} \\ \delta \dotup{Y} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -3165,36 +3187,36 @@
   \begin{pmatrix} \delta v_N \\ \delta v_E \\ \delta v_D \end{pmatrix}
   + \mathbf{C}_b^n \boldsymbol{\delta \omega}_{ib}^b
 \end{equation}
-\_form#393=1537x23:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Attitude-error-definition}
+\_form#403=1537x23:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Attitude-error-definition}
   \mathbf{\hat{C}}_b^n = (\mathbf{I} + \mathbf{\Psi}) \mathbf{C}_b^n
 \end{equation}
-\_form#394=1607x44:\begin{equation} \label{eq:eq-ImuSimulator-VelocityNav-equation-pre}
+\_form#404=1607x44:\begin{equation} \label{eq:eq-ImuSimulator-VelocityNav-equation-pre}
   \boldsymbol{\dot{v}}^n = \boldsymbol{f}^n - \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis acceleration}} +\ \mathbf{g}_l^n
 \end{equation}
-\_form#395=19x18:$ \mathbf{g}_l^n $
-\_form#396=121x19:$ \boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] $
-\_form#397=44x19:\eqref{eq:eq-ImuSimulator-VelocityNav-equation-pre}
-\_form#398=1741x70:\begin{equation} \label{eq:eq-ImuSimulator-VelocityNav-equation}
+\_form#405=19x18:$ \mathbf{g}_l^n $
+\_form#406=121x19:$ \boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] $
+\_form#407=44x19:\eqref{eq:eq-ImuSimulator-VelocityNav-equation-pre}
+\_form#408=1741x70:\begin{equation} \label{eq:eq-ImuSimulator-VelocityNav-equation}
   \underbrace{\boldsymbol{\dot{v}}^n}_{\hidewidth\text{trajectory}\hidewidth}
       = \overbrace{\boldsymbol{f}^n}^{\hidewidth\text{measured}\hidewidth}
         -\ \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis acceleration}}
         +\ \overbrace{\mathbf{g}^n}^{\hidewidth\text{gravitation}\hidewidth}
         -\ \mathbf{C}_e^n \cdot \underbrace{\left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right)}_{\text{centrifugal acceleration}}
 \end{equation}
-\_form#399=1736x70:\begin{equation} \label{eq:eq-ImuSimulator-acceleration-measured}
+\_form#409=1736x70:\begin{equation} \label{eq:eq-ImuSimulator-acceleration-measured}
   \underbrace{\boldsymbol{f}^n}_{\hidewidth\text{measured}\hidewidth}
       = \overbrace{\boldsymbol{\dot{v}}^n}^{\hidewidth\text{trajectory}\hidewidth}
         + \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis acceleration}}
         -\ \overbrace{\mathbf{g}^n}^{\hidewidth\text{gravitation}\hidewidth}
         +\ \mathbf{C}_e^n \cdot \underbrace{\left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right)}_{\text{centrifugal acceleration}}
 \end{equation}
-\_form#400=1661x39:\begin{equation} \label{eq:eq-ImuSimulator-acceleration-navigation}
+\_form#410=1661x39:\begin{equation} \label{eq:eq-ImuSimulator-acceleration-navigation}
   \boldsymbol{\dot{v}}^n = \frac{\partial}{\partial t} \left( \boldsymbol{\dot{x}}^n \right) = \frac{\partial}{\partial t} \left( \boldsymbol{C}_e^n \cdot \boldsymbol{\dot{x}}^e \right) = \boldsymbol{\dot{C}}_e^n \cdot \boldsymbol{\dot{x}}^e + \boldsymbol{C}_e^n \cdot \boldsymbol{\ddot{x}}^e
 \end{equation}
-\_form#401=1579x25:\begin{equation} \label{eq:eq-ImuSimulator-acceleration-C_ne_dot}
+\_form#411=1579x25:\begin{equation} \label{eq:eq-ImuSimulator-acceleration-C_ne_dot}
   \boldsymbol{\dot{C}}_e^n = (\boldsymbol{\dot{C}}_n^e)^T = (\boldsymbol{C}_n^e \cdot \boldsymbol{\Omega}_{en}^n)^T
 \end{equation}
-\_form#402=1624x158:\begin{equation} \label{eq:eq-ImuSimulator-GyroMeas}
+\_form#412=1624x158:\begin{equation} \label{eq:eq-ImuSimulator-GyroMeas}
 \begin{aligned}
   \boldsymbol{\omega}_{ip}^p &= \boldsymbol{\omega}_{in}^p + \boldsymbol{\omega}_{np}^p \\
                              &= \mathbf{C}_n^p \cdot [ \boldsymbol{\omega}_{in}^n + \boldsymbol{\omega}_{np}^n ] \\
@@ -3203,31 +3225,31 @@
                              &= \mathbf{C}_n^p \cdot [ \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n + \mathbf{C}_b^n \boldsymbol{\omega}_{nb}^b ]
 \end{aligned}
 \end{equation}
-\_form#403=9x14:$ \theta $
-\_form#404=12x18:$ \psi $
-\_form#405=1614x65:\begin{equation} \label{eq:eq-ImuSimulator-omega_nb_b}
+\_form#413=9x14:$ \theta $
+\_form#414=12x18:$ \psi $
+\_form#415=1614x65:\begin{equation} \label{eq:eq-ImuSimulator-omega_nb_b}
   \boldsymbol{\omega}_{nb}^b
       = \begin{bmatrix} \dotup{R} \\ 0 \\ 0 \end{bmatrix}
         + \mathbf{C_3} \begin{bmatrix} 0 \\ \dotup{P} \\ 0 \end{bmatrix}
         + \mathbf{C_3} \mathbf{C_2} \begin{bmatrix} 0 \\ 0 \\ \dotup{Y} \end{bmatrix}
 \end{equation}
-\_form#406=1572x26:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Fixed-position}
+\_form#416=1572x26:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Fixed-position}
   \mathbf{x}^n = \begin{pmatrix} \phi & \lambda & h \end{pmatrix}^T = \text{const}
 \end{equation}
-\_form#407=1521x19:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Fixed-velocity}
+\_form#417=1521x19:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Fixed-velocity}
   \boldsymbol{v}^n = \mathbf{\dot{x}}^n = 0
 \end{equation}
-\_form#408=1519x19:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Fixed-acceleration}
+\_form#418=1519x19:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Fixed-acceleration}
   \mathbf{a}^n = \boldsymbol{\dot{v}}^n = 0
 \end{equation}
-\_form#409=1545x105:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Linear-curvilinearPositionDerivative}
+\_form#419=1545x105:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Linear-curvilinearPositionDerivative}
 \begin{aligned}
   \dotup{\phi}    &= \frac{v_N}{R_N + h} \\
   \dotup{\lambda} &= \frac{v_E}{(R_E + h) \cos{\phi}} \\
   \dotup{h}       &= -v_D
 \end{aligned}
 \end{equation}
-\_form#410=1643x128:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Linear-position}
+\_form#420=1643x128:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Linear-position}
   \renewcommand*{\arraystretch}{2.0}
   \mathbf{x}^n =
   \begin{pmatrix} \phi \\ \lambda \\ h \end{pmatrix}
@@ -3235,41 +3257,41 @@
   + \begin{pmatrix} \dfrac{v_N}{R_N + h} \\ \dfrac{v_E}{(R_E + h) \cos{\phi}} \\  -v_D \end{pmatrix}
   \cdot t
 \end{equation}
-\_form#411=1537x19:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Linear-velocity}
+\_form#421=1537x19:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Linear-velocity}
 \boldsymbol{v}^n = \mathbf{\dot{x}}^n = const
 \end{equation}
-\_form#412=1519x19:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Linear-acceleration}
+\_form#422=1519x19:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Linear-acceleration}
   \mathbf{a}^n = \boldsymbol{\dot{v}}^n = 0
 \end{equation}
-\_form#413=1526x19:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Circular-horizontal-speed}
+\_form#423=1526x19:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Circular-horizontal-speed}
 \begin{aligned}
   \left|\boldsymbol{v}_{\text{h}}^n\right| &= \text{const}
 \end{aligned}
 \end{equation}
-\_form#414=53x16:$ v_D = 0 $
-\_form#415=84x16:$ v_D = \text{const} $
-\_form#416=1603x42:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Circular-local-position-phi}
+\_form#424=53x16:$ v_D = 0 $
+\_form#425=84x16:$ v_D = \text{const} $
+\_form#426=1603x42:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Circular-local-position-phi}
   \mathbf{x}^n = \begin{pmatrix} x_N \\ x_E \end{pmatrix}
                = \mathbf{x}_M^n
                  + \begin{pmatrix} r \cdot \sin{\left( \varphi \right)} \\
                                    r \cdot \cos{\left( \varphi \right)}
                    \end{pmatrix}
 \end{equation}
-\_form#417=25x12:$ x_M $
-\_form#418=158x18:$ x_D = x_{M,D} - v_{UP} \cdot t $
-\_form#419=12x14:$ \varphi $
-\_form#420=1656x42:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Circular-phi-tilde}
+\_form#427=25x12:$ x_M $
+\_form#428=158x18:$ x_D = x_{M,D} - v_{UP} \cdot t $
+\_form#429=12x14:$ \varphi $
+\_form#430=1656x42:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Circular-phi-tilde}
   \left|\boldsymbol{v}_{\text{h}}^n\right| = \frac{s}{t}
                                 = \left( \frac{\tilde{\varphi}}{2\pi} \cdot U \right) \frac{1}{t}
                                 = \left( \frac{\tilde{\varphi}}{2\pi} \cdot 2\pi r \right) \frac{1}{t}
                                 = \frac{\tilde{\varphi} \cdot r}{t}
 \end{equation}
-\_form#421=19x14:$ \varphi_0 $
-\_form#422=21x14:$ \text{dir} $
-\_form#423=1554x39:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Circular-phi}
+\_form#431=19x14:$ \varphi_0 $
+\_form#432=21x14:$ \text{dir} $
+\_form#433=1554x39:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Circular-phi}
   \varphi = \frac{\left|\boldsymbol{v}_{\text{h}}^n\right| \cdot t}{r} \cdot \text{dir} + \varphi_0
 \end{equation}
-\_form#424=1692x63:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Circular-local-position}
+\_form#434=1692x63:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Circular-local-position}
 \begin{aligned}
   \mathbf{x}^n = \begin{pmatrix} x_N \\ x_E \\ x_D\end{pmatrix}
   = \mathbf{x}_M^n
@@ -3279,13 +3301,13 @@
       \end{pmatrix}
 \end{aligned}
 \end{equation}
-\_form#425=18x12:$ a_h $
-\_form#426=19x12:$ \omega_h $
-\_form#427=1565x19:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Circular-position}
+\_form#435=18x12:$ a_h $
+\_form#436=19x12:$ \omega_h $
+\_form#437=1565x19:\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Circular-position}
   \renewcommand*{\arraystretch}{2.0}
   \mathbf{x}^e = \mathbf{x}_M^e + \mathbf{C}_n^e(\mathbf{x}_M) \cdot \mathbf{x}^n
 \end{equation}
-\_form#428=891x235:\begin{tikzpicture}
+\_form#438=891x235:\begin{tikzpicture}
   \def\ellipseB{10.0};
   \def\ellipseA{14.0};
   \coordinate (origin) at (0.0, 0.0);
@@ -3332,16 +3354,16 @@
   \path [draw,->,thick] ($($(origin)!.8!(xMC)$)$) -- (xMC) node [pos=0.5,right] {$\vec{\mathbf{x}}_M^e$};
   \path [draw, thick] ($($(origin)!.8!(xMC)$)$) --pic{ext} ($($(origin)!.8!(xMC)$)$);
 \end{tikzpicture}
-\_form#429=18x16:$\vec{x}^e$
-\_form#430=1586x44:\begin{equation} \label{eq:eq-ImuSimulator-roll-with-norm}
+\_form#439=18x16:$\vec{x}^e$
+\_form#440=1586x44:\begin{equation} \label{eq:eq-ImuSimulator-roll-with-norm}
   R = \text{dir} \cdot \arccos{\left(\frac{\vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e}{\left|\vec{\mathbf{n}}_M^e\right| \cdot \left|\vec{\mathbf{n}}^e\right|}\right)}
 \end{equation}
-\_form#431=18x16:$\vec{\mathbf{x}}^e$
-\_form#432=25x19:$\vec{\mathbf{x}}^e_M$
-\_form#433=1551x63:\begin{equation} \label{eq:eq-ImuSimulator-n-vector}
+\_form#441=18x16:$\vec{\mathbf{x}}^e$
+\_form#442=25x19:$\vec{\mathbf{x}}^e_M$
+\_form#443=1551x63:\begin{equation} \label{eq:eq-ImuSimulator-n-vector}
   \vec{\mathbf{n}}^e = \begin{pmatrix} \cos{\phi} \cdot \cos{\lambda} \\ \cos{\phi} \cdot \sin{\lambda} \\ \sin{\phi} \end{pmatrix}
 \end{equation}
-\_form#434=1649x154:\begin{equation} \label{eq:eq-ImuSimulator-n-vector-norm}
+\_form#444=1649x154:\begin{equation} \label{eq:eq-ImuSimulator-n-vector-norm}
 \begin{aligned}
   \left|\vec{\mathbf{n}}^e\right| &= \sqrt{ \cos^2{\phi} \cdot \cos^2{\lambda} + \cos^2{\phi} \cdot \sin^2{\lambda} + \sin^2{\phi} } \\
                                   &= \sqrt{ \cos^2{\phi} \cdot \underbrace{( \cos^2{\lambda} + \sin^2{\lambda})}_{=1} + \sin^2{\phi} } \\
@@ -3349,14 +3371,14 @@
                                   &= 1
 \end{aligned}
 \end{equation}
-\_form#435=1568x19:\begin{equation} \label{eq:eq-ImuSimulator-roll}
+\_form#445=1568x19:\begin{equation} \label{eq:eq-ImuSimulator-roll}
   R = \text{dir} \cdot \arccos{\left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)}
 \end{equation}
-\_form#436=33x19:\eqref{eq:eq-INS-Mechanization-Pitch}
-\_form#437=1570x53:\begin{equation} \label{eq:eq-ImuSimulator-pitch}
+\_form#446=33x19:\eqref{eq:eq-INS-Mechanization-Pitch}
+\_form#447=1570x53:\begin{equation} \label{eq:eq-ImuSimulator-pitch}
   P = \tan^{-1}\left(\frac{-v_D}{\sqrt{v_N^2 + v_E^2}}\right)
 \end{equation}
-\_form#438=33x19:\eqref{eq:eq-INS-Mechanization-Yaw}
-\_form#439=1540x42:\begin{equation} \label{eq:eq-ImuSimulator-yaw}
+\_form#448=33x19:\eqref{eq:eq-INS-Mechanization-Yaw}
+\_form#449=1540x42:\begin{equation} \label{eq:eq-ImuSimulator-yaw}
   Y = \tan^{-1}\left(\frac{v_E}{v_N}\right)
 \end{equation}
