@@ -264,7 +264,7 @@ bool InputInt2L(const char* label, int v[2], int v_min, int v_max, ImGuiInputTex
 
 bool InputInt3L(const char* label, int v[3], int v_min, int v_max, ImGuiInputTextFlags flags) // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
 {
-    if (InputInt2(label, v, flags))
+    if (InputInt3(label, v, flags))
     {
         for (size_t i = 0; i < 3; i++)
         {
@@ -278,7 +278,7 @@ bool InputInt3L(const char* label, int v[3], int v_min, int v_max, ImGuiInputTex
 
 bool InputInt4L(const char* label, int v[4], int v_min, int v_max, ImGuiInputTextFlags flags) // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
 {
-    if (InputInt2(label, v, flags))
+    if (InputInt4(label, v, flags))
     {
         for (size_t i = 0; i < 4; i++)
         {

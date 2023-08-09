@@ -259,7 +259,7 @@
         },
         "node-50": {
             "data": {
-                "codes": "111100010001001110001111110000111100011101111111111111111111110101111111111111011101110000000001000000001",
+                "codes": "00111100010001001110001111110000111100011101111111111111111111110101111111111111011101110000000001000000001",
                 "elevationMask": 0.0,
                 "excludedSatellites": [],
                 "frequencies": 1,
@@ -750,6 +750,24 @@
                             },
                             {
                                 "displayName": "sdvdn [m/s]"
+                            },
+                            {
+                                "displayName": "sdvx [m/s]"
+                            },
+                            {
+                                "displayName": "sdvy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvxy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvyz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvzx [m/s]"
                             }
                         ],
                         "size": 0,
@@ -872,6 +890,24 @@
                             },
                             {
                                 "displayName": "sdvdn [m/s]"
+                            },
+                            {
+                                "displayName": "sdvx [m/s]"
+                            },
+                            {
+                                "displayName": "sdvy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvxy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvyz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvzx [m/s]"
                             }
                         ],
                         "size": 0,
@@ -994,6 +1030,24 @@
                             },
                             {
                                 "displayName": "sdvdn [m/s]"
+                            },
+                            {
+                                "displayName": "sdvx [m/s]"
+                            },
+                            {
+                                "displayName": "sdvy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvxy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvyz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvzx [m/s]"
                             }
                         ],
                         "size": 0,
@@ -1116,6 +1170,24 @@
                             },
                             {
                                 "displayName": "sdvdn [m/s]"
+                            },
+                            {
+                                "displayName": "sdvx [m/s]"
+                            },
+                            {
+                                "displayName": "sdvy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvxy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvyz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvzx [m/s]"
                             }
                         ],
                         "size": 0,
@@ -1238,6 +1310,24 @@
                             },
                             {
                                 "displayName": "sdvdn [m/s]"
+                            },
+                            {
+                                "displayName": "sdvx [m/s]"
+                            },
+                            {
+                                "displayName": "sdvy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvxy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvyz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvzx [m/s]"
                             }
                         ],
                         "size": 0,
@@ -1360,6 +1450,24 @@
                             },
                             {
                                 "displayName": "sdvdn [m/s]"
+                            },
+                            {
+                                "displayName": "sdvx [m/s]"
+                            },
+                            {
+                                "displayName": "sdvy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvxy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvyz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvzx [m/s]"
                             }
                         ],
                         "size": 0,
@@ -1482,6 +1590,24 @@
                             },
                             {
                                 "displayName": "sdvdn [m/s]"
+                            },
+                            {
+                                "displayName": "sdvx [m/s]"
+                            },
+                            {
+                                "displayName": "sdvy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvxy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvyz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvzx [m/s]"
                             }
                         ],
                         "size": 0,
@@ -1779,9 +1905,15 @@
                         "title": "Position",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "North/South [m]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -2074,9 +2206,15 @@
                         "title": "North/South",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "North/South [m]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -2369,9 +2507,15 @@
                         "title": "East/West",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "East/West [m]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -2664,9 +2808,15 @@
                         "title": "Altitude",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Altitude [m]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -2959,9 +3109,15 @@
                         "title": "# Satellites",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "# Satellites",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -3089,9 +3245,15 @@
                         "title": "Clock Bias",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Clock Bias [s]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -3186,9 +3348,15 @@
                         "title": "Velocity North",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Velocity North [m/s]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -3283,9 +3451,15 @@
                         "title": "Velocity East",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Velocity East [m/s]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -3380,9 +3554,15 @@
                         "title": "Velocity Down",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Velocity Down [m/s]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -3477,9 +3657,15 @@
                         "title": "StDev North",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "StDev North [m]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     }
                 ],

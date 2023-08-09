@@ -10,6 +10,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <vector>
+#include <string>
 
 #include "internal/Node/Node.hpp"
 #include "internal/AppLogic.hpp"
@@ -17,16 +18,19 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
-bool NAV::TESTS::testFlow(const char* path)
+bool NAV::TESTS::testFlow(const char* path, bool useTestDirectories)
 {
     // Config Manager object
     NAV::ConfigManager::initialize();
 
+    std::string folder = useTestDirectories ? "test/" : "";
+    std::string inputPath = "--input-path=" + folder + "data";
+    std::string outputPath = "--output-path=" + folder + "logs";
     std::vector<const char*> argv = { "",
                                       "--nogui",
                                       "-l", path,
-                                      "--input-path=test/data",
-                                      "--output-path=test/logs",
+                                      inputPath.c_str(),
+                                      outputPath.c_str(),
                                       "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
                                       "--file-log-level=trace",    // trace/debug/info/warning/error/critical/off
                                       nullptr };
