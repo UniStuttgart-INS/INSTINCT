@@ -84,10 +84,11 @@ void NAV::MultiImuFile::guiConfig()
 
     ImGui::Separator();
     // Set Imu Position and Rotation (from 'Imu::guiConfig();')
+    bool showRotation = true;
     for (size_t i = 0; i < _nSensors; ++i)
     {
-        bool showRotation = i == 0 ? true : false;
         ImGui::SetNextItemOpen(showRotation, ImGuiCond_FirstUseEver);
+        if (i == 0) { showRotation = false; }
         if (ImGui::TreeNode(fmt::format("Imu #{} Position & Rotation##{}", i + 1, size_t(id)).c_str()))
         {
             std::array<float, 3> imuPosAccel = { static_cast<float>(_imuPosAll[i].b_positionAccel().x()), static_cast<float>(_imuPosAll[i].b_positionAccel().y()), static_cast<float>(_imuPosAll[i].b_positionAccel().z()) };
@@ -369,24 +370,24 @@ void NAV::MultiImuFile::readHeader()
                         LOG_DEBUG("{}: nmeaMsgType read.", nameId());
                         continue;
                     }
-                    else if (col == "UTC_HMS")
+                    if (col == "UTC_HMS")
                     {
                         hour = std::stoi(cell.substr(0, 2));
                         min = std::stoi(cell.substr(2, 2));
                         sec = std::stold(cell.substr(4, 5));
                         continue;
                     }
-                    else if (col == "day")
+                    if (col == "day")
                     {
                         day = std::stoi(cell);
                         continue;
                     }
-                    else if (col == "month")
+                    if (col == "month")
                     {
                         month = std::stoi(cell);
                         continue;
                     }
-                    else if (col == "year")
+                    if (col == "year")
                     {
                         year = std::stoi(cell);
                     }
