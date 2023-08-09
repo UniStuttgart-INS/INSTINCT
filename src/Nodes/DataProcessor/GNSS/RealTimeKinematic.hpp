@@ -374,6 +374,10 @@ class RealTimeKinematic : public Node
     /// @param[in] ionosphericCorrections Ionospheric correction parameters collected from the Nav data
     void calcObservationEstimates(Observations& observations, const std::vector<SatData>& satelliteData, const IonosphericCorrections& ionosphericCorrections);
 
+    /// @brief Adds or remove Ambiguities to/from the Kalman Filter state depending on the received observations
+    /// @param[in] observations List of GNSS observation data used for the calculation of this epoch
+    void addOrRemoveKalmanFilterAmbiguities(const Observations& observations);
+
     /// @brief Calculates the single difference of the measurements and estimates
     /// @param[in] observations List of GNSS observation data used for the calculation of this epoch
     [[nodiscard]] Differences calcSingleDifferences(const Observations& observations) const;

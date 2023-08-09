@@ -603,6 +603,8 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
         auto [satelliteData, observations] = selectSatObservationsForCalculation(gnssNavInfos);
         calcObservationEstimates(observations, satelliteData, ionosphericCorrections);
 
+        addOrRemoveKalmanFilterAmbiguities(observations);
+
         auto singleDifferences = calcSingleDifferences(observations);
 
         updatePivotSatellites(satelliteData, observations);
@@ -655,6 +657,8 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
             auto satData_s = std::find_if(satelliteData.begin(), satelliteData.end(),
                                           [&satSigId_s = satSigId_s](const SatData& satData) { return satData.satId == satSigId_s.toSatId(); });
 
+            double lambda_j = InsConst::C / satSigId_s.freq().getFrequency(); // TODO: GLONASS frequency number
+
             const auto& satSigId_1 = _pivotSatellites.at(satSigId_s.code).satSigId;
             auto satData_1 = std::find_if(satelliteData.begin(), satelliteData.end(),
                                           [&satSigId_1](const SatData& satData) { return satData.satId == satSigId_1.toSatId(); });
@@ -674,6 +678,8 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
                 case GnssObs::Carrier:
                     _kalmanFilter.z(Meas::CarrierDD{ satSigId_s }) = obs.measurement - obs.estimate;
                     _kalmanFilter.H.block<3>(Meas::CarrierDD{ satSigId_s }, States::Pos) = (e_pLOS_1 - e_pLOS_s).transpose();
+                    _kalmanFilter.H(Meas::CarrierDD{ satSigId_s }, States::AmbiguitySD{ satSigId_1 }) = -lambda_j;
+                    _kalmanFilter.H(Meas::CarrierDD{ satSigId_s }, States::AmbiguitySD{ satSigId_s }) = lambda_j;
                     _kalmanFilter.R(Meas::CarrierDD{ satSigId_s }, Meas::CarrierDD{ satSigId_s }) = obs.measVar;
                     break;
                 case GnssObs::Doppler:
@@ -1039,6 +1045,61 @@ void RealTimeKinematic::calcObservationEstimates(Observations& observations, con
     }
 }
 
+void RealTimeKinematic::addOrRemoveKalmanFilterAmbiguities(const Observations& observations)
+{
+    std::unordered_set<SatSigId> observedSignals;
+
+    for (const auto& observation : observations)
+    {
+        if (observation.second.at(Rover).contains(GnssObs::Carrier)) // This means rover and base have carrier and pseudorange
+        {
+            const auto& satSigId = observation.first;
+            observedSignals.insert(satSigId);
+
+            auto key = States::AmbiguitySD{ satSigId };
+            if (!_kalmanFilter.x.hasRow(key))
+            {
+                LOG_DEBUG("{}: [{}] Adding state: {}", nameId(), _receiver[Rover].gnssObs->insTime, key);
+                _kalmanFilter.addState(key);
+
+                // F: Entries are all 0
+                _kalmanFilter.G(key, key) = 1;
+                _kalmanFilter.W(key, key) = 1e-6; // Ambiguities are modeled as RW with very small noise to keep numerical stability
+
+                // Initialize with difference of (pseudorange - carrier-phase) measurement. Then single difference (rover - base)
+                double lambda_j = InsConst::C / satSigId.freq().getFrequency(); // TODO: GLONASS frequency number
+                _kalmanFilter.x(key) = ((observation.second.at(Rover).at(GnssObs::Pseudorange).measurement
+                                         - observation.second.at(Rover).at(GnssObs::Carrier).measurement)
+                                        - (observation.second.at(Base).at(GnssObs::Pseudorange).measurement
+                                           - observation.second.at(Base).at(GnssObs::Carrier).measurement))
+                                       / lambda_j;
+
+                _kalmanFilter.P(key, key) = (observation.second.at(Rover).at(GnssObs::Pseudorange).measVar
+                                             + observation.second.at(Rover).at(GnssObs::Carrier).measVar
+                                             + observation.second.at(Base).at(GnssObs::Pseudorange).measVar
+                                             + observation.second.at(Base).at(GnssObs::Carrier).measVar)
+                                            / lambda_j;
+            }
+        }
+    }
+    // Iterate all Ambiguities in the state and remove those who were not observed anymore
+    for (size_t i = States::KFStates_COUNT; i < static_cast<size_t>(_kalmanFilter.x.rows()); i++)
+    {
+        const auto& key = std::get<States::AmbiguitySD>(_kalmanFilter.x.rowKeys().at(i));
+        if (!observedSignals.contains(key.satSigId))
+        {
+            LOG_DEBUG("{}: [{}] Removing state: {} (because not observed this epoch)", nameId(), _receiver[Rover].gnssObs->insTime, key);
+            _kalmanFilter.removeState(key);
+        }
+    }
+
+    LOG_TRACE("{}: x =\n{}", nameId(), _kalmanFilter.x);
+    LOG_TRACE("{}: P =\n{}", nameId(), _kalmanFilter.P);
+    LOG_TRACE("{}: G =\n{}", nameId(), _kalmanFilter.G);
+    LOG_TRACE("{}: W =\n{}", nameId(), _kalmanFilter.W);
+    LOG_TRACE("{}: Q =\n{}", nameId(), _kalmanFilter.Q);
+}
+
 RealTimeKinematic::Differences RealTimeKinematic::calcSingleDifferences(const Observations& observations) const
 {
     Differences singleDifferences;
@@ -1064,7 +1125,7 @@ RealTimeKinematic::Differences RealTimeKinematic::calcSingleDifferences(const Ob
             {
                 // ------------------------------------------- Ambiguity ---------------------------------------------
                 double lambda_j = InsConst::C / satSigId.freq().getFrequency(); // TODO: GLONASS frequency number
-                double N_br_s = 0.0;                                            // TODO: Update with values from KF
+                double N_br_s = _kalmanFilter.x(States::AmbiguitySD{ satSigId });
                 singleDifferences[satSigId][obsType].estimate += lambda_j * N_br_s;
             }
 
