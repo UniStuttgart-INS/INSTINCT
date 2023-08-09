@@ -106,6 +106,9 @@ class MultiImuFile : public Node, public FileReader
     /// @brief Counter for messages
     std::vector<size_t> _messageCnt;
 
+    /// @brief Delimiter: ',' for GPZDA and ' ' for GPGGA messages (NMEA)
+    char _delim = ',';
+
     /// @brief First 'gpsSecond', s.t. measurements start at time = 0
     double _startupGpsSecond{};
 

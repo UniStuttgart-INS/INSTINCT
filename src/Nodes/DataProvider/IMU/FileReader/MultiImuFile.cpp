@@ -58,7 +58,7 @@ void NAV::MultiImuFile::guiConfig()
     if (FileReader::guiConfig(".txt", { ".txt" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        deinitialize();
+        doDeinitialize();
     }
 
     ImGui::SetNextItemWidth(columnWidth);
@@ -235,6 +235,7 @@ void NAV::MultiImuFile::guiConfig()
     j["imuPos"] = _imuPosAll;
     j["nmeaType"] = _nmeaType;
     j["startTime"] = _startTime;
+    j["delim"] = _delim;
 
     return j;
 }
@@ -259,6 +260,10 @@ void NAV::MultiImuFile::restore(json const& j)
     {
         j.at("startTime").get_to(_startTime);
     }
+    if (j.contains("delim"))
+    {
+        j.at("delim").get_to(_delim);
+    }
 }
 
 bool NAV::MultiImuFile::initialize()
@@ -266,6 +271,7 @@ bool NAV::MultiImuFile::initialize()
     LOG_TRACE("{}: called", nameId());
 
     _lastFiltObs.reset();
+    _delim = _nmeaType == NmeaType::GPZDA ? ',' : ' ';
 
     return FileReader::initialize();
 }
@@ -468,7 +474,7 @@ std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(size_t pinIdx, 
             // Split line at comma
             for (const auto& col : _columns)
             {
-                if (std::getline(lineStream, cell, ' '))
+                if (std::getline(lineStream, cell, _delim))
                 {
                     // Remove any trailing non text characters
                     cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
