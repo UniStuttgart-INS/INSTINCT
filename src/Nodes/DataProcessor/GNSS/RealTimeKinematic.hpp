@@ -361,7 +361,7 @@ class RealTimeKinematic : public Node
     std::shared_ptr<RtkSolution> calcFallbackSppSolution();
 
     /// @brief Does the Kalman Filter prediction
-    void predictKalmanFilter();
+    void kalmanFilterPrediction();
 
     /// @brief Returns a list of satellites and observations used for calculation of RTK (only satellites filtered by GUI filter & NAV data available & ...)
     /// @param[in] gnssNavInfos Collection of all connected navigation data providers
@@ -390,6 +390,11 @@ class RealTimeKinematic : public Node
     /// @brief Calculates the double difference of the measurements and estimates
     /// @param[in] singleDifferences List of single differences
     [[nodiscard]] Differences calcDoubleDifferences(const Differences& singleDifferences) const;
+
+    /// @brief Does the Kalman Filter update
+    /// @param[in] satelliteData List of satellite data used for the calculation of this epoch
+    /// @param[in] doubleDifferences List of double differences
+    void kalmanFilterUpdate(const std::vector<SatData>& satelliteData, const Differences& doubleDifferences);
 
     /// @brief Converts the enum to a string
     /// @param[in] receiver Enum value to convert into text

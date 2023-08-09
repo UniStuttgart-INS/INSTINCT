@@ -598,7 +598,10 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
         // Collection of all connected Ionospheric Corrections
         IonosphericCorrections ionosphericCorrections(gnssNavInfos);
 
-        predictKalmanFilter();
+        auto rtkSol = std::make_shared<RtkSolution>();
+        rtkSol->insTime = _receiver[Rover].gnssObs->insTime;
+
+        kalmanFilterPrediction();
 
         auto [satelliteData, observations] = selectSatObservationsForCalculation(gnssNavInfos);
         calcObservationEstimates(observations, satelliteData, ionosphericCorrections);
@@ -613,118 +616,15 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
         // #######################################################################################################
         //                                     TODO: Debugging, remove later
         // #######################################################################################################
-        //  Send out predicted state
-        auto rtkSol = std::make_shared<RtkSolution>();
-        rtkSol->insTime = _receiver[Rover].gnssObs->insTime;
-        rtkSol->solType = RtkSolution::SolutionType::RTK_Float;
-        rtkSol->nSatellites = satelliteData.size() - _pivotSatellites.size();
-        rtkSol->setPositionAndStdDev_e(_kalmanFilter.x.segment<3>(States::Pos), _kalmanFilter.P.block<3>(States::Pos, States::Pos));
-        rtkSol->setVelocityAndStdDev_e(_kalmanFilter.x.segment<3>(States::Vel), _kalmanFilter.P.block<3>(States::Vel, States::Vel));
-        invokeCallbacks(OUTPUT_PORT_INDEX_RTKSOL, rtkSol);
+        // //  Send out predicted state
+        // rtkSol->solType = RtkSolution::SolutionType::RTK_Float;
+        // rtkSol->nSatellites = satelliteData.size() - _pivotSatellites.size();
+        // rtkSol->setPositionAndStdDev_e(_kalmanFilter.x.segment<3>(States::Pos), _kalmanFilter.P.block<3>(States::Pos, States::Pos));
+        // rtkSol->setVelocityAndStdDev_e(_kalmanFilter.x.segment<3>(States::Vel), _kalmanFilter.P.block<3>(States::Vel, States::Vel));
+        // invokeCallbacks(OUTPUT_PORT_INDEX_RTKSOL, rtkSol);
         // #######################################################################################################
 
-        // ###################################################################################################
-        //                                      Kalman Filter - Update
-        // ###################################################################################################
-
-        // Update the Measurement sensitivity Matrix (𝐇), the Measurement noise covariance matrix (𝐑) and the Measurement vector (𝐳)
-
-        std::vector<Meas::MeasKeyTypes> measKeys;
-        measKeys.reserve(doubleDifferences.size()
-                         * static_cast<size_t>(std::count(_usedObservations.begin(), _usedObservations.end(), true)));
-        for (const auto& [satSigId, doubleDiff] : doubleDifferences)
-        {
-            for (const auto& [obsType, diff] : doubleDiff)
-            {
-                switch (obsType)
-                {
-                case GnssObs::Pseudorange:
-                    measKeys.emplace_back(Meas::PsrDD{ satSigId });
-                    break;
-                case GnssObs::Carrier:
-                    measKeys.emplace_back(Meas::CarrierDD{ satSigId });
-                    break;
-                case GnssObs::Doppler:
-                    measKeys.emplace_back(Meas::DopplerDD{ satSigId });
-                    break;
-                }
-            }
-        }
-        _kalmanFilter.setMeasurements(measKeys);
-
-        for (const auto& [satSigId_s, doubleDiff] : doubleDifferences)
-        {
-            auto satData_s = std::find_if(satelliteData.begin(), satelliteData.end(),
-                                          [&satSigId_s = satSigId_s](const SatData& satData) { return satData.satId == satSigId_s.toSatId(); });
-
-            double lambda_j = InsConst::C / satSigId_s.freq().getFrequency(); // TODO: GLONASS frequency number
-
-            const auto& satSigId_1 = _pivotSatellites.at(satSigId_s.code).satSigId;
-            auto satData_1 = std::find_if(satelliteData.begin(), satelliteData.end(),
-                                          [&satSigId_1](const SatData& satData) { return satData.satId == satSigId_1.toSatId(); });
-
-            const auto& e_pLOS_1 = satData_1->receiverData.at(Rover).e_pLOS;
-            const auto& e_pLOS_s = satData_s->receiverData.at(Rover).e_pLOS;
-
-            for (const auto& [obsType, obs] : doubleDiff)
-            {
-                switch (obsType)
-                {
-                case GnssObs::Pseudorange:
-                    _kalmanFilter.z(Meas::PsrDD{ satSigId_s }) = obs.measurement - obs.estimate;
-                    _kalmanFilter.H.block<3>(Meas::PsrDD{ satSigId_s }, States::Pos) = (e_pLOS_1 - e_pLOS_s).transpose();
-                    _kalmanFilter.R(Meas::PsrDD{ satSigId_s }, Meas::PsrDD{ satSigId_s }) = obs.measVar;
-                    break;
-                case GnssObs::Carrier:
-                    _kalmanFilter.z(Meas::CarrierDD{ satSigId_s }) = obs.measurement - obs.estimate;
-                    _kalmanFilter.H.block<3>(Meas::CarrierDD{ satSigId_s }, States::Pos) = (e_pLOS_1 - e_pLOS_s).transpose();
-                    _kalmanFilter.H(Meas::CarrierDD{ satSigId_s }, States::AmbiguitySD{ satSigId_1 }) = -lambda_j;
-                    _kalmanFilter.H(Meas::CarrierDD{ satSigId_s }, States::AmbiguitySD{ satSigId_s }) = lambda_j;
-                    _kalmanFilter.R(Meas::CarrierDD{ satSigId_s }, Meas::CarrierDD{ satSigId_s }) = obs.measVar;
-                    break;
-                case GnssObs::Doppler:
-                {
-                    _kalmanFilter.z(Meas::DopplerDD{ satSigId_s }) = obs.measurement - obs.estimate;
-                    const auto& e_vLOS_1 = satData_1->receiverData.at(Rover).e_vLOS;
-                    const auto& e_vLOS_s = satData_s->receiverData.at(Rover).e_vLOS;
-
-                    _kalmanFilter.H.block<3>(Meas::DopplerDD{ satSigId_s }, States::Pos) = Eigen::RowVector3d(
-                        -e_vLOS_1.x() * e_pLOS_1.x() * e_pLOS_1.x() + e_vLOS_1.x() + e_vLOS_s.x() * e_pLOS_s.x() * e_pLOS_s.x() - e_vLOS_s.x() - e_vLOS_1.y() * e_pLOS_1.x() * e_pLOS_1.y() + e_vLOS_s.y() * e_pLOS_s.x() * e_pLOS_s.y() - e_vLOS_1.z() * e_pLOS_1.x() * e_pLOS_1.z() + e_vLOS_s.z() * e_pLOS_s.x() * e_pLOS_s.z(),
-                        -e_vLOS_1.x() * e_pLOS_1.x() * e_pLOS_1.y() + e_vLOS_s.x() * e_pLOS_s.x() * e_pLOS_s.y() - e_vLOS_1.y() * e_pLOS_1.y() * e_pLOS_1.y() + e_vLOS_1.y() + e_vLOS_s.y() * e_pLOS_s.y() * e_pLOS_s.y() - e_vLOS_s.y() - e_vLOS_1.z() * e_pLOS_1.y() * e_pLOS_1.z() + e_vLOS_s.z() * e_pLOS_s.y() * e_pLOS_s.z(),
-                        -e_vLOS_1.x() * e_pLOS_1.x() * e_pLOS_1.z() + e_vLOS_s.x() * e_pLOS_s.x() * e_pLOS_s.z() - e_vLOS_1.y() * e_pLOS_1.y() * e_pLOS_1.z() + e_vLOS_s.y() * e_pLOS_s.y() * e_pLOS_s.z() - e_vLOS_1.z() * e_pLOS_1.z() * e_pLOS_1.z() + e_vLOS_1.z() + e_vLOS_s.z() * e_pLOS_s.z() * e_pLOS_s.z() - e_vLOS_s.z());
-                    _kalmanFilter.H.block<3>(Meas::DopplerDD{ satSigId_s }, States::Vel) = (e_pLOS_1 - e_pLOS_s).transpose();
-                    _kalmanFilter.R(Meas::DopplerDD{ satSigId_s }, Meas::DopplerDD{ satSigId_s }) = obs.measVar;
-                    break;
-                }
-                }
-            }
-        }
-        LOG_TRACE("{}: z =\n{}", nameId(), _kalmanFilter.z);
-        LOG_TRACE("{}: H =\n{}", nameId(), _kalmanFilter.H);
-        LOG_TRACE("{}: R =\n{}", nameId(), _kalmanFilter.R);
-
-        LOG_TRACE("{}: HPH^T =\n{}", nameId(),
-                  KeyedMatrixXd<Meas::MeasKeyTypes>(_kalmanFilter.H(all, all)
-                                                        * _kalmanFilter.P(all, all)
-                                                        * _kalmanFilter.H(all, all).transpose(),
-                                                    _kalmanFilter.z.rowKeys()));
-        LOG_TRACE("{}: S =\n{}", nameId(),
-                  KeyedMatrixXd<Meas::MeasKeyTypes>((_kalmanFilter.H(all, all)
-                                                         * _kalmanFilter.P(all, all)
-                                                         * _kalmanFilter.H(all, all).transpose()
-                                                     + _kalmanFilter.R(all, all))
-                                                        .inverse(),
-                                                    _kalmanFilter.z.rowKeys()));
-
-        _kalmanFilter.correctWithMeasurementInnovation();
-        LOG_TRACE("{}: x (a posteriori, t   = {}) =\n{}", nameId(), _receiver[Rover].gnssObs->insTime, _kalmanFilter.x);
-        LOG_TRACE("{}: P (a posteriori, t   = {}) =\n{}", nameId(), _receiver[Rover].gnssObs->insTime, _kalmanFilter.P);
-
-        LOG_TRACE("{}: dx (ECEF) = {}", nameId(), (_kalmanFilter.x.segment<3>(States::Pos) - _receiver[Rover].e_pos).transpose());
-        LOG_TRACE("{}: dv (ECEF) = {}", nameId(), (_kalmanFilter.x.segment<3>(States::Vel) - _receiver[Rover].e_vel).transpose());
-        _receiver[Rover].e_pos = _kalmanFilter.x.segment<3>(States::Pos);
-        _receiver[Rover].e_vel = _kalmanFilter.x.segment<3>(States::Vel);
-        _receiver[Rover].lla_pos = trafo::ecef2lla_WGS84(_receiver[Rover].e_pos);
+        kalmanFilterUpdate(satelliteData, doubleDifferences);
 
         rtkSol->solType = RtkSolution::SolutionType::RTK_Float;
         rtkSol->nSatellites = satelliteData.size() - _pivotSatellites.size();
@@ -777,7 +677,7 @@ std::shared_ptr<RtkSolution> RealTimeKinematic::calcFallbackSppSolution()
     return nullptr;
 }
 
-void RealTimeKinematic::predictKalmanFilter()
+void RealTimeKinematic::kalmanFilterPrediction()
 {
     // Update the State transition matrix (𝚽) and the Process noise covariance matrix (𝐐)
 
@@ -1063,8 +963,9 @@ void RealTimeKinematic::addOrRemoveKalmanFilterAmbiguities(const Observations& o
                 _kalmanFilter.addState(key);
 
                 // F: Entries are all 0
+                // Ambiguities are modeled as RW with very small noise to keep numerical stability
                 _kalmanFilter.G(key, key) = 1;
-                _kalmanFilter.W(key, key) = 1e-6; // Ambiguities are modeled as RW with very small noise to keep numerical stability
+                _kalmanFilter.W(key, key) = 1e-12; // Variance
 
                 // Initialize with difference of (pseudorange - carrier-phase) measurement. Then single difference (rover - base)
                 double lambda_j = InsConst::C / satSigId.freq().getFrequency(); // TODO: GLONASS frequency number
@@ -1254,6 +1155,108 @@ RealTimeKinematic::Differences RealTimeKinematic::calcDoubleDifferences(const Di
     }
 
     return doubleDifferences;
+}
+
+void RealTimeKinematic::kalmanFilterUpdate(const std::vector<SatData>& satelliteData, const Differences& doubleDifferences)
+{
+    // Update the Measurement sensitivity Matrix (𝐇), the Measurement noise covariance matrix (𝐑) and the Measurement vector (𝐳)
+
+    std::vector<Meas::MeasKeyTypes> measKeys;
+    measKeys.reserve(doubleDifferences.size()
+                     * static_cast<size_t>(std::count(_usedObservations.begin(), _usedObservations.end(), true)));
+    for (const auto& [satSigId, doubleDiff] : doubleDifferences)
+    {
+        for (const auto& [obsType, diff] : doubleDiff)
+        {
+            switch (obsType)
+            {
+            case GnssObs::Pseudorange:
+                measKeys.emplace_back(Meas::PsrDD{ satSigId });
+                break;
+            case GnssObs::Carrier:
+                measKeys.emplace_back(Meas::CarrierDD{ satSigId });
+                break;
+            case GnssObs::Doppler:
+                measKeys.emplace_back(Meas::DopplerDD{ satSigId });
+                break;
+            }
+        }
+    }
+    _kalmanFilter.setMeasurements(measKeys);
+
+    for (const auto& [satSigId_s, doubleDiff] : doubleDifferences)
+    {
+        auto satData_s = std::find_if(satelliteData.begin(), satelliteData.end(),
+                                      [&satSigId_s = satSigId_s](const SatData& satData) { return satData.satId == satSigId_s.toSatId(); });
+
+        double lambda_j = InsConst::C / satSigId_s.freq().getFrequency(); // TODO: GLONASS frequency number
+
+        const auto& satSigId_1 = _pivotSatellites.at(satSigId_s.code).satSigId;
+        auto satData_1 = std::find_if(satelliteData.begin(), satelliteData.end(),
+                                      [&satSigId_1](const SatData& satData) { return satData.satId == satSigId_1.toSatId(); });
+
+        const auto& e_pLOS_1 = satData_1->receiverData.at(Rover).e_pLOS;
+        const auto& e_pLOS_s = satData_s->receiverData.at(Rover).e_pLOS;
+
+        for (const auto& [obsType, obs] : doubleDiff)
+        {
+            switch (obsType)
+            {
+            case GnssObs::Pseudorange:
+                _kalmanFilter.z(Meas::PsrDD{ satSigId_s }) = obs.measurement - obs.estimate;
+                _kalmanFilter.H.block<3>(Meas::PsrDD{ satSigId_s }, States::Pos) = (e_pLOS_1 - e_pLOS_s).transpose();
+                _kalmanFilter.R(Meas::PsrDD{ satSigId_s }, Meas::PsrDD{ satSigId_s }) = obs.measVar;
+                break;
+            case GnssObs::Carrier:
+                _kalmanFilter.z(Meas::CarrierDD{ satSigId_s }) = obs.measurement - obs.estimate;
+                _kalmanFilter.H.block<3>(Meas::CarrierDD{ satSigId_s }, States::Pos) = (e_pLOS_1 - e_pLOS_s).transpose();
+                _kalmanFilter.H(Meas::CarrierDD{ satSigId_s }, States::AmbiguitySD{ satSigId_1 }) = -lambda_j;
+                _kalmanFilter.H(Meas::CarrierDD{ satSigId_s }, States::AmbiguitySD{ satSigId_s }) = lambda_j;
+                _kalmanFilter.R(Meas::CarrierDD{ satSigId_s }, Meas::CarrierDD{ satSigId_s }) = obs.measVar;
+                break;
+            case GnssObs::Doppler:
+            {
+                _kalmanFilter.z(Meas::DopplerDD{ satSigId_s }) = obs.measurement - obs.estimate;
+                const auto& e_vLOS_1 = satData_1->receiverData.at(Rover).e_vLOS;
+                const auto& e_vLOS_s = satData_s->receiverData.at(Rover).e_vLOS;
+
+                _kalmanFilter.H.block<3>(Meas::DopplerDD{ satSigId_s }, States::Pos) = Eigen::RowVector3d(
+                    -e_vLOS_1.x() * e_pLOS_1.x() * e_pLOS_1.x() + e_vLOS_1.x() + e_vLOS_s.x() * e_pLOS_s.x() * e_pLOS_s.x() - e_vLOS_s.x() - e_vLOS_1.y() * e_pLOS_1.x() * e_pLOS_1.y() + e_vLOS_s.y() * e_pLOS_s.x() * e_pLOS_s.y() - e_vLOS_1.z() * e_pLOS_1.x() * e_pLOS_1.z() + e_vLOS_s.z() * e_pLOS_s.x() * e_pLOS_s.z(),
+                    -e_vLOS_1.x() * e_pLOS_1.x() * e_pLOS_1.y() + e_vLOS_s.x() * e_pLOS_s.x() * e_pLOS_s.y() - e_vLOS_1.y() * e_pLOS_1.y() * e_pLOS_1.y() + e_vLOS_1.y() + e_vLOS_s.y() * e_pLOS_s.y() * e_pLOS_s.y() - e_vLOS_s.y() - e_vLOS_1.z() * e_pLOS_1.y() * e_pLOS_1.z() + e_vLOS_s.z() * e_pLOS_s.y() * e_pLOS_s.z(),
+                    -e_vLOS_1.x() * e_pLOS_1.x() * e_pLOS_1.z() + e_vLOS_s.x() * e_pLOS_s.x() * e_pLOS_s.z() - e_vLOS_1.y() * e_pLOS_1.y() * e_pLOS_1.z() + e_vLOS_s.y() * e_pLOS_s.y() * e_pLOS_s.z() - e_vLOS_1.z() * e_pLOS_1.z() * e_pLOS_1.z() + e_vLOS_1.z() + e_vLOS_s.z() * e_pLOS_s.z() * e_pLOS_s.z() - e_vLOS_s.z());
+                _kalmanFilter.H.block<3>(Meas::DopplerDD{ satSigId_s }, States::Vel) = (e_pLOS_1 - e_pLOS_s).transpose();
+                _kalmanFilter.R(Meas::DopplerDD{ satSigId_s }, Meas::DopplerDD{ satSigId_s }) = obs.measVar;
+                break;
+            }
+            }
+        }
+    }
+    LOG_TRACE("{}: z =\n{}", nameId(), _kalmanFilter.z);
+    LOG_TRACE("{}: H =\n{}", nameId(), _kalmanFilter.H);
+    LOG_TRACE("{}: R =\n{}", nameId(), _kalmanFilter.R);
+
+    LOG_TRACE("{}: HPH^T =\n{}", nameId(),
+              KeyedMatrixXd<Meas::MeasKeyTypes>(_kalmanFilter.H(all, all)
+                                                    * _kalmanFilter.P(all, all)
+                                                    * _kalmanFilter.H(all, all).transpose(),
+                                                _kalmanFilter.z.rowKeys()));
+    LOG_TRACE("{}: S =\n{}", nameId(),
+              KeyedMatrixXd<Meas::MeasKeyTypes>((_kalmanFilter.H(all, all)
+                                                     * _kalmanFilter.P(all, all)
+                                                     * _kalmanFilter.H(all, all).transpose()
+                                                 + _kalmanFilter.R(all, all))
+                                                    .inverse(),
+                                                _kalmanFilter.z.rowKeys()));
+
+    _kalmanFilter.correctWithMeasurementInnovation();
+    LOG_TRACE("{}: x (a posteriori, t   = {}) =\n{}", nameId(), _receiver[Rover].gnssObs->insTime, _kalmanFilter.x);
+    LOG_TRACE("{}: P (a posteriori, t   = {}) =\n{}", nameId(), _receiver[Rover].gnssObs->insTime, _kalmanFilter.P);
+
+    LOG_TRACE("{}: dx (ECEF) = {}", nameId(), (_kalmanFilter.x.segment<3>(States::Pos) - _receiver[Rover].e_pos).transpose());
+    LOG_TRACE("{}: dv (ECEF) = {}", nameId(), (_kalmanFilter.x.segment<3>(States::Vel) - _receiver[Rover].e_vel).transpose());
+    _receiver[Rover].e_pos = _kalmanFilter.x.segment<3>(States::Pos);
+    _receiver[Rover].e_vel = _kalmanFilter.x.segment<3>(States::Vel);
+    _receiver[Rover].lla_pos = trafo::ecef2lla_WGS84(_receiver[Rover].e_pos);
 }
 
 const char* RealTimeKinematic::to_string(RealTimeKinematic::ReceiverType receiver)
