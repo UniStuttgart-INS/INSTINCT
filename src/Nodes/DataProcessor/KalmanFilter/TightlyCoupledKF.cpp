@@ -1643,7 +1643,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
                         LOG_DATA("{}: Satellite {} is skipped because the signal is not healthy.", nameId(), satId);
                         continue;
                     }
-                    LOG_DATA("{}: Using observation from {} {}", nameId(), obsData.satSigId, obsData.code);
+                    LOG_DATA("{}: Using observation from {} {}", nameId(), obsData.satSigId, obsData.satSigId.code);
                     calcData.emplace_back(obsIdx, satNavData);
                     if (std::find(availSatelliteSystems.begin(), availSatelliteSystems.end(), satId.satSys) == availSatelliteSystems.end())
                     {

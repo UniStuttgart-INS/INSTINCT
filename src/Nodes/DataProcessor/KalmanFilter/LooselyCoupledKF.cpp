@@ -975,9 +975,9 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         _kalmanFilter.W(all, all) = noiseScaleMatrix_W(sigma_ra, sigma_rg,
                                                        sigma_bad, sigma_bgd,
                                                        _tau_bad, _tau_bgd);
-        LOG_DATA("{}:     W =\n{}", nameId(), _kalmanFilter.W);
+        LOG_DATA("{}:     W =\n{}", nameId(), _kalmanFilter.W(all, all));
 
-        LOG_DATA("{}:     G*W*G^T =\n{}", nameId(), _kalmanFilter.G(all, all) * _kalmanFilter.W * _kalmanFilter.G(all, all).transpose());
+        LOG_DATA("{}:     G*W*G^T =\n{}", nameId(), _kalmanFilter.G(all, all) * _kalmanFilter.W(all, all) * _kalmanFilter.G(all, all).transpose());
 
         // 1. Calculate the transition matrix 𝚽_{k-1}
         if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_Phi); }
