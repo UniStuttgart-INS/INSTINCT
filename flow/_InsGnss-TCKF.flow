@@ -691,6 +691,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 5,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -724,6 +725,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 5,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -757,6 +759,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 5,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -822,6 +825,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 13,
+                                "displayName": "North velocity [m/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -855,6 +859,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 14,
+                                "displayName": "East velocity [m/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -920,6 +925,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 16,
+                                "displayName": "Roll [deg]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -953,6 +959,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 17,
+                                "displayName": "Pitch [deg]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -986,6 +993,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 18,
+                                "displayName": "Yaw [deg]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1019,6 +1027,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 16,
+                                "displayName": "Roll [deg]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1052,6 +1061,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 17,
+                                "displayName": "Pitch [deg]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1085,6 +1095,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 18,
+                                "displayName": "Yaw [deg]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1150,6 +1161,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 4,
+                                "displayName": "Altitude [m]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1183,6 +1195,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 4,
+                                "displayName": "Altitude [m]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1216,6 +1229,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 4,
+                                "displayName": "Altitude [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -1651,6 +1665,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 20,
+                                "displayName": "Accelerometer bias b_X [m/s^2]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1684,6 +1699,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 21,
+                                "displayName": "Accelerometer bias b_Y [m/s^2]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1717,6 +1733,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 22,
+                                "displayName": "Accelerometer bias b_Z [m/s^2]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1781,6 +1798,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 23,
+                                "displayName": "Gyroscope bias b_X [rad/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1814,6 +1832,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 24,
+                                "displayName": "Gyroscope bias b_Y [rad/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1847,6 +1866,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 25,
+                                "displayName": "Gyroscope bias b_Z [rad/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1911,6 +1931,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 28,
+                                "displayName": "Receiver clock offset [s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1944,6 +1965,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 18,
+                                "displayName": "Receiver clock bias [s]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -2008,6 +2030,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 29,
+                                "displayName": "Receiver clock drift [s/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -2041,6 +2064,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 19,
+                                "displayName": "Receiver clock drift [s/s]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -2125,8 +2149,9 @@
         },
         "node-1193": {
             "data": {
-                "codes": "11110001000100111000111111000011110001110111111111111111111111010111111101110111011101110000000001000000001",
+                "codes": "011110001000100111000111111000011110001110111111111111111111111010111111101110111011101110000000001000000001",
                 "elevationMask": 14.999999999999998,
+                "estimatorType": 1,
                 "excludedSatellites": [],
                 "frequencies": 1,
                 "ionosphereModel": 0,
@@ -2164,8 +2189,7 @@
                             "waterVaporModel": 0
                         }
                     ]
-                },
-                "useWeightedLeastSquares": true
+                }
             },
             "enabled": true,
             "id": 1193,
@@ -2593,7 +2617,7 @@
         "node-810": {
             "data": {
                 "checkKalmanMatricesRanks": true,
-                "codes": "11110001000100111000111111000011110001110111111111111111111111010111111101110111011101110000000001000000001",
+                "codes": "011110001000100111000111111000011110001110111111111111111111111010111111101110111011101110000000001000000001",
                 "elevationMask": 14.999999999999998,
                 "excludedSatellites": [],
                 "frame": 1,
@@ -3101,6 +3125,28 @@
             "data": {
                 "attitudeMode": 2,
                 "initDuration": 5.0,
+                "overridePosition": 2,
+                "overrideRollPitchYaw": [
+                    false,
+                    false,
+                    false
+                ],
+                "overrideValuesPosition": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "overrideValuesRollPitchYaw": [
+                    0.0,
+                    0.0,
+                    90.0
+                ],
                 "overrideValuesVelocity": {
                     "0": {
                         "0": 0.0
@@ -3112,29 +3158,6 @@
                         "0": 0.0
                     }
                 },
-
-                "overridePosition": 2,
-                "overrideRollPitchYaw": [
-                    false,
-                    false,
-                    false
-                ],
-                "overrideValuesPosition_lla": {
-                    "0": {
-                        "0": 30.000999450683594
-                    },
-                    "1": {
-                        "0": 95.0
-                    },
-                    "2": {
-                        "0": 0.0
-                    }
-                },
-                "overrideValuesRollPitchYaw": [
-                    0.0,
-                    0.0,
-                    90.0
-                ],
                 "overrideVelocity": 2,
                 "positionAccuracyThreshold": 10.0,
                 "velocityAccuracyThreshold": 10.0

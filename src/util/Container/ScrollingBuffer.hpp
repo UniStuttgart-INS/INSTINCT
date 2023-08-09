@@ -154,6 +154,13 @@ class ScrollingBuffer
         return _maxSize - (_dataStart - _dataEnd);
     }
 
+    /// @brief Increase the capacity of the vector to a value that's greater or equal to new_cap.
+    /// @param new_cap New capacity of the vector, in number of elements
+    void reserve(size_t new_cap)
+    {
+        _data.reserve(new_cap);
+    }
+
     /// @brief Returns the number of elements that can be held in currently allocated storage
     [[nodiscard]] size_t capacity() const
     {

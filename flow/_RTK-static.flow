@@ -996,6 +996,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 5,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1029,6 +1030,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 8,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1062,6 +1064,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 8,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 3,
                                 "style": {
                                     "color": {
@@ -1095,6 +1098,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 5,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -1162,6 +1166,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 5,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1195,6 +1200,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 8,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1228,6 +1234,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 8,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 3,
                                 "style": {
                                     "color": {
@@ -1261,6 +1268,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 5,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -1327,6 +1335,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 6,
+                                "displayName": "East/West [m]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1360,6 +1369,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 9,
+                                "displayName": "East/West [m]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1393,6 +1403,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 9,
+                                "displayName": "East/West [m]",
                                 "pinIndex": 3,
                                 "style": {
                                     "color": {
@@ -1426,6 +1437,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 6,
+                                "displayName": "East/West [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -1492,6 +1504,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 4,
+                                "displayName": "Altitude [m]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1525,6 +1538,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 7,
+                                "displayName": "Altitude [m]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1558,6 +1572,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 7,
+                                "displayName": "Altitude [m]",
                                 "pinIndex": 3,
                                 "style": {
                                     "color": {
@@ -1591,6 +1606,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 4,
+                                "displayName": "Altitude [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -1657,6 +1673,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 10,
+                                "displayName": "X velocity ECEF [m/s]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -1690,6 +1707,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 11,
+                                "displayName": "Y velocity ECEF [m/s]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -1723,6 +1741,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 12,
+                                "displayName": "Z velocity ECEF [m/s]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -1789,6 +1808,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 16,
+                                "displayName": "Number satellites (pos)",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1822,6 +1842,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 11,
+                                "displayName": "ns [-]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1855,6 +1876,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 11,
+                                "displayName": "ns [-]",
                                 "pinIndex": 3,
                                 "style": {
                                     "color": {
@@ -1888,6 +1910,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 17,
+                                "displayName": "Number satellites",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -1954,6 +1977,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 21,
+                                "displayName": "North StDev [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -1987,6 +2011,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 22,
+                                "displayName": "East StDev [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2020,6 +2045,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 23,
+                                "displayName": "Down StDev [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2086,6 +2112,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 18,
+                                "displayName": "X-ECEF StDev [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2119,6 +2146,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 19,
+                                "displayName": "Y-ECEF StDev [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2152,6 +2180,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 20,
+                                "displayName": "Z-ECEF StDev [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2367,17 +2396,6 @@
             "data": {
                 "attitudeMode": 0,
                 "initDuration": 5.0,
-                "overrideValuesVelocity": {
-                    "0": {
-                        "0": 0.0
-                    },
-                    "1": {
-                        "0": 0.0
-                    },
-                    "2": {
-                        "0": 0.0
-                    }
-                },
                 "overridePosition": 2,
                 "overrideRollPitchYaw": [
                     true,
@@ -2400,6 +2418,17 @@
                     0.0,
                     0.0
                 ],
+                "overrideValuesVelocity": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
                 "overrideVelocity": 2,
                 "positionAccuracyThreshold": 10.0,
                 "velocityAccuracyThreshold": 10.0

@@ -376,7 +376,7 @@
         "node-137": {
             "data": {
                 "nInputPins": 5,
-                "nPlots": 8,
+                "nPlots": 9,
                 "overridePositionStartValues": true,
                 "pinData": [
                     {
@@ -845,6 +845,39 @@
                             },
                             {
                                 "displayName": "Down velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-07"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-15"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-27"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-32"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-10"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-08"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-18"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-21"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-01"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-30"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-16"
                             }
                         ],
                         "size": 0,
@@ -1078,6 +1111,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 5,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1111,6 +1145,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 8,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1144,6 +1179,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 8,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 3,
                                 "style": {
                                     "color": {
@@ -1177,6 +1213,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 5,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -1210,6 +1247,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 5,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 4,
                                 "style": {
                                     "color": {
@@ -1278,6 +1316,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 5,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1311,6 +1350,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 8,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1344,6 +1384,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 8,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 3,
                                 "style": {
                                     "color": {
@@ -1377,6 +1418,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 5,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -1410,6 +1452,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 5,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 4,
                                 "style": {
                                     "color": {
@@ -1478,6 +1521,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 6,
+                                "displayName": "East/West [m]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1511,6 +1555,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 9,
+                                "displayName": "East/West [m]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1544,6 +1589,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 9,
+                                "displayName": "East/West [m]",
                                 "pinIndex": 3,
                                 "style": {
                                     "color": {
@@ -1577,6 +1623,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 6,
+                                "displayName": "East/West [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -1610,6 +1657,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 6,
+                                "displayName": "East/West [m]",
                                 "pinIndex": 4,
                                 "style": {
                                     "color": {
@@ -1678,6 +1726,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 4,
+                                "displayName": "Altitude [m]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1711,6 +1760,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 7,
+                                "displayName": "Altitude [m]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1744,6 +1794,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 7,
+                                "displayName": "Altitude [m]",
                                 "pinIndex": 3,
                                 "style": {
                                     "color": {
@@ -1777,6 +1828,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 4,
+                                "displayName": "Altitude [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -1810,6 +1862,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 4,
+                                "displayName": "Altitude [m]",
                                 "pinIndex": 4,
                                 "style": {
                                     "color": {
@@ -1878,6 +1931,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 13,
+                                "displayName": "North velocity [m/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1911,6 +1965,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 29,
+                                "displayName": "Velocity North [m/s]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1944,6 +1999,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 13,
+                                "displayName": "North velocity [m/s]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -1977,6 +2033,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 29,
+                                "displayName": "Velocity North [m/s]",
                                 "pinIndex": 3,
                                 "style": {
                                     "color": {
@@ -2010,6 +2067,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 13,
+                                "displayName": "North velocity [m/s]",
                                 "pinIndex": 4,
                                 "style": {
                                     "color": {
@@ -2078,6 +2136,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 16,
+                                "displayName": "Number satellites (pos)",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -2111,6 +2170,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 11,
+                                "displayName": "ns [-]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -2144,6 +2204,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 11,
+                                "displayName": "ns [-]",
                                 "pinIndex": 3,
                                 "style": {
                                     "color": {
@@ -2177,6 +2238,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 17,
+                                "displayName": "Number satellites",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2234,6 +2296,414 @@
                             0,
                             0
                         ],
+                        "yAxisFlags": 0
+                    },
+                    {
+                        "headerText": "Ambiguities",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 30,
+                                "displayName": "AmbSD G1C-07",
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-07",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 31,
+                                "displayName": "AmbSD G1C-15",
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-15",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 32,
+                                "displayName": "AmbSD G1C-27",
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-27",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 33,
+                                "displayName": "AmbSD G1C-32",
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-32",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 34,
+                                "displayName": "AmbSD G1C-10",
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-10",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 35,
+                                "displayName": "AmbSD G1C-08",
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-08",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 36,
+                                "displayName": "AmbSD G1C-18",
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-18",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 37,
+                                "displayName": "AmbSD G1C-21",
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-21",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 38,
+                                "displayName": "AmbSD G1C-01",
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-01",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 39,
+                                "displayName": "AmbSD G1C-30",
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-30",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 40,
+                                "displayName": "AmbSD G1C-16",
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": 1.0,
+                                        "x": 0.5826936960220337,
+                                        "y": 0.6901960968971252,
+                                        "z": 0.2980392277240753
+                                    },
+                                    "legendName": "G1C-16",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 2,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 350.0
+                        },
+                        "title": "Ambiguities",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "xAxisScale": 0,
+                        "y1AxisLabel": "Ambiguity [cycles]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -2245,6 +2715,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 21,
+                                "displayName": "North StDev [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2278,6 +2749,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 22,
+                                "displayName": "East StDev [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2311,6 +2783,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 23,
+                                "displayName": "Down StDev [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2379,6 +2852,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 27,
+                                "displayName": "North velocity StDev [m/s]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2412,6 +2886,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 28,
+                                "displayName": "East velocity StDev [m/s]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2445,6 +2920,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 29,
+                                "displayName": "Down velocity StDev [m/s]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {

@@ -229,6 +229,8 @@ class Plot : public Node
         int stride = 1;
         /// Mutex to lock the buffer so that the GUI thread and the calculation threads don't cause a data race
         std::mutex mutex;
+        /// Dynamic data start index
+        int dynamicDataStartIndex = -1;
     };
 
     /// @brief Information specifying the look of each plot
@@ -281,26 +283,29 @@ class Plot : public Node
             /// @brief Constructor
             /// @param[in] pinIndex Index of the pin where the data came in
             /// @param[in] dataIndex Index of the data on the pin
-            PlotItem(size_t pinIndex, size_t dataIndex)
-                : pinIndex(pinIndex), dataIndex(dataIndex) {}
+            /// @param[in] displayName Display name of the data
+            PlotItem(size_t pinIndex, size_t dataIndex, std::string displayName)
+                : pinIndex(pinIndex), dataIndex(dataIndex), displayName(std::move(displayName)) {}
 
             /// @brief Constructor
             /// @param[in] pinIndex Index of the pin where the data came in
             /// @param[in] dataIndex Index of the data on the pin
+            /// @param[in] displayName Display name of the data
             /// @param[in] axis Axis to plot the data on (Y1, Y2, Y3)
-            PlotItem(size_t pinIndex, size_t dataIndex, ImAxis axis)
-                : pinIndex(pinIndex), dataIndex(dataIndex), axis(axis) {}
+            PlotItem(size_t pinIndex, size_t dataIndex, std::string displayName, ImAxis axis)
+                : pinIndex(pinIndex), dataIndex(dataIndex), displayName(std::move(displayName)), axis(axis) {}
 
             /// @brief Equal comparison operator (needed to search the vector with std::find)
             /// @param[in] rhs Right-hand-side of the operator
             /// @return True if the pin and data indices match
             constexpr bool operator==(const PlotItem& rhs) const
             {
-                return pinIndex == rhs.pinIndex && dataIndex == rhs.dataIndex;
+                return pinIndex == rhs.pinIndex && dataIndex == rhs.dataIndex && displayName == rhs.displayName;
             }
 
             size_t pinIndex{};        ///< Index of the pin where the data came in
             size_t dataIndex{};       ///< Index of the data on the pin
+            std::string displayName;  ///< Display name of the data (not changing and unique)
             ImAxis axis{ ImAxis_Y1 }; ///< Axis to plot the data on (Y1, Y2, Y3)
             Style style{};            ///< Defines how the data should be plotted
         };
@@ -377,6 +382,12 @@ class Plot : public Node
     /// @param[in] dataIndex Index of the data to insert
     /// @param[in] value The value to insert
     void addData(size_t pinIndex, size_t dataIndex, double value);
+
+    /// @brief Add Data to the buffer of the pin
+    /// @param[in] pinIndex Index of the input pin where the data was received
+    /// @param[in] displayName Display name of the data
+    /// @param[in] value The value to insert
+    void addData(size_t pinIndex, std::string displayName, double value);
 
     /// @brief Plots the data on this port
     /// @param[in] insTime Time the data was received

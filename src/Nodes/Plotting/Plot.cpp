@@ -175,6 +175,7 @@ void to_json(json& j, const Plot::PlotInfo::PlotItem& data)
     j = json{
         { "pinIndex", data.pinIndex },
         { "dataIndex", data.dataIndex },
+        { "displayName", data.displayName },
         { "axis", data.axis },
         { "style", data.style },
     };
@@ -191,6 +192,10 @@ void from_json(const json& j, Plot::PlotInfo::PlotItem& data)
     if (j.contains("dataIndex"))
     {
         j.at("dataIndex").get_to(data.dataIndex);
+    }
+    if (j.contains("displayName"))
+    {
+        j.at("displayName").get_to(data.displayName);
     }
     if (j.contains("axis"))
     {
@@ -947,9 +952,9 @@ void NAV::Plot::guiConfig()
                 {
                     if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND PlotItem {} - {}", size_t(id), plotIdx).c_str()))
                     {
-                        auto [pinIndex, dataIndex] = *static_cast<std::pair<size_t, size_t>*>(payloadData->Data);
+                        auto [pinIndex, dataIndex, displayName] = *static_cast<std::tuple<size_t, size_t, std::string*>*>(payloadData->Data);
 
-                        auto iter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ pinIndex, dataIndex });
+                        auto iter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ pinIndex, dataIndex, *displayName });
                         if (iter != plot.plotItems.end())
                         {
                             plot.plotItems.erase(iter);
@@ -974,7 +979,7 @@ void NAV::Plot::guiConfig()
                         }
                         std::string label = plotData.displayName;
 
-                        if (auto iter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ plot.selectedPin, dataIndex });
+                        if (auto iter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ plot.selectedPin, dataIndex, plotData.displayName });
                             iter != plot.plotItems.end())
                         {
                             label += fmt::format(" (Y{})", iter->axis + 1 - 3);
@@ -984,7 +989,7 @@ void NAV::Plot::guiConfig()
                         if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
                         {
                             // Data is copied into heap inside the drag and drop
-                            auto pinAndDataIndex = std::make_pair(plot.selectedPin, dataIndex);
+                            auto pinAndDataIndex = std::make_tuple(plot.selectedPin, dataIndex, &plotData.displayName);
                             ImGui::SetDragDropPayload(fmt::format("DND PlotItem {} - {}", size_t(id), plotIdx).c_str(),
                                                       &pinAndDataIndex, sizeof(pinAndDataIndex));
                             ImGui::TextUnformatted(label.c_str());
@@ -1028,10 +1033,24 @@ void NAV::Plot::guiConfig()
                     ImPlot::SetupAxisScale(ImAxis_Y3, plot.yAxesScale[2]);
                 }
 
+                std::vector<PlotInfo::PlotItem> plotItemsToRemove;
                 for (auto& plotItem : plot.plotItems)
                 {
                     auto& pinData = _pinData.at(plotItem.pinIndex);
+                    if (pinData.plotData.size() <= plotItem.dataIndex) { continue; } // Dynamic data can not be available yet
                     auto& plotData = pinData.plotData.at(plotItem.dataIndex);
+                    if (plotData.displayName != plotItem.displayName)
+                    {
+                        if (plotItem.displayName.empty())
+                        {
+                            plotItem.displayName = plotData.displayName; // old flow file where it was not set yet
+                        }
+                        else
+                        {
+                            plotItemsToRemove.push_back(plotItem);
+                            continue;
+                        }
+                    }
 
                     if (plotData.hasData
                         && (plotItem.axis == ImAxis_Y1
@@ -1095,7 +1114,7 @@ void NAV::Plot::guiConfig()
                         if (ImPlot::BeginDragDropSourceItem(plotName.c_str()))
                         {
                             // Data is copied into heap inside the drag and drop
-                            auto pinAndDataIndex = std::make_pair(plotItem.pinIndex, plotItem.dataIndex);
+                            auto pinAndDataIndex = std::make_tuple(plotItem.pinIndex, plotItem.dataIndex, &plotItem.displayName);
                             ImGui::SetDragDropPayload(fmt::format("DND PlotItem {} - {}", size_t(id), plotIdx).c_str(), &pinAndDataIndex, sizeof(pinAndDataIndex));
                             ImGui::TextUnformatted(plotData.displayName.c_str());
                             ImPlot::EndDragDropSource();
@@ -1218,19 +1237,27 @@ void NAV::Plot::guiConfig()
                     }
                 }
 
+                for (const auto& plotItem : plotItemsToRemove)
+                {
+                    LOG_WARN("{}: Erasing plot item '{}' from plot '{}', because it does not match the order the data came in",
+                             nameId(), plotItem.displayName, plot.headerText);
+                    std::erase(plot.plotItems, plotItem);
+                    flow::ApplyChanges();
+                }
+
                 auto addDragDropPlotToAxis = [this, plotIdx, &plot](ImAxis dragDropAxis) {
                     if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND PlotItem {} - {}", size_t(id), plotIdx).c_str()))
                     {
-                        auto [pinIndex, dataIndex] = *static_cast<std::pair<size_t, size_t>*>(payloadData->Data);
+                        auto [pinIndex, dataIndex, displayName] = *static_cast<std::tuple<size_t, size_t, std::string*>*>(payloadData->Data);
 
-                        auto iter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ pinIndex, dataIndex });
+                        auto iter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ pinIndex, dataIndex, *displayName });
                         if (iter != plot.plotItems.end()) // Item gets dragged from one axis to another
                         {
                             iter->axis = dragDropAxis;
                         }
                         else
                         {
-                            plot.plotItems.emplace_back(pinIndex, dataIndex, dragDropAxis);
+                            plot.plotItems.emplace_back(pinIndex, dataIndex, *displayName, dragDropAxis);
                         }
                         flow::ApplyChanges();
                     }
@@ -1396,6 +1423,10 @@ bool NAV::Plot::initialize()
         {
             plotData.hasData = false;
             plotData.buffer.clear();
+        }
+        if (pinData.dynamicDataStartIndex != -1) // Erase all dynamic data
+        {
+            pinData.plotData.erase(pinData.plotData.begin() + pinData.dynamicDataStartIndex, pinData.plotData.end());
         }
     }
 
@@ -2150,9 +2181,10 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
 
         for (size_t dataIndex = i; dataIndex < _pinData.at(pinIndex).plotData.size(); dataIndex++)
         {
+            const auto& displayName = _pinData.at(pinIndex).plotData.at(dataIndex).displayName;
             for (auto& plot : _plots)
             {
-                auto plotItemIter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ pinIndex, dataIndex });
+                auto plotItemIter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ pinIndex, dataIndex, displayName });
                 if (plotItemIter != plot.plotItems.end())
                 {
                     plot.plotItems.erase(plotItemIter);
@@ -2229,13 +2261,45 @@ void NAV::Plot::updateNumberOfPlots()
 
 void NAV::Plot::addData(size_t pinIndex, size_t dataIndex, double value)
 {
-    auto& pinData = _pinData.at(pinIndex);
+    auto& plotData = _pinData.at(pinIndex).plotData.at(dataIndex);
 
-    pinData.plotData.at(dataIndex).buffer.push_back(value);
+    plotData.buffer.push_back(value);
     if (!std::isnan(value))
     {
-        pinData.plotData.at(dataIndex).hasData = true;
+        plotData.hasData = true;
     }
+}
+
+void NAV::Plot::addData(size_t pinIndex, std::string displayName, double value)
+{
+    auto& pinData = _pinData.at(pinIndex);
+
+    auto plotData = std::find_if(pinData.plotData.begin(), pinData.plotData.end(), [&](const auto& data) {
+        return data.displayName == displayName;
+    });
+    if (plotData == pinData.plotData.end()) // Item is new
+    {
+        pinData.addPlotDataItem(pinData.plotData.size(), displayName);
+        plotData = pinData.plotData.end() - 1;
+
+        // We assume, there is a static item at the front (the time)
+        plotData->buffer.reserve(pinData.plotData.front().buffer.size());
+        for (size_t i = plotData->buffer.size(); i < pinData.plotData.front().buffer.size() - 1; i++) // Add empty NaN values to shift it to the correct start point
+        {
+            plotData->buffer.push_back(std::nan(""));
+        }
+    }
+    else
+    {
+        // Item was there, but it could have been missing and came again
+        plotData->buffer.reserve(pinData.plotData.front().buffer.size());
+        for (size_t i = plotData->buffer.size(); i < pinData.plotData.front().buffer.size() - 1; i++) // Add empty NaN values to shift it to the correct start point
+        {
+            plotData->buffer.push_back(std::nan(""));
+        }
+    }
+
+    addData(pinIndex, static_cast<size_t>(plotData - pinData.plotData.begin()), value);
 }
 
 void NAV::Plot::plotBoolean(const InsTime& insTime, size_t pinIdx)
