@@ -57,6 +57,10 @@ image: ins-cpp:10
   only:
     - schedules
 
+.branch-github:
+  only:
+    - github
+
 .retry:
   retry:
     max: 2
@@ -526,6 +530,7 @@ pages:
     - .build:test-artifacts
     - .linux
     - .schedule
+    - .branch-github
     - .retry
     - .log-trace
   image: ubuntu:22.04
@@ -576,6 +581,7 @@ ubuntu:22.04:gcc:debug:
     - .run-tests
     - .linux
     - .schedule
+    - .branch-github
   image: ubuntu:22.04
   variables:
     DEBIAN_FRONTEND: noninteractive
@@ -623,6 +629,7 @@ run-tests:ubuntu:22.04:gcc:debug:
     - .build:test-artifacts
     - .linux
     - .schedule
+    - .branch-github
     - .retry
     - .log-trace
   image: archlinux:latest
@@ -670,6 +677,7 @@ archlinux:latest:gcc:debug:
     - .run-tests
     - .linux
     - .schedule
+    - .branch-github
   image: archlinux:latest
   before_script:
     - pacman -Sy archlinux-keyring --noconfirm && pacman -Syyu --noconfirm --needed
