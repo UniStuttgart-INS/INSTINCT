@@ -43,15 +43,15 @@ namespace States
 /// @brief State Keys of the Kalman filter
 enum KFStates
 {
-    PosX,           ///< Position ECEF_X
-    PosY,           ///< Position ECEF_Y
-    PosZ,           ///< Position ECEF_Z
-    VelX,           ///< Velocity ECEF_X
-    VelY,           ///< Velocity ECEF_Y
-    VelZ,           ///< Velocity ECEF_Z
+    PosX,           ///< Position ECEF_X [m]
+    PosY,           ///< Position ECEF_Y [m]
+    PosZ,           ///< Position ECEF_Z [m]
+    VelX,           ///< Velocity ECEF_X [m/s]
+    VelY,           ///< Velocity ECEF_Y [m/s]
+    VelZ,           ///< Velocity ECEF_Z [m/s]
     KFStates_COUNT, ///< Count
 };
-/// @brief Single differenced (rover - base) ambiguity N_br^1 (one for each satellite signal)
+/// @brief Single differenced (rover - base) ambiguity N_br^1 [cycles] (one for each satellite signal)
 struct AmbiguitySD
 {
     /// @brief Equal comparison operator
@@ -76,7 +76,7 @@ inline static const std::vector<StateKeyTypes> Vel = { KFStates::VelX, KFStates:
 namespace Meas
 {
 
-/// @brief Double differenced pseudorange measurement psr_br^1s (one for each satellite signal, referenced to the pivot satellite)
+/// @brief Double differenced pseudorange measurement psr_br^1s [m] (one for each satellite signal, referenced to the pivot satellite)
 struct PsrDD
 {
     /// @brief Equal comparison operator
@@ -85,7 +85,7 @@ struct PsrDD
     /// @brief Satellite Signal Id
     SatSigId satSigId;
 };
-/// @brief Double differenced carrier-phase measurement phi_br^1s (one for each satellite signal, referenced to the pivot satellite)
+/// @brief Double differenced carrier-phase measurement phi_br^1s [m] (one for each satellite signal, referenced to the pivot satellite)
 struct CarrierDD
 {
     /// @brief Equal comparison operator
@@ -94,7 +94,7 @@ struct CarrierDD
     /// @brief Satellite Signal Id
     SatSigId satSigId;
 };
-/// @brief Double differenced doppler measurement d_br^1s (one for each satellite signal, referenced to the pivot satellite)
+/// @brief Double differenced range-rate (doppler) measurement d_br^1s [m/s] (one for each satellite signal, referenced to the pivot satellite)
 struct DopplerDD
 {
     /// @brief Equal comparison operator
@@ -204,12 +204,6 @@ class RealTimeKinematic : public Node
     /// @brief GUI selection for the Standard deviation of the acceleration 𝜎_a due to user motion in horizontal and vertical component
     /// @note See Groves (2013) eq. (9.156)
     std::array<double, 2> _gui_stdevAccel = { { 3.0, 1.5 } } /* [ m / √(s^3) ] */;
-
-    /// 𝜎²_a Variance of the acceleration due to user motion in horizontal and vertical component in [m^2 / s^3]
-    std::array<double, 2> _varAccel{};
-
-    /// Recalculates the variance of the acceleration with the GUI setting
-    void recalcVarAccel();
 
     // ------------------------------------------------------------ Algorithm --------------------------------------------------------------
 
@@ -366,27 +360,28 @@ class RealTimeKinematic : public Node
     /// @brief Calculates a SPP solution as fallback in case no base data is available
     std::shared_ptr<RtkSolution> calcFallbackSppSolution();
 
+    /// @brief Does the Kalman Filter prediction
+    void predictKalmanFilter();
+
     /// @brief Returns a list of satellites and observations used for calculation of RTK (only satellites filtered by GUI filter & NAV data available & ...)
-    /// @param[in] obsTypes Observation types to take into account
     /// @param[in] gnssNavInfos Collection of all connected navigation data providers
     /// @return 0: List of satellite data; 1: List of observations; 2: Total amount of observations
-    std::tuple<std::vector<SatData>, Observations, size_t> selectSatObservationsForCalculation(const std::unordered_set<GnssObs::ObservationType>& obsTypes,
-                                                                                               const std::vector<const GnssNavInfo*>& gnssNavInfos);
+    std::pair<std::vector<SatData>, Observations> selectSatObservationsForCalculation(const std::vector<const GnssNavInfo*>& gnssNavInfos);
+
+    /// @brief Calculates the observation estimates
+    /// @param[in, out] observations List of GNSS observation data used for the calculation of this epoch
+    /// @param[in] satelliteData List of satellite data used for the calculation of this epoch
+    /// @param[in] ionosphericCorrections Ionospheric correction parameters collected from the Nav data
+    void calcObservationEstimates(Observations& observations, const std::vector<SatData>& satelliteData, const IonosphericCorrections& ionosphericCorrections);
+
+    /// @brief Calculates the single difference of the measurements and estimates
+    /// @param[in] observations List of GNSS observation data used for the calculation of this epoch
+    [[nodiscard]] Differences calcSingleDifferences(const Observations& observations) const;
 
     /// @brief Update the pivot satellites for each constellation
     /// @param[in] satelliteData List of satellite data used for the calculation of this epoch
     /// @param[in] observations List of GNSS observation data used for the calculation of this epoch
     void updatePivotSatellites(const std::vector<SatData>& satelliteData, const Observations& observations);
-
-    /// @brief Calculates the observation estimates
-    /// @param[in] satelliteData List of satellite data used for the calculation of this epoch
-    /// @param[in, out] observations List of GNSS observation data used for the calculation of this epoch
-    /// @param ionosphericCorrections Ionospheric correction parameters collected from the Nav data
-    void calcObservationEstimates(const std::vector<SatData>& satelliteData, Observations& observations, const IonosphericCorrections& ionosphericCorrections);
-
-    /// @brief Calculates the single difference of the measurements and estimates
-    /// @param[in] observations List of GNSS observation data used for the calculation of this epoch
-    [[nodiscard]] Differences calcSingleDifferences(const Observations& observations) const;
 
     /// @brief Calculates the double difference of the measurements and estimates
     /// @param[in] singleDifferences List of single differences
@@ -449,6 +444,146 @@ struct hash<NAV::RealTimeKinematicKF::Meas::DopplerDD>
 } // namespace std
 
 #ifndef DOXYGEN_IGNORE
+
+/// @brief Formatter
+template<>
+struct fmt::formatter<NAV::RealTimeKinematicKF::States::KFStates>
+{
+    /// @brief Parse function to make the struct formattable
+    /// @param[in] ctx Parser context
+    /// @return Beginning of the context
+    template<typename ParseContext>
+    constexpr auto parse(ParseContext& ctx)
+    {
+        return ctx.begin();
+    }
+
+    /// @brief Defines how to format structs
+    /// @param[in] state Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::RealTimeKinematicKF::States::KFStates& state, FormatContext& ctx)
+    {
+        using namespace NAV::RealTimeKinematicKF::States; // NOLINT(google-build-using-namespace)
+
+        switch (state)
+        {
+        case PosX:
+            return fmt::format_to(ctx.out(), "PosX");
+        case PosY:
+            return fmt::format_to(ctx.out(), "PosY");
+        case PosZ:
+            return fmt::format_to(ctx.out(), "PosZ");
+        case VelX:
+            return fmt::format_to(ctx.out(), "VelX");
+        case VelY:
+            return fmt::format_to(ctx.out(), "VelY");
+        case VelZ:
+            return fmt::format_to(ctx.out(), "VelZ");
+        case KFStates_COUNT:
+            return fmt::format_to(ctx.out(), "KFStates_COUNT");
+        }
+
+        return fmt::format_to(ctx.out(), "ERROR");
+    }
+};
+
+/// @brief Formatter
+template<>
+struct fmt::formatter<NAV::RealTimeKinematicKF::States::AmbiguitySD>
+{
+    /// @brief Parse function to make the struct formattable
+    /// @param[in] ctx Parser context
+    /// @return Beginning of the context
+    template<typename ParseContext>
+    constexpr auto parse(ParseContext& ctx)
+    {
+        return ctx.begin();
+    }
+
+    /// @brief Defines how to format structs
+    /// @param[in] amb Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::RealTimeKinematicKF::States::AmbiguitySD& amb, FormatContext& ctx)
+    {
+        return fmt::format_to(ctx.out(), "Amb({})", amb.satSigId);
+    }
+};
+
+/// @brief Formatter
+template<>
+struct fmt::formatter<NAV::RealTimeKinematicKF::Meas::PsrDD>
+{
+    /// @brief Parse function to make the struct formattable
+    /// @param[in] ctx Parser context
+    /// @return Beginning of the context
+    template<typename ParseContext>
+    constexpr auto parse(ParseContext& ctx)
+    {
+        return ctx.begin();
+    }
+
+    /// @brief Defines how to format structs
+    /// @param[in] psrDD Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::RealTimeKinematicKF::Meas::PsrDD& psrDD, FormatContext& ctx)
+    {
+        return fmt::format_to(ctx.out(), "psrDD({})", psrDD.satSigId);
+    }
+};
+
+/// @brief Formatter
+template<>
+struct fmt::formatter<NAV::RealTimeKinematicKF::Meas::CarrierDD>
+{
+    /// @brief Parse function to make the struct formattable
+    /// @param[in] ctx Parser context
+    /// @return Beginning of the context
+    template<typename ParseContext>
+    constexpr auto parse(ParseContext& ctx)
+    {
+        return ctx.begin();
+    }
+
+    /// @brief Defines how to format structs
+    /// @param[in] phiDD Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::RealTimeKinematicKF::Meas::CarrierDD& phiDD, FormatContext& ctx)
+    {
+        return fmt::format_to(ctx.out(), "phiDD({})", phiDD.satSigId);
+    }
+};
+
+/// @brief Formatter
+template<>
+struct fmt::formatter<NAV::RealTimeKinematicKF::Meas::DopplerDD>
+{
+    /// @brief Parse function to make the struct formattable
+    /// @param[in] ctx Parser context
+    /// @return Beginning of the context
+    template<typename ParseContext>
+    constexpr auto parse(ParseContext& ctx)
+    {
+        return ctx.begin();
+    }
+
+    /// @brief Defines how to format structs
+    /// @param[in] dDD Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::RealTimeKinematicKF::Meas::DopplerDD& dDD, FormatContext& ctx)
+    {
+        return fmt::format_to(ctx.out(), "dopDD({})", dDD.satSigId);
+    }
+};
 
 /// @brief Formatter
 template<>
