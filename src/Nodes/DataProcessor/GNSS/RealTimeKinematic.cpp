@@ -630,6 +630,12 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
         rtkSol->nSatellites = satelliteData.size() - _pivotSatellites.size();
         rtkSol->setPositionAndStdDev_e(_receiver[Rover].e_pos, _kalmanFilter.P.block<3>(States::Pos, States::Pos));
         rtkSol->setVelocityAndStdDev_e(_receiver[Rover].e_vel, _kalmanFilter.P.block<3>(States::Vel, States::Vel));
+        rtkSol->ambiguitySD_br.reserve(static_cast<size_t>(_kalmanFilter.x.rows()) - States::KFStates_COUNT);
+        for (size_t i = States::KFStates_COUNT; i < static_cast<size_t>(_kalmanFilter.x.rows()); i++)
+        {
+            const auto& key = std::get<States::AmbiguitySD>(_kalmanFilter.x.rowKeys().at(i));
+            rtkSol->ambiguitySD_br.emplace_back(key.satSigId, _kalmanFilter.x(key));
+        }
 
         _lastUpdate = rtkSol->insTime;
         invokeCallbacks(OUTPUT_PORT_INDEX_RTKSOL, rtkSol);
@@ -1055,7 +1061,7 @@ void RealTimeKinematic::updatePivotSatellites(const std::vector<SatData>& satell
             || std::any_of(satIter->receiverData.begin(), satIter->receiverData.end(), // Do not use the pivot satellite anymore, if elevation < 10°
                            [](const auto& recvData) { return recvData.second.satElevation < deg2rad(10); }))
         {
-            LOG_TRACE("{}: Dropping pivot satellite [{}] because: {}", nameId(), pivotSatellite.second.satSigId,
+            LOG_DEBUG("{}: Dropping pivot satellite [{}] because: {}", nameId(), pivotSatellite.second.satSigId,
                       satIter == satelliteData.end() ? "Satellite not observed this epoch" : "Satellite elevation < 10°");
             erasePivotCode.push_back(pivotSatellite.first);
         }
@@ -1116,7 +1122,7 @@ void RealTimeKinematic::updatePivotSatellites(const std::vector<SatData>& satell
                                                                return satData.satId == pivotSat.satSigId.toSatId();
                                                            });
 
-            LOG_TRACE("{}: Code [{}] uses [{}] as pivot satellite with elevation {:.4}°", nameId(),
+            LOG_DEBUG("{}: Code [{}] uses [{}] as pivot satellite with elevation {:.4}°", nameId(),
                       pivotCode,
                       pivotSat.satSigId,
                       rad2deg(pivotIter->receiverData.begin()->second.satElevation));

@@ -61,6 +61,9 @@ class RtkSolution : public PosVel
     /// Amount of satellites used
     size_t nSatellites = 0;
 
+    /// @brief Single differenced ambiguities
+    std::vector<std::pair<SatSigId, double>> ambiguitySD_br;
+
     // ------------------------------------------------------------- Getter ----------------------------------------------------------------
 
     /// Returns the standard deviation of the position in ECEF frame coordinates in [m]

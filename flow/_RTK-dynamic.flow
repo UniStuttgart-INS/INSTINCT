@@ -847,37 +847,37 @@
                                 "displayName": "Down velocity StDev [m/s]"
                             },
                             {
-                                "displayName": "AmbSD G1C-07"
+                                "displayName": "AmbSD G1C-07 [cycles]"
                             },
                             {
-                                "displayName": "AmbSD G1C-15"
+                                "displayName": "AmbSD G1C-15 [cycles]"
                             },
                             {
-                                "displayName": "AmbSD G1C-27"
+                                "displayName": "AmbSD G1C-27 [cycles]"
                             },
                             {
-                                "displayName": "AmbSD G1C-32"
+                                "displayName": "AmbSD G1C-32 [cycles]"
                             },
                             {
-                                "displayName": "AmbSD G1C-10"
+                                "displayName": "AmbSD G1C-10 [cycles]"
                             },
                             {
-                                "displayName": "AmbSD G1C-08"
+                                "displayName": "AmbSD G1C-08 [cycles]"
                             },
                             {
-                                "displayName": "AmbSD G1C-18"
+                                "displayName": "AmbSD G1C-18 [cycles]"
                             },
                             {
-                                "displayName": "AmbSD G1C-21"
+                                "displayName": "AmbSD G1C-21 [cycles]"
                             },
                             {
-                                "displayName": "AmbSD G1C-01"
+                                "displayName": "AmbSD G1C-01 [cycles]"
                             },
                             {
-                                "displayName": "AmbSD G1C-30"
+                                "displayName": "AmbSD G1C-30 [cycles]"
                             },
                             {
-                                "displayName": "AmbSD G1C-16"
+                                "displayName": "AmbSD G1C-16 [cycles]"
                             }
                         ],
                         "size": 0,
@@ -2307,7 +2307,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 30,
-                                "displayName": "AmbSD G1C-07",
+                                "displayName": "AmbSD G1C-07 [cycles]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2341,7 +2341,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 31,
-                                "displayName": "AmbSD G1C-15",
+                                "displayName": "AmbSD G1C-15 [cycles]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2375,7 +2375,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 32,
-                                "displayName": "AmbSD G1C-27",
+                                "displayName": "AmbSD G1C-27 [cycles]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2409,7 +2409,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 33,
-                                "displayName": "AmbSD G1C-32",
+                                "displayName": "AmbSD G1C-32 [cycles]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2443,7 +2443,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 34,
-                                "displayName": "AmbSD G1C-10",
+                                "displayName": "AmbSD G1C-10 [cycles]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2477,7 +2477,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 35,
-                                "displayName": "AmbSD G1C-08",
+                                "displayName": "AmbSD G1C-08 [cycles]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2511,7 +2511,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 36,
-                                "displayName": "AmbSD G1C-18",
+                                "displayName": "AmbSD G1C-18 [cycles]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2545,7 +2545,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 37,
-                                "displayName": "AmbSD G1C-21",
+                                "displayName": "AmbSD G1C-21 [cycles]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2579,7 +2579,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 38,
-                                "displayName": "AmbSD G1C-01",
+                                "displayName": "AmbSD G1C-01 [cycles]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2613,7 +2613,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 39,
-                                "displayName": "AmbSD G1C-30",
+                                "displayName": "AmbSD G1C-30 [cycles]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -2647,7 +2647,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 40,
-                                "displayName": "AmbSD G1C-16",
+                                "displayName": "AmbSD G1C-16 [cycles]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {

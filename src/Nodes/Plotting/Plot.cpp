@@ -1651,6 +1651,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "North velocity StDev [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "East velocity StDev [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Down velocity StDev [m/s]");
+            _pinData.at(pinIndex).dynamicDataStartIndex = static_cast<int>(i);
         }
         else if (startPin.dataIdentifier.front() == SppSolution::type())
         {
@@ -2803,6 +2804,12 @@ void NAV::Plot::plotRtkSolution(const std::shared_ptr<const RtkSolution>& obs, s
     addData(pinIndex, i++, obs->n_velocityStdev()(0)); // North velocity StDev [m/s]
     addData(pinIndex, i++, obs->n_velocityStdev()(1)); // East velocity StDev [m/s]
     addData(pinIndex, i++, obs->n_velocityStdev()(2)); // Down velocity StDev [m/s]
+
+    // Ambiguities
+    for (const auto& [satSigId, ambiguity] : obs->ambiguitySD_br)
+    {
+        addData(pinIndex, fmt::format("AmbSD {} [cycles]", satSigId), ambiguity);
+    }
 }
 
 void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, size_t pinIndex)
