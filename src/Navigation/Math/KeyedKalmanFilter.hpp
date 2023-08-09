@@ -151,27 +151,12 @@ class KeyedKalmanFilter
         P.addRowsCols(stateKeys, stateKeys);
         F.addRowsCols(stateKeys, stateKeys);
         Phi.addRowsCols(stateKeys, stateKeys);
-        G.addRows(stateKeys);
+        G.addRowsCols(stateKeys, stateKeys);
+        W.addRowsCols(stateKeys, stateKeys);
         Q.addRowsCols(stateKeys, stateKeys);
         H.addCols(stateKeys);
         K.addRows(stateKeys);
         I = Eigen::MatrixX<Scalar>::Identity(n, n);
-    }
-
-    /// @brief Add a new noise state to the filter
-    /// @param stateKey State key
-    void addNoiseState(const StateKeyType& stateKey) { addNoiseStates({ stateKey }); }
-
-    /// @brief Add new noise states to the filter
-    /// @param stateKeys State keys
-    void addNoiseStates(const std::vector<StateKeyType>& stateKeys)
-    {
-        INS_ASSERT_USER_ERROR(!G.hasAnyCols(stateKeys), "You cannot add a state key which is already in the noise matrix of the Kalman filter.");
-        std::unordered_set<StateKeyType> stateSet = { stateKeys.begin(), stateKeys.end() };
-        INS_ASSERT_USER_ERROR(stateSet.size() == stateKeys.size(), "Each state key must be unique");
-
-        G.addCols(stateKeys);
-        W.addRowsCols(stateKeys, stateKeys);
     }
 
     /// @brief Remove a state from the filter
@@ -192,27 +177,12 @@ class KeyedKalmanFilter
         P.removeRowsCols(stateKeys, stateKeys);
         F.removeRowsCols(stateKeys, stateKeys);
         Phi.removeRowsCols(stateKeys, stateKeys);
-        G.removeRows(stateKeys);
+        G.removeRowsCols(stateKeys, stateKeys);
+        W.removeRowsCols(stateKeys, stateKeys);
         Q.removeRowsCols(stateKeys, stateKeys);
         H.removeCols(stateKeys);
         K.removeRows(stateKeys);
         I = Eigen::MatrixX<Scalar>::Identity(n, n);
-    }
-
-    /// @brief Remove a noise state from the filter
-    /// @param stateKey State key
-    void removeNoiseState(const StateKeyType& stateKey) { removeNoiseStates({ stateKey }); }
-
-    /// @brief Remove noise states from the filter
-    /// @param stateKeys State keys
-    void removeNoiseStates(const std::vector<StateKeyType>& stateKeys)
-    {
-        INS_ASSERT_USER_ERROR(G.hasCols(stateKeys), "Not all noise state keys you are trying to remove are in the Kalman filter.");
-        std::unordered_set<StateKeyType> stateSet = { stateKeys.begin(), stateKeys.end() };
-        INS_ASSERT_USER_ERROR(stateSet.size() == stateKeys.size(), "Each state key must be unique");
-
-        G.removeCols(stateKeys);
-        W.removeRowsCols(stateKeys, stateKeys);
     }
 
     /// @brief Sets the measurement keys and initializes matrices z, H, R, S, K with Zero
