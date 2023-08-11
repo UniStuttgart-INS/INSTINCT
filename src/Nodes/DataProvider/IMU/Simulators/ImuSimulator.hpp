@@ -107,7 +107,7 @@ class ImuSimulator : public Imu
     StartTimeSource _startTimeSource = StartTimeSource::CustomTime;
 
     /// Time Format to input the start time with
-    gui::widgets::TimeEditFormat _startTimeEditFormat = gui::widgets::TimeEditFormat::YMDHMS;
+    gui::widgets::TimeEditFormat _startTimeEditFormat;
 
     /// Global starttime
     InsTime _startTime{ 2000, 1, 1, 0, 0, 0 };

@@ -393,6 +393,21 @@ void NAV::PosVelAttInitializer::guiConfig()
 
         ImGui::EndTable();
     }
+
+    if (_overridePosition != PositionOverride::OFF && _overrideVelocity != VelocityOverride::OFF
+        && _overrideRollPitchYaw[0] && _overrideRollPitchYaw[1] && _overrideRollPitchYaw[2])
+    {
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::TreeNode(fmt::format("Init Time##{}", size_t(id)).c_str()))
+        {
+            if (gui::widgets::TimeEdit(fmt::format("Init Time Edit {}", size_t(id)).c_str(), _initTime, _initTimeEditFormat))
+            {
+                LOG_DEBUG("{}: initTime changed to {}", nameId(), _initTime);
+                flow::ApplyChanges();
+            }
+            ImGui::TreePop();
+        }
+    }
 }
 
 [[nodiscard]] json NAV::PosVelAttInitializer::save() const
@@ -411,6 +426,8 @@ void NAV::PosVelAttInitializer::guiConfig()
     j["overrideValuesVelocity"] = _overrideValuesVelocity;
     j["overrideRollPitchYaw"] = _overrideRollPitchYaw;
     j["overrideValuesRollPitchYaw"] = _overrideValuesRollPitchYaw;
+    j["initTime"] = _initTime;
+    j["initTimeEditFormat"] = _initTimeEditFormat;
 
     return j;
 }
@@ -459,6 +476,14 @@ void NAV::PosVelAttInitializer::restore(json const& j)
     {
         j.at("overrideValuesRollPitchYaw").get_to(_overrideValuesRollPitchYaw);
     }
+    if (j.contains("initTime"))
+    {
+        j.at("initTime").get_to(_initTime);
+    }
+    if (j.contains("initTimeEditFormat"))
+    {
+        j.at("initTimeEditFormat").get_to(_initTimeEditFormat);
+    }
     updatePins();
 }
 
@@ -479,7 +504,11 @@ bool NAV::PosVelAttInitializer::initialize()
 
     _posVelAttInitialized = { false, false, false, false };
 
-    _initTime = InsTime(InsTime_GPSweekTow(0, 0, 0));
+    if (_overridePosition == PositionOverride::OFF || _overrideVelocity == VelocityOverride::OFF
+        || !_overrideRollPitchYaw[0] || !_overrideRollPitchYaw[1] || !_overrideRollPitchYaw[2])
+    {
+        _initTime = InsTime(InsTime_GPSweekTow(0, 0, 0));
+    }
 
     return true;
 }

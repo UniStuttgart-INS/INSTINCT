@@ -1037,6 +1037,11 @@ void NAV::Plot::guiConfig()
                 for (auto& plotItem : plot.plotItems)
                 {
                     auto& pinData = _pinData.at(plotItem.pinIndex);
+
+                    // Lock the buffer so no data can be inserted till plotting finishes
+                    std::scoped_lock<std::mutex> guard(pinData.mutex);
+                    // The next line needs already be locked, otherwise we have a data race
+
                     if (pinData.plotData.size() <= plotItem.dataIndex) { continue; } // Dynamic data can not be available yet
                     auto& plotData = pinData.plotData.at(plotItem.dataIndex);
                     if (plotData.displayName != plotItem.displayName)
@@ -1057,9 +1062,6 @@ void NAV::Plot::guiConfig()
                             || (plotItem.axis == ImAxis_Y2 && (plot.plotFlags & ImPlotFlags_YAxis2))
                             || (plotItem.axis == ImAxis_Y3 && (plot.plotFlags & ImPlotFlags_YAxis3))))
                     {
-                        // Lock the buffer so no data can be inserted till plotting finishes
-                        std::scoped_lock<std::mutex> guard(pinData.mutex);
-
                         ImPlot::SetAxis(plotItem.axis);
 
                         // Style options

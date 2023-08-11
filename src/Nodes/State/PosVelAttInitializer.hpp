@@ -22,6 +22,8 @@
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
 
+#include "internal/gui/widgets/TimeEdit.hpp"
+
 #include <limits>
 
 namespace NAV
@@ -201,6 +203,9 @@ class PosVelAttInitializer : public Node
 
     /// Whether the states are initialized (pos, vel, att, messages send)
     std::array<bool, 4> _posVelAttInitialized = { false, false, false, false };
+
+    /// Time Format to input the init time with
+    gui::widgets::TimeEditFormat _initTimeEditFormat;
 
     /// Initialization time
     InsTime _initTime;
