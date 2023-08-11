@@ -1,15 +1,5 @@
 {
     "links": {
-        "link-114": {
-            "endPinId": 100,
-            "id": 114,
-            "startPinId": 110
-        },
-        "link-117": {
-            "endPinId": 106,
-            "id": 117,
-            "startPinId": 110
-        },
         "link-119": {
             "endPinId": 101,
             "id": 119,
@@ -24,21 +14,6 @@
             "endPinId": 129,
             "id": 130,
             "startPinId": 115
-        },
-        "link-139": {
-            "endPinId": 132,
-            "id": 139,
-            "startPinId": 102
-        },
-        "link-154": {
-            "endPinId": 138,
-            "id": 154,
-            "startPinId": 148
-        },
-        "link-158": {
-            "endPinId": 151,
-            "id": 158,
-            "startPinId": 156
         },
         "link-174": {
             "endPinId": 172,
@@ -55,17 +30,42 @@
             "id": 189,
             "startPinId": 185
         },
-        "link-214": {
+        "link-287": {
+            "endPinId": 286,
+            "id": 287,
+            "startPinId": 185
+        },
+        "link-290": {
+            "endPinId": 132,
+            "id": 290,
+            "startPinId": 102
+        },
+        "link-292": {
             "endPinId": 150,
-            "id": 214,
+            "id": 292,
             "startPinId": 108
+        },
+        "link-330": {
+            "endPinId": 218,
+            "id": 330,
+            "startPinId": 271
+        },
+        "link-331": {
+            "endPinId": 100,
+            "id": 331,
+            "startPinId": 110
+        },
+        "link-332": {
+            "endPinId": 106,
+            "id": 332,
+            "startPinId": 110
         }
     },
     "nodes": {
         "node-103": {
             "data": {
                 "codes": "011111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000111010000011111",
-                "elevationMask": 14.999999999999998,
+                "elevationMask": 0.0,
                 "estimatorType": 1,
                 "excludedSatellites": [],
                 "frequencies": 1,
@@ -131,8 +131,8 @@
                 }
             ],
             "pos": {
-                "x": 241.0,
-                "y": 414.0
+                "x": 120.0,
+                "y": 146.0
             },
             "size": {
                 "x": 0.0,
@@ -240,8 +240,8 @@
                 }
             ],
             "pos": {
-                "x": 234.0,
-                "y": 114.0
+                "x": 122.0,
+                "y": 282.0
             },
             "size": {
                 "x": 0.0,
@@ -252,7 +252,7 @@
         "node-111": {
             "data": {
                 "FileReader": {
-                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_static-rover_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/Spirent_RINEX_MO_Rover-2km.obs"
+                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/Rover-static-2km-east_MO_Spirent.obs"
                 },
                 "eraseLessPreciseCodes": true
             },
@@ -268,8 +268,8 @@
                 }
             ],
             "pos": {
-                "x": -47.0,
-                "y": 270.0
+                "x": -175.0,
+                "y": 414.0
             },
             "size": {
                 "x": 0.0,
@@ -280,7 +280,7 @@
         "node-113": {
             "data": {
                 "FileReader": {
-                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_static-rover_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/Spirent_RINEX_MO_Base.obs"
+                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/Base-static_MO_Spirent.obs"
                 },
                 "eraseLessPreciseCodes": true
             },
@@ -296,8 +296,8 @@
                 }
             ],
             "pos": {
-                "x": -41.0,
-                "y": 110.0
+                "x": -169.0,
+                "y": 254.0
             },
             "size": {
                 "x": 0.0,
@@ -308,7 +308,7 @@
         "node-116": {
             "data": {
                 "FileReader": {
-                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_static-rover_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/Spirent_RINEX_GN.23N"
+                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/RINEX_GN_Spirent.23N"
                 }
             },
             "enabled": true,
@@ -323,8 +323,8 @@
                 }
             ],
             "pos": {
-                "x": -19.0,
-                "y": 350.0
+                "x": -131.0,
+                "y": -66.0
             },
             "size": {
                 "x": 0.0,
@@ -341,8 +341,8 @@
             "name": "Base Station",
             "outputPins": [],
             "pos": {
-                "x": -64.0,
-                "y": -16.0
+                "x": -192.0,
+                "y": 128.0
             },
             "size": {
                 "x": 240.0,
@@ -356,15 +356,15 @@
             "id": 127,
             "inputPins": [],
             "kind": "GroupBox",
-            "name": "Rover",
+            "name": "Rover - Static - 2km East",
             "outputPins": [],
             "pos": {
-                "x": -64.0,
-                "y": 224.0
+                "x": -192.0,
+                "y": 368.0
             },
             "size": {
                 "x": 240.0,
-                "y": 346.0
+                "y": 186.0
             },
             "type": "GroupBox"
         },
@@ -602,146 +602,690 @@
                             },
                             {
                                 "displayName": "SBAS system time drift difference StDev [s/s]"
-                            }
-                        ],
-                        "size": 0,
-                        "stride": 1
-                    },
-                    {
-                        "dataIdentifier": "RtklibPosObs",
-                        "pinType": 0,
-                        "plotData": [
-                            {
-                                "displayName": "Time [s]"
                             },
                             {
-                                "displayName": "GPS time of week [s]"
+                                "displayName": "G1C-08 SatPos ECEF X [m]"
                             },
                             {
-                                "displayName": "X-ECEF [m]"
+                                "displayName": "G1C-08 SatPos ECEF Y [m]"
                             },
                             {
-                                "displayName": "Y-ECEF [m]"
+                                "displayName": "G1C-08 SatPos ECEF Z [m]"
                             },
                             {
-                                "displayName": "Z-ECEF [m]"
+                                "displayName": "G1C-08 SatVel ECEF X [m/s]"
                             },
                             {
-                                "displayName": "Latitude [deg]"
+                                "displayName": "G1C-08 SatVel ECEF Y [m/s]"
                             },
                             {
-                                "displayName": "Longitude [deg]"
+                                "displayName": "G1C-08 SatVel ECEF Z [m/s]"
                             },
                             {
-                                "displayName": "Altitude [m]"
+                                "displayName": "G1C-08 Satellite clock bias [s]"
                             },
                             {
-                                "displayName": "North/South [m]"
+                                "displayName": "G1C-08 Satellite clock drift [s/s]"
                             },
                             {
-                                "displayName": "East/West [m]"
+                                "displayName": "G1C-08 Elevation [deg]"
                             },
                             {
-                                "displayName": "Q [-]"
+                                "displayName": "G1C-08 Azimuth [deg]"
                             },
                             {
-                                "displayName": "ns [-]"
+                                "displayName": "G1C-08 Unhealthy (skipped)"
                             },
                             {
-                                "displayName": "sdx [m]"
+                                "displayName": "G1C-08 Elevation mask triggered"
                             },
                             {
-                                "displayName": "sdy [m]"
+                                "displayName": "G1C-08 Estimated Pseudorange [m]"
                             },
                             {
-                                "displayName": "sdz [m]"
+                                "displayName": "G1C-08 Estimated Pseudorange rate [m/s]"
                             },
                             {
-                                "displayName": "sdn [m]"
+                                "displayName": "G1C-08 Geometric distance [m]"
                             },
                             {
-                                "displayName": "sde [m]"
+                                "displayName": "G1C-08 Estimated Inter-system clock bias [m]"
                             },
                             {
-                                "displayName": "sdd [m]"
+                                "displayName": "G1C-08 Estimated ionosphere propagation error [m]"
                             },
                             {
-                                "displayName": "sdxy [m]"
+                                "displayName": "G1C-08 Estimated troposphere propagation error [m]"
                             },
                             {
-                                "displayName": "sdyz [m]"
+                                "displayName": "G1C-08 Sagnac correction [m]"
                             },
                             {
-                                "displayName": "sdzx [m]"
+                                "displayName": "G1C-13 SatPos ECEF X [m]"
                             },
                             {
-                                "displayName": "sdne [m]"
+                                "displayName": "G1C-13 SatPos ECEF Y [m]"
                             },
                             {
-                                "displayName": "sded [m]"
+                                "displayName": "G1C-13 SatPos ECEF Z [m]"
                             },
                             {
-                                "displayName": "sddn [m]"
+                                "displayName": "G1C-13 SatVel ECEF X [m/s]"
                             },
                             {
-                                "displayName": "age [s]"
+                                "displayName": "G1C-13 SatVel ECEF Y [m/s]"
                             },
                             {
-                                "displayName": "ratio [-]"
+                                "displayName": "G1C-13 SatVel ECEF Z [m/s]"
                             },
                             {
-                                "displayName": "Velocity ECEF X [m/s]"
+                                "displayName": "G1C-13 Satellite clock bias [s]"
                             },
                             {
-                                "displayName": "Velocity ECEF Y [m/s]"
+                                "displayName": "G1C-13 Satellite clock drift [s/s]"
                             },
                             {
-                                "displayName": "Velocity ECEF Z [m/s]"
+                                "displayName": "G1C-13 Elevation [deg]"
                             },
                             {
-                                "displayName": "Velocity North [m/s]"
+                                "displayName": "G1C-13 Azimuth [deg]"
                             },
                             {
-                                "displayName": "Velocity East [m/s]"
+                                "displayName": "G1C-13 Unhealthy (skipped)"
                             },
                             {
-                                "displayName": "Velocity Down [m/s]"
+                                "displayName": "G1C-13 Elevation mask triggered"
                             },
                             {
-                                "displayName": "sdvn [m/s]"
+                                "displayName": "G1C-13 Estimated Pseudorange [m]"
                             },
                             {
-                                "displayName": "sdve [m/s]"
+                                "displayName": "G1C-13 Estimated Pseudorange rate [m/s]"
                             },
                             {
-                                "displayName": "sdvd [m/s]"
+                                "displayName": "G1C-13 Geometric distance [m]"
                             },
                             {
-                                "displayName": "sdvne [m/s]"
+                                "displayName": "G1C-13 Estimated Inter-system clock bias [m]"
                             },
                             {
-                                "displayName": "sdved [m/s]"
+                                "displayName": "G1C-13 Estimated ionosphere propagation error [m]"
                             },
                             {
-                                "displayName": "sdvdn [m/s]"
+                                "displayName": "G1C-13 Estimated troposphere propagation error [m]"
                             },
                             {
-                                "displayName": "sdvx [m/s]"
+                                "displayName": "G1C-13 Sagnac correction [m]"
                             },
                             {
-                                "displayName": "sdvy [m/s]"
+                                "displayName": "G1C-24 SatPos ECEF X [m]"
                             },
                             {
-                                "displayName": "sdvz [m/s]"
+                                "displayName": "G1C-24 SatPos ECEF Y [m]"
                             },
                             {
-                                "displayName": "sdvxy [m/s]"
+                                "displayName": "G1C-24 SatPos ECEF Z [m]"
                             },
                             {
-                                "displayName": "sdvyz [m/s]"
+                                "displayName": "G1C-24 SatVel ECEF X [m/s]"
                             },
                             {
-                                "displayName": "sdvzx [m/s]"
+                                "displayName": "G1C-24 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-24 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-24 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-24 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-24 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-24 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-24 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-24 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-24 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-24 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-24 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-24 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-24 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-24 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-24 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1C-07 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-07 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-07 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-07 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-07 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-07 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-07 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-07 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-07 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-07 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-07 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-07 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-07 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-07 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-07 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-07 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-07 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-07 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-07 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1C-18 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-18 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-18 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-18 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-18 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-18 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-18 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-18 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-18 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-18 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-18 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-18 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-18 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-18 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-18 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-18 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-18 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-18 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-18 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1C-20 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-20 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-20 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-20 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-20 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-20 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-20 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-20 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-20 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-20 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-20 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-20 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-20 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-20 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-20 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-20 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-20 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-20 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-20 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1C-14 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-14 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-14 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-14 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-14 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-14 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-14 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-14 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-14 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-14 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-14 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-14 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-14 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-14 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-14 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-14 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-14 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-14 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-14 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1C-23 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-23 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-23 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-23 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-23 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-23 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-23 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-23 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-23 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-23 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-23 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-23 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-23 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-23 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-23 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-23 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-23 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-23 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-23 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1C-05 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-05 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-05 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-05 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-05 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-05 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-05 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-05 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-05 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-05 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-05 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-05 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-05 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-05 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-05 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-05 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-05 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-05 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-05 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1C-30 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-30 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-30 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-30 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-30 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-30 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-30 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-30 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-30 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-30 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-30 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-30 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-30 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-30 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-30 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-30 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-30 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-30 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-30 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1C-15 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-15 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-15 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-15 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-15 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-15 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-15 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-15 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-15 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-15 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-15 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-15 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-15 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-15 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-15 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-15 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-15 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-15 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-15 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1C-17 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-17 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-17 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-17 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-17 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-17 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-17 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-17 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-17 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-17 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-17 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-17 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-17 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-17 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-17 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-17 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-17 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-17 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-17 Sagnac correction [m]"
                             }
                         ],
                         "size": 0,
@@ -840,13 +1384,49 @@
                             },
                             {
                                 "displayName": "Down velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-08 [cycles]"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-13 [cycles]"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-24 [cycles]"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-07 [cycles]"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-18 [cycles]"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-20 [cycles]"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-14 [cycles]"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-23 [cycles]"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-05 [cycles]"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-30 [cycles]"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-15 [cycles]"
+                            },
+                            {
+                                "displayName": "AmbSD G1C-17 [cycles]"
                             }
                         ],
                         "size": 0,
                         "stride": 1
                     },
                     {
-                        "dataIdentifier": "RtklibPosObs",
+                        "dataIdentifier": "PosVelAtt",
                         "pinType": 0,
                         "plotData": [
                             {
@@ -854,15 +1434,6 @@
                             },
                             {
                                 "displayName": "GPS time of week [s]"
-                            },
-                            {
-                                "displayName": "X-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Y-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Z-ECEF [m]"
                             },
                             {
                                 "displayName": "Latitude [deg]"
@@ -880,106 +1451,129 @@
                                 "displayName": "East/West [m]"
                             },
                             {
-                                "displayName": "Q [-]"
+                                "displayName": "X-ECEF [m]"
                             },
                             {
-                                "displayName": "ns [-]"
+                                "displayName": "Y-ECEF [m]"
                             },
                             {
-                                "displayName": "sdx [m]"
+                                "displayName": "Z-ECEF [m]"
                             },
                             {
-                                "displayName": "sdy [m]"
+                                "displayName": "X velocity ECEF [m/s]"
                             },
                             {
-                                "displayName": "sdz [m]"
+                                "displayName": "Y velocity ECEF [m/s]"
                             },
                             {
-                                "displayName": "sdn [m]"
+                                "displayName": "Z velocity ECEF [m/s]"
                             },
                             {
-                                "displayName": "sde [m]"
+                                "displayName": "North velocity [m/s]"
                             },
                             {
-                                "displayName": "sdd [m]"
+                                "displayName": "East velocity [m/s]"
                             },
                             {
-                                "displayName": "sdxy [m]"
+                                "displayName": "Down velocity [m/s]"
                             },
                             {
-                                "displayName": "sdyz [m]"
+                                "displayName": "Roll [deg]"
                             },
                             {
-                                "displayName": "sdzx [m]"
+                                "displayName": "Pitch [deg]"
                             },
                             {
-                                "displayName": "sdne [m]"
+                                "displayName": "Yaw [deg]"
                             },
                             {
-                                "displayName": "sded [m]"
+                                "displayName": "Quaternion::w"
                             },
                             {
-                                "displayName": "sddn [m]"
+                                "displayName": "Quaternion::x"
                             },
                             {
-                                "displayName": "age [s]"
+                                "displayName": "Quaternion::y"
                             },
                             {
-                                "displayName": "ratio [-]"
+                                "displayName": "Quaternion::z"
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "PosVelAtt",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
                             },
                             {
-                                "displayName": "Velocity ECEF X [m/s]"
+                                "displayName": "GPS time of week [s]"
                             },
                             {
-                                "displayName": "Velocity ECEF Y [m/s]"
+                                "displayName": "Latitude [deg]"
                             },
                             {
-                                "displayName": "Velocity ECEF Z [m/s]"
+                                "displayName": "Longitude [deg]"
                             },
                             {
-                                "displayName": "Velocity North [m/s]"
+                                "displayName": "Altitude [m]"
                             },
                             {
-                                "displayName": "Velocity East [m/s]"
+                                "displayName": "North/South [m]"
                             },
                             {
-                                "displayName": "Velocity Down [m/s]"
+                                "displayName": "East/West [m]"
                             },
                             {
-                                "displayName": "sdvn [m/s]"
+                                "displayName": "X-ECEF [m]"
                             },
                             {
-                                "displayName": "sdve [m/s]"
+                                "displayName": "Y-ECEF [m]"
                             },
                             {
-                                "displayName": "sdvd [m/s]"
+                                "displayName": "Z-ECEF [m]"
                             },
                             {
-                                "displayName": "sdvne [m/s]"
+                                "displayName": "X velocity ECEF [m/s]"
                             },
                             {
-                                "displayName": "sdved [m/s]"
+                                "displayName": "Y velocity ECEF [m/s]"
                             },
                             {
-                                "displayName": "sdvdn [m/s]"
+                                "displayName": "Z velocity ECEF [m/s]"
                             },
                             {
-                                "displayName": "sdvx [m/s]"
+                                "displayName": "North velocity [m/s]"
                             },
                             {
-                                "displayName": "sdvy [m/s]"
+                                "displayName": "East velocity [m/s]"
                             },
                             {
-                                "displayName": "sdvz [m/s]"
+                                "displayName": "Down velocity [m/s]"
                             },
                             {
-                                "displayName": "sdvxy [m/s]"
+                                "displayName": "Roll [deg]"
                             },
                             {
-                                "displayName": "sdvyz [m/s]"
+                                "displayName": "Pitch [deg]"
                             },
                             {
-                                "displayName": "sdvzx [m/s]"
+                                "displayName": "Yaw [deg]"
+                            },
+                            {
+                                "displayName": "Quaternion::w"
+                            },
+                            {
+                                "displayName": "Quaternion::x"
+                            },
+                            {
+                                "displayName": "Quaternion::y"
+                            },
+                            {
+                                "displayName": "Quaternion::z"
                             }
                         ],
                         "size": 0,
@@ -1005,75 +1599,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "SPP (INSTINCT)",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 8,
-                                "displayName": "North/South [m]",
-                                "pinIndex": 1,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "SPP (RTKLib)",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 8,
-                                "displayName": "North/South [m]",
-                                "pinIndex": 3,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "RTK (RTKLib)",
+                                    "legendName": "SPP",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1099,7 +1625,7 @@
                                 "axis": 3,
                                 "dataIndex": 5,
                                 "displayName": "North/South [m]",
-                                "pinIndex": 2,
+                                "pinIndex": 1,
                                 "style": {
                                     "color": {
                                         "w": -1.0,
@@ -1107,7 +1633,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "RTK (INSTINCT)",
+                                    "legendName": "RTK",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1128,20 +1654,55 @@
                                     "stride": 0,
                                     "thickness": 1.0
                                 }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 5,
+                                "displayName": "North/South [m]",
+                                "pinIndex": 3,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "Nominal",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 8.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 4.0,
+                                    "markers": true,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
                             }
                         ],
                         "rightPaneWidth": 400.0,
                         "selectedPin": 2,
                         "selectedXdata": [
                             6,
-                            9,
                             6,
-                            9,
-                            0
+                            6,
+                            6,
+                            6,
+                            6
                         ],
                         "size": {
                             "x": -1.0,
-                            "y": 405.0
+                            "y": 400.0
                         },
                         "title": "Horizontal Position",
                         "xAxisFlags": 2048,
@@ -1175,7 +1736,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "SPP (INSTINCT)",
+                                    "legendName": "SPP",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1190,74 +1751,6 @@
                                         "z": 0.0
                                     },
                                     "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 8,
-                                "displayName": "North/South [m]",
-                                "pinIndex": 1,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "SPP (RTKLib)",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 8,
-                                "displayName": "North/South [m]",
-                                "pinIndex": 3,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "RTK (RTKLib)",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 6.599999904632568,
                                     "markerStyle": 7,
                                     "markerWeight": 1.0,
                                     "markers": false,
@@ -1269,7 +1762,7 @@
                                 "axis": 3,
                                 "dataIndex": 5,
                                 "displayName": "North/South [m]",
-                                "pinIndex": 2,
+                                "pinIndex": 1,
                                 "style": {
                                     "color": {
                                         "w": -1.0,
@@ -1277,7 +1770,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "RTK (INSTINCT)",
+                                    "legendName": "RTK",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1303,6 +1796,8 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 2,
                         "selectedXdata": [
+                            0,
+                            0,
                             0,
                             0,
                             0,
@@ -1344,75 +1839,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "SPP (INSTINCT)",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 9,
-                                "displayName": "East/West [m]",
-                                "pinIndex": 1,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "SPP (RTKLib)",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 9,
-                                "displayName": "East/West [m]",
-                                "pinIndex": 3,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "RTK (RTKLib)",
+                                    "legendName": "SPP",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1438,7 +1865,7 @@
                                 "axis": 3,
                                 "dataIndex": 6,
                                 "displayName": "East/West [m]",
-                                "pinIndex": 2,
+                                "pinIndex": 1,
                                 "style": {
                                     "color": {
                                         "w": -1.0,
@@ -1446,7 +1873,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "RTK (INSTINCT)",
+                                    "legendName": "RTK",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1472,6 +1899,8 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 2,
                         "selectedXdata": [
+                            0,
+                            0,
                             0,
                             0,
                             0,
@@ -1513,75 +1942,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "SPP (INSTINCT)",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 7,
-                                "displayName": "Altitude [m]",
-                                "pinIndex": 1,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "SPP (RTKLib)",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 7,
-                                "displayName": "Altitude [m]",
-                                "pinIndex": 3,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "RTK (RTKLib)",
+                                    "legendName": "SPP",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1607,7 +1968,7 @@
                                 "axis": 3,
                                 "dataIndex": 4,
                                 "displayName": "Altitude [m]",
-                                "pinIndex": 2,
+                                "pinIndex": 1,
                                 "style": {
                                     "color": {
                                         "w": -1.0,
@@ -1615,7 +1976,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "RTK (INSTINCT)",
+                                    "legendName": "RTK",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1641,6 +2002,8 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 2,
                         "selectedXdata": [
+                            0,
+                            0,
                             0,
                             0,
                             0,
@@ -1665,16 +2028,16 @@
                         "yAxisFlags": 2048
                     },
                     {
-                        "headerText": "Velocity ECEF",
+                        "headerText": "Velocity North",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 10,
-                                "displayName": "X velocity ECEF [m/s]",
-                                "pinIndex": 2,
+                                "dataIndex": 13,
+                                "displayName": "North velocity [m/s]",
+                                "pinIndex": 0,
                                 "style": {
                                     "color": {
                                         "w": -1.0,
@@ -1682,7 +2045,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "X",
+                                    "legendName": "SPP",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1706,9 +2069,9 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 11,
-                                "displayName": "Y velocity ECEF [m/s]",
-                                "pinIndex": 2,
+                                "dataIndex": 13,
+                                "displayName": "North velocity [m/s]",
+                                "pinIndex": 1,
                                 "style": {
                                     "color": {
                                         "w": -1.0,
@@ -1716,41 +2079,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "Y",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 12,
-                                "displayName": "Z velocity ECEF [m/s]",
-                                "pinIndex": 2,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Z",
+                                    "legendName": "RTK",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1779,13 +2108,15 @@
                             0,
                             0,
                             0,
+                            0,
+                            0,
                             0
                         ],
                         "size": {
                             "x": -1.0,
                             "y": 300.0
                         },
-                        "title": "Velocity ECEF",
+                        "title": "Velocity North",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
@@ -1817,7 +2148,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "SPP (INSTINCT)",
+                                    "legendName": "SPP",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1834,75 +2165,7 @@
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
                                     "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 11,
-                                "displayName": "ns [-]",
-                                "pinIndex": 1,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "SPP (RTKLib)",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 11,
-                                "displayName": "ns [-]",
-                                "pinIndex": 3,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "RTK (RTKLib)",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
+                                    "markers": true,
                                     "stride": 0,
                                     "thickness": 1.0
                                 }
@@ -1911,7 +2174,7 @@
                                 "axis": 3,
                                 "dataIndex": 17,
                                 "displayName": "Number satellites",
-                                "pinIndex": 2,
+                                "pinIndex": 1,
                                 "style": {
                                     "color": {
                                         "w": -1.0,
@@ -1919,7 +2182,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "RTK (INSTINCT)",
+                                    "legendName": "RTK",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1936,15 +2199,17 @@
                                     "markerSize": 1.0,
                                     "markerStyle": 7,
                                     "markerWeight": 1.0,
-                                    "markers": false,
+                                    "markers": true,
                                     "stride": 0,
                                     "thickness": 1.0
                                 }
                             }
                         ],
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 2,
+                        "selectedPin": 3,
                         "selectedXdata": [
+                            0,
+                            0,
                             0,
                             0,
                             0,
@@ -1969,16 +2234,16 @@
                         "yAxisFlags": 2048
                     },
                     {
-                        "headerText": "NED StDev [m] - INSTINCT",
-                        "leftPaneWidth": 180.0,
+                        "headerText": "Ambiguity Single Differences",
+                        "leftPaneWidth": 261.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 21,
-                                "displayName": "North StDev [m]",
-                                "pinIndex": 2,
+                                "dataIndex": 30,
+                                "displayName": "AmbSD G1C-08 [cycles]",
+                                "pinIndex": 1,
                                 "style": {
                                     "color": {
                                         "w": -1.0,
@@ -1986,7 +2251,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "North",
+                                    "legendName": "G1C-08",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -2010,9 +2275,9 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 22,
-                                "displayName": "East StDev [m]",
-                                "pinIndex": 2,
+                                "dataIndex": 31,
+                                "displayName": "AmbSD G1C-13 [cycles]",
+                                "pinIndex": 1,
                                 "style": {
                                     "color": {
                                         "w": -1.0,
@@ -2020,7 +2285,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "East",
+                                    "legendName": "G1C-13",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -2044,9 +2309,9 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 23,
-                                "displayName": "Down StDev [m]",
-                                "pinIndex": 2,
+                                "dataIndex": 32,
+                                "displayName": "AmbSD G1C-24 [cycles]",
+                                "pinIndex": 1,
                                 "style": {
                                     "color": {
                                         "w": -1.0,
@@ -2054,7 +2319,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "Down",
+                                    "legendName": "G1C-24",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -2068,7 +2333,313 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "markerSize": 7.5,
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 33,
+                                "displayName": "AmbSD G1C-07 [cycles]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-07",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 34,
+                                "displayName": "AmbSD G1C-18 [cycles]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-18",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 35,
+                                "displayName": "AmbSD G1C-20 [cycles]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-20",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 36,
+                                "displayName": "AmbSD G1C-14 [cycles]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-14",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 37,
+                                "displayName": "AmbSD G1C-23 [cycles]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-23",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 38,
+                                "displayName": "AmbSD G1C-05 [cycles]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-05",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 39,
+                                "displayName": "AmbSD G1C-30 [cycles]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-30",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 40,
+                                "displayName": "AmbSD G1C-15 [cycles]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-15",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 41,
+                                "displayName": "AmbSD G1C-17 [cycles]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-17",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
                                     "markerStyle": 7,
                                     "markerWeight": 1.0,
                                     "markers": false,
@@ -2077,9 +2648,11 @@
                                 }
                             }
                         ],
-                        "rightPaneWidth": 400.0,
+                        "rightPaneWidth": 319.0,
                         "selectedPin": 2,
                         "selectedXdata": [
+                            0,
+                            0,
                             0,
                             0,
                             0,
@@ -2087,13 +2660,13 @@
                         ],
                         "size": {
                             "x": -1.0,
-                            "y": 300.0
+                            "y": 350.0
                         },
-                        "title": "NED StDev [m] - INSTINCT",
+                        "title": "Ambiguity Single Differences",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
-                        "y1AxisLabel": "StDev [m]",
+                        "y1AxisLabel": "Ambiguity [cycles]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
                         "yAxesScale": [
@@ -2104,16 +2677,16 @@
                         "yAxisFlags": 2048
                     },
                     {
-                        "headerText": "ECEF StDev [m] - INSTINCT",
-                        "leftPaneWidth": 180.0,
+                        "headerText": "Elevation",
+                        "leftPaneWidth": 267.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 18,
-                                "displayName": "X-ECEF StDev [m]",
-                                "pinIndex": 2,
+                                "dataIndex": 83,
+                                "displayName": "G1C-08 Elevation [deg]",
+                                "pinIndex": 0,
                                 "style": {
                                     "color": {
                                         "w": -1.0,
@@ -2121,7 +2694,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "X",
+                                    "legendName": "G1C-08",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -2145,9 +2718,9 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 19,
-                                "displayName": "Y-ECEF StDev [m]",
-                                "pinIndex": 2,
+                                "dataIndex": 102,
+                                "displayName": "G1C-13 Elevation [deg]",
+                                "pinIndex": 0,
                                 "style": {
                                     "color": {
                                         "w": -1.0,
@@ -2155,7 +2728,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "Y",
+                                    "legendName": "G1C-13",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -2179,9 +2752,9 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 20,
-                                "displayName": "Z-ECEF StDev [m]",
-                                "pinIndex": 2,
+                                "dataIndex": 121,
+                                "displayName": "G1C-24 Elevation [deg]",
+                                "pinIndex": 0,
                                 "style": {
                                     "color": {
                                         "w": -1.0,
@@ -2189,7 +2762,313 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "Z",
+                                    "legendName": "G1C-24",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 140,
+                                "displayName": "G1C-07 Elevation [deg]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-07",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 159,
+                                "displayName": "G1C-18 Elevation [deg]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-18",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 178,
+                                "displayName": "G1C-20 Elevation [deg]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-20",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 197,
+                                "displayName": "G1C-14 Elevation [deg]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-14",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 216,
+                                "displayName": "G1C-23 Elevation [deg]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-23",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 235,
+                                "displayName": "G1C-05 Elevation [deg]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-05",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 254,
+                                "displayName": "G1C-30 Elevation [deg]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-30",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 273,
+                                "displayName": "G1C-15 Elevation [deg]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-15",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 292,
+                                "displayName": "G1C-17 Elevation [deg]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "legendName": "G1C-17",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -2212,9 +3091,11 @@
                                 }
                             }
                         ],
-                        "rightPaneWidth": 400.0,
-                        "selectedPin": 2,
+                        "rightPaneWidth": 313.0,
+                        "selectedPin": 0,
                         "selectedXdata": [
+                            0,
+                            0,
                             0,
                             0,
                             0,
@@ -2222,13 +3103,13 @@
                         ],
                         "size": {
                             "x": -1.0,
-                            "y": 300.0
+                            "y": 350.0
                         },
-                        "title": "ECEF StDev [m] - INSTINCT",
+                        "title": "Elevation",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
-                        "y1AxisLabel": "StDev [m]",
+                        "y1AxisLabel": "Elevation [deg]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
                         "yAxesScale": [
@@ -2236,38 +3117,38 @@
                             0,
                             0
                         ],
-                        "yAxisFlags": 2048
+                        "yAxisFlags": 0
                     }
                 ],
-                "startValue_East": 1.6584118552796565,
-                "startValue_North": 0.523598775649385
+                "startValue_East": 0.16055741850758026,
+                "startValue_North": 0.851384450958764
             },
             "enabled": true,
             "id": 137,
             "inputPins": [
                 {
                     "id": 132,
-                    "name": "SPP (INSTINCT)"
-                },
-                {
-                    "id": 138,
-                    "name": "SPP (RTKLib)"
+                    "name": "SPP"
                 },
                 {
                     "id": 150,
-                    "name": "RTK (INSTINCT)"
+                    "name": "RTK"
                 },
                 {
-                    "id": 151,
-                    "name": "RTK (RTKLib)"
+                    "id": 286,
+                    "name": "Base"
+                },
+                {
+                    "id": 218,
+                    "name": "Nominal"
                 }
             ],
             "kind": "Blueprint",
             "name": "Plot",
             "outputPins": [],
             "pos": {
-                "x": 680.0,
-                "y": 234.0
+                "x": 520.0,
+                "y": 322.0
             },
             "size": {
                 "x": 0.0,
@@ -2275,100 +3156,10 @@
             },
             "type": "Plot"
         },
-        "node-149": {
-            "data": {
-                "FileReader": {
-                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_static-rover_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/Spirent_RINEX_MO_Rover-2km_SPP.pos"
-                }
-            },
-            "enabled": true,
-            "id": 149,
-            "inputPins": [],
-            "kind": "Blueprint",
-            "name": "RtklibPosFile - SPP",
-            "outputPins": [
-                {
-                    "id": 148,
-                    "name": "RtklibPosObs"
-                }
-            ],
-            "pos": {
-                "x": 350.0,
-                "y": 558.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "RtklibPosFile"
-        },
-        "node-153": {
-            "data": null,
-            "enabled": true,
-            "id": 153,
-            "inputPins": [],
-            "kind": "GroupBox",
-            "name": "SPP",
-            "outputPins": [],
-            "pos": {
-                "x": 208.0,
-                "y": 368.0
-            },
-            "size": {
-                "x": 368.0,
-                "y": 250.0
-            },
-            "type": "GroupBox"
-        },
-        "node-155": {
-            "data": null,
-            "enabled": true,
-            "id": 155,
-            "inputPins": [],
-            "kind": "GroupBox",
-            "name": "RTK",
-            "outputPins": [],
-            "pos": {
-                "x": 208.0,
-                "y": -16.0
-            },
-            "size": {
-                "x": 368.0,
-                "y": 298.0
-            },
-            "type": "GroupBox"
-        },
-        "node-157": {
-            "data": {
-                "FileReader": {
-                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_static-rover_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/Spirent_RINEX_MO_Rover-2km_RTK.pos"
-                }
-            },
-            "enabled": true,
-            "id": 157,
-            "inputPins": [],
-            "kind": "Blueprint",
-            "name": "RtklibPosFile - RTK",
-            "outputPins": [
-                {
-                    "id": 156,
-                    "name": "RtklibPosObs"
-                }
-            ],
-            "pos": {
-                "x": 364.0,
-                "y": 30.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "RtklibPosFile"
-        },
         "node-167": {
             "data": {
                 "FileReader": {
-                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_static-rover_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/Spirent_RINEX_EN.23L"
+                    "path": "../test/data/GNSS/Spirent-SimGEN_RTK_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/RINEX_EN_Spirent.23L"
                 }
             },
             "enabled": true,
@@ -2383,8 +3174,8 @@
                 }
             ],
             "pos": {
-                "x": -20.0,
-                "y": 430.0
+                "x": -132.0,
+                "y": 14.0
             },
             "size": {
                 "x": 0.0,
@@ -2396,7 +3187,15 @@
             "data": {
                 "attitudeMode": 0,
                 "initDuration": 5.0,
-                "overridePosition": 2,
+                "initTime": {
+                    "mjd_day": 59952,
+                    "mjd_frac": 0.4164583333333333
+                },
+                "initTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
+                },
+                "overridePosition": 1,
                 "overrideRollPitchYaw": [
                     true,
                     true,
@@ -2404,13 +3203,13 @@
                 ],
                 "overrideValuesPosition": {
                     "0": {
-                        "0": 30.0
+                        "0": 4157177.0658
                     },
                     "1": {
-                        "0": 95.0
+                        "0": 671230.4766
                     },
                     "2": {
-                        "0": 0.0
+                        "0": 4774767.0311
                     }
                 },
                 "overrideValuesRollPitchYaw": [
@@ -2445,14 +3244,120 @@
                 }
             ],
             "pos": {
-                "x": -38.0,
-                "y": 30.0
+                "x": -166.0,
+                "y": 174.0
             },
             "size": {
                 "x": 0.0,
                 "y": 0.0
             },
             "type": "PosVelAttInitializer"
+        },
+        "node-234": {
+            "data": null,
+            "enabled": true,
+            "id": 234,
+            "inputPins": [],
+            "kind": "GroupBox",
+            "name": "Navigation Data",
+            "outputPins": [],
+            "pos": {
+                "x": -160.0,
+                "y": -112.0
+            },
+            "size": {
+                "x": 208.0,
+                "y": 186.0
+            },
+            "type": "GroupBox"
+        },
+        "node-270": {
+            "data": {
+                "attitudeMode": 0,
+                "initDuration": 5.0,
+                "initTime": {
+                    "mjd_day": 59952,
+                    "mjd_frac": 0.4164583333333333
+                },
+                "initTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
+                },
+                "overridePosition": 1,
+                "overrideRollPitchYaw": [
+                    true,
+                    true,
+                    true
+                ],
+                "overrideValuesPosition": {
+                    "0": {
+                        "0": 4156857.1195929
+                    },
+                    "1": {
+                        "0": 673209.028774142
+                    },
+                    "2": {
+                        "0": 4774767.03105544
+                    }
+                },
+                "overrideValuesRollPitchYaw": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "overrideValuesVelocity": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "overrideVelocity": 2,
+                "positionAccuracyThreshold": 10.0,
+                "velocityAccuracyThreshold": 10.0
+            },
+            "enabled": true,
+            "id": 270,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "Nominal Reference",
+            "outputPins": [
+                {
+                    "id": 271,
+                    "name": "PosVelAtt"
+                }
+            ],
+            "pos": {
+                "x": -166.0,
+                "y": 494.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "PosVelAttInitializer"
+        },
+        "node-285": {
+            "data": null,
+            "enabled": true,
+            "id": 285,
+            "inputPins": [],
+            "kind": "GroupBox",
+            "name": "Algorithms",
+            "outputPins": [],
+            "pos": {
+                "x": 96.0,
+                "y": 96.0
+            },
+            "size": {
+                "x": 352.0,
+                "y": 362.0
+            },
+            "type": "GroupBox"
         }
     }
 }

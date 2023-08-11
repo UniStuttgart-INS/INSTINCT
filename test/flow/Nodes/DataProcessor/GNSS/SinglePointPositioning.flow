@@ -311,6 +311,2400 @@
                             },
                             {
                                 "displayName": "SBAS system time drift difference StDev [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-01 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-01 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-01 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-01 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-01 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-01 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-01 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-01 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-01 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-01 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-01 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-01 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-01 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-01 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-01 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-01 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-01 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-01 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-01 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1P-01 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1P-01 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1P-01 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1P-01 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-01 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-01 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-01 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1P-01 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1P-01 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1P-01 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1P-01 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1P-01 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1P-01 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1P-01 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-01 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1P-01 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1P-01 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-01 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-01 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1X-01 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1X-01 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1X-01 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1X-01 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-01 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-01 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-01 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1X-01 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1X-01 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1X-01 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1X-01 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1X-01 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1X-01 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1X-01 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-01 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1X-01 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1X-01 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-01 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-01 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1C-07 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-07 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-07 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-07 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-07 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-07 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-07 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-07 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-07 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-07 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-07 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-07 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-07 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-07 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-07 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-07 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-07 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-07 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-07 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1P-07 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1P-07 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1P-07 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1P-07 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-07 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-07 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-07 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1P-07 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1P-07 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1P-07 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1P-07 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1P-07 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1P-07 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1P-07 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-07 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1P-07 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1P-07 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-07 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-07 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1X-07 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1X-07 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1X-07 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1X-07 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-07 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-07 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-07 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1X-07 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1X-07 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1X-07 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1X-07 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1X-07 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1X-07 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1X-07 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-07 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1X-07 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1X-07 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-07 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-07 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1C-08 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-08 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-08 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-08 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-08 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-08 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-08 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-08 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-08 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-08 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-08 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-08 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-08 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-08 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-08 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-08 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-08 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-08 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-08 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1P-08 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1P-08 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1P-08 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1P-08 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-08 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-08 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-08 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1P-08 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1P-08 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1P-08 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1P-08 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1P-08 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1P-08 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1P-08 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-08 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1P-08 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1P-08 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-08 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-08 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1X-08 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1X-08 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1X-08 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1X-08 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-08 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-08 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-08 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1X-08 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1X-08 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1X-08 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1X-08 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1X-08 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1X-08 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1X-08 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-08 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1X-08 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1X-08 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-08 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-08 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1C-09 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-09 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-09 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-09 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-09 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-09 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-09 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-09 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-09 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-09 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-09 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-09 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-09 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-09 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-09 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-09 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-09 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-09 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-09 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1P-09 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1P-09 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1P-09 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1P-09 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-09 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-09 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-09 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1P-09 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1P-09 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1P-09 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1P-09 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1P-09 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1P-09 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1P-09 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-09 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1P-09 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1P-09 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-09 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-09 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1X-09 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1X-09 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1X-09 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1X-09 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-09 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-09 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-09 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1X-09 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1X-09 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1X-09 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1X-09 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1X-09 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1X-09 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1X-09 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-09 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1X-09 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1X-09 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-09 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-09 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1C-14 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-14 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-14 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-14 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-14 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-14 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-14 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-14 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-14 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-14 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-14 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-14 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-14 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-14 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-14 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-14 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-14 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-14 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-14 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1P-14 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1P-14 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1P-14 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1P-14 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-14 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-14 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-14 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1P-14 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1P-14 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1P-14 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1P-14 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1P-14 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1P-14 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1P-14 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-14 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1P-14 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1P-14 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-14 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-14 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1X-14 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1X-14 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1X-14 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1X-14 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-14 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-14 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-14 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1X-14 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1X-14 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1X-14 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1X-14 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1X-14 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1X-14 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1X-14 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-14 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1X-14 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1X-14 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-14 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-14 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1C-17 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-17 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-17 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-17 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-17 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-17 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-17 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-17 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-17 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-17 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-17 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-17 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-17 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-17 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-17 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-17 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-17 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-17 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-17 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1P-17 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1P-17 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1P-17 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1P-17 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-17 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-17 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-17 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1P-17 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1P-17 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1P-17 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1P-17 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1P-17 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1P-17 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1P-17 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-17 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1P-17 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1P-17 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-17 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-17 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1X-17 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1X-17 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1X-17 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1X-17 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-17 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-17 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-17 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1X-17 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1X-17 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1X-17 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1X-17 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1X-17 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1X-17 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1X-17 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-17 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1X-17 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1X-17 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-17 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-17 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1C-21 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-21 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-21 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-21 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-21 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-21 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-21 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-21 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-21 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-21 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-21 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-21 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-21 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-21 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-21 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-21 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-21 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-21 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-21 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1P-21 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1P-21 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1P-21 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1P-21 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-21 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-21 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-21 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1P-21 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1P-21 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1P-21 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1P-21 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1P-21 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1P-21 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1P-21 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-21 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1P-21 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1P-21 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-21 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-21 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1X-21 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1X-21 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1X-21 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1X-21 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-21 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-21 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-21 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1X-21 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1X-21 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1X-21 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1X-21 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1X-21 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1X-21 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1X-21 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-21 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1X-21 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1X-21 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-21 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-21 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1C-30 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-30 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-30 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-30 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-30 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-30 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-30 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-30 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-30 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-30 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-30 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-30 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-30 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-30 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-30 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-30 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-30 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-30 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-30 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1P-30 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1P-30 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1P-30 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1P-30 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-30 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-30 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-30 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1P-30 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1P-30 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1P-30 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1P-30 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1P-30 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1P-30 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1P-30 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-30 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1P-30 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1P-30 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-30 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-30 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1X-30 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1X-30 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1X-30 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1X-30 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-30 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-30 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-30 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1X-30 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1X-30 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1X-30 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1X-30 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1X-30 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1X-30 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1X-30 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-30 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1X-30 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1X-30 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-30 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-30 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1C-13 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-13 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-13 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-13 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-13 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-13 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-13 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-13 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-13 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-13 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-13 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-13 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-13 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-13 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-13 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-13 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-13 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-13 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-13 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1P-13 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1P-13 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1P-13 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1P-13 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-13 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-13 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-13 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1P-13 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1P-13 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1P-13 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1P-13 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1P-13 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1P-13 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1P-13 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-13 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1P-13 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1P-13 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-13 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-13 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1X-13 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1X-13 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1X-13 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1X-13 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-13 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-13 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-13 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1X-13 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1X-13 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1X-13 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1X-13 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1X-13 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1X-13 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1X-13 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-13 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1X-13 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1X-13 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-13 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-13 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1C-19 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-19 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-19 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-19 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-19 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-19 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-19 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-19 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-19 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-19 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-19 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-19 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-19 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-19 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-19 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-19 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-19 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-19 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-19 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1P-19 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1P-19 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1P-19 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1P-19 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-19 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-19 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-19 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1P-19 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1P-19 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1P-19 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1P-19 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1P-19 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1P-19 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1P-19 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-19 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1P-19 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1P-19 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-19 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-19 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1X-19 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1X-19 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1X-19 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1X-19 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-19 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-19 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-19 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1X-19 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1X-19 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1X-19 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1X-19 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1X-19 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1X-19 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1X-19 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-19 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1X-19 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1X-19 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-19 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-19 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1C-06 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-06 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-06 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-06 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-06 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-06 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-06 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-06 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-06 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-06 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-06 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-06 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-06 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-06 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-06 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-06 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-06 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-06 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-06 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1P-06 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1P-06 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1P-06 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1P-06 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-06 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-06 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-06 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1P-06 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1P-06 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1P-06 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1P-06 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1P-06 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1P-06 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1P-06 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-06 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1P-06 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1P-06 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-06 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-06 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1X-06 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1X-06 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1X-06 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1X-06 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-06 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-06 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-06 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1X-06 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1X-06 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1X-06 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1X-06 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1X-06 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1X-06 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1X-06 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-06 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1X-06 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1X-06 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-06 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-06 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1C-03 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-03 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-03 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-03 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-03 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-03 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-03 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-03 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-03 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-03 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-03 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-03 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-03 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-03 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-03 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-03 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-03 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-03 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-03 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1P-03 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1P-03 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1P-03 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1P-03 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-03 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-03 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-03 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1P-03 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1P-03 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1P-03 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1P-03 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1P-03 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1P-03 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1P-03 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-03 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1P-03 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1P-03 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-03 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-03 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1X-03 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1X-03 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1X-03 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1X-03 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-03 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-03 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-03 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1X-03 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1X-03 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1X-03 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1X-03 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1X-03 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1X-03 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1X-03 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-03 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1X-03 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1X-03 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-03 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-03 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1C-11 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-11 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-11 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-11 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-11 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-11 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-11 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-11 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-11 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-11 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-11 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-11 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-11 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-11 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-11 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-11 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-11 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-11 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-11 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1P-11 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1P-11 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1P-11 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1P-11 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-11 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-11 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-11 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1P-11 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1P-11 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1P-11 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1P-11 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1P-11 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1P-11 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1P-11 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-11 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1P-11 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1P-11 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-11 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-11 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1X-11 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1X-11 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1X-11 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1X-11 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-11 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-11 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-11 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1X-11 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1X-11 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1X-11 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1X-11 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1X-11 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1X-11 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1X-11 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-11 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1X-11 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1X-11 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-11 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-11 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1C-24 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1C-24 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1C-24 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1C-24 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-24 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-24 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-24 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1C-24 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1C-24 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1C-24 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1C-24 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1C-24 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1C-24 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1C-24 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1C-24 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1C-24 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1C-24 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-24 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1C-24 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1P-24 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1P-24 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1P-24 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1P-24 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-24 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-24 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-24 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1P-24 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1P-24 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1P-24 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1P-24 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1P-24 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1P-24 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1P-24 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1P-24 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1P-24 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1P-24 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-24 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1P-24 Sagnac correction [m]"
+                            },
+                            {
+                                "displayName": "G1X-24 SatPos ECEF X [m]"
+                            },
+                            {
+                                "displayName": "G1X-24 SatPos ECEF Y [m]"
+                            },
+                            {
+                                "displayName": "G1X-24 SatPos ECEF Z [m]"
+                            },
+                            {
+                                "displayName": "G1X-24 SatVel ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-24 SatVel ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-24 SatVel ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-24 Satellite clock bias [s]"
+                            },
+                            {
+                                "displayName": "G1X-24 Satellite clock drift [s/s]"
+                            },
+                            {
+                                "displayName": "G1X-24 Elevation [deg]"
+                            },
+                            {
+                                "displayName": "G1X-24 Azimuth [deg]"
+                            },
+                            {
+                                "displayName": "G1X-24 Unhealthy (skipped)"
+                            },
+                            {
+                                "displayName": "G1X-24 Elevation mask triggered"
+                            },
+                            {
+                                "displayName": "G1X-24 Estimated Pseudorange [m]"
+                            },
+                            {
+                                "displayName": "G1X-24 Estimated Pseudorange rate [m/s]"
+                            },
+                            {
+                                "displayName": "G1X-24 Geometric distance [m]"
+                            },
+                            {
+                                "displayName": "G1X-24 Estimated Inter-system clock bias [m]"
+                            },
+                            {
+                                "displayName": "G1X-24 Estimated ionosphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-24 Estimated troposphere propagation error [m]"
+                            },
+                            {
+                                "displayName": "G1X-24 Sagnac correction [m]"
                             }
                         ],
                         "size": 0,
@@ -467,6 +2861,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 5,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -500,6 +2895,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 8,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -564,6 +2960,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 5,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -597,6 +2994,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 8,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -661,6 +3059,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 6,
+                                "displayName": "East/West [m]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -694,6 +3093,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 9,
+                                "displayName": "East/West [m]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -758,6 +3158,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 4,
+                                "displayName": "Altitude [m]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -791,6 +3192,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 7,
+                                "displayName": "Altitude [m]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -855,6 +3257,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 16,
+                                "displayName": "Number satellites (pos)",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -888,6 +3291,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 11,
+                                "displayName": "ns [-]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -952,6 +3356,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 13,
+                                "displayName": "North velocity [m/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -985,6 +3390,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 29,
+                                "displayName": "Velocity North [m/s]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1049,6 +3455,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 14,
+                                "displayName": "East velocity [m/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1082,6 +3489,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 30,
+                                "displayName": "Velocity East [m/s]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1146,6 +3554,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 15,
+                                "displayName": "Down velocity [m/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1179,6 +3588,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 31,
+                                "displayName": "Velocity Down [m/s]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1243,6 +3653,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 26,
+                                "displayName": "North StDev [m]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1276,6 +3687,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 15,
+                                "displayName": "sdn [m]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {

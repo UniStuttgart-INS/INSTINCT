@@ -199,7 +199,6 @@
                     "mjd_day": 51544,
                     "mjd_frac": 0.0
                 },
-                "startTimeEditFormat": 0,
                 "startTimeSource": 0,
                 "trajectoryType": 0
             },
@@ -365,7 +364,6 @@
                     "mjd_day": 51544,
                     "mjd_frac": 0.0
                 },
-                "startTimeEditFormat": 0,
                 "startTimeSource": 0,
                 "trajectoryType": 0
             },
@@ -531,7 +529,6 @@
                     "mjd_day": 51544,
                     "mjd_frac": 0.0
                 },
-                "startTimeEditFormat": 0,
                 "startTimeSource": 0,
                 "trajectoryType": 0
             },
@@ -697,7 +694,6 @@
                     "mjd_day": 51544,
                     "mjd_frac": 0.0
                 },
-                "startTimeEditFormat": 0,
                 "startTimeSource": 0,
                 "trajectoryType": 0
             },

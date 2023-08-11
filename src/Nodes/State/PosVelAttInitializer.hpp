@@ -208,7 +208,7 @@ class PosVelAttInitializer : public Node
     gui::widgets::TimeEditFormat _initTimeEditFormat;
 
     /// Initialization time
-    InsTime _initTime;
+    InsTime _initTime = InsTime(InsTime_GPSweekTow(0, 0, 0));
     /// Initialized Quaternion body to navigation frame (roll, pitch, yaw)
     Eigen::Quaterniond _n_Quat_b_init;
     /// Position in ECEF coordinates

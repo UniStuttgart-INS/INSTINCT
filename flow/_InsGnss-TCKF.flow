@@ -3056,7 +3056,6 @@
                     "mjd_day": 59994,
                     "mjd_frac": 0.4164583333333333
                 },
-                "startTimeEditFormat": 0,
                 "startTimeSource": 0,
                 "trajectoryType": 2
             },

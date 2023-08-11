@@ -167,16 +167,13 @@
             "data": {
                 "attitudeMode": 2,
                 "initDuration": 5.0,
-                "overrideValuesVelocity": {
-                    "0": {
-                        "0": 0.0
-                    },
-                    "1": {
-                        "0": 0.0
-                    },
-                    "2": {
-                        "0": 0.0
-                    }
+                "initTime": {
+                    "mjd_day": 44244,
+                    "mjd_frac": 0.0
+                },
+                "initTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
                 },
                 "overridePosition": 2,
                 "overrideRollPitchYaw": [
@@ -200,6 +197,17 @@
                     -5.278240203857422,
                     -61.86539840698242
                 ],
+                "overrideValuesVelocity": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
                 "overrideVelocity": 2,
                 "positionAccuracyThreshold": 10.0,
                 "velocityAccuracyThreshold": 10.0
@@ -527,22 +535,22 @@
                                 "displayName": "ECEF Z error [m]"
                             },
                             {
-                                "displayName": "Accelerometer bias b_X accumulated [m/s^2]"
+                                "displayName": "Accelerometer bias b_X [m/s^2]"
                             },
                             {
-                                "displayName": "Accelerometer bias b_Y accumulated [m/s^2]"
+                                "displayName": "Accelerometer bias b_Y [m/s^2]"
                             },
                             {
-                                "displayName": "Accelerometer bias b_Z accumulated [m/s^2]"
+                                "displayName": "Accelerometer bias b_Z [m/s^2]"
                             },
                             {
-                                "displayName": "Gyroscope bias b_X accumulated [rad/s]"
+                                "displayName": "Gyroscope bias b_X [rad/s]"
                             },
                             {
-                                "displayName": "Gyroscope bias b_Y accumulated [rad/s]"
+                                "displayName": "Gyroscope bias b_Y [rad/s]"
                             },
                             {
-                                "displayName": "Gyroscope bias b_Z accumulated [rad/s]"
+                                "displayName": "Gyroscope bias b_Z [rad/s]"
                             }
                         ],
                         "size": 0,
@@ -3407,6 +3415,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 20,
+                                "displayName": "Accelerometer bias b_X [m/s^2]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -3440,6 +3449,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 21,
+                                "displayName": "Accelerometer bias b_Y [m/s^2]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -3473,6 +3483,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 22,
+                                "displayName": "Accelerometer bias b_Z [m/s^2]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -3524,9 +3535,15 @@
                         "title": "Accelerometer bias body-frame (accumulated)",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Bias [m/s^2]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -3538,6 +3555,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 23,
+                                "displayName": "Gyroscope bias b_X [rad/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -3571,6 +3589,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 24,
+                                "displayName": "Gyroscope bias b_Y [rad/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -3604,6 +3623,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 25,
+                                "displayName": "Gyroscope bias b_Z [rad/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -3655,9 +3675,15 @@
                         "title": "Gyroscope bias body-frame (accumulated)",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Bias [rad/s]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -3669,6 +3695,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 8,
+                                "displayName": "Latitude error [deg]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -3702,6 +3729,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 9,
+                                "displayName": "Longitude error [deg]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -3735,6 +3763,7 @@
                             {
                                 "axis": 4,
                                 "dataIndex": 10,
+                                "displayName": "Altitude error [m]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -3768,6 +3797,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 17,
+                                "displayName": "ECEF X error [m]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -3801,6 +3831,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 18,
+                                "displayName": "ECEF Y error [m]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -3834,6 +3865,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 19,
+                                "displayName": "ECEF Z error [m]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -3885,9 +3917,15 @@
                         "title": "Position error",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Lat/Lon error [deg] / ECEF error [m]",
                         "y2AxisLabel": "Altitude error [m]",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -3899,6 +3937,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 5,
+                                "displayName": "North velocity error [m/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -3932,6 +3971,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 6,
+                                "displayName": "East velocity error [m/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -3965,6 +4005,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 7,
+                                "displayName": "Down velocity error [m/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -3998,6 +4039,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 14,
+                                "displayName": "ECEF X velocity error [m/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -4031,6 +4073,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 15,
+                                "displayName": "ECEF Y velocity error [m/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -4064,6 +4107,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 16,
+                                "displayName": "ECEF Z velocity error [m/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -4115,9 +4159,15 @@
                         "title": "Velocity error",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Velocity error [m/s]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -4129,6 +4179,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 2,
+                                "displayName": "Roll error [deg]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -4162,6 +4213,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 3,
+                                "displayName": "Pitch error [deg]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -4195,6 +4247,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 4,
+                                "displayName": "Yaw error [deg]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -4228,6 +4281,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 11,
+                                "displayName": "Alpha_eb [deg]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -4261,6 +4315,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 12,
+                                "displayName": "Beta_eb [deg]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -4294,6 +4349,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 13,
+                                "displayName": "Gamma_eb [deg]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -4345,9 +4401,15 @@
                         "title": "Angle error",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Angle error [deg]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -4359,6 +4421,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 2,
+                                "displayName": "0, 0",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -4392,6 +4455,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 18,
+                                "displayName": "1, 1",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -4425,6 +4489,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 34,
+                                "displayName": "2, 2",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -4476,9 +4541,15 @@
                         "title": "P Angles",
                         "xAxisFlags": 0,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Variance [deg^2]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 0
                     },
                     {
@@ -4490,6 +4561,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 50,
+                                "displayName": "3, 3",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -4523,6 +4595,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 66,
+                                "displayName": "4, 4",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -4556,6 +4629,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 82,
+                                "displayName": "5, 5",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -4607,9 +4681,15 @@
                         "title": "P Velocity",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Variance [m^2/s^2]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -4621,6 +4701,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 98,
+                                "displayName": "6, 6",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -4654,6 +4735,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 114,
+                                "displayName": "7, 7",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -4687,6 +4769,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 130,
+                                "displayName": "8, 8",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -4738,9 +4821,15 @@
                         "title": "P Position",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Variance [m^2]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -4752,6 +4841,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 146,
+                                "displayName": "9, 9",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -4785,6 +4875,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 162,
+                                "displayName": "10, 10",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -4818,6 +4909,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 178,
+                                "displayName": "11, 11",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -4869,9 +4961,15 @@
                         "title": "P Accel Bias",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Variance [mg^2/s^2]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -4883,6 +4981,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 194,
+                                "displayName": "12, 12",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -4916,6 +5015,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 210,
+                                "displayName": "13, 13",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -4949,6 +5049,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 226,
+                                "displayName": "14, 14",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -5000,9 +5101,15 @@
                         "title": "P Gyro Bias",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Variance [mrad^2/s^4]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -5014,6 +5121,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 2,
+                                "displayName": "0",
                                 "pinIndex": 5,
                                 "style": {
                                     "color": {
@@ -5047,6 +5155,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 3,
+                                "displayName": "1",
                                 "pinIndex": 5,
                                 "style": {
                                     "color": {
@@ -5080,6 +5189,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 4,
+                                "displayName": "2",
                                 "pinIndex": 5,
                                 "style": {
                                     "color": {
@@ -5131,9 +5241,15 @@
                         "title": "z Position Difference",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Difference [m]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 0
                     },
                     {
@@ -5145,6 +5261,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 5,
+                                "displayName": "3",
                                 "pinIndex": 5,
                                 "style": {
                                     "color": {
@@ -5178,6 +5295,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 6,
+                                "displayName": "4",
                                 "pinIndex": 5,
                                 "style": {
                                     "color": {
@@ -5211,6 +5329,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 7,
+                                "displayName": "5",
                                 "pinIndex": 5,
                                 "style": {
                                     "color": {
@@ -5262,9 +5381,15 @@
                         "title": "z Velocity Difference",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Difference [m/s]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 0
                     }
                 ]
@@ -5767,7 +5892,10 @@
                     "mjd_day": 51544,
                     "mjd_frac": 0.0
                 },
-                "startTimeEditFormat": 0,
+                "startTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
+                },
                 "startTimeSource": 0,
                 "trajectoryType": 0
             },
@@ -6041,6 +6169,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 5,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -6074,6 +6203,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 5,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -6122,9 +6252,15 @@
                         "title": "Horizontal Position (North/East)",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "East/West [m]",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "North/South [m]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -6136,6 +6272,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 5,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -6169,6 +6306,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 5,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -6214,9 +6352,15 @@
                         "title": "Position - North",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "North/South [m]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -6228,6 +6372,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 6,
+                                "displayName": "East/West [m]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -6261,6 +6406,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 6,
+                                "displayName": "East/West [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -6306,9 +6452,15 @@
                         "title": "Position - East",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "East/West [m]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -6320,6 +6472,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 4,
+                                "displayName": "Altitude [m]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -6353,6 +6506,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 4,
+                                "displayName": "Altitude [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -6401,9 +6555,15 @@
                         "title": "Altitude",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Altitude [m]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -6415,6 +6575,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 16,
+                                "displayName": "Roll [deg]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -6448,6 +6609,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 16,
+                                "displayName": "Roll [deg]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -6496,9 +6658,15 @@
                         "title": "Flight Angles - Roll",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Roll [deg]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -6510,6 +6678,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 17,
+                                "displayName": "Pitch [deg]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -6543,6 +6712,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 17,
+                                "displayName": "Pitch [deg]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -6591,9 +6761,15 @@
                         "title": "Flight Angles - Pitch",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Pitch [deg]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -6605,6 +6781,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 18,
+                                "displayName": "Yaw [deg]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -6638,6 +6815,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 18,
+                                "displayName": "Yaw [deg]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -6686,9 +6864,15 @@
                         "title": "Flight Angles - Yaw",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Yaw [deg]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -6700,6 +6884,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 13,
+                                "displayName": "North velocity [m/s]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -6733,6 +6918,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 13,
+                                "displayName": "North velocity [m/s]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -6781,9 +6967,15 @@
                         "title": "Velocity - North",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Velocity North [m/s]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -6795,6 +6987,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 14,
+                                "displayName": "East velocity [m/s]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -6828,6 +7021,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 14,
+                                "displayName": "East velocity [m/s]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -6876,9 +7070,15 @@
                         "title": "Velocity - East",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Velocity East [m/s]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -6890,6 +7090,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 15,
+                                "displayName": "Down velocity [m/s]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -6923,6 +7124,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 15,
+                                "displayName": "Down velocity [m/s]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -6971,9 +7173,15 @@
                         "title": "Velocity - Down",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Velocity Down [m/s]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -6985,6 +7193,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 6,
+                                "displayName": "Accel uncomp X [m/s^2]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -7018,6 +7227,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 7,
+                                "displayName": "Accel uncomp Y [m/s^2]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -7051,6 +7261,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 8,
+                                "displayName": "Accel uncomp Z [m/s^2]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -7099,9 +7310,15 @@
                         "title": "Acceleration Measurements (f_p)",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Acceleration [m/s^2]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -7113,6 +7330,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 9,
+                                "displayName": "Gyro uncomp X [rad/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -7146,6 +7364,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 10,
+                                "displayName": "Gyro uncomp Y [rad/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -7179,6 +7398,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 11,
+                                "displayName": "Gyro uncomp Z [rad/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -7227,9 +7447,15 @@
                         "title": "Angular Rate Measurements (omega_ip_p)",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "Angular rate [rad/s]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     }
                 ]

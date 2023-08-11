@@ -124,10 +124,6 @@
                 "daysStart": 0,
                 "decFracEnd": 0.0,
                 "decFracStart": 0.0,
-                "endTime": {
-                    "mjd_day": 51544,
-                    "mjd_frac": 9.837962962962963e-05
-                },
                 "gpsCycleEnd": 0,
                 "gpsCycleStart": 0,
                 "gpsTowEnd": 0.0,
@@ -142,10 +138,6 @@
                 "monthStart": 1,
                 "secEnd": 8.5,
                 "secStart": 1.5,
-                "startTime": {
-                    "mjd_day": 51544,
-                    "mjd_frac": 1.7361111111111114e-05
-                },
                 "timeFormat": 3,
                 "yearEnd": 2000,
                 "yearStart": 2000
@@ -313,7 +305,10 @@
                     "mjd_day": 51544,
                     "mjd_frac": 0.0
                 },
-                "startTimeEditFormat": 0,
+                "startTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
+                },
                 "startTimeSource": 0,
                 "trajectoryType": 0
             },

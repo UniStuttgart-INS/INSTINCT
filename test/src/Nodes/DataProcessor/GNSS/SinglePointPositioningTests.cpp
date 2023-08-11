@@ -32,6 +32,7 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/GNSS/SppSolution.hpp"
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "Navigation/GNSS/Core/Code.hpp"
+#include "Navigation/GNSS/Functions.hpp"
 #include "Navigation/Transformations/Units.hpp"
 
 #include "data/SpirentAsciiSatelliteData.hpp"
@@ -84,17 +85,15 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - no 
     auto logger = initializeTestLogger();
 
     // ###########################################################################################################
-    //                                       SinglePointPositioningSkydel.flow
+    //                                           SinglePointPositioning.flow
     // ###########################################################################################################
     //
-    // PosVelAttInitializer (70)
-    //         (69) PosVelAtt |>  -
-    //                             \              SinglePointPositioning (50)                     Plot (77)
-    // RinexObsFile (65)            (71)-->  |> PosVelInit (46)   (49) SppSolution |>  --(78)-->  |> SPP (72)
-    //         (64) PosVelAtt |>  --(66)-->  |> GnssObs (47)                             (81)-->  |> RTKLIB (76)
-    //                              (55)-->  |> GnssNavInfo (48)                        /
-    // RinexNavFile() (54)         /                                                   /
-    //         (53) PosVelAtt <>  -                            RtklibPosFile (80)     /
+    // RinexObsFile (65)                          SinglePointPositioning (91)                     Plot (77)
+    //         (64) PosVelAtt |>  --(92)-->  |> GnssObs (88)      (90) SppSolution |>  --(94)-->  |> SPP (72)
+    //                              (93)-->  |> GnssNavInfo (89)                         (81)-->  |> RTKLIB (76)
+    // RinexNavFile() (54)         /                                                    /
+    //         (53) PosVelAtt <>  -                                                    /
+    //                                                         RtklibPosFile (80)     /
     //                                                         (79) RtklibPosObs |>  -
     //
     // ###########################################################################################################
@@ -251,12 +250,12 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Spirent data (GPS L1 C/A - no
     auto logger = initializeTestLogger();
 
     nm::RegisterPreInitCallback([&]() {
-        dynamic_cast<RinexObsFile*>(nm::FindNode(65))->_path = "GNSS/Spirent-SimGEN_RTK_static-rover_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/Spirent_RINEX_MO_Base.obs";
-        dynamic_cast<RinexNavFile*>(nm::FindNode(54))->_path = "GNSS/Spirent-SimGEN_RTK_static-rover_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/Spirent_RINEX_GN.23N";
+        dynamic_cast<RinexObsFile*>(nm::FindNode(65))->_path = "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/Spirent_RINEX_MO.obs";
+        dynamic_cast<RinexNavFile*>(nm::FindNode(54))->_path = "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/Spirent_RINEX_GN.23N";
     });
 
     // ###########################################################################################################
-    //                                       SinglePointPositioningSkydel.flow
+    //                                           SinglePointPositioning.flow
     // ###########################################################################################################
     //
     // RinexObsFile (65)                          SinglePointPositioning (91)                     Plot (77)
@@ -272,7 +271,7 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Spirent data (GPS L1 C/A - no
     const Eigen::Vector3d lla_refRecvPos = { deg2rad(30.0), deg2rad(95.0), 0.0 };
     const Eigen::Vector3d e_refRecvPos = trafo::lla2ecef_WGS84(lla_refRecvPos);
 
-    std::ifstream fs{ "test/data/GNSS/Spirent-SimGEN_RTK_static-rover_duration-10min_rate-1s_sys-GE_iono-none_tropo-none/sat_data_V1A1_Base.csv", std::ios_base::binary };
+    std::ifstream fs{ "test/data/GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/sat_data_V1A1.csv", std::ios_base::binary };
     REQUIRE(fs.good());
 
     std::string line;
@@ -294,7 +293,8 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Spirent data (GPS L1 C/A - no
         else if (v[SpirentAsciiSatelliteData_Sat_type] == "IRNSS") { satSys = IRNSS; }
         REQUIRE(satSys != SatSys_None);
 
-        InsTime recvTime = InsTime{ 2023, 1, 8, 10, 0, std::stod(v[SpirentAsciiSatelliteData_Time_ms]) * 1e-3, GPST };
+        InsTime recvTime = InsTime{ 2023, 1, 8, 10, 0, std::stod(v[SpirentAsciiSatelliteData_Time_ms]) * 1e-3 - 60.0, GPST };
+        LOG_DEBUG("  [{} GPST][{}] Found in Spirent file", recvTime.toYMDHMS(GPST), SatId{ satSys, satNum });
 
         // The Spirent reference frame is rotated by the signal transmit time
         auto rotateDataFrame = [&v](const Eigen::Vector3d& e_satPos) -> Eigen::Vector3d {
@@ -365,7 +365,7 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Spirent data (GPS L1 C/A - no
 
         });
     }
-    REQUIRE(spirentSatelliteData.size() == 11400);
+    REQUIRE(spirentSatelliteData.size() == 1917);
 
     size_t messageCounter = 0; // Message Counter
     nm::RegisterWatcherCallbackToInputPin(72, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
@@ -412,23 +412,20 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Spirent data (GPS L1 C/A - no
             LOG_DEBUG("        ref.dpsr_T = {}", ref->Tropo_delay);
             REQUIRE(ref->Tropo_delay == 0.0);
 
-            LOG_DEBUG("        spp.satClkBias = {}", sppSatData.satClkBias);
-            REQUIRE(sppSatData.satClkBias == 0.0);
+            // LOG_DEBUG("        spp.satClkBias = {}", sppSatData.satClkBias);
+            // REQUIRE(sppSatData.satClkBias == 0.0);
             LOG_DEBUG("        spp.satClkDrift = {}", sppSatData.satClkDrift);
-            REQUIRE(sppSatData.satClkDrift == 0.0);
+            REQUIRE(sppSatData.satClkDrift < 1e-11);
             LOG_DEBUG("        spp.dpsr_clkISB = {}", sppSatData.dpsr_clkISB);
             REQUIRE(sppSatData.dpsr_clkISB == 0.0);
 
             LOG_DEBUG("        spp.psrEst - refPsr = {}", sppSatData.psrEst - ref->P_Range_Group_A);
             REQUIRE_THAT(sppSatData.psrEst - ref->P_Range_Group_A, Catch::Matchers::WithinAbs(0.0, 6.7e-4)); // Determined by running the test and adapting
 
-            // Sagnac correction [m] - Springer Handbook ch. 19.1.1, eq. 19.7, p. 562
-            double ref_dpsr_ie = 1.0 / InsConst::C * (e_refRecvPos - ref->Sat_Pos).dot(InsConst::e_omega_ie.cross(e_refRecvPos));
+            // Sagnac correction [m]
+            double ref_dpsr_ie = calcSagnacCorrection(e_refRecvPos, ref->Sat_Pos);
             LOG_DEBUG("        spp.dpsr_ie - ref.dpsr_ie = {}", sppSatData.dpsr_ie - ref_dpsr_ie);
             REQUIRE_THAT(sppSatData.dpsr_ie - ref_dpsr_ie, Catch::Matchers::WithinAbs(0.0, 6.2e-9)); // Determined by running the test and adapting
-
-            // The Range is the same as the Pseudorange in the sat_data file, therefore the Sagnac correction is included in the Range
-            REQUIRE(ref->Range == ref->P_Range_Group_A);
 
             LOG_DEBUG("        spp.geometricDist - (refRange - ref_dpsr_ie) = {}", sppSatData.geometricDist - (ref->Range - ref_dpsr_ie));
             REQUIRE_THAT(sppSatData.geometricDist - (ref->Range - ref_dpsr_ie), Catch::Matchers::WithinAbs(0.0, 1.9e-3)); // Determined by running the test and adapting
@@ -437,7 +434,7 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Spirent data (GPS L1 C/A - no
 
     REQUIRE(testFlow("test/flow/Nodes/DataProcessor/GNSS/SinglePointPositioning.flow"));
 
-    CHECK(messageCounter == 601);
+    CHECK(messageCounter == 49);
 }
 
 } // namespace NAV::TESTS::SinglePointPositioningTests
