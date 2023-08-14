@@ -39,11 +39,6 @@ struct TimeEditFormat
     TimeSystem system = GPST;       ///< Time System
 };
 
-/// @brief Shows a ComboBox to select the time edit format
-/// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
-/// @param[in] format Reference to the format to select
-bool ComboTimeEditFormat(const char* label, TimeEditFormat::Format& format);
-
 /// @brief Inputs to edit an InsTime object
 /// @param[in] str_id Unique id for the ImGui elements
 /// @param[in, out] insTime Time object to modify

@@ -65,7 +65,7 @@ std::string NAV::ImuSimulator::category()
 
 void NAV::ImuSimulator::guiConfig()
 {
-    float columnWidth = 130.0F * gui::NodeEditorApplication::windowFontRatio();
+    float columnWidth = 140.0F * gui::NodeEditorApplication::windowFontRatio();
 
     if (_trajectoryType != TrajectoryType::Csv && ImGui::TreeNode("Start Time"))
     {
@@ -273,42 +273,19 @@ void NAV::ImuSimulator::guiConfig()
         }
         else
         {
-            ImGui::SetNextItemWidth(columnWidth);
-            double latitude = rad2deg(_lla_startPosition.x());
-            if (ImGui::InputDoubleL(fmt::format("##Latitude{}", size_t(id)).c_str(), &latitude, -90, 90, 0.0, 0.0, "%.8f°"))
+            auto txt = _trajectoryType == TrajectoryType::Fixed
+                           ? "Position"
+                           : (_trajectoryType == TrajectoryType::Linear
+                                  ? "Start position"
+                                  : (_trajectoryType == TrajectoryType::Circular
+                                         ? "Center position"
+                                         : ""));
+
+            if (gui::widgets::PositionInput(fmt::format("{}##PosInput {}", txt, size_t(id)).c_str(), _startPosition, gui::widgets::PositionInputLayout::TWO_ROWS, columnWidth))
             {
-                _lla_startPosition.x() = deg2rad(latitude);
-                LOG_DEBUG("{}: latitude changed to {}", nameId(), latitude);
                 flow::ApplyChanges();
                 doDeinitialize();
             }
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(columnWidth);
-            double longitude = rad2deg(_lla_startPosition.y());
-            if (ImGui::InputDoubleL(fmt::format("##Longitude{}", size_t(id)).c_str(), &longitude, -180, 180, 0.0, 0.0, "%.8f°"))
-            {
-                _lla_startPosition.y() = deg2rad(longitude);
-                LOG_DEBUG("{}: longitude changed to {}", nameId(), longitude);
-                flow::ApplyChanges();
-                doDeinitialize();
-            }
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(columnWidth);
-            if (ImGui::InputDouble(fmt::format("##Altitude (Ellipsoid){}", size_t(id)).c_str(), &_lla_startPosition.z(), 0.0, 0.0, "%.3f m"))
-            {
-                LOG_DEBUG("{}: altitude changed to {}", nameId(), _lla_startPosition.y());
-                flow::ApplyChanges();
-                doDeinitialize();
-            }
-            ImGui::SameLine();
-            ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
-            ImGui::TextUnformatted(_trajectoryType == TrajectoryType::Fixed
-                                       ? "Position (Lat, Lon, Alt)"
-                                       : (_trajectoryType == TrajectoryType::Linear
-                                              ? "Start position (Lat, Lon, Alt)"
-                                              : (_trajectoryType == TrajectoryType::Circular
-                                                     ? "Center position (Lat, Lon, Alt)"
-                                                     : "")));
         }
 
         if (_trajectoryType == TrajectoryType::Fixed)
@@ -608,7 +585,7 @@ json NAV::ImuSimulator::save() const
     j["gnssFrequency"] = _gnssFrequency;
     // ###########################################################################################################
     j["trajectoryType"] = _trajectoryType;
-    j["startPosition_lla"] = _lla_startPosition;
+    j["startPosition"] = _startPosition;
     j["fixedTrajectoryStartOrientation"] = _fixedTrajectoryStartOrientation;
     j["n_linearTrajectoryStartVelocity"] = _n_linearTrajectoryStartVelocity;
     j["circularTrajectoryHorizontalSpeed"] = _circularTrajectoryHorizontalSpeed;
@@ -675,9 +652,9 @@ void NAV::ImuSimulator::restore(json const& j)
             nm::DeleteInputPin(inputPins.front());
         }
     }
-    if (j.contains("startPosition_lla"))
+    if (j.contains("startPosition"))
     {
-        j.at("startPosition_lla").get_to(_lla_startPosition);
+        j.at("startPosition").get_to(_startPosition);
     }
     if (j.contains("fixedTrajectoryStartOrientation"))
     {
@@ -889,7 +866,7 @@ bool NAV::ImuSimulator::initializeSplines()
         splineTime.push_back(_simulationDuration + 20.0); // 10 seconds past simulation end; simply to define the derivative at end node
         splineTime.push_back(_simulationDuration + 30.0); // 10 seconds past simulation end; simply to define the derivative at end node
 
-        Eigen::Vector3d e_startPosition = trafo::lla2ecef_WGS84(_lla_startPosition);
+        const Eigen::Vector3d& e_startPosition = _startPosition.e_position;
         std::vector<double> X(splineTime.size(), e_startPosition[0]);
         std::vector<double> Y(splineTime.size(), e_startPosition[1]);
         std::vector<double> Z(splineTime.size(), e_startPosition[2]);
@@ -910,7 +887,7 @@ bool NAV::ImuSimulator::initializeSplines()
         double roll = 0.0;
         double pitch = _n_linearTrajectoryStartVelocity.head<2>().norm() > 1e-8 ? calcPitchFromVelocity(_n_linearTrajectoryStartVelocity) : 0;
         double yaw = _n_linearTrajectoryStartVelocity.head<2>().norm() > 1e-8 ? calcYawFromVelocity(_n_linearTrajectoryStartVelocity) : 0;
-        Eigen::Vector3d e_startPosition = trafo::lla2ecef_WGS84(_lla_startPosition);
+        const Eigen::Vector3d& e_startPosition = _startPosition.e_position;
 
         size_t nOverhead = static_cast<size_t>(std::round(1.0 / _splines.sampleInterval)) + 1;
 
@@ -938,7 +915,7 @@ bool NAV::ImuSimulator::initializeSplines()
             return y_dot;
         };
 
-        Eigen::Vector3d lla_lastPosition = _lla_startPosition;
+        Eigen::Vector3d lla_lastPosition = _startPosition.latLonAlt();
         for (size_t i = 2; i <= nOverhead; i++) // Calculate one second backwards
         {
             Eigen::Vector<double, 6> y; // [𝜙, λ, h, v_N, v_E, v_D]^T
@@ -956,7 +933,7 @@ bool NAV::ImuSimulator::initializeSplines()
             splineZ.at(nOverhead - i) = e_position(2);
         }
 
-        lla_lastPosition = _lla_startPosition;
+        lla_lastPosition = _startPosition.latLonAlt();
         for (size_t i = 1;; i++)
         {
             Eigen::Vector<double, 6> y; // [𝜙, λ, h, v_N, v_E, v_D]^T
@@ -984,8 +961,8 @@ bool NAV::ImuSimulator::initializeSplines()
             }
             if (_simulationStopCondition == StopCondition::DistanceOrCircles)
             {
-                auto horizontalDistance = calcGeographicalDistance(_lla_startPosition(0), _lla_startPosition(1), lla_lastPosition(0), lla_lastPosition(1));
-                auto distance = std::sqrt(std::pow(horizontalDistance, 2) + std::pow(_lla_startPosition(2) - lla_lastPosition(2), 2))
+                auto horizontalDistance = calcGeographicalDistance(_startPosition.latitude(), _startPosition.longitude(), lla_lastPosition(0), lla_lastPosition(1));
+                auto distance = std::sqrt(std::pow(horizontalDistance, 2) + std::pow(_startPosition.altitude() - lla_lastPosition(2), 2))
                                 - _n_linearTrajectoryStartVelocity.norm() * 1.0;
                 if (distance > _linearTrajectoryDistanceForStop)
                 {
@@ -1027,9 +1004,10 @@ bool NAV::ImuSimulator::initializeSplines()
         std::vector<double> splinePitch(splineTime.size());
         std::vector<double> splineYaw(splineTime.size());
 
-        Eigen::Vector3d e_origin = trafo::lla2ecef_WGS84(_lla_startPosition);
+        const Eigen::Vector3d& e_origin = _startPosition.e_position;
+        Eigen::Vector3d lla_origin = _startPosition.latLonAlt();
 
-        Eigen::Quaterniond e_quatCenter_n = trafo::e_Quat_n(_lla_startPosition(0), _lla_startPosition(1));
+        Eigen::Quaterniond e_quatCenter_n = trafo::e_Quat_n(lla_origin(0), lla_origin(1));
 
         for (uint64_t i = 0; i < splineTime.size(); i++)
         {
@@ -1066,9 +1044,9 @@ bool NAV::ImuSimulator::initializeSplines()
             Eigen::Vector3d lla_position = trafo::ecef2lla_WGS84(e_pos);
             Eigen::Vector3d n_velocity = trafo::n_Quat_e(lla_position(0), lla_position(1)) * e_vel;
 
-            Eigen::Vector3d e_normalVectorCenterCircle{ std::cos(_lla_startPosition(0)) * std::cos(_lla_startPosition(1)),
-                                                        std::cos(_lla_startPosition(0)) * std::sin(_lla_startPosition(1)),
-                                                        std::sin(_lla_startPosition(0)) };
+            Eigen::Vector3d e_normalVectorCenterCircle{ std::cos(lla_origin(0)) * std::cos(lla_origin(1)),
+                                                        std::cos(lla_origin(0)) * std::sin(lla_origin(1)),
+                                                        std::sin(lla_origin(0)) };
 
             Eigen::Vector3d e_normalVectorCurrentPosition{ std::cos(lla_position(0)) * std::cos(lla_position(1)),
                                                            std::cos(lla_position(0)) * std::sin(lla_position(1)),
@@ -1193,8 +1171,8 @@ bool NAV::ImuSimulator::resetNode()
 
     _imuLastUpdateTime = 0.0;
     _gnssLastUpdateTime = 0.0;
-    _lla_imuLastLinearPosition = _lla_startPosition;
-    _lla_gnssLastLinearPosition = _lla_startPosition;
+    _lla_imuLastLinearPosition = _startPosition.latLonAlt();
+    _lla_gnssLastLinearPosition = _startPosition.latLonAlt();
 
     if (_trajectoryType == TrajectoryType::Csv)
     {
@@ -1246,8 +1224,8 @@ bool NAV::ImuSimulator::checkStopCondition(double time, const Eigen::Vector3d& l
     {
         if (_trajectoryType == TrajectoryType::Linear)
         {
-            auto horizontalDistance = calcGeographicalDistance(_lla_startPosition(0), _lla_startPosition(1), lla_position(0), lla_position(1));
-            auto distance = std::sqrt(std::pow(horizontalDistance, 2) + std::pow(_lla_startPosition(2) - lla_position(2), 2));
+            auto horizontalDistance = calcGeographicalDistance(_startPosition.latitude(), _startPosition.longitude(), lla_position(0), lla_position(1));
+            auto distance = std::sqrt(std::pow(horizontalDistance, 2) + std::pow(_startPosition.altitude() - lla_position(2), 2));
             return distance > _linearTrajectoryDistanceForStop;
         }
         if (_trajectoryType == TrajectoryType::Circular)

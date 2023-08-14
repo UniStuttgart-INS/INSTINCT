@@ -288,15 +288,18 @@
                 "simulationDuration": 10.0,
                 "simulationStopCondition": 0,
                 "splineSampleInterval": 0.1,
-                "startPosition_lla": {
-                    "0": {
-                        "0": 0.0
-                    },
-                    "1": {
-                        "0": 0.0
-                    },
-                    "2": {
-                        "0": 0.0
+                "startPosition": {
+                    "frame": "LLA",
+                    "position": {
+                        "0": {
+                            "0": 0.0
+                        },
+                        "1": {
+                            "0": 0.0
+                        },
+                        "2": {
+                            "0": 0.0
+                        }
                     }
                 },
                 "startTime": {

@@ -20,6 +20,7 @@
 #include "Navigation/Gravity/Gravity.hpp"
 #include "Navigation/Math/CubicSpline.hpp"
 #include "internal/gui/widgets/TimeEdit.hpp"
+#include "internal/gui/widgets/PositionInput.hpp"
 
 #include "NodeData/General/CsvData.hpp"
 
@@ -142,7 +143,7 @@ class ImuSimulator : public Imu
     ///
     /// - Fixed, Linear: Start position
     /// - Circular: Center of the circle
-    Eigen::Vector3d _lla_startPosition = Eigen::Vector3d::Zero();
+    gui::widgets::PositionWithFrame _startPosition;
 
     /// Orientation of the vehicle [roll, pitch, yaw] [rad]
     Eigen::Vector3d _fixedTrajectoryStartOrientation = Eigen::Vector3d::Zero();

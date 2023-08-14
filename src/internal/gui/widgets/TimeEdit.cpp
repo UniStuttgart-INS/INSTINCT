@@ -17,9 +17,6 @@
 namespace NAV
 {
 
-/// @brief Converts the enum to a string
-/// @param[in] timeEditFormat Enum value to convert into text
-/// @return String representation of the enum
 const char* to_string(gui::widgets::TimeEditFormat::Format timeEditFormat)
 {
     switch (timeEditFormat)
@@ -34,12 +31,20 @@ const char* to_string(gui::widgets::TimeEditFormat::Format timeEditFormat)
     return "";
 }
 
-} // namespace NAV
+namespace gui::widgets
+{
 
-bool NAV::gui::widgets::ComboTimeEditFormat(const char* label, TimeEditFormat::Format& format)
+/// @brief Shows a ComboBox to select the time edit format
+/// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
+/// @param[in] format Reference to the format to select
+bool ComboTimeEditFormat(const char* label, TimeEditFormat::Format& format)
 {
     return gui::widgets::EnumCombo(label, format);
 }
+
+} // namespace gui::widgets
+
+} // namespace NAV
 
 bool NAV::gui::widgets::TimeEdit(const char* str_id, InsTime& insTime, TimeEditFormat& timeEditFormat, float itemWidth)
 {

@@ -175,29 +175,33 @@
                     "format": 0,
                     "system": "GPST"
                 },
-                "overridePosition": 2,
+                "overridePosition": true,
+                "overridePositionValues": {
+                    "frame": "LLA",
+                    "position": {
+                        "0": {
+                            "0": 48.78070449829101
+                        },
+                        "1": {
+                            "0": 9.17157745361328
+                        },
+                        "2": {
+                            "0": 325.0310058586017
+                        }
+                    }
+                },
                 "overrideRollPitchYaw": [
                     true,
                     true,
                     true
                 ],
-                "overrideValuesPosition": {
-                    "0": {
-                        "0": 48.780704498291016
-                    },
-                    "1": {
-                        "0": 9.171577453613281
-                    },
-                    "2": {
-                        "0": 325.031005859375
-                    }
-                },
-                "overrideValuesRollPitchYaw": [
+                "overrideRollPitchYawValues": [
                     0.42855000495910645,
                     -5.278240203857422,
                     -61.86539840698242
                 ],
-                "overrideValuesVelocity": {
+                "overrideVelocity": 2,
+                "overrideVelocityValues": {
                     "0": {
                         "0": 0.0
                     },
@@ -208,7 +212,6 @@
                         "0": 0.0
                     }
                 },
-                "overrideVelocity": 2,
                 "positionAccuracyThreshold": 10.0,
                 "velocityAccuracyThreshold": 10.0
             },
@@ -5877,15 +5880,18 @@
                 "simulationDuration": 300.0,
                 "simulationStopCondition": 0,
                 "splineSampleInterval": 0.1,
-                "startPosition_lla": {
-                    "0": {
-                        "0": 0.0
-                    },
-                    "1": {
-                        "0": 0.0
-                    },
-                    "2": {
-                        "0": 0.0
+                "startPosition": {
+                    "frame": "LLA",
+                    "position": {
+                        "0": {
+                            "0": 0.0
+                        },
+                        "1": {
+                            "0": 0.0
+                        },
+                        "2": {
+                            "0": 0.0
+                        }
                     }
                 },
                 "startTime": {
@@ -5928,7 +5934,21 @@
             "data": {
                 "nInputPins": 3,
                 "nPlots": 12,
-                "overridePositionStartValues": false,
+                "originPosition": {
+                    "frame": "LLA",
+                    "position": {
+                        "0": {
+                            "0": 48.780704498291016
+                        },
+                        "1": {
+                            "0": 9.17157745361328
+                        },
+                        "2": {
+                            "0": 325.0310058614208
+                        }
+                    }
+                },
+                "overridePositionStartValues": true,
                 "pinData": [
                     {
                         "dataIdentifier": "ImuObs",

@@ -23,6 +23,7 @@
 #include "NodeData/State/PosVelAtt.hpp"
 
 #include "internal/gui/widgets/TimeEdit.hpp"
+#include "internal/gui/widgets/PositionInput.hpp"
 
 #include <limits>
 
@@ -142,24 +143,11 @@ class PosVelAttInitializer : public Node
     /// GUI option to pecify the initialization source for attitude
     AttitudeMode _attitudeMode = AttitudeMode::BOTH;
 
-    /// Override options for Position
-    enum class PositionOverride
-    {
-        OFF,   ///< Do not override the values
-        ECEF,  ///< Override with ECEF values
-        LLA,   ///< Override with LLA values
-        COUNT, ///< Amount of items in the enum
-    };
-
-    /// @brief Converts the enum to a string
-    /// @param[in] posOverride Enum value to convert into text
-    /// @return String representation of the enum
-    friend constexpr const char* to_string(PositionOverride posOverride);
-
     /// Whether the GNSS values should be used or we want to override the values manually
-    PositionOverride _overridePosition = PositionOverride::OFF;
-    /// Values to override the Position in LatLonAlt in [deg, deg, m] or in ECEF coordinates in [m]
-    Eigen::Vector3d _overrideValuesPosition = Eigen::Vector3d::Zero();
+    bool _overridePosition = false;
+    /// Values to override the Position in ECEF coordinates in [m]
+    gui::widgets::PositionWithFrame _overridePositionValue;
+
     /// Position Accuracy to achieve in [cm]
     double _positionAccuracyThreshold = 10;
     /// Last position accuracy in [cm] for XYZ or NED
@@ -184,7 +172,7 @@ class PosVelAttInitializer : public Node
     /// Whether the GNSS values should be used or we want to override the values manually
     VelocityOverride _overrideVelocity = VelocityOverride::OFF;
     /// Values to override the Velocity in [m/s]
-    Eigen::Vector3d _overrideValuesVelocity = Eigen::Vector3d::Zero();
+    Eigen::Vector3d _overrideVelocityValues = Eigen::Vector3d::Zero();
     /// Velocity Accuracy to achieve in [cm/s]
     double _velocityAccuracyThreshold = 10;
     /// Last velocity accuracy in [cm/s] for XYZ or NED
@@ -199,7 +187,7 @@ class PosVelAttInitializer : public Node
     /// Whether the IMU values should be used or we want to override the values manually
     std::array<bool, 3> _overrideRollPitchYaw = { false, false, false };
     /// Values to override Roll, Pitch and Yaw with in [deg]
-    std::array<double, 3> _overrideValuesRollPitchYaw = {};
+    std::array<double, 3> _overrideRollPitchYawValues = {};
 
     /// Whether the states are initialized (pos, vel, att, messages send)
     std::array<bool, 4> _posVelAttInitialized = { false, false, false, false };
@@ -231,25 +219,6 @@ constexpr const char* to_string(PosVelAttInitializer::AttitudeMode attitudeMode)
     case NAV::PosVelAttInitializer::AttitudeMode::GNSS:
         return "GNSS";
     case NAV::PosVelAttInitializer::AttitudeMode::COUNT:
-        return "";
-    }
-    return "";
-}
-
-/// @brief Converts the enum to a string
-/// @param[in] posOverride Enum value to convert into text
-/// @return String representation of the enum
-constexpr const char* to_string(PosVelAttInitializer::PositionOverride posOverride)
-{
-    switch (posOverride)
-    {
-    case NAV::PosVelAttInitializer::PositionOverride::OFF:
-        return "OFF";
-    case NAV::PosVelAttInitializer::PositionOverride::ECEF:
-        return "ECEF";
-    case NAV::PosVelAttInitializer::PositionOverride::LLA:
-        return "LLA";
-    case NAV::PosVelAttInitializer::PositionOverride::COUNT:
         return "";
     }
     return "";

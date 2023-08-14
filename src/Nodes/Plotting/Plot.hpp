@@ -19,6 +19,7 @@
 #include <mutex>
 
 #include "internal/Node/Node.hpp"
+#include "internal/gui/widgets/PositionInput.hpp"
 
 #include "util/Container/ScrollingBuffer.hpp"
 #include "util/Container/Vector.hpp"
@@ -499,10 +500,8 @@ class Plot : public Node
 
     /// Start Time for calculation of relative time with the GPS ToW
     InsTime _startTime;
-    /// Start Latitude [rad] for calculation of relative North-South
-    double _originLatitude = std::nan("");
-    /// Start Longitude [rad] for calculation of relative East-West
-    double _originLongitude = std::nan("");
+    /// Start position for the calculation of relative North-South and East-West
+    std::optional<gui::widgets::PositionWithFrame> _originPosition;
 
     /// Flag, whether to override the North/East startValues in the GUI
     bool _overridePositionStartValues = false;

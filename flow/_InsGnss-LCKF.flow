@@ -207,29 +207,41 @@
             "data": {
                 "attitudeMode": 2,
                 "initDuration": 5.0,
-                "overridePosition": 2,
+                "initTime": {
+                    "mjd_day": 44244,
+                    "mjd_frac": 0.0
+                },
+                "initTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
+                },
+                "overridePosition": false,
+                "overridePositionValues": {
+                    "frame": "LLA",
+                    "position": {
+                        "0": {
+                            "0": 0.0
+                        },
+                        "1": {
+                            "0": 0.0
+                        },
+                        "2": {
+                            "0": 0.0
+                        }
+                    }
+                },
                 "overrideRollPitchYaw": [
                     false,
                     false,
                     false
                 ],
-                "overrideValuesPosition": {
-                    "0": {
-                        "0": 0.0
-                    },
-                    "1": {
-                        "0": 0.0
-                    },
-                    "2": {
-                        "0": 0.0
-                    }
-                },
-                "overrideValuesRollPitchYaw": [
+                "overrideRollPitchYawValues": [
                     0.0,
                     0.0,
                     0.0
                 ],
-                "overrideValuesVelocity": {
+                "overrideVelocity": 0,
+                "overrideVelocityValues": {
                     "0": {
                         "0": 0.0
                     },
@@ -240,7 +252,6 @@
                         "0": 0.0
                     }
                 },
-                "overrideVelocity": 2,
                 "positionAccuracyThreshold": 10.0,
                 "velocityAccuracyThreshold": 10.0
             },
@@ -5610,20 +5621,27 @@
                 "simulationDuration": 3000.0,
                 "simulationStopCondition": 1,
                 "splineSampleInterval": 0.1,
-                "startPosition_lla": {
-                    "0": {
-                        "0": 0.0
-                    },
-                    "1": {
-                        "0": 0.0
-                    },
-                    "2": {
-                        "0": 0.0
+                "startPosition": {
+                    "frame": "LLA",
+                    "position": {
+                        "0": {
+                            "0": 0.0
+                        },
+                        "1": {
+                            "0": 0.0
+                        },
+                        "2": {
+                            "0": 0.0
+                        }
                     }
                 },
                 "startTime": {
                     "mjd_day": 51544,
                     "mjd_frac": 0.0
+                },
+                "startTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
                 },
                 "startTimeSource": 0,
                 "trajectoryType": 2
@@ -6367,6 +6385,20 @@
             "data": {
                 "nInputPins": 3,
                 "nPlots": 10,
+                "originPosition": {
+                    "frame": "LLA",
+                    "position": {
+                        "0": {
+                            "0": 0.0
+                        },
+                        "1": {
+                            "0": 0.0
+                        },
+                        "2": {
+                            "0": 0.0
+                        }
+                    }
+                },
                 "overridePositionStartValues": true,
                 "pinData": [
                     {
@@ -7901,9 +7933,7 @@
                         ],
                         "yAxisFlags": 2048
                     }
-                ],
-                "startValue_East": 0.0,
-                "startValue_North": 0.0
+                ]
             },
             "enabled": true,
             "id": 9,

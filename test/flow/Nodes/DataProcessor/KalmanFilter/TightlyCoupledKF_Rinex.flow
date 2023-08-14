@@ -307,29 +307,33 @@
                     "format": 0,
                     "system": "GPST"
                 },
-                "overridePosition": 2,
+                "overridePosition": true,
+                "overridePositionValues": {
+                    "frame": "LLA",
+                    "position": {
+                        "0": {
+                            "0": 48.78065872192383
+                        },
+                        "1": {
+                            "0": 9.171496391296387
+                        },
+                        "2": {
+                            "0": 329.204711913199
+                        }
+                    }
+                },
                 "overrideRollPitchYaw": [
                     true,
                     true,
                     true
                 ],
-                "overrideValuesPosition": {
-                    "0": {
-                        "0": 48.78065872192383
-                    },
-                    "1": {
-                        "0": 9.171496391296387
-                    },
-                    "2": {
-                        "0": 329.2047119140625
-                    }
-                },
-                "overrideValuesRollPitchYaw": [
+                "overrideRollPitchYawValues": [
                     0.0,
                     0.0,
                     0.0
                 ],
-                "overrideValuesVelocity": {
+                "overrideVelocity": 2,
+                "overrideVelocityValues": {
                     "0": {
                         "0": 0.0
                     },
@@ -340,7 +344,6 @@
                         "0": 0.0
                     }
                 },
-                "overrideVelocity": 2,
                 "positionAccuracyThreshold": 10.0,
                 "velocityAccuracyThreshold": 10.0
             },
@@ -5985,15 +5988,18 @@
                 "simulationDuration": 300.0,
                 "simulationStopCondition": 0,
                 "splineSampleInterval": 0.1,
-                "startPosition_lla": {
-                    "0": {
-                        "0": 0.0
-                    },
-                    "1": {
-                        "0": 0.0
-                    },
-                    "2": {
-                        "0": 0.0
+                "startPosition": {
+                    "frame": "LLA",
+                    "position": {
+                        "0": {
+                            "0": 0.0
+                        },
+                        "1": {
+                            "0": 0.0
+                        },
+                        "2": {
+                            "0": 0.0
+                        }
                     }
                 },
                 "startTime": {

@@ -212,6 +212,11 @@
             "id": 1199,
             "startPinId": 1192
         },
+        "link-1242": {
+            "endPinId": 841,
+            "id": 1242,
+            "startPinId": 402
+        },
         "link-845": {
             "endPinId": 819,
             "id": 845,
@@ -251,21 +256,6 @@
             "endPinId": 840,
             "id": 976,
             "startPinId": 384
-        },
-        "link-990": {
-            "endPinId": 841,
-            "id": 990,
-            "startPinId": 989
-        },
-        "link-991": {
-            "endPinId": 987,
-            "id": 991,
-            "startPinId": 384
-        },
-        "link-992": {
-            "endPinId": 988,
-            "id": 992,
-            "startPinId": 402
         }
     },
     "nodes": {
@@ -291,7 +281,21 @@
             "data": {
                 "nInputPins": 3,
                 "nPlots": 4,
-                "overridePositionStartValues": false,
+                "originPosition": {
+                    "frame": "LLA",
+                    "position": {
+                        "0": {
+                            "0": 29.999999999999996
+                        },
+                        "1": {
+                            "0": 95.0
+                        },
+                        "2": {
+                            "0": 0.0
+                        }
+                    }
+                },
+                "overridePositionStartValues": true,
                 "pinData": [
                     {
                         "dataIdentifier": "PosVelAtt",
@@ -2149,7 +2153,7 @@
         },
         "node-1193": {
             "data": {
-                "codes": "011110001000100111000111111000011110001110111111111111111111111010111111101110111011101110000000001000000001",
+                "codes": "011110001000100111000111111000011110001110111111111111111111111010111111101110111011101110000000000000011111",
                 "elevationMask": 14.999999999999998,
                 "estimatorType": 1,
                 "excludedSatellites": [],
@@ -2617,7 +2621,7 @@
         "node-810": {
             "data": {
                 "checkKalmanMatricesRanks": true,
-                "codes": "011110001000100111000111111000011110001110111111111111111111111010111111101110111011101110000000001000000001",
+                "codes": "011110001000100111000111111000011110001110111111111111111111111010111111101110111011101110000000000000011111",
                 "elevationMask": 14.999999999999998,
                 "excludedSatellites": [],
                 "frame": 1,
@@ -3041,20 +3045,27 @@
                 "simulationDuration": 600.0,
                 "simulationStopCondition": 1,
                 "splineSampleInterval": 0.1,
-                "startPosition_lla": {
-                    "0": {
-                        "0": 0.5235987755982988
-                    },
-                    "1": {
-                        "0": 1.6580627893946132
-                    },
-                    "2": {
-                        "0": 0.0
+                "startPosition": {
+                    "frame": "LLA",
+                    "position": {
+                        "0": {
+                            "0": 29.999999999999996
+                        },
+                        "1": {
+                            "0": 95.0
+                        },
+                        "2": {
+                            "0": 0.0
+                        }
                     }
                 },
                 "startTime": {
                     "mjd_day": 59994,
                     "mjd_frac": 0.4164583333333333
+                },
+                "startTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
                 },
                 "startTimeSource": 0,
                 "trajectoryType": 2
@@ -3119,77 +3130,6 @@
                 "y": 186.0
             },
             "type": "GroupBox"
-        },
-        "node-986": {
-            "data": {
-                "attitudeMode": 2,
-                "initDuration": 5.0,
-                "overridePosition": 2,
-                "overrideRollPitchYaw": [
-                    false,
-                    false,
-                    false
-                ],
-                "overrideValuesPosition": {
-                    "0": {
-                        "0": 0.0
-                    },
-                    "1": {
-                        "0": 0.0
-                    },
-                    "2": {
-                        "0": 0.0
-                    }
-                },
-                "overrideValuesRollPitchYaw": [
-                    0.0,
-                    0.0,
-                    90.0
-                ],
-                "overrideValuesVelocity": {
-                    "0": {
-                        "0": 0.0
-                    },
-                    "1": {
-                        "0": 10.0
-                    },
-                    "2": {
-                        "0": 0.0
-                    }
-                },
-                "overrideVelocity": 2,
-                "positionAccuracyThreshold": 10.0,
-                "velocityAccuracyThreshold": 10.0
-            },
-            "enabled": true,
-            "id": 986,
-            "inputPins": [
-                {
-                    "id": 987,
-                    "name": "ImuObs"
-                },
-                {
-                    "id": 988,
-                    "name": "PosVelAttInit"
-                }
-            ],
-            "kind": "Blueprint",
-            "name": "PosVelAttInitializer",
-            "outputPins": [
-                {
-                    "id": 989,
-                    "name": "PosVelAtt"
-                }
-            ],
-            "pos": {
-                "x": 376.0,
-                "y": -674.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "PosVelAttInitializer"
         }
     }
 }

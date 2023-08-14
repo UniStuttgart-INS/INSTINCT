@@ -635,34 +635,14 @@ void NAV::Plot::guiConfig()
         {
             flow::ApplyChanges();
             LOG_DEBUG("{}: overridePositionStartValues changed to {}", nameId(), _overridePositionStartValues);
-            if (_overridePositionStartValues)
-            {
-                if (std::isnan(_originLongitude))
-                {
-                    _originLongitude = 0;
-                }
-                if (std::isnan(_originLatitude))
-                {
-                    _originLatitude = 0;
-                }
-            }
+            if (!_originPosition) { _originPosition = gui::widgets::PositionWithFrame(); }
         }
         if (_overridePositionStartValues)
         {
             ImGui::Indent();
-            double latitudeOrigin = rad2deg(_originLatitude);
-            if (ImGui::InputDoubleL(fmt::format("Latitude Origin##{}", size_t(id)).c_str(), &latitudeOrigin))
+            if (gui::widgets::PositionInput(fmt::format("Origin##{}", size_t(id)).c_str(), _originPosition.value(), gui::widgets::PositionInputLayout::SINGLE_ROW))
             {
-                _originLatitude = deg2rad(latitudeOrigin);
                 flow::ApplyChanges();
-                LOG_DEBUG("{}: latitudeOrigin changed to {}", nameId(), latitudeOrigin);
-            }
-            double longitudeOrigin = rad2deg(_originLongitude);
-            if (ImGui::InputDoubleL(fmt::format("Longitude Origin##{}", size_t(id)).c_str(), &longitudeOrigin))
-            {
-                _originLongitude = deg2rad(longitudeOrigin);
-                flow::ApplyChanges();
-                LOG_DEBUG("{}: longitudeOrigin changed to {}", nameId(), longitudeOrigin);
             }
             ImGui::Unindent();
         }
@@ -1324,10 +1304,9 @@ void NAV::Plot::guiConfig()
     j["pinData"] = _pinData;
     j["plots"] = _plots;
     j["overridePositionStartValues"] = _overridePositionStartValues;
-    if (_overridePositionStartValues)
+    if (_overridePositionStartValues && _originPosition)
     {
-        j["startValue_North"] = _originLatitude;
-        j["startValue_East"] = _originLongitude;
+        j["originPosition"] = _originPosition.value();
     }
 
     return j;
@@ -1395,13 +1374,13 @@ void NAV::Plot::restore(json const& j)
     }
     if (_overridePositionStartValues)
     {
-        if (j.contains("startValue_North"))
+        if (j.contains("originPosition"))
         {
-            j.at("startValue_North").get_to(_originLatitude);
+            _originPosition = j.at("originPosition").get<gui::widgets::PositionWithFrame>();
         }
-        if (j.contains("startValue_East"))
+        else
         {
-            j.at("startValue_East").get_to(_originLongitude);
+            _originPosition = gui::widgets::PositionWithFrame();
         }
     }
 }
@@ -1411,11 +1390,7 @@ bool NAV::Plot::initialize()
     LOG_TRACE("{}: called", nameId());
 
     _startTime.reset();
-    if (!_overridePositionStartValues)
-    {
-        _originLatitude = std::nan("");
-        _originLongitude = std::nan("");
-    }
+    if (!_overridePositionStartValues) { _originPosition.reset(); }
 
     for (auto& pinData : _pinData)
     {
@@ -2521,24 +2496,22 @@ void NAV::Plot::plotPos(const std::shared_ptr<const Pos>& obs, size_t pinIndex)
     // [𝜙, λ, h] Latitude, Longitude and altitude in [rad, rad, m]
     Eigen::Vector3d lla_position = obs->lla_position();
 
-    if (std::isnan(_originLatitude))
+    if (!_originPosition)
     {
-        _originLatitude = lla_position.x();
+        _originPosition = { .frame = gui::widgets::PositionWithFrame::ReferenceFrame::ECEF,
+                            .e_position = obs->e_position() };
     }
-    int sign = lla_position.x() > _originLatitude ? 1 : -1;
+
+    int sign = lla_position.x() > _originPosition->latitude() ? 1 : -1;
     // North/South deviation [m]
     double northSouth = calcGeographicalDistance(lla_position.x(), lla_position.y(),
-                                                 _originLatitude, lla_position.y())
+                                                 _originPosition->latitude(), lla_position.y())
                         * sign;
 
-    if (std::isnan(_originLongitude))
-    {
-        _originLongitude = lla_position.y();
-    }
-    sign = lla_position.y() > _originLongitude ? 1 : -1;
+    sign = lla_position.y() > _originPosition->longitude() ? 1 : -1;
     // East/West deviation [m]
     double eastWest = calcGeographicalDistance(lla_position.x(), lla_position.y(),
-                                               lla_position.x(), _originLongitude)
+                                               lla_position.x(), _originPosition->longitude())
                       * sign;
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
@@ -2565,24 +2538,22 @@ void NAV::Plot::plotPosVel(const std::shared_ptr<const PosVel>& obs, size_t pinI
     // [𝜙, λ, h] Latitude, Longitude and altitude in [rad, rad, m]
     Eigen::Vector3d lla_position = obs->lla_position();
 
-    if (std::isnan(_originLatitude))
+    if (!_originPosition)
     {
-        _originLatitude = lla_position.x();
+        _originPosition = { .frame = gui::widgets::PositionWithFrame::ReferenceFrame::ECEF,
+                            .e_position = obs->e_position() };
     }
-    int sign = lla_position.x() > _originLatitude ? 1 : -1;
+
+    int sign = lla_position.x() > _originPosition->latitude() ? 1 : -1;
     // North/South deviation [m]
     double northSouth = calcGeographicalDistance(lla_position.x(), lla_position.y(),
-                                                 _originLatitude, lla_position.y())
+                                                 _originPosition->latitude(), lla_position.y())
                         * sign;
 
-    if (std::isnan(_originLongitude))
-    {
-        _originLongitude = lla_position.y();
-    }
-    sign = lla_position.y() > _originLongitude ? 1 : -1;
+    sign = lla_position.y() > _originPosition->longitude() ? 1 : -1;
     // East/West deviation [m]
     double eastWest = calcGeographicalDistance(lla_position.x(), lla_position.y(),
-                                               lla_position.x(), _originLongitude)
+                                               lla_position.x(), _originPosition->longitude())
                       * sign;
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
@@ -2615,24 +2586,22 @@ void NAV::Plot::plotPosVelAtt(const std::shared_ptr<const PosVelAtt>& obs, size_
     // [𝜙, λ, h] Latitude, Longitude and altitude in [rad, rad, m]
     Eigen::Vector3d lla_position = obs->lla_position();
 
-    if (std::isnan(_originLatitude))
+    if (!_originPosition)
     {
-        _originLatitude = lla_position.x();
+        _originPosition = { .frame = gui::widgets::PositionWithFrame::ReferenceFrame::ECEF,
+                            .e_position = obs->e_position() };
     }
-    int sign = lla_position.x() > _originLatitude ? 1 : -1;
+
+    int sign = lla_position.x() > _originPosition->latitude() ? 1 : -1;
     // North/South deviation [m]
     double northSouth = calcGeographicalDistance(lla_position.x(), lla_position.y(),
-                                                 _originLatitude, lla_position.y())
+                                                 _originPosition->latitude(), lla_position.y())
                         * sign;
 
-    if (std::isnan(_originLongitude))
-    {
-        _originLongitude = lla_position.y();
-    }
-    sign = lla_position.y() > _originLongitude ? 1 : -1;
+    sign = lla_position.y() > _originPosition->longitude() ? 1 : -1;
     // East/West deviation [m]
     double eastWest = calcGeographicalDistance(lla_position.x(), lla_position.y(),
-                                               lla_position.x(), _originLongitude)
+                                               lla_position.x(), _originPosition->longitude())
                       * sign;
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
@@ -2752,24 +2721,22 @@ void NAV::Plot::plotRtkSolution(const std::shared_ptr<const RtkSolution>& obs, s
     if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
     size_t i = 0;
 
-    if (std::isnan(_originLatitude))
+    if (!_originPosition)
     {
-        _originLatitude = obs->lla_position().x();
+        _originPosition = { .frame = gui::widgets::PositionWithFrame::ReferenceFrame::ECEF,
+                            .e_position = obs->e_position() };
     }
-    int sign = obs->lla_position().x() > _originLatitude ? 1 : -1;
+
+    int sign = obs->lla_position().x() > _originPosition->latitude() ? 1 : -1;
     // North/South deviation [m]
     double northSouth = calcGeographicalDistance(obs->lla_position().x(), obs->lla_position().y(),
-                                                 _originLatitude, obs->lla_position().y())
+                                                 _originPosition->latitude(), obs->lla_position().y())
                         * sign;
 
-    if (std::isnan(_originLongitude))
-    {
-        _originLongitude = obs->lla_position().y();
-    }
-    sign = obs->lla_position().y() > _originLongitude ? 1 : -1;
+    sign = obs->lla_position().y() > _originPosition->longitude() ? 1 : -1;
     // East/West deviation [m]
     double eastWest = calcGeographicalDistance(obs->lla_position().x(), obs->lla_position().y(),
-                                               obs->lla_position().x(), _originLongitude)
+                                               obs->lla_position().x(), _originPosition->longitude())
                       * sign;
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
@@ -2820,24 +2787,22 @@ void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, s
     if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
     size_t i = 0;
 
-    if (std::isnan(_originLatitude))
+    if (!_originPosition)
     {
-        _originLatitude = obs->lla_position().x();
+        _originPosition = { .frame = gui::widgets::PositionWithFrame::ReferenceFrame::ECEF,
+                            .e_position = obs->e_position() };
     }
-    int sign = obs->lla_position().x() > _originLatitude ? 1 : -1;
+
+    int sign = obs->lla_position().x() > _originPosition->latitude() ? 1 : -1;
     // North/South deviation [m]
     double northSouth = calcGeographicalDistance(obs->lla_position().x(), obs->lla_position().y(),
-                                                 _originLatitude, obs->lla_position().y())
+                                                 _originPosition->latitude(), obs->lla_position().y())
                         * sign;
 
-    if (std::isnan(_originLongitude))
-    {
-        _originLongitude = obs->lla_position().y();
-    }
-    sign = obs->lla_position().y() > _originLongitude ? 1 : -1;
+    sign = obs->lla_position().y() > _originPosition->longitude() ? 1 : -1;
     // East/West deviation [m]
     double eastWest = calcGeographicalDistance(obs->lla_position().x(), obs->lla_position().y(),
-                                               obs->lla_position().x(), _originLongitude)
+                                               obs->lla_position().x(), _originPosition->longitude())
                       * sign;
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
@@ -2956,24 +2921,22 @@ void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs,
     if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
     size_t i = 0;
 
-    if (std::isnan(_originLatitude))
+    if (!_originPosition)
     {
-        _originLatitude = obs->lla_position().x();
+        _originPosition = { .frame = gui::widgets::PositionWithFrame::ReferenceFrame::ECEF,
+                            .e_position = obs->e_position() };
     }
-    int sign = obs->lla_position().x() > _originLatitude ? 1 : -1;
+
+    int sign = obs->lla_position().x() > _originPosition->latitude() ? 1 : -1;
     // North/South deviation [m]
     double northSouth = calcGeographicalDistance(obs->lla_position().x(), obs->lla_position().y(),
-                                                 _originLatitude, obs->lla_position().y())
+                                                 _originPosition->latitude(), obs->lla_position().y())
                         * sign;
 
-    if (std::isnan(_originLongitude))
-    {
-        _originLongitude = obs->lla_position().y();
-    }
-    sign = obs->lla_position().y() > _originLongitude ? 1 : -1;
+    sign = obs->lla_position().y() > _originPosition->longitude() ? 1 : -1;
     // East/West deviation [m]
     double eastWest = calcGeographicalDistance(obs->lla_position().x(), obs->lla_position().y(),
-                                               obs->lla_position().x(), _originLongitude)
+                                               obs->lla_position().x(), _originPosition->longitude())
                       * sign;
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
@@ -3075,22 +3038,20 @@ void NAV::Plot::plotUbloxObs(const std::shared_ptr<const UbloxObs>& obs, size_t 
 
     if (lla_position.has_value())
     {
-        if (std::isnan(_originLatitude))
+        if (!_originPosition)
         {
-            _originLatitude = lla_position->x();
+            _originPosition = { .frame = gui::widgets::PositionWithFrame::ReferenceFrame::ECEF,
+                                .e_position = trafo::lla2ecef_WGS84(lla_position.value()) };
         }
-        int sign = lla_position->x() > _originLatitude ? 1 : -1;
+
+        int sign = lla_position->x() > _originPosition->latitude() ? 1 : -1;
         northSouth = calcGeographicalDistance(lla_position->x(), lla_position->y(),
-                                              _originLatitude, lla_position->y())
+                                              _originPosition->latitude(), lla_position->y())
                      * sign;
 
-        if (std::isnan(_originLongitude))
-        {
-            _originLongitude = lla_position->y();
-        }
-        sign = lla_position->y() > _originLongitude ? 1 : -1;
+        sign = lla_position->y() > _originPosition->longitude() ? 1 : -1;
         eastWest = calcGeographicalDistance(lla_position->x(), lla_position->y(),
-                                            lla_position->x(), _originLongitude)
+                                            lla_position->x(), _originPosition->longitude())
                    * sign;
 
         lla_position->x() = rad2deg(lla_position->x());
