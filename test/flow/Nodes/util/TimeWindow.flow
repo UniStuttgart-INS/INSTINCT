@@ -118,29 +118,27 @@
         },
         "node-3": {
             "data": {
-                "dayEnd": 1,
-                "dayStart": 1,
-                "daysEnd": 0,
-                "daysStart": 0,
-                "decFracEnd": 0.0,
-                "decFracStart": 0.0,
-                "gpsCycleEnd": 0,
-                "gpsCycleStart": 0,
-                "gpsTowEnd": 0.0,
-                "gpsTowStart": 0.0,
-                "gpsWeekEnd": 0,
-                "gpsWeekStart": 0,
-                "hourEnd": 0,
-                "hourStart": 0,
-                "minEnd": 0,
-                "minStart": 0,
-                "monthEnd": 1,
-                "monthStart": 1,
-                "secEnd": 8.5,
-                "secStart": 1.5,
-                "timeFormat": 3,
-                "yearEnd": 2000,
-                "yearStart": 2000
+                "inverseWindow": false,
+                "startEndTime": [
+                    {
+                        "mjd_day": 51544,
+                        "mjd_frac": 1.7361111111111114e-05
+                    },
+                    {
+                        "mjd_day": 51544,
+                        "mjd_frac": 9.837962962962963e-05
+                    }
+                ],
+                "timeEditFormat": [
+                    {
+                        "format": 0,
+                        "system": "UTC"
+                    },
+                    {
+                        "format": 0,
+                        "system": "UTC"
+                    }
+                ]
             },
             "enabled": true,
             "id": 3,
@@ -307,7 +305,7 @@
                 },
                 "startTimeEditFormat": {
                     "format": 0,
-                    "system": "GPST"
+                    "system": "UTC"
                 },
                 "startTimeSource": 0,
                 "trajectoryType": 0

@@ -444,9 +444,9 @@
                 "--file-log-level=trace", // trace/debug/info/warning/error/critical/off
                 // "--log-filter=SinglePointPositioning.cpp",
                 // ================ To configure tests ================
-                "--flow-path=test/flow",
-                "--input-path=test/data",
-                "--output-path=test/logs",
+                // "--flow-path=test/flow",
+                // "--input-path=test/data",
+                // "--output-path=test/logs",
             ],
             "options": {
                 "cwd": "${workspaceFolder}",
