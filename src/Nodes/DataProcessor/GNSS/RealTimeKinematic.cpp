@@ -67,7 +67,7 @@ RealTimeKinematic::RealTimeKinematic()
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 637, 617 };
+    _guiConfigDefaultWindowSize = { 633, 670 };
 
     nm::CreateInputPin(this, "Base Position", Pin::Type::Flow, { Pos::type() }, &RealTimeKinematic::recvBasePos, nullptr, 1);
     nm::CreateInputPin(this, "GnssObs (Base)", Pin::Type::Flow, { GnssObs::type() }, &RealTimeKinematic::recvBaseGnssObs);
@@ -316,6 +316,14 @@ void RealTimeKinematic::guiConfig()
             LOG_DEBUG("{}: stdevAccelNoiseUnits changed to {}", nameId(), fmt::underlying(_gui_stdevAccelUnits));
             flow::ApplyChanges();
         }
+        if (gui::widgets::InputDoubleWithUnit(fmt::format("Ambiguity noise (carrier-phase bias)##{}", size_t(id)).c_str(),
+                                              configWidth, unitWidth, &_gui_ambiguityProcessNoiseStDev, reinterpret_cast<int*>(&_gui_stdevAmbiguityUnits), "cycle\0\0",
+                                              0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: ambiguityProcessNoiseStDev changed to {}", nameId(), _gui_ambiguityProcessNoiseStDev);
+            LOG_DEBUG("{}: stdevAmbiguityUnits changed to {}", nameId(), fmt::underlying(_gui_stdevAmbiguityUnits));
+            flow::ApplyChanges();
+        }
 
         ImGui::TreePop();
     }
@@ -356,6 +364,8 @@ void RealTimeKinematic::guiConfig()
 
     j["stdevAccelUnits"] = _gui_stdevAccelUnits;
     j["stdevAccel"] = _gui_stdevAccel;
+    j["stdevAmbiguityUnits"] = _gui_stdevAmbiguityUnits;
+    j["ambiguityProcessNoiseStDev"] = _gui_ambiguityProcessNoiseStDev;
 
     return j;
 }
@@ -412,6 +422,15 @@ void RealTimeKinematic::restore(json const& j)
     if (j.contains("stdevAccel"))
     {
         _gui_stdevAccel = j.at("stdevAccel");
+    }
+
+    if (j.contains("stdevAmbiguityUnits"))
+    {
+        j.at("stdevAmbiguityUnits").get_to(_gui_stdevAmbiguityUnits);
+    }
+    if (j.contains("ambiguityProcessNoiseStDev"))
+    {
+        j.at("ambiguityProcessNoiseStDev").get_to(_gui_ambiguityProcessNoiseStDev);
     }
 }
 
@@ -971,7 +990,12 @@ void RealTimeKinematic::addOrRemoveKalmanFilterAmbiguities(const Observations& o
                 // F: Entries are all 0
                 // Ambiguities are modeled as RW with very small noise to keep numerical stability
                 _kalmanFilter.G(key, key) = 1;
-                _kalmanFilter.W(key, key) = 1e-12; // Variance
+                switch (_gui_stdevAmbiguityUnits)
+                {
+                case StdevAmbiguityUnits::Cycle:
+                    _kalmanFilter.W(key, key) = std::pow(_gui_ambiguityProcessNoiseStDev, 2.0);
+                    break;
+                }
 
                 // Initialize with difference of (pseudorange - carrier-phase) measurement. Then single difference (rover - base)
                 double lambda_j = InsConst::C / satSigId.freq().getFrequency(); // TODO: GLONASS frequency number

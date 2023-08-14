@@ -105,6 +105,8 @@ class Plot : public Node
 
             /// When connecting a new link. All data is flagged for delete and only those who are also present in the new link are kept
             bool markedForDelete = false;
+            /// Bool to show if dynamic data
+            bool isDynamic = false;
         };
 
         /// @brief Possible Pin types

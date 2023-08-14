@@ -56,6 +56,18 @@ void from_json(const json& j, Plot::PinData::PlotData& data)
 /// @brief Write info to a json object
 /// @param[out] j Json output
 /// @param[in] data Object to read info from
+void to_json(json& j, const std::vector<Plot::PinData::PlotData>& data)
+{
+    for (const auto& i : data)
+    {
+        if (i.isDynamic) { continue; }
+        j.push_back(i);
+    }
+}
+
+/// @brief Write info to a json object
+/// @param[out] j Json output
+/// @param[in] data Object to read info from
 void to_json(json& j, const Plot::PinData& data)
 {
     j = json{
@@ -2260,6 +2272,7 @@ void NAV::Plot::addData(size_t pinIndex, std::string displayName, double value)
     {
         pinData.addPlotDataItem(pinData.plotData.size(), displayName);
         plotData = pinData.plotData.end() - 1;
+        plotData->isDynamic = true;
 
         // We assume, there is a static item at the front (the time)
         plotData->buffer.reserve(pinData.plotData.front().buffer.size());

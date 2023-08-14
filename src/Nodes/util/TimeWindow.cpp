@@ -68,9 +68,9 @@ void NAV::TimeWindow::guiConfig()
         for (size_t i = 0; i < _startEndTime.size(); i++)
         {
             ImGui::TableNextColumn();
-            if (gui::widgets::TimeEdit(fmt::format("Time edit##{} {}", i, size_t(id)).c_str(), _startEndTime[i], _timeEditFormat[i]))
+            if (gui::widgets::TimeEdit(fmt::format("Time edit##{} {}", i, size_t(id)).c_str(), _startEndTime.at(i), _timeEditFormat.at(i)))
             {
-                LOG_DEBUG("{}: {}Time = {}", nameId(), i == 0 ? "start" : "end", _startEndTime[i]);
+                LOG_DEBUG("{}: {}Time = {}", nameId(), i == 0 ? "start" : "end", _startEndTime.at(i));
                 flow::ApplyChanges();
                 if (_startEndTime[0] >= _startEndTime[1]) { doDeinitialize(); }
             }

@@ -205,6 +205,16 @@ class RealTimeKinematic : public Node
     /// @note See Groves (2013) eq. (9.156)
     std::array<double, 2> _gui_stdevAccel = { { 3.0, 1.5 } } /* [ m / √(s^3) ] */;
 
+    /// Possible Units for the Standard deviation of the ambiguities
+    enum class StdevAmbiguityUnits
+    {
+        Cycle, ///< [cycle]
+    };
+    /// Gui selection for the Unit of the input for the StDev of the ambiguities
+    StdevAmbiguityUnits _gui_stdevAmbiguityUnits = StdevAmbiguityUnits::Cycle;
+    /// Process noise (standard deviation) for the ambiguities
+    double _gui_ambiguityProcessNoiseStDev = 1e-4;
+
     // ------------------------------------------------------------ Algorithm --------------------------------------------------------------
 
     /// @brief Receiver Types
