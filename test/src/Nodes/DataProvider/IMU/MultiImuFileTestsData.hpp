@@ -25,10 +25,10 @@ namespace NAV::TESTS::MultiImuFileTests
 /// @return GPS second of the day
 long double timestamp(double gpsSecond, double timeNumerator, double timeDenominator);
 
-InsTime IMU_STARTTIME = InsTime(2023, 8, 9, 9, 34, 35., UTC); // UTC time at start from 'GPZDA' NMEA msg
+static inline InsTime IMU_STARTTIME = InsTime(2023, 8, 9, 9, 34, 35., UTC); // UTC time at start from 'GPZDA' NMEA msg
 
-double SCALEFACTOR_ACCEL = 0.001;
-double SCALEFACTOR_GYRO = 1. / 131.;
+constexpr double SCALEFACTOR_ACCEL = 0.001;
+constexpr double SCALEFACTOR_GYRO = 1. / 131.;
 
 enum ImuRef : size_t
 {
