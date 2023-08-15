@@ -97,6 +97,9 @@ class MultiImuFile : public Node, public FileReader
     /// Number of connected sensors
     size_t _nSensors = 5;
 
+    /// @brief GPS data rate [Hz]
+    double _gpsRate = 1;
+
     /// @brief Read messages.
     /// Vector idx: Sensor Id,
     /// - Map Key: InsTime

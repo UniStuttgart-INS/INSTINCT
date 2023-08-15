@@ -398,7 +398,7 @@ void NAV::MultiImuFile::readHeader()
                         year = std::stoi(cell);
                     }
 
-                    _startTime = InsTime(year, month, day, hour, min, sec, UTC);
+                    _startTime = InsTime(year, month, day, hour, min, sec + 1. / _gpsRate, UTC); // GPS has a rate of 1 Hz, actual starttime is one message after the last GPZDA msg in the header
 
                     len = tellg();
                     continue;
