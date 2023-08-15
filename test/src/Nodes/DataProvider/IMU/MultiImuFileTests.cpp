@@ -21,12 +21,11 @@
 
 #include "FlowTester.hpp"
 
-#include "NodeData/IMU/VectorNavBinaryOutput.hpp"
-
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
 #include "Logger.hpp"
+#include "Navigation/Transformations/Units.hpp"
 
 #include "MultiImuFileTestsData.hpp"
 
@@ -45,28 +44,37 @@ namespace nm = NAV::NodeManager;
 
 namespace NAV::TESTS::MultiImuFileTests
 {
-void compareImuObservation(const std::shared_ptr<const NAV::ImuObs>& obs, size_t /*messageCounterData*/, size_t /*pinIdx*/)
+void compareImuObservation(const std::shared_ptr<const NAV::ImuObs>& obs, size_t messageCounterData, size_t pinIdx)
 {
     // --------------------------------------------- Sensor ID -----------------------------------------------
-    // REQUIRE(pinIdx == static_cast<size_t>(IMU_REFERENCE_DATA.at(messageCounterData).at(SensorId)) - 1); // '-1' due to 1-based SensorIds
+    REQUIRE(pinIdx == static_cast<size_t>(IMU_REFERENCE_DATA.at(messageCounterData).at(SensorId)) - 1); // '-1' due to 1-based SensorIds
 
     // --------------------------------------------- Ins Time ------------------------------------------------
     REQUIRE(!obs->insTime.empty());
 
     REQUIRE(obs->insTime.toGPSweekTow().gpsCycle == IMU_STARTTIME.toGPSweekTow().gpsCycle);
     REQUIRE(obs->insTime.toGPSweekTow().gpsWeek == IMU_STARTTIME.toGPSweekTow().gpsWeek);
-    // REQUIRE(obs->insTime.toGPSweekTow().tow == timestamp(IMU_REFERENCE_DATA.at(messageCounterData).at(GpsSec), IMU_REFERENCE_DATA.at(messageCounterData).at(GpsNum), IMU_REFERENCE_DATA.at(messageCounterData).at(GpsDen), IMU_STARTTIME.toGPSweekTow().tow));
+    long double gpsDayOfWeek = std::floor(IMU_STARTTIME.toGPSweekTow().tow / InsTimeUtil::SECONDS_PER_DAY);
+    REQUIRE_THAT(obs->insTime.toGPSweekTow().tow
+                     - gpsDayOfWeek * static_cast<long double>(InsTimeUtil::SECONDS_PER_DAY)
+                     - timestamp(IMU_REFERENCE_DATA.at(messageCounterData).at(GpsSec), IMU_REFERENCE_DATA.at(messageCounterData).at(GpsNum), IMU_REFERENCE_DATA.at(messageCounterData).at(GpsDen))
+                     - static_cast<long double>(IMU_STARTTIME.differenceToUTC(GPST)),
+                 Catch::Matchers::WithinAbs(0.0L, 5e-7L));
 
     // ------------------------------------------- Accelerations ---------------------------------------------
-    // TODO: Add 'REQUIRE' for accels
+    REQUIRE_THAT(obs->accelUncompXYZ.value()(0) - IMU_REFERENCE_DATA.at(messageCounterData).at(AccX) * SCALEFACTOR_ACCEL, Catch::Matchers::WithinAbs(0.0L, 5e-7L));
+    REQUIRE_THAT(obs->accelUncompXYZ.value()(1) - IMU_REFERENCE_DATA.at(messageCounterData).at(AccY) * SCALEFACTOR_ACCEL, Catch::Matchers::WithinAbs(0.0L, 5e-7L));
+    REQUIRE_THAT(obs->accelUncompXYZ.value()(2) - IMU_REFERENCE_DATA.at(messageCounterData).at(AccZ) * SCALEFACTOR_ACCEL, Catch::Matchers::WithinAbs(0.0L, 5e-7L));
 
     // ------------------------------------------- Angular rates ---------------------------------------------
-    // TODO: Add 'REQUIRE' for gyro
+    REQUIRE_THAT(obs->gyroUncompXYZ.value()(0) - deg2rad(IMU_REFERENCE_DATA.at(messageCounterData).at(GyroX)) * SCALEFACTOR_GYRO, Catch::Matchers::WithinAbs(0.0L, 5e-7L));
+    REQUIRE_THAT(obs->gyroUncompXYZ.value()(1) - deg2rad(IMU_REFERENCE_DATA.at(messageCounterData).at(GyroY)) * SCALEFACTOR_GYRO, Catch::Matchers::WithinAbs(0.0L, 5e-7L));
+    REQUIRE_THAT(obs->gyroUncompXYZ.value()(2) - deg2rad(IMU_REFERENCE_DATA.at(messageCounterData).at(GyroZ)) * SCALEFACTOR_GYRO, Catch::Matchers::WithinAbs(0.0L, 5e-7L));
 }
 
-long double timestamp(double gpsSecond, double timeNumerator, double timeDenominator, long double startupGpsSecond)
+long double timestamp(double gpsSecond, double timeNumerator, double timeDenominator)
 {
-    return static_cast<long double>(gpsSecond + timeNumerator / timeDenominator) - startupGpsSecond;
+    return static_cast<long double>(gpsSecond + timeNumerator / timeDenominator);
 }
 
 TEST_CASE("[MultiImuFile][flow] Read 'data/DataProvider/IMU/2023-08-09_Multi-IMU_commaDelim.txt' and compare content with hardcoded values", "[MultiImuFile][flow]")
