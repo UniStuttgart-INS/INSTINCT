@@ -102,9 +102,9 @@ TEST_CASE("[MultiImuFile][flow] Read 'data/DataProvider/IMU/2023-08-09_Multi-IMU
 
     std::array<size_t, 5> inputPinIds = { 7, 14, 15, 16, 17 };
 
-    for (size_t i = 0; i < inputPinIds.size(); i++)
+    for (size_t inputPinId : inputPinIds)
     {
-        nm::RegisterWatcherCallbackToInputPin(inputPinIds.at(i), [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t pinIdx) {
+        nm::RegisterWatcherCallbackToInputPin(inputPinId, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t pinIdx) {
             LOG_TRACE("messageCounter = {}", messageCounter);
 
             compareImuObservation(std::dynamic_pointer_cast<const NAV::ImuObs>(queue.front()), messageCounter, pinIdx);
