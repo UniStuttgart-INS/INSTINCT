@@ -221,25 +221,15 @@ void NAV::LooselyCoupledKF::guiConfig()
 
         if (_randomProcessAccel == RandomProcess::GaussMarkov1 || _qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
         {
-            ImGui::SetNextItemWidth(configWidth - unitWidth);
-            if (ImGui::InputDouble3L(fmt::format("##Correlation length τ of the accel dynamic bias {}", size_t(id)).c_str(), _tau_bad.data(), 0., std::numeric_limits<double>::max(), "%.2e", ImGuiInputTextFlags_CharsScientific))
+            int unitCorrelationLength = 0;
+            if (gui::widgets::InputDouble3LWithUnit(fmt::format("Correlation length τ of the accel {}##Correlation length τ of the accel dynamic bias {}",
+                                                                _qCalculationAlgorithm == QCalculationAlgorithm::VanLoan ? "bias noise" : "dynamic bias", size_t(id))
+                                                        .c_str(),
+                                                    configWidth, unitWidth, _tau_bad.data(), 0., std::numeric_limits<double>::max(),
+                                                    &unitCorrelationLength, "s\0\0", "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: tau_bad changed to {}", nameId(), _tau_bad);
                 flow::ApplyChanges();
-            }
-            ImGui::SameLine();
-            int unitCorrelationLength = 0;
-            ImGui::SetNextItemWidth(unitWidth);
-            ImGui::Combo(fmt::format("##Correlation length of the accel dynamic bias unit {}", size_t(id)).c_str(), &unitCorrelationLength, "s\0\0");
-            ImGui::SameLine();
-            ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
-            if (_qCalculationAlgorithm == QCalculationAlgorithm::VanLoan)
-            {
-                ImGui::TextUnformatted("Correlation length τ of the accel bias noise");
-            }
-            else if (_qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
-            {
-                ImGui::TextUnformatted("Correlation length τ of the accel dynamic bias");
             }
         }
 
@@ -282,25 +272,15 @@ void NAV::LooselyCoupledKF::guiConfig()
 
         if (_randomProcessGyro == RandomProcess::GaussMarkov1 || _qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
         {
-            ImGui::SetNextItemWidth(configWidth - unitWidth);
-            if (ImGui::InputDouble3L(fmt::format("##Correlation length τ of the gyro dynamic bias {}", size_t(id)).c_str(), _tau_bgd.data(), 0., std::numeric_limits<double>::max(), "%.2e", ImGuiInputTextFlags_CharsScientific))
+            int unitCorrelationLength = 0;
+            if (gui::widgets::InputDouble3LWithUnit(fmt::format("Correlation length τ of the gyro {}##Correlation length τ of the gyro dynamic bias {}",
+                                                                _qCalculationAlgorithm == QCalculationAlgorithm::VanLoan ? "bias noise" : "dynamic bias", size_t(id))
+                                                        .c_str(),
+                                                    configWidth, unitWidth, _tau_bgd.data(), 0., std::numeric_limits<double>::max(),
+                                                    &unitCorrelationLength, "s\0\0", "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: tau_bgd changed to {}", nameId(), _tau_bgd);
                 flow::ApplyChanges();
-            }
-            ImGui::SameLine();
-            int unitCorrelationLength = 0;
-            ImGui::SetNextItemWidth(unitWidth);
-            ImGui::Combo(fmt::format("##Correlation length of the gyro dynamic bias unit {}", size_t(id)).c_str(), &unitCorrelationLength, "s\0\0");
-            ImGui::SameLine();
-            ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
-            if (_qCalculationAlgorithm == QCalculationAlgorithm::VanLoan)
-            {
-                ImGui::TextUnformatted("Correlation length τ of the gyro bias noise");
-            }
-            else if (_qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
-            {
-                ImGui::TextUnformatted("Correlation length τ of the gyro dynamic bias");
             }
         }
 

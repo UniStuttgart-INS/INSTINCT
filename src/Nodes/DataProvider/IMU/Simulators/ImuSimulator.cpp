@@ -273,13 +273,13 @@ void NAV::ImuSimulator::guiConfig()
         }
         else
         {
-            auto txt = _trajectoryType == TrajectoryType::Fixed
-                           ? "Position"
-                           : (_trajectoryType == TrajectoryType::Linear
-                                  ? "Start position"
-                                  : (_trajectoryType == TrajectoryType::Circular
-                                         ? "Center position"
-                                         : ""));
+            const auto* txt = _trajectoryType == TrajectoryType::Fixed
+                                  ? "Position"
+                                  : (_trajectoryType == TrajectoryType::Linear
+                                         ? "Start position"
+                                         : (_trajectoryType == TrajectoryType::Circular
+                                                ? "Center position"
+                                                : ""));
 
             if (gui::widgets::PositionInput(fmt::format("{}##PosInput {}", txt, size_t(id)).c_str(), _startPosition, gui::widgets::PositionInputLayout::TWO_ROWS, columnWidth))
             {
