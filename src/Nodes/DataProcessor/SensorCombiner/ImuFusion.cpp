@@ -943,14 +943,7 @@ void NAV::ImuFusion::initializeKalmanFilter()
             _kalmanFilter.x.block<3, 1>(12 + 6 * pinIndex, 0) = initValues.first[containerIndex];
             _kalmanFilter.x.block<3, 1>(15 + 6 * pinIndex, 0) = initValues.first[1 + containerIndex];
         }
-
-        // hard-coded - long time measurements (kept for reference) ################################################################################
-        // Eigen::VectorXd bla = Eigen::VectorXd::Zero(24, 1);
-        // bla << 0.1250, -0.1615, 0.0194, -0.1434, 0.2279, -2.5783, -0.0132, 0.0117, 0.0245, -0.2762, 0.4848, -1.5336, 0.0213, -0.0320, 0.0397, -0.1588, 0.2588, -2.9022, 0.0091, -0.0055, 0.0183, -0.2413, 0.0189, -3.6849; // entire time series
-        // bla << 0.1250, -0.1616, 0.0192, -0.1447, 0.2291, -2.5865, -0.0130, 0.0117, 0.0237, -0.2725, 0.4880, -1.5728, 0.0223, -0.0330, 0.0394, -0.1571, 0.2600, -2.9525, 0.0098, -0.0060, 0.0185, -0.2440, 0.0256, -3.7012; // 1 second
-        // _kalmanFilter.x.block<24, 1>(12, 0) = bla;
         LOG_DATA("{}: kalmanFilter.x = {}", nameId(), _kalmanFilter.x.transpose());
-        // hard-coded - long time measurements (kept for reference) ################################################################################
 
         _kalmanFilter.P = initialErrorCovarianceMatrix_P0(initValues.second);
         LOG_DATA("{}: kalmanFilter.P =\n{}", nameId(), _kalmanFilter.P);
@@ -1021,14 +1014,6 @@ void NAV::ImuFusion::recvSignal(NAV::InputPin::NodeDataQueue& queue, size_t pinI
     auto DCM_gyro = _imuRotations_gyro.at(pinIdx);
     LOG_DATA("{}: DCM_gyro =\n{}", nameId(), DCM_gyro);
 
-    // FIXME: Data is already rotated into body-frame through design matrix!
-    // Initialize '_imuPos' of the combined solution - that of the reference sensor
-    // if (!_imuPosSet && pinIdx == 0)
-    // {
-    //     this->_imuPos = imuObs->imuPos;
-    //     _imuPosSet = true;
-    // }
-
     _kalmanFilter.H = designMatrix_H(DCM_accel, DCM_gyro, pinIdx);
     LOG_DATA("{}: kalmanFilter.H =\n{}", nameId(), _kalmanFilter.H);
 
@@ -1073,13 +1058,16 @@ void NAV::ImuFusion::combineSignals(const std::shared_ptr<const ImuObs>& imuObs)
 
     _kalmanFilter.predict();
 
-    _kalmanFilter.z.block<3, 1>(0, 0) = imuObs->gyroUncompXYZ.value();
-    _kalmanFilter.z.block<3, 1>(3, 0) = imuObs->accelUncompXYZ.value();
+    if (imuObs->gyroUncompXYZ.has_value() && imuObs->accelUncompXYZ.has_value())
+    {
+        _kalmanFilter.z.block<3, 1>(0, 0) = imuObs->gyroUncompXYZ.value();
+        _kalmanFilter.z.block<3, 1>(3, 0) = imuObs->accelUncompXYZ.value();
 
-    LOG_DATA("{}: Measurements z =\n{}", nameId(), _kalmanFilter.z);
+        LOG_DATA("{}: Measurements z =\n{}", nameId(), _kalmanFilter.z);
 
-    _kalmanFilter.correct();
-    LOG_DATA("{}: Estimated state after correction: x =\n{}", nameId(), _kalmanFilter.x);
+        _kalmanFilter.correct();
+        LOG_DATA("{}: Estimated state after correction: x =\n{}", nameId(), _kalmanFilter.x);
+    }
 
     if (_checkKalmanMatricesRanks)
     {
