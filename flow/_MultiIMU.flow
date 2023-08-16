@@ -202,22 +202,25 @@
                                 "displayName": "ECEF Z error [m]"
                             },
                             {
+                                "displayName": "Accelerometer bias b_X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_Z [rad/s]"
+                            },
+                            {
                                 "displayName": "Accelerometer bias b_X accumulated [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accelerometer bias b_Y accumulated [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accelerometer bias b_Z accumulated [m/s^2]"
-                            },
-                            {
-                                "displayName": "Gyroscope bias b_X accumulated [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyroscope bias b_Y accumulated [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyroscope bias b_Z accumulated [rad/s]"
                             }
                         ],
                         "size": 2000,
@@ -288,22 +291,25 @@
                                 "displayName": "ECEF Z error [m]"
                             },
                             {
+                                "displayName": "Accelerometer bias b_X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_Z [rad/s]"
+                            },
+                            {
                                 "displayName": "Accelerometer bias b_X accumulated [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accelerometer bias b_Y accumulated [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accelerometer bias b_Z accumulated [m/s^2]"
-                            },
-                            {
-                                "displayName": "Gyroscope bias b_X accumulated [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyroscope bias b_Y accumulated [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyroscope bias b_Z accumulated [rad/s]"
                             }
                         ],
                         "size": 2000,
@@ -374,22 +380,25 @@
                                 "displayName": "ECEF Z error [m]"
                             },
                             {
+                                "displayName": "Accelerometer bias b_X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_Z [rad/s]"
+                            },
+                            {
                                 "displayName": "Accelerometer bias b_X accumulated [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accelerometer bias b_Y accumulated [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accelerometer bias b_Z accumulated [m/s^2]"
-                            },
-                            {
-                                "displayName": "Gyroscope bias b_X accumulated [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyroscope bias b_Y accumulated [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyroscope bias b_Z accumulated [rad/s]"
                             }
                         ],
                         "size": 2000,
@@ -460,22 +469,25 @@
                                 "displayName": "ECEF Z error [m]"
                             },
                             {
+                                "displayName": "Accelerometer bias b_X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_Z [rad/s]"
+                            },
+                            {
                                 "displayName": "Accelerometer bias b_X accumulated [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accelerometer bias b_Y accumulated [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accelerometer bias b_Z accumulated [m/s^2]"
-                            },
-                            {
-                                "displayName": "Gyroscope bias b_X accumulated [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyroscope bias b_Y accumulated [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyroscope bias b_Z accumulated [rad/s]"
                             }
                         ],
                         "size": 2000,
@@ -648,9 +660,15 @@
                         "title": "Plot 1",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     },
                     {
@@ -809,9 +827,15 @@
                         "title": "Plot 2",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
+                        "xAxisScale": 0,
                         "y1AxisLabel": "",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
                         "yAxisFlags": 2048
                     }
                 ]
@@ -860,8 +884,9 @@
         "node-17": {
             "data": {
                 "FileReader": {
-                    "path": ""
+                    "path": "../test/data/DataProvider/IMU/2023-08-09_Multi-IMU_commaDelim.txt"
                 },
+                "delim": 44,
                 "imuPos": [
                     {
                         "b_positionAccel": {
@@ -1248,7 +1273,12 @@
                             }
                         }
                     }
-                ]
+                ],
+                "nmeaType": 1,
+                "startTime": {
+                    "mjd_day": 60165,
+                    "mjd_frac": 0.39902777777777776
+                }
             },
             "enabled": true,
             "id": 17,
@@ -1289,188 +1319,78 @@
         },
         "node-5": {
             "data": {
+                "autoInitKF": true,
+                "averageEndTime": 1.0,
                 "checkKalmanMatricesRanks": false,
                 "designMatrixInitialized": false,
                 "imuFrequency": 25.0,
-                "imuRotations_accel": [
-                    {
-                        "0": {
-                            "0": null,
-                            "1": 0.0,
-                            "2": 0.0
-                        },
-                        "1": {
-                            "0": 0.0,
-                            "1": 0.0,
-                            "2": 0.0
-                        },
-                        "2": {
-                            "0": 0.0,
-                            "1": 0.0,
-                            "2": 0.0
-                        }
-                    },
-                    {
-                        "0": {
-                            "0": null,
-                            "1": 0.0,
-                            "2": 0.0
-                        },
-                        "1": {
-                            "0": 0.0,
-                            "1": 0.0,
-                            "2": 0.0
-                        },
-                        "2": {
-                            "0": 0.0,
-                            "1": 0.0,
-                            "2": 0.0
-                        }
-                    },
-                    {
-                        "0": {
-                            "0": null,
-                            "1": 0.0,
-                            "2": 0.0
-                        },
-                        "1": {
-                            "0": 0.0,
-                            "1": 0.0,
-                            "2": 0.0
-                        },
-                        "2": {
-                            "0": 0.0,
-                            "1": 0.0,
-                            "2": 0.0
-                        }
-                    },
-                    {
-                        "0": {
-                            "0": null,
-                            "1": 0.0,
-                            "2": 0.0
-                        },
-                        "1": {
-                            "0": 0.0,
-                            "1": 0.0,
-                            "2": 0.0
-                        },
-                        "2": {
-                            "0": 0.0,
-                            "1": 0.0,
-                            "2": 0.0
-                        }
-                    },
-                    {
-                        "0": {
-                            "0": null,
-                            "1": 0.0,
-                            "2": 0.0
-                        },
-                        "1": {
-                            "0": 0.0,
-                            "1": 0.0,
-                            "2": 0.0
-                        },
-                        "2": {
-                            "0": 0.0,
-                            "1": 0.0,
-                            "2": 0.0
-                        }
-                    }
-                ],
-                "imuRotations_gyro": [
-                    {
-                        "0": {
-                            "0": null,
-                            "1": 0.0,
-                            "2": 0.0
-                        },
-                        "1": {
-                            "0": 0.0,
-                            "1": 0.0,
-                            "2": 0.0
-                        },
-                        "2": {
-                            "0": 0.0,
-                            "1": 0.0,
-                            "2": 0.0
-                        }
-                    },
-                    {
-                        "0": {
-                            "0": null,
-                            "1": 0.0,
-                            "2": 0.0
-                        },
-                        "1": {
-                            "0": 0.0,
-                            "1": 0.0,
-                            "2": 0.0
-                        },
-                        "2": {
-                            "0": 0.0,
-                            "1": 0.0,
-                            "2": 0.0
-                        }
-                    },
-                    {
-                        "0": {
-                            "0": null,
-                            "1": 0.0,
-                            "2": 0.0
-                        },
-                        "1": {
-                            "0": 0.0,
-                            "1": 0.0,
-                            "2": 0.0
-                        },
-                        "2": {
-                            "0": 0.0,
-                            "1": 0.0,
-                            "2": 0.0
-                        }
-                    },
-                    {
-                        "0": {
-                            "0": null,
-                            "1": 0.0,
-                            "2": 0.0
-                        },
-                        "1": {
-                            "0": 0.0,
-                            "1": 0.0,
-                            "2": 0.0
-                        },
-                        "2": {
-                            "0": 0.0,
-                            "1": 0.0,
-                            "2": 0.0
-                        }
-                    },
-                    {
-                        "0": {
-                            "0": null,
-                            "1": 0.0,
-                            "2": 0.0
-                        },
-                        "1": {
-                            "0": 0.0,
-                            "1": 0.0,
-                            "2": 0.0
-                        },
-                        "2": {
-                            "0": 0.0,
-                            "1": 0.0,
-                            "2": 0.0
-                        }
-                    }
-                ],
+                "initJerkAngAcc": true,
+                "kfInitialized": false,
                 "nInputPins": 5,
                 "numMeasurements": 6,
                 "numStates": 36,
                 "pinData": [
                     {
+                        "initAcceleration": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAccelerationBias": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAccelerationBiasUnit": 0,
+                        "initAccelerationUnit": 0,
+                        "initAngularAcc": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAngularAccUnit": 0,
+                        "initAngularRate": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAngularRateBias": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAngularRateBiasUnit": 0,
+                        "initAngularRateUnit": 0,
                         "initCovarianceAcceleration": {
                             "0": {
                                 "0": 0.1
@@ -1543,6 +1463,18 @@
                             }
                         },
                         "initCovarianceJerkUnit": 1,
+                        "initJerk": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initJerkUnit": 0,
                         "measurementUncertaintyAcceleration": {
                             "0": {
                                 "0": 0.1
@@ -1617,6 +1549,66 @@
                         "varJerkNoiseUnit": 1
                     },
                     {
+                        "initAcceleration": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAccelerationBias": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAccelerationBiasUnit": 0,
+                        "initAccelerationUnit": 0,
+                        "initAngularAcc": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAngularAccUnit": 0,
+                        "initAngularRate": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAngularRateBias": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAngularRateBiasUnit": 0,
+                        "initAngularRateUnit": 0,
                         "initCovarianceAcceleration": {
                             "0": {
                                 "0": 0.1
@@ -1689,6 +1681,18 @@
                             }
                         },
                         "initCovarianceJerkUnit": 1,
+                        "initJerk": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initJerkUnit": 0,
                         "measurementUncertaintyAcceleration": {
                             "0": {
                                 "0": 0.1
@@ -1763,6 +1767,66 @@
                         "varJerkNoiseUnit": 1
                     },
                     {
+                        "initAcceleration": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAccelerationBias": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAccelerationBiasUnit": 0,
+                        "initAccelerationUnit": 0,
+                        "initAngularAcc": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAngularAccUnit": 0,
+                        "initAngularRate": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAngularRateBias": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAngularRateBiasUnit": 0,
+                        "initAngularRateUnit": 0,
                         "initCovarianceAcceleration": {
                             "0": {
                                 "0": 0.1
@@ -1835,6 +1899,18 @@
                             }
                         },
                         "initCovarianceJerkUnit": 1,
+                        "initJerk": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initJerkUnit": 0,
                         "measurementUncertaintyAcceleration": {
                             "0": {
                                 "0": 0.1
@@ -1909,6 +1985,66 @@
                         "varJerkNoiseUnit": 1
                     },
                     {
+                        "initAcceleration": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAccelerationBias": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAccelerationBiasUnit": 0,
+                        "initAccelerationUnit": 0,
+                        "initAngularAcc": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAngularAccUnit": 0,
+                        "initAngularRate": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAngularRateBias": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAngularRateBiasUnit": 0,
+                        "initAngularRateUnit": 0,
                         "initCovarianceAcceleration": {
                             "0": {
                                 "0": 0.1
@@ -1981,6 +2117,18 @@
                             }
                         },
                         "initCovarianceJerkUnit": 1,
+                        "initJerk": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initJerkUnit": 0,
                         "measurementUncertaintyAcceleration": {
                             "0": {
                                 "0": 0.1
@@ -2055,6 +2203,66 @@
                         "varJerkNoiseUnit": 1
                     },
                     {
+                        "initAcceleration": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAccelerationBias": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAccelerationBiasUnit": 0,
+                        "initAccelerationUnit": 0,
+                        "initAngularAcc": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAngularAccUnit": 0,
+                        "initAngularRate": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAngularRateBias": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initAngularRateBiasUnit": 0,
+                        "initAngularRateUnit": 0,
                         "initCovarianceAcceleration": {
                             "0": {
                                 "0": 0.1
@@ -2127,6 +2335,18 @@
                             }
                         },
                         "initCovarianceJerkUnit": 1,
+                        "initJerk": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "initJerkUnit": 0,
                         "measurementUncertaintyAcceleration": {
                             "0": {
                                 "0": 0.1
