@@ -271,7 +271,7 @@ bool NAV::MultiImuFile::initialize()
     LOG_TRACE("{}: called", nameId());
 
     _lastFiltObs.reset();
-    _delim = _nmeaType == NmeaType::GPZDA ? ',' : ' ';
+    _lineCnt = 0;
 
     return FileReader::initialize();
 }
@@ -330,8 +330,8 @@ void NAV::MultiImuFile::readHeader()
 {
     LOG_TRACE("called");
 
-    bool gpzdaFound = false;
-    bool gpggaFound = false;
+    _gpzdaFound = false;
+    _gpggaFound = false;
     const char* gpzda = "GPZDA";
     const char* gpgga = "GPGGA";
 
@@ -341,12 +341,14 @@ void NAV::MultiImuFile::readHeader()
     // Find first line of data
     while (getline(line))
     {
+        _lineCnt++;
+
         // Remove any trailing non text characters
         line.erase(std::find_if(line.begin(), line.end(), [](int ch) { return std::iscntrl(ch); }), line.end());
 
         if ((line.find(gpzda)) != std::string::npos)
         {
-            gpzdaFound = true;
+            _gpzdaFound = true;
 
             int32_t year{};
             int32_t month{};
@@ -407,27 +409,27 @@ void NAV::MultiImuFile::readHeader()
         }
         if (line.find(gpgga) != std::string::npos)
         {
-            gpggaFound = true;
-            LOG_INFO("{}: Multi-IMU has no absolute time reference due to NMEA message 'GPGGA' instead of 'GPZDA' (used in old version of the Multi-IMU).", nameId());
-            len = tellg();
-            continue;
+            _gpggaFound = true;
         }
-        if ((std::find_if(line.begin(), line.begin() + 1, [](int ch) { return std::isdigit(ch); }) != (std::begin(line) + 1)) && (gpggaFound || gpzdaFound))
+        else if ((std::find_if(line.begin(), line.begin() + 1, [](int ch) { return std::isdigit(ch); }) != (std::begin(line) + 1)) && (_gpggaFound || _gpzdaFound))
         {
             LOG_DEBUG("{}: Found first line of data: {}", nameId(), line);
-            seekg(len, std::ios_base::beg); // Reser the read cursor, otherwise we skip the first message
+            seekg(len, std::ios_base::beg); // Reset the read cursor, otherwise we skip the first message
             break;
         }
         len = tellg();
     }
-    if (gpggaFound && _nmeaType == NmeaType::GPZDA)
+    if (_gpggaFound && _nmeaType == NmeaType::GPZDA && !_gpzdaFound)
     {
-        LOG_WARN("{}: NMEA message type was set to 'GPZDA', but the file contains 'GPGGA'. Make sure that the absolute time reference is set correctly.", nameId());
+        LOG_WARN("{}: NMEA message type was set to 'GPZDA', but the file contains only 'GPGGA'. Make sure that the absolute time reference is set correctly.", nameId());
+        _nmeaType = NmeaType::GPGGA;
     }
-    if (gpzdaFound && _nmeaType == NmeaType::GPGGA)
+    if (_gpzdaFound && _nmeaType == NmeaType::GPGGA)
     {
         LOG_WARN("{}: NMEA message type was set to 'GPGGA', but the file contains 'GPZDA'. The absolute time reference was read from the header, not the GUI input.", nameId());
+        _nmeaType = NmeaType::GPZDA;
     }
+    _delim = _gpzdaFound ? ',' : ' ';
 }
 
 std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(size_t pinIdx, bool peek)
@@ -448,6 +450,8 @@ std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(size_t pinIdx, 
         std::string line;
         while (getline(line))
         {
+            _lineCnt++;
+
             // Remove any starting non text characters
             line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
 
@@ -572,14 +576,12 @@ std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(size_t pinIdx, 
         _messageCnt.at(pinIdx)++;
 
         // Detect jumps back in time
-        if (pinIdx == 2)
+        if (obs->insTime < _lastFiltObs)
         {
-            if (obs->insTime < _lastFiltObs)
-            {
-                LOG_ERROR("{}: obs->insTime < _lastFiltObs --> {}", nameId(), (obs->insTime - _lastFiltObs).count());
-            }
-            _lastFiltObs = obs->insTime;
+            LOG_ERROR("{}: Jumped back in time on line {}, by {} s", nameId(), _lineCnt, (obs->insTime - _lastFiltObs).count());
+            return obs;
         }
+        _lastFiltObs = obs->insTime;
 
         invokeCallbacks(pinIdx, obs);
     }

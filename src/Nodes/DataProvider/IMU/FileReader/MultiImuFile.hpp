@@ -106,6 +106,9 @@ class MultiImuFile : public Node, public FileReader
     /// - Map Value: IMU Observation
     std::vector<std::map<InsTime, std::shared_ptr<ImuObs>>> _messages;
 
+    /// @brief Counter for lines
+    size_t _lineCnt{};
+
     /// @brief Counter for messages
     std::vector<size_t> _messageCnt;
 
@@ -132,6 +135,11 @@ class MultiImuFile : public Node, public FileReader
 
     /// @brief Previous observation (for timestamp)
     InsTime _lastFiltObs{};
+
+    /// @brief Flag that indicates whether a 'GPZDA' message was found in the Multi-IMU-Logs header
+    bool _gpzdaFound = false;
+    /// @brief Flag that indicates whether a 'GPGGA' message was found in the Multi-IMU-Logs header
+    bool _gpggaFound = false;
 
     /// Types of NMEA messages available
     enum class NmeaType
