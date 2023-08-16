@@ -134,7 +134,7 @@ OutputPin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, cons
 template<typename T,
          typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
 OutputPin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier,
-                           std::shared_ptr<const NAV::NodeData> (T::*peekPollDataFunc)(bool) = nullptr, int idx = -1)
+                           std::shared_ptr<const NAV::NodeData> (T::*peekPollDataFunc)(size_t, bool) = nullptr, int idx = -1)
 {
     assert(pinType == Pin::Type::Flow);
     INS_ASSERT_USER_ERROR(std::none_of(node->outputPins.begin(), node->outputPins.end(),

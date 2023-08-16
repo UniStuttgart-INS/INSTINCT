@@ -79,14 +79,16 @@ class ImuSimulator : public Imu
     void deinitialize() override;
 
     /// @brief Polls the next simulated data
+    /// @param[in] pinIdx Index of the pin the data is requested on
     /// @param[in] peek Specifies if the data should be peeked or read
     /// @return The simulated observation
-    [[nodiscard]] std::shared_ptr<const NodeData> pollImuObs(bool peek = false);
+    [[nodiscard]] std::shared_ptr<const NodeData> pollImuObs(size_t pinIdx, bool peek);
 
     /// @brief Polls the next simulated data
+    /// @param[in] pinIdx Index of the pin the data is requested on
     /// @param[in] peek Specifies if the data should be peeked or read
     /// @return The simulated observation
-    [[nodiscard]] std::shared_ptr<const NodeData> pollPosVelAtt(bool peek = false);
+    [[nodiscard]] std::shared_ptr<const NodeData> pollPosVelAtt(size_t pinIdx, bool peek);
 
     /// @brief Checks the selected stop condition
     /// @param[in] time Current simulation time

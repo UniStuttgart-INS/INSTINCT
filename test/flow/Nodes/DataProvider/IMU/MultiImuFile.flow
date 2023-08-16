@@ -1,0 +1,1060 @@
+{
+    "implot": {
+        "prefereFlowOverGlobal": true,
+        "style": {
+            "AnnotationPadding": {
+                "x": 2.0,
+                "y": 2.0
+            },
+            "Colormap": {
+                "active": 0
+            },
+            "Colors": {
+                "AxisBg": {
+                    "col": "Auto"
+                },
+                "AxisBgActive": {
+                    "col": "Auto"
+                },
+                "AxisBgHovered": {
+                    "col": "Auto"
+                },
+                "AxisGrid": {
+                    "col": "Auto"
+                },
+                "AxisText": {
+                    "col": {
+                        "w": 1.0,
+                        "x": 9.999999974752427e-07,
+                        "y": 9.999899930335232e-07,
+                        "z": 9.999899930335232e-07
+                    }
+                },
+                "AxisTick": {
+                    "col": "Auto"
+                },
+                "Crosshairs": {
+                    "col": "Auto"
+                },
+                "ErrorBar": {
+                    "col": "Auto"
+                },
+                "Fill": {
+                    "col": "Auto"
+                },
+                "FrameBg": {
+                    "col": {
+                        "w": 1.0,
+                        "x": 0.9999997019767761,
+                        "y": 0.9999998211860657,
+                        "z": 1.0
+                    }
+                },
+                "InlayText": {
+                    "col": "Auto"
+                },
+                "LegendBg": {
+                    "col": {
+                        "w": 1.0,
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    }
+                },
+                "LegendBorder": {
+                    "col": "Auto"
+                },
+                "LegendText": {
+                    "col": {
+                        "w": 1.0,
+                        "x": 9.999999974752427e-07,
+                        "y": 9.999899930335232e-07,
+                        "z": 9.999899930335232e-07
+                    }
+                },
+                "Line": {
+                    "col": "Auto"
+                },
+                "MarkerFill": {
+                    "col": "Auto"
+                },
+                "MarkerOutline": {
+                    "col": "Auto"
+                },
+                "PlotBg": {
+                    "col": {
+                        "w": 1.0,
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    }
+                },
+                "PlotBorder": {
+                    "col": "Auto"
+                },
+                "Selection": {
+                    "col": "Auto"
+                },
+                "TitleText": {
+                    "col": {
+                        "w": 1.0,
+                        "x": 9.999999974752427e-07,
+                        "y": 9.999899930335232e-07,
+                        "z": 9.999899930335232e-07
+                    }
+                }
+            },
+            "DigitalBitGap": 4.0,
+            "DigitalBitHeight": 8.0,
+            "ErrorBarSize": 5.0,
+            "ErrorBarWeight": 1.5,
+            "FillAlpha": 1.0,
+            "FitPadding": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "LabelPadding": {
+                "x": 5.0,
+                "y": 5.0
+            },
+            "LegendInnerPadding": {
+                "x": 5.0,
+                "y": 5.0
+            },
+            "LegendPadding": {
+                "x": 10.0,
+                "y": 10.0
+            },
+            "LegendSpacing": {
+                "x": 5.0,
+                "y": 0.0
+            },
+            "LineWeight": 1.0,
+            "MajorGridSize": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "MajorTickLen": {
+                "x": 10.0,
+                "y": 10.0
+            },
+            "MajorTickSize": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "MarkerSize": 4.0,
+            "MarkerWeight": 1.0,
+            "MinorAlpha": 0.25,
+            "MinorGridSize": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "MinorTickLen": {
+                "x": 5.0,
+                "y": 5.0
+            },
+            "MinorTickSize": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "MousePosPadding": {
+                "x": 10.0,
+                "y": 10.0
+            },
+            "PlotBorderSize": 1.0,
+            "PlotDefaultSize": {
+                "x": 400.0,
+                "y": 300.0
+            },
+            "PlotMinSize": {
+                "x": 200.0,
+                "y": 150.0
+            },
+            "PlotPadding": {
+                "x": 10.0,
+                "y": 10.0
+            }
+        }
+    },
+    "links": {
+        "link-13": {
+            "endPinId": 7,
+            "id": 13,
+            "startPinId": 1
+        },
+        "link-18": {
+            "endPinId": 14,
+            "id": 18,
+            "startPinId": 2
+        },
+        "link-19": {
+            "endPinId": 15,
+            "id": 19,
+            "startPinId": 3
+        },
+        "link-20": {
+            "endPinId": 16,
+            "id": 20,
+            "startPinId": 4
+        },
+        "link-21": {
+            "endPinId": 17,
+            "id": 21,
+            "startPinId": 5
+        }
+    },
+    "nodes": {
+        "node-12": {
+            "data": {
+                "nInputPins": 5,
+                "nPlots": 0,
+                "overridePositionStartValues": false,
+                "pinData": [
+                    {
+                        "dataIdentifier": "ImuObs",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "Time since startup [ns]"
+                            },
+                            {
+                                "displayName": "Mag uncomp X [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag uncomp Y [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag uncomp Z [Gauss]"
+                            },
+                            {
+                                "displayName": "Accel uncomp X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel uncomp Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel uncomp Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyro uncomp X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro uncomp Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro uncomp Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Mag Comp X [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Comp Y [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Comp Z [Gauss]"
+                            },
+                            {
+                                "displayName": "Accel Comp X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Comp Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Comp Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyro Comp X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Comp Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Comp Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Temperature [°C]"
+                            }
+                        ],
+                        "size": 2000,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "ImuObs",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "Time since startup [ns]"
+                            },
+                            {
+                                "displayName": "Mag uncomp X [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag uncomp Y [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag uncomp Z [Gauss]"
+                            },
+                            {
+                                "displayName": "Accel uncomp X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel uncomp Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel uncomp Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyro uncomp X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro uncomp Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro uncomp Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Mag Comp X [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Comp Y [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Comp Z [Gauss]"
+                            },
+                            {
+                                "displayName": "Accel Comp X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Comp Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Comp Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyro Comp X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Comp Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Comp Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Temperature [°C]"
+                            }
+                        ],
+                        "size": 2000,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "ImuObs",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "Time since startup [ns]"
+                            },
+                            {
+                                "displayName": "Mag uncomp X [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag uncomp Y [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag uncomp Z [Gauss]"
+                            },
+                            {
+                                "displayName": "Accel uncomp X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel uncomp Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel uncomp Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyro uncomp X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro uncomp Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro uncomp Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Mag Comp X [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Comp Y [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Comp Z [Gauss]"
+                            },
+                            {
+                                "displayName": "Accel Comp X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Comp Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Comp Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyro Comp X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Comp Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Comp Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Temperature [°C]"
+                            }
+                        ],
+                        "size": 2000,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "ImuObs",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "Time since startup [ns]"
+                            },
+                            {
+                                "displayName": "Mag uncomp X [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag uncomp Y [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag uncomp Z [Gauss]"
+                            },
+                            {
+                                "displayName": "Accel uncomp X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel uncomp Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel uncomp Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyro uncomp X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro uncomp Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro uncomp Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Mag Comp X [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Comp Y [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Comp Z [Gauss]"
+                            },
+                            {
+                                "displayName": "Accel Comp X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Comp Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Comp Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyro Comp X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Comp Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Comp Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Temperature [°C]"
+                            }
+                        ],
+                        "size": 2000,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "ImuObs",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "Time since startup [ns]"
+                            },
+                            {
+                                "displayName": "Mag uncomp X [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag uncomp Y [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag uncomp Z [Gauss]"
+                            },
+                            {
+                                "displayName": "Accel uncomp X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel uncomp Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel uncomp Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyro uncomp X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro uncomp Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro uncomp Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Mag Comp X [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Comp Y [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Comp Z [Gauss]"
+                            },
+                            {
+                                "displayName": "Accel Comp X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Comp Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Comp Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyro Comp X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Comp Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Comp Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Temperature [°C]"
+                            }
+                        ],
+                        "size": 2000,
+                        "stride": 1
+                    }
+                ],
+                "plots": []
+            },
+            "enabled": true,
+            "id": 12,
+            "inputPins": [
+                {
+                    "id": 7,
+                    "name": "Pin 1"
+                },
+                {
+                    "id": 14,
+                    "name": "Pin 2"
+                },
+                {
+                    "id": 15,
+                    "name": "Pin 3"
+                },
+                {
+                    "id": 16,
+                    "name": "Pin 4"
+                },
+                {
+                    "id": 17,
+                    "name": "Pin 5"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "Plot",
+            "outputPins": [],
+            "pos": {
+                "x": 584.0,
+                "y": 114.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Plot"
+        },
+        "node-6": {
+            "data": {
+                "FileReader": {
+                    "path": "DataProvider/IMU/2023-08-09_Multi-IMU_commaDelim.txt"
+                },
+                "delim": 44,
+                "imuPos": [
+                    {
+                        "b_positionAccel": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_positionGyro": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_positionMag": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_quatAccel_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatGyro_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatMag_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        }
+                    },
+                    {
+                        "b_positionAccel": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_positionGyro": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_positionMag": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_quatAccel_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatGyro_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatMag_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        }
+                    },
+                    {
+                        "b_positionAccel": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_positionGyro": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_positionMag": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_quatAccel_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatGyro_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatMag_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        }
+                    },
+                    {
+                        "b_positionAccel": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_positionGyro": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_positionMag": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_quatAccel_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatGyro_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatMag_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        }
+                    },
+                    {
+                        "b_positionAccel": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_positionGyro": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_positionMag": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_quatAccel_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatGyro_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatMag_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        }
+                    }
+                ],
+                "nmeaType": 1,
+                "startTime": {
+                    "mjd_day": 60165,
+                    "mjd_frac": 0.3990162037037037
+                }
+            },
+            "enabled": true,
+            "id": 6,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "MultiImuFile",
+            "outputPins": [
+                {
+                    "id": 1,
+                    "name": "ImuObs 1"
+                },
+                {
+                    "id": 2,
+                    "name": "ImuObs 2"
+                },
+                {
+                    "id": 3,
+                    "name": "ImuObs 3"
+                },
+                {
+                    "id": 4,
+                    "name": "ImuObs 4"
+                },
+                {
+                    "id": 5,
+                    "name": "ImuObs 5"
+                }
+            ],
+            "pos": {
+                "x": 360.0,
+                "y": 114.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "MultiImuFile"
+        }
+    }
+}

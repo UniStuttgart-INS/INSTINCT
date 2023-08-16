@@ -172,8 +172,10 @@ void NAV::FlowExecutor::execute()
         _activeNodes += 1;
         node->resetNode();
         LOG_TRACE("Putting node '{}' into post-processing mode and adding to active nodes.", node->nameId());
-        for (auto& outputPin : node->outputPins)
+        for (size_t i = 0; i < node->outputPins.size(); i++)
+        // for (auto& outputPin : node->outputPins)
         {
+            auto& outputPin = node->outputPins[i];
             if (outputPin.type == Pin::Type::Flow && outputPin.isPinLinked())
             {
                 outputPin.mode = OutputPin::Mode::POST_PROCESSING;
@@ -183,7 +185,7 @@ void NAV::FlowExecutor::execute()
             if (std::holds_alternative<OutputPin::PollDataFunc>(outputPin.data))
             {
                 LOG_TRACE("    Adding pin '{}' to data poll event list.", outputPin.name);
-                node->pollEvents.insert(std::make_pair(InsTime(), &outputPin));
+                node->pollEvents.insert(std::make_pair(InsTime(), std::make_pair(&outputPin, i)));
             }
             else if (std::holds_alternative<OutputPin::PeekPollDataFunc>(outputPin.data))
             {
@@ -193,10 +195,10 @@ void NAV::FlowExecutor::execute()
                            return link.connectedNode->isInitialized();
                        }))
                 {
-                    if (auto obs = (node->**callback)(true)) // Peek the data
+                    if (auto obs = (node->**callback)(i, true)) // Peek the data
                     {
                         LOG_TRACE("    Adding pin '{}' to data poll event list with time {}.", outputPin.name, obs->insTime);
-                        node->pollEvents.insert(std::make_pair(obs->insTime, &outputPin));
+                        node->pollEvents.insert(std::make_pair(obs->insTime, std::make_pair(&outputPin, i)));
                     }
                 }
             }
