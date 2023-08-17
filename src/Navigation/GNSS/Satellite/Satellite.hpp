@@ -33,10 +33,10 @@ class Satellite
     /// @param[in] transTime Transmit time to calculate the satellite position for
     [[nodiscard]] Orbit::Pos calcSatellitePos(const InsTime& transTime) const;
     /// @brief Calculates position and velocity of the satellite at transmission time
-    /// @param[in] transTime Transmit time to calculate the satellite position for
+    /// @param[in] transTime Transmit time to calculate the satellite position and velocity for
     [[nodiscard]] Orbit::PosVel calcSatellitePosVel(const InsTime& transTime) const;
     /// @brief Calculates position, velocity and acceleration of the satellite at transmission time
-    /// @param[in] transTime Transmit time to calculate the satellite position for
+    /// @param[in] transTime Transmit time to calculate the satellite position, velocity and acceleration for
     [[nodiscard]] Orbit::PosVelAccel calcSatellitePosVelAccel(const InsTime& transTime) const;
 
     /// @brief Calculates the Variance of the satellite position in [m]

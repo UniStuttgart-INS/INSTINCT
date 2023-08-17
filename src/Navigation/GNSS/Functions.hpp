@@ -42,6 +42,24 @@ namespace NAV
 /// @note See \cite Groves2013 Groves, ch. 8.5.4, eq. 8.57, p. 344
 [[nodiscard]] double calcSatAzimuth(const Eigen::Vector3d& n_lineOfSightUnitVector);
 
+/// @brief Calculates the Earth rotation/Sagnac correction
+/// @param[in] e_posAnt Position of the user antenna in ECEF frame coordinates
+/// @param[in] e_satPos Position of the satellite in ECEF frame coordinates
+/// @return Earth rotation/Sagnac correction [m]
+///
+/// @note See \cite SpringerHandbookGNSS2017 Springer Handbook ch. 19.1.1, eq. 19.7, p. 562
+[[nodiscard]] double calcSagnacCorrection(const Eigen::Vector3d& e_posAnt, const Eigen::Vector3d& e_satPos);
+
+/// @brief Calculates the Range-rate Earth rotation/Sagnac correction
+/// @param[in] e_posAnt Position of the user antenna in ECEF frame coordinates
+/// @param[in] e_satPos Position of the satellite in ECEF frame coordinates
+/// @param[in] e_velAnt Velocity of the user antenna in ECEF frame coordinates
+/// @param[in] e_satVel Velocity of the satellite in ECEF frame coordinates
+/// @return Range-rate Earth rotation/Sagnac correction [m/s]
+///
+/// @note See \cite Groves2013 Groves ch. 8.5.3, eq. 8.46, p. 342
+[[nodiscard]] double calcSagnacRateCorrection(const Eigen::Vector3d& e_posAnt, const Eigen::Vector3d& e_satPos, const Eigen::Vector3d& e_velAnt, const Eigen::Vector3d& e_satVel);
+
 /// @brief Transforms a doppler-shift measurement into a pseudorange-rate measurement
 /// @param[in] doppler The doppler-shift measurement to transform [Hz]
 /// @param[in] freq Frequency the measurement originates from

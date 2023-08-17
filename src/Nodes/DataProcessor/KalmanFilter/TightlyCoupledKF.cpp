@@ -1629,8 +1629,8 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         const auto& obsData = gnssObs->data[obsIdx];
         auto satId = obsData.satSigId.toSatId();
 
-        if ((obsData.satSigId.freq & _filterFreq)                                                                     // frequency is selected in GUI
-            && (obsData.code & _filterCode)                                                                           // code is selected in GUI
+        if ((obsData.satSigId.freq() & _filterFreq)                                                                   // frequency is selected in GUI
+            && (obsData.satSigId.code & _filterCode)                                                                  // code is selected in GUI
             && obsData.pseudorange                                                                                    // has a valid pseudorange
             && std::find(_excludedSatellites.begin(), _excludedSatellites.end(), satId) == _excludedSatellites.end()) // is not excluded
         {
@@ -1643,7 +1643,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
                         LOG_DATA("{}: Satellite {} is skipped because the signal is not healthy.", nameId(), satId);
                         continue;
                     }
-                    LOG_DATA("{}: Using observation from {} {}", nameId(), obsData.satSigId, obsData.code);
+                    LOG_DATA("{}: Using observation from {} {}", nameId(), obsData.satSigId, obsData.satSigId.code);
                     calcData.emplace_back(obsIdx, satNavData);
                     if (std::find(availSatelliteSystems.begin(), availSatelliteSystems.end(), satId.satSys) == availSatelliteSystems.end())
                     {
@@ -1675,7 +1675,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
 
             nDopplerMeas++;
             // TODO: Find out what this is used for and find a way to use it, after the GLONASS orbit calculation is working
-            if (obsData.satSigId.freq & (R01 | R02))
+            if (obsData.satSigId.freq() & (R01 | R02))
             {
                 if (auto satNavData = std::dynamic_pointer_cast<GLONASSEphemeris>(calcData[i].satNavData))
                 {
@@ -1683,7 +1683,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
                 }
             }
 
-            calcData[i].pseudorangeRate = doppler2psrRate(obsData.doppler.value(), obsData.satSigId.freq, freqNum);
+            calcData[i].pseudorangeRate = doppler2psrRate(obsData.doppler.value(), obsData.satSigId.freq(), freqNum);
         }
     }
 
@@ -1696,7 +1696,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         LOG_DATA("{}: satellite {}", nameId(), obsData.satSigId);
         LOG_DATA("{}:     pseudorange  {}", nameId(), obsData.pseudorange.value().value);
 
-        auto satClk = calcData[i].satNavData->calcClockCorrections(gnssObs->insTime, obsData.pseudorange.value().value, obsData.satSigId.freq);
+        auto satClk = calcData[i].satNavData->calcClockCorrections(gnssObs->insTime, obsData.pseudorange.value().value, obsData.satSigId.freq());
         calcData[i].satClkBias = satClk.bias;
         calcData[i].satClkDrift = satClk.drift;
         LOG_DATA("{}:     satClkBias {}, satClkDrift {}", nameId(), calcData[i].satClkBias, calcData[i].satClkDrift);
@@ -1819,9 +1819,8 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         psrMeas(static_cast<int>(ix)) = obsData.pseudorange.value().value /* + (multipath and/or NLOS errors) + (tracking errors) */;
         LOG_DATA("{}:     psrMeas({}) {}", nameId(), ix, psrMeas(static_cast<int>(ix)));
         // Estimated modulation ionosphere propagation error [m]
-        double dpsr_I = calcIonosphericTimeDelay(static_cast<double>(gnssObs->insTime.toGPSweekTow().tow), obsData.satSigId.freq, lla_position,
-                                                 calc.satElevation, calc.satAzimuth, _ionosphereModel, &ionosphericCorrections)
-                        * InsConst::C;
+        double dpsr_I = calcIonosphericDelay(static_cast<double>(gnssObs->insTime.toGPSweekTow().tow), obsData.satSigId.freq(), -128, lla_position,
+                                             calc.satElevation, calc.satAzimuth, _ionosphereModel, &ionosphericCorrections);
         LOG_DATA("{}:     dpsr_I {} [m] (Estimated modulation ionosphere propagation error)", nameId(), dpsr_I);
 
         auto tropo = calcTroposphericDelayAndMapping(gnssObs->insTime, lla_position, calc.satElevation, calc.satAzimuth, _troposphereModels);

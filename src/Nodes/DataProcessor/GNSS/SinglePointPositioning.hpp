@@ -20,10 +20,19 @@
 #include "Navigation/GNSS/Core/Frequency.hpp"
 #include "Navigation/GNSS/Core/Code.hpp"
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
-#include "Navigation/GNSS/Core/ReceiverClock.hpp"
+#include "Navigation/GNSS/Positioning/SppAlgorithm.hpp"
 #include "Navigation/Atmosphere/Ionosphere/Ionosphere.hpp"
 #include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
+
 #include "Navigation/Transformations/Units.hpp"
+#include "Navigation/Math/KalmanFilter.hpp"
+#include "Navigation/Math/LeastSquares.hpp"
+#include "Navigation/GNSS/Functions.hpp"
+#include "Navigation/GNSS/Satellite/internal/SatNavData.hpp"
+
+#include "NodeData/GNSS/GnssObs.hpp"
+#include "NodeData/GNSS/GnssNavInfo.hpp"
+#include "NodeData/GNSS/SppSolution.hpp"
 
 namespace NAV
 {
@@ -68,9 +77,7 @@ class SinglePointPositioning : public Node
     constexpr static size_t INPUT_PORT_INDEX_GNSS_OBS = 0;      ///< @brief GnssObs
     constexpr static size_t INPUT_PORT_INDEX_GNSS_NAV_INFO = 1; ///< @brief GnssNavInfo
 
-    constexpr static size_t OUTPUT_PORT_INDEX_SPPSOL = 0; ///< @brief Flow (PosVel)
-
-    // --------------------------------------------------------------- Gui -----------------------------------------------------------------
+    constexpr static size_t OUTPUT_PORT_INDEX_SPPSOL = 0; ///< @brief Flow (SppSol)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -88,13 +95,7 @@ class SinglePointPositioning : public Node
     /// Frequencies used for calculation (GUI filter)
     Frequency _filterFreq = G01;
     /// Codes used for calculation (GUI filter)
-    Code _filterCode = Code::G1C | Code::G2C | Code_G5I_G5Q_G5X
-                       | Code_E1B_E1C_E1X | Code_E5I_E5Q_E5X | Code_E6B_E6C_E6X | Code_E7I_E7Q_E7X | Code_E8I_E8Q_E8X
-                       | Code::R1C | Code::R2C | Code_R3I_R3Q_R3X | Code_R4A_R4B_R4X | Code_R6A_R6B_R6X
-                       | Code_B1D_B1P_B1X | Code_B2I_B2Q_B2X | Code_B5D_B5P_B5X | Code_B6I_B6Q_B6X | Code_B7I_B7Q_B7X | Code_B8D_B8P_B8X
-                       | Code::J1C | Code_J2S_J2L_J2X | Code_J5I_J5Q_J5X | Code_J6S_J6L_J6X
-                       | Code::I5A | Code::I9A
-                       | Code::S1C | Code_S5I_S5Q_S5X;
+    Code _filterCode = Code_Default;
     /// List of satellites to exclude
     std::vector<SatId> _excludedSatellites;
     /// Elevation cut-off angle for satellites in [rad]
@@ -106,18 +107,14 @@ class SinglePointPositioning : public Node
     /// Troposphere Models used for the calculation
     TroposphereModelSelection _troposphereModels;
 
-    /// Use the weighted least squares algorithm
-    bool _useWeightedLeastSquares = true;
+    /// GNSS measurement error model to use
+    GnssMeasurementErrorModel _gnssMeasurementErrorModel;
 
-    // ------------------------------------------------------------ Algorithm --------------------------------------------------------------
+    /// Estimator type
+    GNSS::Positioning::SPP::EstimatorType _estimatorType = GNSS::Positioning::SPP::EstimatorType::WEIGHTED_LEAST_SQUARES;
 
-    /// Estimated position in ECEF frame [m]
-    Eigen::Vector3d _e_position = Eigen::Vector3d::Zero();
-    /// Estimated velocity in ECEF frame [m/s]
-    Eigen::Vector3d _e_velocity = Eigen::Vector3d::Zero();
-
-    /// Estimated receiver clock parameters
-    ReceiverClock _recvClk;
+    /// State estimated by the algorithm
+    GNSS::Positioning::SPP::State _state;
 
     /// @brief Receive Function for the Gnss Observations
     /// @param[in] queue Queue with all the received data messages

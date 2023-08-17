@@ -48,7 +48,6 @@ inline bool operator==(const GnssObs::ObservationData::CarrierPhase& lhs, const 
 inline bool operator==(const GnssObs::ObservationData& lhs, const GnssObs::ObservationData& rhs)
 {
     REQUIRE(lhs.satSigId == rhs.satSigId);
-    REQUIRE(lhs.code == rhs.code);
     REQUIRE(lhs.pseudorange == rhs.pseudorange);
     REQUIRE(lhs.carrierPhase == rhs.carrierPhase);
     REQUIRE(lhs.doppler == rhs.doppler);

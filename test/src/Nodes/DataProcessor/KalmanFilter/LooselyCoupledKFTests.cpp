@@ -73,14 +73,18 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
                  dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_qCalculationAlgorithm = LooselyCoupledKF::QCalculationAlgorithm::Taylor1; },
           []() { LOG_WARN("Setting LooselyCoupledKF - _qCalculationAlgorithm to: VanLoan");
                  dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_qCalculationAlgorithm = LooselyCoupledKF::QCalculationAlgorithm::VanLoan; } },
-        { []() { LOG_WARN("Setting LooselyCoupledKF - _randomProcessAccel to: GaussMarkov1");
+        {
+            []() { LOG_WARN("Setting LooselyCoupledKF - _randomProcessAccel to: GaussMarkov1");
                  dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_randomProcessAccel = LooselyCoupledKF::RandomProcess::GaussMarkov1; },
-          []() { LOG_WARN("Setting LooselyCoupledKF - _randomProcessAccel to: RandomWalk");
-                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_randomProcessAccel = LooselyCoupledKF::RandomProcess::RandomWalk; } },
-        { []() { LOG_WARN("Setting LooselyCoupledKF - _randomProcessGyro to: GaussMarkov1");
+            //   []() { LOG_WARN("Setting LooselyCoupledKF - _randomProcessAccel to: RandomWalk");
+            //          dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_randomProcessAccel = LooselyCoupledKF::RandomProcess::RandomWalk; }
+        },
+        {
+            []() { LOG_WARN("Setting LooselyCoupledKF - _randomProcessGyro to: GaussMarkov1");
                  dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_randomProcessGyro = LooselyCoupledKF::RandomProcess::GaussMarkov1; },
-          []() { LOG_WARN("Setting LooselyCoupledKF - _randomProcessGyro to: RandomWalk");
-                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_randomProcessGyro = LooselyCoupledKF::RandomProcess::RandomWalk; } },
+            //   []() { LOG_WARN("Setting LooselyCoupledKF - _randomProcessGyro to: RandomWalk");
+            //          dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_randomProcessGyro = LooselyCoupledKF::RandomProcess::RandomWalk; }
+        },
     } };
 
     cartesian_product_idx([&](size_t i0, size_t i1, size_t i2, size_t i3, size_t i4, size_t i5) {

@@ -90,6 +90,8 @@ class Code
     /// @brief Enumeration of all Codes
     enum Enum
     {
+        None, ///< None
+
         G1C, ///< GPS L1 - C/A-code
         G1S, ///< GPS L1 - L1C-D (data)
         G1L, ///< GPS L1 - L1C-P (pilot)
@@ -290,11 +292,15 @@ class Code
     using Set = std::bitset<COUNT>;
 
     /// Default constructor for an empty code
-    Code() = default;
+    constexpr Code() = default;
 
     /// @brief Constructor from a biset
     /// @param[in] set Bitset with values to construct the Code from
-    explicit Code(const Set& set) : value(set) {}
+    constexpr explicit Code(const Set& set) : value(set) {}
+
+    /// @brief Constructor from a frequency
+    /// @param[in] freq Frequency to set all codes for
+    explicit Code(Frequency_ freq);
 
     /// @brief Constructor from a single code value
     /// @param[in] e Code enum value to construct the code from
@@ -305,7 +311,7 @@ class Code
 
     /// @brief std::bitset conversion operator
     /// @return The bitset representation of the type
-    explicit operator Set() const { return value; }
+    constexpr explicit operator Set() const { return value; }
 
     /// @brief std::string conversion operator
     /// @return A std::string representation of the type
@@ -335,6 +341,16 @@ class Code
     /// @param[in] first First GNSS signal code
     /// @param[in] second Second GNSS signal code
     static bool IsCodeCombined(Code first, Code second);
+
+    /// @brief Returns a list with all possible codes
+    static std::vector<Code> GetAll();
+
+    /// @brief Returns the enum value for the code (only one must be set)
+    /// @param code GNSS signal code
+    static Enum GetCodeEnumValue(Code code);
+
+    /// @brief Returns the enum value for the code (only one must be set)
+    [[nodiscard]] Enum getEnumValue() const;
 
     // #####################################################################################################################################
 
@@ -611,6 +627,21 @@ const Code Code_I9B_I9C_I9X = Code::I9B | Code::I9C | Code::I9X; ///< RS (data, 
 
 const Code Code_S5I_S5Q_S5X = Code::S5I | Code::S5Q | Code::S5X; ///< L5 (data, pilot, combined)
 
+const Code Code_ALL = Code(Code::Set().set()); ///< All codes set
+/// Default selection for codes
+const Code Code_Default = Code(Code::Set().set())
+                          & ~Code(Code::G1P)  // GPS L1 - P-code (unencrypted)
+                          & ~Code(Code::G1W)  // GPS L1 - Semicodeless P(Y) tracking (Z-tracking)
+                          & ~Code(Code::G1Y)  // GPS L1 - Y-code (with decryption)
+                          & ~Code(Code::G1M)  // GPS L1 - M-code
+                          & ~Code(Code::G1N)  // GPS L1 - codeless
+                          & ~Code(Code::G2D)  // GPS L2 - Semi-codeless P(Y) tracking (L1 C/A + (P2-P1))
+                          & ~Code(Code::G2P)  // GPS L2 - P-code (unencrypted)
+                          & ~Code(Code::G2W)  // GPS L2 - Semicodeless P(Y) tracking (Z-tracking)
+                          & ~Code(Code::G2Y)  // GPS L2 - Y-code (with decryption)
+                          & ~Code(Code::G2M)  // GPS L2 - M-code
+                          & ~Code(Code::G2N); // GPS L2 - codeless
+
 /// @brief Shows a ComboBox to select signal codes
 /// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
 /// @param[in, out] code Reference to the code object to select
@@ -618,6 +649,23 @@ const Code Code_S5I_S5Q_S5X = Code::S5I | Code::S5Q | Code::S5X; ///< L5 (data, 
 bool ShowCodeSelector(const char* label, Code& code, const Frequency& filterFreq);
 
 } // namespace NAV
+
+namespace std
+{
+
+/// @brief Hash function for Frequency (needed for unordered_map)
+template<>
+struct hash<NAV::Code>
+{
+    /// @brief Hash function for signal code
+    /// @param[in] c Signal code
+    /// @return Has value for the signal code
+    std::size_t operator()(const NAV::Code& c) const
+    {
+        return static_cast<size_t>(c.getEnumValue());
+    }
+};
+} // namespace std
 
 #ifndef DOXYGEN_IGNORE
 

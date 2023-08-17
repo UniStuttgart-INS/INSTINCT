@@ -21,6 +21,7 @@
 #include "Navigation/Atmosphere/Ionosphere/IonosphericCorrections.hpp"
 #include "Navigation/GNSS/Satellite/Satellite.hpp"
 #include "util/Container/Pair.hpp"
+#include "util/Logger.hpp"
 
 namespace NAV
 {
@@ -37,21 +38,21 @@ class GnssNavInfo
 
     /// @brief Calculates position, velocity and acceleration of the satellite at transmission time
     /// @param[in] satId Satellite identifier
-    /// @param[in] transTime Transmit time to calculate the satellite position for
+    /// @param[in] transTime Transmit time of the signal
     [[nodiscard]] Orbit::Pos calcSatellitePos(const SatId& satId, const InsTime& transTime) const
     {
         return m_satellites.at(satId).calcSatellitePos(transTime);
     }
     /// @brief Calculates position, velocity and acceleration of the satellite at transmission time
     /// @param[in] satId Satellite identifier
-    /// @param[in] transTime Transmit time to calculate the satellite position for
+    /// @param[in] transTime Transmit time of the signal
     [[nodiscard]] Orbit::PosVel calcSatellitePosVel(const SatId& satId, const InsTime& transTime) const
     {
         return m_satellites.at(satId).calcSatellitePosVel(transTime);
     }
     /// @brief Calculates position, velocity and acceleration of the satellite at transmission time
     /// @param[in] satId Satellite identifier
-    /// @param[in] transTime Transmit time to calculate the satellite position for
+    /// @param[in] transTime Transmit time of the signal
     [[nodiscard]] Orbit::PosVelAccel calcSatellitePosVelAccel(const SatId& satId, const InsTime& transTime) const
     {
         return m_satellites.at(satId).calcSatellitePosVelAccel(transTime);
@@ -59,7 +60,7 @@ class GnssNavInfo
 
     /// @brief Calculates clock bias and drift of the satellite
     /// @param[in] satId Satellite identifier
-    /// @param[in] recvTime Receiver time to calculate the satellite position for
+    /// @param[in] recvTime Receiver time of the signal
     /// @param[in] dist Distance between receiver and satellite (normally the pseudorange) [m]
     /// @param[in] freq Signal Frequency
     [[nodiscard]] Clock::Corrections calcSatelliteClockCorrections(const SatId& satId, const InsTime& recvTime, double dist, const Frequency& freq) const

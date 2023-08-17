@@ -578,7 +578,7 @@ TEST_CASE("[KeyedMatrix] rowKeys & colKeys", "[KeyedMatrix]")
         THREE,
     };
 
-    KeyedMatrixX<double, Keys, int> mat(Eigen::Matrix3d{}, { ONE, TWO, THREE }, { 1, 2, 3 });
+    KeyedMatrixX<double, Keys, int> mat(Eigen::Matrix3d::Zero(), { ONE, TWO, THREE }, { 1, 2, 3 });
     REQUIRE(mat.rowKeys() == std::vector<Keys>{ ONE, TWO, THREE });
     REQUIRE(mat.colKeys() == std::vector<int>{ 1, 2, 3 });
 }
@@ -596,7 +596,7 @@ TEST_CASE("[KeyedMatrix] hasRow(s) & hasCol(s)", "[KeyedMatrix]")
         FIVE,
     };
 
-    KeyedMatrixX<double, Keys, int> mat(Eigen::Matrix3d{}, { ONE, TWO, THREE }, { 1, 2, 3 });
+    KeyedMatrixX<double, Keys, int> mat(Eigen::Matrix3d::Zero(), { ONE, TWO, THREE }, { 1, 2, 3 });
     REQUIRE(mat.hasRow(TWO));
     REQUIRE(!mat.hasRow(FOUR));
 
@@ -1017,28 +1017,30 @@ TEST_CASE("[KeyedMatrix] Formatting", "[KeyedMatrix]")
     auto logger = initializeTestLogger();
 
     Eigen::Matrix3d eigMat;
-    eigMat << 1, 2.1234567, 3,
-        4.1234567, 5.1234567, 6.1234567,
-        7.1234567, 8.1234567, 9.1234567;
+    eigMat << 1, 2.1234567, -20.1234567,
+        3.1234567e-6, 4.1234567e10, -3.1234567e-6,
+        -4.1234567e10, 20.1234567, -20.1234567;
 
     {
-        KeyedMatrixX<double, int, std::string> mat(eigMat, { 1, 2, 3 }, { "long-column-name", "2", "3" });
+        KeyedMatrixX<double, int, std::string> mat(eigMat, { 1, 2, 3 }, { "1", "2", "3" });
 
         std::string output = fmt::format("{}", mat);
-        std::string expected = "   long-column-name       2       3\n"
-                               "1                 1  2.1235       3\n"
-                               "2         4.1234567  5.1235  6.1235\n"
-                               "3         7.1234567  8.1235  9.1235";
+        std::string expected = "           1         2         3\n"
+                               "1          1      2.12     -20.1\n"
+                               "2   3.12e-06  4.12e+10 -3.12e-06\n"
+                               "3  -4.12e+10      20.1     -20.1";
+
         REQUIRE(output == expected);
     }
     {
         KeyedMatrix<double, std::string, std::string, 3, 3> mat(eigMat, { "1", "2", "123" }, { "long-column-name", "2", "3" });
 
         std::string output = fmt::format("{}", mat);
-        std::string expected = "     long-column-name       2       3\n"
-                               "  1                 1  2.1235       3\n"
-                               "  2         4.1234567  5.1235  6.1235\n"
-                               "123         7.1234567  8.1235  9.1235";
+        std::string expected = "     long-column-name         2         3\n"
+                               "  1                 1      2.12     -20.1\n"
+                               "  2     3.1234567e-06  4.12e+10 -3.12e-06\n"
+                               "123    -4.1234567e+10      20.1     -20.1";
+
         REQUIRE(output == expected);
     }
 }
@@ -1047,26 +1049,33 @@ TEST_CASE("[KeyedVector] Formatting", "[KeyedVector]")
 {
     auto logger = initializeTestLogger();
 
-    Eigen::Vector4d eigVec(1, 2.1234567, 3, 4);
+    Eigen::VectorXd eigVec(7);
+    eigVec << 1, 20.1234567, -20.1234567, 3.1234567e-6, 4.1234567e10, -3.1234567e-6, -4.1234567e10;
 
     {
-        KeyedVectorX<double, int> vec(eigVec, { 1, 2, 3, 4 });
+        KeyedVectorX<double, int> vec(eigVec, { 1, 2, 3, 4, 5, 6, 7 });
 
         std::string output = fmt::format("{}", vec);
-        std::string expected = "1       1\n"
-                               "2  2.1235\n"
-                               "3       3\n"
-                               "4       4";
+        std::string expected = "1          1\n"
+                               "2       20.1\n"
+                               "3      -20.1\n"
+                               "4   3.12e-06\n"
+                               "5   4.12e+10\n"
+                               "6  -3.12e-06\n"
+                               "7  -4.12e+10";
         REQUIRE(output == expected);
     }
     {
-        KeyedVector<double, std::string, 4> vec(eigVec, { "1", "2", "3", "1234" });
+        KeyedVector<double, std::string, 7> vec(eigVec, { "1", "2", "3", "1234", "dsfdsfdsfdfdsfdsf", "6", "7" });
 
         std::string output = fmt::format("{}", vec);
-        std::string expected = "   1       1\n"
-                               "   2  2.1235\n"
-                               "   3       3\n"
-                               "1234       4";
+        std::string expected = "                1          1\n"
+                               "                2       20.1\n"
+                               "                3      -20.1\n"
+                               "             1234   3.12e-06\n"
+                               "dsfdsfdsfdfdsfdsf   4.12e+10\n"
+                               "                6  -3.12e-06\n"
+                               "                7  -4.12e+10";
         REQUIRE(output == expected);
     }
 }
@@ -1075,22 +1084,22 @@ TEST_CASE("[KeyedRowVector] Formatting", "[KeyedRowVector]")
 {
     auto logger = initializeTestLogger();
 
-    Eigen::RowVector4d eigVec(1, 2.1234567, 3, 4);
+    Eigen::RowVectorXd eigVec(7);
+    eigVec << 1, 20.1234567, -20.1234567, 3.1234567e-6, 4.1234567e10, -3.1234567e-6, -4.1234567e10;
 
     {
-        KeyedRowVectorX<double, int> vec(eigVec, { 1, 2, 3, 4 });
-
+        KeyedRowVectorX<double, int> vec(eigVec, { 1, 2, 3, 4, 5, 6, 7 });
         std::string output = fmt::format("{}", vec);
-        std::string expected = "     1       2       3       4\n"
-                               "     1  2.1235       3       4";
+        std::string expected = "        1         2         3         4         5         6         7\n"
+                               "        1  20.12346 -20.12346  3.12e-06  4.12e+10 -3.12e-06 -4.12e+10";
         REQUIRE(output == expected);
     }
     {
-        KeyedRowVector<double, std::string, 4> vec(eigVec, { "1", "2", "3", "1234" });
+        KeyedRowVector<double, std::string, 7> vec(eigVec, { "1", "2", "3", "1234", "dsfdsfdsfdfdsfdsf", "6", "7" });
 
         std::string output = fmt::format("{}", vec);
-        std::string expected = "     1       2       3    1234\n"
-                               "     1  2.1235       3       4";
+        std::string expected = "        1         2         3      1234 dsfdsfdsfdfdsfdsf         6         7\n"
+                               "        1  20.12346 -20.12346  3.12e-06       41234567000 -3.12e-06 -4.12e+10";
         REQUIRE(output == expected);
     }
 }

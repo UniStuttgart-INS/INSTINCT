@@ -363,7 +363,7 @@ void RinexObsFile::readHeader()
                 Frequency freq = getFrequencyFromBand(satSys, line.at(i + 1) - '0');
                 Code code = Code::fromFreqAttr(freq, line.at(i + 2));
 
-                _obsDescription[satSys].push_back(ObservationDescription{ .type = type, .frequency = freq, .code = code });
+                _obsDescription[satSys].push_back(ObservationDescription{ .type = type, .code = code });
 
                 debugOutput += fmt::format("({},{},{})", obsTypeToChar(type), freq, code);
 
@@ -596,7 +596,7 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
             }
             catch (const std::exception& e)
             {
-                if ((*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).pseudorange)
+                if ((*gnssObs)({ obsDesc.code, satNum }).pseudorange)
                 {
                     if (obsDesc.type == ObsType::L) // Phase
                     {
@@ -658,19 +658,19 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
             switch (obsDesc.type)
             {
             case ObsType::C: // Code / Pseudorange
-                (*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).pseudorange = { .value = observation,
-                                                                                    .SSI = SSI };
+                (*gnssObs)({ obsDesc.code, satNum }).pseudorange = { .value = observation,
+                                                                     .SSI = SSI };
                 break;
             case ObsType::L: // Phase
-                (*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).carrierPhase = { .value = observation,
-                                                                                     .SSI = SSI,
-                                                                                     .LLI = LLI };
+                (*gnssObs)({ obsDesc.code, satNum }).carrierPhase = { .value = observation,
+                                                                      .SSI = SSI,
+                                                                      .LLI = LLI };
                 break;
             case ObsType::D: // Doppler
-                (*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).doppler = observation;
+                (*gnssObs)({ obsDesc.code, satNum }).doppler = observation;
                 break;
             case ObsType::S: // Raw signal strength(carrier to noise ratio)
-                (*gnssObs)(obsDesc.frequency, satNum, obsDesc.code).CN0 = observation;
+                (*gnssObs)({ obsDesc.code, satNum }).CN0 = observation;
                 break;
             case ObsType::I:
             case ObsType::X:
@@ -679,26 +679,28 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
                 break;
             }
 
-            LOG_DATA("{}:     {}-{}-{}-{}: {}, LLI {}, SSI {}", nameId(),
-                     obsTypeToChar(obsDesc.type), obsDesc.frequency, obsDesc.code, satNum,
+            gnssObs->satData(SatId{ satSys, satNum }).frequencies |= obsDesc.code.getFrequency();
+
+            LOG_DATA("{}:     {}-{}-{}: {}, LLI {}, SSI {}", nameId(),
+                     obsTypeToChar(obsDesc.type), obsDesc.code, satNum,
                      observation, LLI, SSI);
 
-            if (_eraseLessPreciseCodes) { eraseLessPreciseCodes(gnssObs, obsDesc.frequency, satNum); }
+            if (_eraseLessPreciseCodes) { eraseLessPreciseCodes(gnssObs, obsDesc.code.getFrequency(), satNum); }
         }
 
         if (gnssObs->data.back().pseudorange)
         {
             if (!gnssObs->data.back().carrierPhase)
             {
-                LOG_WARN("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing carrier phase.", nameId(), epochTime.toYMDHMS());
+                LOG_DATA("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing carrier phase.", nameId(), epochTime.toYMDHMS());
             }
             if (!gnssObs->data.back().doppler)
             {
-                LOG_WARN("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing doppler.", nameId(), epochTime.toYMDHMS());
+                LOG_DATA("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing doppler.", nameId(), epochTime.toYMDHMS());
             }
             if (!gnssObs->data.back().CN0)
             {
-                LOG_WARN("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing raw signal strength(carrier to noise ratio).", nameId(), epochTime.toYMDHMS());
+                LOG_DATA("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing raw signal strength(carrier to noise ratio).", nameId(), epochTime.toYMDHMS());
             }
         }
     }
@@ -915,23 +917,23 @@ void RinexObsFile::eraseLessPreciseCodes(const std::shared_ptr<NAV::GnssObs>& gn
 {
     auto eraseLessPrecise = [&](const Code& third, const Code& second, const Code& prime) {
         auto eraseSatDataWithCode = [&](const Code& code) {
-            LOG_DATA("{}: Searching for {}-{}-{}", nameId(), freq, satNum, code);
-            auto iter = std::find_if(gnssObs->data.begin(), gnssObs->data.end(), [freq, satNum, code](const GnssObs::ObservationData& idData) {
-                return idData.satSigId.freq == freq && idData.satSigId.satNum == satNum && idData.code == code;
+            LOG_DATA("{}: Searching for {}-{}", nameId(), code, satNum);
+            auto iter = std::find_if(gnssObs->data.begin(), gnssObs->data.end(), [code, satNum](const GnssObs::ObservationData& idData) {
+                return idData.satSigId == SatSigId{ code, satNum };
             });
             if (iter != gnssObs->data.end())
             {
-                LOG_DATA("{}: Erasing {}-{}-{}", nameId(), freq, satNum, code);
+                LOG_DATA("{}: Erasing {}-{}", nameId(), code, satNum);
                 gnssObs->data.erase(iter);
             }
         };
 
-        if (gnssObs->contains(freq, satNum, prime))
+        if (gnssObs->contains({ prime, satNum }))
         {
             eraseSatDataWithCode(second);
             eraseSatDataWithCode(third);
         }
-        else if (gnssObs->contains(freq, satNum, second))
+        else if (gnssObs->contains({ second, satNum }))
         {
             eraseSatDataWithCode(third);
         }

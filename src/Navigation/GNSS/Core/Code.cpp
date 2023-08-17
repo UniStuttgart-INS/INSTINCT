@@ -17,6 +17,37 @@
 namespace NAV
 {
 
+Code::Code(Frequency_ freq)
+{
+    if (freq & G01) { *this |= G1C | G1S | G1L | G1X | G1P | G1W | G1Y | G1M | G1N; }
+    if (freq & G02) { *this |= G2C | G2D | G2S | G2L | G2X | G2P | G2W | G2Y | G2M | G2N; }
+    if (freq & G05) { *this |= G5I | G5Q | G5X; }
+    if (freq & E01) { *this |= E1A | E1B | E1C | E1X | E1Z; }
+    if (freq & E05) { *this |= E5I | E5Q | E5X; }
+    if (freq & E06) { *this |= E6A | E6B | E6C | E6X | E6Z; }
+    if (freq & E07) { *this |= E7I | E7Q | E7X; }
+    if (freq & E08) { *this |= E8I | E8Q | E8X; }
+    if (freq & R01) { *this |= R1C | R1P; }
+    if (freq & R02) { *this |= R2C | R2P; }
+    if (freq & R03) { *this |= R3I | R3Q | R3X; }
+    if (freq & R04) { *this |= R4A | R4B | R4X; }
+    if (freq & R06) { *this |= R6A | R6B | R6X; }
+    if (freq & B01) { *this |= B1D | B1P | B1X; }
+    if (freq & B02) { *this |= B2I | B2Q | B2X; }
+    if (freq & B05) { *this |= B5D | B5P | B5X; }
+    if (freq & B06) { *this |= B6I | B6Q | B6X | B6A; }
+    if (freq & B07) { *this |= B7I | B7Q | B7X | B7D | B7P | B7Z; }
+    if (freq & B08) { *this |= B8D | B8P | B8X; }
+    if (freq & J01) { *this |= J1C | J1S | J1L | J1X | J1Z; }
+    if (freq & J02) { *this |= J2S | J2L | J2X; }
+    if (freq & J05) { *this |= J5I | J5Q | J5X | J5D | J5P | J5Z; }
+    if (freq & J06) { *this |= J6S | J6L | J6X | J6E | J6Z; }
+    if (freq & I05) { *this |= I5A | I5B | I5C | I5X; }
+    if (freq & I09) { *this |= I9A | I9B | I9C | I9X; }
+    if (freq & S01) { value |= S1C; }
+    if (freq & S05) { *this |= S5I | S5Q | S5X; }
+}
+
 Code::operator std::string() const
 {
     const std::string filler = " | ";
@@ -599,6 +630,31 @@ bool Code::IsCodeCombined(Code first, Code second)
            || ((first & Code_I5B_I5C_I5X) && (second & Code_I5B_I5C_I5X))
            || ((first & Code_I9B_I9C_I9X) && (second & Code_I9B_I9C_I9X))
            || ((first & Code_S5I_S5Q_S5X) && (second & Code_S5I_S5Q_S5X));
+}
+
+std::vector<Code> Code::GetAll()
+{
+    std::vector<Code> codes;
+    codes.reserve(COUNT);
+    for (size_t i = 1; i < static_cast<size_t>(COUNT); i++)
+    {
+        codes.emplace_back(static_cast<Enum>(i));
+    }
+    return codes;
+}
+
+Code::Enum Code::GetCodeEnumValue(Code code)
+{
+    for (size_t i = 0; i < static_cast<size_t>(COUNT); i++)
+    {
+        if (static_cast<Enum>(i) == code) { return static_cast<Enum>(i); }
+    }
+    return Code::None;
+}
+
+Code::Enum Code::getEnumValue() const
+{
+    return GetCodeEnumValue(*this);
 }
 
 // #########################################################################################################################################

@@ -116,6 +116,16 @@ struct SatelliteSystem
     /// @brief Returns a continuous enumeration of the object
     [[nodiscard]] size_t toEnumeration() const;
 
+    /// @brief Get a vector representation of the specified Satellite Systems
+    /// @param[in] satSys Satellite System to get the vector for
+    static std::vector<SatelliteSystem> ToVector(SatelliteSystem satSys);
+
+    /// @brief Get a vector representation of the specified Satellite Systems
+    [[nodiscard]] std::vector<SatelliteSystem> toVector() const;
+
+    /// @brief Returns a list with all possible satellite systems
+    static std::vector<SatelliteSystem> GetAll();
+
   private:
     /// @brief Internal value
     SatelliteSystem_ value = SatelliteSystem_::SatSys_None;
@@ -335,13 +345,44 @@ namespace std
 {
 /// @brief Hash function for SatelliteSystem (needed for unordered_map)
 template<>
+struct hash<NAV::SatelliteSystem_>
+{
+    /// @brief Hash function for SatelliteSystem
+    /// @param[in] satSys Satellite system
+    std::size_t operator()(const NAV::SatelliteSystem_& satSys) const
+    {
+        using namespace NAV; // NOLINT(google-build-using-namespace)
+        switch (satSys)
+        {
+        case SatSys_None:
+            return 1;
+        case GPS:
+            return 100;
+        case GAL:
+            return 200;
+        case GLO:
+            return 300;
+        case BDS:
+            return 400;
+        case QZSS:
+            return 500;
+        case IRNSS:
+            return 600;
+        case SBAS:
+            return 700;
+        }
+        return 0;
+    }
+};
+/// @brief Hash function for SatelliteSystem (needed for unordered_map)
+template<>
 struct hash<NAV::SatelliteSystem>
 {
     /// @brief Hash function for SatelliteSystem
-    /// @param[in] f Satellite system
-    std::size_t operator()(const NAV::SatelliteSystem& f) const
+    /// @param[in] satSys Satellite system
+    std::size_t operator()(const NAV::SatelliteSystem& satSys) const
     {
-        return std::hash<NAV::SatelliteSystem_>{}(NAV::SatelliteSystem_(f));
+        return std::hash<NAV::SatelliteSystem_>()(NAV::SatelliteSystem_(satSys));
     }
 };
 } // namespace std

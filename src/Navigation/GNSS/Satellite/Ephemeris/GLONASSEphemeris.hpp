@@ -116,11 +116,11 @@ class GLONASSEphemeris final : public SatNavData
     /// @brief Move assignment operator
     GLONASSEphemeris& operator=(GLONASSEphemeris&&) = delete;
 
-    /// @brief Calculates the Variance of the satellite position in [m]
+    /// @brief Calculates the Variance of the satellite position in [m^2]
     [[nodiscard]] double calcSatellitePositionVariance() const final;
 
     /// @brief Calculates clock bias and drift of the satellite
-    /// @param[in] recvTime Receiver time to calculate the satellite position for
+    /// @param[in] recvTime Receive time of the signal
     /// @param[in] dist Distance between receiver and satellite (normally the pseudorange) [m]
     /// @param[in] freq Signal Frequency
     /// @note See https://gssc.esa.int/navipedia/index.php/Clock_Modelling

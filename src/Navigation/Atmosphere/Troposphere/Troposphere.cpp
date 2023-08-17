@@ -236,7 +236,7 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& /* insTime */, const 
 {
     if (lla_pos(2) < -1000 || lla_pos(2) > 1e4)
     {
-        LOG_WARN("Not calculating tropospheric delay, due to altitude being invalid: {}m", lla_pos(2));
+        LOG_TRACE("Not calculating tropospheric delay, due to altitude being invalid: {}m", lla_pos(2));
         return {};
     }
 
@@ -355,6 +355,13 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& /* insTime */, const 
              .ZWD = zwd,
              .zhdMappingFactor = zhdMappingFactor,
              .zwdMappingFactor = zwdMappingFactor };
+}
+
+double tropoErrorVar(double dpsr_T, double elevation)
+{
+    constexpr double ERR_SAAS = 0.3; // Saastamoinen model error std [m] (maximum zenith wet delay - formulas with worst possible values)
+
+    return dpsr_T == 0.0 ? 0.0 : std::pow(ERR_SAAS / (std::sin(elevation) + 0.1), 2);
 }
 
 void to_json(json& j, const AtmosphereModels& obj)

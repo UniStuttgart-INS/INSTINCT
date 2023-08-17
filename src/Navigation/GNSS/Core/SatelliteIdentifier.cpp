@@ -31,13 +31,13 @@ void from_json(const json& j, SatId& data)
 void to_json(json& j, const SatSigId& data)
 {
     j = json{
-        { "freq", data.freq },
+        { "code", data.code },
         { "num", data.satNum },
     };
 }
 void from_json(const json& j, SatSigId& data)
 {
-    j.at("freq").get_to(data.freq);
+    j.at("code").get_to(data.code);
     j.at("num").get_to(data.satNum);
 }
 

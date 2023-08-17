@@ -18,7 +18,7 @@
 namespace NAV
 {
 
-double calcIonosphericTimeDelay_Klobuchar(double tow, Frequency freq,
+double calcIonosphericTimeDelay_Klobuchar(double tow, Frequency freq, int8_t freqNum,
                                           double latitude, double longitude,
                                           double elevation, double azimuth,
                                           const std::array<double, 4>& alpha, const std::array<double, 4>& beta)
@@ -91,7 +91,7 @@ double calcIonosphericTimeDelay_Klobuchar(double tow, Frequency freq,
     LOG_DATA("T_iono_L1 {} [s] (Ionospheric delay)", T_iono);
 
     // T_iono is referred to the L1 frequency; if the user is operating on the L2 frequency, the correction term must be multiplied by γ
-    T_iono *= ratioFreqSquared(G01, freq);
+    T_iono *= ratioFreqSquared(G01, freq, 0, freqNum);
     LOG_DATA("T_iono    {} [s] (Ionospheric delay for requested frequency)", T_iono);
 
     return T_iono;

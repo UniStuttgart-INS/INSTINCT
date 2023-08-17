@@ -15,6 +15,9 @@
 
 #include <string>
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json; ///< json namespace
+
 namespace NAV
 {
 /// @brief List of all time systems
@@ -101,7 +104,10 @@ class TimeSystem
 
     /// @brief std::string conversion operator
     /// @return A std::string representation of the type
-    explicit operator std::string() const
+    explicit operator std::string() const { return toString(); }
+
+    /// @brief Converts the time system into a string
+    [[nodiscard]] constexpr const char* toString() const
     {
         switch (value)
         {
@@ -126,10 +132,74 @@ class TimeSystem
         return "None";
     }
 
+    /// Continuous enum for the time systems
+    enum class TimeSystemEnum
+    {
+        TimeSys_None, ///< No Time system
+        UTC,          ///< Coordinated Universal Time
+        GPST,         ///< GPS Time
+        GLNT,         ///< GLONASS Time (GLONASST)
+        GST,          ///< Galileo System Time
+        BDT,          ///< BeiDou Time
+        QZSST,        ///< Quasi-Zenith Satellite System Time
+        IRNSST,       ///< Indian Regional Navigation Satellite System Time
+        COUNT,        ///< Amount of items in the enum
+    };
+
+    /// @brief Returns the enum value (only one must be set)
+    /// @param timeSystem Time system
+    static TimeSystemEnum GetTimeSystemEnumValue(TimeSystem timeSystem);
+
+    /// @brief Returns the enum value (only one must be set)
+    [[nodiscard]] TimeSystemEnum getEnumValue() const;
+
+    /// Constructor
+    /// @param[in] timeSystem Time system enum value
+    constexpr TimeSystem(TimeSystemEnum timeSystem) // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
+    {
+        switch (timeSystem)
+        {
+        case TimeSystemEnum::UTC:
+            value = UTC;
+            break;
+        case TimeSystemEnum::GPST:
+            value = GPST;
+            break;
+        case TimeSystemEnum::GLNT:
+            value = GLNT;
+            break;
+        case TimeSystemEnum::GST:
+            value = GST;
+            break;
+        case TimeSystemEnum::BDT:
+            value = BDT;
+            break;
+        case TimeSystemEnum::QZSST:
+            value = QZSST;
+            break;
+        case TimeSystemEnum::IRNSST:
+            value = IRNSST;
+            break;
+        default:
+            value = TimeSys_None;
+            break;
+        }
+    }
+
   private:
     /// @brief Internal value
     TimeSystem_ value = TimeSystem_::TimeSys_None;
 };
+
+/// @brief Shows a ComboBox to select the time system
+/// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
+/// @param[in] timeSystem Reference to the time system to select
+bool ComboTimeSystem(const char* label, TimeSystem& timeSystem);
+
+/// @brief Converts the enum to a string
+/// @param[in] timeSystem Enum value to convert into text
+/// @return String representation of the enum
+const char* to_string(TimeSystem::TimeSystemEnum timeSystem);
 
 /// @brief Allows combining flags of the TimeSystem enum.
 /// @param[in] lhs Left-hand side enum value.
@@ -317,6 +387,15 @@ constexpr bool operator!=(const TimeSystem& lhs, const TimeSystem_& rhs) { retur
 /// @param[in] rhs Right-hand side of the operator
 /// @return Whether the comparison was successful
 constexpr bool operator!=(const TimeSystem_& lhs, const TimeSystem& rhs) { return !(lhs == rhs); }
+
+/// @brief Converts the provided TimeSystem into a json object
+/// @param[out] j Return Json object
+/// @param[in] timeSystem TimeSystem to convert
+void to_json(json& j, const TimeSystem& timeSystem);
+/// @brief Converts the provided json object into a TimeSystem
+/// @param[in] j Json object with the time system
+/// @param[out] timeSystem TimeSystem to return
+void from_json(const json& j, TimeSystem& timeSystem);
 
 } // namespace NAV
 

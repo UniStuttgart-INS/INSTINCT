@@ -132,6 +132,12 @@ class Frequency
         return GetL1(value);
     }
 
+    /// Counts the amount of frequencies contained
+    [[nodiscard]] size_t count() const;
+
+    /// @brief Returns a list with all possible frequencies
+    static std::vector<Frequency> GetAll();
+
   private:
     /// @brief Internal value
     Frequency_ value = Frequency_::Freq_None;
@@ -454,14 +460,87 @@ namespace std
 {
 /// @brief Hash function for Frequency (needed for unordered_map)
 template<>
+struct hash<NAV::Frequency_>
+{
+    /// @brief Hash function for Frequency
+    /// @param[in] f Satellite frequency
+    /// @return Has value for the frequency
+    std::size_t operator()(const NAV::Frequency_& f) const
+    {
+        using namespace NAV; // NOLINT(google-build-using-namespace)
+        switch (f)
+        {
+        case Freq_None:
+            return 2;
+        case G01:
+            return 101;
+        case G02:
+            return 102;
+        case G05:
+            return 103;
+        case E01:
+            return 201;
+        case E05:
+            return 202;
+        case E06:
+            return 203;
+        case E07:
+            return 204;
+        case E08:
+            return 205;
+        case R01:
+            return 301;
+        case R02:
+            return 302;
+        case R03:
+            return 303;
+        case R04:
+            return 304;
+        case R06:
+            return 305;
+        case B01:
+            return 401;
+        case B02:
+            return 402;
+        case B05:
+            return 403;
+        case B06:
+            return 404;
+        case B07:
+            return 405;
+        case B08:
+            return 406;
+        case J01:
+            return 501;
+        case J02:
+            return 502;
+        case J05:
+            return 503;
+        case J06:
+            return 504;
+        case I05:
+            return 601;
+        case I09:
+            return 602;
+        case S01:
+            return 701;
+        case S05:
+            return 702;
+        }
+
+        return 0;
+    }
+};
+/// @brief Hash function for Frequency (needed for unordered_map)
+template<>
 struct hash<NAV::Frequency>
 {
     /// @brief Hash function for Frequency
     /// @param[in] f Satellite frequency
-    /// @return Has value for the satellite identifier
+    /// @return Has value for the frequency
     std::size_t operator()(const NAV::Frequency& f) const
     {
-        return std::hash<NAV::Frequency_>{}(NAV::Frequency_(f));
+        return std::hash<NAV::Frequency_>()(NAV::Frequency_(f));
     }
 };
 } // namespace std

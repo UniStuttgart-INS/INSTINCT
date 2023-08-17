@@ -231,7 +231,6 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
                     }
                 }
                 revertButton(style.DigitalBitGap, NodeEditorApplication::imPlotReferenceStyle.DigitalBitGap, "DigitalBitGap");
-
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
                 ImGui::Text("Plot Styling");

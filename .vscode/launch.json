@@ -84,7 +84,6 @@
             "request": "attach",
             "program": "${workspaceFolder}/build/bin/Debug/instinct",
             "MIMode": "gdb",
-            "miDebuggerPath": "/usr/bin/gdb",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -105,7 +104,6 @@
             "preLaunchTask": "TEST: Build project",
             "program": "${workspaceFolder}/build/bin/Debug/tests",
             "MIMode": "gdb",
-            "miDebuggerPath": "/usr/bin/gdb",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",

@@ -56,6 +56,18 @@ void from_json(const json& j, Plot::PinData::PlotData& data)
 /// @brief Write info to a json object
 /// @param[out] j Json output
 /// @param[in] data Object to read info from
+void to_json(json& j, const std::vector<Plot::PinData::PlotData>& data)
+{
+    for (const auto& i : data)
+    {
+        if (i.isDynamic) { continue; }
+        j.push_back(i);
+    }
+}
+
+/// @brief Write info to a json object
+/// @param[out] j Json output
+/// @param[in] data Object to read info from
 void to_json(json& j, const Plot::PinData& data)
 {
     j = json{
@@ -175,6 +187,7 @@ void to_json(json& j, const Plot::PlotInfo::PlotItem& data)
     j = json{
         { "pinIndex", data.pinIndex },
         { "dataIndex", data.dataIndex },
+        { "displayName", data.displayName },
         { "axis", data.axis },
         { "style", data.style },
     };
@@ -191,6 +204,10 @@ void from_json(const json& j, Plot::PlotInfo::PlotItem& data)
     if (j.contains("dataIndex"))
     {
         j.at("dataIndex").get_to(data.dataIndex);
+    }
+    if (j.contains("displayName"))
+    {
+        j.at("displayName").get_to(data.displayName);
     }
     if (j.contains("axis"))
     {
@@ -318,9 +335,18 @@ NAV::Plot::Plot()
     _lockConfigDuringRun = false;
     _guiConfigDefaultWindowSize = { 750, 650 };
 
-    _dataIdentifier = { Pos::type(), PosVel::type(), PosVelAtt::type(), LcKfInsGnssErrors::type(), TcKfInsGnssErrors::type(),
-                        SppSolution::type(), RtklibPosObs::type(), UbloxObs::type(),
-                        ImuObs::type(), KvhObs::type(), ImuObsWDelta::type(), VectorNavBinaryOutput::type() };
+    _dataIdentifier = { Pos::type(),
+                        PosVel::type(),
+                        PosVelAtt::type(),
+                        LcKfInsGnssErrors::type(),
+                        TcKfInsGnssErrors::type(),
+                        SppSolution::type(),
+                        RtklibPosObs::type(),
+                        UbloxObs::type(),
+                        ImuObs::type(),
+                        KvhObs::type(),
+                        ImuObsWDelta::type(),
+                        VectorNavBinaryOutput::type() };
 
     updateNumberOfInputPins();
 
@@ -620,34 +646,14 @@ void NAV::Plot::guiConfig()
         {
             flow::ApplyChanges();
             LOG_DEBUG("{}: overridePositionStartValues changed to {}", nameId(), _overridePositionStartValues);
-            if (_overridePositionStartValues)
-            {
-                if (std::isnan(_originLongitude))
-                {
-                    _originLongitude = 0;
-                }
-                if (std::isnan(_originLatitude))
-                {
-                    _originLatitude = 0;
-                }
-            }
+            if (!_originPosition) { _originPosition = gui::widgets::PositionWithFrame(); }
         }
         if (_overridePositionStartValues)
         {
             ImGui::Indent();
-            double latitudeOrigin = rad2deg(_originLatitude);
-            if (ImGui::InputDoubleL(fmt::format("Latitude Origin##{}", size_t(id)).c_str(), &latitudeOrigin))
+            if (gui::widgets::PositionInput(fmt::format("Origin##{}", size_t(id)).c_str(), _originPosition.value(), gui::widgets::PositionInputLayout::SINGLE_ROW))
             {
-                _originLatitude = deg2rad(latitudeOrigin);
                 flow::ApplyChanges();
-                LOG_DEBUG("{}: latitudeOrigin changed to {}", nameId(), latitudeOrigin);
-            }
-            double longitudeOrigin = rad2deg(_originLongitude);
-            if (ImGui::InputDoubleL(fmt::format("Longitude Origin##{}", size_t(id)).c_str(), &longitudeOrigin))
-            {
-                _originLongitude = deg2rad(longitudeOrigin);
-                flow::ApplyChanges();
-                LOG_DEBUG("{}: longitudeOrigin changed to {}", nameId(), longitudeOrigin);
             }
             ImGui::Unindent();
         }
@@ -937,9 +943,9 @@ void NAV::Plot::guiConfig()
                 {
                     if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND PlotItem {} - {}", size_t(id), plotIdx).c_str()))
                     {
-                        auto [pinIndex, dataIndex] = *static_cast<std::pair<size_t, size_t>*>(payloadData->Data);
+                        auto [pinIndex, dataIndex, displayName] = *static_cast<std::tuple<size_t, size_t, std::string*>*>(payloadData->Data);
 
-                        auto iter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ pinIndex, dataIndex });
+                        auto iter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ pinIndex, dataIndex, *displayName });
                         if (iter != plot.plotItems.end())
                         {
                             plot.plotItems.erase(iter);
@@ -964,7 +970,7 @@ void NAV::Plot::guiConfig()
                         }
                         std::string label = plotData.displayName;
 
-                        if (auto iter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ plot.selectedPin, dataIndex });
+                        if (auto iter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ plot.selectedPin, dataIndex, plotData.displayName });
                             iter != plot.plotItems.end())
                         {
                             label += fmt::format(" (Y{})", iter->axis + 1 - 3);
@@ -974,7 +980,7 @@ void NAV::Plot::guiConfig()
                         if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
                         {
                             // Data is copied into heap inside the drag and drop
-                            auto pinAndDataIndex = std::make_pair(plot.selectedPin, dataIndex);
+                            auto pinAndDataIndex = std::make_tuple(plot.selectedPin, dataIndex, &plotData.displayName);
                             ImGui::SetDragDropPayload(fmt::format("DND PlotItem {} - {}", size_t(id), plotIdx).c_str(),
                                                       &pinAndDataIndex, sizeof(pinAndDataIndex));
                             ImGui::TextUnformatted(label.c_str());
@@ -1018,19 +1024,35 @@ void NAV::Plot::guiConfig()
                     ImPlot::SetupAxisScale(ImAxis_Y3, plot.yAxesScale[2]);
                 }
 
+                std::vector<PlotInfo::PlotItem> plotItemsToRemove;
                 for (auto& plotItem : plot.plotItems)
                 {
                     auto& pinData = _pinData.at(plotItem.pinIndex);
+
+                    // Lock the buffer so no data can be inserted till plotting finishes
+                    std::scoped_lock<std::mutex> guard(pinData.mutex);
+                    // The next line needs already be locked, otherwise we have a data race
+
+                    if (pinData.plotData.size() <= plotItem.dataIndex) { continue; } // Dynamic data can not be available yet
                     auto& plotData = pinData.plotData.at(plotItem.dataIndex);
+                    if (plotData.displayName != plotItem.displayName)
+                    {
+                        if (plotItem.displayName.empty())
+                        {
+                            plotItem.displayName = plotData.displayName; // old flow file where it was not set yet
+                        }
+                        else
+                        {
+                            plotItemsToRemove.push_back(plotItem);
+                            continue;
+                        }
+                    }
 
                     if (plotData.hasData
                         && (plotItem.axis == ImAxis_Y1
                             || (plotItem.axis == ImAxis_Y2 && (plot.plotFlags & ImPlotFlags_YAxis2))
                             || (plotItem.axis == ImAxis_Y3 && (plot.plotFlags & ImPlotFlags_YAxis3))))
                     {
-                        // Lock the buffer so no data can be inserted till plotting finishes
-                        std::scoped_lock<std::mutex> guard(pinData.mutex);
-
                         ImPlot::SetAxis(plotItem.axis);
 
                         // Style options
@@ -1085,7 +1107,7 @@ void NAV::Plot::guiConfig()
                         if (ImPlot::BeginDragDropSourceItem(plotName.c_str()))
                         {
                             // Data is copied into heap inside the drag and drop
-                            auto pinAndDataIndex = std::make_pair(plotItem.pinIndex, plotItem.dataIndex);
+                            auto pinAndDataIndex = std::make_tuple(plotItem.pinIndex, plotItem.dataIndex, &plotItem.displayName);
                             ImGui::SetDragDropPayload(fmt::format("DND PlotItem {} - {}", size_t(id), plotIdx).c_str(), &pinAndDataIndex, sizeof(pinAndDataIndex));
                             ImGui::TextUnformatted(plotData.displayName.c_str());
                             ImPlot::EndDragDropSource();
@@ -1208,19 +1230,27 @@ void NAV::Plot::guiConfig()
                     }
                 }
 
+                for (const auto& plotItem : plotItemsToRemove)
+                {
+                    LOG_WARN("{}: Erasing plot item '{}' from plot '{}', because it does not match the order the data came in",
+                             nameId(), plotItem.displayName, plot.headerText);
+                    std::erase(plot.plotItems, plotItem);
+                    flow::ApplyChanges();
+                }
+
                 auto addDragDropPlotToAxis = [this, plotIdx, &plot](ImAxis dragDropAxis) {
                     if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND PlotItem {} - {}", size_t(id), plotIdx).c_str()))
                     {
-                        auto [pinIndex, dataIndex] = *static_cast<std::pair<size_t, size_t>*>(payloadData->Data);
+                        auto [pinIndex, dataIndex, displayName] = *static_cast<std::tuple<size_t, size_t, std::string*>*>(payloadData->Data);
 
-                        auto iter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ pinIndex, dataIndex });
+                        auto iter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ pinIndex, dataIndex, *displayName });
                         if (iter != plot.plotItems.end()) // Item gets dragged from one axis to another
                         {
                             iter->axis = dragDropAxis;
                         }
                         else
                         {
-                            plot.plotItems.emplace_back(pinIndex, dataIndex, dragDropAxis);
+                            plot.plotItems.emplace_back(pinIndex, dataIndex, *displayName, dragDropAxis);
                         }
                         flow::ApplyChanges();
                     }
@@ -1285,10 +1315,9 @@ void NAV::Plot::guiConfig()
     j["pinData"] = _pinData;
     j["plots"] = _plots;
     j["overridePositionStartValues"] = _overridePositionStartValues;
-    if (_overridePositionStartValues)
+    if (_overridePositionStartValues && _originPosition)
     {
-        j["startValue_North"] = _originLatitude;
-        j["startValue_East"] = _originLongitude;
+        j["originPosition"] = _originPosition.value();
     }
 
     return j;
@@ -1356,13 +1385,13 @@ void NAV::Plot::restore(json const& j)
     }
     if (_overridePositionStartValues)
     {
-        if (j.contains("startValue_North"))
+        if (j.contains("originPosition"))
         {
-            j.at("startValue_North").get_to(_originLatitude);
+            _originPosition = j.at("originPosition").get<gui::widgets::PositionWithFrame>();
         }
-        if (j.contains("startValue_East"))
+        else
         {
-            j.at("startValue_East").get_to(_originLongitude);
+            _originPosition = gui::widgets::PositionWithFrame();
         }
     }
 }
@@ -1372,11 +1401,7 @@ bool NAV::Plot::initialize()
     LOG_TRACE("{}: called", nameId());
 
     _startTime.reset();
-    if (!_overridePositionStartValues)
-    {
-        _originLatitude = std::nan("");
-        _originLongitude = std::nan("");
-    }
+    if (!_overridePositionStartValues) { _originPosition.reset(); }
 
     for (auto& pinData : _pinData)
     {
@@ -1386,6 +1411,10 @@ bool NAV::Plot::initialize()
         {
             plotData.hasData = false;
             plotData.buffer.clear();
+        }
+        if (pinData.dynamicDataStartIndex != -1) // Erase all dynamic data
+        {
+            pinData.plotData.erase(pinData.plotData.begin() + pinData.dynamicDataStartIndex, pinData.plotData.end());
         }
     }
 
@@ -1655,6 +1684,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "QZSS system time drift difference StDev [s/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "IRNSS system time drift difference StDev [s/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "SBAS system time drift difference StDev [s/s]");
+            _pinData.at(pinIndex).dynamicDataStartIndex = static_cast<int>(i);
         }
         else if (startPin.dataIdentifier.front() == RtklibPosObs::type())
         {
@@ -2104,9 +2134,10 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
 
         for (size_t dataIndex = i; dataIndex < _pinData.at(pinIndex).plotData.size(); dataIndex++)
         {
+            const auto& displayName = _pinData.at(pinIndex).plotData.at(dataIndex).displayName;
             for (auto& plot : _plots)
             {
-                auto plotItemIter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ pinIndex, dataIndex });
+                auto plotItemIter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ pinIndex, dataIndex, displayName });
                 if (plotItemIter != plot.plotItems.end())
                 {
                     plot.plotItems.erase(plotItemIter);
@@ -2183,13 +2214,46 @@ void NAV::Plot::updateNumberOfPlots()
 
 void NAV::Plot::addData(size_t pinIndex, size_t dataIndex, double value)
 {
-    auto& pinData = _pinData.at(pinIndex);
+    auto& plotData = _pinData.at(pinIndex).plotData.at(dataIndex);
 
-    pinData.plotData.at(dataIndex).buffer.push_back(value);
+    plotData.buffer.push_back(value);
     if (!std::isnan(value))
     {
-        pinData.plotData.at(dataIndex).hasData = true;
+        plotData.hasData = true;
     }
+}
+
+void NAV::Plot::addData(size_t pinIndex, std::string displayName, double value)
+{
+    auto& pinData = _pinData.at(pinIndex);
+
+    auto plotData = std::find_if(pinData.plotData.begin(), pinData.plotData.end(), [&](const auto& data) {
+        return data.displayName == displayName;
+    });
+    if (plotData == pinData.plotData.end()) // Item is new
+    {
+        pinData.addPlotDataItem(pinData.plotData.size(), displayName);
+        plotData = pinData.plotData.end() - 1;
+        plotData->isDynamic = true;
+
+        // We assume, there is a static item at the front (the time)
+        plotData->buffer.reserve(pinData.plotData.front().buffer.size());
+        for (size_t i = plotData->buffer.size(); i < pinData.plotData.front().buffer.size() - 1; i++) // Add empty NaN values to shift it to the correct start point
+        {
+            plotData->buffer.push_back(std::nan(""));
+        }
+    }
+    else
+    {
+        // Item was there, but it could have been missing and came again
+        plotData->buffer.reserve(pinData.plotData.front().buffer.size());
+        for (size_t i = plotData->buffer.size(); i < pinData.plotData.front().buffer.size() - 1; i++) // Add empty NaN values to shift it to the correct start point
+        {
+            plotData->buffer.push_back(std::nan(""));
+        }
+    }
+
+    addData(pinIndex, static_cast<size_t>(plotData - pinData.plotData.begin()), value);
 }
 
 void NAV::Plot::plotBoolean(const InsTime& insTime, size_t pinIdx)
@@ -2403,24 +2467,22 @@ void NAV::Plot::plotPos(const std::shared_ptr<const Pos>& obs, size_t pinIndex)
     // [𝜙, λ, h] Latitude, Longitude and altitude in [rad, rad, m]
     Eigen::Vector3d lla_position = obs->lla_position();
 
-    if (std::isnan(_originLatitude))
+    if (!_originPosition)
     {
-        _originLatitude = lla_position.x();
+        _originPosition = { .frame = gui::widgets::PositionWithFrame::ReferenceFrame::ECEF,
+                            .e_position = obs->e_position() };
     }
-    int sign = lla_position.x() > _originLatitude ? 1 : -1;
+
+    int sign = lla_position.x() > _originPosition->latitude() ? 1 : -1;
     // North/South deviation [m]
     double northSouth = calcGeographicalDistance(lla_position.x(), lla_position.y(),
-                                                 _originLatitude, lla_position.y())
+                                                 _originPosition->latitude(), lla_position.y())
                         * sign;
 
-    if (std::isnan(_originLongitude))
-    {
-        _originLongitude = lla_position.y();
-    }
-    sign = lla_position.y() > _originLongitude ? 1 : -1;
+    sign = lla_position.y() > _originPosition->longitude() ? 1 : -1;
     // East/West deviation [m]
     double eastWest = calcGeographicalDistance(lla_position.x(), lla_position.y(),
-                                               lla_position.x(), _originLongitude)
+                                               lla_position.x(), _originPosition->longitude())
                       * sign;
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
@@ -2447,24 +2509,22 @@ void NAV::Plot::plotPosVel(const std::shared_ptr<const PosVel>& obs, size_t pinI
     // [𝜙, λ, h] Latitude, Longitude and altitude in [rad, rad, m]
     Eigen::Vector3d lla_position = obs->lla_position();
 
-    if (std::isnan(_originLatitude))
+    if (!_originPosition)
     {
-        _originLatitude = lla_position.x();
+        _originPosition = { .frame = gui::widgets::PositionWithFrame::ReferenceFrame::ECEF,
+                            .e_position = obs->e_position() };
     }
-    int sign = lla_position.x() > _originLatitude ? 1 : -1;
+
+    int sign = lla_position.x() > _originPosition->latitude() ? 1 : -1;
     // North/South deviation [m]
     double northSouth = calcGeographicalDistance(lla_position.x(), lla_position.y(),
-                                                 _originLatitude, lla_position.y())
+                                                 _originPosition->latitude(), lla_position.y())
                         * sign;
 
-    if (std::isnan(_originLongitude))
-    {
-        _originLongitude = lla_position.y();
-    }
-    sign = lla_position.y() > _originLongitude ? 1 : -1;
+    sign = lla_position.y() > _originPosition->longitude() ? 1 : -1;
     // East/West deviation [m]
     double eastWest = calcGeographicalDistance(lla_position.x(), lla_position.y(),
-                                               lla_position.x(), _originLongitude)
+                                               lla_position.x(), _originPosition->longitude())
                       * sign;
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
@@ -2497,24 +2557,22 @@ void NAV::Plot::plotPosVelAtt(const std::shared_ptr<const PosVelAtt>& obs, size_
     // [𝜙, λ, h] Latitude, Longitude and altitude in [rad, rad, m]
     Eigen::Vector3d lla_position = obs->lla_position();
 
-    if (std::isnan(_originLatitude))
+    if (!_originPosition)
     {
-        _originLatitude = lla_position.x();
+        _originPosition = { .frame = gui::widgets::PositionWithFrame::ReferenceFrame::ECEF,
+                            .e_position = obs->e_position() };
     }
-    int sign = lla_position.x() > _originLatitude ? 1 : -1;
+
+    int sign = lla_position.x() > _originPosition->latitude() ? 1 : -1;
     // North/South deviation [m]
     double northSouth = calcGeographicalDistance(lla_position.x(), lla_position.y(),
-                                                 _originLatitude, lla_position.y())
+                                                 _originPosition->latitude(), lla_position.y())
                         * sign;
 
-    if (std::isnan(_originLongitude))
-    {
-        _originLongitude = lla_position.y();
-    }
-    sign = lla_position.y() > _originLongitude ? 1 : -1;
+    sign = lla_position.y() > _originPosition->longitude() ? 1 : -1;
     // East/West deviation [m]
     double eastWest = calcGeographicalDistance(lla_position.x(), lla_position.y(),
-                                               lla_position.x(), _originLongitude)
+                                               lla_position.x(), _originPosition->longitude())
                       * sign;
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
@@ -2634,24 +2692,22 @@ void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, s
     if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
     size_t i = 0;
 
-    if (std::isnan(_originLatitude))
+    if (!_originPosition)
     {
-        _originLatitude = obs->lla_position().x();
+        _originPosition = { .frame = gui::widgets::PositionWithFrame::ReferenceFrame::ECEF,
+                            .e_position = obs->e_position() };
     }
-    int sign = obs->lla_position().x() > _originLatitude ? 1 : -1;
+
+    int sign = obs->lla_position().x() > _originPosition->latitude() ? 1 : -1;
     // North/South deviation [m]
     double northSouth = calcGeographicalDistance(obs->lla_position().x(), obs->lla_position().y(),
-                                                 _originLatitude, obs->lla_position().y())
+                                                 _originPosition->latitude(), obs->lla_position().y())
                         * sign;
 
-    if (std::isnan(_originLongitude))
-    {
-        _originLongitude = obs->lla_position().y();
-    }
-    sign = obs->lla_position().y() > _originLongitude ? 1 : -1;
+    sign = obs->lla_position().y() > _originPosition->longitude() ? 1 : -1;
     // East/West deviation [m]
     double eastWest = calcGeographicalDistance(obs->lla_position().x(), obs->lla_position().y(),
-                                               obs->lla_position().x(), _originLongitude)
+                                               obs->lla_position().x(), _originPosition->longitude())
                       * sign;
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
@@ -2677,34 +2733,34 @@ void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, s
     // SppSolution
     addData(pinIndex, i++, static_cast<double>(obs->nSatellitesPosition));
     addData(pinIndex, i++, static_cast<double>(obs->nSatellitesVelocity));
-    addData(pinIndex, i++, obs->recvClk.bias.value);      // Receiver clock bias [s]
-    addData(pinIndex, i++, obs->recvClk.drift.value);     // Receiver clock drift [s/s]
-    addData(pinIndex, i++, obs->e_positionStdev()(0, 0)); // X-ECEF StDev [m]
-    addData(pinIndex, i++, obs->e_positionStdev()(1, 1)); // Y-ECEF StDev [m]
-    addData(pinIndex, i++, obs->e_positionStdev()(2, 2)); // Z-ECEF StDev [m]
-    addData(pinIndex, i++, obs->e_positionStdev()(0, 1)); // XY-ECEF StDev [m]
-    addData(pinIndex, i++, obs->e_positionStdev()(0, 2)); // XZ-ECEF StDev [m]
-    addData(pinIndex, i++, obs->e_positionStdev()(1, 2)); // YZ-ECEF StDev [m]
-    addData(pinIndex, i++, obs->n_positionStdev()(0, 0)); // North StDev [m]
-    addData(pinIndex, i++, obs->n_positionStdev()(1, 1)); // East StDev [m]
-    addData(pinIndex, i++, obs->n_positionStdev()(2, 2)); // Down StDev [m]
-    addData(pinIndex, i++, obs->n_positionStdev()(0, 1)); // NE-ECEF StDev [m]
-    addData(pinIndex, i++, obs->n_positionStdev()(0, 2)); // ND-ECEF StDev [m]
-    addData(pinIndex, i++, obs->n_positionStdev()(1, 2)); // ED-ECEF StDev [m]
-    addData(pinIndex, i++, obs->e_velocityStdev()(0, 0)); // X velocity ECEF StDev [m/s]
-    addData(pinIndex, i++, obs->e_velocityStdev()(1, 1)); // Y velocity ECEF StDev [m/s]
-    addData(pinIndex, i++, obs->e_velocityStdev()(2, 2)); // Z velocity ECEF StDev [m/s]
-    addData(pinIndex, i++, obs->e_velocityStdev()(0, 1)); // XY velocity StDev [m]
-    addData(pinIndex, i++, obs->e_velocityStdev()(0, 2)); // XZ velocity StDev [m]
-    addData(pinIndex, i++, obs->e_velocityStdev()(1, 2)); // YZ velocity StDev [m]
-    addData(pinIndex, i++, obs->n_velocityStdev()(0, 0)); // North velocity StDev [m/s]
-    addData(pinIndex, i++, obs->n_velocityStdev()(1, 1)); // East velocity StDev [m/s]
-    addData(pinIndex, i++, obs->n_velocityStdev()(2, 2)); // Down velocity StDev [m/s]
-    addData(pinIndex, i++, obs->n_velocityStdev()(0, 1)); // NE velocity StDev [m]
-    addData(pinIndex, i++, obs->n_velocityStdev()(0, 2)); // ND velocity StDev [m]
-    addData(pinIndex, i++, obs->n_velocityStdev()(1, 2)); // ED velocity StDev [m]
-    addData(pinIndex, i++, obs->recvClk.bias.stdDev);     // Receiver clock bias StDev [s]
-    addData(pinIndex, i++, obs->recvClk.drift.stdDev);    // Receiver clock drift StDev [s/s]
+    addData(pinIndex, i++, obs->recvClk.bias.value);                                                                                                         // Receiver clock bias [s]
+    addData(pinIndex, i++, obs->recvClk.drift.value);                                                                                                        // Receiver clock drift [s/s]
+    addData(pinIndex, i++, obs->e_positionStdev()(0));                                                                                                       // X-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_positionStdev()(1));                                                                                                       // Y-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_positionStdev()(2));                                                                                                       // Z-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_CovarianceMatrix().rows() >= 1 && obs->e_CovarianceMatrix().cols() >= 2 ? obs->e_CovarianceMatrix()(0, 1) : std::nan("")); // XY-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_CovarianceMatrix().rows() >= 1 && obs->e_CovarianceMatrix().cols() >= 3 ? obs->e_CovarianceMatrix()(0, 2) : std::nan("")); // XZ-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_CovarianceMatrix().rows() >= 2 && obs->e_CovarianceMatrix().cols() >= 3 ? obs->e_CovarianceMatrix()(1, 2) : std::nan("")); // YZ-ECEF StDev [m]
+    addData(pinIndex, i++, obs->n_positionStdev()(0));                                                                                                       // North StDev [m]
+    addData(pinIndex, i++, obs->n_positionStdev()(1));                                                                                                       // East StDev [m]
+    addData(pinIndex, i++, obs->n_positionStdev()(2));                                                                                                       // Down StDev [m]
+    addData(pinIndex, i++, obs->n_CovarianceMatrix().rows() >= 1 && obs->n_CovarianceMatrix().cols() >= 2 ? obs->n_CovarianceMatrix()(0, 1) : std::nan("")); // NE-ECEF StDev [m]
+    addData(pinIndex, i++, obs->n_CovarianceMatrix().rows() >= 1 && obs->n_CovarianceMatrix().cols() >= 3 ? obs->n_CovarianceMatrix()(0, 2) : std::nan("")); // ND-ECEF StDev [m]
+    addData(pinIndex, i++, obs->n_CovarianceMatrix().rows() >= 2 && obs->n_CovarianceMatrix().cols() >= 3 ? obs->n_CovarianceMatrix()(1, 2) : std::nan("")); // ED-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_velocityStdev()(0));                                                                                                       // X velocity ECEF StDev [m/s]
+    addData(pinIndex, i++, obs->e_velocityStdev()(1));                                                                                                       // Y velocity ECEF StDev [m/s]
+    addData(pinIndex, i++, obs->e_velocityStdev()(2));                                                                                                       // Z velocity ECEF StDev [m/s]
+    addData(pinIndex, i++, obs->e_CovarianceMatrix().rows() >= 4 && obs->e_CovarianceMatrix().cols() >= 5 ? obs->e_CovarianceMatrix()(3, 4) : std::nan("")); // XY velocity StDev [m]
+    addData(pinIndex, i++, obs->e_CovarianceMatrix().rows() >= 4 && obs->e_CovarianceMatrix().cols() >= 6 ? obs->e_CovarianceMatrix()(3, 5) : std::nan("")); // XZ velocity StDev [m]
+    addData(pinIndex, i++, obs->e_CovarianceMatrix().rows() >= 5 && obs->e_CovarianceMatrix().cols() >= 6 ? obs->e_CovarianceMatrix()(4, 5) : std::nan("")); // YZ velocity StDev [m]
+    addData(pinIndex, i++, obs->n_velocityStdev()(0));                                                                                                       // North velocity StDev [m/s]
+    addData(pinIndex, i++, obs->n_velocityStdev()(1));                                                                                                       // East velocity StDev [m/s]
+    addData(pinIndex, i++, obs->n_velocityStdev()(2));                                                                                                       // Down velocity StDev [m/s]
+    addData(pinIndex, i++, obs->n_CovarianceMatrix().rows() >= 4 && obs->n_CovarianceMatrix().cols() >= 5 ? obs->n_CovarianceMatrix()(3, 4) : std::nan("")); // NE velocity StDev [m]
+    addData(pinIndex, i++, obs->n_CovarianceMatrix().rows() >= 4 && obs->n_CovarianceMatrix().cols() >= 6 ? obs->n_CovarianceMatrix()(3, 5) : std::nan("")); // ND velocity StDev [m]
+    addData(pinIndex, i++, obs->n_CovarianceMatrix().rows() >= 5 && obs->n_CovarianceMatrix().cols() >= 6 ? obs->n_CovarianceMatrix()(4, 5) : std::nan("")); // ED velocity StDev [m]
+    addData(pinIndex, i++, obs->recvClk.bias.stdDev);                                                                                                        // Receiver clock bias StDev [s]
+    addData(pinIndex, i++, obs->recvClk.drift.stdDev);                                                                                                       // Receiver clock drift StDev [s/s]
 
     addData(pinIndex, i++, static_cast<double>(obs->recvClk.referenceTimeSatelliteSystem.toEnumeration())); // System time reference system
 
@@ -2739,6 +2795,30 @@ void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, s
     addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(QZSS) ? obs->recvClk.sysDriftDiff.at(QZSS).stdDev : std::nan(""));   // QZSS system time drift difference StDev [s/s]
     addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(IRNSS) ? obs->recvClk.sysDriftDiff.at(IRNSS).stdDev : std::nan("")); // IRNSS system time drift difference StDev [s/s]
     addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(SBAS) ? obs->recvClk.sysDriftDiff.at(SBAS).stdDev : std::nan(""));   // SBAS system time drift difference StDev [s/s]
+
+    // Dynamic data
+    for (const auto& satData : obs->satData)
+    {
+        addData(pinIndex, fmt::format("{} SatPos ECEF X [m]", satData.satSigId), satData.e_satPos.x());
+        addData(pinIndex, fmt::format("{} SatPos ECEF Y [m]", satData.satSigId), satData.e_satPos.y());
+        addData(pinIndex, fmt::format("{} SatPos ECEF Z [m]", satData.satSigId), satData.e_satPos.z());
+        addData(pinIndex, fmt::format("{} SatVel ECEF X [m/s]", satData.satSigId), satData.e_satVel.x());
+        addData(pinIndex, fmt::format("{} SatVel ECEF Y [m/s]", satData.satSigId), satData.e_satVel.y());
+        addData(pinIndex, fmt::format("{} SatVel ECEF Z [m/s]", satData.satSigId), satData.e_satVel.z());
+        addData(pinIndex, fmt::format("{} Satellite clock bias [s]", satData.satSigId), satData.satClkBias);
+        addData(pinIndex, fmt::format("{} Satellite clock drift [s/s]", satData.satSigId), satData.satClkDrift);
+        addData(pinIndex, fmt::format("{} Elevation [deg]", satData.satSigId), rad2deg(satData.satElevation));
+        addData(pinIndex, fmt::format("{} Azimuth [deg]", satData.satSigId), rad2deg(satData.satAzimuth));
+        addData(pinIndex, fmt::format("{} Unhealthy (skipped)", satData.satSigId), static_cast<int>(satData.skipped));
+        addData(pinIndex, fmt::format("{} Elevation mask triggered", satData.satSigId), static_cast<int>(satData.elevationMaskTriggered));
+        addData(pinIndex, fmt::format("{} Estimated Pseudorange [m]", satData.satSigId), satData.psrEst);
+        addData(pinIndex, fmt::format("{} Estimated Pseudorange rate [m/s]", satData.satSigId), satData.psrRateEst.has_value() ? satData.psrRateEst.value() : std::nan(""));
+        addData(pinIndex, fmt::format("{} Geometric distance [m]", satData.satSigId), satData.geometricDist);
+        addData(pinIndex, fmt::format("{} Estimated Inter-system clock bias [m]", satData.satSigId), satData.dpsr_clkISB);
+        addData(pinIndex, fmt::format("{} Estimated ionosphere propagation error [m]", satData.satSigId), satData.dpsr_I);
+        addData(pinIndex, fmt::format("{} Estimated troposphere propagation error [m]", satData.satSigId), satData.dpsr_T);
+        addData(pinIndex, fmt::format("{} Sagnac correction [m]", satData.satSigId), satData.dpsr_ie);
+    }
 }
 
 void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs, size_t pinIndex)
@@ -2746,24 +2826,22 @@ void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs,
     if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
     size_t i = 0;
 
-    if (std::isnan(_originLatitude))
+    if (!_originPosition)
     {
-        _originLatitude = obs->lla_position().x();
+        _originPosition = { .frame = gui::widgets::PositionWithFrame::ReferenceFrame::ECEF,
+                            .e_position = obs->e_position() };
     }
-    int sign = obs->lla_position().x() > _originLatitude ? 1 : -1;
+
+    int sign = obs->lla_position().x() > _originPosition->latitude() ? 1 : -1;
     // North/South deviation [m]
     double northSouth = calcGeographicalDistance(obs->lla_position().x(), obs->lla_position().y(),
-                                                 _originLatitude, obs->lla_position().y())
+                                                 _originPosition->latitude(), obs->lla_position().y())
                         * sign;
 
-    if (std::isnan(_originLongitude))
-    {
-        _originLongitude = obs->lla_position().y();
-    }
-    sign = obs->lla_position().y() > _originLongitude ? 1 : -1;
+    sign = obs->lla_position().y() > _originPosition->longitude() ? 1 : -1;
     // East/West deviation [m]
     double eastWest = calcGeographicalDistance(obs->lla_position().x(), obs->lla_position().y(),
-                                               obs->lla_position().x(), _originLongitude)
+                                               obs->lla_position().x(), _originPosition->longitude())
                       * sign;
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
@@ -2865,22 +2943,20 @@ void NAV::Plot::plotUbloxObs(const std::shared_ptr<const UbloxObs>& obs, size_t 
 
     if (lla_position.has_value())
     {
-        if (std::isnan(_originLatitude))
+        if (!_originPosition)
         {
-            _originLatitude = lla_position->x();
+            _originPosition = { .frame = gui::widgets::PositionWithFrame::ReferenceFrame::ECEF,
+                                .e_position = trafo::lla2ecef_WGS84(lla_position.value()) };
         }
-        int sign = lla_position->x() > _originLatitude ? 1 : -1;
+
+        int sign = lla_position->x() > _originPosition->latitude() ? 1 : -1;
         northSouth = calcGeographicalDistance(lla_position->x(), lla_position->y(),
-                                              _originLatitude, lla_position->y())
+                                              _originPosition->latitude(), lla_position->y())
                      * sign;
 
-        if (std::isnan(_originLongitude))
-        {
-            _originLongitude = lla_position->y();
-        }
-        sign = lla_position->y() > _originLongitude ? 1 : -1;
+        sign = lla_position->y() > _originPosition->longitude() ? 1 : -1;
         eastWest = calcGeographicalDistance(lla_position->x(), lla_position->y(),
-                                            lla_position->x(), _originLongitude)
+                                            lla_position->x(), _originPosition->longitude())
                    * sign;
 
         lla_position->x() = rad2deg(lla_position->x());

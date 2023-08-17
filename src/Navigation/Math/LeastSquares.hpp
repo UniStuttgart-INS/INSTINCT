@@ -84,11 +84,11 @@ LeastSquaresResult<Eigen::Vector<typename DerivedA::Scalar, DerivedA::ColsAtComp
     LOG_DATA("RSS = {}", RSS);
 
     // Amount of equations
-    auto n = H.rows();
+    auto m = H.rows();
     // Amount of variables
-    auto m = H.cols();
+    auto n = H.cols();
     // Statistical degrees of freedom
-    auto dof = n - m;
+    auto dof = m - n;
     LOG_DATA("dof = {}", dof);
 
     // Estimated error variance (reduced chi-squared statistic)
@@ -99,7 +99,7 @@ LeastSquaresResult<Eigen::Vector<typename DerivedA::Scalar, DerivedA::ColsAtComp
     Q *= sigma2;
     LOG_DATA("variance = \n{}", Q);
 
-    return { .solution = dx, .variance = Q.cwiseAbs() };
+    return { .solution = dx, .variance = Q };
 }
 
 /// @brief Finds the "weighted least squares" solution
@@ -123,11 +123,11 @@ LeastSquaresResult<Eigen::Vector<typename DerivedA::Scalar, DerivedA::ColsAtComp
     LOG_DATA("RSS = {}", RSS);
 
     // Amount of equations
-    auto n = H.rows();
+    auto m = H.rows();
     // Amount of variables
-    auto m = H.cols();
+    auto n = H.cols();
     // Statistical degrees of freedom
-    auto dof = n - m;
+    auto dof = m - n;
     LOG_DATA("dof = {}", dof);
 
     // Estimated error variance (reduced chi-squared statistic)
@@ -138,7 +138,7 @@ LeastSquaresResult<Eigen::Vector<typename DerivedA::Scalar, DerivedA::ColsAtComp
     Q *= sigma2;
     LOG_DATA("Covariance matrix = \n{}", Q);
 
-    return { .solution = dx, .variance = Q.cwiseAbs() };
+    return { .solution = dx, .variance = Q };
 }
 
 } // namespace NAV

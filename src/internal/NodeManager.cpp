@@ -348,6 +348,7 @@ bool NAV::NodeManager::InitializeAllNodes()
         {
             if (!node->doInitialize(true))
             {
+                LOG_ERROR("Node '{}' could not initialize.", node->nameId());
                 nodeCouldNotInitialize = true;
             }
         }

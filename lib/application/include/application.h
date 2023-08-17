@@ -24,10 +24,10 @@ struct Application
 
     const std::string& GetName() const;
 
-    ImFont* DefaultFont() const;
-    ImFont* WindowFont() const;
-    ImFont* MonoFont() const;
-    ImFont* HeaderFont() const;
+    static ImFont* DefaultFont();
+    static ImFont* WindowFont();
+    static ImFont* MonoFont();
+    static ImFont* HeaderFont();
 
     static void swapDefaultFont(bool big = false);
     static void swapWindowFont(bool big = false);

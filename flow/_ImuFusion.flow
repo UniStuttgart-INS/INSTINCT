@@ -184,22 +184,28 @@
                 "simulationDuration": 100.0,
                 "simulationStopCondition": 0,
                 "splineSampleInterval": 0.1,
-                "startPosition_lla": {
-                    "0": {
-                        "0": 0.0
-                    },
-                    "1": {
-                        "0": 0.0
-                    },
-                    "2": {
-                        "0": 0.0
+                "startPosition": {
+                    "frame": "LLA",
+                    "position": {
+                        "0": {
+                            "0": 0.0
+                        },
+                        "1": {
+                            "0": 0.0
+                        },
+                        "2": {
+                            "0": 0.0
+                        }
                     }
                 },
                 "startTime": {
                     "mjd_day": 51544,
                     "mjd_frac": 0.0
                 },
-                "startTimeEditFormat": 0,
+                "startTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
+                },
                 "startTimeSource": 0,
                 "trajectoryType": 0
             },
@@ -350,22 +356,28 @@
                 "simulationDuration": 100.0,
                 "simulationStopCondition": 0,
                 "splineSampleInterval": 0.1,
-                "startPosition_lla": {
-                    "0": {
-                        "0": 0.0
-                    },
-                    "1": {
-                        "0": 0.0
-                    },
-                    "2": {
-                        "0": 0.0
+                "startPosition": {
+                    "frame": "LLA",
+                    "position": {
+                        "0": {
+                            "0": 0.0
+                        },
+                        "1": {
+                            "0": 0.0
+                        },
+                        "2": {
+                            "0": 0.0
+                        }
                     }
                 },
                 "startTime": {
                     "mjd_day": 51544,
                     "mjd_frac": 0.0
                 },
-                "startTimeEditFormat": 0,
+                "startTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
+                },
                 "startTimeSource": 0,
                 "trajectoryType": 0
             },
@@ -516,22 +528,28 @@
                 "simulationDuration": 100.0,
                 "simulationStopCondition": 0,
                 "splineSampleInterval": 0.1,
-                "startPosition_lla": {
-                    "0": {
-                        "0": 0.0
-                    },
-                    "1": {
-                        "0": 0.0
-                    },
-                    "2": {
-                        "0": 0.0
+                "startPosition": {
+                    "frame": "LLA",
+                    "position": {
+                        "0": {
+                            "0": 0.0
+                        },
+                        "1": {
+                            "0": 0.0
+                        },
+                        "2": {
+                            "0": 0.0
+                        }
                     }
                 },
                 "startTime": {
                     "mjd_day": 51544,
                     "mjd_frac": 0.0
                 },
-                "startTimeEditFormat": 0,
+                "startTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
+                },
                 "startTimeSource": 0,
                 "trajectoryType": 0
             },
@@ -682,22 +700,28 @@
                 "simulationDuration": 100.0,
                 "simulationStopCondition": 0,
                 "splineSampleInterval": 0.1,
-                "startPosition_lla": {
-                    "0": {
-                        "0": 0.0
-                    },
-                    "1": {
-                        "0": 0.0
-                    },
-                    "2": {
-                        "0": 0.0
+                "startPosition": {
+                    "frame": "LLA",
+                    "position": {
+                        "0": {
+                            "0": 0.0
+                        },
+                        "1": {
+                            "0": 0.0
+                        },
+                        "2": {
+                            "0": 0.0
+                        }
                     }
                 },
                 "startTime": {
                     "mjd_day": 51544,
                     "mjd_frac": 0.0
                 },
-                "startTimeEditFormat": 0,
+                "startTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
+                },
                 "startTimeSource": 0,
                 "trajectoryType": 0
             },
@@ -2332,22 +2356,22 @@
                                 "displayName": "ECEF Z error [m]"
                             },
                             {
-                                "displayName": "Accelerometer bias b_X accumulated [m/s^2]"
+                                "displayName": "Accelerometer bias b_X [m/s^2]"
                             },
                             {
-                                "displayName": "Accelerometer bias b_Y accumulated [m/s^2]"
+                                "displayName": "Accelerometer bias b_Y [m/s^2]"
                             },
                             {
-                                "displayName": "Accelerometer bias b_Z accumulated [m/s^2]"
+                                "displayName": "Accelerometer bias b_Z [m/s^2]"
                             },
                             {
-                                "displayName": "Gyroscope bias b_X accumulated [rad/s]"
+                                "displayName": "Gyroscope bias b_X [rad/s]"
                             },
                             {
-                                "displayName": "Gyroscope bias b_Y accumulated [rad/s]"
+                                "displayName": "Gyroscope bias b_Y [rad/s]"
                             },
                             {
-                                "displayName": "Gyroscope bias b_Z accumulated [rad/s]"
+                                "displayName": "Gyroscope bias b_Z [rad/s]"
                             }
                         ],
                         "size": 0,
@@ -2418,22 +2442,22 @@
                                 "displayName": "ECEF Z error [m]"
                             },
                             {
-                                "displayName": "Accelerometer bias b_X accumulated [m/s^2]"
+                                "displayName": "Accelerometer bias b_X [m/s^2]"
                             },
                             {
-                                "displayName": "Accelerometer bias b_Y accumulated [m/s^2]"
+                                "displayName": "Accelerometer bias b_Y [m/s^2]"
                             },
                             {
-                                "displayName": "Accelerometer bias b_Z accumulated [m/s^2]"
+                                "displayName": "Accelerometer bias b_Z [m/s^2]"
                             },
                             {
-                                "displayName": "Gyroscope bias b_X accumulated [rad/s]"
+                                "displayName": "Gyroscope bias b_X [rad/s]"
                             },
                             {
-                                "displayName": "Gyroscope bias b_Y accumulated [rad/s]"
+                                "displayName": "Gyroscope bias b_Y [rad/s]"
                             },
                             {
-                                "displayName": "Gyroscope bias b_Z accumulated [rad/s]"
+                                "displayName": "Gyroscope bias b_Z [rad/s]"
                             }
                         ],
                         "size": 0,
@@ -2504,22 +2528,22 @@
                                 "displayName": "ECEF Z error [m]"
                             },
                             {
-                                "displayName": "Accelerometer bias b_X accumulated [m/s^2]"
+                                "displayName": "Accelerometer bias b_X [m/s^2]"
                             },
                             {
-                                "displayName": "Accelerometer bias b_Y accumulated [m/s^2]"
+                                "displayName": "Accelerometer bias b_Y [m/s^2]"
                             },
                             {
-                                "displayName": "Accelerometer bias b_Z accumulated [m/s^2]"
+                                "displayName": "Accelerometer bias b_Z [m/s^2]"
                             },
                             {
-                                "displayName": "Gyroscope bias b_X accumulated [rad/s]"
+                                "displayName": "Gyroscope bias b_X [rad/s]"
                             },
                             {
-                                "displayName": "Gyroscope bias b_Y accumulated [rad/s]"
+                                "displayName": "Gyroscope bias b_Y [rad/s]"
                             },
                             {
-                                "displayName": "Gyroscope bias b_Z accumulated [rad/s]"
+                                "displayName": "Gyroscope bias b_Z [rad/s]"
                             }
                         ],
                         "size": 0,
@@ -2536,6 +2560,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 8,
+                                "displayName": "Accel uncomp Z [m/s^2]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {

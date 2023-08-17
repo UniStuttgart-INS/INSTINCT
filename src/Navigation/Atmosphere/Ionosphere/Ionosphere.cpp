@@ -15,6 +15,9 @@
 
 #include "Models/Klobuchar.hpp"
 
+#include "Navigation/GNSS/Functions.hpp"
+#include "Navigation/Constants.hpp"
+
 namespace NAV
 {
 
@@ -37,11 +40,11 @@ bool ComboIonosphereModel(const char* label, IonosphereModel& ionosphereModel)
     return gui::widgets::EnumCombo(label, ionosphereModel);
 }
 
-double calcIonosphericTimeDelay(double tow, Frequency freq,
-                                const Eigen::Vector3d& lla_pos,
-                                double elevation, double azimuth,
-                                IonosphereModel ionosphereModel,
-                                const IonosphericCorrections* corrections)
+double calcIonosphericDelay(double tow, Frequency freq, int8_t freqNum,
+                            const Eigen::Vector3d& lla_pos,
+                            double elevation, double azimuth,
+                            IonosphereModel ionosphereModel,
+                            const IonosphericCorrections* corrections)
 {
     switch (ionosphereModel)
     {
@@ -53,7 +56,8 @@ double calcIonosphericTimeDelay(double tow, Frequency freq,
             const auto* beta = corrections->get(GPS, IonosphericCorrections::Beta);
             if (alpha && beta)
             {
-                return calcIonosphericTimeDelay_Klobuchar(tow, freq, lla_pos(0), lla_pos(1), elevation, azimuth, *alpha, *beta);
+                return calcIonosphericTimeDelay_Klobuchar(tow, freq, freqNum, lla_pos(0), lla_pos(1), elevation, azimuth, *alpha, *beta)
+                       * InsConst::C;
             }
         }
 
@@ -66,6 +70,14 @@ double calcIonosphericTimeDelay(double tow, Frequency freq,
     }
 
     return 0.0;
+}
+
+double ionoErrorVar(double dpsr_I, Frequency freq, int8_t num)
+{
+    constexpr double ERR_BRDCI = 0.5; // Broadcast iono model error factor (See GPS ICD ch. 20.3.3.5.2.5, p. 130: 50% reduction on RMS error)
+
+    return ratioFreqSquared(freq.getL1(), freq, num, num)
+           * std::pow(dpsr_I * ERR_BRDCI, 2);
 }
 
 } // namespace NAV

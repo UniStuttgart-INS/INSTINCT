@@ -20,6 +20,7 @@ using json = nlohmann::json; ///< json namespace
 
 #include "SatelliteSystem.hpp"
 #include "Frequency.hpp"
+#include "Code.hpp"
 
 namespace NAV
 {
@@ -42,12 +43,12 @@ struct SatId
     /// @brief Equal comparison (needed for unordered_map)
     /// @param[in] rhs Right hand side of the operator
     /// @return True if the elements are equal
-    bool operator==(const SatId& rhs) const { return satSys == rhs.satSys && satNum == rhs.satNum; }
+    constexpr bool operator==(const SatId& rhs) const { return satSys == rhs.satSys && satNum == rhs.satNum; }
 
     /// @brief Less than comparison (needed for map)
     /// @param[in] rhs Right hand side of the operator
     /// @return True if lhs < rhs
-    bool operator<(const SatId& rhs) const
+    constexpr bool operator<(const SatId& rhs) const
     {
         return satSys == rhs.satSys ? satNum < rhs.satNum
                                     : satSys < rhs.satSys;
@@ -58,35 +59,41 @@ struct SatId
 struct SatSigId
 {
     /// @brief Constructor
-    /// @param[in] freq Signal frequency
+    /// @param[in] code Signal code
     /// @param[in] satNum Number of the satellite
-    SatSigId(Frequency freq, uint16_t satNum)
-        : freq(freq), satNum(satNum) {}
+    SatSigId(Code code, uint16_t satNum)
+        : code(code), satNum(satNum) {}
 
     /// Default constructor
     SatSigId() = default;
 
-    Frequency freq = Freq_None; ///< Signal frequency
-    uint16_t satNum = 0;        ///< Number of the satellite
+    Code code = Code::None; ///< Code
+    uint16_t satNum = 0;    ///< Number of the satellite
 
     /// @brief Equal comparison (needed for unordered_map)
     /// @param[in] rhs Right hand side of the operator
     /// @return True if the elements are equal
-    bool operator==(const SatSigId& rhs) const { return freq == rhs.freq && satNum == rhs.satNum; }
+    bool operator==(const SatSigId& rhs) const { return code == rhs.code && satNum == rhs.satNum; }
 
     /// @brief Less than comparison (needed for map)
     /// @param[in] rhs Right hand side of the operator
     /// @return True if lhs < rhs
     bool operator<(const SatSigId& rhs) const
     {
-        return freq == rhs.freq ? satNum < rhs.satNum
-                                : freq < rhs.freq;
+        return code == rhs.code ? satNum < rhs.satNum
+                                : Code::Set(code).count() < Code::Set(rhs.code).count();
     }
 
     /// @brief Returns a satellite identifier for the satellite signal
     [[nodiscard]] SatId toSatId() const
     {
-        return { freq.getSatSys(), satNum };
+        return { code.getFrequency().getSatSys(), satNum };
+    }
+
+    /// @brief Returns the frequency of the satellite signal
+    [[nodiscard]] Frequency freq() const
+    {
+        return code.getFrequency();
     }
 };
 
@@ -163,9 +170,9 @@ struct fmt::formatter<NAV::SatSigId>
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::SatSigId& satSigId, FormatContext& ctx) const -> decltype(ctx.out())
+    auto format(const NAV::SatSigId& satSigId, FormatContext& ctx) const
     {
-        return fmt::format_to(ctx.out(), "{0}-{1:02d}", std::string(satSigId.freq), satSigId.satNum);
+        return fmt::format_to(ctx.out(), "{0}-{1:02d}", satSigId.code, satSigId.satNum);
     }
 };
 
@@ -182,15 +189,9 @@ struct hash<NAV::SatId>
     std::size_t operator()(const NAV::SatId& f) const
     {
         auto hash1 = std::hash<NAV::SatelliteSystem_>{}(NAV::SatelliteSystem_(f.satSys));
-        auto hash2 = std::hash<decltype(f.satNum)>()(f.satNum);
+        auto hash2 = static_cast<size_t>(f.satNum);
 
-        if (hash1 != hash2)
-        {
-            return hash1 ^ hash2 << 1;
-        }
-
-        // If hash1 == hash2, their XOR is zero.
-        return hash1;
+        return hash1 | (hash2 << 10);
     }
 };
 /// @brief Hash function for SatSigId (needed for unordered_map)
@@ -201,16 +202,10 @@ struct hash<NAV::SatSigId>
     /// @param[in] f Satellite signal identifier
     std::size_t operator()(const NAV::SatSigId& f) const
     {
-        auto hash1 = std::hash<NAV::Frequency_>{}(NAV::Frequency_(f.freq));
-        auto hash2 = std::hash<decltype(f.satNum)>()(f.satNum);
+        auto hash1 = static_cast<size_t>(f.code.getEnumValue());
+        auto hash2 = static_cast<size_t>(f.satNum);
 
-        if (hash1 != hash2)
-        {
-            return hash1 ^ hash2 << 1;
-        }
-
-        // If hash1 == hash2, their XOR is zero.
-        return hash1;
+        return hash1 | (hash2 << 8);
     }
 };
 } // namespace std

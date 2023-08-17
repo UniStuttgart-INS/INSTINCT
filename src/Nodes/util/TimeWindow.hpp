@@ -13,10 +13,12 @@
 
 #pragma once
 
+#include <array>
 #include "internal/Node/Node.hpp"
 
 #include "Navigation/Time/InsTime.hpp"
 
+#include "internal/gui/widgets/TimeEdit.hpp"
 #include "util/Eigen.hpp"
 
 namespace NAV
@@ -80,76 +82,13 @@ class TimeWindow : public Node
     /// @param[in] pinIdx Index of the pin the data is received on
     void receiveObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
-    /// @brief Beginning of time window
-    InsTime _startTime;
+    /// Beginning and end of the time window
+    std::array<InsTime, 2> _startEndTime;
 
-    /// @brief End of time window
-    InsTime _endTime;
+    /// Time edit format for start and end times
+    std::array<gui::widgets::TimeEditFormat, 2> _timeEditFormat;
 
-    /// @brief Possible units to specify a time
-    enum class TimeFormats : int
-    {
-        MJD,    ///< full days, decimal fractions
-        JD,     ///< full days, decimal fractions
-        GPST,   ///< gpsCycle, gpsWeek, tow
-        YMDHMS, ///< year, month, day, hour, min, sec
-    };
-
-    /// Selected time format in GUI
-    TimeFormats _timeFormat = TimeFormats::YMDHMS;
-
-    // --------------------------------------- Beginning of time window ------------------------------------------
-
-    /// @brief Number of days at beginning of time window (Julien Date and Modified Julien Date)
-    int32_t _daysStart{};
-    /// @brief Decimal fraction of a day at beginning of time window (Julien Date and Modified Julien Date)
-    double _decFracStart{};
-
-    /// @brief GPS cycle at beginning of time window
-    int32_t _gpsCycleStart{};
-    /// @brief GPS week at beginning of time window
-    int32_t _gpsWeekStart{};
-    /// @brief GPS Time of Week (in sec) at beginning of time window
-    double _gpsTowStart{};
-
-    /// @brief Year at beginning of time window
-    int32_t _yearStart{};
-    /// @brief Month at beginning of time window
-    int32_t _monthStart{};
-    /// @brief Day at beginning of time window
-    int32_t _dayStart{};
-    /// @brief Hour at beginning of time window
-    int32_t _hourStart{};
-    /// @brief Minute at beginning of time window
-    int32_t _minStart{};
-    /// @brief Second at beginning of time window
-    double _secStart{};
-
-    // ------------------------------------------ End of time window ---------------------------------------------
-
-    /// @brief Number of days at end of time window (Julien Date and Modified Julien Date)
-    int32_t _daysEnd{};
-    /// @brief Decimal fraction of a day at end of time window (Julien Date and Modified Julien Date)
-    double _decFracEnd{};
-
-    /// @brief GPS cycle at end of time window
-    int32_t _gpsCycleEnd{};
-    /// @brief GPS week at end of time window
-    int32_t _gpsWeekEnd{};
-    /// @brief GPS Time of Week (in sec) at end of time window
-    double _gpsTowEnd{};
-
-    /// @brief Year at end of time window
-    int32_t _yearEnd{};
-    /// @brief Month at end of time window
-    int32_t _monthEnd{};
-    /// @brief Day at end of time window
-    int32_t _dayEnd{};
-    /// @brief Hour at end of time window
-    int32_t _hourEnd{};
-    /// @brief Minute at end of time window
-    int32_t _minEnd{};
-    /// @brief Second at end of time window
-    double _secEnd{};
+    /// If true, the window lets only times pass through, which are out of the time frame
+    bool _inverseWindow = false;
 };
 } // namespace NAV

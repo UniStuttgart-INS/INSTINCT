@@ -59,6 +59,54 @@ class LooselyCoupledKF : public Node
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
+    /// @brief State Keys of the Kalman filter
+    enum KFStates
+    {
+        Roll,
+        Pitch,
+        Yaw,
+        VelN,
+        VelE,
+        VelD,
+        PosLat,
+        PosLon,
+        PosAlt,
+        AccBiasX,
+        AccBiasY,
+        AccBiasZ,
+        GyrBiasX,
+        GyrBiasY,
+        GyrBiasZ,
+
+        Psi_eb_1 = Roll,
+        Psi_eb_2 = Pitch,
+        Psi_eb_3 = Yaw,
+        VelX = VelN,
+        VelY = VelE,
+        VelZ = VelD,
+        PosX = PosLat,
+        PosY = PosLon,
+        PosZ = PosAlt,
+    };
+
+    /// @brief Measurement Keys of the Kalman filter
+    enum KFMeas
+    {
+        dPosLat,
+        dPosLon,
+        dPosAlt,
+        dVelN,
+        dVelE,
+        dVelD,
+
+        dPosX = dPosLat,
+        dPosY = dPosLon,
+        dPosZ = dPosAlt,
+        dVelX = dVelN,
+        dVelY = dVelE,
+        dVelZ = dVelD,
+    };
+
   private:
     constexpr static size_t INPUT_PORT_INDEX_GNSS = 1;   ///< @brief Flow (PosVel)
     constexpr static size_t OUTPUT_PORT_INDEX_ERROR = 0; ///< @brief Flow (LcKfInsGnssErrors)
@@ -117,36 +165,6 @@ class LooselyCoupledKF : public Node
     /// Accumulated Gyroscope biases
     Eigen::Vector3d _accumulatedGyroBiases;
 
-    /// @brief State Keys of the Kalman filter
-    enum KFStates
-    {
-        Roll,
-        Pitch,
-        Yaw,
-        VelN,
-        VelE,
-        VelD,
-        PosLat,
-        PosLon,
-        PosAlt,
-        AccBiasX,
-        AccBiasY,
-        AccBiasZ,
-        GyrBiasX,
-        GyrBiasY,
-        GyrBiasZ,
-
-        Psi_eb_1 = Roll,
-        Psi_eb_2 = Pitch,
-        Psi_eb_3 = Yaw,
-        VelX = VelN,
-        VelY = VelE,
-        VelZ = VelD,
-        PosX = PosLat,
-        PosY = PosLon,
-        PosZ = PosAlt,
-    };
-
     /// @brief Vector with all state keys
     inline static const std::vector<KFStates> States = { KFStates::Roll, KFStates::Pitch, KFStates::Yaw,
                                                          KFStates::VelN, KFStates::VelE, KFStates::VelD,
@@ -164,23 +182,6 @@ class LooselyCoupledKF : public Node
     /// @brief All gyroscope bias keys
     inline static const std::vector<KFStates> GyrBias = { KFStates::GyrBiasX, KFStates::GyrBiasY, KFStates::GyrBiasZ };
 
-    /// @brief Measurement Keys of the Kalman filter
-    enum KFMeas
-    {
-        dPosLat,
-        dPosLon,
-        dPosAlt,
-        dVelN,
-        dVelE,
-        dVelD,
-
-        dPosX = dPosLat,
-        dPosY = dPosLon,
-        dPosZ = dPosAlt,
-        dVelX = dVelN,
-        dVelY = dVelE,
-        dVelZ = dVelD,
-    };
     /// @brief Vector with all measurement keys
     inline static const std::vector<KFMeas> Meas = { KFMeas::dPosLat, KFMeas::dPosLon, KFMeas::dPosAlt, KFMeas::dVelN, KFMeas::dVelE, KFMeas::dVelD };
     /// @brief All position difference keys
@@ -493,7 +494,7 @@ class LooselyCoupledKF : public Node
     /// @brief Calculates the noise input matrix 𝐆
     /// @param[in] ien_Quat_b Quaternion from body frame to {i,e,n} frame
     /// @note See \cite Groves2013 Groves, ch. 14.2.6, eq. 14.79, p. 590
-    [[nodiscard]] static KeyedMatrix<double, KFStates, KFStates, 15, 12> noiseInputMatrix_G(const Eigen::Quaterniond& ien_Quat_b);
+    [[nodiscard]] static KeyedMatrix<double, KFStates, KFStates, 15, 15> noiseInputMatrix_G(const Eigen::Quaterniond& ien_Quat_b);
 
     /// @brief Calculates the noise scale matrix 𝐖
     /// @param[in] sigma_ra Standard deviation of the noise on the accelerometer specific-force measurements
@@ -503,7 +504,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] tau_bad Correlation length for the accelerometer in [s]
     /// @param[in] tau_bgd Correlation length for the gyroscope in [s]
     /// @note See \cite Groves2013 Groves, ch. 14.2.6, eq. 14.79, p. 590
-    [[nodiscard]] Eigen::Matrix<double, 12, 12> noiseScaleMatrix_W(const Eigen::Vector3d& sigma_ra, const Eigen::Vector3d& sigma_rg,
+    [[nodiscard]] Eigen::Matrix<double, 15, 15> noiseScaleMatrix_W(const Eigen::Vector3d& sigma_ra, const Eigen::Vector3d& sigma_rg,
                                                                    const Eigen::Vector3d& sigma_bad, const Eigen::Vector3d& sigma_bgd,
                                                                    const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd);
 
@@ -638,10 +639,98 @@ class LooselyCoupledKF : public Node
 #ifndef DOXYGEN_IGNORE
 
 template<>
-struct fmt::formatter<NAV::LooselyCoupledKF::KFStates> : ostream_formatter
-{};
+struct fmt::formatter<NAV::LooselyCoupledKF::KFStates>
+{
+    /// @brief Parse function to make the struct formattable
+    /// @param[in] ctx Parser context
+    /// @return Beginning of the context
+    template<typename ParseContext>
+    constexpr auto parse(ParseContext& ctx)
+    {
+        return ctx.begin();
+    }
+
+    /// @brief Defines how to format structs
+    /// @param[in] st Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::LooselyCoupledKF::KFStates& st, FormatContext& ctx)
+    {
+        switch (st)
+        {
+        case NAV::LooselyCoupledKF::KFStates::Roll:
+            return fmt::format_to(ctx.out(), "Roll/Psi_eb_1");
+        case NAV::LooselyCoupledKF::KFStates::Pitch:
+            return fmt::format_to(ctx.out(), "Pitch/Psi_eb_2");
+        case NAV::LooselyCoupledKF::KFStates::Yaw:
+            return fmt::format_to(ctx.out(), "Yaw/Psi_eb_3");
+        case NAV::LooselyCoupledKF::KFStates::VelN:
+            return fmt::format_to(ctx.out(), "VelN/VelX");
+        case NAV::LooselyCoupledKF::KFStates::VelE:
+            return fmt::format_to(ctx.out(), "VelE/VelY");
+        case NAV::LooselyCoupledKF::KFStates::VelD:
+            return fmt::format_to(ctx.out(), "VelD/VelZ");
+        case NAV::LooselyCoupledKF::KFStates::PosLat:
+            return fmt::format_to(ctx.out(), "PosLat/PosX");
+        case NAV::LooselyCoupledKF::KFStates::PosLon:
+            return fmt::format_to(ctx.out(), "PosLon/PosY");
+        case NAV::LooselyCoupledKF::KFStates::PosAlt:
+            return fmt::format_to(ctx.out(), "PosAlt/PosZ");
+        case NAV::LooselyCoupledKF::KFStates::AccBiasX:
+            return fmt::format_to(ctx.out(), "AccBiasX");
+        case NAV::LooselyCoupledKF::KFStates::AccBiasY:
+            return fmt::format_to(ctx.out(), "AccBiasY");
+        case NAV::LooselyCoupledKF::KFStates::AccBiasZ:
+            return fmt::format_to(ctx.out(), "AccBiasZ");
+        case NAV::LooselyCoupledKF::KFStates::GyrBiasX:
+            return fmt::format_to(ctx.out(), "GyrBiasX");
+        case NAV::LooselyCoupledKF::KFStates::GyrBiasY:
+            return fmt::format_to(ctx.out(), "GyrBiasY");
+        case NAV::LooselyCoupledKF::KFStates::GyrBiasZ:
+            return fmt::format_to(ctx.out(), "GyrBiasZ");
+        }
+
+        return fmt::format_to(ctx.out(), "ERROR");
+    }
+};
 template<>
-struct fmt::formatter<NAV::LooselyCoupledKF::KFMeas> : ostream_formatter
-{};
+struct fmt::formatter<NAV::LooselyCoupledKF::KFMeas>
+{
+    /// @brief Parse function to make the struct formattable
+    /// @param[in] ctx Parser context
+    /// @return Beginning of the context
+    template<typename ParseContext>
+    constexpr auto parse(ParseContext& ctx)
+    {
+        return ctx.begin();
+    }
+
+    /// @brief Defines how to format structs
+    /// @param[in] st Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::LooselyCoupledKF::KFMeas& st, FormatContext& ctx)
+    {
+        switch (st)
+        {
+        case NAV::LooselyCoupledKF::KFMeas::dPosLat:
+            return fmt::format_to(ctx.out(), "dPosLat/dPosX");
+        case NAV::LooselyCoupledKF::KFMeas::dPosLon:
+            return fmt::format_to(ctx.out(), "dPosLon/dPosY");
+        case NAV::LooselyCoupledKF::KFMeas::dPosAlt:
+            return fmt::format_to(ctx.out(), "dPosAlt/dPosZ");
+        case NAV::LooselyCoupledKF::KFMeas::dVelN:
+            return fmt::format_to(ctx.out(), "dVelN/dVelX");
+        case NAV::LooselyCoupledKF::KFMeas::dVelE:
+            return fmt::format_to(ctx.out(), "dVelE/dVelY");
+        case NAV::LooselyCoupledKF::KFMeas::dVelD:
+            return fmt::format_to(ctx.out(), "dVelD/dVelZ");
+        }
+
+        return fmt::format_to(ctx.out(), "ERROR");
+    }
+};
 
 #endif

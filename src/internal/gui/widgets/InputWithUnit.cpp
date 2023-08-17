@@ -9,6 +9,8 @@
 #include "InputWithUnit.hpp"
 
 #include <fmt/format.h>
+#include <algorithm>
+#include "util/Logger.hpp"
 
 #include "imgui_ex.hpp"
 
@@ -54,10 +56,28 @@ NAV::gui::widgets::InputWithUnitChange InputWithUnit(const char* label, float it
     }
     ImGui::SameLine();
     ImGui::SetNextItemWidth(unitWidth);
+
+    char first = '1';
+    char second = '1';
+    bool disable = true;
+    for (size_t i = 0; first != '\0' || second != '\0'; i++)
+    {
+        first = *(combo_items_separated_by_zeros + i);
+        second = *(combo_items_separated_by_zeros + i + 1);
+
+        if (first == '\0' && second != '\0')
+        {
+            disable = false;
+            break;
+        }
+    }
+
+    if (disable) { ImGui::BeginDisabled(); }
     if (ImGui::Combo(fmt::format("##{} - unit", label).c_str(), combo_current_item, combo_items_separated_by_zeros, combo_popup_max_height_in_items))
     {
         retVal = NAV::gui::widgets::InputWithUnitChange_Unit;
     }
+    if (disable) { ImGui::EndDisabled(); }
     ImGui::SameLine();
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
     std::string strLabel{ label };
@@ -128,4 +148,128 @@ NAV::gui::widgets::InputWithUnitChange NAV::gui::widgets::InputDouble4WithUnit(c
                                                                                int combo_popup_max_height_in_items)
 {
     return InputWithUnit<ImGuiDataType_Double, 4, double>(label, itemWidth, unitWidth, v, combo_current_item, combo_items_separated_by_zeros, 0.0, 0.0, format, flags, combo_popup_max_height_in_items);
+}
+
+// ###########################################################################################################
+
+NAV::gui::widgets::InputWithUnitChange NAV::gui::widgets::InputFloatLWithUnit(const char* label, float itemWidth, float unitWidth,
+                                                                              float* v, float v_min, float v_max, int* combo_current_item, const char* combo_items_separated_by_zeros,
+                                                                              float step, float step_fast, const char* format, ImGuiInputTextFlags flags,
+                                                                              int combo_popup_max_height_in_items)
+{
+    auto change = InputWithUnit<ImGuiDataType_Float, 1, float>(label, itemWidth, unitWidth, v, combo_current_item, combo_items_separated_by_zeros, step, step_fast, format, flags, combo_popup_max_height_in_items);
+    if (change == InputWithUnitChange::InputWithUnitChange_Input)
+    {
+        *v = std::clamp(*v, v_min, v_max);
+    }
+    return change;
+}
+
+NAV::gui::widgets::InputWithUnitChange NAV::gui::widgets::InputFloat2LWithUnit(const char* label, float itemWidth, float unitWidth,
+                                                                               float v[2], float v_min, float v_max, int* combo_current_item, const char* combo_items_separated_by_zeros, // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+                                                                               const char* format, ImGuiInputTextFlags flags,
+                                                                               int combo_popup_max_height_in_items)
+{
+    auto change = InputWithUnit<ImGuiDataType_Float, 2, float>(label, itemWidth, unitWidth, v, combo_current_item, combo_items_separated_by_zeros, 0.0, 0.0, format, flags, combo_popup_max_height_in_items);
+    if (change == InputWithUnitChange::InputWithUnitChange_Input)
+    {
+        for (size_t i = 0; i < 2; i++)
+        {
+            v[i] = std::clamp(v[i], v_min, v_max);
+        }
+    }
+    return change;
+}
+
+NAV::gui::widgets::InputWithUnitChange NAV::gui::widgets::InputFloat3LWithUnit(const char* label, float itemWidth, float unitWidth,
+                                                                               float v[3], float v_min, float v_max, int* combo_current_item, const char* combo_items_separated_by_zeros, // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+                                                                               const char* format, ImGuiInputTextFlags flags,
+                                                                               int combo_popup_max_height_in_items)
+{
+    auto change = InputWithUnit<ImGuiDataType_Float, 3, float>(label, itemWidth, unitWidth, v, combo_current_item, combo_items_separated_by_zeros, 0.0, 0.0, format, flags, combo_popup_max_height_in_items);
+    if (change == InputWithUnitChange::InputWithUnitChange_Input)
+    {
+        for (size_t i = 0; i < 3; i++)
+        {
+            v[i] = std::clamp(v[i], v_min, v_max);
+        }
+    }
+    return change;
+}
+
+NAV::gui::widgets::InputWithUnitChange NAV::gui::widgets::InputFloat4LWithUnit(const char* label, float itemWidth, float unitWidth,
+                                                                               float v[4], float v_min, float v_max, int* combo_current_item, const char* combo_items_separated_by_zeros, // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+                                                                               const char* format, ImGuiInputTextFlags flags,
+                                                                               int combo_popup_max_height_in_items)
+{
+    auto change = InputWithUnit<ImGuiDataType_Float, 4, float>(label, itemWidth, unitWidth, v, combo_current_item, combo_items_separated_by_zeros, 0.0, 0.0, format, flags, combo_popup_max_height_in_items);
+    if (change == InputWithUnitChange::InputWithUnitChange_Input)
+    {
+        for (size_t i = 0; i < 4; i++)
+        {
+            v[i] = std::clamp(v[i], v_min, v_max);
+        }
+    }
+    return change;
+}
+
+NAV::gui::widgets::InputWithUnitChange NAV::gui::widgets::InputDoubleLWithUnit(const char* label, float itemWidth, float unitWidth,
+                                                                               double* v, double v_min, double v_max, int* combo_current_item, const char* combo_items_separated_by_zeros,
+                                                                               double step, double step_fast, const char* format, ImGuiInputTextFlags flags,
+                                                                               int combo_popup_max_height_in_items)
+{
+    auto change = InputWithUnit<ImGuiDataType_Double, 1, double>(label, itemWidth, unitWidth, v, combo_current_item, combo_items_separated_by_zeros, step, step_fast, format, flags, combo_popup_max_height_in_items);
+    if (change == InputWithUnitChange::InputWithUnitChange_Input)
+    {
+        *v = std::clamp(*v, v_min, v_max);
+    }
+    return change;
+}
+
+NAV::gui::widgets::InputWithUnitChange NAV::gui::widgets::InputDouble2LWithUnit(const char* label, float itemWidth, float unitWidth,
+                                                                                double v[2], double v_min, double v_max, int* combo_current_item, const char* combo_items_separated_by_zeros, // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+                                                                                const char* format, ImGuiInputTextFlags flags,
+                                                                                int combo_popup_max_height_in_items)
+{
+    auto change = InputWithUnit<ImGuiDataType_Double, 2, double>(label, itemWidth, unitWidth, v, combo_current_item, combo_items_separated_by_zeros, 0.0, 0.0, format, flags, combo_popup_max_height_in_items);
+    if (change == InputWithUnitChange::InputWithUnitChange_Input)
+    {
+        for (size_t i = 0; i < 2; i++)
+        {
+            v[i] = std::clamp(v[i], v_min, v_max);
+        }
+    }
+    return change;
+}
+
+NAV::gui::widgets::InputWithUnitChange NAV::gui::widgets::InputDouble3LWithUnit(const char* label, float itemWidth, float unitWidth,
+                                                                                double v[3], double v_min, double v_max, int* combo_current_item, const char* combo_items_separated_by_zeros, // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+                                                                                const char* format, ImGuiInputTextFlags flags,
+                                                                                int combo_popup_max_height_in_items)
+{
+    auto change = InputWithUnit<ImGuiDataType_Double, 3, double>(label, itemWidth, unitWidth, v, combo_current_item, combo_items_separated_by_zeros, 0.0, 0.0, format, flags, combo_popup_max_height_in_items);
+    if (change == InputWithUnitChange::InputWithUnitChange_Input)
+    {
+        for (size_t i = 0; i < 3; i++)
+        {
+            v[i] = std::clamp(v[i], v_min, v_max);
+        }
+    }
+    return change;
+}
+
+NAV::gui::widgets::InputWithUnitChange NAV::gui::widgets::InputDouble4LWithUnit(const char* label, float itemWidth, float unitWidth,
+                                                                                double v[4], double v_min, double v_max, int* combo_current_item, const char* combo_items_separated_by_zeros, // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+                                                                                const char* format, ImGuiInputTextFlags flags,
+                                                                                int combo_popup_max_height_in_items)
+{
+    auto change = InputWithUnit<ImGuiDataType_Double, 4, double>(label, itemWidth, unitWidth, v, combo_current_item, combo_items_separated_by_zeros, 0.0, 0.0, format, flags, combo_popup_max_height_in_items);
+    if (change == InputWithUnitChange::InputWithUnitChange_Input)
+    {
+        for (size_t i = 0; i < 4; i++)
+        {
+            v[i] = std::clamp(v[i], v_min, v_max);
+        }
+    }
+    return change;
 }
