@@ -118,8 +118,8 @@ class MultiImuFile : public Node, public FileReader
     /// @brief First 'gpsSecond', s.t. measurements start at time = 0
     double _startupGpsSecond{};
 
-    /// Time Format to input the start time with
-    gui::widgets::TimeEditFormat _startTimeEditFormat = gui::widgets::TimeEditFormat::GPSWeekToW;
+    /// Time Format to input the init time with
+    gui::widgets::TimeEditFormat _startTimeEditFormat;
 
     /// @brief Absolute start time
     InsTime _startTime{ 2000, 1, 1, 0, 0, 0 };
