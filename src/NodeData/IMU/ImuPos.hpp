@@ -17,8 +17,9 @@
 
 namespace NAV
 {
-// Forward declaration
+// Forward declarations
 class Imu;
+class MultiImuFile;
 
 /// IMU Position
 class ImuPos
@@ -89,6 +90,7 @@ class ImuPos
     Eigen::Quaterniond _b_quatMag_p = { 1, 0, 0, 0 };
 
     friend class Imu;
+    friend class MultiImuFile;
     friend void from_json(const json& j, ImuPos& pos);
 };
 

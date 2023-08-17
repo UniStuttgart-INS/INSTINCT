@@ -1238,7 +1238,7 @@ bool NAV::ImuSimulator::checkStopCondition(double time, const Eigen::Vector3d& l
     return false;
 }
 
-std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(size_t /* pinIdx */, bool peek)
 {
     double imuUpdateTime = static_cast<double>(_imuUpdateCnt) / _imuFrequency;
 
@@ -1339,7 +1339,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     return obs;
 }
 
-std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(size_t /* pinIdx */, bool peek)
 {
     double gnssUpdateTime = static_cast<double>(_gnssUpdateCnt) / _gnssFrequency;
 

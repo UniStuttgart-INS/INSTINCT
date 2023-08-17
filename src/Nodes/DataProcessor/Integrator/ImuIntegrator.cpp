@@ -686,6 +686,12 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::ImuIntegrator::integrateObservationNE
     // IMU Observation at the time tₖ₋₁
     const std::shared_ptr<const ImuObs>& imuObs__t1 = _imuObservations.at(1);
 
+    // Detect jumps back in time
+    if (static_cast<double>((imuObs__t0->insTime - imuObs__t1->insTime).count()) < 0.)
+    {
+        LOG_ERROR("{}: integration tau is < 0 --> {}", nameId(), static_cast<double>((imuObs__t0->insTime - imuObs__t1->insTime).count()));
+    }
+
     // Result State Data at the time tₖ
     auto posVelAtt__t0 = std::make_shared<InertialNavSol>();
 

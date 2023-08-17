@@ -431,10 +431,12 @@ class OutputPin : public Pin
 
     /// @brief FileReader/Simulator peekPollData function type for nodes with more than one polling pin
     ///
-    /// This function gets called twice.
-    /// - First with 'peek = true':   There an observation with a valid InsTime must be provided. `invokeCallbacks(...` should not be called.
-    /// - Second with 'peek = false': Here the message is read again and `invokeCallbacks(...)` should be called
-    using PeekPollDataFunc = std::shared_ptr<const NAV::NodeData> (Node::*)(bool);
+    /// - First parameter is the index of the pin in the outputPins vector
+    /// - Second parameter is a boolean 'peek'
+    ///   This function gets called twice.
+    ///   - First with 'peek = true':   There an observation with a valid InsTime must be provided. `invokeCallbacks(...` should not be called.
+    ///   - Second with 'peek = false': Here the message is read again and `invokeCallbacks(...)` should be called
+    using PeekPollDataFunc = std::shared_ptr<const NAV::NodeData> (Node::*)(size_t, bool);
 
     /// FileReader/Simulator pollData function type for nodes with a single poll pin
     using PollDataFunc = std::shared_ptr<const NAV::NodeData> (Node::*)();
