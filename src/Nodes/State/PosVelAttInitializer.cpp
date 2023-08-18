@@ -259,6 +259,7 @@ void NAV::PosVelAttInitializer::guiConfig()
 
     if (ImGui::Checkbox(fmt::format("Override Position##{}", size_t(id)).c_str(), &_overridePosition))
     {
+        updatePins();
         flow::ApplyChanges();
     }
 
@@ -272,51 +273,6 @@ void NAV::PosVelAttInitializer::guiConfig()
         }
         ImGui::Unindent();
     }
-
-    // auto oldOverridePosition = _overridePosition;
-    // ImGui::SetNextItemWidth(100 * gui::NodeEditorApplication::windowFontRatio());
-    // if (gui::widgets::EnumCombo(fmt::format("Override Position##{}", size_t(id)).c_str(), _overridePosition))
-    // {
-    //     updatePins();
-    //     flow::ApplyChanges();
-    //     if (oldOverridePosition == PositionOverride::LLA && _overridePosition == PositionOverride::ECEF)
-    //     {
-    //         _overrideValuesPosition = trafo::lla2ecef_WGS84({ deg2rad(_overrideValuesPosition(0)),
-    //                                                           deg2rad(_overrideValuesPosition(1)),
-    //                                                           _overrideValuesPosition(2) });
-    //     }
-    //     else if (oldOverridePosition == PositionOverride::ECEF && _overridePosition == PositionOverride::LLA)
-    //     {
-    //         Eigen::Vector3d lla = trafo::ecef2lla_WGS84(_overrideValuesPosition);
-    //         _overrideValuesPosition = Eigen::Vector3d(rad2deg(lla(0)), rad2deg(lla(1)), lla(2));
-    //     }
-    // }
-    // if (_overridePosition != PositionOverride::OFF)
-    // {
-    //     ImGui::Indent();
-
-    //     bool lla = _overridePosition == PositionOverride::LLA;
-    //     ImGui::SetNextItemWidth(140 * gui::NodeEditorApplication::windowFontRatio());
-    //     if (ImGui::DragDouble(fmt::format("{}##{}", lla ? "Latitude [deg]" : "ECEF X [m]", size_t(id)).c_str(), &_overrideValuesPosition(0),
-    //                           1.0F, lla ? -90.0 : 0.0, lla ? 90.0 : 0.0, lla ? "%.9f" : "%.4f"))
-    //     {
-    //         flow::ApplyChanges();
-    //     }
-    //     ImGui::SetNextItemWidth(140 * gui::NodeEditorApplication::windowFontRatio());
-    //     if (ImGui::DragDouble(fmt::format("{}##{}", lla ? "Longitude [deg]" : "ECEF Y [m]", size_t(id)).c_str(), &_overrideValuesPosition(1),
-    //                           1.0F, lla ? -180.0 : 0.0, lla ? 180.0 : 0.0, lla ? "%.9f" : "%.4f"))
-    //     {
-    //         flow::ApplyChanges();
-    //     }
-    //     ImGui::SetNextItemWidth(140 * gui::NodeEditorApplication::windowFontRatio());
-    //     if (ImGui::DragDouble(fmt::format("{}##{}", lla ? "Altitude [m]" : "ECEF Z [m]", size_t(id)).c_str(), &_overrideValuesPosition(2),
-    //                           1.0F, 0.0, 0.0, "%.4f"))
-    //     {
-    //         flow::ApplyChanges();
-    //     }
-
-    //     ImGui::Unindent();
-    // }
 
     ImGui::SetNextItemWidth(100 * gui::NodeEditorApplication::windowFontRatio());
     if (gui::widgets::EnumCombo(fmt::format("Override Velocity##{}", size_t(id)).c_str(), _overrideVelocity))
@@ -640,7 +596,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
     else if (std::all_of(inputPins.begin(), inputPins.end(), [](const InputPin& inputPin) {
                  if (auto* connectedPin = inputPin.link.getConnectedPin())
                  {
-                     return connectedPin->mode == OutputPin::Mode::REAL_TIME;
+                     return connectedPin->noMoreDataAvailable.load();
                  }
                  return !inputPin.isPinLinked();
              }))

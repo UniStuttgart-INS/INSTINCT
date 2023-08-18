@@ -399,6 +399,9 @@ class Node
     /// Lock the config when executing post-processing
     bool _lockConfigDuringRun = true;
 
+    /// Whether the node can run in post-processing or only real-time
+    bool _onlyRealTime = false;
+
   private:
     State _state = State::Deinitialized; ///< Current state of the node
     mutable std::mutex _stateMutex;      ///< Mutex to interact with the worker state variable

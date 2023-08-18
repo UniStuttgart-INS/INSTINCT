@@ -501,9 +501,9 @@ void NAV::ImuIntegrator::integrateObservation()
         // Push out new data
         invokeCallbacks(OUTPUT_PORT_INDEX_INERTIAL_NAV_SOL, newPosVelAtt);
 
-        if (inputPins[INPUT_PORT_INDEX_IMU_OBS].queue.empty() && inputPins[INPUT_PORT_INDEX_IMU_OBS].link.getConnectedPin()->mode == OutputPin::Mode::REAL_TIME)
+        if (inputPins[INPUT_PORT_INDEX_IMU_OBS].queue.empty() && inputPins[INPUT_PORT_INDEX_IMU_OBS].link.getConnectedPin()->noMoreDataAvailable)
         {
-            outputPins[OUTPUT_PORT_INDEX_INERTIAL_NAV_SOL].mode = OutputPin::Mode::REAL_TIME;
+            outputPins[OUTPUT_PORT_INDEX_INERTIAL_NAV_SOL].noMoreDataAvailable = true;
             for (auto& link : outputPins[OUTPUT_PORT_INDEX_INERTIAL_NAV_SOL].links)
             {
                 link.connectedNode->wakeWorker();

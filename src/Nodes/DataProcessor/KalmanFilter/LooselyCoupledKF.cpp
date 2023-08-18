@@ -759,9 +759,9 @@ void NAV::LooselyCoupledKF::recvInertialNavigationSolution(NAV::InputPin::NodeDa
     if (!inputPins[INPUT_PORT_INDEX_GNSS].queue.empty() && inputPins[INPUT_PORT_INDEX_GNSS].queue.front()->insTime == _lastPredictTime)
     {
         looselyCoupledUpdate(std::static_pointer_cast<const PosVel>(inputPins[INPUT_PORT_INDEX_GNSS].queue.extract_front()));
-        if (inputPins[INPUT_PORT_INDEX_GNSS].queue.empty() && inputPins[INPUT_PORT_INDEX_GNSS].link.getConnectedPin()->mode == OutputPin::Mode::REAL_TIME)
+        if (inputPins[INPUT_PORT_INDEX_GNSS].queue.empty() && inputPins[INPUT_PORT_INDEX_GNSS].link.getConnectedPin()->noMoreDataAvailable)
         {
-            outputPins[OUTPUT_PORT_INDEX_SYNC].mode = OutputPin::Mode::REAL_TIME;
+            outputPins[OUTPUT_PORT_INDEX_SYNC].noMoreDataAvailable = true;
             for (auto& link : outputPins[OUTPUT_PORT_INDEX_SYNC].links)
             {
                 link.connectedNode->wakeWorker();

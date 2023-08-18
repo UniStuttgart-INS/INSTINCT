@@ -352,7 +352,7 @@ class OutputPin : public Pin
     OutputPin(const OutputPin&) = delete;
     /// @brief Move constructor
     OutputPin(OutputPin&& other) noexcept
-        : Pin(std::move(other)), links(std::move(other.links)), data(other.data), mode(other.mode.load()) {}
+        : Pin(std::move(other)), links(std::move(other.links)), data(other.data), noMoreDataAvailable(other.noMoreDataAvailable.load()) {}
     /// @brief Copy assignment operator
     OutputPin& operator=(const OutputPin&) = delete;
     /// @brief Move assignment operator
@@ -362,18 +362,11 @@ class OutputPin : public Pin
         {
             links = std::move(other.links);
             data = other.data;
-            mode = other.mode.load();
+            noMoreDataAvailable = other.noMoreDataAvailable.load();
             Pin::operator=(std::move(other));
         }
         return *this;
     }
-
-    /// @brief Different Modes the Pin can work in
-    enum class Mode
-    {
-        REAL_TIME,       ///< Pin running in real-time mode
-        POST_PROCESSING, ///< Pin running in post-processing mode
-    };
 
     /// @brief Checks if this pin can connect to the provided pin
     /// @param[in] other The pin to create a link to
@@ -463,8 +456,8 @@ class OutputPin : public Pin
     /// Condition variable to signal that the data was read by connected nodes (used for non-flow pins)
     std::condition_variable dataAccessConditionVariable;
 
-    /// Flag whether the node still has post-processing data left
-    std::atomic<Mode> mode = Mode::REAL_TIME;
+    /// Flag set, when no more data is available on this pin
+    std::atomic<bool> noMoreDataAvailable = true;
 
     friend class Pin;
     friend class InputPin;
