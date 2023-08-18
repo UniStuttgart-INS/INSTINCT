@@ -241,6 +241,13 @@ void NAV::FlowExecutor::execute()
         while (timeout)
         {
             std::unique_lock lk(_mutex);
+
+            if (realTimeMode)
+            {
+                _cv.wait(lk, [] { return _state == State::Stopping; });
+                break;
+            }
+
             timeout = !_cv.wait_for(lk, timeoutDuration, [] { return _state == State::Stopping; });
             if (timeout && _activeNodes == 0)
             {

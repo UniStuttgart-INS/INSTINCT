@@ -7417,9 +7417,10 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         // NOLINTNEXTLINE(hicpp-use-nullptr, modernize-use-nullptr)
                         if (obs->insTime - vnSensor->_lastMessageTime.at(b) >= std::chrono::duration<double>(1.5 * (vnSensor->_binaryOutputRegister.at(b).rateDivisor / IMU_DEFAULT_FREQUENCY)))
                         {
-                            LOG_WARN("{}: Potentially lost a message. Previous message was at {} and current message at {} which is a time difference of {} seconds but we expect a rate of {} seconds.", vnSensor->nameId(),
-                                     vnSensor->_lastMessageTime.at(b), obs->insTime, (obs->insTime - vnSensor->_lastMessageTime.at(b)).count(),
-                                     1. / IMU_DEFAULT_FREQUENCY * vnSensor->_binaryOutputRegister.at(b).rateDivisor);
+                            LOG_WARN("{}: Potentially lost a message. dt = {:.4} s, expect {} s. (Previous message at [{}], current message [{}])", vnSensor->nameId(),
+                                     (obs->insTime - vnSensor->_lastMessageTime.at(b)).count(),
+                                     1. / IMU_DEFAULT_FREQUENCY * vnSensor->_binaryOutputRegister.at(b).rateDivisor,
+                                     vnSensor->_lastMessageTime.at(b), obs->insTime);
                         }
                     }
                     vnSensor->_lastMessageTime.at(b) = obs->insTime;
