@@ -34,6 +34,7 @@ namespace NAV::experimental
 SkydelNetworkStream::SkydelNetworkStream()
     : Imu(typeStatic()), _senderEndpoint(udp::v4(), 4444), _socket(_ioservice, _senderEndpoint)
 {
+    _onlyRealTime = true;
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 305, 70 };
 

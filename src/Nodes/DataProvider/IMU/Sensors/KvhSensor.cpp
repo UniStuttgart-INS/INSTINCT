@@ -26,6 +26,7 @@ NAV::KvhSensor::KvhSensor()
 {
     LOG_TRACE("{}: called", name);
 
+    _onlyRealTime = true;
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 360, 70 };
 
