@@ -796,12 +796,6 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                                  > 2.0F
                              ? IM_COL32(0, 0, 0, 255)
                              : IM_COL32(255, 255, 255, 255);
-        auto checkBoxColor = ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_NodeBg].x
-                                         + ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_NodeBg].y
-                                         + ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_NodeBg].z
-                                     > 2.0F
-                                 ? IM_COL32(255, 255, 255, 255)
-                                 : IM_COL32(41, 74, 122, 138);
 
         for (auto* node : nm::m_Nodes()) // Blueprint || Simple
         {
@@ -813,16 +807,11 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             const auto isSimple = node->kind == Node::Kind::Simple;
 
             bool hasOutputDelegates = false;
-            bool hasOutputFlows = false;
             for (const auto& output : node->outputPins)
             {
                 if (output.type == Pin::Type::Delegate)
                 {
                     hasOutputDelegates = true;
-                }
-                else if (output.type == Pin::Type::Flow)
-                {
-                    hasOutputFlows = true;
                 }
             }
 
@@ -863,22 +852,9 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 {
                     gui::widgets::Spinner(("##Spinner " + node->nameId()).c_str(), ImColor(255, 160, 122), 10.0F, 1.0F);
                 }
-                else if (hasOutputFlows)
-                {
-                    bool itemDisabled = !node->isInitialized() && !node->callbacksEnabled;
-                    if (itemDisabled) { ImGui::BeginDisabled(); }
-
-                    ImGui::PushStyleColor(ImGuiCol_FrameBg, checkBoxColor);
-                    ImGui::Checkbox("", &node->callbacksEnabled);
-                    ImGui::PopStyleColor();
-                    if (ImGui::IsItemHovered()) { tooltipText = "Enable Callbacks"; }
-
-                    if (itemDisabled) { ImGui::EndDisabled(); }
-                    ImGui::Dummy(ImVec2(0, 26));
-                }
                 else
                 {
-                    ImGui::Dummy(ImVec2(0, 26));
+                    ImGui::Dummy(ImVec2(ImGui::GetStyle().ItemSpacing.x + 12.0F + ImGui::GetStyle().FramePadding.x, 26));
                 }
                 if (hasOutputDelegates)
                 {
@@ -1020,7 +996,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 if (_showQueueSizeOnPins && output.type == Pin::Type::Flow && output.isPinLinked())
                 {
                     auto cursor = ImGui::GetCursorPos();
-                    std::string text = fmt::format("{}", output.mode == OutputPin::Mode::REAL_TIME ? "R" : "P");
+                    std::string text = fmt::format("{}", output.noMoreDataAvailable ? "F" : "P");
                     auto* drawList = ImGui::GetWindowDrawList();
                     drawList->AddText(ImVec2(cursor.x - 26.0F, cursor.y + 2.F), IM_COL32(255, 0, 0, 255), text.c_str());
                 }
@@ -1436,7 +1412,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Text("ID: %lu", size_t(pin->id));
             ImGui::Text("Node: %s", pin->parentNode ? std::to_string(size_t(pin->parentNode->id)).c_str() : "<none>");
             ImGui::Text("Type: %s", std::string(pin->type).c_str());
-            ImGui::Text("Mode: %s", pin->mode == OutputPin::Mode::REAL_TIME ? "Real-time" : "Post-processing");
+            ImGui::Text("Data available: %s", pin->noMoreDataAvailable ? "No" : "Yes");
             ImGui::Separator();
             if (pin->isPinLinked())
             {

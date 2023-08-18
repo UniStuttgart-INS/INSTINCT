@@ -1609,6 +1609,7 @@ NAV::VectorNavSensor::VectorNavSensor()
 {
     LOG_TRACE("{}: called", name);
 
+    _onlyRealTime = true;
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 954, 783 };
 
@@ -5762,6 +5763,7 @@ void NAV::VectorNavSensor::restore(json const& j)
 bool NAV::VectorNavSensor::resetNode()
 {
     std::for_each(_lastMessageTime.begin(), _lastMessageTime.end(), [](InsTime& insTime) { insTime.reset(); });
+    std::for_each(_lastMessageTimeSinceStartup.begin(), _lastMessageTimeSinceStartup.end(), [](uint64_t& value) { value = 0; });
     _gnssTimeCounter = {};
 
     _timeSyncOut.ppsTime.reset();
@@ -5882,7 +5884,21 @@ bool NAV::VectorNavSensor::initialize()
     }
 
     // Query the sensor's model number
+    auto modelNumber = _vs.readModelNumber();
     LOG_DEBUG("{}: {} connected on port '{}' with baudrate {}", nameId(), _vs.readModelNumber(), _connectedSensorPort, connectedBaudrate);
+
+    if (_sensorModel == VectorNavModel::VN100_VN110 && (!modelNumber.starts_with("VN-100") && !modelNumber.starts_with("VN-110")))
+    {
+        LOG_ERROR("{}: VN100/VN110 configured, but sensor identifies as {}", nameId(), modelNumber);
+        doDeinitialize();
+        return false;
+    }
+    if (_sensorModel == VectorNavModel::VN310 && !modelNumber.starts_with("VN-310"))
+    {
+        LOG_ERROR("{}: VN310 configured, but sensor identifies as {}", nameId(), modelNumber);
+        doDeinitialize();
+        return false;
+    }
 
     // ###########################################################################################################
     //                                               SYSTEM MODULE
@@ -6808,6 +6824,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                 //         obs->timeOutputs->timePPS = p.extractUint64();
                 //     }
                 // }
+
                 // Group 2 (Time)
                 if (vnSensor->_binaryOutputRegister.at(b).timeField != vn::protocol::uart::TimeGroup::TIMEGROUP_NONE)
                 {
@@ -7372,6 +7389,13 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     if (mutex) { mutex->unlock(); }
                 }
 
+                if (obs->insTime.empty()
+                    && !vnSensor->_lastMessageTime.at(b).empty()
+                    && obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP)
+                {
+                    obs->insTime = vnSensor->_lastMessageTime.at(b) + std::chrono::nanoseconds(obs->timeOutputs->timeStartup - vnSensor->_lastMessageTimeSinceStartup.at(b));
+                }
+
                 if (obs->insTime.empty()  // Look if other sensors have set a global time
                     && !(obs->timeOutputs // but only if we did not request the time from the sensor via GNSS
                          && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS)
@@ -7399,6 +7423,10 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         }
                     }
                     vnSensor->_lastMessageTime.at(b) = obs->insTime;
+                    if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP)
+                    {
+                        vnSensor->_lastMessageTimeSinceStartup.at(b) = obs->timeOutputs->timeStartup;
+                    }
                 }
 
                 if ((vnSensor->_binaryOutputRegisterMerge == BinaryRegisterMerge::Output1_Output2 && (b == 0 || b == 1))

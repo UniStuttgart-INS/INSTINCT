@@ -92,27 +92,30 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
                 nm::ApplyWatcherCallbacks();
 #endif
 
-                auto start = std::chrono::steady_clock::now();
                 NAV::FlowExecutor::start();
 
-                NAV::FlowExecutor::waitForFinish();
-
                 if (NAV::ConfigManager::Get<bool>("nogui")
-                    && NAV::ConfigManager::Get<bool>("sigterm"))
+                    && (NAV::ConfigManager::Get<bool>("sigterm") || NAV::ConfigManager::Get<size_t>("duration")))
                 {
-                    nm::EnableAllCallbacks();
-                    NAV::Sleep::waitForSignal(true);
+                    auto interruptThread = std::thread([]() {
+                        if (NAV::ConfigManager::Get<bool>("nogui")
+                            && NAV::ConfigManager::Get<bool>("sigterm"))
+                        {
+                            NAV::Sleep::waitForSignal(true);
+                            NAV::FlowExecutor::stop();
+                        }
+                        else if (size_t duration = NAV::ConfigManager::Get<size_t>("duration");
+                                 NAV::ConfigManager::Get<bool>("nogui") && duration)
+                        {
+                            NAV::Sleep::countDownSeconds(duration);
+                            NAV::FlowExecutor::stop();
+                        }
+                    });
+                    interruptThread.join();
                 }
-                else if (size_t duration = NAV::ConfigManager::Get<size_t>("duration");
-                         NAV::ConfigManager::Get<bool>("nogui") && duration)
+                else
                 {
-                    nm::EnableAllCallbacks();
-                    auto now = std::chrono::steady_clock::now();
-                    std::chrono::duration<double> elapsed = now - start;
-                    if (elapsed.count() < static_cast<double>(duration))
-                    {
-                        NAV::Sleep::countDownSeconds(duration - static_cast<size_t>(elapsed.count()));
-                    }
+                    NAV::FlowExecutor::waitForFinish();
                 }
 
 #ifdef TESTING

@@ -1221,9 +1221,9 @@ void NAV::TightlyCoupledKF::recvInertialNavigationSolution(NAV::InputPin::NodeDa
     if (!inputPins[INPUT_PORT_INDEX_GNSS_OBS].queue.empty() && inputPins[INPUT_PORT_INDEX_GNSS_OBS].queue.front()->insTime == _lastPredictTime)
     {
         tightlyCoupledUpdate(std::static_pointer_cast<const GnssObs>(inputPins[INPUT_PORT_INDEX_GNSS_OBS].queue.extract_front()));
-        if (inputPins[INPUT_PORT_INDEX_GNSS_OBS].queue.empty() && inputPins[INPUT_PORT_INDEX_GNSS_OBS].link.getConnectedPin()->mode == OutputPin::Mode::REAL_TIME)
+        if (inputPins[INPUT_PORT_INDEX_GNSS_OBS].queue.empty() && inputPins[INPUT_PORT_INDEX_GNSS_OBS].link.getConnectedPin()->noMoreDataAvailable)
         {
-            outputPins[OUTPUT_PORT_INDEX_SYNC].mode = OutputPin::Mode::REAL_TIME;
+            outputPins[OUTPUT_PORT_INDEX_SYNC].noMoreDataAvailable = true;
             for (auto& link : outputPins[OUTPUT_PORT_INDEX_SYNC].links)
             {
                 link.connectedNode->wakeWorker();

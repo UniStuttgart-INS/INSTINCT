@@ -159,6 +159,12 @@ void NAV::FlowExecutor::execute()
         return;
     }
 
+    LOG_INFO("=====================================================");
+    bool realTimeMode = std::any_of(nm::m_Nodes().begin(), nm::m_Nodes().end(), [](const Node* node) { return node->_onlyRealTime; });
+    LOG_INFO("Executing in {} mode", realTimeMode ? "real-time" : "post-processing");
+
+    util::time::SetMode(realTimeMode ? util::time::Mode::REAL_TIME : util::time::Mode::POST_PROCESSING);
+
     for (Node* node : nm::m_Nodes())
     {
         if (node == nullptr || !node->isInitialized()) { continue; }
@@ -168,18 +174,20 @@ void NAV::FlowExecutor::execute()
             if (_state != State::Starting) { break; }
         }
 
-        node->_mode = Node::Mode::POST_PROCESSING;
-        _activeNodes += 1;
+        node->_mode = realTimeMode ? Node::Mode::REAL_TIME : Node::Mode::POST_PROCESSING;
+        if (!realTimeMode)
+        {
+            _activeNodes += 1;
+            LOG_TRACE("Putting node '{}' into post-processing mode and adding to active nodes.", node->nameId());
+        }
         node->resetNode();
-        LOG_TRACE("Putting node '{}' into post-processing mode and adding to active nodes.", node->nameId());
-        for (size_t i = 0; i < node->outputPins.size(); i++)
-        // for (auto& outputPin : node->outputPins)
+        for (size_t i = 0; i < node->outputPins.size(); i++) // for (auto& outputPin : node->outputPins)
         {
             auto& outputPin = node->outputPins[i];
             if (outputPin.type == Pin::Type::Flow && outputPin.isPinLinked())
             {
-                outputPin.mode = OutputPin::Mode::POST_PROCESSING;
-                LOG_TRACE("    Putting pin '{}' into post-processing mode", outputPin.name);
+                outputPin.noMoreDataAvailable = false;
+                LOG_TRACE("    Setting pin '{}' to hasDataAvailable", outputPin.name);
             }
 
             if (std::holds_alternative<OutputPin::PollDataFunc>(outputPin.data))
@@ -190,7 +198,7 @@ void NAV::FlowExecutor::execute()
             else if (std::holds_alternative<OutputPin::PeekPollDataFunc>(outputPin.data))
             {
                 if (auto* callback = std::get_if<OutputPin::PeekPollDataFunc>(&outputPin.data);
-                    outputPin.mode == OutputPin::Mode::POST_PROCESSING && callback != nullptr && *callback != nullptr
+                    !outputPin.noMoreDataAvailable && callback != nullptr && *callback != nullptr
                     && std::any_of(outputPin.links.begin(), outputPin.links.end(), [](const OutputPin::OutgoingLink& link) {
                            return link.connectedNode->isInitialized();
                        }))
@@ -214,8 +222,8 @@ void NAV::FlowExecutor::execute()
         }
     }
 
-    LOG_INFO("Post-processing started");
     _startTime = std::chrono::steady_clock::now();
+    LOG_INFO("Execution started");
 
     for (Node* node : nm::m_Nodes()) // Search for node pins with data callbacks
     {
@@ -225,6 +233,7 @@ void NAV::FlowExecutor::execute()
             node->wakeWorker();
         }
     }
+
     {
         // Wait for the nodes to finish
         bool timeout = true;
@@ -255,7 +264,7 @@ void NAV::FlowExecutor::execute()
         node->_mode = Node::Mode::REAL_TIME;
         for (auto& outputPin : node->outputPins)
         {
-            outputPin.mode = OutputPin::Mode::REAL_TIME;
+            outputPin.noMoreDataAvailable = true;
         }
         node->flush();
     }
