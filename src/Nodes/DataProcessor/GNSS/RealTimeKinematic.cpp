@@ -625,11 +625,12 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
         auto [satelliteData, observations] = selectSatObservationsForCalculation(gnssNavInfos);
         calcObservationEstimates(observations, satelliteData, ionosphericCorrections);
 
+        auto newPivotSignals = updatePivotSatellites(satelliteData, observations);
+        updateKalmanFilterAmbiguitiesForPivotChange(newPivotSignals);
         addOrRemoveKalmanFilterAmbiguities(observations);
 
         auto singleDifferences = calcSingleDifferences(observations);
 
-        updatePivotSatellites(satelliteData, observations);
         auto doubleDifferences = calcDoubleDifferences(singleDifferences);
 
         // #######################################################################################################
@@ -970,6 +971,119 @@ void RealTimeKinematic::calcObservationEstimates(Observations& observations, con
     }
 }
 
+std::vector<SatSigId> RealTimeKinematic::updatePivotSatellites(const std::vector<SatData>& satelliteData, const Observations& observations)
+{
+    // Update or erase pivot satellites from last epoch
+    std::vector<Code> erasePivotCode;
+    for (auto& pivotSatellite : _pivotSatellites)
+    {
+        auto satIter = std::find_if(satelliteData.begin(), satelliteData.end(), [&](const SatData& satData) {
+            return pivotSatellite.second.satSigId.toSatId() == satData.satId;
+        });
+
+        if (satIter == satelliteData.end()
+            || std::any_of(satIter->receiverData.begin(), satIter->receiverData.end(), // Do not use the pivot satellite anymore, if elevation < 10°
+                           [](const auto& recvData) { return recvData.second.satElevation < deg2rad(10); }))
+        {
+            LOG_DEBUG("{}: Dropping pivot satellite [{}] because: {}", nameId(), pivotSatellite.second.satSigId,
+                      satIter == satelliteData.end() ? "Satellite not observed this epoch" : "Satellite elevation < 10°");
+            erasePivotCode.push_back(pivotSatellite.first);
+        }
+    }
+    for (const auto& code : erasePivotCode)
+    {
+        _pivotSatellites.erase(code);
+    }
+
+    // Determine new pivot satellite
+    for (const auto& satData : satelliteData)
+    {
+        for (const auto& observation : observations)
+        {
+            const auto satSigId = observation.first;
+            const auto code = satSigId.code;
+            if (satData.satId != satSigId.toSatId()) { continue; }
+
+            if (!_pivotSatellites.contains(code))
+            {
+                _pivotSatellites.insert(std::make_pair(code, PivotSatellite{ .reevaluate = true, .satSigId = satSigId }));
+                LOG_DATA("{}: Setting [{}] as new pivot satellite", nameId(), satSigId);
+            }
+            else if (auto& pivotSat = _pivotSatellites.at(code);
+                     pivotSat.reevaluate) // Check if better pivot available
+            {
+                auto pivotIter = std::find_if(satelliteData.begin(), satelliteData.end(),
+                                              [&pivotSat](const SatData& satData) { return satData.satId == pivotSat.satSigId.toSatId(); });
+                if (pivotIter == satelliteData.end()) { LOG_CRITICAL("{}: None existing pivot satellite should have been removed earlier.", nameId()); }
+
+                double elevation = 0.0;
+                double pivotSatElevation = 0.0;
+                for (const auto& recvObs : observation.second)
+                {
+                    elevation += satData.receiverData.at(recvObs.first).satElevation;
+                    pivotSatElevation += pivotIter->receiverData.at(recvObs.first).satElevation;
+                }
+                elevation /= static_cast<double>(observation.second.size());
+                pivotSatElevation /= static_cast<double>(observation.second.size());
+
+                // Check if all frequencies available and select satellite with largest elevation
+                LOG_DATA("{}: Pivot [{}] ele {}° <--> Sat [{}] ele {}°", nameId(), pivotIter->satId, rad2deg(pivotSatElevation),
+                         satData.satId, rad2deg(elevation));
+                if (elevation > pivotSatElevation)
+                {
+                    pivotSat = PivotSatellite{ .reevaluate = true, .satSigId = satSigId };
+                    LOG_DATA("{}: Setting [{}] as new pivot satellite for satellite code [{}]", nameId(), satData.satId, satSigId.code);
+                }
+            }
+        }
+    }
+    std::vector<SatSigId> newPivotSignals;
+    for (auto& [pivotCode, pivotSat] : _pivotSatellites)
+    {
+        if (pivotSat.reevaluate)
+        {
+            [[maybe_unused]] auto pivotIter = std::find_if(satelliteData.begin(), satelliteData.end(),
+                                                           [&pivotSat = pivotSat](const SatData& satData) {
+                                                               return satData.satId == pivotSat.satSigId.toSatId();
+                                                           });
+
+            LOG_DEBUG("{}: Code [{}] uses [{}] as pivot satellite with elevation {:.4}°", nameId(),
+                      pivotCode,
+                      pivotSat.satSigId,
+                      rad2deg(pivotIter->receiverData.begin()->second.satElevation));
+            pivotSat.reevaluate = false;
+            newPivotSignals.push_back(pivotSat.satSigId);
+        }
+    }
+
+    return newPivotSignals;
+}
+
+void RealTimeKinematic::updateKalmanFilterAmbiguitiesForPivotChange(const std::vector<SatSigId>& newPivotSignals)
+{
+    for (const auto& pivotSatSigId : newPivotSignals)
+    {
+        if (_kalmanFilter.x.hasRow(States::AmbiguitySD{ pivotSatSigId }))
+        {
+            // double newPivotAmb = _kalmanFilter.x(States::AmbiguitySD{ pivotSatSigId });
+
+            std::vector<States::AmbiguitySD> ambiguitiesToChange;
+            for (size_t i = 6; i < _kalmanFilter.x.rowKeys().size(); i++) // 0-2 Pos, 3-5 Vel
+            {
+                const auto& key = _kalmanFilter.x.rowKeys().at(i);
+                if (const auto* ambSD = std::get_if<States::AmbiguitySD>(&key);
+                    ambSD && pivotSatSigId.code == ambSD->satSigId.code)
+                {
+                    ambiguitiesToChange.push_back(*ambSD);
+                }
+            }
+            LOG_DEBUG("{}: Adapting [{}] for new pivot satellite {}", nameId(), fmt::join(ambiguitiesToChange, ", "), pivotSatSigId);
+
+            // TODO: Adapt here
+        }
+    }
+}
+
 void RealTimeKinematic::addOrRemoveKalmanFilterAmbiguities(const Observations& observations)
 {
     std::unordered_set<SatSigId> observedSignals;
@@ -1069,90 +1183,6 @@ RealTimeKinematic::Differences RealTimeKinematic::calcSingleDifferences(const Ob
     }
 
     return singleDifferences;
-}
-
-void RealTimeKinematic::updatePivotSatellites(const std::vector<SatData>& satelliteData, const Observations& observations)
-{
-    // Update or erase pivot satellites from last epoch
-    std::vector<Code> erasePivotCode;
-    for (auto& pivotSatellite : _pivotSatellites)
-    {
-        auto satIter = std::find_if(satelliteData.begin(), satelliteData.end(), [&](const SatData& satData) {
-            return pivotSatellite.second.satSigId.toSatId() == satData.satId;
-        });
-
-        if (satIter == satelliteData.end()
-            || std::any_of(satIter->receiverData.begin(), satIter->receiverData.end(), // Do not use the pivot satellite anymore, if elevation < 10°
-                           [](const auto& recvData) { return recvData.second.satElevation < deg2rad(10); }))
-        {
-            LOG_DEBUG("{}: Dropping pivot satellite [{}] because: {}", nameId(), pivotSatellite.second.satSigId,
-                      satIter == satelliteData.end() ? "Satellite not observed this epoch" : "Satellite elevation < 10°");
-            erasePivotCode.push_back(pivotSatellite.first);
-        }
-    }
-    for (const auto& code : erasePivotCode)
-    {
-        _pivotSatellites.erase(code);
-    }
-
-    // Determine pivot satellite
-    for (const auto& satData : satelliteData)
-    {
-        for (const auto& observation : observations)
-        {
-            const auto satSigId = observation.first;
-            const auto code = satSigId.code;
-            if (satData.satId != satSigId.toSatId()) { continue; }
-
-            if (!_pivotSatellites.contains(code))
-            {
-                _pivotSatellites.insert(std::make_pair(code, PivotSatellite{ .reevaluate = true, .satSigId = satSigId }));
-                LOG_DATA("{}: Setting [{}] as new pivot satellite", nameId(), satSigId);
-            }
-            else if (auto& pivotSat = _pivotSatellites.at(code);
-                     pivotSat.reevaluate) // Check if better pivot available
-            {
-                auto pivotIter = std::find_if(satelliteData.begin(), satelliteData.end(),
-                                              [&pivotSat](const SatData& satData) { return satData.satId == pivotSat.satSigId.toSatId(); });
-                if (pivotIter == satelliteData.end()) { LOG_CRITICAL("{}: None existing pivot satellite should have been removed earlier.", nameId()); }
-
-                double elevation = 0.0;
-                double pivotSatElevation = 0.0;
-                for (const auto& recvObs : observation.second)
-                {
-                    elevation += satData.receiverData.at(recvObs.first).satElevation;
-                    pivotSatElevation += pivotIter->receiverData.at(recvObs.first).satElevation;
-                }
-                elevation /= static_cast<double>(observation.second.size());
-                pivotSatElevation /= static_cast<double>(observation.second.size());
-
-                // Check if all frequencies available and select satellite with largest elevation
-                LOG_DATA("{}: Pivot [{}] ele {}° <--> Sat [{}] ele {}°", nameId(), pivotIter->satId, rad2deg(pivotSatElevation),
-                         satData.satId, rad2deg(elevation));
-                if (elevation > pivotSatElevation)
-                {
-                    pivotSat = PivotSatellite{ .reevaluate = true, .satSigId = satSigId };
-                    LOG_DATA("{}: Setting [{}] as new pivot satellite for satellite code [{}]", nameId(), satData.satId, satSigId.code);
-                }
-            }
-        }
-    }
-    for (auto& [pivotCode, pivotSat] : _pivotSatellites)
-    {
-        if (pivotSat.reevaluate)
-        {
-            [[maybe_unused]] auto pivotIter = std::find_if(satelliteData.begin(), satelliteData.end(),
-                                                           [&pivotSat = pivotSat](const SatData& satData) {
-                                                               return satData.satId == pivotSat.satSigId.toSatId();
-                                                           });
-
-            LOG_DEBUG("{}: Code [{}] uses [{}] as pivot satellite with elevation {:.4}°", nameId(),
-                      pivotCode,
-                      pivotSat.satSigId,
-                      rad2deg(pivotIter->receiverData.begin()->second.satElevation));
-            pivotSat.reevaluate = false;
-        }
-    }
 }
 
 RealTimeKinematic::Differences RealTimeKinematic::calcDoubleDifferences(const Differences& singleDifferences) const

@@ -384,6 +384,16 @@ class RealTimeKinematic : public Node
     /// @param[in] ionosphericCorrections Ionospheric correction parameters collected from the Nav data
     void calcObservationEstimates(Observations& observations, const std::vector<SatData>& satelliteData, const IonosphericCorrections& ionosphericCorrections);
 
+    /// @brief Update the pivot satellites for each constellation
+    /// @param[in] satelliteData List of satellite data used for the calculation of this epoch
+    /// @param[in] observations List of GNSS observation data used for the calculation of this epoch
+    /// @return List with new pivot satellite signals
+    std::vector<SatSigId> updatePivotSatellites(const std::vector<SatData>& satelliteData, const Observations& observations);
+
+    /// @brief Adapts the Kalman Filter if a pivot satellite signal was changed
+    /// @param newPivotSignals List of newly added pivot satellite signals
+    void updateKalmanFilterAmbiguitiesForPivotChange(const std::vector<SatSigId>& newPivotSignals);
+
     /// @brief Adds or remove Ambiguities to/from the Kalman Filter state depending on the received observations
     /// @param[in] observations List of GNSS observation data used for the calculation of this epoch
     void addOrRemoveKalmanFilterAmbiguities(const Observations& observations);
@@ -391,11 +401,6 @@ class RealTimeKinematic : public Node
     /// @brief Calculates the single difference of the measurements and estimates
     /// @param[in] observations List of GNSS observation data used for the calculation of this epoch
     [[nodiscard]] Differences calcSingleDifferences(const Observations& observations) const;
-
-    /// @brief Update the pivot satellites for each constellation
-    /// @param[in] satelliteData List of satellite data used for the calculation of this epoch
-    /// @param[in] observations List of GNSS observation data used for the calculation of this epoch
-    void updatePivotSatellites(const std::vector<SatData>& satelliteData, const Observations& observations);
 
     /// @brief Calculates the double difference of the measurements and estimates
     /// @param[in] singleDifferences List of single differences
@@ -482,7 +487,7 @@ struct fmt::formatter<NAV::RealTimeKinematicKF::States::KFStates>
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::RealTimeKinematicKF::States::KFStates& state, FormatContext& ctx)
+    auto format(const NAV::RealTimeKinematicKF::States::KFStates& state, FormatContext& ctx) const
     {
         using namespace NAV::RealTimeKinematicKF::States; // NOLINT(google-build-using-namespace)
 
@@ -526,7 +531,7 @@ struct fmt::formatter<NAV::RealTimeKinematicKF::States::AmbiguitySD>
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::RealTimeKinematicKF::States::AmbiguitySD& amb, FormatContext& ctx)
+    auto format(const NAV::RealTimeKinematicKF::States::AmbiguitySD& amb, FormatContext& ctx) const
     {
         return fmt::format_to(ctx.out(), "Amb({})", amb.satSigId);
     }
@@ -550,7 +555,7 @@ struct fmt::formatter<NAV::RealTimeKinematicKF::Meas::PsrDD>
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::RealTimeKinematicKF::Meas::PsrDD& psrDD, FormatContext& ctx)
+    auto format(const NAV::RealTimeKinematicKF::Meas::PsrDD& psrDD, FormatContext& ctx) const
     {
         return fmt::format_to(ctx.out(), "psrDD({})", psrDD.satSigId);
     }
@@ -574,7 +579,7 @@ struct fmt::formatter<NAV::RealTimeKinematicKF::Meas::CarrierDD>
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::RealTimeKinematicKF::Meas::CarrierDD& phiDD, FormatContext& ctx)
+    auto format(const NAV::RealTimeKinematicKF::Meas::CarrierDD& phiDD, FormatContext& ctx) const
     {
         return fmt::format_to(ctx.out(), "phiDD({})", phiDD.satSigId);
     }
@@ -598,7 +603,7 @@ struct fmt::formatter<NAV::RealTimeKinematicKF::Meas::DopplerDD>
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::RealTimeKinematicKF::Meas::DopplerDD& dDD, FormatContext& ctx)
+    auto format(const NAV::RealTimeKinematicKF::Meas::DopplerDD& dDD, FormatContext& ctx) const
     {
         return fmt::format_to(ctx.out(), "dopDD({})", dDD.satSigId);
     }
@@ -622,7 +627,7 @@ struct fmt::formatter<NAV::RealTimeKinematicKF::States::StateKeyTypes>
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::RealTimeKinematicKF::States::StateKeyTypes& state, FormatContext& ctx)
+    auto format(const NAV::RealTimeKinematicKF::States::StateKeyTypes& state, FormatContext& ctx) const
     {
         using namespace NAV::RealTimeKinematicKF::States; // NOLINT(google-build-using-namespace)
 
@@ -673,7 +678,7 @@ struct fmt::formatter<NAV::RealTimeKinematicKF::Meas::MeasKeyTypes>
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::RealTimeKinematicKF::Meas::MeasKeyTypes& meas, FormatContext& ctx)
+    auto format(const NAV::RealTimeKinematicKF::Meas::MeasKeyTypes& meas, FormatContext& ctx) const
     {
         if (const auto* psrDD = std::get_if<NAV::RealTimeKinematicKF::Meas::PsrDD>(&meas))
         {
