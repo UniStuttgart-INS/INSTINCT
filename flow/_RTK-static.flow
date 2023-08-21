@@ -997,7 +997,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "North/South [m] (Base)",
+                                    "legendName": "Base",
                                     "lineType": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
