@@ -581,20 +581,6 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
                 _receiver[Rover].lla_pos = trafo::ecef2lla_WGS84(_receiver[Rover].e_pos);
                 _receiver[Rover].e_vel = sol->e_velocity();
 
-                // #######################################################################################################
-                //                                     TODO: Debugging, remove later
-                // #######################################################################################################
-                // // _receiver[Base].lla_pos = Eigen::Vector3d(deg2rad(48.780736), deg2rad(9.171992), 320);
-                // // _receiver[Base].e_pos = trafo::lla2ecef_WGS84(_receiver[Base].lla_pos);
-                // _receiver[Base].e_pos = Eigen::Vector3d{ 4157177.0658, 671230.4766, 4774767.0311 }; // From the RINEX obs file
-                // _receiver[Base].lla_pos = trafo::ecef2lla_WGS84(_receiver[Base].e_pos);
-                // _receiver[Rover].lla_pos = Eigen::Vector3d(deg2rad(48.7807357850344), deg2rad(9.17267255313124), 320.000195601453);
-                // _receiver[Rover].e_pos = trafo::lla2ecef_WGS84(_receiver[Rover].lla_pos);
-                // // _receiver[Rover].e_pos = Eigen::Vector3d{ 4157169.09562069,671279.836905924,4774767.03132723 }; // From the RINEX obs file
-                // // _receiver[Rover].e_vel = Eigen::Vector3d::Zero();
-                // _receiver[Rover].e_vel = Eigen::Vector3d(-3.8613, -0.6248, 3.4297);
-                // #######################################################################################################
-
                 _kalmanFilter.x.segment<3>(States::Pos) = _receiver[Rover].e_pos;
                 _kalmanFilter.x.segment<3>(States::Vel) = _receiver[Rover].e_vel;
 
@@ -626,23 +612,11 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
         calcObservationEstimates(observations, satelliteData, ionosphericCorrections);
 
         auto newPivotSignals = updatePivotSatellites(satelliteData, observations);
-        updateKalmanFilterAmbiguitiesForPivotChange(newPivotSignals);
         addOrRemoveKalmanFilterAmbiguities(observations);
+        updateKalmanFilterAmbiguitiesForPivotChange(newPivotSignals);
 
         auto singleDifferences = calcSingleDifferences(observations);
-
         auto doubleDifferences = calcDoubleDifferences(singleDifferences);
-
-        // #######################################################################################################
-        //                                     TODO: Debugging, remove later
-        // #######################################################################################################
-        // //  Send out predicted state
-        // rtkSol->solType = RtkSolution::SolutionType::RTK_Float;
-        // rtkSol->nSatellites = satelliteData.size() - _pivotSatellites.size();
-        // rtkSol->setPositionAndStdDev_e(_kalmanFilter.x.segment<3>(States::Pos), _kalmanFilter.P.block<3>(States::Pos, States::Pos));
-        // rtkSol->setVelocityAndStdDev_e(_kalmanFilter.x.segment<3>(States::Vel), _kalmanFilter.P.block<3>(States::Vel, States::Vel));
-        // invokeCallbacks(OUTPUT_PORT_INDEX_RTKSOL, rtkSol);
-        // #######################################################################################################
 
         kalmanFilterUpdate(satelliteData, doubleDifferences);
 
@@ -982,11 +956,11 @@ std::vector<SatSigId> RealTimeKinematic::updatePivotSatellites(const std::vector
         });
 
         if (satIter == satelliteData.end()
-            || std::any_of(satIter->receiverData.begin(), satIter->receiverData.end(), // Do not use the pivot satellite anymore, if elevation < 10°
-                           [](const auto& recvData) { return recvData.second.satElevation < deg2rad(10); }))
+            || std::any_of(satIter->receiverData.begin(), satIter->receiverData.end(), // Do not use the pivot satellite anymore when elevation small
+                           [](const auto& recvData) { return recvData.second.satElevation < deg2rad(30); }))
         {
-            LOG_DEBUG("{}: Dropping pivot satellite [{}] because: {}", nameId(), pivotSatellite.second.satSigId,
-                      satIter == satelliteData.end() ? "Satellite not observed this epoch" : "Satellite elevation < 10°");
+            LOG_DEBUG("{}: [{}] Dropping pivot satellite [{}] because: {}", nameId(), _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
+                      pivotSatellite.second.satSigId, satIter == satelliteData.end() ? "Satellite not observed this epoch" : "Satellite elevation < 30°");
             erasePivotCode.push_back(pivotSatellite.first);
         }
     }
@@ -1047,9 +1021,9 @@ std::vector<SatSigId> RealTimeKinematic::updatePivotSatellites(const std::vector
                                                                return satData.satId == pivotSat.satSigId.toSatId();
                                                            });
 
-            LOG_DEBUG("{}: Code [{}] uses [{}] as pivot satellite with elevation {:.4}°", nameId(),
-                      pivotCode,
-                      pivotSat.satSigId,
+            LOG_DEBUG("{}: [{}] Code [{}] uses [{}] as pivot satellite with elevation {:.4}°", nameId(),
+                      _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
+                      pivotCode, pivotSat.satSigId,
                       rad2deg(pivotIter->receiverData.begin()->second.satElevation));
             pivotSat.reevaluate = false;
             newPivotSignals.push_back(pivotSat.satSigId);
@@ -1063,23 +1037,40 @@ void RealTimeKinematic::updateKalmanFilterAmbiguitiesForPivotChange(const std::v
 {
     for (const auto& pivotSatSigId : newPivotSignals)
     {
-        if (_kalmanFilter.x.hasRow(States::AmbiguitySD{ pivotSatSigId }))
+        auto pivotKey = States::AmbiguitySD{ pivotSatSigId };
+        if (_kalmanFilter.x.hasRow(pivotKey))
         {
-            // double newPivotAmb = _kalmanFilter.x(States::AmbiguitySD{ pivotSatSigId });
-
-            std::vector<States::AmbiguitySD> ambiguitiesToChange;
+            std::vector<States::StateKeyTypes> ambiguitiesToChange;
             for (size_t i = 6; i < _kalmanFilter.x.rowKeys().size(); i++) // 0-2 Pos, 3-5 Vel
             {
-                const auto& key = _kalmanFilter.x.rowKeys().at(i);
-                if (const auto* ambSD = std::get_if<States::AmbiguitySD>(&key);
-                    ambSD && pivotSatSigId.code == ambSD->satSigId.code)
+                const auto* ambSD = std::get_if<States::AmbiguitySD>(&_kalmanFilter.x.rowKeys().at(i));
+                if (ambSD && pivotSatSigId.code == ambSD->satSigId.code && pivotSatSigId != ambSD->satSigId)
                 {
                     ambiguitiesToChange.push_back(*ambSD);
                 }
             }
-            LOG_DEBUG("{}: Adapting [{}] for new pivot satellite {}", nameId(), fmt::join(ambiguitiesToChange, ", "), pivotSatSigId);
+            LOG_DEBUG("{}: [{}] New pivot {} adapts ambiguities [{}]", nameId(), _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
+                      pivotSatSigId, fmt::join(ambiguitiesToChange, ", "));
 
-            // TODO: Adapt here
+            auto allStates = _kalmanFilter.x.rowKeys();
+            auto allStatesWithoutPivot = _kalmanFilter.x.rowKeys();
+            std::erase_if(allStatesWithoutPivot, [&pivotSatSigId](const States::StateKeyTypes& state) {
+                const auto* amb = std::get_if<States::AmbiguitySD>(&state);
+                return amb && amb->satSigId == pivotSatSigId;
+            });
+            auto nStatesWithoutPivot = static_cast<int>(allStatesWithoutPivot.size());
+
+            KeyedMatrixXd<States::StateKeyTypes> D(Eigen::MatrixXd::Zero(nStatesWithoutPivot, static_cast<int>(allStates.size())),
+                                                   allStatesWithoutPivot, allStates);
+
+            D(ambiguitiesToChange, pivotKey).setConstant(-1.0);
+            D(allStatesWithoutPivot, allStatesWithoutPivot) = Eigen::MatrixXd::Identity(nStatesWithoutPivot, nStatesWithoutPivot);
+            LOG_TRACE("{}: D = \n{}", nameId(), D);
+
+            _kalmanFilter.x(allStatesWithoutPivot) = D(all, all) * _kalmanFilter.x(all);
+            _kalmanFilter.P(allStatesWithoutPivot, allStatesWithoutPivot) = D(all, all) * _kalmanFilter.P(all, all) * D(all, all).transpose();
+
+            _kalmanFilter.removeState(pivotKey);
         }
     }
 }
@@ -1096,9 +1087,9 @@ void RealTimeKinematic::addOrRemoveKalmanFilterAmbiguities(const Observations& o
             observedSignals.insert(satSigId);
 
             auto key = States::AmbiguitySD{ satSigId };
-            if (!_kalmanFilter.x.hasRow(key))
+            if (!_kalmanFilter.x.hasRow(key) && _pivotSatellites.at(satSigId.code).satSigId != satSigId) // Don't add a ambiguity for pivot satellite
             {
-                LOG_DEBUG("{}: [{}] Adding state: {}", nameId(), _receiver[Rover].gnssObs->insTime, key);
+                LOG_DEBUG("{}: [{}] Adding state: {}", nameId(), _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), key);
                 _kalmanFilter.addState(key);
 
                 // F: Entries are all 0
@@ -1166,7 +1157,7 @@ RealTimeKinematic::Differences RealTimeKinematic::calcSingleDifferences(const Ob
             singleDifferences[satSigId].at(obsType).measurement = roverObs.measurement - baseObs.measurement;
             singleDifferences[satSigId].at(obsType).measVar = roverObs.measVar + baseObs.measVar;
 
-            if (obsType == GnssObs::Carrier)
+            if (obsType == GnssObs::Carrier && _pivotSatellites.at(satSigId.code).satSigId != satSigId) // Pivot satellite ambiguity is 0 and not in state
             {
                 // ------------------------------------------- Ambiguity ---------------------------------------------
                 double lambda_j = InsConst::C / satSigId.freq().getFrequency(); // TODO: GLONASS frequency number
@@ -1270,7 +1261,6 @@ void RealTimeKinematic::kalmanFilterUpdate(const std::vector<SatData>& satellite
             case GnssObs::Carrier:
                 _kalmanFilter.z(Meas::CarrierDD{ satSigId_s }) = obs.measurement - obs.estimate;
                 _kalmanFilter.H.block<3>(Meas::CarrierDD{ satSigId_s }, States::Pos) = (e_pLOS_1 - e_pLOS_s).transpose();
-                _kalmanFilter.H(Meas::CarrierDD{ satSigId_s }, States::AmbiguitySD{ satSigId_1 }) = -lambda_j;
                 _kalmanFilter.H(Meas::CarrierDD{ satSigId_s }, States::AmbiguitySD{ satSigId_s }) = lambda_j;
                 _kalmanFilter.R(Meas::CarrierDD{ satSigId_s }, Meas::CarrierDD{ satSigId_s }) = obs.measVar;
                 break;
