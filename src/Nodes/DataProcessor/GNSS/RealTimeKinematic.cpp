@@ -620,6 +620,27 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
 
         kalmanFilterUpdate(satelliteData, doubleDifferences);
 
+        // Integer Rounding of ambiguities
+        // {
+        //     std::vector<States::StateKeyTypes> ambKeys;
+        //     for (size_t i = 6; i < _kalmanFilter.x.rowKeys().size(); i++) // 0-2 Pos, 3-5 Vel
+        //     {
+        //         if (const auto* ambSD = std::get_if<States::AmbiguitySD>(&_kalmanFilter.x.rowKeys().at(i)))
+        //         {
+        //             ambKeys.push_back(*ambSD);
+        //         }
+        //     }
+        //     KeyedVectorXd<States::StateKeyTypes> ambRemainder(Eigen::VectorXd::Zero(static_cast<int>(ambKeys.size())), ambKeys);
+        //     ambRemainder(all) = _kalmanFilter.x.segment(ambKeys) - _kalmanFilter.x.segment(ambKeys).array().round().matrix();
+        //     _kalmanFilter.x.segment(ambKeys) -= ambRemainder(all);
+
+        //     _kalmanFilter.x.segment(States::PosVel) -= _kalmanFilter.P.block(States::PosVel, ambKeys) * _kalmanFilter.P.block(ambKeys, ambKeys).inverse() * ambRemainder(all);
+
+        //     // _kalmanFilter.P.block(States::PosVel, States::PosVel) -= _kalmanFilter.P.block(States::PosVel, ambKeys)
+        //     //                                                          * _kalmanFilter.P.block(ambKeys, ambKeys).inverse()
+        //     //                                                          * _kalmanFilter.P.block(ambKeys, States::PosVel);
+        // }
+
         rtkSol->solType = RtkSolution::SolutionType::RTK_Float;
         rtkSol->nSatellites = satelliteData.size() - _pivotSatellites.size();
         rtkSol->setPositionAndStdDev_e(_receiver[Rover].e_pos, _kalmanFilter.P.block<3>(States::Pos, States::Pos));
@@ -1102,6 +1123,14 @@ void RealTimeKinematic::addOrRemoveKalmanFilterAmbiguities(const Observations& o
                     break;
                 }
 
+                if (!observation.second.at(Rover).contains(GnssObs::Pseudorange) || !observation.second.at(Rover).contains(GnssObs::Carrier)
+                    || !observation.second.at(Base).contains(GnssObs::Pseudorange) || !observation.second.at(Base).contains(GnssObs::Carrier))
+                {
+                    // Do not initialize the ambiguity and use a default value for the P matrix
+                    _kalmanFilter.P(key, key) = 0.1; // [m]
+                    continue;
+                }
+
                 // Initialize with difference of (pseudorange - carrier-phase) measurement. Then single difference (rover - base)
                 double lambda_j = InsConst::C / satSigId.freq().getFrequency(); // TODO: GLONASS frequency number
                 _kalmanFilter.x(key) = ((observation.second.at(Rover).at(GnssObs::Pseudorange).measurement
@@ -1115,6 +1144,22 @@ void RealTimeKinematic::addOrRemoveKalmanFilterAmbiguities(const Observations& o
                                              + observation.second.at(Base).at(GnssObs::Pseudorange).measVar
                                              + observation.second.at(Base).at(GnssObs::Carrier).measVar)
                                             / lambda_j;
+
+                auto pivotObs = std::find_if(observations.begin(), observations.end(),
+                                             [&](const auto& obs) { return obs.first == _pivotSatellites.at(satSigId.code).satSigId; });
+                INS_ASSERT_USER_ERROR(pivotObs != observations.end(), "The pivot satellite should have a measurement");
+                _kalmanFilter.x(key) -= ((pivotObs->second.at(Rover).at(GnssObs::Pseudorange).measurement
+                                          - pivotObs->second.at(Rover).at(GnssObs::Carrier).measurement)
+                                         - (pivotObs->second.at(Base).at(GnssObs::Pseudorange).measurement
+                                            - pivotObs->second.at(Base).at(GnssObs::Carrier).measurement))
+                                        / lambda_j;
+                _kalmanFilter.P(key, key) += (pivotObs->second.at(Rover).at(GnssObs::Pseudorange).measVar
+                                              + pivotObs->second.at(Rover).at(GnssObs::Carrier).measVar
+                                              + pivotObs->second.at(Base).at(GnssObs::Pseudorange).measVar
+                                              + pivotObs->second.at(Base).at(GnssObs::Carrier).measVar)
+                                             / lambda_j;
+
+                _kalmanFilter.P(key, key) *= 3.0; // TODO: Make this choosable by user
             }
         }
     }
