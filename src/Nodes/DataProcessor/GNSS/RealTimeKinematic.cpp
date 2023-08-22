@@ -1054,48 +1054,6 @@ std::vector<SatSigId> RealTimeKinematic::updatePivotSatellites(const std::vector
     return newPivotSignals;
 }
 
-void RealTimeKinematic::updateKalmanFilterAmbiguitiesForPivotChange(const std::vector<SatSigId>& newPivotSignals)
-{
-    for (const auto& pivotSatSigId : newPivotSignals)
-    {
-        auto pivotKey = States::AmbiguitySD{ pivotSatSigId };
-        if (_kalmanFilter.x.hasRow(pivotKey))
-        {
-            std::vector<States::StateKeyTypes> ambiguitiesToChange;
-            for (size_t i = 6; i < _kalmanFilter.x.rowKeys().size(); i++) // 0-2 Pos, 3-5 Vel
-            {
-                const auto* ambSD = std::get_if<States::AmbiguitySD>(&_kalmanFilter.x.rowKeys().at(i));
-                if (ambSD && pivotSatSigId.code == ambSD->satSigId.code && pivotSatSigId != ambSD->satSigId)
-                {
-                    ambiguitiesToChange.push_back(*ambSD);
-                }
-            }
-            LOG_DEBUG("{}: [{}] New pivot {} adapts ambiguities [{}]", nameId(), _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
-                      pivotSatSigId, fmt::join(ambiguitiesToChange, ", "));
-
-            auto allStates = _kalmanFilter.x.rowKeys();
-            auto allStatesWithoutPivot = _kalmanFilter.x.rowKeys();
-            std::erase_if(allStatesWithoutPivot, [&pivotSatSigId](const States::StateKeyTypes& state) {
-                const auto* amb = std::get_if<States::AmbiguitySD>(&state);
-                return amb && amb->satSigId == pivotSatSigId;
-            });
-            auto nStatesWithoutPivot = static_cast<int>(allStatesWithoutPivot.size());
-
-            KeyedMatrixXd<States::StateKeyTypes> D(Eigen::MatrixXd::Zero(nStatesWithoutPivot, static_cast<int>(allStates.size())),
-                                                   allStatesWithoutPivot, allStates);
-
-            D(ambiguitiesToChange, pivotKey).setConstant(-1.0);
-            D(allStatesWithoutPivot, allStatesWithoutPivot) = Eigen::MatrixXd::Identity(nStatesWithoutPivot, nStatesWithoutPivot);
-            LOG_TRACE("{}: D = \n{}", nameId(), D);
-
-            _kalmanFilter.x(allStatesWithoutPivot) = D(all, all) * _kalmanFilter.x(all);
-            _kalmanFilter.P(allStatesWithoutPivot, allStatesWithoutPivot) = D(all, all) * _kalmanFilter.P(all, all) * D(all, all).transpose();
-
-            _kalmanFilter.removeState(pivotKey);
-        }
-    }
-}
-
 void RealTimeKinematic::addOrRemoveKalmanFilterAmbiguities(const Observations& observations)
 {
     std::unordered_set<SatSigId> observedSignals;
@@ -1179,6 +1137,48 @@ void RealTimeKinematic::addOrRemoveKalmanFilterAmbiguities(const Observations& o
     LOG_TRACE("{}: G =\n{}", nameId(), _kalmanFilter.G);
     LOG_TRACE("{}: W =\n{}", nameId(), _kalmanFilter.W);
     LOG_TRACE("{}: Q =\n{}", nameId(), _kalmanFilter.Q);
+}
+
+void RealTimeKinematic::updateKalmanFilterAmbiguitiesForPivotChange(const std::vector<SatSigId>& newPivotSignals)
+{
+    for (const auto& pivotSatSigId : newPivotSignals)
+    {
+        auto pivotKey = States::AmbiguitySD{ pivotSatSigId };
+        if (_kalmanFilter.x.hasRow(pivotKey))
+        {
+            std::vector<States::StateKeyTypes> ambiguitiesToChange;
+            for (size_t i = 6; i < _kalmanFilter.x.rowKeys().size(); i++) // 0-2 Pos, 3-5 Vel
+            {
+                const auto* ambSD = std::get_if<States::AmbiguitySD>(&_kalmanFilter.x.rowKeys().at(i));
+                if (ambSD && pivotSatSigId.code == ambSD->satSigId.code && pivotSatSigId != ambSD->satSigId)
+                {
+                    ambiguitiesToChange.emplace_back(*ambSD);
+                }
+            }
+            LOG_DEBUG("{}: [{}] New pivot {} adapts ambiguities [{}]", nameId(), _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
+                      pivotSatSigId, fmt::join(ambiguitiesToChange, ", "));
+
+            auto allStates = _kalmanFilter.x.rowKeys();
+            auto allStatesWithoutPivot = _kalmanFilter.x.rowKeys();
+            std::erase_if(allStatesWithoutPivot, [&pivotSatSigId](const States::StateKeyTypes& state) {
+                const auto* amb = std::get_if<States::AmbiguitySD>(&state);
+                return amb && amb->satSigId == pivotSatSigId;
+            });
+            auto nStatesWithoutPivot = static_cast<int>(allStatesWithoutPivot.size());
+
+            KeyedMatrixXd<States::StateKeyTypes> D(Eigen::MatrixXd::Zero(nStatesWithoutPivot, static_cast<int>(allStates.size())),
+                                                   allStatesWithoutPivot, allStates);
+
+            D(ambiguitiesToChange, pivotKey).setConstant(-1.0);
+            D(allStatesWithoutPivot, allStatesWithoutPivot) = Eigen::MatrixXd::Identity(nStatesWithoutPivot, nStatesWithoutPivot);
+            LOG_TRACE("{}: D = \n{}", nameId(), D);
+
+            _kalmanFilter.x(allStatesWithoutPivot) = D(all, all) * _kalmanFilter.x(all);
+            _kalmanFilter.P(allStatesWithoutPivot, allStatesWithoutPivot) = D(all, all) * _kalmanFilter.P(all, all) * D(all, all).transpose();
+
+            _kalmanFilter.removeState(pivotKey);
+        }
+    }
 }
 
 RealTimeKinematic::Differences RealTimeKinematic::calcSingleDifferences(const Observations& observations) const

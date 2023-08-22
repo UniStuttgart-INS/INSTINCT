@@ -390,13 +390,13 @@ class RealTimeKinematic : public Node
     /// @return List with new pivot satellite signals
     std::vector<SatSigId> updatePivotSatellites(const std::vector<SatData>& satelliteData, const Observations& observations);
 
-    /// @brief Adapts the Kalman Filter if a pivot satellite signal was changed
-    /// @param newPivotSignals List of newly added pivot satellite signals
-    void updateKalmanFilterAmbiguitiesForPivotChange(const std::vector<SatSigId>& newPivotSignals);
-
     /// @brief Adds or remove Ambiguities to/from the Kalman Filter state depending on the received observations
     /// @param[in] observations List of GNSS observation data used for the calculation of this epoch
     void addOrRemoveKalmanFilterAmbiguities(const Observations& observations);
+
+    /// @brief Adapts the Kalman Filter if a pivot satellite signal was changed
+    /// @param newPivotSignals List of newly added pivot satellite signals
+    void updateKalmanFilterAmbiguitiesForPivotChange(const std::vector<SatSigId>& newPivotSignals);
 
     /// @brief Calculates the single difference of the measurements and estimates
     /// @param[in] observations List of GNSS observation data used for the calculation of this epoch
