@@ -15,11 +15,15 @@
 
 #include "internal/Node/Node.hpp"
 
+#include "NodeData/GNSS/GnssObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
 
+#include "util/Random/RandomNumberGenerator.hpp"
+
 #include "util/Eigen.hpp"
 #include <random>
+#include <map>
 
 namespace NAV
 {
@@ -60,14 +64,6 @@ class ErrorModel : public Node
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
-    /// Random Number Generator GUI settings
-    struct RandomNumberGenerator // NOLINT(cert-msc32-c,cert-msc51-cpp)
-    {
-        bool useSeedInsteadOfSystemTime = true; ///< Flag whether to use the seed instead of the system time
-        uint32_t seed = 0;                      ///< Seed for the random number generator
-        std::minstd_rand generator;             ///< Random number generator
-    };
-
   private:
     constexpr static size_t OUTPUT_PORT_INDEX_FLOW = 0; ///< @brief Flow
     constexpr static size_t INPUT_PORT_INDEX_FLOW = 0;  ///< @brief Flow
@@ -98,6 +94,15 @@ class ErrorModel : public Node
     /// @param[in] posVelAtt Copied data to modify and send out again
     void receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt);
 
+    /// @brief Callback when receiving an GnssObs
+    /// @param[in] gnssObs Copied data to modify and send out again
+    void receiveGnssObs(const std::shared_ptr<GnssObs>& gnssObs);
+
+    /// Last observation time
+    InsTime _lastObservationTime;
+    /// Frequency of the messages [Hz]
+    double _messageFrequency{};
+
     // #########################################################################################################################################
     //                                                                 ImuObs
     // #########################################################################################################################################
@@ -109,10 +114,8 @@ class ErrorModel : public Node
     {
         m_s2, ///< [m/s^2]
     };
-
     /// Selected unit for the accelerometer bias in the GUI
     ImuAccelerometerBiasUnits _imuAccelerometerBiasUnit = ImuAccelerometerBiasUnits::m_s2;
-
     /// Bias of the accelerometer in platform coordinates (Unit as selected)
     Eigen::Vector3d _imuAccelerometerBias_p = Eigen::Vector3d::Zero();
 
@@ -122,10 +125,8 @@ class ErrorModel : public Node
         rad_s, ///< [rad/s]
         deg_s, ///< [deg/s]
     };
-
     /// Selected unit for the gyroscope bias in the GUI
     ImuGyroscopeBiasUnits _imuGyroscopeBiasUnit = ImuGyroscopeBiasUnits::rad_s;
-
     /// Bias of the gyroscope in platform coordinates (Unit as selected)
     Eigen::Vector3d _imuGyroscopeBias_p = Eigen::Vector3d::Zero();
 
@@ -137,15 +138,12 @@ class ErrorModel : public Node
         m_s2,  ///< [m/s^2] (Standard deviation)
         m2_s4, ///< [m^2/s^4] (Variance)
     };
-
     /// Selected unit for the accelerometer noise in the GUI
     ImuAccelerometerNoiseUnits _imuAccelerometerNoiseUnit = ImuAccelerometerNoiseUnits::m_s2;
-
     /// Noise of the accelerometer (Unit as selected)
     Eigen::Vector3d _imuAccelerometerNoise = Eigen::Vector3d::Zero();
-
     /// Random number generator for the accelerometer noise
-    RandomNumberGenerator _imuAccelerometerRandomNumberGenerator;
+    RandomNumberGenerator _imuAccelerometerRng;
 
     /// Possible units to specify an gyroscope noise with
     enum class ImuGyroscopeNoiseUnits
@@ -155,15 +153,12 @@ class ErrorModel : public Node
         rad2_s2, ///< [rad^2/s^2] (Variance)
         deg2_s2, ///< [deg^2/s^2] (Variance)
     };
-
     /// Selected unit for the gyroscope noise in the GUI
     ImuGyroscopeNoiseUnits _imuGyroscopeNoiseUnit = ImuGyroscopeNoiseUnits::rad_s;
-
     /// Noise of the gyroscope (Unit as selected)
     Eigen::Vector3d _imuGyroscopeNoise = Eigen::Vector3d::Zero();
-
     /// Random number generator for the gyroscope noise
-    RandomNumberGenerator _imuGyroscopeRandomNumberGenerator;
+    RandomNumberGenerator _imuGyroscopeRng;
 
     // #########################################################################################################################################
     //                                                                PosVelAtt
@@ -178,10 +173,8 @@ class ErrorModel : public Node
         rad_rad_m, ///< LatLonAlt [rad, rad, m]
         deg_deg_m, ///< LatLonAlt [deg, deg, m]
     };
-
     /// Selected unit for the position bias in the GUI
     PositionBiasUnits _positionBiasUnit = PositionBiasUnits::meter;
-
     /// Bias of the position (Unit as selected)
     Eigen::Vector3d _positionBias = Eigen::Vector3d::Zero();
 
@@ -190,10 +183,8 @@ class ErrorModel : public Node
     {
         m_s, ///< [m/s]
     };
-
     /// Selected unit for the velocity bias in the GUI
     VelocityBiasUnits _velocityBiasUnit = VelocityBiasUnits::m_s;
-
     /// Bias of the velocity (Unit as selected)
     Eigen::Vector3d _velocityBias = Eigen::Vector3d::Zero();
 
@@ -203,10 +194,8 @@ class ErrorModel : public Node
         rad, ///< [rad]
         deg, ///< [deg]
     };
-
     /// Selected unit for the attitude bias in the GUI
     AttitudeBiasUnits _attitudeBiasUnit = AttitudeBiasUnits::deg;
-
     /// Bias of the attitude (Unit as selected)
     Eigen::Vector3d _attitudeBias = Eigen::Vector3d::Zero();
 
@@ -225,28 +214,22 @@ class ErrorModel : public Node
 
     /// Selected unit for the position noise in the GUI
     PositionNoiseUnits _positionNoiseUnit = PositionNoiseUnits::meter;
-
     /// Noise of the position (Unit as selected)
     Eigen::Vector3d _positionNoise = Eigen::Vector3d::Zero();
-
     /// Random number generator for the position noise
-    RandomNumberGenerator _positionRandomNumberGenerator;
-
+    RandomNumberGenerator _positionRng;
     /// Possible units to specify an velocity noise with
     enum class VelocityNoiseUnits
     {
         m_s,   ///< [m/s] (Standard deviation)
         m2_s2, ///< [m^2/s^2] (Variance)
     };
-
     /// Selected unit for the velocity noise in the GUI
     VelocityNoiseUnits _velocityNoiseUnit = VelocityNoiseUnits::m_s;
-
     /// Noise of the velocity (Unit as selected)
     Eigen::Vector3d _velocityNoise = Eigen::Vector3d::Zero();
-
     /// Random number generator for the velocity noise
-    RandomNumberGenerator _velocityRandomNumberGenerator;
+    RandomNumberGenerator _velocityRng;
 
     /// Possible units to specify a attitude noise with
     enum class AttitudeNoiseUnits
@@ -256,15 +239,99 @@ class ErrorModel : public Node
         rad2, ///< [rad^2] (Variance)
         deg2, ///< [deg^2] (Variance)
     };
-
     /// Selected unit for the attitude noise in the GUI
     AttitudeNoiseUnits _attitudeNoiseUnit = AttitudeNoiseUnits::deg;
-
     /// Noise of the attitude (Unit as selected)
     Eigen::Vector3d _attitudeNoise = Eigen::Vector3d::Zero();
-
     /// Random number generator for the attitude noise
-    RandomNumberGenerator _attitudeRandomNumberGenerator;
+    RandomNumberGenerator _attitudeRng;
+
+    // #########################################################################################################################################
+    //                                                                GnssObs
+    // #########################################################################################################################################
+
+    // ---------------------------------------------------------------- Noise ------------------------------------------------------------------
+
+    /// Possible units to specify a pseudorange noise with
+    enum class PseudorangeNoiseUnits
+    {
+        meter, ///< [m] (Standard deviation)
+    };
+    /// Selected unit for the pseudorange noise in the GUI
+    PseudorangeNoiseUnits _gui_pseudorangeNoiseUnit = PseudorangeNoiseUnits::meter;
+    /// Noise of the pseudorange (Unit as selected)
+    double _gui_pseudorangeNoise{ 0.3 };
+    /// Random number generator for the pseudorange noise
+    RandomNumberGenerator _pseudorangeRng;
+
+    /// Possible units to specify a carrier-phase noise with
+    enum class CarrierPhaseNoiseUnits
+    {
+        meter, ///< [m] (Standard deviation)
+    };
+    /// Selected unit for the carrier-phase noise in the GUI
+    CarrierPhaseNoiseUnits _gui_carrierPhaseNoiseUnit = CarrierPhaseNoiseUnits::meter;
+    /// Noise of the carrier-phase (Unit as selected)
+    double _gui_carrierPhaseNoise{ 0.003 };
+    /// Random number generator for the carrier-phase noise
+    RandomNumberGenerator _carrierPhaseRng;
+
+    /// Possible units to specify a range-rate noise with
+    enum class DopplerNoiseUnits
+    {
+        m_s, ///< [m/s] (Standard deviation)
+    };
+    /// Selected unit for the range-rate noise in the GUI
+    DopplerNoiseUnits _gui_dopplerNoiseUnit = DopplerNoiseUnits::m_s;
+    /// Noise of the range-rate (Unit as selected)
+    double _gui_dopplerNoise{ 0.05 };
+    /// Random number generator for the range-rate noise
+    RandomNumberGenerator _dopplerRng;
+
+    // -------------------------------------------------------------- Ambiguity ----------------------------------------------------------------
+
+    /// Ambiguity limits
+    std::array<int, 2> _gui_ambiguityLimits = { { -20, 20 } };
+    /// Random number generator for the ambiguity
+    RandomNumberGenerator _ambiguityRng;
+    /// Ambiguity map
+    std::map<SatSigId, std::vector<std::pair<InsTime, int>>> _ambiguities;
+
+    // ------------------------------------------------------------- Cycle-slip ----------------------------------------------------------------
+
+    /// Possible units to specify the cycle-slip rate with
+    enum class CycleSlipFrequencyUnits
+    {
+        per_day,    ///< [1/d]
+        per_hour,   ///< [1/h]
+        per_minute, ///< [1/m]
+    };
+    /// Selected unit for the cycle-slip frequency in the GUI
+    CycleSlipFrequencyUnits _gui_cycleSlipFrequencyUnit = CycleSlipFrequencyUnits::per_hour;
+    /// The cycle-slip frequency (Unit as selected)
+    double _gui_cycleSlipFrequency{ 0.0 };
+    /// The time frame which is considered for a cycle slip
+    InsTime _cycleSlipWindowStartTime;
+
+    /// Possible units to specify the cycle-slip detection probability with
+    enum class CycleSlipDetectionProbabilityUnits
+    {
+        percent, ///< [%]
+    };
+    /// Selected unit for the cycle-slip detection probability in the GUI
+    CycleSlipDetectionProbabilityUnits _gui_cycleSlipDetectionProbabilityUnit = CycleSlipDetectionProbabilityUnits::percent;
+    /// The chance to detect a cycle slip and set the Loss-of-Lock indicator
+    double _gui_cycleSlipDetectionProbability{ 100.0 };
+
+    /// Random number generator for the cycle-slip
+    RandomNumberGenerator _cycleSlipRng;
+    /// List of produced cycle-slips
+    std::vector<std::pair<InsTime, SatSigId>> _cycleSlips;
+
+    /// Frequencies used for calculation (GUI filter)
+    Frequency _filterFreq = G01;
+    /// Codes used for calculation (GUI filter)
+    Code _filterCode = Code_Default;
 };
 
 } // namespace NAV
