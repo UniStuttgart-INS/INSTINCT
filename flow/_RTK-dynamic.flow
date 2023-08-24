@@ -5,11 +5,6 @@
             "id": 119,
             "startPinId": 115
         },
-        "link-120": {
-            "endPinId": 105,
-            "id": 120,
-            "startPinId": 112
-        },
         "link-130": {
             "endPinId": 129,
             "id": 130,
@@ -45,20 +40,35 @@
             "id": 292,
             "startPinId": 108
         },
-        "link-305": {
-            "endPinId": 100,
-            "id": 305,
-            "startPinId": 259
-        },
-        "link-306": {
-            "endPinId": 106,
-            "id": 306,
-            "startPinId": 259
-        },
         "link-309": {
             "endPinId": 218,
             "id": 309,
             "startPinId": 215
+        },
+        "link-314": {
+            "endPinId": 310,
+            "id": 314,
+            "startPinId": 112
+        },
+        "link-315": {
+            "endPinId": 105,
+            "id": 315,
+            "startPinId": 311
+        },
+        "link-321": {
+            "endPinId": 316,
+            "id": 321,
+            "startPinId": 259
+        },
+        "link-322": {
+            "endPinId": 100,
+            "id": 322,
+            "startPinId": 317
+        },
+        "link-323": {
+            "endPinId": 106,
+            "id": 323,
+            "startPinId": 317
         }
     },
     "nodes": {
@@ -270,7 +280,7 @@
                 }
             ],
             "pos": {
-                "x": -169.0,
+                "x": -377.0,
                 "y": 254.0
             },
             "size": {
@@ -315,11 +325,11 @@
             "name": "Base Station",
             "outputPins": [],
             "pos": {
-                "x": -192.0,
+                "x": -400.0,
                 "y": 128.0
             },
             "size": {
-                "x": 240.0,
+                "x": 448.0,
                 "y": 186.0
             },
             "type": "GroupBox"
@@ -1637,7 +1647,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "G1C-08",
+                                    "legendName": "AmbSD G1C-08 [cycles] (RTK)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1662,7 +1672,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 31,
-                                "displayName": "AmbSD G1C-13 [cycles]",
+                                "displayName": "AmbSD G1C-24 [cycles]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1671,7 +1681,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "G1C-13",
+                                    "legendName": "AmbSD G1C-24 [cycles] (RTK)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1696,7 +1706,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 32,
-                                "displayName": "AmbSD G1C-24 [cycles]",
+                                "displayName": "AmbSD G1C-07 [cycles]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1705,7 +1715,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "G1C-24",
+                                    "legendName": "AmbSD G1C-07 [cycles] (RTK)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1730,7 +1740,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 33,
-                                "displayName": "AmbSD G1C-07 [cycles]",
+                                "displayName": "AmbSD G1C-18 [cycles]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1739,7 +1749,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "G1C-07",
+                                    "legendName": "AmbSD G1C-18 [cycles] (RTK)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1764,7 +1774,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 34,
-                                "displayName": "AmbSD G1C-18 [cycles]",
+                                "displayName": "AmbSD G1C-20 [cycles]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1773,7 +1783,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "G1C-18",
+                                    "legendName": "AmbSD G1C-20 [cycles] (RTK)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1798,7 +1808,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 35,
-                                "displayName": "AmbSD G1C-20 [cycles]",
+                                "displayName": "AmbSD G1C-14 [cycles]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1807,7 +1817,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "G1C-20",
+                                    "legendName": "AmbSD G1C-14 [cycles] (RTK)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1832,7 +1842,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 36,
-                                "displayName": "AmbSD G1C-14 [cycles]",
+                                "displayName": "AmbSD G1C-23 [cycles]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1841,7 +1851,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "G1C-14",
+                                    "legendName": "AmbSD G1C-23 [cycles] (RTK)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1866,7 +1876,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 37,
-                                "displayName": "AmbSD G1C-23 [cycles]",
+                                "displayName": "AmbSD G1C-05 [cycles]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1875,7 +1885,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "G1C-23",
+                                    "legendName": "AmbSD G1C-05 [cycles] (RTK)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1900,7 +1910,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 38,
-                                "displayName": "AmbSD G1C-05 [cycles]",
+                                "displayName": "AmbSD G1C-30 [cycles]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1909,7 +1919,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "G1C-05",
+                                    "legendName": "AmbSD G1C-30 [cycles] (RTK)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1934,7 +1944,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 39,
-                                "displayName": "AmbSD G1C-30 [cycles]",
+                                "displayName": "AmbSD G1C-15 [cycles]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1943,7 +1953,7 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "G1C-30",
+                                    "legendName": "AmbSD G1C-15 [cycles] (RTK)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -1968,50 +1978,16 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 40,
-                                "displayName": "AmbSD G1C-15 [cycles]",
-                                "pinIndex": 1,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "G1C-15",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 41,
                                 "displayName": "AmbSD G1C-17 [cycles]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
+                                        "w": 1.0,
+                                        "x": 0.47058823704719543,
+                                        "y": 0.6274510025978088,
+                                        "z": 0.16470588743686676
                                     },
-                                    "legendName": "G1C-17",
+                                    "legendName": "AmbSD G1C-17 [cycles] (RTK)",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -2035,7 +2011,7 @@
                             }
                         ],
                         "rightPaneWidth": 319.0,
-                        "selectedPin": 2,
+                        "selectedPin": 1,
                         "selectedXdata": [
                             0,
                             0,
@@ -2081,40 +2057,6 @@
                                         "z": 0.0
                                     },
                                     "legendName": "G1C-08",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 102,
-                                "displayName": "G1C-13 Elevation [deg]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "G1C-13",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -2449,12 +2391,46 @@
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
+                                        "w": 1.0,
+                                        "x": 0.47058823704719543,
+                                        "y": 0.6274510025978088,
+                                        "z": 0.16470588743686676
+                                    },
+                                    "legendName": "G1C-17",
+                                    "lineType": 1,
+                                    "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "G1C-17",
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 102,
+                                "displayName": "G1C-13 Elevation [deg]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": 1.0,
+                                        "x": 0.5686274766921997,
+                                        "y": 0.10588235408067703,
+                                        "z": 0.7647058963775635
+                                    },
+                                    "legendName": "G1C-13",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -2708,7 +2684,7 @@
                 }
             ],
             "pos": {
-                "x": -175.0,
+                "x": -383.0,
                 "y": 414.0
             },
             "size": {
@@ -2726,11 +2702,11 @@
             "name": "Rover - Dynamic - Rose figure",
             "outputPins": [],
             "pos": {
-                "x": -192.0,
+                "x": -400.0,
                 "y": 368.0
             },
             "size": {
-                "x": 240.0,
+                "x": 448.0,
                 "y": 202.0
             },
             "type": "GroupBox"
@@ -2752,6 +2728,416 @@
                 "y": 362.0
             },
             "type": "GroupBox"
+        },
+        "node-312": {
+            "data": {
+                "ambiguityLimits": [
+                    -20,
+                    20
+                ],
+                "ambiguityRng": {
+                    "seed": 7033218420296542824,
+                    "useSeed": true
+                },
+                "attitudeBias": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "attitudeBiasUnit": 1,
+                "attitudeNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "attitudeNoiseUnit": 1,
+                "attitudeRng": {
+                    "seed": 6175087243161463320,
+                    "useSeed": true
+                },
+                "carrierPhaseNoise": 0.003,
+                "carrierPhaseNoiseUnit": 0,
+                "carrierPhaseRng": {
+                    "seed": 9140605052669898140,
+                    "useSeed": true
+                },
+                "cycleSlipDetectionProbability": 100.0,
+                "cycleSlipDetectionProbabilityUnit": 0,
+                "cycleSlipFrequency": 0.0,
+                "cycleSlipFrequencyUnit": 1,
+                "cycleSlipRng": {
+                    "seed": 5229643671472084774,
+                    "useSeed": true
+                },
+                "dopplerNoise": 0.05,
+                "dopplerNoiseUnit": 0,
+                "dopplerRng": {
+                    "seed": 6560060033626271903,
+                    "useSeed": true
+                },
+                "filterCode": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000111010000011111",
+                "filterFreq": "L1",
+                "imuAccelerometerBiasUnit": 0,
+                "imuAccelerometerBias_p": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuAccelerometerNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuAccelerometerNoiseUnit": 0,
+                "imuAccelerometerRng": {
+                    "seed": 1814708486923872724,
+                    "useSeed": true
+                },
+                "imuGyroscopeBiasUnit": 0,
+                "imuGyroscopeBias_p": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuGyroscopeNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuGyroscopeNoiseUnit": 0,
+                "imuGyroscopeRng": {
+                    "seed": 4105127080553954674,
+                    "useSeed": true
+                },
+                "positionBias": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "positionBiasUnit": 0,
+                "positionNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "positionNoiseUnit": 0,
+                "positionRng": {
+                    "seed": 3138155281694485079,
+                    "useSeed": true
+                },
+                "pseudorangeNoise": 0.3,
+                "pseudorangeNoiseUnit": 0,
+                "pseudorangeRng": {
+                    "seed": 6525220135165462219,
+                    "useSeed": true
+                },
+                "velocityBias": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "velocityBiasUnit": 0,
+                "velocityNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "velocityNoiseUnit": 0,
+                "velocityRng": {
+                    "seed": 345647588396531303,
+                    "useSeed": true
+                }
+            },
+            "enabled": true,
+            "id": 312,
+            "inputPins": [
+                {
+                    "id": 310,
+                    "name": "True"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "ErrorModel",
+            "outputPins": [
+                {
+                    "id": 311,
+                    "name": "Biased"
+                }
+            ],
+            "pos": {
+                "x": -143.0,
+                "y": 254.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "ErrorModel"
+        },
+        "node-318": {
+            "data": {
+                "ambiguityLimits": [
+                    -20,
+                    20
+                ],
+                "ambiguityRng": {
+                    "seed": 7937889249321028732,
+                    "useSeed": true
+                },
+                "attitudeBias": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "attitudeBiasUnit": 1,
+                "attitudeNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "attitudeNoiseUnit": 1,
+                "attitudeRng": {
+                    "seed": 9108751070319027447,
+                    "useSeed": true
+                },
+                "carrierPhaseNoise": 0.003,
+                "carrierPhaseNoiseUnit": 0,
+                "carrierPhaseRng": {
+                    "seed": 2086641784851992463,
+                    "useSeed": true
+                },
+                "cycleSlipDetectionProbability": 100.0,
+                "cycleSlipDetectionProbabilityUnit": 0,
+                "cycleSlipFrequency": 0.0,
+                "cycleSlipFrequencyUnit": 1,
+                "cycleSlipRng": {
+                    "seed": 4397228057862922079,
+                    "useSeed": true
+                },
+                "dopplerNoise": 0.05,
+                "dopplerNoiseUnit": 0,
+                "dopplerRng": {
+                    "seed": 1542482685477957171,
+                    "useSeed": true
+                },
+                "filterCode": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000111010000011111",
+                "filterFreq": "L1",
+                "imuAccelerometerBiasUnit": 0,
+                "imuAccelerometerBias_p": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuAccelerometerNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuAccelerometerNoiseUnit": 0,
+                "imuAccelerometerRng": {
+                    "seed": 4519486888175225159,
+                    "useSeed": true
+                },
+                "imuGyroscopeBiasUnit": 0,
+                "imuGyroscopeBias_p": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuGyroscopeNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuGyroscopeNoiseUnit": 0,
+                "imuGyroscopeRng": {
+                    "seed": 7522016391005614755,
+                    "useSeed": true
+                },
+                "positionBias": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "positionBiasUnit": 0,
+                "positionNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "positionNoiseUnit": 0,
+                "positionRng": {
+                    "seed": 8433090270576267959,
+                    "useSeed": true
+                },
+                "pseudorangeNoise": 0.3,
+                "pseudorangeNoiseUnit": 0,
+                "pseudorangeRng": {
+                    "seed": 9171461642434201085,
+                    "useSeed": true
+                },
+                "velocityBias": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "velocityBiasUnit": 0,
+                "velocityNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "velocityNoiseUnit": 0,
+                "velocityRng": {
+                    "seed": 6465524100278632599,
+                    "useSeed": true
+                }
+            },
+            "enabled": true,
+            "id": 318,
+            "inputPins": [
+                {
+                    "id": 316,
+                    "name": "True"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "ErrorModel",
+            "outputPins": [
+                {
+                    "id": 317,
+                    "name": "Biased"
+                }
+            ],
+            "pos": {
+                "x": -143.0,
+                "y": 414.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "ErrorModel"
         }
     }
 }

@@ -5,11 +5,6 @@
             "id": 119,
             "startPinId": 115
         },
-        "link-120": {
-            "endPinId": 105,
-            "id": 120,
-            "startPinId": 112
-        },
         "link-130": {
             "endPinId": 129,
             "id": 130,
@@ -50,15 +45,30 @@
             "id": 330,
             "startPinId": 271
         },
-        "link-331": {
-            "endPinId": 100,
-            "id": 331,
+        "link-336": {
+            "endPinId": 333,
+            "id": 336,
             "startPinId": 110
         },
-        "link-332": {
+        "link-337": {
+            "endPinId": 100,
+            "id": 337,
+            "startPinId": 334
+        },
+        "link-338": {
             "endPinId": 106,
-            "id": 332,
-            "startPinId": 110
+            "id": 338,
+            "startPinId": 334
+        },
+        "link-342": {
+            "endPinId": 339,
+            "id": 342,
+            "startPinId": 112
+        },
+        "link-343": {
+            "endPinId": 105,
+            "id": 343,
+            "startPinId": 340
         }
     },
     "nodes": {
@@ -142,7 +152,7 @@
         },
         "node-109": {
             "data": {
-                "ambiguityProcessNoiseStDev": 0.0001,
+                "ambiguityProcessNoiseStDev": 0.1,
                 "codes": "011111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000111010000011111",
                 "elevationMask": 0.0,
                 "excludedSatellites": [],
@@ -152,20 +162,20 @@
                     "rtklibParams": {
                         "carrierPhaseErrorAB": [
                             0.003,
-                            0.003
+                            0.0
                         ],
                         "codeCarrierPhaseErrorRatio": [
                             100.0,
                             100.0
                         ],
-                        "dopplerFrequency": 1.0
+                        "dopplerFrequency": 0.26
                     }
                 },
                 "ionosphereModel": 0,
                 "nNavInfoPins": 2,
                 "stdevAccel": [
-                    0.01,
-                    0.01
+                    0.0001,
+                    0.0001
                 ],
                 "stdevAccelUnits": 0,
                 "stdevAmbiguityUnits": 0,
@@ -242,7 +252,7 @@
                 }
             ],
             "pos": {
-                "x": 122.0,
+                "x": 106.0,
                 "y": 282.0
             },
             "size": {
@@ -270,7 +280,7 @@
                 }
             ],
             "pos": {
-                "x": -175.0,
+                "x": -383.0,
                 "y": 414.0
             },
             "size": {
@@ -298,7 +308,7 @@
                 }
             ],
             "pos": {
-                "x": -169.0,
+                "x": -377.0,
                 "y": 254.0
             },
             "size": {
@@ -343,11 +353,11 @@
             "name": "Base Station",
             "outputPins": [],
             "pos": {
-                "x": -192.0,
+                "x": -400.0,
                 "y": 128.0
             },
             "size": {
-                "x": 240.0,
+                "x": 448.0,
                 "y": 186.0
             },
             "type": "GroupBox"
@@ -361,11 +371,11 @@
             "name": "Rover - Static - 2km East",
             "outputPins": [],
             "pos": {
-                "x": -192.0,
+                "x": -400.0,
                 "y": 368.0
             },
             "size": {
-                "x": 240.0,
+                "x": 448.0,
                 "y": 186.0
             },
             "type": "GroupBox"
@@ -984,40 +994,6 @@
                                     "stride": 0,
                                     "thickness": 1.0
                                 }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 5,
-                                "displayName": "North/South [m]",
-                                "pinIndex": 2,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Base",
-                                    "lineType": 0,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 8.699999809265137,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
                             }
                         ],
                         "rightPaneWidth": 400.0,
@@ -1565,7 +1541,7 @@
                     },
                     {
                         "headerText": "Ambiguity Single Differences",
-                        "leftPaneWidth": 261.0,
+                        "leftPaneWidth": 239.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
@@ -1606,40 +1582,6 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 31,
-                                "displayName": "AmbSD G1C-13 [cycles]",
-                                "pinIndex": 1,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "G1C-13",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 32,
                                 "displayName": "AmbSD G1C-24 [cycles]",
                                 "pinIndex": 1,
                                 "style": {
@@ -1673,7 +1615,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 33,
+                                "dataIndex": 32,
                                 "displayName": "AmbSD G1C-07 [cycles]",
                                 "pinIndex": 1,
                                 "style": {
@@ -1707,7 +1649,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 34,
+                                "dataIndex": 33,
                                 "displayName": "AmbSD G1C-18 [cycles]",
                                 "pinIndex": 1,
                                 "style": {
@@ -1741,7 +1683,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 35,
+                                "dataIndex": 34,
                                 "displayName": "AmbSD G1C-20 [cycles]",
                                 "pinIndex": 1,
                                 "style": {
@@ -1775,7 +1717,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 36,
+                                "dataIndex": 35,
                                 "displayName": "AmbSD G1C-14 [cycles]",
                                 "pinIndex": 1,
                                 "style": {
@@ -1809,7 +1751,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 37,
+                                "dataIndex": 36,
                                 "displayName": "AmbSD G1C-23 [cycles]",
                                 "pinIndex": 1,
                                 "style": {
@@ -1843,7 +1785,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 38,
+                                "dataIndex": 37,
                                 "displayName": "AmbSD G1C-05 [cycles]",
                                 "pinIndex": 1,
                                 "style": {
@@ -1877,7 +1819,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 39,
+                                "dataIndex": 38,
                                 "displayName": "AmbSD G1C-30 [cycles]",
                                 "pinIndex": 1,
                                 "style": {
@@ -1911,7 +1853,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 40,
+                                "dataIndex": 39,
                                 "displayName": "AmbSD G1C-15 [cycles]",
                                 "pinIndex": 1,
                                 "style": {
@@ -1945,15 +1887,15 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 41,
+                                "dataIndex": 40,
                                 "displayName": "AmbSD G1C-17 [cycles]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
+                                        "w": 1.0,
+                                        "x": 0.46986159682273865,
+                                        "y": 0.6293436288833618,
+                                        "z": 0.1652330756187439
                                     },
                                     "legendName": "G1C-17",
                                     "lineType": 1,
@@ -1978,8 +1920,8 @@
                                 }
                             }
                         ],
-                        "rightPaneWidth": 319.0,
-                        "selectedPin": 2,
+                        "rightPaneWidth": 341.0,
+                        "selectedPin": 1,
                         "selectedXdata": [
                             0,
                             0,
@@ -2008,7 +1950,7 @@
                     },
                     {
                         "headerText": "Elevation",
-                        "leftPaneWidth": 267.0,
+                        "leftPaneWidth": 238.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
@@ -2025,40 +1967,6 @@
                                         "z": 0.0
                                     },
                                     "legendName": "G1C-08",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 102,
-                                "displayName": "G1C-13 Elevation [deg]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "G1C-13",
                                     "lineType": 1,
                                     "markerFillColor": {
                                         "w": -1.0,
@@ -2393,10 +2301,10 @@
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
+                                        "w": 1.0,
+                                        "x": 0.47058823704719543,
+                                        "y": 0.6274510025978088,
+                                        "z": 0.16470588743686676
                                     },
                                     "legendName": "G1C-17",
                                     "lineType": 1,
@@ -2419,9 +2327,43 @@
                                     "stride": 0,
                                     "thickness": 1.0
                                 }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 102,
+                                "displayName": "G1C-13 Elevation [deg]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": 1.0,
+                                        "x": 0.5687918663024902,
+                                        "y": 0.10625958442687988,
+                                        "z": 0.7644787430763245
+                                    },
+                                    "legendName": "G1C-13",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
                             }
                         ],
-                        "rightPaneWidth": 313.0,
+                        "rightPaneWidth": 342.0,
                         "selectedPin": 0,
                         "selectedXdata": [
                             0,
@@ -2447,7 +2389,7 @@
                             0,
                             0
                         ],
-                        "yAxisFlags": 0
+                        "yAxisFlags": 2048
                     }
                 ]
             },
@@ -2608,7 +2550,7 @@
                 "initDuration": 5.0,
                 "initTime": {
                     "mjd_day": 59952,
-                    "mjd_frac": 0.4164583333333333
+                    "mjd_frac": 0.41687499999999994
                 },
                 "initTimeEditFormat": {
                     "format": 0,
@@ -2692,6 +2634,416 @@
                 "y": 362.0
             },
             "type": "GroupBox"
+        },
+        "node-335": {
+            "data": {
+                "ambiguityLimits": [
+                    -20,
+                    20
+                ],
+                "ambiguityRng": {
+                    "seed": 8458400565724971008,
+                    "useSeed": true
+                },
+                "attitudeBias": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "attitudeBiasUnit": 1,
+                "attitudeNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "attitudeNoiseUnit": 1,
+                "attitudeRng": {
+                    "seed": 368325746,
+                    "useSeed": true
+                },
+                "carrierPhaseNoise": 0.003,
+                "carrierPhaseNoiseUnit": 0,
+                "carrierPhaseRng": {
+                    "seed": 2644616285626826752,
+                    "useSeed": true
+                },
+                "cycleSlipDetectionProbability": 70.0,
+                "cycleSlipDetectionProbabilityUnit": 0,
+                "cycleSlipFrequency": 0.1,
+                "cycleSlipFrequencyUnit": 2,
+                "cycleSlipRng": {
+                    "seed": 3650007519041945600,
+                    "useSeed": true
+                },
+                "dopplerNoise": 0.05,
+                "dopplerNoiseUnit": 0,
+                "dopplerRng": {
+                    "seed": 5311088663390584832,
+                    "useSeed": true
+                },
+                "filterCode": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000111010000011111",
+                "filterFreq": "L1",
+                "imuAccelerometerBiasUnit": 0,
+                "imuAccelerometerBias_p": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuAccelerometerNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuAccelerometerNoiseUnit": 0,
+                "imuAccelerometerRng": {
+                    "seed": 1012305278,
+                    "useSeed": true
+                },
+                "imuGyroscopeBiasUnit": 0,
+                "imuGyroscopeBias_p": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuGyroscopeNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuGyroscopeNoiseUnit": 0,
+                "imuGyroscopeRng": {
+                    "seed": 961617070,
+                    "useSeed": true
+                },
+                "positionBias": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "positionBiasUnit": 0,
+                "positionNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "positionNoiseUnit": 0,
+                "positionRng": {
+                    "seed": 1471708235,
+                    "useSeed": true
+                },
+                "pseudorangeNoise": 0.3,
+                "pseudorangeNoiseUnit": 0,
+                "pseudorangeRng": {
+                    "seed": 6994026449631969280,
+                    "useSeed": true
+                },
+                "velocityBias": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "velocityBiasUnit": 0,
+                "velocityNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "velocityNoiseUnit": 0,
+                "velocityRng": {
+                    "seed": 1874021467,
+                    "useSeed": true
+                }
+            },
+            "enabled": true,
+            "id": 335,
+            "inputPins": [
+                {
+                    "id": 333,
+                    "name": "True"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "ErrorModel",
+            "outputPins": [
+                {
+                    "id": 334,
+                    "name": "Biased"
+                }
+            ],
+            "pos": {
+                "x": -143.0,
+                "y": 414.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "ErrorModel"
+        },
+        "node-341": {
+            "data": {
+                "ambiguityLimits": [
+                    -20,
+                    20
+                ],
+                "ambiguityRng": {
+                    "seed": 3278449829545508864,
+                    "useSeed": true
+                },
+                "attitudeBias": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "attitudeBiasUnit": 1,
+                "attitudeNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "attitudeNoiseUnit": 1,
+                "attitudeRng": {
+                    "seed": 1024369581,
+                    "useSeed": true
+                },
+                "carrierPhaseNoise": 0.003,
+                "carrierPhaseNoiseUnit": 0,
+                "carrierPhaseRng": {
+                    "seed": 1901500906633953280,
+                    "useSeed": true
+                },
+                "cycleSlipDetectionProbability": 70.0,
+                "cycleSlipDetectionProbabilityUnit": 0,
+                "cycleSlipFrequency": 0.0,
+                "cycleSlipFrequencyUnit": 1,
+                "cycleSlipRng": {
+                    "seed": 1092816564035518464,
+                    "useSeed": true
+                },
+                "dopplerNoise": 0.05,
+                "dopplerNoiseUnit": 0,
+                "dopplerRng": {
+                    "seed": 5704502719901859840,
+                    "useSeed": true
+                },
+                "filterCode": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000111010000011111",
+                "filterFreq": "L1",
+                "imuAccelerometerBiasUnit": 0,
+                "imuAccelerometerBias_p": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuAccelerometerNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuAccelerometerNoiseUnit": 0,
+                "imuAccelerometerRng": {
+                    "seed": 1749357625,
+                    "useSeed": true
+                },
+                "imuGyroscopeBiasUnit": 0,
+                "imuGyroscopeBias_p": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuGyroscopeNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuGyroscopeNoiseUnit": 0,
+                "imuGyroscopeRng": {
+                    "seed": 2102989819,
+                    "useSeed": true
+                },
+                "positionBias": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "positionBiasUnit": 0,
+                "positionNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "positionNoiseUnit": 0,
+                "positionRng": {
+                    "seed": 185891306,
+                    "useSeed": true
+                },
+                "pseudorangeNoise": 0.3,
+                "pseudorangeNoiseUnit": 0,
+                "pseudorangeRng": {
+                    "seed": 7300015038083891200,
+                    "useSeed": true
+                },
+                "velocityBias": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "velocityBiasUnit": 0,
+                "velocityNoise": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "velocityNoiseUnit": 0,
+                "velocityRng": {
+                    "seed": 233418686,
+                    "useSeed": true
+                }
+            },
+            "enabled": true,
+            "id": 341,
+            "inputPins": [
+                {
+                    "id": 339,
+                    "name": "True"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "ErrorModel",
+            "outputPins": [
+                {
+                    "id": 340,
+                    "name": "Biased"
+                }
+            ],
+            "pos": {
+                "x": -143.0,
+                "y": 254.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "ErrorModel"
         }
     }
 }
