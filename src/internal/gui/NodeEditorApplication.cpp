@@ -568,7 +568,11 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
 
         if (ImGui::BeginPopupModal("Could not open file", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize))
         {
-            ImGui::Text("The filename specified is invalid\nor the program has insufficient\npermissions to access the file");
+            ImGui::Text("Could not open the flow file. This can have the following reasons:");
+            ImGui::Text("- the filename specified is invalid");
+            ImGui::Text("- the program has insufficient permissions to access the file");
+            ImGui::Text("- the provided file was not a valid flow file");
+            ImGui::Text("Read the log output for further information");
             if (ImGui::Button("Close"))
             {
                 loadSuccessful = true;

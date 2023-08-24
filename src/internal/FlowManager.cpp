@@ -100,66 +100,75 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
 {
     LOG_TRACE("called for path {}", filepath);
     bool loadSuccessful = true;
-    std::ifstream filestream(filepath);
 
-    if (!filestream.good())
+    try
     {
-        LOG_ERROR("Load Flow error: Could not open file: {}", filepath);
-        return false;
-    }
+        std::ifstream filestream(filepath);
 
-    if (FlowExecutor::isRunning()) { FlowExecutor::stop(); }
+        if (!filestream.good())
+        {
+            LOG_ERROR("Load Flow error: Could not open file: {}", filepath);
+            return false;
+        }
 
-    json j;
-    filestream >> j;
+        if (FlowExecutor::isRunning()) { FlowExecutor::stop(); }
 
-    saveLastActions = false;
+        json j;
+        filestream >> j;
 
-    nm::DeleteAllNodes();
+        saveLastActions = false;
 
-    LoadJson(j);
+        nm::DeleteAllNodes();
+
+        LoadJson(j);
 
 #ifdef TESTING
-    nm::CallPreInitCallback();
+        nm::CallPreInitCallback();
 #endif
 
-    if (!ConfigManager::Get<bool>("noinit"))
-    {
-        if (ConfigManager::Get<bool>("nogui"))
+        if (!ConfigManager::Get<bool>("noinit"))
         {
-            if (!nm::InitializeAllNodes())
+            if (ConfigManager::Get<bool>("nogui"))
             {
-                loadSuccessful = false;
+                if (!nm::InitializeAllNodes())
+                {
+                    loadSuccessful = false;
+                }
+            }
+            else
+            {
+                nm::InitializeAllNodesAsync();
             }
         }
-        else
+
+        if (!ConfigManager::Get<bool>("nogui"))
         {
-            nm::InitializeAllNodesAsync();
+            loadingFrameCount = ImGui::GetFrameCount();
         }
-    }
+        unsavedChanges = false;
+        saveLastActions = true;
+        currentFilename = filepath;
 
-    if (!ConfigManager::Get<bool>("nogui"))
+        if (!ConfigManager::Get<bool>("nogui"))
+        {
+            gui::clearLastActionList();
+            gui::saveLastAction();
+        }
+
+        std::string path = filepath;
+        if (path.find(GetProgramRootPath().string()) != std::string::npos)
+        {
+            path = path.substr(GetProgramRootPath().string().size());
+            if (path.starts_with('\\') || path.starts_with('/')) { path = path.substr(1); }
+        }
+
+        LOG_INFO("Loaded flow file: {}", path);
+    }
+    catch (const std::exception& e)
     {
-        loadingFrameCount = ImGui::GetFrameCount();
+        LOG_ERROR("Loading flow file failed with error: {}", e.what());
+        loadSuccessful = false;
     }
-    unsavedChanges = false;
-    saveLastActions = true;
-    currentFilename = filepath;
-
-    if (!ConfigManager::Get<bool>("nogui"))
-    {
-        gui::clearLastActionList();
-        gui::saveLastAction();
-    }
-
-    std::string path = filepath;
-    if (path.find(GetProgramRootPath().string()) != std::string::npos)
-    {
-        path = path.substr(GetProgramRootPath().string().size());
-        if (path.starts_with('\\') || path.starts_with('/')) { path = path.substr(1); }
-    }
-
-    LOG_INFO("Loaded flow file: {}", path);
 
     return loadSuccessful;
 }
