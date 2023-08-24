@@ -864,8 +864,8 @@ std::pair<std::vector<RealTimeKinematic::SatData>, RealTimeKinematic::Observatio
                                                                                                  * recvObsData->carrierPhase->value;
                         break;
                     case GnssObs::Doppler:
-                        observations[recvObsData->satSigId][recv.type].at(obsType).measurement = doppler2psrRate(recvObsData->doppler.value(),
-                                                                                                                 recvObsData->satSigId.freq());
+                        observations[recvObsData->satSigId][recv.type].at(obsType).measurement = doppler2rangeRate(recvObsData->doppler.value(),
+                                                                                                                   recvObsData->satSigId.freq());
                         break;
                     }
                 }

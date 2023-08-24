@@ -42,9 +42,14 @@ double calcSagnacRateCorrection(const Eigen::Vector3d& e_posAnt, const Eigen::Ve
               - e_satVel.x() * e_posAnt.y() - e_satPos.x() * e_velAnt.y());
 }
 
-double doppler2psrRate(double doppler, Frequency freq, int8_t num)
+double doppler2rangeRate(double doppler, Frequency freq, int8_t num)
 {
     return -InsConst::C / freq.getFrequency(num) * doppler;
+}
+
+double rangeRate2doppler(double rangeRate, Frequency freq, int8_t num)
+{
+    return -freq.getFrequency(num) / InsConst::C * rangeRate;
 }
 
 double ratioFreqSquared(Frequency f1, Frequency f2, int8_t num1, int8_t num2)

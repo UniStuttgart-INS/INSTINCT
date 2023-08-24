@@ -1683,7 +1683,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
                 }
             }
 
-            calcData[i].pseudorangeRate = doppler2psrRate(obsData.doppler.value(), obsData.satSigId.freq(), freqNum);
+            calcData[i].pseudorangeRate = doppler2rangeRate(obsData.doppler.value(), obsData.satSigId.freq(), freqNum);
         }
     }
 

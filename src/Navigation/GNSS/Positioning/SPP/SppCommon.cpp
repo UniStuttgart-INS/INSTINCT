@@ -79,7 +79,7 @@ size_t findDopplerMeasurements(std::vector<CalcData>& calcData)
                 }
             }
 
-            calc.pseudorangeRateMeas = doppler2psrRate(obsData.doppler.value(), obsData.satSigId.freq());
+            calc.pseudorangeRateMeas = doppler2rangeRate(obsData.doppler.value(), obsData.satSigId.freq());
         }
     }
     return nDopplerMeas;
