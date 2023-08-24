@@ -307,4 +307,150 @@ InputWithUnitChange InputDouble4LWithUnit(const char* label, float itemWidth, fl
                                           const char* format = "%.6f", ImGuiInputTextFlags flags = 0,
                                           int combo_popup_max_height_in_items = -1);
 
+// ###########################################################################################################
+
+/// @brief Shows an Slider GUI element to modify the provided value and also set its unit
+/// @param[in] label Label to display beside the input. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in] itemWidth Width of the input element(s) + unit combo
+/// @param[in] unitWidth Width of the unit combo
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in, out] combo_current_item Pointer to the selected item in the unit combo
+/// @param[in] combo_items_separated_by_zeros Items to display in the unit combo (separated by \0 and ends with \0\0)
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @param[in] combo_popup_max_height_in_items Maximum height of the combo in number of items
+/// @return Returns if the value or unit was changed
+InputWithUnitChange SliderFloatWithUnit(const char* label, float itemWidth, float unitWidth,
+                                        float* v, float v_min, float v_max, int* combo_current_item, const char* combo_items_separated_by_zeros,
+                                        const char* format = "%.3f", ImGuiSliderFlags flags = 0,
+                                        int combo_popup_max_height_in_items = -1);
+
+/// @brief Shows an Slider GUI element to modify the provided value and also set its unit
+/// @param[in] label Label to display beside the input. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in] itemWidth Width of the input element(s) + unit combo
+/// @param[in] unitWidth Width of the unit combo
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in, out] combo_current_item Pointer to the selected item in the unit combo
+/// @param[in] combo_items_separated_by_zeros Items to display in the unit combo (separated by \0 and ends with \0\0)
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @param[in] combo_popup_max_height_in_items Maximum height of the combo in number of items
+/// @return Returns if the value or unit was changed
+InputWithUnitChange SliderFloat2WithUnit(const char* label, float itemWidth, float unitWidth,
+                                         float v[2], float v_min, float v_max, int* combo_current_item, const char* combo_items_separated_by_zeros, // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+                                         const char* format = "%.3f", ImGuiSliderFlags flags = 0,
+                                         int combo_popup_max_height_in_items = -1);
+
+/// @brief Shows an Slider GUI element to modify the provided value and also set its unit
+/// @param[in] label Label to display beside the input. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in] itemWidth Width of the input element(s) + unit combo
+/// @param[in] unitWidth Width of the unit combo
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in, out] combo_current_item Pointer to the selected item in the unit combo
+/// @param[in] combo_items_separated_by_zeros Items to display in the unit combo (separated by \0 and ends with \0\0)
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @param[in] combo_popup_max_height_in_items Maximum height of the combo in number of items
+/// @return Returns if the value or unit was changed
+InputWithUnitChange SliderFloat3WithUnit(const char* label, float itemWidth, float unitWidth,
+                                         float v[3], float v_min, float v_max, int* combo_current_item, const char* combo_items_separated_by_zeros, // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+                                         const char* format = "%.3f", ImGuiSliderFlags flags = 0,
+                                         int combo_popup_max_height_in_items = -1);
+
+/// @brief Shows an Slider GUI element to modify the provided value and also set its unit
+/// @param[in] label Label to display beside the input. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in] itemWidth Width of the input element(s) + unit combo
+/// @param[in] unitWidth Width of the unit combo
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in, out] combo_current_item Pointer to the selected item in the unit combo
+/// @param[in] combo_items_separated_by_zeros Items to display in the unit combo (separated by \0 and ends with \0\0)
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @param[in] combo_popup_max_height_in_items Maximum height of the combo in number of items
+/// @return Returns if the value or unit was changed
+InputWithUnitChange SliderFloat4WithUnit(const char* label, float itemWidth, float unitWidth,
+                                         float v[4], float v_min, float v_max, int* combo_current_item, const char* combo_items_separated_by_zeros, // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+                                         const char* format = "%.3f", ImGuiSliderFlags flags = 0,
+                                         int combo_popup_max_height_in_items = -1);
+
+/// @brief Shows an Slider GUI element to modify the provided value and also set its unit
+/// @param[in] label Label to display beside the input. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in] itemWidth Width of the input element(s) + unit combo
+/// @param[in] unitWidth Width of the unit combo
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in, out] combo_current_item Pointer to the selected item in the unit combo
+/// @param[in] combo_items_separated_by_zeros Items to display in the unit combo (separated by \0 and ends with \0\0)
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @param[in] combo_popup_max_height_in_items Maximum height of the combo in number of items
+/// @return Returns if the value or unit was changed
+InputWithUnitChange SliderDoubleWithUnit(const char* label, float itemWidth, float unitWidth,
+                                         double* v, double v_min, double v_max, int* combo_current_item, const char* combo_items_separated_by_zeros,
+                                         const char* format = "%.6f", ImGuiSliderFlags flags = 0,
+                                         int combo_popup_max_height_in_items = -1);
+
+/// @brief Shows an Slider GUI element to modify the provided value and also set its unit
+/// @param[in] label Label to display beside the input. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in] itemWidth Width of the input element(s) + unit combo
+/// @param[in] unitWidth Width of the unit combo
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in, out] combo_current_item Pointer to the selected item in the unit combo
+/// @param[in] combo_items_separated_by_zeros Items to display in the unit combo (separated by \0 and ends with \0\0)
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @param[in] combo_popup_max_height_in_items Maximum height of the combo in number of items
+/// @return Returns if the value or unit was changed
+InputWithUnitChange SliderDouble2WithUnit(const char* label, float itemWidth, float unitWidth,
+                                          double v[2], double v_min, double v_max, int* combo_current_item, const char* combo_items_separated_by_zeros, // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+                                          const char* format = "%.6f", ImGuiSliderFlags flags = 0,
+                                          int combo_popup_max_height_in_items = -1);
+
+/// @brief Shows an Slider GUI element to modify the provided value and also set its unit
+/// @param[in] label Label to display beside the input. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in] itemWidth Width of the input element(s) + unit combo
+/// @param[in] unitWidth Width of the unit combo
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in, out] combo_current_item Pointer to the selected item in the unit combo
+/// @param[in] combo_items_separated_by_zeros Items to display in the unit combo (separated by \0 and ends with \0\0)
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @param[in] combo_popup_max_height_in_items Maximum height of the combo in number of items
+/// @return Returns if the value or unit was changed
+InputWithUnitChange SliderDouble3WithUnit(const char* label, float itemWidth, float unitWidth,
+                                          double v[3], double v_min, double v_max, int* combo_current_item, const char* combo_items_separated_by_zeros, // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+                                          const char* format = "%.6f", ImGuiSliderFlags flags = 0,
+                                          int combo_popup_max_height_in_items = -1);
+
+/// @brief Shows an Slider GUI element to modify the provided value and also set its unit
+/// @param[in] label Label to display beside the input. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in] itemWidth Width of the input element(s) + unit combo
+/// @param[in] unitWidth Width of the unit combo
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in, out] combo_current_item Pointer to the selected item in the unit combo
+/// @param[in] combo_items_separated_by_zeros Items to display in the unit combo (separated by \0 and ends with \0\0)
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @param[in] combo_popup_max_height_in_items Maximum height of the combo in number of items
+/// @return Returns if the value or unit was changed
+InputWithUnitChange SliderDouble4WithUnit(const char* label, float itemWidth, float unitWidth,
+                                          double v[4], double v_min, double v_max, int* combo_current_item, const char* combo_items_separated_by_zeros, // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+                                          const char* format = "%.6f", ImGuiSliderFlags flags = 0,
+                                          int combo_popup_max_height_in_items = -1);
+
 } // namespace NAV::gui::widgets
