@@ -256,66 +256,72 @@ class KeyedKalmanFilter
 
     /// @brief Shows ImGui Tree nodes for all matrices
     /// @param id Unique id for ImGui
-    void showKalmanFilterMatrixViews(const char* id)
+    /// @param nRows Amount of rows to show
+    void showKalmanFilterMatrixViews(const char* id, int nRows = -2)
     {
+        ImGui::PushFont(Application::MonoFont());
+        float matrixTableHeight = ImGui::GetTextLineHeightWithSpacing() * static_cast<float>(nRows + 1);
+        float vectorTableHeight = ImGui::GetTextLineHeightWithSpacing() * static_cast<float>(nRows);
+        ImGui::PopFont();
+
         if (ImGui::TreeNode(fmt::format("x - State vector##{}", id).c_str()))
         {
-            gui::widgets::KeyedVectorView(fmt::format("Kalman Filter x##{}", id).c_str(), &x);
+            gui::widgets::KeyedVectorView(fmt::format("Kalman Filter x##{}", id).c_str(), &x, vectorTableHeight);
             ImGui::TreePop();
         }
         if (ImGui::TreeNode(fmt::format("P - Error covariance matrix##{}", id).c_str()))
         {
-            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter P##{}", id).c_str(), &P);
+            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter P##{}", id).c_str(), &P, matrixTableHeight);
             ImGui::TreePop();
         }
         if (ImGui::TreeNode(fmt::format("Phi - State transition matrix##{}", id).c_str()))
         {
-            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter Phi##{}", id).c_str(), &Phi);
+            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter Phi##{}", id).c_str(), &Phi, matrixTableHeight);
             ImGui::TreePop();
         }
         if (ImGui::TreeNode(fmt::format("Q System/Process noise covariance matrix##{}", id).c_str()))
         {
-            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter Q##{}", id).c_str(), &Q);
+            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter Q##{}", id).c_str(), &Q, matrixTableHeight);
             ImGui::TreePop();
         }
         if (ImGui::TreeNode(fmt::format("z - Measurement vector##{}", id).c_str()))
         {
-            gui::widgets::KeyedVectorView(fmt::format("Kalman Filter z##{}", id).c_str(), &z);
+            gui::widgets::KeyedVectorView(fmt::format("Kalman Filter z##{}", id).c_str(), &z, vectorTableHeight);
             ImGui::TreePop();
         }
         if (ImGui::TreeNode(fmt::format("H - Measurement sensitivity matrix##{}", id).c_str()))
         {
-            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter H##{}", id).c_str(), &H);
+            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter H##{}", id).c_str(), &H, matrixTableHeight);
             ImGui::TreePop();
         }
         if (ImGui::TreeNode(fmt::format("R - Measurement noise covariance matrix##{}", id).c_str()))
         {
-            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter R##{}", id).c_str(), &R);
+            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter R##{}", id).c_str(), &R, matrixTableHeight);
             ImGui::TreePop();
         }
         if (ImGui::TreeNode(fmt::format("S - Measurement prediction covariance matrix##{}", id).c_str()))
         {
-            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter S##{}", id).c_str(), &S);
+            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter S##{}", id).c_str(), &S, matrixTableHeight);
             ImGui::TreePop();
         }
         if (ImGui::TreeNode(fmt::format("K - Kalman gain matrix##{}", id).c_str()))
         {
-            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter K##{}", id).c_str(), &K);
+            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter K##{}", id).c_str(), &K, matrixTableHeight);
             ImGui::TreePop();
         }
         if (ImGui::TreeNode(fmt::format("F - System model matrix##{}", id).c_str()))
         {
-            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter F##{}", id).c_str(), &F);
+            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter F##{}", id).c_str(), &F, matrixTableHeight);
             ImGui::TreePop();
         }
         if (ImGui::TreeNode(fmt::format("G - Noise input matrix##{}", id).c_str()))
         {
-            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter G##{}", id).c_str(), &G);
+            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter G##{}", id).c_str(), &G, matrixTableHeight);
             ImGui::TreePop();
         }
         if (ImGui::TreeNode(fmt::format("W - Noise scale matrix##{}", id).c_str()))
         {
-            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter W##{}", id).c_str(), &W);
+            gui::widgets::KeyedMatrixView(fmt::format("Kalman Filter W##{}", id).c_str(), &W, matrixTableHeight);
             ImGui::TreePop();
         }
     }

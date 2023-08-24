@@ -36,11 +36,12 @@ void KeyedMatrixView(const char* label, const KeyedMatrix<Scalar, RowKeyType, Co
                      ImGuiTableFlags tableFlags = ImGuiTableFlags_Borders
                                                   | ImGuiTableFlags_NoHostExtendX
                                                   | ImGuiTableFlags_SizingFixedFit
-                                                  | ImGuiTableFlags_ScrollX)
+                                                  | ImGuiTableFlags_ScrollX
+                                                  | ImGuiTableFlags_ScrollY)
 {
     ImGui::PushFont(Application::MonoFont());
-    ImVec2 outer_size = ImVec2(0.0F, tableHeight > 0.0F ? tableHeight
-                                                        : ImGui::GetTextLineHeightWithSpacing() * static_cast<float>(matrix->rows() + 1));
+    float height = ImGui::GetTextLineHeightWithSpacing() * static_cast<float>(matrix->rows() + 1);
+    ImVec2 outer_size = ImVec2(0.0F, tableHeight > 0.0F ? std::min(tableHeight, height) : height);
     if (ImGui::BeginTable(label, static_cast<int>(matrix->cols()) + 1, tableFlags, outer_size))
     {
         ImGui::TableSetupScrollFreeze(1, 1);
@@ -100,11 +101,12 @@ void KeyedVectorView(const char* label, const KeyedVector<Scalar, RowKeyType, Ro
                      float tableHeight = -1.0F,
                      ImGuiTableFlags tableFlags = ImGuiTableFlags_Borders
                                                   | ImGuiTableFlags_NoHostExtendX
-                                                  | ImGuiTableFlags_SizingFixedFit)
+                                                  | ImGuiTableFlags_SizingFixedFit
+                                                  | ImGuiTableFlags_ScrollY)
 {
     ImGui::PushFont(Application::MonoFont());
-    ImVec2 outer_size = ImVec2(0.0F, tableHeight > 0.0F ? tableHeight
-                                                        : ImGui::GetTextLineHeightWithSpacing() * static_cast<float>(matrix->rows()));
+    float height = ImGui::GetTextLineHeightWithSpacing() * static_cast<float>(matrix->rows());
+    ImVec2 outer_size = ImVec2(0.0F, tableHeight > 0.0F ? std::min(tableHeight, height) : height);
     if (ImGui::BeginTable(label, 2, tableFlags, outer_size))
     {
         ImGui::TableSetupScrollFreeze(1, 0);
@@ -214,7 +216,8 @@ bool InputKeyedMatrix(const char* label, KeyedMatrix<Scalar, RowKeyType, ColKeyT
                       ImGuiTableFlags tableFlags = ImGuiTableFlags_Borders
                                                    | ImGuiTableFlags_NoHostExtendX
                                                    | ImGuiTableFlags_SizingFixedFit
-                                                   | ImGuiTableFlags_ScrollX,
+                                                   | ImGuiTableFlags_ScrollX
+                                                   | ImGuiTableFlags_ScrollY,
                       double step = 0.0, double step_fast = 0.0,
                       const char* format = "%.4g",
                       ImGuiInputTextFlags inputTextFlags = ImGuiInputTextFlags_None)
@@ -222,10 +225,10 @@ bool InputKeyedMatrix(const char* label, KeyedMatrix<Scalar, RowKeyType, ColKeyT
     bool changed = false;
     ImGui::PushFont(Application::MonoFont());
     const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
-    ImVec2 outer_size = ImVec2(0.0F, tableHeight > 0.0F ? tableHeight
-                                                        : ImGui::GetTextLineHeightWithSpacing()
-                                                              + (ImGui::GetTextLineHeightWithSpacing() + 1.5F * ImGui::GetStyle().ItemSpacing.y)
-                                                                    * static_cast<float>(matrix->rows()));
+    float height = ImGui::GetTextLineHeightWithSpacing()
+                   + (ImGui::GetTextLineHeightWithSpacing() + 1.5F * ImGui::GetStyle().ItemSpacing.y)
+                         * static_cast<float>(matrix->rows());
+    ImVec2 outer_size = ImVec2(0.0F, tableHeight > 0.0F ? std::min(tableHeight, height) : height);
     if (ImGui::BeginTable(label, static_cast<int>(matrix->cols()) + 1, tableFlags, outer_size))
     {
         ImGui::TableSetupScrollFreeze(1, 1);
@@ -292,7 +295,7 @@ bool InputKeyedVector(const char* label, KeyedVector<Scalar, RowKeyType, Rows>* 
                       ImGuiTableFlags tableFlags = ImGuiTableFlags_Borders
                                                    | ImGuiTableFlags_NoHostExtendX
                                                    | ImGuiTableFlags_SizingFixedFit
-                                                   | ImGuiTableFlags_ScrollX,
+                                                   | ImGuiTableFlags_ScrollY,
                       double step = 0.0, double step_fast = 0.0,
                       const char* format = "%.4g",
                       ImGuiInputTextFlags inputTextFlags = ImGuiInputTextFlags_None)
@@ -300,9 +303,8 @@ bool InputKeyedVector(const char* label, KeyedVector<Scalar, RowKeyType, Rows>* 
     bool changed = false;
     ImGui::PushFont(Application::MonoFont());
     const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
-    ImVec2 outer_size = ImVec2(0.0F, tableHeight > 0.0F ? tableHeight
-                                                        : (ImGui::GetTextLineHeightWithSpacing() + 1.5F * ImGui::GetStyle().ItemSpacing.y)
-                                                              * static_cast<float>(matrix->rows()));
+    float height = (ImGui::GetTextLineHeightWithSpacing() + 1.5F * ImGui::GetStyle().ItemSpacing.y) * static_cast<float>(matrix->rows());
+    ImVec2 outer_size = ImVec2(0.0F, tableHeight > 0.0F ? std::min(tableHeight, height) : height);
     if (ImGui::BeginTable(label, 2, tableFlags, outer_size))
     {
         ImGui::TableSetupScrollFreeze(1, 0);
