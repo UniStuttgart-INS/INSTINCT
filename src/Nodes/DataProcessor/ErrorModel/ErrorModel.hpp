@@ -325,8 +325,16 @@ class ErrorModel : public Node
 
     /// Random number generator for the cycle-slip
     RandomNumberGenerator _cycleSlipRng;
+
+    /// Cycle-slip information
+    struct CycleSlipInfo
+    {
+        InsTime time;      ///< Time of the cycle-slip
+        SatSigId satSigId; ///< Satellite Signal identifier
+        bool LLI;          ///< Whether the LLI was set
+    };
     /// List of produced cycle-slips
-    std::vector<std::pair<InsTime, SatSigId>> _cycleSlips;
+    std::vector<CycleSlipInfo> _cycleSlips;
 
     /// Frequencies used for calculation (GUI filter)
     Frequency _filterFreq = G01;

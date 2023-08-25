@@ -270,6 +270,8 @@ void NAV::ErrorModel::guiConfig()
             {
                 flow::ApplyChanges();
             }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("Frequency and code selection only affects the cycle-slip simulation");
 
             ImGui::SetNextItemWidth(itemWidth);
             if (ShowCodeSelector(fmt::format("Signal Codes##{}", size_t(id)).c_str(), _filterCode, _filterFreq))
@@ -330,13 +332,15 @@ void NAV::ErrorModel::guiConfig()
                                 if (iter != ambiguities->second.end())
                                 {
                                     ImVec4 color;
-                                    auto cycleIter = std::find_if(_cycleSlips.begin(), _cycleSlips.end(), [&](const auto& timeAndSatSig) {
-                                        return timeAndSatSig.first == time && timeAndSatSig.second == ambiguities->first;
+                                    auto cycleIter = std::find_if(_cycleSlips.begin(), _cycleSlips.end(), [&](const CycleSlipInfo& cycleSlip) {
+                                        return cycleSlip.time == time && cycleSlip.satSigId == ambiguities->first;
                                     });
                                     if (cycleIter != _cycleSlips.end()) { color = ImColor(240, 128, 128); }
                                     else if (ambiguities->second.back().first == time) { color = ImGui::GetStyle().Colors[ImGuiCol_Text]; }
                                     else { color = ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]; }
-                                    ImGui::TextColored(color, "%s", fmt::format("{}", iter->second).c_str());
+                                    ImGui::TextColored(color, "%s%s",
+                                                       fmt::format("{}", iter->second).c_str(),
+                                                       cycleIter != _cycleSlips.end() && cycleIter->LLI ? " (LLI)" : "");
                                     if (ImGui::IsItemHovered() && cycleIter != _cycleSlips.end()) { ImGui::SetTooltip("Cycle-slip"); }
                                 }
                                 else if (time < ambiguities->second.front().first)
@@ -868,11 +872,11 @@ void NAV::ErrorModel::receiveGnssObs(const std::shared_ptr<GnssObs>& gnssObs)
 
             // ---------------------------------------- Cycle-slip -------------------------------------------
 
-            if (obs.satSigId.freq() & _filterFreq                                                 // GUI selected frequencies
-                && obs.satSigId.code & _filterCode                                                // GUI selected codes
-                && _gui_cycleSlipFrequency != 0.0                                                 // 0 Frequency means disabled
-                && !_lastObservationTime.empty()                                                  // Do not apply a cycle slip on the first message
-                && (_cycleSlips.empty() || _cycleSlips.back().first < _cycleSlipWindowStartTime)) // In the current window, there was no cycle-slip yet
+            if (obs.satSigId.freq() & _filterFreq                                                // GUI selected frequencies
+                && obs.satSigId.code & _filterCode                                               // GUI selected codes
+                && _gui_cycleSlipFrequency != 0.0                                                // 0 Frequency means disabled
+                && !_lastObservationTime.empty()                                                 // Do not apply a cycle slip on the first message
+                && (_cycleSlips.empty() || _cycleSlips.back().time < _cycleSlipWindowStartTime)) // In the current window, there was no cycle-slip yet
             {
                 double dtMessage = 1.0 / _messageFrequency;                                                       // [s]
                 double probabilityCycleSlip = dtMessage / (dtCycleSlipSeconds * static_cast<double>(nObs)) * 2.0; // Double chance, because often does not happen otherwise
@@ -880,12 +884,12 @@ void NAV::ErrorModel::receiveGnssObs(const std::shared_ptr<GnssObs>& gnssObs)
                     || (gnssObs->insTime >= _cycleSlipWindowStartTime + dtCycleSlip - std::chrono::nanoseconds(static_cast<int64_t>((dtMessage + 0.001) * 1e9)))) // Last message this window
                 {
                     _ambiguities[obs.satSigId].push_back(std::make_pair(gnssObs->insTime, _ambiguityRng.getRand_uniformIntDist(_gui_ambiguityLimits[0], _gui_ambiguityLimits[1])));
-                    _cycleSlips.emplace_back(gnssObs->insTime, obs.satSigId);
 
                     if (_cycleSlipRng.getRand_uniformRealDist(0.0, 1.0) <= cycleSlipDetectionProbability)
                     {
                         obs.carrierPhase.value().LLI = 1;
                     }
+                    _cycleSlips.push_back(CycleSlipInfo{ gnssObs->insTime, obs.satSigId, obs.carrierPhase.value().LLI != 0 });
                     LOG_DEBUG("{}: [{}] Simulating cycle-slip for satellite [{}] with LLI {}", nameId(), gnssObs->insTime.toYMDHMS(GPST),
                               obs.satSigId, obs.carrierPhase.value().LLI);
                 }
