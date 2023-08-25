@@ -84,7 +84,7 @@ struct SatSigId
         {
             if (satNum == rhs.satNum)
             {
-                return Code::Set(code).to_ulong() < Code::Set(rhs.code).to_ulong();
+                return Code::Set(code).to_ullong() < Code::Set(rhs.code).to_ullong();
             }
             return satNum < rhs.satNum;
         }

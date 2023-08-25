@@ -611,6 +611,8 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
         auto [satelliteData, observations] = selectSatObservationsForCalculation(gnssNavInfos);
         calcObservationEstimates(observations, satelliteData, ionosphericCorrections);
 
+        // TODO: Cycle-slip detection (also handle, if cycle-slip was the pivot satellite)
+
         auto newPivotSignals = updatePivotSatellites(satelliteData, observations);
         addOrRemoveKalmanFilterAmbiguities(observations);
         updateKalmanFilterAmbiguitiesForPivotChange(newPivotSignals);
@@ -620,14 +622,14 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
 
         kalmanFilterUpdate(satelliteData, doubleDifferences);
 
-        // Integer Rounding of ambiguities
+        // TODO: Integer Rounding of ambiguities
         // {
         //     std::vector<States::StateKeyTypes> ambKeys;
         //     for (size_t i = States::KFStates_COUNT; i < _kalmanFilter.x.rowKeys().size(); i++) // 0-2 Pos, 3-5 Vel
         //     {
         //         if (const auto* ambSD = std::get_if<States::AmbiguitySD>(&_kalmanFilter.x.rowKeys().at(i)))
         //         {
-        //             ambKeys.push_back(*ambSD);
+        //             ambKeys.emplace_back(*ambSD);
         //         }
         //     }
         //     KeyedVectorXd<States::StateKeyTypes> ambRemainder(Eigen::VectorXd::Zero(static_cast<int>(ambKeys.size())), ambKeys);

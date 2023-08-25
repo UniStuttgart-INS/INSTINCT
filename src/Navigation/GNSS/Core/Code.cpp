@@ -17,6 +17,17 @@
 namespace NAV
 {
 
+Code::Code(SatelliteSystem_ sys)
+{
+    if (sys & GPS) { *this |= Code(G01 | G02 | G05); }
+    if (sys & GAL) { *this |= Code(E01 | E05 | E06 | E07 | E08); }
+    if (sys & GLO) { *this |= Code(R01 | R02 | R03 | R04 | R06); }
+    if (sys & BDS) { *this |= Code(B01 | B02 | B05 | B06 | B07 | B08); }
+    if (sys & QZSS) { *this |= Code(J01 | J02 | J05 | J06); }
+    if (sys & IRNSS) { *this |= Code(I05 | I09); }
+    if (sys & SBAS) { *this |= Code(S01 | S05); }
+}
+
 Code::Code(Frequency_ freq)
 {
     if (freq & G01) { *this |= G1C | G1S | G1L | G1X | G1P | G1W | G1Y | G1M | G1N; }
