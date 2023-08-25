@@ -623,7 +623,7 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
         // Integer Rounding of ambiguities
         // {
         //     std::vector<States::StateKeyTypes> ambKeys;
-        //     for (size_t i = 6; i < _kalmanFilter.x.rowKeys().size(); i++) // 0-2 Pos, 3-5 Vel
+        //     for (size_t i = States::KFStates_COUNT; i < _kalmanFilter.x.rowKeys().size(); i++) // 0-2 Pos, 3-5 Vel
         //     {
         //         if (const auto* ambSD = std::get_if<States::AmbiguitySD>(&_kalmanFilter.x.rowKeys().at(i)))
         //         {
@@ -1147,7 +1147,7 @@ void RealTimeKinematic::updateKalmanFilterAmbiguitiesForPivotChange(const std::v
         if (_kalmanFilter.x.hasRow(pivotKey))
         {
             std::vector<States::StateKeyTypes> ambiguitiesToChange;
-            for (size_t i = 6; i < _kalmanFilter.x.rowKeys().size(); i++) // 0-2 Pos, 3-5 Vel
+            for (size_t i = States::KFStates_COUNT; i < _kalmanFilter.x.rowKeys().size(); i++)
             {
                 const auto* ambSD = std::get_if<States::AmbiguitySD>(&_kalmanFilter.x.rowKeys().at(i));
                 if (ambSD && pivotSatSigId.code == ambSD->satSigId.code && pivotSatSigId != ambSD->satSigId)
