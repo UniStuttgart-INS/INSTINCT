@@ -1091,32 +1091,25 @@ void RealTimeKinematic::addOrRemoveKalmanFilterAmbiguities(const Observations& o
                     continue;
                 }
 
-                // Initialize with difference of (pseudorange - carrier-phase) measurement. Then single difference (rover - base)
+                // Initialize with difference of (carrier-phase - pseudorange) measurement. Then single difference (rover - base)
                 double lambda_j = InsConst::C / satSigId.freq().getFrequency(); // TODO: GLONASS frequency number
-                _kalmanFilter.x(key) = ((observation.second.at(Rover).at(GnssObs::Pseudorange).measurement
-                                         - observation.second.at(Rover).at(GnssObs::Carrier).measurement)
-                                        - (observation.second.at(Base).at(GnssObs::Pseudorange).measurement
-                                           - observation.second.at(Base).at(GnssObs::Carrier).measurement))
+                _kalmanFilter.x(key) = ((observation.second.at(Rover).at(GnssObs::Carrier).measurement - observation.second.at(Rover).at(GnssObs::Pseudorange).measurement)
+                                        - (observation.second.at(Base).at(GnssObs::Carrier).measurement - observation.second.at(Base).at(GnssObs::Pseudorange).measurement))
                                        / lambda_j;
 
-                _kalmanFilter.P(key, key) = (observation.second.at(Rover).at(GnssObs::Pseudorange).measVar
-                                             + observation.second.at(Rover).at(GnssObs::Carrier).measVar
-                                             + observation.second.at(Base).at(GnssObs::Pseudorange).measVar
-                                             + observation.second.at(Base).at(GnssObs::Carrier).measVar)
+                _kalmanFilter.P(key, key) = (observation.second.at(Rover).at(GnssObs::Carrier).measVar + observation.second.at(Rover).at(GnssObs::Pseudorange).measVar
+                                             + observation.second.at(Base).at(GnssObs::Carrier).measVar + observation.second.at(Base).at(GnssObs::Pseudorange).measVar)
                                             / lambda_j;
 
+                // All ambiguities are relative to the pivot, so subtract the pivot ambiguity
                 auto pivotObs = std::find_if(observations.begin(), observations.end(),
                                              [&](const auto& obs) { return obs.first == _pivotSatellites.at(satSigId.code).satSigId; });
                 INS_ASSERT_USER_ERROR(pivotObs != observations.end(), "The pivot satellite should have a measurement");
-                _kalmanFilter.x(key) -= ((pivotObs->second.at(Rover).at(GnssObs::Pseudorange).measurement
-                                          - pivotObs->second.at(Rover).at(GnssObs::Carrier).measurement)
-                                         - (pivotObs->second.at(Base).at(GnssObs::Pseudorange).measurement
-                                            - pivotObs->second.at(Base).at(GnssObs::Carrier).measurement))
+                _kalmanFilter.x(key) -= ((pivotObs->second.at(Rover).at(GnssObs::Carrier).measurement - pivotObs->second.at(Rover).at(GnssObs::Pseudorange).measurement)
+                                         - (pivotObs->second.at(Base).at(GnssObs::Carrier).measurement - pivotObs->second.at(Base).at(GnssObs::Pseudorange).measurement))
                                         / lambda_j;
-                _kalmanFilter.P(key, key) += (pivotObs->second.at(Rover).at(GnssObs::Pseudorange).measVar
-                                              + pivotObs->second.at(Rover).at(GnssObs::Carrier).measVar
-                                              + pivotObs->second.at(Base).at(GnssObs::Pseudorange).measVar
-                                              + pivotObs->second.at(Base).at(GnssObs::Carrier).measVar)
+                _kalmanFilter.P(key, key) += (pivotObs->second.at(Rover).at(GnssObs::Carrier).measVar + pivotObs->second.at(Rover).at(GnssObs::Pseudorange).measVar
+                                              + pivotObs->second.at(Base).at(GnssObs::Carrier).measVar + pivotObs->second.at(Base).at(GnssObs::Pseudorange).measVar)
                                              / lambda_j;
 
                 _kalmanFilter.P(key, key) *= 3.0; // TODO: Make this choosable by user

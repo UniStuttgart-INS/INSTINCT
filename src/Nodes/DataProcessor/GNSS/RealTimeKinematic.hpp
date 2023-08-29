@@ -299,9 +299,9 @@ class RealTimeKinematic : public Node
         Observation(std::shared_ptr<const GnssObs> gnssObs, size_t obsIdx)
             : gnssObs(std::move(gnssObs)), obsIdx(obsIdx) {}
 
-        double estimate = 0.0;    ///< Estimate
-        double measurement = 0.0; ///< Measurement
-        double measVar = 0.0;     ///< Variance of the measurement
+        double estimate = 0.0;    ///< Estimate (psr [m], carrier [m], range-rate [m/s])
+        double measurement = 0.0; ///< Measurement (psr [m], carrier [m], range-rate [m/s])
+        double measVar = 0.0;     ///< Variance of the measurement  (psr [m^2], carrier [m^2], range-rate [m^2/s^2])
 
         /// @brief Returns the observation data
         [[nodiscard]] const GnssObs::ObservationData& obs() const
