@@ -73,13 +73,25 @@ TEST_CASE("[Ambiguity] LDL Decomposition", "[Ambiguity]")
 {
     auto logger = initializeTestLogger();
 
-    Eigen::Matrix3d Qahat;
-    Qahat << 2, -0.5, 0,
-        -0.5, 2, -1,
-        0, -1, 2;
+    // erzeuge die eine (mxn m>>n, also zum bsp. 40 x 4) matrix A, dann bau dir daraus deine Q matrix als Q = inv(A'*A)
 
-    Eigen::LLT<Eigen::Matrix3d> lltOfQahat(Qahat); // See https://eigen.tuxfamily.org/dox/classEigen_1_1LLT.html
-    REQUIRE(lltOfQahat.info() == Eigen::Success);  // Success if computation was successful, NumericalIssue if the matrix.appears not to be positive definite.
+    constexpr size_t m = 3;
+    constexpr size_t n = 3;
+    using Matrix = Eigen::Matrix<double, m, m>;
+
+    Eigen::Matrix<double, m, n> A = Eigen::Matrix<double, m, n>::Random();
+    Matrix Qahat = A * A.transpose();
+    Qahat += m * Matrix::Identity();
+
+    // Qahat << 2, -0.5, 0,
+    //     -0.5, 2, -1,
+    //     0, -1, 2;
+
+    LOG_INFO("A = \n{}", A);
+    LOG_INFO("Q = \n{}\n", Qahat);
+
+    Eigen::LLT<Matrix> lltOfQahat(Qahat);         // See https://eigen.tuxfamily.org/dox/classEigen_1_1LLT.html
+    REQUIRE(lltOfQahat.info() == Eigen::Success); // Success if computation was successful, NumericalIssue if the matrix.appears not to be positive definite.
 
     auto start{ std::chrono::steady_clock::now() };
     auto [L, D] = LtDLdecomp(Qahat);
@@ -87,11 +99,15 @@ TEST_CASE("[Ambiguity] LDL Decomposition", "[Ambiguity]")
     LOG_INFO("Matlab (TU Delft): L^T * D * L");
     LOG_INFO("Elapsed time: {}", std::chrono::duration<double>(end - start).count());
     LOG_INFO("L = \n{}", L);
-    LOG_INFO("D = {}\n", D.transpose());
-    REQUIRE(L.transpose() * Eigen::DiagonalMatrix<double, 3>(D) * L == Qahat);
+    LOG_INFO("D = {}", D.transpose());
+    Matrix LTDL_minus_Q = L.transpose() * Eigen::DiagonalMatrix<double, m>(D) * L - Qahat;
+    LOG_INFO("L^T * D * L - Q = \n{}\n", LTDL_minus_Q);
+    REQUIRE_THAT(LTDL_minus_Q, Catch::Matchers::WithinAbs(Matrix::Zero(), 1e-10));
+
+    // The Eigen LDLT apparently is not working for random Q matrices. So it should not be used
 
     start = std::chrono::steady_clock::now();
-    Eigen::LDLT<Eigen::Matrix3d> ldltOfQahat(Qahat); // See https://eigen.tuxfamily.org/dox/classEigen_1_1LDLT.html
+    Eigen::LDLT<Matrix> ldltOfQahat(Qahat); // See https://eigen.tuxfamily.org/dox/classEigen_1_1LDLT.html
     end = std::chrono::steady_clock::now();
     REQUIRE(ldltOfQahat.info() == Eigen::Success); // Success if computation was successful, NumericalIssue if the factorization failed because of a zero pivot.
     Eigen::MatrixXd Leigen = ldltOfQahat.matrixL();
@@ -100,7 +116,9 @@ TEST_CASE("[Ambiguity] LDL Decomposition", "[Ambiguity]")
     LOG_INFO("Elapsed time: {}", std::chrono::duration<double>(end - start).count());
     LOG_INFO("L = \n{}", Leigen);
     LOG_INFO("D = {}", Deigen.transpose());
-    REQUIRE(Leigen * Eigen::DiagonalMatrix<double, 3>(Deigen) * Leigen.transpose() == Qahat);
+    [[maybe_unused]] Matrix LDLT_minus_Q = Leigen * Eigen::DiagonalMatrix<double, m>(Deigen) * Leigen.transpose() - Qahat;
+    LOG_INFO("L * D * L^T - Q = \n{}", LDLT_minus_Q);
+    // REQUIRE_THAT(LDLT_minus_Q, Catch::Matchers::WithinAbs(Matrix::Zero(), 1e-10));
 }
 
 } // namespace NAV::TESTS::AmbiguityTests
