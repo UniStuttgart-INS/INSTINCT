@@ -46,12 +46,13 @@ TEST_CASE("[Ambiguity] LDL Decomposition", "[Ambiguity]")
 
     {
         const auto start{ std::chrono::steady_clock::now() };
-        const auto [L, D] = math::LtDLdecomp_outerProduct(Q);
+        const auto [L, Dvec] = math::LtDLdecomp_outerProduct(Q);
         const auto end{ std::chrono::steady_clock::now() };
         LOG_INFO("LtDLdecomp_outerProduct (FMFAC5): L^T * D * L");
         LOG_INFO("Elapsed time: {}", std::chrono::duration<double>(end - start).count());
         // LOG_INFO("L = \n{}", L);
-        // LOG_INFO("D = {}", D.diagonal().transpose());
+        // LOG_INFO("D = {}", Dvec.transpose());
+        Matrix D = Eigen::DiagonalMatrix<double, m>(Dvec);
         Matrix LTDL_minus_Q = L.transpose() * D * L - Q;
         // LOG_INFO("L^T * D * L - Q = \n{}\n", LTDL_minus_Q);
         REQUIRE_THAT(LTDL_minus_Q, Catch::Matchers::WithinAbs(Matrix::Zero(n, n), 1e-10));
@@ -59,12 +60,13 @@ TEST_CASE("[Ambiguity] LDL Decomposition", "[Ambiguity]")
     // LtDLdecomp_choleskyFact is faster than LtDLdecomp_outerProduct
     {
         const auto start{ std::chrono::steady_clock::now() };
-        const auto [L, D] = math::LtDLdecomp_choleskyFact(Q);
+        const auto [L, Dvec] = math::LtDLdecomp_choleskyFact(Q);
         const auto end{ std::chrono::steady_clock::now() };
         LOG_INFO("LtDLdecomp_choleskyFact (FMFAC6): L^T * D * L");
         LOG_INFO("Elapsed time: {}", std::chrono::duration<double>(end - start).count());
         LOG_INFO("L = \n{}", L);
-        LOG_INFO("D = {}", D.diagonal().transpose());
+        LOG_INFO("D = {}", Dvec.transpose());
+        Matrix D = Eigen::DiagonalMatrix<double, m>(Dvec);
         Matrix LTDL_minus_Q = L.transpose() * D * L - Q;
         LOG_INFO("L^T * D * L - Q = \n{}\n", LTDL_minus_Q);
         REQUIRE_THAT(LTDL_minus_Q, Catch::Matchers::WithinAbs(Matrix::Zero(n, n), 1e-10));
@@ -75,17 +77,66 @@ TEST_CASE("[Ambiguity] LDL Decomposition", "[Ambiguity]")
         Eigen::LDLT<Matrix> ldltOfQ(Q); // See https://eigen.tuxfamily.org/dox/classEigen_1_1LDLT.html
         const auto end{ std::chrono::steady_clock::now() };
         REQUIRE(ldltOfQ.info() == Eigen::Success); // Success if computation was successful, NumericalIssue if the factorization failed because of a zero pivot.
-        Eigen::MatrixXd Leigen = ldltOfQ.matrixL();
-        Eigen::VectorXd Deigen = ldltOfQ.vectorD();
+        Eigen::MatrixXd L = ldltOfQ.matrixL();
+        Eigen::VectorXd Dvec = ldltOfQ.vectorD();
         LOG_INFO("Eigen: L * D * L^T");
         LOG_INFO("Elapsed time: {}", std::chrono::duration<double>(end - start).count());
-        LOG_INFO("L = \n{}", Leigen);
-        LOG_INFO("D = {}", Deigen.transpose());
-        Matrix Dmatrix = Eigen::DiagonalMatrix<double, m>(Deigen);
-        [[maybe_unused]] Matrix LDLT_minus_Q = Leigen * Dmatrix * Leigen.transpose() - Q;
+        LOG_INFO("L = \n{}", L);
+        LOG_INFO("D = {}", Dvec.transpose());
+        Matrix D = Eigen::DiagonalMatrix<double, m>(Dvec);
+        [[maybe_unused]] Matrix LDLT_minus_Q = L * D * L.transpose() - Q;
         LOG_INFO("L * D * L^T - Q = \n{}", LDLT_minus_Q);
         // REQUIRE_THAT(LDLT_minus_Q, Catch::Matchers::WithinAbs(Matrix::Zero(n, n), 1e-10)); // This fails
     }
+}
+
+TEST_CASE("[Ambiguity] Decorrelate Ambiguities", "[Ambiguity]")
+{
+    auto logger = initializeTestLogger();
+
+    constexpr size_t n = 3;
+    using Matrix = Eigen::Matrix<double, n, n>;
+    Matrix Qa; // Example taken from 'de Jonge 1996, eq. 3.37'
+    Qa << 6.290, 5.978, 0.544,
+        5.978, 6.292, 2.340,
+        0.544, 2.340, 6.288;
+
+    Eigen::LLT<Matrix> lltOfQ(Qa);            // See https://eigen.tuxfamily.org/dox/classEigen_1_1LLT.html
+    REQUIRE(lltOfQ.info() == Eigen::Success); // Success if computation was successful, NumericalIssue if the matrix.appears not to be positive definite.
+
+    Eigen::Vector3d a(1.23, 2.49, -0.51);
+    LOG_INFO("a = {}", a.transpose());
+
+    [[maybe_unused]] auto [Qz, Z, L, D, z] = Ambiguity::LAMBDA::decorrelate(a, Qa);
+
+    LOG_INFO("Qz = \n{}", Qz);
+    LOG_INFO("Z = \n{}", Z);
+    LOG_INFO("L = \n{}", L);
+    LOG_INFO("D = {}", D.transpose());
+    LOG_INFO("z = {}", z.transpose());
+
+    Matrix Qz_expected;
+    // Qz_expected << 0.626, 0.230, 0.082, // This is the result given by 'de Jonge 1996, eq. 3.40', but they say they reordered it
+    //     0.230, 4.476, 0.334,
+    //     0.082, 0.334, 1.146;
+    Qz_expected << 4.476, 0.334, 0.230,
+        0.334, 1.146, 0.082,
+        0.230, 0.082, 0.626;
+    REQUIRE_THAT(Qz - Qz_expected, Catch::Matchers::WithinAbs(Matrix::Zero(n, n), 1e-3));
+
+    Matrix Z_expected;
+    // Z_expected << 1, -1, 0, // This is the result given by 'de Jonge 1996, eq. 3.39', but they say they reordered it
+    //     -2, 3, -1,
+    //     3, -3, 1;
+    Z_expected << -2, 3, 1,
+        3, -3, -1,
+        -1, 1, 0;
+    REQUIRE(Z == Z_expected);
+
+    Matrix Dmat = Eigen::DiagonalMatrix<double, n>(D);
+    Matrix LTDL = L.transpose() * Dmat * L;
+    LOG_INFO("L^T D L = \n{}", LTDL);
+    REQUIRE_THAT(LTDL - Qz, Catch::Matchers::WithinAbs(Matrix::Zero(n, n), 1e-10));
 }
 
 } // namespace NAV::TESTS::AmbiguityTests

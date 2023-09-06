@@ -91,12 +91,12 @@ int sgn(const T& val)
 /// @brief Find (L^T D L)-decomposition of Q-matrix via outer product method
 /// @param[in] Qmatrix Symmetric positive definite matrix to be factored
 /// @return L - Factor matrix (strict lower triangular)
-/// @return D - Diagonal matrix
-/// @note See 1996 P. de Jonge and C. Tiberius - The LAMBDA method for integer ambiguity estimation: implementation aspects, algorithm FMFAC5
+/// @return D - Vector with entries of the diagonal matrix
+/// @note See \cite deJonge1996 de Jonge 1996, Algorithm FMFAC5
 /// @attention Consider using NAV::math::LtDLdecomp_choleskyFact() because it is faster by up to a factor 10
 template<typename Derived>
 std::pair<Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime>,
-          Eigen::DiagonalMatrix<typename Derived::Scalar, Derived::RowsAtCompileTime>>
+          Eigen::Vector<typename Derived::Scalar, Derived::RowsAtCompileTime>>
     LtDLdecomp_outerProduct(const Eigen::MatrixBase<Derived>& Qmatrix)
 {
     using Eigen::seq;
@@ -104,7 +104,7 @@ std::pair<Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, De
     auto n = Qmatrix.rows();
     Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime> Q = Qmatrix.template triangularView<Eigen::Lower>();
     Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime> L;
-    Eigen::DiagonalMatrix<typename Derived::Scalar, Derived::RowsAtCompileTime> D;
+    Eigen::Vector<typename Derived::Scalar, Derived::RowsAtCompileTime> D;
 
     if constexpr (Derived::RowsAtCompileTime == Eigen::Dynamic)
     {
@@ -114,12 +114,12 @@ std::pair<Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, De
     else
     {
         L = Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime>::Zero();
-        D.setZero(n);
+        D.setZero();
     }
 
     for (Eigen::Index i = n - 1; i >= 0; i--)
     {
-        D.diagonal()(i) = Q(i, i);
+        D(i) = Q(i, i);
         L(i, seq(0, i)) = Q(i, seq(0, i)) / std::sqrt(Q(i, i));
 
         for (Eigen::Index j = 0; j <= i - 1; j++)
@@ -135,22 +135,22 @@ std::pair<Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, De
 /// @brief Find (L^T D L)-decomposition of Q-matrix via a backward Cholesky factorization in a bordering method formulation
 /// @param[in] Q Symmetric positive definite matrix to be factored
 /// @return L - Factor matrix (strict lower triangular)
-/// @return D - Diagonal matrix
-/// @note See 1996 P. de Jonge and C. Tiberius - The LAMBDA method for integer ambiguity estimation: implementation aspects, algorithm FMFAC6
+/// @return D - Vector with entries of the diagonal matrix
+/// @note See \cite deJonge1996 de Jonge 1996, Algorithm FMFAC6
 template<typename Derived>
 std::pair<Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime>,
-          Eigen::DiagonalMatrix<typename Derived::Scalar, Derived::RowsAtCompileTime>>
+          Eigen::Vector<typename Derived::Scalar, Derived::RowsAtCompileTime>>
     LtDLdecomp_choleskyFact(const Eigen::MatrixBase<Derived>& Q)
 {
     using Eigen::seq;
 
     auto n = Q.rows();
-    Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime> L = Q.template triangularView<Eigen::Lower>();
-    Eigen::DiagonalMatrix<typename Derived::Scalar, Derived::RowsAtCompileTime> D;
+    typename Derived::PlainObject L = Q.template triangularView<Eigen::Lower>();
+    Eigen::Vector<typename Derived::Scalar, Derived::RowsAtCompileTime> D;
     double cmin = 1;
 
     if constexpr (Derived::RowsAtCompileTime == Eigen::Dynamic) { D.setZero(n); }
-    else { D.setZero(n); }
+    else { D.setZero(); }
 
     for (Eigen::Index j = n - 1; j >= 0; j--)
     {
@@ -169,7 +169,7 @@ std::pair<Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, De
     for (Eigen::Index i = 0; i < n; i++)
     {
         L.row(i).leftCols(i) /= L(i, i);
-        D.diagonal()(i) = std::pow(L(i, i), 2.0);
+        D(i) = std::pow(L(i, i), 2.0);
         L(i, i) = 1;
     }
 
