@@ -28,7 +28,7 @@ TEST_CASE("[Ambiguity] LDL Decomposition", "[Ambiguity]")
 
     constexpr size_t m = 30;
     constexpr size_t n = 3;
-    // using Matrix = Eigen::Matrix<double, m, m>;
+    // using Matrix = Eigen::Matrix<double, n, n>;
     using Matrix = Eigen::MatrixXd;
 
     Matrix A = Matrix::Random(m, n);
@@ -38,8 +38,8 @@ TEST_CASE("[Ambiguity] LDL Decomposition", "[Ambiguity]")
     //     -0.5, 2, -1,
     //     0, -1, 2;
 
-    LOG_INFO("A = \n{}", A);
-    LOG_INFO("Q = \n{}\n", Q);
+    // LOG_INFO("A = \n{}", A);
+    // LOG_INFO("Q = \n{}\n", Q);
 
     Eigen::LLT<Matrix> lltOfQ(Q);             // See https://eigen.tuxfamily.org/dox/classEigen_1_1LLT.html
     REQUIRE(lltOfQ.info() == Eigen::Success); // Success if computation was successful, NumericalIssue if the matrix.appears not to be positive definite.
@@ -50,9 +50,9 @@ TEST_CASE("[Ambiguity] LDL Decomposition", "[Ambiguity]")
         const auto end{ std::chrono::steady_clock::now() };
         LOG_INFO("LtDLdecomp_outerProduct (FMFAC5): L^T * D * L");
         LOG_INFO("Elapsed time: {}", std::chrono::duration<double>(end - start).count());
+        Matrix D = Eigen::DiagonalMatrix<double, n>(Dvec);
         // LOG_INFO("L = \n{}", L);
-        // LOG_INFO("D = {}", Dvec.transpose());
-        Matrix D = Eigen::DiagonalMatrix<double, m>(Dvec);
+        // LOG_INFO("D = \n{}", D);
         Matrix LTDL_minus_Q = L.transpose() * D * L - Q;
         // LOG_INFO("L^T * D * L - Q = \n{}\n", LTDL_minus_Q);
         REQUIRE_THAT(LTDL_minus_Q, Catch::Matchers::WithinAbs(Matrix::Zero(n, n), 1e-10));
@@ -64,29 +64,29 @@ TEST_CASE("[Ambiguity] LDL Decomposition", "[Ambiguity]")
         const auto end{ std::chrono::steady_clock::now() };
         LOG_INFO("LtDLdecomp_choleskyFact (FMFAC6): L^T * D * L");
         LOG_INFO("Elapsed time: {}", std::chrono::duration<double>(end - start).count());
-        LOG_INFO("L = \n{}", L);
-        LOG_INFO("D = {}", Dvec.transpose());
-        Matrix D = Eigen::DiagonalMatrix<double, m>(Dvec);
+        Matrix D = Eigen::DiagonalMatrix<double, n>(Dvec);
+        // LOG_INFO("L = \n{}", L);
+        // LOG_INFO("D = \n{}", D);
         Matrix LTDL_minus_Q = L.transpose() * D * L - Q;
-        LOG_INFO("L^T * D * L - Q = \n{}\n", LTDL_minus_Q);
+        // LOG_INFO("L^T * D * L - Q = \n{}\n", LTDL_minus_Q);
         REQUIRE_THAT(LTDL_minus_Q, Catch::Matchers::WithinAbs(Matrix::Zero(n, n), 1e-10));
     }
-    // The Eigen LDLT apparently is not working for random Q matrices. So it should not be used
+    // Eigen is even faster for big matrices
     {
         const auto start{ std::chrono::steady_clock::now() };
-        Eigen::LDLT<Matrix> ldltOfQ(Q); // See https://eigen.tuxfamily.org/dox/classEigen_1_1LDLT.html
+        Eigen::LDLT<Matrix> ldltOfQ(Q); // See https://eigen.tuxfamily.org/dox/classEigen_1_1LDLT.html Eigen calculates P^T * L * D * L^T * P
         const auto end{ std::chrono::steady_clock::now() };
         REQUIRE(ldltOfQ.info() == Eigen::Success); // Success if computation was successful, NumericalIssue if the factorization failed because of a zero pivot.
-        Eigen::MatrixXd L = ldltOfQ.matrixL();
-        Eigen::VectorXd Dvec = ldltOfQ.vectorD();
-        LOG_INFO("Eigen: L * D * L^T");
+        LOG_INFO("Eigen: P^T * L * D * L^T * P");
         LOG_INFO("Elapsed time: {}", std::chrono::duration<double>(end - start).count());
-        LOG_INFO("L = \n{}", L);
-        LOG_INFO("D = {}", Dvec.transpose());
-        Matrix D = Eigen::DiagonalMatrix<double, m>(Dvec);
-        [[maybe_unused]] Matrix LDLT_minus_Q = L * D * L.transpose() - Q;
-        LOG_INFO("L * D * L^T - Q = \n{}", LDLT_minus_Q);
-        // REQUIRE_THAT(LDLT_minus_Q, Catch::Matchers::WithinAbs(Matrix::Zero(n, n), 1e-10)); // This fails
+        auto P = Eigen::PermutationMatrix<n>(ldltOfQ.transpositionsP());
+        Matrix L = ldltOfQ.matrixL();
+        Matrix D = Eigen::DiagonalMatrix<double, n>(ldltOfQ.vectorD());
+        // LOG_INFO("L = \n{}", L);
+        // LOG_INFO("D = \n{}", D);
+        Matrix PTLDLTP_minus_Q = P.transpose() * L * D * L.transpose() * P - Q;
+        // LOG_INFO("P^T * L * D * L^T * P - Q = \n{}\n", PTLDLTP_minus_Q);
+        REQUIRE_THAT(PTLDLTP_minus_Q, Catch::Matchers::WithinAbs(Matrix::Zero(n, n), 1e-10));
     }
 }
 
