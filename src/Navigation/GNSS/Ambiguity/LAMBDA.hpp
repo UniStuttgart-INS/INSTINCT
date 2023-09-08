@@ -64,7 +64,7 @@ template<typename DerivedA, typename DerivedQ>
     while (sw)
     {
         sw = false;
-        for (auto i = n - 2; !sw && i > 0; i--)
+        for (auto i = n - 2; !sw && i >= 0; i--)
         {
             if (i <= i1)
             {
@@ -94,8 +94,9 @@ template<typename DerivedA, typename DerivedQ>
                 {
                     auto lambda1 = L(i, seq(0, i - 1));
                     auto lambda2 = L(i + 1, seq(0, i - 1));
-                    L(i, seq(0, i - 1)) = -L(i + 1, i) * lambda1 + lambda2;
+                    auto L_ij = (-L(i + 1, i) * lambda1 + lambda2).eval();
                     L(i + 1, seq(0, i - 1)) = eta * lambda1 + lambda3 * lambda2;
+                    L(i, seq(0, i - 1)) = L_ij;
                 }
                 L(i + 1, i) = lambda3;
                 L(seq(i + 2, n - 1), i).swap(L(seq(i + 2, n - 1), i + 1));
