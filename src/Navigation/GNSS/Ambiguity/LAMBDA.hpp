@@ -59,55 +59,47 @@ template<typename DerivedA, typename DerivedQ>
     typename DerivedA::PlainObject z = a;
 
     auto i1 = n - 2; // keeps track what the last column is that fulfills the criterion dn <= ... <= d1 (most precise ambiguity at position n)
-    bool sw = true;  // keeps track if there was an interchange of diagonal elements during a sweep. If no diagonal elements were interchanged, the algorithm terminates
 
-    while (sw)
+    for (auto i = n - 2; i >= 0; i--)
     {
-        sw = false;
-        for (auto i = n - 2; !sw && i >= 0; i--)
+        if (i <= i1)
         {
-            if (i <= i1)
+            // Apply algorithm ZTRAN to column i
+            for (auto j = i + 1; j < n; j++)
             {
-                // Apply algorithm ZTRAN to column i
-                for (auto j = i + 1; j < n; j++)
+                auto mu = std::round(L(j, i));
+                if (mu != 0)
                 {
-                    auto mu = std::round(L(j, i));
-                    if (mu != 0)
-                    {
-                        L(seq(j, n - 1), i) -= mu * L(seq(j, n - 1), j);
-                        Z(seq(0, n - 1), i) -= mu * Z(seq(0, n - 1), j);
-                        // Z(seq(0, n - 1), j) += mu * Z(seq(0, n - 1), i); // Z^-T can be directly computed with this
-                        z(i) -= mu * z(j);
-                    }
+                    L(seq(j, n - 1), i) -= mu * L(seq(j, n - 1), j);
+                    Z(seq(0, n - 1), i) -= mu * Z(seq(0, n - 1), j);
+                    // Z(seq(0, n - 1), j) += mu * Z(seq(0, n - 1), i); // Z^-T can be directly computed with this
+                    z(i) -= mu * z(j);
                 }
             }
+        }
 
-            double delta = D(i) + std::pow(L(i + 1, i), 2) * D(i + 1);
-            if (delta < D(i + 1))
-            {
-                auto lambda3 = D(i + 1) * L(i + 1, i) / delta;
-                auto eta = D(i) / delta;
-                D(i) = eta * D(i + 1);
-                D(i + 1) = delta;
+        double delta = D(i) + std::pow(L(i + 1, i), 2) * D(i + 1);
+        if (delta < D(i + 1))
+        {
+            auto lambda3 = D(i + 1) * L(i + 1, i) / delta;
+            auto eta = D(i) / delta;
+            D(i) = eta * D(i + 1);
+            D(i + 1) = delta;
 
-                // for (int j = 0; j <= i - 1; j++)
-                {
-                    auto lambda1 = L(i, seq(0, i - 1));
-                    auto lambda2 = L(i + 1, seq(0, i - 1));
-                    auto L_ij = (-L(i + 1, i) * lambda1 + lambda2).eval();
-                    L(i + 1, seq(0, i - 1)) = eta * lambda1 + lambda3 * lambda2;
-                    L(i, seq(0, i - 1)) = L_ij;
-                }
-                L(i + 1, i) = lambda3;
-                L(seq(i + 2, n - 1), i).swap(L(seq(i + 2, n - 1), i + 1));
-                Z(seq(0, n - 1), i).swap(Z(seq(0, n - 1), i + 1));
-                std::swap(z(i), z(i + 1));
+            // for (int j = 0; j <= i - 1; j++)
+            auto lambda1 = L(i, seq(0, i - 1));
+            auto lambda2 = L(i + 1, seq(0, i - 1));
+            auto L_ij = (-L(i + 1, i) * lambda1 + lambda2).eval();
+            L(i + 1, seq(0, i - 1)) = eta * lambda1 + lambda3 * lambda2;
+            L(i, seq(0, i - 1)) = L_ij;
 
-                i1 = i;
-                sw = true;
+            L(i + 1, i) = lambda3;
+            L(seq(i + 2, n - 1), i).swap(L(seq(i + 2, n - 1), i + 1));
+            Z(seq(0, n - 1), i).swap(Z(seq(0, n - 1), i + 1));
+            std::swap(z(i), z(i + 1));
 
-                // i = n - 1; // Restart the for loop
-            }
+            i1 = i;
+            i = n - 1; // Restart the for loop
         }
     }
 

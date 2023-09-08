@@ -96,6 +96,7 @@ TEST_CASE("[Ambiguity] Decorrelate Ambiguities", "[Ambiguity]")
 
     constexpr size_t n = 3;
     using Matrix = Eigen::Matrix<double, n, n>;
+
     Matrix Qa; // Example taken from 'de Jonge 1996, eq. 3.37'
     Qa << 6.290, 5.978, 0.544,
         5.978, 6.292, 2.340,
@@ -122,7 +123,7 @@ TEST_CASE("[Ambiguity] Decorrelate Ambiguities", "[Ambiguity]")
     Qz_expected << 4.476, 0.334, 0.230,
         0.334, 1.146, 0.082,
         0.230, 0.082, 0.626;
-    REQUIRE_THAT(Qz - Qz_expected, Catch::Matchers::WithinAbs(Matrix::Zero(n, n), 1e-3));
+    REQUIRE_THAT(Qz - Qz_expected, Catch::Matchers::WithinAbs(Matrix::Zero(n, n), 1e-10));
 
     Matrix Z_expected;
     // Z_expected << 1, -1, 0, // This is the result given by 'de Jonge 1996, eq. 3.39', but they say they reordered it
@@ -137,6 +138,9 @@ TEST_CASE("[Ambiguity] Decorrelate Ambiguities", "[Ambiguity]")
     Matrix LTDL = L.transpose() * Dmat * L;
     LOG_INFO("L^T D L = \n{}", LTDL);
     REQUIRE_THAT(LTDL - Qz, Catch::Matchers::WithinAbs(Matrix::Zero(n, n), 1e-10));
+
+    Eigen::Vector3d z_expected(5.52, -4.29, -1.26);
+    REQUIRE_THAT(z - z_expected, Catch::Matchers::WithinAbs(Eigen::Vector3d::Zero(), 1e-10));
 }
 
 } // namespace NAV::TESTS::AmbiguityTests
