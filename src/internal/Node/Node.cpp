@@ -623,7 +623,7 @@ void NAV::Node::workerThread(Node* node)
                                     if (inputPin.type == Pin::Type::Flow && inputPin.neededForTemporalQueueCheck && !inputPin.queueBlocked && inputPin.queue.empty())
                                     {
                                         if (auto* connectedPin = inputPin.link.getConnectedPin();
-                                            connectedPin && connectedPin->mode == OutputPin::Mode::POST_PROCESSING)
+                                            connectedPin && !connectedPin->noMoreDataAvailable)
                                         {
                                             allInputPinsHaveData = false;
                                             break;
@@ -694,7 +694,7 @@ void NAV::Node::workerThread(Node* node)
                 }
 
                 // Post-processing (FileReader/Simulator)
-                if (node->_mode == Node::Mode::POST_PROCESSING && !node->pollEvents.empty())
+                if (!node->pollEvents.empty())
                 {
                     std::multimap<InsTime, std::pair<OutputPin*, size_t>>::iterator it;
                     while (it = node->pollEvents.begin(), it != node->pollEvents.end() && node->isInitialized() && node->callbacksEnabled)
@@ -747,7 +747,7 @@ void NAV::Node::workerThread(Node* node)
                                 }
                                 else // nullptr -> no more data incoming on this pin
                                 {
-                                    outputPin->mode = OutputPin::Mode::REAL_TIME;
+                                    outputPin->noMoreDataAvailable = true;
                                     for (auto& link : outputPin->links)
                                     {
                                         link.connectedNode->wakeWorker();
@@ -769,9 +769,9 @@ void NAV::Node::workerThread(Node* node)
                         node->callbacksEnabled = false;
                         for (auto& outputPin : node->outputPins)
                         {
-                            if (outputPin.mode != OutputPin::Mode::REAL_TIME)
+                            if (!outputPin.noMoreDataAvailable)
                             {
-                                outputPin.mode = OutputPin::Mode::REAL_TIME;
+                                outputPin.noMoreDataAvailable = true;
                                 for (auto& link : outputPin.links)
                                 {
                                     link.connectedNode->wakeWorker();
@@ -789,14 +789,14 @@ void NAV::Node::workerThread(Node* node)
             {
                 if (std::all_of(node->inputPins.begin(), node->inputPins.end(), [](const InputPin& inputPin) {
                         return inputPin.type != Pin::Type::Flow || !inputPin.isPinLinked() || inputPin.link.connectedNode->isDisabled()
-                               || (inputPin.queue.empty() && inputPin.link.getConnectedPin()->mode == OutputPin::Mode::REAL_TIME);
+                               || (inputPin.queue.empty() && inputPin.link.getConnectedPin()->noMoreDataAvailable);
                     }))
                 {
                     LOG_TRACE("{}: Node finished", node->nameId());
                     node->callbacksEnabled = false;
                     for (auto& outputPin : node->outputPins)
                     {
-                        outputPin.mode = OutputPin::Mode::REAL_TIME;
+                        outputPin.noMoreDataAvailable = true;
                         for (auto& link : outputPin.links)
                         {
                             link.connectedNode->wakeWorker();
@@ -869,7 +869,7 @@ bool NAV::Node::workerInitializeNode()
         LOG_TRACE("{}: resetNode() was successful", nameId());
         for (auto& outputPin : outputPins)
         {
-            outputPin.mode = OutputPin::Mode::REAL_TIME;
+            outputPin.noMoreDataAvailable = true;
             for (auto& link : outputPin.links)
             {
                 LOG_TRACE("{}: Waking connected node '{}'", nameId(), link.connectedNode->nameId());

@@ -510,7 +510,7 @@ void NAV::VectorNavDataLogger::writeObservation(NAV::InputPin::NodeDataQueue& qu
 
         if (!obs->insTime.empty())
         {
-            _filestream << std::setprecision(doublePrecision) << std::round(calcTimeIntoRun(obs->insTime) * 1e9) / 1e9;
+            _filestream << std::setprecision(15) << std::round(calcTimeIntoRun(obs->insTime) * 1e9) / 1e9;
         }
         _filestream << ",";
         if (!obs->insTime.empty())

@@ -71,6 +71,7 @@ NAV::Demo::Demo()
 {
     LOG_TRACE("{}: called", name);
 
+    _onlyRealTime = true; // Add this if you have a sensor, network stream, ...
     _hasConfig = true;
     _lockConfigDuringRun = false;
     _guiConfigDefaultWindowSize = { 630, 410 };
