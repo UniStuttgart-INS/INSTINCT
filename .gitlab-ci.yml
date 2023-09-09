@@ -474,7 +474,7 @@ doxygen:
       - build/doc/html/
     expire_in: 2h
   only:
-    - master
+    - main
 
 coverage:
   stage: analyze
@@ -512,9 +512,9 @@ pages:
       - public
     expire_in: 2h
   only:
-    - master
+    - main
   # except:
-  #   - /^(?!master).+@/
+  #   - /^(?!main).+@/
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                           Ubuntu 22.04                                           ║
