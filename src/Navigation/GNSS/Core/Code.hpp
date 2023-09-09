@@ -298,6 +298,10 @@ class Code
     /// @param[in] set Bitset with values to construct the Code from
     constexpr explicit Code(const Set& set) : value(set) {}
 
+    /// @brief Constructor from a satellite system
+    /// @param[in] sys System to set all codes for
+    explicit Code(SatelliteSystem_ sys);
+
     /// @brief Constructor from a frequency
     /// @param[in] freq Frequency to set all codes for
     explicit Code(Frequency_ freq);

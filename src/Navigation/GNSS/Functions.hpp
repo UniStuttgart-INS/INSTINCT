@@ -60,14 +60,23 @@ namespace NAV
 /// @note See \cite Groves2013 Groves ch. 8.5.3, eq. 8.46, p. 342
 [[nodiscard]] double calcSagnacRateCorrection(const Eigen::Vector3d& e_posAnt, const Eigen::Vector3d& e_satPos, const Eigen::Vector3d& e_velAnt, const Eigen::Vector3d& e_satVel);
 
-/// @brief Transforms a doppler-shift measurement into a pseudorange-rate measurement
-/// @param[in] doppler The doppler-shift measurement to transform [Hz]
-/// @param[in] freq Frequency the measurement originates from
-/// @param[in] num  Frequency number. Only used for GLONASS G1 and G2
-/// @return The corresponding pseudorange-rate measurement [s/s]
+/// @brief Transforms a doppler-shift into a range-rate
+/// @param[in] doppler The doppler-shift to transform [Hz]
+/// @param[in] freq Frequency
+/// @param[in] num Frequency number. Only used for GLONASS G1 and G2
+/// @return The corresponding range-rate [m/s]
 ///
 /// @note See \cite Groves2013 Groves, ch. 9.2.7, eq. 9.70, p. 388
-[[nodiscard]] double doppler2psrRate(double doppler, Frequency freq, int8_t num = -128);
+[[nodiscard]] double doppler2rangeRate(double doppler, Frequency freq, int8_t num = -128);
+
+/// @brief Transforms a range-rate into a doppler-shift
+/// @param[in] rangeRate The range-rate to transform [m/s]
+/// @param[in] freq Frequency
+/// @param[in] num Frequency number. Only used for GLONASS G1 and G2
+/// @return The corresponding doppler-shift [Hz]
+///
+/// @note See \cite Groves2013 Groves, ch. 9.2.7, eq. 9.70, p. 388
+[[nodiscard]] double rangeRate2doppler(double rangeRate, Frequency freq, int8_t num = -128);
 
 /// @brief Calculates the ration of the frequencies squared γ
 ///

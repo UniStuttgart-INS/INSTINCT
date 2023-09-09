@@ -99,7 +99,7 @@ double GnssMeasurementErrorModel::codeBiasErrorVar() const
 {
     if (model == RTKLIB)
     {
-        return std::pow(doppler2psrRate(rtklibParams.dopplerFrequency, freq, num), 2);
+        return std::pow(doppler2rangeRate(rtklibParams.dopplerFrequency, freq, num), 2);
     }
     return 0.0;
 }
@@ -127,7 +127,7 @@ bool GnssMeasurementErrorModel::ShowGuiWidgets(const char* id, float width)
         ImGui::SetNextItemWidth(width);
         changed |= ImGui::InputDouble(fmt::format("Doppler Frequency##", id).c_str(), &(rtklibParams.dopplerFrequency), 0.0, 0.0, "%.3g Hz");
         ImGui::SameLine();
-        ImGui::Text("= %.2g m/s (G1)", std::abs(doppler2psrRate(rtklibParams.dopplerFrequency, G01)));
+        ImGui::Text("= %.2g m/s (G1)", std::abs(doppler2rangeRate(rtklibParams.dopplerFrequency, G01)));
     }
     return changed;
 }

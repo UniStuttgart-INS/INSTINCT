@@ -145,20 +145,16 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
         {
             if (NAV::ConfigManager::HasKey("load"))
             {
-                try
+                LOG_INFO("Loading flow file: {}", NAV::ConfigManager::Get<std::string>("load", ""));
+                if (NAV::flow::LoadFlow(NAV::ConfigManager::Get<std::string>("load", "")))
                 {
-                    LOG_INFO("Loading flow file: {}", NAV::ConfigManager::Get<std::string>("load", ""));
-                    if (NAV::flow::LoadFlow(NAV::ConfigManager::Get<std::string>("load", "")))
-                    {
-                        app.frameCountNavigate = ImGui::GetFrameCount();
-                    }
+                    app.frameCountNavigate = ImGui::GetFrameCount();
                 }
-                catch (...)
+                else
                 {
                     nm::DeleteAllNodes();
                     NAV::flow::DiscardChanges();
                     NAV::flow::SetCurrentFilename("");
-                    LOG_ERROR("Loading flow file failed");
                 }
             }
 

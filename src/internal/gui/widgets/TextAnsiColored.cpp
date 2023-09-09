@@ -10,10 +10,15 @@
 
 #include <array>
 
-static constexpr int kMaxChar = 10000;
-static std::array<char, kMaxChar> char_buf;
-static std::array<ImU32, kMaxChar> col_buf;
-static std::array<bool, kMaxChar> char_skip;
+namespace
+{
+
+constexpr int kMaxChar = 10000;
+std::array<char, kMaxChar> char_buf;
+std::array<ImU32, kMaxChar> col_buf;
+std::array<bool, kMaxChar> char_skip;
+
+} // namespace
 
 namespace jet
 {

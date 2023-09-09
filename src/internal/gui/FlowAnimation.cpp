@@ -12,10 +12,15 @@
 #include <mutex>
 #include <algorithm>
 
+namespace
+{
+
 /// Queue to store animations till the draw threads pushes them onto the library
-static std::vector<std::pair<ax::NodeEditor::LinkId, ax::NodeEditor::FlowDirection>> flowAnimationQueue;
+std::vector<std::pair<ax::NodeEditor::LinkId, ax::NodeEditor::FlowDirection>> flowAnimationQueue;
 /// Mutex to lock the animation queue
-static std::mutex flowAnimationQueueMutex;
+std::mutex flowAnimationQueueMutex;
+
+} // namespace
 
 void NAV::FlowAnimation::Add(ax::NodeEditor::LinkId id, ax::NodeEditor::FlowDirection direction)
 {

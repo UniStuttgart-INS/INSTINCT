@@ -80,8 +80,15 @@ struct SatSigId
     /// @return True if lhs < rhs
     bool operator<(const SatSigId& rhs) const
     {
-        return code == rhs.code ? satNum < rhs.satNum
-                                : Code::Set(code).count() < Code::Set(rhs.code).count();
+        if (toSatId().satSys == rhs.toSatId().satSys)
+        {
+            if (satNum == rhs.satNum)
+            {
+                return Code::Set(code).to_ullong() < Code::Set(rhs.code).to_ullong();
+            }
+            return satNum < rhs.satNum;
+        }
+        return toSatId().satSys < rhs.toSatId().satSys;
     }
 
     /// @brief Returns a satellite identifier for the satellite signal

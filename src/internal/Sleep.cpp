@@ -17,8 +17,11 @@
 #endif
 #include <csignal>
 
+namespace
+{
 /// Flag for interrupt check
-static volatile sig_atomic_t usr_interrupt = 0;
+volatile sig_atomic_t usr_interrupt = 0;
+} // namespace
 
 void handler(int /* */)
 {
