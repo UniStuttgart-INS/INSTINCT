@@ -21,37 +21,13 @@
 #include "Navigation/Atmosphere/Ionosphere/Ionosphere.hpp"
 #include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
 #include "Navigation/GNSS/Core/ReceiverClock.hpp"
+#include "Navigation/GNSS/Positioning/SppAlgorithmTypes.hpp"
+
+#include "Navigation/GNSS/Positioning/SPP/SppKalmanFilter.hpp"
 #include "Navigation/GNSS/Errors.hpp"
 
-namespace NAV
+namespace NAV::GNSS::Positioning::SPP
 {
-namespace GNSS::Positioning::SPP
-{
-
-/// Possible SPP estimation algorithms
-enum class EstimatorType
-{
-    LEAST_SQUARES,          ///< Linear Least Squares
-    WEIGHTED_LEAST_SQUARES, ///< Weighted Linear Least Squares
-    KF,                     ///< Kalman Filter
-    COUNT,                  ///< Amount of items in the enum
-};
-
-/// @brief Shows a ComboBox to select the SPP estimator
-/// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
-/// @param[in] estimatorType Reference to the SPP estimator to select
-bool ComboSppEstimatorType(const char* label, EstimatorType& estimatorType);
-
-/// @brief State estimated by the SPP algorithm
-struct State
-{
-    /// Estimated position in ECEF frame [m]
-    Eigen::Vector3d e_position = Eigen::Vector3d::Zero();
-    /// Estimated velocity in ECEF frame [m/s]
-    Eigen::Vector3d e_velocity = Eigen::Vector3d::Zero();
-    /// Estimated receiver clock parameters
-    ReceiverClock recvClk;
-};
 
 /// @brief Calculates the SPP solution with a Least squares estimator
 /// @param[in] state Previous SPP state
@@ -78,11 +54,31 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
                                                 const std::vector<SatId>& excludedSatellites,
                                                 double elevationMask);
 
-} // namespace GNSS::Positioning::SPP
+/// @brief Calculates the SPP solution with a Kalman Filter
+/// @param[in, out] kalmanFilter Spp Kalman Filter with all settings
+/// @param[in] state Previous SPP state
+/// @param[in] gnssObs GNSS observation received
+/// @param[in] gnssNavInfos Collection of all connected navigation data providers
+/// @param[in] ionosphereModel Ionosphere Model used for the calculation
+/// @param[in] troposphereModels Troposphere Models used for the calculation
+/// @param[in] gnssMeasurementErrorModel GNSS measurement error model to use
+/// @param[in] filterFreq Frequencies used for calculation (GUI filter)
+/// @param[in] filterCode Codes used for calculation (GUI filter)
+/// @param[in] excludedSatellites List of satellites to exclude
+/// @param[in] elevationMask Elevation cut-off angle for satellites in [rad]
+/// @param[in] usedObservations Utilized observations (Order from GnssObs::ObservationType: Psr, Carrier, Doppler)
+/// @return Shared pointer to the SPP solution
+std::shared_ptr<SppSolution> calcSppSolutionKF(SppKalmanFilter& kalmanFilter,
+                                               State state,
+                                               const std::shared_ptr<const GnssObs>& gnssObs,
+                                               const std::vector<const GnssNavInfo*>& gnssNavInfos,
+                                               const IonosphereModel& ionosphereModel,
+                                               const TroposphereModelSelection& troposphereModels,
+                                               const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
+                                               const Frequency& filterFreq,
+                                               const Code& filterCode,
+                                               const std::vector<SatId>& excludedSatellites,
+                                               double elevationMask,
+                                               const std::array<bool, 2>& usedObservations);
 
-/// @brief Converts the enum to a string
-/// @param[in] estimatorType Enum value to convert into text
-/// @return String representation of the enum
-const char* to_string(GNSS::Positioning::SPP::EstimatorType estimatorType);
-
-} // namespace NAV
+} // namespace NAV::GNSS::Positioning::SPP

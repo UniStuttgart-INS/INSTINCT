@@ -35,14 +35,11 @@ using SppSolSetErrorCovarianceMatrix = void (SppSolution::*)(const Eigen::Matrix
 /// @param[in] e_H Corresponding design matrix
 /// @param[in] W Corresponding weights of observations
 /// @param[in] estimatorType Estimator Type, either LSQ or WLSQ
-/// @param[in] satelliteSystems List of satellite systems of this epoch
 /// @param[in] nMeas Number of measurements
-/// @param[in] nParam Number of parameters of LSE
 /// @param[out] posOrVel Output for the position or velocity
 /// @param[out] biasOrDrift Output for the bias or drift
 /// @param[out] sysTimeOrDriftDiff Output for output for the inter system bias or drifts
 /// @param[out] sppSol SPP solution
-/// @param[out] sppSolSatelliteNum Output for the number of satellites used
 /// @param[out] sppSolBiasOrDrift Output for the bias or drift (assigned inside the sppSol)
 /// @param[out] sppSolSysTimeOrDriftDiff Output for output for the inter system bias or drifts (assigned inside the sppSol)
 /// @param[out] sppSolSetPosOrVelAndStdDev_e Function to call to set the position or velocity and standard deviation in the sppSol
@@ -51,14 +48,11 @@ using SppSolSetErrorCovarianceMatrix = void (SppSolution::*)(const Eigen::Matrix
 /// @return True if the solution change is below 1e-4
 bool solveLeastSquaresAndAssignSolution(const Eigen::VectorXd& dy, const Eigen::MatrixXd& e_H, const Eigen::MatrixXd& W,
                                         const EstimatorType& estimatorType,
-                                        const std::vector<SatelliteSystem>& satelliteSystems,
                                         size_t nMeas,
-                                        size_t nParam,
                                         Eigen::Vector3d& posOrVel,
                                         UncertainValue<double>& biasOrDrift,
                                         std::unordered_map<NAV::SatelliteSystem, NAV::UncertainValue<double>>& sysTimeOrDriftDiff,
                                         const std::shared_ptr<SppSolution>& sppSol,
-                                        size_t& sppSolSatelliteNum,
                                         UncertainValue<double>& sppSolBiasOrDrift,
                                         std::unordered_map<NAV::SatelliteSystem, NAV::UncertainValue<double>>& sppSolSysTimeOrDriftDiff,
                                         SppSolSetPosOrVelAndStdDev_e sppSolSetPosOrVelAndStdDev_e,

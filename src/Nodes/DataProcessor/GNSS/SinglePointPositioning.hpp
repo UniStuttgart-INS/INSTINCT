@@ -21,6 +21,8 @@
 #include "Navigation/GNSS/Core/Code.hpp"
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "Navigation/GNSS/Positioning/SppAlgorithm.hpp"
+#include "Navigation/GNSS/Positioning/SppAlgorithmTypes.hpp"
+#include "Navigation/GNSS/Positioning/SPP/SppKalmanFilter.hpp"
 #include "Navigation/Atmosphere/Ionosphere/Ionosphere.hpp"
 #include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
 
@@ -101,6 +103,9 @@ class SinglePointPositioning : public Node
     /// Elevation cut-off angle for satellites in [rad]
     double _elevationMask = static_cast<double>(15.0_deg);
 
+    /// Utilized observations (Order from GnssObs::ObservationType: Psr, Doppler)
+    std::array<bool, 2> _usedObservations = { true, true };
+
     /// Ionosphere Model used for the calculation
     IonosphereModel _ionosphereModel = IonosphereModel::Klobuchar;
 
@@ -112,6 +117,9 @@ class SinglePointPositioning : public Node
 
     /// Estimator type
     GNSS::Positioning::SPP::EstimatorType _estimatorType = GNSS::Positioning::SPP::EstimatorType::WEIGHTED_LEAST_SQUARES;
+
+    /// @brief SPP Kalman filter
+    GNSS::Positioning::SPP::SppKalmanFilter _kalmanFilter;
 
     /// State estimated by the algorithm
     GNSS::Positioning::SPP::State _state;

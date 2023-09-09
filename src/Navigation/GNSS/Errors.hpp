@@ -28,10 +28,13 @@ class GnssMeasurementErrorModel
     /// @brief Models
     enum Model : int
     {
-        None,   ///< Measurement error model turned off
-        RTKLIB, ///< RTKLIB error model. See \cite RTKLIB RTKLIB ch. E.6, eq. E.6.24, p. 162
-        COUNT,  ///< Amount of items in the enum
+        None,       ///< Measurement error model turned off
+        RTKLIB,     ///< RTKLIB error model. See \cite RTKLIB RTKLIB ch. E.6, eq. E.6.24, p. 162
+        Groves2013, ///< Measurement Error see Groves 2013 ch. 9.4.2.4, eq. 9.168, p. 422 (range acceleration is neglected)
+        COUNT,      ///< Amount of items in the enum
     };
+    /// @brief Model to use
+    Model model = RTKLIB;
 
     /// @brief Calculates the measurement Error Variance for pseudorange observations
     /// @param[in] satSys Satellite System
@@ -60,8 +63,17 @@ class GnssMeasurementErrorModel
     /// @return Variance of the Doppler error [Hz^2]
     [[nodiscard]] double dopplerErrorVar() const;
 
-    /// @brief Model to use
-    Model model = RTKLIB;
+    /// @brief Calculates the measurement Error Variance for pseudorange observations for model of Groves 2013
+    /// @param[in] elevation Satellite Elevation in [rad]
+    /// @param[in] cn0 Carrier power to noise density
+    /// @return Variance of the measurement error [m^2]
+    [[nodiscard]] double psrMeasErrorVar(double elevation, double cn0) const;
+
+    /// @brief Calculates the measurement Error Variance for doppler observations for model of Groves 2013
+    /// @param[in] elevation Satellite Elevation in [rad]
+    /// @param[in] cn0 Carrier power to noise density
+    /// @return Variance of the measurement error [m^2]
+    [[nodiscard]] double dopplerMeasErrorVar(double elevation, double cn0) const;
 
     /// @brief Shows a ComboBox to select the model
     /// @param[in] id Unique id for ImGui.
@@ -80,6 +92,17 @@ class GnssMeasurementErrorModel
     };
     /// @brief Parameters for the RTKLIB model
     RtklibParameters rtklibParams;
+
+    /// @brief Groves 2013 model parameters
+    struct Groves2013Parameters
+    {
+        /// Pseudo-range error standard deviation in [m] (zenith and cn0-dependent)
+        std::array<double, 2> sigmaRho = { 0.1, 0.1 };
+        /// Pseudo-range rate error standard deviation in [m/s] (zenith and cn0-dependent)
+        std::array<double, 2> sigmaR = { 0.1, 0.1 };
+    };
+    /// @brief Parameters for the model of Groves 2013
+    Groves2013Parameters groves2013Params;
 
   private:
     /// @brief Calculates the measurement Error Variance for pseudorange or carrier-phase observations
@@ -111,5 +134,13 @@ void to_json(json& j, const GnssMeasurementErrorModel::RtklibParameters& obj);
 /// @param[in] j Json object with the needed values
 /// @param[out] obj Object to fill from the json
 void from_json(const json& j, GnssMeasurementErrorModel::RtklibParameters& obj);
+/// @brief Converts the provided object into json
+/// @param[out] j Json object which gets filled with the info
+/// @param[in] obj Object to convert into json
+void to_json(json& j, const GnssMeasurementErrorModel::Groves2013Parameters& obj);
+/// @brief Converts the provided json object into a node object
+/// @param[in] j Json object with the needed values
+/// @param[out] obj Object to fill from the json
+void from_json(const json& j, GnssMeasurementErrorModel::Groves2013Parameters& obj);
 
 } // namespace NAV

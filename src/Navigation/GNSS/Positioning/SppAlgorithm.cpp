@@ -7,6 +7,8 @@
 #include "internal/gui/widgets/EnumCombo.hpp"
 
 #include <set>
+#include <cmath>
+#include <algorithm>
 
 namespace NAV
 {
@@ -59,7 +61,7 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
 
     // Data calculated for each satellite (only satellites filtered by GUI filter & NAV data available)
     std::vector<CalcData> calcData = selectObservations(sppSol, gnssObs, gnssNavInfos, filterFreq, filterCode, excludedSatellites);
-    // List of satellite systems
+    // Sorted list of satellite systems
     std::set<SatelliteSystem> availSatelliteSystems;
     for (const auto& calc : calcData) { availSatelliteSystems.insert(calc.obsData.satSigId.toSatId().satSys); }
 
@@ -99,35 +101,27 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
         satelliteSystems.reserve(availSatelliteSystems.size());
         std::copy(availSatelliteSystems.begin(), availSatelliteSystems.end(), std::back_inserter(satelliteSystems));
 
-        // Keeps track of skipped meausrements (because of elevation mask, ...)
-        size_t cntSkippedMeas = 0;
-        if (!calcDataBasedOnEstimates(sppSol, satelliteSystems, cntSkippedMeas, calcData, state,
-                                      nParam, nMeasPsr, nDopplerMeas, gnssObs->insTime, lla_pos, elevationMask))
+        if (!calcDataBasedOnEstimates(sppSol, satelliteSystems, calcData, state,
+                                      nParam, nMeasPsr, nDopplerMeas, gnssObs->insTime, lla_pos,
+                                      elevationMask, estimatorType))
         {
             return sppSol;
         }
 
-        // Update the amount of measurements to take skipped measurements because of elevation mask into account
-        size_t nMeasPsr_i = nMeasPsr - cntSkippedMeas;
-        size_t nDopplerMeas_i = nDopplerMeas - cntSkippedMeas;
-
-        auto [e_H_psr,     // Measurement/Geometry matrix for the pseudorange
-              psrEst,      // Pseudorange estimates [m]
-              psrMeas,     // Pseudorange measurements [m]
-              W_psr,       // Pseudorange measurement error weight matrix
-              dpsr,        // Difference between Pseudorange measurements and estimates
-              e_H_r,       // Measurement/Geometry matrix for the pseudorange-rate
-              psrRateEst,  // Corrected pseudorange-rate estimates [m/s]
-              psrRateMeas, // Corrected pseudorange-rate measurements [m/s]
-              W_psrRate,   // Pseudorange rate (doppler) measurement error weight matrix
-              dpsr_dot     // Difference between Pseudorange rate measurements and estimates
+        auto [e_H_psr,          // Measurement/Geometry matrix for the pseudorange
+              psrEst,           // Pseudorange estimates [m]
+              psrMeas,          // Pseudorange measurements [m]
+              W_psr,            // Pseudorange measurement error weight matrix
+              dpsr,             // Difference between Pseudorange measurements and estimates
+              e_H_r,            // Measurement/Geometry matrix for the pseudorange-rate
+              psrRateEst,       // Corrected pseudorange-rate estimates [m/s]
+              psrRateMeas,      // Corrected pseudorange-rate measurements [m/s]
+              W_psrRate,        // Pseudorange rate (doppler) measurement error weight matrix
+              dpsr_dot,         // Difference between Pseudorange rate measurements and estimates
+              keyedObservations // Observations for use with KeyedKalmanFilter (contains Innovations, Design/Geometry matrix, Weight matrix)
         ] = calcMeasurementEstimatesAndDesignMatrix(sppSol, calcData,
-                                                    static_cast<int>(nParam),
-                                                    static_cast<int>(nMeasPsr_i),
-                                                    static_cast<int>(nDopplerMeas_i),
                                                     gnssObs->insTime,
                                                     state, lla_pos,
-                                                    satelliteSystems,
                                                     ionosphericCorrections, ionosphereModel,
                                                     troposphereModels, gnssMeasurementErrorModel, estimatorType);
 
@@ -137,35 +131,96 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
 
         // ---------------------------------------------------------- Position -------------------------------------------------------------
 
-        bool solAccurate = solveLeastSquaresAndAssignSolution(dpsr, e_H_psr, W_psr, estimatorType, satelliteSystems, nMeasPsr_i, nParam,
+        bool solAccurate = solveLeastSquaresAndAssignSolution(dpsr, e_H_psr, W_psr, estimatorType, sppSol->nSatellitesPosition,
                                                               // Outputs:
                                                               state.e_position, state.recvClk.bias, state.recvClk.sysTimeDiff,
-                                                              sppSol, sppSol->nSatellitesPosition, sppSol->recvClk.bias, sppSol->recvClk.sysTimeDiff,
+                                                              sppSol, sppSol->recvClk.bias, sppSol->recvClk.sysTimeDiff,
                                                               &SppSolution::setPositionAndStdDev_e, &SppSolution::setPosition_e,
                                                               &SppSolution::setPositionClockErrorCovarianceMatrix);
 
         // ---------------------------------------------------------- Velocity -------------------------------------------------------------
-        if (nDopplerMeas_i >= nParam)
+        if (sppSol->nSatellitesVelocity >= sppSol->nParam)
         {
-            solAccurate &= solveLeastSquaresAndAssignSolution(dpsr_dot, e_H_r, W_psrRate, estimatorType, satelliteSystems, nDopplerMeas_i, nParam,
+            solAccurate &= solveLeastSquaresAndAssignSolution(dpsr_dot, e_H_r, W_psrRate, estimatorType, sppSol->nSatellitesVelocity,
                                                               // Outputs:
                                                               state.e_velocity, state.recvClk.drift, state.recvClk.sysDriftDiff,
-                                                              sppSol, sppSol->nSatellitesVelocity, sppSol->recvClk.drift, sppSol->recvClk.sysDriftDiff,
+                                                              sppSol, sppSol->recvClk.drift, sppSol->recvClk.sysDriftDiff,
                                                               &SppSolution::setVelocityAndStdDev_e, &SppSolution::setVelocity_e,
                                                               &SppSolution::setVelocityClockDriftCovarianceMatrix);
         }
         else
         {
             LOG_WARN("[{}] Cannot calculate velocity because only {} valid doppler measurements ({} needed). Try changing filter settings or reposition your antenna.",
-                     gnssObs->insTime, nDopplerMeas_i, nParam);
+                     gnssObs->insTime, sppSol->nSatellitesVelocity, sppSol->nParam);
             continue;
         }
+
+        sppSol->setCovarianceMatrix(); // Combine covariances from LSE of pseudoranges and pseudorange-rates
 
         if (solAccurate)
         {
             break;
         }
     }
+
+    return sppSol;
+}
+
+std::shared_ptr<SppSolution> calcSppSolutionKF(SppKalmanFilter& kalmanFilter,
+                                               State state,
+                                               const std::shared_ptr<const GnssObs>& gnssObs,
+                                               const std::vector<const GnssNavInfo*>& gnssNavInfos,
+                                               const IonosphereModel& ionosphereModel,
+                                               const TroposphereModelSelection& troposphereModels,
+                                               const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
+                                               const Frequency& filterFreq,
+                                               const Code& filterCode,
+                                               const std::vector<SatId>& excludedSatellites,
+                                               double elevationMask,
+                                               const std::array<bool, 2>& usedObservations)
+{
+    // #####################################################################################################################################
+    //                                                          Calculation
+    // #####################################################################################################################################
+
+    if (!kalmanFilter.isInitialized())
+    {
+        auto sppSol = calcSppSolutionLSE(state, gnssObs, gnssNavInfos,
+                                         ionosphereModel,
+                                         troposphereModels,
+                                         gnssMeasurementErrorModel,
+                                         EstimatorType::WEIGHTED_LEAST_SQUARES,
+                                         filterFreq,
+                                         filterCode,
+                                         excludedSatellites,
+                                         elevationMask);
+
+        // Find all selected satellite systems
+        std::vector<SatelliteSystem> allOtherSatSys = filterFreq.getSatSys().toVector();
+        allOtherSatSys.erase(std::find(allOtherSatSys.begin(), allOtherSatSys.end(), sppSol->recvClk.referenceTimeSatelliteSystem));
+        kalmanFilter.setAllOtherSelectedSatelliteSystems(allOtherSatSys);
+
+        // Add Kalman Filter States (inter-system clock errors and drifts)
+        kalmanFilter.addInterSysStateKeys(sppSol->insTime);
+
+        // Initialize Kalman Filter representation
+        kalmanFilter.initializeKalmanFilter(sppSol);
+        LOG_DEBUG("{}: Kalman Filter initialized.");
+
+        return sppSol;
+    }
+
+    // Collection of all connected Ionospheric Corrections
+    IonosphericCorrections ionosphericCorrections(gnssNavInfos);
+
+    auto sppSol = std::make_shared<SppSolution>();
+    sppSol->insTime = gnssObs->insTime;
+
+    // Data calculated for each satellite (only satellites filtered by GUI filter & NAV data available)
+    std::vector<CalcData> calcData = selectObservations(sppSol, gnssObs, gnssNavInfos, filterFreq, filterCode, excludedSatellites);
+
+    kalmanFilter.estimate(gnssObs->insTime, state, calcData, sppSol, ionosphericCorrections, ionosphereModel,
+                          troposphereModels, gnssMeasurementErrorModel, elevationMask, usedObservations);
 
     return sppSol;
 }

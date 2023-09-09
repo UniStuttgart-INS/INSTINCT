@@ -113,6 +113,24 @@ double GnssMeasurementErrorModel::dopplerErrorVar() const
     return 0.0;
 }
 
+double GnssMeasurementErrorModel::psrMeasErrorVar(double elevation, double cn0) const
+{
+    if (model == Groves2013)
+    {
+        return (1 / std::pow(std::sin(elevation), 2) * (std::pow(groves2013Params.sigmaRho.at(0), 2) + std::pow(groves2013Params.sigmaRho.at(1), 2) / cn0));
+    }
+    return 0.0;
+}
+
+double GnssMeasurementErrorModel::dopplerMeasErrorVar(double elevation, double cn0) const
+{
+    if (model == Groves2013)
+    {
+        return (1 / std::pow(std::sin(elevation), 2) * (std::pow(groves2013Params.sigmaR.at(0), 2) + std::pow(groves2013Params.sigmaR.at(1), 2) / cn0));
+    }
+    return 0.0;
+}
+
 bool GnssMeasurementErrorModel::ShowGuiWidgets(const char* id, float width)
 {
     ImGui::SetNextItemWidth(width);
@@ -129,6 +147,13 @@ bool GnssMeasurementErrorModel::ShowGuiWidgets(const char* id, float width)
         ImGui::SameLine();
         ImGui::Text("= %.2g m/s (G1)", std::abs(doppler2rangeRate(rtklibParams.dopplerFrequency, G01)));
     }
+    if (model == GnssMeasurementErrorModel::Groves2013)
+    {
+        ImGui::SetNextItemWidth(width);
+        changed |= ImGui::InputDouble2(fmt::format("Pseudo-range error standard deviations (zenith | cn0-dependent)##", id).c_str(), groves2013Params.sigmaRho.data(), "%.3g m");
+        ImGui::SetNextItemWidth(width);
+        changed |= ImGui::InputDouble2(fmt::format("Pseudo-range rate error standard deviations (zenith | cn0-dependent)##", id).c_str(), groves2013Params.sigmaR.data(), "%.3g m");
+    }
     return changed;
 }
 
@@ -140,6 +165,8 @@ const char* to_string(GnssMeasurementErrorModel::Model model)
         return "None";
     case GnssMeasurementErrorModel::Model::RTKLIB:
         return "RTKLIB";
+    case GnssMeasurementErrorModel::Model::Groves2013:
+        return "Groves2013";
     case GnssMeasurementErrorModel::Model::COUNT:
         break;
     }
@@ -151,6 +178,7 @@ void to_json(json& j, const GnssMeasurementErrorModel& obj)
     j = json{
         { "model", obj.model },
         { "rtklibParams", obj.rtklibParams },
+        { "groves2013Params", obj.groves2013Params },
     };
 }
 
@@ -158,6 +186,7 @@ void from_json(const json& j, GnssMeasurementErrorModel& obj)
 {
     if (j.contains("model")) { j.at("model").get_to(obj.model); }
     if (j.contains("rtklibParams")) { j.at("rtklibParams").get_to(obj.rtklibParams); }
+    if (j.contains("groves2013Params")) { j.at("groves2013Params").get_to(obj.groves2013Params); }
 }
 
 void to_json(json& j, const GnssMeasurementErrorModel::RtklibParameters& obj)
@@ -174,6 +203,20 @@ void from_json(const json& j, GnssMeasurementErrorModel::RtklibParameters& obj)
     if (j.contains("codeCarrierPhaseErrorRatio")) { j.at("codeCarrierPhaseErrorRatio").get_to(obj.codeCarrierPhaseErrorRatio); }
     if (j.contains("carrierPhaseErrorAB")) { j.at("carrierPhaseErrorAB").get_to(obj.carrierPhaseErrorAB); }
     if (j.contains("dopplerFrequency")) { j.at("dopplerFrequency").get_to(obj.dopplerFrequency); }
+}
+
+void to_json(json& j, const GnssMeasurementErrorModel::Groves2013Parameters& obj)
+{
+    j = json{
+        { "sigmaRho", obj.sigmaRho },
+        { "sigmaR", obj.sigmaR },
+    };
+}
+
+void from_json(const json& j, GnssMeasurementErrorModel::Groves2013Parameters& obj)
+{
+    if (j.contains("sigmaRho")) { j.at("sigmaRhoZ").get_to(obj.sigmaRho); }
+    if (j.contains("sigmaR")) { j.at("sigmarZ").get_to(obj.sigmaR); }
 }
 
 } // namespace NAV

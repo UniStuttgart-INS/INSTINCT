@@ -30,6 +30,7 @@ namespace nm = NAV::NodeManager;
 #include "Navigation/Math/VanLoan.hpp"
 
 namespace SPP = NAV::GNSS::Positioning::SPP;
+using SppKalmanFilter = SPP::SppKalmanFilter;
 
 NAV::SinglePointPositioning::SinglePointPositioning()
     : Node(typeStatic())
@@ -209,6 +210,8 @@ void NAV::SinglePointPositioning::guiConfig()
     // ###########################################################################################################
 
     const float itemWidth = 250.0F * gui::NodeEditorApplication::windowFontRatio();
+    const float configWidth = 380.0F * gui::NodeEditorApplication::windowFontRatio();
+    const float unitWidth = 100.0F * gui::NodeEditorApplication::windowFontRatio();
 
     ImGui::SetNextItemWidth(itemWidth);
     if (ShowFrequencySelector(fmt::format("Satellite Frequencies##{}", size_t(id)).c_str(), _filterFreq))
@@ -237,7 +240,24 @@ void NAV::SinglePointPositioning::guiConfig()
         flow::ApplyChanges();
     }
 
-    ImGui::Separator();
+    // ###########################################################################################################
+
+    ImGui::BeginHorizontal(fmt::format("Observables##{}", size_t(id)).c_str(),
+                           ImVec2(itemWidth - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x, 0.0F));
+    if (ImGui::Checkbox(fmt::format("Pseudorange##{}", size_t(id)).c_str(), &_usedObservations[GnssObs::Pseudorange]))
+    {
+        LOG_DEBUG("{}: Using {}: {}", nameId(), GnssObs::Pseudorange, _usedObservations[GnssObs::Pseudorange]);
+        flow::ApplyChanges();
+    }
+    if (ImGui::Checkbox(fmt::format("Doppler##{}", size_t(id)).c_str(), &_usedObservations[GnssObs::Doppler - 1]))
+    {
+        LOG_DEBUG("{}: Using {}: {}", nameId(), GnssObs::Doppler - 1, _usedObservations[GnssObs::Doppler - 1]);
+        flow::ApplyChanges();
+    }
+    ImGui::EndHorizontal();
+
+    ImGui::SameLine();
+    ImGui::TextUnformatted("Used observables");
 
     // ###########################################################################################################
 
@@ -247,6 +267,8 @@ void NAV::SinglePointPositioning::guiConfig()
         LOG_DEBUG("{}: SPP estimator algorithm changed to {}", nameId(), NAV::to_string(_estimatorType));
         flow::ApplyChanges();
     }
+
+    // ###########################################################################################################
 
     // ###########################################################################################################
 
@@ -272,7 +294,8 @@ void NAV::SinglePointPositioning::guiConfig()
     if (_estimatorType != SPP::EstimatorType::LEAST_SQUARES)
     {
         ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-        if (ImGui::TreeNode(fmt::format("GNSS Measurement Error##{}", size_t(id)).c_str()))
+        if (_estimatorType == SPP::EstimatorType::WEIGHTED_LEAST_SQUARES ? ImGui::TreeNode(fmt::format("GNSS Measurement Error Model##{}", size_t(id)).c_str())
+                                                                         : ImGui::TreeNode(fmt::format("Measurement noise##{}", size_t(id)).c_str()))
         {
             if (_gnssMeasurementErrorModel.ShowGuiWidgets(std::to_string(size_t(id)).c_str(), itemWidth - ImGui::GetStyle().IndentSpacing))
             {
@@ -284,6 +307,174 @@ void NAV::SinglePointPositioning::guiConfig()
     }
 
     // ###########################################################################################################
+
+    if (_estimatorType == SPP::EstimatorType::KF)
+    {
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::TreeNode(fmt::format("System/Process noise##{}", size_t(id)).c_str()))
+        {
+            ImGui::SetNextItemWidth(itemWidth);
+            if (ImGui::Combo(fmt::format("Q calculation algorithm##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_kalmanFilter.qCalculationAlgorithm), "Van Loan\0Taylor 1st Order (Groves 2013)\0\0"))
+            {
+                LOG_DEBUG("{}: Q calculation algorithm changed to {}", nameId(), fmt::underlying(_kalmanFilter.qCalculationAlgorithm));
+                flow::ApplyChanges();
+            }
+
+            if (_kalmanFilter.qCalculationAlgorithm == SppKalmanFilter::QCalculationAlgorithm::VanLoan)
+            {
+                if (gui::widgets::InputDouble2WithUnit(fmt::format("Acceleration due to user motion (Hor/Ver)##{}", size_t(id)).c_str(),
+                                                       configWidth, unitWidth, _kalmanFilter.gui_covarianceAccel.data(), reinterpret_cast<int*>(&_kalmanFilter.gui_covarianceAccelUnit), "m/√(s^3)\0m^2/s^3\0\0",
+                                                       "%.2e", ImGuiInputTextFlags_CharsScientific))
+                {
+                    LOG_DEBUG("{}: gui_covarianceAccel changed to {}", nameId(), _kalmanFilter.gui_covarianceAccel);
+                    LOG_DEBUG("{}: gui_covarianceAccelUnit changed to {}", nameId(), fmt::underlying(_kalmanFilter.gui_covarianceAccelUnit));
+                    flow::ApplyChanges();
+                }
+                if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the receiver clock phase drift (RW)##{}", size_t(id)).c_str(),
+                                                      configWidth, unitWidth, &_kalmanFilter.gui_covarianceClkPhaseDrift, reinterpret_cast<int*>(&_kalmanFilter.gui_covarianceClkPhaseDriftUnit), "m/√(s^3)\0m^2/s^3\0\0",
+                                                      0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+                {
+                    LOG_DEBUG("{}: gui_covarianceClkPhaseDrift changed to {}", nameId(), _kalmanFilter.gui_covarianceClkPhaseDrift);
+                    LOG_DEBUG("{}: gui_covarianceClkPhaseDriftUnit changed to {}", nameId(), fmt::underlying(_kalmanFilter.gui_covarianceClkPhaseDriftUnit));
+                    flow::ApplyChanges();
+                }
+                if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the receiver clock frequency drift (IRW)##{}", size_t(id)).c_str(),
+                                                      configWidth, unitWidth, &_kalmanFilter.gui_covarianceClkFrequencyDrift, reinterpret_cast<int*>(&_kalmanFilter.gui_covarianceClkFrequencyDriftUnit), "m/√(s)\0m^2/s\0\0",
+                                                      0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+                {
+                    LOG_DEBUG("{}: gui_covarianceClkFrequencyDrift changed to {}", nameId(), _kalmanFilter.gui_covarianceClkFrequencyDrift);
+                    LOG_DEBUG("{}: gui_covarianceClkFrequencyDriftUnit changed to {}", nameId(), fmt::underlying(_kalmanFilter.gui_covarianceClkFrequencyDriftUnit));
+                    flow::ApplyChanges();
+                }
+                if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the inter-system clock phase drift (RW)##{}", size_t(id)).c_str(),
+                                                      configWidth, unitWidth, &_kalmanFilter.gui_covarianceInterSysClkPhaseDrift, reinterpret_cast<int*>(&_kalmanFilter.gui_covarianceInterSysClkPhaseDriftUnit), "m/√(s^3)\0m^2/s^3\0\0",
+                                                      0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+                {
+                    LOG_DEBUG("{}: gui_covarianceInterSysClkPhaseDrift changed to {}", nameId(), _kalmanFilter.gui_covarianceInterSysClkPhaseDrift);
+                    LOG_DEBUG("{}: gui_covarianceInterSysClkPhaseDriftUnit changed to {}", nameId(), fmt::underlying(_kalmanFilter.gui_covarianceInterSysClkPhaseDriftUnit));
+                    flow::ApplyChanges();
+                }
+                if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the inter-system clock frequency drift (IRW)##{}", size_t(id)).c_str(),
+                                                      configWidth, unitWidth, &_kalmanFilter.gui_covarianceInterSysClkFrequencyDrift, reinterpret_cast<int*>(&_kalmanFilter.gui_covarianceInterSysClkFrequencyDriftUnit), "m/√(s)\0m^2/s\0\0",
+                                                      0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+                {
+                    LOG_DEBUG("{}: gui_covarianceInterSysClkFrequencyDrift changed to {}", nameId(), _kalmanFilter.gui_covarianceInterSysClkFrequencyDrift);
+                    LOG_DEBUG("{}: gui_covarianceInterSysClkFrequencyDriftUnit changed to {}", nameId(), fmt::underlying(_kalmanFilter.gui_covarianceInterSysClkFrequencyDriftUnit));
+                    flow::ApplyChanges();
+                }
+            }
+
+            if (_kalmanFilter.qCalculationAlgorithm == SppKalmanFilter::QCalculationAlgorithm::Taylor1)
+            {
+                ImGui::SetNextItemWidth(itemWidth);
+                if (ImGui::InputFloat(fmt::format("Standard Deviation of Process Noise", size_t(id)).c_str(), &_kalmanFilter.processNoiseStandardDeviation, 0.0, 0.0, "%.2e"))
+                {
+                    LOG_DEBUG("{}: processNoiseStandardDeviation changed to {}", nameId(), _kalmanFilter.processNoiseStandardDeviation);
+                    flow::ApplyChanges();
+                }
+            }
+            ImGui::TreePop();
+        }
+
+        // ###########################################################################################################
+
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::TreeNode(fmt::format("P Error covariance matrix (init)##{}", size_t(id)).c_str()))
+        {
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("ECEF Position Covariance ({})##{}",
+                                                               _kalmanFilter.gui_initCovariancePositionUnit == SppKalmanFilter::InitCovariancePositionUnits::m2
+                                                                   ? "Variance σ²"
+                                                                   : "Standard deviation σ",
+                                                               size_t(id))
+                                                       .c_str(),
+                                                   configWidth, unitWidth, _kalmanFilter.gui_initCovariancePosition.data(), reinterpret_cast<int*>(&_kalmanFilter.gui_initCovariancePositionUnit), "m^2, m^2, m^2\0"
+                                                                                                                                                                                                   "m, m, m\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: gui_initCovariancePosition changed to {}", nameId(), _kalmanFilter.gui_initCovariancePosition);
+                LOG_DEBUG("{}: gui_initCovariancePositionUnit changed to {}", nameId(), fmt::underlying(_kalmanFilter.gui_initCovariancePositionUnit));
+                flow::ApplyChanges();
+            }
+
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Velocity Covariance ({})##{}",
+                                                               _kalmanFilter.gui_initCovarianceVelocityUnit == SppKalmanFilter::InitCovarianceVelocityUnits::m2_s2
+                                                                   ? "Variance σ²"
+                                                                   : "Standard deviation σ",
+                                                               size_t(id))
+                                                       .c_str(),
+                                                   configWidth, unitWidth, _kalmanFilter.gui_initCovarianceVelocity.data(), reinterpret_cast<int*>(&_kalmanFilter.gui_initCovarianceVelocityUnit), "m^2/s^2\0"
+                                                                                                                                                                                                   "m/s\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: gui_initCovarianceVelocity changed to {}", nameId(), _kalmanFilter.gui_initCovarianceVelocity);
+                LOG_DEBUG("{}: gui_initCovarianceVelocityUnit changed to {}", nameId(), fmt::underlying(_kalmanFilter.gui_initCovarianceVelocityUnit));
+                flow::ApplyChanges();
+            }
+
+            if (gui::widgets::InputDoubleWithUnit(fmt::format("Receiver Clock Bias Covariance ({})##{}",
+                                                              _kalmanFilter.gui_initCovarianceRecvClkErrUnit == SppKalmanFilter::InitCovarianceRecvClkErrUnits::s2
+                                                                  ? "Variance σ²"
+                                                                  : "Standard deviation σ",
+                                                              size_t(id))
+                                                      .c_str(),
+                                                  configWidth, unitWidth, &_kalmanFilter.gui_initCovarianceRecvClkErr, reinterpret_cast<int*>(&_kalmanFilter.gui_initCovarianceRecvClkErrUnit), "s^2\0"
+                                                                                                                                                                                                "s\0\0",
+                                                  0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: gui_initCovarianceRecvClkErr changed to {}", nameId(), _kalmanFilter.gui_initCovarianceRecvClkErr);
+                LOG_DEBUG("{}: gui_initCovarianceRecvClkErrUnit changed to {}", nameId(), fmt::underlying(_kalmanFilter.gui_initCovarianceRecvClkErrUnit));
+                flow::ApplyChanges();
+            }
+
+            if (gui::widgets::InputDoubleWithUnit(fmt::format("Receiver Clock Drift Covariance ({})##{}",
+                                                              _kalmanFilter.gui_initCovarianceRecvClkDriftUnit == SppKalmanFilter::InitCovarianceRecvClkDriftUnits::s2_s2
+                                                                  ? "Variance σ²"
+                                                                  : "Standard deviation σ",
+                                                              size_t(id))
+                                                      .c_str(),
+                                                  configWidth, unitWidth, &_kalmanFilter.gui_initCovarianceRecvClkDrift, reinterpret_cast<int*>(&_kalmanFilter.gui_initCovarianceRecvClkDriftUnit), "s^2/s^2\0"
+                                                                                                                                                                                                    "s/s\0\0",
+                                                  0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: gui_initCovarianceRecvClkDrift changed to {}", nameId(), _kalmanFilter.gui_initCovarianceRecvClkDrift);
+                LOG_DEBUG("{}: gui_initCovarianceRecvClkDriftUnit changed to {}", nameId(), fmt::underlying(_kalmanFilter.gui_initCovarianceRecvClkDriftUnit));
+                flow::ApplyChanges();
+            }
+
+            if (gui::widgets::InputDoubleWithUnit(fmt::format("Inter-system Clock Offsets Covariances ({})##{}",
+                                                              _kalmanFilter.gui_initCovarianceInterSysErrUnit == SppKalmanFilter::InitCovarianceRecvClkErrUnits::s2
+                                                                  ? "Variance σ²"
+                                                                  : "Standard deviation σ",
+                                                              size_t(id))
+                                                      .c_str(),
+                                                  configWidth, unitWidth, &_kalmanFilter.gui_initCovarianceInterSysErr, reinterpret_cast<int*>(&_kalmanFilter.gui_initCovarianceInterSysErrUnit), "s^2\0"
+                                                                                                                                                                                                  "s\0\0",
+                                                  0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: gui_initCovarianceInterSysErr changed to {}", nameId(), _kalmanFilter.gui_initCovarianceInterSysErr);
+                LOG_DEBUG("{}: gui_initCovarianceInterSysErrUnit changed to {}", nameId(), fmt::underlying(_kalmanFilter.gui_initCovarianceInterSysErrUnit));
+                flow::ApplyChanges();
+            }
+
+            if (gui::widgets::InputDoubleWithUnit(fmt::format("Inter-system Clock Offset Drift Covariances ({})##{}",
+                                                              _kalmanFilter.gui_initCovarianceInterSysDriftUnit == SppKalmanFilter::InitCovarianceRecvClkDriftUnits::s2_s2
+                                                                  ? "Variance σ²"
+                                                                  : "Standard deviation σ",
+                                                              size_t(id))
+                                                      .c_str(),
+                                                  configWidth, unitWidth, &_kalmanFilter.gui_initCovarianceInterSysDrift, reinterpret_cast<int*>(&_kalmanFilter.gui_initCovarianceInterSysDriftUnit), "s^2\0"
+                                                                                                                                                                                                      "s\0\0",
+                                                  0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: gui_initCovarianceInterSysDrift changed to {}", nameId(), _kalmanFilter.gui_initCovarianceInterSysDrift);
+                LOG_DEBUG("{}: gui_initCovarianceInterSysDriftUnit changed to {}", nameId(), fmt::underlying(_kalmanFilter.gui_initCovarianceInterSysDriftUnit));
+                flow::ApplyChanges();
+            }
+
+            ImGui::TreePop();
+        }
+        // ###########################################################################################################
+    }
 }
 
 [[nodiscard]] json NAV::SinglePointPositioning::save() const
@@ -297,13 +488,16 @@ void NAV::SinglePointPositioning::guiConfig()
     j["codes"] = _filterCode;
     j["excludedSatellites"] = _excludedSatellites;
     j["elevationMask"] = rad2deg(_elevationMask);
+    j["usedObservations"] = _usedObservations;
 
     // ###########################################################################################################
 
     j["estimatorType"] = _estimatorType;
+    j["kalmanFilter"] = _kalmanFilter;
 
     j["ionosphereModel"] = _ionosphereModel;
     j["troposphereModels"] = _troposphereModels;
+    j["gnssMeasurementError"] = _gnssMeasurementErrorModel;
 
     return j;
 }
@@ -336,12 +530,20 @@ void NAV::SinglePointPositioning::restore(json const& j)
         j.at("elevationMask").get_to(_elevationMask);
         _elevationMask = deg2rad(_elevationMask);
     }
+    if (j.contains("usedObservations"))
+    {
+        j.at("usedObservations").get_to(_usedObservations);
+    }
 
     // ###########################################################################################################
 
     if (j.contains("estimatorType"))
     {
         j.at("estimatorType").get_to(_estimatorType);
+    }
+    if (j.contains("kalmanFilter"))
+    {
+        j.at("kalmanFilter").get_to(_kalmanFilter);
     }
 
     // ###########################################################################################################
@@ -353,6 +555,10 @@ void NAV::SinglePointPositioning::restore(json const& j)
     if (j.contains("troposphereModels"))
     {
         j.at("troposphereModels").get_to(_troposphereModels);
+    }
+    if (j.contains("gnssMeasurementError"))
+    {
+        j.at("gnssMeasurementError").get_to(_gnssMeasurementErrorModel);
     }
 
     // ###########################################################################################################
@@ -369,6 +575,7 @@ bool NAV::SinglePointPositioning::initialize()
     }
 
     _state = {};
+    _kalmanFilter.initialize();
 
     LOG_DEBUG("{}: initialized", nameId());
 
@@ -408,14 +615,30 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     auto gnssObs = std::static_pointer_cast<const GnssObs>(queue.extract_front());
     LOG_DATA("{}: Calculating SPP for [{}]", nameId(), gnssObs->insTime);
 
-    if (auto sppSol = calcSppSolutionLSE(_state, gnssObs, gnssNavInfos,
-                                         _ionosphereModel, _troposphereModels, _gnssMeasurementErrorModel, _estimatorType,
-                                         _filterFreq, _filterCode, _excludedSatellites, _elevationMask))
+    if (_estimatorType == NAV::GNSS::Positioning::SPP::EstimatorType::LEAST_SQUARES || _estimatorType == NAV::GNSS::Positioning::SPP::EstimatorType::WEIGHTED_LEAST_SQUARES)
     {
-        _state = SPP::State{ .e_position = sppSol->e_position(),
-                             .e_velocity = sppSol->e_velocity(),
-                             .recvClk = sppSol->recvClk };
+        if (auto sppSol = calcSppSolutionLSE(_state, gnssObs, gnssNavInfos,
+                                             _ionosphereModel, _troposphereModels, _gnssMeasurementErrorModel, _estimatorType,
+                                             _filterFreq, _filterCode, _excludedSatellites, _elevationMask))
+        {
+            _state = SPP::State{ .e_position = sppSol->e_position(),
+                                 .e_velocity = sppSol->e_velocity(),
+                                 .recvClk = sppSol->recvClk };
 
-        invokeCallbacks(OUTPUT_PORT_INDEX_SPPSOL, sppSol);
+            invokeCallbacks(OUTPUT_PORT_INDEX_SPPSOL, sppSol);
+        }
+    }
+    else // if (_estimatorType == NAV::GNSS::Positioning::SPP::EstimatorType::KF)
+    {
+        if (auto sppSol = calcSppSolutionKF(_kalmanFilter, _state, gnssObs, gnssNavInfos,
+                                            _ionosphereModel, _troposphereModels, _gnssMeasurementErrorModel,
+                                            _filterFreq, _filterCode, _excludedSatellites, _elevationMask, _usedObservations))
+        {
+            _state = SPP::State{ .e_position = sppSol->e_position(),
+                                 .e_velocity = sppSol->e_velocity(),
+                                 .recvClk = sppSol->recvClk };
+
+            invokeCallbacks(OUTPUT_PORT_INDEX_SPPSOL, sppSol);
+        }
     }
 }

@@ -18,11 +18,12 @@
 
 #include "util/Eigen.hpp"
 
-#include "Navigation/GNSS/Positioning/SppAlgorithm.hpp"
+#include "Navigation/GNSS/Positioning/SppAlgorithmTypes.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
 #include "NodeData/GNSS/GnssNavInfo.hpp"
 #include "NodeData/GNSS/SppSolution.hpp"
 #include "Navigation/Atmosphere/Ionosphere/Ionosphere.hpp"
+#include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
 #include "Navigation/GNSS/Errors.hpp"
 
 namespace NAV::GNSS::Positioning::SPP
@@ -121,6 +122,19 @@ ValueWeight<double> calcPsrRateAndWeight(const CalcData& calc,
                                          const EstimatorType& estimatorType,
                                          const GnssMeasurementErrorModel& gnssMeasurementErrorModel);
 
+/// Keyed Observation for Kalman Filter
+struct KeyedObservation
+{
+    double z_i = 0.0;      ///< Innovation
+    Eigen::VectorXd e_H_i; ///< Row of Design/Geometry matrix
+    double W_i = 0.0;      ///< Entry of weight matrix
+};
+
+/// @brief Storage type for Kalman Filter
+using KeyedObservations = std::unordered_map<NAV::SatSigId,
+                                             std::unordered_map<NAV::GnssObs::ObservationType,
+                                                                KeyedObservation>>;
+
 /// @brief Return type for the function 'calcMeasurementEstimatesAndDesignMatrix'
 struct EstWeightDesignMatrices
 {
@@ -145,33 +159,27 @@ struct EstWeightDesignMatrices
     Eigen::MatrixXd W_psrRate;
     /// dpsr_dot Difference between Pseudorange rate measurements and estimates
     Eigen::VectorXd dpsr_dot;
+    /// KeyedObservations for Kalman Filter
+    KeyedObservations keyedObservations;
 };
 
 /// @brief Get Measurements, it's estimates and the corresponding Design-Matrix
 /// @param[out] sppSol SPP solution
 /// @param[in, out] calcData Data calculated for each satellite, that is available and selected
-/// @param[in] nParam Number of parameters
-/// @param[in] nMeasPsr Number of pseudorange measurements
-/// @param[in] nMeasDoppler Number of doppler/pseudorange rate measurements
 /// @param[in] insTime Epoch time
 /// @param[in] state SPP state from the previous epoch
 /// @param[in] lla_pos Position in latitude, longitude, altitude in [rad, rad, m]
-/// @param[in] satelliteSystems List of satellite systems of this epoch
 /// @param[in] ionosphericCorrections Ionospheric corrections from the navigation data
 /// @param[in] ionosphereModel Ionospheric model to use
 /// @param[in] troposphereModels Troposphere mode to use
 /// @param[in] gnssMeasurementErrorModel GNSS measurement error model to use
 /// @param[in] estimatorType Estimator type
-/// @return Matrices: e_H_psr, psrEst, psrMeas, W_psr, dpsr, e_H_r, psrRateEst, psrRateMeas, W_psrRate, dpsr_dot
+/// @return Matrices: e_H_psr, psrEst, psrMeas, W_psr, dpsr, e_H_r, psrRateEst, psrRateMeas, W_psrRate, dpsr_dot, keyedObservations
 EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::shared_ptr<SppSolution>& sppSol,
                                                                 std::vector<CalcData>& calcData,
-                                                                int nParam,
-                                                                int nMeasPsr,
-                                                                int nMeasDoppler,
                                                                 const InsTime& insTime,
                                                                 State& state,
                                                                 const Eigen::Vector3d& lla_pos,
-                                                                const std::vector<SatelliteSystem>& satelliteSystems,
                                                                 const IonosphericCorrections& ionosphericCorrections,
                                                                 const IonosphereModel& ionosphereModel,
                                                                 const TroposphereModelSelection& troposphereModels,
@@ -181,7 +189,6 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
 /// @brief Prepares data further based on the current estimation and applies elevation mask
 /// @param[out] sppSol SPP solution
 /// @param[in, out] satelliteSystems List of satellite systems of this epoch (systems can be removed if all satellited are skipped due to e.g. elevation mask)
-/// @param[out] cntSkippedMeas Amount of skipped measurements
 /// @param[in, out] calcData Data calculated for each satellite, that is available and selected
 /// @param[in, out] state SPP state from the previous epoch (reference time satellite system gets updated to the new epoch)
 /// @param[in] nParam Number of parameters
@@ -190,10 +197,10 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
 /// @param[in] insTime Epoch time
 /// @param[in] lla_pos Position in latitude, longitude, altitude in [rad, rad, m]
 /// @param[in] elevationMask Elevation cut-off angle for satellites in [rad]
+/// @param[in] estimatorType Estimator type
 /// @return False if no calculation is possible
 bool calcDataBasedOnEstimates(const std::shared_ptr<SppSolution>& sppSol,
                               std::vector<SatelliteSystem>& satelliteSystems,
-                              size_t& cntSkippedMeas,
                               std::vector<CalcData>& calcData,
                               State& state,
                               size_t nParam,
@@ -201,6 +208,7 @@ bool calcDataBasedOnEstimates(const std::shared_ptr<SppSolution>& sppSol,
                               size_t nMeasDoppler,
                               const InsTime& insTime,
                               const Eigen::Vector3d& lla_pos,
-                              double elevationMask);
+                              double elevationMask,
+                              EstimatorType estimatorType);
 
 } // namespace NAV::GNSS::Positioning::SPP

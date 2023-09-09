@@ -50,6 +50,10 @@ class SppSolution : public PosVel
     size_t nSatellitesPosition = 0;
     /// Amount of satellites used for the velocity calculation
     size_t nSatellitesVelocity = 0;
+    /// Amount of Parameters estimated in this epoch
+    size_t nParam = 0;
+    /// Satellite system used for the estimation besides Reference time satellite system
+    std::vector<SatelliteSystem> otherUsedSatelliteSystems;
 
     /// Estimated receiver clock parameter
     ReceiverClock recvClk = { .bias = { std::nan(""), std::nan("") },

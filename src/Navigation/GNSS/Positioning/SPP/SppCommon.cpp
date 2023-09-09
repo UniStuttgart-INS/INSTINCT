@@ -79,7 +79,7 @@ size_t findDopplerMeasurements(std::vector<CalcData>& calcData)
                 }
             }
 
-            calc.pseudorangeRateMeas = doppler2rangeRate(obsData.doppler.value(), obsData.satSigId.freq());
+            calc.pseudorangeRateMeas = doppler2rangeRate(obsData.doppler.value(), obsData.satSigId.freq(), calc.freqNum);
         }
     }
     return nDopplerMeas;
@@ -147,22 +147,29 @@ ValueWeight<double> calcPsrAndWeight(const std::shared_ptr<SppSolution>& sppSol,
     double W_psr = 1.0;
     if (estimatorType == EstimatorType::WEIGHTED_LEAST_SQUARES || estimatorType == EstimatorType::KF)
     {
-        // Weight matrix - RTKLIB eq. E6.23, p. 158
+        if (gnssMeasurementErrorModel.model == GnssMeasurementErrorModel::RTKLIB)
+        {
+            // Weight matrix - RTKLIB eq. E6.23, p. 158
+            double varPsrMeas = gnssMeasurementErrorModel.psrMeasErrorVar(obsData.satSigId.toSatId().satSys, obsData.satSigId.freq(), calc.satElevation);
+            LOG_DATA("         varPsrMeas {}", varPsrMeas);
+            double varEph = calc.satNavData->calcSatellitePositionVariance();
+            LOG_DATA("         varEph {}", varEph);
+            double varIono = ionoErrorVar(dpsr_I, obsData.satSigId.freq(), calc.freqNum);
+            LOG_DATA("         varIono {}", varIono);
+            double varTrop = tropoErrorVar(dpsr_T, calc.satElevation);
+            LOG_DATA("         varTrop {}", varTrop);
+            double varBias = gnssMeasurementErrorModel.codeBiasErrorVar();
+            LOG_DATA("         varBias {}", varBias);
+            double varErrors = varPsrMeas + varEph + varIono + varTrop + varBias;
+            LOG_DATA("         varErrors {}", varErrors);
 
-        double varPsrMeas = gnssMeasurementErrorModel.psrMeasErrorVar(obsData.satSigId.toSatId().satSys, obsData.satSigId.freq(), calc.satElevation);
-        LOG_DATA("         varPsrMeas {}", varPsrMeas);
-        double varEph = calc.satNavData->calcSatellitePositionVariance();
-        LOG_DATA("         varEph {}", varEph);
-        double varIono = ionoErrorVar(dpsr_I, obsData.satSigId.freq(), calc.freqNum);
-        LOG_DATA("         varIono {}", varIono);
-        double varTrop = tropoErrorVar(dpsr_T, calc.satElevation);
-        LOG_DATA("         varTrop {}", varTrop);
-        double varBias = gnssMeasurementErrorModel.codeBiasErrorVar();
-        LOG_DATA("         varBias {}", varBias);
-        double varErrors = varPsrMeas + varEph + varIono + varTrop + varBias;
-        LOG_DATA("         varErrors {}", varErrors);
-
-        W_psr = 1.0 / varErrors;
+            W_psr = 1.0 / varErrors;
+        }
+        else if (gnssMeasurementErrorModel.model == GnssMeasurementErrorModel::Groves2013)
+        {
+            // Weight matrix - Groves 2013, see ch. 9.4.2.4, eq. 9.168, p. 422 (range acceleration is neglected)
+            W_psr = gnssMeasurementErrorModel.psrMeasErrorVar(calc.satElevation, std::pow(10, calc.obsData.CN0.value() / 10));
+        }
         LOG_DATA("         W_psr {}", W_psr);
     }
 
@@ -197,14 +204,22 @@ ValueWeight<double> calcPsrRateAndWeight(const CalcData& calc,
     double W_psrRate = 1.0;
     if (estimatorType == EstimatorType::WEIGHTED_LEAST_SQUARES || estimatorType == EstimatorType::KF)
     {
-        double varPsrRateMeas = gnssMeasurementErrorModel.psrRateErrorVar(obsData.satSigId.freq());
-        LOG_DATA("         varPsrRateMeas {}", varPsrRateMeas);
-        double varEph = calc.satNavData->calcSatellitePositionVariance();
-        LOG_DATA("         varEph {}", varEph);
-        double varErrors = varPsrRateMeas + varEph;
-        LOG_DATA("         varErrors {}", varErrors);
+        if (gnssMeasurementErrorModel.model == GnssMeasurementErrorModel::RTKLIB)
+        {
+            double varPsrRateMeas = gnssMeasurementErrorModel.psrRateErrorVar(obsData.satSigId.freq(), calc.freqNum);
+            LOG_DATA("         varPsrRateMeas {}", varPsrRateMeas);
+            double varEph = calc.satNavData->calcSatellitePositionVariance();
+            LOG_DATA("         varEph {}", varEph);
+            double varErrors = varPsrRateMeas + varEph;
+            LOG_DATA("         varErrors {}", varErrors);
 
-        W_psrRate = 1.0 / varErrors;
+            W_psrRate = 1.0 / varErrors;
+        }
+        else if (gnssMeasurementErrorModel.model == GnssMeasurementErrorModel::Groves2013)
+        {
+            // Weight matrix - Groves 2013, see ch. 9.4.2.4, eq. 9.168, p. 422 (range acceleration is neglected)
+            W_psrRate = gnssMeasurementErrorModel.psrMeasErrorVar(calc.satElevation, std::pow(10, calc.obsData.CN0.value() / 10));
+        }
         LOG_DATA("         W_psrRate {}", W_psrRate);
     }
 
@@ -213,19 +228,20 @@ ValueWeight<double> calcPsrRateAndWeight(const CalcData& calc,
 
 EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::shared_ptr<SppSolution>& sppSol,
                                                                 std::vector<CalcData>& calcData,
-                                                                int nParam,
-                                                                int nMeasPsr,
-                                                                int nMeasDoppler,
                                                                 const InsTime& insTime,
                                                                 State& state,
                                                                 const Eigen::Vector3d& lla_pos,
-                                                                const std::vector<SatelliteSystem>& satelliteSystems,
                                                                 const IonosphericCorrections& ionosphericCorrections,
                                                                 const IonosphereModel& ionosphereModel,
                                                                 const TroposphereModelSelection& troposphereModels,
                                                                 const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
                                                                 const EstimatorType& estimatorType)
 {
+    int nParam = static_cast<int>(sppSol->nParam);                                           // Number of parameters
+    int nMeasPsr = static_cast<int>(sppSol->nSatellitesPosition);                            // Number of pseudorange measurements
+    int nMeasDoppler = static_cast<int>(sppSol->nSatellitesVelocity);                        // Number of doppler/pseudorange rate measurements
+    const std::vector<SatelliteSystem> satelliteSystems = sppSol->otherUsedSatelliteSystems; // available satellite systems besides reference time satellite system
+
     EstWeightDesignMatrices retVal;
 
     retVal.e_H_psr = Eigen::MatrixXd::Zero(nMeasPsr, nParam);
@@ -281,6 +297,10 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
         }
         LOG_DATA("         e_H_psr.row({}) {}", ix, retVal.e_H_psr.row(ix));
 
+        retVal.keyedObservations[calc.obsData.satSigId][GnssObs::ObservationType::Pseudorange].z_i = retVal.psrMeas(ix) - retVal.psrEst(ix);
+        retVal.keyedObservations[calc.obsData.satSigId][GnssObs::ObservationType::Pseudorange].e_H_i = retVal.e_H_psr.row(ix);
+        retVal.keyedObservations[calc.obsData.satSigId][GnssObs::ObservationType::Pseudorange].W_i = W_psr_i;
+
         // #############################################################################################################################
         //                                                    Velocity calculation
         // #############################################################################################################################
@@ -299,6 +319,10 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
             // Measurement/Geometry matrix - Groves ch. 9.4.1, eq. 9.144, p. 412
             retVal.e_H_r.row(iv) = retVal.e_H_psr.row(ix);
 
+            retVal.keyedObservations[calc.obsData.satSigId][GnssObs::ObservationType::Doppler].z_i = retVal.psrRateMeas(iv) - retVal.psrRateEst(iv);
+            retVal.keyedObservations[calc.obsData.satSigId][GnssObs::ObservationType::Doppler].e_H_i = retVal.e_H_r.row(iv);
+            retVal.keyedObservations[calc.obsData.satSigId][GnssObs::ObservationType::Doppler].W_i = W_psrRate_i;
+
             iv++;
         }
 
@@ -313,7 +337,6 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
 
 bool calcDataBasedOnEstimates(const std::shared_ptr<SppSolution>& sppSol,
                               std::vector<SatelliteSystem>& satelliteSystems,
-                              size_t& cntSkippedMeas,
                               std::vector<CalcData>& calcData,
                               State& state,
                               size_t nParam,
@@ -321,9 +344,10 @@ bool calcDataBasedOnEstimates(const std::shared_ptr<SppSolution>& sppSol,
                               size_t nMeasDoppler,
                               const InsTime& insTime,
                               const Eigen::Vector3d& lla_pos,
-                              double elevationMask)
+                              double elevationMask,
+                              EstimatorType estimatorType)
 {
-    cntSkippedMeas = 0;
+    size_t cntSkippedMeas = 0;
     SatelliteSystem_ usedSatelliteSystems = SatSys_None;
     for (size_t i = 0; i < calcData.size(); i++)
     {
@@ -390,12 +414,10 @@ bool calcDataBasedOnEstimates(const std::shared_ptr<SppSolution>& sppSol,
 
             solSatData.elevationMaskTriggered = true;
 
-            if (nMeasPsr - cntSkippedMeas < nParam)
+            if (nMeasPsr - cntSkippedMeas < nParam && (estimatorType == EstimatorType::LEAST_SQUARES || estimatorType == EstimatorType::WEIGHTED_LEAST_SQUARES))
             {
                 LOG_ERROR(" Cannot calculate position because only {} valid measurements ({} needed). Try changing filter settings or reposition your antenna.",
                           insTime, nMeasPsr - cntSkippedMeas, nParam);
-                sppSol->nSatellitesPosition = nMeasPsr - cntSkippedMeas;
-                sppSol->nSatellitesVelocity = nMeasDoppler - cntSkippedMeas;
                 return false;
             }
             continue;
@@ -404,23 +426,19 @@ bool calcDataBasedOnEstimates(const std::shared_ptr<SppSolution>& sppSol,
 
         usedSatelliteSystems |= satId.satSys;
     }
-    // sort used satellite systems of this epoch (for better handling later) and use first one as reference time (or in KF: use the one from first epoch if still available)
-    std::sort(satelliteSystems.begin(), satelliteSystems.end());
 
-    // TODO std::find(satelliteSystems.begin(), satelliteSystems.end(), _kalmanFilterReferenceTimeSatelliteSystem) != satelliteSystems.end() ? _recvClk.referenceTimeSatelliteSystem = _kalmanFilterReferenceTimeSatelliteSystem : _recvClk.referenceTimeSatelliteSystem = satelliteSystems.front();
+    // Update the amount of measurements and parameter to take skipped measurements because of elevation mask and not available satellite systems into account
+    sppSol->nSatellitesPosition = nMeasPsr - cntSkippedMeas;
+    sppSol->nSatellitesVelocity = nMeasDoppler - cntSkippedMeas;
+    sppSol->nParam = nParam;
 
     // Choose reference time satellite system
     state.recvClk.referenceTimeSatelliteSystem = satelliteSystems.front();
-    for (const auto& availSatSys : satelliteSystems)
-    {
-        if (SatelliteSystem_(availSatSys) < SatelliteSystem_(state.recvClk.referenceTimeSatelliteSystem))
-        {
-            state.recvClk.referenceTimeSatelliteSystem = availSatSys;
-        }
-    }
     satelliteSystems.erase(std::find(satelliteSystems.begin(), satelliteSystems.end(), state.recvClk.referenceTimeSatelliteSystem));
     LOG_DATA("     referenceTimeSatelliteSystem {} ({} other time systems)", state.recvClk.referenceTimeSatelliteSystem, satelliteSystems.size());
     sppSol->recvClk.referenceTimeSatelliteSystem = state.recvClk.referenceTimeSatelliteSystem;
+
+    sppSol->otherUsedSatelliteSystems = satelliteSystems;
 
     return true;
 }

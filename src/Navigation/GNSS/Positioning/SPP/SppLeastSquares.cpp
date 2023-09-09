@@ -8,14 +8,11 @@ namespace NAV::GNSS::Positioning::SPP
 
 bool solveLeastSquaresAndAssignSolution(const Eigen::VectorXd& dy, const Eigen::MatrixXd& e_H, const Eigen::MatrixXd& W,
                                         const EstimatorType& estimatorType,
-                                        const std::vector<SatelliteSystem>& satelliteSystems,
                                         size_t nMeas,
-                                        size_t nParam,
                                         Eigen::Vector3d& posOrVel,
                                         UncertainValue<double>& biasOrDrift,
                                         std::unordered_map<NAV::SatelliteSystem, NAV::UncertainValue<double>>& sysTimeOrDriftDiff,
                                         const std::shared_ptr<SppSolution>& sppSol,
-                                        size_t& sppSolSatelliteNum,
                                         UncertainValue<double>& sppSolBiasOrDrift,
                                         std::unordered_map<NAV::SatelliteSystem, NAV::UncertainValue<double>>& sppSolSysTimeOrDriftDiff,
                                         SppSolSetPosOrVelAndStdDev_e sppSolSetPosOrVelAndStdDev_e,
@@ -38,14 +35,14 @@ bool solveLeastSquaresAndAssignSolution(const Eigen::VectorXd& dy, const Eigen::
 
     posOrVel += lsq.solution.head<3>();
     biasOrDrift.value += lsq.solution(3) / InsConst::C;
-    for (size_t s = 0; s < satelliteSystems.size(); s++)
+    for (size_t s = 0; s < sppSol->otherUsedSatelliteSystems.size(); s++)
     {
         int idx = 4 + static_cast<int>(s);
-        sysTimeOrDriftDiff[satelliteSystems.at(s)].value += lsq.solution(idx) / InsConst::C;
-        sysTimeOrDriftDiff[satelliteSystems.at(s)].stdDev = std::sqrt(lsq.variance(idx, idx)) / InsConst::C;
+        sysTimeOrDriftDiff[sppSol->otherUsedSatelliteSystems.at(s)].value += lsq.solution(idx) / InsConst::C;
+        sysTimeOrDriftDiff[sppSol->otherUsedSatelliteSystems.at(s)].stdDev = std::sqrt(lsq.variance(idx, idx)) / InsConst::C;
     }
 
-    if (nMeas > nParam) // Standard deviation can only be calculated with more measurements than estimated parameters
+    if (nMeas > sppSol->nParam) // Standard deviation can only be calculated with more measurements than estimated parameters
     {
         std::invoke(sppSolSetPosOrVelAndStdDev_e, sppSol, posOrVel, lsq.variance.topLeftCorner<3, 3>());
         biasOrDrift.stdDev = std::sqrt(lsq.variance(3, 3)) / InsConst::C;
@@ -58,7 +55,6 @@ bool solveLeastSquaresAndAssignSolution(const Eigen::VectorXd& dy, const Eigen::
 
     std::invoke(sppSolSetErrorCovarianceMatrix, sppSol, lsq.variance);
 
-    sppSolSatelliteNum = nMeas;
     sppSolBiasOrDrift = biasOrDrift;
     sppSolSysTimeOrDriftDiff = sysTimeOrDriftDiff;
 
