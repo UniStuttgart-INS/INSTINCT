@@ -1499,6 +1499,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "X-ECEF [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Y-ECEF [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Z-ECEF [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity norm [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "X velocity ECEF [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Y velocity ECEF [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Z velocity ECEF [m/s]");
@@ -1521,6 +1522,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "X-ECEF [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Y-ECEF [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Z-ECEF [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity norm [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "X velocity ECEF [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Y velocity ECEF [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Z velocity ECEF [m/s]");
@@ -1618,6 +1620,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "X-ECEF [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Y-ECEF [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Z-ECEF [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity norm [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "X velocity ECEF [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Y velocity ECEF [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Z velocity ECEF [m/s]");
@@ -1716,6 +1719,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "sddn [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "age [s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "ratio [-]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity norm [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity ECEF X [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity ECEF Y [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity ECEF Z [m/s]");
@@ -1749,6 +1753,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "Altitude [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "North/South [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "East/West [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity norm [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity N [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity E [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity D [m/s]");
@@ -2541,6 +2546,7 @@ void NAV::Plot::plotPosVel(const std::shared_ptr<const PosVel>& obs, size_t pinI
     addData(pinIndex, i++, obs->e_position().x());
     addData(pinIndex, i++, obs->e_position().y());
     addData(pinIndex, i++, obs->e_position().z());
+    addData(pinIndex, i++, obs->e_velocity().norm());
     addData(pinIndex, i++, obs->e_velocity().x());
     addData(pinIndex, i++, obs->e_velocity().y());
     addData(pinIndex, i++, obs->e_velocity().z());
@@ -2589,6 +2595,7 @@ void NAV::Plot::plotPosVelAtt(const std::shared_ptr<const PosVelAtt>& obs, size_
     addData(pinIndex, i++, obs->e_position().x());
     addData(pinIndex, i++, obs->e_position().y());
     addData(pinIndex, i++, obs->e_position().z());
+    addData(pinIndex, i++, obs->e_velocity().norm());
     addData(pinIndex, i++, obs->e_velocity().x());
     addData(pinIndex, i++, obs->e_velocity().y());
     addData(pinIndex, i++, obs->e_velocity().z());
@@ -2724,6 +2731,7 @@ void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, s
     addData(pinIndex, i++, obs->e_position().x());
     addData(pinIndex, i++, obs->e_position().y());
     addData(pinIndex, i++, obs->e_position().z());
+    addData(pinIndex, i++, obs->e_velocity().norm());
     addData(pinIndex, i++, obs->e_velocity().x());
     addData(pinIndex, i++, obs->e_velocity().y());
     addData(pinIndex, i++, obs->e_velocity().z());
@@ -2874,6 +2882,7 @@ void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs,
     addData(pinIndex, i++, obs->sddn.has_value() ? obs->sddn.value() : std::nan(""));
     addData(pinIndex, i++, obs->age);
     addData(pinIndex, i++, obs->ratio);
+    addData(pinIndex, i++, obs->e_velocity().norm());
     addData(pinIndex, i++, obs->e_velocity().x());
     addData(pinIndex, i++, obs->e_velocity().y());
     addData(pinIndex, i++, obs->e_velocity().z());
@@ -2979,6 +2988,7 @@ void NAV::Plot::plotUbloxObs(const std::shared_ptr<const UbloxObs>& obs, size_t 
     addData(pinIndex, i++, lla_position.has_value() ? lla_position->z() : std::nan(""));
     addData(pinIndex, i++, northSouth.has_value() ? northSouth.value() : std::nan(""));
     addData(pinIndex, i++, eastWest.has_value() ? eastWest.value() : std::nan(""));
+    addData(pinIndex, i++, n_velocity.has_value() ? n_velocity->norm() : std::nan(""));
     addData(pinIndex, i++, n_velocity.has_value() ? n_velocity->x() : std::nan(""));
     addData(pinIndex, i++, n_velocity.has_value() ? n_velocity->y() : std::nan(""));
     addData(pinIndex, i++, n_velocity.has_value() ? n_velocity->z() : std::nan(""));
