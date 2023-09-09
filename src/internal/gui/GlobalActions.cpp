@@ -294,12 +294,14 @@ void NAV::gui::pasteFlowElements()
 
 bool NAV::gui::canUndoLastAction()
 {
-    return currentAction > 0;
+    return false;
+    // return currentAction > 0;
 }
 
 bool NAV::gui::canRedoLastAction()
 {
-    return currentAction + 1 < actionList.size();
+    return false;
+    // return currentAction + 1 < actionList.size();
 }
 
 void NAV::gui::clearLastActionList()
