@@ -21,8 +21,6 @@ If no GUI is required, the application can be run in ```--nogui``` mode and a `.
   ```
   git clone --recurse-submodules <URL> INSTINCT
   cd INSTINCT
-  git lfs install
-  git lfs pull
   ```
 - Update the repository
   ```
@@ -94,7 +92,7 @@ Most library dependencies are managed by Conan.io, so you just need to install t
 #### ArchLinux
 ```shell
 # Needed
-sudo pacman -S --noconfirm --needed base-devel git-lfs cmake clang glfw-x11
+sudo pacman -S --noconfirm --needed base-devel cmake clang glfw-x11
 yay -S --noconfirm --needed conan # AUR package
 conan profile detect --force
 
@@ -113,7 +111,7 @@ sudo pacman -S --noconfirm --needed valgrind kcachegrind
 # Needed
 sudo apt update
 sudo apt upgrade -y
-sudo apt install -y build-essential git-lfs clang clang-tidy clang-format cmake python3-pip libglfw3-dev libglfw3
+sudo apt install -y build-essential clang clang-tidy clang-format cmake python3-pip libglfw3-dev libglfw3
 pip3 install conan --user
 conan profile detect --force
 
@@ -139,7 +137,7 @@ xcode-select --install
 brew update
 
 # Needed
-brew install git-lfs cmake llvm conan glfw
+brew install cmake llvm conan glfw
 ln -s "$(brew --prefix llvm)/bin/clang-format" "/usr/local/bin/clang-format"
 ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy"
 
