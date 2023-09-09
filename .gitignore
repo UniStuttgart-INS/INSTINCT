@@ -39,3 +39,7 @@ INSTINCT.ini
 
 # Jupyter
 .ipynb_checkpoints
+
+# Data
+*.pos.trace
+*.pos.stat
