@@ -24,6 +24,10 @@ const char* to_string(WaterVaporModel waterVaporModel)
         return "None";
     case WaterVaporModel::ISA:
         return "ISA";
+    case WaterVaporModel::GPT2:
+        return "GPT2";
+    case WaterVaporModel::GPT3:
+        return "GPT3";
     case WaterVaporModel::COUNT:
         break;
     }
@@ -41,6 +45,8 @@ double calcWaterVaporPartialPressure(double temp, double humidity_rel, WaterVapo
     {
     case WaterVaporModel::ISA:
         return calcWaterVaporPartialPressureStAtm(temp, humidity_rel);
+    case WaterVaporModel::GPT2:
+    case WaterVaporModel::GPT3:
     case WaterVaporModel::None:
     case WaterVaporModel::COUNT:
         break;

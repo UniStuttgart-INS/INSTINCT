@@ -21,6 +21,7 @@
 #include "Navigation/Atmosphere/Pressure/Pressure.hpp"
 #include "Navigation/Atmosphere/Temperature/Temperature.hpp"
 #include "Navigation/Atmosphere/WaterVapor/WaterVapor.hpp"
+#include "Navigation/Atmosphere/Troposphere/MappingFunctions/ViennaMappingFunction.hpp"
 
 namespace NAV
 {
@@ -38,6 +39,8 @@ enum class TroposphereModel : int
 {
     None,         ///< Troposphere Model turned off
     Saastamoinen, ///< Saastamoinen model
+    GPT2,         ///< GPT2
+    GPT3,         ///< GPT3
     COUNT,        ///< Amount of items in the enum
 };
 
@@ -46,6 +49,8 @@ enum class MappingFunction : int
 {
     None,     ///< Mapping Function turned off (= 1)
     Cosecant, ///< Cosecant of elevation
+    VMF_GPT2, ///<  Vienna Mapping Function based on the GPT2 grid
+    VMF_GPT3, ///<  Vienna Mapping Function based on the GPT3 grid
     COUNT,    ///< Amount of items in the enum
 };
 

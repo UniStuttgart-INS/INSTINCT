@@ -22,6 +22,8 @@ enum class TemperatureModel : int
     None,    ///< No temperature model
     ConstNN, ///< Constant value at zero altitude
     ISA,     ///< ICAO Standard Atmosphere
+    GPT2,    ///< GPT2
+    GPT3,    ///< GPT3
     COUNT,   ///< Amount of items in the enum
 };
 

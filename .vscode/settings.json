@@ -28,6 +28,7 @@
         "Kalman",
         "Klobuchar",
         "kutta",
+        "MappingFunction",
         "mathbf",
         "nodiscard",
         "Orolia",
@@ -39,6 +40,7 @@
         "Sagnac",
         "Skydel",
         "Spirent",
+        "troposphereModel",
         "ublox"
     ],
     "editor.formatOnSave": true,

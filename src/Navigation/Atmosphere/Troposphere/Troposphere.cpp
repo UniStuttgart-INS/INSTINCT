@@ -12,8 +12,10 @@
 #include "util/Logger.hpp"
 
 #include "Models/Saastamoinen.hpp"
+#include "Models/GPT.hpp"
 
 #include "MappingFunctions/Cosecant.hpp"
+#include <boost/algorithm/string.hpp>
 
 namespace NAV
 {
@@ -26,6 +28,10 @@ const char* to_string(TroposphereModel troposphereZhdModel)
         return "None";
     case TroposphereModel::Saastamoinen:
         return "Saastamoinen";
+    case TroposphereModel::GPT2:
+        return "GPT2";
+    case TroposphereModel::GPT3:
+        return "GPT3";
     case TroposphereModel::COUNT:
         break;
     }
@@ -40,6 +46,10 @@ const char* to_string(MappingFunction mappingFunction)
         return "None";
     case MappingFunction::Cosecant:
         return "Cosecant(elevation)";
+    case MappingFunction::VMF_GPT2:
+        return "VMF(GPT2)";
+    case MappingFunction::VMF_GPT3:
+        return "VMF(GPT3)";
     case MappingFunction::COUNT:
         break;
     }
@@ -54,6 +64,14 @@ AtmosphereModels MappingFunctionDefaults(MappingFunction mappingFunction)
         return { .pressureModel = PressureModel::ISA,
                  .temperatureModel = TemperatureModel::ISA,
                  .waterVaporModel = WaterVaporModel::ISA };
+    case MappingFunction::VMF_GPT2:
+        return { .pressureModel = PressureModel::GPT2,
+                 .temperatureModel = TemperatureModel::GPT2,
+                 .waterVaporModel = WaterVaporModel::GPT2 };
+    case MappingFunction::VMF_GPT3:
+        return { .pressureModel = PressureModel::GPT3,
+                 .temperatureModel = TemperatureModel::GPT3,
+                 .waterVaporModel = WaterVaporModel::GPT3 };
     case MappingFunction::None:
     case MappingFunction::COUNT:
         break;
@@ -76,6 +94,18 @@ std::tuple<AtmosphereModels, MappingFunction, AtmosphereModels> ModelDefaults(Tr
                                    .waterVaporModel = WaterVaporModel::ISA },
                  MappingFunction::Cosecant,
                  MappingFunctionDefaults(MappingFunction::Cosecant) };
+    case TroposphereModel::GPT2:
+        return { AtmosphereModels{ .pressureModel = PressureModel::GPT2,
+                                   .temperatureModel = TemperatureModel::GPT2,
+                                   .waterVaporModel = WaterVaporModel::GPT2 },
+                 MappingFunction::VMF_GPT2,
+                 MappingFunctionDefaults(MappingFunction::VMF_GPT2) };
+    case TroposphereModel::GPT3:
+        return { AtmosphereModels{ .pressureModel = PressureModel::GPT3,
+                                   .temperatureModel = TemperatureModel::GPT3,
+                                   .waterVaporModel = WaterVaporModel::GPT3 },
+                 MappingFunction::VMF_GPT3,
+                 MappingFunctionDefaults(MappingFunction::VMF_GPT3) };
     case TroposphereModel::None:
     case TroposphereModel::COUNT:
         break;
@@ -231,7 +261,7 @@ bool ComboTroposphereModel(const char* label, TroposphereModelSelection& troposp
     return changed;
 }
 
-ZenithDelay calcTroposphericDelayAndMapping(const InsTime& /* insTime */, const Eigen::Vector3d& lla_pos, double elevation, double /* azimuth */,
+ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen::Vector3d& lla_pos, double elevation, double /* azimuth */,
                                             const TroposphereModelSelection& troposphereModels)
 {
     if (lla_pos(2) < -1000 || lla_pos(2) > 1e4)
@@ -313,6 +343,71 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& /* insTime */, const 
     case TroposphereModel::Saastamoinen:
         zhd = calcZHD_Saastamoinen(lla_pos, pressure[ZHD]);
         break;
+    case TroposphereModel::GPT2:
+    {
+        // UTC->GPST
+        auto epoch_temp = InsTime(insTime) + std::chrono::duration<long double>(insTime.leapGps2UTC());
+        double mjd = static_cast<double>(epoch_temp.toMJD().mjd_day) + static_cast<double>(epoch_temp.toMJD().mjd_frac);
+        // pressure
+        double p = 0.0;
+        // temperature
+        double T = 0.0;
+        // temperature lapse rate
+        double dT = 0.0;
+        // mean temperature of the water vapor
+        double Tm = 0.0;
+        //  water vapor pressure
+        double e = 0.0;
+        // hydrostatic and wet mapping function coefficients
+        double ah = 0.0;
+        double aw = 0.0;
+        // water vapour decrease factor
+        double la = 0.0;
+        // geoid undulation for specific sites near the Earth surface
+        double undu = 0.0;
+        GPT2_param(mjd, lla_pos, internal::GPT2_grid, p, T, dT, Tm, e, ah, aw, la, undu);
+        zhd = calcZHD_Saastamoinen(lla_pos, p);
+        // LOG_INFO("p {}", p);
+        // LOG_INFO("ZHD {}", zhd);
+        break;
+    }
+    case TroposphereModel::GPT3:
+    {
+        // UTC->GPST
+        auto epoch_temp = InsTime(insTime) + std::chrono::duration<long double>(insTime.leapGps2UTC());
+        double mjd = static_cast<double>(epoch_temp.toMJD().mjd_day) + static_cast<double>(epoch_temp.toMJD().mjd_frac);
+        // pressure
+        double p = 0.0;
+        // temperature
+        double T = 0.0;
+        // temperature lapse rate
+        double dT = 0.0;
+        // mean temperature of the water vapor
+        double Tm = 0.0;
+        //  water vapor pressure
+        double e = 0.0;
+        // hydrostatic and wet mapping function coefficients
+        double ah = 0.0;
+        double aw = 0.0;
+        // water vapour decrease factor
+        double la = 0.0;
+        // geoid undulation for specific sites near the Earth surface
+        double undu = 0.0;
+        // hydrostatic north gradient
+        double Gn_h = 0.0;
+        // hydrostatic east gradient
+        double Ge_h = 0.0;
+        // wet north gradient
+        double Gn_w = 0.0;
+        // wet east gradient
+        double Ge_w = 0.0;
+
+        GPT3_param(mjd, lla_pos, internal::GPT3_grid, p, T, dT, Tm, e, ah, aw, la, undu, Gn_h, Ge_h, Gn_w, Ge_w);
+        zhd = calcZHD_Saastamoinen(lla_pos, p);
+        // LOG_INFO("p {}", p);
+        // LOG_INFO("ZHD {}", zhd);
+        break;
+    }
     case TroposphereModel::None:
     case TroposphereModel::COUNT:
         break;
@@ -324,6 +419,69 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& /* insTime */, const 
     case TroposphereModel::Saastamoinen:
         zwd = calcZWD_Saastamoinen(temperature[ZWD], waterVapor[ZWD]);
         break;
+    case TroposphereModel::GPT2:
+    {
+        // UTC->GPST
+        auto epoch_temp = InsTime(insTime) + std::chrono::duration<long double>(insTime.leapGps2UTC());
+        double mjd = static_cast<double>(epoch_temp.toMJD().mjd_day) + static_cast<double>(epoch_temp.toMJD().mjd_frac);
+        // pressure
+        double p = 0.0;
+        // temperature
+        double T = 0.0;
+        // temperature lapse rate
+        double dT = 0.0;
+        // mean temperature of the water vapor
+        double Tm = 0.0;
+        //  water vapor pressure
+        double e = 0.0;
+        // hydrostatic and wet mapping function coefficients
+        double ah = 0.0;
+        double aw = 0.0;
+        // water vapour decrease factor
+        double la = 0.0;
+        // geoid undulation for specific sites near the Earth surface
+        double undu = 0.0;
+        GPT2_param(mjd, lla_pos, internal::GPT2_grid, p, T, dT, Tm, e, ah, aw, la, undu);
+        zwd = asknewet(e, Tm, la);
+        break;
+    }
+    case TroposphereModel::GPT3:
+    {
+        // UTC->GPST
+        auto epoch_temp = InsTime(insTime) + std::chrono::duration<long double>(insTime.leapGps2UTC());
+        double mjd = static_cast<double>(epoch_temp.toMJD().mjd_day) + static_cast<double>(epoch_temp.toMJD().mjd_frac);
+        // pressure
+        double p = 0.0;
+        // temperature
+        double T = 0.0;
+        // temperature lapse rate
+        double dT = 0.0;
+        // mean temperature of the water vapor
+        double Tm = 0.0;
+        //  water vapor pressure
+        double e = 0.0;
+        // hydrostatic and wet mapping function coefficients
+        double ah = 0.0;
+        double aw = 0.0;
+        // water vapour decrease factor
+        double la = 0.0;
+        // geoid undulation for specific sites near the Earth surface
+        double undu = 0.0;
+        // hydrostatic north gradient
+        double Gn_h = 0.0;
+        // hydrostatic east gradient
+        double Ge_h = 0.0;
+        // wet north gradient
+        double Gn_w = 0.0;
+        // wet east gradient
+        double Ge_w = 0.0;
+
+        GPT3_param(mjd, lla_pos, internal::GPT3_grid, p, T, dT, Tm, e, ah, aw, la, undu, Gn_h, Ge_h, Gn_w, Ge_w);
+        zwd = asknewet(e, Tm, la);
+        // LOG_INFO("p {}", p);
+        // LOG_INFO("ZWD {}", zwd);
+        break;
+    }
     case TroposphereModel::None:
     case TroposphereModel::COUNT:
         break;
@@ -335,6 +493,69 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& /* insTime */, const 
     case MappingFunction::Cosecant:
         zhdMappingFactor = calcTropoMapFunc_cosecant(elevation);
         break;
+    case MappingFunction::VMF_GPT2:
+    {
+        // UTC->GPST
+        auto epoch_temp = InsTime(insTime) + std::chrono::duration<long double>(insTime.leapGps2UTC());
+        double mjd = static_cast<double>(epoch_temp.toMJD().mjd_day) + static_cast<double>(epoch_temp.toMJD().mjd_frac);
+        // pressure
+        double p = 0.0;
+        // temperature
+        double T = 0.0;
+        // temperature lapse rate
+        double dT = 0.0;
+        // mean temperature of the water vapor
+        double Tm = 0.0;
+        //  water vapor pressure
+        double e = 0.0;
+        // hydrostatic and wet mapping function coefficients
+        double ah = 0.0;
+        double aw = 0.0;
+        // water vapour decrease factor
+        double la = 0.0;
+        // geoid undulation for specific sites near the Earth surface
+        double undu = 0.0;
+        GPT2_param(mjd, lla_pos, internal::GPT2_grid, p, T, dT, Tm, e, ah, aw, la, undu);
+        zhdMappingFactor = vmf1h(ah, mjd, lla_pos(0), lla_pos(2), M_PI / 2.0 - elevation);
+        // LOG_INFO("zhdMappingFactor {}", zhdMappingFactor);
+        break;
+    }
+    case MappingFunction::VMF_GPT3:
+    {
+        // UTC->GPST
+        auto epoch_temp = InsTime(insTime) + std::chrono::duration<long double>(insTime.leapGps2UTC());
+        double mjd = static_cast<double>(epoch_temp.toMJD().mjd_day) + static_cast<double>(epoch_temp.toMJD().mjd_frac);
+        // pressure
+        double p = 0.0;
+        // temperature
+        double T = 0.0;
+        // temperature lapse rate
+        double dT = 0.0;
+        // mean temperature of the water vapor
+        double Tm = 0.0;
+        //  water vapor pressure
+        double e = 0.0;
+        // hydrostatic and wet mapping function coefficients
+        double ah = 0.0;
+        double aw = 0.0;
+        // water vapour decrease factor
+        double la = 0.0;
+        // geoid undulation for specific sites near the Earth surface
+        double undu = 0.0;
+        // hydrostatic north gradient
+        double Gn_h = 0.0;
+        // hydrostatic east gradient
+        double Ge_h = 0.0;
+        // wet north gradient
+        double Gn_w = 0.0;
+        // wet east gradient
+        double Ge_w = 0.0;
+
+        GPT3_param(mjd, lla_pos, internal::GPT3_grid, p, T, dT, Tm, e, ah, aw, la, undu, Gn_h, Ge_h, Gn_w, Ge_w);
+        zhdMappingFactor = vmf1h(ah, mjd, lla_pos(0), lla_pos(2), M_PI / 2.0 - elevation);
+        // LOG_INFO("zhdMappingFactor {}", zhdMappingFactor);
+        break;
+    }
     case MappingFunction::None:
     case MappingFunction::COUNT:
         break;
@@ -346,6 +567,69 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& /* insTime */, const 
     case MappingFunction::Cosecant:
         zwdMappingFactor = calcTropoMapFunc_cosecant(elevation);
         break;
+    case MappingFunction::VMF_GPT2:
+    {
+        // UTC->GPST
+        auto epoch_temp = InsTime(insTime) + std::chrono::duration<long double>(insTime.leapGps2UTC());
+        double mjd = static_cast<double>(epoch_temp.toMJD().mjd_day) + static_cast<double>(epoch_temp.toMJD().mjd_frac);
+        // pressure
+        double p = 0.0;
+        // temperature
+        double T = 0.0;
+        // temperature lapse rate
+        double dT = 0.0;
+        // mean temperature of the water vapor
+        double Tm = 0.0;
+        //  water vapor pressure
+        double e = 0.0;
+        // hydrostatic and wet mapping function coefficients
+        double ah = 0.0;
+        double aw = 0.0;
+        // water vapour decrease factor
+        double la = 0.0;
+        // geoid undulation for specific sites near the Earth surface
+        double undu = 0.0;
+        GPT2_param(mjd, lla_pos, internal::GPT2_grid, p, T, dT, Tm, e, ah, aw, la, undu);
+        zwdMappingFactor = vmf1w(aw, M_PI / 2.0 - elevation);
+        // LOG_INFO("zwdMappingFactor {}", zwdMappingFactor);
+        break;
+    }
+    case MappingFunction::VMF_GPT3:
+    {
+        // UTC->GPST
+        auto epoch_temp = InsTime(insTime) + std::chrono::duration<long double>(insTime.leapGps2UTC());
+        double mjd = static_cast<double>(epoch_temp.toMJD().mjd_day) + static_cast<double>(epoch_temp.toMJD().mjd_frac);
+        // pressure
+        double p = 0.0;
+        // temperature
+        double T = 0.0;
+        // temperature lapse rate
+        double dT = 0.0;
+        // mean temperature of the water vapor
+        double Tm = 0.0;
+        //  water vapor pressure
+        double e = 0.0;
+        // hydrostatic and wet mapping function coefficients
+        double ah = 0.0;
+        double aw = 0.0;
+        // water vapour decrease factor
+        double la = 0.0;
+        // geoid undulation for specific sites near the Earth surface
+        double undu = 0.0;
+        // hydrostatic north gradient
+        double Gn_h = 0.0;
+        // hydrostatic east gradient
+        double Ge_h = 0.0;
+        // wet north gradient
+        double Gn_w = 0.0;
+        // wet east gradient
+        double Ge_w = 0.0;
+
+        GPT3_param(mjd, lla_pos, internal::GPT3_grid, p, T, dT, Tm, e, ah, aw, la, undu, Gn_h, Ge_h, Gn_w, Ge_w);
+        zwdMappingFactor = vmf1w(aw, M_PI / 2.0 - elevation);
+        // LOG_INFO("zwdMappingFactor {}", zwdMappingFactor);
+        break;
+    }
     case MappingFunction::None:
     case MappingFunction::COUNT:
         break;
