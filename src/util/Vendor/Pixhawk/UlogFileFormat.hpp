@@ -130,16 +130,16 @@ struct message_logging_tagged_s
 /// @brief tag attributes of message_logging_tagged_s
 enum class ulog_tag : uint16_t
 {
-    unassigned,
-    mavlink_handler,
-    ppk_handler,
-    camera_handler,
-    ptp_handler,
-    serial_handler,
-    watchdog,
-    io_service,
-    cbuf,
-    ulg
+    unassigned,      ///< Unassigned
+    mavlink_handler, ///< MAVLink handler
+    ppk_handler,     ///< PPK handler
+    camera_handler,  ///< Camera handler
+    ptp_handler,     ///< PTP handler
+    serial_handler,  ///< Serial handler
+    watchdog,        ///< Watchdog
+    io_service,      ///< IO service
+    cbuf,            ///< cbuf
+    ulg              ///< ulg
 };
 
 /// @brief synchronization message so that a reader can recover from a corrupt message by searching for the next sync message

@@ -165,9 +165,9 @@ class Pin
         /// @brief Kind of the Pin (Input/Output)
         enum Value : uint8_t
         {
-            None,
-            Output,
-            Input,
+            None,   ///< None
+            Output, ///< Output Pin
+            Input,  ///< Input Pin
         };
 
         /// @brief Default Constructor

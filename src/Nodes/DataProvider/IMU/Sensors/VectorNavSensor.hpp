@@ -205,10 +205,10 @@ class VectorNavSensor : public Imu, public UartSensor
     /// Possible Merge combinations between the binary output registers
     enum class BinaryRegisterMerge
     {
-        None,
-        Output1_Output2,
-        Output1_Output3,
-        Output2_Output3,
+        None,            ///< Do not merge any outputs
+        Output1_Output2, ///< Merge Output 1 and 2
+        Output1_Output3, ///< Merge Output 1 and 3
+        Output2_Output3, ///< Merge Output 2 and 3
     };
 
     /// Merge binary output registers together. This has to be done because VectorNav sensors have a buffer overflow when packages get too big.

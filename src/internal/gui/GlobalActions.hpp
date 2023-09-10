@@ -16,13 +16,13 @@
 /// @brief Possible Global Actions to perform in the GUI
 enum GlobalActions
 {
-    None,
-    Quit,
-    QuitUnsaved,
-    SaveAs,
-    Clear,
-    Load,
-    RunFlow,
+    None,        ///< None
+    Quit,        ///< Quit the program
+    QuitUnsaved, ///< Quit the program without saving
+    SaveAs,      ///< Save the flow as filename
+    Clear,       ///< Clear the flow
+    Load,        ///< Load a flow
+    RunFlow,     ///< Run the flow
 };
 
 namespace NAV::gui

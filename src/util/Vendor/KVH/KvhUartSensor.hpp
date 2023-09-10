@@ -113,11 +113,11 @@ class KvhUartSensor
     /// @brief Possible states in the header building process
     enum TagState
     {
-        SM_H1,
-        SM_H2,
-        SM_H3,
-        SM_X3,
-        SM_IDLE
+        SM_H1,   ///< H1
+        SM_H2,   ///< H2
+        SM_H3,   ///< H3
+        SM_X3,   ///< X3
+        SM_IDLE, ///< IDLE
     };
 
     /// Current state of the header building process
@@ -126,12 +126,12 @@ class KvhUartSensor
     /// @brief Possible Header Types
     enum HeaderType
     {
-        FMT_A,
-        FMT_B,
-        FMT_C,
-        FMT_XBIT,
-        FMT_XBIT2,
-        FMT_UNKNOWN
+        FMT_A,       ///< Use header A
+        FMT_B,       ///< Use header B
+        FMT_C,       ///< Use header C
+        FMT_XBIT,    ///< Format XBIT
+        FMT_XBIT2,   ///< Format XBIT2
+        FMT_UNKNOWN, ///< Unknown format
     };
 
     /// @brief Current packet type determined by the header

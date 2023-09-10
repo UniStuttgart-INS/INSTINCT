@@ -22,8 +22,7 @@ using GuiMatrixViewFlags = int;
 /// @brief Flags to select the MatrixView behaviour
 enum GuiMatrixViewFlags_
 {
-    // Features
-    GuiMatrixViewFlags_None = 0,
+    GuiMatrixViewFlags_None = 0,                                                                ///< None
     GuiMatrixViewFlags_RowHeader = 1 << 0,                                                      ///< Print the Row Header
     GuiMatrixViewFlags_ColumnHeader = 1 << 1,                                                   ///< Print the Col Header
     GuiMatrixViewFlags_Header = GuiMatrixViewFlags_RowHeader | GuiMatrixViewFlags_ColumnHeader, ///< Print all Header
