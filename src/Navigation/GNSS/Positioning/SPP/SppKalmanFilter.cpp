@@ -268,7 +268,7 @@ void SppKalmanFilter::initializeKalmanFilter(const std::shared_ptr<const SppSolu
     {
         _kalmanFilter.F(States::InterSysErr{ satSys }, States::InterSysDrift{ satSys }) = 1;
     }
-    LOG_DATA("{}:   System matrix F =\n{} ", nameId(), _kalmanFilter.F);
+    LOG_DATA("F =\n{}", _kalmanFilter.F);
 
     // Fix part of Noise input matrix G
     _kalmanFilter.G(States::RecvClkErr, States::RecvClkErr) = 1;
@@ -309,9 +309,9 @@ void SppKalmanFilter::addInterSysStateKeys([[maybe_unused]] const InsTime& insTi
 
         if (!_kalmanFilter.x.hasRow(keyErr))
         {
-            // LOG_DEBUG("{}: [{}] Adding state: {}", nameId(), insTime, keyErr);
+            LOG_DEBUG("{}: [{}] Adding state: {}", "SppKalmanFilter", insTime.toYMDHMS(GPST), keyErr);
             _kalmanFilter.addState(keyErr);
-            // LOG_DEBUG("{}: [{}] Adding state: {}", nameId(), insTime, keyDrift);
+            LOG_DEBUG("{}: [{}] Adding state: {}", "SppKalmanFilter", insTime.toYMDHMS(GPST), keyDrift);
             _kalmanFilter.addState(keyDrift);
 
             States::InterSysErrs.emplace_back(KF::States::InterSysErr{ satelliteSystem });
@@ -353,8 +353,6 @@ void SppKalmanFilter::processNoiseMatrixGroves(double dt)
     _kalmanFilter.Q(States::RecvClkDrift, States::RecvClkDrift) = cf_S_a * dt;
 
     // TODO add Q for inter-system clock errors and drifts
-
-    LOG_DATA("{} _kalmanFilter.Q {}\n ", nameId(), _kalmanFilter.Q);
 }
 
 // ###########################################################################################################
@@ -464,11 +462,11 @@ void SppKalmanFilter::estimate(const InsTime& insTime, State& state,
                                                     troposphereModels, gnssMeasurementErrorModel,
                                                     EstimatorType::KF);
 
-        kalmanFilterUpdate(keyedObservations, sppSol->recvClk.referenceTimeSatelliteSystem, sppSol->otherUsedSatelliteSystems, usedObservations);
+        kalmanFilterUpdate(keyedObservations, sppSol->recvClk.referenceTimeSatelliteSystem, sppSol->otherUsedSatelliteSystems, usedObservations, insTime);
         assignSolution(sppSol, state, availableSatelliteSystems);
 
         _lastUpdate = sppSol->insTime;
-        LOG_DATA("{} _lastTime {}", nameId(), _lastUpdate);
+        LOG_DATA("_lastTime {}", _lastUpdate);
     }
 }
 
@@ -503,10 +501,9 @@ void SppKalmanFilter::kalmanFilterPrediction(const InsTime& insTime)
 
         _kalmanFilter.calcPhiAndQWithVanLoanMethod(dt);
     }
-    LOG_DATA("{}: F =\n{}", nameId(), _kalmanFilter.F);
-    LOG_DATA("{}: G =\n{}", nameId(), _kalmanFilter.G);
-    LOG_DATA("{}: W =\n{}", nameId(), _kalmanFilter.W);
-    LOG_DATA("{}: GWG^T =\n{}", nameId(),
+    LOG_DATA("G =\n{}", _kalmanFilter.G);
+    LOG_DATA("W =\n{}", _kalmanFilter.W);
+    LOG_DATA("GWG^T =\n{}",
              KeyedMatrixXd<States::StateKeyTypes>(_kalmanFilter.G(all, all)
                                                       * _kalmanFilter.W(all, all)
                                                       * _kalmanFilter.G(all, all).transpose(),
@@ -514,14 +511,14 @@ void SppKalmanFilter::kalmanFilterPrediction(const InsTime& insTime)
     LOG_DATA("State transition matrix Phi {}", _kalmanFilter.Phi);
     LOG_DATA("Process noise matrix Q {}", _kalmanFilter.Q);
 
-    LOG_DATA("{}: x (a posteriori, t-1 = {}) =\n{}", nameId(), _lastUpdate, _kalmanFilter.x);
-    LOG_DATA("{}: P (a posteriori, t-1 = {}) =\n{}", nameId(), _lastUpdate, _kalmanFilter.P);
+    LOG_DATA("x (a posteriori, t-1 = {}) =\n{}", _lastUpdate, _kalmanFilter.x);
+    LOG_DATA("P (a posteriori, t-1 = {}) =\n{}", _lastUpdate, _kalmanFilter.P);
     _kalmanFilter.predict();
-    LOG_DATA("{}: x (a priori    , t   = {}) =\n{}", nameId(), insTime, _kalmanFilter.x);
-    LOG_DATA("{}: P (a priori    , t   = {}) =\n{}", nameId(), insTime, _kalmanFilter.P);
+    LOG_DATA("x (a priori    , t   = {}) =\n{}", insTime, _kalmanFilter.x);
+    LOG_DATA("P (a priori    , t   = {}) =\n{}", insTime, _kalmanFilter.P);
 
-    LOG_DATA("{}: dx Prediction (ECEF) = {}", nameId(), (_kalmanFilter.x.segment<3>(States::Pos) - _e_position));
-    LOG_DATA("{}: dv Prediction (ECEF) = {}", nameId(), (_kalmanFilter.x.segment<3>(States::Vel) - _e_velocity));
+    LOG_DATA("dx Prediction (ECEF) = {}", (_kalmanFilter.x.segment<3>(States::Pos) - _e_position));
+    LOG_DATA("dv Prediction (ECEF) = {}", (_kalmanFilter.x.segment<3>(States::Vel) - _e_velocity));
 }
 
 // ###########################################################################################################
@@ -530,7 +527,8 @@ void SppKalmanFilter::kalmanFilterPrediction(const InsTime& insTime)
 void SppKalmanFilter::kalmanFilterUpdate(const KeyedObservations& keyedObservations,
                                          SatelliteSystem sppSolReferenceTimeSatelliteSystem,
                                          const std::vector<SatelliteSystem>& otherSatelliteSystems,
-                                         const std::array<bool, 2>& usedObservations)
+                                         const std::array<bool, 2>& usedObservations,
+                                         [[maybe_unused]] const InsTime& insTime)
 {
     // Update the Measurement sensitivity Matrix (𝐇), the Measurement noise covariance matrix (𝐑) and the Measurement vector (𝐳)
 
@@ -617,15 +615,16 @@ void SppKalmanFilter::kalmanFilterUpdate(const KeyedObservations& keyedObservati
         }
     }
 
-    LOG_DATA("{}: z =\n{}", nameId(), _kalmanFilter.z.transpose());
-    LOG_DATA("{}: H =\n{}", nameId(), _kalmanFilter.H);
-    LOG_DATA("{}: R =\n{}", nameId(), _kalmanFilter.R);
+    LOG_DATA("z =\n{}", _kalmanFilter.z.transposed());
+    LOG_DATA("H =\n{}", _kalmanFilter.H);
+    LOG_DATA("R =\n{}", _kalmanFilter.R);
 
     _kalmanFilter.correctWithMeasurementInnovation();
-    LOG_DATA("{}: x (a posteriori, t   = {}) =\n{}", nameId(), insTime, _kalmanFilter.x);
-    LOG_DATA("{}: P (a posteriori, t   = {}) =\n{}", nameId(), insTime, _kalmanFilter.P);
-    LOG_DATA("{}: dx Update (ECEF) = {}", nameId(), (_kalmanFilter.x.segment<3>(States::Pos) - _e_position));
-    LOG_DATA("{}: dv Update (ECEF) = {}", nameId(), (_kalmanFilter.x.segment<3>(States::Vel) - _e_velocity));
+    LOG_DATA("x (a posteriori, t   = {}) =\n{}", insTime, _kalmanFilter.x);
+    LOG_DATA("P (a posteriori, t   = {}) =\n{}", insTime, _kalmanFilter.P);
+
+    LOG_DATA("dx Update (ECEF) = {}", (_kalmanFilter.x.segment<3>(States::Pos) - _e_position));
+    LOG_DATA("dv Update (ECEF) = {}", (_kalmanFilter.x.segment<3>(States::Vel) - _e_velocity));
 }
 
 void to_json(json& j, const SppKalmanFilter& data)

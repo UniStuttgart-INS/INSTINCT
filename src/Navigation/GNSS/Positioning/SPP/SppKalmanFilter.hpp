@@ -121,7 +121,7 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     /// Possible Units for the initial covariance for the position (standard deviation σ or Variance σ²)
     enum class InitCovariancePositionUnits
     {
-        m2, ///< Variance ECEF [m² , m², m²]
+        m2, ///< Variance ECEF [m², m², m²]
         m,  ///< Standard deviation ECEF [m, m, m]
     };
     /// Gui selection for the Unit of the initial covariance for the position
@@ -310,10 +310,12 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     /// @param[in] sppSolReferenceTimeSatelliteSystem Reference time satellite system selected from SPP LSE functions
     /// @param[in] satelliteSystems Available/Observed satellite systems in this epoch except reference satellite systems
     /// @param[in] usedObservations Used observation types (pseudorange, doppler)
+    /// @param[in] insTime Epoch time
     void kalmanFilterUpdate(const KeyedObservations& keyedObservations,
                             SatelliteSystem sppSolReferenceTimeSatelliteSystem,
                             const std::vector<SatelliteSystem>& satelliteSystems,
-                            const std::array<bool, 2>& usedObservations);
+                            const std::array<bool, 2>& usedObservations,
+                            const InsTime& insTime);
 
     /// @brief Sets Process Noise Matrix
     /// @param[in] dt Time interval between the Kalman Filter estimates in [s]
@@ -372,7 +374,7 @@ template<>
 struct hash<NAV::GNSS::Positioning::SPP::KF::States::InterSysErr>
 {
     /// @brief Hash function
-    /// @param[in] interSysErr Inter System error
+    /// @param[in] interSysErr Inter-system clock errors
     size_t operator()(const NAV::GNSS::Positioning::SPP::KF::States::InterSysErr& interSysErr) const
     {
         return NAV::GNSS::Positioning::SPP::KF::States::KFStates_COUNT + std::hash<NAV::SatelliteSystem>()(interSysErr.satSys);
@@ -383,7 +385,7 @@ template<>
 struct hash<NAV::GNSS::Positioning::SPP::KF::States::InterSysDrift>
 {
     /// @brief Hash function
-    /// @param[in] interSysDrift Inter System drift
+    /// @param[in] interSysDrift Inter-system clock drifts
     size_t operator()(const NAV::GNSS::Positioning::SPP::KF::States::InterSysDrift& interSysDrift) const
     {
         return NAV::GNSS::Positioning::SPP::KF::States::KFStates_COUNT + std::hash<NAV::SatelliteSystem>()(interSysDrift.satSys);
@@ -394,7 +396,7 @@ template<>
 struct hash<NAV::GNSS::Positioning::SPP::KF::Meas::Psr>
 {
     /// @brief Hash function
-    /// @param[in] psr Double differenced pseudorange
+    /// @param[in] psr Pseudorange observation
     size_t operator()(const NAV::GNSS::Positioning::SPP::KF::Meas::Psr& psr) const
     {
         return std::hash<NAV::SatSigId>()(psr.satSigId);
@@ -405,7 +407,7 @@ template<>
 struct hash<NAV::GNSS::Positioning::SPP::KF::Meas::Doppler>
 {
     /// @brief Hash function
-    /// @param[in] doppler Double differenced doppler
+    /// @param[in] doppler Doppler observation
     size_t operator()(const NAV::GNSS::Positioning::SPP::KF::Meas::Doppler& doppler) const
     {
         return std::hash<NAV::SatSigId>()(doppler.satSigId) << 12;
