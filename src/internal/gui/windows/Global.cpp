@@ -25,7 +25,7 @@ bool showFontSizeEditor = false;
 
 } // namespace NAV::gui::windows
 
-void NAV::gui::windows::renderGlobalWindows()
+void NAV::gui::windows::renderGlobalWindows(std::vector<ImVec4>& colors, const std::vector<const char*>& colorNames)
 {
     if (showImGuiDemoWindow)
     {
@@ -37,7 +37,7 @@ void NAV::gui::windows::renderGlobalWindows()
     }
     if (showNodeEditorStyleEditor)
     {
-        gui::windows::ShowNodeEditorStyleEditor(&showNodeEditorStyleEditor);
+        gui::windows::ShowNodeEditorStyleEditor(&showNodeEditorStyleEditor, colors, colorNames);
     }
     if (showImPlotStyleEditor)
     {

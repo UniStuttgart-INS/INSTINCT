@@ -12,7 +12,7 @@
 
 namespace ed = ax::NodeEditor;
 
-void NAV::gui::windows::ShowNodeEditorStyleEditor(bool* show /* = nullptr*/)
+void NAV::gui::windows::ShowNodeEditorStyleEditor(bool* show, std::vector<ImVec4>& colors, const std::vector<const char*>& colorNames)
 {
     if (!ImGui::Begin("Node Editor Style", show))
     {
@@ -75,7 +75,7 @@ void NAV::gui::windows::ShowNodeEditorStyleEditor(bool* show /* = nullptr*/)
     ImGui::Spacing();
 
     ImGui::PushItemWidth(-160);
-    for (int i = 0; i < ed::StyleColor_Count; ++i)
+    for (int i = 0; i < ed::StyleColor_Count; i++)
     {
         const auto* name = ed::GetStyleColorName(static_cast<ed::StyleColor>(i));
         if (!filter.PassFilter(name))
@@ -84,6 +84,16 @@ void NAV::gui::windows::ShowNodeEditorStyleEditor(bool* show /* = nullptr*/)
         }
 
         ImGui::ColorEdit4(name, &editorStyle.Colors[i].x, edit_mode); // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
+    }
+
+    for (size_t i = 0; i < colors.size(); i++)
+    {
+        const auto* name = colorNames.at(i);
+        if (!filter.PassFilter(name))
+        {
+            continue;
+        }
+        ImGui::ColorEdit4(name, &colors.at(i).x, edit_mode); // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
     }
     ImGui::PopItemWidth();
 

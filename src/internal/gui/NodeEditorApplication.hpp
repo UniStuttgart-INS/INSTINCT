@@ -14,6 +14,7 @@
 #pragma once
 
 #include <array>
+#include <vector>
 
 #include <application.h>
 #include <imgui.h>
@@ -131,6 +132,26 @@ class NodeEditorApplication : public Application
 
     /// @brief Pointer to the texture for the node headers
     ImTextureID m_HeaderBackground = nullptr;
+
+    /// Available color settings
+    enum Colors : size_t
+    {
+        COLOR_GROUP_HEADER_TEXT,  ///< Color of the group header text
+        COLOR_GROUP_HEADER_BG,    ///< Color of the group header background
+        COLOR_GROUP_OUTER_BORDER, ///< Color of the group outer border
+    };
+    /// Color settings
+    std::vector<ImVec4> m_colors = {
+        { 1.0, 1.0, 1.0, 1.0 },  // GROUP_HEADER_TEXT
+        { 1.0, 1.0, 1.0, 0.25 }, // GROUP_HEADER_BG
+        { 1.0, 1.0, 1.0, 0.25 }, // GROUP_OUTER_BORDER
+    };
+    /// Color names
+    std::vector<const char*> m_colorsNames = {
+        "GroupHeaderText",  // GROUP_HEADER_TEXT
+        "GroupHeaderBg",    // GROUP_HEADER_BG
+        "GroupOuterBorder", // GROUP_OUTER_BORDER
+    };
 
     /// @brief Global action to execute
     GlobalActions globalAction = GlobalActions::None; // TODO: Move to the GlobalAction.cpp as a global variable
