@@ -13,10 +13,15 @@
 
 #pragma once
 
+#include <vector>
+#include <imgui.h>
+
 namespace NAV::gui::windows
 {
 /// @brief Shows a window for editing the style of the Node Editor
 /// @param[in, out] show Flag which indicates whether the window is shown
-void ShowNodeEditorStyleEditor(bool* show = nullptr);
+/// @param[in, out] colors Colors of the GUI
+/// @param[in] colorNames Names for the colors
+void ShowNodeEditorStyleEditor(bool* show, std::vector<ImVec4>& colors, const std::vector<const char*>& colorNames);
 
 } // namespace NAV::gui::windows
