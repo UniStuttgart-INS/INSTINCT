@@ -12,10 +12,17 @@ namespace Instinct {
 
 /** \defgroup DataProcessor_chapter DataProcessor
  * @{
+ *      \defgroup DataProcessor_GNSS_chapter GNSS
  *      \defgroup DataProcessor_KalmanFilter_chapter KalmanFilter
  *      \defgroup DataProcessor_Integrator_chapter Integrator
  * @} */
 
+/** \addtogroup SppBasics
+    \ingroup DataProcessor_GNSS_chapter */ 
+/** \addtogroup SppLSE
+    \ingroup DataProcessor_GNSS_chapter */ 
+ /** \addtogroup SppKF
+    \ingroup DataProcessor_GNSS_chapter */ 
  /** \addtogroup KalmanFilterBasics
      \ingroup DataProcessor_KalmanFilter_chapter */
  /** \addtogroup LooselyCoupledKF_n

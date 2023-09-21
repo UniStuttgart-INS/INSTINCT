@@ -1,0 +1,130 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+namespace Instinct {
+
+/** \defgroup SppBasics Single Point Positioning Basics
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section SppBasics-estimators Estimators
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+- Least-squares estimation (LSE)
+- weighted Least-squares estimation (WLSE)
+- Kalman Filtering (KF)
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section SppBasics-measurementModel Measurement model
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+Used observations
+- \f$ \tilde{p}_r^s \f$ Pseudorange measurements \[m\]
+- \f$ \tilde{d}_r^s \f$ Doppler/Pseudorange rate measurements \[m/s\]
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection SppBasics-measurementModel-innovation Measurement innovation
+
+\subsubsection SppBasics-measurementModel-innovation-vector Innovation vector
+
+\fl{equation,eq-SppBasics-measurementModel-innovation}
+\delta\mathbf{z}(\boldsymbol{x}) = \mathbf{z} - \mathbf{h}(\mathbf{x})
+\f}
+
+<b> Measurement vector </b>
+\fl{equation,eq-SppBasics-measurementModel-innovation-measurementVector}
+\mathbf{z} = \left\{ \begin{array}{c:c}
+\tilde{p}_r^1,\quad \tilde{p}_r^2,\quad \dots,\quad \tilde{p}_r^m &
+\tilde{d}_r^1,\quad \tilde{d}_r^2,\quad \dots,\quad \tilde{d}_r^m
+\end{array} \right\}
+\f}
+
+<b> Estimates vector </b>
+\fl{equation,eq-SppBasics-measurementModel-innovation-estimatesVector}
+\mathbf{h}(\mathbf{x}) = \left\{ \begin{array}{c:c}
+\hat{p}_r^1,\quad \hat{p}_r^2,\quad \dots,\quad \hat{p}_r^m &
+\hat{d}_r^1,\quad \hat{d}_r^2,\quad \dots,\quad \hat{d}_r^m
+\end{array} \right\}
+\f}
+
+- Pseudorange estimates
+  \fl{equation,eq-SppBasics-measurementModel-innovation-estimates-pseudorange}
+  \hat{p}_r^s = \hat{\rho}_r^s + c [d\hat{t}_r - d\hat{t}^s + d\hat{t}_{ISB}] + \hat{I}_r^s + \hat{T}_r^s + \delta\hat{\rho}_r^s 
+  \f}
+  where
+  - \f$ \hat{\rho}_r^s \f$ Receiver-satellite range [m]
+  - \f$ d\hat{t}_r \f$ Receiver clock error [s]
+  - \f$ d\hat{t}^s \f$ Satellite clock error [s]
+  - \f$ d\hat{t}_{ISB} \f$ Inter-system bias clock error [s]
+  - \f$ \hat{I}_r^s \f$ Ionospheric delay [m]
+  - \f$ \hat{T}_r^s \f$ Tropospheric delay [m]
+  - \f$ \delta\hat{\rho}_r^s \f$ Sagnac correction [m]
+
+  TODO: citation
+
+- Pseudorange-rate estimates
+  \fl{equation,eq-SppBasics-measurementModel-innovation-estimates-pseudorange}
+  \hat{d}_r^s = {\mathbf{u}_{as}^e}^T [\mathbf{\hat{v}}^e_s - \mathbf{\hat{v}}^e_r] + c [d\hat{\dot{t}}_r - d\hat{\dot{t}}^s + d\hat{\dot{t}}_{ISB}] - \delta\hat{\dot{\rho}}_r^s
+  \f}
+  where
+  - \f$ \mathbf{u}_{rs}^e \f$ Line-of-Sight vector
+  - \f$ \mathbf{\hat{v}}^e_s \f$ Satellite velocity [m/s]
+  - \f$ \mathbf{\hat{v}}^e_r \f$ Receiver velocity [m/s]
+  - \f$ d\hat{\dot{t}}_r \f$ Receiver clock drift [s/s]
+  - \f$ d\hat{\dot{t}}^s \f$ Satellite clock drift [s/s]
+  - \f$ d\hat{\dot{t}}_{ISB} \f$ Inter-system bias clock drift [s/s]
+  - \f$ \delta\hat{\dot{\rho}}_r^s \f$ Range-rate Sagnac correction [m/s]
+
+  (\cite \Groves2013 Groves, ch. 9.4.1, eq. 9.142, p. 412 (Sagnac correction different sign))
+  
+
+\subsubsection SppBasics-measurementModel-innovation-estimates Measurement estimates
+
+<b> Receiver-satellite range </b>
+\fl{equation,eq-SppBasics-measurementModel-innovation-estimates-rho}
+\hat{\rho}_r^s = \mid(\mathbf{x}^s\left(t_{\mathrm{E}}\right) - \mathbf{x}_r\left(t_{\mathrm{A}}\right))\mid  
+\f}
+
+<b> Ionospheric delay </b> <br>
+See \ref Ionosphere-Model-Klobuchar
+
+<b> Tropospheric delay </b> <br>
+See \ref Troposphere-Model-Saastamoinen
+
+<b> Sagnac correction </b>
+\fl{equation,eq-SppBasics-measurementModel-innovation-estimates-sagnac}
+\delta\hat{\rho}_r^s = \frac{1}{c}\left(\boldsymbol{x}_{r}\left(t_{\mathrm{A}}\right)-\boldsymbol{x}^{s}\left(t_{\mathrm{E}}\right)\right) \cdot \left(\boldsymbol{\omega}_{ie} \times \boldsymbol{x}_{r}\left(t_{\mathrm{A}}\right)\right) 
+\f}
+(\cite \SpringerHandbookGNSS2017 Springer Handbook, ch. 19.1.1, eq. 19.7, p. 562)
+
+<b> Range-rate Sagnac correction </b>
+\fl{equation,eq-SppBasics-measurementModel-innovation-estimates-sagnac-rate}
+\delta\hat{\dot{\rho}}_r^s = \frac{\boldsymbol{\omega}_{ie}}{c}\left(v_y^s \cdot x_r + y^s \cdot v_{x,r} - v_x^s \cdot y_r - x^s \cdot v_{y,r}\right) 
+\f}
+(\cite \Groves2013 Groves, ch. 8.5.3, eq. 8.46, p. 342)
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection SppBasics-measurementModel-sensitivityMatrix Design matrix / Measurement sensitivity matrix
+
+\fl{equation,eq-SppBasics-measurementModel-sensitivityMatrix-general}
+\mathbf{H}_k = \left.\frac{\delta\mathbf{h}(\mathbf{x}, t_k)}{\delta\mathbf{x}}\right|_{x=\hat{x}_k^-}
+\f}
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection SppBasics-measurementModel-measurementError Measurement error models
+
+See \ref GNSS-MeasErrorModel
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+*/
+
+
+}

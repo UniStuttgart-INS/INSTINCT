@@ -10,6 +10,86 @@
 /// @brief Errors concerning GNSS observations
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2023-06-09
+/// #### Model descriptions
+/// @anchor GNSS-MeasErrorModel
+///
+/// <b> rtklib </b>
+/// \fl{equation,eq-MeasErrorModel-rtklib}
+/// \begin{array}{rl}
+/// \sigma_{pj}^2 &= \sigma_{pseudo}^2 + \sigma_{eph}^2  + \sigma_{ion}^2  + \sigma_{trop}^2  + \sigma_{bias}^2 \\
+/// \sigma_{rj}^2 &= \sigma_{doppler}^2 + \sigma_{eph}^2 \\
+/// \end{array}
+/// \f}
+/// - \f$ \sigma_{pseudo} \f$ pseudorange measurement error variance
+///   \f$ \sigma_{pseudo}^2 = {F^{s}}^2 R_r^2 \left( a_{\sigma}^2 + \frac{b_{\sigma}^2}{\sin(el^s_r)} \right) \f$
+///     - \f$ F^s \f$ satellite system error factor (1.5 for GLONASS, 1 for GPS / GALILEO / QZSS / BeiDou, 3.0 for SBAS)
+///     - \f$ R_r \f$ code/carrier-phase error ratio (default 300)
+///     - \f$ a_{\sigma} \f$, \f$ b_{\sigma} \f$ carrier‐phase error factor a and b (default both 0.003) in [m]
+/// - \f$ \sigma_{\text{eph}} \f$ standard deviation of ephemeris and clock error in [m]
+/// - \f$ \sigma_{\text{ion}} \f$ standard deviation of ionosphere correction model error in [m]
+///
+///   \f$ \sigma^2_{\text{ion}} = \frac{f_{L1}^2}{f^2} (I \cdot err_{\text{BRDCI}})^2 \f$
+///     where \f$ err_{\text{BRDCI}} \f$ is the broadcast iono model error factor (0.5)
+///
+///     - \f$ \sigma_{\text{trop}} \f$ standard deviation of troposphere correction model error in [m]
+///
+///     \f$ \sigma^2_{\text{trop}} = \left(\frac{err_{\text{SAAS}}}{\sin(el) + 0.1}\right)^2 \f$
+///     where \f$ err_{\text{SAAS}} \f$ is the saastamoinen model error (0.3) in [m]
+///
+/// - \f$ \sigma_{\text{bias}} \f$ standard deviation of code bias error in [m]
+///
+///   \f$ \sigma^2_{\text{bias}} = err_{\text{CBIAS}}^2 \f$
+///     where \f$ err_{\text{CBIAS}} \f$ is the code bias error 0.3 m
+///
+/// - \f$ \sigma_{Doppler} \f$
+///   \f$ \sigma_{Doppler}^2 = err_{f_\text{Doppler}}^2 \f$
+///     where \f$ err_{f_\text{doppler}} \f$ is the Doppler Frequency error factor in [Hz] (1.0)
+///
+/// A weight matrix for Least squares estimation or a measurement noise covariance matrix for Kalman Filtering would contain
+///
+/// \fl{equation,eq-MeasErrorModel-rtklib-W}
+/// \mathbf{W} = \mathbf{R} = \left[\begin{array}{cccc:cccc}
+/// 1/\sigma_{p 1}^2 & 0 & \dots & 0 & 0 & 0 & \dots & 0 \\
+/// 0 & 1/\sigma_{p 2}^2 & 0 & \dots & 0 & 0 & \dots & \dots \\
+/// \vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \ddots & \vdots \\
+/// 0 & 0 & \dots & 1/\sigma_{p m}^2 & 0 & 0 & \dots & 0 \\ 
+/// \hdashline
+/// 0 & 0 & \dots & 0                 & 1/\sigma_{d 1}^2 & 0 & \dots & 0 \\
+/// 0 & 0 & \dots & \dots             & 0 & 1/\sigma_{d 2}^2 & 0 & \dots \\
+/// \vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \ddots & \vdots \\
+/// 0 & 0 & \dots & 0                 & 0 & 0 & \dots & 1/\sigma_{d m}^2 \\
+/// \end{array}\right]
+/// \f}
+/// (\cite \RTKLIB rtklib, eq. E6.23, p. 158)
+///
+/// <b> Groves </b>
+/// \fl{equation,eq-MeasErrorModel-groves}
+/// \begin{array}{rl}
+/// \sigma_{pj}^2 &= \dfrac{1}{\sin^2({\varepsilon})} \left( \sigma_{pZ}^2 + \dfrac{\sigma_{pc}^2}{(c/n_0)_j} + \sigma_{pa}^2 \ddot{r}_{aj}^2 \right)\\
+/// \sigma_{rj}^2 &= \dfrac{1}{\sin^2({\varepsilon})} \left( \sigma_{rZ}^2 + \dfrac{\sigma_{rc}^2}{(c/n_0)_j} + \sigma_{ra}^2 \ddot{r}_{aj}^2 \right)\\
+/// \end{array}
+/// \f}
+/// - \f$ \varepsilon \f$ Satellite elevation in [rad]
+/// - \f$ c/n_0 \f$ Carrier power to noise density
+/// - coefficients \f$ \sigma_{pZ} \f$, \f$ \sigma_{pc} \f$, \f$ \sigma_{pa} \f$, \f$ \sigma_{rZ} \f$, \f$ \sigma_{rc} \f$ and \f$ \sigma_{ra} \f$ should be determined empirically
+/// - \f$ \ddot{r}_{aj} \f$ Range acceleration [groves2013, Appendix G.4.1] (neglected)
+///
+/// A weight matrix for Least squares estimation or a measurement noise covariance matrix for Kalman Filtering would contain
+///
+/// \fl{equation,eq-MeasErrorModel-groves-W}
+/// \mathbf{W} = \mathbf{R} = \left[\begin{array}{cccc:cccc}
+/// \sigma_{p 1}^2 & 0 & \dots & 0 & 0 & 0 & \dots & 0 \\
+/// 0 & \sigma_{p 2}^2 & 0 & \dots & 0 & 0 & \dots & \dots \\
+/// \vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \ddots & \vdots \\
+/// 0 & 0 & \dots & \sigma_{p m}^2 & 0 & 0 & \dots & 0 \\ 
+/// \hdashline
+/// 0 & 0 & \dots & 0                 & \sigma_{d 1}^2 & 0 & \dots & 0 \\
+/// 0 & 0 & \dots & \dots             & 0 & \sigma_{d 2}^2 & 0 & \dots \\
+/// \vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \ddots & \vdots \\
+/// 0 & 0 & \dots & 0                 & 0 & 0 & \dots & \sigma_{d m}^2 \\
+/// \end{array}\right]
+/// \f}
+/// (\cite \Groves2013 Groves, ch. 9.4.2.2, eq. 9.168, p. 422)
 
 #pragma once
 
