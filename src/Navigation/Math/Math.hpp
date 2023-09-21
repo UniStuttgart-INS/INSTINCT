@@ -9,7 +9,8 @@
 /// @file Math.hpp
 /// @brief Simple Math functions
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2020-09-23
+/// @author N. Stahl (HiWi: Elliptical integral)
+/// @date 2023-07-04
 
 #pragma once
 
@@ -87,5 +88,12 @@ int sgn(const T& val)
 {
     return (T(0) < val) - (val < T(0));
 }
+
+/// @brief Calculates the incomplete elliptical integral of the second kind
+/// @param[in] phi Interval bound the integration uses from 0 to phi
+/// @param[in] m Function parameter that is integrated 1-m*sin(t)^2
+/// @return Incomplete elliptical integral of the second kind
+/// @note See http://www2.iap.fr/users/pichon/doc/html_xref/elliptic-es.html
+double calcEllipticalIntegral(double phi, double m);
 
 } // namespace NAV::math

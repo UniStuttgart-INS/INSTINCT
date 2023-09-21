@@ -66,6 +66,9 @@ class CubicSpline
     /// @param[in] y List of y coordinates of the points
     void setPoints(const std::vector<double>& x, const std::vector<double>& y);
 
+    /// @brief Returns the size of the spline vector
+    [[nodiscard]] size_t size() const noexcept;
+
     /// @brief Interpolates or extrapolates a value on the spline
     /// @param[in] x X coordinate to inter-/extrapolate the value for
     /// @return The y coordinate
