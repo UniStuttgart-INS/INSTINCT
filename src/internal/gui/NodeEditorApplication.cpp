@@ -254,6 +254,30 @@ void NAV::gui::NodeEditorApplication::OnStart()
     {
         m_InsLogo.at(1) = LoadTexture("resources/images/INS_logo_rectangular_black_small.png");
     }
+
+    if (fs.is_file("resources/images/Rose-rhodonea-curve-7x9-chart-improved.jpg"))
+    {
+        auto fd = fs.open("resources/images/Rose-rhodonea-curve-7x9-chart-improved.jpg");
+
+        LOG_DEBUG("Generating Texture for Rose figure ({} byte)", fd.size());
+
+        auto is = cmrc::memstream(const_cast<char*>(fd.begin()), // NOLINT(cppcoreguidelines-pro-type-const-cast)
+                                  const_cast<char*>(fd.end()));  // NOLINT(cppcoreguidelines-pro-type-const-cast)
+
+        std::vector<char> buffer;
+        buffer.resize(fd.size(), '\0');
+
+        is.read(buffer.data(),
+                static_cast<std::streamsize>(buffer.size()));
+
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
+        m_RoseFigure = LoadTexture(reinterpret_cast<const void*>(const_cast<const char*>(buffer.data())),
+                                   static_cast<int>(fd.size()));
+    }
+    else
+    {
+        m_RoseFigure = LoadTexture("resources/images/Rose-rhodonea-curve-7x9-chart-improved.jpg");
+    }
 }
 
 void NAV::gui::NodeEditorApplication::OnStop()
@@ -277,6 +301,7 @@ void NAV::gui::NodeEditorApplication::OnStop()
     releaseTexture(m_InstinctLogo.at(0));
     releaseTexture(m_InstinctLogo.at(1));
     releaseTexture(m_HeaderBackground);
+    releaseTexture(m_RoseFigure);
 
     if (m_Editor)
     {

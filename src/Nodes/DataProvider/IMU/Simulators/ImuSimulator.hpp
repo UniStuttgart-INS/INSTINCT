@@ -9,7 +9,8 @@
 /// @file ImuSimulator.hpp
 /// @brief Imu Observation Simulator
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2020-03-16
+/// @author N. Stahl (Hiwi: Rose figure trajectory type)
+/// @date 2023-07-18
 
 #pragma once
 
@@ -127,11 +128,12 @@ class ImuSimulator : public Imu
     /// Types of Trajectories available for simulation
     enum class TrajectoryType
     {
-        Fixed,    ///< Static position without movement
-        Linear,   ///< Linear movement with constant velocity
-        Circular, ///< Circular path
-        Csv,      ///< Get the input from the CsvData pin
-        COUNT,    ///< Amount of items in the enum
+        Fixed,      ///< Static position without movement
+        Linear,     ///< Linear movement with constant velocity
+        Circular,   ///< Circular path
+        Csv,        ///< Get the input from the CsvData pin
+        RoseFigure, ///< Movement along a mathmatical rose figure
+        COUNT,      ///< Amount of items in the enum
     };
     /// @brief Converts the enum to a string
     /// @param[in] value Enum value to convert into text
@@ -153,18 +155,6 @@ class ImuSimulator : public Imu
     /// Start Velocity of the vehicle in local-navigation frame cooridnates in [m/s]
     Eigen::Vector3d _n_linearTrajectoryStartVelocity = Eigen::Vector3d{ 1, 0, 0 };
 
-    /// Horizontal speed of the vehicle in the tangential plane in [m/s]
-    double _circularTrajectoryHorizontalSpeed = 10.0;
-
-    /// Vertical speed of the vehicle in the tangential plane in [m/s]
-    double _circularTrajectoryVerticalSpeed = 0.0;
-
-    /// In the GUI selected radius of the circular trajectory
-    double _circularTrajectoryRadius = 50.0;
-
-    /// In the GUI selected origin angle of the circular trajectory in [rad]
-    double _circularTrajectoryOriginAngle = 0.0;
-
     /// Harmonic Oscillation Frequency on the circular trajectory [cycles/revolution]
     int _circularHarmonicFrequency = 0;
 
@@ -183,16 +173,40 @@ class ImuSimulator : public Imu
     /// @return String representation of the enum
     static const char* to_string(Direction value);
 
-    /// In the GUI selected direction of the circular trajectory
-    Direction _circularTrajectoryDirection = Direction::CCW;
+    /// In the GUI selected direction of the circular trajectory (used by circular and rose figure)
+    Direction _trajectoryDirection = Direction::CCW;
+
+    /// In the GUI selected origin angle of the circular trajectory in [rad]
+    double _trajectoryRotationAngle = 0.0;
+
+    /// Horizontal speed of the vehicle in the tangential plane in [m/s] (used by circular and rose figure)
+    double _trajectoryHorizontalSpeed = 10.0;
+
+    /// Vertical speed of the vehicle in the tangential plane in [m/s] (used by circular and rose figure)
+    double _trajectoryVerticalSpeed = 0.0;
+
+    /// In the GUI selected radius of the circular trajectory (used by circular and rose figure)
+    double _trajectoryRadius = 50.0;
+
+    /// In the GUI selected numerator of petals (2*k for even k, k for uneven k) of the rose figure
+    int _rosePetNum = 2;
+
+    /// In the GUI selected denominator of petals (2*k for even k, k for uneven k) of the rose figure
+    int _rosePetDenom = 1;
+
+    /// Maxmimum step length for the spline points for the rose figure [m]. Points will be spaced between [L/3 L]
+    double _roseStepLengthMax = 0.1;
+
+    /// Simulation duration needed for the rose figure
+    double _roseSimDuration = 0.0;
 
     // ###########################################################################################################
 
     /// Possible stop conditions for the simulation
     enum StopCondition
     {
-        Duration,          ///< Time Duration
-        DistanceOrCircles, ///< Distance for Linear trajectory / Circle count for Circular trajectory
+        Duration,                 ///< Time Duration
+        DistanceOrCirclesOrRoses, ///< Distance for Linear trajectory / Circle count for Circular / Count for rose figure trajectory
     };
 
     /// Condition which has to be met to stop the simulation
@@ -210,6 +224,8 @@ class ImuSimulator : public Imu
     /// Amount of circles to simulate before stopping
     double _circularTrajectoryCircleCountForStop = 1.0;
 
+    /// Amount of rose figures to simulate before stopping
+    double _roseTrajectoryCountForStop = 1.0;
     // ###########################################################################################################
 
     /// Gravitation model selected in the GUI
