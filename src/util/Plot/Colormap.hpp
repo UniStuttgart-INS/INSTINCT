@@ -17,6 +17,7 @@
 #include <imgui_internal.h>
 #include <string>
 #include <vector>
+#include "util/Json.hpp"
 
 namespace NAV
 {
@@ -25,12 +26,22 @@ class Colormap;
 
 /// @brief Display a colormap button
 /// @param[in] label Label to display on the button (unique id for ImGui)
-/// @param[in] cmap Colormap to show on the button
+/// @param[in, out] cmap Colormap to show on the button and edit in the popup
 /// @param[in] size_arg Size of the button
 /// @return True if clicked
 /// @note Code from Implot library
-bool ColormapButton(const char* label, const Colormap& cmap, const ImVec2& size_arg);
+bool ColormapButton(const char* label, Colormap& cmap, const ImVec2& size_arg);
 
+/// @brief Converts the provided object into a json object
+/// @param[out] j Return Json object
+/// @param[in] cmap Colormap to convert
+void to_json(json& j, const Colormap& cmap);
+/// @brief Converts the provided json object into a struct
+/// @param[in] j Json object with the vector values
+/// @param[out] cmap Struct to return
+void from_json(const json& j, Colormap& cmap);
+
+/// @brief Colormap class
 class Colormap
 {
   public:
@@ -49,12 +60,14 @@ class Colormap
     /// @brief Return the map
     [[nodiscard]] const std::vector<std::pair<double, ImColor>>& getColormap() const;
 
-    std::string name;      ///< Name of the Colormap
-    bool discrete = false; ///< Whether to have discrete changes of the colors or continuous
+    std::string name = "Colormap"; ///< Name of the Colormap
+    bool discrete = false;         ///< Whether to have discrete changes of the colors or continuous
 
   private:
-    int64_t id;                                       ///< Unique id of the colormap
-    std::vector<std::pair<double, ImColor>> colormap; ///< Sorted list of value/color combinations (value is active if lookup is greater or equal)
+    /// Unique id of the colormap
+    int64_t id;
+    /// Sorted list of value/color combinations (value is active if lookup is greater or equal)
+    std::vector<std::pair<double, ImColor>> colormap = { { 0.0, ImColor(1.0F, 1.0F, 1.0F, 1.0F) } };
 
     /// @brief Renders the colormap
     /// @note Code from Implot library
@@ -65,10 +78,27 @@ class Colormap
     /// @note Code from Implot library
     void render(const ImRect& bounds) const;
 
-    friend bool NAV::ColormapButton(const char* label, const Colormap& cmap, const ImVec2& size_arg);
+    /// @brief Display a colormap button
+    /// @param[in] label Label to display on the button (unique id for ImGui)
+    /// @param[in, out] cmap Colormap to show on the button and edit in the popup
+    /// @param[in] size_arg Size of the button
+    /// @return True if clicked
+    /// @note Code from Implot library
+    friend bool NAV::ColormapButton(const char* label, Colormap& cmap, const ImVec2& size_arg);
+
+    /// @brief Converts the provided object into a json object
+    /// @param[out] j Return Json object
+    /// @param[in] cmap Colormap to convert
+    friend void to_json(json& j, const Colormap& cmap);
+    /// @brief Converts the provided json object into a struct
+    /// @param[in] j Json object with the vector values
+    /// @param[out] cmap Struct to return
+    friend void from_json(const json& j, Colormap& cmap);
 };
 
 /// Global colormaps
-extern std::vector<Colormap> GlobalColormaps;
+extern std::vector<Colormap> ColormapsGlobal;
+/// Flow colormaps
+extern std::vector<Colormap> ColormapsFlow;
 
 } // namespace NAV

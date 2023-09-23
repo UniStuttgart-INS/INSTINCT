@@ -86,4 +86,10 @@ bool HasKey(const std::string& key);
 /// Returns all keys in the configuration, as a vector.
 std::vector<std::string> GetKeys();
 
+/// @brief Saves the global settings
+void SaveGlobalSettings();
+
+/// @brief Loads the global settings
+void LoadGlobalSettings();
+
 } // namespace NAV::ConfigManager

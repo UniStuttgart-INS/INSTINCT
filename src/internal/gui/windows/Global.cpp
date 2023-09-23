@@ -51,6 +51,6 @@ void NAV::gui::windows::renderGlobalWindows(std::vector<ImVec4>& colors, const s
     }
     if (showColormapEditor)
     {
-        gui::windows::ShowColormapEditor(&showColormapEditor, GlobalColormaps);
+        gui::windows::ShowColormapEditor(&showColormapEditor);
     }
 }

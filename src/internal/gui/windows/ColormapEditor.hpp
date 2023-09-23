@@ -13,17 +13,11 @@
 
 #pragma once
 
-#include <vector>
-
-#include "util/Plot/Colormap.hpp"
-
 namespace NAV::gui::windows
 {
 
 /// @brief Shows a window for editing the user defined value colormaps
 /// @param[in, out] show Flag which indicates whether the window is shown
-/// @param[in, out] colormaps Colormaps to edit
-/// @param[in] id Unique id (e.g. node id) to make the GUI unique
-void ShowColormapEditor(bool* show, std::vector<Colormap>& colormaps, size_t id = 0);
+void ShowColormapEditor(bool* show);
 
 } // namespace NAV::gui::windows

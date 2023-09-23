@@ -25,6 +25,7 @@ namespace ed = ax::NodeEditor;
 #include "internal/FlowExecutor.hpp"
 
 #include "internal/gui/windows/ImPlotStyleEditor.hpp"
+#include "util/Plot/Colormap.hpp"
 
 #include <fstream>
 #include <set>
@@ -90,6 +91,8 @@ void NAV::flow::SaveFlowAs(const std::string& filepath)
         j["implot"]["style"] = ImPlot::GetStyle();
         j["implot"]["prefereFlowOverGlobal"] = gui::windows::prefereFlowOverGlobal;
     }
+
+    j["colormaps"] = ColormapsFlow;
 
     filestream << std::setw(4) << j << std::endl;
 
@@ -207,6 +210,15 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
                 }
             }
         }
+    }
+    else
+    {
+        gui::windows::saveConfigInFlow = false;
+    }
+
+    if (j.contains("colormaps"))
+    {
+        j.at("colormaps").get_to(ColormapsFlow);
     }
 
     if (j.contains("nodes"))

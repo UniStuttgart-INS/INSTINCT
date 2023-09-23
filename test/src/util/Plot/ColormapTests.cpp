@@ -42,17 +42,23 @@ TEST_CASE("[Colormap] Add/Remove colors", "[Colormap]")
     auto logger = initializeTestLogger();
 
     Colormap cm;
+    REQUIRE(cm.getColormap().size() == 1);
 
     cm.addColor(1.0, ImVec4(1.0, 1.0, 1.0, 1.0));
     cm.addColor(3.0, ImVec4(3.0, 1.0, 1.0, 1.0));
     cm.addColor(2.0, ImVec4(2.0, 1.0, 1.0, 1.0));
 
+    REQUIRE(cm.getColormap().size() == 4);
+    REQUIRE(cm.getColormap().at(1) == std::make_pair(1.0, ImColor(1.0F, 1.0F, 1.0F, 1.0F)));
+    REQUIRE(cm.getColormap().at(2) == std::make_pair(2.0, ImColor(2.0F, 1.0F, 1.0F, 1.0F)));
+    REQUIRE(cm.getColormap().at(3) == std::make_pair(3.0, ImColor(3.0F, 1.0F, 1.0F, 1.0F)));
+
+    cm.removeColor(2);
     REQUIRE(cm.getColormap().size() == 3);
-    REQUIRE(cm.getColormap().at(0) == std::make_pair(1.0, ImColor(1.0F, 1.0F, 1.0F, 1.0F)));
-    REQUIRE(cm.getColormap().at(1) == std::make_pair(2.0, ImColor(2.0F, 1.0F, 1.0F, 1.0F)));
+    REQUIRE(cm.getColormap().at(1) == std::make_pair(1.0, ImColor(1.0F, 1.0F, 1.0F, 1.0F)));
     REQUIRE(cm.getColormap().at(2) == std::make_pair(3.0, ImColor(3.0F, 1.0F, 1.0F, 1.0F)));
 
-    cm.removeColor(1);
+    cm.removeColor(0);
     REQUIRE(cm.getColormap().size() == 2);
     REQUIRE(cm.getColormap().at(0) == std::make_pair(1.0, ImColor(1.0F, 1.0F, 1.0F, 1.0F)));
     REQUIRE(cm.getColormap().at(1) == std::make_pair(3.0, ImColor(3.0F, 1.0F, 1.0F, 1.0F)));
@@ -62,11 +68,13 @@ TEST_CASE("[Colormap] Add/Remove colors", "[Colormap]")
     REQUIRE(cm.getColormap().at(0) == std::make_pair(1.0, ImColor(1.0F, 1.0F, 1.0F, 1.0F)));
     REQUIRE(cm.getColormap().at(1) == std::make_pair(3.0, ImColor(3.0F, 1.0F, 1.0F, 1.0F)));
 
-    cm.removeColor(0);
-    cm.removeColor(0);
-    REQUIRE(cm.getColormap().empty());
+    cm.removeColor(1);
+    REQUIRE(cm.getColormap().size() == 1);
+    REQUIRE(cm.getColormap().at(0) == std::make_pair(1.0, ImColor(1.0F, 1.0F, 1.0F, 1.0F)));
 
-    cm.removeColor(0);
+    cm.removeColor(0); // NoOp (as one has to always stay)
+    REQUIRE(cm.getColormap().size() == 1);
+    REQUIRE(cm.getColormap().at(0) == std::make_pair(1.0, ImColor(1.0F, 1.0F, 1.0F, 1.0F)));
 }
 
 } // namespace NAV::TESTS

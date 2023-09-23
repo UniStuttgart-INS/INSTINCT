@@ -133,6 +133,8 @@ void NAV::gui::NodeEditorApplication::OnStart()
         }
     }
 
+    ConfigManager::LoadGlobalSettings();
+
     auto fs = cmrc::instinct::get_filesystem();
 
     if (fs.is_file("resources/images/BlueprintBackground.png"))
@@ -285,6 +287,8 @@ void NAV::gui::NodeEditorApplication::OnStop()
     LOG_TRACE("called");
 
     FlowExecutor::stop();
+
+    ConfigManager::SaveGlobalSettings();
 
     nm::DeleteAllNodes();
 

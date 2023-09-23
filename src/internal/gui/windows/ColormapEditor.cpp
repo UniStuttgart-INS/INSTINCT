@@ -11,12 +11,17 @@
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2023-09-22
 
+#include "ColormapEditor.hpp"
+
 #include <imgui.h>
 #include <imgui_stdlib.h>
 #include <fmt/format.h>
-#include "ColormapEditor.hpp"
+#include <vector>
 
-void NAV::gui::windows::ShowColormapEditor(bool* show, std::vector<Colormap>& colormaps, size_t id)
+#include "util/Plot/Colormap.hpp"
+#include "internal/FlowManager.hpp"
+
+void NAV::gui::windows::ShowColormapEditor(bool* show)
 {
     if (!ImGui::Begin("Colormap Editor", show))
     {
@@ -24,48 +29,76 @@ void NAV::gui::windows::ShowColormapEditor(bool* show, std::vector<Colormap>& co
         return;
     }
 
-    int colormapRemovalIdx = -1;
+    auto showColormaps = [](std::vector<Colormap>& colormaps, bool flow) {
+        int colormapRemovalIdx = -1;
 
-    if (ImGui::BeginTable(fmt::format("##{} colormap table", id).c_str(), 4, ImGuiTableFlags_SizingFixedFit, ImVec2(0.0F, 0.0F)))
-    {
-        ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed, 150.0F);
-        ImGui::TableSetupColumn("Discrete", ImGuiTableColumnFlags_WidthFixed, 25.0F);
-        ImGui::TableSetupColumn("Map", ImGuiTableColumnFlags_WidthStretch);
-        ImGui::TableSetupColumn("Delete", ImGuiTableColumnFlags_WidthFixed, 20.0F);
-
-        for (size_t i = 0; i < colormaps.size(); i++)
+        if (ImGui::BeginTable("##{} colormap table", 4, ImGuiTableFlags_SizingFixedFit, ImVec2(0.0F, 0.0F)))
         {
-            auto& cm = colormaps.at(i);
+            ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed, 150.0F);
+            ImGui::TableSetupColumn("Discrete", ImGuiTableColumnFlags_WidthFixed, 25.0F);
+            ImGui::TableSetupColumn("Map", ImGuiTableColumnFlags_WidthStretch);
+            ImGui::TableSetupColumn("Delete", ImGuiTableColumnFlags_WidthFixed, 20.0F);
 
-            ImGui::TableNextColumn();
-            ImGui::SetNextItemWidth(152.0F);
-            ImGui::InputText(fmt::format("##{} colormap name {}", id, i).c_str(), &cm.name);
+            for (size_t i = 0; i < colormaps.size(); i++)
+            {
+                auto& cm = colormaps.at(i);
 
-            ImGui::TableNextColumn();
-            ImGui::SetNextItemWidth(145.0F);
-            ImGui::Checkbox(fmt::format("##{} colormap discrete {}", id, i).c_str(), &cm.discrete);
-            if (ImGui::IsItemHovered()) { ImGui::SetTooltip("Discrete?"); }
+                ImGui::TableNextColumn();
+                ImGui::SetNextItemWidth(152.0F);
+                if (ImGui::InputText(fmt::format("##colormap name {}", i).c_str(), &cm.name) && flow)
+                {
+                    flow::ApplyChanges();
+                }
 
-            ImGui::TableNextColumn();
-            ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-            ColormapButton(fmt::format("##{} colormap button {}", id, i).c_str(), cm, ImVec2(-1.0F, 0.0F));
+                ImGui::TableNextColumn();
+                ImGui::SetNextItemWidth(145.0F);
+                if (ImGui::Checkbox(fmt::format("##colormap discrete {}", i).c_str(), &cm.discrete) && flow)
+                {
+                    flow::ApplyChanges();
+                }
+                if (ImGui::IsItemHovered()) { ImGui::SetTooltip("Discrete?"); }
 
-            ImGui::TableNextColumn();
-            if (ImGui::Button(fmt::format("X##{} remove colormap {}", id, i).c_str())) { colormapRemovalIdx = static_cast<int>(i); }
-            if (ImGui::IsItemHovered()) { ImGui::SetTooltip("Remove?"); }
+                ImGui::TableNextColumn();
+                ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+                if (ColormapButton(fmt::format("##colormap button {}", i).c_str(), cm, ImVec2(-1.0F, 0.0F)) && flow)
+                {
+                    flow::ApplyChanges();
+                }
+
+                ImGui::TableNextColumn();
+                if (ImGui::Button(fmt::format("X##remove colormap {}", i).c_str())) { colormapRemovalIdx = static_cast<int>(i); }
+                if (ImGui::IsItemHovered()) { ImGui::SetTooltip("Remove?"); }
+            }
+
+            ImGui::EndTable();
         }
 
-        ImGui::EndTable();
-    }
+        if (colormapRemovalIdx >= 0)
+        {
+            colormaps.erase(colormaps.begin() + static_cast<std::ptrdiff_t>(colormapRemovalIdx));
+            if (flow) { flow::ApplyChanges(); }
+        }
 
-    if (colormapRemovalIdx >= 0)
-    {
-        colormaps.erase(colormaps.begin() + static_cast<std::ptrdiff_t>(colormapRemovalIdx));
-    }
+        if (ImGui::Button("Add##colormap"))
+        {
+            colormaps.emplace_back();
+            if (flow) { flow::ApplyChanges(); }
+        }
+    };
 
-    if (ImGui::Button(fmt::format("Add##{} add colormap", id).c_str()))
+    if (ImGui::BeginTabBar("Colormap TabBar"))
     {
-        colormaps.emplace_back();
+        if (ImGui::BeginTabItem("Global"))
+        {
+            showColormaps(ColormapsGlobal, false);
+            ImGui::EndTabItem();
+        }
+        if (ImGui::BeginTabItem("Flow"))
+        {
+            showColormaps(ColormapsFlow, true);
+            ImGui::EndTabItem();
+        }
+        ImGui::EndTabBar();
     }
 
     ImGui::End();
