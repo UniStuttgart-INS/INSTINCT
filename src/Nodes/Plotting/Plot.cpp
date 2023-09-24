@@ -16,6 +16,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/ConfigManager.hpp"
 
 #include "internal/gui/NodeEditorApplication.hpp"
+#include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/widgets/Splitter.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "util/Json.hpp"
@@ -119,6 +120,7 @@ void to_json(json& j, const Plot::PlotInfo::PlotItem::Style& style)
         { "stride", style.stride },
         { "lineType", style.lineType },
         { "color", style.color },
+        { "colormapMask", style.colormapMask },
         { "thickness", style.thickness },
         { "markers", style.markers },
         { "markerStyle", style.markerStyle },
@@ -148,6 +150,10 @@ void from_json(const json& j, Plot::PlotInfo::PlotItem::Style& style)
     if (j.contains("color"))
     {
         j.at("color").get_to(style.color);
+    }
+    if (j.contains("colormapMask"))
+    {
+        j.at("colormapMask").get_to(style.colormapMask);
     }
     if (j.contains("thickness"))
     {
@@ -1055,6 +1061,33 @@ void NAV::Plot::guiConfig()
                     {
                         ImPlot::SetAxis(plotItem.axis);
 
+                        if (plotItem.style.colormapMask.first != ColormapMaskType::None)
+                        {
+                            if (const auto& cmap = ColormapSearch(plotItem.style.colormapMask.first, plotItem.style.colormapMask.second))
+                            {
+                                if (plotItem.colormapMaskVersion != cmap->get().version) { plotItem.colormapMaskColors.clear(); }
+                                if (plotItem.colormapMaskColors.size() != plotData.buffer.size())
+                                {
+                                    plotItem.colormapMaskVersion = cmap->get().version;
+
+                                    auto color = plotItem.style.lineType == PlotInfo::PlotItem::Style::LineType::Line
+                                                     ? (ImPlot::IsColorAuto(plotItem.style.color) ? ImPlot::GetColormapColor(static_cast<int>(plotElementIdx)) : plotItem.style.color)
+                                                     : (ImPlot::IsColorAuto(plotItem.style.markerFillColor) ? ImPlot::GetColormapColor(static_cast<int>(plotElementIdx)) : plotItem.style.markerFillColor);
+                                    plotItem.colormapMaskColors.reserve(plotData.buffer.size());
+                                    for (size_t i = plotItem.colormapMaskColors.size(); i < plotData.buffer.size(); i++)
+                                    {
+                                        plotItem.colormapMaskColors.push_back(cmap->get().getColor(plotData.buffer.at(i), color));
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                plotItem.style.colormapMask.first = ColormapMaskType::None;
+                                plotItem.style.colormapMask.second = -1;
+                                plotItem.colormapMaskColors.clear();
+                            }
+                        }
+
                         // Style options
                         if (plotItem.style.legendName.empty())
                         {
@@ -1084,6 +1117,15 @@ void NAV::Plot::guiConfig()
                         // Plot the data
                         if (plotItem.style.lineType == PlotInfo::PlotItem::Style::LineType::Line)
                         {
+                            if (plotItem.style.colormapMask.first != ColormapMaskType::None)
+                            {
+                                ImPlot::SetNextColorsData(ImPlotCol_Line, plotItem.colormapMaskColors.data(), stride * static_cast<int>(sizeof(ImU32)));
+                                if (plotItem.style.markers)
+                                {
+                                    ImPlot::SetNextColorsData(ImPlotCol_MarkerFill, plotItem.colormapMaskColors.data(), stride * static_cast<int>(sizeof(ImU32)));
+                                    ImPlot::SetNextColorsData(ImPlotCol_MarkerOutline, plotItem.colormapMaskColors.data(), stride * static_cast<int>(sizeof(ImU32)));
+                                }
+                            }
                             ImPlot::PlotLine(plotName.c_str(),
                                              pinData.plotData.at(plot.selectedXdata.at(plotItem.pinIndex)).buffer.data(),
                                              plotData.buffer.data(),
@@ -1094,6 +1136,11 @@ void NAV::Plot::guiConfig()
                         }
                         else if (plotItem.style.lineType == PlotInfo::PlotItem::Style::LineType::Scatter)
                         {
+                            if (plotItem.style.colormapMask.first != ColormapMaskType::None && plotItem.colormapMaskColors.isInfiniteBuffer())
+                            {
+                                ImPlot::SetNextColorsData(ImPlotCol_MarkerFill, plotItem.colormapMaskColors.data(), stride * static_cast<int>(sizeof(ImU32)));
+                                ImPlot::SetNextColorsData(ImPlotCol_MarkerOutline, plotItem.colormapMaskColors.data(), stride * static_cast<int>(sizeof(ImU32)));
+                            }
                             ImPlot::PlotScatter(plotName.c_str(),
                                                 pinData.plotData.at(plot.selectedXdata.at(plotItem.pinIndex)).buffer.data(),
                                                 plotData.buffer.data(),
@@ -1159,6 +1206,11 @@ void NAV::Plot::guiConfig()
                                     plotItem.style.color = col;
                                     flow::ApplyChanges();
                                 }
+                                if (ShowColormapSelector(plotItem.style.colormapMask.first, plotItem.style.colormapMask.second))
+                                {
+                                    plotItem.colormapMaskColors.clear();
+                                    flow::ApplyChanges();
+                                }
                                 if (!isColorAuto)
                                 {
                                     ImGui::SameLine();
@@ -1221,6 +1273,14 @@ void NAV::Plot::guiConfig()
                                     {
                                         plotItem.style.markerOutlineColor = IMPLOT_AUTO_COL;
                                     }
+                                }
+                            }
+                            if (plotItem.style.lineType == PlotInfo::PlotItem::Style::LineType::Scatter)
+                            {
+                                if (ShowColormapSelector(plotItem.style.colormapMask.first, plotItem.style.colormapMask.second))
+                                {
+                                    plotItem.colormapMaskColors.clear();
+                                    flow::ApplyChanges();
                                 }
                             }
                             ImPlot::EndLegendPopup();
@@ -1415,6 +1475,13 @@ bool NAV::Plot::initialize()
         if (pinData.dynamicDataStartIndex != -1) // Erase all dynamic data
         {
             pinData.plotData.erase(pinData.plotData.begin() + pinData.dynamicDataStartIndex, pinData.plotData.end());
+        }
+    }
+    for (auto& plot : _plots)
+    {
+        for (auto& plotItem : plot.plotItems)
+        {
+            plotItem.colormapMaskColors.clear();
         }
     }
 

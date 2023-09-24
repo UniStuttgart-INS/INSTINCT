@@ -23,6 +23,7 @@
 
 #include "util/Container/ScrollingBuffer.hpp"
 #include "util/Container/Vector.hpp"
+#include "util/Plot/Colormap.hpp"
 
 #include "NodeData/State/PosVelAtt.hpp"
 #include "NodeData/State/InertialNavSol.hpp"
@@ -259,6 +260,8 @@ class Plot : public Node
                 LineType lineType = LineType::Line;
                 /// Line Color
                 ImVec4 color = IMPLOT_AUTO_COL;
+                /// Colormap mask (pair: type and id)
+                std::pair<ColormapMaskType, int64_t> colormapMask = { ColormapMaskType::None, -1 };
                 /// Line thickness
                 float thickness = 1.0F;
 
@@ -310,6 +313,10 @@ class Plot : public Node
             std::string displayName;  ///< Display name of the data (not changing and unique)
             ImAxis axis{ ImAxis_Y1 }; ///< Axis to plot the data on (Y1, Y2, Y3)
             Style style{};            ///< Defines how the data should be plotted
+            /// Buffer for the colormap mask
+            ScrollingBuffer<ImU32> colormapMaskColors = ScrollingBuffer<ImU32>(0);
+            /// Colormap version (to track updates of the colormap)
+            size_t colormapMaskVersion = 0;
         };
 
         /// @brief Default constructor

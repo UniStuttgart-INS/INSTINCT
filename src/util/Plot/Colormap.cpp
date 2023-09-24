@@ -18,6 +18,7 @@
 
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "util/Logger.hpp"
+#include "util/ImGui.hpp"
 
 namespace NAV
 {
@@ -37,12 +38,41 @@ void Colormap::addColor(double value, ImColor color)
     colormap.insert(std::upper_bound(colormap.begin(), colormap.end(), value,
                                      [](double value, const std::pair<double, ImColor>& item) { return value < item.first; }),
                     std::make_pair(value, color));
+    version++;
 }
 
 void Colormap::removeColor(size_t idx)
 {
     if (idx >= colormap.size() || colormap.size() == 1) { return; }
     colormap.erase(colormap.begin() + static_cast<std::ptrdiff_t>(idx));
+    version++;
+}
+
+ImColor Colormap::getColor(double value, const ImColor& defaultColor) const
+{
+    for (size_t i = colormap.size() - 1; i >= 0; i--)
+    {
+        const auto& item = colormap.at(i);
+        if (value >= item.first)
+        {
+            if (discrete || i == colormap.size() - 1) { return item.second; }
+
+            const auto& other = colormap.at(i + 1);
+
+            double t = (value - item.first) / (other.first - item.first);
+
+            return item.second.Value + static_cast<float>(t) * (other.second.Value - item.second.Value);
+        }
+
+        if (i == 0) { break; }
+    }
+
+    return defaultColor;
+}
+
+int64_t Colormap::getId() const
+{
+    return id;
 }
 
 const std::vector<std::pair<double, ImColor>>& Colormap::getColormap() const
@@ -105,6 +135,8 @@ bool ColormapButton(const char* label, Colormap& cmap, const ImVec2& size_arg)
     ImGui::PopStyleColor(3);
     ImGui::PopStyleVar(1);
 
+    bool changed = false;
+
     if (pressed) { ImGui::OpenPopup(fmt::format("Colormap##{}", label).c_str()); }
     if (ImGui::BeginPopup(fmt::format("Colormap##{}", label).c_str()))
     {
@@ -124,14 +156,22 @@ bool ColormapButton(const char* label, Colormap& cmap, const ImVec2& size_arg)
                 auto& [value, color] = cmap.colormap.at(i);
                 ImGui::TableNextColumn();
                 ImGui::SetNextItemWidth(100.0F);
-                ImGui::InputDoubleL(fmt::format("##{} colormap value {}", label, i).c_str(), &value,
-                                    i != 0 ? cmap.colormap.at(i - 1).first : std::numeric_limits<double>::lowest(),
-                                    i != cmap.colormap.size() - 1 ? cmap.colormap.at(i + 1).first : std::numeric_limits<double>::max(),
-                                    0.0, 0.0, "%.6g", ImGuiInputTextFlags_CharsScientific);
+                if (ImGui::InputDoubleL(fmt::format("##{} colormap value {}", label, i).c_str(), &value,
+                                        i != 0 ? cmap.colormap.at(i - 1).first : std::numeric_limits<double>::lowest(),
+                                        i != cmap.colormap.size() - 1 ? cmap.colormap.at(i + 1).first : std::numeric_limits<double>::max(),
+                                        0.0, 0.0, "%.6g", ImGuiInputTextFlags_CharsScientific))
+                {
+                    cmap.version++;
+                    changed = true;
+                }
 
                 ImGui::TableNextColumn();
                 ImGui::SetNextItemWidth(300.0F);
-                ImGui::ColorEdit4(fmt::format("##{} colormap color {}", label, i).c_str(), &color.Value.x);
+                if (ImGui::ColorEdit4(fmt::format("##{} colormap color {}", label, i).c_str(), &color.Value.x))
+                {
+                    cmap.version++;
+                    changed = true;
+                }
 
                 ImGui::TableNextColumn();
                 if (ImGui::Button(fmt::format("⌃##{} insert colormap above {}", label, i).c_str())) { insertIdx = static_cast<int>(i); }
@@ -151,12 +191,16 @@ bool ColormapButton(const char* label, Colormap& cmap, const ImVec2& size_arg)
             if (colormapRemovalIdx >= 0)
             {
                 cmap.colormap.erase(cmap.colormap.begin() + static_cast<std::ptrdiff_t>(colormapRemovalIdx));
+                cmap.version++;
+                changed = true;
             }
             if (insertIdx >= 0)
             {
                 cmap.colormap.insert(cmap.colormap.begin() + static_cast<std::ptrdiff_t>(insertIdx),
                                      std::make_pair(cmap.colormap.at(static_cast<size_t>(insertIdx != static_cast<int>(cmap.colormap.size()) ? insertIdx : insertIdx - 1)).first,
                                                     ImColor(1.0F, 1.0F, 1.0F, 1.0F)));
+                cmap.version++;
+                changed = true;
             }
 
             ImGui::EndTable();
@@ -165,7 +209,7 @@ bool ColormapButton(const char* label, Colormap& cmap, const ImVec2& size_arg)
         ImGui::EndPopup();
     }
 
-    return pressed;
+    return changed;
 }
 
 void to_json(json& j, const Colormap& cmap)
@@ -196,6 +240,86 @@ void from_json(const json& j, Colormap& cmap)
     {
         j.at("colormap").get_to(cmap.colormap);
     }
+}
+
+bool ShowColormapSelector(ColormapMaskType& type, int64_t& id)
+{
+    bool changes = false;
+
+    auto activeColormap = ColormapSearch(type, id);
+
+    std::string colormapName = activeColormap ? activeColormap->get().name : "";
+    if (ImGui::BeginCombo("Colormap Mask", colormapName.c_str()))
+    {
+        if (ImGui::Selectable("##Empty colormap mask", colormapName.empty(), 0))
+        {
+            if (id != -1 || type != ColormapMaskType::None)
+            {
+                id = -1;
+                type = ColormapMaskType::None;
+                changes = true;
+            }
+        }
+        // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+        if (colormapName.empty()) { ImGui::SetItemDefaultFocus(); }
+
+        for (const auto& cmap : ColormapsGlobal)
+        {
+            const bool is_selected = (cmap.getId() == id);
+            if (ImGui::Selectable(fmt::format("G: {}##Global colormap", cmap.name).c_str(), is_selected, 0))
+            {
+                if (id != cmap.getId() || type != ColormapMaskType::Global)
+                {
+                    id = cmap.getId();
+                    type = ColormapMaskType::Global;
+                    changes = true;
+                }
+            }
+            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+            if (is_selected) { ImGui::SetItemDefaultFocus(); }
+        }
+        for (const auto& cmap : ColormapsFlow)
+        {
+            const bool is_selected = (cmap.getId() == id);
+            if (ImGui::Selectable(fmt::format("F: {}##Flow colormap", cmap.name).c_str(), is_selected, 0))
+            {
+                if (id != cmap.getId() || type != ColormapMaskType::Flow)
+                {
+                    id = cmap.getId();
+                    type = ColormapMaskType::Flow;
+                    changes = true;
+                }
+            }
+            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+            if (is_selected) { ImGui::SetItemDefaultFocus(); }
+        }
+        ImGui::EndCombo();
+    }
+    return changes;
+}
+
+std::optional<std::reference_wrapper<const Colormap>> ColormapSearch(const ColormapMaskType& type, const int64_t& id)
+{
+    switch (type)
+    {
+    case ColormapMaskType::None:
+        break;
+    case ColormapMaskType::Global:
+        if (auto iter = std::find_if(ColormapsGlobal.begin(), ColormapsGlobal.end(), [&id](const Colormap& cmap) { return id == cmap.getId(); });
+            iter != ColormapsGlobal.end())
+        {
+            return std::cref(*iter);
+        }
+        break;
+    case ColormapMaskType::Flow:
+        if (auto iter = std::find_if(ColormapsFlow.begin(), ColormapsFlow.end(), [&id](const Colormap& cmap) { return id == cmap.getId(); });
+            iter != ColormapsFlow.end())
+        {
+            return std::cref(*iter);
+        }
+        break;
+    }
+    return {};
 }
 
 } // namespace NAV

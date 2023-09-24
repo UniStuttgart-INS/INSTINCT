@@ -15,6 +15,8 @@
 
 #include <imgui.h>
 #include <imgui_internal.h>
+#include <optional>
+#include <functional>
 #include <string>
 #include <vector>
 #include "util/Json.hpp"
@@ -57,11 +59,21 @@ class Colormap
     /// @param idx Index to remove
     void removeColor(size_t idx);
 
+    /// @brief Gets the color for the given value
+    /// @param[in] value Value to look for
+    /// @param[in] defaultColor Default color to display if no enty in the colormap matches
+    /// @return The color for the value or the given defaultColor if nothing matches
+    [[nodiscard]] ImColor getColor(double value, const ImColor& defaultColor) const;
+
+    /// Return the id of the colormap
+    [[nodiscard]] int64_t getId() const;
+
     /// @brief Return the map
     [[nodiscard]] const std::vector<std::pair<double, ImColor>>& getColormap() const;
 
     std::string name = "Colormap"; ///< Name of the Colormap
     bool discrete = false;         ///< Whether to have discrete changes of the colors or continuous
+    size_t version = 0;            ///< Version, to tell nodes that the colormap was updated
 
   private:
     /// Unique id of the colormap
@@ -100,5 +112,25 @@ class Colormap
 extern std::vector<Colormap> ColormapsGlobal;
 /// Flow colormaps
 extern std::vector<Colormap> ColormapsFlow;
+
+/// @brief Type of the Colormap mask
+enum class ColormapMaskType : int
+{
+    None,   ///< Do not use a colormap mask
+    Global, ///< Use the global colormap
+    Flow,   ///< Use the flow colormap
+};
+
+/// @brief Shows a combobox to select a colormap
+/// @param[in, out] type Type of the selected colormap
+/// @param[in, out] id Id of the selected colormap
+/// @return True if a change was made
+bool ShowColormapSelector(ColormapMaskType& type, int64_t& id);
+
+/// @brief Searches for the colormap in the Global and Flow colormaps
+/// @param type Type of the colormap (global or flow)
+/// @param id Id of the colormap
+/// @return The colormap if one could be found
+std::optional<std::reference_wrapper<const Colormap>> ColormapSearch(const ColormapMaskType& type, const int64_t& id);
 
 } // namespace NAV

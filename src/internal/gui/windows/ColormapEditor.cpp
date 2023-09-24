@@ -41,28 +41,29 @@ void NAV::gui::windows::ShowColormapEditor(bool* show)
 
             for (size_t i = 0; i < colormaps.size(); i++)
             {
-                auto& cm = colormaps.at(i);
+                auto& cmap = colormaps.at(i);
 
                 ImGui::TableNextColumn();
                 ImGui::SetNextItemWidth(152.0F);
-                if (ImGui::InputText(fmt::format("##colormap name {}", i).c_str(), &cm.name) && flow)
+                if (ImGui::InputText(fmt::format("##colormap name {}", i).c_str(), &cmap.name))
                 {
-                    flow::ApplyChanges();
+                    if (flow) { flow::ApplyChanges(); }
                 }
 
                 ImGui::TableNextColumn();
                 ImGui::SetNextItemWidth(145.0F);
-                if (ImGui::Checkbox(fmt::format("##colormap discrete {}", i).c_str(), &cm.discrete) && flow)
+                if (ImGui::Checkbox(fmt::format("##colormap discrete {}", i).c_str(), &cmap.discrete))
                 {
-                    flow::ApplyChanges();
+                    cmap.version++;
+                    if (flow) { flow::ApplyChanges(); }
                 }
                 if (ImGui::IsItemHovered()) { ImGui::SetTooltip("Discrete?"); }
 
                 ImGui::TableNextColumn();
                 ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-                if (ColormapButton(fmt::format("##colormap button {}", i).c_str(), cm, ImVec2(-1.0F, 0.0F)) && flow)
+                if (ColormapButton(fmt::format("##colormap button {}", i).c_str(), cmap, ImVec2(-1.0F, 0.0F)))
                 {
-                    flow::ApplyChanges();
+                    if (flow) { flow::ApplyChanges(); }
                 }
 
                 ImGui::TableNextColumn();
