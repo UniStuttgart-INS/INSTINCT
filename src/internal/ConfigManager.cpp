@@ -19,6 +19,9 @@
 
 #include <boost/tokenizer.hpp>
 
+#include "util/Json.hpp"
+#include "util/Plot/Colormap.hpp"
+
 namespace bpo = boost::program_options;
 
 /// Program option description
@@ -174,4 +177,32 @@ std::vector<std::string> NAV::ConfigManager::GetKeys()
     }
 
     return keys;
+}
+
+void NAV::ConfigManager::SaveGlobalSettings()
+{
+    // Save also global settings
+    std::ofstream filestream(flow::GetConfigPath() / "globals.json");
+    json j;
+    j["colormaps"] = ColormapsGlobal;
+    filestream << std::setw(4) << j << std::endl;
+}
+
+void NAV::ConfigManager::LoadGlobalSettings()
+{
+    auto filepath = flow::GetConfigPath() / "globals.json";
+    std::ifstream filestream(filepath);
+
+    if (!filestream.good())
+    {
+        LOG_ERROR("Load Flow error: Could not open file: {}", filepath);
+        return;
+    }
+    json j;
+    filestream >> j;
+
+    if (j.contains("colormaps"))
+    {
+        j.at("colormaps").get_to(ColormapsGlobal);
+    }
 }

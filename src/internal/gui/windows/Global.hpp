@@ -30,6 +30,8 @@ extern bool showNodeEditorStyleEditor;
 extern bool showImPlotStyleEditor;
 /// @brief Flag whether the Font size editor window should be displayed
 extern bool showFontSizeEditor;
+/// @brief Flag whether the Colormap editor window should be displayed
+extern bool showColormapEditor;
 
 /// @brief Called every frame to render global windows
 /// @param[in, out] colors Colors of the GUI
