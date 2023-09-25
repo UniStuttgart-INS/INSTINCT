@@ -220,6 +220,10 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
     {
         j.at("colormaps").get_to(ColormapsFlow);
     }
+    else
+    {
+        ColormapsFlow.clear();
+    }
 
     if (j.contains("nodes"))
     {

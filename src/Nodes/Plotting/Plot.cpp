@@ -121,6 +121,7 @@ void to_json(json& j, const Plot::PlotInfo::PlotItem::Style& style)
         { "lineType", style.lineType },
         { "color", style.color },
         { "colormapMask", style.colormapMask },
+        { "colormapMaskDataCmpIdx", style.colormapMaskDataCmpIdx },
         { "thickness", style.thickness },
         { "markers", style.markers },
         { "markerStyle", style.markerStyle },
@@ -154,6 +155,10 @@ void from_json(const json& j, Plot::PlotInfo::PlotItem::Style& style)
     if (j.contains("colormapMask"))
     {
         j.at("colormapMask").get_to(style.colormapMask);
+    }
+    if (j.contains("colormapMaskDataCmpIdx"))
+    {
+        j.at("colormapMaskDataCmpIdx").get_to(style.colormapMaskDataCmpIdx);
     }
     if (j.contains("thickness"))
     {
@@ -1066,9 +1071,11 @@ void NAV::Plot::guiConfig()
                             if (const auto& cmap = ColormapSearch(plotItem.style.colormapMask.first, plotItem.style.colormapMask.second))
                             {
                                 if (plotItem.colormapMaskVersion != cmap->get().version) { plotItem.colormapMaskColors.clear(); }
-                                if (plotItem.colormapMaskColors.size() != plotData.buffer.size())
+                                if (plotItem.colormapMaskColors.size() != plotData.buffer.size()
+                                    && plotItem.style.colormapMaskDataCmpIdx < pinData.plotData.size())
                                 {
                                     plotItem.colormapMaskVersion = cmap->get().version;
+                                    auto cmpData = pinData.plotData.at(plotItem.style.colormapMaskDataCmpIdx);
 
                                     auto color = plotItem.style.lineType == PlotInfo::PlotItem::Style::LineType::Line
                                                      ? (ImPlot::IsColorAuto(plotItem.style.color) ? ImPlot::GetColormapColor(static_cast<int>(plotElementIdx)) : plotItem.style.color)
@@ -1076,7 +1083,7 @@ void NAV::Plot::guiConfig()
                                     plotItem.colormapMaskColors.reserve(plotData.buffer.size());
                                     for (size_t i = plotItem.colormapMaskColors.size(); i < plotData.buffer.size(); i++)
                                     {
-                                        plotItem.colormapMaskColors.push_back(cmap->get().getColor(plotData.buffer.at(i), color));
+                                        plotItem.colormapMaskColors.push_back(i >= cmpData.buffer.size() ? ImColor(color) : cmap->get().getColor(cmpData.buffer.at(i), color));
                                     }
                                 }
                             }
@@ -1166,6 +1173,43 @@ void NAV::Plot::guiConfig()
                             ImGui::TextUnformatted(fmt::format("Pin {} - {}: {}", plotItem.pinIndex + 1, pinData.dataIdentifier, plotData.displayName).c_str());
                             ImGui::Separator();
 
+                            auto ShowColormapReferenceChooser = [&]() -> bool {
+                                bool changed = false;
+                                const char* preview = plotItem.style.colormapMaskDataCmpIdx < pinData.plotData.size()
+                                                          ? pinData.plotData.at(plotItem.style.colormapMaskDataCmpIdx).displayName.c_str()
+                                                          : "";
+                                if (ImGui::BeginCombo("Colormap Ref", preview))
+                                {
+                                    for (size_t plotDataIndex = 0; plotDataIndex < pinData.plotData.size(); plotDataIndex++)
+                                    {
+                                        auto& plotData = pinData.plotData.at(plotDataIndex);
+
+                                        if (!plotData.hasData)
+                                        {
+                                            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
+                                        }
+                                        const bool is_selected = (plotItem.style.colormapMaskDataCmpIdx == plotDataIndex);
+                                        if (ImGui::Selectable(pinData.plotData.at(plotDataIndex).displayName.c_str(), is_selected))
+                                        {
+                                            changed = true;
+                                            plotItem.style.colormapMaskDataCmpIdx = plotDataIndex;
+                                        }
+                                        if (!plotData.hasData)
+                                        {
+                                            ImGui::PopStyleVar();
+                                        }
+
+                                        // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                                        if (is_selected)
+                                        {
+                                            ImGui::SetItemDefaultFocus();
+                                        }
+                                    }
+                                    ImGui::EndCombo();
+                                }
+                                return changed;
+                            };
+
                             if (plotItem.style.legendNameGui.empty())
                             {
                                 plotItem.style.legendNameGui = plotItem.style.legendName;
@@ -1207,6 +1251,11 @@ void NAV::Plot::guiConfig()
                                     flow::ApplyChanges();
                                 }
                                 if (ShowColormapSelector(plotItem.style.colormapMask.first, plotItem.style.colormapMask.second))
+                                {
+                                    plotItem.colormapMaskColors.clear();
+                                    flow::ApplyChanges();
+                                }
+                                if (plotItem.style.colormapMask.first != ColormapMaskType::None && ShowColormapReferenceChooser())
                                 {
                                     plotItem.colormapMaskColors.clear();
                                     flow::ApplyChanges();
@@ -1278,6 +1327,11 @@ void NAV::Plot::guiConfig()
                             if (plotItem.style.lineType == PlotInfo::PlotItem::Style::LineType::Scatter)
                             {
                                 if (ShowColormapSelector(plotItem.style.colormapMask.first, plotItem.style.colormapMask.second))
+                                {
+                                    plotItem.colormapMaskColors.clear();
+                                    flow::ApplyChanges();
+                                }
+                                if (plotItem.style.colormapMask.first != ColormapMaskType::None && ShowColormapReferenceChooser())
                                 {
                                     plotItem.colormapMaskColors.clear();
                                     flow::ApplyChanges();

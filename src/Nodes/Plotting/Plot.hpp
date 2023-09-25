@@ -262,6 +262,8 @@ class Plot : public Node
                 ImVec4 color = IMPLOT_AUTO_COL;
                 /// Colormap mask (pair: type and id)
                 std::pair<ColormapMaskType, int64_t> colormapMask = { ColormapMaskType::None, -1 };
+                /// Index of the plot data to compare for the color
+                size_t colormapMaskDataCmpIdx = 0;
                 /// Line thickness
                 float thickness = 1.0F;
 
@@ -290,7 +292,10 @@ class Plot : public Node
             /// @param[in] dataIndex Index of the data on the pin
             /// @param[in] displayName Display name of the data
             PlotItem(size_t pinIndex, size_t dataIndex, std::string displayName)
-                : pinIndex(pinIndex), dataIndex(dataIndex), displayName(std::move(displayName)) {}
+                : pinIndex(pinIndex), dataIndex(dataIndex), displayName(std::move(displayName))
+            {
+                style.colormapMaskDataCmpIdx = dataIndex;
+            }
 
             /// @brief Constructor
             /// @param[in] pinIndex Index of the pin where the data came in
@@ -298,7 +303,10 @@ class Plot : public Node
             /// @param[in] displayName Display name of the data
             /// @param[in] axis Axis to plot the data on (Y1, Y2, Y3)
             PlotItem(size_t pinIndex, size_t dataIndex, std::string displayName, ImAxis axis)
-                : pinIndex(pinIndex), dataIndex(dataIndex), displayName(std::move(displayName)), axis(axis) {}
+                : pinIndex(pinIndex), dataIndex(dataIndex), displayName(std::move(displayName)), axis(axis)
+            {
+                style.colormapMaskDataCmpIdx = dataIndex;
+            }
 
             /// @brief Equal comparison operator (needed to search the vector with std::find)
             /// @param[in] rhs Right-hand-side of the operator

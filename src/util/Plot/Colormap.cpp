@@ -50,7 +50,7 @@ void Colormap::removeColor(size_t idx)
 
 ImColor Colormap::getColor(double value, const ImColor& defaultColor) const
 {
-    for (size_t i = colormap.size() - 1; i >= 0; i--)
+    for (size_t i = colormap.size() - 1;; i--)
     {
         const auto& item = colormap.at(i);
         if (value >= item.first)
