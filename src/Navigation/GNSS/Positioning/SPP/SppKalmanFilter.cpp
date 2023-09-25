@@ -5,6 +5,11 @@
 #include "Navigation/Atmosphere/Ionosphere/Ionosphere.hpp"
 #include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
 
+#include "internal/gui/widgets/InputWithUnit.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
+#include "internal/NodeManager.hpp"
+#include "internal/FlowManager.hpp"
+
 #include <algorithm>
 
 namespace States = NAV::GNSS::Positioning::SPP::KF::States;
@@ -13,12 +18,183 @@ namespace Meas = NAV::GNSS::Positioning::SPP::KF::Meas;
 namespace NAV::GNSS::Positioning::SPP
 {
 
+void SppKalmanFilter::gui()
+{
+    const float itemWidth = 250.0F * gui::NodeEditorApplication::windowFontRatio();
+    const float configWidth = 380.0F * gui::NodeEditorApplication::windowFontRatio();
+    const float unitWidth = 100.0F * gui::NodeEditorApplication::windowFontRatio();
+
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+    if (ImGui::TreeNode(fmt::format("System/Process noise##{}", "SppKalmanFilter").c_str()))
+    {
+        ImGui::SetNextItemWidth(itemWidth);
+        if (ImGui::Combo(fmt::format("Q calculation algorithm##{}", "SppKalmanFilter").c_str(), reinterpret_cast<int*>(&qCalculationAlgorithm), "Van Loan\0Taylor 1st Order (Groves 2013)\0\0"))
+        {
+            LOG_DEBUG("{}: Q calculation algorithm changed to {}", "SppKalmanFilter", fmt::underlying(qCalculationAlgorithm));
+            flow::ApplyChanges();
+        }
+
+        if (qCalculationAlgorithm == SppKalmanFilter::QCalculationAlgorithm::VanLoan)
+        {
+            if (gui::widgets::InputDouble2WithUnit(fmt::format("Acceleration due to user motion (Hor/Ver)##{}", "SppKalmanFilter").c_str(),
+                                                   configWidth, unitWidth, gui_covarianceAccel.data(), reinterpret_cast<int*>(&gui_covarianceAccelUnit), "m/√(s^3)\0m^2/s^3\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: gui_covarianceAccel changed to {}", "SppKalmanFilter", gui_covarianceAccel);
+                LOG_DEBUG("{}: gui_covarianceAccelUnit changed to {}", "SppKalmanFilter", fmt::underlying(gui_covarianceAccelUnit));
+                flow::ApplyChanges();
+            }
+            if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the receiver clock phase drift (RW)##{}", "SppKalmanFilter").c_str(),
+                                                  configWidth, unitWidth, &gui_covarianceClkPhaseDrift, reinterpret_cast<int*>(&gui_covarianceClkPhaseDriftUnit), "m/√(s^3)\0m^2/s^3\0\0",
+                                                  0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: gui_covarianceClkPhaseDrift changed to {}", "SppKalmanFilter", gui_covarianceClkPhaseDrift);
+                LOG_DEBUG("{}: gui_covarianceClkPhaseDriftUnit changed to {}", "SppKalmanFilter", fmt::underlying(gui_covarianceClkPhaseDriftUnit));
+                flow::ApplyChanges();
+            }
+            if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the receiver clock frequency drift (IRW)##{}", "SppKalmanFilter").c_str(),
+                                                  configWidth, unitWidth, &gui_covarianceClkFrequencyDrift, reinterpret_cast<int*>(&gui_covarianceClkFrequencyDriftUnit), "m/√(s)\0m^2/s\0\0",
+                                                  0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: gui_covarianceClkFrequencyDrift changed to {}", "SppKalmanFilter", gui_covarianceClkFrequencyDrift);
+                LOG_DEBUG("{}: gui_covarianceClkFrequencyDriftUnit changed to {}", "SppKalmanFilter", fmt::underlying(gui_covarianceClkFrequencyDriftUnit));
+                flow::ApplyChanges();
+            }
+            if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the inter-system clock phase drift (RW)##{}", "SppKalmanFilter").c_str(),
+                                                  configWidth, unitWidth, &gui_covarianceInterSysClkPhaseDrift, reinterpret_cast<int*>(&gui_covarianceInterSysClkPhaseDriftUnit), "m/√(s^3)\0m^2/s^3\0\0",
+                                                  0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: gui_covarianceInterSysClkPhaseDrift changed to {}", "SppKalmanFilter", gui_covarianceInterSysClkPhaseDrift);
+                LOG_DEBUG("{}: gui_covarianceInterSysClkPhaseDriftUnit changed to {}", "SppKalmanFilter", fmt::underlying(gui_covarianceInterSysClkPhaseDriftUnit));
+                flow::ApplyChanges();
+            }
+            if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the inter-system clock frequency drift (IRW)##{}", "SppKalmanFilter").c_str(),
+                                                  configWidth, unitWidth, &gui_covarianceInterSysClkFrequencyDrift, reinterpret_cast<int*>(&gui_covarianceInterSysClkFrequencyDriftUnit), "m/√(s)\0m^2/s\0\0",
+                                                  0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: gui_covarianceInterSysClkFrequencyDrift changed to {}", "SppKalmanFilter", gui_covarianceInterSysClkFrequencyDrift);
+                LOG_DEBUG("{}: gui_covarianceInterSysClkFrequencyDriftUnit changed to {}", "SppKalmanFilter", fmt::underlying(gui_covarianceInterSysClkFrequencyDriftUnit));
+                flow::ApplyChanges();
+            }
+        }
+
+        if (qCalculationAlgorithm == SppKalmanFilter::QCalculationAlgorithm::Taylor1)
+        {
+            ImGui::SetNextItemWidth(itemWidth);
+            if (ImGui::InputFloat(fmt::format("Standard Deviation of Process Noise", "SppKalmanFilter").c_str(), &processNoiseStandardDeviation, 0.0, 0.0, "%.2e"))
+            {
+                LOG_DEBUG("{}: processNoiseStandardDeviation changed to {}", "SppKalmanFilter", processNoiseStandardDeviation);
+                flow::ApplyChanges();
+            }
+        }
+        ImGui::TreePop();
+    }
+
+    // ###########################################################################################################
+
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+    if (ImGui::TreeNode(fmt::format("P Error covariance matrix (init)##{}", "SppKalmanFilter").c_str()))
+    {
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("ECEF Position Covariance ({})##{}",
+                                                           gui_initCovariancePositionUnit == SppKalmanFilter::InitCovariancePositionUnits::m2
+                                                               ? "Variance σ²"
+                                                               : "Standard deviation σ",
+                                                           "SppKalmanFilter")
+                                                   .c_str(),
+                                               configWidth, unitWidth, gui_initCovariancePosition.data(), reinterpret_cast<int*>(&gui_initCovariancePositionUnit), "m^2, m^2, m^2\0"
+                                                                                                                                                                   "m, m, m\0\0",
+                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: gui_initCovariancePosition changed to {}", "SppKalmanFilter", gui_initCovariancePosition);
+            LOG_DEBUG("{}: gui_initCovariancePositionUnit changed to {}", "SppKalmanFilter", fmt::underlying(gui_initCovariancePositionUnit));
+            flow::ApplyChanges();
+        }
+
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Velocity Covariance ({})##{}",
+                                                           gui_initCovarianceVelocityUnit == SppKalmanFilter::InitCovarianceVelocityUnits::m2_s2
+                                                               ? "Variance σ²"
+                                                               : "Standard deviation σ",
+                                                           "SppKalmanFilter")
+                                                   .c_str(),
+                                               configWidth, unitWidth, gui_initCovarianceVelocity.data(), reinterpret_cast<int*>(&gui_initCovarianceVelocityUnit), "m^2/s^2\0"
+                                                                                                                                                                   "m/s\0\0",
+                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: gui_initCovarianceVelocity changed to {}", "SppKalmanFilter", gui_initCovarianceVelocity);
+            LOG_DEBUG("{}: gui_initCovarianceVelocityUnit changed to {}", "SppKalmanFilter", fmt::underlying(gui_initCovarianceVelocityUnit));
+            flow::ApplyChanges();
+        }
+
+        if (gui::widgets::InputDoubleWithUnit(fmt::format("Receiver Clock Bias Covariance ({})##{}",
+                                                          gui_initCovarianceRecvClkErrUnit == SppKalmanFilter::InitCovarianceRecvClkErrUnits::s2
+                                                              ? "Variance σ²"
+                                                              : "Standard deviation σ",
+                                                          "SppKalmanFilter")
+                                                  .c_str(),
+                                              configWidth, unitWidth, &gui_initCovarianceRecvClkErr, reinterpret_cast<int*>(&gui_initCovarianceRecvClkErrUnit), "s^2\0"
+                                                                                                                                                                "s\0\0",
+                                              0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: gui_initCovarianceRecvClkErr changed to {}", "SppKalmanFilter", gui_initCovarianceRecvClkErr);
+            LOG_DEBUG("{}: gui_initCovarianceRecvClkErrUnit changed to {}", "SppKalmanFilter", fmt::underlying(gui_initCovarianceRecvClkErrUnit));
+            flow::ApplyChanges();
+        }
+
+        if (gui::widgets::InputDoubleWithUnit(fmt::format("Receiver Clock Drift Covariance ({})##{}",
+                                                          gui_initCovarianceRecvClkDriftUnit == SppKalmanFilter::InitCovarianceRecvClkDriftUnits::s2_s2
+                                                              ? "Variance σ²"
+                                                              : "Standard deviation σ",
+                                                          "SppKalmanFilter")
+                                                  .c_str(),
+                                              configWidth, unitWidth, &gui_initCovarianceRecvClkDrift, reinterpret_cast<int*>(&gui_initCovarianceRecvClkDriftUnit), "s^2/s^2\0"
+                                                                                                                                                                    "s/s\0\0",
+                                              0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: gui_initCovarianceRecvClkDrift changed to {}", "SppKalmanFilter", gui_initCovarianceRecvClkDrift);
+            LOG_DEBUG("{}: gui_initCovarianceRecvClkDriftUnit changed to {}", "SppKalmanFilter", fmt::underlying(gui_initCovarianceRecvClkDriftUnit));
+            flow::ApplyChanges();
+        }
+
+        if (gui::widgets::InputDoubleWithUnit(fmt::format("Inter-system Clock Offsets Covariances ({})##{}",
+                                                          gui_initCovarianceInterSysErrUnit == SppKalmanFilter::InitCovarianceRecvClkErrUnits::s2
+                                                              ? "Variance σ²"
+                                                              : "Standard deviation σ",
+                                                          "SppKalmanFilter")
+                                                  .c_str(),
+                                              configWidth, unitWidth, &gui_initCovarianceInterSysErr, reinterpret_cast<int*>(&gui_initCovarianceInterSysErrUnit), "s^2\0"
+                                                                                                                                                                  "s\0\0",
+                                              0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: gui_initCovarianceInterSysErr changed to {}", "SppKalmanFilter", gui_initCovarianceInterSysErr);
+            LOG_DEBUG("{}: gui_initCovarianceInterSysErrUnit changed to {}", "SppKalmanFilter", fmt::underlying(gui_initCovarianceInterSysErrUnit));
+            flow::ApplyChanges();
+        }
+
+        if (gui::widgets::InputDoubleWithUnit(fmt::format("Inter-system Clock Offset Drift Covariances ({})##{}",
+                                                          gui_initCovarianceInterSysDriftUnit == SppKalmanFilter::InitCovarianceRecvClkDriftUnits::s2_s2
+                                                              ? "Variance σ²"
+                                                              : "Standard deviation σ",
+                                                          "SppKalmanFilter")
+                                                  .c_str(),
+                                              configWidth, unitWidth, &gui_initCovarianceInterSysDrift, reinterpret_cast<int*>(&gui_initCovarianceInterSysDriftUnit), "s^2\0"
+                                                                                                                                                                      "s\0\0",
+                                              0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: gui_initCovarianceInterSysDrift changed to {}", "SppKalmanFilter", gui_initCovarianceInterSysDrift);
+            LOG_DEBUG("{}: gui_initCovarianceInterSysDriftUnit changed to {}", "SppKalmanFilter", fmt::underlying(gui_initCovarianceInterSysDriftUnit));
+            flow::ApplyChanges();
+        }
+
+        ImGui::TreePop();
+    }
+}
+
 void SppKalmanFilter::initialize()
 {
     _lastUpdate.reset();
     _kalmanFilter = KeyedKalmanFilterD<States::StateKeyTypes, Meas::MeasKeyTypes>{ States::PosVelRecvClk, {} };
-    _kalmanFilterInitialized = false;
-    _kalmanFilterReferenceTimeSatelliteSystem = SatSys_None;
+    _initialized = false;
+    _refTimeSatSys = SatSys_None;
 
     KF::States::InterSysErrs.clear();
     KF::States::InterSysDrifts.clear();
@@ -26,36 +202,51 @@ void SppKalmanFilter::initialize()
     // Initial Covariance of the acceleration 𝜎_a due to user motion in horizontal and vertical component [m²/s³]
     if (gui_covarianceAccelUnit == CovarianceAccelUnits::m_sqrts3)
     {
-        gui_covarianceAccel = gui_covarianceAccel.array().pow(2);
-        gui_covarianceAccelUnit = CovarianceAccelUnits::m2_s3;
+        _covarianceAccel = gui_covarianceAccel.array().pow(2);
+    }
+    else if (gui_covarianceAccelUnit == CovarianceAccelUnits::m2_s3)
+    {
+        _covarianceAccel = gui_covarianceAccel;
     }
 
     // Initial Covariance of the clock phase drift [m²/s³]
     if (gui_covarianceClkPhaseDriftUnit == CovarianceClkPhaseDriftUnits::m_sqrts3)
     {
-        gui_covarianceClkPhaseDrift = std::pow(gui_covarianceClkPhaseDrift, 2);
-        gui_covarianceClkPhaseDriftUnit = CovarianceClkPhaseDriftUnits::m2_s3;
+        _covarianceClkPhaseDrift = std::pow(gui_covarianceClkPhaseDrift, 2);
+    }
+    else if (gui_covarianceClkPhaseDriftUnit == CovarianceClkPhaseDriftUnits::m2_s3)
+    {
+        _covarianceClkPhaseDrift = gui_covarianceClkPhaseDrift;
     }
 
     // Initial Covariance of the frequency phase drift [m²/s]
     if (gui_covarianceClkFrequencyDriftUnit == CovarianceClkFrequencyDriftUnits::m_sqrts)
     {
-        gui_covarianceClkFrequencyDrift = std::pow(gui_covarianceClkFrequencyDrift, 2);
-        gui_covarianceClkFrequencyDriftUnit = CovarianceClkFrequencyDriftUnits::m2_s;
+        _covarianceClkFrequencyDrift = std::pow(gui_covarianceClkFrequencyDrift, 2);
+    }
+    else if (gui_covarianceClkFrequencyDriftUnit == CovarianceClkFrequencyDriftUnits::m2_s)
+    {
+        _covarianceClkFrequencyDrift = gui_covarianceClkFrequencyDrift;
     }
 
     // Initial Covariance of the inter-system clock phase drift [m²/s³]
     if (gui_covarianceInterSysClkPhaseDriftUnit == CovarianceClkPhaseDriftUnits::m_sqrts3)
     {
-        gui_covarianceInterSysClkPhaseDrift = std::pow(gui_covarianceInterSysClkPhaseDrift, 2);
-        gui_covarianceInterSysClkPhaseDriftUnit = CovarianceClkPhaseDriftUnits::m2_s3;
+        _covarianceInterSysClkPhaseDrift = std::pow(gui_covarianceInterSysClkPhaseDrift, 2);
+    }
+    else if (gui_covarianceInterSysClkPhaseDriftUnit == CovarianceClkPhaseDriftUnits::m2_s3)
+    {
+        _covarianceInterSysClkPhaseDrift = gui_covarianceInterSysClkPhaseDrift;
     }
 
     // Initial Covariance of the inter-system frequency phase drift [m²/s]
     if (gui_covarianceInterSysClkFrequencyDriftUnit == CovarianceClkFrequencyDriftUnits::m_sqrts)
     {
-        gui_covarianceInterSysClkFrequencyDrift = std::pow(gui_covarianceInterSysClkFrequencyDrift, 2);
-        gui_covarianceInterSysClkFrequencyDriftUnit = CovarianceClkFrequencyDriftUnits::m2_s;
+        _covarianceInterSysClkFrequencyDrift = std::pow(gui_covarianceInterSysClkFrequencyDrift, 2);
+    }
+    else if (gui_covarianceInterSysClkFrequencyDriftUnit == CovarianceClkFrequencyDriftUnits::m2_s)
+    {
+        _covarianceInterSysClkFrequencyDrift = gui_covarianceInterSysClkFrequencyDrift;
     }
 
     // ###########################################################################################################
@@ -64,83 +255,85 @@ void SppKalmanFilter::initialize()
     // Initial Covariance of the position in [m²]
     if (gui_initCovariancePositionUnit == InitCovariancePositionUnits::m)
     {
-        gui_initCovariancePosition = gui_initCovariancePosition.array().pow(2);
-        gui_initCovariancePositionUnit = InitCovariancePositionUnits::m2;
+        _initCovariancePosition = gui_initCovariancePosition.array().pow(2);
+    }
+    else if (gui_initCovariancePositionUnit == InitCovariancePositionUnits::m2)
+    {
+        _initCovariancePosition = gui_initCovariancePosition;
     }
 
     // Initial Covariance of the velocity in [m²/s²]
     if (gui_initCovarianceVelocityUnit == InitCovarianceVelocityUnits::m_s)
     {
-        gui_initCovarianceVelocity = gui_initCovarianceVelocity.array().pow(2);
-        gui_initCovarianceVelocityUnit = InitCovarianceVelocityUnits::m2_s2;
+        _initCovarianceVelocity = gui_initCovarianceVelocity.array().pow(2);
+    }
+    else if (gui_initCovarianceVelocityUnit == InitCovarianceVelocityUnits::m2_s2)
+    {
+        _initCovarianceVelocity = gui_initCovarianceVelocity;
     }
 
     // Initial Covariance of the receiver clock error [m²]
-    if (gui_initCovarianceRecvClkErrUnit == InitCovarianceRecvClkErrUnits::s2 && gui_initCovarianceRecvClkErr < 1)
+    if (gui_initCovarianceRecvClkErrUnit == InitCovarianceRecvClkErrUnits::s2)
     {
-        gui_initCovarianceRecvClkErr = gui_initCovarianceRecvClkErr * std::pow(InsConst::C, 2);
+        _initCovarianceRecvClkErr = gui_initCovarianceRecvClkErr * std::pow(InsConst::C, 2);
     }
-    else if (gui_initCovarianceRecvClkErrUnit == InitCovarianceRecvClkErrUnits::s && gui_initCovarianceRecvClkErr < 1)
+    else if (gui_initCovarianceRecvClkErrUnit == InitCovarianceRecvClkErrUnits::s)
     {
-        gui_initCovarianceRecvClkErr = std::pow(gui_initCovarianceRecvClkErr * InsConst::C, 2);
-        gui_initCovarianceRecvClkErrUnit = InitCovarianceRecvClkErrUnits::s2;
+        _initCovarianceRecvClkErr = std::pow(gui_initCovarianceRecvClkErr * InsConst::C, 2);
     }
 
     // Initial Covariance of the receiver clock drift [m²/s²]
-    if (gui_initCovarianceRecvClkDriftUnit == InitCovarianceRecvClkDriftUnits::s2_s2 && gui_initCovarianceRecvClkDrift < 1)
+    if (gui_initCovarianceRecvClkDriftUnit == InitCovarianceRecvClkDriftUnits::s2_s2)
     {
-        gui_initCovarianceRecvClkDrift = gui_initCovarianceRecvClkDrift * std::pow(InsConst::C, 2);
+        _initCovarianceRecvClkDrift = gui_initCovarianceRecvClkDrift * std::pow(InsConst::C, 2);
     }
-    else if (gui_initCovarianceRecvClkDriftUnit == InitCovarianceRecvClkDriftUnits::s_s && gui_initCovarianceRecvClkDrift < 1)
+    else if (gui_initCovarianceRecvClkDriftUnit == InitCovarianceRecvClkDriftUnits::s_s)
     {
-        gui_initCovarianceRecvClkDrift = std::pow(gui_initCovarianceRecvClkDrift * InsConst::C, 2);
-        gui_initCovarianceRecvClkDriftUnit = InitCovarianceRecvClkDriftUnits::s2_s2;
+        _initCovarianceRecvClkDrift = std::pow(gui_initCovarianceRecvClkDrift * InsConst::C, 2);
     }
 
     // Initial Covariance of the inter-system clock error [m²]
-    if (gui_initCovarianceInterSysErrUnit == InitCovarianceRecvClkErrUnits::s2 && gui_initCovarianceInterSysErr < 1)
+    if (gui_initCovarianceInterSysErrUnit == InitCovarianceRecvClkErrUnits::s2)
     {
-        gui_initCovarianceInterSysErr = gui_initCovarianceInterSysErr * std::pow(InsConst::C, 2);
+        _initCovarianceInterSysErr = gui_initCovarianceInterSysErr * std::pow(InsConst::C, 2);
     }
-    else if (gui_initCovarianceInterSysErrUnit == InitCovarianceRecvClkErrUnits::s && gui_initCovarianceInterSysErr < 1)
+    else if (gui_initCovarianceInterSysErrUnit == InitCovarianceRecvClkErrUnits::s)
     {
-        gui_initCovarianceInterSysErr = std::pow(gui_initCovarianceInterSysErr * InsConst::C, 2);
-        gui_initCovarianceInterSysErrUnit = InitCovarianceRecvClkErrUnits::s2;
+        _initCovarianceInterSysErr = std::pow(gui_initCovarianceInterSysErr * InsConst::C, 2);
     }
 
     // Initial Covariance of the inter-system clock drift [m²/s²]
-    if (gui_initCovarianceInterSysDriftUnit == InitCovarianceRecvClkDriftUnits::s2_s2 && gui_initCovarianceInterSysDrift < 1)
+    if (gui_initCovarianceInterSysDriftUnit == InitCovarianceRecvClkDriftUnits::s2_s2)
     {
-        gui_initCovarianceInterSysDrift = gui_initCovarianceInterSysDrift * std::pow(InsConst::C, 2);
+        _initCovarianceInterSysDrift = gui_initCovarianceInterSysDrift * std::pow(InsConst::C, 2);
     }
-    else if (gui_initCovarianceInterSysDriftUnit == InitCovarianceRecvClkDriftUnits::s_s && gui_initCovarianceInterSysDrift < 1)
+    else if (gui_initCovarianceInterSysDriftUnit == InitCovarianceRecvClkDriftUnits::s_s)
     {
-        gui_initCovarianceInterSysDrift = std::pow(gui_initCovarianceInterSysDrift * InsConst::C, 2);
-        gui_initCovarianceInterSysDriftUnit = InitCovarianceRecvClkDriftUnits::s2_s2;
+        _initCovarianceInterSysDrift = std::pow(gui_initCovarianceInterSysDrift * InsConst::C, 2);
     }
 }
 
 bool SppKalmanFilter::isInitialized() const
 {
-    return _kalmanFilterInitialized;
+    return _initialized;
 }
 
 // ###########################################################################################################
 //                                             Getter and Setter
 // ###########################################################################################################
-void SppKalmanFilter::setAllOtherSelectedSatelliteSystems(const std::vector<SatelliteSystem>& allSatSys)
+void SppKalmanFilter::setAllSatSysExceptRef(const std::vector<SatelliteSystem>& allSatSys)
 {
-    _allOtherSelectedSatelliteSystems = allSatSys;
+    _allSatSysExceptRef = allSatSys;
 }
 
-std::vector<SatelliteSystem> SppKalmanFilter::getAllOtherSelectedSatelliteSystems() const
+std::vector<SatelliteSystem> SppKalmanFilter::getAllSatSysExceptRef() const
 {
-    return _allOtherSelectedSatelliteSystems;
+    return _allSatSysExceptRef;
 }
 
-SatelliteSystem SppKalmanFilter::getKalmanFilterReferenceTimeSatelliteSystem() const
+SatelliteSystem SppKalmanFilter::getRefTimeSatSys() const
 {
-    return _kalmanFilterReferenceTimeSatelliteSystem;
+    return _refTimeSatSys;
 }
 
 // ###########################################################################################################
@@ -149,24 +342,32 @@ SatelliteSystem SppKalmanFilter::getKalmanFilterReferenceTimeSatelliteSystem() c
 void SppKalmanFilter::initializeKalmanFilter(const std::shared_ptr<const SppSolution>& sppSolLSE)
 {
     auto refSys = sppSolLSE->recvClk.referenceTimeSatelliteSystem;
-    _kalmanFilterReferenceTimeSatelliteSystem = refSys;
+    _refTimeSatSys = refSys;
 
     // Initialize Kalman Filter state x and Covariance P
 
-    _kalmanFilter.x.segment(States::Pos) = sppSolLSE->e_position();                       // _e_position
-    _kalmanFilter.x(States::RecvClkErr) = sppSolLSE->recvClk.bias.value * InsConst::C;    // receiver clock error
-    _kalmanFilter.x.segment(States::Vel) = sppSolLSE->e_velocity();                       // _e_velocity
-    _kalmanFilter.x(States::RecvClkDrift) = sppSolLSE->recvClk.drift.value * InsConst::C; // receiver clock drift
+    _kalmanFilter.x.segment(States::Pos) = sppSolLSE->e_position();                    // _e_position
+    _kalmanFilter.x(States::RecvClkErr) = sppSolLSE->recvClk.bias.value * InsConst::C; // receiver clock error
+
+    if (std::none_of(sppSolLSE->e_velocity().begin(), sppSolLSE->e_velocity().end(), [](double d) { return std::isnan(d); })) // in case Doppler observations were not available for LSE
+    {
+        _kalmanFilter.x.segment(States::Vel) = sppSolLSE->e_velocity();                       // _e_velocity
+        _kalmanFilter.x(States::RecvClkDrift) = sppSolLSE->recvClk.drift.value * InsConst::C; // receiver clock drift
+    }
+
     // inter-system clock error and drift
     for (const auto& otherSys : sppSolLSE->otherUsedSatelliteSystems)
     {
         _kalmanFilter.x(States::InterSysErr{ otherSys }) = sppSolLSE->recvClk.sysTimeDiff.at(otherSys).value * InsConst::C;
-        _kalmanFilter.x(States::InterSysDrift{ otherSys }) = sppSolLSE->recvClk.sysDriftDiff.at(otherSys).value * InsConst::C;
+        if (std::none_of(sppSolLSE->e_velocity().begin(), sppSolLSE->e_velocity().end(), [](double d) { return std::isnan(d); })) // in case Doppler observations were not available for LSE
+        {
+            _kalmanFilter.x(States::InterSysDrift{ otherSys }) = sppSolLSE->recvClk.sysDriftDiff.at(otherSys).value * InsConst::C;
+        }
     }
 
     // Find Satellite systems that are selected but not available in first epoch
     std::vector<SatelliteSystem> satSysDiff;
-    std::set_difference(_allOtherSelectedSatelliteSystems.begin(), _allOtherSelectedSatelliteSystems.end(),
+    std::set_difference(_allSatSysExceptRef.begin(), _allSatSysExceptRef.end(),
                         sppSolLSE->otherUsedSatelliteSystems.begin(), sppSolLSE->otherUsedSatelliteSystems.end(),
                         std::inserter(satSysDiff, satSysDiff.begin()));
 
@@ -201,22 +402,22 @@ void SppKalmanFilter::initializeKalmanFilter(const std::shared_ptr<const SppSolu
         {
             for (const auto& satSysDiff_i : satSysDiff)
             {
-                _kalmanFilter.P(States::InterSysErr{ satSysDiff_i }, States::InterSysErr{ satSysDiff_i }) = gui_initCovarianceInterSysErr;
+                _kalmanFilter.P(States::InterSysErr{ satSysDiff_i }, States::InterSysErr{ satSysDiff_i }) = _initCovarianceInterSysErr;
             }
         }
     }
     else
     {
-        _kalmanFilter.P(States::Pos, States::Pos) = gui_initCovariancePosition.asDiagonal();
-        _kalmanFilter.P(States::RecvClkErr, States::RecvClkErr) = gui_initCovarianceRecvClkErr;
-        for (const auto& otherSys_i : _allOtherSelectedSatelliteSystems)
+        _kalmanFilter.P(States::Pos, States::Pos) = _initCovariancePosition.asDiagonal();
+        _kalmanFilter.P(States::RecvClkErr, States::RecvClkErr) = _initCovarianceRecvClkErr;
+        for (const auto& otherSys_i : _allSatSysExceptRef)
         {
-            _kalmanFilter.P(States::InterSysErr{ otherSys_i }, States::InterSysErr{ otherSys_i }) = gui_initCovarianceInterSysErr;
+            _kalmanFilter.P(States::InterSysErr{ otherSys_i }, States::InterSysErr{ otherSys_i }) = _initCovarianceInterSysErr;
         }
     }
 
     // Standard deviation can only be calculated in LSE with more measurements than estimated parameters
-    if (std::none_of(sppSolLSE->e_positionStdev().begin(), sppSolLSE->e_positionStdev().end(), [](double d) { return std::isnan(d); }))
+    if (std::none_of(sppSolLSE->e_velocityStdev().begin(), sppSolLSE->e_velocityStdev().end(), [](double d) { return std::isnan(d); }))
     {
         _kalmanFilter.P(States::Vel, States::Vel) = sppSolLSE->e_CovarianceMatrix().block<3, 3>(3, 3);
         _kalmanFilter.P(States::RecvClkDrift, States::RecvClkDrift) = sppSolLSE->e_CovarianceMatrix()(7, 7);
@@ -246,25 +447,28 @@ void SppKalmanFilter::initializeKalmanFilter(const std::shared_ptr<const SppSolu
         {
             for (const auto& satSysDiff_i : satSysDiff)
             {
-                _kalmanFilter.P(States::InterSysDrift{ satSysDiff_i }, States::InterSysDrift{ satSysDiff_i }) = gui_initCovarianceInterSysDrift;
+                _kalmanFilter.P(States::InterSysDrift{ satSysDiff_i }, States::InterSysDrift{ satSysDiff_i }) = _initCovarianceInterSysDrift;
             }
         }
     }
     else
     {
-        _kalmanFilter.P(States::Vel, States::Vel) = gui_initCovarianceVelocity.asDiagonal();
-        _kalmanFilter.P(States::RecvClkDrift, States::RecvClkDrift) = gui_initCovarianceRecvClkDrift;
-        for (const auto& otherSys_i : _allOtherSelectedSatelliteSystems)
+        _kalmanFilter.P(States::Vel, States::Vel) = _initCovarianceVelocity.asDiagonal();
+        _kalmanFilter.P(States::RecvClkDrift, States::RecvClkDrift) = _initCovarianceRecvClkDrift;
+        for (const auto& otherSys_i : _allSatSysExceptRef)
         {
-            _kalmanFilter.P(States::InterSysDrift{ otherSys_i }, States::InterSysDrift{ otherSys_i }) = gui_initCovarianceInterSysDrift;
+            _kalmanFilter.P(States::InterSysDrift{ otherSys_i }, States::InterSysDrift{ otherSys_i }) = _initCovarianceInterSysDrift;
         }
     }
+
+    LOG_DATA("x =\n{}", _kalmanFilter.x);
+    LOG_DATA("P =\n{}", _kalmanFilter.P);
 
     // System matrix - Groves ch. 9.4.2.2, eq. 9.148, p. 415
     _kalmanFilter.F(States::Pos, States::Vel) = Eigen::Matrix3d::Identity();
     _kalmanFilter.F(States::RecvClkErr, States::RecvClkDrift) = 1;
     // inter-system system clock error and drift
-    for (const auto& satSys : _allOtherSelectedSatelliteSystems)
+    for (const auto& satSys : _allSatSysExceptRef)
     {
         _kalmanFilter.F(States::InterSysErr{ satSys }, States::InterSysDrift{ satSys }) = 1;
     }
@@ -279,21 +483,21 @@ void SppKalmanFilter::initializeKalmanFilter(const std::shared_ptr<const SppSolu
                                                                                                 static_cast<Eigen::Index>(States::InterSysDrifts.size()));
 
     // Fix part of Noise scale matrix W
-    _kalmanFilter.W(States::RecvClkErr, States::RecvClkErr) = gui_covarianceClkPhaseDrift;
-    _kalmanFilter.W(States::RecvClkDrift, States::RecvClkDrift) = gui_covarianceClkFrequencyDrift;
-    for (const auto& satSys : _allOtherSelectedSatelliteSystems)
+    _kalmanFilter.W(States::RecvClkErr, States::RecvClkErr) = _covarianceClkPhaseDrift;
+    _kalmanFilter.W(States::RecvClkDrift, States::RecvClkDrift) = _covarianceClkFrequencyDrift;
+    for (const auto& satSys : _allSatSysExceptRef)
     {
-        _kalmanFilter.W(States::InterSysErr{ satSys }, States::InterSysErr{ satSys }) = gui_covarianceInterSysClkPhaseDrift;
-        _kalmanFilter.W(States::InterSysDrift{ satSys }, States::InterSysDrift{ satSys }) = gui_covarianceInterSysClkFrequencyDrift;
+        _kalmanFilter.W(States::InterSysErr{ satSys }, States::InterSysErr{ satSys }) = _covarianceInterSysClkPhaseDrift;
+        _kalmanFilter.W(States::InterSysDrift{ satSys }, States::InterSysDrift{ satSys }) = _covarianceInterSysClkFrequencyDrift;
     }
 
-    _kalmanFilterInitialized = true;
-    LOG_DATA("_kalmanFilterInitialized {}", _kalmanFilterInitialized);
+    _initialized = true;
+    LOG_DATA("_initialized {}", _initialized);
 
     _lastUpdate = sppSolLSE->insTime;
     LOG_DATA("_lastTime {}", _lastUpdate);
 
-    assignInternalSolution(_allOtherSelectedSatelliteSystems);
+    assignInternalSolution(_allSatSysExceptRef);
 }
 
 // ###########################################################################################################
@@ -302,7 +506,7 @@ void SppKalmanFilter::initializeKalmanFilter(const std::shared_ptr<const SppSolu
 void SppKalmanFilter::addInterSysStateKeys([[maybe_unused]] const InsTime& insTime)
 {
     // Add Kalman Filter States (inter-system clock errors and drifts)
-    for (const auto& satelliteSystem : _allOtherSelectedSatelliteSystems)
+    for (const auto& satelliteSystem : _allSatSysExceptRef)
     {
         auto keyErr = States::InterSysErr{ satelliteSystem };
         auto keyDrift = States::InterSysDrift{ satelliteSystem };
@@ -351,21 +555,16 @@ void SppKalmanFilter::processNoiseMatrixGroves(double dt)
     _kalmanFilter.Q(States::RecvClkErr, States::RecvClkDrift) = cf_S_a * std::pow(dt, 2) / 2.0;
     _kalmanFilter.Q(States::RecvClkDrift, States::RecvClkErr) = _kalmanFilter.Q(States::RecvClkErr, States::RecvClkDrift);
     _kalmanFilter.Q(States::RecvClkDrift, States::RecvClkDrift) = cf_S_a * dt;
-
-    // TODO add Q for inter-system clock errors and drifts
 }
 
 // ###########################################################################################################
 //                                  Assign Solution of Kalman Filter estimation
 // ###########################################################################################################
-void SppKalmanFilter::assignSolution(std::shared_ptr<NAV::SppSolution>& sppSol, State& state,
+void SppKalmanFilter::assignSolution(std::shared_ptr<NAV::SppSolution>& sppSol,
                                      const std::vector<SatelliteSystem>& otherSatelliteSystems)
 {
     assignInternalSolution(otherSatelliteSystems);
 
-    state.e_position = _kalmanFilter.x(States::Pos);
-    state.e_velocity = _kalmanFilter.x(States::Vel);
-    state.recvClk = _recvClk;
     sppSol->setPositionAndStdDev_e(_e_position, _kalmanFilter.P(States::Pos, States::Pos));
     sppSol->setVelocityAndStdDev_e(_e_velocity, _kalmanFilter.P(States::Vel, States::Vel));
     sppSol->recvClk = _recvClk;
@@ -380,7 +579,7 @@ void SppKalmanFilter::assignInternalSolution(const std::vector<SatelliteSystem>&
     _recvClk.bias.stdDev = std::sqrt(_kalmanFilter.P(States::RecvClkErr, States::RecvClkErr)) / InsConst::C;
     _recvClk.drift.value = _kalmanFilter.x(States::RecvClkDrift) / InsConst::C;
     _recvClk.drift.stdDev = std::sqrt(_kalmanFilter.P(States::RecvClkDrift, States::RecvClkDrift)) / InsConst::C;
-    _recvClk.referenceTimeSatelliteSystem = _kalmanFilterReferenceTimeSatelliteSystem;
+    _recvClk.referenceTimeSatelliteSystem = _refTimeSatSys;
 
     for (const auto& satelliteSystem : otherSatelliteSystems)
     {
@@ -397,17 +596,20 @@ void SppKalmanFilter::assignInternalSolution(const std::vector<SatelliteSystem>&
 // ###########################################################################################################
 //                       Single Point Positioning by Kalman Filter estimation
 // ###########################################################################################################
-void SppKalmanFilter::estimate(const InsTime& insTime, State& state,
-                               std::vector<CalcData>& calcData,
-                               std::shared_ptr<NAV::SppSolution>& sppSol,
-                               const IonosphericCorrections& ionosphericCorrections,
-                               const IonosphereModel& ionosphereModel,
-                               const TroposphereModelSelection& troposphereModels,
-                               const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
-                               double elevationMask, const std::array<bool, 2>& usedObservations)
+std::shared_ptr<NAV::SppSolution> SppKalmanFilter::estimateSppSolution(const InsTime& insTime,
+                                                                       std::vector<CalcData>& calcData,
+                                                                       const IonosphericCorrections& ionosphericCorrections,
+                                                                       const IonosphereModel& ionosphereModel,
+                                                                       const TroposphereModelSelection& troposphereModels,
+                                                                       const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
+                                                                       double elevationMask,
+                                                                       const std::set<GnssObs::ObservationType>& usedObservations)
 {
-    kalmanFilterPrediction(sppSol->insTime);
-    assignSolution(sppSol, state, _allOtherSelectedSatelliteSystems);
+    auto sppSol = std::make_shared<SppSolution>();
+    sppSol->insTime = insTime;
+
+    kalmanFilterPrediction(insTime);
+    assignSolution(sppSol, _allSatSysExceptRef);
 
     if (!calcData.empty())
     {
@@ -425,7 +627,11 @@ void SppKalmanFilter::estimate(const InsTime& insTime, State& state,
         LOG_DATA("nMeasPsr {}", nMeasPsr);
 
         // Find all observations providing a doppler measurement (for velocity calculation)
-        size_t nDopplerMeas = findDopplerMeasurements(calcData);
+        size_t nDopplerMeas = 0;
+        if (usedObservations.contains(GnssObs::ObservationType::Doppler))
+        {
+            nDopplerMeas = findDopplerMeasurements(calcData);
+        }
         LOG_DATA("nDopplerMeas {}", nDopplerMeas);
 
         // Amount of estimated parameters
@@ -435,13 +641,17 @@ void SppKalmanFilter::estimate(const InsTime& insTime, State& state,
         // Latitude, Longitude, Altitude of the receiver [rad, rad, m]
         Eigen::Vector3d lla_pos = trafo::ecef2lla_WGS84(_kalmanFilter.x(States::Pos));
 
+        State state = SPP::State{ .e_position = _e_position,
+                                  .e_velocity = _e_velocity,
+                                  .recvClk = _recvClk };
+
         calcDataBasedOnEstimates(sppSol, availableSatelliteSystems, calcData, state,
                                  nParam, nMeasPsr, nDopplerMeas, insTime, lla_pos,
                                  elevationMask, EstimatorType::KF);
 
         if (sppSol->nSatellitesPosition + sppSol->nSatellitesVelocity == 0)
         {
-            return;
+            return sppSol;
         }
 
         auto [e_H_psr,          // Measurement/Geometry matrix for the pseudorange
@@ -463,11 +673,13 @@ void SppKalmanFilter::estimate(const InsTime& insTime, State& state,
                                                     EstimatorType::KF);
 
         kalmanFilterUpdate(keyedObservations, sppSol->recvClk.referenceTimeSatelliteSystem, sppSol->otherUsedSatelliteSystems, usedObservations, insTime);
-        assignSolution(sppSol, state, availableSatelliteSystems);
+        assignSolution(sppSol, availableSatelliteSystems);
 
         _lastUpdate = sppSol->insTime;
         LOG_DATA("_lastTime {}", _lastUpdate);
     }
+
+    return sppSol;
 }
 
 // ###########################################################################################################
@@ -496,8 +708,8 @@ void SppKalmanFilter::kalmanFilterPrediction(const InsTime& insTime)
         _kalmanFilter.G(States::Vel, States::Vel) = n_Quat_e.toRotationMatrix().transpose();
 
         // Position dependent part of Noise scale matrix W
-        Eigen::DiagonalMatrix<double, 3> a_S_n(gui_covarianceAccel(0), gui_covarianceAccel(0), gui_covarianceAccel(1));            // Scaling matrix in n-frame
-        _kalmanFilter.W(States::Vel, States::Vel) = n_Quat_e.toRotationMatrix().transpose() * a_S_n * n_Quat_e.toRotationMatrix(); // Scaling matrix in e-frame
+        Eigen::DiagonalMatrix<double, 3> a_S_n(_covarianceAccel(0), _covarianceAccel(0), _covarianceAccel(1)); // Scaling matrix in n-frame
+        _kalmanFilter.W(States::Vel, States::Vel) = a_S_n;                                                     // Scaling matrix in e-frame
 
         _kalmanFilter.calcPhiAndQWithVanLoanMethod(dt);
     }
@@ -527,14 +739,13 @@ void SppKalmanFilter::kalmanFilterPrediction(const InsTime& insTime)
 void SppKalmanFilter::kalmanFilterUpdate(const KeyedObservations& keyedObservations,
                                          SatelliteSystem sppSolReferenceTimeSatelliteSystem,
                                          const std::vector<SatelliteSystem>& otherSatelliteSystems,
-                                         const std::array<bool, 2>& usedObservations,
+                                         const std::set<GnssObs::ObservationType>& usedObservations,
                                          [[maybe_unused]] const InsTime& insTime)
 {
     // Update the Measurement sensitivity Matrix (𝐇), the Measurement noise covariance matrix (𝐑) and the Measurement vector (𝐳)
 
     std::vector<Meas::MeasKeyTypes> measKeys;
-    measKeys.reserve(keyedObservations.size()
-                     * static_cast<size_t>(std::count(usedObservations.begin(), usedObservations.end(), true)));
+    measKeys.reserve(keyedObservations.size() * usedObservations.size());
     for (const auto& [satSigId, keyedObservation] : keyedObservations)
     {
         for (const auto& [obsType, obs_i] : keyedObservation)
@@ -557,7 +768,7 @@ void SppKalmanFilter::kalmanFilterUpdate(const KeyedObservations& keyedObservati
 
     // check whether reference time satellite system has changed
     bool referenceTimeSatelliteSystemChanged = false;
-    if (_kalmanFilterReferenceTimeSatelliteSystem != sppSolReferenceTimeSatelliteSystem)
+    if (_refTimeSatSys != sppSolReferenceTimeSatelliteSystem)
     {
         referenceTimeSatelliteSystemChanged = true;
         LOG_WARN("Reference satellite system for clock estimation is not available in this epoch. Inter-system clock update cannot be performed.");
@@ -631,32 +842,43 @@ void to_json(json& j, const SppKalmanFilter& data)
 {
     j["qCalculationAlgorithm"] = data.qCalculationAlgorithm;
 
-    j["covarianceAccelUnit"] = data.gui_covarianceAccelUnit;
-    j["covarianceAccel"] = data.gui_covarianceAccel;
+    j["gui_covarianceAccelUnit"] = data.gui_covarianceAccelUnit;
+    j["gui_covarianceAccel"] = data.gui_covarianceAccel;
+    j["_covarianceAccel"] = data._covarianceAccel;
 
     j["gui_covarianceClkPhaseDriftUnit"] = data.gui_covarianceClkPhaseDriftUnit;
     j["gui_covarianceClkPhaseDrift"] = data.gui_covarianceClkPhaseDrift;
+    j["_covarianceClkPhaseDrift"] = data._covarianceClkPhaseDrift;
     j["gui_covarianceClkFrequencyDriftUnit"] = data.gui_covarianceClkFrequencyDriftUnit;
     j["gui_covarianceClkFrequencyDrift"] = data.gui_covarianceClkFrequencyDrift;
+    j["_covarianceClkFrequencyDrift"] = data._covarianceClkFrequencyDrift;
     j["gui_covarianceInterSysClkPhaseDriftUnit"] = data.gui_covarianceInterSysClkPhaseDriftUnit;
     j["gui_covarianceInterSysClkPhaseDrift"] = data.gui_covarianceInterSysClkPhaseDrift;
+    j["_covarianceInterSysClkPhaseDrift"] = data._covarianceInterSysClkPhaseDrift;
     j["gui_covarianceInterSysClkFrequencyDriftUnit"] = data.gui_covarianceInterSysClkFrequencyDriftUnit;
     j["gui_covarianceInterSysClkFrequencyDrift"] = data.gui_covarianceInterSysClkFrequencyDrift;
+    j["_covarianceInterSysClkFrequencyDrift"] = data._covarianceInterSysClkFrequencyDrift;
 
     j["processNoiseStandardDeviation"] = data.processNoiseStandardDeviation;
 
     j["gui_initCovariancePositionUnit"] = data.gui_initCovariancePositionUnit;
     j["gui_initCovariancePosition"] = data.gui_initCovariancePosition;
+    j["_initCovariancePosition"] = data._initCovariancePosition;
     j["gui_initCovarianceVelocityUnit"] = data.gui_initCovarianceVelocityUnit;
     j["gui_initCovarianceVelocity"] = data.gui_initCovarianceVelocity;
+    j["_initCovarianceVelocity"] = data._initCovarianceVelocity;
     j["gui_initCovarianceRecvClkErrUnit"] = data.gui_initCovarianceRecvClkErrUnit;
     j["gui_initCovarianceRecvClkErr"] = data.gui_initCovarianceRecvClkErr;
+    j["_initCovarianceRecvClkErr"] = data._initCovarianceRecvClkErr;
     j["gui_initCovarianceRecvClkDriftUnit"] = data.gui_initCovarianceRecvClkDriftUnit;
     j["gui_initCovarianceRecvClkDrift"] = data.gui_initCovarianceRecvClkDrift;
+    j["_initCovarianceRecvClkDrift"] = data._initCovarianceRecvClkDrift;
     j["gui_initCovarianceInterSysErrUnit"] = data.gui_initCovarianceInterSysErrUnit;
     j["gui_initCovarianceInterSysErr"] = data.gui_initCovarianceInterSysErr;
+    j["_initCovarianceInterSysErr"] = data._initCovarianceInterSysErr;
     j["gui_initCovarianceInterSysDriftUnit"] = data.gui_initCovarianceInterSysDriftUnit;
     j["gui_initCovarianceInterSysDrift"] = data.gui_initCovarianceInterSysDrift;
+    j["_initCovarianceInterSysDrift"] = data._initCovarianceInterSysDrift;
 }
 
 void from_json(const json& j, SppKalmanFilter& data)
@@ -665,15 +887,20 @@ void from_json(const json& j, SppKalmanFilter& data)
 
     if (j.contains("qCalculationAlgorithm")) { j.at("qCalculationAlgorithm").get_to(data.qCalculationAlgorithm); }
 
-    if (j.contains("covarianceAccelUnit")) { j.at("covarianceAccelUnit").get_to(data.gui_covarianceAccelUnit); }
-    if (j.contains("covarianceAccel")) { j.at("covarianceAccel").get_to(data.gui_covarianceAccel); }
+    if (j.contains("gui_covarianceAccelUnit")) { j.at("gui_covarianceAccelUnit").get_to(data.gui_covarianceAccelUnit); }
+    if (j.contains("gui_covarianceAccel")) { j.at("gui_covarianceAccel").get_to(data.gui_covarianceAccel); }
+    if (j.contains("_covarianceAccel")) { j.at("_covarianceAccel").get_to(data._covarianceAccel); }
 
+    if (j.contains("_covarianceClkPhaseDrift")) { j.at("_covarianceClkPhaseDrift").get_to(data._covarianceClkPhaseDrift); }
     if (j.contains("gui_covarianceClkPhaseDrift")) { j.at("gui_covarianceClkPhaseDrift").get_to(data.gui_covarianceClkPhaseDrift); }
     if (j.contains("gui_covarianceClkPhaseDriftUnit")) { j.at("gui_covarianceClkPhaseDriftUnit").get_to(data.gui_covarianceClkPhaseDriftUnit); }
+    if (j.contains("_covarianceClkFrequencyDrift")) { j.at("_covarianceClkFrequencyDrift").get_to(data._covarianceClkFrequencyDrift); }
     if (j.contains("gui_covarianceClkFrequencyDrift")) { j.at("gui_covarianceClkFrequencyDrift").get_to(data.gui_covarianceClkFrequencyDrift); }
     if (j.contains("gui_covarianceClkFrequencyDriftUnit")) { j.at("gui_covarianceClkFrequencyDriftUnit").get_to(data.gui_covarianceClkFrequencyDriftUnit); }
+    if (j.contains("_covarianceInterSysClkPhaseDrift")) { j.at("_covarianceInterSysClkPhaseDrift").get_to(data._covarianceInterSysClkPhaseDrift); }
     if (j.contains("gui_covarianceInterSysClkPhaseDrift")) { j.at("gui_covarianceInterSysClkPhaseDrift").get_to(data.gui_covarianceInterSysClkPhaseDrift); }
     if (j.contains("gui_covarianceInterSysClkPhaseDriftUnit")) { j.at("gui_covarianceInterSysClkPhaseDriftUnit").get_to(data.gui_covarianceInterSysClkPhaseDriftUnit); }
+    if (j.contains("_covarianceInterSysClkFrequencyDrift")) { j.at("_covarianceInterSysClkFrequencyDrift").get_to(data._covarianceInterSysClkFrequencyDrift); }
     if (j.contains("gui_covarianceInterSysClkFrequencyDrift")) { j.at("gui_covarianceInterSysClkFrequencyDrift").get_to(data.gui_covarianceInterSysClkFrequencyDrift); }
     if (j.contains("gui_covarianceInterSysClkFrequencyDriftUnit")) { j.at("gui_covarianceInterSysClkFrequencyDriftUnit").get_to(data.gui_covarianceInterSysClkFrequencyDriftUnit); }
 
@@ -683,21 +910,27 @@ void from_json(const json& j, SppKalmanFilter& data)
 
     if (j.contains("gui_initCovariancePositionUnit")) { j.at("gui_initCovariancePositionUnit").get_to(data.gui_initCovariancePositionUnit); }
     if (j.contains("gui_initCovariancePosition")) { j.at("gui_initCovariancePosition").get_to(data.gui_initCovariancePosition); }
+    if (j.contains("_initCovariancePosition")) { j.at("_initCovariancePosition").get_to(data._initCovariancePosition); }
 
     if (j.contains("gui_initCovarianceVelocityUnit")) { j.at("gui_initCovarianceVelocityUnit").get_to(data.gui_initCovarianceVelocityUnit); }
     if (j.contains("gui_initCovarianceVelocity")) { j.at("gui_initCovarianceVelocity").get_to(data.gui_initCovarianceVelocity); }
+    if (j.contains("_initCovarianceVelocity")) { j.at("_initCovarianceVelocity").get_to(data._initCovarianceVelocity); }
 
     if (j.contains("gui_initCovarianceRecvClkErrUnit")) { j.at("gui_initCovarianceRecvClkErrUnit").get_to(data.gui_initCovarianceRecvClkErrUnit); }
     if (j.contains("gui_initCovarianceRecvClkErr")) { j.at("gui_initCovarianceRecvClkErr").get_to(data.gui_initCovarianceRecvClkErr); }
+    if (j.contains("_initCovarianceRecvClkErr")) { j.at("_initCovarianceRecvClkErr").get_to(data._initCovarianceRecvClkErr); }
 
     if (j.contains("gui_initCovarianceRecvClkDriftUnit")) { j.at("gui_initCovarianceRecvClkDriftUnit").get_to(data.gui_initCovarianceRecvClkDriftUnit); }
     if (j.contains("gui_initCovarianceRecvClkDrift")) { j.at("gui_initCovarianceRecvClkDrift").get_to(data.gui_initCovarianceRecvClkDrift); }
+    if (j.contains("_initCovarianceRecvClkDrift")) { j.at("_initCovarianceRecvClkDrift").get_to(data._initCovarianceRecvClkDrift); }
 
     if (j.contains("gui_initCovarianceInterSysErrUnit")) { j.at("gui_initCovarianceInterSysErrUnit").get_to(data.gui_initCovarianceInterSysErrUnit); }
     if (j.contains("gui_initCovarianceInterSysErr")) { j.at("gui_initCovarianceInterSysErr").get_to(data.gui_initCovarianceInterSysErr); }
+    if (j.contains("_initCovarianceInterSysErr")) { j.at("_initCovarianceInterSysErr").get_to(data._initCovarianceInterSysErr); }
 
     if (j.contains("gui_initCovarianceInterSysDriftUnit")) { j.at("gui_initCovarianceInterSysDriftUnit").get_to(data.gui_initCovarianceInterSysDriftUnit); }
     if (j.contains("gui_initCovarianceInterSysDrift")) { j.at("gui_initCovarianceInterSysDrift").get_to(data.gui_initCovarianceInterSysDrift); }
+    if (j.contains("_initCovarianceInterSysDrift")) { j.at("_initCovarianceInterSysDrift").get_to(data._initCovarianceInterSysDrift); }
 }
 
 } // namespace NAV::GNSS::Positioning::SPP

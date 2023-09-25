@@ -14,6 +14,8 @@
 #pragma once
 
 #include <memory>
+#include <set>
+
 #include "NodeData/GNSS/GnssObs.hpp"
 #include "NodeData/GNSS/GnssNavInfo.hpp"
 #include "NodeData/GNSS/SppSolution.hpp"
@@ -41,6 +43,7 @@ namespace NAV::GNSS::Positioning::SPP
 /// @param[in] filterCode Codes used for calculation (GUI filter)
 /// @param[in] excludedSatellites List of satellites to exclude
 /// @param[in] elevationMask Elevation cut-off angle for satellites in [rad]
+/// @param[in] usedObservations Utilized observations
 /// @return Shared pointer to the SPP solution
 std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
                                                 const std::shared_ptr<const GnssObs>& gnssObs,
@@ -52,7 +55,8 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
                                                 const Frequency& filterFreq,
                                                 const Code& filterCode,
                                                 const std::vector<SatId>& excludedSatellites,
-                                                double elevationMask);
+                                                double elevationMask,
+                                                const std::set<GnssObs::ObservationType>& usedObservations);
 
 /// @brief Calculates the SPP solution with a Kalman Filter
 /// @param[in, out] kalmanFilter Spp Kalman Filter with all settings
@@ -66,7 +70,7 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
 /// @param[in] filterCode Codes used for calculation (GUI filter)
 /// @param[in] excludedSatellites List of satellites to exclude
 /// @param[in] elevationMask Elevation cut-off angle for satellites in [rad]
-/// @param[in] usedObservations Utilized observations (Order from GnssObs::ObservationType: Psr, Carrier, Doppler)
+/// @param[in] usedObservations Utilized observations
 /// @return Shared pointer to the SPP solution
 std::shared_ptr<SppSolution> calcSppSolutionKF(SppKalmanFilter& kalmanFilter,
                                                State state,
@@ -79,6 +83,6 @@ std::shared_ptr<SppSolution> calcSppSolutionKF(SppKalmanFilter& kalmanFilter,
                                                const Code& filterCode,
                                                const std::vector<SatId>& excludedSatellites,
                                                double elevationMask,
-                                               const std::array<bool, 2>& usedObservations);
+                                               const std::set<GnssObs::ObservationType>& usedObservations);
 
 } // namespace NAV::GNSS::Positioning::SPP

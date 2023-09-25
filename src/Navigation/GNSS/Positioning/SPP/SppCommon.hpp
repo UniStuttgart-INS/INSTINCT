@@ -14,6 +14,7 @@
 #pragma once
 
 #include <vector>
+#include <set>
 #include <unordered_map>
 
 #include "util/Eigen.hpp"
@@ -60,15 +61,13 @@ struct CalcData
 };
 
 /// @brief Selects the satellite signals depending on various filters
-/// @param[out] sppSol SPP solution
 /// @param[in] gnssObs GNSS observations (pseudoranges, carrier phases, doppler, CN0, ...)
 /// @param[in] gnssNavInfos List of Navigation data (ionospheric corrections, time system corrections, ...)
 /// @param[in] filterFreq Frequencies to use
 /// @param[in] filterCode Codes to use
 /// @param[in] excludedSatellites List of excluded satellites
 /// @return Data calculated for each satellite, that is available and selected
-std::vector<CalcData> selectObservations(const std::shared_ptr<SppSolution>& sppSol,
-                                         const std::shared_ptr<const GnssObs>& gnssObs,
+std::vector<CalcData> selectObservations(const std::shared_ptr<const GnssObs>& gnssObs,
                                          const std::vector<const GnssNavInfo*>& gnssNavInfos,
                                          const Frequency& filterFreq,
                                          const Code& filterCode,

@@ -21,8 +21,7 @@
 namespace NAV::GNSS::Positioning::SPP
 {
 
-std::vector<CalcData> selectObservations(const std::shared_ptr<SppSolution>& sppSol,
-                                         const std::shared_ptr<const GnssObs>& gnssObs,
+std::vector<CalcData> selectObservations(const std::shared_ptr<const GnssObs>& gnssObs,
                                          const std::vector<const GnssNavInfo*>& gnssNavInfos,
                                          const Frequency& filterFreq,
                                          const Code& filterCode,
@@ -45,8 +44,6 @@ std::vector<CalcData> selectObservations(const std::shared_ptr<SppSolution>& spp
                     if (!satNavData->isHealthy())
                     {
                         LOG_DATA("Satellite {} is skipped because the signal is not healthy.", satId);
-                        (*sppSol)(obsData.satSigId).skipped = true;
-
                         continue;
                     }
                     LOG_DATA("Using observation from {}", obsData.satSigId);
@@ -237,10 +234,10 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
                                                                 const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
                                                                 const EstimatorType& estimatorType)
 {
-    int nParam = static_cast<int>(sppSol->nParam);                                           // Number of parameters
-    int nMeasPsr = static_cast<int>(sppSol->nSatellitesPosition);                            // Number of pseudorange measurements
-    int nMeasDoppler = static_cast<int>(sppSol->nSatellitesVelocity);                        // Number of doppler/pseudorange rate measurements
-    const std::vector<SatelliteSystem> satelliteSystems = sppSol->otherUsedSatelliteSystems; // available satellite systems besides reference time satellite system
+    int nParam = static_cast<int>(sppSol->nParam);                                            // Number of parameters
+    int nMeasPsr = static_cast<int>(sppSol->nSatellitesPosition);                             // Number of pseudorange measurements
+    int nMeasDoppler = static_cast<int>(sppSol->nSatellitesVelocity);                         // Number of doppler/pseudorange rate measurements
+    const std::vector<SatelliteSystem>& satelliteSystems = sppSol->otherUsedSatelliteSystems; // available satellite systems besides reference time satellite system
 
     EstWeightDesignMatrices retVal;
 

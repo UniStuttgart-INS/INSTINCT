@@ -15,6 +15,7 @@
 
 #include "util/Eigen.hpp"
 #include <vector>
+#include <set>
 
 #include "internal/Node/Node.hpp"
 #include "Navigation/GNSS/Core/Frequency.hpp"
@@ -103,8 +104,8 @@ class SinglePointPositioning : public Node
     /// Elevation cut-off angle for satellites in [rad]
     double _elevationMask = static_cast<double>(15.0_deg);
 
-    /// Utilized observations (Order from GnssObs::ObservationType: Psr, Doppler)
-    std::array<bool, 2> _usedObservations = { true, true };
+    /// Utilized observations
+    std::set<GnssObs::ObservationType> _usedObservations{ GnssObs::Pseudorange, GnssObs::Doppler };
 
     /// Ionosphere Model used for the calculation
     IonosphereModel _ionosphereModel = IonosphereModel::Klobuchar;

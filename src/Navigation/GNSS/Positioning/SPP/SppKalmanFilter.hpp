@@ -8,6 +8,7 @@
 
 /// @file SppKalmanFilter.hpp
 /// @brief SPP with a Kalman Filter
+/// @author P. Peitschat (HiWi)
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2023-07-19
 
@@ -82,6 +83,7 @@ inline static const std::vector<StateKeyTypes> PosVelRecvClk = { KFStates::PosX,
 /// @brief All Inter-system clock errors keys
 static std::vector<KF::States::StateKeyTypes> InterSysErrs;
 /// @brief All Inter-system clock drifts keys
+/// @note Groves2013 does not estimate inter-system drifts, but we do for all models.
 static std::vector<KF::States::StateKeyTypes> InterSysDrifts;
 
 } // namespace States
@@ -129,6 +131,8 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
 
     /// @brief GUI selection of the initial covariance diagonal values for position (standard deviation σ or Variance σ²)
     Eigen::Vector3d gui_initCovariancePosition{ 10, 10, 10 };
+    /// @brief Initial covariance diagonal values for position (Variance σ²)
+    Eigen::Vector3d _initCovariancePosition{ 10, 10, 10 };
 
     // ###########################################################################################################
 
@@ -143,6 +147,8 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
 
     /// @brief GUI selection of the initial covariance diagonal values for velocity (standard deviation σ or Variance σ²)
     Eigen::Vector3d gui_initCovarianceVelocity{ 3, 3, 3 };
+    /// @brief Initial covariance diagonal values for velocity (Variance σ²)
+    Eigen::Vector3d _initCovarianceVelocity{ 3, 3, 3 };
 
     // ###########################################################################################################
 
@@ -152,11 +158,13 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
         s2, ///< Variance [s²]
         s,  ///< Standard deviation [s]
     };
-    /// Gui selection for the Unit of the initial covariance for the receivcer clock error
+    /// Gui selection for the Unit of the initial covariance for the receiver clock error
     InitCovarianceRecvClkErrUnits gui_initCovarianceRecvClkErrUnit = InitCovarianceRecvClkErrUnits::s;
 
-    /// @brief GUI selection of the initial covariance for the receivcer clock error (standard deviation σ or Variance σ²)
+    /// @brief GUI selection of the initial covariance for the receiver clock error (standard deviation σ or Variance σ²)
     double gui_initCovarianceRecvClkErr = 1e-8;
+    /// @brief Initial covariance for the receiver clock error (Variance σ²)
+    double _initCovarianceRecvClkErr = 1e-8;
 
     // ###########################################################################################################
 
@@ -166,27 +174,33 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
         s2_s2, ///< Variance [s²/s²]
         s_s,   ///< Standard deviation [s/s]
     };
-    /// Gui selection for the Unit of the initial covariance for the receivcer clock drift
+    /// Gui selection for the Unit of the initial covariance for the receiver clock drift
     InitCovarianceRecvClkDriftUnits gui_initCovarianceRecvClkDriftUnit = InitCovarianceRecvClkDriftUnits::s_s;
 
-    /// @brief GUI selection of the initial covariance for the receivcer clock drift (standard deviation σ or Variance σ²)
+    /// @brief GUI selection of the initial covariance for the receiver clock drift (standard deviation σ or Variance σ²)
     double gui_initCovarianceRecvClkDrift = 1e-10;
+    /// @brief Initial covariance for the receiver clock drift (Variance σ²)
+    double _initCovarianceRecvClkDrift = 1e-10;
 
     // ###########################################################################################################
 
-    /// Gui selection for the Unit of the initial covariance for the inter-sytem clock error
+    /// Gui selection for the Unit of the initial covariance for the inter-system clock error
     InitCovarianceRecvClkErrUnits gui_initCovarianceInterSysErrUnit = InitCovarianceRecvClkErrUnits::s;
 
-    /// @brief GUI selection of the initial covariance for the interconstellation clock error
+    /// @brief GUI selection of the initial covariance for the inter-constellation clock error
     double gui_initCovarianceInterSysErr = 1e-8;
+    /// @brief Initial covariance for the inter-constellation clock error
+    double _initCovarianceInterSysErr = 1e-8;
 
     // ###########################################################################################################
 
     /// Gui selection for the Unit of the initial covariance for the inter-system clock drift
     InitCovarianceRecvClkDriftUnits gui_initCovarianceInterSysDriftUnit = InitCovarianceRecvClkDriftUnits::s_s;
 
-    /// @brief GUI selection of the initial covariance for the interconstellation clock drift
+    /// @brief GUI selection of the initial covariance for the inter-constellation clock drift
     double gui_initCovarianceInterSysDrift = 1e-10;
+    /// @brief Initial covariance for the inter-constellation clock drift
+    double _initCovarianceInterSysDrift = 1e-10;
 
     // ###########################################################################################################
 
@@ -198,6 +212,9 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     };
     /// Q calculation algorithm
     QCalculationAlgorithm qCalculationAlgorithm = QCalculationAlgorithm::VanLoan;
+
+    /// @brief Gui selection of the process noise
+    float processNoiseStandardDeviation = 1;
 
     // ###########################################################################################################
 
@@ -213,6 +230,10 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     /// @brief GUI selection for the Standard deviation of the acceleration 𝜎_a due to user motion in horizontal and vertical component
     /// @note See Groves (2013) eq. (9.156)
     Eigen::Vector2d gui_covarianceAccel = { 3.0, 1.5 } /* [ m / √(s^3) ] */;
+    /// @brief Covariance of the acceleration 𝜎_a due to user motion in horizontal and vertical component
+    Eigen::Vector2d _covarianceAccel = { 3.0, 1.5 } /* [ m^2 / s^3 ] */;
+
+    // ###########################################################################################################
 
     /// Possible Units for the Standard deviation of the clock phase drift
     enum class CovarianceClkPhaseDriftUnits
@@ -225,6 +246,10 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
 
     /// @brief GUI selection for the Standard deviation of the clock phase drift
     double gui_covarianceClkPhaseDrift = 0.2 /* [ m / √(s^3) ] */;
+    /// @brief Covariance of the clock phase drift
+    double _covarianceClkPhaseDrift = 0.2 /* [ m^2 / s^3 ] */;
+
+    // ###########################################################################################################
 
     /// Possible Units for the Standard deviation of the clock frequency drift
     enum class CovarianceClkFrequencyDriftUnits
@@ -237,23 +262,33 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
 
     /// @brief GUI selection for the Standard deviation of the clock frequency drift
     double gui_covarianceClkFrequencyDrift = 0.1 /* [ m / √(s) ] */;
+    /// @brief Covariance of the clock frequency drift
+    double _covarianceClkFrequencyDrift = 0.1 /* [ m^2 / s ] */;
+
+    // ###########################################################################################################
 
     /// Gui selection for the Unit of the input stdevClkPhaseDrift parameter
     CovarianceClkPhaseDriftUnits gui_covarianceInterSysClkPhaseDriftUnit = CovarianceClkPhaseDriftUnits::m_sqrts3;
 
     /// @brief GUI selection for the Standard deviation of the inter-system clock phase drift
     double gui_covarianceInterSysClkPhaseDrift = std::sqrt(2) * 0.2 /* [ m / √(s^3) ] */;
+    /// @brief Covariance of the inter-system clock phase drift
+    double _covarianceInterSysClkPhaseDrift = std::sqrt(2) * 0.2 /* [ m^2 / s^3 ] */;
+
+    // ###########################################################################################################
 
     /// Gui selection for the Unit of the input stdevClkFrequencyDrift parameter
     CovarianceClkFrequencyDriftUnits gui_covarianceInterSysClkFrequencyDriftUnit = CovarianceClkFrequencyDriftUnits::m_sqrts;
 
     /// @brief GUI selection for the Standard deviation of the inter-system clock frequency drift
     double gui_covarianceInterSysClkFrequencyDrift = std::sqrt(2) * 0.1 /* [ m / √(s) ] */;
-
-    /// @brief Gui selection of the process noise
-    float processNoiseStandardDeviation = 1;
+    /// @brief Covariance of the inter-system clock frequency drift
+    double _covarianceInterSysClkFrequencyDrift = std::sqrt(2) * 0.1 /* [ m^2 / s ] */;
 
     // ###########################################################################################################
+
+    /// @brief Creates the GUI for SPP if a Kalman Filter is selected
+    void gui();
 
     /// @brief Initializes and resets the filter
     void initialize();
@@ -261,14 +296,15 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     /// @brief Checks wether the Kalman filter is initialized
     bool isInitialized() const;
 
-    /// @ brief Sets _allOtherSelectedSatelliteSystems
-    void setAllOtherSelectedSatelliteSystems(const std::vector<SatelliteSystem>& allSatSys);
+    /// @brief Sets the vector that contains all satellite systems that the user has selected in the GUI besides Reference time satellite system
+    /// @param[in] allSatSys selected satellite systems besides Reference time satellite system
+    void setAllSatSysExceptRef(const std::vector<SatelliteSystem>& allSatSys);
 
-    /// @ brief Gets _allOtherSelectedSatelliteSystems
-    std::vector<SatelliteSystem> getAllOtherSelectedSatelliteSystems() const;
+    /// @ brief Gets the vector that contains all satellite systems that the user has selected in the GUI besides Reference time satellite system
+    std::vector<SatelliteSystem> getAllSatSysExceptRef() const;
 
-    /// @ brief Gets _kalmanFilterReferenceTimeSatelliteSystem
-    SatelliteSystem getKalmanFilterReferenceTimeSatelliteSystem() const;
+    /// @ brief Gets satellite system used as time reference
+    SatelliteSystem getRefTimeSatSys() const;
 
     /// @brief Gets the state keys for inter-system clock estimation
     /// @param[in] insTime Epoch time
@@ -280,25 +316,22 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
 
     /// @brief Performs Single Point Positioning algorithm based on Kalman Filter
     /// @param[in] insTime Epoch time
-    /// @param[in] state Previous SPP state
     /// @param[in, out] calcData Data calculated for each satellite, that is available and selected
-    /// @param[in, out] sppSol Single Point Positioning Solution
     /// @param[in] ionosphericCorrections Collection of all connected Ionospheric Corrections
     /// @param[in] ionosphereModel Ionosphere Model used for the calculation
     /// @param[in] troposphereModels Troposphere Models used for the calculation
     /// @param[in] gnssMeasurementErrorModel GNSS measurement error model to use
     /// @param[in] elevationMask Elevation cut-off angle for satellites in [rad]
     /// @param[in] usedObservations Utilized observations (Order from GnssObs::ObservationType: Psr, Carrier, Doppler)
-    void estimate(const InsTime& insTime,
-                  State& state,
-                  std::vector<CalcData>& calcData,
-                  std::shared_ptr<NAV::SppSolution>& sppSol,
-                  const IonosphericCorrections& ionosphericCorrections,
-                  const IonosphereModel& ionosphereModel,
-                  const TroposphereModelSelection& troposphereModels,
-                  const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
-                  double elevationMask,
-                  const std::array<bool, 2>& usedObservations);
+    /// @param[out] sppSol Single Point Positioning Solution
+    std::shared_ptr<NAV::SppSolution> estimateSppSolution(const InsTime& insTime,
+                                                          std::vector<CalcData>& calcData,
+                                                          const IonosphericCorrections& ionosphericCorrections,
+                                                          const IonosphereModel& ionosphereModel,
+                                                          const TroposphereModelSelection& troposphereModels,
+                                                          const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
+                                                          double elevationMask,
+                                                          const std::set<GnssObs::ObservationType>& usedObservations);
 
   private:
     /// @brief Does the Kalman Filter prediction
@@ -314,7 +347,7 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     void kalmanFilterUpdate(const KeyedObservations& keyedObservations,
                             SatelliteSystem sppSolReferenceTimeSatelliteSystem,
                             const std::vector<SatelliteSystem>& satelliteSystems,
-                            const std::array<bool, 2>& usedObservations,
+                            const std::set<GnssObs::ObservationType>& usedObservations,
                             const InsTime& insTime);
 
     /// @brief Sets Process Noise Matrix
@@ -327,9 +360,8 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
 
     /// @brief Assigns Kalman Filter estimates to internal variables as well as sppSol and state
     /// @param[in, out] sppSol Single Point Positioning Solution
-    /// @param[in, out] state Previous SPP state
     /// @param[in] otherSatelliteSystems List of satellite systems (all, or available at this epoch)
-    void assignSolution(std::shared_ptr<NAV::SppSolution>& sppSol, State& state,
+    void assignSolution(std::shared_ptr<NAV::SppSolution>& sppSol,
                         const std::vector<SatelliteSystem>& otherSatelliteSystems);
 
     /// Estimated position in ECEF frame [m]
@@ -347,13 +379,13 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     KeyedKalmanFilterD<NAV::GNSS::Positioning::SPP::KF::States::StateKeyTypes, NAV::GNSS::Positioning::SPP::KF::Meas::MeasKeyTypes> _kalmanFilter;
 
     /// Satellite system used as time reference
-    SatelliteSystem _kalmanFilterReferenceTimeSatelliteSystem = SatSys_None;
+    SatelliteSystem _refTimeSatSys = SatSys_None;
 
     /// All satellite systems that the user has selected in the GUI besides Reference time satellite system
-    std::vector<SatelliteSystem> _allOtherSelectedSatelliteSystems;
+    std::vector<SatelliteSystem> _allSatSysExceptRef;
 
     /// Boolean that determines, if Kalman Filter is initialized (from weighted LSE solution)
-    bool _kalmanFilterInitialized = false;
+    bool _initialized = false;
 };
 
 /// @brief Converts the provided data into a json object
