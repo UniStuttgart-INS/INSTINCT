@@ -235,15 +235,15 @@ S_{c f}^a = \frac{\sigma^2\left(\delta \dot{\rho}_c^a\left(t+\tau_s\right)-\delt
   \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
               nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em]
   {
-    \mathbf{0}_3     & \mathbf{0}_3     & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} &               \mathbf{0}_{3,1}              &             \mathbf{0}_{3,1}             & \dots  &               \mathbf{0}_{3,1}              &              \mathbf{0}_{3,1}            \\
-    \mathbf{0}_3     & \mathbf{S}_{a}   & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} &               \mathbf{0}_{3,1}              &             \mathbf{0}_{3,1}             & \dots  &               \mathbf{0}_{3,1}              &              \mathbf{0}_{3,1}            \\
-    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} & \sigma_{c\phi}^2 &         0        &                       0                     &                     0                    & \dots  &                       0                     &                      0                   \\
-    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &         0        &   \sigma_{cf}^2  &                       0                     &                     0                    & \dots  &                       0                     &                      0                   \\
-    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &         0        &         0        & {\sigma_{ISB,\phi}^{S_2 \rightarrow S_1}}^2 &                     0                    & \dots  &                       0                     &                      0                   \\
-    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &         0        &         0        &                       0                     & {\sigma_{ISB,f}^{S_2 \rightarrow S_1}}^2 & \dots  &                       0                     &                      0                   \\
-         \vdots      &      \vdots      &      \vdots      &      \vdots      &                    \vdots                   &                  \vdots                  & \ddots &                    \vdots                   &                   \vdots                 \\
-    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &         0        &         0        &                       0                     &                     0                    & \dots  & {\sigma_{ISB,\phi}^{S_o \rightarrow S_1}}^2 &                      0                   \\
-    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &         0        &         0        &                       0                     &                     0                    & \dots  &                       0                     & {\sigma_{ISB,f}^{S_o \rightarrow S_1}}^2 \\
+    \mathbf{0}_3     & \mathbf{0}_3       & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} &               \mathbf{0}_{3,1}              &             \mathbf{0}_{3,1}             & \dots  &               \mathbf{0}_{3,1}              &              \mathbf{0}_{3,1}            \\
+    \mathbf{0}_3     & \mathbf{S}_{a}^{n} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} &               \mathbf{0}_{3,1}              &             \mathbf{0}_{3,1}             & \dots  &               \mathbf{0}_{3,1}              &              \mathbf{0}_{3,1}            \\
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3}   & \sigma_{c\phi}^2 &         0        &                       0                     &                     0                    & \dots  &                       0                     &                      0                   \\
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3}   &         0        &   \sigma_{cf}^2  &                       0                     &                     0                    & \dots  &                       0                     &                      0                   \\
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3}   &         0        &         0        & {\sigma_{ISB,\phi}^{S_2 \rightarrow S_1}}^2 &                     0                    & \dots  &                       0                     &                      0                   \\
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3}   &         0        &         0        &                       0                     & {\sigma_{ISB,f}^{S_2 \rightarrow S_1}}^2 & \dots  &                       0                     &                      0                   \\
+         \vdots      &      \vdots        &      \vdots      &      \vdots      &                    \vdots                   &                  \vdots                  & \ddots &                    \vdots                   &                   \vdots                 \\
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3}   &         0        &         0        &                       0                     &                     0                    & \dots  & {\sigma_{ISB,\phi}^{S_o \rightarrow S_1}}^2 &                      0                   \\
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3}   &         0        &         0        &                       0                     &                     0                    & \dots  &                       0                     & {\sigma_{ISB,f}^{S_o \rightarrow S_1}}^2 \\
   };
   \draw [dash dot] (-5.75,2.25) -- (5.75,2.25);
   \draw [dash dot] (-3.2,3.65) -- (-3.2,-3.65);
@@ -292,18 +292,20 @@ Uses GUI input values for \f$ S_{aH} \f$, \f$ S_{cf} \f$ and \f$ S_{c\phi} \f$.
 
 \fl{equation,eq-SppKF-processModel-processNoise-groves}
 \mathbf{Q} = 
-\left(\begin{array}{cc:cc}
+\left[\begin{array}{cc:cc}
   \frac{1}{3} S_a^\gamma \tau_s^3 & \frac{1}{2} S_a^\gamma \tau_s^2 & 0_{3,1} & 0_{3,1} \\
   \frac{1}{2} S_a^\gamma \tau_s^2 & S_a^\gamma \tau_s & 0_{3,1} & 0_{3,1} \\
   \hdashline
   0_{1,3} & 0_{1,3} & S_{c \phi}^a \tau_s+\frac{1}{3} S_{c f}^a \tau_s^3 & \frac{1}{2} S_{c f}^a \tau_s^2 \\
   0_{1,3} & 0_{1,3} & \frac{1}{2} S_{c f}^a \tau_s^2 & S_{c f}^a \tau_s
-  \end{array}\right)
+  \end{array}\right]
 \f}
 
 Uses calculated values for \f$ S_{aH} \f$, \f$ S_{cf} \f$ and \f$ S_{c\phi} \f$.
 
 (\cite \Groves2013 Groves, ch. 9.4.2.2, eq. 9.152, p. 417-418)
+
+The inter-system errors and drifts are assumed constant. Note: Groves does not estimate an inter-system drift (\cite \Groves2013 Groves, Appendix G.8, p. G-23 - G-24), but we do for all models.
 
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->

@@ -52,7 +52,7 @@
 /// 1/\sigma_{p 1}^2 & 0 & \dots & 0 & 0 & 0 & \dots & 0 \\
 /// 0 & 1/\sigma_{p 2}^2 & 0 & \dots & 0 & 0 & \dots & \dots \\
 /// \vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \ddots & \vdots \\
-/// 0 & 0 & \dots & 1/\sigma_{p m}^2 & 0 & 0 & \dots & 0 \\ 
+/// 0 & 0 & \dots & 1/\sigma_{p m}^2 & 0 & 0 & \dots & 0 \\
 /// \hdashline
 /// 0 & 0 & \dots & 0                 & 1/\sigma_{d 1}^2 & 0 & \dots & 0 \\
 /// 0 & 0 & \dots & \dots             & 0 & 1/\sigma_{d 2}^2 & 0 & \dots \\
@@ -81,7 +81,7 @@
 /// \sigma_{p 1}^2 & 0 & \dots & 0 & 0 & 0 & \dots & 0 \\
 /// 0 & \sigma_{p 2}^2 & 0 & \dots & 0 & 0 & \dots & \dots \\
 /// \vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \ddots & \vdots \\
-/// 0 & 0 & \dots & \sigma_{p m}^2 & 0 & 0 & \dots & 0 \\ 
+/// 0 & 0 & \dots & \sigma_{p m}^2 & 0 & 0 & \dots & 0 \\
 /// \hdashline
 /// 0 & 0 & \dots & 0                 & \sigma_{d 1}^2 & 0 & \dots & 0 \\
 /// 0 & 0 & \dots & \dots             & 0 & \sigma_{d 2}^2 & 0 & \dots \\
