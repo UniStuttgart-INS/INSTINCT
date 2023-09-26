@@ -60,7 +60,6 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
 
 /// @brief Calculates the SPP solution with a Kalman Filter
 /// @param[in, out] kalmanFilter Spp Kalman Filter with all settings
-/// @param[in] state Previous SPP state
 /// @param[in] gnssObs GNSS observation received
 /// @param[in] gnssNavInfos Collection of all connected navigation data providers
 /// @param[in] ionosphereModel Ionosphere Model used for the calculation
@@ -73,7 +72,6 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
 /// @param[in] usedObservations Utilized observations
 /// @return Shared pointer to the SPP solution
 std::shared_ptr<SppSolution> calcSppSolutionKF(SppKalmanFilter& kalmanFilter,
-                                               State state,
                                                const std::shared_ptr<const GnssObs>& gnssObs,
                                                const std::vector<const GnssNavInfo*>& gnssNavInfos,
                                                const IonosphereModel& ionosphereModel,

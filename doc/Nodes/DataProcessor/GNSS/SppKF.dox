@@ -144,7 +144,7 @@ Pseudorange and Doppler observations are processed together.
 \mathbf{G} \cdot \boldsymbol{w}  
 \f}
 
-(\cite \Groves2013 Groves, ch. 9.4.2.2, eq. 9.148, p. 415)
+(\cite Groves2013 Groves, ch. 9.4.2.2, eq. 9.148, p. 415)
 
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
@@ -157,7 +157,7 @@ Higher order terms are zero, so the exact solution is
 \mathbf{\Phi} = \text{exp}(\mathbf{F} \tau_s) = \mathbf{I} + \mathbf{F}\tau_s 
 \f}
 
-(\cite \Groves2013 Groves, ch. 9.4.2.2, eq. 9.150, p. 416)
+(\cite Groves2013 Groves, ch. 9.4.2.2, eq. 9.150, p. 416)
 
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
@@ -195,7 +195,7 @@ S_{c f}^a = \frac{\sigma^2\left(\delta \dot{\rho}_c^a\left(t+\tau_s\right)-\delt
   - \f$ 100 \text{ m}^2 \text{s}^{–3} \f$ for a military aircraft.
 - The vertical acceleration PSD \f$ S_{aV} \f$  is usually smaller
   
-(\cite \Groves2013 Groves, ch. 9.4.2.2, p. 416-418)
+(\cite Groves2013 Groves, ch. 9.4.2.2, p. 416-418)
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
@@ -303,9 +303,9 @@ Uses GUI input values for \f$ S_{aH} \f$, \f$ S_{cf} \f$ and \f$ S_{c\phi} \f$.
 
 Uses calculated values for \f$ S_{aH} \f$, \f$ S_{cf} \f$ and \f$ S_{c\phi} \f$.
 
-(\cite \Groves2013 Groves, ch. 9.4.2.2, eq. 9.152, p. 417-418)
+(\cite Groves2013 Groves, ch. 9.4.2.2, eq. 9.152, p. 417-418)
 
-The inter-system errors and drifts are assumed constant. Note: Groves does not estimate an inter-system drift (\cite \Groves2013 Groves, Appendix G.8, p. G-23 - G-24), but we do for all models.
+The inter-system errors and drifts are assumed constant. Note: Groves does not estimate an inter-system drift (\cite Groves2013 Groves, Appendix G.8, p. G-23 - G-24), but we do for all models.
 
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
@@ -356,7 +356,7 @@ In detail for Kalman Filtering
 \end{aligned}
 \f}
 
-(\cite \Groves2013 Groves, ch. 9.4.2.2, eq. 9.163, p. 420)
+(\cite Groves2013 Groves, ch. 9.4.2.2, eq. 9.163, p. 420)
 
 \subsection SppKF-measurmentModel-measurementNoise Measurement noise covariance matrix
 See \ref GNSS-MeasErrorModel

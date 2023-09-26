@@ -476,7 +476,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     }
     else // if (_estimatorType == NAV::GNSS::Positioning::SPP::EstimatorType::KF)
     {
-        sppSol = calcSppSolutionKF(_kalmanFilter, _state, gnssObs, gnssNavInfos,
+        sppSol = calcSppSolutionKF(_kalmanFilter, gnssObs, gnssNavInfos,
                                    _ionosphereModel, _troposphereModels, _gnssMeasurementErrorModel,
                                    _filterFreq, _filterCode, _excludedSatellites, _elevationMask, _usedObservations);
     }

@@ -179,7 +179,6 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
 }
 
 std::shared_ptr<SppSolution> calcSppSolutionKF(SppKalmanFilter& kalmanFilter,
-                                               State state,
                                                const std::shared_ptr<const GnssObs>& gnssObs,
                                                const std::vector<const GnssNavInfo*>& gnssNavInfos,
                                                const IonosphereModel& ionosphereModel,
@@ -197,6 +196,10 @@ std::shared_ptr<SppSolution> calcSppSolutionKF(SppKalmanFilter& kalmanFilter,
 
     if (!kalmanFilter.isInitialized())
     {
+        State state = SPP::State{ .e_position = Eigen::Vector3d::Zero(),
+                                  .e_velocity = Eigen::Vector3d::Zero(),
+                                  .recvClk = {} };
+
         auto sppSol = calcSppSolutionLSE(state, gnssObs, gnssNavInfos,
                                          ionosphereModel,
                                          troposphereModels,

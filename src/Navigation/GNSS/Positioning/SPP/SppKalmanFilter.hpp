@@ -323,7 +323,7 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     /// @param[in] gnssMeasurementErrorModel GNSS measurement error model to use
     /// @param[in] elevationMask Elevation cut-off angle for satellites in [rad]
     /// @param[in] usedObservations Utilized observations (Order from GnssObs::ObservationType: Psr, Carrier, Doppler)
-    /// @param[out] sppSol Single Point Positioning Solution
+    /// @return Shared pointer to the SPP solution
     std::shared_ptr<NAV::SppSolution> estimateSppSolution(const InsTime& insTime,
                                                           std::vector<CalcData>& calcData,
                                                           const IonosphericCorrections& ionosphericCorrections,

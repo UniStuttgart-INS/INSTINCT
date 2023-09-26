@@ -68,7 +68,7 @@ Used observations
   TODO: citation
 
 - Pseudorange-rate estimates
-  \fl{equation,eq-SppBasics-measurementModel-innovation-estimates-pseudorange}
+  \fl{equation,eq-SppBasics-measurementModel-innovation-estimates-pseudorangeRate}
   \hat{d}_r^s = {\mathbf{u}_{as}^e}^T [\mathbf{\hat{v}}^e_s - \mathbf{\hat{v}}^e_r] + c [d\hat{\dot{t}}_r - d\hat{\dot{t}}^s + d\hat{\dot{t}}_{ISB}] - \delta\hat{\dot{\rho}}_r^s
   \f}
   where
@@ -80,7 +80,7 @@ Used observations
   - \f$ d\hat{\dot{t}}_{ISB} \f$ Inter-system bias clock drift [s/s]
   - \f$ \delta\hat{\dot{\rho}}_r^s \f$ Range-rate Sagnac correction [m/s]
 
-  (\cite \Groves2013 Groves, ch. 9.4.1, eq. 9.142, p. 412 (Sagnac correction different sign))
+  (\cite Groves2013 Groves, ch. 9.4.1, eq. 9.142, p. 412 (Sagnac correction different sign))
   
 
 \subsubsection SppBasics-measurementModel-innovation-estimates Measurement estimates
@@ -100,13 +100,13 @@ See \ref Troposphere-Model-Saastamoinen
 \fl{equation,eq-SppBasics-measurementModel-innovation-estimates-sagnac}
 \delta\hat{\rho}_r^s = \frac{1}{c}\left(\boldsymbol{x}_{r}\left(t_{\mathrm{A}}\right)-\boldsymbol{x}^{s}\left(t_{\mathrm{E}}\right)\right) \cdot \left(\boldsymbol{\omega}_{ie} \times \boldsymbol{x}_{r}\left(t_{\mathrm{A}}\right)\right) 
 \f}
-(\cite \SpringerHandbookGNSS2017 Springer Handbook, ch. 19.1.1, eq. 19.7, p. 562)
+(\cite SpringerHandbookGNSS2017 Springer Handbook, ch. 19.1.1, eq. 19.7, p. 562)
 
 <b> Range-rate Sagnac correction </b>
 \fl{equation,eq-SppBasics-measurementModel-innovation-estimates-sagnac-rate}
 \delta\hat{\dot{\rho}}_r^s = \frac{\boldsymbol{\omega}_{ie}}{c}\left(v_y^s \cdot x_r + y^s \cdot v_{x,r} - v_x^s \cdot y_r - x^s \cdot v_{y,r}\right) 
 \f}
-(\cite \Groves2013 Groves, ch. 8.5.3, eq. 8.46, p. 342)
+(\cite Groves2013 Groves, ch. 8.5.3, eq. 8.46, p. 342)
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
