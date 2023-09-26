@@ -145,7 +145,7 @@ In detail for Least squares estimation
 
 <b> Doppler </b>
 
-\fl{equation,eq-SppLSE-measurementModel-designMatrix-pseudorange}
+\fl{equation,eq-SppLSE-measurementModel-designMatrix-pseudorangeRate}
 \begin{aligned}
 \mathbf{H}_k 
 &=

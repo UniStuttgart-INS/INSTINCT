@@ -60,7 +60,7 @@
 /// 0 & 0 & \dots & 0                 & 0 & 0 & \dots & 1/\sigma_{d m}^2 \\
 /// \end{array}\right]
 /// \f}
-/// (\cite \RTKLIB rtklib, eq. E6.23, p. 158)
+/// (\cite RTKLIB rtklib, eq. E6.23, p. 158)
 ///
 /// <b> Groves </b>
 /// \fl{equation,eq-MeasErrorModel-groves}
@@ -89,7 +89,7 @@
 /// 0 & 0 & \dots & 0                 & 0 & 0 & \dots & \sigma_{d m}^2 \\
 /// \end{array}\right]
 /// \f}
-/// (\cite \Groves2013 Groves, ch. 9.4.2.2, eq. 9.168, p. 422)
+/// (\cite Groves2013 Groves, ch. 9.4.2.2, eq. 9.168, p. 422)
 
 #pragma once
 
@@ -110,7 +110,7 @@ class GnssMeasurementErrorModel
     {
         None,       ///< Measurement error model turned off
         RTKLIB,     ///< RTKLIB error model. See \cite RTKLIB RTKLIB ch. E.6, eq. E.6.24, p. 162
-        Groves2013, ///< Measurement Error see Groves 2013 ch. 9.4.2.4, eq. 9.168, p. 422 (range acceleration is neglected)
+        Groves2013, ///< Measurement Error. See \cite Groves2013 Groves, ch. 9.4.2.4, eq. 9.168, p. 422 (range acceleration is neglected)
         COUNT,      ///< Amount of items in the enum
     };
     /// @brief Model to use
