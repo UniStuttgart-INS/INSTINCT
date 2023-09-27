@@ -9,9 +9,10 @@
 /// @file Saastamoinen.hpp
 /// @brief Saastamoinen troposphere correction model
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2022-05-26/// #### Algorithm description
+/// @date 2022-05-26
 /// @anchor Troposphere-Model-Saastamoinen
 ///
+/// #### Algorithm description
 /// Given the approximate position \f$ \phi \f$, \f$ \lambda \f$, \f$ h \f$, the elevation \f$ \varepsilon \f$ and the relative humidity \f$ h_{\mathrm{rel}} \f$ the tropospheric delay can be calculated using Saastamoinen's formulas.
 ///
 /// A standard atmosphere is applied as a reference for the necessary parameters of the atmosphere.
