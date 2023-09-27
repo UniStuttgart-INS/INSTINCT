@@ -6,6 +6,12 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+// @file SppLSE.dox
+// @brief SPP LSE documentation
+// @author P. Peitschat (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2023-09-27
+
 namespace Instinct {
 
 /** \defgroup SppLSE Single Point Positioning using (Weighed) Least Squares Estimation
@@ -25,8 +31,8 @@ The solution is obtained by iteratively performing
     \fl{equation,eq-SPP-LseAlgorithm-dx}
     \delta \boldsymbol{x} = (\boldsymbol{Q})^{-1} \boldsymbol{H}(\boldsymbol{x})^T \boldsymbol{W} \delta \boldsymbol{z}(\boldsymbol{x})
     \f}
-    
--# Unknowns: 
+
+-# Unknowns:
     \fl{equation,eq-SPP-LseAlgorithm-xhat}
     \hat{\boldsymbol{x}} = \boldsymbol{x} + \delta \boldsymbol{x}
     \f}
@@ -58,11 +64,11 @@ Pseudorange and Doppler observations are processed separately.
     \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
         \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
                     nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em] {
-    \mathbf{r}^e \\ 
-    dt_R \\ 
-    dt_{ISB}^{S_2 \rightarrow S_1} \\ 
+    \mathbf{r}^e \\
+    dt_R \\
+    dt_{ISB}^{S_2 \rightarrow S_1} \\
     \vdots \\
-    dt_{ISB}^{S_o \rightarrow S_1} \\ 
+    dt_{ISB}^{S_o \rightarrow S_1} \\
     };
 
   \end{tikzpicture}
@@ -70,11 +76,11 @@ Pseudorange and Doppler observations are processed separately.
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
                 nodes={rectangle,text width=20em,align=center},row sep=0.3em, column sep=0.4em] {
-    \text{Position [m]} \\ 
-    \text{Receiver clock error [m]} \\ 
-    \text{Inter-system clock error (System 2 to 1) [m]} \\ 
+    \text{Position [m]} \\
+    \text{Receiver clock error [m]} \\
+    \text{Inter-system clock error (System 2 to 1) [m]} \\
     \vdots \\
-    \text{Inter-system clock error (System o to 1) [m]} \\ 
+    \text{Inter-system clock error (System o to 1) [m]} \\
     };
 
   \end{tikzpicture}
@@ -87,7 +93,7 @@ Pseudorange and Doppler observations are processed separately.
     \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
         \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
                     nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em] {
-    \mathbf{v}^e \\ 
+    \mathbf{v}^e \\
     d\dotup{t}_R \\
     d\dotup{t}_{ISB}^{S_2 \rightarrow S_1} \\
     \vdots \\
@@ -99,7 +105,7 @@ Pseudorange and Doppler observations are processed separately.
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
                 nodes={rectangle,text width=20em,align=center},row sep=0.3em, column sep=0.4em] {
-    \text{Velocity [m/s]} \\ 
+    \text{Velocity [m/s]} \\
     \text{Receiver clock drift [m/s]} \\
     \text{Inter-system clock drift (System 2 to 1)  [m/s]} \\
     \vdots \\
@@ -127,14 +133,14 @@ In detail for Least squares estimation
 
 \fl{equation,eq-SppLSE-measurementModel-designMatrix-pseudorange}
 \begin{aligned}
-\mathbf{H}_k 
+\mathbf{H}_k
 &=
 \left[\begin{array}{ccccc}
   \frac{-x^s+x_r}{\rho_s^s} & \frac{-y^s+y_r}{\rho_s^s} & \frac{-z^s+z_r}{\rho_r^s} & 1 & 0 \\
   \frac{-x^s+x_r}{\rho_r^s} & \frac{-y^s+y_r}{\rho_r^s} & \frac{-z^s+z_r}{\rho_r^s} & 1 & 1 \\
   \ldots & \ldots & \ldots & \ldots & \ldots
 \end{array}\right] \\
-&= 
+&=
 \left[\begin{array}{ccccc}
   -u_{rs,x} & -u_{rs,y} & -u_{rs,z} & 1 & 0 \\
   -u_{rs,x} & -u_{rs,y} & -u_{rs,z} & 1 & 1 \\
@@ -147,14 +153,14 @@ In detail for Least squares estimation
 
 \fl{equation,eq-SppLSE-measurementModel-designMatrix-pseudorangeRate}
 \begin{aligned}
-\mathbf{H}_k 
+\mathbf{H}_k
 &=
 \left[\begin{array}{ccccc}
     -\frac{x^s-x_r}{\rho_r^s} & -\frac{y^s-y_r}{\rho_r^s} & -\frac{z^s-z_r}{\rho_r^s} & 1 & 0 \\
     -\frac{x^s-x_r}{\rho_r^s} & -\frac{y^s-y_r}{\rho_r^s} & -\frac{z^s-z_r}{\rho_r^s} & 1 & 1 \\
     \ldots & \ldots & \ldots & \ldots & \ldots
   \end{array}\right] \\
-  &= 
+  &=
   \left[\begin{array}{ccccc}
     -u_{rs,x} & -u_{rs,y} & -u_{rs,z} & 1 & 0 \\
     -u_{rs,x} & -u_{rs,y} & -u_{rs,z} & 1 & 1 \\

@@ -6,8 +6,14 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+// @file SppKF.dox
+// @brief SPP KF documentation
+// @author P. Peitschat (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2023-09-27
+
 namespace Instinct {
-  
+
   /** \defgroup SppKF Single Point Positioning using Kalman Filtering
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
@@ -61,21 +67,21 @@ Pseudorange and Doppler observations are processed together.
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
                 nodes={rectangle,text width=20em,align=center},row sep=0.3em, column sep=0.4em] {
-      \text{Position [m]} \\ 
-      \text{Velocity [m/s]} \\ 
-      \text{Receiver clock error [m]} \\ 
+      \text{Position [m]} \\
+      \text{Velocity [m/s]} \\
+      \text{Receiver clock error [m]} \\
       \text{Receiver clock drift [m/s]} \\
-      \text{Inter-system clock error (System 2 to 1) [m]} \\ 
+      \text{Inter-system clock error (System 2 to 1) [m]} \\
       \text{Inter-system clock drift (System 2 to 1)  [m/s]} \\
       \vdots \\
-      \text{Inter-system clock error (System o to 1) [m]} \\ 
+      \text{Inter-system clock error (System o to 1) [m]} \\
       \text{Inter-system clock drift (System o to 1)  [m/s]} \\
     };
     \draw [dash dot] (-3.75,1.9) -- (3.75,1.9);
 
   \end{tikzpicture}
 \f}
-  
+
 <!-- --------------------------------------------------------------------------------------------------------------- -->
   \section SppKF-processModel Process Model
 <!-- --------------------------------------------------------------------------------------------------------------- -->
@@ -85,7 +91,7 @@ Pseudorange and Doppler observations are processed together.
 
 \fl{equation,eq-SppKF-processModel-systemModel}
 \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-  \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em] 
+  \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em]
   {
     \boldsymbol{v}^e \\
     \boldsymbol{a}^e \\
@@ -124,7 +130,7 @@ Pseudorange and Doppler observations are processed together.
 \cdot
 \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
   \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
-              nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em] 
+              nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em]
   {
     \mathbf{r}^e \\
     \mathbf{v}^e \\
@@ -139,9 +145,9 @@ Pseudorange and Doppler observations are processed together.
   \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{x}^e$} (m-1-1.north east);
   \draw [dash dot] (-0.75,1.9) -- (0.75,1.9);
 
-\end{tikzpicture} 
+\end{tikzpicture}
 +
-\mathbf{G} \cdot \boldsymbol{w}  
+\mathbf{G} \cdot \boldsymbol{w}
 \f}
 
 (\cite Groves2013 Groves, ch. 9.4.2.2, eq. 9.148, p. 415)
@@ -153,8 +159,8 @@ Pseudorange and Doppler observations are processed together.
 
 Higher order terms are zero, so the exact solution is
 
-\fl{equation,eq-SppKF-processModel-stateTransitionMatrix} 
-\mathbf{\Phi} = \text{exp}(\mathbf{F} \tau_s) = \mathbf{I} + \mathbf{F}\tau_s 
+\fl{equation,eq-SppKF-processModel-stateTransitionMatrix}
+\mathbf{\Phi} = \text{exp}(\mathbf{F} \tau_s) = \mathbf{I} + \mathbf{F}\tau_s
 \f}
 
 (\cite Groves2013 Groves, ch. 9.4.2.2, eq. 9.150, p. 416)
@@ -164,7 +170,7 @@ Higher order terms are zero, so the exact solution is
 \subsection SppKF-processModel-processNoise Process noise covariance matrix
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
-<b> Clock modeling </b> 
+<b> Clock modeling </b>
 - Phase drift \f$ \sigma_{c\phi} \f$ (random walk) and Frequency drift \f$ \sigma_{cf} \f$ (integrated random walk)
 \fl{equation,eq-SppKF-processModel-processNoise-clock}
 S_{c f}^a = \frac{\sigma^2\left(\delta \dot{\rho}_c^a\left(t+\tau_s\right)-\delta \dot{\rho}_c^a(t)\right)}{\tau_s} \quad S_{c \phi}^a = \frac{\sigma^2\left(\delta \rho_c^a\left(t+tau_s\right)-\delta \rho_c^a(t)-\delta \dot{\rho}_c^a(t) \tau_s\right)}{\tau_s}
@@ -173,8 +179,8 @@ S_{c f}^a = \frac{\sigma^2\left(\delta \dot{\rho}_c^a\left(t+\tau_s\right)-\delt
 
 <b> Velocity change due to user motion (Variances) </b> <br>
   \f$
-  \mathbf{S}_a^n 
-  = 
+  \mathbf{S}_a^n
+  =
   \begin{bmatrix}
     S_{aH} & 0 & 0 \\
     0 & S_{aH} & 0 \\
@@ -188,13 +194,13 @@ S_{c f}^a = \frac{\sigma^2\left(\delta \dot{\rho}_c^a\left(t+\tau_s\right)-\delt
 & S_{a V}=\frac{\sigma^2\left(v_{e b, D}^n\left(t+\tau_s\right)-v_{e b, D}^n(t)\right)}{\tau_s}
 \end{aligned}
 \f}
- 
+
 - Suitable values for \f$ S_{aH} \f$ are around
   - \f$ 1 \text{ m}^2 \text{s}^{–3} \f$ for a pedestrian or ship,
-  - \f$ 10 \text{ m}^2 \text{s}^{–3} \f$ for a car, 
+  - \f$ 10 \text{ m}^2 \text{s}^{–3} \f$ for a car,
   - \f$ 100 \text{ m}^2 \text{s}^{–3} \f$ for a military aircraft.
 - The vertical acceleration PSD \f$ S_{aV} \f$  is usually smaller
-  
+
 (\cite Groves2013 Groves, ch. 9.4.2.2, p. 416-418)
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
@@ -265,7 +271,7 @@ S_{c f}^a = \frac{\sigma^2\left(\delta \dot{\rho}_c^a\left(t+\tau_s\right)-\delt
 = \left[ \begin{array}{c:c}
     \dots      & \mathbf{\Phi}^{-1} \mathbf{Q} \\[2mm]
     \hdashline
-    \mathbf{0} & \mathbf{\Phi}^T              
+    \mathbf{0} & \mathbf{\Phi}^T
   \end{array} \right]
 = \left[ \begin{array}{c:c}
 	\mathbf{B}_{11} & \mathbf{B}_{12} \\[2mm]
@@ -288,10 +294,10 @@ Uses GUI input values for \f$ S_{aH} \f$, \f$ S_{cf} \f$ and \f$ S_{c\phi} \f$.
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
-\subsubsection SppKF-processModel-processNoise-groves Groves 
+\subsubsection SppKF-processModel-processNoise-groves Groves
 
 \fl{equation,eq-SppKF-processModel-processNoise-groves}
-\mathbf{Q} = 
+\mathbf{Q} =
 \left[\begin{array}{cc:cc}
   \frac{1}{3} S_a^\gamma \tau_s^3 & \frac{1}{2} S_a^\gamma \tau_s^2 & 0_{3,1} & 0_{3,1} \\
   \frac{1}{2} S_a^\gamma \tau_s^2 & S_a^\gamma \tau_s & 0_{3,1} & 0_{3,1} \\
@@ -322,7 +328,7 @@ See \ref SppBasics-measurementModel-sensitivityMatrix
 In detail for Kalman Filtering
 \fl{equation,eq-SppKF-measurementModel-sensitivityMatrix}
 \begin{aligned}
-\mathbf{H}_k 
+\mathbf{H}_k
 &=
 \left[\begin{array}{cccccccccc}
   \frac{-x^s+x_r}{\rho_s^s} & \frac{-y^s+y_r}{\rho_s^s} & \frac{-z^s+z_r}{\rho_r^s} & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
@@ -333,7 +339,7 @@ In detail for Kalman Filtering
   -\frac{\mathbf{v}_x^s-\mathbf{v}_{r, x}^s}{\rho_r^s} & -\frac{\mathbf{v}_y^s-\mathbf{v}_{r, y}^s}{\rho_r^s} & -\frac{\mathbf{v}_z^s-\mathbf{v}_{r_r}^s}{\rho_r^s} & -\frac{x^s-x_r}{\rho_r^s} & -\frac{y^s-y_r}{\rho_r^s} & -\frac{z^s-z_r}{\rho_r^s} & 0 & 1 & 0 & 1 \\
   \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots
 \end{array}\right] \\
-&= 
+&=
 \left[\begin{array}{cccccccccc}
   -u_{rs,x} & -u_{rs,y} & -u_{rs,z} & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
   -u_{rs,x} & -u_{rs,y} & -u_{rs,z} & 0 & 0 & 0 & 1 & 0 & 1 & 0 \\
@@ -366,7 +372,7 @@ See \ref GNSS-MeasErrorModel
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
 - State \f$ x \f$: from Single Point Positioning solution using weighted Least-squares estimation
-- Covariance matrix of state \f$ P \f$: 
+- Covariance matrix of state \f$ P \f$:
   - if more observations than unknowns: SPP solution using LSE
   - otherwise: GUI input
 

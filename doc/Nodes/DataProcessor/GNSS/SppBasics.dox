@@ -6,6 +6,12 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+// @file SppBasics.dox
+// @brief SPP Basics documentation
+// @author P. Peitschat (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2023-09-27
+
 namespace Instinct {
 
 /** \defgroup SppBasics Single Point Positioning Basics
@@ -15,8 +21,8 @@ namespace Instinct {
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
 - Least-squares estimation (LSE)
-- weighted Least-squares estimation (WLSE)
-- Kalman Filtering (KF)
+- \ref SppLSE-LseAlgorithm "weighted Least-squares estimation (WLSE)"
+- \ref SppKF-KfAlgorithm "Kalman Filtering (KF)"
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 \section SppBasics-measurementModel Measurement model
@@ -54,7 +60,7 @@ Used observations
 
 - Pseudorange estimates
   \fl{equation,eq-SppBasics-measurementModel-innovation-estimates-pseudorange}
-  \hat{p}_r^s = \hat{\rho}_r^s + c [d\hat{t}_r - d\hat{t}^s + d\hat{t}_{ISB}] + \hat{I}_r^s + \hat{T}_r^s + \delta\hat{\rho}_r^s 
+  \hat{p}_r^s = \hat{\rho}_r^s + c [d\hat{t}_r - d\hat{t}^s + d\hat{t}_{ISB}] + \hat{I}_r^s + \hat{T}_r^s + \delta\hat{\rho}_r^s
   \f}
   where
   - \f$ \hat{\rho}_r^s \f$ Receiver-satellite range [m]
@@ -81,13 +87,13 @@ Used observations
   - \f$ \delta\hat{\dot{\rho}}_r^s \f$ Range-rate Sagnac correction [m/s]
 
   (\cite Groves2013 Groves, ch. 9.4.1, eq. 9.142, p. 412 (Sagnac correction different sign))
-  
+
 
 \subsubsection SppBasics-measurementModel-innovation-estimates Measurement estimates
 
 <b> Receiver-satellite range </b>
 \fl{equation,eq-SppBasics-measurementModel-innovation-estimates-rho}
-\hat{\rho}_r^s = \mid(\mathbf{x}^s\left(t_{\mathrm{E}}\right) - \mathbf{x}_r\left(t_{\mathrm{A}}\right))\mid  
+\hat{\rho}_r^s = \mid(\mathbf{x}^s\left(t_{\mathrm{E}}\right) - \mathbf{x}_r\left(t_{\mathrm{A}}\right))\mid
 \f}
 
 <b> Ionospheric delay </b> <br>
@@ -98,13 +104,13 @@ See \ref Troposphere-Model-Saastamoinen
 
 <b> Sagnac correction </b>
 \fl{equation,eq-SppBasics-measurementModel-innovation-estimates-sagnac}
-\delta\hat{\rho}_r^s = \frac{1}{c}\left(\boldsymbol{x}_{r}\left(t_{\mathrm{A}}\right)-\boldsymbol{x}^{s}\left(t_{\mathrm{E}}\right)\right) \cdot \left(\boldsymbol{\omega}_{ie} \times \boldsymbol{x}_{r}\left(t_{\mathrm{A}}\right)\right) 
+\delta\hat{\rho}_r^s = \frac{1}{c}\left(\boldsymbol{x}_{r}\left(t_{\mathrm{A}}\right)-\boldsymbol{x}^{s}\left(t_{\mathrm{E}}\right)\right) \cdot \left(\boldsymbol{\omega}_{ie} \times \boldsymbol{x}_{r}\left(t_{\mathrm{A}}\right)\right)
 \f}
 (\cite SpringerHandbookGNSS2017 Springer Handbook, ch. 19.1.1, eq. 19.7, p. 562)
 
 <b> Range-rate Sagnac correction </b>
 \fl{equation,eq-SppBasics-measurementModel-innovation-estimates-sagnac-rate}
-\delta\hat{\dot{\rho}}_r^s = \frac{\boldsymbol{\omega}_{ie}}{c}\left(v_y^s \cdot x_r + y^s \cdot v_{x,r} - v_x^s \cdot y_r - x^s \cdot v_{y,r}\right) 
+\delta\hat{\dot{\rho}}_r^s = \frac{\boldsymbol{\omega}_{ie}}{c}\left(v_y^s \cdot x_r + y^s \cdot v_{x,r} - v_x^s \cdot y_r - x^s \cdot v_{y,r}\right)
 \f}
 (\cite Groves2013 Groves, ch. 8.5.3, eq. 8.46, p. 342)
 

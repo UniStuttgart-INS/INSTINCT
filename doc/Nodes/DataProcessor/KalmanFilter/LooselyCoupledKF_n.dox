@@ -6,6 +6,12 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+// @file LooselyCoupledKF_e.dox
+// @brief INS/GNSS Loosely-coupled Kalman Filter (local-navigation frame)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @author M. Maier (marcel.maier@ins.uni-stuttgart.de)
+// @date 2022-02-01
+
 namespace Instinct {
 
 /** \defgroup LooselyCoupledKF_n INS/GNSS Loosely-coupled Kalman Filter (local-navigation frame)

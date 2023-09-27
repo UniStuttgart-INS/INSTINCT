@@ -6,6 +6,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+// @file ImuIntegrator_e.dox
+// @brief ImuIntegrator e-frame documentation
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2022-01-05
+
 namespace Instinct {
 
 /** \defgroup ImuIntegrator_e IMU Integrator (Earth-fixed frame)
