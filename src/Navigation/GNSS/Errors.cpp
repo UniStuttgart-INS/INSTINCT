@@ -215,8 +215,8 @@ void to_json(json& j, const GnssMeasurementErrorModel::Groves2013Parameters& obj
 
 void from_json(const json& j, GnssMeasurementErrorModel::Groves2013Parameters& obj)
 {
-    if (j.contains("sigmaRho")) { j.at("sigmaRhoZ").get_to(obj.sigmaRho); }
-    if (j.contains("sigmaR")) { j.at("sigmarZ").get_to(obj.sigmaR); }
+    if (j.contains("sigmaRho")) { j.at("sigmaRho").get_to(obj.sigmaRho); }
+    if (j.contains("sigmaR")) { j.at("sigmaR").get_to(obj.sigmaR); }
 }
 
 } // namespace NAV
