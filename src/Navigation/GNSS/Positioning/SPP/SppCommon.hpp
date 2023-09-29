@@ -173,6 +173,7 @@ struct EstWeightDesignMatrices
 /// @param[in] troposphereModels Troposphere mode to use
 /// @param[in] gnssMeasurementErrorModel GNSS measurement error model to use
 /// @param[in] estimatorType Estimator type
+/// @param[in] useDoppler Boolean which enables the use of doppler observations
 /// @return Matrices: e_H_psr, psrEst, psrMeas, W_psr, dpsr, e_H_r, psrRateEst, psrRateMeas, W_psrRate, dpsr_dot, keyedObservations
 EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::shared_ptr<SppSolution>& sppSol,
                                                                 std::vector<CalcData>& calcData,
@@ -183,7 +184,8 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
                                                                 const IonosphereModel& ionosphereModel,
                                                                 const TroposphereModelSelection& troposphereModels,
                                                                 const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
-                                                                const EstimatorType& estimatorType);
+                                                                const EstimatorType& estimatorType,
+                                                                bool useDoppler);
 
 /// @brief Prepares data further based on the current estimation and applies elevation mask
 /// @param[out] sppSol SPP solution

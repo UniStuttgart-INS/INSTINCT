@@ -603,7 +603,7 @@ std::shared_ptr<NAV::SppSolution> SppKalmanFilter::estimateSppSolution(const Ins
                                                                        const TroposphereModelSelection& troposphereModels,
                                                                        const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
                                                                        double elevationMask,
-                                                                       const std::set<GnssObs::ObservationType>& usedObservations)
+                                                                       bool useDoppler)
 {
     auto sppSol = std::make_shared<SppSolution>();
     sppSol->insTime = insTime;
@@ -628,7 +628,7 @@ std::shared_ptr<NAV::SppSolution> SppKalmanFilter::estimateSppSolution(const Ins
 
         // Find all observations providing a doppler measurement (for velocity calculation)
         size_t nDopplerMeas = 0;
-        if (usedObservations.contains(GnssObs::ObservationType::Doppler))
+        if (useDoppler)
         {
             nDopplerMeas = findDopplerMeasurements(calcData);
         }
@@ -670,9 +670,9 @@ std::shared_ptr<NAV::SppSolution> SppKalmanFilter::estimateSppSolution(const Ins
                                                     state, lla_pos,
                                                     ionosphericCorrections, ionosphereModel,
                                                     troposphereModels, gnssMeasurementErrorModel,
-                                                    EstimatorType::KF);
+                                                    EstimatorType::KF, useDoppler);
 
-        kalmanFilterUpdate(keyedObservations, sppSol->recvClk.referenceTimeSatelliteSystem, sppSol->otherUsedSatelliteSystems, usedObservations, insTime);
+        kalmanFilterUpdate(keyedObservations, sppSol->recvClk.referenceTimeSatelliteSystem, sppSol->otherUsedSatelliteSystems, useDoppler, insTime);
         assignSolution(sppSol, availableSatelliteSystems);
 
         _lastUpdate = sppSol->insTime;
@@ -739,13 +739,13 @@ void SppKalmanFilter::kalmanFilterPrediction(const InsTime& insTime)
 void SppKalmanFilter::kalmanFilterUpdate(const KeyedObservations& keyedObservations,
                                          SatelliteSystem sppSolReferenceTimeSatelliteSystem,
                                          const std::vector<SatelliteSystem>& otherSatelliteSystems,
-                                         const std::set<GnssObs::ObservationType>& usedObservations,
+                                         bool useDoppler,
                                          [[maybe_unused]] const InsTime& insTime)
 {
     // Update the Measurement sensitivity Matrix (𝐇), the Measurement noise covariance matrix (𝐑) and the Measurement vector (𝐳)
 
     std::vector<Meas::MeasKeyTypes> measKeys;
-    measKeys.reserve(keyedObservations.size() * usedObservations.size());
+    useDoppler ? measKeys.reserve(keyedObservations.size() * 2) : measKeys.reserve(keyedObservations.size());
     for (const auto& [satSigId, keyedObservation] : keyedObservations)
     {
         for (const auto& [obsType, obs_i] : keyedObservation)

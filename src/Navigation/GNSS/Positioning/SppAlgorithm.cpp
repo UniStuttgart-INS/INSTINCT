@@ -48,7 +48,7 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
                                                 const Code& filterCode,
                                                 const std::vector<SatId>& excludedSatellites,
                                                 double elevationMask,
-                                                const std::set<GnssObs::ObservationType>& usedObservations)
+                                                bool useDoppler)
 {
     INS_ASSERT_USER_ERROR(estimatorType == EstimatorType::LEAST_SQUARES || estimatorType == EstimatorType::WEIGHTED_LEAST_SQUARES,
                           "This function only works for the estimator types LSE or WLSE.");
@@ -72,7 +72,7 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
 
     // Find all observations providing a doppler measurement (for velocity calculation)
     size_t nDopplerMeas = 0;
-    if (usedObservations.contains(GnssObs::ObservationType::Doppler))
+    if (useDoppler)
     {
         nDopplerMeas = findDopplerMeasurements(calcData);
     }
@@ -99,12 +99,8 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
         LOG_DATA("     e_position {}, {}, {}", state.e_position.x(), state.e_position.y(), state.e_position.z());
         LOG_DATA("     lla_pos {}°, {}°, {}m", rad2deg(lla_pos.x()), rad2deg(lla_pos.y()), lla_pos.z());
         LOG_DATA("     recvClk.bias {}", state.recvClk.bias.value);
-
-        if (usedObservations.contains(GnssObs::ObservationType::Doppler))
-        {
-            LOG_DATA("     e_velocity {}, {}, {}", state.e_velocity.x(), state.e_velocity.y(), state.e_velocity.z());
-            LOG_DATA("     recvClk.drift {}", state.recvClk.drift.value);
-        }
+        LOG_DATA("     e_velocity {}, {}, {}", state.e_velocity.x(), state.e_velocity.y(), state.e_velocity.z());
+        LOG_DATA("     recvClk.drift {}", state.recvClk.drift.value);
 
         std::vector<SatelliteSystem> satelliteSystems; // Make a copy of available systems, which we can edit every iteration
         satelliteSystems.reserve(availSatelliteSystems.size());
@@ -132,7 +128,7 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
                                                     gnssObs->insTime,
                                                     state, lla_pos,
                                                     ionosphericCorrections, ionosphereModel, troposphereModels,
-                                                    gnssMeasurementErrorModel, estimatorType);
+                                                    gnssMeasurementErrorModel, estimatorType, useDoppler);
 
         // #################################################################################################################################
         //                                                     Least squares solution
@@ -148,7 +144,7 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
                                                               &SppSolution::setPositionClockErrorCovarianceMatrix);
 
         // ---------------------------------------------------------- Velocity -------------------------------------------------------------
-        if (usedObservations.contains(GnssObs::ObservationType::Doppler))
+        if (useDoppler)
         {
             if (sppSol->nSatellitesVelocity >= sppSol->nParam)
             {
@@ -188,7 +184,7 @@ std::shared_ptr<SppSolution> calcSppSolutionKF(SppKalmanFilter& kalmanFilter,
                                                const Code& filterCode,
                                                const std::vector<SatId>& excludedSatellites,
                                                double elevationMask,
-                                               const std::set<GnssObs::ObservationType>& usedObservations)
+                                               bool useDoppler)
 {
     // #####################################################################################################################################
     //                                                          Calculation
@@ -209,7 +205,7 @@ std::shared_ptr<SppSolution> calcSppSolutionKF(SppKalmanFilter& kalmanFilter,
                                          filterCode,
                                          excludedSatellites,
                                          elevationMask,
-                                         usedObservations);
+                                         useDoppler);
 
         // Find all selected satellite systems
         std::vector<SatelliteSystem> allOtherSatSys = filterFreq.getSatSys().toVector();
@@ -233,7 +229,7 @@ std::shared_ptr<SppSolution> calcSppSolutionKF(SppKalmanFilter& kalmanFilter,
     std::vector<CalcData> calcData = selectObservations(gnssObs, gnssNavInfos, filterFreq, filterCode, excludedSatellites);
 
     auto sppSol = kalmanFilter.estimateSppSolution(gnssObs->insTime, calcData, ionosphericCorrections, ionosphereModel,
-                                                   troposphereModels, gnssMeasurementErrorModel, elevationMask, usedObservations);
+                                                   troposphereModels, gnssMeasurementErrorModel, elevationMask, useDoppler);
 
     return sppSol;
 }

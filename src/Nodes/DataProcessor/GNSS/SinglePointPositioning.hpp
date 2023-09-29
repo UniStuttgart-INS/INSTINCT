@@ -104,8 +104,8 @@ class SinglePointPositioning : public Node
     /// Elevation cut-off angle for satellites in [rad]
     double _elevationMask = static_cast<double>(15.0_deg);
 
-    /// Utilized observations
-    std::set<GnssObs::ObservationType> _usedObservations{ GnssObs::Pseudorange, GnssObs::Doppler };
+    /// Boolean which enables the use of doppler observations
+    bool _useDoppler = true;
 
     /// Ionosphere Model used for the calculation
     IonosphereModel _ionosphereModel = IonosphereModel::Klobuchar;

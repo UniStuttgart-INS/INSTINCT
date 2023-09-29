@@ -242,38 +242,12 @@ void NAV::SinglePointPositioning::guiConfig()
 
     ImGui::BeginHorizontal(fmt::format("Observables##{}", size_t(id)).c_str(),
                            ImVec2(itemWidth - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x, 0.0F));
-    bool usedPsr = _usedObservations.contains(GnssObs::ObservationType::Pseudorange);
-    if (ImGui::Checkbox(fmt::format("Pseudorange##{}", size_t(id)).c_str(), &usedPsr))
+    if (ImGui::Checkbox(fmt::format("Use Doppler in addition to Pseudoranges##{}", size_t(id)).c_str(), &_useDoppler))
     {
-        LOG_DEBUG("{}: Using {}: {}", nameId(), GnssObs::ObservationType::Pseudorange, usedPsr);
-        if (usedPsr)
-        {
-            _usedObservations.insert(GnssObs::Pseudorange);
-        }
-        else
-        {
-            _usedObservations.erase(GnssObs::Pseudorange);
-        }
-        flow::ApplyChanges();
-    }
-    bool usedDoppler = _usedObservations.contains(GnssObs::ObservationType::Doppler);
-    if (ImGui::Checkbox(fmt::format("Doppler##{}", size_t(id)).c_str(), &usedDoppler))
-    {
-        LOG_DEBUG("{}: Using {}: {}", nameId(), GnssObs::ObservationType::Doppler, usedDoppler);
-        if (usedDoppler)
-        {
-            _usedObservations.insert(GnssObs::ObservationType::Doppler);
-        }
-        else
-        {
-            _usedObservations.erase(GnssObs::ObservationType::Doppler);
-        }
+        LOG_DEBUG("{}: Using Doppler: {}", nameId(), _useDoppler);
         flow::ApplyChanges();
     }
     ImGui::EndHorizontal();
-
-    ImGui::SameLine();
-    ImGui::TextUnformatted("Used observables");
 
     // ###########################################################################################################
 
@@ -339,7 +313,7 @@ void NAV::SinglePointPositioning::guiConfig()
     j["codes"] = _filterCode;
     j["excludedSatellites"] = _excludedSatellites;
     j["elevationMask"] = rad2deg(_elevationMask);
-    j["usedObservations"] = _usedObservations;
+    j["useDoppler"] = _useDoppler;
 
     // ###########################################################################################################
 
@@ -381,9 +355,9 @@ void NAV::SinglePointPositioning::restore(json const& j)
         j.at("elevationMask").get_to(_elevationMask);
         _elevationMask = deg2rad(_elevationMask);
     }
-    if (j.contains("usedObservations"))
+    if (j.contains("useDoppler"))
     {
-        j.at("usedObservations").get_to(_usedObservations);
+        j.at("useDoppler").get_to(_useDoppler);
     }
 
     // ###########################################################################################################
@@ -472,13 +446,13 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     {
         sppSol = calcSppSolutionLSE(_state, gnssObs, gnssNavInfos,
                                     _ionosphereModel, _troposphereModels, _gnssMeasurementErrorModel, _estimatorType,
-                                    _filterFreq, _filterCode, _excludedSatellites, _elevationMask, _usedObservations);
+                                    _filterFreq, _filterCode, _excludedSatellites, _elevationMask, _useDoppler);
     }
     else // if (_estimatorType == NAV::GNSS::Positioning::SPP::EstimatorType::KF)
     {
         sppSol = calcSppSolutionKF(_kalmanFilter, gnssObs, gnssNavInfos,
                                    _ionosphereModel, _troposphereModels, _gnssMeasurementErrorModel,
-                                   _filterFreq, _filterCode, _excludedSatellites, _elevationMask, _usedObservations);
+                                   _filterFreq, _filterCode, _excludedSatellites, _elevationMask, _useDoppler);
     }
 
     if (sppSol)

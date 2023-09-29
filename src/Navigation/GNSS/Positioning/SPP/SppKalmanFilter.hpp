@@ -322,7 +322,7 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     /// @param[in] troposphereModels Troposphere Models used for the calculation
     /// @param[in] gnssMeasurementErrorModel GNSS measurement error model to use
     /// @param[in] elevationMask Elevation cut-off angle for satellites in [rad]
-    /// @param[in] usedObservations Utilized observations (Order from GnssObs::ObservationType: Psr, Carrier, Doppler)
+    /// @param[in] useDoppler Boolean which enables the use of doppler observations
     /// @return Shared pointer to the SPP solution
     std::shared_ptr<NAV::SppSolution> estimateSppSolution(const InsTime& insTime,
                                                           std::vector<CalcData>& calcData,
@@ -331,7 +331,7 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
                                                           const TroposphereModelSelection& troposphereModels,
                                                           const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
                                                           double elevationMask,
-                                                          const std::set<GnssObs::ObservationType>& usedObservations);
+                                                          bool useDoppler);
 
   private:
     /// @brief Does the Kalman Filter prediction
@@ -342,12 +342,12 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     /// @param[in] keyedObservations Storage type for Kalman Filter (contains innovations, Design matrix entries, weight matrix entries)
     /// @param[in] sppSolReferenceTimeSatelliteSystem Reference time satellite system selected from SPP LSE functions
     /// @param[in] satelliteSystems Available/Observed satellite systems in this epoch except reference satellite systems
-    /// @param[in] usedObservations Used observation types (pseudorange, doppler)
+    /// @param[in] useDoppler Boolean which enables the use of doppler observations
     /// @param[in] insTime Epoch time
     void kalmanFilterUpdate(const KeyedObservations& keyedObservations,
                             SatelliteSystem sppSolReferenceTimeSatelliteSystem,
                             const std::vector<SatelliteSystem>& satelliteSystems,
-                            const std::set<GnssObs::ObservationType>& usedObservations,
+                            bool useDoppler,
                             const InsTime& insTime);
 
     /// @brief Sets Process Noise Matrix

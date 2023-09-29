@@ -232,7 +232,8 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
                                                                 const IonosphereModel& ionosphereModel,
                                                                 const TroposphereModelSelection& troposphereModels,
                                                                 const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
-                                                                const EstimatorType& estimatorType)
+                                                                const EstimatorType& estimatorType,
+                                                                bool useDoppler)
 {
     int nParam = static_cast<int>(sppSol->nParam);                                            // Number of parameters
     int nMeasPsr = static_cast<int>(sppSol->nSatellitesPosition);                             // Number of pseudorange measurements
@@ -302,7 +303,7 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
         //                                                    Velocity calculation
         // #############################################################################################################################
 
-        if (calc.pseudorangeRateMeas)
+        if (calc.pseudorangeRateMeas && useDoppler)
         {
             // Pseudorange-rate measurement [m/s] - Groves ch. 8.5.3, eq. 8.48, p. 342
             retVal.psrRateMeas(iv) = calc.pseudorangeRateMeas.value(); // + (multipath and/or NLOS errors) + (tracking errors)
@@ -426,7 +427,7 @@ bool calcDataBasedOnEstimates(const std::shared_ptr<SppSolution>& sppSol,
 
     // Update the amount of measurements and parameter to take skipped measurements because of elevation mask and not available satellite systems into account
     sppSol->nSatellitesPosition = nMeasPsr - cntSkippedMeas;
-    sppSol->nSatellitesVelocity = nMeasDoppler - cntSkippedMeas;
+    nMeasDoppler <= cntSkippedMeas ? sppSol->nSatellitesVelocity = 0 : sppSol->nSatellitesVelocity = nMeasDoppler - cntSkippedMeas;
     sppSol->nParam = nParam;
 
     // Choose reference time satellite system
