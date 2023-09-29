@@ -71,7 +71,7 @@ Used observations
   - \f$ \hat{T}_r^s \f$ Tropospheric delay [m]
   - \f$ \delta\hat{\rho}_r^s \f$ Sagnac correction [m]
 
-  TODO: citation
+  (\cite SpringerHandbookGNSS2017 Springer Handbook, ch. 21.1.1, eq. 21.1, p. 606)
 
 - Pseudorange-rate estimates
   \fl{equation,eq-SppBasics-measurementModel-innovation-estimates-pseudorangeRate}
