@@ -1116,8 +1116,21 @@ bool NAV::ImuSimulator::initializeSplines()
     {
         // Formulas and notation for the rose figure from https://en.wikipedia.org/wiki/Rose_(mathematics)
 
-        int n = _rosePetNum;   // defining as local variables for case distinction
-        int d = _rosePetDenom; // defining as local variables for case distinction
+        // Adjusting the integration bounds needs a factor * PI
+        // | d  \ n | 1   | 2   | 3   | 4   | 5   | 6   | 7   |
+        // | ------ | --- | --- | --- | --- | --- | --- | --- |
+        // | 1      | 1   | 2   | 1   | 2   | 1   | 2   | 1   |
+        // | 2      | 4   | 1   | 4   | 2   | 4   | 1   | 4   |
+        // | 3      | 3   | 6   | 1   | 6   | 3   | 2   | 3   |
+        // | 4      | 8   | 4   | 8   | 1   | 8   | 4   | 8   |
+        // | 5      | 5   | 10  | 5   | 10  | 1   | 10  | 5   |
+        // | 6      | 12  | 3   | 4   | 6   | 12  | 1   | 12  |
+        // | 7      | 7   | 14  | 7   | 14  | 7   | 14  | 1   |
+        // | 8      | 16  | 8   | 16  | 4   | 16  | 8   | 16  |
+        // | 9      | 9   | 18  | 3   | 18  | 9   | 6   | 9   |
+
+        int n = _rosePetNum;
+        int d = _rosePetDenom;
 
         for (int i = 2; i <= n; i++) // reduction of fraction ( 4/2 ==> 2/1 )
         {
@@ -1129,39 +1142,26 @@ bool NAV::ImuSimulator::initializeSplines()
             }
         }
 
-        // Determining local k using symmetry
-        double k = d > n ? static_cast<double>(d) / static_cast<double>(n)
-                         : static_cast<double>(n) / static_cast<double>(d);
-
         auto isOdd = [](auto a) { return static_cast<int>(a) % 2 != 0; };
         auto isEven = [](auto a) { return static_cast<int>(a) % 2 == 0; };
 
         double integrationFactor = 0.0;
-        if (std::abs(k - 1.0) < std::numeric_limits<double>::epsilon())
+        if (isOdd(d))
         {
-            integrationFactor = 1.0;
+            if (isOdd(n)) { integrationFactor = static_cast<double>(d); }
+            else { integrationFactor = 2.0 * static_cast<double>(d); }
         }
-        else if (isOdd(n))
+        else // if (isEven(d))
         {
-            if (isEven(d)) { integrationFactor = 2.0 * static_cast<double>(d); }
-            else { integrationFactor = 1.0 * static_cast<double>(d); }
-        }
-        else if (isEven(n))
-        {
-            if (isEven(d))
-            {
-                if (isOdd(k)) { integrationFactor = 1.0 * static_cast<double>(d); }
-                else { integrationFactor = 2.0 * static_cast<double>(d); }
-            }
+            if (isEven(n)) { integrationFactor = static_cast<double>(d); }
             else { integrationFactor = 2.0 * static_cast<double>(d); }
         }
 
-        // k = n/d
-        double roseK = static_cast<double>(_rosePetNum) / static_cast<double>(_rosePetDenom);
-
-        std::vector<double> splineX;
-        std::vector<double> splineY;
-        std::vector<double> splineZ;
+        constexpr size_t nVirtPoints = 10;
+        splineTime.resize(nVirtPoints); // Preallocate points to make the spline start at the right point
+        std::vector<double> splineX(splineTime.size());
+        std::vector<double> splineY(splineTime.size());
+        std::vector<double> splineZ(splineTime.size());
 
         Eigen::Vector3d e_origin = trafo::lla2ecef_WGS84(_startPosition.latLonAlt());
 
@@ -1172,11 +1172,16 @@ bool NAV::ImuSimulator::initializeSplines()
         double maxPhi = std::numeric_limits<double>::infinity(); // Interval for integration depending on selected stop criteria
         if (_simulationStopCondition == StopCondition::DistanceOrCirclesOrRoses)
         {
-            maxPhi = _roseTrajectoryCountForStop * _rosePetDenom * integrationFactor * M_PI;
+            maxPhi = _roseTrajectoryCountForStop * integrationFactor * M_PI;
         }
 
-        // We cannot input negative values or zero into the elliptical integral, so we have to live with a single start point
-        for (double phi = 1e-6; phi <= maxPhi + 5 * dPhi; phi += dPhi) // NOLINT(clang-analyzer-security.FloatLoopCounter, cert-flp30-c)
+        // k = n/d
+        double roseK = static_cast<double>(_rosePetNum) / static_cast<double>(_rosePetDenom);
+
+        _roseSimDuration = 0.0;
+
+        // We cannot input negative values or zero
+        for (double phi = dPhi; phi <= maxPhi + 10 * dPhi; phi += dPhi) // NOLINT(clang-analyzer-security.FloatLoopCounter, cert-flp30-c)
         {
             double length = _trajectoryRadius / roseK * math::calcEllipticalIntegral(roseK * phi, 1.0 - std::pow(roseK, 2.0));
             double dL = length - lengthOld;
@@ -1210,13 +1215,39 @@ bool NAV::ImuSimulator::initializeSplines()
             splineY.push_back(e_position[1]);
             splineZ.push_back(e_position[2]);
 
-            if (std::abs(maxPhi - phi) < 1.5 * dPhi) { _roseSimDuration = time; }
-
-            if (_simulationStopCondition == StopCondition::Duration && time > _simulationDuration)
+            if (_simulationStopCondition == StopCondition::DistanceOrCirclesOrRoses && std::abs(maxPhi - phi) < 1.0 * dPhi)
+            {
+                LOG_TRACE("{}: Rose figure simulation duration: {:8.6}s | l={:8.6}m", nameId(), time, length);
+                _roseSimDuration = time;
+            }
+            else if (_simulationStopCondition == StopCondition::Duration && _roseSimDuration == 0.0 && time > _simulationDuration)
             {
                 _roseSimDuration = _simulationDuration;
-                break;
+                maxPhi = phi;
             }
+        }
+
+        maxPhi = integrationFactor * M_PI;
+        double endLength = _trajectoryRadius / roseK * math::calcEllipticalIntegral(roseK * maxPhi, 1.0 - std::pow(roseK, 2.0));
+        for (size_t i = 0; i < nVirtPoints; i++)
+        {
+            double phi = maxPhi - static_cast<double>(i) * dPhi;
+            double length = _trajectoryRadius / roseK * math::calcEllipticalIntegral(roseK * phi, 1.0 - std::pow(roseK, 2.0));
+            double time = (length - endLength) / _trajectoryHorizontalSpeed;
+            splineTime[nVirtPoints - i - 1] = time;
+
+            Eigen::Vector3d n_relativePosition{ _trajectoryRadius * std::cos(roseK * phi) * std::sin(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
+                                                _trajectoryRadius * std::cos(roseK * phi) * std::cos(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
+                                                -_trajectoryVerticalSpeed * time };                                                                                                          // [m]
+
+            LOG_DATA("{}: t={:8.6}s | l={:8.6}m", nameId(), time, length);
+
+            Eigen::Vector3d e_relativePosition = e_quatCenter_n * n_relativePosition;
+            Eigen::Vector3d e_position = e_origin + e_relativePosition;
+
+            splineX[nVirtPoints - i - 1] = e_position[0];
+            splineY[nVirtPoints - i - 1] = e_position[1];
+            splineZ[nVirtPoints - i - 1] = e_position[2];
         }
 
         _splines.x.setPoints(splineTime, splineX);
@@ -1233,7 +1264,7 @@ bool NAV::ImuSimulator::initializeSplines()
             _startTime = getTimeFromCsvLine(csvData->lines.front(), csvData->description);
             if (_startTime.empty()) { return false; }
 
-            constexpr size_t nVirtPoints = 5;
+            constexpr size_t nVirtPoints = 10;
             splineTime.resize(nVirtPoints); // Preallocate points to make the spline start at the right point
             std::vector<double> splineX(splineTime.size());
             std::vector<double> splineY(splineTime.size());
