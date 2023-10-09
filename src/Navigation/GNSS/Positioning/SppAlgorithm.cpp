@@ -48,7 +48,9 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
                                                 const Code& filterCode,
                                                 const std::vector<SatId>& excludedSatellites,
                                                 double elevationMask,
-                                                bool useDoppler)
+                                                bool useDoppler,
+                                                std::vector<States::StateKeyTypes>& interSysErrs,
+                                                std::vector<States::StateKeyTypes>& interSysDrifts)
 {
     INS_ASSERT_USER_ERROR(estimatorType == EstimatorType::LEAST_SQUARES || estimatorType == EstimatorType::WEIGHTED_LEAST_SQUARES,
                           "This function only works for the estimator types LSE or WLSE.");
@@ -65,10 +67,10 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
     std::set<SatelliteSystem> availSatelliteSystems;
     for (const auto& calc : calcData) { availSatelliteSystems.insert(calc.obsData.satSigId.toSatId().satSys); }
 
-    size_t nMeasPsr = calcData.size();
-    LOG_DATA("nMeasPsr {}", nMeasPsr);
     size_t nParam = 4 + availSatelliteSystems.size() - 1; // 3x pos, 1x clk, (N-1)x clkDiff
     LOG_DATA("nParam {}", nParam);
+    size_t nMeasPsr = calcData.size();
+    LOG_DATA("nMeasPsr {}", nMeasPsr);
 
     // Find all observations providing a doppler measurement (for velocity calculation)
     size_t nDopplerMeas = 0;
@@ -113,22 +115,24 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
             return sppSol;
         }
 
-        auto [e_H_psr,          // Measurement/Geometry matrix for the pseudorange
-              psrEst,           // Pseudorange estimates [m]
-              psrMeas,          // Pseudorange measurements [m]
-              W_psr,            // Pseudorange measurement error weight matrix
-              dpsr,             // Difference between Pseudorange measurements and estimates
-              e_H_r,            // Measurement/Geometry matrix for the pseudorange-rate
-              psrRateEst,       // Corrected pseudorange-rate estimates [m/s]
-              psrRateMeas,      // Corrected pseudorange-rate measurements [m/s]
-              W_psrRate,        // Pseudorange rate (doppler) measurement error weight matrix
-              dpsr_dot,         // Difference between Pseudorange rate measurements and estimates
-              keyedObservations // Observations for use with KeyedKalmanFilter (contains Innovations, Design/Geometry matrix, Weight matrix)
+        getInterSysKeys(satelliteSystems, interSysErrs, interSysDrifts);
+
+        auto [e_H_psr,     // Measurement/Geometry matrix for the pseudorange
+              psrEst,      // Pseudorange estimates [m]
+              psrMeas,     // Pseudorange measurements [m]
+              W_psr,       // Pseudorange measurement error weight matrix
+              dpsr,        // Difference between Pseudorange measurements and estimates
+              e_H_r,       // Measurement/Geometry matrix for the pseudorange-rate
+              psrRateEst,  // Corrected pseudorange-rate estimates [m/s]
+              psrRateMeas, // Corrected pseudorange-rate measurements [m/s]
+              W_psrRate,   // Pseudorange rate (doppler) measurement error weight matrix
+              dpsr_dot     // Difference between Pseudorange rate measurements and estimates
         ] = calcMeasurementEstimatesAndDesignMatrix(sppSol, calcData,
                                                     gnssObs->insTime,
                                                     state, lla_pos,
                                                     ionosphericCorrections, ionosphereModel, troposphereModels,
-                                                    gnssMeasurementErrorModel, estimatorType, useDoppler);
+                                                    gnssMeasurementErrorModel, estimatorType, useDoppler,
+                                                    interSysErrs, interSysDrifts);
 
         // #################################################################################################################################
         //                                                     Least squares solution
@@ -136,9 +140,10 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
 
         // ---------------------------------------------------------- Position -------------------------------------------------------------
 
-        bool solAccurate = solveLeastSquaresAndAssignSolution(dpsr, e_H_psr, W_psr, estimatorType, sppSol->nSatellitesPosition,
+        bool solAccurate = solveLeastSquaresAndAssignSolution(dpsr, e_H_psr, W_psr, estimatorType, sppSol->nSatellitesPosition, interSysErrs,
                                                               // Outputs:
-                                                              state.e_position, state.recvClk.bias, state.recvClk.sysTimeDiff,
+                                                              state.e_position, States::Pos, state.recvClk.bias, States::RecvClkErr,
+                                                              state.recvClk.sysTimeDiff,
                                                               sppSol, sppSol->recvClk.bias, sppSol->recvClk.sysTimeDiff,
                                                               &SppSolution::setPositionAndStdDev_e, &SppSolution::setPosition_e,
                                                               &SppSolution::setPositionClockErrorCovarianceMatrix);
@@ -148,9 +153,10 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
         {
             if (sppSol->nSatellitesVelocity >= sppSol->nParam)
             {
-                solAccurate &= solveLeastSquaresAndAssignSolution(dpsr_dot, e_H_r, W_psrRate, estimatorType, sppSol->nSatellitesVelocity,
+                solAccurate &= solveLeastSquaresAndAssignSolution(dpsr_dot, e_H_r, W_psrRate, estimatorType, sppSol->nSatellitesVelocity, interSysDrifts,
                                                                   // Outputs:
-                                                                  state.e_velocity, state.recvClk.drift, state.recvClk.sysDriftDiff,
+                                                                  state.e_velocity, States::Vel, state.recvClk.drift, States::RecvClkDrift,
+                                                                  state.recvClk.sysDriftDiff,
                                                                   sppSol, sppSol->recvClk.drift, sppSol->recvClk.sysDriftDiff,
                                                                   &SppSolution::setVelocityAndStdDev_e, &SppSolution::setVelocity_e,
                                                                   &SppSolution::setVelocityClockDriftCovarianceMatrix);
@@ -184,7 +190,9 @@ std::shared_ptr<SppSolution> calcSppSolutionKF(SppKalmanFilter& kalmanFilter,
                                                const Code& filterCode,
                                                const std::vector<SatId>& excludedSatellites,
                                                double elevationMask,
-                                               bool useDoppler)
+                                               bool useDoppler,
+                                               std::vector<States::StateKeyTypes>& interSysErrs,
+                                               std::vector<States::StateKeyTypes>& interSysDrifts)
 {
     // #####################################################################################################################################
     //                                                          Calculation
@@ -205,7 +213,9 @@ std::shared_ptr<SppSolution> calcSppSolutionKF(SppKalmanFilter& kalmanFilter,
                                          filterCode,
                                          excludedSatellites,
                                          elevationMask,
-                                         useDoppler);
+                                         useDoppler,
+                                         interSysErrs,
+                                         interSysDrifts);
 
         // Find all selected satellite systems
         std::vector<SatelliteSystem> allOtherSatSys = filterFreq.getSatSys().toVector();
@@ -216,7 +226,7 @@ std::shared_ptr<SppSolution> calcSppSolutionKF(SppKalmanFilter& kalmanFilter,
         kalmanFilter.addInterSysStateKeys(sppSol->insTime);
 
         // Initialize Kalman Filter representation
-        kalmanFilter.initializeKalmanFilter(sppSol);
+        kalmanFilter.initializeKalmanFilter(sppSol, interSysErrs, interSysDrifts);
         LOG_DEBUG("{}: Kalman Filter initialized.");
 
         return sppSol;
@@ -229,7 +239,8 @@ std::shared_ptr<SppSolution> calcSppSolutionKF(SppKalmanFilter& kalmanFilter,
     std::vector<CalcData> calcData = selectObservations(gnssObs, gnssNavInfos, filterFreq, filterCode, excludedSatellites);
 
     auto sppSol = kalmanFilter.estimateSppSolution(gnssObs->insTime, calcData, ionosphericCorrections, ionosphereModel,
-                                                   troposphereModels, gnssMeasurementErrorModel, elevationMask, useDoppler);
+                                                   troposphereModels, gnssMeasurementErrorModel, elevationMask, useDoppler,
+                                                   interSysErrs, interSysDrifts);
 
     return sppSol;
 }

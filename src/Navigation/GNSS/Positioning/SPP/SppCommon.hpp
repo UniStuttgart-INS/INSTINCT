@@ -18,6 +18,7 @@
 #include <unordered_map>
 
 #include "util/Eigen.hpp"
+#include "util/Container/KeyedMatrix.hpp"
 
 #include "Navigation/GNSS/Positioning/SppAlgorithmTypes.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
@@ -26,6 +27,10 @@
 #include "Navigation/Atmosphere/Ionosphere/Ionosphere.hpp"
 #include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
 #include "Navigation/GNSS/Errors.hpp"
+#include "Navigation/GNSS/Positioning/SPP/SppKeys.hpp"
+
+namespace States = NAV::GNSS::Positioning::SPP::States;
+namespace Meas = NAV::GNSS::Positioning::SPP::Meas;
 
 namespace NAV::GNSS::Positioning::SPP
 {
@@ -121,45 +126,30 @@ ValueWeight<double> calcPsrRateAndWeight(const CalcData& calc,
                                          const EstimatorType& estimatorType,
                                          const GnssMeasurementErrorModel& gnssMeasurementErrorModel);
 
-/// Keyed Observation for Kalman Filter
-struct KeyedObservation
-{
-    double z_i = 0.0;      ///< Innovation
-    Eigen::VectorXd e_H_i; ///< Row of Design/Geometry matrix
-    double W_i = 0.0;      ///< Entry of weight matrix
-};
-
-/// @brief Storage type for Kalman Filter
-using KeyedObservations = std::unordered_map<NAV::SatSigId,
-                                             std::unordered_map<NAV::GnssObs::ObservationType,
-                                                                KeyedObservation>>;
-
 /// @brief Return type for the function 'calcMeasurementEstimatesAndDesignMatrix'
 struct EstWeightDesignMatrices
 {
     /// e_H_psr Measurement/Geometry matrix for the pseudorange
-    Eigen::MatrixXd e_H_psr;
+    KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyTypes> e_H_psr;
     /// psrEst Pseudorange estimates [m]
-    Eigen::VectorXd psrEst;
+    KeyedVectorXd<Meas::MeasKeyTypes> psrEst;
     /// psrMeas Pseudorange measurements [m]
-    Eigen::VectorXd psrMeas;
+    KeyedVectorXd<Meas::MeasKeyTypes> psrMeas;
     /// W_psr Pseudorange measurement error weight matrix
-    Eigen::MatrixXd W_psr;
+    KeyedMatrixXd<Meas::MeasKeyTypes, Meas::MeasKeyTypes> W_psr;
     /// dpsr Difference between Pseudorange measurements and estimates
-    Eigen::VectorXd dpsr;
+    KeyedVectorXd<Meas::MeasKeyTypes> dpsr;
 
     /// e_H_r Measurement/Geometry matrix for the pseudorange-rate
-    Eigen::MatrixXd e_H_r;
+    KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyTypes> e_H_r;
     /// psrRateEst Corrected pseudorange-rate estimates [m/s]
-    Eigen::VectorXd psrRateEst;
+    KeyedVectorXd<Meas::MeasKeyTypes> psrRateEst;
     /// psrRateMeas Corrected pseudorange-rate measurements [m/s]
-    Eigen::VectorXd psrRateMeas;
+    KeyedVectorXd<Meas::MeasKeyTypes> psrRateMeas;
     /// W_psrRate Pseudorange rate (doppler) measurement error weight matrix
-    Eigen::MatrixXd W_psrRate;
+    KeyedMatrixXd<Meas::MeasKeyTypes, Meas::MeasKeyTypes> W_psrRate;
     /// dpsr_dot Difference between Pseudorange rate measurements and estimates
-    Eigen::VectorXd dpsr_dot;
-    /// KeyedObservations for Kalman Filter
-    KeyedObservations keyedObservations;
+    KeyedVectorXd<Meas::MeasKeyTypes> dpsr_dot;
 };
 
 /// @brief Get Measurements, it's estimates and the corresponding Design-Matrix
@@ -174,7 +164,9 @@ struct EstWeightDesignMatrices
 /// @param[in] gnssMeasurementErrorModel GNSS measurement error model to use
 /// @param[in] estimatorType Estimator type
 /// @param[in] useDoppler Boolean which enables the use of doppler observations
-/// @return Matrices: e_H_psr, psrEst, psrMeas, W_psr, dpsr, e_H_r, psrRateEst, psrRateMeas, W_psrRate, dpsr_dot, keyedObservations
+/// @param[in] interSysErrs Inter-system clock error keys
+/// @param[in] interSysDrifts Inter-system clock drift keys
+/// @return Matrices: e_H_psr, psrEst, psrMeas, W_psr, dpsr, e_H_r, psrRateEst, psrRateMeas, W_psrRate, dpsr_dot
 EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::shared_ptr<SppSolution>& sppSol,
                                                                 std::vector<CalcData>& calcData,
                                                                 const InsTime& insTime,
@@ -185,7 +177,9 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
                                                                 const TroposphereModelSelection& troposphereModels,
                                                                 const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
                                                                 const EstimatorType& estimatorType,
-                                                                bool useDoppler);
+                                                                bool useDoppler,
+                                                                const std::vector<States::StateKeyTypes>& interSysErrs,
+                                                                const std::vector<States::StateKeyTypes>& interSysDrifts);
 
 /// @brief Prepares data further based on the current estimation and applies elevation mask
 /// @param[out] sppSol SPP solution
@@ -211,5 +205,13 @@ bool calcDataBasedOnEstimates(const std::shared_ptr<SppSolution>& sppSol,
                               const Eigen::Vector3d& lla_pos,
                               double elevationMask,
                               EstimatorType estimatorType);
+
+/// @brief Gets keys for inter-system clock errors and drifts
+/// @param[in] satelliteSystems List of satellite systems of current epoch
+/// @param[in, out] interSysErrs Inter-system clock error keys
+/// @param[in, out] interSysDrifts Inter-system clock drift keys
+void getInterSysKeys(const std::vector<SatelliteSystem>& satelliteSystems,
+                     std::vector<States::StateKeyTypes>& interSysErrs,
+                     std::vector<States::StateKeyTypes>& interSysDrifts);
 
 } // namespace NAV::GNSS::Positioning::SPP

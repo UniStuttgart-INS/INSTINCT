@@ -15,7 +15,6 @@
 #pragma once
 
 #include <set>
-#include <variant>
 
 #include "Navigation/Time/InsTime.hpp"
 #include "Navigation/Math/KalmanFilter.hpp"
@@ -30,91 +29,6 @@
 
 namespace NAV::GNSS::Positioning::SPP
 {
-namespace KF
-{
-namespace States
-{
-/// @brief State Keys of the Kalman filter
-enum KFStates
-{
-    PosX,           ///< Position ECEF_X [m]
-    PosY,           ///< Position ECEF_Y [m]
-    PosZ,           ///< Position ECEF_Z [m]
-    VelX,           ///< Velocity ECEF_X [m/s]
-    VelY,           ///< Velocity ECEF_Y [m/s]
-    VelZ,           ///< Velocity ECEF_Z [m/s]
-    RecvClkErr,     ///< Receiver clock error [m]
-    RecvClkDrift,   ///< Receiver clock drift [m/s]
-    KFStates_COUNT, ///< Count
-};
-/// @brief Inter-system clock errors (one for additional satellite system)
-struct InterSysErr
-{
-    /// @brief Equal comparison operator
-    /// @param rhs Right-hand side
-    bool operator==(const InterSysErr& rhs) const { return satSys == rhs.satSys; }
-    /// @brief Satellite system
-    SatelliteSystem satSys;
-};
-/// @brief Inter-system clock drifts (one for additional satellite system)
-struct InterSysDrift
-{
-    /// @brief Equal comparison operator
-    /// @param rhs Right-hand side
-    bool operator==(const InterSysDrift& rhs) const { return satSys == rhs.satSys; }
-    /// @brief Satellite system
-    SatelliteSystem satSys;
-};
-
-/// Alias for the state key type
-using StateKeyTypes = std::variant<KFStates, InterSysErr, InterSysDrift>;
-/// @brief All position keys
-inline static const std::vector<StateKeyTypes> Pos = { KFStates::PosX, KFStates::PosY, KFStates::PosZ };
-/// @brief All velocity keys
-inline static const std::vector<StateKeyTypes> Vel = { KFStates::VelX, KFStates::VelY, KFStates::VelZ };
-/// @brief Vector with all position and velocity state keys
-inline static const std::vector<StateKeyTypes> PosVel = { KFStates::PosX, KFStates::PosY, KFStates::PosZ,
-                                                          KFStates::VelX, KFStates::VelY, KFStates::VelZ };
-/// @brief Vector with all position, velocity and receiver clock state keys
-inline static const std::vector<StateKeyTypes> PosVelRecvClk = { KFStates::PosX, KFStates::PosY, KFStates::PosZ,
-                                                                 KFStates::VelX, KFStates::VelY, KFStates::VelZ,
-                                                                 KFStates::RecvClkErr, KFStates::RecvClkDrift };
-
-/// @brief All Inter-system clock errors keys
-static std::vector<KF::States::StateKeyTypes> InterSysErrs;
-/// @brief All Inter-system clock drifts keys
-/// @note Groves2013 does not estimate inter-system drifts, but we do for all models.
-static std::vector<KF::States::StateKeyTypes> InterSysDrifts;
-
-} // namespace States
-
-namespace Meas
-{
-
-/// @brief Pseudorange measurement [m]
-struct Psr
-{
-    /// @brief Equal comparison operator
-    /// @param rhs Right-hand side
-    bool operator==(const Psr& rhs) const { return satSigId == rhs.satSigId; }
-    /// @brief Satellite Signal Id
-    SatSigId satSigId;
-};
-/// @brief Range-rate (doppler) measurement [m/s]
-struct Doppler
-{
-    /// @brief Equal comparison operator
-    /// @param rhs Right-hand side
-    bool operator==(const Doppler& rhs) const { return satSigId == rhs.satSigId; }
-    /// @brief Satellite Signal Id
-    SatSigId satSigId;
-};
-
-/// Alias for the measurement key type
-using MeasKeyTypes = std::variant<Psr, Doppler>;
-
-} // namespace Meas
-} // namespace KF
 
 /// @brief The Spp Kalman Filter related options
 class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
@@ -312,7 +226,11 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
 
     /// @brief Initialize Kalman Filter from LSE solution
     /// @param[in] sppSolLSE SPP Least squares solution
-    void initializeKalmanFilter(const std::shared_ptr<const SppSolution>& sppSolLSE);
+    /// @param[in] interSysErrs Inter-system clock error keys
+    /// @param[in] interSysDrifts Inter-system clock drift keys
+    void initializeKalmanFilter(const std::shared_ptr<const SppSolution>& sppSolLSE,
+                                const std::vector<States::StateKeyTypes>& interSysErrs,
+                                const std::vector<States::StateKeyTypes>& interSysDrifts);
 
     /// @brief Performs Single Point Positioning algorithm based on Kalman Filter
     /// @param[in] insTime Epoch time
@@ -323,6 +241,8 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     /// @param[in] gnssMeasurementErrorModel GNSS measurement error model to use
     /// @param[in] elevationMask Elevation cut-off angle for satellites in [rad]
     /// @param[in] useDoppler Boolean which enables the use of doppler observations
+    /// @param[in, out] interSysErrs Inter-system clock error keys
+    /// @param[in, out] interSysDrifts Inter-system clock drift keys
     /// @return Shared pointer to the SPP solution
     std::shared_ptr<NAV::SppSolution> estimateSppSolution(const InsTime& insTime,
                                                           std::vector<CalcData>& calcData,
@@ -331,7 +251,9 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
                                                           const TroposphereModelSelection& troposphereModels,
                                                           const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
                                                           double elevationMask,
-                                                          bool useDoppler);
+                                                          bool useDoppler,
+                                                          std::vector<States::StateKeyTypes>& interSysErrs,
+                                                          std::vector<States::StateKeyTypes>& interSysDrifts);
 
   private:
     /// @brief Does the Kalman Filter prediction
@@ -339,15 +261,27 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     void kalmanFilterPrediction(const InsTime& insTime);
 
     /// @brief Does the Kalman Filter update
-    /// @param[in] keyedObservations Storage type for Kalman Filter (contains innovations, Design matrix entries, weight matrix entries)
+    /// @param[in] dpsr Difference between Pseudorange measurements and estimates [m]
+    /// @param[in] e_H_psr Measurement/Geometry matrix for the pseudorange
+    /// @param[in] W_psr Pseudorange measurement error weight matrix
+    /// @param[in] dpsr_dot Difference between Pseudorange rate measurements and estimates [m/s]
+    /// @param[in] e_H_r Measurement/Geometry matrix for the pseudorange-rate
+    /// @param[in] W_psrRate Pseudorange rate (doppler) measurement error weight matrix
     /// @param[in] sppSolReferenceTimeSatelliteSystem Reference time satellite system selected from SPP LSE functions
-    /// @param[in] satelliteSystems Available/Observed satellite systems in this epoch except reference satellite systems
     /// @param[in] useDoppler Boolean which enables the use of doppler observations
+    /// @param[in] interSysErrs Inter-system clock error keys
+    /// @param[in] interSysDrifts Inter-system clock drift keys
     /// @param[in] insTime Epoch time
-    void kalmanFilterUpdate(const KeyedObservations& keyedObservations,
+    void kalmanFilterUpdate(const KeyedVectorXd<Meas::MeasKeyTypes>& dpsr,
+                            const KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyTypes>& e_H_psr,
+                            const KeyedMatrixXd<Meas::MeasKeyTypes, Meas::MeasKeyTypes>& W_psr,
+                            const KeyedVectorXd<Meas::MeasKeyTypes>& dpsr_dot,
+                            const KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyTypes>& e_H_r,
+                            const KeyedMatrixXd<Meas::MeasKeyTypes, Meas::MeasKeyTypes>& W_psrRate,
                             SatelliteSystem sppSolReferenceTimeSatelliteSystem,
-                            const std::vector<SatelliteSystem>& satelliteSystems,
                             bool useDoppler,
+                            const std::vector<States::StateKeyTypes>& interSysErrs,
+                            const std::vector<States::StateKeyTypes>& interSysDrifts,
                             const InsTime& insTime);
 
     /// @brief Sets Process Noise Matrix
@@ -376,7 +310,7 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     InsTime _lastUpdate;
 
     /// Kalman Filter representation
-    KeyedKalmanFilterD<NAV::GNSS::Positioning::SPP::KF::States::StateKeyTypes, NAV::GNSS::Positioning::SPP::KF::Meas::MeasKeyTypes> _kalmanFilter;
+    KeyedKalmanFilterD<States::StateKeyTypes, Meas::MeasKeyTypes> _kalmanFilter;
 
     /// Satellite system used as time reference
     SatelliteSystem _refTimeSatSys = SatSys_None;
@@ -398,291 +332,3 @@ void to_json(json& j, const SppKalmanFilter& data);
 void from_json(const json& j, SppKalmanFilter& data);
 
 } // namespace NAV::GNSS::Positioning::SPP
-
-namespace std
-{
-/// @brief Hash function (needed for unordered_map)
-template<>
-struct hash<NAV::GNSS::Positioning::SPP::KF::States::InterSysErr>
-{
-    /// @brief Hash function
-    /// @param[in] interSysErr Inter-system clock errors
-    size_t operator()(const NAV::GNSS::Positioning::SPP::KF::States::InterSysErr& interSysErr) const
-    {
-        return NAV::GNSS::Positioning::SPP::KF::States::KFStates_COUNT + std::hash<NAV::SatelliteSystem>()(interSysErr.satSys);
-    }
-};
-/// @brief Hash function (needed for unordered_map)
-template<>
-struct hash<NAV::GNSS::Positioning::SPP::KF::States::InterSysDrift>
-{
-    /// @brief Hash function
-    /// @param[in] interSysDrift Inter-system clock drifts
-    size_t operator()(const NAV::GNSS::Positioning::SPP::KF::States::InterSysDrift& interSysDrift) const
-    {
-        return NAV::GNSS::Positioning::SPP::KF::States::KFStates_COUNT + std::hash<NAV::SatelliteSystem>()(interSysDrift.satSys);
-    }
-};
-/// @brief Hash function (needed for unordered_map)
-template<>
-struct hash<NAV::GNSS::Positioning::SPP::KF::Meas::Psr>
-{
-    /// @brief Hash function
-    /// @param[in] psr Pseudorange observation
-    size_t operator()(const NAV::GNSS::Positioning::SPP::KF::Meas::Psr& psr) const
-    {
-        return std::hash<NAV::SatSigId>()(psr.satSigId);
-    }
-};
-/// @brief Hash function (needed for unordered_map)
-template<>
-struct hash<NAV::GNSS::Positioning::SPP::KF::Meas::Doppler>
-{
-    /// @brief Hash function
-    /// @param[in] doppler Doppler observation
-    size_t operator()(const NAV::GNSS::Positioning::SPP::KF::Meas::Doppler& doppler) const
-    {
-        return std::hash<NAV::SatSigId>()(doppler.satSigId) << 12;
-    }
-};
-} // namespace std
-
-#ifndef DOXYGEN_IGNORE
-
-/// @brief Formatter
-template<>
-struct fmt::formatter<NAV::GNSS::Positioning::SPP::KF::States::KFStates>
-{
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
-    /// @brief Defines how to format structs
-    /// @param[in] state Struct to format
-    /// @param[in, out] ctx Format context
-    /// @return Output iterator
-    template<typename FormatContext>
-    auto format(const NAV::GNSS::Positioning::SPP::KF::States::KFStates& state, FormatContext& ctx)
-    {
-        using namespace NAV::GNSS::Positioning::SPP::KF::States; // NOLINT(google-build-using-namespace)
-
-        switch (state)
-        {
-        case PosX:
-            return fmt::format_to(ctx.out(), "PosX");
-        case PosY:
-            return fmt::format_to(ctx.out(), "PosY");
-        case PosZ:
-            return fmt::format_to(ctx.out(), "PosZ");
-        case VelX:
-            return fmt::format_to(ctx.out(), "VelX");
-        case VelY:
-            return fmt::format_to(ctx.out(), "VelY");
-        case VelZ:
-            return fmt::format_to(ctx.out(), "VelZ");
-        case RecvClkErr:
-            return fmt::format_to(ctx.out(), "RecvClkErr");
-        case RecvClkDrift:
-            return fmt::format_to(ctx.out(), "RecvClkDrift");
-        case KFStates_COUNT:
-            return fmt::format_to(ctx.out(), "KFStates_COUNT");
-        }
-
-        return fmt::format_to(ctx.out(), "ERROR");
-    }
-};
-
-/// @brief Formatter
-template<>
-struct fmt::formatter<NAV::GNSS::Positioning::SPP::KF::States::InterSysErr>
-{
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
-    /// @brief Defines how to format structs
-    /// @param[in] interSysErr Struct to format
-    /// @param[in, out] ctx Format context
-    /// @return Output iterator
-    template<typename FormatContext>
-    auto format(const NAV::GNSS::Positioning::SPP::KF::States::InterSysErr& interSysErr, FormatContext& ctx)
-    {
-        return fmt::format_to(ctx.out(), "InterSysErr({})", interSysErr.satSys);
-    }
-};
-
-/// @brief Formatter
-template<>
-struct fmt::formatter<NAV::GNSS::Positioning::SPP::KF::States::InterSysDrift>
-{
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
-    /// @brief Defines how to format structs
-    /// @param[in] interSysDrift Struct to format
-    /// @param[in, out] ctx Format context
-    /// @return Output iterator
-    template<typename FormatContext>
-    auto format(const NAV::GNSS::Positioning::SPP::KF::States::InterSysDrift& interSysDrift, FormatContext& ctx)
-    {
-        return fmt::format_to(ctx.out(), "InterSysDrift({})", interSysDrift.satSys);
-    }
-};
-
-/// @brief Formatter
-template<>
-struct fmt::formatter<NAV::GNSS::Positioning::SPP::KF::Meas::Psr>
-{
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
-    /// @brief Defines how to format structs
-    /// @param[in] psr Struct to format
-    /// @param[in, out] ctx Format context
-    /// @return Output iterator
-    template<typename FormatContext>
-    auto format(const NAV::GNSS::Positioning::SPP::KF::Meas::Psr& psr, FormatContext& ctx)
-    {
-        return fmt::format_to(ctx.out(), "psr({})", psr.satSigId);
-    }
-};
-
-/// @brief Formatter
-template<>
-struct fmt::formatter<NAV::GNSS::Positioning::SPP::KF::Meas::Doppler>
-{
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
-    /// @brief Defines how to format structs
-    /// @param[in] doppler Struct to format
-    /// @param[in, out] ctx Format context
-    /// @return Output iterator
-    template<typename FormatContext>
-    auto format(const NAV::GNSS::Positioning::SPP::KF::Meas::Doppler& doppler, FormatContext& ctx)
-    {
-        return fmt::format_to(ctx.out(), "dop({})", doppler.satSigId);
-    }
-};
-
-/// @brief Formatter
-template<>
-struct fmt::formatter<NAV::GNSS::Positioning::SPP::KF::States::StateKeyTypes>
-{
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
-    /// @brief Defines how to format structs
-    /// @param[in] state Struct to format
-    /// @param[in, out] ctx Format context
-    /// @return Output iterator
-    template<typename FormatContext>
-    auto format(const NAV::GNSS::Positioning::SPP::KF::States::StateKeyTypes& state, FormatContext& ctx)
-    {
-        using namespace NAV::GNSS::Positioning::SPP::KF::States; // NOLINT(google-build-using-namespace)
-
-        if (const auto* s = std::get_if<NAV::GNSS::Positioning::SPP::KF::States::KFStates>(&state))
-        {
-            switch (*s)
-            {
-            case PosX:
-                return fmt::format_to(ctx.out(), "PosX");
-            case PosY:
-                return fmt::format_to(ctx.out(), "PosY");
-            case PosZ:
-                return fmt::format_to(ctx.out(), "PosZ");
-            case VelX:
-                return fmt::format_to(ctx.out(), "VelX");
-            case VelY:
-                return fmt::format_to(ctx.out(), "VelY");
-            case VelZ:
-                return fmt::format_to(ctx.out(), "VelZ");
-            case RecvClkErr:
-                return fmt::format_to(ctx.out(), "RecvClkErr");
-            case RecvClkDrift:
-                return fmt::format_to(ctx.out(), "RecvClkDrift");
-            case KFStates_COUNT:
-                return fmt::format_to(ctx.out(), "KFStates_COUNT");
-            }
-        }
-        if (const auto* interSysErr = std::get_if<NAV::GNSS::Positioning::SPP::KF::States::InterSysErr>(&state))
-        {
-            return fmt::format_to(ctx.out(), "InterSysErr({})", interSysErr->satSys);
-        }
-        if (const auto* interSysDrift = std::get_if<NAV::GNSS::Positioning::SPP::KF::States::InterSysDrift>(&state))
-        {
-            return fmt::format_to(ctx.out(), "InterSysDrift({})", interSysDrift->satSys);
-        }
-
-        return fmt::format_to(ctx.out(), "ERROR");
-    }
-};
-
-/// @brief Formatter
-template<>
-struct fmt::formatter<NAV::GNSS::Positioning::SPP::KF::Meas::MeasKeyTypes>
-{
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
-    /// @brief Defines how to format structs
-    /// @param[in] meas Struct to format
-    /// @param[in, out] ctx Format context
-    /// @return Output iterator
-    template<typename FormatContext>
-    auto format(const NAV::GNSS::Positioning::SPP::KF::Meas::MeasKeyTypes& meas, FormatContext& ctx)
-    {
-        if (const auto* psr = std::get_if<NAV::GNSS::Positioning::SPP::KF::Meas::Psr>(&meas))
-        {
-            return fmt::format_to(ctx.out(), "psr({})", psr->satSigId);
-        }
-        if (const auto* doppler = std::get_if<NAV::GNSS::Positioning::SPP::KF::Meas::Doppler>(&meas))
-        {
-            return fmt::format_to(ctx.out(), "doppler({})", doppler->satSigId);
-        }
-
-        return fmt::format_to(ctx.out(), "ERROR");
-    }
-};
-
-#endif

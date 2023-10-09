@@ -402,6 +402,9 @@ bool NAV::SinglePointPositioning::initialize()
     _state = {};
     _kalmanFilter.initialize();
 
+    _interSysErrs.clear();
+    _interSysDrifts.clear();
+
     LOG_DEBUG("{}: initialized", nameId());
 
     return true;
@@ -446,13 +449,15 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     {
         sppSol = calcSppSolutionLSE(_state, gnssObs, gnssNavInfos,
                                     _ionosphereModel, _troposphereModels, _gnssMeasurementErrorModel, _estimatorType,
-                                    _filterFreq, _filterCode, _excludedSatellites, _elevationMask, _useDoppler);
+                                    _filterFreq, _filterCode, _excludedSatellites, _elevationMask, _useDoppler,
+                                    _interSysErrs, _interSysDrifts);
     }
     else // if (_estimatorType == NAV::GNSS::Positioning::SPP::EstimatorType::KF)
     {
         sppSol = calcSppSolutionKF(_kalmanFilter, gnssObs, gnssNavInfos,
                                    _ionosphereModel, _troposphereModels, _gnssMeasurementErrorModel,
-                                   _filterFreq, _filterCode, _excludedSatellites, _elevationMask, _useDoppler);
+                                   _filterFreq, _filterCode, _excludedSatellites, _elevationMask, _useDoppler,
+                                   _interSysErrs, _interSysDrifts);
     }
 
     if (sppSol)

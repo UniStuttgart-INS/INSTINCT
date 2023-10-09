@@ -17,6 +17,7 @@
 #include "NodeData/GNSS/SppSolution.hpp"
 #include "util/Eigen.hpp"
 #include "util/Container/UncertainValue.hpp"
+
 #include <unordered_map>
 #include <memory>
 
@@ -36,8 +37,11 @@ using SppSolSetErrorCovarianceMatrix = void (SppSolution::*)(const Eigen::Matrix
 /// @param[in] W Corresponding weights of observations
 /// @param[in] estimatorType Estimator Type, either LSQ or WLSQ
 /// @param[in] nMeas Number of measurements
+/// @param[in] interSysErrOrDrifts Inter-system clock error or drift keys
 /// @param[out] posOrVel Output for the position or velocity
+/// @param[out] statesPosOrVel State keys for position or velocity
 /// @param[out] biasOrDrift Output for the bias or drift
+/// @param[out] statesBiasOrDrift State key for receiver clock error or drift
 /// @param[out] sysTimeOrDriftDiff Output for output for the inter system bias or drifts
 /// @param[out] sppSol SPP solution
 /// @param[out] sppSolBiasOrDrift Output for the bias or drift (assigned inside the sppSol)
@@ -46,11 +50,14 @@ using SppSolSetErrorCovarianceMatrix = void (SppSolution::*)(const Eigen::Matrix
 /// @param[out] sppSolSetPosOrVel_e Function to call to set the position or velocity in the sppSol
 /// @param[out] sppSolSetErrorCovarianceMatrix Function to call to set the covariance matrix in the sppSol
 /// @return True if the solution change is below 1e-4
-bool solveLeastSquaresAndAssignSolution(const Eigen::VectorXd& dy, const Eigen::MatrixXd& e_H, const Eigen::MatrixXd& W,
+bool solveLeastSquaresAndAssignSolution(const KeyedVectorXd<Meas::MeasKeyTypes>& dy,
+                                        const KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyTypes>& e_H,
+                                        const KeyedMatrixXd<Meas::MeasKeyTypes, Meas::MeasKeyTypes>& W,
                                         const EstimatorType& estimatorType,
                                         size_t nMeas,
-                                        Eigen::Vector3d& posOrVel,
-                                        UncertainValue<double>& biasOrDrift,
+                                        const std::vector<States::StateKeyTypes>& interSysErrOrDrifts,
+                                        Eigen::Vector3d& posOrVel, std::vector<States::StateKeyTypes> statesPosOrVel,
+                                        UncertainValue<double>& biasOrDrift, States::StateKeyTypes statesBiasOrDrift,
                                         std::unordered_map<NAV::SatelliteSystem, NAV::UncertainValue<double>>& sysTimeOrDriftDiff,
                                         const std::shared_ptr<SppSolution>& sppSol,
                                         UncertainValue<double>& sppSolBiasOrDrift,

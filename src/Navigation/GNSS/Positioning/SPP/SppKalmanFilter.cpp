@@ -12,9 +12,6 @@
 
 #include <algorithm>
 
-namespace States = NAV::GNSS::Positioning::SPP::KF::States;
-namespace Meas = NAV::GNSS::Positioning::SPP::KF::Meas;
-
 namespace NAV::GNSS::Positioning::SPP
 {
 
@@ -196,9 +193,6 @@ void SppKalmanFilter::initialize()
     _initialized = false;
     _refTimeSatSys = SatSys_None;
 
-    KF::States::InterSysErrs.clear();
-    KF::States::InterSysDrifts.clear();
-
     // Initial Covariance of the acceleration 𝜎_a due to user motion in horizontal and vertical component [m²/s³]
     if (gui_covarianceAccelUnit == CovarianceAccelUnits::m_sqrts3)
     {
@@ -339,31 +333,37 @@ SatelliteSystem SppKalmanFilter::getRefTimeSatSys() const
 // ###########################################################################################################
 //                                          Initialize Kalman Filter
 // ###########################################################################################################
-void SppKalmanFilter::initializeKalmanFilter(const std::shared_ptr<const SppSolution>& sppSolLSE)
+void SppKalmanFilter::initializeKalmanFilter(const std::shared_ptr<const SppSolution>& sppSolLSE,
+                                             const std::vector<States::StateKeyTypes>& interSysErrs,
+                                             const std::vector<States::StateKeyTypes>& interSysDrifts)
 {
     auto refSys = sppSolLSE->recvClk.referenceTimeSatelliteSystem;
     _refTimeSatSys = refSys;
 
-    // Initialize Kalman Filter state x and Covariance P
+    // ----------------------------------------------------- Initialize Kalman Filter state x --------------------------------------------------------
 
     _kalmanFilter.x.segment(States::Pos) = sppSolLSE->e_position();                    // _e_position
     _kalmanFilter.x(States::RecvClkErr) = sppSolLSE->recvClk.bias.value * InsConst::C; // receiver clock error
 
-    if (std::none_of(sppSolLSE->e_velocity().begin(), sppSolLSE->e_velocity().end(), [](double d) { return std::isnan(d); })) // in case Doppler observations were not available for LSE
+    if (std::none_of(sppSolLSE->e_velocity().begin(), sppSolLSE->e_velocity().end(), [](double d) { return std::isnan(d); })) // in case doppler observations were available for LSE
     {
         _kalmanFilter.x.segment(States::Vel) = sppSolLSE->e_velocity();                       // _e_velocity
         _kalmanFilter.x(States::RecvClkDrift) = sppSolLSE->recvClk.drift.value * InsConst::C; // receiver clock drift
     }
 
-    // inter-system clock error and drift
+    // Inter-system clock error and drift
     for (const auto& otherSys : sppSolLSE->otherUsedSatelliteSystems)
     {
         _kalmanFilter.x(States::InterSysErr{ otherSys }) = sppSolLSE->recvClk.sysTimeDiff.at(otherSys).value * InsConst::C;
-        if (std::none_of(sppSolLSE->e_velocity().begin(), sppSolLSE->e_velocity().end(), [](double d) { return std::isnan(d); })) // in case Doppler observations were not available for LSE
+        if (std::none_of(sppSolLSE->e_velocity().begin(), sppSolLSE->e_velocity().end(), [](double d) { return std::isnan(d); })) // in case doppler observations were available for LSE
         {
             _kalmanFilter.x(States::InterSysDrift{ otherSys }) = sppSolLSE->recvClk.sysDriftDiff.at(otherSys).value * InsConst::C;
         }
     }
+
+    LOG_DATA("x =\n{}", _kalmanFilter.x);
+
+    // -------------------------------------------------- Initialize Kalman Filter covariance P ------------------------------------------------------
 
     // Find Satellite systems that are selected but not available in first epoch
     std::vector<SatelliteSystem> satSysDiff;
@@ -381,16 +381,15 @@ void SppKalmanFilter::initializeKalmanFilter(const std::shared_ptr<const SppSolu
 
         Eigen::Index i = 0;
         Eigen::Index j = 0;
-        for (const auto& otherSys_i : sppSolLSE->otherUsedSatelliteSystems)
+        for (const auto& key_i : interSysErrs)
         {
-            _kalmanFilter.P(States::Pos, States::InterSysErr{ otherSys_i }) = sppSolLSE->e_CovarianceMatrix().block<3, 1>(0, 8 + i);
-            _kalmanFilter.P(States::InterSysErr{ otherSys_i }, States::Pos) = sppSolLSE->e_CovarianceMatrix().block<1, 3>(8 + i, 0);
-            _kalmanFilter.P(States::RecvClkErr, States::InterSysErr{ otherSys_i }) = sppSolLSE->e_CovarianceMatrix()(6, 8 + i);
-            _kalmanFilter.P(States::InterSysErr{ otherSys_i }, States::RecvClkErr) = sppSolLSE->e_CovarianceMatrix()(8 + i, 6);
-            for (const auto& otherSys_j : sppSolLSE->otherUsedSatelliteSystems)
+            _kalmanFilter.P(States::Pos, key_i) = sppSolLSE->e_CovarianceMatrix().block<3, 1>(0, 8 + i);
+            _kalmanFilter.P(key_i, States::Pos) = sppSolLSE->e_CovarianceMatrix().block<1, 3>(8 + i, 0);
+            _kalmanFilter.P(States::RecvClkErr, key_i) = sppSolLSE->e_CovarianceMatrix()(6, 8 + i);
+            _kalmanFilter.P(key_i, States::RecvClkErr) = sppSolLSE->e_CovarianceMatrix()(8 + i, 6);
+            for (const auto& key_j : interSysErrs)
             {
-                _kalmanFilter.P(States::InterSysErr{ otherSys_i }, States::InterSysErr{ otherSys_j }) = sppSolLSE->e_CovarianceMatrix()(8 + i, 8 + j);
-
+                _kalmanFilter.P(key_i, key_j) = sppSolLSE->e_CovarianceMatrix()(8 + i, 8 + j);
                 j += 2;
             }
 
@@ -426,17 +425,16 @@ void SppKalmanFilter::initializeKalmanFilter(const std::shared_ptr<const SppSolu
 
         Eigen::Index i = 0;
         Eigen::Index j = 0;
-        for (const auto& otherSys_i : sppSolLSE->otherUsedSatelliteSystems)
+        for (const auto& key_i : interSysDrifts)
         {
-            _kalmanFilter.P(States::Vel, States::InterSysDrift{ otherSys_i }) = sppSolLSE->e_CovarianceMatrix().block<3, 1>(3, 9 + i);
-            _kalmanFilter.P(States::InterSysDrift{ otherSys_i }, States::Vel) = sppSolLSE->e_CovarianceMatrix().block<1, 3>(9 + i, 3);
-            _kalmanFilter.P(States::RecvClkDrift, States::InterSysDrift{ otherSys_i }) = sppSolLSE->e_CovarianceMatrix()(7, 9 + i);
-            _kalmanFilter.P(States::InterSysDrift{ otherSys_i }, States::RecvClkDrift) = sppSolLSE->e_CovarianceMatrix()(9 + i, 7);
+            _kalmanFilter.P(States::Vel, key_i) = sppSolLSE->e_CovarianceMatrix().block<3, 1>(3, 9 + i);
+            _kalmanFilter.P(key_i, States::Vel) = sppSolLSE->e_CovarianceMatrix().block<1, 3>(9 + i, 3);
+            _kalmanFilter.P(States::RecvClkDrift, key_i) = sppSolLSE->e_CovarianceMatrix()(7, 9 + i);
+            _kalmanFilter.P(key_i, States::RecvClkDrift) = sppSolLSE->e_CovarianceMatrix()(9 + i, 7);
 
-            for (const auto& otherSys_j : sppSolLSE->otherUsedSatelliteSystems)
+            for (const auto& key_j : interSysDrifts)
             {
-                _kalmanFilter.P(States::InterSysDrift{ otherSys_i }, States::InterSysDrift{ otherSys_j }) = sppSolLSE->e_CovarianceMatrix()(9 + i, 9 + j);
-
+                _kalmanFilter.P(key_i, key_j) = sppSolLSE->e_CovarianceMatrix()(9 + i, 9 + j);
                 j += 2;
             }
 
@@ -461,8 +459,9 @@ void SppKalmanFilter::initializeKalmanFilter(const std::shared_ptr<const SppSolu
         }
     }
 
-    LOG_DATA("x =\n{}", _kalmanFilter.x);
     LOG_DATA("P =\n{}", _kalmanFilter.P);
+
+    // ---------------------------------------------------- Initialize Kalman Filter matrices --------------------------------------------------------
 
     // System matrix - Groves ch. 9.4.2.2, eq. 9.148, p. 415
     _kalmanFilter.F(States::Pos, States::Vel) = Eigen::Matrix3d::Identity();
@@ -474,22 +473,23 @@ void SppKalmanFilter::initializeKalmanFilter(const std::shared_ptr<const SppSolu
     }
     LOG_DATA("F =\n{}", _kalmanFilter.F);
 
-    // Fix part of Noise input matrix G
+    // Fix part of Noise input matrix G and Noise scale matrix W
     _kalmanFilter.G(States::RecvClkErr, States::RecvClkErr) = 1;
     _kalmanFilter.G(States::RecvClkDrift, States::RecvClkDrift) = 1;
-    _kalmanFilter.G(States::InterSysErrs, States::InterSysErrs) = Eigen::MatrixXd::Identity(static_cast<Eigen::Index>(States::InterSysErrs.size()),
-                                                                                            static_cast<Eigen::Index>(States::InterSysErrs.size()));
-    _kalmanFilter.G(States::InterSysDrifts, States::InterSysDrifts) = Eigen::MatrixXd::Identity(static_cast<Eigen::Index>(States::InterSysDrifts.size()),
-                                                                                                static_cast<Eigen::Index>(States::InterSysDrifts.size()));
-
-    // Fix part of Noise scale matrix W
     _kalmanFilter.W(States::RecvClkErr, States::RecvClkErr) = _covarianceClkPhaseDrift;
     _kalmanFilter.W(States::RecvClkDrift, States::RecvClkDrift) = _covarianceClkFrequencyDrift;
     for (const auto& satSys : _allSatSysExceptRef)
     {
+        _kalmanFilter.G(States::InterSysErr{ satSys }, States::InterSysErr{ satSys }) = 1;
+        _kalmanFilter.G(States::InterSysDrift{ satSys }, States::InterSysDrift{ satSys }) = 1;
+
         _kalmanFilter.W(States::InterSysErr{ satSys }, States::InterSysErr{ satSys }) = _covarianceInterSysClkPhaseDrift;
         _kalmanFilter.W(States::InterSysDrift{ satSys }, States::InterSysDrift{ satSys }) = _covarianceInterSysClkFrequencyDrift;
     }
+    LOG_DATA("G =\n{}", _kalmanFilter.G);
+    LOG_DATA("W =\n{}", _kalmanFilter.W);
+
+    // -----------------------------------------------------------------------------------------------------------------------------------------------
 
     _initialized = true;
     LOG_DATA("_initialized {}", _initialized);
@@ -517,9 +517,6 @@ void SppKalmanFilter::addInterSysStateKeys([[maybe_unused]] const InsTime& insTi
             _kalmanFilter.addState(keyErr);
             LOG_DEBUG("{}: [{}] Adding state: {}", "SppKalmanFilter", insTime.toYMDHMS(GPST), keyDrift);
             _kalmanFilter.addState(keyDrift);
-
-            States::InterSysErrs.emplace_back(KF::States::InterSysErr{ satelliteSystem });
-            States::InterSysDrifts.emplace_back(KF::States::InterSysDrift{ satelliteSystem });
         }
     }
 }
@@ -603,7 +600,9 @@ std::shared_ptr<NAV::SppSolution> SppKalmanFilter::estimateSppSolution(const Ins
                                                                        const TroposphereModelSelection& troposphereModels,
                                                                        const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
                                                                        double elevationMask,
-                                                                       bool useDoppler)
+                                                                       bool useDoppler,
+                                                                       std::vector<States::StateKeyTypes>& interSysErrs,
+                                                                       std::vector<States::StateKeyTypes>& interSysDrifts)
 {
     auto sppSol = std::make_shared<SppSolution>();
     sppSol->insTime = insTime;
@@ -622,6 +621,9 @@ std::shared_ptr<NAV::SppSolution> SppKalmanFilter::estimateSppSolution(const Ins
         availableSatelliteSystems.reserve(sortedAvailableSatelliteSystems.size());
         std::copy(sortedAvailableSatelliteSystems.begin(), sortedAvailableSatelliteSystems.end(), std::back_inserter(availableSatelliteSystems));
 
+        // Amount of estimated parameters
+        size_t nParam = 4 + sortedAvailableSatelliteSystems.size() - 1; // 3x pos, 1x clk, (N-1)x clkDiff (= nDoppler Param -> 3x vel, 1x clkDrift, (N-1)x clkDiffDrift)
+        LOG_DATA("nParam {}", nParam);
         // Amount of pseudorange measurements
         size_t nMeasPsr = calcData.size();
         LOG_DATA("nMeasPsr {}", nMeasPsr);
@@ -633,10 +635,6 @@ std::shared_ptr<NAV::SppSolution> SppKalmanFilter::estimateSppSolution(const Ins
             nDopplerMeas = findDopplerMeasurements(calcData);
         }
         LOG_DATA("nDopplerMeas {}", nDopplerMeas);
-
-        // Amount of estimated parameters
-        size_t nParam = 4 + sortedAvailableSatelliteSystems.size() - 1; // 3x pos, 1x clk, (N-1)x clkDiff (= nDoppler Param -> 3x vel, 1x clkDrift, (N-1)x clkDiffDrift)
-        LOG_DATA("nParam {}", nParam);
 
         // Latitude, Longitude, Altitude of the receiver [rad, rad, m]
         Eigen::Vector3d lla_pos = trafo::ecef2lla_WGS84(_kalmanFilter.x(States::Pos));
@@ -651,28 +649,30 @@ std::shared_ptr<NAV::SppSolution> SppKalmanFilter::estimateSppSolution(const Ins
 
         if (sppSol->nSatellitesPosition + sppSol->nSatellitesVelocity == 0)
         {
-            return sppSol;
+            return sppSol; // no update
         }
 
-        auto [e_H_psr,          // Measurement/Geometry matrix for the pseudorange
-              psrEst,           // Pseudorange estimates [m]
-              psrMeas,          // Pseudorange measurements [m]
-              W_psr,            // Pseudorange measurement error weight matrix
-              dpsr,             // Difference between Pseudorange measurements and estimates
-              e_H_r,            // Measurement/Geometry matrix for the pseudorange-rate
-              psrRateEst,       // Corrected pseudorange-rate estimates [m/s]
-              psrRateMeas,      // Corrected pseudorange-rate measurements [m/s]
-              W_psrRate,        // Pseudorange rate (doppler) measurement error weight matrix
-              dpsr_dot,         // Difference between Pseudorange rate measurements and estimates
-              keyedObservations // Observations for use with KeyedKalmanFilter (contains Innovations, Design/Geometry matrix, Weight matrix)
+        getInterSysKeys(availableSatelliteSystems, interSysErrs, interSysDrifts);
+
+        auto [e_H_psr,     // Measurement/Geometry matrix for the pseudorange
+              psrEst,      // Pseudorange estimates [m]
+              psrMeas,     // Pseudorange measurements [m]
+              W_psr,       // Pseudorange measurement error weight matrix
+              dpsr,        // Difference between Pseudorange measurements and estimates
+              e_H_r,       // Measurement/Geometry matrix for the pseudorange-rate
+              psrRateEst,  // Corrected pseudorange-rate estimates [m/s]
+              psrRateMeas, // Corrected pseudorange-rate measurements [m/s]
+              W_psrRate,   // Pseudorange rate (doppler) measurement error weight matrix
+              dpsr_dot     // Difference between Pseudorange rate measurements and estimates
         ] = calcMeasurementEstimatesAndDesignMatrix(sppSol, calcData,
                                                     insTime,
                                                     state, lla_pos,
                                                     ionosphericCorrections, ionosphereModel,
                                                     troposphereModels, gnssMeasurementErrorModel,
-                                                    EstimatorType::KF, useDoppler);
+                                                    EstimatorType::KF, useDoppler, interSysErrs, interSysDrifts);
 
-        kalmanFilterUpdate(keyedObservations, sppSol->recvClk.referenceTimeSatelliteSystem, sppSol->otherUsedSatelliteSystems, useDoppler, insTime);
+        kalmanFilterUpdate(dpsr, e_H_psr, W_psr, dpsr_dot, e_H_r, W_psrRate,
+                           sppSol->recvClk.referenceTimeSatelliteSystem, useDoppler, interSysErrs, interSysDrifts, insTime);
         assignSolution(sppSol, availableSatelliteSystems);
 
         _lastUpdate = sppSol->insTime;
@@ -707,9 +707,8 @@ void SppKalmanFilter::kalmanFilterPrediction(const InsTime& insTime)
         // Position dependent part of Noise input matrix G
         _kalmanFilter.G(States::Vel, States::Vel) = n_Quat_e.toRotationMatrix().transpose();
 
-        // Position dependent part of Noise scale matrix W
-        Eigen::DiagonalMatrix<double, 3> a_S_n(_covarianceAccel(0), _covarianceAccel(0), _covarianceAccel(1)); // Scaling matrix in n-frame
-        _kalmanFilter.W(States::Vel, States::Vel) = a_S_n;                                                     // Scaling matrix in e-frame
+        // Position dependent part of Noise scale matrix W in n-frame
+        _kalmanFilter.W(States::Vel, States::Vel) = Eigen::DiagonalMatrix<double, 3>(_covarianceAccel(0), _covarianceAccel(0), _covarianceAccel(1));
 
         _kalmanFilter.calcPhiAndQWithVanLoanMethod(dt);
     }
@@ -736,33 +735,31 @@ void SppKalmanFilter::kalmanFilterPrediction(const InsTime& insTime)
 // ###########################################################################################################
 //                                          Kalman Filter Update
 // ###########################################################################################################
-void SppKalmanFilter::kalmanFilterUpdate(const KeyedObservations& keyedObservations,
+void SppKalmanFilter::kalmanFilterUpdate(const KeyedVectorXd<Meas::MeasKeyTypes>& dpsr,
+                                         const KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyTypes>& e_H_psr,
+                                         const KeyedMatrixXd<Meas::MeasKeyTypes, Meas::MeasKeyTypes>& W_psr,
+                                         const KeyedVectorXd<Meas::MeasKeyTypes>& dpsr_dot,
+                                         const KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyTypes>& e_H_r,
+                                         const KeyedMatrixXd<Meas::MeasKeyTypes, Meas::MeasKeyTypes>& W_psrRate,
                                          SatelliteSystem sppSolReferenceTimeSatelliteSystem,
-                                         const std::vector<SatelliteSystem>& otherSatelliteSystems,
                                          bool useDoppler,
+                                         const std::vector<States::StateKeyTypes>& interSysErrs,
+                                         const std::vector<States::StateKeyTypes>& interSysDrifts,
                                          [[maybe_unused]] const InsTime& insTime)
 {
     // Update the Measurement sensitivity Matrix (𝐇), the Measurement noise covariance matrix (𝐑) and the Measurement vector (𝐳)
 
+    // Get measurment keys to set Kalman Filter matrices and vectors
     std::vector<Meas::MeasKeyTypes> measKeys;
-    useDoppler ? measKeys.reserve(keyedObservations.size() * 2) : measKeys.reserve(keyedObservations.size());
-    for (const auto& [satSigId, keyedObservation] : keyedObservations)
+    useDoppler ? measKeys.reserve(static_cast<size_t>(dpsr.rows() * 2)) : measKeys.reserve(static_cast<size_t>(dpsr.rows()));
+
+    for (const auto& key : dpsr.rowKeys())
     {
-        for (const auto& [obsType, obs_i] : keyedObservation)
-        {
-            switch (obsType)
-            {
-            case GnssObs::Pseudorange:
-                measKeys.emplace_back(Meas::Psr{ satSigId });
-                break;
-            case GnssObs::Doppler:
-                measKeys.emplace_back(Meas::Doppler{ satSigId });
-                break;
-            default:
-                LOG_WARN("Single Point Positioning only uses pseudorange and doppler observations. Therefore this observation is neglected.");
-                break;
-            }
-        }
+        measKeys.emplace_back(key);
+    }
+    for (const auto& key : dpsr_dot.rowKeys())
+    {
+        measKeys.emplace_back(key);
     }
     _kalmanFilter.setMeasurements(measKeys);
 
@@ -776,53 +773,27 @@ void SppKalmanFilter::kalmanFilterUpdate(const KeyedObservations& keyedObservati
 
     // Innovation - Groves ch. 9.4.2.3, eq. 9.159, p. 420
     // Design matrix - Groves ch. 9.4.2.3, eq. 9.163, p. 420
-    Eigen::Index i = 0;
-    for (const auto& [satSigId, keyedObservation] : keyedObservations)
+    for (const auto& key : measKeys)
     {
-        for (const auto& [obsType, obs_i] : keyedObservation)
+        if (const auto key_ = std::get_if<Meas::Psr>(&key))
         {
-            switch (obsType)
+            _kalmanFilter.z(key) = dpsr(key);
+            _kalmanFilter.H(key, States::PosRecvClkErr) = e_H_psr(key, States::PosRecvClkErr);
+            if (!referenceTimeSatelliteSystemChanged)
             {
-            case GnssObs::Pseudorange:
-                _kalmanFilter.z(Meas::Psr{ satSigId }) = obs_i.z_i;
-
-                _kalmanFilter.H(Meas::Psr{ satSigId }, States::Pos) = obs_i.e_H_i.block<3, 1>(0, 0).transpose();
-                _kalmanFilter.H(Meas::Psr{ satSigId }, States::RecvClkErr) = obs_i.e_H_i(3, 0);
-                if (!referenceTimeSatelliteSystemChanged)
-                {
-                    i = 0;
-                    for (const auto& satSys : otherSatelliteSystems)
-                    {
-                        _kalmanFilter.H(Meas::Psr{ satSigId }, States::InterSysErr{ satSys }) = obs_i.e_H_i(4 + i, 0);
-                        i++;
-                    }
-                }
-
-                _kalmanFilter.R(Meas::Psr{ satSigId }, Meas::Psr{ satSigId }) = obs_i.W_i;
-
-                break;
-            case GnssObs::Doppler:
-                _kalmanFilter.z(Meas::Doppler{ satSigId }) = obs_i.z_i;
-
-                _kalmanFilter.H(Meas::Doppler{ satSigId }, States::Vel) = obs_i.e_H_i.block<3, 1>(0, 0).transpose();
-                _kalmanFilter.H(Meas::Doppler{ satSigId }, States::RecvClkDrift) = obs_i.e_H_i(3, 0);
-                if (!referenceTimeSatelliteSystemChanged)
-                {
-                    i = 0;
-                    for (const auto& satSys : otherSatelliteSystems)
-                    {
-                        _kalmanFilter.H(Meas::Doppler{ satSigId }, States::InterSysDrift{ satSys }) = obs_i.e_H_i(4 + i, 0);
-                        i++;
-                    }
-                }
-
-                _kalmanFilter.R(Meas::Doppler{ satSigId }, Meas::Doppler{ satSigId }) = obs_i.W_i;
-
-                break;
-            default:
-                LOG_WARN("Single Point Positioning only uses pseudorange and doppler observations. Therefore this observation is neglected.");
-                break;
+                _kalmanFilter.H(key, interSysErrs) = e_H_psr(key, interSysErrs);
             }
+            _kalmanFilter.R(key, key) = W_psr(key, key);
+        }
+        else if (const auto key_ = std::get_if<Meas::Doppler>(&key))
+        {
+            _kalmanFilter.z(key) = dpsr_dot(key);
+            _kalmanFilter.H(key, States::VelRecvClkDrift) = e_H_r(key, States::VelRecvClkDrift);
+            if (!referenceTimeSatelliteSystemChanged)
+            {
+                _kalmanFilter.H(key, interSysDrifts) = e_H_r(key, interSysDrifts);
+            }
+            _kalmanFilter.R(key, key) = W_psrRate(key, key);
         }
     }
 

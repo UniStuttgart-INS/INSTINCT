@@ -49,6 +49,13 @@ std::vector<CalcData> selectObservations(const std::shared_ptr<const GnssObs>& g
                     LOG_DATA("Using observation from {}", obsData.satSigId);
                     calcData.emplace_back(obsData, satNavData);
                     calcData.back().pseudorangeEst = obsData.pseudorange.value().value;
+                    if (obsData.satSigId.freq() & (R01 | R02))
+                    {
+                        if (auto satNavData = std::dynamic_pointer_cast<GLONASSEphemeris>(calcData.back().satNavData))
+                        {
+                            calcData.back().freqNum = satNavData->frequencyNumber;
+                        }
+                    }
                     break;
                 }
             }
@@ -68,13 +75,13 @@ size_t findDopplerMeasurements(std::vector<CalcData>& calcData)
         {
             nDopplerMeas++;
             // TODO: Find out what this is used for and find a way to use it, after the GLONASS orbit calculation is working
-            if (obsData.satSigId.freq() & (R01 | R02))
-            {
-                if (auto satNavData = std::dynamic_pointer_cast<GLONASSEphemeris>(calc.satNavData))
-                {
-                    calc.freqNum = satNavData->frequencyNumber;
-                }
-            }
+            // if (obsData.satSigId.freq() & (R01 | R02))
+            // {
+            //     if (auto satNavData = std::dynamic_pointer_cast<GLONASSEphemeris>(calc.satNavData))
+            //     {
+            //         // calc.freqNum = satNavData->frequencyNumber;
+            //     }
+            // }
 
             calc.pseudorangeRateMeas = doppler2rangeRate(obsData.doppler.value(), obsData.satSigId.freq(), calc.freqNum);
         }
@@ -233,27 +240,46 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
                                                                 const TroposphereModelSelection& troposphereModels,
                                                                 const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
                                                                 const EstimatorType& estimatorType,
-                                                                bool useDoppler)
+                                                                bool useDoppler,
+                                                                const std::vector<States::StateKeyTypes>& interSysErrs,
+                                                                const std::vector<States::StateKeyTypes>& interSysDrifts)
 {
-    int nParam = static_cast<int>(sppSol->nParam);                                            // Number of parameters
-    int nMeasPsr = static_cast<int>(sppSol->nSatellitesPosition);                             // Number of pseudorange measurements
-    int nMeasDoppler = static_cast<int>(sppSol->nSatellitesVelocity);                         // Number of doppler/pseudorange rate measurements
-    const std::vector<SatelliteSystem>& satelliteSystems = sppSol->otherUsedSatelliteSystems; // available satellite systems besides reference time satellite system
+    int nParamFix = 4;                                                // Number of fix LSE parameters (position and receiver clock error or velocity and receiver clock drift respectively)
+    int nMeasPsr = static_cast<int>(sppSol->nSatellitesPosition);     // Number of pseudorange measurements
+    int nMeasDoppler = static_cast<int>(sppSol->nSatellitesVelocity); // Number of doppler/pseudorange rate measurements
+
+    // Get Measurement keys
+    std::vector<Meas::MeasKeyTypes> measKeysPsr;
+    std::vector<Meas::MeasKeyTypes> measKeysPsrRate;
+    measKeysPsr.reserve(calcData.size());
+    measKeysPsrRate.reserve(calcData.size());
+
+    for (auto& calc : calcData)
+    {
+        if (calc.skipped) { continue; }
+        measKeysPsr.emplace_back(Meas::Psr{ calc.obsData.satSigId });
+
+        if (calc.pseudorangeRateMeas)
+        {
+            measKeysPsrRate.emplace_back(Meas::Doppler{ calc.obsData.satSigId });
+        }
+    }
 
     EstWeightDesignMatrices retVal;
 
-    retVal.e_H_psr = Eigen::MatrixXd::Zero(nMeasPsr, nParam);
-    retVal.psrEst = Eigen::VectorXd::Zero(nMeasPsr);
-    retVal.psrMeas = Eigen::VectorXd::Zero(nMeasPsr);
-    retVal.W_psr = Eigen::MatrixXd::Zero(nMeasPsr, nMeasPsr);
+    retVal.e_H_psr = KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyTypes>(Eigen::MatrixXd::Zero(nMeasPsr, nParamFix), measKeysPsr, States::PosRecvClkErr);
+    retVal.e_H_psr.addCols(interSysErrs);
+    retVal.psrEst = KeyedVectorXd<Meas::MeasKeyTypes>(Eigen::VectorXd::Zero(nMeasPsr), measKeysPsr);
+    retVal.psrMeas = KeyedVectorXd<Meas::MeasKeyTypes>(Eigen::VectorXd::Zero(nMeasPsr), measKeysPsr);
+    retVal.W_psr = KeyedMatrixXd<Meas::MeasKeyTypes, Meas::MeasKeyTypes>(Eigen::MatrixXd::Zero(nMeasPsr, nMeasPsr), measKeysPsr, measKeysPsr);
+    retVal.dpsr = KeyedVectorXd<Meas::MeasKeyTypes>(Eigen::VectorXd::Zero(nMeasPsr), measKeysPsr);
 
-    retVal.e_H_r = Eigen::MatrixXd::Zero(nMeasDoppler, nParam);
-    retVal.psrRateEst = Eigen::VectorXd::Zero(nMeasDoppler);
-    retVal.psrRateMeas = Eigen::VectorXd::Zero(nMeasDoppler);
-    retVal.W_psrRate = Eigen::MatrixXd::Zero(nMeasDoppler, nMeasDoppler);
-
-    int ix = 0;
-    int iv = 0;
+    retVal.e_H_r = KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyTypes>(Eigen::MatrixXd::Zero(nMeasDoppler, nParamFix), measKeysPsrRate, States::VelRecvClkDrift);
+    retVal.e_H_r.addCols(interSysDrifts);
+    retVal.psrRateEst = KeyedVectorXd<Meas::MeasKeyTypes>(Eigen::VectorXd::Zero(nMeasDoppler), measKeysPsrRate);
+    retVal.psrRateMeas = KeyedVectorXd<Meas::MeasKeyTypes>(Eigen::VectorXd::Zero(nMeasDoppler), measKeysPsrRate);
+    retVal.W_psrRate = KeyedMatrixXd<Meas::MeasKeyTypes, Meas::MeasKeyTypes>(Eigen::MatrixXd::Zero(nMeasDoppler, nMeasDoppler), measKeysPsrRate, measKeysPsrRate);
+    retVal.dpsr_dot = KeyedVectorXd<Meas::MeasKeyTypes>(Eigen::VectorXd::Zero(nMeasDoppler), measKeysPsrRate);
 
     for (auto& calc : calcData)
     {
@@ -261,7 +287,7 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
 
         const auto& obsData = calc.obsData;
         LOG_DATA("     satellite {}", obsData.satSigId);
-        auto satId = obsData.satSigId.toSatId();
+        auto satSigId = obsData.satSigId;
 
         auto& solSatData = (*sppSol)(obsData.satSigId);
 
@@ -270,34 +296,37 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
         // #############################################################################################################################
 
         // Pseudorange measurement [m] - Groves ch. 8.5.3, eq. 8.48, p. 342
-        retVal.psrMeas(ix) = obsData.pseudorange.value().value; // + (multipath and/or NLOS errors) + (tracking errors)
-        LOG_DATA("         psrMeas({}) {}", ix, retVal.psrMeas(ix));
+        retVal.psrMeas(Meas::Psr{ satSigId }) = obsData.pseudorange.value().value; // + (multipath and/or NLOS errors) + (tracking errors)
+        LOG_DATA("         psrMeas({}) = {}", Meas::Psr{ satSigId }, retVal.psrMeas(Meas::Psr{ satSigId }));
 
         // Pseudorange estimate [m] and Weight of pseudorange measurement [1/m²]
         auto [psrEst_i, W_psr_i] = calcPsrAndWeight(sppSol, calc, insTime, state, lla_pos,
                                                     ionosphericCorrections, ionosphereModel, troposphereModels,
                                                     gnssMeasurementErrorModel, estimatorType);
-        retVal.psrEst(ix) = psrEst_i;
-        calc.pseudorangeEst = retVal.psrEst(ix);
-        solSatData.psrEst = retVal.psrEst(ix);
-        retVal.W_psr(ix, ix) = W_psr_i;
+        retVal.psrEst(Meas::Psr{ satSigId }) = psrEst_i;
+        LOG_DATA("         psrEst({}) = {}", Meas::Psr{ satSigId }, retVal.psrEst(Meas::Psr{ satSigId }));
+        calc.pseudorangeEst = psrEst_i;
+        solSatData.psrEst = psrEst_i;
+        retVal.W_psr(Meas::Psr{ satSigId }, Meas::Psr{ satSigId }) = W_psr_i;
+        LOG_DATA("         W_psr({},{}) = {}", Meas::Psr{ satSigId }, Meas::Psr{ satSigId }, retVal.W_psr(Meas::Psr{ satSigId }, Meas::Psr{ satSigId }));
 
         // Measurement/Geometry matrix - Groves ch. 9.4.1, eq. 9.144, p. 412
-        retVal.e_H_psr.block<1, 3>(ix, 0) = -calc.e_lineOfSightUnitVector;
-        retVal.e_H_psr(ix, 3) = 1;
-        for (size_t s = 0; s < satelliteSystems.size(); s++)
+        retVal.e_H_psr(Meas::Psr{ satSigId }, States::Pos) = -calc.e_lineOfSightUnitVector.transpose();
+        retVal.e_H_psr(Meas::Psr{ satSigId }, States::SppStates::RecvClkErr) = 1;
+        if (sppSol->recvClk.referenceTimeSatelliteSystem != satSigId.toSatId().satSys)
         {
-            if (satId.satSys != state.recvClk.referenceTimeSatelliteSystem
-                && satId.satSys == satelliteSystems.at(s))
+            for (const auto& interSysErr : interSysErrs)
             {
-                retVal.e_H_psr(ix, 4 + static_cast<int>(s)) = 1;
+                if (std::get_if<States::InterSysErr>(&interSysErr)->satSys == satSigId.toSatId().satSys)
+                {
+                    retVal.e_H_psr(Meas::Psr{ satSigId }, interSysErr) = 1;
+                }
             }
         }
-        LOG_DATA("         e_H_psr.row({}) {}", ix, retVal.e_H_psr.row(ix));
+        LOG_DATA("         e_H_psr.row({}) = {}", Meas::Psr{ satSigId }, retVal.e_H_psr(Meas::Psr{ satSigId }, all));
 
-        retVal.keyedObservations[calc.obsData.satSigId][GnssObs::ObservationType::Pseudorange].z_i = retVal.psrMeas(ix) - retVal.psrEst(ix);
-        retVal.keyedObservations[calc.obsData.satSigId][GnssObs::ObservationType::Pseudorange].e_H_i = retVal.e_H_psr.row(ix);
-        retVal.keyedObservations[calc.obsData.satSigId][GnssObs::ObservationType::Pseudorange].W_i = W_psr_i;
+        retVal.dpsr(Meas::Psr{ satSigId }) = retVal.psrMeas(Meas::Psr{ satSigId }) - psrEst_i;
+        LOG_DATA("         dpsr({}) = {}", Meas::Psr{ satSigId }, retVal.dpsr(Meas::Psr{ satSigId }));
 
         // #############################################################################################################################
         //                                                    Velocity calculation
@@ -306,29 +335,35 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
         if (calc.pseudorangeRateMeas && useDoppler)
         {
             // Pseudorange-rate measurement [m/s] - Groves ch. 8.5.3, eq. 8.48, p. 342
-            retVal.psrRateMeas(iv) = calc.pseudorangeRateMeas.value(); // + (multipath and/or NLOS errors) + (tracking errors)
-            LOG_DATA("         psrRateMeas({}) {}", iv, retVal.psrRateMeas(iv));
+            retVal.psrRateMeas(Meas::Doppler{ satSigId }) = calc.pseudorangeRateMeas.value(); // + (multipath and/or NLOS errors) + (tracking errors)
+            LOG_DATA("         psrRateMeas({}) = {}", Meas::Doppler{ satSigId }, retVal.psrRateMeas(Meas::Doppler{ satSigId }));
 
             auto [psrRateEst_i, W_psrRate_i] = calcPsrRateAndWeight(calc, state, estimatorType, gnssMeasurementErrorModel);
-            retVal.psrRateEst(iv) = psrRateEst_i;
-            solSatData.psrRateEst = retVal.psrRateEst(iv);
-            retVal.W_psrRate(iv, iv) = W_psrRate_i;
+            retVal.psrRateEst(Meas::Doppler{ satSigId }) = psrRateEst_i;
+            LOG_DATA("         psrRateEst({}) = {}", Meas::Doppler{ satSigId }, retVal.psrRateEst(Meas::Doppler{ satSigId }));
+            solSatData.psrRateEst = psrRateEst_i;
+            retVal.W_psrRate(Meas::Doppler{ satSigId }, Meas::Doppler{ satSigId }) = W_psrRate_i;
+            LOG_DATA("         W_psrRate({},{}) = {}", Meas::Doppler{ satSigId }, Meas::Doppler{ satSigId }, retVal.W_psrRate(Meas::Doppler{ satSigId }, Meas::Doppler{ satSigId }));
 
             // Measurement/Geometry matrix - Groves ch. 9.4.1, eq. 9.144, p. 412
-            retVal.e_H_r.row(iv) = retVal.e_H_psr.row(ix);
+            retVal.e_H_r(Meas::Doppler{ satSigId }, States::Vel) = retVal.e_H_psr(Meas::Psr{ satSigId }, States::Pos);
+            retVal.e_H_r(Meas::Doppler{ satSigId }, States::RecvClkDrift) = retVal.e_H_psr(Meas::Psr{ satSigId }, States::RecvClkErr);
+            if (sppSol->recvClk.referenceTimeSatelliteSystem != satSigId.toSatId().satSys)
+            {
+                for (const auto& interSysDrift : interSysDrifts)
+                {
+                    if (std::get_if<States::InterSysDrift>(&interSysDrift)->satSys == satSigId.toSatId().satSys)
+                    {
+                        retVal.e_H_r(Meas::Doppler{ satSigId }, interSysDrift) = 1;
+                    }
+                }
+            }
+            LOG_DATA("         e_H_r.row({}) = {}", Meas::Doppler{ satSigId }, retVal.e_H_r(Meas::Doppler{ satSigId }, all));
 
-            retVal.keyedObservations[calc.obsData.satSigId][GnssObs::ObservationType::Doppler].z_i = retVal.psrRateMeas(iv) - retVal.psrRateEst(iv);
-            retVal.keyedObservations[calc.obsData.satSigId][GnssObs::ObservationType::Doppler].e_H_i = retVal.e_H_r.row(iv);
-            retVal.keyedObservations[calc.obsData.satSigId][GnssObs::ObservationType::Doppler].W_i = W_psrRate_i;
-
-            iv++;
+            retVal.dpsr_dot(Meas::Doppler{ satSigId }) = retVal.psrRateMeas(Meas::Doppler{ satSigId }) - psrRateEst_i;
+            LOG_DATA("         dpsr_dot({}) {}", Meas::Doppler{ satSigId }, retVal.dpsr_dot(Meas::Doppler{ satSigId }));
         }
-
-        ix++;
     }
-
-    retVal.dpsr = retVal.psrMeas - retVal.psrEst;
-    retVal.dpsr_dot = retVal.psrRateMeas - retVal.psrRateEst;
 
     return retVal;
 }
@@ -439,6 +474,39 @@ bool calcDataBasedOnEstimates(const std::shared_ptr<SppSolution>& sppSol,
     sppSol->otherUsedSatelliteSystems = satelliteSystems;
 
     return true;
+}
+
+void getInterSysKeys(const std::vector<SatelliteSystem>& satelliteSystems,
+                     std::vector<States::StateKeyTypes>& interSysErrs,
+                     std::vector<States::StateKeyTypes>& interSysDrifts)
+{
+    if (satelliteSystems.size() == interSysErrs.size() && satelliteSystems.size() == interSysDrifts.size())
+    {
+        // Check that the keys and available satellite systems are the same
+        for (const auto& interSysErr : interSysErrs)
+        {
+            if (std::find(satelliteSystems.begin(), satelliteSystems.end(), std::get_if<States::InterSysErr>(&interSysErr)->satSys) == satelliteSystems.end())
+            {
+                interSysErrs.clear();
+                interSysDrifts.clear();
+                for (const auto& satSys : satelliteSystems)
+                {
+                    interSysErrs.emplace_back(States::InterSysErr{ satSys });
+                    interSysDrifts.emplace_back(States::InterSysDrift{ satSys });
+                }
+            }
+        }
+    }
+    else
+    {
+        interSysErrs.clear();
+        interSysDrifts.clear();
+        for (const auto& satSys : satelliteSystems)
+        {
+            interSysErrs.emplace_back(States::InterSysErr{ satSys });
+            interSysDrifts.emplace_back(States::InterSysDrift{ satSys });
+        }
+    }
 }
 
 } // namespace NAV::GNSS::Positioning::SPP
