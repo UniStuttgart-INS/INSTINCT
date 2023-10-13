@@ -12,7 +12,7 @@
 namespace NAV
 {
 void GPT2_param(const double& mjd, const Eigen::Vector3d& lla_pos, const std::array<internal::GPT2Data, 64800>& GPT2_grid,
-                double& p, double& T, double& dT, double& Tm, double& e, double& ah, double& aw, double& la, double& undu)
+                GPToutput& gpt2outputs)
 {
     // change the reference epoch to January 1 2000
     double mjd1 = mjd - 51544.5;
@@ -87,10 +87,10 @@ void GPT2_param(const double& mjd, const Eigen::Vector3d& lla_pos, const std::ar
     // case of nearest neighborhood
     if (ibilinear == 0) // then
     {
-        ix = indx[0] - 1;                   // -1 to use in c
-                                            // transforming ellipsoidal height to orthometric height
-        undu = GPT2_grid.at(ix).undulation; // undu: geoid undulation in m
-        hgt = hell - undu;
+        ix = indx[0];
+        // transforming ellipsoidal height to orthometric height
+        gpt2outputs.undu = GPT2_grid.at(ix).undulation; // undu: geoid undulation in m
+        hgt = hell - gpt2outputs.undu;
 
         // pressure, temperature at the height of the grid
         T0 = GPT2_grid.at(ix).T_A0 + GPT2_grid.at(ix).T_A1 * cosfy + GPT2_grid.at(ix).T_B1 * sinfy + GPT2_grid.at(ix).T_A2 * coshy + GPT2_grid.at(ix).T_B2 * sinhy;
@@ -101,17 +101,17 @@ void GPT2_param(const double& mjd, const Eigen::Vector3d& lla_pos, const std::ar
         Q /= 1000.0;
 
         // lapse rate of the temperature
-        dT = GPT2_grid.at(ix).dT_A0 + GPT2_grid.at(ix).dT_A1 * cosfy + GPT2_grid.at(ix).dT_B1 * sinfy + GPT2_grid.at(ix).dT_A2 * coshy + GPT2_grid.at(ix).dT_B2 * sinhy;
-        dT /= 1000.0;
+        gpt2outputs.dT = GPT2_grid.at(ix).dT_A0 + GPT2_grid.at(ix).dT_A1 * cosfy + GPT2_grid.at(ix).dT_B1 * sinfy + GPT2_grid.at(ix).dT_A2 * coshy + GPT2_grid.at(ix).dT_B2 * sinhy;
+        gpt2outputs.dT /= 1000.0;
 
         // station height - grid height
         redh = hgt - GPT2_grid.at(ix).Hs; // Hs: orthometric grid height in m
 
         // temperature at station height in Celsius
-        T = T0 + dT * redh - 273.150;
+        gpt2outputs.T = T0 + gpt2outputs.dT * redh - 273.150;
 
         // temperature lapse rate in degrees / km
-        dT = dT * 1000.0;
+        gpt2outputs.dT = gpt2outputs.dT * 1000.0;
 
         // virtual temperature in Kelvin
         Tv = T0 * (1 + 0.6077 * Q);
@@ -119,26 +119,26 @@ void GPT2_param(const double& mjd, const Eigen::Vector3d& lla_pos, const std::ar
         c = gm * dMtr / (Rg * Tv);
 
         // pressure in hPa
-        p = (p0 * exp(-c * redh)) / 100.0;
+        gpt2outputs.p = (p0 * exp(-c * redh)) / 100.0;
 
         // hydrostatic coefficient ah
-        ah = GPT2_grid.at(ix).h_A0 + GPT2_grid.at(ix).h_A1 * cosfy + GPT2_grid.at(ix).h_B1 * sinfy + GPT2_grid.at(ix).h_A2 * coshy + GPT2_grid.at(ix).h_B2 * sinhy;
-        ah /= 1000.0;
+        gpt2outputs.ah = GPT2_grid.at(ix).h_A0 + GPT2_grid.at(ix).h_A1 * cosfy + GPT2_grid.at(ix).h_B1 * sinfy + GPT2_grid.at(ix).h_A2 * coshy + GPT2_grid.at(ix).h_B2 * sinhy;
+        gpt2outputs.ah /= 1000.0;
 
         // wet coefficient aw
-        aw = GPT2_grid.at(ix).w_A0 + GPT2_grid.at(ix).w_A1 * cosfy + GPT2_grid.at(ix).w_B1 * sinfy + GPT2_grid.at(ix).w_A2 * coshy + GPT2_grid.at(ix).w_B2 * sinhy;
-        aw /= 1000.0;
+        gpt2outputs.aw = GPT2_grid.at(ix).w_A0 + GPT2_grid.at(ix).w_A1 * cosfy + GPT2_grid.at(ix).w_B1 * sinfy + GPT2_grid.at(ix).w_A2 * coshy + GPT2_grid.at(ix).w_B2 * sinhy;
+        gpt2outputs.aw /= 1000.0;
 
         // water vapour decrease factor la - added by GP
-        la = GPT2_grid.at(ix).la_A0 + GPT2_grid.at(ix).la_A1 * cosfy + GPT2_grid.at(ix).la_B1 * sinfy + GPT2_grid.at(ix).la_A2 * coshy + GPT2_grid.at(ix).la_B2 * sinhy;
+        gpt2outputs.la = GPT2_grid.at(ix).la_A0 + GPT2_grid.at(ix).la_A1 * cosfy + GPT2_grid.at(ix).la_B1 * sinfy + GPT2_grid.at(ix).la_A2 * coshy + GPT2_grid.at(ix).la_B2 * sinhy;
 
         // mean temperature of the water vapor Tm - added by GP
-        Tm = GPT2_grid.at(ix).Tm_A0 + GPT2_grid.at(ix).Tm_A1 * cosfy + GPT2_grid.at(ix).Tm_B1 * sinfy + GPT2_grid.at(ix).Tm_A2 * coshy + GPT2_grid.at(ix).Tm_B2 * sinhy;
+        gpt2outputs.Tm = GPT2_grid.at(ix).Tm_A0 + GPT2_grid.at(ix).Tm_A1 * cosfy + GPT2_grid.at(ix).Tm_B1 * sinfy + GPT2_grid.at(ix).Tm_A2 * coshy + GPT2_grid.at(ix).Tm_B2 * sinhy;
 
         // water vapor pressure in hPa - changed by GP
         e0 = Q * p0 / (0.622 + 0.378 * Q) / 100.0; // on the grid
 
-        e = e0 * pow((100.0 * p / p0), (la + 1)); // on the station height - (14) Askne and Nordius, 1987
+        gpt2outputs.e = e0 * pow((100.0 * gpt2outputs.p / p0), (gpt2outputs.la + 1)); // on the station height - (14) Askne and Nordius, 1987
     }
     else // bilinear interpolation
     {
@@ -164,16 +164,16 @@ void GPT2_param(const double& mjd, const Eigen::Vector3d& lla_pos, const std::ar
         indx[3] -= 1;
 
         unsigned int l = 0;
-        std::vector<double> undul(4);
-        std::vector<double> Ql(4);
-        std::vector<double> dTl(4);
-        std::vector<double> Tl(4);
-        std::vector<double> pl(4);
-        std::vector<double> ahl(4);
-        std::vector<double> awl(4);
-        std::vector<double> lal(4);
-        std::vector<double> Tml(4);
-        std::vector<double> el(4);
+        std::array<double, 4> undul;
+        std::array<double, 4> Ql;
+        std::array<double, 4> dTl;
+        std::array<double, 4> Tl;
+        std::array<double, 4> pl;
+        std::array<double, 4> ahl;
+        std::array<double, 4> awl;
+        std::array<double, 4> lal;
+        std::array<double, 4> Tml;
+        std::array<double, 4> el;
 
         do // do l = 1:4
         {
@@ -243,53 +243,52 @@ void GPT2_param(const double& mjd, const Eigen::Vector3d& lla_pos, const std::ar
         // pressure
         R1 = dnpod2 * pl[0] + dnpod1 * pl[1];
         R2 = dnpod2 * pl[2] + dnpod1 * pl[3];
-        p = dnlon2 * R1 + dnlon1 * R2;
+        gpt2outputs.p = dnlon2 * R1 + dnlon1 * R2;
 
         // temperature
         R1 = dnpod2 * Tl[0] + dnpod1 * Tl[1];
         R2 = dnpod2 * Tl[2] + dnpod1 * Tl[3];
-        T = dnlon2 * R1 + dnlon1 * R2;
+        gpt2outputs.T = dnlon2 * R1 + dnlon1 * R2;
 
         // temperature in degree per km
         R1 = dnpod2 * dTl[0] + dnpod1 * dTl[1];
         R2 = dnpod2 * dTl[2] + dnpod1 * dTl[3];
-        dT = (dnlon2 * R1 + dnlon1 * R2) * 1000.0;
+        gpt2outputs.dT = (dnlon2 * R1 + dnlon1 * R2) * 1000.0;
 
         // water vapor pressure in hPa - changed by GP
         R1 = dnpod2 * el[0] + dnpod1 * el[1];
         R2 = dnpod2 * el[2] + dnpod1 * el[3];
-        e = dnlon2 * R1 + dnlon1 * R2;
+        gpt2outputs.e = dnlon2 * R1 + dnlon1 * R2;
 
         // hydrostatic
         R1 = dnpod2 * ahl[0] + dnpod1 * ahl[1];
         R2 = dnpod2 * ahl[2] + dnpod1 * ahl[3];
-        ah = dnlon2 * R1 + dnlon1 * R2;
+        gpt2outputs.ah = dnlon2 * R1 + dnlon1 * R2;
 
         // wet
         R1 = dnpod2 * awl[0] + dnpod1 * awl[1];
         R2 = dnpod2 * awl[2] + dnpod1 * awl[3];
-        aw = dnlon2 * R1 + dnlon1 * R2;
+        gpt2outputs.aw = dnlon2 * R1 + dnlon1 * R2;
 
         // undulation
         R1 = dnpod2 * undul[0] + dnpod1 * undul[1];
         R2 = dnpod2 * undul[2] + dnpod1 * undul[3];
-        undu = dnlon2 * R1 + dnlon1 * R2;
+        gpt2outputs.undu = dnlon2 * R1 + dnlon1 * R2;
 
         // water vapor decrease factor la - added by GP
         R1 = dnpod2 * lal[0] + dnpod1 * lal[1];
         R2 = dnpod2 * lal[2] + dnpod1 * lal[3];
-        la = dnlon2 * R1 + dnlon1 * R2;
+        gpt2outputs.la = dnlon2 * R1 + dnlon1 * R2;
 
         // mean temperature of the water vapor - added by GP
         R1 = dnpod2 * Tml[0] + dnpod1 * Tml[1];
         R2 = dnpod2 * Tml[2] + dnpod1 * Tml[3];
-        Tm = dnlon2 * R1 + dnlon1 * R2;
-    } // else
+        gpt2outputs.Tm = dnlon2 * R1 + dnlon1 * R2;
+    } // else end
 }
 
 void GPT3_param(const double& mjd, const Eigen::Vector3d& lla_pos, const std::array<internal::GPT3Data, 64800>& GPT3_grid,
-                double& p, double& T, double& dT, double& Tm, double& e, double& ah, double& aw, double& la, double& undu,
-                double& Gn_h, double& Ge_h, double& Gn_w, double& Ge_w)
+                GPToutput& gpt3outputs)
 {
     //   convert mjd to doy
     double doy = mjd2doy(mjd);
@@ -366,10 +365,10 @@ void GPT3_param(const double& mjd, const Eigen::Vector3d& lla_pos, const std::ar
     // case of nearest neighborhood
     if (ibilinear == 0) // then
     {
-        ix = indx[0] - 1;                   // -1 to use in c
-                                            // transforming ellipsoidal height to orthometric height
-        undu = GPT3_grid.at(ix).undulation; // undu: geoid undulation in m
-        hgt = hell - undu;
+        ix = indx[0];
+        // transforming ellipsoidal height to orthometric height
+        gpt3outputs.undu = GPT3_grid.at(ix).undulation; // undu: geoid undulation in m
+        hgt = hell - gpt3outputs.undu;
 
         // pressure, temperature at the height of the grid
         T0 = GPT3_grid.at(ix).T_A0 + GPT3_grid.at(ix).T_A1 * cosfy + GPT3_grid.at(ix).T_B1 * sinfy + GPT3_grid.at(ix).T_A2 * coshy + GPT3_grid.at(ix).T_B2 * sinhy;
@@ -380,17 +379,17 @@ void GPT3_param(const double& mjd, const Eigen::Vector3d& lla_pos, const std::ar
         Q /= 1000.0;
 
         // lapse rate of the temperature
-        dT = GPT3_grid.at(ix).dT_A0 + GPT3_grid.at(ix).dT_A1 * cosfy + GPT3_grid.at(ix).dT_B1 * sinfy + GPT3_grid.at(ix).dT_A2 * coshy + GPT3_grid.at(ix).dT_B2 * sinhy;
-        dT /= 1000.0;
+        gpt3outputs.dT = GPT3_grid.at(ix).dT_A0 + GPT3_grid.at(ix).dT_A1 * cosfy + GPT3_grid.at(ix).dT_B1 * sinfy + GPT3_grid.at(ix).dT_A2 * coshy + GPT3_grid.at(ix).dT_B2 * sinhy;
+        gpt3outputs.dT /= 1000.0;
 
         // station height - grid height
         redh = hgt - GPT3_grid.at(ix).Hs; // Hs: orthometric grid height in m
 
         // temperature at station height in Celsius
-        T = T0 + dT * redh - 273.150;
+        gpt3outputs.T = T0 + gpt3outputs.dT * redh - 273.150;
 
         // temperature lapse rate in degrees / km
-        dT = dT * 1000.0;
+        gpt3outputs.dT = gpt3outputs.dT * 1000.0;
 
         // virtual temperature in Kelvin
         Tv = T0 * (1 + 0.6077 * Q);
@@ -398,36 +397,36 @@ void GPT3_param(const double& mjd, const Eigen::Vector3d& lla_pos, const std::ar
         c = gm * dMtr / (Rg * Tv);
 
         // pressure in hPa
-        p = (p0 * exp(-c * redh)) / 100.0;
+        gpt3outputs.p = (p0 * exp(-c * redh)) / 100.0;
 
         // hydrostatic coefficient ah
-        ah = GPT3_grid.at(ix).h_A0 + GPT3_grid.at(ix).h_A1 * cosfy + GPT3_grid.at(ix).h_B1 * sinfy + GPT3_grid.at(ix).h_A2 * coshy + GPT3_grid.at(ix).h_B2 * sinhy;
-        ah /= 1000.0;
+        gpt3outputs.ah = GPT3_grid.at(ix).h_A0 + GPT3_grid.at(ix).h_A1 * cosfy + GPT3_grid.at(ix).h_B1 * sinfy + GPT3_grid.at(ix).h_A2 * coshy + GPT3_grid.at(ix).h_B2 * sinhy;
+        gpt3outputs.ah /= 1000.0;
 
         // wet coefficient aw
-        aw = GPT3_grid.at(ix).w_A0 + GPT3_grid.at(ix).w_A1 * cosfy + GPT3_grid.at(ix).w_B1 * sinfy + GPT3_grid.at(ix).w_A2 * coshy + GPT3_grid.at(ix).w_B2 * sinhy;
-        aw /= 1000.0;
+        gpt3outputs.aw = GPT3_grid.at(ix).w_A0 + GPT3_grid.at(ix).w_A1 * cosfy + GPT3_grid.at(ix).w_B1 * sinfy + GPT3_grid.at(ix).w_A2 * coshy + GPT3_grid.at(ix).w_B2 * sinhy;
+        gpt3outputs.aw /= 1000.0;
 
         // water vapour decrease factor la - added by GP
-        la = GPT3_grid.at(ix).la_A0 + GPT3_grid.at(ix).la_A1 * cosfy + GPT3_grid.at(ix).la_B1 * sinfy + GPT3_grid.at(ix).la_A2 * coshy + GPT3_grid.at(ix).la_B2 * sinhy;
+        gpt3outputs.la = GPT3_grid.at(ix).la_A0 + GPT3_grid.at(ix).la_A1 * cosfy + GPT3_grid.at(ix).la_B1 * sinfy + GPT3_grid.at(ix).la_A2 * coshy + GPT3_grid.at(ix).la_B2 * sinhy;
 
         // mean temperature of the water vapor Tm - added by GP
-        Tm = GPT3_grid.at(ix).Tm_A0 + GPT3_grid.at(ix).Tm_A1 * cosfy + GPT3_grid.at(ix).Tm_B1 * sinfy + GPT3_grid.at(ix).Tm_A2 * coshy + GPT3_grid.at(ix).Tm_B2 * sinhy;
+        gpt3outputs.Tm = GPT3_grid.at(ix).Tm_A0 + GPT3_grid.at(ix).Tm_A1 * cosfy + GPT3_grid.at(ix).Tm_B1 * sinfy + GPT3_grid.at(ix).Tm_A2 * coshy + GPT3_grid.at(ix).Tm_B2 * sinhy;
 
         // water vapor pressure in hPa - changed by GP
         e0 = Q * p0 / (0.622 + 0.378 * Q) / 100.0; // on the grid
 
-        e = e0 * pow((100.0 * p / p0), (la + 1)); // on the station height - (14) Askne and Nordius, 1987
+        gpt3outputs.e = e0 * pow((100.0 * gpt3outputs.p / p0), (gpt3outputs.la + 1)); // on the station height - (14) Askne and Nordius, 1987
 
         //   north and east gradients (total, hydrostatic and wet)
-        Gn_h = GPT3_grid.at(ix).Gnh_A0 + GPT3_grid.at(ix).Gnh_A1 * cosfy + GPT3_grid.at(ix).Gnh_B1 * sinfy + GPT3_grid.at(ix).Gnh_A2 * coshy + GPT3_grid.at(ix).Gnh_B2 * sinhy;
-        Gn_h /= 100000.0;
-        Ge_h = GPT3_grid.at(ix).Geh_A0 + GPT3_grid.at(ix).Geh_A1 * cosfy + GPT3_grid.at(ix).Geh_B1 * sinfy + GPT3_grid.at(ix).Geh_A2 * coshy + GPT3_grid.at(ix).Geh_B2 * sinhy;
-        Ge_h /= 100000.0;
-        Gn_w = GPT3_grid.at(ix).Gnw_A0 + GPT3_grid.at(ix).Gnw_A1 * cosfy + GPT3_grid.at(ix).Gnw_B1 * sinfy + GPT3_grid.at(ix).Gnw_A2 * coshy + GPT3_grid.at(ix).Gnw_B2 * sinhy;
-        Gn_w /= 100000.0;
-        Ge_w = GPT3_grid.at(ix).Gew_A0 + GPT3_grid.at(ix).Gew_A1 * cosfy + GPT3_grid.at(ix).Gew_B1 * sinfy + GPT3_grid.at(ix).Gew_A2 * coshy + GPT3_grid.at(ix).Gew_B2 * sinhy;
-        Ge_w /= 100000.0;
+        gpt3outputs.Gn_h = GPT3_grid.at(ix).Gnh_A0 + GPT3_grid.at(ix).Gnh_A1 * cosfy + GPT3_grid.at(ix).Gnh_B1 * sinfy + GPT3_grid.at(ix).Gnh_A2 * coshy + GPT3_grid.at(ix).Gnh_B2 * sinhy;
+        gpt3outputs.Gn_h /= 100000.0;
+        gpt3outputs.Ge_h = GPT3_grid.at(ix).Geh_A0 + GPT3_grid.at(ix).Geh_A1 * cosfy + GPT3_grid.at(ix).Geh_B1 * sinfy + GPT3_grid.at(ix).Geh_A2 * coshy + GPT3_grid.at(ix).Geh_B2 * sinhy;
+        gpt3outputs.Ge_h /= 100000.0;
+        gpt3outputs.Gn_w = GPT3_grid.at(ix).Gnw_A0 + GPT3_grid.at(ix).Gnw_A1 * cosfy + GPT3_grid.at(ix).Gnw_B1 * sinfy + GPT3_grid.at(ix).Gnw_A2 * coshy + GPT3_grid.at(ix).Gnw_B2 * sinhy;
+        gpt3outputs.Gn_w /= 100000.0;
+        gpt3outputs.Ge_w = GPT3_grid.at(ix).Gew_A0 + GPT3_grid.at(ix).Gew_A1 * cosfy + GPT3_grid.at(ix).Gew_B1 * sinfy + GPT3_grid.at(ix).Gew_A2 * coshy + GPT3_grid.at(ix).Gew_B2 * sinhy;
+        gpt3outputs.Ge_w /= 100000.0;
     }
     else // bilinear interpolation
     {
@@ -453,20 +452,20 @@ void GPT3_param(const double& mjd, const Eigen::Vector3d& lla_pos, const std::ar
         indx[3] -= 1;
 
         unsigned int l = 0;
-        std::vector<double> undul(4);
-        std::vector<double> Ql(4);
-        std::vector<double> dTl(4);
-        std::vector<double> Tl(4);
-        std::vector<double> pl(4);
-        std::vector<double> ahl(4);
-        std::vector<double> awl(4);
-        std::vector<double> lal(4);
-        std::vector<double> Tml(4);
-        std::vector<double> el(4);
-        std::vector<double> Gn_hl(4);
-        std::vector<double> Ge_hl(4);
-        std::vector<double> Gn_wl(4);
-        std::vector<double> Ge_wl(4);
+        std::array<double, 4> undul;
+        std::array<double, 4> Ql;
+        std::array<double, 4> dTl;
+        std::array<double, 4> Tl;
+        std::array<double, 4> pl;
+        std::array<double, 4> ahl;
+        std::array<double, 4> awl;
+        std::array<double, 4> lal;
+        std::array<double, 4> Tml;
+        std::array<double, 4> el;
+        std::array<double, 4> Gn_hl;
+        std::array<double, 4> Ge_hl;
+        std::array<double, 4> Gn_wl;
+        std::array<double, 4> Ge_wl;
         do // do l = 1:4
         {
             // transforming ellipsoidal height to orthometric height:
@@ -544,65 +543,65 @@ void GPT3_param(const double& mjd, const Eigen::Vector3d& lla_pos, const std::ar
         // pressure
         R1 = dnpod2 * pl[0] + dnpod1 * pl[1];
         R2 = dnpod2 * pl[2] + dnpod1 * pl[3];
-        p = dnlon2 * R1 + dnlon1 * R2;
+        gpt3outputs.p = dnlon2 * R1 + dnlon1 * R2;
 
         // temperature
         R1 = dnpod2 * Tl[0] + dnpod1 * Tl[1];
         R2 = dnpod2 * Tl[2] + dnpod1 * Tl[3];
-        T = dnlon2 * R1 + dnlon1 * R2;
+        gpt3outputs.T = dnlon2 * R1 + dnlon1 * R2;
 
         // temperature in degree per km
         R1 = dnpod2 * dTl[0] + dnpod1 * dTl[1];
         R2 = dnpod2 * dTl[2] + dnpod1 * dTl[3];
-        dT = (dnlon2 * R1 + dnlon1 * R2) * 1000.0;
+        gpt3outputs.dT = (dnlon2 * R1 + dnlon1 * R2) * 1000.0;
 
         // water vapor pressure in hPa - changed by GP
         R1 = dnpod2 * el[0] + dnpod1 * el[1];
         R2 = dnpod2 * el[2] + dnpod1 * el[3];
-        e = dnlon2 * R1 + dnlon1 * R2;
+        gpt3outputs.e = dnlon2 * R1 + dnlon1 * R2;
 
         // hydrostatic
         R1 = dnpod2 * ahl[0] + dnpod1 * ahl[1];
         R2 = dnpod2 * ahl[2] + dnpod1 * ahl[3];
-        ah = dnlon2 * R1 + dnlon1 * R2;
+        gpt3outputs.ah = dnlon2 * R1 + dnlon1 * R2;
 
         // wet
         R1 = dnpod2 * awl[0] + dnpod1 * awl[1];
         R2 = dnpod2 * awl[2] + dnpod1 * awl[3];
-        aw = dnlon2 * R1 + dnlon1 * R2;
+        gpt3outputs.aw = dnlon2 * R1 + dnlon1 * R2;
 
         // undulation
         R1 = dnpod2 * undul[0] + dnpod1 * undul[1];
         R2 = dnpod2 * undul[2] + dnpod1 * undul[3];
-        undu = dnlon2 * R1 + dnlon1 * R2;
+        gpt3outputs.undu = dnlon2 * R1 + dnlon1 * R2;
 
         // water vapor decrease factor la - added by GP
         R1 = dnpod2 * lal[0] + dnpod1 * lal[1];
         R2 = dnpod2 * lal[2] + dnpod1 * lal[3];
-        la = dnlon2 * R1 + dnlon1 * R2;
+        gpt3outputs.la = dnlon2 * R1 + dnlon1 * R2;
 
         // mean temperature of the water vapor - added by GP
         R1 = dnpod2 * Tml[0] + dnpod1 * Tml[1];
         R2 = dnpod2 * Tml[2] + dnpod1 * Tml[3];
-        Tm = dnlon2 * R1 + dnlon1 * R2;
+        gpt3outputs.Tm = dnlon2 * R1 + dnlon1 * R2;
 
         //   gradients
         R1 = dnpod2 * Gn_hl[0] + dnpod1 * Gn_hl[1];
         R2 = dnpod2 * Gn_hl[2] + dnpod1 * Gn_hl[3];
-        Gn_h = dnlon2 * R1 + dnlon1 * R2;
+        gpt3outputs.Gn_h = dnlon2 * R1 + dnlon1 * R2;
 
         R1 = dnpod2 * Ge_hl[0] + dnpod1 * Ge_hl[1];
         R2 = dnpod2 * Ge_hl[2] + dnpod1 * Ge_hl[3];
-        Ge_h = dnlon2 * R1 + dnlon1 * R2;
+        gpt3outputs.Ge_h = dnlon2 * R1 + dnlon1 * R2;
 
         R1 = dnpod2 * Gn_wl[0] + dnpod1 * Gn_wl[1];
         R2 = dnpod2 * Gn_wl[2] + dnpod1 * Gn_wl[3];
-        Gn_w = dnlon2 * R1 + dnlon1 * R2;
+        gpt3outputs.Gn_w = dnlon2 * R1 + dnlon1 * R2;
 
         R1 = dnpod2 * Ge_wl[0] + dnpod1 * Ge_wl[1];
         R2 = dnpod2 * Ge_wl[2] + dnpod1 * Ge_wl[3];
-        Ge_w = dnlon2 * R1 + dnlon1 * R2;
-    } // else
+        gpt3outputs.Ge_w = dnlon2 * R1 + dnlon1 * R2;
+    } // else end
 }
 double mjd2doy(const double& mjd)
 {

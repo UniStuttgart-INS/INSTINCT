@@ -10,6 +10,7 @@
 /// @brief GPT2/3 (Global Pressure and Temperature) models
 /// @author Rui Wang (rui.wang@ins.uni-stuttgart.de)
 /// @date 2020-11-25
+/// @note See https://vmf.geo.tuwien.ac.at/codes/ for code sources in matlab.
 
 #pragma once
 #include "Eigen/Dense"
@@ -18,6 +19,24 @@
 
 namespace NAV
 {
+/// GPT2/3 output parameters
+struct GPToutput
+{
+    double p{};    ///< p pressure in hPa (vector of length nstat)
+    double T{};    ///< temperature in degrees Celsius (vector of length nstat)
+    double dT{};   ///< temperature lapse rate in degrees per km (vector of length nstat)
+    double Tm{};   ///< mean temperature of the water vapor in degrees Kelvin (vector of length nstat)
+    double e{};    ///< water vapor pressure in hPa (vector of length nstat)
+    double ah{};   ///< hydrostatic mapping function coefficient at zero height (VMF1) (vector of length nstat)
+    double aw{};   ///< wet mapping function coefficient (VMF1) (vector of length nstat)
+    double la{};   ///< water vapor decrease factor (vector of length nstat)
+    double undu{}; ///< geoid undulation in m (vector of length nstat)
+    // more outputs for GPT3
+    double Gn_h{}; ///< hydrostatic north gradient in m
+    double Ge_h{}; ///< hydrostatic east gradient in m
+    double Gn_w{}; ///< wet north gradient in m
+    double Ge_w{}; ///< wet east gradient in m
+};
 
 /// @brief Determine pressure, temperature, temperature lapse rate, mean temperature of the water vapor,
 ///        water vapor pressure, hydrostatic and wet mapping function coefficients ah and aw, water vapour decrease
@@ -25,17 +44,10 @@ namespace NAV
 /// @param[in] mjd modified Julian date
 /// @param[in] lla_pos [𝜙, λ, h]^T Geodetic latitude, longitude and height in [rad, rad, m]
 /// @param[in] GPT2_grid GPT2 grid in 1 degree x 1 degree resolution
-/// @param[in, out] p pressure in hPa (vector of length nstat)
-/// @param[in, out] T temperature in degrees Celsius (vector of length nstat)
-/// @param[in, out] dT temperature lapse rate in degrees per km (vector of length nstat)
-/// @param[in, out] Tm mean temperature of the water vapor in degrees Kelvin (vector of length nstat)
-/// @param[in, out] e water vapor pressure in hPa (vector of length nstat)
-/// @param[in, out] ah hydrostatic mapping function coefficient at zero height (VMF1) (vector of length nstat)
-/// @param[in, out] aw wet mapping function coefficient (VMF1) (vector of length nstat)
-/// @param[in, out] la water vapor decrease factor (vector of length nstat)
-/// @param[in, out] undu geoid undulation in m (vector of length nstat)
+/// @param[in, out] gpt2outputs GPT2 outputs
+/// @note See \cite bohm2015development
 void GPT2_param(const double& mjd, const Eigen::Vector3d& lla_pos, const std::array<internal::GPT2Data, 64800>& GPT2_grid,
-                double& p, double& T, double& dT, double& Tm, double& e, double& ah, double& aw, double& la, double& undu);
+                GPToutput& gpt2outputs);
 
 /// @brief Determine pressure, temperature, temperature lapse rate,
 ///        mean temperature of the water vapor, water vapour pressure, hydrostatic
@@ -45,22 +57,10 @@ void GPT2_param(const double& mjd, const Eigen::Vector3d& lla_pos, const std::ar
 /// @param[in] mjd modified Julian date
 /// @param[in] lla_pos [𝜙, λ, h]^T Geodetic latitude, longitude and height in [rad, rad, m]
 /// @param[in] GPT3_grid GPT3 grid in 1 degree x 1 degree resolution
-/// @param[in, out] p pressure in hPa (vector of length nstat)
-/// @param[in, out] T temperature in degrees Celsius (vector of length nstat)
-/// @param[in, out] dT temperature lapse rate in degrees per km (vector of length nstat)
-/// @param[in, out] Tm mean temperature of the water vapor in degrees Kelvin (vector of length nstat)
-/// @param[in, out] e water vapor pressure in hPa (vector of length nstat)
-/// @param[in, out] ah hydrostatic mapping function coefficient at zero height (VMF1) (vector of length nstat)
-/// @param[in, out] aw wet mapping function coefficient (VMF1) (vector of length nstat)
-/// @param[in, out] la water vapor decrease factor (vector of length nstat)
-/// @param[in, out] undu geoid undulation in m (vector of length nstat)
-/// @param[in, out] Gn_h hydrostatic north gradient in m
-/// @param[in, out] Ge_h hydrostatic east gradient in m
-/// @param[in, out] Gn_w wet north gradient in m
-/// @param[in, out] Ge_w wet east gradient in m
+/// @param[in, out] gpt3outputs GPT3 outputs
+/// @note See \cite Landskron2018
 void GPT3_param(const double& mjd, const Eigen::Vector3d& lla_pos, const std::array<internal::GPT3Data, 64800>& GPT3_grid,
-                double& p, double& T, double& dT, double& Tm, double& e, double& ah, double& aw, double& la, double& undu,
-                double& Gn_h, double& Ge_h, double& Gn_w, double& Ge_w);
+                GPToutput& gpt3outputs);
 
 /// @brief To calculate the day of year
 /// @param[in] mjd the Modified Julien Date
@@ -83,6 +83,7 @@ static constexpr double Rg = 8.3143;      ///< universal gas constant in J/K/mol
 /// @param[in] Tm mean temperature in Kelvin
 /// @param[in] la water vapor lapse rate (see definition in Askne and Nordius 1987)
 /// @return zwd: zenith wet delay in meter
+/// @note See \cite askne1987estimation
 double asknewet(const double& e, const double& Tm, const double& la);
 
 } // namespace NAV

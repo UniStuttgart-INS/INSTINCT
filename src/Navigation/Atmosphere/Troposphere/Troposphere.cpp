@@ -289,6 +289,28 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
     std::array<double, COUNT> temperature{}; // Absolute temperature in [K]
     std::array<double, COUNT> waterVapor{};  // Partial pressure of water vapour in [hPa]
 
+    GPToutput gpt2outputs;
+    GPToutput gpt3outputs;
+    // UTC->GPST
+    auto epoch_temp = InsTime(insTime) + std::chrono::duration<long double>(insTime.leapGps2UTC());
+    double mjd = static_cast<double>(epoch_temp.toMJD().mjd_day) + static_cast<double>(epoch_temp.toMJD().mjd_frac);
+
+    if (troposphereModels.zhdModel.first == TroposphereModel::GPT2
+        || troposphereModels.zwdModel.first == TroposphereModel::GPT2
+        || troposphereModels.zhdMappingFunction.first == MappingFunction::VMF_GPT2
+        || troposphereModels.zwdMappingFunction.first == MappingFunction::VMF_GPT2)
+    {
+        GPT2_param(mjd, lla_pos, internal::GPT2_grid, gpt2outputs);
+    }
+
+    if (troposphereModels.zhdModel.first == TroposphereModel::GPT3
+        || troposphereModels.zwdModel.first == TroposphereModel::GPT3
+        || troposphereModels.zhdMappingFunction.first == MappingFunction::VMF_GPT3
+        || troposphereModels.zwdMappingFunction.first == MappingFunction::VMF_GPT3)
+    {
+        GPT3_param(mjd, lla_pos, internal::GPT3_grid, gpt3outputs);
+    }
+
     LOG_DATA("Calculating Atmosphere parameters (ZHD={}, ZWD={}, ZHDMapFunc={}, ZWDMapFunc={}, ",
              fmt::underlying(ZHD), fmt::underlying(ZWD), fmt::underlying(ZHDMapFunc), fmt::underlying(ZWDMapFunc));
     for (size_t i = 0; i < COUNT; i++)
@@ -303,6 +325,19 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
                 break;
             }
         }
+
+        if (atmosphereModels.at(i).get().pressureModel == PressureModel::GPT2)
+        {
+            GPT2_param(mjd, lla_pos, internal::GPT2_grid, gpt2outputs);
+            pressure.at(i) = gpt2outputs.p;
+        }
+
+        if (atmosphereModels.at(i).get().pressureModel == PressureModel::GPT3)
+        {
+            GPT3_param(mjd, lla_pos, internal::GPT3_grid, gpt3outputs);
+            pressure.at(i) = gpt3outputs.p;
+        }
+
         if (!alreadyCalculated) { pressure.at(i) = calcTotalPressure(lla_pos(2), atmosphereModels.at(i).get().pressureModel); }
         LOG_DATA("  []: {}: p {} [millibar] (Total barometric pressure) - value {}", i, to_string(atmosphereModels.at(i).get().pressureModel),
                  pressure.at(i), alreadyCalculated ? "reused" : "calculated");
@@ -317,6 +352,19 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
                 break;
             }
         }
+
+        if (atmosphereModels.at(i).get().pressureModel == PressureModel::GPT2)
+        {
+            GPT2_param(mjd, lla_pos, internal::GPT2_grid, gpt2outputs);
+            temperature.at(i) = gpt2outputs.T;
+        }
+
+        if (atmosphereModels.at(i).get().pressureModel == PressureModel::GPT3)
+        {
+            GPT3_param(mjd, lla_pos, internal::GPT3_grid, gpt3outputs);
+            temperature.at(i) = gpt3outputs.T;
+        }
+
         if (!alreadyCalculated) { temperature.at(i) = calcAbsoluteTemperature(lla_pos(2), atmosphereModels.at(i).get().temperatureModel); }
         LOG_DATA("  []: {}: T {} [K] (Absolute temperature) - value {}", i, to_string(atmosphereModels.at(i).get().temperatureModel),
                  temperature.at(i), alreadyCalculated ? "reused" : "calculated");
@@ -331,6 +379,19 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
                 break;
             }
         }
+
+        if (atmosphereModels.at(i).get().pressureModel == PressureModel::GPT2)
+        {
+            GPT2_param(mjd, lla_pos, internal::GPT2_grid, gpt2outputs);
+            waterVapor.at(i) = gpt2outputs.e;
+        }
+
+        if (atmosphereModels.at(i).get().pressureModel == PressureModel::GPT3)
+        {
+            GPT3_param(mjd, lla_pos, internal::GPT3_grid, gpt3outputs);
+            waterVapor.at(i) = gpt3outputs.e;
+        }
+
         // Partial pressure of water vapour in [millibar] - RTKLIB ch. E.5, p. 149 specifies 70%
         if (!alreadyCalculated) { waterVapor.at(i) = calcWaterVaporPartialPressure(temperature.at(i), 0.7, atmosphereModels.at(i).get().waterVaporModel); }
         LOG_DATA("  []: {}: e {} [millibar] (Partial pressure of water vapour) - value {}", i, to_string(atmosphereModels.at(i).get().waterVaporModel),
@@ -345,65 +406,14 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
         break;
     case TroposphereModel::GPT2:
     {
-        // UTC->GPST
-        auto epoch_temp = InsTime(insTime) + std::chrono::duration<long double>(insTime.leapGps2UTC());
-        double mjd = static_cast<double>(epoch_temp.toMJD().mjd_day) + static_cast<double>(epoch_temp.toMJD().mjd_frac);
-        // pressure
-        double p = 0.0;
-        // temperature
-        double T = 0.0;
-        // temperature lapse rate
-        double dT = 0.0;
-        // mean temperature of the water vapor
-        double Tm = 0.0;
-        //  water vapor pressure
-        double e = 0.0;
-        // hydrostatic and wet mapping function coefficients
-        double ah = 0.0;
-        double aw = 0.0;
-        // water vapour decrease factor
-        double la = 0.0;
-        // geoid undulation for specific sites near the Earth surface
-        double undu = 0.0;
-        GPT2_param(mjd, lla_pos, internal::GPT2_grid, p, T, dT, Tm, e, ah, aw, la, undu);
-        zhd = calcZHD_Saastamoinen(lla_pos, p);
+        zhd = calcZHD_Saastamoinen(lla_pos, gpt2outputs.p);
         // LOG_INFO("p {}", p);
         // LOG_INFO("ZHD {}", zhd);
         break;
     }
     case TroposphereModel::GPT3:
     {
-        // UTC->GPST
-        auto epoch_temp = InsTime(insTime) + std::chrono::duration<long double>(insTime.leapGps2UTC());
-        double mjd = static_cast<double>(epoch_temp.toMJD().mjd_day) + static_cast<double>(epoch_temp.toMJD().mjd_frac);
-        // pressure
-        double p = 0.0;
-        // temperature
-        double T = 0.0;
-        // temperature lapse rate
-        double dT = 0.0;
-        // mean temperature of the water vapor
-        double Tm = 0.0;
-        //  water vapor pressure
-        double e = 0.0;
-        // hydrostatic and wet mapping function coefficients
-        double ah = 0.0;
-        double aw = 0.0;
-        // water vapour decrease factor
-        double la = 0.0;
-        // geoid undulation for specific sites near the Earth surface
-        double undu = 0.0;
-        // hydrostatic north gradient
-        double Gn_h = 0.0;
-        // hydrostatic east gradient
-        double Ge_h = 0.0;
-        // wet north gradient
-        double Gn_w = 0.0;
-        // wet east gradient
-        double Ge_w = 0.0;
-
-        GPT3_param(mjd, lla_pos, internal::GPT3_grid, p, T, dT, Tm, e, ah, aw, la, undu, Gn_h, Ge_h, Gn_w, Ge_w);
-        zhd = calcZHD_Saastamoinen(lla_pos, p);
+        zhd = calcZHD_Saastamoinen(lla_pos, gpt3outputs.p);
         // LOG_INFO("p {}", p);
         // LOG_INFO("ZHD {}", zhd);
         break;
@@ -421,63 +431,12 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
         break;
     case TroposphereModel::GPT2:
     {
-        // UTC->GPST
-        auto epoch_temp = InsTime(insTime) + std::chrono::duration<long double>(insTime.leapGps2UTC());
-        double mjd = static_cast<double>(epoch_temp.toMJD().mjd_day) + static_cast<double>(epoch_temp.toMJD().mjd_frac);
-        // pressure
-        double p = 0.0;
-        // temperature
-        double T = 0.0;
-        // temperature lapse rate
-        double dT = 0.0;
-        // mean temperature of the water vapor
-        double Tm = 0.0;
-        //  water vapor pressure
-        double e = 0.0;
-        // hydrostatic and wet mapping function coefficients
-        double ah = 0.0;
-        double aw = 0.0;
-        // water vapour decrease factor
-        double la = 0.0;
-        // geoid undulation for specific sites near the Earth surface
-        double undu = 0.0;
-        GPT2_param(mjd, lla_pos, internal::GPT2_grid, p, T, dT, Tm, e, ah, aw, la, undu);
-        zwd = asknewet(e, Tm, la);
+        zwd = asknewet(gpt2outputs.e, gpt2outputs.Tm, gpt2outputs.la);
         break;
     }
     case TroposphereModel::GPT3:
     {
-        // UTC->GPST
-        auto epoch_temp = InsTime(insTime) + std::chrono::duration<long double>(insTime.leapGps2UTC());
-        double mjd = static_cast<double>(epoch_temp.toMJD().mjd_day) + static_cast<double>(epoch_temp.toMJD().mjd_frac);
-        // pressure
-        double p = 0.0;
-        // temperature
-        double T = 0.0;
-        // temperature lapse rate
-        double dT = 0.0;
-        // mean temperature of the water vapor
-        double Tm = 0.0;
-        //  water vapor pressure
-        double e = 0.0;
-        // hydrostatic and wet mapping function coefficients
-        double ah = 0.0;
-        double aw = 0.0;
-        // water vapour decrease factor
-        double la = 0.0;
-        // geoid undulation for specific sites near the Earth surface
-        double undu = 0.0;
-        // hydrostatic north gradient
-        double Gn_h = 0.0;
-        // hydrostatic east gradient
-        double Ge_h = 0.0;
-        // wet north gradient
-        double Gn_w = 0.0;
-        // wet east gradient
-        double Ge_w = 0.0;
-
-        GPT3_param(mjd, lla_pos, internal::GPT3_grid, p, T, dT, Tm, e, ah, aw, la, undu, Gn_h, Ge_h, Gn_w, Ge_w);
-        zwd = asknewet(e, Tm, la);
+        zwd = asknewet(gpt3outputs.e, gpt3outputs.Tm, gpt3outputs.la);
         // LOG_INFO("p {}", p);
         // LOG_INFO("ZWD {}", zwd);
         break;
@@ -495,64 +454,13 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
         break;
     case MappingFunction::VMF_GPT2:
     {
-        // UTC->GPST
-        auto epoch_temp = InsTime(insTime) + std::chrono::duration<long double>(insTime.leapGps2UTC());
-        double mjd = static_cast<double>(epoch_temp.toMJD().mjd_day) + static_cast<double>(epoch_temp.toMJD().mjd_frac);
-        // pressure
-        double p = 0.0;
-        // temperature
-        double T = 0.0;
-        // temperature lapse rate
-        double dT = 0.0;
-        // mean temperature of the water vapor
-        double Tm = 0.0;
-        //  water vapor pressure
-        double e = 0.0;
-        // hydrostatic and wet mapping function coefficients
-        double ah = 0.0;
-        double aw = 0.0;
-        // water vapour decrease factor
-        double la = 0.0;
-        // geoid undulation for specific sites near the Earth surface
-        double undu = 0.0;
-        GPT2_param(mjd, lla_pos, internal::GPT2_grid, p, T, dT, Tm, e, ah, aw, la, undu);
-        zhdMappingFactor = vmf1h(ah, mjd, lla_pos(0), lla_pos(2), M_PI / 2.0 - elevation);
+        zhdMappingFactor = vmf1h(gpt2outputs.ah, mjd, lla_pos(0), lla_pos(2), M_PI / 2.0 - elevation);
         // LOG_INFO("zhdMappingFactor {}", zhdMappingFactor);
         break;
     }
     case MappingFunction::VMF_GPT3:
     {
-        // UTC->GPST
-        auto epoch_temp = InsTime(insTime) + std::chrono::duration<long double>(insTime.leapGps2UTC());
-        double mjd = static_cast<double>(epoch_temp.toMJD().mjd_day) + static_cast<double>(epoch_temp.toMJD().mjd_frac);
-        // pressure
-        double p = 0.0;
-        // temperature
-        double T = 0.0;
-        // temperature lapse rate
-        double dT = 0.0;
-        // mean temperature of the water vapor
-        double Tm = 0.0;
-        //  water vapor pressure
-        double e = 0.0;
-        // hydrostatic and wet mapping function coefficients
-        double ah = 0.0;
-        double aw = 0.0;
-        // water vapour decrease factor
-        double la = 0.0;
-        // geoid undulation for specific sites near the Earth surface
-        double undu = 0.0;
-        // hydrostatic north gradient
-        double Gn_h = 0.0;
-        // hydrostatic east gradient
-        double Ge_h = 0.0;
-        // wet north gradient
-        double Gn_w = 0.0;
-        // wet east gradient
-        double Ge_w = 0.0;
-
-        GPT3_param(mjd, lla_pos, internal::GPT3_grid, p, T, dT, Tm, e, ah, aw, la, undu, Gn_h, Ge_h, Gn_w, Ge_w);
-        zhdMappingFactor = vmf1h(ah, mjd, lla_pos(0), lla_pos(2), M_PI / 2.0 - elevation);
+        zhdMappingFactor = vmf1h(gpt3outputs.ah, mjd, lla_pos(0), lla_pos(2), M_PI / 2.0 - elevation);
         // LOG_INFO("zhdMappingFactor {}", zhdMappingFactor);
         break;
     }
@@ -569,64 +477,13 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
         break;
     case MappingFunction::VMF_GPT2:
     {
-        // UTC->GPST
-        auto epoch_temp = InsTime(insTime) + std::chrono::duration<long double>(insTime.leapGps2UTC());
-        double mjd = static_cast<double>(epoch_temp.toMJD().mjd_day) + static_cast<double>(epoch_temp.toMJD().mjd_frac);
-        // pressure
-        double p = 0.0;
-        // temperature
-        double T = 0.0;
-        // temperature lapse rate
-        double dT = 0.0;
-        // mean temperature of the water vapor
-        double Tm = 0.0;
-        //  water vapor pressure
-        double e = 0.0;
-        // hydrostatic and wet mapping function coefficients
-        double ah = 0.0;
-        double aw = 0.0;
-        // water vapour decrease factor
-        double la = 0.0;
-        // geoid undulation for specific sites near the Earth surface
-        double undu = 0.0;
-        GPT2_param(mjd, lla_pos, internal::GPT2_grid, p, T, dT, Tm, e, ah, aw, la, undu);
-        zwdMappingFactor = vmf1w(aw, M_PI / 2.0 - elevation);
+        zwdMappingFactor = vmf1w(gpt2outputs.aw, M_PI / 2.0 - elevation);
         // LOG_INFO("zwdMappingFactor {}", zwdMappingFactor);
         break;
     }
     case MappingFunction::VMF_GPT3:
     {
-        // UTC->GPST
-        auto epoch_temp = InsTime(insTime) + std::chrono::duration<long double>(insTime.leapGps2UTC());
-        double mjd = static_cast<double>(epoch_temp.toMJD().mjd_day) + static_cast<double>(epoch_temp.toMJD().mjd_frac);
-        // pressure
-        double p = 0.0;
-        // temperature
-        double T = 0.0;
-        // temperature lapse rate
-        double dT = 0.0;
-        // mean temperature of the water vapor
-        double Tm = 0.0;
-        //  water vapor pressure
-        double e = 0.0;
-        // hydrostatic and wet mapping function coefficients
-        double ah = 0.0;
-        double aw = 0.0;
-        // water vapour decrease factor
-        double la = 0.0;
-        // geoid undulation for specific sites near the Earth surface
-        double undu = 0.0;
-        // hydrostatic north gradient
-        double Gn_h = 0.0;
-        // hydrostatic east gradient
-        double Ge_h = 0.0;
-        // wet north gradient
-        double Gn_w = 0.0;
-        // wet east gradient
-        double Ge_w = 0.0;
-
-        GPT3_param(mjd, lla_pos, internal::GPT3_grid, p, T, dT, Tm, e, ah, aw, la, undu, Gn_h, Ge_h, Gn_w, Ge_w);
-        zwdMappingFactor = vmf1w(aw, M_PI / 2.0 - elevation);
+        zwdMappingFactor = vmf1w(gpt3outputs.aw, M_PI / 2.0 - elevation);
         // LOG_INFO("zwdMappingFactor {}", zwdMappingFactor);
         break;
     }
