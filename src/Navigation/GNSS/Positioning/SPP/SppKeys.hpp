@@ -60,6 +60,8 @@ using StateKeyTypes = std::variant<SppStates, InterSysErr, InterSysDrift>;
 inline static const std::vector<StateKeyTypes> Pos = { SppStates::PosX, SppStates::PosY, SppStates::PosZ };
 /// @brief All velocity keys
 inline static const std::vector<StateKeyTypes> Vel = { SppStates::VelX, SppStates::VelY, SppStates::VelZ };
+/// @brief All receiver clock keys
+inline static const std::vector<StateKeyTypes> RecvClk = { SppStates::RecvClkErr, SppStates::RecvClkDrift };
 /// @brief Vector with all position and velocity state keys
 inline static const std::vector<StateKeyTypes> PosVel = { SppStates::PosX, SppStates::PosY, SppStates::PosZ,
                                                           SppStates::VelX, SppStates::VelY, SppStates::VelZ };

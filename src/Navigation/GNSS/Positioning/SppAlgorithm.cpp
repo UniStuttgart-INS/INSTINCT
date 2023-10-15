@@ -169,7 +169,7 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
             }
         }
 
-        sppSol->setCovarianceMatrix(); // Combine covariances from LSE of pseudoranges and pseudorange-rates
+        sppSol->setCovarianceMatrix(interSysErrs, interSysDrifts); // Combine covariances from LSE of pseudoranges and pseudorange-rates
 
         if (solAccurate)
         {
@@ -218,9 +218,9 @@ std::shared_ptr<SppSolution> calcSppSolutionKF(SppKalmanFilter& kalmanFilter,
                                          interSysDrifts);
 
         // Find all selected satellite systems
-        std::vector<SatelliteSystem> allOtherSatSys = filterFreq.getSatSys().toVector();
-        allOtherSatSys.erase(std::find(allOtherSatSys.begin(), allOtherSatSys.end(), sppSol->recvClk.referenceTimeSatelliteSystem));
-        kalmanFilter.setAllSatSysExceptRef(allOtherSatSys);
+        std::vector<SatelliteSystem> allSatSysExceptRef = filterFreq.getSatSys().toVector();
+        allSatSysExceptRef.erase(std::find(allSatSysExceptRef.begin(), allSatSysExceptRef.end(), sppSol->recvClk.referenceTimeSatelliteSystem));
+        kalmanFilter.setAllSatSysExceptRef(allSatSysExceptRef);
 
         // Add Kalman Filter States (inter-system clock errors and drifts)
         kalmanFilter.addInterSysStateKeys(sppSol->insTime);

@@ -29,7 +29,7 @@ using SppSolSetPosOrVelAndStdDev_e = void (SppSolution::*)(const Eigen::Vector3d
 /// @brief Function to call to set the position or velocity in the sppSol
 using SppSolSetPosOrVel_e = void (SppSolution::*)(const Eigen::Vector3d&);
 /// @brief Function to call to set the covariance matrix in the sppSol
-using SppSolSetErrorCovarianceMatrix = void (SppSolution::*)(const Eigen::MatrixXd&);
+using SppSolSetErrorCovarianceMatrix = void (SppSolution::*)(const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>&);
 
 /// @brief Compute the linear least squares estimates and uncertainties and assign the solution
 /// @param[in] dy Innovation of pseudoranges or pseudorange rates

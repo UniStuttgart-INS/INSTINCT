@@ -471,7 +471,7 @@ bool calcDataBasedOnEstimates(const std::shared_ptr<SppSolution>& sppSol,
     LOG_DATA("     referenceTimeSatelliteSystem {} ({} other time systems)", state.recvClk.referenceTimeSatelliteSystem, satelliteSystems.size());
     sppSol->recvClk.referenceTimeSatelliteSystem = state.recvClk.referenceTimeSatelliteSystem;
 
-    sppSol->otherUsedSatelliteSystems = satelliteSystems;
+    sppSol->usedSatSysExceptRef = satelliteSystems;
 
     return true;
 }

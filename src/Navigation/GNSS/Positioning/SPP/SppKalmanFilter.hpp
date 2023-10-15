@@ -228,7 +228,7 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     /// @param[in] sppSolLSE SPP Least squares solution
     /// @param[in] interSysErrs Inter-system clock error keys
     /// @param[in] interSysDrifts Inter-system clock drift keys
-    void initializeKalmanFilter(const std::shared_ptr<const SppSolution>& sppSolLSE,
+    void initializeKalmanFilter(std::shared_ptr<SppSolution>& sppSolLSE,
                                 const std::vector<States::StateKeyTypes>& interSysErrs,
                                 const std::vector<States::StateKeyTypes>& interSysDrifts);
 

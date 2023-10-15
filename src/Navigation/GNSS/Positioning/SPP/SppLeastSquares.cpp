@@ -64,7 +64,7 @@ bool solveLeastSquaresAndAssignSolution(const KeyedVectorXd<Meas::MeasKeyTypes>&
         biasOrDrift.stdDev = std::nan("");
     }
 
-    std::invoke(sppSolSetErrorCovarianceMatrix, sppSol, lsq.variance(all, all));
+    std::invoke(sppSolSetErrorCovarianceMatrix, sppSol, lsq.variance);
 
     sppSolBiasOrDrift = biasOrDrift;
     sppSolSysTimeOrDriftDiff = sysTimeOrDriftDiff;

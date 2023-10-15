@@ -333,7 +333,7 @@ SatelliteSystem SppKalmanFilter::getRefTimeSatSys() const
 // ###########################################################################################################
 //                                          Initialize Kalman Filter
 // ###########################################################################################################
-void SppKalmanFilter::initializeKalmanFilter(const std::shared_ptr<const SppSolution>& sppSolLSE,
+void SppKalmanFilter::initializeKalmanFilter(std::shared_ptr<SppSolution>& sppSolLSE,
                                              const std::vector<States::StateKeyTypes>& interSysErrs,
                                              const std::vector<States::StateKeyTypes>& interSysDrifts)
 {
@@ -352,7 +352,7 @@ void SppKalmanFilter::initializeKalmanFilter(const std::shared_ptr<const SppSolu
     }
 
     // Inter-system clock error and drift
-    for (const auto& otherSys : sppSolLSE->otherUsedSatelliteSystems)
+    for (const auto& otherSys : sppSolLSE->usedSatSysExceptRef)
     {
         _kalmanFilter.x(States::InterSysErr{ otherSys }) = sppSolLSE->recvClk.sysTimeDiff.at(otherSys).value * InsConst::C;
         if (std::none_of(sppSolLSE->e_velocity().begin(), sppSolLSE->e_velocity().end(), [](double d) { return std::isnan(d); })) // in case doppler observations were available for LSE
@@ -368,35 +368,16 @@ void SppKalmanFilter::initializeKalmanFilter(const std::shared_ptr<const SppSolu
     // Find Satellite systems that are selected but not available in first epoch
     std::vector<SatelliteSystem> satSysDiff;
     std::set_difference(_allSatSysExceptRef.begin(), _allSatSysExceptRef.end(),
-                        sppSolLSE->otherUsedSatelliteSystems.begin(), sppSolLSE->otherUsedSatelliteSystems.end(),
+                        sppSolLSE->usedSatSysExceptRef.begin(), sppSolLSE->usedSatSysExceptRef.end(),
                         std::inserter(satSysDiff, satSysDiff.begin()));
 
-    // Standard deviation can only be calculated in LSE with more measurements than estimated parameters
+    // Check if covariances are available (can only be calculated in LSE with more measurements than estimated parameters)
     if (std::none_of(sppSolLSE->e_positionStdev().begin(), sppSolLSE->e_positionStdev().end(), [](double d) { return std::isnan(d); }))
     {
-        _kalmanFilter.P(States::Pos, States::Pos) = sppSolLSE->e_CovarianceMatrix().block<3, 3>(0, 0);
-        _kalmanFilter.P(States::RecvClkErr, States::RecvClkErr) = sppSolLSE->e_CovarianceMatrix()(6, 6);
-        _kalmanFilter.P(States::RecvClkErr, States::Pos) = sppSolLSE->e_CovarianceMatrix().block<1, 3>(6, 0);
-        _kalmanFilter.P(States::Pos, States::RecvClkErr) = sppSolLSE->e_CovarianceMatrix().block<3, 1>(0, 6);
-
-        Eigen::Index i = 0;
-        Eigen::Index j = 0;
-        for (const auto& key_i : interSysErrs)
-        {
-            _kalmanFilter.P(States::Pos, key_i) = sppSolLSE->e_CovarianceMatrix().block<3, 1>(0, 8 + i);
-            _kalmanFilter.P(key_i, States::Pos) = sppSolLSE->e_CovarianceMatrix().block<1, 3>(8 + i, 0);
-            _kalmanFilter.P(States::RecvClkErr, key_i) = sppSolLSE->e_CovarianceMatrix()(6, 8 + i);
-            _kalmanFilter.P(key_i, States::RecvClkErr) = sppSolLSE->e_CovarianceMatrix()(8 + i, 6);
-            for (const auto& key_j : interSysErrs)
-            {
-                _kalmanFilter.P(key_i, key_j) = sppSolLSE->e_CovarianceMatrix()(8 + i, 8 + j);
-                j += 2;
-            }
-
-            i += 2;
-            j = 0;
-        }
-
+        _kalmanFilter.P(States::PosRecvClkErr, States::PosRecvClkErr) = sppSolLSE->e_CovarianceMatrix()(States::PosRecvClkErr, States::PosRecvClkErr);
+        _kalmanFilter.P(interSysErrs, interSysErrs) = sppSolLSE->e_CovarianceMatrix()(interSysErrs, interSysErrs);
+        _kalmanFilter.P(States::PosRecvClkErr, interSysErrs) = sppSolLSE->e_CovarianceMatrix()(States::PosRecvClkErr, interSysErrs);
+        _kalmanFilter.P(interSysErrs, States::PosRecvClkErr) = sppSolLSE->e_CovarianceMatrix()(interSysErrs, States::PosRecvClkErr);
         if (!satSysDiff.empty())
         {
             for (const auto& satSysDiff_i : satSysDiff)
@@ -414,33 +395,13 @@ void SppKalmanFilter::initializeKalmanFilter(const std::shared_ptr<const SppSolu
             _kalmanFilter.P(States::InterSysErr{ otherSys_i }, States::InterSysErr{ otherSys_i }) = _initCovarianceInterSysErr;
         }
     }
-
-    // Standard deviation can only be calculated in LSE with more measurements than estimated parameters
+    // Check if covariances are available (can only be calculated in LSE with more measurements than estimated parameters)
     if (std::none_of(sppSolLSE->e_velocityStdev().begin(), sppSolLSE->e_velocityStdev().end(), [](double d) { return std::isnan(d); }))
     {
-        _kalmanFilter.P(States::Vel, States::Vel) = sppSolLSE->e_CovarianceMatrix().block<3, 3>(3, 3);
-        _kalmanFilter.P(States::RecvClkDrift, States::RecvClkDrift) = sppSolLSE->e_CovarianceMatrix()(7, 7);
-        _kalmanFilter.P(States::Vel, States::RecvClkDrift) = sppSolLSE->e_CovarianceMatrix().block<3, 1>(3, 7);
-        _kalmanFilter.P(States::RecvClkDrift, States::Vel) = sppSolLSE->e_CovarianceMatrix().block<1, 3>(7, 3);
-
-        Eigen::Index i = 0;
-        Eigen::Index j = 0;
-        for (const auto& key_i : interSysDrifts)
-        {
-            _kalmanFilter.P(States::Vel, key_i) = sppSolLSE->e_CovarianceMatrix().block<3, 1>(3, 9 + i);
-            _kalmanFilter.P(key_i, States::Vel) = sppSolLSE->e_CovarianceMatrix().block<1, 3>(9 + i, 3);
-            _kalmanFilter.P(States::RecvClkDrift, key_i) = sppSolLSE->e_CovarianceMatrix()(7, 9 + i);
-            _kalmanFilter.P(key_i, States::RecvClkDrift) = sppSolLSE->e_CovarianceMatrix()(9 + i, 7);
-
-            for (const auto& key_j : interSysDrifts)
-            {
-                _kalmanFilter.P(key_i, key_j) = sppSolLSE->e_CovarianceMatrix()(9 + i, 9 + j);
-                j += 2;
-            }
-
-            i += 2;
-            j = 0;
-        }
+        _kalmanFilter.P(States::VelRecvClkDrift, States::VelRecvClkDrift) = sppSolLSE->e_CovarianceMatrix()(States::VelRecvClkDrift, States::VelRecvClkDrift);
+        _kalmanFilter.P(interSysDrifts, interSysDrifts) = sppSolLSE->e_CovarianceMatrix()(interSysDrifts, interSysDrifts);
+        _kalmanFilter.P(States::VelRecvClkDrift, interSysDrifts) = sppSolLSE->e_CovarianceMatrix()(States::VelRecvClkDrift, interSysDrifts);
+        _kalmanFilter.P(interSysDrifts, States::VelRecvClkDrift) = sppSolLSE->e_CovarianceMatrix()(interSysDrifts, States::VelRecvClkDrift);
         if (!satSysDiff.empty())
         {
             for (const auto& satSysDiff_i : satSysDiff)
@@ -498,6 +459,8 @@ void SppKalmanFilter::initializeKalmanFilter(const std::shared_ptr<const SppSolu
     LOG_DATA("_lastTime {}", _lastUpdate);
 
     assignInternalSolution(_allSatSysExceptRef);
+
+    sppSolLSE->setCovarianceMatrix(_kalmanFilter.P);
 }
 
 // ###########################################################################################################
@@ -565,7 +528,7 @@ void SppKalmanFilter::assignSolution(std::shared_ptr<NAV::SppSolution>& sppSol,
     sppSol->setPositionAndStdDev_e(_e_position, _kalmanFilter.P(States::Pos, States::Pos));
     sppSol->setVelocityAndStdDev_e(_e_velocity, _kalmanFilter.P(States::Vel, States::Vel));
     sppSol->recvClk = _recvClk;
-    sppSol->setCovarianceMatrix(_kalmanFilter.P(all, all));
+    sppSol->setCovarianceMatrix(_kalmanFilter.P);
 }
 
 void SppKalmanFilter::assignInternalSolution(const std::vector<SatelliteSystem>& otherSatelliteSystems)
