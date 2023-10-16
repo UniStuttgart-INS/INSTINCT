@@ -748,7 +748,7 @@ void SppKalmanFilter::kalmanFilterUpdate(const KeyedVectorXd<Meas::MeasKeyTypes>
             }
             _kalmanFilter.R(key, key) = W_psr(key, key);
         }
-        else if (const auto key_ = std::get_if<Meas::Doppler>(&key))
+        else if (const auto* const key_ = std::get_if<Meas::Doppler>(&key))
         {
             _kalmanFilter.z(key) = dpsr_dot(key);
             _kalmanFilter.H(key, States::VelRecvClkDrift) = e_H_r(key, States::VelRecvClkDrift);

@@ -28,14 +28,7 @@ struct KeyedLeastSquaresResult
 
 /// @brief Finds the "least squares" solution for the equation \f$ \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} \f$
 ///
-/// Minimizes the functional
-/// \anchor eq-LinearLeastSquares-functional \f{equation}{ \label{eq:eq-LinearLeastSquares-functional}
-///   J(\mathbf{x}) \equiv \sum_{i=1}^m v_i^2 = \mathbf{v}^T \mathbf{v} = (\mathbf{dz} - \mathbf{H} \mathbf{x})^T (\mathbf{dz} - \mathbf{H} \mathbf{x})
-/// \f}
-/// which has the solution (assuming that the inverse to \f$ \mathbf{H}^T \mathbf{H} \f$ exists)
-/// \anchor eq-LinearLeastSquares-solution \f{equation}{ \label{eq:eq-LinearLeastSquares-solution}
-///   \mathbf{x} = \left(\mathbf{H}^T \mathbf{H} \right)^{-1} \mathbf{H}^T \mathbf{dz}
-/// \f}
+/// Minimizes the functional (see LeastSquares.hpp)
 /// @param[in] H Design Matrix
 /// @param[in] dz Residual vector
 /// @return Least squares solution
@@ -47,11 +40,7 @@ KeyedVectorX<Scalar, StateKeyType> solveLinearLeastSquares(const KeyedMatrixX<Sc
     return dx;
 }
 
-/// @brief Finds the "weighted least squares" solution
-///
-/// \anchor eq-WeightedLinearLeastSquares \f{equation}{ \label{eq:eq-WeightedLinearLeastSquares}
-///   \mathbf{x} = \left(\mathbf{H}^T \mathbf{W} \mathbf{H} \right)^{-1} \mathbf{H}^T \mathbf{W} \mathbf{dz}
-/// \f}
+/// @brief Finds the "weighted least squares" solution (see LeastSquares.hpp)
 /// @param[in] H Design Matrix
 /// @param[in] W Weight matrix
 /// @param[in] dz Residual vector

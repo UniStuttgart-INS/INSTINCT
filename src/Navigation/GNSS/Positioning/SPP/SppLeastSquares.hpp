@@ -56,7 +56,7 @@ bool solveLeastSquaresAndAssignSolution(const KeyedVectorXd<Meas::MeasKeyTypes>&
                                         const EstimatorType& estimatorType,
                                         size_t nMeas,
                                         const std::vector<States::StateKeyTypes>& interSysErrOrDrifts,
-                                        Eigen::Vector3d& posOrVel, std::vector<States::StateKeyTypes> statesPosOrVel,
+                                        Eigen::Vector3d& posOrVel, const std::vector<States::StateKeyTypes>& statesPosOrVel,
                                         UncertainValue<double>& biasOrDrift, States::StateKeyTypes statesBiasOrDrift,
                                         std::unordered_map<NAV::SatelliteSystem, NAV::UncertainValue<double>>& sysTimeOrDriftDiff,
                                         const std::shared_ptr<SppSolution>& sppSol,

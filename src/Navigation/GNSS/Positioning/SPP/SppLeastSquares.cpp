@@ -12,7 +12,7 @@ bool solveLeastSquaresAndAssignSolution(const KeyedVectorXd<Meas::MeasKeyTypes>&
                                         const EstimatorType& estimatorType,
                                         size_t nMeas,
                                         const std::vector<States::StateKeyTypes>& interSysErrOrDrifts,
-                                        Eigen::Vector3d& posOrVel, std::vector<States::StateKeyTypes> statesPosOrVel,
+                                        Eigen::Vector3d& posOrVel, const std::vector<States::StateKeyTypes>& statesPosOrVel,
                                         UncertainValue<double>& biasOrDrift, States::StateKeyTypes statesBiasOrDrift,
                                         std::unordered_map<NAV::SatelliteSystem, NAV::UncertainValue<double>>& sysTimeOrDriftDiff,
                                         const std::shared_ptr<SppSolution>& sppSol,
@@ -41,12 +41,12 @@ bool solveLeastSquaresAndAssignSolution(const KeyedVectorXd<Meas::MeasKeyTypes>&
 
     for (const auto& errOrDrift : interSysErrOrDrifts)
     {
-        if (const auto key = std::get_if<States::InterSysErr>(&errOrDrift)) // key with right data type to access satSys
+        if (const auto* const key = std::get_if<States::InterSysErr>(&errOrDrift)) // key with right data type to access satSys
         {
             sysTimeOrDriftDiff[key->satSys].value += lsq.solution(errOrDrift) / InsConst::C;
             sysTimeOrDriftDiff[key->satSys].stdDev = std::sqrt(lsq.variance(errOrDrift, errOrDrift)) / InsConst::C;
         }
-        else if (const auto key = std::get_if<States::InterSysDrift>(&errOrDrift))
+        else if (const auto* const key = std::get_if<States::InterSysDrift>(&errOrDrift))
         {
             sysTimeOrDriftDiff[key->satSys].value += lsq.solution(errOrDrift) / InsConst::C;
             sysTimeOrDriftDiff[key->satSys].stdDev = std::sqrt(lsq.variance(errOrDrift, errOrDrift)) / InsConst::C;
