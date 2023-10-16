@@ -738,7 +738,7 @@ void SppKalmanFilter::kalmanFilterUpdate(const KeyedVectorXd<Meas::MeasKeyTypes>
     // Design matrix - Groves ch. 9.4.2.3, eq. 9.163, p. 420
     for (const auto& key : measKeys)
     {
-        if (const auto key_ = std::get_if<Meas::Psr>(&key))
+        if (const auto* const key_ = std::get_if<Meas::Psr>(&key))
         {
             _kalmanFilter.z(key) = dpsr(key);
             _kalmanFilter.H(key, States::PosRecvClkErr) = e_H_psr(key, States::PosRecvClkErr);
