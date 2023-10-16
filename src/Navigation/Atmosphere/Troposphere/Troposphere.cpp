@@ -298,7 +298,11 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
     if (troposphereModels.zhdModel.first == TroposphereModel::GPT2
         || troposphereModels.zwdModel.first == TroposphereModel::GPT2
         || troposphereModels.zhdMappingFunction.first == MappingFunction::VMF_GPT2
-        || troposphereModels.zwdMappingFunction.first == MappingFunction::VMF_GPT2)
+        || troposphereModels.zwdMappingFunction.first == MappingFunction::VMF_GPT2
+        || std::any_of(atmosphereModels.begin(), atmosphereModels.end(),
+                       [](const auto& model) { return model.get().pressureModel == PressureModel::GPT2
+                                                      || model.get().temperatureModel == TemperatureModel::GPT2
+                                                      || model.get().waterVaporModel == WaterVaporModel::GPT2; }))
     {
         GPT2_param(mjd, lla_pos, internal::GPT2_grid, gpt2outputs);
     }
@@ -306,7 +310,11 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
     if (troposphereModels.zhdModel.first == TroposphereModel::GPT3
         || troposphereModels.zwdModel.first == TroposphereModel::GPT3
         || troposphereModels.zhdMappingFunction.first == MappingFunction::VMF_GPT3
-        || troposphereModels.zwdMappingFunction.first == MappingFunction::VMF_GPT3)
+        || troposphereModels.zwdMappingFunction.first == MappingFunction::VMF_GPT3
+        || std::any_of(atmosphereModels.begin(), atmosphereModels.end(),
+                       [](const auto& model) { return model.get().pressureModel == PressureModel::GPT3
+                                                      || model.get().temperatureModel == TemperatureModel::GPT3
+                                                      || model.get().waterVaporModel == WaterVaporModel::GPT3; }))
     {
         GPT3_param(mjd, lla_pos, internal::GPT3_grid, gpt3outputs);
     }
@@ -326,19 +334,21 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
             }
         }
 
-        if (atmosphereModels.at(i).get().pressureModel == PressureModel::GPT2)
+        if (!alreadyCalculated)
         {
-            GPT2_param(mjd, lla_pos, internal::GPT2_grid, gpt2outputs);
-            pressure.at(i) = gpt2outputs.p;
+            if (atmosphereModels.at(i).get().pressureModel == PressureModel::GPT2)
+            {
+                pressure.at(i) = gpt2outputs.p;
+            }
+            else if (atmosphereModels.at(i).get().pressureModel == PressureModel::GPT3)
+            {
+                pressure.at(i) = gpt3outputs.p;
+            }
+            else
+            {
+                pressure.at(i) = calcTotalPressure(lla_pos(2), atmosphereModels.at(i).get().pressureModel);
+            }
         }
-
-        if (atmosphereModels.at(i).get().pressureModel == PressureModel::GPT3)
-        {
-            GPT3_param(mjd, lla_pos, internal::GPT3_grid, gpt3outputs);
-            pressure.at(i) = gpt3outputs.p;
-        }
-
-        if (!alreadyCalculated) { pressure.at(i) = calcTotalPressure(lla_pos(2), atmosphereModels.at(i).get().pressureModel); }
         LOG_DATA("  []: {}: p {} [millibar] (Total barometric pressure) - value {}", i, to_string(atmosphereModels.at(i).get().pressureModel),
                  pressure.at(i), alreadyCalculated ? "reused" : "calculated");
 
@@ -353,19 +363,21 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
             }
         }
 
-        if (atmosphereModels.at(i).get().pressureModel == PressureModel::GPT2)
+        if (!alreadyCalculated)
         {
-            GPT2_param(mjd, lla_pos, internal::GPT2_grid, gpt2outputs);
-            temperature.at(i) = gpt2outputs.T;
+            if (atmosphereModels.at(i).get().temperatureModel == TemperatureModel::GPT2)
+            {
+                temperature.at(i) = gpt2outputs.T;
+            }
+            else if (atmosphereModels.at(i).get().temperatureModel == TemperatureModel::GPT3)
+            {
+                temperature.at(i) = gpt3outputs.T;
+            }
+            else
+            {
+                temperature.at(i) = calcAbsoluteTemperature(lla_pos(2), atmosphereModels.at(i).get().temperatureModel);
+            }
         }
-
-        if (atmosphereModels.at(i).get().pressureModel == PressureModel::GPT3)
-        {
-            GPT3_param(mjd, lla_pos, internal::GPT3_grid, gpt3outputs);
-            temperature.at(i) = gpt3outputs.T;
-        }
-
-        if (!alreadyCalculated) { temperature.at(i) = calcAbsoluteTemperature(lla_pos(2), atmosphereModels.at(i).get().temperatureModel); }
         LOG_DATA("  []: {}: T {} [K] (Absolute temperature) - value {}", i, to_string(atmosphereModels.at(i).get().temperatureModel),
                  temperature.at(i), alreadyCalculated ? "reused" : "calculated");
 
@@ -380,20 +392,22 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
             }
         }
 
-        if (atmosphereModels.at(i).get().pressureModel == PressureModel::GPT2)
-        {
-            GPT2_param(mjd, lla_pos, internal::GPT2_grid, gpt2outputs);
-            waterVapor.at(i) = gpt2outputs.e;
-        }
-
-        if (atmosphereModels.at(i).get().pressureModel == PressureModel::GPT3)
-        {
-            GPT3_param(mjd, lla_pos, internal::GPT3_grid, gpt3outputs);
-            waterVapor.at(i) = gpt3outputs.e;
-        }
-
         // Partial pressure of water vapour in [millibar] - RTKLIB ch. E.5, p. 149 specifies 70%
-        if (!alreadyCalculated) { waterVapor.at(i) = calcWaterVaporPartialPressure(temperature.at(i), 0.7, atmosphereModels.at(i).get().waterVaporModel); }
+        if (!alreadyCalculated)
+        {
+            if (atmosphereModels.at(i).get().waterVaporModel == WaterVaporModel::GPT2)
+            {
+                waterVapor.at(i) = gpt2outputs.e;
+            }
+            else if (atmosphereModels.at(i).get().waterVaporModel == WaterVaporModel::GPT3)
+            {
+                waterVapor.at(i) = gpt3outputs.e;
+            }
+            else
+            {
+                waterVapor.at(i) = calcWaterVaporPartialPressure(temperature.at(i), 0.7, atmosphereModels.at(i).get().waterVaporModel);
+            }
+        }
         LOG_DATA("  []: {}: e {} [millibar] (Partial pressure of water vapour) - value {}", i, to_string(atmosphereModels.at(i).get().waterVaporModel),
                  waterVapor.at(i), alreadyCalculated ? "reused" : "calculated");
     }
@@ -402,22 +416,10 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
     switch (troposphereModels.zhdModel.first)
     {
     case TroposphereModel::Saastamoinen:
+    case TroposphereModel::GPT2:
+    case TroposphereModel::GPT3:
         zhd = calcZHD_Saastamoinen(lla_pos, pressure[ZHD]);
         break;
-    case TroposphereModel::GPT2:
-    {
-        zhd = calcZHD_Saastamoinen(lla_pos, gpt2outputs.p);
-        // LOG_INFO("p {}", p);
-        // LOG_INFO("ZHD {}", zhd);
-        break;
-    }
-    case TroposphereModel::GPT3:
-    {
-        zhd = calcZHD_Saastamoinen(lla_pos, gpt3outputs.p);
-        // LOG_INFO("p {}", p);
-        // LOG_INFO("ZHD {}", zhd);
-        break;
-    }
     case TroposphereModel::None:
     case TroposphereModel::COUNT:
         break;
@@ -430,17 +432,11 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
         zwd = calcZWD_Saastamoinen(temperature[ZWD], waterVapor[ZWD]);
         break;
     case TroposphereModel::GPT2:
-    {
-        zwd = asknewet(gpt2outputs.e, gpt2outputs.Tm, gpt2outputs.la);
+        zwd = asknewet(waterVapor[ZWD], gpt2outputs.Tm, gpt2outputs.la);
         break;
-    }
     case TroposphereModel::GPT3:
-    {
-        zwd = asknewet(gpt3outputs.e, gpt3outputs.Tm, gpt3outputs.la);
-        // LOG_INFO("p {}", p);
-        // LOG_INFO("ZWD {}", zwd);
+        zwd = asknewet(waterVapor[ZWD], gpt3outputs.Tm, gpt3outputs.la);
         break;
-    }
     case TroposphereModel::None:
     case TroposphereModel::COUNT:
         break;
@@ -453,17 +449,11 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
         zhdMappingFactor = calcTropoMapFunc_cosecant(elevation);
         break;
     case MappingFunction::VMF_GPT2:
-    {
         zhdMappingFactor = vmf1h(gpt2outputs.ah, mjd, lla_pos(0), lla_pos(2), M_PI / 2.0 - elevation);
-        // LOG_INFO("zhdMappingFactor {}", zhdMappingFactor);
         break;
-    }
     case MappingFunction::VMF_GPT3:
-    {
         zhdMappingFactor = vmf1h(gpt3outputs.ah, mjd, lla_pos(0), lla_pos(2), M_PI / 2.0 - elevation);
-        // LOG_INFO("zhdMappingFactor {}", zhdMappingFactor);
         break;
-    }
     case MappingFunction::None:
     case MappingFunction::COUNT:
         break;
@@ -476,17 +466,11 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
         zwdMappingFactor = calcTropoMapFunc_cosecant(elevation);
         break;
     case MappingFunction::VMF_GPT2:
-    {
         zwdMappingFactor = vmf1w(gpt2outputs.aw, M_PI / 2.0 - elevation);
-        // LOG_INFO("zwdMappingFactor {}", zwdMappingFactor);
         break;
-    }
     case MappingFunction::VMF_GPT3:
-    {
         zwdMappingFactor = vmf1w(gpt3outputs.aw, M_PI / 2.0 - elevation);
-        // LOG_INFO("zwdMappingFactor {}", zwdMappingFactor);
         break;
-    }
     case MappingFunction::None:
     case MappingFunction::COUNT:
         break;
