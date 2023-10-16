@@ -6,22 +6,18 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-/// @file NodeEditorStyleEditor.hpp
-/// @brief Style Editor window
+/// @file ColormapEditor.hpp
+/// @brief Colormap editor window
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2020-12-14
+/// @date 2023-09-22
 
 #pragma once
 
-#include <vector>
-#include <imgui.h>
-
 namespace NAV::gui::windows
 {
-/// @brief Shows a window for editing the style of the Node Editor
+
+/// @brief Shows a window for editing the user defined value colormaps
 /// @param[in, out] show Flag which indicates whether the window is shown
-/// @param[in, out] colors Colors of the GUI
-/// @param[in] colorNames Names for the colors
-void ShowNodeEditorStyleEditor(bool* show, std::vector<ImVec4>& colors, const std::vector<const char*>& colorNames);
+void ShowColormapEditor(bool* show);
 
 } // namespace NAV::gui::windows

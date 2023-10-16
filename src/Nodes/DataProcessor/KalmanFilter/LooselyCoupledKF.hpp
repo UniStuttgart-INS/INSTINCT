@@ -62,49 +62,49 @@ class LooselyCoupledKF : public Node
     /// @brief State Keys of the Kalman filter
     enum KFStates
     {
-        Roll,
-        Pitch,
-        Yaw,
-        VelN,
-        VelE,
-        VelD,
-        PosLat,
-        PosLon,
-        PosAlt,
-        AccBiasX,
-        AccBiasY,
-        AccBiasZ,
-        GyrBiasX,
-        GyrBiasY,
-        GyrBiasZ,
+        Roll,     ///< Roll
+        Pitch,    ///< Pitch
+        Yaw,      ///< Yaw
+        VelN,     ///< Velocity North
+        VelE,     ///< Velocity East
+        VelD,     ///< Velocity Down
+        PosLat,   ///< Latitude
+        PosLon,   ///< Longitude
+        PosAlt,   ///< Altitude
+        AccBiasX, ///< Accelerometer Bias X
+        AccBiasY, ///< Accelerometer Bias Y
+        AccBiasZ, ///< Accelerometer Bias Z
+        GyrBiasX, ///< Gyroscope Bias X
+        GyrBiasY, ///< Gyroscope Bias Y
+        GyrBiasZ, ///< Gyroscope Bias Z
 
-        Psi_eb_1 = Roll,
-        Psi_eb_2 = Pitch,
-        Psi_eb_3 = Yaw,
-        VelX = VelN,
-        VelY = VelE,
-        VelZ = VelD,
-        PosX = PosLat,
-        PosY = PosLon,
-        PosZ = PosAlt,
+        Psi_eb_1 = Roll,  ///< Angle between Earth and Body frame around 1. axis
+        Psi_eb_2 = Pitch, ///< Angle between Earth and Body frame around 2. axis
+        Psi_eb_3 = Yaw,   ///< Angle between Earth and Body frame around 3. axis
+        VelX = VelN,      ///< ECEF Velocity X
+        VelY = VelE,      ///< ECEF Velocity Y
+        VelZ = VelD,      ///< ECEF Velocity Z
+        PosX = PosLat,    ///< ECEF Position X
+        PosY = PosLon,    ///< ECEF Position Y
+        PosZ = PosAlt,    ///< ECEF Position Z
     };
 
     /// @brief Measurement Keys of the Kalman filter
     enum KFMeas
     {
-        dPosLat,
-        dPosLon,
-        dPosAlt,
-        dVelN,
-        dVelE,
-        dVelD,
+        dPosLat, ///< Latitude difference
+        dPosLon, ///< Longitude difference
+        dPosAlt, ///< Altitude difference
+        dVelN,   ///< Velocity North difference
+        dVelE,   ///< Velocity East difference
+        dVelD,   ///< Velocity Down difference
 
-        dPosX = dPosLat,
-        dPosY = dPosLon,
-        dPosZ = dPosAlt,
-        dVelX = dVelN,
-        dVelY = dVelE,
-        dVelZ = dVelD,
+        dPosX = dPosLat, ///< ECEF Position X difference
+        dPosY = dPosLon, ///< ECEF Position Y difference
+        dPosZ = dPosAlt, ///< ECEF Position Z difference
+        dVelX = dVelN,   ///< ECEF Velocity X difference
+        dVelY = dVelE,   ///< ECEF Velocity Y difference
+        dVelZ = dVelD,   ///< ECEF Velocity Z difference
     };
 
   private:

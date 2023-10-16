@@ -13,6 +13,9 @@
 
 #pragma once
 
+#include <vector>
+#include <imgui.h>
+
 namespace NAV::gui::windows
 {
 
@@ -27,8 +30,12 @@ extern bool showNodeEditorStyleEditor;
 extern bool showImPlotStyleEditor;
 /// @brief Flag whether the Font size editor window should be displayed
 extern bool showFontSizeEditor;
+/// @brief Flag whether the Colormap editor window should be displayed
+extern bool showColormapEditor;
 
 /// @brief Called every frame to render global windows
-void renderGlobalWindows();
+/// @param[in, out] colors Colors of the GUI
+/// @param[in] colorNames Names for the colors
+void renderGlobalWindows(std::vector<ImVec4>& colors, const std::vector<const char*>& colorNames);
 
 } // namespace NAV::gui::windows

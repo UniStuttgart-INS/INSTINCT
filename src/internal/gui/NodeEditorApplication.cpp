@@ -133,6 +133,8 @@ void NAV::gui::NodeEditorApplication::OnStart()
         }
     }
 
+    ConfigManager::LoadGlobalSettings();
+
     auto fs = cmrc::instinct::get_filesystem();
 
     if (fs.is_file("resources/images/BlueprintBackground.png"))
@@ -254,6 +256,30 @@ void NAV::gui::NodeEditorApplication::OnStart()
     {
         m_InsLogo.at(1) = LoadTexture("resources/images/INS_logo_rectangular_black_small.png");
     }
+
+    if (fs.is_file("resources/images/Rose-rhodonea-curve-7x9-chart-improved.jpg"))
+    {
+        auto fd = fs.open("resources/images/Rose-rhodonea-curve-7x9-chart-improved.jpg");
+
+        LOG_DEBUG("Generating Texture for Rose figure ({} byte)", fd.size());
+
+        auto is = cmrc::memstream(const_cast<char*>(fd.begin()), // NOLINT(cppcoreguidelines-pro-type-const-cast)
+                                  const_cast<char*>(fd.end()));  // NOLINT(cppcoreguidelines-pro-type-const-cast)
+
+        std::vector<char> buffer;
+        buffer.resize(fd.size(), '\0');
+
+        is.read(buffer.data(),
+                static_cast<std::streamsize>(buffer.size()));
+
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
+        m_RoseFigure = LoadTexture(reinterpret_cast<const void*>(const_cast<const char*>(buffer.data())),
+                                   static_cast<int>(fd.size()));
+    }
+    else
+    {
+        m_RoseFigure = LoadTexture("resources/images/Rose-rhodonea-curve-7x9-chart-improved.jpg");
+    }
 }
 
 void NAV::gui::NodeEditorApplication::OnStop()
@@ -261,6 +287,8 @@ void NAV::gui::NodeEditorApplication::OnStop()
     LOG_TRACE("called");
 
     FlowExecutor::stop();
+
+    ConfigManager::SaveGlobalSettings();
 
     nm::DeleteAllNodes();
 
@@ -277,6 +305,7 @@ void NAV::gui::NodeEditorApplication::OnStop()
     releaseTexture(m_InstinctLogo.at(0));
     releaseTexture(m_InstinctLogo.at(1));
     releaseTexture(m_HeaderBackground);
+    releaseTexture(m_RoseFigure);
 
     if (m_Editor)
     {
@@ -778,6 +807,11 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
     ImGui::BeginGroup();
 
+    bool darkMode = ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_Bg].x
+                        + ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_Bg].y
+                        + ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_Bg].z
+                    > 2.0F;
+
     if (bottomViewSelectedTab != BottomViewTabItem::None)
     {
         float blueprintHeight = ImGui::GetContentRegionAvail().y - bottomViewHeight + 28.5F;
@@ -1019,17 +1053,17 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 continue;
             }
 
-            const float commentAlpha = 0.75F;
-
-            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, commentAlpha);
-            ed::PushStyleColor(ed::StyleColor_NodeBg, ImColor(255, 255, 255, 64));
-            ed::PushStyleColor(ed::StyleColor_NodeBorder, ImColor(255, 255, 255, 64));
+            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.75F);
+            ed::PushStyleColor(ed::StyleColor_NodeBg, m_colors[COLOR_GROUP_HEADER_BG]);
+            ed::PushStyleColor(ed::StyleColor_NodeBorder, m_colors[COLOR_GROUP_OUTER_BORDER]);
             ed::BeginNode(node->id);
             ImGui::PushID(node->id.AsPointer());
             ImGui::BeginVertical("content");
             ImGui::BeginHorizontal("horizontal");
             ImGui::Spring(1);
+            ImGui::PushStyleColor(ImGuiCol_Text, m_colors[COLOR_GROUP_HEADER_TEXT]);
             ImGui::TextUnformatted(node->name.c_str());
+            ImGui::PopStyleColor();
             ImGui::Spring(1);
             ImGui::EndHorizontal();
             ed::Group(node->_size);
@@ -1047,17 +1081,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 auto color = output.getIconColor();
                 if (output.type == Pin::Type::Flow)
                 {
-                    if (ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_Bg].x
-                            + ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_Bg].y
-                            + ax::NodeEditor::GetStyle().Colors[ax::NodeEditor::StyleColor_Bg].z
-                        > 2.0F)
-                    {
-                        color = { 0, 0, 0 };
-                    }
-                    else
-                    {
-                        color = { 255, 255, 255 };
-                    }
+                    color = darkMode ? ImColor{ 0, 0, 0 } : ImColor{ 255, 255, 255 };
                 }
 
                 for (const auto& link : output.links)
@@ -1781,7 +1805,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     if (!tooltipText.empty()) { ImGui::SetTooltip("%s", tooltipText.c_str()); }
 
     ImGui::PushFont(WindowFont());
-    gui::windows::renderGlobalWindows();
+    gui::windows::renderGlobalWindows(m_colors, m_colorsNames);
     ImGui::PopFont();
 
     std::string title = (flow::HasUnsavedChanges() ? "● " : "")

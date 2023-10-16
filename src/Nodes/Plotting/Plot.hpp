@@ -23,6 +23,7 @@
 
 #include "util/Container/ScrollingBuffer.hpp"
 #include "util/Container/Vector.hpp"
+#include "util/Plot/Colormap.hpp"
 
 #include "NodeData/State/PosVelAtt.hpp"
 #include "NodeData/State/InertialNavSol.hpp"
@@ -259,6 +260,10 @@ class Plot : public Node
                 LineType lineType = LineType::Line;
                 /// Line Color
                 ImVec4 color = IMPLOT_AUTO_COL;
+                /// Colormap mask (pair: type and id)
+                std::pair<ColormapMaskType, int64_t> colormapMask = { ColormapMaskType::None, -1 };
+                /// Index of the plot data to compare for the color
+                size_t colormapMaskDataCmpIdx = 0;
                 /// Line thickness
                 float thickness = 1.0F;
 
@@ -287,7 +292,10 @@ class Plot : public Node
             /// @param[in] dataIndex Index of the data on the pin
             /// @param[in] displayName Display name of the data
             PlotItem(size_t pinIndex, size_t dataIndex, std::string displayName)
-                : pinIndex(pinIndex), dataIndex(dataIndex), displayName(std::move(displayName)) {}
+                : pinIndex(pinIndex), dataIndex(dataIndex), displayName(std::move(displayName))
+            {
+                style.colormapMaskDataCmpIdx = dataIndex;
+            }
 
             /// @brief Constructor
             /// @param[in] pinIndex Index of the pin where the data came in
@@ -295,7 +303,10 @@ class Plot : public Node
             /// @param[in] displayName Display name of the data
             /// @param[in] axis Axis to plot the data on (Y1, Y2, Y3)
             PlotItem(size_t pinIndex, size_t dataIndex, std::string displayName, ImAxis axis)
-                : pinIndex(pinIndex), dataIndex(dataIndex), displayName(std::move(displayName)), axis(axis) {}
+                : pinIndex(pinIndex), dataIndex(dataIndex), displayName(std::move(displayName)), axis(axis)
+            {
+                style.colormapMaskDataCmpIdx = dataIndex;
+            }
 
             /// @brief Equal comparison operator (needed to search the vector with std::find)
             /// @param[in] rhs Right-hand-side of the operator
@@ -310,6 +321,10 @@ class Plot : public Node
             std::string displayName;  ///< Display name of the data (not changing and unique)
             ImAxis axis{ ImAxis_Y1 }; ///< Axis to plot the data on (Y1, Y2, Y3)
             Style style{};            ///< Defines how the data should be plotted
+            /// Buffer for the colormap mask
+            ScrollingBuffer<ImU32> colormapMaskColors = ScrollingBuffer<ImU32>(0);
+            /// Colormap version (to track updates of the colormap)
+            size_t colormapMaskVersion = 0;
         };
 
         /// @brief Default constructor

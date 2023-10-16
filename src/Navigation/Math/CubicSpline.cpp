@@ -121,6 +121,11 @@ void CubicSpline::setPoints(const std::vector<double>& x,
     coef_c0 = (boundaryConditionLeft.type == BoundaryCondition::FirstDerivative) ? 0.0 : coef_c[0];
 }
 
+size_t CubicSpline::size() const noexcept
+{
+    return vals_x.size();
+}
+
 size_t CubicSpline::findClosestIdx(double x) const
 {
     auto it = std::upper_bound(vals_x.begin(), vals_x.end(), x);

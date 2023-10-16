@@ -131,13 +131,13 @@ struct DOP
 /// @brief Satellite Constellation
 enum class SatSys : uint8_t
 {
-    GPS = 0,
-    SBAS = 1,
-    Galileo = 2,
-    BeiDou = 3,
-    IMES = 4,
-    QZSS = 5,
-    GLONASS = 6,
+    GPS = 0,     ///< GPS
+    SBAS = 1,    ///< SBAS
+    Galileo = 2, ///< Galileo
+    BeiDou = 3,  ///< BeiDou
+    IMES = 4,    ///< IMES
+    QZSS = 5,    ///< QZSS
+    GLONASS = 6, ///< GLONASS
 };
 
 /// @brief Stream insertion operator overload

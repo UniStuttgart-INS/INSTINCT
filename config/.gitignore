@@ -1,5 +1,6 @@
 *
 
 !.gitignore
+!globals.json
 !implot.json
 !implot-light.json

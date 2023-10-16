@@ -39,4 +39,5 @@ void NAV::gui::menus::ShowEditMenu()
     ImGui::MenuItem("Node Editor Style", nullptr, &gui::windows::showNodeEditorStyleEditor);
     ImGui::MenuItem("ImPlot Style", nullptr, &gui::windows::showImPlotStyleEditor);
     ImGui::MenuItem("Font Size", nullptr, &gui::windows::showFontSizeEditor);
+    ImGui::MenuItem("Colormap Editor", nullptr, &gui::windows::showColormapEditor);
 }

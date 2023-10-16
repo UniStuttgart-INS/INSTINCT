@@ -425,9 +425,21 @@ class ScrollingBuffer
     }
 
     /// @brief Returns a pointer to the raw data array (not in scrolled order)
-    [[nodiscard]] const T* data()
+    [[nodiscard]] const T* data() const
     {
         return _data.data();
+    }
+
+    /// @brief Returns a pointer to the raw data array (not in scrolled order)
+    [[nodiscard]] T* data()
+    {
+        return _data.data();
+    }
+
+    /// @brief Returns whether the buffer is infinite and growing
+    [[nodiscard]] bool isInfiniteBuffer() const
+    {
+        return _infiniteBuffer;
     }
 
     /// @brief Prints the buffer to the output stream

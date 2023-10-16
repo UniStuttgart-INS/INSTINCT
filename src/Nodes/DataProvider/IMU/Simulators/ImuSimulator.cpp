@@ -279,7 +279,9 @@ void NAV::ImuSimulator::guiConfig()
                                          ? "Start position"
                                          : (_trajectoryType == TrajectoryType::Circular
                                                 ? "Center position"
-                                                : ""));
+                                                : (_trajectoryType == TrajectoryType::RoseFigure
+                                                       ? "Center/Tangential position"
+                                                       : "")));
 
             if (gui::widgets::PositionInput(fmt::format("{}##PosInput {}", txt, size_t(id)).c_str(), _startPosition, gui::widgets::PositionInputLayout::TWO_ROWS, columnWidth))
             {
@@ -352,22 +354,60 @@ void NAV::ImuSimulator::guiConfig()
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
             ImGui::TextUnformatted("Velocity (North, East, Down)");
         }
-        else if (_trajectoryType == TrajectoryType::Circular)
+        else if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::RoseFigure)
         {
-            if (ImGui::BeginTable(fmt::format("CircularTrajectory##{}", size_t(id)).c_str(), 2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX))
+            if (ImGui::BeginTable(fmt::format("CircularOrRoseTrajectory##{}", size_t(id)).c_str(), 2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX))
             {
+                ImGui::TableNextColumn();
+                ImGui::SetNextItemWidth(columnWidth);
+                if (ImGui::InputDoubleL(fmt::format("{}##{}", _trajectoryType == TrajectoryType::Circular ? "Radius" : "Radius/Amplitude", size_t(id)).c_str(), &_trajectoryRadius, 1e-3, std::numeric_limits<double>::max(), 0.0, 0.0, "%.3f m"))
+                {
+                    LOG_DEBUG("{}: circularTrajectoryRadius changed to {}", nameId(), _trajectoryRadius);
+                    flow::ApplyChanges();
+                    doDeinitialize();
+                }
+
+                ImGui::TableNextColumn();
+                ImGui::SetNextItemWidth(columnWidth);
+                if (ImGui::InputDouble(fmt::format("Horizontal speed##{}", size_t(id)).c_str(), &_trajectoryHorizontalSpeed, 0.0, 0.0, "%.3f m/s"))
+                {
+                    LOG_DEBUG("{}: circularTrajectoryHorizontalSpeed changed to {}", nameId(), _trajectoryHorizontalSpeed);
+                    flow::ApplyChanges();
+                    doDeinitialize();
+                }
+                // ####################################################################################################
+                ImGui::TableNextColumn();
+                ImGui::SetNextItemWidth(columnWidth);
+                double originAngle = rad2deg(_trajectoryRotationAngle);
+                if (ImGui::DragDouble(fmt::format("{}##{}", _trajectoryType == TrajectoryType::Circular ? "Origin angle" : "Rotation angle", size_t(id)).c_str(), &originAngle, 15.0, -360.0, 360.0, "%.3f°"))
+                {
+                    _trajectoryRotationAngle = deg2rad(originAngle);
+                    LOG_DEBUG("{}: originAngle changed to {}", nameId(), originAngle);
+                    flow::ApplyChanges();
+                    doDeinitialize();
+                }
+
+                ImGui::TableNextColumn();
+                ImGui::SetNextItemWidth(columnWidth);
+                if (ImGui::InputDouble(fmt::format("Vertical speed (Up)##{}", size_t(id)).c_str(), &_trajectoryVerticalSpeed, 0.0, 0.0, "%.3f m/s"))
+                {
+                    LOG_DEBUG("{}: circularTrajectoryVerticalSpeed changed to {}", nameId(), _trajectoryVerticalSpeed);
+                    flow::ApplyChanges();
+                    doDeinitialize();
+                }
+                // ####################################################################################################
                 ImGui::TableNextColumn();
                 auto tableStartX = ImGui::GetCursorPosX();
                 ImGui::SetNextItemWidth(200 * gui::NodeEditorApplication::windowFontRatio());
-                if (ImGui::BeginCombo(fmt::format("Motion##{}", size_t(id)).c_str(), to_string(_circularTrajectoryDirection)))
+                if (ImGui::BeginCombo(fmt::format("Motion##{}", size_t(id)).c_str(), to_string(_trajectoryDirection)))
                 {
                     for (size_t i = 0; i < static_cast<size_t>(Direction::COUNT); i++)
                     {
-                        const bool is_selected = (static_cast<size_t>(_circularTrajectoryDirection) == i);
+                        const bool is_selected = (static_cast<size_t>(_trajectoryDirection) == i);
                         if (ImGui::Selectable(to_string(static_cast<Direction>(i)), is_selected))
                         {
-                            _circularTrajectoryDirection = static_cast<Direction>(i);
-                            LOG_DEBUG("{}: circularTrajectoryDirection changed to {}", nameId(), fmt::underlying(_circularTrajectoryDirection));
+                            _trajectoryDirection = static_cast<Direction>(i);
+                            LOG_DEBUG("{}: circularTrajectoryDirection changed to {}", nameId(), fmt::underlying(_trajectoryDirection));
                             flow::ApplyChanges();
                             doDeinitialize();
                         }
@@ -382,75 +422,72 @@ void NAV::ImuSimulator::guiConfig()
                 ImGui::SetCursorPosX(tableStartX + columnWidth * 2.0F + ImGui::GetStyle().ItemSpacing.x * 1.0F);
 
                 ImGui::TableNextColumn();
-                ImGui::SetNextItemWidth(columnWidth);
-                if (ImGui::InputDoubleL(fmt::format("Radius##{}", size_t(id)).c_str(), &_circularTrajectoryRadius, 1e-3, std::numeric_limits<double>::max(), 0.0, 0.0, "%.3f m"))
-                {
-                    LOG_DEBUG("{}: circularTrajectoryRadius changed to {}", nameId(), _circularTrajectoryRadius);
-                    flow::ApplyChanges();
-                    doDeinitialize();
-                }
                 // ####################################################################################################
-                ImGui::TableNextColumn();
-                ImGui::SetNextItemWidth(columnWidth);
-                if (ImGui::InputDouble(fmt::format("Horizontal speed##{}", size_t(id)).c_str(), &_circularTrajectoryHorizontalSpeed, 0.0, 0.0, "%.3f m/s"))
+                if (_trajectoryType == TrajectoryType::Circular)
                 {
-                    LOG_DEBUG("{}: circularTrajectoryHorizontalSpeed changed to {}", nameId(), _circularTrajectoryHorizontalSpeed);
-                    flow::ApplyChanges();
-                    doDeinitialize();
-                }
+                    ImGui::TableNextColumn();
+                    ImGui::SetNextItemWidth(columnWidth);
+                    if (ImGui::DragInt(fmt::format("Osc Frequency##{}", size_t(id)).c_str(), &_circularHarmonicFrequency, 1.0F, 0, 100, "%d [cycles/rev]"))
+                    {
+                        LOG_DEBUG("{}: circularHarmonicFrequency changed to {}", nameId(), _circularHarmonicFrequency);
+                        flow::ApplyChanges();
+                        doDeinitialize();
+                    }
+                    ImGui::SameLine();
+                    gui::widgets::HelpMarker("This modulates a harmonic oscillation on the circular path.\n"
+                                             "The frequency is in units [cycles per revolution].");
 
-                ImGui::TableNextColumn();
-                ImGui::SetNextItemWidth(columnWidth);
-                double originAngle = rad2deg(_circularTrajectoryOriginAngle);
-                if (ImGui::DragDouble(fmt::format("Origin Angle##{}", size_t(id)).c_str(), &originAngle, 15.0, -360.0, 360.0, "%.3f°"))
-                {
-                    _circularTrajectoryOriginAngle = deg2rad(originAngle);
-                    LOG_DEBUG("{}: originAngle changed to {}", nameId(), originAngle);
-                    flow::ApplyChanges();
-                    doDeinitialize();
+                    ImGui::TableNextColumn();
+                    ImGui::SetNextItemWidth(columnWidth);
+                    if (ImGui::DragDouble(fmt::format("Osc Amplitude Factor##{}", size_t(id)).c_str(), &_circularHarmonicAmplitudeFactor, 0.01F, 0.0, 10.0, "%.3f * r"))
+                    {
+                        LOG_DEBUG("{}: circularHarmonicAmplitudeFactor changed to {}", nameId(), _circularHarmonicAmplitudeFactor);
+                        flow::ApplyChanges();
+                        doDeinitialize();
+                    }
+                    ImGui::SameLine();
+                    gui::widgets::HelpMarker("This modulates a harmonic oscillation on the circular path.\n"
+                                             "This factor determines the amplitude of the oscillation\n"
+                                             "with respect to the radius of the circle.");
                 }
-                // ####################################################################################################
-                ImGui::TableNextColumn();
-                ImGui::SetNextItemWidth(columnWidth);
-                if (ImGui::InputDouble(fmt::format("Vertical speed (Up)##{}", size_t(id)).c_str(), &_circularTrajectoryVerticalSpeed, 0.0, 0.0, "%.3f m/s"))
+                else if (_trajectoryType == TrajectoryType::RoseFigure)
                 {
-                    LOG_DEBUG("{}: circularTrajectoryVerticalSpeed changed to {}", nameId(), _circularTrajectoryVerticalSpeed);
-                    flow::ApplyChanges();
-                    doDeinitialize();
-                }
+                    ImGui::TableNextColumn();
+                    ImGui::SetNextItemWidth(columnWidth);
+                    if (ImGui::InputIntL(fmt::format("n (angular freq.)##{}", size_t(id)).c_str(), &_rosePetNum, 1.0, std::numeric_limits<int>::max(), 1, 1))
+                    {
+                        LOG_DEBUG("{}: Rose figure numerator changed to {}", nameId(), _rosePetNum);
+                        flow::ApplyChanges();
+                        doDeinitialize();
+                    }
 
-                ImGui::TableNextColumn();
-                // ####################################################################################################
-                ImGui::TableNextColumn();
-                ImGui::SetNextItemWidth(columnWidth);
-                if (ImGui::DragInt(fmt::format("Osc Frequency##{}", size_t(id)).c_str(), &_circularHarmonicFrequency, 1.0F, 0, 100, "%d [cycles/rev]"))
-                {
-                    LOG_DEBUG("{}: circularHarmonicFrequency changed to {}", nameId(), _circularHarmonicFrequency);
-                    flow::ApplyChanges();
-                    doDeinitialize();
+                    ImGui::TableNextColumn();
+                    ImGui::SetNextItemWidth(columnWidth);
+                    if (ImGui::InputIntL(fmt::format("d (angular freq.)##{}", size_t(id)).c_str(), &_rosePetDenom, 1.0, std::numeric_limits<int>::max(), 1, 1))
+                    {
+                        LOG_DEBUG("{}: Rose figure denominator changed to {}", nameId(), _rosePetDenom);
+                        flow::ApplyChanges();
+                        doDeinitialize();
+                    }
+                    ImGui::SameLine();
+                    if (gui::widgets::BeginHelpMarker())
+                    {
+                        ImGui::TextUnformatted("Angular frequency k=n/d, n,d = natural numbers. In case of d=1,\n"
+                                               "for even k number of petals is 2*k, for odd k, number of petals is k.\n"
+                                               "Adjusts the integration limits of the incomplete elliptical integral\n"
+                                               "of the second kind. If k is rational (d >1), the correct limit needs \n"
+                                               "to be choosen depending on the symmetry (petals) of the figure.");
+                        float width = 500.0F;
+                        ImGui::Image(gui::NodeEditorApplication::m_RoseFigure, ImVec2(width, width * 909.0F / 706.0F));
+                        ImGui::TextUnformatted("Graphic by Jason Davies, CC BY-SA 3.0,\nhttps://commons.wikimedia.org/w/index.php?curid=30515231");
+                        gui::widgets::EndHelpMarker();
+                    }
                 }
-                ImGui::SameLine();
-                gui::widgets::HelpMarker("This modulates a harmonic oscillation on the circular path.\n"
-                                         "The frequency is in units [cycles per revolution].");
-
-                ImGui::TableNextColumn();
-                ImGui::SetNextItemWidth(columnWidth);
-                if (ImGui::DragDouble(fmt::format("Osc Amplitude Factor##{}", size_t(id)).c_str(), &_circularHarmonicAmplitudeFactor, 0.01F, 0.0, 10.0, "%.3f * r"))
-                {
-                    LOG_DEBUG("{}: circularHarmonicAmplitudeFactor changed to {}", nameId(), _circularHarmonicAmplitudeFactor);
-                    flow::ApplyChanges();
-                    doDeinitialize();
-                }
-                ImGui::SameLine();
-                gui::widgets::HelpMarker("This modulates a harmonic oscillation on the circular path.\n"
-                                         "This factor determines the amplitude of the oscillation\n"
-                                         "with respect to the radius of the circle.");
                 // ####################################################################################################
 
                 ImGui::EndTable();
             }
         }
-
         ImGui::TreePop();
     }
 
@@ -467,6 +504,7 @@ void NAV::ImuSimulator::guiConfig()
             }
             ImGui::SameLine();
         }
+
         ImGui::SetNextItemWidth(columnWidth);
         if (ImGui::InputDoubleL(fmt::format("Duration##{}", size_t(id)).c_str(), &_simulationDuration, 0.0, std::numeric_limits<double>::max(), 0.0, 0.0, "%.3f s"))
         {
@@ -474,10 +512,9 @@ void NAV::ImuSimulator::guiConfig()
             flow::ApplyChanges();
             doDeinitialize();
         }
-
         if (_trajectoryType != TrajectoryType::Fixed)
         {
-            if (ImGui::RadioButton(fmt::format("##simulationStopConditionDistanceOrCircles{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_simulationStopCondition), static_cast<int>(StopCondition::DistanceOrCircles)))
+            if (ImGui::RadioButton(fmt::format("##simulationStopConditionDistanceOrCirclesOrRoses{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_simulationStopCondition), static_cast<int>(StopCondition::DistanceOrCirclesOrRoses)))
             {
                 LOG_DEBUG("{}: simulationStopCondition changed to {}", nameId(), fmt::underlying(_simulationStopCondition));
                 flow::ApplyChanges();
@@ -485,6 +522,7 @@ void NAV::ImuSimulator::guiConfig()
             }
             ImGui::SameLine();
         }
+
         if (_trajectoryType == TrajectoryType::Linear)
         {
             ImGui::SetNextItemWidth(columnWidth);
@@ -505,22 +543,46 @@ void NAV::ImuSimulator::guiConfig()
                 doDeinitialize();
             }
         }
-
+        else if (_trajectoryType == TrajectoryType::RoseFigure)
+        {
+            ImGui::SetNextItemWidth(columnWidth);
+            if (ImGui::InputDoubleL(fmt::format("Amount of rose figures##{}", size_t(id)).c_str(), &_roseTrajectoryCountForStop, 0.0, std::numeric_limits<double>::max(), 1.0, 1.0, "%.3f"))
+            {
+                LOG_DEBUG("{}: RoseTrajectoryCountForStop changed to {}", nameId(), _roseTrajectoryCountForStop);
+                flow::ApplyChanges();
+                doDeinitialize();
+            }
+        }
         ImGui::TreePop();
     }
 
     ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
     if (ImGui::TreeNode("Simulation models"))
     {
-        if (_trajectoryType != TrajectoryType::Fixed && _trajectoryType != TrajectoryType::Csv)
+        if (_trajectoryType != TrajectoryType::Fixed && _trajectoryType != TrajectoryType::Csv && _trajectoryType != TrajectoryType::RoseFigure)
         {
-            ImGui::TextUnformatted("Spline");
+            ImGui::TextUnformatted(fmt::format("Spline (current knots {})", _splines.x.size()).c_str());
             {
                 ImGui::Indent();
                 ImGui::SetNextItemWidth(columnWidth - ImGui::GetStyle().IndentSpacing);
                 if (ImGui::InputDoubleL(fmt::format("Sample Interval##{}", size_t(id)).c_str(), &_splines.sampleInterval, 0.0, std::numeric_limits<double>::max(), 0.0, 0.0, "%.3e s"))
                 {
                     LOG_DEBUG("{}: spline sample interval changed to {}", nameId(), _splines.sampleInterval);
+                    flow::ApplyChanges();
+                    doDeinitialize();
+                }
+                ImGui::Unindent();
+            }
+        }
+        else if (_trajectoryType == TrajectoryType::RoseFigure)
+        {
+            ImGui::TextUnformatted(fmt::format("Spline (current knots {})", _splines.x.size()).c_str());
+            {
+                ImGui::Indent();
+                ImGui::SetNextItemWidth(columnWidth - ImGui::GetStyle().IndentSpacing);
+                if (ImGui::InputDoubleL(fmt::format("Sample Distance##{}", size_t(id)).c_str(), &_roseStepLengthMax, 0.0, std::numeric_limits<double>::max(), 0.0, 0.0, "%.3e m"))
+                {
+                    LOG_DEBUG("{}: Spline sample distance (rose figure) changed to {}", nameId(), _roseStepLengthMax);
                     flow::ApplyChanges();
                     doDeinitialize();
                 }
@@ -588,20 +650,24 @@ json NAV::ImuSimulator::save() const
     j["startPosition"] = _startPosition;
     j["fixedTrajectoryStartOrientation"] = _fixedTrajectoryStartOrientation;
     j["n_linearTrajectoryStartVelocity"] = _n_linearTrajectoryStartVelocity;
-    j["circularTrajectoryHorizontalSpeed"] = _circularTrajectoryHorizontalSpeed;
-    j["circularTrajectoryVerticalSpeed"] = _circularTrajectoryVerticalSpeed;
-    j["circularTrajectoryRadius"] = _circularTrajectoryRadius;
-    j["circularTrajectoryOriginAngle"] = _circularTrajectoryOriginAngle;
-    j["circularTrajectoryDirection"] = _circularTrajectoryDirection;
     j["circularHarmonicFrequency"] = _circularHarmonicFrequency;
     j["circularHarmonicAmplitudeFactor"] = _circularHarmonicAmplitudeFactor;
-    // ###########################################################################################################
+    j["trajectoryHorizontalSpeed"] = _trajectoryHorizontalSpeed;
+    j["trajectoryVerticalSpeed"] = _trajectoryVerticalSpeed;
+    j["trajectoryRadius"] = _trajectoryRadius;
+    j["trajectoryRotationAngle"] = _trajectoryRotationAngle;
+    j["trajectoryDirection"] = _trajectoryDirection;
+    j["rosePetNum"] = _rosePetNum;
+    j["rosePetDenom"] = _rosePetDenom;
+    //  ###########################################################################################################
     j["simulationStopCondition"] = _simulationStopCondition;
     j["simulationDuration"] = _simulationDuration;
     j["linearTrajectoryDistanceForStop"] = _linearTrajectoryDistanceForStop;
     j["circularTrajectoryCircleCountForStop"] = _circularTrajectoryCircleCountForStop;
+    j["roseTrajectoryCountForStop"] = _roseTrajectoryCountForStop;
     // ###########################################################################################################
     j["splineSampleInterval"] = _splines.sampleInterval;
+    j["roseStepLengthMax"] = _roseStepLengthMax;
     j["gravitationModel"] = _gravitationModel;
     j["coriolisAccelerationEnabled"] = _coriolisAccelerationEnabled;
     j["centrifgalAccelerationEnabled"] = _centrifgalAccelerationEnabled;
@@ -664,26 +730,6 @@ void NAV::ImuSimulator::restore(json const& j)
     {
         j.at("n_linearTrajectoryStartVelocity").get_to(_n_linearTrajectoryStartVelocity);
     }
-    if (j.contains("circularTrajectoryHorizontalSpeed"))
-    {
-        j.at("circularTrajectoryHorizontalSpeed").get_to(_circularTrajectoryHorizontalSpeed);
-    }
-    if (j.contains("circularTrajectoryVerticalSpeed"))
-    {
-        j.at("circularTrajectoryVerticalSpeed").get_to(_circularTrajectoryVerticalSpeed);
-    }
-    if (j.contains("circularTrajectoryRadius"))
-    {
-        j.at("circularTrajectoryRadius").get_to(_circularTrajectoryRadius);
-    }
-    if (j.contains("circularTrajectoryOriginAngle"))
-    {
-        j.at("circularTrajectoryOriginAngle").get_to(_circularTrajectoryOriginAngle);
-    }
-    if (j.contains("circularTrajectoryDirection"))
-    {
-        j.at("circularTrajectoryDirection").get_to(_circularTrajectoryDirection);
-    }
     if (j.contains("circularHarmonicFrequency"))
     {
         j.at("circularHarmonicFrequency").get_to(_circularHarmonicFrequency);
@@ -692,7 +738,35 @@ void NAV::ImuSimulator::restore(json const& j)
     {
         j.at("circularHarmonicAmplitudeFactor").get_to(_circularHarmonicAmplitudeFactor);
     }
-    // ###########################################################################################################
+    if (j.contains("trajectoryHorizontalSpeed"))
+    {
+        j.at("trajectoryHorizontalSpeed").get_to(_trajectoryHorizontalSpeed);
+    }
+    if (j.contains("trajectoryVerticalSpeed"))
+    {
+        j.at("trajectoryVerticalSpeed").get_to(_trajectoryVerticalSpeed);
+    }
+    if (j.contains("trajectoryRadius"))
+    {
+        j.at("trajectoryRadius").get_to(_trajectoryRadius);
+    }
+    if (j.contains("trajectoryRotationAngle"))
+    {
+        j.at("trajectoryRotationAngle").get_to(_trajectoryRotationAngle);
+    }
+    if (j.contains("trajectoryDirection"))
+    {
+        j.at("trajectoryDirection").get_to(_trajectoryDirection);
+    }
+    if (j.contains("rosePetNum"))
+    {
+        j.at("rosePetNum").get_to(_rosePetNum);
+    }
+    if (j.contains("rosePetDenom"))
+    {
+        j.at("rosePetDenom").get_to(_rosePetDenom);
+    }
+    //  ###########################################################################################################
     if (j.contains("simulationStopCondition"))
     {
         j.at("simulationStopCondition").get_to(_simulationStopCondition);
@@ -709,10 +783,18 @@ void NAV::ImuSimulator::restore(json const& j)
     {
         j.at("circularTrajectoryCircleCountForStop").get_to(_circularTrajectoryCircleCountForStop);
     }
+    if (j.contains("roseTrajectoryCountForStop"))
+    {
+        j.at("roseTrajectoryCountForStop").get_to(_roseTrajectoryCountForStop);
+    }
     // ###########################################################################################################
     if (j.contains("splineSampleInterval"))
     {
         j.at("splineSampleInterval").get_to(_splines.sampleInterval);
+    }
+    if (j.contains("roseStepLengthMax"))
+    {
+        j.at("roseStepLengthMax").get_to(_roseStepLengthMax);
     }
     if (j.contains("gravitationModel"))
     {
@@ -782,6 +864,7 @@ NAV::InsTime NAV::ImuSimulator::getTimeFromCsvLine(const CsvData::CsvLine& line,
     LOG_ERROR("{}: Could not find the necessary columns in the CSV file to determine the time.", nameId());
     return {};
 }
+
 Eigen::Vector3d NAV::ImuSimulator::e_getPositionFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const
 {
     auto posXIter = std::find(description.begin(), description.end(), "Pos ECEF X [m]");
@@ -959,7 +1042,7 @@ bool NAV::ImuSimulator::initializeSplines()
             {
                 break;
             }
-            if (_simulationStopCondition == StopCondition::DistanceOrCircles)
+            if (_simulationStopCondition == StopCondition::DistanceOrCirclesOrRoses)
             {
                 auto horizontalDistance = calcGeographicalDistance(_startPosition.latitude(), _startPosition.longitude(), lla_lastPosition(0), lla_lastPosition(1));
                 auto distance = std::sqrt(std::pow(horizontalDistance, 2) + std::pow(_startPosition.altitude() - lla_lastPosition(2), 2))
@@ -986,9 +1069,9 @@ bool NAV::ImuSimulator::initializeSplines()
         {
             simDuration = _simulationDuration;
         }
-        else if (_simulationStopCondition == StopCondition::DistanceOrCircles)
+        else if (_simulationStopCondition == StopCondition::DistanceOrCirclesOrRoses)
         {
-            double omega = _circularTrajectoryHorizontalSpeed / _circularTrajectoryRadius;
+            double omega = _trajectoryHorizontalSpeed / _trajectoryRadius;
             simDuration = _circularTrajectoryCircleCountForStop * 2 * M_PI / omega;
         }
 
@@ -1000,9 +1083,6 @@ bool NAV::ImuSimulator::initializeSplines()
         std::vector<double> splineX(splineTime.size());
         std::vector<double> splineY(splineTime.size());
         std::vector<double> splineZ(splineTime.size());
-        std::vector<double> splineRoll(splineTime.size());
-        std::vector<double> splinePitch(splineTime.size());
-        std::vector<double> splineYaw(splineTime.size());
 
         const Eigen::Vector3d& e_origin = _startPosition.e_position;
         Eigen::Vector3d lla_origin = _startPosition.latLonAlt();
@@ -1011,13 +1091,13 @@ bool NAV::ImuSimulator::initializeSplines()
 
         for (uint64_t i = 0; i < splineTime.size(); i++)
         {
-            auto phi = _circularTrajectoryHorizontalSpeed * splineTime[i] / _circularTrajectoryRadius; // Angle of the current point on the circle
-            phi *= _circularTrajectoryDirection == Direction::CW ? -1 : 1;
-            phi += _circularTrajectoryOriginAngle;
+            auto phi = _trajectoryHorizontalSpeed * splineTime[i] / _trajectoryRadius; // Angle of the current point on the circle
+            phi *= _trajectoryDirection == Direction::CW ? -1 : 1;
+            phi += _trajectoryRotationAngle;
 
-            Eigen::Vector3d n_relativePosition{ _circularTrajectoryRadius * std::sin(phi) * (1 + _circularHarmonicAmplitudeFactor * sin(phi * static_cast<double>(_circularHarmonicFrequency))), // [m]
-                                                _circularTrajectoryRadius * std::cos(phi) * (1 + _circularHarmonicAmplitudeFactor * sin(phi * static_cast<double>(_circularHarmonicFrequency))), // [m]
-                                                -_circularTrajectoryVerticalSpeed * splineTime[i] };                                                                                             // [m]
+            Eigen::Vector3d n_relativePosition{ _trajectoryRadius * std::sin(phi) * (1 + _circularHarmonicAmplitudeFactor * sin(phi * static_cast<double>(_circularHarmonicFrequency))), // [m]
+                                                _trajectoryRadius * std::cos(phi) * (1 + _circularHarmonicAmplitudeFactor * sin(phi * static_cast<double>(_circularHarmonicFrequency))), // [m]
+                                                -_trajectoryVerticalSpeed * splineTime[i] };                                                                                             // [m]
 
             Eigen::Vector3d e_relativePosition = e_quatCenter_n * n_relativePosition;
 
@@ -1031,39 +1111,148 @@ bool NAV::ImuSimulator::initializeSplines()
         _splines.x.setPoints(splineTime, splineX);
         _splines.y.setPoints(splineTime, splineY);
         _splines.z.setPoints(splineTime, splineZ);
+    }
+    else if (_trajectoryType == TrajectoryType::RoseFigure)
+    {
+        // Formulas and notation for the rose figure from https://en.wikipedia.org/wiki/Rose_(mathematics)
 
-        for (uint64_t i = 0; i < splineTime.size(); i++)
+        // Adjusting the integration bounds needs a factor * PI
+        // | d  \ n | 1   | 2   | 3   | 4   | 5   | 6   | 7   |
+        // | ------ | --- | --- | --- | --- | --- | --- | --- |
+        // | 1      | 1   | 2   | 1   | 2   | 1   | 2   | 1   |
+        // | 2      | 4   | 1   | 4   | 2   | 4   | 1   | 4   |
+        // | 3      | 3   | 6   | 1   | 6   | 3   | 2   | 3   |
+        // | 4      | 8   | 4   | 8   | 1   | 8   | 4   | 8   |
+        // | 5      | 5   | 10  | 5   | 10  | 1   | 10  | 5   |
+        // | 6      | 12  | 3   | 4   | 6   | 12  | 1   | 12  |
+        // | 7      | 7   | 14  | 7   | 14  | 7   | 14  | 1   |
+        // | 8      | 16  | 8   | 16  | 4   | 16  | 8   | 16  |
+        // | 9      | 9   | 18  | 3   | 18  | 9   | 6   | 9   |
+
+        int n = _rosePetNum;
+        int d = _rosePetDenom;
+
+        for (int i = 2; i <= n; i++) // reduction of fraction ( 4/2 ==> 2/1 )
         {
-            Eigen::Vector3d e_pos{ _splines.x(splineTime[i]),
-                                   _splines.y(splineTime[i]),
-                                   _splines.z(splineTime[i]) };
-            Eigen::Vector3d e_vel{ _splines.x.derivative(1, splineTime[i]),
-                                   _splines.y.derivative(1, splineTime[i]),
-                                   _splines.z.derivative(1, splineTime[i]) };
-
-            Eigen::Vector3d lla_position = trafo::ecef2lla_WGS84(e_pos);
-            Eigen::Vector3d n_velocity = trafo::n_Quat_e(lla_position(0), lla_position(1)) * e_vel;
-
-            Eigen::Vector3d e_normalVectorCenterCircle{ std::cos(lla_origin(0)) * std::cos(lla_origin(1)),
-                                                        std::cos(lla_origin(0)) * std::sin(lla_origin(1)),
-                                                        std::sin(lla_origin(0)) };
-
-            Eigen::Vector3d e_normalVectorCurrentPosition{ std::cos(lla_position(0)) * std::cos(lla_position(1)),
-                                                           std::cos(lla_position(0)) * std::sin(lla_position(1)),
-                                                           std::sin(lla_position(0)) };
-
-            double yaw = calcYawFromVelocity(n_velocity);
-
-            splineYaw[i] = i > 0 ? unwrapAngle(yaw, splineYaw[i - 1], M_PI) : yaw;
-
-            splineRoll[i] = (_circularTrajectoryDirection == Direction::CCW ? -1.0 : 1.0) // CCW = Right wing facing outwards, roll angle measured downwards
-                            * std::acos(e_normalVectorCurrentPosition.dot(e_normalVectorCenterCircle) / (e_normalVectorCurrentPosition.norm() * e_normalVectorCenterCircle.norm()));
-            splinePitch[i] = n_velocity.head<2>().norm() > 1e-8 ? calcPitchFromVelocity(n_velocity) : 0;
+            if (n % i == 0 && d % i == 0)
+            {
+                n /= i;
+                d /= i;
+                i--;
+            }
         }
 
-        _splines.roll.setPoints(splineTime, splineRoll);
-        _splines.pitch.setPoints(splineTime, splinePitch);
-        _splines.yaw.setPoints(splineTime, splineYaw);
+        auto isOdd = [](auto a) { return static_cast<int>(a) % 2 != 0; };
+        auto isEven = [](auto a) { return static_cast<int>(a) % 2 == 0; };
+
+        double integrationFactor = 0.0;
+        if (isOdd(d))
+        {
+            if (isOdd(n)) { integrationFactor = static_cast<double>(d); }
+            else { integrationFactor = 2.0 * static_cast<double>(d); }
+        }
+        else // if (isEven(d))
+        {
+            if (isEven(n)) { integrationFactor = static_cast<double>(d); }
+            else { integrationFactor = 2.0 * static_cast<double>(d); }
+        }
+
+        constexpr size_t nVirtPoints = 10;
+        splineTime.resize(nVirtPoints); // Preallocate points to make the spline start at the right point
+        std::vector<double> splineX(splineTime.size());
+        std::vector<double> splineY(splineTime.size());
+        std::vector<double> splineZ(splineTime.size());
+
+        Eigen::Vector3d e_origin = trafo::lla2ecef_WGS84(_startPosition.latLonAlt());
+
+        Eigen::Quaterniond e_quatCenter_n = trafo::e_Quat_n(_startPosition.latLonAlt()(0), _startPosition.latLonAlt()(1));
+
+        double lengthOld = -_roseStepLengthMax / 2.0;            // n-1 length
+        double dPhi = 0.001;                                     // Angle step size
+        double maxPhi = std::numeric_limits<double>::infinity(); // Interval for integration depending on selected stop criteria
+        if (_simulationStopCondition == StopCondition::DistanceOrCirclesOrRoses)
+        {
+            maxPhi = _roseTrajectoryCountForStop * integrationFactor * M_PI;
+        }
+
+        // k = n/d
+        double roseK = static_cast<double>(_rosePetNum) / static_cast<double>(_rosePetDenom);
+
+        _roseSimDuration = 0.0;
+
+        // We cannot input negative values or zero
+        for (double phi = dPhi; phi <= maxPhi + 10 * dPhi; phi += dPhi) // NOLINT(clang-analyzer-security.FloatLoopCounter, cert-flp30-c)
+        {
+            double length = _trajectoryRadius / roseK * math::calcEllipticalIntegral(roseK * phi, 1.0 - std::pow(roseK, 2.0));
+            double dL = length - lengthOld;
+
+            if (dL > _roseStepLengthMax)
+            {
+                phi -= dPhi;
+                dPhi /= 2.0;
+                continue;
+            }
+            if (dL < _roseStepLengthMax / 3.0) // Avoid also too small steps
+            {
+                phi -= dPhi;
+                dPhi *= 1.5;
+                continue;
+            }
+            lengthOld = length;
+
+            double time = length / _trajectoryHorizontalSpeed;
+            splineTime.push_back(time);
+            Eigen::Vector3d n_relativePosition{ _trajectoryRadius * std::cos(roseK * phi) * std::sin(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
+                                                _trajectoryRadius * std::cos(roseK * phi) * std::cos(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
+                                                -_trajectoryVerticalSpeed * time };                                                                                                          // [m]
+
+            LOG_DATA("{}: t={:8.6}s | l={:8.6}m", nameId(), time, length);
+
+            Eigen::Vector3d e_relativePosition = e_quatCenter_n * n_relativePosition;
+            Eigen::Vector3d e_position = e_origin + e_relativePosition;
+
+            splineX.push_back(e_position[0]);
+            splineY.push_back(e_position[1]);
+            splineZ.push_back(e_position[2]);
+
+            if (_simulationStopCondition == StopCondition::DistanceOrCirclesOrRoses && std::abs(maxPhi - phi) < 1.0 * dPhi)
+            {
+                LOG_TRACE("{}: Rose figure simulation duration: {:8.6}s | l={:8.6}m", nameId(), time, length);
+                _roseSimDuration = time;
+            }
+            else if (_simulationStopCondition == StopCondition::Duration && _roseSimDuration == 0.0 && time > _simulationDuration)
+            {
+                _roseSimDuration = _simulationDuration;
+                maxPhi = phi;
+            }
+        }
+
+        maxPhi = integrationFactor * M_PI;
+        double endLength = _trajectoryRadius / roseK * math::calcEllipticalIntegral(roseK * maxPhi, 1.0 - std::pow(roseK, 2.0));
+        for (size_t i = 0; i < nVirtPoints; i++)
+        {
+            double phi = maxPhi - static_cast<double>(i) * dPhi;
+            double length = _trajectoryRadius / roseK * math::calcEllipticalIntegral(roseK * phi, 1.0 - std::pow(roseK, 2.0));
+            double time = (length - endLength) / _trajectoryHorizontalSpeed;
+            splineTime[nVirtPoints - i - 1] = time;
+
+            Eigen::Vector3d n_relativePosition{ _trajectoryRadius * std::cos(roseK * phi) * std::sin(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
+                                                _trajectoryRadius * std::cos(roseK * phi) * std::cos(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
+                                                -_trajectoryVerticalSpeed * time };                                                                                                          // [m]
+
+            LOG_DATA("{}: t={:8.6}s | l={:8.6}m", nameId(), time, length);
+
+            Eigen::Vector3d e_relativePosition = e_quatCenter_n * n_relativePosition;
+            Eigen::Vector3d e_position = e_origin + e_relativePosition;
+
+            splineX[nVirtPoints - i - 1] = e_position[0];
+            splineY[nVirtPoints - i - 1] = e_position[1];
+            splineZ[nVirtPoints - i - 1] = e_position[2];
+        }
+
+        _splines.x.setPoints(splineTime, splineX);
+        _splines.y.setPoints(splineTime, splineY);
+        _splines.z.setPoints(splineTime, splineZ);
     }
     else if (_trajectoryType == TrajectoryType::Csv)
     {
@@ -1075,7 +1264,7 @@ bool NAV::ImuSimulator::initializeSplines()
             _startTime = getTimeFromCsvLine(csvData->lines.front(), csvData->description);
             if (_startTime.empty()) { return false; }
 
-            constexpr size_t nVirtPoints = 5;
+            constexpr size_t nVirtPoints = 10;
             splineTime.resize(nVirtPoints); // Preallocate points to make the spline start at the right point
             std::vector<double> splineX(splineTime.size());
             std::vector<double> splineY(splineTime.size());
@@ -1154,6 +1343,44 @@ bool NAV::ImuSimulator::initializeSplines()
         }
     }
 
+    if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::RoseFigure)
+    {
+        std::vector<double> splineRoll(splineTime.size());
+        std::vector<double> splinePitch(splineTime.size());
+        std::vector<double> splineYaw(splineTime.size());
+
+        for (uint64_t i = 0; i < splineTime.size(); i++)
+        {
+            Eigen::Vector3d e_pos{ _splines.x(splineTime[i]),
+                                   _splines.y(splineTime[i]),
+                                   _splines.z(splineTime[i]) };
+            Eigen::Vector3d e_vel{ _splines.x.derivative(1, splineTime[i]),
+                                   _splines.y.derivative(1, splineTime[i]),
+                                   _splines.z.derivative(1, splineTime[i]) };
+
+            Eigen::Vector3d lla_position = trafo::ecef2lla_WGS84(e_pos);
+            Eigen::Vector3d n_velocity = trafo::n_Quat_e(lla_position(0), lla_position(1)) * e_vel;
+
+            Eigen::Vector3d e_normalVectorCenterCircle{ std::cos(_startPosition.latLonAlt()(0)) * std::cos(_startPosition.latLonAlt()(1)),
+                                                        std::cos(_startPosition.latLonAlt()(0)) * std::sin(_startPosition.latLonAlt()(1)),
+                                                        std::sin(_startPosition.latLonAlt()(0)) };
+
+            Eigen::Vector3d e_normalVectorCurrentPosition{ std::cos(lla_position(0)) * std::cos(lla_position(1)),
+                                                           std::cos(lla_position(0)) * std::sin(lla_position(1)),
+                                                           std::sin(lla_position(0)) };
+
+            double yaw = calcYawFromVelocity(n_velocity);
+
+            splineYaw[i] = i > 0 ? unwrapAngle(yaw, splineYaw[i - 1], M_PI) : yaw;
+            splineRoll[i] = 0.0;
+            splinePitch[i] = n_velocity.head<2>().norm() > 1e-8 ? calcPitchFromVelocity(n_velocity) : 0;
+        }
+
+        _splines.roll.setPoints(splineTime, splineRoll);
+        _splines.pitch.setPoints(splineTime, splinePitch);
+        _splines.yaw.setPoints(splineTime, splineYaw);
+    }
+
     return true;
 }
 
@@ -1220,7 +1447,7 @@ bool NAV::ImuSimulator::checkStopCondition(double time, const Eigen::Vector3d& l
     {
         return time > _simulationDuration;
     }
-    if (_simulationStopCondition == StopCondition::DistanceOrCircles)
+    if (_simulationStopCondition == StopCondition::DistanceOrCirclesOrRoses)
     {
         if (_trajectoryType == TrajectoryType::Linear)
         {
@@ -1230,9 +1457,13 @@ bool NAV::ImuSimulator::checkStopCondition(double time, const Eigen::Vector3d& l
         }
         if (_trajectoryType == TrajectoryType::Circular)
         {
-            double omega = _circularTrajectoryHorizontalSpeed / _circularTrajectoryRadius;
+            double omega = _trajectoryHorizontalSpeed / _trajectoryRadius;
             double simDuration = _circularTrajectoryCircleCountForStop * 2 * M_PI / omega;
             return time > simDuration;
+        }
+        if (_trajectoryType == TrajectoryType::RoseFigure)
+        {
+            return time > _roseSimDuration;
         }
     }
     return false;
@@ -1491,6 +1722,8 @@ const char* NAV::ImuSimulator::to_string(TrajectoryType value)
         return "Circular";
     case TrajectoryType::Csv:
         return "CSV";
+    case TrajectoryType::RoseFigure:
+        return "Rose Figure";
     case TrajectoryType::COUNT:
         return "";
     }
