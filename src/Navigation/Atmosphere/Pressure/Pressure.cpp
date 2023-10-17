@@ -10,6 +10,7 @@
 
 #include "internal/gui/widgets/EnumCombo.hpp"
 #include "util/Logger.hpp"
+#include "util/Assert.h"
 
 #include "Models/StandardAtmosphere.hpp"
 
@@ -26,6 +27,10 @@ const char* to_string(PressureModel pressureModel)
         return "Const p0";
     case PressureModel::ISA:
         return "ISA";
+    case PressureModel::GPT2:
+        return "GPT2";
+    case PressureModel::GPT3:
+        return "GPT3";
     case PressureModel::COUNT:
         break;
     }
@@ -45,6 +50,10 @@ double calcTotalPressure(double altitudeMSL, PressureModel pressureModel)
         return calcTotalPressureStAtm(0);
     case PressureModel::ISA:
         return calcTotalPressureStAtm(altitudeMSL);
+    case PressureModel::GPT2:
+    case PressureModel::GPT3:
+        INS_ASSERT_USER_ERROR(false, "GPT2/GPT3 Model needs to be called separately because of parameter lookup.");
+        break;
     case PressureModel::None:
     case PressureModel::COUNT:
         break;

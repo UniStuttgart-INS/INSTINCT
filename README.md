@@ -254,6 +254,7 @@ Recommended changes to the User's ```keybindings.json```
 * [M.Sc. Thomas Topp](mailto:topp@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
 * [M.Sc. Marcel Maier](mailto:marcel.maier@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
 * [Prof. Dr. Thomas Hobiger](mailto:thomas.hobiger@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
+* [M.Sc. Rui Wang](mailto:rui.wang@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
 
 ## Version History
 

@@ -142,4 +142,15 @@ constexpr double omega_ie_Skydel = 7.2921155e-5; // FIXME: Skydel (for compatibi
 /// ω_ie_e = ω_ie_i Nominal mean angular velocity of the Earth in [rad/s], in earth coordinates
 const static Eigen::Vector3d e_omega_ie{ 0.0, 0.0, omega_ie };
 
+/// Avogadro’s number. Number of units in one mole of any substance [1/mol].
+/// Units may be electrons, atoms, ions, or molecules, depending on substance or reaction
+constexpr double N_A = 6.02214076e23;
+/// Boltzmann constant [J/K]
+constexpr double k_B = 1.380649e-23;
+/// Universal gas constant in [J/K/mol]
+constexpr double Rg = N_A * k_B;
+
+/// Molar mass of dry air in [kg/mol]
+constexpr double dMtr = 28.965e-3;
+
 } // namespace NAV::InsConst

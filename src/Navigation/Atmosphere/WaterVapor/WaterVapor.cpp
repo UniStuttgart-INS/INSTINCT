@@ -10,6 +10,7 @@
 
 #include "internal/gui/widgets/EnumCombo.hpp"
 #include "util/Logger.hpp"
+#include "util/Assert.h"
 
 #include "Models/StandardAtmosphere.hpp"
 
@@ -24,6 +25,10 @@ const char* to_string(WaterVaporModel waterVaporModel)
         return "None";
     case WaterVaporModel::ISA:
         return "ISA";
+    case WaterVaporModel::GPT2:
+        return "GPT2";
+    case WaterVaporModel::GPT3:
+        return "GPT3";
     case WaterVaporModel::COUNT:
         break;
     }
@@ -41,6 +46,10 @@ double calcWaterVaporPartialPressure(double temp, double humidity_rel, WaterVapo
     {
     case WaterVaporModel::ISA:
         return calcWaterVaporPartialPressureStAtm(temp, humidity_rel);
+    case WaterVaporModel::GPT2:
+    case WaterVaporModel::GPT3:
+        INS_ASSERT_USER_ERROR(false, "GPT2/GPT3 Model needs to be called separately because of parameter lookup.");
+        break;
     case WaterVaporModel::None:
     case WaterVaporModel::COUNT:
         break;

@@ -10,6 +10,7 @@
 
 #include "internal/gui/widgets/EnumCombo.hpp"
 #include "util/Logger.hpp"
+#include "util/Assert.h"
 
 #include "Models/StandardAtmosphere.hpp"
 
@@ -26,6 +27,10 @@ const char* to_string(TemperatureModel temperatureModel)
         return "Const T0";
     case TemperatureModel::ISA:
         return "ISA";
+    case TemperatureModel::GPT2:
+        return "GPT2";
+    case TemperatureModel::GPT3:
+        return "GPT3";
     case TemperatureModel::COUNT:
         break;
     }
@@ -45,6 +50,10 @@ double calcAbsoluteTemperature(double altitudeMSL, TemperatureModel temperatureM
         return calcAbsoluteTemperatureStAtm(0);
     case TemperatureModel::ISA:
         return calcAbsoluteTemperatureStAtm(altitudeMSL);
+    case TemperatureModel::GPT2:
+    case TemperatureModel::GPT3:
+        INS_ASSERT_USER_ERROR(false, "GPT2/GPT3 Model needs to be called separately because of parameter lookup.");
+        break;
     case TemperatureModel::None:
     case TemperatureModel::COUNT:
         break;

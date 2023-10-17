@@ -21,6 +21,8 @@ enum class WaterVaporModel : int
 {
     None,  ///< Water vapor model turned off
     ISA,   ///< ICAO Standard Atmosphere
+    GPT2,  ///< GPT2
+    GPT3,  ///< GPT3
     COUNT, ///< Amount of items in the enum
 };
 
