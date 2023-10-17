@@ -31,59 +31,47 @@ void SppKalmanFilter::gui()
             flow::ApplyChanges();
         }
 
-        if (qCalculationAlgorithm == SppKalmanFilter::QCalculationAlgorithm::VanLoan)
+        if (gui::widgets::InputDouble2WithUnit(fmt::format("Acceleration due to user motion (Hor/Ver)##{}", "SppKalmanFilter").c_str(),
+                                               configWidth, unitWidth, gui_covarianceAccel.data(), reinterpret_cast<int*>(&gui_covarianceAccelUnit), "m/√(s^3)\0m^2/s^3\0\0",
+                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
-            if (gui::widgets::InputDouble2WithUnit(fmt::format("Acceleration due to user motion (Hor/Ver)##{}", "SppKalmanFilter").c_str(),
-                                                   configWidth, unitWidth, gui_covarianceAccel.data(), reinterpret_cast<int*>(&gui_covarianceAccelUnit), "m/√(s^3)\0m^2/s^3\0\0",
-                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
-            {
-                LOG_DEBUG("{}: gui_covarianceAccel changed to {}", "SppKalmanFilter", gui_covarianceAccel);
-                LOG_DEBUG("{}: gui_covarianceAccelUnit changed to {}", "SppKalmanFilter", fmt::underlying(gui_covarianceAccelUnit));
-                flow::ApplyChanges();
-            }
-            if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the receiver clock phase drift (RW)##{}", "SppKalmanFilter").c_str(),
-                                                  configWidth, unitWidth, &gui_covarianceClkPhaseDrift, reinterpret_cast<int*>(&gui_covarianceClkPhaseDriftUnit), "m/√(s^3)\0m^2/s^3\0\0",
-                                                  0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
-            {
-                LOG_DEBUG("{}: gui_covarianceClkPhaseDrift changed to {}", "SppKalmanFilter", gui_covarianceClkPhaseDrift);
-                LOG_DEBUG("{}: gui_covarianceClkPhaseDriftUnit changed to {}", "SppKalmanFilter", fmt::underlying(gui_covarianceClkPhaseDriftUnit));
-                flow::ApplyChanges();
-            }
-            if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the receiver clock frequency drift (IRW)##{}", "SppKalmanFilter").c_str(),
-                                                  configWidth, unitWidth, &gui_covarianceClkFrequencyDrift, reinterpret_cast<int*>(&gui_covarianceClkFrequencyDriftUnit), "m/√(s)\0m^2/s\0\0",
-                                                  0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
-            {
-                LOG_DEBUG("{}: gui_covarianceClkFrequencyDrift changed to {}", "SppKalmanFilter", gui_covarianceClkFrequencyDrift);
-                LOG_DEBUG("{}: gui_covarianceClkFrequencyDriftUnit changed to {}", "SppKalmanFilter", fmt::underlying(gui_covarianceClkFrequencyDriftUnit));
-                flow::ApplyChanges();
-            }
-            if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the inter-system clock phase drift (RW)##{}", "SppKalmanFilter").c_str(),
-                                                  configWidth, unitWidth, &gui_covarianceInterSysClkPhaseDrift, reinterpret_cast<int*>(&gui_covarianceInterSysClkPhaseDriftUnit), "m/√(s^3)\0m^2/s^3\0\0",
-                                                  0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
-            {
-                LOG_DEBUG("{}: gui_covarianceInterSysClkPhaseDrift changed to {}", "SppKalmanFilter", gui_covarianceInterSysClkPhaseDrift);
-                LOG_DEBUG("{}: gui_covarianceInterSysClkPhaseDriftUnit changed to {}", "SppKalmanFilter", fmt::underlying(gui_covarianceInterSysClkPhaseDriftUnit));
-                flow::ApplyChanges();
-            }
-            if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the inter-system clock frequency drift (IRW)##{}", "SppKalmanFilter").c_str(),
-                                                  configWidth, unitWidth, &gui_covarianceInterSysClkFrequencyDrift, reinterpret_cast<int*>(&gui_covarianceInterSysClkFrequencyDriftUnit), "m/√(s)\0m^2/s\0\0",
-                                                  0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
-            {
-                LOG_DEBUG("{}: gui_covarianceInterSysClkFrequencyDrift changed to {}", "SppKalmanFilter", gui_covarianceInterSysClkFrequencyDrift);
-                LOG_DEBUG("{}: gui_covarianceInterSysClkFrequencyDriftUnit changed to {}", "SppKalmanFilter", fmt::underlying(gui_covarianceInterSysClkFrequencyDriftUnit));
-                flow::ApplyChanges();
-            }
+            LOG_DEBUG("{}: gui_covarianceAccel changed to {}", "SppKalmanFilter", gui_covarianceAccel);
+            LOG_DEBUG("{}: gui_covarianceAccelUnit changed to {}", "SppKalmanFilter", fmt::underlying(gui_covarianceAccelUnit));
+            flow::ApplyChanges();
+        }
+        if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the receiver clock phase drift (RW)##{}", "SppKalmanFilter").c_str(),
+                                              configWidth, unitWidth, &gui_covarianceClkPhaseDrift, reinterpret_cast<int*>(&gui_covarianceClkPhaseDriftUnit), "m/√(s^3)\0m^2/s^3\0\0",
+                                              0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: gui_covarianceClkPhaseDrift changed to {}", "SppKalmanFilter", gui_covarianceClkPhaseDrift);
+            LOG_DEBUG("{}: gui_covarianceClkPhaseDriftUnit changed to {}", "SppKalmanFilter", fmt::underlying(gui_covarianceClkPhaseDriftUnit));
+            flow::ApplyChanges();
+        }
+        if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the receiver clock frequency drift (IRW)##{}", "SppKalmanFilter").c_str(),
+                                              configWidth, unitWidth, &gui_covarianceClkFrequencyDrift, reinterpret_cast<int*>(&gui_covarianceClkFrequencyDriftUnit), "m/√(s)\0m^2/s\0\0",
+                                              0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: gui_covarianceClkFrequencyDrift changed to {}", "SppKalmanFilter", gui_covarianceClkFrequencyDrift);
+            LOG_DEBUG("{}: gui_covarianceClkFrequencyDriftUnit changed to {}", "SppKalmanFilter", fmt::underlying(gui_covarianceClkFrequencyDriftUnit));
+            flow::ApplyChanges();
+        }
+        if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the inter-system clock phase drift (RW)##{}", "SppKalmanFilter").c_str(),
+                                              configWidth, unitWidth, &gui_covarianceInterSysClkPhaseDrift, reinterpret_cast<int*>(&gui_covarianceInterSysClkPhaseDriftUnit), "m/√(s^3)\0m^2/s^3\0\0",
+                                              0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: gui_covarianceInterSysClkPhaseDrift changed to {}", "SppKalmanFilter", gui_covarianceInterSysClkPhaseDrift);
+            LOG_DEBUG("{}: gui_covarianceInterSysClkPhaseDriftUnit changed to {}", "SppKalmanFilter", fmt::underlying(gui_covarianceInterSysClkPhaseDriftUnit));
+            flow::ApplyChanges();
+        }
+        if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the inter-system clock frequency drift (IRW)##{}", "SppKalmanFilter").c_str(),
+                                              configWidth, unitWidth, &gui_covarianceInterSysClkFrequencyDrift, reinterpret_cast<int*>(&gui_covarianceInterSysClkFrequencyDriftUnit), "m/√(s)\0m^2/s\0\0",
+                                              0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: gui_covarianceInterSysClkFrequencyDrift changed to {}", "SppKalmanFilter", gui_covarianceInterSysClkFrequencyDrift);
+            LOG_DEBUG("{}: gui_covarianceInterSysClkFrequencyDriftUnit changed to {}", "SppKalmanFilter", fmt::underlying(gui_covarianceInterSysClkFrequencyDriftUnit));
+            flow::ApplyChanges();
         }
 
-        if (qCalculationAlgorithm == SppKalmanFilter::QCalculationAlgorithm::Taylor1)
-        {
-            ImGui::SetNextItemWidth(itemWidth);
-            if (ImGui::InputFloat(fmt::format("Standard Deviation of Process Noise", "SppKalmanFilter").c_str(), &processNoiseStandardDeviation, 0.0, 0.0, "%.2e"))
-            {
-                LOG_DEBUG("{}: processNoiseStandardDeviation changed to {}", "SppKalmanFilter", processNoiseStandardDeviation);
-                flow::ApplyChanges();
-            }
-        }
         ImGui::TreePop();
     }
 
@@ -491,30 +479,25 @@ void SppKalmanFilter::processNoiseMatrixGroves(double dt)
 {
     Eigen::Vector3d lla_pos = trafo::ecef2lla_WGS84(_e_position);
     Eigen::Quaterniond n_Quat_e = trafo::n_Quat_e(lla_pos(0), lla_pos(1));
-    Eigen::Vector3d n_velocity = n_Quat_e * _e_velocity;
-    Eigen::VectorXd x_new = _kalmanFilter.Phi(all, all) * _kalmanFilter.x(all);
-    Eigen::VectorXd n_velocity_new = n_Quat_e * x_new.block<3, 1>(3, 0);
 
-    // Groves ch. 9.4.2.2, eq. 9.156, p. 418
-    double aH_S = std::pow(processNoiseStandardDeviation, 2) / dt * (n_velocity_new(0, 0) - n_velocity(0, 0));
-    double aV_S = std::pow(processNoiseStandardDeviation, 2) / dt * (n_velocity_new(2, 0) - n_velocity(2, 0));
-
-    Eigen::DiagonalMatrix<double, 3> a_S_n(aH_S, aH_S, aV_S);                                              // Scaling matrix in n-frame
-    Eigen::Matrix3d a_S_e = n_Quat_e.toRotationMatrix().transpose() * a_S_n * n_Quat_e.toRotationMatrix(); // Scaling matrix in e-frame
-
-    // Groves ch. 9.4.2.2, eq. 9.156, p. 418
-    double cPhi_S_a = std::pow(processNoiseStandardDeviation, 2) / dt * (x_new(6, 0) - _recvClk.bias.value - _recvClk.drift.value * dt);
-    double cf_S_a = std::pow(processNoiseStandardDeviation, 2) / dt * (x_new(7) - _recvClk.drift.value);
+    Eigen::DiagonalMatrix<double, 3> a_S_n = Eigen::DiagonalMatrix<double, 3>(_covarianceAccel(0), _covarianceAccel(0), _covarianceAccel(1)); // Scaling matrix in n-frame
+    Eigen::Matrix3d a_S_e = n_Quat_e.toRotationMatrix().transpose() * a_S_n * n_Quat_e.toRotationMatrix();                                    // Scaling matrix in e-frame
 
     // Groves ch. 9.4.2.2, eq. 9.152, p. 417
     _kalmanFilter.Q(States::Pos, States::Pos) = std::pow(dt, 3) / 3.0 * a_S_e;
     _kalmanFilter.Q(States::Pos, States::Vel) = std::pow(dt, 2) / 2.0 * a_S_e;
     _kalmanFilter.Q(States::Vel, States::Pos) = _kalmanFilter.Q(States::Pos, States::Vel).transpose();
     _kalmanFilter.Q(States::Vel, States::Vel) = dt * a_S_e;
-    _kalmanFilter.Q(States::RecvClkErr, States::RecvClkErr) = cPhi_S_a * dt + cf_S_a * std::pow(dt, 3) / 3.0;
-    _kalmanFilter.Q(States::RecvClkErr, States::RecvClkDrift) = cf_S_a * std::pow(dt, 2) / 2.0;
+    _kalmanFilter.Q(States::RecvClkErr, States::RecvClkErr) = _covarianceClkPhaseDrift * dt + _covarianceClkFrequencyDrift * std::pow(dt, 3) / 3.0;
+    _kalmanFilter.Q(States::RecvClkErr, States::RecvClkDrift) = _covarianceClkFrequencyDrift * std::pow(dt, 2) / 2.0;
     _kalmanFilter.Q(States::RecvClkDrift, States::RecvClkErr) = _kalmanFilter.Q(States::RecvClkErr, States::RecvClkDrift);
-    _kalmanFilter.Q(States::RecvClkDrift, States::RecvClkDrift) = cf_S_a * dt;
+    _kalmanFilter.Q(States::RecvClkDrift, States::RecvClkDrift) = _covarianceClkFrequencyDrift * dt;
+
+    for (const auto& satSys : _allSatSysExceptRef)
+    {
+        _kalmanFilter.Q(States::InterSysErr{ satSys }, States::InterSysErr{ satSys }) = _covarianceInterSysClkPhaseDrift;
+        _kalmanFilter.Q(States::InterSysDrift{ satSys }, States::InterSysDrift{ satSys }) = _covarianceInterSysClkFrequencyDrift;
+    }
 }
 
 // ###########################################################################################################
@@ -793,8 +776,6 @@ void to_json(json& j, const SppKalmanFilter& data)
     j["gui_covarianceInterSysClkFrequencyDrift"] = data.gui_covarianceInterSysClkFrequencyDrift;
     j["_covarianceInterSysClkFrequencyDrift"] = data._covarianceInterSysClkFrequencyDrift;
 
-    j["processNoiseStandardDeviation"] = data.processNoiseStandardDeviation;
-
     j["gui_initCovariancePositionUnit"] = data.gui_initCovariancePositionUnit;
     j["gui_initCovariancePosition"] = data.gui_initCovariancePosition;
     j["_initCovariancePosition"] = data._initCovariancePosition;
@@ -837,8 +818,6 @@ void from_json(const json& j, SppKalmanFilter& data)
     if (j.contains("_covarianceInterSysClkFrequencyDrift")) { j.at("_covarianceInterSysClkFrequencyDrift").get_to(data._covarianceInterSysClkFrequencyDrift); }
     if (j.contains("gui_covarianceInterSysClkFrequencyDrift")) { j.at("gui_covarianceInterSysClkFrequencyDrift").get_to(data.gui_covarianceInterSysClkFrequencyDrift); }
     if (j.contains("gui_covarianceInterSysClkFrequencyDriftUnit")) { j.at("gui_covarianceInterSysClkFrequencyDriftUnit").get_to(data.gui_covarianceInterSysClkFrequencyDriftUnit); }
-
-    if (j.contains("processNoiseStandardDeviation")) { j.at("processNoiseStandardDeviation").get_to(data.processNoiseStandardDeviation); }
 
     // ###########################################################################################################
 

@@ -264,7 +264,121 @@
                 "estimatorType": 1,
                 "excludedSatellites": [],
                 "frequencies": 1,
+                "gnssMeasurementError": {
+                    "groves2013Params": {
+                        "sigmaR": [
+                            0.1,
+                            0.1
+                        ],
+                        "sigmaRho": [
+                            0.1,
+                            0.1
+                        ]
+                    },
+                    "model": 1,
+                    "rtklibParams": {
+                        "carrierPhaseErrorAB": [
+                            0.003,
+                            0.003
+                        ],
+                        "codeCarrierPhaseErrorRatio": [
+                            100.0,
+                            100.0
+                        ],
+                        "dopplerFrequency": 1.0
+                    }
+                },
                 "ionosphereModel": 0,
+                "kalmanFilter": {
+                    "_covarianceAccel": {
+                        "0": {
+                            "0": 9.0
+                        },
+                        "1": {
+                            "0": 2.25
+                        }
+                    },
+                    "_covarianceClkFrequencyDrift": 0.010000000000000002,
+                    "_covarianceClkPhaseDrift": 0.04000000000000001,
+                    "_covarianceInterSysClkFrequencyDrift": 0.020000000000000007,
+                    "_covarianceInterSysClkPhaseDrift": 0.08000000000000003,
+                    "_initCovarianceInterSysDrift": 0.0008987551787368178,
+                    "_initCovarianceInterSysErr": 8.987551787368178,
+                    "_initCovariancePosition": {
+                        "0": {
+                            "0": 100.0
+                        },
+                        "1": {
+                            "0": 100.0
+                        },
+                        "2": {
+                            "0": 100.0
+                        }
+                    },
+                    "_initCovarianceRecvClkDrift": 0.0008987551787368178,
+                    "_initCovarianceRecvClkErr": 8.987551787368178,
+                    "_initCovarianceVelocity": {
+                        "0": {
+                            "0": 9.0
+                        },
+                        "1": {
+                            "0": 9.0
+                        },
+                        "2": {
+                            "0": 9.0
+                        }
+                    },
+                    "gui_covarianceAccel": {
+                        "0": {
+                            "0": 3.0
+                        },
+                        "1": {
+                            "0": 1.5
+                        }
+                    },
+                    "gui_covarianceAccelUnit": 0,
+                    "gui_covarianceClkFrequencyDrift": 0.1,
+                    "gui_covarianceClkFrequencyDriftUnit": 0,
+                    "gui_covarianceClkPhaseDrift": 0.2,
+                    "gui_covarianceClkPhaseDriftUnit": 0,
+                    "gui_covarianceInterSysClkFrequencyDrift": 0.14142135623730953,
+                    "gui_covarianceInterSysClkFrequencyDriftUnit": 0,
+                    "gui_covarianceInterSysClkPhaseDrift": 0.28284271247461906,
+                    "gui_covarianceInterSysClkPhaseDriftUnit": 0,
+                    "gui_initCovarianceInterSysDrift": 1e-10,
+                    "gui_initCovarianceInterSysDriftUnit": 1,
+                    "gui_initCovarianceInterSysErr": 1e-08,
+                    "gui_initCovarianceInterSysErrUnit": 1,
+                    "gui_initCovariancePosition": {
+                        "0": {
+                            "0": 10.0
+                        },
+                        "1": {
+                            "0": 10.0
+                        },
+                        "2": {
+                            "0": 10.0
+                        }
+                    },
+                    "gui_initCovariancePositionUnit": 1,
+                    "gui_initCovarianceRecvClkDrift": 1e-10,
+                    "gui_initCovarianceRecvClkDriftUnit": 1,
+                    "gui_initCovarianceRecvClkErr": 1e-08,
+                    "gui_initCovarianceRecvClkErrUnit": 1,
+                    "gui_initCovarianceVelocity": {
+                        "0": {
+                            "0": 3.0
+                        },
+                        "1": {
+                            "0": 3.0
+                        },
+                        "2": {
+                            "0": 3.0
+                        }
+                    },
+                    "gui_initCovarianceVelocityUnit": 1,
+                    "qCalculationAlgorithm": 0
+                },
                 "nNavInfoPins": 3,
                 "troposphereModels": {
                     "zhdMappingFunction": [
@@ -299,7 +413,8 @@
                             "waterVaporModel": 0
                         }
                     ]
-                }
+                },
+                "useDoppler": true
             },
             "enabled": true,
             "id": 50,
@@ -398,7 +513,7 @@
             "data": {
                 "nInputPins": 8,
                 "nPlots": 10,
-                "overridePositionStartValues": true,
+                "overridePositionStartValues": false,
                 "pinData": [
                     {
                         "dataIdentifier": "SppSolution",
@@ -433,6 +548,9 @@
                             },
                             {
                                 "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
                             },
                             {
                                 "displayName": "X velocity ECEF [m/s]"
@@ -716,144 +834,7 @@
                                 "displayName": "ratio [-]"
                             },
                             {
-                                "displayName": "Velocity ECEF X [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF Y [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF Z [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity North [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity East [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity Down [m/s]"
-                            },
-                            {
-                                "displayName": "sdvn [m/s]"
-                            },
-                            {
-                                "displayName": "sdve [m/s]"
-                            },
-                            {
-                                "displayName": "sdvd [m/s]"
-                            },
-                            {
-                                "displayName": "sdvne [m/s]"
-                            },
-                            {
-                                "displayName": "sdved [m/s]"
-                            },
-                            {
-                                "displayName": "sdvdn [m/s]"
-                            },
-                            {
-                                "displayName": "sdvx [m/s]"
-                            },
-                            {
-                                "displayName": "sdvy [m/s]"
-                            },
-                            {
-                                "displayName": "sdvz [m/s]"
-                            },
-                            {
-                                "displayName": "sdvxy [m/s]"
-                            },
-                            {
-                                "displayName": "sdvyz [m/s]"
-                            },
-                            {
-                                "displayName": "sdvzx [m/s]"
-                            }
-                        ],
-                        "size": 0,
-                        "stride": 1
-                    },
-                    {
-                        "dataIdentifier": "RtklibPosObs",
-                        "pinType": 0,
-                        "plotData": [
-                            {
-                                "displayName": "Time [s]"
-                            },
-                            {
-                                "displayName": "GPS time of week [s]"
-                            },
-                            {
-                                "displayName": "X-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Y-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Z-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Latitude [deg]"
-                            },
-                            {
-                                "displayName": "Longitude [deg]"
-                            },
-                            {
-                                "displayName": "Altitude [m]"
-                            },
-                            {
-                                "displayName": "North/South [m]"
-                            },
-                            {
-                                "displayName": "East/West [m]"
-                            },
-                            {
-                                "displayName": "Q [-]"
-                            },
-                            {
-                                "displayName": "ns [-]"
-                            },
-                            {
-                                "displayName": "sdx [m]"
-                            },
-                            {
-                                "displayName": "sdy [m]"
-                            },
-                            {
-                                "displayName": "sdz [m]"
-                            },
-                            {
-                                "displayName": "sdn [m]"
-                            },
-                            {
-                                "displayName": "sde [m]"
-                            },
-                            {
-                                "displayName": "sdd [m]"
-                            },
-                            {
-                                "displayName": "sdxy [m]"
-                            },
-                            {
-                                "displayName": "sdyz [m]"
-                            },
-                            {
-                                "displayName": "sdzx [m]"
-                            },
-                            {
-                                "displayName": "sdne [m]"
-                            },
-                            {
-                                "displayName": "sded [m]"
-                            },
-                            {
-                                "displayName": "sddn [m]"
-                            },
-                            {
-                                "displayName": "age [s]"
-                            },
-                            {
-                                "displayName": "ratio [-]"
+                                "displayName": "Velocity norm [m/s]"
                             },
                             {
                                 "displayName": "Velocity ECEF X [m/s]"
@@ -996,144 +977,7 @@
                                 "displayName": "ratio [-]"
                             },
                             {
-                                "displayName": "Velocity ECEF X [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF Y [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF Z [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity North [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity East [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity Down [m/s]"
-                            },
-                            {
-                                "displayName": "sdvn [m/s]"
-                            },
-                            {
-                                "displayName": "sdve [m/s]"
-                            },
-                            {
-                                "displayName": "sdvd [m/s]"
-                            },
-                            {
-                                "displayName": "sdvne [m/s]"
-                            },
-                            {
-                                "displayName": "sdved [m/s]"
-                            },
-                            {
-                                "displayName": "sdvdn [m/s]"
-                            },
-                            {
-                                "displayName": "sdvx [m/s]"
-                            },
-                            {
-                                "displayName": "sdvy [m/s]"
-                            },
-                            {
-                                "displayName": "sdvz [m/s]"
-                            },
-                            {
-                                "displayName": "sdvxy [m/s]"
-                            },
-                            {
-                                "displayName": "sdvyz [m/s]"
-                            },
-                            {
-                                "displayName": "sdvzx [m/s]"
-                            }
-                        ],
-                        "size": 0,
-                        "stride": 1
-                    },
-                    {
-                        "dataIdentifier": "RtklibPosObs",
-                        "pinType": 0,
-                        "plotData": [
-                            {
-                                "displayName": "Time [s]"
-                            },
-                            {
-                                "displayName": "GPS time of week [s]"
-                            },
-                            {
-                                "displayName": "X-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Y-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Z-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Latitude [deg]"
-                            },
-                            {
-                                "displayName": "Longitude [deg]"
-                            },
-                            {
-                                "displayName": "Altitude [m]"
-                            },
-                            {
-                                "displayName": "North/South [m]"
-                            },
-                            {
-                                "displayName": "East/West [m]"
-                            },
-                            {
-                                "displayName": "Q [-]"
-                            },
-                            {
-                                "displayName": "ns [-]"
-                            },
-                            {
-                                "displayName": "sdx [m]"
-                            },
-                            {
-                                "displayName": "sdy [m]"
-                            },
-                            {
-                                "displayName": "sdz [m]"
-                            },
-                            {
-                                "displayName": "sdn [m]"
-                            },
-                            {
-                                "displayName": "sde [m]"
-                            },
-                            {
-                                "displayName": "sdd [m]"
-                            },
-                            {
-                                "displayName": "sdxy [m]"
-                            },
-                            {
-                                "displayName": "sdyz [m]"
-                            },
-                            {
-                                "displayName": "sdzx [m]"
-                            },
-                            {
-                                "displayName": "sdne [m]"
-                            },
-                            {
-                                "displayName": "sded [m]"
-                            },
-                            {
-                                "displayName": "sddn [m]"
-                            },
-                            {
-                                "displayName": "age [s]"
-                            },
-                            {
-                                "displayName": "ratio [-]"
+                                "displayName": "Velocity norm [m/s]"
                             },
                             {
                                 "displayName": "Velocity ECEF X [m/s]"
@@ -1276,144 +1120,7 @@
                                 "displayName": "ratio [-]"
                             },
                             {
-                                "displayName": "Velocity ECEF X [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF Y [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF Z [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity North [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity East [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity Down [m/s]"
-                            },
-                            {
-                                "displayName": "sdvn [m/s]"
-                            },
-                            {
-                                "displayName": "sdve [m/s]"
-                            },
-                            {
-                                "displayName": "sdvd [m/s]"
-                            },
-                            {
-                                "displayName": "sdvne [m/s]"
-                            },
-                            {
-                                "displayName": "sdved [m/s]"
-                            },
-                            {
-                                "displayName": "sdvdn [m/s]"
-                            },
-                            {
-                                "displayName": "sdvx [m/s]"
-                            },
-                            {
-                                "displayName": "sdvy [m/s]"
-                            },
-                            {
-                                "displayName": "sdvz [m/s]"
-                            },
-                            {
-                                "displayName": "sdvxy [m/s]"
-                            },
-                            {
-                                "displayName": "sdvyz [m/s]"
-                            },
-                            {
-                                "displayName": "sdvzx [m/s]"
-                            }
-                        ],
-                        "size": 0,
-                        "stride": 1
-                    },
-                    {
-                        "dataIdentifier": "RtklibPosObs",
-                        "pinType": 0,
-                        "plotData": [
-                            {
-                                "displayName": "Time [s]"
-                            },
-                            {
-                                "displayName": "GPS time of week [s]"
-                            },
-                            {
-                                "displayName": "X-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Y-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Z-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Latitude [deg]"
-                            },
-                            {
-                                "displayName": "Longitude [deg]"
-                            },
-                            {
-                                "displayName": "Altitude [m]"
-                            },
-                            {
-                                "displayName": "North/South [m]"
-                            },
-                            {
-                                "displayName": "East/West [m]"
-                            },
-                            {
-                                "displayName": "Q [-]"
-                            },
-                            {
-                                "displayName": "ns [-]"
-                            },
-                            {
-                                "displayName": "sdx [m]"
-                            },
-                            {
-                                "displayName": "sdy [m]"
-                            },
-                            {
-                                "displayName": "sdz [m]"
-                            },
-                            {
-                                "displayName": "sdn [m]"
-                            },
-                            {
-                                "displayName": "sde [m]"
-                            },
-                            {
-                                "displayName": "sdd [m]"
-                            },
-                            {
-                                "displayName": "sdxy [m]"
-                            },
-                            {
-                                "displayName": "sdyz [m]"
-                            },
-                            {
-                                "displayName": "sdzx [m]"
-                            },
-                            {
-                                "displayName": "sdne [m]"
-                            },
-                            {
-                                "displayName": "sded [m]"
-                            },
-                            {
-                                "displayName": "sddn [m]"
-                            },
-                            {
-                                "displayName": "age [s]"
-                            },
-                            {
-                                "displayName": "ratio [-]"
+                                "displayName": "Velocity norm [m/s]"
                             },
                             {
                                 "displayName": "Velocity ECEF X [m/s]"
@@ -1554,6 +1261,438 @@
                             },
                             {
                                 "displayName": "ratio [-]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity North [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity East [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity Down [m/s]"
+                            },
+                            {
+                                "displayName": "sdvn [m/s]"
+                            },
+                            {
+                                "displayName": "sdve [m/s]"
+                            },
+                            {
+                                "displayName": "sdvd [m/s]"
+                            },
+                            {
+                                "displayName": "sdvne [m/s]"
+                            },
+                            {
+                                "displayName": "sdved [m/s]"
+                            },
+                            {
+                                "displayName": "sdvdn [m/s]"
+                            },
+                            {
+                                "displayName": "sdvx [m/s]"
+                            },
+                            {
+                                "displayName": "sdvy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvxy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvyz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvzx [m/s]"
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "RtklibPosObs",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Latitude [deg]"
+                            },
+                            {
+                                "displayName": "Longitude [deg]"
+                            },
+                            {
+                                "displayName": "Altitude [m]"
+                            },
+                            {
+                                "displayName": "North/South [m]"
+                            },
+                            {
+                                "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "Q [-]"
+                            },
+                            {
+                                "displayName": "ns [-]"
+                            },
+                            {
+                                "displayName": "sdx [m]"
+                            },
+                            {
+                                "displayName": "sdy [m]"
+                            },
+                            {
+                                "displayName": "sdz [m]"
+                            },
+                            {
+                                "displayName": "sdn [m]"
+                            },
+                            {
+                                "displayName": "sde [m]"
+                            },
+                            {
+                                "displayName": "sdd [m]"
+                            },
+                            {
+                                "displayName": "sdxy [m]"
+                            },
+                            {
+                                "displayName": "sdyz [m]"
+                            },
+                            {
+                                "displayName": "sdzx [m]"
+                            },
+                            {
+                                "displayName": "sdne [m]"
+                            },
+                            {
+                                "displayName": "sded [m]"
+                            },
+                            {
+                                "displayName": "sddn [m]"
+                            },
+                            {
+                                "displayName": "age [s]"
+                            },
+                            {
+                                "displayName": "ratio [-]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity North [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity East [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity Down [m/s]"
+                            },
+                            {
+                                "displayName": "sdvn [m/s]"
+                            },
+                            {
+                                "displayName": "sdve [m/s]"
+                            },
+                            {
+                                "displayName": "sdvd [m/s]"
+                            },
+                            {
+                                "displayName": "sdvne [m/s]"
+                            },
+                            {
+                                "displayName": "sdved [m/s]"
+                            },
+                            {
+                                "displayName": "sdvdn [m/s]"
+                            },
+                            {
+                                "displayName": "sdvx [m/s]"
+                            },
+                            {
+                                "displayName": "sdvy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvxy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvyz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvzx [m/s]"
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "RtklibPosObs",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Latitude [deg]"
+                            },
+                            {
+                                "displayName": "Longitude [deg]"
+                            },
+                            {
+                                "displayName": "Altitude [m]"
+                            },
+                            {
+                                "displayName": "North/South [m]"
+                            },
+                            {
+                                "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "Q [-]"
+                            },
+                            {
+                                "displayName": "ns [-]"
+                            },
+                            {
+                                "displayName": "sdx [m]"
+                            },
+                            {
+                                "displayName": "sdy [m]"
+                            },
+                            {
+                                "displayName": "sdz [m]"
+                            },
+                            {
+                                "displayName": "sdn [m]"
+                            },
+                            {
+                                "displayName": "sde [m]"
+                            },
+                            {
+                                "displayName": "sdd [m]"
+                            },
+                            {
+                                "displayName": "sdxy [m]"
+                            },
+                            {
+                                "displayName": "sdyz [m]"
+                            },
+                            {
+                                "displayName": "sdzx [m]"
+                            },
+                            {
+                                "displayName": "sdne [m]"
+                            },
+                            {
+                                "displayName": "sded [m]"
+                            },
+                            {
+                                "displayName": "sddn [m]"
+                            },
+                            {
+                                "displayName": "age [s]"
+                            },
+                            {
+                                "displayName": "ratio [-]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity ECEF X [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity ECEF Y [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity ECEF Z [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity North [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity East [m/s]"
+                            },
+                            {
+                                "displayName": "Velocity Down [m/s]"
+                            },
+                            {
+                                "displayName": "sdvn [m/s]"
+                            },
+                            {
+                                "displayName": "sdve [m/s]"
+                            },
+                            {
+                                "displayName": "sdvd [m/s]"
+                            },
+                            {
+                                "displayName": "sdvne [m/s]"
+                            },
+                            {
+                                "displayName": "sdved [m/s]"
+                            },
+                            {
+                                "displayName": "sdvdn [m/s]"
+                            },
+                            {
+                                "displayName": "sdvx [m/s]"
+                            },
+                            {
+                                "displayName": "sdvy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvxy [m/s]"
+                            },
+                            {
+                                "displayName": "sdvyz [m/s]"
+                            },
+                            {
+                                "displayName": "sdvzx [m/s]"
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "RtklibPosObs",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Latitude [deg]"
+                            },
+                            {
+                                "displayName": "Longitude [deg]"
+                            },
+                            {
+                                "displayName": "Altitude [m]"
+                            },
+                            {
+                                "displayName": "North/South [m]"
+                            },
+                            {
+                                "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "Q [-]"
+                            },
+                            {
+                                "displayName": "ns [-]"
+                            },
+                            {
+                                "displayName": "sdx [m]"
+                            },
+                            {
+                                "displayName": "sdy [m]"
+                            },
+                            {
+                                "displayName": "sdz [m]"
+                            },
+                            {
+                                "displayName": "sdn [m]"
+                            },
+                            {
+                                "displayName": "sde [m]"
+                            },
+                            {
+                                "displayName": "sdd [m]"
+                            },
+                            {
+                                "displayName": "sdxy [m]"
+                            },
+                            {
+                                "displayName": "sdyz [m]"
+                            },
+                            {
+                                "displayName": "sdzx [m]"
+                            },
+                            {
+                                "displayName": "sdne [m]"
+                            },
+                            {
+                                "displayName": "sded [m]"
+                            },
+                            {
+                                "displayName": "sddn [m]"
+                            },
+                            {
+                                "displayName": "age [s]"
+                            },
+                            {
+                                "displayName": "ratio [-]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
                             },
                             {
                                 "displayName": "Velocity ECEF X [m/s]"
@@ -3719,9 +3858,7 @@
                         ],
                         "yAxisFlags": 2048
                     }
-                ],
-                "startValue_East": 1.6580627893946132,
-                "startValue_North": 0.5235987755982988
+                ]
             },
             "enabled": true,
             "id": 77,

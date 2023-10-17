@@ -127,9 +127,6 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     /// Q calculation algorithm
     QCalculationAlgorithm qCalculationAlgorithm = QCalculationAlgorithm::VanLoan;
 
-    /// @brief Gui selection of the process noise
-    float processNoiseStandardDeviation = 1;
-
     // ###########################################################################################################
 
     /// Possible Units for the Standard deviation of the acceleration due to user motion
