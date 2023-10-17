@@ -25,56 +25,58 @@ TEST_CASE("[GPTmodel_Series] GPT2/3 Model Functions", "[GPTmodel_Series]")
 {
     auto logger = initializeTestLogger();
 
-    GPToutput gpt2outputs;
-    GPToutput gpt3outputs;
+    std::array<std::pair<double, GPT2output>, GPT2ref_series.size()> GPT2_series_results{};
+    std::array<std::pair<double, GPT3output>, GPT3ref_series.size()> GPT3_series_results{};
 
-    Eigen::MatrixXd GPT2_series_results = Eigen::MatrixXd::Zero(41, 10);
-    Eigen::MatrixXd GPT3_series_results = Eigen::MatrixXd::Zero(41, 14);
-
-    for (int i = 0; i < 41; i++)
+    for (unsigned int i = 0; i < GPT2_series_results.size(); i++)
     {
         double mjd = 58849.0 + i * 1.0 / 4.0;
+        GPT2_series_results.at(i).first = mjd;
+        GPT2_series_results.at(i).second = GPT2_param(mjd, GRAZ);
+    }
 
-        // GPT2
-        GPT2_param(mjd, GRAZ, internal::GPT2_grid, gpt2outputs);
-        GPT2_series_results(i, 0) = mjd;
-        GPT2_series_results(i, 1) = gpt2outputs.p;
-        GPT2_series_results(i, 2) = gpt2outputs.T;
-        GPT2_series_results(i, 3) = gpt2outputs.dT;
-        GPT2_series_results(i, 4) = gpt2outputs.Tm;
-        GPT2_series_results(i, 5) = gpt2outputs.e;
-        GPT2_series_results(i, 6) = gpt2outputs.ah;
-        GPT2_series_results(i, 7) = gpt2outputs.aw;
-        GPT2_series_results(i, 8) = gpt2outputs.la;
-        GPT2_series_results(i, 9) = gpt2outputs.undu;
-
-        // GPT3
-        GPT3_param(mjd, GRAZ, internal::GPT3_grid, gpt3outputs);
-        GPT3_series_results(i, 0) = mjd;
-        GPT3_series_results(i, 1) = gpt3outputs.p;
-        GPT3_series_results(i, 2) = gpt3outputs.T;
-        GPT3_series_results(i, 3) = gpt3outputs.dT;
-        GPT3_series_results(i, 4) = gpt3outputs.Tm;
-        GPT3_series_results(i, 5) = gpt3outputs.e;
-        GPT3_series_results(i, 6) = gpt3outputs.ah;
-        GPT3_series_results(i, 7) = gpt3outputs.aw;
-        GPT3_series_results(i, 8) = gpt3outputs.la;
-        GPT3_series_results(i, 9) = gpt3outputs.undu;
-        GPT3_series_results(i, 10) = gpt3outputs.Gn_h;
-        GPT3_series_results(i, 11) = gpt3outputs.Ge_h;
-        GPT3_series_results(i, 12) = gpt3outputs.Gn_w;
-        GPT3_series_results(i, 13) = gpt3outputs.Ge_w;
+    for (unsigned int i = 0; i < GPT3_series_results.size(); i++)
+    {
+        double mjd = 58849.0 + i * 1.0 / 4.0;
+        GPT3_series_results.at(i).first = mjd;
+        GPT3_series_results.at(i).second = GPT3_param(mjd, GRAZ);
     }
 
     std::array<double, 14> epsilon{ 1e-2, 1e-2, 1e-2, 1e-2, 1e-2, 1e-2, 1e-7, 1e-7, 1e-4, 1e-2, 1e-7, 1e-7, 1e-7, 1e-7 };
 
-    for (unsigned int i = 0; i < 10; i++)
+    for (size_t i = 0; i < GPT2ref_series.size(); i++)
     {
-        CHECK_THAT(GPT2_series_results.col(i), Catch::Matchers::WithinAbs(GPT2ref_series.col(i), epsilon.at(i)));
+        CAPTURE(i);
+        REQUIRE_THAT(GPT2_series_results.at(i).first, Catch::Matchers::WithinAbs(GPT2ref_series.at(i).first, epsilon[0]));
+
+        REQUIRE_THAT(GPT2_series_results.at(i).second.p, Catch::Matchers::WithinAbs(GPT2ref_series.at(i).second.p, epsilon[1]));
+        REQUIRE_THAT(GPT2_series_results.at(i).second.T, Catch::Matchers::WithinAbs(GPT2ref_series.at(i).second.T, epsilon[2]));
+        REQUIRE_THAT(GPT2_series_results.at(i).second.dT, Catch::Matchers::WithinAbs(GPT2ref_series.at(i).second.dT, epsilon[3]));
+        REQUIRE_THAT(GPT2_series_results.at(i).second.Tm, Catch::Matchers::WithinAbs(GPT2ref_series.at(i).second.Tm, epsilon[4]));
+        REQUIRE_THAT(GPT2_series_results.at(i).second.e, Catch::Matchers::WithinAbs(GPT2ref_series.at(i).second.e, epsilon[5]));
+        REQUIRE_THAT(GPT2_series_results.at(i).second.ah, Catch::Matchers::WithinAbs(GPT2ref_series.at(i).second.ah, epsilon[6]));
+        REQUIRE_THAT(GPT2_series_results.at(i).second.aw, Catch::Matchers::WithinAbs(GPT2ref_series.at(i).second.aw, epsilon[7]));
+        REQUIRE_THAT(GPT2_series_results.at(i).second.la, Catch::Matchers::WithinAbs(GPT2ref_series.at(i).second.la, epsilon[8]));
+        REQUIRE_THAT(GPT2_series_results.at(i).second.undu, Catch::Matchers::WithinAbs(GPT2ref_series.at(i).second.undu, epsilon[9]));
     }
-    for (unsigned int i = 0; i < 14; i++)
+    for (unsigned int i = 0; i < GPT3ref_series.size(); i++)
     {
-        CHECK_THAT(GPT3_series_results.col(i), Catch::Matchers::WithinAbs(GPT3ref_series.col(i), epsilon.at(i)));
+        CAPTURE(i);
+        REQUIRE_THAT(GPT3_series_results.at(i).first, Catch::Matchers::WithinAbs(GPT3ref_series.at(i).first, epsilon[0]));
+
+        REQUIRE_THAT(GPT3_series_results.at(i).second.p, Catch::Matchers::WithinAbs(GPT3ref_series.at(i).second.p, epsilon[1]));
+        REQUIRE_THAT(GPT3_series_results.at(i).second.T, Catch::Matchers::WithinAbs(GPT3ref_series.at(i).second.T, epsilon[2]));
+        REQUIRE_THAT(GPT3_series_results.at(i).second.dT, Catch::Matchers::WithinAbs(GPT3ref_series.at(i).second.dT, epsilon[3]));
+        REQUIRE_THAT(GPT3_series_results.at(i).second.Tm, Catch::Matchers::WithinAbs(GPT3ref_series.at(i).second.Tm, epsilon[4]));
+        REQUIRE_THAT(GPT3_series_results.at(i).second.e, Catch::Matchers::WithinAbs(GPT3ref_series.at(i).second.e, epsilon[5]));
+        REQUIRE_THAT(GPT3_series_results.at(i).second.ah, Catch::Matchers::WithinAbs(GPT3ref_series.at(i).second.ah, epsilon[6]));
+        REQUIRE_THAT(GPT3_series_results.at(i).second.aw, Catch::Matchers::WithinAbs(GPT3ref_series.at(i).second.aw, epsilon[7]));
+        REQUIRE_THAT(GPT3_series_results.at(i).second.la, Catch::Matchers::WithinAbs(GPT3ref_series.at(i).second.la, epsilon[8]));
+        REQUIRE_THAT(GPT3_series_results.at(i).second.undu, Catch::Matchers::WithinAbs(GPT3ref_series.at(i).second.undu, epsilon[9]));
+        REQUIRE_THAT(GPT3_series_results.at(i).second.Gn_h, Catch::Matchers::WithinAbs(GPT3ref_series.at(i).second.Gn_h, epsilon[10]));
+        REQUIRE_THAT(GPT3_series_results.at(i).second.Ge_h, Catch::Matchers::WithinAbs(GPT3ref_series.at(i).second.Ge_h, epsilon[11]));
+        REQUIRE_THAT(GPT3_series_results.at(i).second.Gn_w, Catch::Matchers::WithinAbs(GPT3ref_series.at(i).second.Gn_w, epsilon[12]));
+        REQUIRE_THAT(GPT3_series_results.at(i).second.Ge_w, Catch::Matchers::WithinAbs(GPT3ref_series.at(i).second.Ge_w, epsilon[13]));
     }
 }
 
@@ -82,60 +84,48 @@ TEST_CASE("[GPTmodel_Grid] GPT2/3 Model Functions", "[GPTmodel_Grid]")
 {
     auto logger = initializeTestLogger();
 
-    for (int i = 0; i < 19; i++)
-    {
-        latGrid(i, 0) = (90.0 - i * 10.0) * M_PI / 180.0;
-    }
+    // GPT2/3_Grid: defining lat/lon vectors and epoch for calculation
+    Eigen::VectorXd latGrid = Eigen::VectorXd::Zero(orography_ell.rows());
+    Eigen::VectorXd lonGrid = Eigen::VectorXd::Zero(orography_ell.cols());
 
-    for (int i = 0; i < 36; i++)
-    {
-        lonGrid(i, 0) = (0.0 + i * 10.0) * M_PI / 180.0;
-    }
+    for (int i = 0; i < latGrid.rows(); i++) { latGrid(i) = (90.0 - i * 10.0) * M_PI / 180.0; }
+    for (int i = 0; i < lonGrid.rows(); i++) { lonGrid(i) = (0.0 + i * 10.0) * M_PI / 180.0; }
 
     double mjd = 58849.0;
-
-    GPToutput gpt2outputs;
-    GPToutput gpt3outputs;
 
     Eigen::Vector3d lla_pos{};
 
     // GPT2param (9)-------------------------------
-    // p,    pressure in hPa
-    // T,    temperature in degrees Celsius
-    // dT,   temperature lapse rate in degrees per km
-    // Tm,   mean temperature of the water vapor in Kelvin
-    // e,    water vapour pressure in hPa
-    // ah,   hydrostatic mapping function coefficient at zero height (VMF1)
-    // aw,   wet mapping function coefficient (VMF1)
-    // la,   water vapour decrease factor
-    // undu, geoid undulation in m
+    //  0 p,    pressure in hPa
+    //  1 T,    temperature in degrees Celsius
+    //  2 dT,   temperature lapse rate in degrees per km
+    //  3 Tm,   mean temperature of the water vapor in Kelvin
+    //  4 e,    water vapour pressure in hPa
+    //  5 ah,   hydrostatic mapping function coefficient at zero height (VMF1)
+    //  6 aw,   wet mapping function coefficient (VMF1)
+    //  7 la,   water vapour decrease factor
+    //  8 undu, geoid undulation in m
 
     // GPT3param (13) more---------------------------
-    // Gn_h, hydrostatic north gradient in m
-    // Ge_h, hydrostatic east gradient in m
-    // Gn_w, wet north gradient in m
-    // Ge_w, wet east gradient in m
+    //  9 Gn_h, hydrostatic north gradient in m
+    // 10 Ge_h, hydrostatic east gradient in m
+    // 11 Gn_w, wet north gradient in m
+    // 12 Ge_w, wet east gradient in m
 
-    std::map<int, Eigen::MatrixXd> GPT2_grid_results;
-    std::map<int, Eigen::MatrixXd> GPT3_grid_results;
-    for (int i = 0; i < 9; i++)
-    {
-        GPT2_grid_results[i] = Eigen::MatrixXd::Zero(19, 36);
-    }
-    for (int i = 0; i < 13; i++)
-    {
-        GPT3_grid_results[i] = Eigen::MatrixXd::Zero(19, 36);
-    }
+    std::array<Eigen::MatrixXd, 9> GPT2_grid_results{};
+    std::array<Eigen::MatrixXd, 13> GPT3_grid_results{};
+    for (auto& grid : GPT2_grid_results) { grid = Eigen::MatrixXd::Zero(orography_ell.rows(), orography_ell.cols()); }
+    for (auto& grid : GPT3_grid_results) { grid = Eigen::MatrixXd::Zero(orography_ell.rows(), orography_ell.cols()); }
 
-    for (int i = 0; i < 36; i++)
+    for (int i = 0; i < orography_ell.cols(); i++)
     {
-        lla_pos(1) = lonGrid(i, 0);
-        for (int j = 0; j < 19; j++)
+        lla_pos(1) = lonGrid(i);
+        for (int j = 0; j < orography_ell.rows(); j++)
         {
-            lla_pos(0) = latGrid(j, 0);
+            lla_pos(0) = latGrid(j);
             lla_pos(2) = orography_ell(j, i);
             // GPT2
-            GPT2_param(mjd, lla_pos, internal::GPT2_grid, gpt2outputs);
+            GPT2output gpt2outputs = GPT2_param(mjd, lla_pos);
             GPT2_grid_results.at(0)(j, i) = gpt2outputs.p;
             GPT2_grid_results.at(1)(j, i) = gpt2outputs.T;
             GPT2_grid_results.at(2)(j, i) = gpt2outputs.dT;
@@ -147,7 +137,7 @@ TEST_CASE("[GPTmodel_Grid] GPT2/3 Model Functions", "[GPTmodel_Grid]")
             GPT2_grid_results.at(8)(j, i) = gpt2outputs.undu;
 
             // GPT3
-            GPT3_param(mjd, lla_pos, internal::GPT3_grid, gpt3outputs);
+            GPT3output gpt3outputs = GPT3_param(mjd, lla_pos);
             GPT3_grid_results.at(0)(j, i) = gpt3outputs.p;
             GPT3_grid_results.at(1)(j, i) = gpt3outputs.T;
             GPT3_grid_results.at(2)(j, i) = gpt3outputs.dT;
@@ -177,6 +167,12 @@ TEST_CASE("[GPTmodel_Grid] GPT2/3 Model Functions", "[GPTmodel_Grid]")
     GPT2ref[7] = GPT2ref_la;
     GPT2ref[8] = GPT2ref_undu;
 
+    for (size_t i = 0; i < GPT2_grid_results.size(); i++)
+    {
+        CAPTURE(i);
+        REQUIRE_THAT(GPT2_grid_results.at(i), Catch::Matchers::WithinAbs(GPT2ref.at(static_cast<int>(i)), epsilon.at(i)));
+    }
+
     std::map<int, Eigen::MatrixXd> GPT3ref;
     GPT3ref[0] = GPT3ref_p;
     GPT3ref[1] = GPT3ref_T;
@@ -192,14 +188,10 @@ TEST_CASE("[GPTmodel_Grid] GPT2/3 Model Functions", "[GPTmodel_Grid]")
     GPT3ref[11] = GPT3ref_Gn_w;
     GPT3ref[12] = GPT3ref_Ge_w;
 
-    for (int i = 0; i < 9; i++)
+    for (size_t i = 0; i < GPT3_grid_results.size(); i++)
     {
-        CHECK_THAT(GPT2_grid_results.at(i), Catch::Matchers::WithinAbs(GPT2ref.at(i), epsilon.at(static_cast<unsigned int>(i))));
-    }
-
-    for (int i = 0; i < 13; i++)
-    {
-        CHECK_THAT(GPT3_grid_results.at(i), Catch::Matchers::WithinAbs(GPT3ref.at(i), epsilon.at(static_cast<unsigned int>(i))));
+        CAPTURE(i);
+        REQUIRE_THAT(GPT3_grid_results.at(i), Catch::Matchers::WithinAbs(GPT3ref.at(static_cast<int>(i)), epsilon.at(i)));
     }
 }
 

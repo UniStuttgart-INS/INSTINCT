@@ -9,6 +9,7 @@
 /// @file Troposphere.hpp
 /// @brief Troposphere Models
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
+/// @author Rui Wang (rui.wang@ins.uni-stuttgart.de)
 /// @date 2022-05-26
 
 #pragma once

@@ -289,8 +289,8 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
     std::array<double, COUNT> temperature{}; // Absolute temperature in [K]
     std::array<double, COUNT> waterVapor{};  // Partial pressure of water vapour in [hPa]
 
-    GPToutput gpt2outputs;
-    GPToutput gpt3outputs;
+    GPT2output gpt2outputs;
+    GPT3output gpt3outputs;
     // UTC->GPST
     auto epoch_temp = InsTime(insTime) + std::chrono::duration<long double>(insTime.leapGps2UTC());
     double mjd = static_cast<double>(epoch_temp.toMJD().mjd_day) + static_cast<double>(epoch_temp.toMJD().mjd_frac);
@@ -304,7 +304,7 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
                                                       || model.get().temperatureModel == TemperatureModel::GPT2
                                                       || model.get().waterVaporModel == WaterVaporModel::GPT2; }))
     {
-        GPT2_param(mjd, lla_pos, internal::GPT2_grid, gpt2outputs);
+        gpt2outputs = GPT2_param(mjd, lla_pos);
     }
 
     if (troposphereModels.zhdModel.first == TroposphereModel::GPT3
@@ -316,7 +316,7 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
                                                       || model.get().temperatureModel == TemperatureModel::GPT3
                                                       || model.get().waterVaporModel == WaterVaporModel::GPT3; }))
     {
-        GPT3_param(mjd, lla_pos, internal::GPT3_grid, gpt3outputs);
+        gpt3outputs = GPT3_param(mjd, lla_pos);
     }
 
     LOG_DATA("Calculating Atmosphere parameters (ZHD={}, ZWD={}, ZHDMapFunc={}, ZWDMapFunc={}, ",

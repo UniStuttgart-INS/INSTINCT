@@ -89,6 +89,21 @@ int sgn(const T& val)
     return (T(0) < val) - (val < T(0));
 }
 
+/// @brief Change the sign of x according to the value of y
+/// @param[in] x input value
+/// @param[in] y input value
+/// @return -x or +x
+template<typename T>
+T sign(const T& x, const T& y)
+{
+    // similar function 'sign' in fortran
+    if (y >= 0.0)
+    {
+        return fabs(x);
+    }
+    return -1.0 * fabs(x);
+}
+
 /// @brief Calculates the incomplete elliptical integral of the second kind
 /// @param[in] phi Interval bound the integration uses from 0 to phi
 /// @param[in] m Function parameter that is integrated 1-m*sin(t)^2

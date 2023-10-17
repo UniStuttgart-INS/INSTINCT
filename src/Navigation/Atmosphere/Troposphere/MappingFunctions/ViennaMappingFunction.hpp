@@ -9,9 +9,10 @@
 /// @file ViennaMappingFunction.hpp
 /// @brief Gridded Vienna Mapping Function
 /// @author Rui Wang (rui.wang@ins.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2023-02-22
 /// @note See https://vmf.geo.tuwien.ac.at/codes/ for code sources in matlab.
-/// @note See \cite Böhm2006
+/// @note See \cite Böhm2006 Böhm2006
 
 #pragma once
 
