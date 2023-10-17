@@ -15,12 +15,15 @@
 
 #include "util/Eigen.hpp"
 #include <vector>
+#include <set>
 
 #include "internal/Node/Node.hpp"
 #include "Navigation/GNSS/Core/Frequency.hpp"
 #include "Navigation/GNSS/Core/Code.hpp"
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "Navigation/GNSS/Positioning/SppAlgorithm.hpp"
+#include "Navigation/GNSS/Positioning/SppAlgorithmTypes.hpp"
+#include "Navigation/GNSS/Positioning/SPP/SppKalmanFilter.hpp"
 #include "Navigation/Atmosphere/Ionosphere/Ionosphere.hpp"
 #include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
 
@@ -101,6 +104,9 @@ class SinglePointPositioning : public Node
     /// Elevation cut-off angle for satellites in [rad]
     double _elevationMask = static_cast<double>(15.0_deg);
 
+    /// Boolean which enables the use of doppler observations
+    bool _useDoppler = true;
+
     /// Ionosphere Model used for the calculation
     IonosphereModel _ionosphereModel = IonosphereModel::Klobuchar;
 
@@ -113,8 +119,17 @@ class SinglePointPositioning : public Node
     /// Estimator type
     GNSS::Positioning::SPP::EstimatorType _estimatorType = GNSS::Positioning::SPP::EstimatorType::WEIGHTED_LEAST_SQUARES;
 
+    /// @brief SPP Kalman filter
+    GNSS::Positioning::SPP::SppKalmanFilter _kalmanFilter;
+
     /// State estimated by the algorithm
     GNSS::Positioning::SPP::State _state;
+
+    /// @brief All Inter-system clock error keys
+    std::vector<States::StateKeyTypes> _interSysErrs{};
+    /// @brief All Inter-system clock drift keys
+    /// @note Groves2013 does not estimate inter-system drifts, but we do for all models.
+    std::vector<States::StateKeyTypes> _interSysDrifts{};
 
     /// @brief Receive Function for the Gnss Observations
     /// @param[in] queue Queue with all the received data messages

@@ -39,9 +39,9 @@ class IonosphericCorrections
     /// @brief Ionospheric Corrections Data Storage
     struct Corrections
     {
-        SatelliteSystem satSys;     ///< Satellite System (e.g. GPS, GAL, GLO, ...)
-        AlphaBeta alphaBeta;        ///< Alpha or beta value
-        std::array<double, 4> data; ///< Data storage (3 values for GAL, otherwise 4)
+        SatelliteSystem satSys = SatSys_None; ///< Satellite System (e.g. GPS, GAL, GLO, ...)
+        AlphaBeta alphaBeta = Alpha;          ///< Alpha or beta value
+        std::array<double, 4> data{};         ///< Data storage (3 values for GAL, otherwise 4)
     };
 
     /// @brief Default constructor

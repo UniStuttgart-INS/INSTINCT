@@ -6,6 +6,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+// @file Tutorial_NMEA.dox
+// @brief NMEA Tutorial
+// @author T. Hobiger (hobiger@ins.uni-stuttgart.de)
+// @date 2022-12-01
+
 namespace Instinct {
 
 /** \page Tutorial_NMEA Learn how to use NMEA log files

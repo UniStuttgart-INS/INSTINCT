@@ -6,17 +6,22 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+// @file KalmanFilterBasics.dox
+// @brief KF Basics documentation
+// @author T. Hobiger (hobiger@ins.uni-stuttgart.de)
+// @date 2023-09-09
+
 namespace Instinct {
 
 /** \defgroup KalmanFilterBasics Basics about Kalman Filtering and how it is used in INSTINCT
 
 \section KalmanFilterBasics-Basic Basic relations
-We are going to postulate the following things about the **Kalman filter** 
+We are going to postulate the following things about the **Kalman filter**
 - The  **Kalman filter** algorithm directly emerges from Bayes' Thereom (we are going to show this below)
 - The  **Linear Kalman filter** is the best estimator in case we are dealing only with Gaussian probability density functions
 - The  **Linear Kalman filter** algorithm consists of two parts - prediction and update/correction - which can be executed continuously one after each other, while carrying the probability density function at any given epoch.
 
-For any multivariate Gaussian state of dimension \f$n\f$, we can express its Gaussian probability density function as 
+For any multivariate Gaussian state of dimension \f$n\f$, we can express its Gaussian probability density function as
 
 \fl{equation,eq-Gaussian}
 p(\boldsymbol{x})=\det((2\pi)^n\boldsymbol{\Sigma})^{-\frac{1}{2}}\cdot \exp\left(-\frac{1}{2}(\boldsymbol{x}-\boldsymbol{\mu})^T\boldsymbol{\Sigma}^{-1}(\boldsymbol{x}-\boldsymbol{\mu})\right)
@@ -34,7 +39,7 @@ The basic idea of the Kalman filter is that both, prediction and update are repr
 \f}
 The following table summarizes the meaning of these variables.
 
-| Variable  | Meaning  
+| Variable  | Meaning
 |---|---|
 |\f$\boldsymbol{\Phi}_t\f$ | \f$(n\times n)\f$ state transition matrix, which describes the linear relation between the state at time \f$(t-1)\f$ and \f$t\f$.  |
 |\f$\boldsymbol{B}_t\f$   | (linear) control-input model which is applied to the control vector \f$ \boldsymbol{u}_t\f$ (note: in many cases )\f$ \boldsymbol{u}_t\f$ is zero, in particular when we deal with an error-state Kalman filter |
@@ -42,26 +47,26 @@ The following table summarizes the meaning of these variables.
 |\f$\boldsymbol{\varepsilon}_t\f$  | process noise, which is assumed to be drawn from a zero mean multivariate normal distribution,  with covariance \f$ \boldsymbol{Q}_t \f$ so that \f$ \boldsymbol{\varepsilon}_t \sim \mathcal{N}( \boldsymbol{0},\boldsymbol{Q}_t )\f$ |
 |\f$\boldsymbol{\upsilon}_t\f$  | observation noise, which is assumed to be zero mean Gaussian white noise with covariance \f$ \boldsymbol{R}_t \f$ so that \f$ \boldsymbol{\upsilon}_t \sim \mathcal{N}( \boldsymbol{0},\boldsymbol{R}_t )\f$   |
 
-Considering now that we have a linear prediction model described above, one can compute the Gaussian probability density function after predication as 
+Considering now that we have a linear prediction model described above, one can compute the Gaussian probability density function after predication as
 \fl{equation,eq-prediction}
 	p(\boldsymbol{x}_t\, |\,\boldsymbol{u}_t,\boldsymbol{x}_{t-1})=\det((2\pi)^n\boldsymbol{Q}_t)^{-\frac{1}{2}}\cdot \exp\left(-\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)^T\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)\right).
 \f}
 
-In a similar way, one can derive the Gaussian probability density function after after making noisy observations as 
+In a similar way, one can derive the Gaussian probability density function after after making noisy observations as
 \fl{equation,eq-measurement}
 	p(\boldsymbol{z}_t\, |\,\boldsymbol{x}_t)=\det((2\pi)^m\boldsymbol{R}_t)^{-\frac{1}{2}}\cdot \exp\left(-\frac{1}{2}(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{x}_t)^T\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{x}_t)\right)
 \f}.
 
 \subsection KalmanFilterBasics-Bayes Bayes' Theorem
 
-Assumption (not proven here): Prediction and update of states with underlying Gaussian distributions lead to Gaussian distributions again. Thus, one can make use of Bayes' Theorem which states that prediction can be understood as convolution of the prior probability density function (PDF), here called "belief" \f$ bel(\boldsymbol{x}_t)\f$ with the PDF of the prediction. This means, prediction can be understood as 
+Assumption (not proven here): Prediction and update of states with underlying Gaussian distributions lead to Gaussian distributions again. Thus, one can make use of Bayes' Theorem which states that prediction can be understood as convolution of the prior probability density function (PDF), here called "belief" \f$ bel(\boldsymbol{x}_t)\f$ with the PDF of the prediction. This means, prediction can be understood as
 \fl{equation,eq-Bayes-prediction}
 bel^-(\boldsymbol{x}_t)=\int {p(\boldsymbol{x}_t\, |\,\boldsymbol{u}_t,\boldsymbol{x}_{t-1})}\cdot {bel(\boldsymbol{x}_{t-1})}\cdot d\boldsymbol{x}_{t-1}
-\f}	
+\f}
 where superscript \f${\,}^{-}\f$ indicates that we obtain a predicted belief from this equation. Moreover, we know from Bayes' Theorem that observation of a state is equal to multiplication of the PDF of the (predicted belief) with PDF of the observation. This means
 \fl{equation,eq-Bayes-update}
 bel(\boldsymbol{x}_t)^+=\eta\cdot p(\boldsymbol{z}_t\, |\,\boldsymbol{x}_t)\cdot bel^-(\boldsymbol{x}_t)
-\f}	
+\f}
 where superscript \f${\,}^{+}\f$ indicates that we obtain a new belief after making an observation which depends on the state. The factor \f$\eta\f$ makes sure that the obtained Gaussian fulfills the normalization criteria, i.e. its hyper-volume is equal to \f$1.0\f$.
 
 
@@ -69,11 +74,11 @@ where superscript \f${\,}^{+}\f$ indicates that we obtain a new belief after mak
 Putting the PDF for prediction into Bayes' Theorem we obtain
 \fl{equation,eq-Bayes-prediction01}
 bel^-(\boldsymbol{x}_t) =\eta\int \exp\left(-\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)^T\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)\right) \exp\left(-\frac{1}{2}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})^T\boldsymbol{\Sigma}^{-1}_{t-1}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})\right)\cdot d\boldsymbol{x}_{t-1}
-\f}	
+\f}
 where \f$ \boldsymbol{\mu}_{t-1}\f$ represents the expectation value of the belief before prediction. This can be formally written as
 \fl{equation,eq-Bayes-prediction02}
 bel^-(\boldsymbol{x}_t)=\eta\int \exp(-L_t)\cdot d\boldsymbol{x}_{t-1}
-\f}	
+\f}
 where
 \fl{equation,eq-Bayes-prediction03}
 L_t=\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)^T\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)
@@ -205,7 +210,7 @@ Like before, we can find the expectation value of this function, by differentiat
 \f}
 which can be rearranged to
 \fl{equation,eq-Bayes-update05}
-\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{+})=(\boldsymbol{\Sigma}_t^{-})^{-1}(\boldsymbol{\mu}_t^{+}-\boldsymbol{\mu}_t^{-}) 
+\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{+})=(\boldsymbol{\Sigma}_t^{-})^{-1}(\boldsymbol{\mu}_t^{+}-\boldsymbol{\mu}_t^{-})
 \f}
 The second derivative of \f$\boldsymbol{J}_t\f$ provides us the inverse of the covariance matrix, i.e.
 \fl{equation,eq-Bayes-update06}
@@ -218,7 +223,7 @@ which can be rewritten as
 \f}
 The equation that hold the expectation value can be re-written to
 \fl{eqnarray,eq-Bayes-update08}
-&\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{+})\\ 
+&\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{+})\\
 &=\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{+}+\boldsymbol{H}_t\boldsymbol{\mu}_t^{-}-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-})\\
 &=\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-})-\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t(\boldsymbol{\mu}_t^{+}-\boldsymbol{\mu}_t^{-})
 \f}
@@ -239,7 +244,7 @@ we obtain a very simple rule how the update has to be computed
 \f}
 However, we might want a more straightforward expression for the Kalman gain, that contains only the predicted covariance and not the one after making observations. Thus, we do a series of mathematical tricks and obtain
 \fl{eqnarray,eq-Bayes-update13}
-\boldsymbol{K}_t&=\boldsymbol{\Sigma}_t\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\\ 
+\boldsymbol{K}_t&=\boldsymbol{\Sigma}_t\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\\
 &=\boldsymbol{\Sigma}_t\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\underset{=\boldsymbol{I}}{\underbrace{(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}}}\\
 &=\boldsymbol{\Sigma}_t(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{H}^T_t\underset{=\boldsymbol{I}}{\underbrace{\boldsymbol{R}^{-1}_t\boldsymbol{R}_t}})(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
 &=\boldsymbol{\Sigma}_t(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{H}^T_t)(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
@@ -324,11 +329,11 @@ If can be easily proven that \f$\boldsymbol{R}\f$ represents
 \boldsymbol{R} = \sqrt{\boldsymbol{A} +\boldsymbol{B}}
 \f}
 
-If we start with the prediction step 
+If we start with the prediction step
 \fl{equation,eq-SQR08}
 \boldsymbol{\Sigma}_t^- =\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}^+\boldsymbol{\Phi}^T_t+\boldsymbol{Q}_t
 \f}
-We can write this (assuming we have Cholesky decomposed the covariance matrix and the process noise matrix) as 
+We can write this (assuming we have Cholesky decomposed the covariance matrix and the process noise matrix) as
 \fl{equation,eq-SQR09}
 \boldsymbol{\Gamma}^T_{\boldsymbol{\Sigma}_t^-} \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^-}
 =\boldsymbol{\Phi}_t \boldsymbol{\Gamma}^T_{\boldsymbol{\Sigma}_{t-1}^+} \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_{t-1}^+}  \boldsymbol{\Phi}^T_t+
@@ -336,7 +341,7 @@ We can write this (assuming we have Cholesky decomposed the covariance matrix an
 \f}
 This relation can also be written in the form
 \fl{equation,eq-SQR10}
-\boldsymbol{\Gamma}^T_{\boldsymbol{\Sigma}_t^-} \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^-} = 
+\boldsymbol{\Gamma}^T_{\boldsymbol{\Sigma}_t^-} \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^-} =
 \begin{bmatrix}
   \boldsymbol{\Phi}_t\boldsymbol{\Gamma}^T_{\boldsymbol{\Sigma}_{t-1}^+} & \boldsymbol{\Gamma}^T_{\boldsymbol{Q}_t}
 \end{bmatrix}
@@ -357,7 +362,7 @@ The update step is a little bit more complicated, as we need to compute the Kalm
 where \f$\boldsymbol{\Gamma}_{\boldsymbol{R}_t}\f$ is the square root of the measurement noise matrix (note: since this matrix is usually a diagonal matrix this square root of it can be compute straightforward without Cholesky decomposition)
 One can now compute the Kalman gain as
 \fl{equation,eq-SQR13}
-\boldsymbol{K}_t   = 
+\boldsymbol{K}_t   =
 \left(
 \boldsymbol{\Gamma}_{\boldsymbol{S}_t}^{-1} (\boldsymbol{\Gamma}_{\boldsymbol{S}_t}^{-1})^T
 \boldsymbol{H}_t \boldsymbol{\Gamma}^T_{\boldsymbol{\Sigma}_t^-} \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^-}
@@ -365,14 +370,14 @@ One can now compute the Kalman gain as
 \f}
 With that one can compute the updated (square root) covariance matrix as
 \fl{equation,eq-SQR14}
-\boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^+}  = 
+\boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^+}  =
 qr_R (
 \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^-}(\boldsymbol{I} -\boldsymbol{K}_t \boldsymbol{H}_t)^T,  \boldsymbol{\Gamma}_{\boldsymbol{R}_t} \boldsymbol{K}_t^T
 )
 \f}
-Prediction and update of the state works like in the standard Kalman filter, since all necessary matrices are available anyway. 
+Prediction and update of the state works like in the standard Kalman filter, since all necessary matrices are available anyway.
 
-Note: While the square root form of the Kalman filter provides more numerical stability, and better balancing of the matrices, this advantage is lost at the point where the user need to back-compute the covariances matrices from their square root equivalent. 
+Note: While the square root form of the Kalman filter provides more numerical stability, and better balancing of the matrices, this advantage is lost at the point where the user need to back-compute the covariances matrices from their square root equivalent.
 
 */
 

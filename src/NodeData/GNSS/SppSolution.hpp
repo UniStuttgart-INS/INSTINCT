@@ -22,6 +22,11 @@
 #include "Navigation/GNSS/Core/Code.hpp"
 #include "Navigation/GNSS/Core/ReceiverClock.hpp"
 
+#include "util/Container/KeyedMatrix.hpp"
+#include "Navigation/GNSS/Positioning/SPP/SppKeys.hpp"
+
+namespace States = NAV::GNSS::Positioning::SPP::States;
+
 namespace NAV
 {
 /// SPP Algorithm output
@@ -50,6 +55,10 @@ class SppSolution : public PosVel
     size_t nSatellitesPosition = 0;
     /// Amount of satellites used for the velocity calculation
     size_t nSatellitesVelocity = 0;
+    /// Amount of Parameters estimated in this epoch
+    size_t nParam = 0;
+    /// Satellite system used for the estimation besides Reference time satellite system
+    std::vector<SatelliteSystem> usedSatSysExceptRef;
 
     /// Estimated receiver clock parameter
     ReceiverClock recvClk = { .bias = { std::nan(""), std::nan("") },
@@ -72,10 +81,10 @@ class SppSolution : public PosVel
     [[nodiscard]] const Eigen::Vector3d& n_velocityStdev() const { return _n_velocityStdev; }
 
     /// Returns the  Covariance matrix in ECEF frame
-    [[nodiscard]] const Eigen::MatrixXd& e_CovarianceMatrix() const { return _e_covarianceMatrix; }
+    [[nodiscard]] const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& e_CovarianceMatrix() const { return _e_covarianceMatrix; }
 
     /// Returns the  Covariance matrix in local navigation frame
-    [[nodiscard]] const Eigen::MatrixXd& n_CovarianceMatrix() const { return _n_covarianceMatrix; }
+    [[nodiscard]] const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& n_CovarianceMatrix() const { return _n_covarianceMatrix; }
 
     // ------------------------------------------------------------- Setter ----------------------------------------------------------------
 
@@ -101,114 +110,124 @@ class SppSolution : public PosVel
 
     /// @brief Set the Covariance matrix of Least-squares estimation from pseudorange measurements
     /// @param[in] Q lsq variance
-    void setPositionClockErrorCovarianceMatrix(const Eigen::MatrixXd& Q)
+    void setPositionClockErrorCovarianceMatrix(const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& Q)
     {
         _e_positionClockErrorCovarianceMatrix = Q;
     }
 
     /// @brief Set the Covariance matrix of Least-squares estimation from pseudorange-rate measurements
     /// @param[in] Q lsq variance
-    void setVelocityClockDriftCovarianceMatrix(const Eigen::MatrixXd& Q)
+    void setVelocityClockDriftCovarianceMatrix(const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& Q)
     {
         _e_velocityClockDriftCovarianceMatrix = Q;
     }
 
     /// @brief Set the Covariance matrix of Kalman Filter estimation
     /// @param[in] Q Kalman Filter error variance
-    void setCovarianceMatrix(const Eigen::MatrixXd& Q)
+    void setCovarianceMatrix(const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& Q)
     {
         _e_covarianceMatrix = Q;
-        n_CovarianceMatrix_e();
+        std::vector<States::StateKeyTypes> interSysErrs;
+        std::vector<States::StateKeyTypes> interSysDrifts;
+        for (const auto& key : Q.colKeys())
+        {
+            if (std::get_if<States::InterSysErr>(&key))
+            {
+                interSysErrs.emplace_back(key);
+            }
+            if (std::get_if<States::InterSysDrift>(&key))
+            {
+                interSysDrifts.emplace_back(key);
+            }
+        }
+
+        n_CovarianceMatrix_e(interSysErrs, interSysDrifts);
     }
 
-    /// @brief Set the Covariance matrix of Least-squares estimation from pseudorange and pseudorange-rate measurements in the same order as Kalman Filter estimation (position, velocity, receiver clock error, receiver clock drift, inter-system clock error, inter-system clock drift))
-    void setCovarianceMatrix()
+    /// @brief Set the Covariance matrix of Least-squares estimation from pseudorange and pseudorange-rate measurements
+    /// @param[in] interSysErrs Inter-system clock error keys
+    /// @param[in] interSysDrifts Inter-system clock drift keys
+    void setCovarianceMatrix(const std::vector<States::StateKeyTypes>& interSysErrs, const std::vector<States::StateKeyTypes>& interSysDrifts)
     {
-        Eigen::Index n = 2 * _e_positionClockErrorCovarianceMatrix.cols();
-        _e_covarianceMatrix = Eigen::MatrixXd::Zero(n, n);
+        if (!_e_covarianceMatrix.hasAnyCols(States::PosVelRecvClk)) // creates states for first use
+        {
+            _e_covarianceMatrix.addRowsCols(States::PosVelRecvClk, States::PosVelRecvClk);
+            _e_covarianceMatrix.addRowsCols(interSysErrs, interSysErrs);
+            _e_covarianceMatrix.addRowsCols(interSysDrifts, interSysDrifts);
+        }
+        else // check whether interSys keys and states in _e_covariance are the same and remove or add accordingly (e. g. due to elevation mask)
+        {
+            for (const auto& key : _e_covarianceMatrix.colKeys())
+            {
+                if (std::get_if<States::InterSysErr>(&key))
+                {
+                    if (std::find(interSysErrs.begin(), interSysErrs.end(), key) != interSysErrs.end())
+                    {
+                        continue;
+                    }
+                    _e_covarianceMatrix.removeCol(key);
+                    _e_covarianceMatrix.removeRow(key);
+                }
+            }
+            for (const auto& key : _e_covarianceMatrix.colKeys())
+            {
+                if (std::get_if<States::InterSysDrift>(&key))
+                {
+                    if (std::find(interSysDrifts.begin(), interSysDrifts.end(), key) != interSysDrifts.end())
+                    {
+                        continue;
+                    }
+                    _e_covarianceMatrix.removeCol(key);
+                    _e_covarianceMatrix.removeRow(key);
+                }
+            }
+            for (size_t i = 0; i < interSysErrs.size(); i++)
+            {
+                if (std::find(_e_covarianceMatrix.colKeys().begin(), _e_covarianceMatrix.colKeys().end(), interSysErrs.at(i)) == _e_covarianceMatrix.colKeys().end())
+                {
+                    _e_covarianceMatrix.addCol(interSysErrs.at(i));
+                    _e_covarianceMatrix.addRow(interSysErrs.at(i));
+                    _e_covarianceMatrix.addCol(interSysDrifts.at(i));
+                    _e_covarianceMatrix.addRow(interSysDrifts.at(i));
+                }
+            }
+        }
 
-        _e_covarianceMatrix.block<3, 3>(0, 0) = _e_positionClockErrorCovarianceMatrix.block<3, 3>(0, 0); // variance of position
-        _e_covarianceMatrix(6, 6) = _e_positionClockErrorCovarianceMatrix(3, 3);                         // variance of receiver clock error
-        _e_covarianceMatrix.block<3, 1>(0, 6) = _e_positionClockErrorCovarianceMatrix.block<3, 1>(0, 3); // covariances between position and receiver clock error
-        _e_covarianceMatrix.block<1, 3>(6, 0) = _e_positionClockErrorCovarianceMatrix.block<1, 3>(3, 0); // covariances between position and receiver clock error
+        _e_covarianceMatrix(States::PosRecvClkErr, States::PosRecvClkErr) = _e_positionClockErrorCovarianceMatrix(States::PosRecvClkErr, States::PosRecvClkErr);
+        _e_covarianceMatrix(interSysErrs, interSysErrs) = _e_positionClockErrorCovarianceMatrix(interSysErrs, interSysErrs);
+        _e_covarianceMatrix(States::PosRecvClkErr, interSysErrs) = _e_positionClockErrorCovarianceMatrix(States::PosRecvClkErr, interSysErrs);
+        _e_covarianceMatrix(interSysErrs, States::PosRecvClkErr) = _e_positionClockErrorCovarianceMatrix(interSysErrs, States::PosRecvClkErr);
 
         if (_e_velocityClockDriftCovarianceMatrix.cols() > 0)
         {
-            _e_covarianceMatrix.block<3, 3>(3, 3) = _e_velocityClockDriftCovarianceMatrix.block<3, 3>(0, 0); // variance of velocity
-            _e_covarianceMatrix(7, 7) = _e_velocityClockDriftCovarianceMatrix(3, 3);                         // variance of receiver clock drift
-            _e_covarianceMatrix.block<3, 1>(3, 7) = _e_velocityClockDriftCovarianceMatrix.block<3, 1>(0, 3); // covariances between velocity and receiver clock drift
-            _e_covarianceMatrix.block<1, 3>(7, 3) = _e_velocityClockDriftCovarianceMatrix.block<1, 3>(3, 0); // covariances between velocity and receiver clock drift}
-
-            auto n_otherSatSys = _e_positionClockErrorCovarianceMatrix.cols() - 4; // number of other satellite systems besides time reference system
-
-            Eigen::Index i_lsq = 0;
-            Eigen::Index j_lsq = 0;
-
-            for (Eigen::Index i = 0; i < n_otherSatSys; i++)
-            {
-                for (Eigen::Index j = 0; j < n_otherSatSys; j++)
-                {
-                    _e_covarianceMatrix(8 + 2 * i, 8 + 2 * j) = _e_positionClockErrorCovarianceMatrix(4 + i_lsq, 4 + j_lsq); // variances and covariances of inter-system clock error
-
-                    if (_e_positionClockErrorCovarianceMatrix.cols() > 0)
-                    {
-                        _e_covarianceMatrix(9 + 2 * i, 9 + 2 * j) = _e_velocityClockDriftCovarianceMatrix(4 + i_lsq, 4 + j_lsq); // variances and covariances of inter-system clock drift
-                    }
-                    j_lsq += 1;
-                }
-
-                // covariances between inter-system clock estimates and position, velocity and receiver clock
-                _e_covarianceMatrix(8 + 2 * i, 0) = _e_positionClockErrorCovarianceMatrix(4 + i_lsq, 0);
-                _e_covarianceMatrix(8 + 2 * i, 1) = _e_positionClockErrorCovarianceMatrix(4 + i_lsq, 1);
-                _e_covarianceMatrix(8 + 2 * i, 2) = _e_positionClockErrorCovarianceMatrix(4 + i_lsq, 2);
-                _e_covarianceMatrix(8 + 2 * i, 6) = _e_positionClockErrorCovarianceMatrix(4 + i_lsq, 3);
-                _e_covarianceMatrix(0, 8 + 2 * i) = _e_positionClockErrorCovarianceMatrix(4 + i_lsq, 0);
-                _e_covarianceMatrix(1, 8 + 2 * i) = _e_positionClockErrorCovarianceMatrix(4 + i_lsq, 1);
-                _e_covarianceMatrix(2, 8 + 2 * i) = _e_positionClockErrorCovarianceMatrix(4 + i_lsq, 2);
-                _e_covarianceMatrix(6, 8 + 2 * i) = _e_positionClockErrorCovarianceMatrix(4 + i_lsq, 3);
-
-                if (_e_velocityClockDriftCovarianceMatrix.cols() > 0)
-                {
-                    _e_covarianceMatrix(9 + 2 * i, 3) = _e_velocityClockDriftCovarianceMatrix(4 + i_lsq, 0);
-                    _e_covarianceMatrix(9 + 2 * i, 4) = _e_velocityClockDriftCovarianceMatrix(4 + i_lsq, 1);
-                    _e_covarianceMatrix(9 + 2 * i, 5) = _e_velocityClockDriftCovarianceMatrix(4 + i_lsq, 2);
-                    _e_covarianceMatrix(9 + 2 * i, 7) = _e_velocityClockDriftCovarianceMatrix(4 + i_lsq, 3);
-                    _e_covarianceMatrix(3, 9 + 2 * i) = _e_velocityClockDriftCovarianceMatrix(4 + i_lsq, 0);
-                    _e_covarianceMatrix(4, 9 + 2 * i) = _e_velocityClockDriftCovarianceMatrix(4 + i_lsq, 1);
-                    _e_covarianceMatrix(5, 9 + 2 * i) = _e_velocityClockDriftCovarianceMatrix(4 + i_lsq, 2);
-                    _e_covarianceMatrix(7, 9 + 2 * i) = _e_velocityClockDriftCovarianceMatrix(4 + i_lsq, 3);
-                }
-
-                i_lsq += 1;
-                j_lsq = 0;
-            }
+            _e_covarianceMatrix(States::VelRecvClkDrift, States::VelRecvClkDrift) = _e_velocityClockDriftCovarianceMatrix(States::VelRecvClkDrift, States::VelRecvClkDrift);
+            _e_covarianceMatrix(interSysDrifts, interSysDrifts) = _e_velocityClockDriftCovarianceMatrix(interSysDrifts, interSysDrifts);
+            _e_covarianceMatrix(States::VelRecvClkDrift, interSysDrifts) = _e_velocityClockDriftCovarianceMatrix(States::VelRecvClkDrift, interSysDrifts);
+            _e_covarianceMatrix(interSysDrifts, States::VelRecvClkDrift) = _e_velocityClockDriftCovarianceMatrix(interSysDrifts, States::VelRecvClkDrift);
         }
-        n_CovarianceMatrix_e();
+
+        n_CovarianceMatrix_e(interSysErrs, interSysDrifts);
     }
 
     /// @brief Transforms the covariance matrix from ECEF frame to local navigation frame
-    void n_CovarianceMatrix_e()
+    /// @param[in] interSysErrs Inter-system clock error keys
+    /// @param[in] interSysDrifts Inter-system clock drift keys
+    void n_CovarianceMatrix_e(const std::vector<States::StateKeyTypes>& interSysErrs, const std::vector<States::StateKeyTypes>& interSysDrifts)
     {
-        _n_covarianceMatrix = Eigen::MatrixXd::Zero(_e_covarianceMatrix.cols(), _e_covarianceMatrix.cols());
+        _n_covarianceMatrix = _e_covarianceMatrix;
 
+        _n_covarianceMatrix(States::PosVel, States::PosVel).setZero();
         Eigen::Vector3d lla_pos = lla_position();
         Eigen::Quaterniond n_Quat_e = trafo::n_Quat_e(lla_pos(0), lla_pos(1));
-        _n_covarianceMatrix.block<3, 3>(0, 0) = n_Quat_e.toRotationMatrix() * _e_covarianceMatrix.block<3, 3>(0, 0) * n_Quat_e.conjugate().toRotationMatrix(); // variance of position
-        _n_covarianceMatrix(6, 6) = _e_covarianceMatrix(6, 6);
+        _n_covarianceMatrix(States::Pos, States::Pos) = n_Quat_e.toRotationMatrix() * _e_covarianceMatrix(States::Pos, States::Pos) * n_Quat_e.conjugate().toRotationMatrix(); // variance of position
+        _n_covarianceMatrix(States::Vel, States::Vel) = n_Quat_e.toRotationMatrix() * _e_covarianceMatrix(States::Vel, States::Vel) * n_Quat_e.toRotationMatrix();             // variance of velocity
 
-        _n_covarianceMatrix.block<3, 3>(3, 3) = n_Quat_e.toRotationMatrix() * _e_covarianceMatrix.block<3, 3>(3, 3) * n_Quat_e.toRotationMatrix(); // variance of velocity
-        _n_covarianceMatrix(7, 7) = _e_covarianceMatrix(7, 7);
-
-        auto n_otherSatSys = _n_covarianceMatrix.cols() / 2 - 4; // number of other satellite systems besides time reference system
-
-        for (Eigen::Index i = 0; i < n_otherSatSys; i++)
-        {
-            for (Eigen::Index j = 0; j < n_otherSatSys; j++)
-            {
-                _n_covarianceMatrix(8 + 2 * i, 8 + 2 * j) = _e_covarianceMatrix(8 + 2 * i, 8 + 2 * j); // variances and covariances of inter-system clock error
-                _n_covarianceMatrix(9 + 2 * i, 9 + 2 * j) = _e_covarianceMatrix(8 + 2 * i, 8 + 2 * j); // variances and covariances of inter-system clock drift
-            }
-        }
+        _n_covarianceMatrix(States::PosVel, States::RecvClk).setZero();
+        _n_covarianceMatrix(States::RecvClk, States::PosVel).setZero();
+        _n_covarianceMatrix(States::PosVel, interSysErrs).setZero();
+        _n_covarianceMatrix(interSysErrs, States::PosVel).setZero();
+        _n_covarianceMatrix(States::PosVel, interSysDrifts).setZero();
+        _n_covarianceMatrix(interSysDrifts, States::PosVel).setZero();
     }
 
     /// Extended data structure
@@ -295,14 +314,14 @@ class SppSolution : public PosVel
     Eigen::Vector3d _n_velocityStdev = Eigen::Vector3d::Zero() * std::nan("");
 
     /// Covariance matrix in ECEF coordinates (Position and clock errors from LSE)
-    Eigen::MatrixXd _e_positionClockErrorCovarianceMatrix;
+    KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes> _e_positionClockErrorCovarianceMatrix;
     /// Covariance matrix in ECEF coordinates (Velocity and clock drifts from LSE)
-    Eigen::MatrixXd _e_velocityClockDriftCovarianceMatrix;
+    KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes> _e_velocityClockDriftCovarianceMatrix;
 
     /// Covariance matrix in ECEF coordinates (Position, Velocity, clock parameter (order as in Kalman Filter estimation: position, velocity, receiver clock error, receiver clock drift, inter-system clock error, inter-system clock drift))
-    Eigen::MatrixXd _e_covarianceMatrix;
+    KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes> _e_covarianceMatrix;
     /// Covariance matrix in local navigation coordinates (Position, Velocity, clock parameter (order as in Kalman Filter estimation: position, velocity, receiver clock error, receiver clock drift, inter-system clock error, inter-system clock drift))
-    Eigen::MatrixXd _n_covarianceMatrix;
+    KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes> _n_covarianceMatrix;
 };
 
 } // namespace NAV

@@ -30,6 +30,7 @@ namespace nm = NAV::NodeManager;
 #include "Navigation/Math/VanLoan.hpp"
 
 namespace SPP = NAV::GNSS::Positioning::SPP;
+using SppKalmanFilter = SPP::SppKalmanFilter;
 
 NAV::SinglePointPositioning::SinglePointPositioning()
     : Node(typeStatic())
@@ -237,7 +238,16 @@ void NAV::SinglePointPositioning::guiConfig()
         flow::ApplyChanges();
     }
 
-    ImGui::Separator();
+    // ###########################################################################################################
+
+    ImGui::BeginHorizontal(fmt::format("Observables##{}", size_t(id)).c_str(),
+                           ImVec2(itemWidth - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x, 0.0F));
+    if (ImGui::Checkbox(fmt::format("Use Doppler in addition to Pseudoranges##{}", size_t(id)).c_str(), &_useDoppler))
+    {
+        LOG_DEBUG("{}: Using Doppler: {}", nameId(), _useDoppler);
+        flow::ApplyChanges();
+    }
+    ImGui::EndHorizontal();
 
     // ###########################################################################################################
 
@@ -272,7 +282,8 @@ void NAV::SinglePointPositioning::guiConfig()
     if (_estimatorType != SPP::EstimatorType::LEAST_SQUARES)
     {
         ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-        if (ImGui::TreeNode(fmt::format("GNSS Measurement Error##{}", size_t(id)).c_str()))
+        if (_estimatorType == SPP::EstimatorType::WEIGHTED_LEAST_SQUARES ? ImGui::TreeNode(fmt::format("GNSS Measurement Error Model##{}", size_t(id)).c_str())
+                                                                         : ImGui::TreeNode(fmt::format("Measurement noise##{}", size_t(id)).c_str()))
         {
             if (_gnssMeasurementErrorModel.ShowGuiWidgets(std::to_string(size_t(id)).c_str(), itemWidth - ImGui::GetStyle().IndentSpacing))
             {
@@ -284,6 +295,11 @@ void NAV::SinglePointPositioning::guiConfig()
     }
 
     // ###########################################################################################################
+
+    if (_estimatorType == SPP::EstimatorType::KF)
+    {
+        _kalmanFilter.gui();
+    }
 }
 
 [[nodiscard]] json NAV::SinglePointPositioning::save() const
@@ -297,13 +313,16 @@ void NAV::SinglePointPositioning::guiConfig()
     j["codes"] = _filterCode;
     j["excludedSatellites"] = _excludedSatellites;
     j["elevationMask"] = rad2deg(_elevationMask);
+    j["useDoppler"] = _useDoppler;
 
     // ###########################################################################################################
 
     j["estimatorType"] = _estimatorType;
+    j["kalmanFilter"] = _kalmanFilter;
 
     j["ionosphereModel"] = _ionosphereModel;
     j["troposphereModels"] = _troposphereModels;
+    j["gnssMeasurementError"] = _gnssMeasurementErrorModel;
 
     return j;
 }
@@ -336,12 +355,20 @@ void NAV::SinglePointPositioning::restore(json const& j)
         j.at("elevationMask").get_to(_elevationMask);
         _elevationMask = deg2rad(_elevationMask);
     }
+    if (j.contains("useDoppler"))
+    {
+        j.at("useDoppler").get_to(_useDoppler);
+    }
 
     // ###########################################################################################################
 
     if (j.contains("estimatorType"))
     {
         j.at("estimatorType").get_to(_estimatorType);
+    }
+    if (j.contains("kalmanFilter"))
+    {
+        j.at("kalmanFilter").get_to(_kalmanFilter);
     }
 
     // ###########################################################################################################
@@ -353,6 +380,10 @@ void NAV::SinglePointPositioning::restore(json const& j)
     if (j.contains("troposphereModels"))
     {
         j.at("troposphereModels").get_to(_troposphereModels);
+    }
+    if (j.contains("gnssMeasurementError"))
+    {
+        j.at("gnssMeasurementError").get_to(_gnssMeasurementErrorModel);
     }
 
     // ###########################################################################################################
@@ -369,6 +400,10 @@ bool NAV::SinglePointPositioning::initialize()
     }
 
     _state = {};
+    _kalmanFilter.initialize();
+
+    _interSysErrs.clear();
+    _interSysDrifts.clear();
 
     LOG_DEBUG("{}: initialized", nameId());
 
@@ -408,9 +443,24 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     auto gnssObs = std::static_pointer_cast<const GnssObs>(queue.extract_front());
     LOG_DATA("{}: Calculating SPP for [{}]", nameId(), gnssObs->insTime);
 
-    if (auto sppSol = calcSppSolutionLSE(_state, gnssObs, gnssNavInfos,
-                                         _ionosphereModel, _troposphereModels, _gnssMeasurementErrorModel, _estimatorType,
-                                         _filterFreq, _filterCode, _excludedSatellites, _elevationMask))
+    auto sppSol = std::make_shared<SppSolution>();
+
+    if (_estimatorType == NAV::GNSS::Positioning::SPP::EstimatorType::LEAST_SQUARES || _estimatorType == NAV::GNSS::Positioning::SPP::EstimatorType::WEIGHTED_LEAST_SQUARES)
+    {
+        sppSol = calcSppSolutionLSE(_state, gnssObs, gnssNavInfos,
+                                    _ionosphereModel, _troposphereModels, _gnssMeasurementErrorModel, _estimatorType,
+                                    _filterFreq, _filterCode, _excludedSatellites, _elevationMask, _useDoppler,
+                                    _interSysErrs, _interSysDrifts);
+    }
+    else // if (_estimatorType == NAV::GNSS::Positioning::SPP::EstimatorType::KF)
+    {
+        sppSol = calcSppSolutionKF(_kalmanFilter, gnssObs, gnssNavInfos,
+                                   _ionosphereModel, _troposphereModels, _gnssMeasurementErrorModel,
+                                   _filterFreq, _filterCode, _excludedSatellites, _elevationMask, _useDoppler,
+                                   _interSysErrs, _interSysDrifts);
+    }
+
+    if (sppSol)
     {
         _state = SPP::State{ .e_position = sppSol->e_position(),
                              .e_velocity = sppSol->e_velocity(),
