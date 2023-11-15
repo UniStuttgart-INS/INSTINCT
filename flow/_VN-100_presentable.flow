@@ -1,0 +1,1389 @@
+{
+    "colormaps": [],
+    "links": {
+        "link-36": {
+            "endPinId": 34,
+            "id": 36,
+            "startPinId": 21
+        },
+        "link-41": {
+            "endPinId": 37,
+            "id": 41,
+            "startPinId": 33
+        },
+        "link-50": {
+            "endPinId": 38,
+            "id": 50,
+            "startPinId": 46
+        },
+        "link-51": {
+            "endPinId": 26,
+            "id": 51,
+            "startPinId": 39
+        },
+        "link-52": {
+            "endPinId": 6,
+            "id": 52,
+            "startPinId": 33
+        }
+    },
+    "nodes": {
+        "node-11": {
+            "data": {
+                "nInputPins": 1,
+                "nPlots": 2,
+                "overridePositionStartValues": false,
+                "pinData": [
+                    {
+                        "dataIdentifier": "ImuObsWDelta",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "Time since startup [ns]"
+                            },
+                            {
+                                "displayName": "Mag uncomp X [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag uncomp Y [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag uncomp Z [Gauss]"
+                            },
+                            {
+                                "displayName": "Accel uncomp X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel uncomp Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel uncomp Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyro uncomp X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro uncomp Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro uncomp Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Mag Comp X [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Comp Y [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Comp Z [Gauss]"
+                            },
+                            {
+                                "displayName": "Accel Comp X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Comp Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Comp Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyro Comp X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Comp Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Comp Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Temperature [°C]"
+                            },
+                            {
+                                "displayName": "dTime [s]"
+                            },
+                            {
+                                "displayName": "dTheta X [deg]"
+                            },
+                            {
+                                "displayName": "dTheta Y [deg]"
+                            },
+                            {
+                                "displayName": "dTheta Z [deg]"
+                            },
+                            {
+                                "displayName": "dVelocity X [m/s]"
+                            },
+                            {
+                                "displayName": "dVelocity Y [m/s]"
+                            },
+                            {
+                                "displayName": "dVelocity Z [m/s]"
+                            }
+                        ],
+                        "size": 1000,
+                        "stride": 1
+                    }
+                ],
+                "plots": [
+                    {
+                        "headerText": "Acceleration",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 6,
+                                "displayName": "Accel uncomp X [m/s^2]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 6,
+                                    "legendName": "X",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 7,
+                                "displayName": "Accel uncomp Y [m/s^2]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 7,
+                                    "legendName": "Y",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 8,
+                                "displayName": "Accel uncomp Z [m/s^2]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 8,
+                                    "legendName": "Z",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Acceleration",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "xAxisScale": 0,
+                        "y1AxisLabel": "a [m/s²]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "Angular Rate",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 9,
+                                "displayName": "Gyro uncomp X [rad/s]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 9,
+                                    "legendName": "X",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 10,
+                                "displayName": "Gyro uncomp Y [rad/s]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 10,
+                                    "legendName": "Y",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 11,
+                                "displayName": "Gyro uncomp Z [rad/s]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 11,
+                                    "legendName": "Z",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Angular Rate",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "xAxisScale": 0,
+                        "y1AxisLabel": "ω [rad/s]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "yAxisFlags": 2048
+                    }
+                ]
+            },
+            "enabled": true,
+            "id": 11,
+            "inputPins": [
+                {
+                    "id": 6,
+                    "name": "IMU Measurements"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "Plot",
+            "outputPins": [],
+            "pos": {
+                "x": 1304.0,
+                "y": 142.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Plot"
+        },
+        "node-24": {
+            "data": {
+                "UartSensor": {
+                    "sensorBaudrate": 0,
+                    "sensorPort": ""
+                },
+                "asciiOutputBufferSize": 10,
+                "asyncDataOutputFrequency": 40,
+                "asyncDataOutputType": 0,
+                "binaryOutputRegister1": {
+                    "asyncMode": 1,
+                    "attitudeField": 0,
+                    "commonField": 0,
+                    "gps2Field": 0,
+                    "gpsField": 0,
+                    "imuField": 1548,
+                    "insField": 0,
+                    "rateDivisor": 16,
+                    "timeField": 513
+                },
+                "binaryOutputRegister1-Frequency": "50 Hz",
+                "binaryOutputRegister2": {
+                    "asyncMode": 0,
+                    "attitudeField": 0,
+                    "commonField": 0,
+                    "gps2Field": 0,
+                    "gpsField": 0,
+                    "imuField": 0,
+                    "insField": 0,
+                    "rateDivisor": 800,
+                    "timeField": 0
+                },
+                "binaryOutputRegister2-Frequency": "1 Hz",
+                "binaryOutputRegister3": {
+                    "asyncMode": 0,
+                    "attitudeField": 0,
+                    "commonField": 0,
+                    "gps2Field": 0,
+                    "gpsField": 0,
+                    "imuField": 0,
+                    "insField": 0,
+                    "rateDivisor": 800,
+                    "timeField": 0
+                },
+                "binaryOutputRegister3-Frequency": "1 Hz",
+                "binaryOutputRegisterMerge": 0,
+                "communicationProtocolControlRegister": {
+                    "errorMode": 1,
+                    "serialChecksum": 1,
+                    "serialCount": 0,
+                    "serialStatus": 0,
+                    "spiChecksum": 0,
+                    "spiCount": 0,
+                    "spiStatus": 0
+                },
+                "coupleImuRateOutput": true,
+                "deltaThetaAndDeltaVelocityConfigurationRegister": {
+                    "accelCompensation": 0,
+                    "earthRateCorrection": 0,
+                    "gyroCompensation": 0,
+                    "integrationFrame": 0
+                },
+                "filterStartupGyroBias": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "gpsAntennaOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "gpsCompassBaselineRegister": {
+                    "position": [
+                        1.0,
+                        0.0,
+                        0.0
+                    ],
+                    "uncertainty": [
+                        0.2540000081062317,
+                        0.2540000081062317,
+                        0.2540000081062317
+                    ]
+                },
+                "gpsConfigurationRegister": {
+                    "antPow": 1,
+                    "mode": 0,
+                    "ppsSource": 0,
+                    "rate": 5
+                },
+                "imuFilteringConfigurationRegister": {
+                    "accelFilterMode": 3,
+                    "accelWindowSize": 16,
+                    "gyroFilterMode": 3,
+                    "gyroWindowSize": 16,
+                    "magFilterMode": 0,
+                    "magWindowSize": 4,
+                    "presFilterMode": 0,
+                    "presWindowSize": 4,
+                    "tempFilterMode": 3,
+                    "tempWindowSize": 4
+                },
+                "insBasicConfigurationRegisterVn300": {
+                    "ahrsAiding": true,
+                    "estBaseline": true,
+                    "scenario": 3
+                },
+                "magneticAndGravityReferenceVectorsRegister": {
+                    "accRef": [
+                        0.0,
+                        0.0,
+                        -9.793745994567871
+                    ],
+                    "magRef": [
+                        1.0,
+                        0.0,
+                        1.7999999523162842
+                    ]
+                },
+                "magnetometerCalibrationControlRegister": {
+                    "convergeRate": 5,
+                    "hsiMode": 1,
+                    "hsiOutput": 3
+                },
+                "referenceFrameRotationMatrix": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "referenceVectorConfigurationRegister": {
+                    "position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "recalcThreshold": 1000,
+                    "useGravityModel": true,
+                    "useMagModel": true,
+                    "year": 0.0
+                },
+                "sensorModel": 0,
+                "startupFilterBiasEstimateRegister": {
+                    "accelBias": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "gyroBias": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "pressureBias": 0.0
+                },
+                "syncInPin": false,
+                "synchronizationControlRegister": {
+                    "syncInEdge": 0,
+                    "syncInMode": 3,
+                    "syncInSkipFactor": 0,
+                    "syncOutMode": 0,
+                    "syncOutPolarity": 1,
+                    "syncOutPulseWidth": 100000000,
+                    "syncOutSkipFactor": 0
+                },
+                "velocityCompensationControlRegister": {
+                    "mode": 1,
+                    "rateTuning": 0.009999999776482582,
+                    "velocityTuning": 0.10000000149011612
+                },
+                "vpeAccelerometerBasicTuningRegister": {
+                    "adaptiveFiltering": [
+                        5.0,
+                        5.0,
+                        5.0
+                    ],
+                    "adaptiveTuning": [
+                        3.0,
+                        3.0,
+                        3.0
+                    ],
+                    "baseTuning": [
+                        6.0,
+                        6.0,
+                        6.0
+                    ]
+                },
+                "vpeBasicControlRegister": {
+                    "enable": 1,
+                    "filteringMode": 1,
+                    "headingMode": 1,
+                    "tuningMode": 1
+                },
+                "vpeGyroBasicTuningRegister": {
+                    "adaptiveTuning": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "angularWalkVariance": [
+                        8.0,
+                        8.0,
+                        8.0
+                    ],
+                    "baseTuning": [
+                        4.0,
+                        4.0,
+                        4.0
+                    ]
+                },
+                "vpeMagnetometerBasicTuningRegister": {
+                    "adaptiveFiltering": [
+                        5.5,
+                        5.5,
+                        5.5
+                    ],
+                    "adaptiveTuning": [
+                        5.0,
+                        5.0,
+                        5.0
+                    ],
+                    "baseTuning": [
+                        4.0,
+                        4.0,
+                        4.0
+                    ]
+                }
+            },
+            "enabled": true,
+            "id": 24,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "VectorNav Sensor",
+            "outputPins": [
+                {
+                    "id": 20,
+                    "name": "ASCII Output"
+                },
+                {
+                    "id": 21,
+                    "name": "Binary Output 1"
+                },
+                {
+                    "id": 22,
+                    "name": "Binary Output 2"
+                },
+                {
+                    "id": 23,
+                    "name": "Binary Output 3"
+                }
+            ],
+            "pos": {
+                "x": 395.0,
+                "y": 114.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavSensor"
+        },
+        "node-31": {
+            "data": {
+                "nInputPins": 1,
+                "nPlots": 4,
+                "overridePositionStartValues": false,
+                "pinData": [
+                    {
+                        "dataIdentifier": "InertialNavSol",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "Latitude [deg]"
+                            },
+                            {
+                                "displayName": "Longitude [deg]"
+                            },
+                            {
+                                "displayName": "Altitude [m]"
+                            },
+                            {
+                                "displayName": "North/South [m]"
+                            },
+                            {
+                                "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Roll [deg]"
+                            },
+                            {
+                                "displayName": "Pitch [deg]"
+                            },
+                            {
+                                "displayName": "Yaw [deg]"
+                            },
+                            {
+                                "displayName": "Quaternion::w"
+                            },
+                            {
+                                "displayName": "Quaternion::x"
+                            },
+                            {
+                                "displayName": "Quaternion::y"
+                            },
+                            {
+                                "displayName": "Quaternion::z"
+                            }
+                        ],
+                        "size": 1000,
+                        "stride": 1
+                    }
+                ],
+                "plots": [
+                    {
+                        "headerText": "Position",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 5,
+                                "displayName": "North/South [m]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 5,
+                                    "legendName": "North/South [m]",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            6
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 599.0
+                        },
+                        "title": "Horizontal Position",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "xAxisScale": 0,
+                        "y1AxisLabel": "North/South [m]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "Altitude",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 4,
+                                "displayName": "Altitude [m]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 4,
+                                    "legendName": "Altitude [m]",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Altitude",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "xAxisScale": 0,
+                        "y1AxisLabel": "h [m]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "Orientation",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 17,
+                                "displayName": "Roll [deg]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 17,
+                                    "legendName": "Roll",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 18,
+                                "displayName": "Pitch [deg]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 18,
+                                    "legendName": "Pitch",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 19,
+                                "displayName": "Yaw [deg]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 19,
+                                    "legendName": "Yaw",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Orientation",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "xAxisScale": 0,
+                        "y1AxisLabel": "Angle [deg]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "Velocity Norm",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 10,
+                                "displayName": "Velocity norm [m/s]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 10,
+                                    "legendName": "Velocity norm [m/s]",
+                                    "lineType": 1,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Velocity Norm",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "xAxisScale": 0,
+                        "y1AxisLabel": "v [m/s]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "yAxisFlags": 2048
+                    }
+                ]
+            },
+            "enabled": true,
+            "id": 31,
+            "inputPins": [
+                {
+                    "id": 26,
+                    "name": "PosVelAtt"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "Plot",
+            "outputPins": [],
+            "pos": {
+                "x": 1304.0,
+                "y": 254.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Plot"
+        },
+        "node-35": {
+            "data": {
+                "forceStatic": false,
+                "outputType": 0,
+                "posVelSource": 0
+            },
+            "enabled": true,
+            "id": 35,
+            "inputPins": [
+                {
+                    "id": 34,
+                    "name": "Binary Output"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "Binary Converter",
+            "outputPins": [
+                {
+                    "id": 33,
+                    "name": "ImuObs"
+                }
+            ],
+            "pos": {
+                "x": 616.0,
+                "y": 142.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavBinaryConverter"
+        },
+        "node-40": {
+            "data": {
+                "angularRateEarthRotationCompensationEnabled": true,
+                "angularRateTransportRateCompensationEnabled": true,
+                "centrifgalAccelerationCompensationEnabled": true,
+                "coriolisAccelerationCompensationEnabled": true,
+                "gravitationModel": 4,
+                "integrationAlgorithm": 0,
+                "integrationFrame": 1,
+                "prefereTimeSinceStartupOverInsTime": false,
+                "prefereUncompensatedData": false,
+                "showCorrectionsInputPin": false
+            },
+            "enabled": true,
+            "id": 40,
+            "inputPins": [
+                {
+                    "id": 37,
+                    "name": "ImuObs"
+                },
+                {
+                    "id": 38,
+                    "name": "PosVelAttInit"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "IMU Integrator",
+            "outputPins": [
+                {
+                    "id": 39,
+                    "name": "InertialNavSol"
+                }
+            ],
+            "pos": {
+                "x": 952.0,
+                "y": 254.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "ImuIntegrator"
+        },
+        "node-49": {
+            "data": {
+                "attitudeMode": 0,
+                "initDuration": 5.0,
+                "initTime": {
+                    "mjd_day": 60244,
+                    "mjd_frac": 0.6734027777777778
+                },
+                "initTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
+                },
+                "overridePosition": true,
+                "overridePositionValues": {
+                    "frame": "LLA",
+                    "position": {
+                        "0": {
+                            "0": 48.78292499999999
+                        },
+                        "1": {
+                            "0": 9.175127
+                        },
+                        "2": {
+                            "0": 250.00000000222695
+                        }
+                    }
+                },
+                "overrideRollPitchYaw": [
+                    true,
+                    true,
+                    true
+                ],
+                "overrideRollPitchYawValues": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "overrideVelocity": 2,
+                "overrideVelocityValues": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "positionAccuracyThreshold": 10.0,
+                "velocityAccuracyThreshold": 10.0
+            },
+            "enabled": true,
+            "id": 49,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "PosVelAtt Initializer",
+            "outputPins": [
+                {
+                    "id": 46,
+                    "name": "PosVelAtt"
+                }
+            ],
+            "pos": {
+                "x": 1002.0,
+                "y": 373.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "PosVelAttInitializer"
+        },
+        "node-53": {
+            "data": null,
+            "enabled": true,
+            "id": 53,
+            "inputPins": [],
+            "kind": "GroupBox",
+            "name": "Read Data",
+            "outputPins": [],
+            "pos": {
+                "x": 368.0,
+                "y": 64.0
+            },
+            "size": {
+                "x": 512.0,
+                "y": 186.0
+            },
+            "type": "GroupBox"
+        },
+        "node-54": {
+            "data": null,
+            "enabled": true,
+            "id": 54,
+            "inputPins": [],
+            "kind": "GroupBox",
+            "name": "Inertial Navigation",
+            "outputPins": [],
+            "pos": {
+                "x": 928.0,
+                "y": 208.0
+            },
+            "size": {
+                "x": 320.0,
+                "y": 218.0
+            },
+            "type": "GroupBox"
+        },
+        "node-55": {
+            "data": null,
+            "enabled": true,
+            "id": 55,
+            "inputPins": [],
+            "kind": "GroupBox",
+            "name": "Visualization",
+            "outputPins": [],
+            "pos": {
+                "x": 1280.0,
+                "y": 96.0
+            },
+            "size": {
+                "x": 224.0,
+                "y": 218.0
+            },
+            "type": "GroupBox"
+        }
+    }
+}
