@@ -1527,7 +1527,7 @@ bool NAV::Plot::initialize()
             plotData.hasData = false;
             plotData.buffer.clear();
         }
-        if (pinData.dynamicDataStartIndex != -1) // Erase all dynamic data
+        if (pinData.dynamicDataStartIndex != -1 && static_cast<int>(pinData.plotData.size()) >= pinData.dynamicDataStartIndex) // Erase all dynamic data
         {
             pinData.plotData.erase(pinData.plotData.begin() + pinData.dynamicDataStartIndex, pinData.plotData.end());
         }
