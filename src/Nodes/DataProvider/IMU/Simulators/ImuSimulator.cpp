@@ -28,7 +28,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
 
-#include "NodeData/IMU/ImuObs.hpp"
+#include "NodeData/IMU/ImuObsSimulated.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
 
 NAV::ImuSimulator::ImuSimulator()
@@ -39,7 +39,7 @@ NAV::ImuSimulator::ImuSimulator()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 677, 580 };
 
-    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuSimulator::pollImuObs);
+    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObsSimulated::type() }, &ImuSimulator::pollImuObs);
     nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuSimulator::pollPosVelAtt);
 }
 
@@ -1489,7 +1489,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(size_t /* pin
         return obs;
     }
 
-    auto obs = std::make_shared<ImuObs>(_imuPos);
+    auto obs = std::make_shared<ImuObsSimulated>(_imuPos);
     obs->timeSinceStartup = static_cast<uint64_t>(imuUpdateTime * 1e9);
     obs->insTime = _startTime + std::chrono::duration<double>(imuUpdateTime);
     LOG_DATA("{}: Simulating IMU data for time [{}]", nameId(), obs->insTime.toYMDHMS());
@@ -1551,18 +1551,32 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(size_t /* pin
 
     // ------------------------------------------------------------ Angular rates --------------------------------------------------------------
 
-    Eigen::Vector3d omega_ip_p = p_calcOmega_ip(imuUpdateTime, Eigen::Vector3d{ roll, pitch, yaw }, b_Quat_n, n_omega_ie, n_omega_en);
-    LOG_DATA("{}: [{:8.3f}] omega_ip_p = {} [rad/s]", nameId(), imuUpdateTime, omega_ip_p.transpose());
+    Eigen::Vector3d n_omega_ip = n_calcOmega_ip(imuUpdateTime, Eigen::Vector3d{ roll, pitch, yaw }, b_Quat_n.conjugate(), n_omega_ie, n_omega_en);
+
+    // ω_ib_b = b_Quat_n * ω_ib_n
+    //                            = 0
+    // ω_ip_p = p_Quat_b * (ω_ib_b + ω_bp_b) = p_Quat_b * ω_ib_b
+    Eigen::Vector3d p_omega_ip = _imuPos.p_quatGyro_b() * b_Quat_n * n_omega_ip;
+    LOG_DATA("{}: [{:8.3f}] p_omega_ip = {} [rad/s]", nameId(), imuUpdateTime, p_omega_ip.transpose());
 
     // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
 
     obs->accelCompXYZ = accel_p;
     obs->accelUncompXYZ = accel_p;
-    obs->gyroCompXYZ = omega_ip_p;
-    obs->gyroUncompXYZ = omega_ip_p;
+    obs->gyroCompXYZ = p_omega_ip;
+    obs->gyroUncompXYZ = p_omega_ip;
+    // obs->magCompXYZ.emplace(0, 0, 0);
+    // obs->magUncompXYZ.emplace(0, 0, 0);
 
-    obs->magCompXYZ.emplace(0, 0, 0);
-    obs->magUncompXYZ.emplace(0, 0, 0);
+    auto e_Quat_n = n_Quat_e.conjugate();
+
+    obs->n_accelUncomp = n_accel;
+    obs->n_gyroUncomp = n_omega_ip;
+    obs->n_magUncomp.setZero();
+
+    obs->e_accelUncomp = e_Quat_n * n_accel;
+    obs->e_gyroUncomp = e_Quat_n * n_omega_ip;
+    obs->e_magUncomp.setZero();
 
     _imuUpdateCnt++;
     invokeCallbacks(OUTPUT_PORT_INDEX_IMU_OBS, obs);
@@ -1650,16 +1664,14 @@ Eigen::Vector3d NAV::ImuSimulator::n_calcTrajectoryAccel(double time, const Eige
     return e_DCM_dot_n * e_vel + n_Quat_e * e_accel;
 }
 
-Eigen::Vector3d NAV::ImuSimulator::p_calcOmega_ip(double time,
+Eigen::Vector3d NAV::ImuSimulator::n_calcOmega_ip(double time,
                                                   const Eigen::Vector3d& rollPitchYaw,
-                                                  const Eigen::Quaterniond& b_Quat_n,
+                                                  const Eigen::Quaterniond& n_Quat_b,
                                                   const Eigen::Vector3d& n_omega_ie,
                                                   const Eigen::Vector3d& n_omega_en) const
 {
     const auto& R = rollPitchYaw(0);
     const auto& P = rollPitchYaw(1);
-
-    Eigen::Quaterniond n_Quat_b = b_Quat_n.conjugate();
 
     // #########################################################################################################################################
 
@@ -1702,12 +1714,7 @@ Eigen::Vector3d NAV::ImuSimulator::p_calcOmega_ip(double time,
         n_omega_ib += n_omega_en;
     }
 
-    // ω_ib_b = b_Quat_n * ω_ib_n
-    Eigen::Vector3d b_omega_ib = b_Quat_n * n_omega_ib;
-
-    //                            = 0
-    // ω_ip_p = p_Quat_b * (ω_ib_b + ω_bp_b) = p_Quat_b * ω_ib_b
-    return _imuPos.p_quatGyro_b() * b_omega_ib;
+    return n_omega_ib;
 }
 
 const char* NAV::ImuSimulator::to_string(TrajectoryType value)

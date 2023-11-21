@@ -9,6 +9,7 @@
 #include "ImuDataLogger.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
+#include "NodeData/IMU/ImuObsSimulated.hpp"
 
 #include "util/Logger.hpp"
 
@@ -28,7 +29,7 @@ NAV::ImuDataLogger::ImuDataLogger()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 380, 70 };
 
-    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuDataLogger::writeObservation);
+    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, { NAV::ImuObs::type(), NAV::ImuObsSimulated::type() }, &ImuDataLogger::writeObservation);
 }
 
 NAV::ImuDataLogger::~ImuDataLogger()
@@ -81,6 +82,13 @@ void NAV::ImuDataLogger::restore(json const& j)
     }
 }
 
+void NAV::ImuDataLogger::afterCreateLink([[maybe_unused]] OutputPin& startPin, [[maybe_unused]] InputPin& endPin)
+{
+    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
+
+    doDeinitialize();
+}
+
 void NAV::ImuDataLogger::flush()
 {
     _filestream.flush();
@@ -101,7 +109,19 @@ bool NAV::ImuDataLogger::initialize()
                 << "UnCompMagX [Gauss],UnCompMagY [Gauss],UnCompMagZ [Gauss],"
                 << "UnCompAccX [m/s^2],UnCompAccY [m/s^2],UnCompAccZ [m/s^2],"
                 << "UnCompGyroX [rad/s],UnCompGyroY [rad/s],UnCompGyroZ [rad/s],"
-                << "Temperature [Celsius]" << std::endl;
+                << "Temperature [Celsius]";
+    if (auto* sourcePin = inputPins[INPUT_PORT_INDEX_IMU_OBS].link.getConnectedPin();
+        sourcePin && sourcePin->dataIdentifier.front() == ImuObsSimulated::type())
+    {
+        _filestream << ","
+                    << "MagN [Gauss],MagE [Gauss],MagD [Gauss],"
+                    << "AccN [m/s^2],AccE [m/s^2],AccD [m/s^2],"
+                    << "GyroN [rad/s],GyroE [rad/s],GyroD [rad/s],"
+                    << "ECEF MagX [Gauss],ECEF MagY [Gauss],ECEF MagZ [Gauss],"
+                    << "ECEF AccX [m/s^2],ECEF AccY [m/s^2],ECEF AccZ [m/s^2],"
+                    << "ECEF GyroX [rad/s],ECEF GyroY [rad/s],ECEF GyroZ [rad/s]";
+    }
+    _filestream << std::endl;
 
     return true;
 }
@@ -195,5 +215,19 @@ void NAV::ImuDataLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, s
     {
         _filestream << obs->temperature.value();
     }
+
+    if (auto* sourcePin = inputPins[INPUT_PORT_INDEX_IMU_OBS].link.getConnectedPin();
+        sourcePin && sourcePin->dataIdentifier.front() == ImuObsSimulated::type())
+    {
+        auto simObs = std::static_pointer_cast<const ImuObsSimulated>(obs);
+
+        _filestream << "," << simObs->n_magUncomp.x() << "," << simObs->n_magUncomp.y() << "," << simObs->n_magUncomp.z();
+        _filestream << "," << simObs->n_accelUncomp.x() << "," << simObs->n_accelUncomp.y() << "," << simObs->n_accelUncomp.z();
+        _filestream << "," << simObs->n_gyroUncomp.x() << "," << simObs->n_gyroUncomp.y() << "," << simObs->n_gyroUncomp.z();
+        _filestream << "," << simObs->e_magUncomp.x() << "," << simObs->e_magUncomp.y() << "," << simObs->e_magUncomp.z();
+        _filestream << "," << simObs->e_accelUncomp.x() << "," << simObs->e_accelUncomp.y() << "," << simObs->e_accelUncomp.z();
+        _filestream << "," << simObs->e_gyroUncomp.x() << "," << simObs->e_gyroUncomp.y() << "," << simObs->e_gyroUncomp.z();
+    }
+
     _filestream << '\n';
 }

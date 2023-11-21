@@ -58,10 +58,17 @@ class ImuDataLogger : public Node, public FileWriter, public CommonLog
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
+    /// @brief Called when a new link was established
+    /// @param[in] startPin Pin where the link starts
+    /// @param[in] endPin Pin where the link ends
+    void afterCreateLink(OutputPin& startPin, InputPin& endPin) override;
+
     /// @brief Function called by the flow executer after finishing to flush out remaining data
     void flush() override;
 
   private:
+    constexpr static size_t INPUT_PORT_INDEX_IMU_OBS = 0; ///< @brief ImuObs/ImuObsSimulated
+
     /// @brief Initialize the node
     bool initialize() override;
 

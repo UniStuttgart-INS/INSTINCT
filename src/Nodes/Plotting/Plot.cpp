@@ -355,6 +355,7 @@ NAV::Plot::Plot()
                         RtklibPosObs::type(),
                         UbloxObs::type(),
                         ImuObs::type(),
+                        ImuObsSimulated::type(),
                         KvhObs::type(),
                         ImuObsWDelta::type(),
                         VectorNavBinaryOutput::type() };
@@ -1906,6 +1907,52 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "Gyro Comp Z [rad/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Temperature [°C]");
         }
+        else if (startPin.dataIdentifier.front() == ImuObsSimulated::type())
+        {
+            // NodeData
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
+            // ImuObs
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Time since startup [ns]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Mag uncomp X [Gauss]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Mag uncomp Y [Gauss]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Mag uncomp Z [Gauss]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accel uncomp X [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accel uncomp Y [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accel uncomp Z [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyro uncomp X [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyro uncomp Y [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyro uncomp Z [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Mag Comp X [Gauss]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Mag Comp Y [Gauss]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Mag Comp Z [Gauss]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accel Comp X [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accel Comp Y [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accel Comp Z [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyro Comp X [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyro Comp Y [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyro Comp Z [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Temperature [°C]");
+            // ImuObsSimulated
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Mag N [Gauss]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Mag E [Gauss]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Mag D [Gauss]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accel N [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accel E [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accel D [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyro N [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyro E [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyro D [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Mag ECEF X [Gauss]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Mag ECEF Y [Gauss]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Mag ECEF Z [Gauss]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accel ECEF X [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accel ECEF Y [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Accel ECEF Z [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyro ECEF X [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyro ECEF Y [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyro ECEF Z [rad/s]");
+        }
         else if (startPin.dataIdentifier.front() == KvhObs::type())
         {
             // NodeData
@@ -2570,6 +2617,10 @@ void NAV::Plot::plotData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
         {
             plotImuObs(std::static_pointer_cast<const ImuObs>(nodeData), pinIdx);
         }
+        else if (sourcePin->dataIdentifier.front() == ImuObsSimulated::type())
+        {
+            plotImuObsSimulated(std::static_pointer_cast<const ImuObsSimulated>(nodeData), pinIdx);
+        }
         else if (sourcePin->dataIdentifier.front() == KvhObs::type())
         {
             plotKvhObs(std::static_pointer_cast<const KvhObs>(nodeData), pinIdx);
@@ -3146,6 +3197,58 @@ void NAV::Plot::plotImuObs(const std::shared_ptr<const ImuObs>& obs, size_t pinI
     addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->y() : std::nan(""));
     addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->z() : std::nan(""));
     addData(pinIndex, i++, obs->temperature.has_value() ? obs->temperature.value() : std::nan(""));
+}
+
+void NAV::Plot::plotImuObsSimulated(const std::shared_ptr<const ImuObsSimulated>& obs, size_t pinIndex)
+{
+    if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
+    size_t i = 0;
+
+    std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
+
+    // NodeData
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>((obs->insTime - _startTime).count()) : std::nan(""));
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>(obs->insTime.toGPSweekTow().tow) : std::nan(""));
+    // ImuObs
+    addData(pinIndex, i++, obs->timeSinceStartup.has_value() ? static_cast<double>(obs->timeSinceStartup.value()) : std::nan(""));
+    addData(pinIndex, i++, obs->magUncompXYZ.has_value() ? obs->magUncompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->magUncompXYZ.has_value() ? obs->magUncompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->magUncompXYZ.has_value() ? obs->magUncompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->accelUncompXYZ.has_value() ? obs->accelUncompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->accelUncompXYZ.has_value() ? obs->accelUncompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->accelUncompXYZ.has_value() ? obs->accelUncompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroUncompXYZ.has_value() ? obs->gyroUncompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroUncompXYZ.has_value() ? obs->gyroUncompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroUncompXYZ.has_value() ? obs->gyroUncompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->magCompXYZ.has_value() ? obs->magCompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->magCompXYZ.has_value() ? obs->magCompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->magCompXYZ.has_value() ? obs->magCompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->accelCompXYZ.has_value() ? obs->accelCompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->accelCompXYZ.has_value() ? obs->accelCompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->accelCompXYZ.has_value() ? obs->accelCompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->temperature.has_value() ? obs->temperature.value() : std::nan(""));
+    // ImuObsSimulated
+    addData(pinIndex, i++, obs->n_magUncomp.x());   // Mag N [Gauss]
+    addData(pinIndex, i++, obs->n_magUncomp.y());   // Mag E [Gauss]
+    addData(pinIndex, i++, obs->n_magUncomp.z());   // Mag D [Gauss]
+    addData(pinIndex, i++, obs->n_accelUncomp.x()); // Accel N [m/s^2]
+    addData(pinIndex, i++, obs->n_accelUncomp.y()); // Accel E [m/s^2]
+    addData(pinIndex, i++, obs->n_accelUncomp.z()); // Accel D [m/s^2]
+    addData(pinIndex, i++, obs->n_gyroUncomp.x());  // Gyro N [rad/s]
+    addData(pinIndex, i++, obs->n_gyroUncomp.y());  // Gyro E [rad/s]
+    addData(pinIndex, i++, obs->n_gyroUncomp.z());  // Gyro D [rad/s]
+    addData(pinIndex, i++, obs->e_magUncomp.x());   // Mag ECEF X [Gauss]
+    addData(pinIndex, i++, obs->e_magUncomp.y());   // Mag ECEF Y [Gauss]
+    addData(pinIndex, i++, obs->e_magUncomp.z());   // Mag ECEF Z [Gauss]
+    addData(pinIndex, i++, obs->e_accelUncomp.x()); // Accel ECEF X [m/s^2]
+    addData(pinIndex, i++, obs->e_accelUncomp.y()); // Accel ECEF Y [m/s^2]
+    addData(pinIndex, i++, obs->e_accelUncomp.z()); // Accel ECEF Z [m/s^2]
+    addData(pinIndex, i++, obs->e_gyroUncomp.x());  // Gyro ECEF X [rad/s]
+    addData(pinIndex, i++, obs->e_gyroUncomp.y());  // Gyro ECEF Y [rad/s]
+    addData(pinIndex, i++, obs->e_gyroUncomp.z());  // Gyro ECEF Z [rad/s]
 }
 
 void NAV::Plot::plotKvhObs(const std::shared_ptr<const KvhObs>& obs, size_t pinIndex)
