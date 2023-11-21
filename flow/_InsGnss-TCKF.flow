@@ -1,4 +1,5 @@
 {
+    "colormaps": [],
     "implot": {
         "prefereFlowOverGlobal": true,
         "style": {
@@ -212,9 +213,9 @@
             "id": 1199,
             "startPinId": 1192
         },
-        "link-1242": {
+        "link-1244": {
             "endPinId": 841,
-            "id": 1242,
+            "id": 1244,
             "startPinId": 402
         },
         "link-845": {
@@ -332,6 +333,9 @@
                                 "displayName": "Z-ECEF [m]"
                             },
                             {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
                                 "displayName": "X velocity ECEF [m/s]"
                             },
                             {
@@ -409,6 +413,9 @@
                                 "displayName": "Z-ECEF [m]"
                             },
                             {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
                                 "displayName": "X velocity ECEF [m/s]"
                             },
                             {
@@ -484,6 +491,9 @@
                             },
                             {
                                 "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
                             },
                             {
                                 "displayName": "X velocity ECEF [m/s]"
@@ -704,6 +714,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Simulated Trajectory",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -738,6 +753,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "TCKF",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -772,6 +792,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "SPP",
                                     "lineType": 0,
                                     "markerFillColor": {
@@ -838,6 +863,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "North",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -872,6 +902,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "East",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -938,6 +973,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Simulated Trajectory - Roll",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -972,6 +1012,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Simulated Trajectory - Pitch",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -1006,6 +1051,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Simulated Trajectory - Yaw",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -1040,6 +1090,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "TCKF - Roll",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -1074,6 +1129,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "TCKF - Pitch",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -1108,6 +1168,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "TCKF - Yaw",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -1174,6 +1239,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Simulated Trajectory",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -1208,6 +1278,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "TCKF",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -1242,6 +1317,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "SPP",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -1458,6 +1538,9 @@
                             },
                             {
                                 "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
                             },
                             {
                                 "displayName": "X velocity ECEF [m/s]"
@@ -1678,6 +1761,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "X",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -1712,6 +1800,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Y",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -1746,6 +1839,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Z",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -1811,6 +1909,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "X",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -1845,6 +1948,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Y",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -1879,6 +1987,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Z",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -1944,6 +2057,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "TCKF",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -1978,6 +2096,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "SPP",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -2043,6 +2166,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "TCKF",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -2077,6 +2205,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "SPP",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -2158,7 +2291,121 @@
                 "estimatorType": 1,
                 "excludedSatellites": [],
                 "frequencies": 1,
+                "gnssMeasurementError": {
+                    "groves2013Params": {
+                        "sigmaR": [
+                            0.1,
+                            0.1
+                        ],
+                        "sigmaRho": [
+                            0.1,
+                            0.1
+                        ]
+                    },
+                    "model": 1,
+                    "rtklibParams": {
+                        "carrierPhaseErrorAB": [
+                            0.003,
+                            0.003
+                        ],
+                        "codeCarrierPhaseErrorRatio": [
+                            100.0,
+                            100.0
+                        ],
+                        "dopplerFrequency": 1.0
+                    }
+                },
                 "ionosphereModel": 0,
+                "kalmanFilter": {
+                    "_covarianceAccel": {
+                        "0": {
+                            "0": 9.0
+                        },
+                        "1": {
+                            "0": 2.25
+                        }
+                    },
+                    "_covarianceClkFrequencyDrift": 0.010000000000000002,
+                    "_covarianceClkPhaseDrift": 0.04000000000000001,
+                    "_covarianceInterSysClkFrequencyDrift": 0.020000000000000007,
+                    "_covarianceInterSysClkPhaseDrift": 0.08000000000000003,
+                    "_initCovarianceInterSysDrift": 0.0008987551787368178,
+                    "_initCovarianceInterSysErr": 8.987551787368178,
+                    "_initCovariancePosition": {
+                        "0": {
+                            "0": 100.0
+                        },
+                        "1": {
+                            "0": 100.0
+                        },
+                        "2": {
+                            "0": 100.0
+                        }
+                    },
+                    "_initCovarianceRecvClkDrift": 0.0008987551787368178,
+                    "_initCovarianceRecvClkErr": 8.987551787368178,
+                    "_initCovarianceVelocity": {
+                        "0": {
+                            "0": 9.0
+                        },
+                        "1": {
+                            "0": 9.0
+                        },
+                        "2": {
+                            "0": 9.0
+                        }
+                    },
+                    "gui_covarianceAccel": {
+                        "0": {
+                            "0": 3.0
+                        },
+                        "1": {
+                            "0": 1.5
+                        }
+                    },
+                    "gui_covarianceAccelUnit": 0,
+                    "gui_covarianceClkFrequencyDrift": 0.1,
+                    "gui_covarianceClkFrequencyDriftUnit": 0,
+                    "gui_covarianceClkPhaseDrift": 0.2,
+                    "gui_covarianceClkPhaseDriftUnit": 0,
+                    "gui_covarianceInterSysClkFrequencyDrift": 0.14142135623730953,
+                    "gui_covarianceInterSysClkFrequencyDriftUnit": 0,
+                    "gui_covarianceInterSysClkPhaseDrift": 0.28284271247461906,
+                    "gui_covarianceInterSysClkPhaseDriftUnit": 0,
+                    "gui_initCovarianceInterSysDrift": 1e-10,
+                    "gui_initCovarianceInterSysDriftUnit": 1,
+                    "gui_initCovarianceInterSysErr": 1e-08,
+                    "gui_initCovarianceInterSysErrUnit": 1,
+                    "gui_initCovariancePosition": {
+                        "0": {
+                            "0": 10.0
+                        },
+                        "1": {
+                            "0": 10.0
+                        },
+                        "2": {
+                            "0": 10.0
+                        }
+                    },
+                    "gui_initCovariancePositionUnit": 1,
+                    "gui_initCovarianceRecvClkDrift": 1e-10,
+                    "gui_initCovarianceRecvClkDriftUnit": 1,
+                    "gui_initCovarianceRecvClkErr": 1e-08,
+                    "gui_initCovarianceRecvClkErrUnit": 1,
+                    "gui_initCovarianceVelocity": {
+                        "0": {
+                            "0": 3.0
+                        },
+                        "1": {
+                            "0": 3.0
+                        },
+                        "2": {
+                            "0": 3.0
+                        }
+                    },
+                    "gui_initCovarianceVelocityUnit": 1,
+                    "qCalculationAlgorithm": 0
+                },
                 "nNavInfoPins": 1,
                 "troposphereModels": {
                     "zhdMappingFunction": [
@@ -2193,7 +2440,8 @@
                             "waterVaporModel": 0
                         }
                     ]
-                }
+                },
+                "useDoppler": true
             },
             "enabled": true,
             "id": 1193,
@@ -2227,6 +2475,14 @@
         },
         "node-386": {
             "data": {
+                "ambiguityLimits": [
+                    -20,
+                    20
+                ],
+                "ambiguityRng": {
+                    "seed": 2131742451585164451,
+                    "useSeed": true
+                },
                 "attitudeBias": {
                     "0": {
                         "0": 0.0
@@ -2251,10 +2507,32 @@
                     }
                 },
                 "attitudeNoiseUnit": 1,
-                "attitudeRandomNumberGenerator": {
-                    "seed": 0,
-                    "useSeedInsteadOfSystemTime": true
+                "attitudeRng": {
+                    "seed": 9220079769064964822,
+                    "useSeed": true
                 },
+                "carrierPhaseNoise": 0.003,
+                "carrierPhaseNoiseUnit": 0,
+                "carrierPhaseRng": {
+                    "seed": 6385755731950957232,
+                    "useSeed": true
+                },
+                "cycleSlipDetectionProbability": 100.0,
+                "cycleSlipDetectionProbabilityUnit": 0,
+                "cycleSlipFrequency": 0.0,
+                "cycleSlipFrequencyUnit": 1,
+                "cycleSlipRng": {
+                    "seed": 2831845633577483680,
+                    "useSeed": true
+                },
+                "dopplerNoise": 0.05,
+                "dopplerNoiseUnit": 0,
+                "dopplerRng": {
+                    "seed": 7560850916445156747,
+                    "useSeed": true
+                },
+                "filterCode": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000111010000011111",
+                "filterFreq": "L1",
                 "imuAccelerometerBiasUnit": 0,
                 "imuAccelerometerBias_p": {
                     "0": {
@@ -2279,9 +2557,9 @@
                     }
                 },
                 "imuAccelerometerNoiseUnit": 0,
-                "imuAccelerometerRandomNumberGenerator": {
-                    "seed": 4585,
-                    "useSeedInsteadOfSystemTime": true
+                "imuAccelerometerRng": {
+                    "seed": 4952344610738333436,
+                    "useSeed": true
                 },
                 "imuGyroscopeBiasUnit": 0,
                 "imuGyroscopeBias_p": {
@@ -2307,9 +2585,9 @@
                     }
                 },
                 "imuGyroscopeNoiseUnit": 1,
-                "imuGyroscopeRandomNumberGenerator": {
-                    "seed": 5456746,
-                    "useSeedInsteadOfSystemTime": true
+                "imuGyroscopeRng": {
+                    "seed": 3109285768391481101,
+                    "useSeed": true
                 },
                 "positionBias": {
                     "0": {
@@ -2335,9 +2613,15 @@
                     }
                 },
                 "positionNoiseUnit": 0,
-                "positionRandomNumberGenerator": {
-                    "seed": 0,
-                    "useSeedInsteadOfSystemTime": true
+                "positionRng": {
+                    "seed": 7262457520045545117,
+                    "useSeed": true
+                },
+                "pseudorangeNoise": 0.3,
+                "pseudorangeNoiseUnit": 0,
+                "pseudorangeRng": {
+                    "seed": 430856215710120476,
+                    "useSeed": true
                 },
                 "velocityBias": {
                     "0": {
@@ -2363,9 +2647,9 @@
                     }
                 },
                 "velocityNoiseUnit": 0,
-                "velocityRandomNumberGenerator": {
-                    "seed": 0,
-                    "useSeedInsteadOfSystemTime": true
+                "velocityRng": {
+                    "seed": 5623721735004579849,
+                    "useSeed": true
                 }
             },
             "enabled": true,
@@ -2396,6 +2680,14 @@
         },
         "node-403": {
             "data": {
+                "ambiguityLimits": [
+                    -20,
+                    20
+                ],
+                "ambiguityRng": {
+                    "seed": 3812986395598405365,
+                    "useSeed": true
+                },
                 "attitudeBias": {
                     "0": {
                         "0": 0.0
@@ -2420,10 +2712,32 @@
                     }
                 },
                 "attitudeNoiseUnit": 1,
-                "attitudeRandomNumberGenerator": {
-                    "seed": 2193613086,
-                    "useSeedInsteadOfSystemTime": true
+                "attitudeRng": {
+                    "seed": 4529038551482207992,
+                    "useSeed": true
                 },
+                "carrierPhaseNoise": 0.003,
+                "carrierPhaseNoiseUnit": 0,
+                "carrierPhaseRng": {
+                    "seed": 5936081876329718870,
+                    "useSeed": true
+                },
+                "cycleSlipDetectionProbability": 100.0,
+                "cycleSlipDetectionProbabilityUnit": 0,
+                "cycleSlipFrequency": 0.0,
+                "cycleSlipFrequencyUnit": 1,
+                "cycleSlipRng": {
+                    "seed": 2722221807494498635,
+                    "useSeed": true
+                },
+                "dopplerNoise": 0.05,
+                "dopplerNoiseUnit": 0,
+                "dopplerRng": {
+                    "seed": 6090143914238986858,
+                    "useSeed": true
+                },
+                "filterCode": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000111010000011111",
+                "filterFreq": "L1",
                 "imuAccelerometerBiasUnit": 0,
                 "imuAccelerometerBias_p": {
                     "0": {
@@ -2448,9 +2762,9 @@
                     }
                 },
                 "imuAccelerometerNoiseUnit": 0,
-                "imuAccelerometerRandomNumberGenerator": {
-                    "seed": 0,
-                    "useSeedInsteadOfSystemTime": true
+                "imuAccelerometerRng": {
+                    "seed": 9076270972176598682,
+                    "useSeed": true
                 },
                 "imuGyroscopeBiasUnit": 0,
                 "imuGyroscopeBias_p": {
@@ -2476,9 +2790,9 @@
                     }
                 },
                 "imuGyroscopeNoiseUnit": 0,
-                "imuGyroscopeRandomNumberGenerator": {
-                    "seed": 0,
-                    "useSeedInsteadOfSystemTime": true
+                "imuGyroscopeRng": {
+                    "seed": 2482975760159199732,
+                    "useSeed": true
                 },
                 "positionBias": {
                     "0": {
@@ -2504,9 +2818,15 @@
                     }
                 },
                 "positionNoiseUnit": 0,
-                "positionRandomNumberGenerator": {
-                    "seed": 59824,
-                    "useSeedInsteadOfSystemTime": true
+                "positionRng": {
+                    "seed": 4944184075926163335,
+                    "useSeed": true
+                },
+                "pseudorangeNoise": 0.3,
+                "pseudorangeNoiseUnit": 0,
+                "pseudorangeRng": {
+                    "seed": 171859222905650133,
+                    "useSeed": true
                 },
                 "velocityBias": {
                     "0": {
@@ -2532,9 +2852,9 @@
                     }
                 },
                 "velocityNoiseUnit": 0,
-                "velocityRandomNumberGenerator": {
-                    "seed": 3158694891,
-                    "useSeedInsteadOfSystemTime": true
+                "velocityRng": {
+                    "seed": 3578191359360194028,
+                    "useSeed": true
                 }
             },
             "enabled": true,
@@ -3010,11 +3330,6 @@
                 "circularHarmonicAmplitudeFactor": 0.2,
                 "circularHarmonicFrequency": 10,
                 "circularTrajectoryCircleCountForStop": 1.0,
-                "circularTrajectoryDirection": 0,
-                "circularTrajectoryHorizontalSpeed": 10.0,
-                "circularTrajectoryOriginAngle": 1.5707963267948966,
-                "circularTrajectoryRadius": 100.0,
-                "circularTrajectoryVerticalSpeed": 0.0,
                 "coriolisAccelerationEnabled": true,
                 "fixedTrajectoryStartOrientation": {
                     "0": {
@@ -3042,6 +3357,10 @@
                         "0": 3.0
                     }
                 },
+                "rosePetDenom": 1,
+                "rosePetNum": 2,
+                "roseStepLengthMax": 0.1,
+                "roseTrajectoryCountForStop": 1.0,
                 "simulationDuration": 600.0,
                 "simulationStopCondition": 1,
                 "splineSampleInterval": 0.1,
@@ -3068,7 +3387,12 @@
                     "system": "GPST"
                 },
                 "startTimeSource": 0,
-                "trajectoryType": 2
+                "trajectoryDirection": 1,
+                "trajectoryHorizontalSpeed": 10.0,
+                "trajectoryRadius": 50.0,
+                "trajectoryRotationAngle": 0.0,
+                "trajectoryType": 2,
+                "trajectoryVerticalSpeed": 0.0
             },
             "enabled": true,
             "id": 952,

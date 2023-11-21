@@ -352,7 +352,11 @@ class OutputPin : public Pin
     OutputPin(const OutputPin&) = delete;
     /// @brief Move constructor
     OutputPin(OutputPin&& other) noexcept
-        : Pin(std::move(other)), links(std::move(other.links)), data(other.data), noMoreDataAvailable(other.noMoreDataAvailable.load()) {}
+        : Pin(std::move(other)),
+          links(std::move(other.links)),
+          data(other.data),
+          noMoreDataAvailable(other.noMoreDataAvailable.load()),
+          blocksConnectedNodeFromFinishing(other.blocksConnectedNodeFromFinishing.load()) {}
     /// @brief Copy assignment operator
     OutputPin& operator=(const OutputPin&) = delete;
     /// @brief Move assignment operator
@@ -363,6 +367,7 @@ class OutputPin : public Pin
             links = std::move(other.links);
             data = other.data;
             noMoreDataAvailable = other.noMoreDataAvailable.load();
+            blocksConnectedNodeFromFinishing = other.blocksConnectedNodeFromFinishing.load();
             Pin::operator=(std::move(other));
         }
         return *this;
@@ -458,6 +463,9 @@ class OutputPin : public Pin
 
     /// Flag set, when no more data is available on this pin
     std::atomic<bool> noMoreDataAvailable = true;
+
+    /// Flag, whether connected nodes can finish with this pin not being finished yet (needed to make a loop with nodes)
+    std::atomic<bool> blocksConnectedNodeFromFinishing = true;
 
     friend class Pin;
     friend class InputPin;

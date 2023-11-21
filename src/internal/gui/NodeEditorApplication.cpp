@@ -1441,6 +1441,10 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Text("Node: %s", pin->parentNode ? std::to_string(size_t(pin->parentNode->id)).c_str() : "<none>");
             ImGui::Text("Type: %s", std::string(pin->type).c_str());
             ImGui::Text("Data available: %s", pin->noMoreDataAvailable ? "No" : "Yes");
+            if (!pin->blocksConnectedNodeFromFinishing)
+            {
+                ImGui::TextUnformatted("Does not block connected pin from finishing!!!");
+            }
             ImGui::Separator();
             if (pin->isPinLinked())
             {

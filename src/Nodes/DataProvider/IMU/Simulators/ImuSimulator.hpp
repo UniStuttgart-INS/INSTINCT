@@ -320,16 +320,16 @@ class ImuSimulator : public Imu
     /// @return n_accel in [rad, rad, m]
     [[nodiscard]] Eigen::Vector3d n_calcTrajectoryAccel(double time, const Eigen::Quaterniond& n_Quat_e, const Eigen::Vector3d& lla_position, const Eigen::Vector3d& n_velocity) const;
 
-    /// @brief Calculates ω_ip_p, the gyroscope measurement (turn rate of the platform with respect to the inertial system expressed in platform coordinates)
+    /// @brief Calculates ω_ip_p, the gyroscope measurement (turn rate of the platform with respect to the inertial system expressed in NED coordinates)
     /// @param[in] time Time in [s]
     /// @param[in] rollPitchYaw Gimbal angles (roll, pitch, yaw) [rad]
-    /// @param[in] b_Quat_n Rotation quaternion from local-navigation frame to the body frame
+    /// @param[in] n_Quat_b Rotation quaternion from body frame to the local-navigation frame
     /// @param[in] n_omega_ie ω_ie_n Earth rotation rate in local-navigation coordinates
     /// @param[in] n_omega_en ω_en_n Transport rate in local-navigation coordinates
     /// @return ω_ip_p [rad/s]
-    [[nodiscard]] Eigen::Vector3d p_calcOmega_ip(double time,
+    [[nodiscard]] Eigen::Vector3d n_calcOmega_ip(double time,
                                                  const Eigen::Vector3d& rollPitchYaw,
-                                                 const Eigen::Quaterniond& b_Quat_n,
+                                                 const Eigen::Quaterniond& n_Quat_b,
                                                  const Eigen::Vector3d& n_omega_ie,
                                                  const Eigen::Vector3d& n_omega_en) const;
 };

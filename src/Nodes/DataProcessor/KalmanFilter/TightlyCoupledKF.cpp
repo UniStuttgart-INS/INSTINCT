@@ -66,6 +66,7 @@ NAV::TightlyCoupledKF::TightlyCoupledKF()
     inputPins.back().dropQueueIfNotFirable = false;
     updateNumberOfInputPins();
     nm::CreateOutputPin(this, "Errors", Pin::Type::Flow, { NAV::TcKfInsGnssErrors::type() });
+    outputPins.back().blocksConnectedNodeFromFinishing = false; // To prevent a deadlock between ImuIntegrator and this node
     nm::CreateOutputPin(this, "Sync", Pin::Type::Flow, { NAV::NodeData::type() });
 }
 

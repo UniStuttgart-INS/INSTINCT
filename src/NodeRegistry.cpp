@@ -302,6 +302,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 #include "NodeData/GNSS/SppSolution.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
+#include "NodeData/IMU/ImuObsSimulated.hpp"
 #include "NodeData/IMU/ImuObsWDelta.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
@@ -325,6 +326,7 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     registerNodeDataType<UbloxObs>();
     // IMU
     registerNodeDataType<ImuObs>();
+    registerNodeDataType<ImuObsSimulated>();
     registerNodeDataType<ImuObsWDelta>();
     registerNodeDataType<KvhObs>();
     registerNodeDataType<VectorNavBinaryOutput>();

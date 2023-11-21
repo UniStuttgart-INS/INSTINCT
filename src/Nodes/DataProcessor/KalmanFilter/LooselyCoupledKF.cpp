@@ -58,6 +58,7 @@ NAV::LooselyCoupledKF::LooselyCoupledKF()
                        });
     inputPins.back().dropQueueIfNotFirable = false;
     nm::CreateOutputPin(this, "Errors", Pin::Type::Flow, { NAV::LcKfInsGnssErrors::type() });
+    outputPins.back().blocksConnectedNodeFromFinishing = false; // To prevent a deadlock between ImuIntegrator and this node
     nm::CreateOutputPin(this, "Sync", Pin::Type::Flow, { NAV::NodeData::type() });
 }
 
