@@ -1,4 +1,5 @@
 {
+    "colormaps": [],
     "links": {
         "link-240": {
             "endPinId": 224,
@@ -3476,6 +3477,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "X",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -3510,6 +3516,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Y",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -3544,6 +3555,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Z",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -3616,6 +3632,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "X",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -3650,6 +3671,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Y",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -3684,6 +3710,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Z",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -3756,6 +3787,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Latitude",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -3790,6 +3826,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Longitude",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -3824,6 +3865,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Altitude",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -3858,6 +3904,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "ECEF X",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -3892,6 +3943,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "ECEF Y",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -3926,6 +3982,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "ECEF Z",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -3998,6 +4059,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "North",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4032,6 +4098,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "East",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4066,6 +4137,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Down",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4100,6 +4176,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "ECEF X",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4134,6 +4215,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "ECEF Y",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4168,6 +4254,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "ECEF Z",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4240,6 +4331,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Roll",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4274,6 +4370,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Pitch",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4308,6 +4409,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Yaw",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4342,6 +4448,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Alpha_eb",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4376,6 +4487,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Beta_eb",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4410,6 +4526,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Gamma_eb",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4482,6 +4603,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Roll - P(0, 0)",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4516,6 +4642,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Pitch - P(1, 1)",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4550,6 +4681,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Yaw - P(2, 2)",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4622,6 +4758,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "North - P(3, 3)",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4656,6 +4797,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "East - P(4, 4)",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4690,6 +4836,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Down - P(5, 5)",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4762,6 +4913,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "North - P(6, 6)",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4796,6 +4952,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "East - P(7, 7)",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4830,6 +4991,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Up - P(8, 8)",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4902,6 +5068,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "X - P(9, 9)",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4936,6 +5107,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Y - P(10, 10)",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -4970,6 +5146,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Z - P(11, 11)",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -5042,6 +5223,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "X - P(12, 12)",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -5076,6 +5262,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Y - P(13, 13)",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -5110,6 +5301,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Z - P(14, 14)",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -5182,6 +5378,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "North/Lat - z(0)",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -5216,6 +5417,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "East/Lon - z(1)",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -5250,6 +5456,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Up/Alt - z(2)",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -5322,6 +5533,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "North - z(3)",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -5356,6 +5572,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "East - z(4)",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -5390,6 +5611,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Down - z(5)",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -5586,11 +5812,6 @@
                 "circularHarmonicAmplitudeFactor": 0.1,
                 "circularHarmonicFrequency": 10,
                 "circularTrajectoryCircleCountForStop": 1.0,
-                "circularTrajectoryDirection": 1,
-                "circularTrajectoryHorizontalSpeed": 10.0,
-                "circularTrajectoryOriginAngle": 0.0,
-                "circularTrajectoryRadius": 600.0,
-                "circularTrajectoryVerticalSpeed": 0.0,
                 "coriolisAccelerationEnabled": true,
                 "fixedTrajectoryStartOrientation": {
                     "0": {
@@ -5618,6 +5839,10 @@
                         "0": 3.0
                     }
                 },
+                "rosePetDenom": 1,
+                "rosePetNum": 2,
+                "roseStepLengthMax": 0.1,
+                "roseTrajectoryCountForStop": 1.0,
                 "simulationDuration": 3000.0,
                 "simulationStopCondition": 1,
                 "splineSampleInterval": 0.1,
@@ -5644,7 +5869,12 @@
                     "system": "GPST"
                 },
                 "startTimeSource": 0,
-                "trajectoryType": 2
+                "trajectoryDirection": 1,
+                "trajectoryHorizontalSpeed": 10.0,
+                "trajectoryRadius": 50.0,
+                "trajectoryRotationAngle": 0.0,
+                "trajectoryType": 2,
+                "trajectoryVerticalSpeed": 0.0
             },
             "enabled": true,
             "id": 3,
@@ -6013,6 +6243,14 @@
         },
         "node-386": {
             "data": {
+                "ambiguityLimits": [
+                    -20,
+                    20
+                ],
+                "ambiguityRng": {
+                    "seed": 8599086175140088258,
+                    "useSeed": true
+                },
                 "attitudeBias": {
                     "0": {
                         "0": 0.0
@@ -6037,10 +6275,32 @@
                     }
                 },
                 "attitudeNoiseUnit": 1,
-                "attitudeRandomNumberGenerator": {
-                    "seed": 0,
-                    "useSeedInsteadOfSystemTime": true
+                "attitudeRng": {
+                    "seed": 1313510331629788874,
+                    "useSeed": true
                 },
+                "carrierPhaseNoise": 0.003,
+                "carrierPhaseNoiseUnit": 0,
+                "carrierPhaseRng": {
+                    "seed": 2658016852188842814,
+                    "useSeed": true
+                },
+                "cycleSlipDetectionProbability": 100.0,
+                "cycleSlipDetectionProbabilityUnit": 0,
+                "cycleSlipFrequency": 0.0,
+                "cycleSlipFrequencyUnit": 1,
+                "cycleSlipRng": {
+                    "seed": 93182880839416755,
+                    "useSeed": true
+                },
+                "dopplerNoise": 0.05,
+                "dopplerNoiseUnit": 0,
+                "dopplerRng": {
+                    "seed": 4433011524049905730,
+                    "useSeed": true
+                },
+                "filterCode": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000111010000011111",
+                "filterFreq": "L1",
                 "imuAccelerometerBiasUnit": 0,
                 "imuAccelerometerBias_p": {
                     "0": {
@@ -6065,9 +6325,9 @@
                     }
                 },
                 "imuAccelerometerNoiseUnit": 0,
-                "imuAccelerometerRandomNumberGenerator": {
-                    "seed": 39445196,
-                    "useSeedInsteadOfSystemTime": true
+                "imuAccelerometerRng": {
+                    "seed": 1629231456377089728,
+                    "useSeed": true
                 },
                 "imuGyroscopeBiasUnit": 0,
                 "imuGyroscopeBias_p": {
@@ -6093,9 +6353,9 @@
                     }
                 },
                 "imuGyroscopeNoiseUnit": 0,
-                "imuGyroscopeRandomNumberGenerator": {
-                    "seed": 2022786190,
-                    "useSeedInsteadOfSystemTime": true
+                "imuGyroscopeRng": {
+                    "seed": 8810792636528941824,
+                    "useSeed": true
                 },
                 "positionBias": {
                     "0": {
@@ -6121,9 +6381,15 @@
                     }
                 },
                 "positionNoiseUnit": 0,
-                "positionRandomNumberGenerator": {
-                    "seed": 0,
-                    "useSeedInsteadOfSystemTime": true
+                "positionRng": {
+                    "seed": 5892739319254363393,
+                    "useSeed": true
+                },
+                "pseudorangeNoise": 0.3,
+                "pseudorangeNoiseUnit": 0,
+                "pseudorangeRng": {
+                    "seed": 2596377096662452132,
+                    "useSeed": true
                 },
                 "velocityBias": {
                     "0": {
@@ -6149,9 +6415,9 @@
                     }
                 },
                 "velocityNoiseUnit": 0,
-                "velocityRandomNumberGenerator": {
-                    "seed": 0,
-                    "useSeedInsteadOfSystemTime": true
+                "velocityRng": {
+                    "seed": 8622923759586434851,
+                    "useSeed": true
                 }
             },
             "enabled": true,
@@ -6182,6 +6448,14 @@
         },
         "node-403": {
             "data": {
+                "ambiguityLimits": [
+                    -20,
+                    20
+                ],
+                "ambiguityRng": {
+                    "seed": 6746407280907955990,
+                    "useSeed": true
+                },
                 "attitudeBias": {
                     "0": {
                         "0": 0.0
@@ -6206,10 +6480,32 @@
                     }
                 },
                 "attitudeNoiseUnit": 1,
-                "attitudeRandomNumberGenerator": {
-                    "seed": 2193613086,
-                    "useSeedInsteadOfSystemTime": true
+                "attitudeRng": {
+                    "seed": 6162285685768837890,
+                    "useSeed": true
                 },
+                "carrierPhaseNoise": 0.003,
+                "carrierPhaseNoiseUnit": 0,
+                "carrierPhaseRng": {
+                    "seed": 1252009070496678223,
+                    "useSeed": true
+                },
+                "cycleSlipDetectionProbability": 100.0,
+                "cycleSlipDetectionProbabilityUnit": 0,
+                "cycleSlipFrequency": 0.0,
+                "cycleSlipFrequencyUnit": 1,
+                "cycleSlipRng": {
+                    "seed": 4676474247884412511,
+                    "useSeed": true
+                },
+                "dopplerNoise": 0.05,
+                "dopplerNoiseUnit": 0,
+                "dopplerRng": {
+                    "seed": 2817558115920640186,
+                    "useSeed": true
+                },
+                "filterCode": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000111010000011111",
+                "filterFreq": "L1",
                 "imuAccelerometerBiasUnit": 0,
                 "imuAccelerometerBias_p": {
                     "0": {
@@ -6234,9 +6530,9 @@
                     }
                 },
                 "imuAccelerometerNoiseUnit": 0,
-                "imuAccelerometerRandomNumberGenerator": {
-                    "seed": 0,
-                    "useSeedInsteadOfSystemTime": true
+                "imuAccelerometerRng": {
+                    "seed": 5698288183713759399,
+                    "useSeed": true
                 },
                 "imuGyroscopeBiasUnit": 0,
                 "imuGyroscopeBias_p": {
@@ -6262,9 +6558,9 @@
                     }
                 },
                 "imuGyroscopeNoiseUnit": 0,
-                "imuGyroscopeRandomNumberGenerator": {
-                    "seed": 0,
-                    "useSeedInsteadOfSystemTime": true
+                "imuGyroscopeRng": {
+                    "seed": 3684190634413084677,
+                    "useSeed": true
                 },
                 "positionBias": {
                     "0": {
@@ -6290,9 +6586,15 @@
                     }
                 },
                 "positionNoiseUnit": 0,
-                "positionRandomNumberGenerator": {
-                    "seed": 59824,
-                    "useSeedInsteadOfSystemTime": true
+                "positionRng": {
+                    "seed": 5680006122585260532,
+                    "useSeed": true
+                },
+                "pseudorangeNoise": 0.3,
+                "pseudorangeNoiseUnit": 0,
+                "pseudorangeRng": {
+                    "seed": 1302997506732961855,
+                    "useSeed": true
                 },
                 "velocityBias": {
                     "0": {
@@ -6318,9 +6620,9 @@
                     }
                 },
                 "velocityNoiseUnit": 0,
-                "velocityRandomNumberGenerator": {
-                    "seed": 3158694891,
-                    "useSeedInsteadOfSystemTime": true
+                "velocityRng": {
+                    "seed": 3958847804449797141,
+                    "useSeed": true
                 }
             },
             "enabled": true,
@@ -6402,7 +6704,7 @@
                 "overridePositionStartValues": true,
                 "pinData": [
                     {
-                        "dataIdentifier": "ImuObs",
+                        "dataIdentifier": "ImuObsSimulated",
                         "pinType": 0,
                         "plotData": [
                             {
@@ -6470,6 +6772,60 @@
                             },
                             {
                                 "displayName": "Temperature [°C]"
+                            },
+                            {
+                                "displayName": "Mag N [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag E [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag D [Gauss]"
+                            },
+                            {
+                                "displayName": "Accel N [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel E [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel D [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyro N [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro E [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro D [rad/s]"
+                            },
+                            {
+                                "displayName": "Mag ECEF X [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag ECEF Y [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag ECEF Z [Gauss]"
+                            },
+                            {
+                                "displayName": "Accel ECEF X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel ECEF Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel ECEF Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyro ECEF X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro ECEF Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro ECEF Z [rad/s]"
                             }
                         ],
                         "size": 0,
@@ -6508,6 +6864,9 @@
                             },
                             {
                                 "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
                             },
                             {
                                 "displayName": "X velocity ECEF [m/s]"
@@ -6587,6 +6946,9 @@
                                 "displayName": "Z-ECEF [m]"
                             },
                             {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
                                 "displayName": "X velocity ECEF [m/s]"
                             },
                             {
@@ -6649,6 +7011,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Nominal",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -6683,6 +7050,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Filter",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -6752,6 +7124,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Nominal",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -6786,6 +7163,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Filter",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -6855,6 +7237,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Nominal",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -6889,6 +7276,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Filter",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -6958,6 +7350,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Nominal",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -6992,6 +7389,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Filter",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -7061,6 +7463,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Nominal",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -7095,6 +7502,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Filter",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -7164,6 +7576,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Nominal",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -7198,6 +7615,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Filter",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -7267,6 +7689,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Nominal",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -7301,6 +7728,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Filter",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -7370,6 +7802,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Nominal",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -7404,6 +7841,11 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
                                     "legendName": "Filter",
                                     "lineType": 1,
                                     "markerFillColor": {
@@ -7460,212 +7902,7 @@
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
-                        "plotItems": [
-                            {
-                                "axis": 3,
-                                "dataIndex": 6,
-                                "displayName": "Accel uncomp X [m/s^2]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Uncomp X",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 7,
-                                "displayName": "Accel uncomp Y [m/s^2]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Uncomp Y",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 8,
-                                "displayName": "Accel uncomp Z [m/s^2]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Uncomp Z",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 15,
-                                "displayName": "Accel Comp X [m/s^2]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Comp X",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 16,
-                                "displayName": "Accel Comp Y [m/s^2]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Comp Y",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 17,
-                                "displayName": "Accel Comp Z [m/s^2]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Comp Z",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            }
-                        ],
+                        "plotItems": [],
                         "rightPaneWidth": 400.0,
                         "selectedPin": 0,
                         "selectedXdata": [
@@ -7699,212 +7936,7 @@
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
-                        "plotItems": [
-                            {
-                                "axis": 3,
-                                "dataIndex": 9,
-                                "displayName": "Gyro uncomp X [rad/s]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Uncomp X",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 10,
-                                "displayName": "Gyro uncomp Y [rad/s]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Uncomp Y",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 11,
-                                "displayName": "Gyro uncomp Z [rad/s]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Uncomp Z",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 18,
-                                "displayName": "Gyro Comp X [rad/s]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Comp X",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 19,
-                                "displayName": "Gyro Comp Y [rad/s]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Comp Y",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 20,
-                                "displayName": "Gyro Comp Z [rad/s]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Comp Z",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            }
-                        ],
+                        "plotItems": [],
                         "rightPaneWidth": 400.0,
                         "selectedPin": 0,
                         "selectedXdata": [

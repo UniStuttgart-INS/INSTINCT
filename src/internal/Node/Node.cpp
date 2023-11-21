@@ -747,6 +747,7 @@ void NAV::Node::workerThread(Node* node)
                                 }
                                 else // nullptr -> no more data incoming on this pin
                                 {
+                                    LOG_TRACE("{}:   Output Pin finished: {}", node->nameId(), outputPin->name);
                                     outputPin->noMoreDataAvailable = true;
                                     for (auto& link : outputPin->links)
                                     {
@@ -771,6 +772,7 @@ void NAV::Node::workerThread(Node* node)
                         {
                             if (!outputPin.noMoreDataAvailable)
                             {
+                                LOG_TRACE("{}:   Output Pin finished: {}", node->nameId(), outputPin.name);
                                 outputPin.noMoreDataAvailable = true;
                                 for (auto& link : outputPin.links)
                                 {
@@ -789,6 +791,7 @@ void NAV::Node::workerThread(Node* node)
             {
                 if (std::all_of(node->inputPins.begin(), node->inputPins.end(), [](const InputPin& inputPin) {
                         return inputPin.type != Pin::Type::Flow || !inputPin.isPinLinked() || inputPin.link.connectedNode->isDisabled()
+                               || !inputPin.link.getConnectedPin()->blocksConnectedNodeFromFinishing
                                || (inputPin.queue.empty() && inputPin.link.getConnectedPin()->noMoreDataAvailable);
                     }))
                 {
@@ -796,6 +799,7 @@ void NAV::Node::workerThread(Node* node)
                     node->callbacksEnabled = false;
                     for (auto& outputPin : node->outputPins)
                     {
+                        LOG_TRACE("{}:   Output Pin finished: {}", node->nameId(), outputPin.name);
                         outputPin.noMoreDataAvailable = true;
                         for (auto& link : outputPin.links)
                         {
