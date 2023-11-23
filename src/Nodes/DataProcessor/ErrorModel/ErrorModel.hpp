@@ -68,6 +68,18 @@ class ErrorModel : public Node
     constexpr static size_t OUTPUT_PORT_INDEX_FLOW = 0; ///< @brief Flow
     constexpr static size_t INPUT_PORT_INDEX_FLOW = 0;  ///< @brief Flow
 
+    /// Input type
+    enum class InputType
+    {
+        None,      ///< None
+        ImuObs,    ///< ImuObs
+        PosVelAtt, ///< PosVelAtt
+        GnssObs,   ///< GnssObs
+    };
+
+    /// Input type
+    InputType _inputType = InputType::None;
+
     /// @brief Resets the node. It is guaranteed that the node is initialized when this is called.
     bool resetNode() override;
 

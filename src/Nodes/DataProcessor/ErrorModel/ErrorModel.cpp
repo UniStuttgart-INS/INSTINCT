@@ -8,6 +8,7 @@
 
 #include "ErrorModel.hpp"
 
+#include "NodeRegistry.hpp"
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
@@ -153,18 +154,17 @@ void NAV::ErrorModel::guiConfig()
         rngInput(title, rng);
     };
 
-    if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == ImuObs::type()
-        || outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type())
+    if (_inputType == InputType::ImuObs || _inputType == InputType::PosVelAtt)
     {
         ImGui::TextUnformatted("Offsets:");
         ImGui::Indent();
         {
-            if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == ImuObs::type())
+            if (_inputType == InputType::ImuObs)
             {
                 inputVector3WithUnit("Accelerometer Bias (platform)", _imuAccelerometerBias_p, _imuAccelerometerBiasUnit, "m/s^2\0\0", "%.2g");
                 inputVector3WithUnit("Gyroscope Bias (platform)", _imuGyroscopeBias_p, _imuGyroscopeBiasUnit, "rad/s\0deg/s\0\0", "%.2g");
             }
-            else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type())
+            else if (_inputType == InputType::PosVelAtt)
             {
                 inputVector3WithUnit(fmt::format("Position Bias ({})", _positionBiasUnit == PositionBiasUnits::meter ? "NED" : "LatLonAlt").c_str(),
                                      _positionBias, _positionBiasUnit, "m, m, m\0rad, rad, m\0deg, deg, m\0\0", "%.2g");
@@ -175,14 +175,12 @@ void NAV::ErrorModel::guiConfig()
         ImGui::Unindent();
     }
 
-    if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == ImuObs::type()
-        || outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type()
-        || outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == GnssObs::type())
+    if (_inputType == InputType::ImuObs || _inputType == InputType::PosVelAtt || _inputType == InputType::GnssObs)
     {
         ImGui::TextUnformatted("Measurement noise:");
         ImGui::Indent();
         {
-            if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == ImuObs::type())
+            if (_inputType == InputType::ImuObs)
             {
                 noiseGuiInput(fmt::format("Accelerometer Noise ({})", _imuAccelerometerNoiseUnit == ImuAccelerometerNoiseUnits::m_s2
                                                                           ? "Standard deviation"
@@ -195,7 +193,7 @@ void NAV::ErrorModel::guiConfig()
                                   .c_str(),
                               _imuGyroscopeNoise, _imuGyroscopeNoiseUnit, "rad/s\0deg/s\0rad^2/s^2\0deg^2/s^2\0\0", "%.2g", _imuGyroscopeRng);
             }
-            else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type())
+            else if (_inputType == InputType::PosVelAtt)
             {
                 noiseGuiInput(fmt::format("Position Noise ({})", _positionNoiseUnit == PositionNoiseUnits::meter
                                                                          || _positionNoiseUnit == PositionNoiseUnits::rad_rad_m
@@ -215,7 +213,7 @@ void NAV::ErrorModel::guiConfig()
                                   .c_str(),
                               _attitudeNoise, _attitudeNoiseUnit, "rad\0deg\0rad^2\0deg^2\0\0", "%.2g", _attitudeRng);
             }
-            else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == GnssObs::type())
+            else if (_inputType == InputType::GnssObs)
             {
                 noiseGuiInput("Pseudorange Noise", _gui_pseudorangeNoise, _gui_pseudorangeNoiseUnit, "m\0\0", "%.3g", _pseudorangeRng);
                 noiseGuiInput("Carrier-phase Noise", _gui_carrierPhaseNoise, _gui_carrierPhaseNoiseUnit, "m\0\0", "%.3g", _carrierPhaseRng);
@@ -225,7 +223,7 @@ void NAV::ErrorModel::guiConfig()
         ImGui::Unindent();
     }
 
-    if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == GnssObs::type())
+    if (_inputType == InputType::GnssObs)
     {
         ImGui::TextUnformatted("Ambiguities:");
         ImGui::Indent();
@@ -476,18 +474,18 @@ bool NAV::ErrorModel::resetNode()
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == ImuObs::type())
+    if (_inputType == InputType::ImuObs)
     {
         _imuAccelerometerRng.resetSeed(size_t(id));
         _imuGyroscopeRng.resetSeed(size_t(id));
     }
-    else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type())
+    else if (_inputType == InputType::PosVelAtt)
     {
         _positionRng.resetSeed(size_t(id));
         _velocityRng.resetSeed(size_t(id));
         _attitudeRng.resetSeed(size_t(id));
     }
-    else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == GnssObs::type())
+    else if (_inputType == InputType::GnssObs)
     {
         _pseudorangeRng.resetSeed(size_t(id));
         _carrierPhaseRng.resetSeed(size_t(id));
@@ -517,6 +515,19 @@ void NAV::ErrorModel::afterCreateLink(OutputPin& startPin, InputPin& endPin)
     auto previousOutputPinDataIdentifier = outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier;
     // Overwrite output pin identifier with input pin identifier
     outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = startPin.dataIdentifier;
+
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier, { ImuObs::type() }))
+    {
+        _inputType = InputType::ImuObs;
+    }
+    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier, { PosVelAtt::type() }))
+    {
+        _inputType = InputType::PosVelAtt;
+    }
+    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier, { GnssObs::type() }))
+    {
+        _inputType = InputType::PosVelAtt;
+    }
 
     if (previousOutputPinDataIdentifier != outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier) // If the identifier changed
     {
@@ -566,15 +577,15 @@ void NAV::ErrorModel::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* 
     if (!_lastObservationTime.empty()) { _messageFrequency = 1.0 / static_cast<double>((obs->insTime - _lastObservationTime).count()); }
 
     // Select the correct data type and make a copy of the node data to modify
-    if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == ImuObs::type())
+    if (_inputType == InputType::ImuObs)
     {
         receiveImuObs(std::make_shared<ImuObs>(*std::static_pointer_cast<const ImuObs>(obs)));
     }
-    else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type())
+    else if (_inputType == InputType::PosVelAtt)
     {
         receivePosVelAtt(std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(obs)));
     }
-    else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == GnssObs::type())
+    else if (_inputType == InputType::GnssObs)
     {
         receiveGnssObs(std::make_shared<GnssObs>(*std::static_pointer_cast<const GnssObs>(obs)));
     }
