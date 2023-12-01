@@ -505,7 +505,6 @@ pages:
   needs: ["doxygen", "coverage"]
   extends: .linux
   script:
-    - rm build/doc/html/form_*_dark.svg
     - mv build/doc/html/ public/
     - mv build/coverage/ public/coverage/
   artifacts:
