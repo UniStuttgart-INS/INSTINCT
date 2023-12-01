@@ -65,6 +65,7 @@ function(set_project_warnings project_name)
       -Wuseless-cast # warn if you perform a cast to the same type
       -Wno-comment # don't warn on misleading multi-line comments (comments which line ends with \ go into next line. Doxygen equations do all the time)
       -Wno-restrict # warns on built-in memcpy when adding a string to a const char*
+      -Wno-cpp # suppress useless warnings
   )
 
   # Clang only warnings
@@ -72,6 +73,7 @@ function(set_project_warnings project_name)
       ${CLANG_WARNINGS}
       -Wdocumentation # warn on wrong documentation
       -Wnull-dereference # warn if a null dereference is detected
+      -Qunused-arguments # suppress clang-16: warning: argument unused during compilation: '-stdlib=libstdc++' [-Wunused-command-line-argument]
   )
 
   if(MSVC)

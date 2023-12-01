@@ -110,7 +110,7 @@ Logger::Logger(const std::string& logpath)
         break;
     }
 
-    _ringBufferSink = std::make_shared<spdlog::sinks::ringbuffer_sink_mt>(1024);
+    _ringBufferSink = std::make_shared<spdlog::sinks::ringbuffer_sink_mt>(4096);
     _ringBufferSink->set_level(spdlog::level::trace);
     _ringBufferSink->set_pattern(logPatternInfo);
 

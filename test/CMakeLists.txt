@@ -56,6 +56,15 @@ if(NOT APPLE AND NOT WIN32)
   target_link_libraries(tests PRIVATE libnavio)
 endif()
 
+if(ENABLE_GPERFTOOLS)
+  if(GPERFTOOLS_FOUND)
+    message(STATUS "Linking Gperftools profiler")
+    target_link_libraries(tests PRIVATE profiler)
+  else()
+    message(WARNING "Gperftools profiler is enabled but was not found. Not using it")
+  endif()
+endif()
+
 target_compile_definitions(tests PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})
 
 if(APPLE)

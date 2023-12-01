@@ -44,6 +44,16 @@ if(ENABLE_MAIN)
     target_link_libraries(${PROJECT_NAME_LOWERCASE} PRIVATE libnavio)
   endif()
 
+  if(ENABLE_GPERFTOOLS)
+    if(GPERFTOOLS_FOUND)
+      message(STATUS "Linking Gperftools profiler")
+      target_link_libraries(${PROJECT_NAME_LOWERCASE} PRIVATE profiler)
+    else()
+      message(WARNING "Gperftools profiler is enabled but was not found. Not using it")
+    endif()
+  endif()
+
+
   target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})
 
   if(APPLE)

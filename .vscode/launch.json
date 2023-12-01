@@ -2,28 +2,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "LLDB Debug",
-            "type": "lldb",
-            "request": "launch",
-            "preLaunchTask": "MAIN: Build project",
-            "program": "${workspaceFolder}/build/bin/Debug/instinct",
-            "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
-                "--config=config.ini",
-                "--load=\"flow/Default.flow\"",
-                // "--load=\"test/flow/Nodes/DataProcessor/GNSS/SinglePointPositioning.flow\"",
-                // "--nogui",
-                // "--noinit",
-                "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
-                "--file-log-level=trace", // trace/debug/info/warning/error/critical/off
-                // "--log-filter=SinglePointPositioning.cpp",
-                // ================ To debug flow tests ================
-                // "--flow-path=test/flow",
-                // "--input-path=test/data",
-                // "--output-path=test/logs",
-            ],
-            "cwd": "${workspaceFolder}"
-        },
-        {
             "name": "Linux Debug",
             "type": "cppdbg",
             "request": "launch",
@@ -77,6 +55,39 @@
                     "ignoreFailures": true
                 }
             ]
+        },
+        {
+            "name": "LLDB Debug",
+            "type": "lldb",
+            "request": "launch",
+            "preLaunchTask": "MAIN: Build project",
+            "program": "${workspaceFolder}/build/bin/Debug/instinct",
+            "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
+                "--config=config.ini",
+                "--load=\"flow/Default.flow\"",
+                // "--load=\"test/flow/Nodes/DataProcessor/GNSS/SinglePointPositioning.flow\"",
+                // "--nogui",
+                // "--noinit",
+                "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
+                "--file-log-level=trace", // trace/debug/info/warning/error/critical/off
+                // "--log-filter=SinglePointPositioning.cpp",
+                // ================ To debug flow tests ================
+                // "--flow-path=test/flow",
+                // "--input-path=test/data",
+                // "--output-path=test/logs",
+            ],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "LLDB Debug Tests",
+            "type": "lldb",
+            "request": "launch",
+            "preLaunchTask": "TEST: Build project",
+            "program": "${workspaceFolder}/build/bin/Debug/tests",
+            "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
+                "[Debug]",
+            ],
+            "cwd": "${workspaceFolder}",
         },
         {
             "name": "Linux Debug Attach",

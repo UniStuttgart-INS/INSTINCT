@@ -4,6 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "~/.conan/data/**",
+                "~/.conan2/p/**",
                 "${workspaceFolder}/src/**",
                 "${workspaceFolder}/lib/gcem/include",
                 "${workspaceFolder}/lib/imgui",
@@ -20,7 +21,6 @@
                 "TESTING",
             ],
             "cppStandard": "c++20",
-            "compilerPath": "/usr/bin/g++",
             "compileCommands": "${workspaceFolder}/compile_commands.json"
         }
     ],

@@ -47,6 +47,8 @@ endif()
 
 # ######################################################################################################################
 
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules/")
+
 # Link this 'library' to set the c++ standard / compile-time options requested
 add_library(project_options INTERFACE)
 target_compile_features(project_options INTERFACE cxx_std_20)
@@ -117,6 +119,11 @@ find_package(Eigen3 REQUIRED)
 find_package(Catch2 3 REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(unordered_dense CONFIG REQUIRED)
+
+option(ENABLE_GPERFTOOLS "Enable use of Google Performance Tools (gperftools) profiler" OFF)
+if(ENABLE_GPERFTOOLS)
+  find_package(Gperftools COMPONENTS profiler)
+endif()
 
 # ------------------------------------------------- imgui ------------------------------------------------
 
