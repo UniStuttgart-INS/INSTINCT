@@ -1,8 +1,8 @@
 var structNAV_1_1ReceiverClock =
 [
-    [ "bias", "structNAV_1_1ReceiverClock.html#abbdfabfa00c00a8ce45cbd4bf980f036", null ],
-    [ "drift", "structNAV_1_1ReceiverClock.html#abbcdadc8436e0859cdded7e783a5702b", null ],
+    [ "bias", "structNAV_1_1ReceiverClock.html#af290e5744a414ebcba70db9a563a401b", null ],
+    [ "drift", "structNAV_1_1ReceiverClock.html#a0eac3777be6dd4662811d407ddf96193", null ],
     [ "referenceTimeSatelliteSystem", "structNAV_1_1ReceiverClock.html#a6570aff96940eb62941f8ecf3598d079", null ],
-    [ "sysDriftDiff", "structNAV_1_1ReceiverClock.html#a93fb7da72b85373bb70ebab516ddc611", null ],
-    [ "sysTimeDiff", "structNAV_1_1ReceiverClock.html#ae0f0d972c4fb23a2c98151736d65e210", null ]
+    [ "sysDriftDiff", "structNAV_1_1ReceiverClock.html#a16036670f56aa9cd7127fd895896160e", null ],
+    [ "sysTimeDiff", "structNAV_1_1ReceiverClock.html#a0b562d6d631d56c7791d67df229f7e4f", null ]
 ];

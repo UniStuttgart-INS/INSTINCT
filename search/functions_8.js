@@ -8,9 +8,10 @@ var searchData=
   ['haskey_5',['HasKey',['../ConfigManager_8hpp.html#a6890a253e9f37f388197a581c53509e0',1,'NAV::ConfigManager']]],
   ['hasrow_6',['hasRow',['../classNAV_1_1internal_1_1KeyedMatrixRowsBase.html#a7fe9b03c1052169665c372bf4b3ae6a4',1,'NAV::internal::KeyedMatrixRowsBase']]],
   ['hasrows_7',['hasRows',['../classNAV_1_1internal_1_1KeyedMatrixRowsBase.html#a927799db4f9db001afa4c724f9e77845',1,'NAV::internal::KeyedMatrixRowsBase']]],
-  ['hasunsavedchanges_8',['HasUnsavedChanges',['../FlowManager_8hpp.html#ae90b86943790df844a176ad1d5572b10',1,'NAV::flow']]],
-  ['header_9',['Header',['../classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#aeb9a0ad965437943fba1440ccd973f88',1,'ax::NodeEditor::Utilities::BlueprintNodeBuilder']]],
-  ['headerfontratio_10',['headerFontRatio',['../classNAV_1_1gui_1_1NodeEditorApplication.html#a602afd716bf31d1295dccf764d477842',1,'NAV::gui::NodeEditorApplication']]],
-  ['helpmarker_11',['HelpMarker',['../HelpMarker_8hpp.html#ab86988e86b4c90bc36dbea966b8d8540',1,'NAV::gui::widgets']]],
-  ['heun_12',['Heun',['../NumericalIntegration_8hpp.html#abcd33e56517eb26ea888a93f0c437702',1,'NAV::Heun(const auto &amp;f, const Scalar &amp;h, const Y &amp;n_y, const Scalar &amp;n_t, const auto &amp;c)'],['../NumericalIntegration_8hpp.html#ac953f160fea07529a47253569d4a1336',1,'NAV::Heun(const auto &amp;f, const Scalar &amp;h, const Y &amp;n_y, const auto &amp;c)']]]
+  ['hassatellitedata_8',['hasSatelliteData',['../classNAV_1_1SppSolution.html#ae948abb8ae0821fd1ba449ff55ba7683',1,'NAV::SppSolution']]],
+  ['hasunsavedchanges_9',['HasUnsavedChanges',['../FlowManager_8hpp.html#ae90b86943790df844a176ad1d5572b10',1,'NAV::flow']]],
+  ['header_10',['Header',['../classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#aeb9a0ad965437943fba1440ccd973f88',1,'ax::NodeEditor::Utilities::BlueprintNodeBuilder']]],
+  ['headerfontratio_11',['headerFontRatio',['../classNAV_1_1gui_1_1NodeEditorApplication.html#a602afd716bf31d1295dccf764d477842',1,'NAV::gui::NodeEditorApplication']]],
+  ['helpmarker_12',['HelpMarker',['../HelpMarker_8hpp.html#ab86988e86b4c90bc36dbea966b8d8540',1,'NAV::gui::widgets']]],
+  ['heun_13',['heun',['../NumericalIntegration_8hpp.html#abcd33e56517eb26ea888a93f0c437702',1,'NAV::Heun(const auto &amp;f, const Scalar &amp;h, const Y &amp;n_y, const Scalar &amp;n_t, const auto &amp;c)'],['../NumericalIntegration_8hpp.html#ac953f160fea07529a47253569d4a1336',1,'NAV::Heun(const auto &amp;f, const Scalar &amp;h, const Y &amp;n_y, const auto &amp;c)']]]
 ];

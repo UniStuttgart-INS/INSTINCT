@@ -1,6 +1,5 @@
 var classNAV_1_1ErrorModel =
 [
-    [ "RandomNumberGenerator", "structNAV_1_1ErrorModel_1_1RandomNumberGenerator.html", "structNAV_1_1ErrorModel_1_1RandomNumberGenerator" ],
     [ "ErrorModel", "classNAV_1_1ErrorModel.html#ad65544b8d6ab64a42389b29dd9e95a64", null ],
     [ "~ErrorModel", "classNAV_1_1ErrorModel.html#a3202b69b1a2fd8325e6a0d66db70c8e3", null ],
     [ "ErrorModel", "classNAV_1_1ErrorModel.html#a4e7dbfbb25abee8e0e9d1cf8518cc907", null ],

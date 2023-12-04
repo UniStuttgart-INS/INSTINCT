@@ -12,5 +12,6 @@ var searchData=
   ['message_5flogging_5fs_9',['message_logging_s',['../structNAV_1_1vendor_1_1pixhawk_1_1message__logging__s.html',1,'NAV::vendor::pixhawk']]],
   ['message_5flogging_5ftagged_5fs_10',['message_logging_tagged_s',['../structNAV_1_1vendor_1_1pixhawk_1_1message__logging__tagged__s.html',1,'NAV::vendor::pixhawk']]],
   ['message_5fremove_5flogged_5fs_11',['message_remove_logged_s',['../structNAV_1_1vendor_1_1pixhawk_1_1message__remove__logged__s.html',1,'NAV::vendor::pixhawk']]],
-  ['message_5fsync_5fs_12',['message_sync_s',['../structNAV_1_1vendor_1_1pixhawk_1_1message__sync__s.html',1,'NAV::vendor::pixhawk']]]
+  ['message_5fsync_5fs_12',['message_sync_s',['../structNAV_1_1vendor_1_1pixhawk_1_1message__sync__s.html',1,'NAV::vendor::pixhawk']]],
+  ['multiimufile_13',['MultiImuFile',['../classNAV_1_1MultiImuFile.html',1,'NAV']]]
 ];

@@ -1,7 +1,0 @@
-<map id="NAV::NmeaFile" name="NAV::NmeaFile">
-<area shape="rect" id="Node000001" title="File Reader for NMEA log files." alt="" coords="176,519,288,864"/>
-<area shape="rect" id="Node000002" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,229,471"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="182,484,191,517,186,519,177,485"/>
-<area shape="rect" id="Node000003" href="$classNAV_1_1FileReader.html" title="Abstract File Reader class." alt="" coords="253,35,440,441"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="295,455,278,519,273,518,289,454"/>
-</map>

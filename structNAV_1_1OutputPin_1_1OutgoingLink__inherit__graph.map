@@ -1,5 +1,0 @@
-<map id="NAV::OutputPin::OutgoingLink" name="NAV::OutputPin::OutgoingLink">
-<area shape="rect" id="Node000001" title="Collection of information about the connected node and pin." alt="" coords="5,179,212,284"/>
-<area shape="rect" id="Node000002" href="$structNAV_1_1Pin_1_1Link.html" title="Link between two pins." alt="" coords="44,5,173,131"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="111,145,111,178,106,178,106,145"/>
-</map>

@@ -9,5 +9,7 @@ var ConfigManager_8hpp =
     [ "GetProgramOptions", "ConfigManager_8hpp.html#a88b5f6c94086975de48afbdc86997ed6", null ],
     [ "HasKey", "ConfigManager_8hpp.html#a6890a253e9f37f388197a581c53509e0", null ],
     [ "initialize", "ConfigManager_8hpp.html#a4b48ed480395e8dfcc46863b8c53671f", null ],
+    [ "LoadGlobalSettings", "ConfigManager_8hpp.html#a1ac3049287324aa6962b96502b194790", null ],
+    [ "SaveGlobalSettings", "ConfigManager_8hpp.html#ac954aad006c70bb9b6f5a4e580ff3da0", null ],
     [ "vm", "ConfigManager_8hpp.html#a4bad78c75feff01f8d792c4641b6247f", null ]
 ];

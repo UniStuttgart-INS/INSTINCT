@@ -6,5 +6,6 @@ var classNAV_1_1CubicSpline =
     [ "derivative", "classNAV_1_1CubicSpline.html#ab7fb0074703b08874a5b9bfc5ac64717", null ],
     [ "operator()", "classNAV_1_1CubicSpline.html#a667a7e41e544f408a427d37b7be61959", null ],
     [ "setBoundaries", "classNAV_1_1CubicSpline.html#a88578234abb6d5cfb7c72a08c6b8accb", null ],
-    [ "setPoints", "classNAV_1_1CubicSpline.html#a619947ef341c5194e204fe1f6f206375", null ]
+    [ "setPoints", "classNAV_1_1CubicSpline.html#a619947ef341c5194e204fe1f6f206375", null ],
+    [ "size", "classNAV_1_1CubicSpline.html#a937b9291bc1eba4d00a2a86a4081c778", null ]
 ];

@@ -1,5 +1,0 @@
-<map id="NAV::TimeWindow" name="NAV::TimeWindow">
-<area shape="rect" id="Node000001" title="Limits measurement data from any source to a user&#45;defined timewindow." alt="" coords="50,519,185,804"/>
-<area shape="rect" id="Node000002" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,229,471"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="120,485,120,518,115,518,115,485"/>
-</map>

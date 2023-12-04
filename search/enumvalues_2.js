@@ -41,10 +41,11 @@ var searchData=
   ['baudrate_5ffastest_38',['BAUDRATE_FASTEST',['../classNAV_1_1UartSensor.html#a44fab5cca5e1067d563834cb5b93fee7a42be13875b9bdbad186977b3d59c6388',1,'NAV::UartSensor']]],
   ['bc_5fchan_39',['BC_Chan',['../structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ae50a0a89ae7ab6d97a7c9b54771205bba8c6903fd6cba80340cb3f82a3c02585f',1,'NAV::vendor::vectornav::RawMeas::SatRawElement']]],
   ['bds_40',['BDS',['../SatelliteSystem_8hpp.html#af01e645814479c1179804a8d5ffb411ea61fb9f2e55aef83d4e5583a14e9f408c',1,'NAV']]],
-  ['bdt_41',['BDT',['../TimeSystem_8hpp.html#a3356fa3cc3daa77e1a1ad447ced1f7d6a398294058674126eedcf593d2d402c58',1,'NAV']]],
-  ['beidouephemeris_42',['BeiDouEphemeris',['../classNAV_1_1SatNavData.html#a8df84a20fa1c90edf3c88f47facabf6fad0bd48c6f6d8b857cd0e3bbd3ae9bbcd',1,'NAV::SatNavData']]],
-  ['beta_43',['Beta',['../classNAV_1_1IonosphericCorrections.html#a387d1004a5d80f019ad197e82c301feca6644318ad10089e266112072272a7617',1,'NAV::IonosphericCorrections']]],
-  ['binary_44',['BINARY',['../classNAV_1_1FileWriter.html#a39fe4e126e5c5669e123167b3e6cf623a98ad0e8750ae10ad556ed7a62affb452',1,'NAV::FileWriter::BINARY'],['../classNAV_1_1FileReader.html#af2e5120198c08c760522fdccd1ac8c2eabab7b9439937fbc5374332f59762d419',1,'NAV::FileReader::BINARY']]],
-  ['blueprint_45',['Blueprint',['../structNAV_1_1Node_1_1Kind.html#a7a07f8df7c0ef9ecbe2dc5ce3851b04aa34007f1aba1b8b2f9f28b034c02d3232',1,'NAV::Node::Kind']]],
-  ['bool_46',['Bool',['../structNAV_1_1Plot_1_1PinData.html#af5cb5f6b25b78422acbafb3ea9cccbf2ac26f15e86e3de4c398a8273272aba034',1,'NAV::Plot::PinData::Bool'],['../structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07add6563ecb6a5326e51a96bb7a00af647',1,'NAV::Pin::Type::Bool']]]
+  ['bdt_41',['bdt',['../classNAV_1_1TimeSystem.html#a980e1c5a12b195ad0845c5502609cdd2ad87492e57553dd834ebe968ab2cc8107',1,'NAV::TimeSystem::BDT'],['../TimeSystem_8hpp.html#a3356fa3cc3daa77e1a1ad447ced1f7d6a398294058674126eedcf593d2d402c58',1,'NAV::BDT']]],
+  ['beidou_42',['BeiDou',['../VectorNavTypes_8hpp.html#a62e32a1bad2112cd23a8beddf30bd9c5a532e1e7daeef2562426638f7092cf9a6',1,'NAV::vendor::vectornav']]],
+  ['beidouephemeris_43',['BeiDouEphemeris',['../classNAV_1_1SatNavData.html#a8df84a20fa1c90edf3c88f47facabf6fad0bd48c6f6d8b857cd0e3bbd3ae9bbcd',1,'NAV::SatNavData']]],
+  ['beta_44',['Beta',['../classNAV_1_1IonosphericCorrections.html#a387d1004a5d80f019ad197e82c301feca6644318ad10089e266112072272a7617',1,'NAV::IonosphericCorrections']]],
+  ['binary_45',['binary',['../classNAV_1_1FileWriter.html#a39fe4e126e5c5669e123167b3e6cf623a98ad0e8750ae10ad556ed7a62affb452',1,'NAV::FileWriter::BINARY'],['../classNAV_1_1FileReader.html#af2e5120198c08c760522fdccd1ac8c2eabab7b9439937fbc5374332f59762d419',1,'NAV::FileReader::BINARY']]],
+  ['blueprint_46',['Blueprint',['../structNAV_1_1Node_1_1Kind.html#a7a07f8df7c0ef9ecbe2dc5ce3851b04aa34007f1aba1b8b2f9f28b034c02d3232',1,'NAV::Node::Kind']]],
+  ['bool_47',['bool',['../structNAV_1_1Plot_1_1PinData.html#af5cb5f6b25b78422acbafb3ea9cccbf2ac26f15e86e3de4c398a8273272aba034',1,'NAV::Plot::PinData::Bool'],['../structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07add6563ecb6a5326e51a96bb7a00af647',1,'NAV::Pin::Type::Bool']]]
 ];

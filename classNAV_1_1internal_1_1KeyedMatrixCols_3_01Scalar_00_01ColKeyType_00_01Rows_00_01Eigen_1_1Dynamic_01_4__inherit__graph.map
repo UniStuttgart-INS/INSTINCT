@@ -1,7 +1,0 @@
-<map id="NAV::internal::KeyedMatrixCols&lt; Scalar, ColKeyType, Rows, Eigen::Dynamic &gt;" name="NAV::internal::KeyedMatrixCols&lt; Scalar, ColKeyType, Rows, Eigen::Dynamic &gt;">
-<area shape="rect" id="Node000001" title="Base class for Keyed matrices with multiple columns of dynamic size." alt="" coords="19,396,207,551"/>
-<area shape="rect" id="Node000002" href="$classNAV_1_1internal_1_1KeyedMatrixColsBase.html" title=" " alt="" coords="5,133,221,348"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="116,362,116,396,111,396,111,362"/>
-<area shape="rect" id="Node000003" href="$classNAV_1_1internal_1_1KeyedMatrixStorage.html" title="KeyedMatrix storage class." alt="" coords="7,5,220,85"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="116,99,116,133,111,133,111,99"/>
-</map>

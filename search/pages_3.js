@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['node_0',['Node',['../Core_Node.html',1,'Core']]],
-  ['notitle_1',['notitle',['../index.html',1,'']]]
+  ['how_20to_20use_20nmea_20log_20files_0',['Learn how to use NMEA log files',['../Tutorial_NMEA.html',1,'Tutorial']]]
 ];

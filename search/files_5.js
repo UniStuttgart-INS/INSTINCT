@@ -9,5 +9,5 @@ var searchData=
   ['flowmanager_2ehpp_6',['FlowManager.hpp',['../FlowManager_8hpp.html',1,'']]],
   ['fontsizeeditor_2ehpp_7',['FontSizeEditor.hpp',['../FontSizeEditor_8hpp.html',1,'']]],
   ['frequency_2ehpp_8',['Frequency.hpp',['../Frequency_8hpp.html',1,'']]],
-  ['functions_2ehpp_9',['Functions.hpp',['../GNSS_2Functions_8hpp.html',1,'(Global Namespace)'],['../INS_2Functions_8hpp.html',1,'(Global Namespace)']]]
+  ['functions_2ehpp_9',['functions.hpp',['../GNSS_2Functions_8hpp.html',1,'(Global Namespace)'],['../INS_2Functions_8hpp.html',1,'(Global Namespace)']]]
 ];

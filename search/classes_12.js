@@ -30,5 +30,7 @@ var searchData=
   ['ulog_5fmessage_5finfo_5fmultiple_5fheader_5fs_27',['ulog_message_info_multiple_header_s',['../structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__info__multiple__header__s.html',1,'NAV::vendor::pixhawk']]],
   ['ulog_5fmessage_5fparameter_5fdefault_5fheader_5fs_28',['ulog_message_parameter_default_header_s',['../structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__parameter__default__header__s.html',1,'NAV::vendor::pixhawk']]],
   ['ulogfile_29',['UlogFile',['../classNAV_1_1UlogFile.html',1,'NAV']]],
-  ['utc_30',['UTC',['../structNAV_1_1vendor_1_1vectornav_1_1UTC.html',1,'NAV::vendor::vectornav']]]
+  ['uncertainvalue_30',['UncertainValue',['../structNAV_1_1UncertainValue.html',1,'NAV']]],
+  ['uncertainvalue_3c_20double_20_3e_31',['UncertainValue&lt; double &gt;',['../structNAV_1_1UncertainValue.html',1,'NAV']]],
+  ['utc_32',['UTC',['../structNAV_1_1vendor_1_1vectornav_1_1UTC.html',1,'NAV::vendor::vectornav']]]
 ];

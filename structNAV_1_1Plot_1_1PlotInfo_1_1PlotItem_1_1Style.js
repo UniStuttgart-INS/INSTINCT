@@ -5,6 +5,8 @@ var structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem_1_1Style =
       [ "Line", "structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem_1_1Style.html#a27134cc2e67fbc7b0c3dbe7e0ca57fb9a4803e6b9e63dabf04de980788d6a13c4", null ]
     ] ],
     [ "color", "structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem_1_1Style.html#a0570e2c5ffaa776a5e6665c9fc9d2b30", null ],
+    [ "colormapMask", "structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem_1_1Style.html#a38f827f3c369390b07a09bd7376acbe0", null ],
+    [ "colormapMaskDataCmpIdx", "structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem_1_1Style.html#a9b369fa274d4ca11336ac8aaa27a652f", null ],
     [ "legendName", "structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem_1_1Style.html#a0d8aae2fc78862867fa0b29acdf0f349", null ],
     [ "legendNameGui", "structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem_1_1Style.html#a70ce2addb1876d8b1434c32118dcc9fc", null ],
     [ "lineType", "structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem_1_1Style.html#a61523484625281d9d9027ec99b9cbfa9", null ],

@@ -1,6 +1,10 @@
 var structNAV_1_1Pin_1_1Kind =
 [
-    [ "Value", "structNAV_1_1Pin_1_1Kind.html#a22002a8788d8157e7aa19414b40b3204", null ],
+    [ "Value", "structNAV_1_1Pin_1_1Kind.html#a22002a8788d8157e7aa19414b40b3204", [
+      [ "None", "structNAV_1_1Pin_1_1Kind.html#a22002a8788d8157e7aa19414b40b3204adaa8fcd19d34c22448b7f2e03bafc78e", null ],
+      [ "Output", "structNAV_1_1Pin_1_1Kind.html#a22002a8788d8157e7aa19414b40b3204ab3638aec3e80fef69d6dcfdfcedcf8f1", null ],
+      [ "Input", "structNAV_1_1Pin_1_1Kind.html#a22002a8788d8157e7aa19414b40b3204a079f06d30ad89a9396fe48d3b10fc1e0", null ]
+    ] ],
     [ "Kind", "structNAV_1_1Pin_1_1Kind.html#a9bd91e03f2299de6c6d49085d5afe64e", null ],
     [ "Kind", "structNAV_1_1Pin_1_1Kind.html#a134d81ae2465f98eebb22ab6dffe126c", null ],
     [ "Kind", "structNAV_1_1Pin_1_1Kind.html#aba35d6f93a061401f675050ad016cb66", null ],

@@ -10,6 +10,7 @@ var Constants_8hpp =
     [ "C", "Constants_8hpp.html#a06903f4bfd848ee715e581ace9bd367a", null ],
     [ "C20", "Constants_8hpp.html#ab2c7dfe474db1d7ad9bc7cf483057baa", null ],
     [ "C20_bar", "Constants_8hpp.html#a1497109f519acf9fd010cefd35cae525", null ],
+    [ "dMtr", "Constants_8hpp.html#a4dd3a037150b4896b239db577ad62c55", null ],
     [ "e_omega_ie", "Constants_8hpp.html#ab10e9db27025a3237df8050116681b75", null ],
     [ "e_squared", "Constants_8hpp.html#aee2b2d86017f4302a16217e14d7580c2", null ],
     [ "e_squared", "Constants_8hpp.html#a8b1b6bb24b199e4694adfef3576262ab", null ],
@@ -24,11 +25,13 @@ var Constants_8hpp =
     [ "J2", "Constants_8hpp.html#a4f20802965e51906981d23d26ce0b9b2", null ],
     [ "J2", "Constants_8hpp.html#a43e19af668e095c3034f8710b0c6535a", null ],
     [ "J2", "Constants_8hpp.html#a432aa70531f84d524f967b789945995c", null ],
+    [ "k_B", "Constants_8hpp.html#a388723212a14ab03e602f983e3c98a42", null ],
     [ "MU", "Constants_8hpp.html#aa14e8e4b04564509946eb70f15c794fe", null ],
     [ "MU", "Constants_8hpp.html#a752183c269394361a66c07de22f5fae0", null ],
     [ "MU", "Constants_8hpp.html#aacad28cff53039e9c716e77ee989d6c5", null ],
     [ "MU", "Constants_8hpp.html#a4ba1c68bf4177c98b2f7ccd253ba2a65", null ],
     [ "MU", "Constants_8hpp.html#a41ee76acee07b2a46e54033117dca0c7", null ],
+    [ "N_A", "Constants_8hpp.html#a4ae133077358c39e085538df3957d2de", null ],
     [ "omega_ie", "Constants_8hpp.html#a75001970899d5e6bc32b57bf40d9a9cb", null ],
     [ "omega_ie", "Constants_8hpp.html#a3e18f1c327ece9503647ce5a3e6806b6", null ],
     [ "omega_ie", "Constants_8hpp.html#aeb6e0a155d7231048c64ae4cf8bb6598", null ],
@@ -37,5 +40,6 @@ var Constants_8hpp =
     [ "omega_ie", "Constants_8hpp.html#a0af2b1603c583c81299d4ff103833862", null ],
     [ "omega_ie_Skydel", "Constants_8hpp.html#a956244f5d8b1ae34089b843959852c94", null ],
     [ "pseudometre", "Constants_8hpp.html#a64a9b5404936aa09a3379d7492da2741", null ],
-    [ "R_E", "Constants_8hpp.html#a26a6e99bb773da04da5882d3e76eeaa2", null ]
+    [ "R_E", "Constants_8hpp.html#a26a6e99bb773da04da5882d3e76eeaa2", null ],
+    [ "Rg", "Constants_8hpp.html#a44a89b0be1a6140d21784f19d6b9e073", null ]
 ];

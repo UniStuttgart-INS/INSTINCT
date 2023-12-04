@@ -1,7 +1,6 @@
 var Frequency_8hpp =
 [
     [ "NAV::Frequency", "classNAV_1_1Frequency.html", "classNAV_1_1Frequency" ],
-    [ "std::hash< NAV::Frequency >", "structstd_1_1hash_3_01NAV_1_1Frequency_01_4.html", "structstd_1_1hash_3_01NAV_1_1Frequency_01_4" ],
     [ "Frequency_", "Frequency_8hpp.html#a28a406c2d7f5c5c4a598301e7dab6eba", [
       [ "Freq_None", "Frequency_8hpp.html#a28a406c2d7f5c5c4a598301e7dab6ebaa18196995ca89df8ef0c3ed6ebf588125", null ],
       [ "G01", "Frequency_8hpp.html#a28a406c2d7f5c5c4a598301e7dab6ebaaaa7886e2afce25989e654e56ae8435f2", null ],

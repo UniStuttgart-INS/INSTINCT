@@ -2,7 +2,9 @@ var classNAV_1_1Frequency =
 [
     [ "Frequency", "classNAV_1_1Frequency.html#ac7387a5aa236a4a5ec53f628132aa34d", null ],
     [ "Frequency", "classNAV_1_1Frequency.html#a28ac0eb439c6eb0eb8e1cc9d838a6fd0", null ],
+    [ "count", "classNAV_1_1Frequency.html#ae778b53609a004ef07c2a3a3fa79930e", null ],
     [ "fromString", "classNAV_1_1Frequency.html#a23f527e5062e09acf41b5fee8e31e59d", null ],
+    [ "GetAll", "classNAV_1_1Frequency.html#ac3054d0c989ce6c72f83316225df1be8", null ],
     [ "GetFrequency", "classNAV_1_1Frequency.html#aea6fae75773564cd399efeaa3b2104cb", null ],
     [ "getFrequency", "classNAV_1_1Frequency.html#a6ddbac22d7dff02b977df4027828bd3e", null ],
     [ "getL1", "classNAV_1_1Frequency.html#a2f42374bb6fff361f958f644d83b33c1", null ],

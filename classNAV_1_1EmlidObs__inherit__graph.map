@@ -1,5 +1,0 @@
-<map id="NAV::EmlidObs" name="NAV::EmlidObs">
-<area shape="rect" id="Node000001" title="Emlid Observation Class." alt="" coords="5,259,131,384"/>
-<area shape="rect" id="Node000002" href="$classNAV_1_1NodeData.html" title="Parent class for all data transmitted over Flow pins." alt="" coords="9,5,127,211"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="71,225,71,258,65,258,65,225"/>
-</map>

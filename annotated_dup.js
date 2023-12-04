@@ -21,11 +21,36 @@ var annotated_dup =
         [ "Delay", "classNAV_1_1experimental_1_1Delay.html", "classNAV_1_1experimental_1_1Delay" ],
         [ "SkydelNetworkStream", "classNAV_1_1experimental_1_1SkydelNetworkStream.html", "classNAV_1_1experimental_1_1SkydelNetworkStream" ]
       ] ],
+      [ "GNSS", null, [
+        [ "Positioning", null, [
+          [ "SPP", null, [
+            [ "Meas", null, [
+              [ "Doppler", "structNAV_1_1GNSS_1_1Positioning_1_1SPP_1_1Meas_1_1Doppler.html", "structNAV_1_1GNSS_1_1Positioning_1_1SPP_1_1Meas_1_1Doppler" ],
+              [ "Psr", "structNAV_1_1GNSS_1_1Positioning_1_1SPP_1_1Meas_1_1Psr.html", "structNAV_1_1GNSS_1_1Positioning_1_1SPP_1_1Meas_1_1Psr" ]
+            ] ],
+            [ "States", null, [
+              [ "InterSysDrift", "structNAV_1_1GNSS_1_1Positioning_1_1SPP_1_1States_1_1InterSysDrift.html", "structNAV_1_1GNSS_1_1Positioning_1_1SPP_1_1States_1_1InterSysDrift" ],
+              [ "InterSysErr", "structNAV_1_1GNSS_1_1Positioning_1_1SPP_1_1States_1_1InterSysErr.html", "structNAV_1_1GNSS_1_1Positioning_1_1SPP_1_1States_1_1InterSysErr" ]
+            ] ],
+            [ "CalcData", "structNAV_1_1GNSS_1_1Positioning_1_1SPP_1_1CalcData.html", "structNAV_1_1GNSS_1_1Positioning_1_1SPP_1_1CalcData" ],
+            [ "EstWeightDesignMatrices", "structNAV_1_1GNSS_1_1Positioning_1_1SPP_1_1EstWeightDesignMatrices.html", "structNAV_1_1GNSS_1_1Positioning_1_1SPP_1_1EstWeightDesignMatrices" ],
+            [ "SppKalmanFilter", "classNAV_1_1GNSS_1_1Positioning_1_1SPP_1_1SppKalmanFilter.html", "classNAV_1_1GNSS_1_1Positioning_1_1SPP_1_1SppKalmanFilter" ],
+            [ "State", "structNAV_1_1GNSS_1_1Positioning_1_1SPP_1_1State.html", "structNAV_1_1GNSS_1_1Positioning_1_1SPP_1_1State" ],
+            [ "ValueWeight", "structNAV_1_1GNSS_1_1Positioning_1_1SPP_1_1ValueWeight.html", "structNAV_1_1GNSS_1_1Positioning_1_1SPP_1_1ValueWeight" ]
+          ] ]
+        ] ]
+      ] ],
       [ "gui", null, [
+        [ "widgets", null, [
+          [ "PositionWithFrame", "structNAV_1_1gui_1_1widgets_1_1PositionWithFrame.html", "structNAV_1_1gui_1_1widgets_1_1PositionWithFrame" ],
+          [ "TimeEditFormat", "structNAV_1_1gui_1_1widgets_1_1TimeEditFormat.html", "structNAV_1_1gui_1_1widgets_1_1TimeEditFormat" ]
+        ] ],
         [ "NodeEditorApplication", "classNAV_1_1gui_1_1NodeEditorApplication.html", "classNAV_1_1gui_1_1NodeEditorApplication" ]
       ] ],
       [ "internal", "namespaceNAV_1_1internal.html", [
         [ "all_t", "structNAV_1_1internal_1_1all__t.html", "structNAV_1_1internal_1_1all__t" ],
+        [ "GPT2Data", "structNAV_1_1internal_1_1GPT2Data.html", "structNAV_1_1internal_1_1GPT2Data" ],
+        [ "GPT3Data", "structNAV_1_1internal_1_1GPT3Data.html", "structNAV_1_1internal_1_1GPT3Data" ],
         [ "KeyedMatrixBase", "classNAV_1_1internal_1_1KeyedMatrixBase.html", "classNAV_1_1internal_1_1KeyedMatrixBase" ],
         [ "KeyedMatrixCols", "classNAV_1_1internal_1_1KeyedMatrixCols.html", null ],
         [ "KeyedMatrixCols< Scalar, ColKeyType, Rows, Eigen::Dynamic >", "classNAV_1_1internal_1_1KeyedMatrixCols_3_01Scalar_00_01ColKeyType_00_01Rows_00_01Eigen_1_1Dynamic_01_4.html", "classNAV_1_1internal_1_1KeyedMatrixCols_3_01Scalar_00_01ColKeyType_00_01Rows_00_01Eigen_1_1Dynamic_01_4" ],
@@ -106,6 +131,7 @@ var annotated_dup =
       [ "BDSEphemeris", "classNAV_1_1BDSEphemeris.html", "classNAV_1_1BDSEphemeris" ],
       [ "Clock", "classNAV_1_1Clock.html", "classNAV_1_1Clock" ],
       [ "Code", "classNAV_1_1Code.html", "classNAV_1_1Code" ],
+      [ "Colormap", "classNAV_1_1Colormap.html", "classNAV_1_1Colormap" ],
       [ "Combiner", "classNAV_1_1Combiner.html", "classNAV_1_1Combiner" ],
       [ "CommonLog", "classNAV_1_1CommonLog.html", "classNAV_1_1CommonLog" ],
       [ "CsvData", "classNAV_1_1CsvData.html", "classNAV_1_1CsvData" ],
@@ -121,9 +147,12 @@ var annotated_dup =
       [ "Frequency", "classNAV_1_1Frequency.html", "classNAV_1_1Frequency" ],
       [ "GalileoEphemeris", "classNAV_1_1GalileoEphemeris.html", "classNAV_1_1GalileoEphemeris" ],
       [ "GLONASSEphemeris", "classNAV_1_1GLONASSEphemeris.html", "classNAV_1_1GLONASSEphemeris" ],
+      [ "GnssMeasurementErrorModel", "classNAV_1_1GnssMeasurementErrorModel.html", "classNAV_1_1GnssMeasurementErrorModel" ],
       [ "GnssNavInfo", "classNAV_1_1GnssNavInfo.html", "classNAV_1_1GnssNavInfo" ],
       [ "GnssObs", "classNAV_1_1GnssObs.html", "classNAV_1_1GnssObs" ],
       [ "GPSEphemeris", "classNAV_1_1GPSEphemeris.html", "classNAV_1_1GPSEphemeris" ],
+      [ "GPT2output", "structNAV_1_1GPT2output.html", "structNAV_1_1GPT2output" ],
+      [ "GPT3output", "structNAV_1_1GPT3output.html", "structNAV_1_1GPT3output" ],
       [ "GroupBox", "classNAV_1_1GroupBox.html", "classNAV_1_1GroupBox" ],
       [ "Imu", "classNAV_1_1Imu.html", "classNAV_1_1Imu" ],
       [ "ImuDataLogger", "classNAV_1_1ImuDataLogger.html", "classNAV_1_1ImuDataLogger" ],
@@ -131,6 +160,7 @@ var annotated_dup =
       [ "ImuFusion", "classNAV_1_1ImuFusion.html", "classNAV_1_1ImuFusion" ],
       [ "ImuIntegrator", "classNAV_1_1ImuIntegrator.html", "classNAV_1_1ImuIntegrator" ],
       [ "ImuObs", "classNAV_1_1ImuObs.html", "classNAV_1_1ImuObs" ],
+      [ "ImuObsSimulated", "classNAV_1_1ImuObsSimulated.html", "classNAV_1_1ImuObsSimulated" ],
       [ "ImuObsWDelta", "classNAV_1_1ImuObsWDelta.html", "classNAV_1_1ImuObsWDelta" ],
       [ "ImuPos", "classNAV_1_1ImuPos.html", "classNAV_1_1ImuPos" ],
       [ "ImuSimulator", "classNAV_1_1ImuSimulator.html", "classNAV_1_1ImuSimulator" ],
@@ -145,6 +175,7 @@ var annotated_dup =
       [ "IonosphericCorrections", "classNAV_1_1IonosphericCorrections.html", "classNAV_1_1IonosphericCorrections" ],
       [ "KalmanFilter", "classNAV_1_1KalmanFilter.html", "classNAV_1_1KalmanFilter" ],
       [ "KeyedKalmanFilter", "classNAV_1_1KeyedKalmanFilter.html", "classNAV_1_1KeyedKalmanFilter" ],
+      [ "KeyedLeastSquaresResult", "structNAV_1_1KeyedLeastSquaresResult.html", "structNAV_1_1KeyedLeastSquaresResult" ],
       [ "KeyedMatrix", "classNAV_1_1KeyedMatrix.html", "classNAV_1_1KeyedMatrix" ],
       [ "KeyedMatrix< Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic >", "classNAV_1_1KeyedMatrix_3_01Scalar_00_01RowKeyType_00_01ColKeyType_00_01Eigen_1_1Dynamic_00_01Eigen_1_1Dynamic_01_4.html", "classNAV_1_1KeyedMatrix_3_01Scalar_00_01RowKeyType_00_01ColKeyType_00_01Eigen_1_1Dynamic_00_01Eigen_1_1Dynamic_01_4" ],
       [ "KeyedRowVector", "classNAV_1_1KeyedRowVector.html", "classNAV_1_1KeyedRowVector" ],
@@ -160,6 +191,7 @@ var annotated_dup =
       [ "LeastSquaresResult", "structNAV_1_1LeastSquaresResult.html", "structNAV_1_1LeastSquaresResult" ],
       [ "LooselyCoupledKF", "classNAV_1_1LooselyCoupledKF.html", "classNAV_1_1LooselyCoupledKF" ],
       [ "MatrixLogger", "classNAV_1_1MatrixLogger.html", "classNAV_1_1MatrixLogger" ],
+      [ "MultiImuFile", "classNAV_1_1MultiImuFile.html", "classNAV_1_1MultiImuFile" ],
       [ "Navio2Sensor", "classNAV_1_1Navio2Sensor.html", "classNAV_1_1Navio2Sensor" ],
       [ "NmeaFile", "classNAV_1_1NmeaFile.html", "classNAV_1_1NmeaFile" ],
       [ "Node", "classNAV_1_1Node.html", "classNAV_1_1Node" ],
@@ -173,8 +205,10 @@ var annotated_dup =
       [ "PosVelAtt", "classNAV_1_1PosVelAtt.html", "classNAV_1_1PosVelAtt" ],
       [ "PosVelAttDerivativeConstants_e", "structNAV_1_1PosVelAttDerivativeConstants__e.html", "structNAV_1_1PosVelAttDerivativeConstants__e" ],
       [ "PosVelAttDerivativeConstants_n", "structNAV_1_1PosVelAttDerivativeConstants__n.html", "structNAV_1_1PosVelAttDerivativeConstants__n" ],
+      [ "PosVelAttFile", "classNAV_1_1PosVelAttFile.html", "classNAV_1_1PosVelAttFile" ],
       [ "PosVelAttInitializer", "classNAV_1_1PosVelAttInitializer.html", "classNAV_1_1PosVelAttInitializer" ],
       [ "PosVelAttLogger", "classNAV_1_1PosVelAttLogger.html", "classNAV_1_1PosVelAttLogger" ],
+      [ "RandomNumberGenerator", "classNAV_1_1RandomNumberGenerator.html", "classNAV_1_1RandomNumberGenerator" ],
       [ "ReceiverClock", "structNAV_1_1ReceiverClock.html", "structNAV_1_1ReceiverClock" ],
       [ "RinexNavFile", "classNAV_1_1RinexNavFile.html", "classNAV_1_1RinexNavFile" ],
       [ "RinexObsFile", "classNAV_1_1RinexObsFile.html", "classNAV_1_1RinexObsFile" ],
@@ -207,7 +241,7 @@ var annotated_dup =
       [ "UdpRecv", "classNAV_1_1UdpRecv.html", "classNAV_1_1UdpRecv" ],
       [ "UdpSend", "classNAV_1_1UdpSend.html", "classNAV_1_1UdpSend" ],
       [ "UlogFile", "classNAV_1_1UlogFile.html", "classNAV_1_1UlogFile" ],
-      [ "ValueStdDev", "structNAV_1_1ValueStdDev.html", "structNAV_1_1ValueStdDev" ],
+      [ "UncertainValue", "structNAV_1_1UncertainValue.html", "structNAV_1_1UncertainValue" ],
       [ "VectorNavBinaryConverter", "classNAV_1_1VectorNavBinaryConverter.html", "classNAV_1_1VectorNavBinaryConverter" ],
       [ "VectorNavBinaryOutput", "classNAV_1_1VectorNavBinaryOutput.html", "classNAV_1_1VectorNavBinaryOutput" ],
       [ "VectorNavDataLogger", "classNAV_1_1VectorNavDataLogger.html", "classNAV_1_1VectorNavDataLogger" ],
@@ -221,8 +255,11 @@ var annotated_dup =
       ] ]
     ] ],
     [ "std", null, [
-      [ "hash< NAV::Frequency >", "structstd_1_1hash_3_01NAV_1_1Frequency_01_4.html", "structstd_1_1hash_3_01NAV_1_1Frequency_01_4" ],
-      [ "hash< NAV::SatelliteSystem >", "structstd_1_1hash_3_01NAV_1_1SatelliteSystem_01_4.html", "structstd_1_1hash_3_01NAV_1_1SatelliteSystem_01_4" ],
+      [ "hash< NAV::Code >", "structstd_1_1hash_3_01NAV_1_1Code_01_4.html", "structstd_1_1hash_3_01NAV_1_1Code_01_4" ],
+      [ "hash< NAV::GNSS::Positioning::SPP::Meas::Doppler >", "structstd_1_1hash_3_01NAV_1_1GNSS_1_1Positioning_1_1SPP_1_1Meas_1_1Doppler_01_4.html", "structstd_1_1hash_3_01NAV_1_1GNSS_1_1Positioning_1_1SPP_1_1Meas_1_1Doppler_01_4" ],
+      [ "hash< NAV::GNSS::Positioning::SPP::Meas::Psr >", "structstd_1_1hash_3_01NAV_1_1GNSS_1_1Positioning_1_1SPP_1_1Meas_1_1Psr_01_4.html", "structstd_1_1hash_3_01NAV_1_1GNSS_1_1Positioning_1_1SPP_1_1Meas_1_1Psr_01_4" ],
+      [ "hash< NAV::GNSS::Positioning::SPP::States::InterSysDrift >", "structstd_1_1hash_3_01NAV_1_1GNSS_1_1Positioning_1_1SPP_1_1States_1_1InterSysDrift_01_4.html", "structstd_1_1hash_3_01NAV_1_1GNSS_1_1Positioning_1_1SPP_1_1States_1_1InterSysDrift_01_4" ],
+      [ "hash< NAV::GNSS::Positioning::SPP::States::InterSysErr >", "structstd_1_1hash_3_01NAV_1_1GNSS_1_1Positioning_1_1SPP_1_1States_1_1InterSysErr_01_4.html", "structstd_1_1hash_3_01NAV_1_1GNSS_1_1Positioning_1_1SPP_1_1States_1_1InterSysErr_01_4" ],
       [ "hash< NAV::SatId >", "structstd_1_1hash_3_01NAV_1_1SatId_01_4.html", "structstd_1_1hash_3_01NAV_1_1SatId_01_4" ],
       [ "hash< NAV::SatSigId >", "structstd_1_1hash_3_01NAV_1_1SatSigId_01_4.html", "structstd_1_1hash_3_01NAV_1_1SatSigId_01_4" ],
       [ "hash< NAV::TimeSystem >", "structstd_1_1hash_3_01NAV_1_1TimeSystem_01_4.html", "structstd_1_1hash_3_01NAV_1_1TimeSystem_01_4" ],

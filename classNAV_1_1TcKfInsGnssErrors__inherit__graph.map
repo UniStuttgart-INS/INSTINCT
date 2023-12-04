@@ -1,7 +1,0 @@
-<map id="NAV::TcKfInsGnssErrors" name="NAV::TcKfInsGnssErrors">
-<area shape="rect" id="Node000001" title="Tightly&#45;coupled Kalman Filter INS/GNSS errors." alt="" coords="6,492,170,597"/>
-<area shape="rect" id="Node000002" href="$classNAV_1_1LcKfInsGnssErrors.html" title="Loosely&#45;coupled Kalman Filter INS/GNSS errors." alt="" coords="5,259,171,444"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="91,458,91,492,85,492,85,458"/>
-<area shape="rect" id="Node000003" href="$classNAV_1_1NodeData.html" title="Parent class for all data transmitted over Flow pins." alt="" coords="29,5,147,211"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="91,224,91,258,85,258,85,224"/>
-</map>

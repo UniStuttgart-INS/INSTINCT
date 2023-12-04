@@ -168,7 +168,9 @@ var searchData=
   ['ubx_5ftim_5fvcocal_165',['UBX_TIM_VCOCAL',['../UbloxTypes_8hpp.html#a15507a1e8703e433c6b5d8d20bf3e992a785575c12b3a45f1c68798518b3c6acd',1,'NAV::vendor::ublox']]],
   ['ubx_5ftim_5fvrfy_166',['UBX_TIM_VRFY',['../UbloxTypes_8hpp.html#a15507a1e8703e433c6b5d8d20bf3e992a44034ca249cf0b64c43d879413942cd0',1,'NAV::vendor::ublox']]],
   ['ubx_5fupd_5fsos_167',['UBX_UPD_SOS',['../UbloxTypes_8hpp.html#a7893b7a1928121df7a2abd1ada48b0f0ab78069c017c3351b74eaff06de698f1b',1,'NAV::vendor::ublox']]],
-  ['usedfornavigation_168',['UsedForNavigation',['../structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html#a7f4ccbed08d47b285c8a789d8a8426f0a6c1fc597377bcb82cde7b1c5d9d2586d',1,'NAV::vendor::vectornav::SatInfo::SatInfoElement']]],
-  ['usedforrtk_169',['UsedForRTK',['../structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html#a7f4ccbed08d47b285c8a789d8a8426f0a08ccd0a73122f96eeca93f3b49339ca4',1,'NAV::vendor::vectornav::SatInfo::SatInfoElement']]],
-  ['utc_170',['UTC',['../TimeSystem_8hpp.html#a3356fa3cc3daa77e1a1ad447ced1f7d6ac977e58954037e7401a3d34090d32f45',1,'NAV']]]
+  ['ulg_168',['ulg',['../UlogFileFormat_8hpp.html#aaf4c855fcd1042223ebe548585f34d5da9dc981b68c66c6d2fe3f14fb61bbd116',1,'NAV::vendor::pixhawk']]],
+  ['unassigned_169',['unassigned',['../UlogFileFormat_8hpp.html#aaf4c855fcd1042223ebe548585f34d5dabad097494597a4e092c1524102eeaea7',1,'NAV::vendor::pixhawk']]],
+  ['usedfornavigation_170',['UsedForNavigation',['../structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html#a7f4ccbed08d47b285c8a789d8a8426f0a6c1fc597377bcb82cde7b1c5d9d2586d',1,'NAV::vendor::vectornav::SatInfo::SatInfoElement']]],
+  ['usedforrtk_171',['UsedForRTK',['../structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html#a7f4ccbed08d47b285c8a789d8a8426f0a08ccd0a73122f96eeca93f3b49339ca4',1,'NAV::vendor::vectornav::SatInfo::SatInfoElement']]],
+  ['utc_172',['utc',['../classNAV_1_1TimeSystem.html#a980e1c5a12b195ad0845c5502609cdd2a9234324ddf6b4176b57d803a925b7961',1,'NAV::TimeSystem::UTC'],['../TimeSystem_8hpp.html#a3356fa3cc3daa77e1a1ad447ced1f7d6ac977e58954037e7401a3d34090d32f45',1,'NAV::UTC']]]
 ];

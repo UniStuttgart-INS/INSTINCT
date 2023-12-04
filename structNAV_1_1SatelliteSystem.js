@@ -5,6 +5,7 @@ var structNAV_1_1SatelliteSystem =
     [ "fromChar", "structNAV_1_1SatelliteSystem.html#a56139015779ce77af1204bb13dfdd2b5", null ],
     [ "fromEnum", "structNAV_1_1SatelliteSystem.html#a28a4ff252d4785db8b872783541d551f", null ],
     [ "fromString", "structNAV_1_1SatelliteSystem.html#ad8a2b8ece180fc28ed1186f8e9ef6247", null ],
+    [ "GetAll", "structNAV_1_1SatelliteSystem.html#a963f19888a844fc97c4ef7ceb8308e97", null ],
     [ "getSatellites", "structNAV_1_1SatelliteSystem.html#afc539e4a2fdef7a5661f618883889762", null ],
     [ "GetSatellitesForSatelliteSystem", "structNAV_1_1SatelliteSystem.html#a737b7dbf0fb681e77ac9f7000c442876", null ],
     [ "getTimeSystem", "structNAV_1_1SatelliteSystem.html#a05378c28b5db99c6f9b27a5a31cbbb7b", null ],
@@ -18,5 +19,7 @@ var structNAV_1_1SatelliteSystem =
     [ "operator=", "structNAV_1_1SatelliteSystem.html#a69f98496a4fbb8245d6c56a258bc5913", null ],
     [ "toEnumeration", "structNAV_1_1SatelliteSystem.html#a68c2c38380a2ce3f87c0298db8b78eca", null ],
     [ "ToEnumeration", "structNAV_1_1SatelliteSystem.html#a0fbb52517ff7525825a2d4cac679c613", null ],
+    [ "toVector", "structNAV_1_1SatelliteSystem.html#ae95820ad357ff09a1f207b9fa02660cb", null ],
+    [ "ToVector", "structNAV_1_1SatelliteSystem.html#a5e22b940226ce99c5353f81cd4fd1ce6", null ],
     [ "operator==", "structNAV_1_1SatelliteSystem.html#ad23a965cd1527371a5c23f50b8755a56", null ]
 ];

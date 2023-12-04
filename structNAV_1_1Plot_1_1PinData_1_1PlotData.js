@@ -5,5 +5,6 @@ var structNAV_1_1Plot_1_1PinData_1_1PlotData =
     [ "buffer", "structNAV_1_1Plot_1_1PinData_1_1PlotData.html#aa3390dd52034026afda89d53569d0c77", null ],
     [ "displayName", "structNAV_1_1Plot_1_1PinData_1_1PlotData.html#ad91def367d9598d863f9570935dcbc3a", null ],
     [ "hasData", "structNAV_1_1Plot_1_1PinData_1_1PlotData.html#a42700a74683f9673a17196d37d52b2cc", null ],
+    [ "isDynamic", "structNAV_1_1Plot_1_1PinData_1_1PlotData.html#a1ff3145e3664bd5ca36bcf01a32007fc", null ],
     [ "markedForDelete", "structNAV_1_1Plot_1_1PinData_1_1PlotData.html#a435d54811c8abec74a14070faefa568b", null ]
 ];

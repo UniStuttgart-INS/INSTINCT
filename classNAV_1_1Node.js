@@ -68,11 +68,12 @@ var classNAV_1_1Node =
     [ "_guiConfigDefaultWindowSize", "classNAV_1_1Node.html#a27df0291782fbc7df5c6b1c6a8da7167", null ],
     [ "_hasConfig", "classNAV_1_1Node.html#ae640c87f9eb07a6f8078ad74b244cbe1", null ],
     [ "_lockConfigDuringRun", "classNAV_1_1Node.html#a8ae6927dfe76c01cb9dbe7f65066188c", null ],
+    [ "_onlyRealTime", "classNAV_1_1Node.html#aa1e91fd9f312aadf79297d25c39a1788", null ],
     [ "callbacksEnabled", "classNAV_1_1Node.html#a6fd6e00cf5d6229eea0de4a8d13b0e4f", null ],
     [ "id", "classNAV_1_1Node.html#acdfebb6f17e365108580e658d5ad8ab8", null ],
     [ "inputPins", "classNAV_1_1Node.html#a5f207b4b920b9994e08c238a254b8b78", null ],
     [ "kind", "classNAV_1_1Node.html#a51e38c43af1eb909a0f6faf2dae3bef4", null ],
     [ "name", "classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8", null ],
     [ "outputPins", "classNAV_1_1Node.html#a355d74c9bf39e9b763078c2710059075", null ],
-    [ "pollEvents", "classNAV_1_1Node.html#a2e78d49d3b6e026fa123b655b29f7f2d", null ]
+    [ "pollEvents", "classNAV_1_1Node.html#a48d6ee1f296a7bc3a30d5b31c923f310", null ]
 ];

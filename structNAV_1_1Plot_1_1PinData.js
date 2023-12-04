@@ -16,6 +16,7 @@ var structNAV_1_1Plot_1_1PinData =
     [ "operator=", "structNAV_1_1Plot_1_1PinData.html#a9e975ae042ec82da046af5c5b15b8ca0", null ],
     [ "operator=", "structNAV_1_1Plot_1_1PinData.html#a12ff9454a49dd5b45a046dfc29674f56", null ],
     [ "dataIdentifier", "structNAV_1_1Plot_1_1PinData.html#ad4a5e1384593a59e4512ff0c51360047", null ],
+    [ "dynamicDataStartIndex", "structNAV_1_1Plot_1_1PinData.html#aa74a2614d1ac9e3b1f77493277d0c1dd", null ],
     [ "mutex", "structNAV_1_1Plot_1_1PinData.html#a00d7414500208419f545718677dcc142", null ],
     [ "pinType", "structNAV_1_1Plot_1_1PinData.html#a6bae1d6ae1a3c727acf1ba8d8b28167f", null ],
     [ "plotData", "structNAV_1_1Plot_1_1PinData.html#acfda3453189dddde1f685920dba59a8a", null ],

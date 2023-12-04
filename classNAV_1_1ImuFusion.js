@@ -12,5 +12,6 @@ var classNAV_1_1ImuFusion =
     [ "restore", "classNAV_1_1ImuFusion.html#aa59ef24a27a80dc9de36c4d9628e2bcf", null ],
     [ "save", "classNAV_1_1ImuFusion.html#a573ab2ade2d9986cbc735d8d11a0164b", null ],
     [ "type", "classNAV_1_1ImuFusion.html#a347216fb854c54258e94abe2234ea95c", null ],
-    [ "typeStatic", "classNAV_1_1ImuFusion.html#a8f9a8262034e199233430e83880fd09c", null ]
+    [ "typeStatic", "classNAV_1_1ImuFusion.html#a8f9a8262034e199233430e83880fd09c", null ],
+    [ "_imuPos", "classNAV_1_1ImuFusion.html#a76fd198850ee01deb3d1e356bfac86a4", null ]
 ];

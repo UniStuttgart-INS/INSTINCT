@@ -1,9 +1,0 @@
-<map id="NAV::SppSolution" name="NAV::SppSolution">
-<area shape="rect" id="Node000001" title="SPP Algorithm output." alt="" coords="5,785,203,1031"/>
-<area shape="rect" id="Node000002" href="$classNAV_1_1PosVel.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="41,572,167,737"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="107,751,107,785,101,785,101,751"/>
-<area shape="rect" id="Node000003" href="$classNAV_1_1Pos.html" title="Position, Velocity and Attitude Storage Class." alt="" coords="37,259,171,524"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="107,538,107,572,101,572,101,538"/>
-<area shape="rect" id="Node000004" href="$classNAV_1_1NodeData.html" title="Parent class for all data transmitted over Flow pins." alt="" coords="45,5,163,211"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="107,225,107,258,101,258,101,225"/>
-</map>

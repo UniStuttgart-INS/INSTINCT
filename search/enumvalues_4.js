@@ -2,8 +2,8 @@ var searchData=
 [
   ['deg2_5fs2_0',['deg2_s2',['../structNAV_1_1ImuFusion_1_1PinData.html#a3702b5d724039c41ce853b01193409eaa19f2e4cdac8d4221cafd70d8f6a59861',1,'NAV::ImuFusion::PinData']]],
   ['deg2_5fs4_1',['deg2_s4',['../structNAV_1_1ImuFusion_1_1PinData.html#acadeab3237d157428548d5f28d758aaca6ad4607fbedaea18398b7305722ba314',1,'NAV::ImuFusion::PinData']]],
-  ['deg_5fs_2',['deg_s',['../structNAV_1_1ImuFusion_1_1PinData.html#a3702b5d724039c41ce853b01193409eaa26b1fed50e629c912150cc2d1dd0dff8',1,'NAV::ImuFusion::PinData']]],
-  ['deg_5fs2_3',['deg_s2',['../structNAV_1_1ImuFusion_1_1PinData.html#acadeab3237d157428548d5f28d758aaca3d64dbcd47d25b5437aaf41c06c0093f',1,'NAV::ImuFusion::PinData']]],
+  ['deg_5fs_2',['deg_s',['../structNAV_1_1ImuFusion_1_1PinData.html#a62dacfc83de0321e190b1fcc6d9e4c93a26b1fed50e629c912150cc2d1dd0dff8',1,'NAV::ImuFusion::PinData::deg_s'],['../structNAV_1_1ImuFusion_1_1PinData.html#a3702b5d724039c41ce853b01193409eaa26b1fed50e629c912150cc2d1dd0dff8',1,'NAV::ImuFusion::PinData::deg_s']]],
+  ['deg_5fs2_3',['deg_s2',['../structNAV_1_1ImuFusion_1_1PinData.html#ac9d1734eacf5f5c7642b8eb518d8555aa3d64dbcd47d25b5437aaf41c06c0093f',1,'NAV::ImuFusion::PinData::deg_s2'],['../structNAV_1_1ImuFusion_1_1PinData.html#acadeab3237d157428548d5f28d758aaca3d64dbcd47d25b5437aaf41c06c0093f',1,'NAV::ImuFusion::PinData::deg_s2']]],
   ['deinitialized_4',['Deinitialized',['../classNAV_1_1Node.html#a04c7d8fd52bb21f40d924a0b9a950534afd7c1706ced8bc5a714ced665d951265',1,'NAV::Node']]],
   ['deinitializing_5',['Deinitializing',['../classNAV_1_1Node.html#a04c7d8fd52bb21f40d924a0b9a950534ac72992ab2deae072d7a546fa116254b4',1,'NAV::Node']]],
   ['delegate_6',['Delegate',['../structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07a1da8908c8e8ca2cd187c7131afb41bac',1,'NAV::Pin::Type']]],
@@ -11,5 +11,18 @@ var searchData=
   ['disabled_8',['Disabled',['../classNAV_1_1Node.html#a04c7d8fd52bb21f40d924a0b9a950534ab9f5c797ebbf55adccdd8539a65a0241',1,'NAV::Node']]],
   ['dodeinitialize_9',['DoDeinitialize',['../classNAV_1_1Node.html#a04c7d8fd52bb21f40d924a0b9a950534a89d04dfd8ad73f396d08145f82a23b48',1,'NAV::Node']]],
   ['doinitialize_10',['DoInitialize',['../classNAV_1_1Node.html#a04c7d8fd52bb21f40d924a0b9a950534a10aebf1323e8b1f5d97a67631ee59aae',1,'NAV::Node']]],
-  ['doshutdown_11',['DoShutdown',['../classNAV_1_1Node.html#a04c7d8fd52bb21f40d924a0b9a950534a1f400aa0f5bc3c84af56f0595b8e395a',1,'NAV::Node']]]
+  ['doppler_11',['Doppler',['../classNAV_1_1GnssObs.html#a23a37f1e6e5cf629278bf5d28e5502c7a3602feaf9f97cba2e050987a85fef57f',1,'NAV::GnssObs']]],
+  ['doshutdown_12',['DoShutdown',['../classNAV_1_1Node.html#a04c7d8fd52bb21f40d924a0b9a950534a1f400aa0f5bc3c84af56f0595b8e395a',1,'NAV::Node']]],
+  ['dposalt_13',['dPosAlt',['../classNAV_1_1LooselyCoupledKF.html#a4cf420ce1b22dbb64b708e005af6a891a86825b126154016a213dcbcaf969bfbd',1,'NAV::LooselyCoupledKF']]],
+  ['dposlat_14',['dPosLat',['../classNAV_1_1LooselyCoupledKF.html#a4cf420ce1b22dbb64b708e005af6a891a13ebf5a1daa92d4fa89b0ff771d50745',1,'NAV::LooselyCoupledKF']]],
+  ['dposlon_15',['dPosLon',['../classNAV_1_1LooselyCoupledKF.html#a4cf420ce1b22dbb64b708e005af6a891a153c7d6ab7d72de794c5155302a8976f',1,'NAV::LooselyCoupledKF']]],
+  ['dposx_16',['dPosX',['../classNAV_1_1LooselyCoupledKF.html#a4cf420ce1b22dbb64b708e005af6a891a409c432788c487a10b043c83505ea4be',1,'NAV::LooselyCoupledKF']]],
+  ['dposy_17',['dPosY',['../classNAV_1_1LooselyCoupledKF.html#a4cf420ce1b22dbb64b708e005af6a891a2ef5f8f080592d6e6f2e627905497d87',1,'NAV::LooselyCoupledKF']]],
+  ['dposz_18',['dPosZ',['../classNAV_1_1LooselyCoupledKF.html#a4cf420ce1b22dbb64b708e005af6a891a7789eeff4c309115eacefabfa35b69ef',1,'NAV::LooselyCoupledKF']]],
+  ['dveld_19',['dVelD',['../classNAV_1_1LooselyCoupledKF.html#a4cf420ce1b22dbb64b708e005af6a891aff050c33e62fc7c47dbc0281b2184d0d',1,'NAV::LooselyCoupledKF']]],
+  ['dvele_20',['dVelE',['../classNAV_1_1LooselyCoupledKF.html#a4cf420ce1b22dbb64b708e005af6a891a73f926240d606eefc57f0bad6f21f84a',1,'NAV::LooselyCoupledKF']]],
+  ['dveln_21',['dVelN',['../classNAV_1_1LooselyCoupledKF.html#a4cf420ce1b22dbb64b708e005af6a891acb09a001b2b2ca73dec5def8043b75dc',1,'NAV::LooselyCoupledKF']]],
+  ['dvelx_22',['dVelX',['../classNAV_1_1LooselyCoupledKF.html#a4cf420ce1b22dbb64b708e005af6a891ae31bdcafa4b4e007e03b7fa839016de7',1,'NAV::LooselyCoupledKF']]],
+  ['dvely_23',['dVelY',['../classNAV_1_1LooselyCoupledKF.html#a4cf420ce1b22dbb64b708e005af6a891af29f7d87969be59e51812f768a5fe944',1,'NAV::LooselyCoupledKF']]],
+  ['dvelz_24',['dVelZ',['../classNAV_1_1LooselyCoupledKF.html#a4cf420ce1b22dbb64b708e005af6a891ad49417a6ef197dbc8d20f34fe5ff27b4',1,'NAV::LooselyCoupledKF']]]
 ];

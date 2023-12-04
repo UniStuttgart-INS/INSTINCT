@@ -2,6 +2,7 @@ var TimeSystem_8hpp =
 [
     [ "std::hash< NAV::TimeSystem >", "structstd_1_1hash_3_01NAV_1_1TimeSystem_01_4.html", "structstd_1_1hash_3_01NAV_1_1TimeSystem_01_4" ],
     [ "NAV::TimeSystem", "classNAV_1_1TimeSystem.html", "classNAV_1_1TimeSystem" ],
+    [ "json", "TimeSystem_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d", null ],
     [ "TimeSystem_", "TimeSystem_8hpp.html#a3356fa3cc3daa77e1a1ad447ced1f7d6", [
       [ "TimeSys_None", "TimeSystem_8hpp.html#a3356fa3cc3daa77e1a1ad447ced1f7d6a873dc9bf7f0ed6d058bf07dc7011ba69", null ],
       [ "UTC", "TimeSystem_8hpp.html#a3356fa3cc3daa77e1a1ad447ced1f7d6ac977e58954037e7401a3d34090d32f45", null ],
@@ -12,6 +13,8 @@ var TimeSystem_8hpp =
       [ "QZSST", "TimeSystem_8hpp.html#a3356fa3cc3daa77e1a1ad447ced1f7d6a9284147e8640bbd87de2fbdfb892ade8", null ],
       [ "IRNSST", "TimeSystem_8hpp.html#a3356fa3cc3daa77e1a1ad447ced1f7d6a12239eef0ac6df41cc22507b46b2c559", null ]
     ] ],
+    [ "ComboTimeSystem", "TimeSystem_8hpp.html#aa229b5a61456a6710c28ab78daccdfa9", null ],
+    [ "from_json", "TimeSystem_8hpp.html#a16a46f654d415d42993cf5ec3d63f46d", null ],
     [ "operator!=", "TimeSystem_8hpp.html#ad972b92de6805ae9b8bffde73e584832", null ],
     [ "operator!=", "TimeSystem_8hpp.html#a1d20d57a184d559cb3553ad4b6941d88", null ],
     [ "operator!=", "TimeSystem_8hpp.html#a007960dd410195193d15f3b79b193f58", null ],
@@ -35,5 +38,7 @@ var TimeSystem_8hpp =
     [ "operator|=", "TimeSystem_8hpp.html#a603eaf95a427be005f4e1d0d167d9f53", null ],
     [ "operator|=", "TimeSystem_8hpp.html#a5b114a97f855217d834205abb240834b", null ],
     [ "operator~", "TimeSystem_8hpp.html#a5e2a1de6f6a59e1c15fa24a2f558a7f7", null ],
-    [ "operator~", "TimeSystem_8hpp.html#a015d321470af3249393a8b96f68b6a8d", null ]
+    [ "operator~", "TimeSystem_8hpp.html#a015d321470af3249393a8b96f68b6a8d", null ],
+    [ "to_json", "TimeSystem_8hpp.html#a133c2f3a1192d468d1d494437908d53f", null ],
+    [ "to_string", "TimeSystem_8hpp.html#a4927a468d9c335285981f4254d83c1b5", null ]
 ];

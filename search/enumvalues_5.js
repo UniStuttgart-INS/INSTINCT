@@ -27,7 +27,7 @@ var searchData=
   ['e8i_24',['E8I',['../classNAV_1_1Code.html#af180d7a6aba068a798f8efc3799f8a6caa5cc9793debbd68d42927b52a1652325',1,'NAV::Code']]],
   ['e8q_25',['E8Q',['../classNAV_1_1Code.html#af180d7a6aba068a798f8efc3799f8a6cab5204b20cbd5dddbe671e1387ee2740b',1,'NAV::Code']]],
   ['e8x_26',['E8X',['../classNAV_1_1Code.html#af180d7a6aba068a798f8efc3799f8a6ca6898902af608043eefa1e7cda5c0f40f',1,'NAV::Code']]],
-  ['ecef_27',['ECEF',['../classNAV_1_1LcKfInsGnssErrors.html#ab2f724d372129d703088c178124977b5ae9f56677a676cd46515c806cba38fffa',1,'NAV::LcKfInsGnssErrors']]],
+  ['ecef_27',['ecef',['../classNAV_1_1LcKfInsGnssErrors.html#ab2f724d372129d703088c178124977b5ae9f56677a676cd46515c806cba38fffa',1,'NAV::LcKfInsGnssErrors::ECEF'],['../structNAV_1_1gui_1_1widgets_1_1PositionWithFrame.html#af65dcf776b8aefae637e9e9557f29bddae9f56677a676cd46515c806cba38fffa',1,'NAV::gui::widgets::PositionWithFrame::ECEF']]],
   ['egm96_28',['EGM96',['../Gravity_8hpp.html#a62cedc05576bd595a348504ae729e9dea7c7ad846cb98dafc9309087d3ba36013',1,'NAV']]],
   ['ephemeris_29',['Ephemeris',['../structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html#a7f4ccbed08d47b285c8a789d8a8426f0a6616522b9b245922c4c35dc71177f3cd',1,'NAV::vendor::vectornav::SatInfo::SatInfoElement']]],
   ['erb_5fmessageid_5fdpos_30',['ERB_MessageId_DPOS',['../EmlidTypes_8hpp.html#a6c08c10102e9b5c1ff914d99531680c4aff6ce833ae9cdba778d28aea65b9bcc8',1,'NAV::vendor::emlid']]],
@@ -38,6 +38,6 @@ var searchData=
   ['erb_5fmessageid_5fsvi_35',['ERB_MessageId_SVI',['../EmlidTypes_8hpp.html#a6c08c10102e9b5c1ff914d99531680c4ae8388e1b6fe3acd4c21ba055539eb670',1,'NAV::vendor::emlid']]],
   ['erb_5fmessageid_5fvel_36',['ERB_MessageId_VEL',['../EmlidTypes_8hpp.html#a6c08c10102e9b5c1ff914d99531680c4ab69276d093c9f0076394bfe7096ba546',1,'NAV::vendor::emlid']]],
   ['erb_5fmessageid_5fver_37',['ERB_MessageId_VER',['../EmlidTypes_8hpp.html#a6c08c10102e9b5c1ff914d99531680c4adfa78b85e7b24909322c11a9fa9ba5b0',1,'NAV::vendor::emlid']]],
-  ['errordetectionmode_5fchecksum_38',['ERRORDETECTIONMODE_CHECKSUM',['../EmlidTypes_8hpp.html#ad8d0665dce687a066fa83275a7269effa93dd270b3e48874cc622d1f2ff3183eb',1,'NAV::vendor::emlid::ERRORDETECTIONMODE_CHECKSUM'],['../UbloxTypes_8hpp.html#ab74203ef5dcaa016c407cbf815da3f50ab1f41282b115d2e4f265ad5219301987',1,'NAV::vendor::ublox::ERRORDETECTIONMODE_CHECKSUM']]],
-  ['errordetectionmode_5fnone_39',['ERRORDETECTIONMODE_NONE',['../EmlidTypes_8hpp.html#ad8d0665dce687a066fa83275a7269effadc325dfd3832fbd9c0b787ea92c5c8dd',1,'NAV::vendor::emlid::ERRORDETECTIONMODE_NONE'],['../UbloxTypes_8hpp.html#ab74203ef5dcaa016c407cbf815da3f50a0a23b9bbee03c9b8856f29443f8f5ab5',1,'NAV::vendor::ublox::ERRORDETECTIONMODE_NONE']]]
+  ['errordetectionmode_5fchecksum_38',['errordetectionmode_checksum',['../EmlidTypes_8hpp.html#ad8d0665dce687a066fa83275a7269effa93dd270b3e48874cc622d1f2ff3183eb',1,'NAV::vendor::emlid::ERRORDETECTIONMODE_CHECKSUM'],['../UbloxTypes_8hpp.html#ab74203ef5dcaa016c407cbf815da3f50ab1f41282b115d2e4f265ad5219301987',1,'NAV::vendor::ublox::ERRORDETECTIONMODE_CHECKSUM']]],
+  ['errordetectionmode_5fnone_39',['errordetectionmode_none',['../EmlidTypes_8hpp.html#ad8d0665dce687a066fa83275a7269effadc325dfd3832fbd9c0b787ea92c5c8dd',1,'NAV::vendor::emlid::ERRORDETECTIONMODE_NONE'],['../UbloxTypes_8hpp.html#ab74203ef5dcaa016c407cbf815da3f50a0a23b9bbee03c9b8856f29443f8f5ab5',1,'NAV::vendor::ublox::ERRORDETECTIONMODE_NONE']]]
 ];

@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['nmeamessageclass_0',['NmeaMessageClass',['../UbloxTypes_8hpp.html#aa7098506da690a5953d12754dd544c9b',1,'NAV::vendor::ublox']]],
-  ['nmeapubxmessages_1',['NmeaPubxMessages',['../UbloxTypes_8hpp.html#a9c92bbaf82c24029df981a1c957cadd1',1,'NAV::vendor::ublox']]],
-  ['nmeastandardmessages_2',['NmeaStandardMessages',['../UbloxTypes_8hpp.html#ae11136efe8825ff233943b50e412aa1b',1,'NAV::vendor::ublox']]],
-  ['nmeatalkerid_3',['NmeaTalkerID',['../UbloxTypes_8hpp.html#a53980e2168b4cc3b1aec45eafc0378d3',1,'NAV::vendor::ublox']]]
+  ['mappingfunction_0',['MappingFunction',['../Troposphere_8hpp.html#a2d4742169ca545152d5b0d42238c4e76',1,'NAV']]],
+  ['mode_1',['mode',['../classNAV_1_1Node.html#a3bf21eafea4312a9a11558c2180d31a6',1,'NAV::Node::Mode'],['../classNAV_1_1vendor_1_1vectornav_1_1InsStatus.html#a1988b87a9c5f649c3e41c982185d4ec5',1,'NAV::vendor::vectornav::InsStatus::Mode'],['../TimeBase_8hpp.html#a5c85c03de6b1c2d12775311f31cced8f',1,'NAV::util::time::Mode']]],
+  ['model_2',['Model',['../classNAV_1_1GnssMeasurementErrorModel.html#a4818411c6ad1cc9c446b5928433c3744',1,'NAV::GnssMeasurementErrorModel']]]
 ];

@@ -1,9 +1,0 @@
-<map id="NAV::VectorNavDataLogger" name="NAV::VectorNavDataLogger">
-<area shape="rect" id="Node000001" title="Data Logger for VectorNav observations." alt="" coords="215,519,407,844"/>
-<area shape="rect" id="Node000002" href="$classNAV_1_1Node.html" title="Abstract parent class for all nodes." alt="" coords="5,5,229,471"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="227,483,242,518,237,520,222,485"/>
-<area shape="rect" id="Node000003" href="$classNAV_1_1FileWriter.html" title="Parent class for other data loggers which manages the output filestream." alt="" coords="254,65,367,411"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="313,424,313,519,308,519,308,424"/>
-<area shape="rect" id="Node000004" href="$classNAV_1_1CommonLog.html" title="Common logging variables like time into run and local positions." alt="" coords="391,155,542,321"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="436,334,370,519,365,517,431,332"/>
-</map>

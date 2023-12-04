@@ -12,9 +12,15 @@ var searchData=
   ['sleep_2ehpp_9',['Sleep.hpp',['../Sleep_8hpp.html',1,'']]],
   ['spinner_2ehpp_10',['Spinner.hpp',['../Spinner_8hpp.html',1,'']]],
   ['splitter_2ehpp_11',['Splitter.hpp',['../Splitter_8hpp.html',1,'']]],
-  ['sppsolution_2ehpp_12',['SppSolution.hpp',['../SppSolution_8hpp.html',1,'']]],
-  ['sppsolutionlogger_2ehpp_13',['SppSolutionLogger.hpp',['../SppSolutionLogger_8hpp.html',1,'']]],
-  ['standardatmosphere_2ehpp_14',['StandardAtmosphere.hpp',['../WaterVapor_2Models_2StandardAtmosphere_8hpp.html',1,'(Global Namespace)'],['../Temperature_2Models_2StandardAtmosphere_8hpp.html',1,'(Global Namespace)'],['../Pressure_2Models_2StandardAtmosphere_8hpp.html',1,'(Global Namespace)']]],
-  ['stringobs_2ehpp_15',['StringObs.hpp',['../StringObs_8hpp.html',1,'']]],
-  ['stringutil_2ehpp_16',['StringUtil.hpp',['../StringUtil_8hpp.html',1,'']]]
+  ['sppalgorithm_2ehpp_12',['SppAlgorithm.hpp',['../SppAlgorithm_8hpp.html',1,'']]],
+  ['sppalgorithmtypes_2ehpp_13',['SppAlgorithmTypes.hpp',['../SppAlgorithmTypes_8hpp.html',1,'']]],
+  ['sppcommon_2ehpp_14',['SppCommon.hpp',['../SppCommon_8hpp.html',1,'']]],
+  ['sppkalmanfilter_2ehpp_15',['SppKalmanFilter.hpp',['../SppKalmanFilter_8hpp.html',1,'']]],
+  ['sppkeys_2ehpp_16',['SppKeys.hpp',['../SppKeys_8hpp.html',1,'']]],
+  ['sppleastsquares_2ehpp_17',['SppLeastSquares.hpp',['../SppLeastSquares_8hpp.html',1,'']]],
+  ['sppsolution_2ehpp_18',['SppSolution.hpp',['../SppSolution_8hpp.html',1,'']]],
+  ['sppsolutionlogger_2ehpp_19',['SppSolutionLogger.hpp',['../SppSolutionLogger_8hpp.html',1,'']]],
+  ['standardatmosphere_2ehpp_20',['standardatmosphere.hpp',['../WaterVapor_2Models_2StandardAtmosphere_8hpp.html',1,'(Global Namespace)'],['../Temperature_2Models_2StandardAtmosphere_8hpp.html',1,'(Global Namespace)'],['../Pressure_2Models_2StandardAtmosphere_8hpp.html',1,'(Global Namespace)']]],
+  ['stringobs_2ehpp_21',['StringObs.hpp',['../StringObs_8hpp.html',1,'']]],
+  ['stringutil_2ehpp_22',['StringUtil.hpp',['../StringUtil_8hpp.html',1,'']]]
 ];

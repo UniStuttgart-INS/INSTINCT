@@ -4,6 +4,7 @@ var classNAV_1_1ImuDataLogger =
     [ "~ImuDataLogger", "classNAV_1_1ImuDataLogger.html#a724e8411da880fb64db8a0156f3c2316", null ],
     [ "ImuDataLogger", "classNAV_1_1ImuDataLogger.html#a18652d687b3ac96ad2c64c91575cd578", null ],
     [ "ImuDataLogger", "classNAV_1_1ImuDataLogger.html#aa3b2919f05cb32724fcb205d42155a55", null ],
+    [ "afterCreateLink", "classNAV_1_1ImuDataLogger.html#a51e99fc4e7c8119952bdf15af7983a70", null ],
     [ "category", "classNAV_1_1ImuDataLogger.html#a1b8c50d75cfc0ce1b1392c889784fdc1", null ],
     [ "flush", "classNAV_1_1ImuDataLogger.html#a6b852801b6729e42a0d648536f550445", null ],
     [ "guiConfig", "classNAV_1_1ImuDataLogger.html#af02fbb209973c1d91f4442029041ee26", null ],

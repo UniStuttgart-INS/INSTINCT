@@ -17,5 +17,7 @@ var functions_eval =
     [ "q", "functions_eval_q.html", null ],
     [ "r", "functions_eval_r.html", null ],
     [ "s", "functions_eval_s.html", null ],
-    [ "w", "functions_eval_w.html", null ]
+    [ "v", "functions_eval_v.html", null ],
+    [ "w", "functions_eval_w.html", null ],
+    [ "y", "functions_eval_y.html", null ]
 ];

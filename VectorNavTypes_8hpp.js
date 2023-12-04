@@ -19,7 +19,15 @@ var VectorNavTypes_8hpp =
       [ "GnssFix_RTK_Float", "VectorNavTypes_8hpp.html#ae0c711ef0bb825c7059baab7bfb6998ba91314b1bb2c80187fff235046c4b0271", null ],
       [ "GnssFix_RTK_Fixed", "VectorNavTypes_8hpp.html#ae0c711ef0bb825c7059baab7bfb6998baffbed6ad40f0a4fec530eab183b5aebb", null ]
     ] ],
-    [ "SatSys", "VectorNavTypes_8hpp.html#a62e32a1bad2112cd23a8beddf30bd9c5", null ],
+    [ "SatSys", "VectorNavTypes_8hpp.html#a62e32a1bad2112cd23a8beddf30bd9c5", [
+      [ "GPS", "VectorNavTypes_8hpp.html#a62e32a1bad2112cd23a8beddf30bd9c5a8c578de37278ada488d763ea86c5cf20", null ],
+      [ "SBAS", "VectorNavTypes_8hpp.html#a62e32a1bad2112cd23a8beddf30bd9c5a34dd33959e729910d676a3108e81ac7f", null ],
+      [ "Galileo", "VectorNavTypes_8hpp.html#a62e32a1bad2112cd23a8beddf30bd9c5a380ece00e3a5c3b9c876cbeb0c8a38bb", null ],
+      [ "BeiDou", "VectorNavTypes_8hpp.html#a62e32a1bad2112cd23a8beddf30bd9c5a532e1e7daeef2562426638f7092cf9a6", null ],
+      [ "IMES", "VectorNavTypes_8hpp.html#a62e32a1bad2112cd23a8beddf30bd9c5ae19daf4d2998f9b8d0afc4fb5af0e125", null ],
+      [ "QZSS", "VectorNavTypes_8hpp.html#a62e32a1bad2112cd23a8beddf30bd9c5a10b5ac7cdca8f06ca82238f8f3b2d119", null ],
+      [ "GLONASS", "VectorNavTypes_8hpp.html#a62e32a1bad2112cd23a8beddf30bd9c5a48549df6f41418cb94b963fe84894cd6", null ]
+    ] ],
     [ "operator&", "VectorNavTypes_8hpp.html#ada5723a2f484234608e77841e43bab2c", null ],
     [ "operator&", "VectorNavTypes_8hpp.html#a4bc38e953e1d4ec20c90c67a7a27f69f", null ],
     [ "operator<<", "VectorNavTypes_8hpp.html#a5ad770c7dfc460f6388bd6209d26f2f7", null ]

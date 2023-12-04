@@ -5,6 +5,9 @@ var classNAV_1_1IonosphericCorrections =
       [ "Alpha", "classNAV_1_1IonosphericCorrections.html#a387d1004a5d80f019ad197e82c301fecae261ef8b47d884e1c8481fc3266fd097", null ],
       [ "Beta", "classNAV_1_1IonosphericCorrections.html#a387d1004a5d80f019ad197e82c301feca6644318ad10089e266112072272a7617", null ]
     ] ],
+    [ "IonosphericCorrections", "classNAV_1_1IonosphericCorrections.html#a89eae267b9fa9ce2880be8bc82c6db34", null ],
+    [ "IonosphericCorrections", "classNAV_1_1IonosphericCorrections.html#a27ad44b416b4c9ac463ad99bdca11384", null ],
+    [ "IonosphericCorrections", "classNAV_1_1IonosphericCorrections.html#ac0e548196a639a8919e6de339af8a3d4", null ],
     [ "clear", "classNAV_1_1IonosphericCorrections.html#a9a5f0c9dacb5aa69d8e300010ff7b17c", null ],
     [ "contains", "classNAV_1_1IonosphericCorrections.html#a33a65c6898e837f578554709ad6c2b11", null ],
     [ "data", "classNAV_1_1IonosphericCorrections.html#a54b7110fb6b11b764f374f6e294a8991", null ],

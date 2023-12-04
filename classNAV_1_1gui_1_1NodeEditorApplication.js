@@ -16,8 +16,8 @@ var classNAV_1_1gui_1_1NodeEditorApplication =
     [ "ShowClearNodesRequested", "classNAV_1_1gui_1_1NodeEditorApplication.html#ab323197536ad5b4f82f8b6f226c634a0", null ],
     [ "ShowLoadRequested", "classNAV_1_1gui_1_1NodeEditorApplication.html#a8b2afcd6377078d8d60c5e6a13d5cc1d", null ],
     [ "ShowQuitRequested", "classNAV_1_1gui_1_1NodeEditorApplication.html#a8e7784c3d13e564ef8fba9b0e9abf295", null ],
-    [ "ShowRenameNodeRequest", "classNAV_1_1gui_1_1NodeEditorApplication.html#a58ab6ddf88bc3b250597a6e5c49f90e0", null ],
-    [ "ShowRenamePinRequest", "classNAV_1_1gui_1_1NodeEditorApplication.html#aa7456397c877105a0917b9453abe5fee", null ],
+    [ "ShowRenameNodeRequest", "classNAV_1_1gui_1_1NodeEditorApplication.html#a6f1f53550be97a5ca33cac4a886dd510", null ],
+    [ "ShowRenamePinRequest", "classNAV_1_1gui_1_1NodeEditorApplication.html#a8c7d85dc1859626cb8a297997bdc49bf", null ],
     [ "ShowSaveAsRequested", "classNAV_1_1gui_1_1NodeEditorApplication.html#a7ac7cf319db342dfa07834dd7e8ddb5d", null ],
     [ "windowFontRatio", "classNAV_1_1gui_1_1NodeEditorApplication.html#a39ca449393815b88e4a95a3dccb4ad15", null ],
     [ "windows::ShowFontSizeEditor", "classNAV_1_1gui_1_1NodeEditorApplication.html#a86bf1839a77fdafa8a7a4bc1c0973b48", null ],
@@ -27,6 +27,7 @@ var classNAV_1_1gui_1_1NodeEditorApplication =
     [ "leftPaneWidth", "classNAV_1_1gui_1_1NodeEditorApplication.html#a1f43b417c8a67d6b4d72fccb8205311f", null ],
     [ "m_InsLogo", "classNAV_1_1gui_1_1NodeEditorApplication.html#a6bc42ce560399c542f54219c07870ccd", null ],
     [ "m_InstinctLogo", "classNAV_1_1gui_1_1NodeEditorApplication.html#a1e5e8e2b5ef4a45b6b5152a3e597b386", null ],
+    [ "m_RoseFigure", "classNAV_1_1gui_1_1NodeEditorApplication.html#a65b0c959685acdec9b01d360b5d31d34", null ],
     [ "menuBarHeight", "classNAV_1_1gui_1_1NodeEditorApplication.html#af5ce1ea722dd0229b040571de9201483", null ],
     [ "rightPaneWidth", "classNAV_1_1gui_1_1NodeEditorApplication.html#ac17050a079c0cfe7e5c68896592c7123", null ],
     [ "SPLITTER_THICKNESS", "classNAV_1_1gui_1_1NodeEditorApplication.html#a214349b3769e4115e44ab37b1df3afb1", null ]
