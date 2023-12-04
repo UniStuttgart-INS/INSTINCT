@@ -1,0 +1,40 @@
+     3.02           OBSERVATION DATA    M (MIXED)           RINEX VERSION / TYPE
+Alloy 5.45          Receiver Operator   20220301 230000 UTC PGM / RUN BY / DATE
+ALLOY                                                       MARKER NAME
+INSA                                                        MARKER NUMBER
+GEODETIC                                                    MARKER TYPE         
+INS Alloy           Institut fuer Navigation Uni Stuttgart  OBSERVER / AGENCY   
+5945R40013          TRIMBLE ALLOY       5.45                REC # / TYPE / VERS
+                    TRM57971.00     NONE                    ANT # / TYPE
+  4157188.8805   671202.2217  4774769.4914                  APPROX POSITION XYZ
+        0.0000        0.0000        0.0000                  ANTENNA: DELTA H/E/N
+G   15 C1C L1C S1C C1X L1X S1X C2W L2W S2W C2X L2X S2X C5X  SYS / # / OBS TYPES
+       L5X S5X                                              SYS / # / OBS TYPES
+S    3 C1C L1C S1C                                          SYS / # / OBS TYPES
+R    9 C1C L1C S1C C2C L2C S2C C3X L3X S3X                  SYS / # / OBS TYPES
+E   15 C1X L1X S1X C5X L5X S5X C7X L7X S7X C8X L8X S8X C6X  SYS / # / OBS TYPES
+       L6X S6X                                              SYS / # / OBS TYPES
+C    9 C2I L2I S2I C7I L7I S7I C6I L6I S6I                  SYS / # / OBS TYPES
+     1.000                                                  INTERVAL
+  2022     3     1    23     0    0.0000000     GPS         TIME OF FIRST OBS
+G L2X -0.25000                                              SYS / PHASE SHIFT   
+R L1P  0.25000                                              SYS / PHASE SHIFT   
+R L2C -0.25000                                              SYS / PHASE SHIFT   
+DBHZ                                                        SIGNAL STRENGTH UNIT
+ 11 R05  1 R06 -4 R07  5 R08  6 R13 -2 R14 -7 R15  0 R20  2 GLONASS SLOT / FRQ #
+    R21  4 R22 -3 R23  3                                    GLONASS SLOT / FRQ #
+                                                            GLONASS COD/PHS/BIS 
+                                                            END OF HEADER       
+> 2022  3  1 23  0  0.0000000  0 43       0.000415417000
+C43  22349867.305 8 116381665.390 8        48.900                                                    22349855.652 8  94569609.783 8        50.800
+C09  38706674.828 7 201555842.344 7        42.300    38706664.113 7 155855727.777 7        43.000    38706659.184 6 163780574.733 6        41.700
+R05  22420402.273 7 119849929.587 7        47.300    22420404.453 7  93216638.634 7        42.400
+G01  20046235.867 7 105343635.532 7        47.600                                                                                                    20046242.508 8  82086056.934 8        50.800    20046238.297 9  78665786.929 9        55.000
+G31  24668780.836 5 129635384.615 5        35.700                                                                                                    24668785.090 6 101014573.592 6        37.100
+G14  24706684.281 6 129834420.530 6        38.100    24706681.297 6 129834513.541 6        39.800                                                    24706686.559 6 101169767.146 6        39.100    24706689.195 7  96954357.058 7        43.400
+G19  24299006.547 6 127692003.035 6        39.500                                                    24299008.266 4  99500376.608 4        24.000
+G17  22919820.070 7 120444400.361 7        45.100                                                                                                    22919824.242 7  93852872.558 7        43.800
+R06  19287914.984 6 102924048.466 6        39.200
+R21  19448257.852 8 104071566.414 8        50.800    19448258.457 8  80944613.870 8        48.400    19448249.238 8  77978305.818 8        50.500
+E33  23604423.273 7 124042147.331 7        47.800    23604423.359 8  92628911.505 8        52.300    23604420.621 8  95045301.171 8        52.200    23604423.922 9  93837118.636 9        55.500    23604418.109 9 100683563.381 9        54.100
+S23  38737434.219 7 203567072.311 7        44.800

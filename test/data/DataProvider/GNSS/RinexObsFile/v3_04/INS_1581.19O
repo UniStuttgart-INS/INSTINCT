@@ -1,0 +1,67 @@
+     3.04           OBSERVATION DATA    M                   RINEX VERSION / TYPE
+sbf2rin-15.6.1                          20221127 185430 UTC PGM / RUN BY / DATE 
+INSB                                                        MARKER NAME         
+2                                                           MARKER NUMBER       
+Pfosten                                                     MARKER TYPE         
+Unknown             INS                                     OBSERVER / AGENCY   
+3046472             SEPT POLARX5TR      5.2.0               REC # / TYPE / VERS 
+Unknown             TRM115000.00    NONE                    ANT # / TYPE        
+  4157190.8666   671204.0707  4774768.5998                  APPROX POSITION XYZ 
+        0.0000        0.0000        0.0000                  ANTENNA: DELTA H/E/N
+G    9 C1C L1C C1W C2W L2W C2L L2L C5Q L5Q                  SYS / # / OBS TYPES 
+E   10 C1C L1C C6C L6C C5Q L5Q C7Q L7Q C8Q L8Q              SYS / # / OBS TYPES 
+S    4 C1C L1C C5I L5I                                      SYS / # / OBS TYPES 
+R   10 C1C L1C C1P L1P C2P L2P C2C L2C C3Q L3Q              SYS / # / OBS TYPES 
+C    6 C2I L2I C7I L7I C6I L6I                              SYS / # / OBS TYPES 
+J    6 C1C L1C C2L L2L C5Q L5Q                              SYS / # / OBS TYPES 
+I    2 C5A L5A                                              SYS / # / OBS TYPES 
+SEPTENTRIO RECEIVERS OUTPUT ALIGNED CARRIER PHASES.         COMMENT             
+NO FURTHER PHASE SHIFT APPLIED IN THE RINEX ENCODER.        COMMENT             
+G L1C                                                       SYS / PHASE SHIFT   
+G L2W                                                       SYS / PHASE SHIFT   
+G L2L  0.00000                                              SYS / PHASE SHIFT   
+G L5Q  0.00000                                              SYS / PHASE SHIFT   
+E L1C  0.00000                                              SYS / PHASE SHIFT   
+E L6C  0.00000                                              SYS / PHASE SHIFT   
+E L5Q  0.00000                                              SYS / PHASE SHIFT   
+E L7Q  0.00000                                              SYS / PHASE SHIFT   
+E L8Q  0.00000                                              SYS / PHASE SHIFT   
+S L1C                                                       SYS / PHASE SHIFT   
+S L5I                                                       SYS / PHASE SHIFT   
+R L1C                                                       SYS / PHASE SHIFT   
+R L1P  0.00000                                              SYS / PHASE SHIFT   
+R L2P  0.00000                                              SYS / PHASE SHIFT   
+R L2C                                                       SYS / PHASE SHIFT   
+R L3Q  0.00000                                              SYS / PHASE SHIFT   
+C L2I                                                       SYS / PHASE SHIFT   
+C L7I                                                       SYS / PHASE SHIFT   
+C L6I                                                       SYS / PHASE SHIFT   
+J L1C                                                       SYS / PHASE SHIFT   
+J L2L  0.00000                                              SYS / PHASE SHIFT   
+J L5Q  0.00000                                              SYS / PHASE SHIFT   
+I L5A                                                       SYS / PHASE SHIFT   
+    15.000                                                  INTERVAL            
+  2019     6     7     0     0    0.0000000     GPS         TIME OF FIRST OBS   
+  2019     6     7     0    59   45.0000000     GPS         TIME OF LAST OBS    
+    56                                                      # OF SATELLITES     
+ C1C    0.000 C1P    0.000 C2C    0.000 C2P    0.000        GLONASS COD/PHS/BIS 
+    18                                                      LEAP SECONDS        
+ 10 R06 -4 R07  5 R08  6 R09 -2 R10 -7 R15  0 R16 -1 R22 -3 GLONASS SLOT / FRQ #
+    R23  3 R24  2                                           GLONASS SLOT / FRQ #
+                                                            END OF HEADER       
+> 2019 06 07 00 00  0.0000000  0 49
+C05  40042574.312 6 208512218.97306  40042567.271 6 161234863.43906  40042570.299 6 169433249.44106
+C20  23482518.059 7 122279657.00207                                  23482511.079 8  99362215.27608
+C23  22903200.752 8 119262990.96608
+E02  25642437.304 7 134751934.72907  25642432.151 8 109376551.96408  25642432.913 7 100626434.85107  25642430.497 7 103251463.96907  25642431.399 7 101938948.98507
+E13  28469196.889 3
+E20  22672683.828 6 119145771.04206
+G02  22458066.119 7 118017952.08907  22458065.104 5  22458057.204 5  91962017.25805
+G03  25435674.322 5 133665419.68005  25435674.170 1  25435671.028 1 104154867.88501  25435671.575 4 104154891.75704  25435670.780 5  99815098.12405
+G05  23631237.367 7 124183008.00907  23631237.215 4  23631230.734 4  96765955.34304  23631231.916 6  96765963.34406
+I02  38518766.840 6 151155936.36606
+J02  44639648.831 5 234582941.79505  44639646.392 4 182791881.93304  44639643.975 5 175175559.20205
+R06  20462782.695 7 109193382.22207  20462781.853 7 109193379.22407
+R07  19719559.112 8 105560396.17608  19719559.387 8 105560382.19908  19719553.220 8  82102486.15708  19719553.035 8  82102500.14708
+R09  21540204.821 8 115023494.76408  21540205.028 8 115023499.76708  21540199.089 7  89462698.49307  21540198.817 7  89462700.48507  21540183.089 7  86364723.50107
+S23  38660624.330 7 203163010.93407  38660605.426 6 151712562.07406

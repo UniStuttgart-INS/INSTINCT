@@ -1,0 +1,16 @@
+% program   : RTKPOST-QT ver.demo5 b34g
+% inp file  : /test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/Septentrio-PolaRx5TR.obs
+% inp file  : /test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/Septentrio-PolaRx5TR_G.nav
+% obs start : 2023/01/08 18:59:42.0 JST (week2244  36000.0s)
+% obs end   : 2023/01/08 22:59:42.0 JST (week2244  50400.0s)
+% pos mode  : Single
+% elev mask : 15.0 deg
+% ionos opt : Broadcast
+% tropo opt : Saastamoinen
+% ephemeris : Broadcast
+% navi sys  : GPS
+%
+% (lat/lon/height=WGS84/ellipsoidal,Q=1:fix,2:float,3:sbas,4:dgps,5:single,6:ppp,ns=# of satellites)
+%  JST                   latitude(deg) longitude(deg)  height(m)   Q  ns   sdn(m)   sde(m)   sdu(m)  sdne(m)  sdeu(m)  sdun(m) age(s)  ratio    vn(m/s)    ve(m/s)    vu(m/s)      sdvn     sdve     sdvu    sdvne    sdveu    sdvun
+2023/01/08 18:59:42.000   29.999994371   94.999992812    -9.3615   5   8   2.5813   2.2781   7.1259   0.7786  -2.0020  -2.6572   0.00    0.0    0.01216    0.00473   -0.00324   0.14536  0.13159  0.44479  0.03911 -0.13176 -0.16769
+2023/01/08 22:59:42.000   30.000005283   94.999995363   -10.8537   5   7   2.4447   2.0231   5.0831  -1.0676  -1.0152   1.5662   0.00    0.0   -0.00941    0.00209    0.00321   0.17005  0.13249  0.34158 -0.07425 -0.08412  0.12257

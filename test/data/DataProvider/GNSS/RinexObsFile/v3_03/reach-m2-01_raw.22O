@@ -1,0 +1,39 @@
+     3.03           OBSERVATION DATA    M: Mixed            RINEX VERSION / TYPE
+ES dev:627ffa9c-Dev                     20221103 100607 UTC PGM / RUN BY / DATE 
+log: C:\Users\user\Downloads\reach-m2-01_raw_202211021639.UBCOMMENT             
+input_format: u-blox                                        COMMENT             
+                                                            MARKER NAME         
+                                                            MARKER NUMBER       
+                                                            MARKER TYPE         
+                                                            OBSERVER / AGENCY   
+                                                            REC # / TYPE / VERS 
+                                                            ANT # / TYPE        
+  4157187.6259   671203.0043  4774770.9905                  APPROX POSITION XYZ 
+        0.0000        0.0000        0.0000                  ANTENNA: DELTA H/E/N
+G    8 C1C L1C D1C S1C C2X L2X D2X S2X                      SYS / # / OBS TYPES 
+R    8 C1C L1C D1C S1C C2C L2C D2C S2C                      SYS / # / OBS TYPES 
+E    8 C1X L1X D1X S1X C7X L7X D7X S7X                      SYS / # / OBS TYPES 
+S    4 C1C L1C D1C S1C                                      SYS / # / OBS TYPES 
+C    8 C2I L2I D2I S2I C7I L7I D7I S7I                      SYS / # / OBS TYPES 
+  2022    11     2    16    39   59.6920000     GPS         TIME OF FIRST OBS   
+  2022    11     2    17    14   15.4930000     GPS         TIME OF LAST OBS    
+G                                                           SYS / PHASE SHIFT   
+R                                                           SYS / PHASE SHIFT   
+E                                                           SYS / PHASE SHIFT   
+S                                                           SYS / PHASE SHIFT   
+C                                                           SYS / PHASE SHIFT   
+  0                                                         GLONASS SLOT / FRQ #
+ C1C    0.000 C1P    0.000 C2C    0.000 C2P    0.000        GLONASS COD/PHS/BIS 
+                                                            END OF HEADER       
+> 2022 11  2 16 39 59.6920000  0 39                     
+G 1  22876259.395 1 120215551.306 3       562.461          36.000    22876256.297 2  93674506.094 4       438.697          34.000  
+G13  19627552.460 1 103143484.484 1     -3581.727          46.000                                                                  
+R 1  18660381.325 1  99750420.719 1     -4129.152          46.000    18660383.569 1  77583668.925 2     -3211.629          42.000  
+R10  21657654.213 1 115447492.344 2     -4203.686          41.000                                                                  
+R13  21689411.389 4 115820280.545 5      3020.874          32.000    21689421.083 4                      2349.882          26.000  
+E 3  22094318.881 1 116106429.676 1     -2446.293          46.000    22094320.071 1  88964669.099 1     -1874.433          50.000  
+E 5  25830241.475 1 135738837.274 3     -3677.055          37.000                                                                  
+C 7                                                                  37737385.511 1 151952809.467 2     -1170.329          40.000  
+C10  36759786.025 1 191417848.535 2     -1192.425          42.000    36759779.463 1 148016392.042 2      -921.977          40.000  
+C23  19672914.865 1 102442028.933 1        96.813          50.000                                                                  
+S23  36325088.073 1 190889609.539 1      -535.350          44.000  
