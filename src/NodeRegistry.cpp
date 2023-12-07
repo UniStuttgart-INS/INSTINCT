@@ -192,6 +192,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataLogger/State/PosVelAttLogger.hpp"
 // Data Processor
 #include "Nodes/DataProcessor/ErrorModel/ErrorModel.hpp"
+#include "Nodes/DataProcessor/GNSS/GnssAnalyzer.hpp"
 #include "Nodes/DataProcessor/GNSS/SinglePointPositioning.hpp"
 #include "Nodes/DataProcessor/Integrator/ImuIntegrator.hpp"
 #include "Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.hpp"
@@ -257,6 +258,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<PosVelAttLogger>();
     // Data Processor
     registerNodeType<ErrorModel>();
+    registerNodeType<GnssAnalyzer>();
     registerNodeType<SinglePointPositioning>();
     registerNodeType<ImuIntegrator>();
     registerNodeType<LooselyCoupledKF>();
@@ -297,6 +299,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 
 #include "NodeData/General/StringObs.hpp"
 #include "NodeData/GNSS/EmlidObs.hpp"
+#include "NodeData/GNSS/GnssCombination.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 #include "NodeData/GNSS/SppSolution.hpp"
@@ -320,6 +323,7 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     registerNodeDataType<StringObs>();
     // GNSS
     registerNodeDataType<EmlidObs>();
+    registerNodeDataType<GnssCombination>();
     registerNodeDataType<GnssObs>();
     registerNodeDataType<RtklibPosObs>();
     registerNodeDataType<SppSolution>();

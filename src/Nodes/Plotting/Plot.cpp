@@ -398,6 +398,7 @@ NAV::Plot::Plot()
                         PosVelAtt::type(),
                         LcKfInsGnssErrors::type(),
                         TcKfInsGnssErrors::type(),
+                        GnssCombination::type(),
                         GnssObs::type(),
                         SppSolution::type(),
                         RtklibPosObs::type(),
@@ -2001,6 +2002,14 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock offset [s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock drift [s/s]");
         }
+        else if (startPin.dataIdentifier.front() == GnssCombination::type())
+        {
+            // NodeData
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
+            // GnssCombination
+            _pinData.at(pinIndex).dynamicDataStartIndex = static_cast<int>(i);
+        }
         else if (startPin.dataIdentifier.front() == GnssObs::type())
         {
             // NodeData
@@ -2878,6 +2887,10 @@ void NAV::Plot::plotData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
         {
             plotTcKfInsGnssErrors(std::static_pointer_cast<const TcKfInsGnssErrors>(nodeData), pinIdx);
         }
+        else if (sourcePin->dataIdentifier.front() == GnssCombination::type())
+        {
+            plotGnssCombination(std::static_pointer_cast<const GnssCombination>(nodeData), pinIdx);
+        }
         else if (sourcePin->dataIdentifier.front() == GnssObs::type())
         {
             plotGnssObs(std::static_pointer_cast<const GnssObs>(nodeData), pinIdx);
@@ -3145,6 +3158,35 @@ void NAV::Plot::plotTcKfInsGnssErrors(const std::shared_ptr<const TcKfInsGnssErr
     addData(pinIndex, i++, obs->recvClkDrift);                // Receiver clock drift in [m/s]
     addData(pinIndex, i++, obs->recvClkOffset / InsConst::C); // Receiver clock offset in [s]
     addData(pinIndex, i++, obs->recvClkDrift / InsConst::C);  // Receiver clock drift in [s/s]
+}
+
+void NAV::Plot::plotGnssCombination(const std::shared_ptr<const GnssCombination>& obs, size_t pinIndex)
+{
+    if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
+    size_t i = 0;
+
+    std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
+
+    // NodeData
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>((obs->insTime - _startTime).count()) : std::nan(""));
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>(obs->insTime.toGPSweekTow().tow) : std::nan(""));
+
+    // GnssCombination
+    for (const auto& comb : obs->combinations)
+    {
+        addData(pinIndex, comb.description, comb.result.value_or(std::nan("")));
+        addData(pinIndex, comb.description + " Cycle Slip", comb.cycleSlipResult ? static_cast<double>(*comb.cycleSlipResult) : std::nan(""));
+        addData(pinIndex, comb.description + " Prediction", comb.cycleSlipPrediction.value_or(std::nan("")));
+        addData(pinIndex, comb.description + " Meas - Pred", comb.cycleSlipMeasMinPred.value_or(std::nan("")));
+    }
+    for (const auto& comb : obs->combinations)
+    {
+        for (const auto& [insTime, poly, value] : comb.cycleSlipPolynomials)
+        {
+            auto t = static_cast<double>((insTime - _startTime).count());
+            addData(pinIndex, fmt::format("{} [{:.1f}] ({})", comb.description, t, poly.toString()), value);
+        }
+    }
 }
 
 void NAV::Plot::plotGnssObs(const std::shared_ptr<const GnssObs>& obs, size_t pinIndex)
