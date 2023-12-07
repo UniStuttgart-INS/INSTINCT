@@ -1551,12 +1551,23 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(size_t /* pin
 
     // ------------------------------------------------------------ Angular rates --------------------------------------------------------------
 
-    Eigen::Vector3d n_omega_ip = n_calcOmega_ip(imuUpdateTime, Eigen::Vector3d{ roll, pitch, yaw }, b_Quat_n.conjugate(), n_omega_ie, n_omega_en);
+    Eigen::Vector3d n_omega_nb = n_calcOmega_nb(imuUpdateTime, Eigen::Vector3d{ roll, pitch, yaw }, b_Quat_n.conjugate());
+
+    //  ω_ib_n = ω_in_n + ω_nb_n = (ω_ie_n + ω_en_n) + ω_nb_n
+    Eigen::Vector3d n_omega_ib = n_omega_nb;
+    if (_angularRateEarthRotationEnabled)
+    {
+        n_omega_ib += n_omega_ie;
+    }
+    if (_angularRateTransportRateEnabled)
+    {
+        n_omega_ib += n_omega_en;
+    }
 
     // ω_ib_b = b_Quat_n * ω_ib_n
     //                            = 0
     // ω_ip_p = p_Quat_b * (ω_ib_b + ω_bp_b) = p_Quat_b * ω_ib_b
-    Eigen::Vector3d p_omega_ip = _imuPos.p_quatGyro_b() * b_Quat_n * n_omega_ip;
+    Eigen::Vector3d p_omega_ip = _imuPos.p_quatGyro_b() * b_Quat_n * n_omega_ib;
     LOG_DATA("{}: [{:8.3f}] p_omega_ip = {} [rad/s]", nameId(), imuUpdateTime, p_omega_ip.transpose());
 
     // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
@@ -1570,13 +1581,11 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(size_t /* pin
 
     auto e_Quat_n = n_Quat_e.conjugate();
 
-    obs->n_accelUncomp = n_accel;
-    obs->n_gyroUncomp = n_omega_ip;
-    obs->n_magUncomp.setZero();
+    obs->n_accelDynamics = n_trajectoryAccel;
+    obs->n_angularRateDynamics = n_omega_nb;
 
-    obs->e_accelUncomp = e_Quat_n * n_accel;
-    obs->e_gyroUncomp = e_Quat_n * n_omega_ip;
-    obs->e_magUncomp.setZero();
+    obs->e_accelDynamics = e_Quat_n * n_trajectoryAccel;
+    obs->e_angularRateDynamics = e_Quat_n * n_omega_nb;
 
     _imuUpdateCnt++;
     invokeCallbacks(OUTPUT_PORT_INDEX_IMU_OBS, obs);
@@ -1664,11 +1673,7 @@ Eigen::Vector3d NAV::ImuSimulator::n_calcTrajectoryAccel(double time, const Eige
     return e_DCM_dot_n * e_vel + n_Quat_e * e_accel;
 }
 
-Eigen::Vector3d NAV::ImuSimulator::n_calcOmega_ip(double time,
-                                                  const Eigen::Vector3d& rollPitchYaw,
-                                                  const Eigen::Quaterniond& n_Quat_b,
-                                                  const Eigen::Vector3d& n_omega_ie,
-                                                  const Eigen::Vector3d& n_omega_en) const
+Eigen::Vector3d NAV::ImuSimulator::n_calcOmega_nb(double time, const Eigen::Vector3d& rollPitchYaw, const Eigen::Quaterniond& n_Quat_b) const
 {
     const auto& R = rollPitchYaw(0);
     const auto& P = rollPitchYaw(1);
@@ -1703,18 +1708,7 @@ Eigen::Vector3d NAV::ImuSimulator::n_calcOmega_ip(double time,
                                  + C_3(R) * Eigen::Vector3d{ 0, P_dot, 0 }
                                  + C_3(R) * C_2(P) * Eigen::Vector3d{ 0, 0, Y_dot };
 
-    //  ω_ib_n = ω_in_n + ω_nb_n = (ω_ie_n + ω_en_n) + n_Quat_b * ω_nb_b
-    Eigen::Vector3d n_omega_ib = n_Quat_b * b_omega_nb;
-    if (_angularRateEarthRotationEnabled)
-    {
-        n_omega_ib += n_omega_ie;
-    }
-    if (_angularRateTransportRateEnabled)
-    {
-        n_omega_ib += n_omega_en;
-    }
-
-    return n_omega_ib;
+    return n_Quat_b * b_omega_nb;
 }
 
 const char* NAV::ImuSimulator::to_string(TrajectoryType value)

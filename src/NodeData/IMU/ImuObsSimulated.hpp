@@ -40,19 +40,15 @@ class ImuObsSimulated final : public ImuObs
         return { ImuObs::type() };
     }
 
-    /// The IMU magnetic field measured in units of [Gauss], given in the NED frame.
-    Eigen::Vector3d n_magUncomp;
-    /// The IMU acceleration measured in units of [m/s^2], given in the NED frame.
-    Eigen::Vector3d n_accelUncomp;
-    /// The IMU angular rate measured in units of [rad/s], given in the NED frame.
-    Eigen::Vector3d n_gyroUncomp;
+    /// The acceleration derived from the trajectory in [m/s^2], given in the NED frame.
+    Eigen::Vector3d n_accelDynamics;
+    /// The angular rate ω_nb_n derived from the trajectory in [rad/s], given in the NED frame.
+    Eigen::Vector3d n_angularRateDynamics;
 
-    /// The IMU magnetic field measured in units of [Gauss], given in the ECEF frame.
-    Eigen::Vector3d e_magUncomp;
-    /// The IMU acceleration measured in units of [m/s^2], given in the ECEF frame.
-    Eigen::Vector3d e_accelUncomp;
-    /// The IMU angular rate measured in units of [rad/s], given in the ECEF frame.
-    Eigen::Vector3d e_gyroUncomp;
+    /// The acceleration derived from the trajectory in [m/s^2], given in the ECEF frame.
+    Eigen::Vector3d e_accelDynamics;
+    /// The angular rate ω_nb_e derived from the trajectory in [rad/s], given in the ECEF frame.
+    Eigen::Vector3d e_angularRateDynamics;
 };
 
 } // namespace NAV

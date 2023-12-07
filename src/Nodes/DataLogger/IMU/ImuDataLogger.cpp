@@ -106,20 +106,18 @@ bool NAV::ImuDataLogger::initialize()
     CommonLog::initialize();
 
     _filestream << "Time [s],GpsCycle,GpsWeek,GpsToW [s],TimeStartup [ns],"
-                << "UnCompMagX [Gauss],UnCompMagY [Gauss],UnCompMagZ [Gauss],"
-                << "UnCompAccX [m/s^2],UnCompAccY [m/s^2],UnCompAccZ [m/s^2],"
-                << "UnCompGyroX [rad/s],UnCompGyroY [rad/s],UnCompGyroZ [rad/s],"
+                << "MagX [Gauss],MagY [Gauss],MagZ [Gauss],"
+                << "AccX [m/s^2],AccY [m/s^2],AccZ [m/s^2],"
+                << "GyroX [rad/s],GyroY [rad/s],GyroZ [rad/s],"
                 << "Temperature [Celsius]";
     if (auto* sourcePin = inputPins[INPUT_PORT_INDEX_IMU_OBS].link.getConnectedPin();
         sourcePin && sourcePin->dataIdentifier.front() == ImuObsSimulated::type())
     {
         _filestream << ","
-                    << "MagN [Gauss],MagE [Gauss],MagD [Gauss],"
-                    << "AccN [m/s^2],AccE [m/s^2],AccD [m/s^2],"
-                    << "GyroN [rad/s],GyroE [rad/s],GyroD [rad/s],"
-                    << "ECEF MagX [Gauss],ECEF MagY [Gauss],ECEF MagZ [Gauss],"
-                    << "ECEF AccX [m/s^2],ECEF AccY [m/s^2],ECEF AccZ [m/s^2],"
-                    << "ECEF GyroX [rad/s],ECEF GyroY [rad/s],ECEF GyroZ [rad/s]";
+                    << "AccelDynamicsN [m/s^2],AccelDynamicsE [m/s^2],AccelDynamicsD [m/s^2],"
+                    << "AngularRateN (ω_nb_n) [rad/s],AngularRateE (ω_nb_n) [rad/s],AngularRateD (ω_nb_n) [rad/s],"
+                    << "AccelDynamicsX ECEF [m/s^2],AccelDynamicsY ECEF [m/s^2],AccelDynamicsZ ECEF [m/s^2],"
+                    << "AngularRateX ECEF (ω_nb_e) [rad/s],AngularRateY ECEF (ω_nb_e) [rad/s],AngularRateZ ECEF (ω_nb_e) [rad/s]";
     }
     _filestream << std::endl;
 
@@ -221,12 +219,10 @@ void NAV::ImuDataLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, s
     {
         auto simObs = std::static_pointer_cast<const ImuObsSimulated>(obs);
 
-        _filestream << "," << simObs->n_magUncomp.x() << "," << simObs->n_magUncomp.y() << "," << simObs->n_magUncomp.z();
-        _filestream << "," << simObs->n_accelUncomp.x() << "," << simObs->n_accelUncomp.y() << "," << simObs->n_accelUncomp.z();
-        _filestream << "," << simObs->n_gyroUncomp.x() << "," << simObs->n_gyroUncomp.y() << "," << simObs->n_gyroUncomp.z();
-        _filestream << "," << simObs->e_magUncomp.x() << "," << simObs->e_magUncomp.y() << "," << simObs->e_magUncomp.z();
-        _filestream << "," << simObs->e_accelUncomp.x() << "," << simObs->e_accelUncomp.y() << "," << simObs->e_accelUncomp.z();
-        _filestream << "," << simObs->e_gyroUncomp.x() << "," << simObs->e_gyroUncomp.y() << "," << simObs->e_gyroUncomp.z();
+        _filestream << "," << simObs->n_accelDynamics.x() << "," << simObs->n_accelDynamics.y() << "," << simObs->n_accelDynamics.z();
+        _filestream << "," << simObs->n_angularRateDynamics.x() << "," << simObs->n_angularRateDynamics.y() << "," << simObs->n_angularRateDynamics.z();
+        _filestream << "," << simObs->e_accelDynamics.x() << "," << simObs->e_accelDynamics.y() << "," << simObs->e_accelDynamics.z();
+        _filestream << "," << simObs->e_angularRateDynamics.x() << "," << simObs->e_angularRateDynamics.y() << "," << simObs->e_angularRateDynamics.z();
     }
 
     _filestream << '\n';

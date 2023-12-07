@@ -1933,24 +1933,18 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "Gyro Comp Z [rad/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Temperature [°C]");
             // ImuObsSimulated
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Mag N [Gauss]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Mag E [Gauss]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Mag D [Gauss]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Accel N [m/s^2]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Accel E [m/s^2]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Accel D [m/s^2]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyro N [rad/s]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyro E [rad/s]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyro D [rad/s]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Mag ECEF X [Gauss]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Mag ECEF Y [Gauss]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Mag ECEF Z [Gauss]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Accel ECEF X [m/s^2]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Accel ECEF Y [m/s^2]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Accel ECEF Z [m/s^2]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyro ECEF X [rad/s]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyro ECEF Y [rad/s]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Gyro ECEF Z [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "AccelDynamicsN [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "AccelDynamicsE [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "AccelDynamicsD [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "AngularRateN (ω_nb_n) [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "AngularRateE (ω_nb_n) [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "AngularRateD (ω_nb_n) [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "AccelDynamicsX ECEF [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "AccelDynamicsY ECEF [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "AccelDynamicsZ ECEF [m/s^2]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "AngularRateX ECEF (ω_nb_e) [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "AngularRateY ECEF (ω_nb_e) [rad/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "AngularRateZ ECEF (ω_nb_e) [rad/s]");
         }
         else if (startPin.dataIdentifier.front() == KvhObs::type())
         {
@@ -2867,6 +2861,8 @@ void NAV::Plot::plotTcKfInsGnssErrors(const std::shared_ptr<const TcKfInsGnssErr
 
 void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, size_t pinIndex)
 {
+    namespace States = NAV::GNSS::Positioning::SPP::States;
+
     if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
     size_t i = 0;
 
@@ -3229,24 +3225,18 @@ void NAV::Plot::plotImuObsSimulated(const std::shared_ptr<const ImuObsSimulated>
     addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->z() : std::nan(""));
     addData(pinIndex, i++, obs->temperature.has_value() ? obs->temperature.value() : std::nan(""));
     // ImuObsSimulated
-    addData(pinIndex, i++, obs->n_magUncomp.x());   // Mag N [Gauss]
-    addData(pinIndex, i++, obs->n_magUncomp.y());   // Mag E [Gauss]
-    addData(pinIndex, i++, obs->n_magUncomp.z());   // Mag D [Gauss]
-    addData(pinIndex, i++, obs->n_accelUncomp.x()); // Accel N [m/s^2]
-    addData(pinIndex, i++, obs->n_accelUncomp.y()); // Accel E [m/s^2]
-    addData(pinIndex, i++, obs->n_accelUncomp.z()); // Accel D [m/s^2]
-    addData(pinIndex, i++, obs->n_gyroUncomp.x());  // Gyro N [rad/s]
-    addData(pinIndex, i++, obs->n_gyroUncomp.y());  // Gyro E [rad/s]
-    addData(pinIndex, i++, obs->n_gyroUncomp.z());  // Gyro D [rad/s]
-    addData(pinIndex, i++, obs->e_magUncomp.x());   // Mag ECEF X [Gauss]
-    addData(pinIndex, i++, obs->e_magUncomp.y());   // Mag ECEF Y [Gauss]
-    addData(pinIndex, i++, obs->e_magUncomp.z());   // Mag ECEF Z [Gauss]
-    addData(pinIndex, i++, obs->e_accelUncomp.x()); // Accel ECEF X [m/s^2]
-    addData(pinIndex, i++, obs->e_accelUncomp.y()); // Accel ECEF Y [m/s^2]
-    addData(pinIndex, i++, obs->e_accelUncomp.z()); // Accel ECEF Z [m/s^2]
-    addData(pinIndex, i++, obs->e_gyroUncomp.x());  // Gyro ECEF X [rad/s]
-    addData(pinIndex, i++, obs->e_gyroUncomp.y());  // Gyro ECEF Y [rad/s]
-    addData(pinIndex, i++, obs->e_gyroUncomp.z());  // Gyro ECEF Z [rad/s]
+    addData(pinIndex, i++, obs->n_accelDynamics.x());       // AccelDynamicsN [m/s^2]
+    addData(pinIndex, i++, obs->n_accelDynamics.y());       // AccelDynamicsE [m/s^2]
+    addData(pinIndex, i++, obs->n_accelDynamics.z());       // AccelDynamicsD [m/s^2]
+    addData(pinIndex, i++, obs->n_angularRateDynamics.x()); // AngularRateN (ω_nb_n) [rad/s]
+    addData(pinIndex, i++, obs->n_angularRateDynamics.y()); // AngularRateE (ω_nb_n) [rad/s]
+    addData(pinIndex, i++, obs->n_angularRateDynamics.z()); // AngularRateD (ω_nb_n) [rad/s]
+    addData(pinIndex, i++, obs->e_accelDynamics.x());       // AccelDynamicsX ECEF [m/s^2]
+    addData(pinIndex, i++, obs->e_accelDynamics.y());       // AccelDynamicsY ECEF [m/s^2]
+    addData(pinIndex, i++, obs->e_accelDynamics.z());       // AccelDynamicsZ ECEF [m/s^2]
+    addData(pinIndex, i++, obs->e_angularRateDynamics.x()); // AngularRateX ECEF (ω_nb_e) [rad/s]
+    addData(pinIndex, i++, obs->e_angularRateDynamics.y()); // AngularRateY ECEF (ω_nb_e) [rad/s]
+    addData(pinIndex, i++, obs->e_angularRateDynamics.z()); // AngularRateZ ECEF (ω_nb_e) [rad/s]
 }
 
 void NAV::Plot::plotKvhObs(const std::shared_ptr<const KvhObs>& obs, size_t pinIndex)
