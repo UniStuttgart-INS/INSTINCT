@@ -57,7 +57,8 @@ std::string RinexObsFile::category()
 
 void RinexObsFile::guiConfig()
 {
-    if (auto res = FileReader::guiConfig("Rinex Obs (.obs .rnx .*O){.obs,.rnx,(.+[.]\\d\\d?O)},.*", { ".obs", ".rnx", "(.+[.]\\d\\d?O)" }, size_t(id), nameId()))
+    if (auto res = FileReader::guiConfig(R"(Rinex Obs (.obs .rnx .*O){.obs,.rnx,(.+[.]\d\d?O)},.*)",
+                                         { ".obs", ".rnx", "(.+[.]\\d\\d?O)" }, size_t(id), nameId()))
     {
         LOG_DEBUG("{}: Path changed to {}", nameId(), _path);
         flow::ApplyChanges();
@@ -512,6 +513,8 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
     int epochFlag = -1;
     while (epochFlag != 0 && !eof() && getline(line)) // Read lines till epoch record with valid epoch flag
     {
+        str::trim(line);
+
         if (line.empty())
         {
             continue;
@@ -571,7 +574,7 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
         auto satSys = SatelliteSystem::fromChar(line.at(0));              // Format: A1,
         auto satNum = static_cast<uint8_t>(std::stoi(line.substr(1, 2))); // Format: I2.2,
 
-        LOG_DATA("{}: {}{}:", nameId(), char(satSys), satNum);
+        LOG_DATA("{}: [{}] {}{}:", nameId(), gnssObs->insTime.toYMDHMS(GPST), char(satSys), satNum);
 
         size_t curExtractLoc = 3;
         for (const auto& obsDesc : _obsDescription.at(satSys))
